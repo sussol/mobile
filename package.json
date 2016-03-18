@@ -1,0 +1,30 @@
+{
+  "name": "offlineMobile",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "mocha --require react-native-mock/mock --recursive './src/**/*.spec.js' --compilers js:babel-core/register"
+  },
+  "dependencies": {
+    "react-dom": "^0.14.7",
+    "react-native": "^0.21.0",
+    "react-redux": "^4.4.1",
+    "redux": "^3.3.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.7.2",
+    "babel-preset-react": "^6.5.0",
+    "babel-preset-react-native": "^1.5.2",
+    "enzyme": "^2.1.0",
+    "expect": "^1.15.2",
+    "expect-jsx": "^2.3.0",
+    "mocha": "^2.4.5",
+    "mockery": "^1.4.1",
+    "react": "^0.14.7",
+    "react-addons-test-utils": "^0.14.7",
+    "react-native-mock": "0.0.7",
+    "redux-devtools": "^3.1.1",
+    "sinon": "^1.17.3"
+  }
+}

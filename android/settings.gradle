@@ -1,0 +1,3 @@
+rootProject.name = 'offlineMobile'
+
+include ':app'
