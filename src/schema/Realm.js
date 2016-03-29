@@ -3,6 +3,7 @@ import Realm from 'realm';
 class Address {};
 Address.schema = {
   name: 'Address',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     line1: 'string',
@@ -14,6 +15,7 @@ Address.schema = {
 class Item {};
 Item.schema = {
   name: 'Item',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     code: 'string',
@@ -30,6 +32,7 @@ Item.schema = {
 class ItemLine {};
 ItemLine.schema = {
   name: 'ItemLine',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     item: 'Item',
@@ -46,6 +49,7 @@ ItemLine.schema = {
 class ItemDepartment {};
 ItemDepartment.schema = {
   name: 'ItemDepartment',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
@@ -56,6 +60,7 @@ ItemDepartment.schema = {
 class ItemCategory {};
 ItemCategory.schema = {
   name: 'ItemCategory',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
@@ -68,6 +73,7 @@ class CustomerInvoice extends Invoice {};
 class SupplierInvoice extends Invoice {};
 Invoice.schema = {
   name: 'Invoice',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     serialNumber: 'int',
@@ -86,6 +92,7 @@ Invoice.schema = {
 class InvoiceCategory {};
 InvoiceCategory.schema = {
   name: 'InvoiceCategory',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
@@ -96,6 +103,7 @@ InvoiceCategory.schema = {
 class InvoiceLine {};
 InvoiceLine.schema = {
   name: 'InvoiceLine',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     itemLine: 'ItemLine',
@@ -108,6 +116,7 @@ InvoiceLine.schema = {
 class MasterList {};
 MasterList.schema = {
   name: 'MasterList',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
@@ -119,6 +128,7 @@ MasterList.schema = {
 class MasterListLine {};
 MasterListLine.schema = {
   name: 'MasterListLine',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     masterList: 'MasterList',
@@ -132,6 +142,7 @@ class Customer extends Name {};
 class Supplier extends Name {};
 Name.schema = {
   name: 'Name',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
@@ -147,6 +158,7 @@ Name.schema = {
 class Requisition {};
 Requisition.schema = {
   name: 'Requisition',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     status: 'string',
@@ -160,6 +172,7 @@ Requisition.schema = {
 class RequisitionLine {};
 RequisitionLine.schema = {
   name: 'RequisitionLine',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     requisition: 'Requisition',
@@ -177,6 +190,7 @@ RequisitionLine.schema = {
 class SyncOut {};
 SyncOut.schema = {
   name: 'SyncOut',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     recordType: 'string', // i.e. Table name
@@ -187,6 +201,7 @@ SyncOut.schema = {
 class Stocktake {};
 Stocktake.schema = {
   name: 'Stocktake',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     createdDate: 'date', // Includes time
@@ -202,6 +217,7 @@ Stocktake.schema = {
 class StocktakeLine {};
 StocktakeLine.schema = {
   name: 'StocktakeLine',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     stocktake: 'Stocktake',
@@ -215,6 +231,7 @@ StocktakeLine.schema = {
 class User {};
 User.schema = {
   name: 'User',
+  primaryKey: 'id',
   properties: {
     id: 'string',
     username: 'string',
