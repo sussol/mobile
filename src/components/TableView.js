@@ -8,16 +8,17 @@ import { ListView } from 'realm/react-native';
 import realm from '../schema/Realm'
 import realmMock from '../schema/mockDBInstantiator'
 
+if (realm.objects('Item').length === 0) {
+  realmMock();
+}
+
 export default class TableView extends Component {
   render() {
-
-    realmMock();
-
     let drugs = realm.objects('Item');
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          name of drug in Realm: {drug[0].name}
+          Show something: {drugs[1].lines[0].id}
         </Text>
       </View>
     );
