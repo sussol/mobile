@@ -11,18 +11,13 @@ import realmMock from '../schema/mockDBInstantiator'
 export default class TableView extends Component {
   render() {
 
-    realmMock.instantiate();
+    realmMock();
 
     let drugs = realm.objects('Item');
-    let oneDrug = drugs.slice(5,6);
-    let text = "name of drug in Realm:";
-    oneDrug.forEach((drug,i,collection)=>{
-      text = text + drug.code;
-    });
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          name of drug in Realm: {oneDrug[0].name}
+          name of drug in Realm: {drug[0].name}
         </Text>
       </View>
     );
