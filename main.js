@@ -6,6 +6,6 @@
 'use strict';
 
 import { AppRegistry } from 'react-native';
-import TodoApp from './src/components/OfflineMobileApp';
+import OfflineMobileApp from './src/components/OfflineMobileApp';
 
-AppRegistry.registerComponent('OfflineMobileApp', () => OfflineMobileApp);
+AppRegistry.registerComponent('offlineMobile', () => OfflineMobileApp);

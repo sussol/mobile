@@ -11,12 +11,12 @@ import React, {
   View
 } from 'react-native';
 
-import { CustomerInvoicesPage } from './src/components/CustomerInvoicesPage';
-import { MenuPage } from './src/components/MenuPage';
-import { OrdersPage } from './src/components/OrdersPage';
-import { StockPage } from './src/components/StockPage';
-import { StocktakesPage } from './src/components/StocktakesPage';
-import Synchronizer from './src/components/Synchronizer';
+import { CustomerInvoicesPage } from './CustomerInvoicesPage';
+import { MenuPage } from './MenuPage';
+import { OrdersPage } from './OrdersPage';
+import { StockPage } from './StockPage';
+import { StocktakesPage } from './StocktakesPage';
+import Synchronizer from '../reducers/Synchronizer';
 
 export default class OfflineMobileApp extends Component {
 
