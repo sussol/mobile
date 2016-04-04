@@ -1,3 +1,10 @@
+/* @flow weak */
+
+/**
+ * OfflineMobile Android Index
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React, {
   Component,
   StyleSheet,
@@ -12,20 +19,12 @@ if (realm.objects('Item').length === 0) {
   realmMock();
 }
 
+
 export default class TableView extends Component {
   renderLoadingView() {
     return (
       <View style={styles.container}>
         <Text> Loading items... </Text>
-      </View>
-    );
-  }
-
-  renderItem(item) {
-    return (
-      <View style={styles.container} onClick={this.handleClick}>
-        <Text style={[styles.itemText, styles.name]} numberOfLines={1}>{item.name}</Text>
-        <Text style={[styles.itemText, styles.quantity]} numberOfLines={1}>{item.defaultPackSize}</Text>
       </View>
     );
   }
@@ -39,7 +38,7 @@ export default class TableView extends Component {
       <ListView
         style={styles.listview}
         dataSource={this.props.dataSource}
-        renderRow={this.renderItem}
+        renderRow={this.props.renderRow}
         initialListSize={200}
       />
     );
@@ -47,28 +46,25 @@ export default class TableView extends Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  name: {
-    flex: 3,
-    fontSize: 20,
-    marginLeft: 20,
-    marginBottom: 8,
-    textAlign: 'left',
-  },
-  quantity: {
-    flex: 1,
-    fontSize: 20,
-    marginRight: 20,
-    textAlign: 'right',
-  },
+  // container: {
+  //   flex: 1,
+  //   flexDirection: 'row',
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: '#d6f3ff',
+  // },
+  // name: {
+  //   fontSize: 10,
+  //   marginLeft: 20,
+  //   marginBottom: 8,
+  //   textAlign: 'left',
+  // },
+  // quantity: {
+  //   fontSize: 20,
+  //   marginRight: 20,
+  //   textAlign: 'right',
+  // },
   listview: {
-    flex: 1,
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
   },

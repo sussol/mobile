@@ -93,9 +93,3 @@ export default function instantiate(){
     });
   });
 };
-
-//   // I don't think this mock will ever by used by a live site.
-//   // Needless to say, don't clearMock unless you want to wipe
-//   // all data! Also, this method is pretty redundant...
-//   let deleteAll = () => realm.deleteAll();
-// }
