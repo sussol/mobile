@@ -12,13 +12,6 @@ import React, {
   View } from 'react-native';
 import { ListView } from 'realm/react-native';
 
-import realm from '../schema/Realm'
-import realmMock from '../schema/mockDBInstantiator'
-
-if (realm.objects('Item').length === 0) {
-  realmMock();
-}
-
 
 export default class TableView extends Component {
   renderLoadingView() {
@@ -39,7 +32,8 @@ export default class TableView extends Component {
         style={styles.listview}
         dataSource={this.props.dataSource}
         renderRow={this.props.renderRow}
-        initialListSize={200}
+        showsVerticalScrollIndicator={true}
+        scrollRenderAheadDistance={5000}
       />
     );
   }

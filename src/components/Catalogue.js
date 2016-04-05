@@ -76,7 +76,9 @@ export class Catalogue extends Component {
           dataSource={this.state.dataSource}
           loaded={this.state.loaded}
           renderRow={this.renderRow}
-          showsVerticalScrollIndicator={true}/>
+          showsVerticalScrollIndicator={true}
+          scrollRenderAheadDistance={5000}
+        />
       </View>
     );
   }

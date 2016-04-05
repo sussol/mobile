@@ -32,64 +32,66 @@ export default function instantiate(){
       parentCategory: antidoteCat,
     });
 
-    let itemOne = realm.create('Item', {
-      id: '111I',
-      code: 'MI1',
-      name: 'MockItem1',
-      defaultPackSize: '100',
-      lines: [],
-      typeOf: 'Drug',
-      department: pharmacyDept,
-      description: 'Super good at being a first Item',
-      category: antidoteSpecficCat,
-    });
+    for (var i = 1; i < 1000; i+=2) {
+      let itemOne = realm.create('Item', {
+        id: i + 'I',
+        code: 'MI' + i,
+        name: 'MockItem' + i,
+        defaultPackSize: '100',
+        lines: [],
+        typeOf: 'Drug',
+        department: pharmacyDept,
+        description: 'Super good at being an Item',
+        category: antidoteSpecficCat,
+      });
 
-    let itemTwo = realm.create('Item', {
-      id: '222I',
-      code: 'MI2',
-      name: 'MockItem2',
-      defaultPackSize: '24',
-      lines: [],
-      typeOf: 'Drug',
-      department: pharmacyDept,
-      description: 'Super good at being a second Item',
-      category: antidoteNonSpecificCat,
-    });
+      let itemTwo = realm.create('Item', {
+        id: (i + 1) + 'I',
+        code: 'MI' + (i + 1),
+        name: 'MockItem' + (i + 1),
+        defaultPackSize: '24',
+        lines: [],
+        typeOf: 'Drug',
+        department: pharmacyDept,
+        description: 'Super good at being an Item',
+        category: antidoteNonSpecificCat,
+      });
 
-    itemOne.lines.push({
-      id: '111LI',
-      item: itemOne,
-      packSize: '12',
-      numberOfPacks: '10',
-      totalQuantity: '120',  // Should be kept consistent with packSize x numberOfPacks
-      expiryDate: new Date(2016, 12, 31),
-      batch: '100',
-      costPrice: '.50',
-      sellPrice: '1.00'
-    });
-
-    itemOne.lines.push({
-      id: '222LI',
-      item: itemOne,
-      packSize: '100',
-      numberOfPacks: '5000',
-      totalQuantity: '500000',  // Should be kept consistent with packSize x numberOfPacks
-      expiryDate: new Date(2017, 7, 31),
-      batch: '200',
-      costPrice: '2.50',
-      sellPrice: '5.00'
-    });
-
-    itemTwo.lines.push({
-      id: '333LI',
-      item: itemTwo,
-      packSize: '24',
-      numberOfPacks: '100',
-      totalQuantity: '2400',  // Should be kept consistent with packSize x numberOfPacks
-      expiryDate: new Date(2020, 1, 31),
-      batch: '300',
-      costPrice: '.10',
-      sellPrice: '.20'
-    });
+      itemOne.lines.push({
+        id: i + 'LI',
+        item: itemOne,
+        packSize: '12',
+        numberOfPacks: '10',
+        totalQuantity: '120',  // Should be kept consistent with packSize x numberOfPacks
+        expiryDate: new Date(2016, 12, 31),
+        batch: '100',
+        costPrice: '.50',
+        sellPrice: '1.00'
+      });
+      //
+      // itemOne.lines.push({
+      //   id: (i + i) + 'LI',
+      //   item: itemOne,
+      //   packSize: '100',
+      //   numberOfPacks: '5000',
+      //   totalQuantity: '500000',  // Should be kept consistent with packSize x numberOfPacks
+      //   expiryDate: new Date(2017, 7, 31),
+      //   batch: '200',
+      //   costPrice: '2.50',
+      //   sellPrice: '5.00'
+      // });
+      //
+      itemTwo.lines.push({
+        id: (i + 1) + '' + (i + 1) + 'LI',
+        item: itemTwo,
+        packSize: '24',
+        numberOfPacks: '100',
+        totalQuantity: '2400',  // Should be kept consistent with packSize x numberOfPacks
+        expiryDate: new Date(2020, 1, 31),
+        batch: '300',
+        costPrice: '.10',
+        sellPrice: '.20'
+      });
+    }
   });
 };
