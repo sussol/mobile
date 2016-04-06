@@ -14,52 +14,68 @@ import { ListView } from 'realm/react-native';
 
 
 export default class TableView extends Component {
-  renderLoadingView() {
-    return (
-      <View style={styles.container}>
-        <Text> Loading items... </Text>
-      </View>
-    );
-  }
+  renderRow(item) {
+    let fields = this.props.rowFields;
+    let fieldStyles = this.props.rowStyles;
+    let row = [];
 
-  render() {
-    if(!this.props.loaded) {
-      return this.renderLoadingView();
-    }
+    for (var i = 0; i < fields.length; i++) {
+      let fieldFunc = fields[i];
+      let field = <View style={fieldStyles[i]}>
+        {fieldFunc(item)}
+      </View>;
+      row.push(field);
+    };
+
 
     return(
-      <ListView
-        style={styles.listview}
-        dataSource={this.props.dataSource}
-        renderRow={this.props.renderRow}
-        showsVerticalScrollIndicator={true}
-        scrollRenderAheadDistance={5000}
-      />
+      <View style={styles.container}>
+        <View style={styles.rowSeparator} />
+        <View style={styles.row}>
+          {row}
+        </View>
+      </View>
     );
-  }
+  };
+
+  render() {
+    return(
+      <View style={styles.verticalContainer}>
+        <ListView
+          style={styles.listview}
+          dataSource={this.props.dataSource}
+          renderRow={this.renderRow.bind(this)}
+          showsVerticalScrollIndicator={true}
+          scrollRenderAheadDistance={5000}
+        />
+      </View>
+    );
+  };
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   flexDirection: 'row',
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   backgroundColor: '#d6f3ff',
-  // },
-  // name: {
-  //   fontSize: 10,
-  //   marginLeft: 20,
-  //   marginBottom: 8,
-  //   textAlign: 'left',
-  // },
-  // quantity: {
-  //   fontSize: 20,
-  //   marginRight: 20,
-  //   textAlign: 'right',
-  // },
+  verticalContainer: {
+    flex: 1,
+  },
   listview: {
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
+  },
+  rowSeparator: {
+    height: 2,
+    backgroundColor: '#98d7f1',
+  },
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    backgroundColor: '#d6f3ff',
+  },
+  fieldSeparator: {
+    height: 35,
+    width: 2,
+    backgroundColor: '#98d7f1',
   },
 });

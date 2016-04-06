@@ -9,7 +9,9 @@ import React, {
   Text,
   Component,
   StyleSheet,
-  View
+  View,
+  TouchableHighlight,
+  TouchableOpacity
 } from 'react-native';
 
 import TableView from './TableView';
@@ -47,75 +49,70 @@ export class Catalogue extends Component {
     });
   }
 
-  renderRow(item) {
-    return(
-      <View>
-        <View style={styles.rowSeparator} />
-        <View style={styles.container} onClick={this.handleClick}>
-          <View style={styles.codeField}>
-            <Text style={styles.text}>{item.code}</Text>
-          </View>
-          <View style={styles.fieldSeparator} />
-          <View style={styles.nameField}>
-            <Text style={styles.text}>{item.name}</Text>
-          </View>
-          <View style={styles.fieldSeparator} />
-          <View style={styles.valueField}>
-            <Text style={styles.value}>{item.defaultPackSize}</Text>
-          </View>
-        </View>
-      </View>
+  // Field functions
+
+  itemCode(item) {
+    return (
+      <Text style={styles.text}>
+        {item.code}
+      </Text>
     );
   }
 
+  itemName(item) {
+    return (
+      <Text style={styles.text}>
+        {item.name}
+      </Text>
+    );
+  }
+
+  itemDefaultPackSize(item) {
+    return (
+      <Text style={styles.value}>
+        {item.defaultPackSize}
+      </Text>
+    );
+  }
+
+  button() {
+    return (
+      <TouchableHighlight onPress={()=>{}} underlayColor="white">
+        <View style={styles.button}>
+          <Text style={styles.text}>
+            Holy button
+          </Text>
+        </View>
+      </TouchableHighlight>
+    );
+  }
+
+/**
+* rowFields is an array of functions defined above. Each Function
+* defines a component in the row.
+*
+* rowStyles is an array of inline css corresponding to each component
+* in the rowFields array, largly for defining flex values.
+*
+*/
   render() {
     return(
-      <View style={styles.verticalContainer} >
-        {/*<View style={styles.rowSeparator} />*/}
-        <ListView
-          dataSource={this.state.dataSource}
-          loaded={this.state.loaded}
-          renderRow={this.renderRow}
-          showsVerticalScrollIndicator={true}
-          scrollRenderAheadDistance={5000}
-        />
-      </View>
+      <TableView
+        dataSource={this.state.dataSource}
+        rowFields={[this.button.bind(this), this.itemCode, this.itemName, this.itemDefaultPackSize]}
+        rowStyles={[{flex:1}, {flex: 1}, {flex: 3}, {flex: 1}]}
+        showsVerticalScrollIndicator={true}
+        scrollRenderAheadDistance={5000}
+      />
     );
-  }
+  };
 }
 
+
+
 let styles = StyleSheet.create({
-  verticalContainer: {
-    flex: 1,
-  },
-  rowSeparator: {
-    // flex: 0,
-    height: 2,
-    backgroundColor: '#98d7f1',
-  },
-  fieldSeparator: {
-    // flex: 1,
-    alignSelf: 'flex-start',
-    height: 35,
-    width: 2,
-    backgroundColor: '#98d7f1',
-  },
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'nowrap',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    backgroundColor: '#d6f3ff',
-  },
-  codeField: {
-    flex: 1,
-  },
-  nameField: {
-    flex: 3,
-  },
-  valueField: {
-    flex: 1,
+  button: {
+    backgroundColor: 'rgba(130, 171, 189, 0.7)',
   },
   text: {
     fontSize: 20,
