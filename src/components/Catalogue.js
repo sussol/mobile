@@ -33,6 +33,8 @@ export class Catalogue extends Component {
     };
     this.onSearchChange = this.onSearchChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.button = this.button.bind(this);
+    this.onHolyButtonPress = this.onHolyButtonPress.bind(this);
   }
 
   componentDidMount() {
@@ -75,9 +77,13 @@ export class Catalogue extends Component {
     );
   }
 
-  button() {
+  onHolyButtonPress(item) {
+    console.log("Mathmatical holy press of the holy button" + item.name);
+  };
+
+  button(item) {
     return (
-      <TouchableHighlight onPress={()=>{}} underlayColor="white">
+      <TouchableHighlight onPress={() => this.onHolyButtonPress(item)} underlayColor="white">
         <View style={styles.button}>
           <Text style={styles.text}>
             Holy button
@@ -99,7 +105,7 @@ export class Catalogue extends Component {
     return(
       <TableView
         dataSource={this.state.dataSource}
-        rowFields={[this.button.bind(this), this.itemCode, this.itemName, this.itemDefaultPackSize]}
+        rowFields={[this.button, this.itemCode, this.itemName, this.itemDefaultPackSize]}
         rowStyles={[{flex:1}, {flex: 1}, {flex: 3}, {flex: 1}]}
         showsVerticalScrollIndicator={true}
         scrollRenderAheadDistance={5000}

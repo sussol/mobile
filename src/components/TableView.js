@@ -12,6 +12,25 @@ import React, {
   View } from 'react-native';
 import { ListView } from 'realm/react-native';
 
+export class Row extends Component {
+
+}
+
+export class Cell extends Component {
+
+}
+
+export class EditableCell extends Component {
+
+}
+
+export class Expansion extends Component {
+
+}
+
+export class TableButton extends Component {
+
+}
 
 export default class TableView extends Component {
   renderRow(item) {
