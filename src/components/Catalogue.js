@@ -14,7 +14,18 @@ import React, {
   TouchableOpacity
 } from 'react-native';
 
-import TableView from './TableView';
+import TableView, {
+  Row,
+  Cell,
+  CellView,
+  EditableCell,
+  Expansion,
+  ExpansionView,
+  TableButton,
+  Header,
+  HeaderCell,
+} from './TableView';
+
 import realm from '../schema/Realm';
 import { ListView } from 'realm/react-native';
 
@@ -27,14 +38,14 @@ export class Catalogue extends Component {
     });
     this.state = {
       query:'item_name=@',
+      id: (item) => item.id,
       dataSource: dataSource.cloneWithRows(dataSource),
       items: realm.objects('Item').sorted('name'),
       loaded:false,
     };
     this.onSearchChange = this.onSearchChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.button = this.button.bind(this);
-    this.onHolyButtonPress = this.onHolyButtonPress.bind(this);
+    this.deleteButton = this.deleteButton.bind(this);
   }
 
   componentDidMount() {
@@ -53,60 +64,90 @@ export class Catalogue extends Component {
 
   // Field functions
 
-  itemCode(item) {
+  // itemCode(item) {
+  //   return (
+  //     <Text style={styles.text}>
+  //       {item.code}
+  //     </Text>
+  //   );
+  // }
+  //
+  // itemName(item) {
+  //   return (
+  //     <Text style={styles.text}>
+  //       {item.name}
+  //     </Text>
+  //   );
+  // }
+  //
+  // itemDefaultPackSize(item) {
+  //   return (
+  //     <Text style={styles.value}>
+  //       {item.defaultPackSize}
+  //     </Text>
+  //   );
+  // }
+  //
+  // // (Android) Check console with command in terminal: adb logcat *:S ReactNative:V ReactNativeJS:V
+  // onHolyButtonPress(item) {
+  //   console.log("Mathmatical holy press of the holy button" + item.name);
+  // };
+  //
+  // button(item) {
+  //   return (
+  //     <TouchableHighlight onPress={() => this.onHolyButtonPress(item)} underlayColor="white">
+  //       <View style={styles.button}>
+  //         <Text style={styles.text}>
+  //           Holy button
+  //         </Text>
+  //       </View>
+  //     </TouchableHighlight>
+  //   );
+  // }
+
+  header() {
     return (
-      <Text style={styles.text}>
-        {item.code}
-      </Text>
+      <Header>
+        <HeaderCell style={styles.code}>Item Code</HeaderCell>
+        <HeaderCell style={styles.name} sortable={true}>Item Name</HeaderCell>
+        <HeaderCell style={styles.packSize}>Default Pack Size</HeaderCell>
+      </Header>
     );
   }
 
-  itemName(item) {
+  deleteButton(item) {
+    //todo implement this proper to learn integrating realm.
+    console.log("Pressed deleteButton for item: " + item);
+  }
+
+  renderRow(item) {
     return (
-      <Text style={styles.text}>
-        {item.name}
-      </Text>
+      <Row expandable={true}>
+        <CellView>
+          <Cell style={styles.code} width={1}>{item.code}</Cell>
+          <Cell style={styles.name} width={4}>{item.name}</Cell>
+          <EditableCell editable={false} style={styles.packSize} width={2}>{item.defaultPackSize}</EditableCell>
+        </CellView>
+        <Expansion>
+          <ExpansionView>
+            {/*<Text>Department: {item.category.name}</Text>*/}
+            <Text>Description: {item.description}</Text>
+          </ExpansionView>
+          <TableButton onPress={() => this.deleteButton(item)}>
+            <Text>Delete Item</Text>
+          </TableButton>
+        </Expansion>
+      </Row>
     );
   }
 
-  itemDefaultPackSize(item) {
-    return (
-      <Text style={styles.value}>
-        {item.defaultPackSize}
-      </Text>
-    );
-  }
-
-  onHolyButtonPress(item) {
-    console.log("Mathmatical holy press of the holy button" + item.name);
-  };
-
-  button(item) {
-    return (
-      <TouchableHighlight onPress={() => this.onHolyButtonPress(item)} underlayColor="white">
-        <View style={styles.button}>
-          <Text style={styles.text}>
-            Holy button
-          </Text>
-        </View>
-      </TouchableHighlight>
-    );
-  }
-
-/**
-* rowFields is an array of functions defined above. Each Function
-* defines a component in the row.
-*
-* rowStyles is an array of inline css corresponding to each component
-* in the rowFields array, largly for defining flex values.
-*
-*/
   render() {
-    return(
+    return (
       <TableView
+        style={styles.TableView}
         dataSource={this.state.dataSource}
-        rowFields={[this.button, this.itemCode, this.itemName, this.itemDefaultPackSize]}
-        rowStyles={[{flex:1}, {flex: 1}, {flex: 3}, {flex: 1}]}
+        header={this.header}
+        renderRow={this.renderRow}
         showsVerticalScrollIndicator={true}
         scrollRenderAheadDistance={5000}
       />
@@ -120,19 +161,26 @@ let styles = StyleSheet.create({
   button: {
     backgroundColor: 'rgba(130, 171, 189, 0.7)',
   },
-  text: {
+  code: {
     fontSize: 20,
     marginLeft: 20,
     marginBottom: 8,
     textAlign: 'left',
   },
-  value: {
+  name: {
+    fontSize: 20,
+    marginLeft: 20,
+    marginBottom: 8,
+    textAlign: 'left',
+  },
+  packSize: {
     fontSize: 20,
     marginRight: 20,
     marginBottom: 8,
     textAlign: 'right',
   },
-  listview: {
+  TableView: {
+    flex: 1,
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
   },
