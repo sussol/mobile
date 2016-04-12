@@ -65,54 +65,11 @@ export class Catalogue extends Component {
     });
   }
 
-  // Field functions
-
-  // itemCode(item) {
-  //   return (
-  //     <Text style={styles.text}>
-  //       {item.code}
-  //     </Text>
-  //   );
-  // }
-  //
-  // itemName(item) {
-  //   return (
-  //     <Text style={styles.text}>
-  //       {item.name}
-  //     </Text>
-  //   );
-  // }
-  //
-  // itemDefaultPackSize(item) {
-  //   return (
-  //     <Text style={styles.value}>
-  //       {item.defaultPackSize}
-  //     </Text>
-  //   );
-  // }
-  //
-  // // (Android) Check console with command in terminal: adb logcat *:S ReactNative:V ReactNativeJS:V
-  // onHolyButtonPress(item) {
-  //   console.log("Mathmatical holy press of the holy button" + item.name);
-  // };
-  //
-  // button(item) {
-  //   return (
-  //     <TouchableHighlight onPress={() => this.onHolyButtonPress(item)} underlayColor="white">
-  //       <View style={styles.button}>
-  //         <Text style={styles.text}>
-  //           Holy button
-  //         </Text>
-  //       </View>
-  //     </TouchableHighlight>
-  //   );
-  // }
-
   header() {
     return (
       <Header>
-        <HeaderCell style={styles.code}>Item Code</HeaderCell>
-        <HeaderCell style={styles.name} sortable={true}>Item Name</HeaderCell>
+        <HeaderCell style={styles.text}>Item Code</HeaderCell>
+        <HeaderCell style={styles.text} sortable={true}>Item Name</HeaderCell>
         <HeaderCell style={styles.packSize}>Default Pack Size</HeaderCell>
       </Header>
     );
@@ -134,24 +91,37 @@ export class Catalogue extends Component {
   deleteButton(item) {
     //todo implement this proper to learn integrating realm.
     console.log("Pressed deleteButton for item: " + item.name);
+    realm.write(() => {
+      realm.delete(item)
+    })
+  }
+// TODO: currently broken system, look at EditableCell class in TableView.js
+//       do like onSearchChange function in this file.
+  onEndEditing(item, value) {
+    realm.write(() => {
+      realm.create('Item', {id: item.code, defaultPackSize: Number(value)})
+    })
   }
 
   renderRow(item) {
+    console.log("Row of rendered for: " + item.code)
     return (
       <Row expandable={true}>
         <CellView>
-          <Cell style={styles.code} width={1}>{item.code}</Cell>
-          <Cell style={styles.name} width={10}>{item.name}</Cell>
+          <Cell style={styles.text} width={1}>{item.code}</Cell>
+          <Cell style={styles.text} width={5}>{item.name}</Cell>
           {/*<TextInput style={styles.packSize} placegholder={'test'}/>*/}
-          <EditableCell style={styles.packSize} width={10}>{item.defaultPackSize}</EditableCell>
+          <EditableCell style={styles.packSize} width={2} onEndEditing={this.onEndEditing} item={item}>
+            {item.defaultPackSize}
+          </EditableCell>
         </CellView>
         <Expansion>
           <ExpansionView>
-            <Text>Department: {this.getItemDepartmentName(item)}</Text>
-            <Text>Description: {item.description}</Text>
+            <Text style={styles.text} >Department: {this.getItemDepartmentName(item)}</Text>
+            <Text style={styles.text} >Description: {item.description}</Text>
           </ExpansionView>
           <TableButton onPress={() => this.deleteButton(item)}>
-            <Text>Delete Item</Text>
+            <Text style={styles.text} >Delete Item</Text>
           </TableButton>
         </Expansion>
       </Row>
@@ -172,8 +142,6 @@ export class Catalogue extends Component {
   };
 }
 
-let { height, width } = Dimensions.get('window')
-
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -181,25 +149,16 @@ let styles = StyleSheet.create({
   button: {
     backgroundColor: 'rgba(130, 171, 189, 0.7)',
   },
-  code: {
+  text: {
     fontSize: 20,
     marginLeft: 20,
-    marginBottom: 8,
-    textAlign: 'left',
-  },
-  name: {
-    fontSize: 20,
-    marginLeft: 20,
-    marginBottom: 8,
     textAlign: 'left',
   },
   packSize: {
     fontSize: 20,
+    height: 45,
     textAlign: 'right',
     marginRight: 20,
-    marginBottom: 8,
-    height: 30,
-    width: 300,
     backgroundColor:'red',
   },
   TableView: {

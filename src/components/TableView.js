@@ -72,12 +72,28 @@ export class CellView extends Component {
 }
 
 export class EditableCell extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      value: String(this.props.chilren)
+    }
+  }
+
+  onEndEditing(value) {
+    this.setState({
+      value: value
+    });
+    this.props.onEndEditing(this.props.item, value)
+  }
+
   render() {
     return (
       <View style={[styles.editableCell, {flex: this.props.width}]}>
         <TextInput
           style={this.props.style}
-          placeholder={String(this.props.children)}
+          onChange = {(value) => this.setState({value: value})}
+          onEndEditing={(value) => this.onEndEditing(value)}
+          value={String(this.state.value)}
         />
       </View>
     )
@@ -145,11 +161,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flexWrap: 'nowrap',
     justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    alignItems: 'stretch',
     backgroundColor: '#d6f3ff',
   },
   cell:{
     flex: 1,
+    justifyContent: 'center',
   },
   cellView:{
     flex: 1,
@@ -158,7 +175,6 @@ const styles = StyleSheet.create({
   },
   editableCell: {
     flex: 1,
-    alignSelf: 'stretch',
     backgroundColor: 'blue',
   },
   expansion: {
@@ -169,15 +185,19 @@ const styles = StyleSheet.create({
   expansionView: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'lightblue',
+    justifyContent: 'space-around',
+    backgroundColor: 'purple',
   },
   tableButton: {
-    flex: 1,
+    flex: .5,
+    alignSelf: 'flex-end',
+    backgroundColor: 'green',
   },
   verticalContainer: {
     flex: 1,
   },
   listview: {
+    flex:1,
     backgroundColor: '#74c3e6',
   }
 });
