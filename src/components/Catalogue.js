@@ -42,7 +42,7 @@ export class Catalogue extends Component {
       query:'item_name=@',
       id: (item) => item.id,
       dataSource: dataSource.cloneWithRows(dataSource),
-      items: realm.objects('Item'),//.sorted('name'),
+      items: realm.objects('Item').sorted('name'),
       loaded:false,
     };
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -68,9 +68,9 @@ export class Catalogue extends Component {
   header() {
     return (
       <Header>
-        <HeaderCell style={styles.text}>Item Code</HeaderCell>
-        <HeaderCell style={styles.text} sortable={true}>Item Name</HeaderCell>
-        <HeaderCell style={styles.packSize}>Default Pack Size</HeaderCell>
+        <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
+        <HeaderCell style={styles.text} width={5} sortable={true}>Item Name</HeaderCell>
+        <HeaderCell style={styles.packSize} width={2}>Default Pack Size</HeaderCell>
       </Header>
     );
   }
@@ -89,17 +89,20 @@ export class Catalogue extends Component {
   }
 
   deleteButton(item) {
-    //todo implement this proper to learn integrating realm.
+    //TODO: needs a modal dialog, deleting needs confirmation!!
     console.log("Pressed deleteButton for item: " + item.name);
     realm.write(() => {
       realm.delete(item)
     })
+
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(this.state.items)
+    });
   }
-// TODO: currently broken system, look at EditableCell class in TableView.js
-//       do like onSearchChange function in this file.
+
   onEndEditing(item, value) {
     realm.write(() => {
-      realm.create('Item', {id: item.code, defaultPackSize: Number(value)})
+      realm.create('Item', {id: item.code, defaultPackSize: value})
     })
   }
 
@@ -117,8 +120,8 @@ export class Catalogue extends Component {
         </CellView>
         <Expansion>
           <ExpansionView>
-            <Text style={styles.text} >Department: {this.getItemDepartmentName(item)}</Text>
-            <Text style={styles.text} >Description: {item.description}</Text>
+            <Text style={styles.text}>Department: {this.getItemDepartmentName(item)}</Text>
+            <Text style={styles.text}>Description: {item.description}</Text>
           </ExpansionView>
           <TableButton onPress={() => this.deleteButton(item)}>
             <Text style={styles.text} >Delete Item</Text>
@@ -134,7 +137,7 @@ export class Catalogue extends Component {
         <Text>Text Component outside of TableView</Text>
         <TableView
           dataSource={this.state.dataSource}
-          header={this.header}
+          header={this.header.bind(this)}
           renderRow={this.renderRow.bind(this)}
         />
       </View>
@@ -159,7 +162,6 @@ let styles = StyleSheet.create({
     height: 45,
     textAlign: 'right',
     marginRight: 20,
-    backgroundColor:'red',
   },
   TableView: {
     flex: 1,

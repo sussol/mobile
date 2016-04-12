@@ -75,15 +75,19 @@ export class EditableCell extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      value: String(this.props.chilren)
+      value: "N/A"
     }
+    this.componentDidMount = this.componentDidMount.bind(this)
   }
 
-  onEndEditing(value) {
+  componentDidMount() {
     this.setState({
-      value: value
+      value: String(this.props.children)
     });
-    this.props.onEndEditing(this.props.item, value)
+  }
+
+  onEndEditing() {
+    this.props.onEndEditing(this.props.item, this.state.value)
   }
 
   render() {
@@ -91,9 +95,9 @@ export class EditableCell extends Component {
       <View style={[styles.editableCell, {flex: this.props.width}]}>
         <TextInput
           style={this.props.style}
-          onChange = {(value) => this.setState({value: value})}
-          onEndEditing={(value) => this.onEndEditing(value)}
-          value={String(this.state.value)}
+          onChange = {(event) => this.setState({value: event.nativeEvent.text})}
+          //    onEndEditing={this.onEndEditing()}
+          value={this.state.value}
         />
       </View>
     )
@@ -131,11 +135,25 @@ export class TableButton extends Component {
 }
 
 export class Header extends Component {
-
+  render() {
+    return (
+      <View style={styles.header}>
+        {this.props.children}
+      </View>
+    );
+  }
 }
 
 export class HeaderCell extends Component {
-
+  render() {
+    return (
+      <View style={[styles.headerCell, {flex: this.props.width}]}>
+        <Text style={this.props.style}>
+          {this.props.children}
+        </Text>
+      </View>
+    );
+  }
 }
 
 export default class TableView extends Component {
@@ -143,6 +161,7 @@ export default class TableView extends Component {
   render() {
     return(
       <View style={styles.verticalContainer}>
+        {this.props.header()}
         <ListView
           style={styles.listview}
           dataSource={this.props.dataSource}
@@ -190,14 +209,23 @@ const styles = StyleSheet.create({
   },
   tableButton: {
     flex: .5,
-    alignSelf: 'flex-end',
+//    alignSelf: 'flex-end',
     backgroundColor: 'green',
   },
   verticalContainer: {
     flex: 1,
   },
   listview: {
-    flex:1,
+    flex: 1,
     backgroundColor: '#74c3e6',
+  },
+  header: {
+    flex: 0.08,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    backgroundColor: 'grey',
+  },
+  headerCell: {
+    flex: 1,
   }
 });
