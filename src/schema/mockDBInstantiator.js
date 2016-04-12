@@ -52,7 +52,7 @@ export default function instantiate(){
         defaultPackSize: '24',
         lines: [],
         typeOf: 'Drug',
-        department: pharmacyDept,
+        department: hospitalDept,
         description: 'Super good at being an Item',
         category: antidoteNonSpecificCat,
       });

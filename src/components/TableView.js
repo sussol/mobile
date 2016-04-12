@@ -74,12 +74,10 @@ export class CellView extends Component {
 export class EditableCell extends Component {
   render() {
     return (
-      // todo: implement this properly
-      <View style={[styles.cell, {flex: this.props.width}]}>
+      <View style={[styles.editableCell, {flex: this.props.width}]}>
         <TextInput
-          editable={this.props.editable}
           style={this.props.style}
-          value={String(this.props.children)}
+          placeholder={String(this.props.children)}
         />
       </View>
     )
@@ -89,7 +87,7 @@ export class EditableCell extends Component {
 export class Expansion extends Component {
   render() {
     return (
-      <View style={styles.Expansion}>
+      <View style={styles.expansion}>
         {this.props.children}
       </View>
     )
@@ -99,7 +97,7 @@ export class Expansion extends Component {
 export class ExpansionView extends Component {
   render() {
     return (
-      <View style={styles.ExpansionView}>
+      <View style={styles.expansionView}>
         {this.props.children}
       </View>
     )
@@ -109,7 +107,7 @@ export class ExpansionView extends Component {
 export class TableButton extends Component {
   render() {
     return (
-      <TouchableOpacity style={styles.TableButton} onPress={this.props.onPress}>
+      <TouchableOpacity style={styles.tableButton} onPress={this.props.onPress}>
         {this.props.children}
       </TouchableOpacity>
     )
@@ -125,29 +123,6 @@ export class HeaderCell extends Component {
 }
 
 export default class TableView extends Component {
-  // renderRow(item) {
-  //   let fields = this.props.rowFields;
-  //   let fieldStyles = this.props.styles;
-  //   let row = [];
-  //
-  //   for (var i = 0; i < fields.length; i++) {
-  //     let fieldFunc = fields[i];
-  //     let field = <View style={fieldStyles[i]}>
-  //       {fieldFunc(item)}
-  //     </View>;
-  //     row.push(field);
-  //   };
-  //
-  //
-  //   return(
-  //     <View style={styles.container}>
-  //       <View style={styles.rowSeparator} />
-  //       <View style={styles.row}>
-  //         {row}
-  //       </View>
-  //     </View>
-  //   );
-  // };
 
   render() {
     return(
@@ -183,12 +158,18 @@ const styles = StyleSheet.create({
   },
   editableCell: {
     flex: 1,
+    alignSelf: 'stretch',
+    backgroundColor: 'blue',
   },
   expansion: {
     flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'magenta',
   },
   expansionView: {
     flex: 1,
+    flexDirection: 'column',
+    backgroundColor: 'lightblue',
   },
   tableButton: {
     flex: 1,
@@ -197,7 +178,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listview: {
-    paddingTop: 20,
     backgroundColor: '#74c3e6',
   }
 });

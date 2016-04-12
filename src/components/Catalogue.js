@@ -7,11 +7,13 @@
 
 import React, {
   Text,
+  TextInput,
   Component,
   StyleSheet,
   View,
   TouchableHighlight,
-  TouchableOpacity
+  TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 
 import TableView, {
@@ -40,12 +42,13 @@ export class Catalogue extends Component {
       query:'item_name=@',
       id: (item) => item.id,
       dataSource: dataSource.cloneWithRows(dataSource),
-      items: realm.objects('Item').sorted('name'),
+      items: realm.objects('Item'),//.sorted('name'),
       loaded:false,
     };
     this.onSearchChange = this.onSearchChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-    this.deleteButton = this.deleteButton.bind(this);
+  //  this.deleteButton = this.deleteButton.bind(this);
+  //  this.getItemDepartmentName = this.getItemDepartmentName.bind(this);
   }
 
   componentDidMount() {
@@ -115,9 +118,22 @@ export class Catalogue extends Component {
     );
   }
 
+  getItemDepartmentName(item) {
+    let code = item.code;
+    // console.log("item:      " + item)
+    // console.log("code:      " + code)
+    // console.log("typeofCode:   " + typeof code)
+    if (code) {
+      // console.log("code True: true")
+      return item.department.name
+    }
+    // console.log("code True: false");
+    return "Undefined"
+  }
+
   deleteButton(item) {
     //todo implement this proper to learn integrating realm.
-    console.log("Pressed deleteButton for item: " + item);
+    console.log("Pressed deleteButton for item: " + item.name);
   }
 
   renderRow(item) {
@@ -125,12 +141,13 @@ export class Catalogue extends Component {
       <Row expandable={true}>
         <CellView>
           <Cell style={styles.code} width={1}>{item.code}</Cell>
-          <Cell style={styles.name} width={4}>{item.name}</Cell>
-          <EditableCell editable={false} style={styles.packSize} width={2}>{item.defaultPackSize}</EditableCell>
+          <Cell style={styles.name} width={10}>{item.name}</Cell>
+          {/*<TextInput style={styles.packSize} placegholder={'test'}/>*/}
+          <EditableCell style={styles.packSize} width={10}>{item.defaultPackSize}</EditableCell>
         </CellView>
         <Expansion>
           <ExpansionView>
-            {/*<Text>Department: {item.category.name}</Text>*/}
+            <Text>Department: {this.getItemDepartmentName(item)}</Text>
             <Text>Description: {item.description}</Text>
           </ExpansionView>
           <TableButton onPress={() => this.deleteButton(item)}>
@@ -143,21 +160,24 @@ export class Catalogue extends Component {
 
   render() {
     return (
-      <TableView
-        style={styles.TableView}
-        dataSource={this.state.dataSource}
-        header={this.header}
-        renderRow={this.renderRow}
-        showsVerticalScrollIndicator={true}
-        scrollRenderAheadDistance={5000}
-      />
+      <View style={styles.container}>
+        <Text>Text Component outside of TableView</Text>
+        <TableView
+          dataSource={this.state.dataSource}
+          header={this.header}
+          renderRow={this.renderRow.bind(this)}
+        />
+      </View>
     );
   };
 }
 
-
+let { height, width } = Dimensions.get('window')
 
 let styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   button: {
     backgroundColor: 'rgba(130, 171, 189, 0.7)',
   },
@@ -175,9 +195,12 @@ let styles = StyleSheet.create({
   },
   packSize: {
     fontSize: 20,
+    textAlign: 'right',
     marginRight: 20,
     marginBottom: 8,
-    textAlign: 'right',
+    height: 30,
+    width: 300,
+    backgroundColor:'red',
   },
   TableView: {
     flex: 1,
