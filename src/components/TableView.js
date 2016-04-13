@@ -96,7 +96,7 @@ export class EditableCell extends Component {
         <TextInput
           style={this.props.style}
           onChange = {(event) => this.setState({value: event.nativeEvent.text})}
-          //    onEndEditing={this.onEndEditing()}
+          onEndEditing={() => this.onEndEditing()}
           value={this.state.value}
         />
       </View>

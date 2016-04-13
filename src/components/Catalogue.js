@@ -101,9 +101,10 @@ export class Catalogue extends Component {
   }
 
   onEndEditing(item, value) {
-    realm.write(() => {
-      realm.create('Item', {id: item.code, defaultPackSize: value})
-    })
+      realm.write(() => {
+        console.log('In edit write for : '+ item.name);
+        item.defaultPackSize = parseFloat(value)
+      })
   }
 
   renderRow(item) {
@@ -113,7 +114,6 @@ export class Catalogue extends Component {
         <CellView>
           <Cell style={styles.text} width={1}>{item.code}</Cell>
           <Cell style={styles.text} width={5}>{item.name}</Cell>
-          {/*<TextInput style={styles.packSize} placegholder={'test'}/>*/}
           <EditableCell style={styles.packSize} width={2} onEndEditing={this.onEndEditing} item={item}>
             {item.defaultPackSize}
           </EditableCell>
