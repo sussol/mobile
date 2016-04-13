@@ -161,6 +161,14 @@ export default class TableView extends Component {
   render() {
     return(
       <View style={styles.verticalContainer}>
+        {
+          (typeof this.props.searchBar === 'function') &&
+            <TextInput
+              style={styles.searchBar}
+              onChange={(event) => this.props.searchBar(event)}
+              placeholder='Search'
+            />
+        }
         {this.props.header()}
         <ListView
           style={styles.listview}
@@ -218,6 +226,12 @@ const styles = StyleSheet.create({
   listview: {
     flex: 1,
     backgroundColor: '#74c3e6',
+  },
+  searchBar: {
+    fontSize: 20,
+    marginLeft: 20,
+    textAlign: 'left',
+    flex: 0.08
   },
   header: {
     flex: 0.08,

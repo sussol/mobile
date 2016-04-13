@@ -43,12 +43,11 @@ export class Catalogue extends Component {
       id: (item) => item.id,
       dataSource: dataSource.cloneWithRows(dataSource),
       items: realm.objects('Item').sorted('name'),
+      sortBy: 'name',
       loaded:false,
     };
     this.onSearchChange = this.onSearchChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
-  //  this.deleteButton = this.deleteButton.bind(this);
-  //  this.getItemDepartmentName = this.getItemDepartmentName.bind(this);
   }
 
   componentDidMount() {
@@ -61,8 +60,13 @@ export class Catalogue extends Component {
   onSearchChange(event: Object) {
     let itemName = event.nativeEvent.text;
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.items.filtered('name BEGINSWITH $0', itemName))
+      dataSource: this.state.dataSource.cloneWithRows(
+        this.state.items.filtered('name CONTAINS[c] $0', itemName).sorted(this.state.sortBy))
     });
+  }
+
+  nameSort(){
+
   }
 
   header() {
@@ -137,8 +141,9 @@ export class Catalogue extends Component {
         <Text>Text Component outside of TableView</Text>
         <TableView
           dataSource={this.state.dataSource}
-          header={this.header.bind(this)}
           renderRow={this.renderRow.bind(this)}
+          header={this.header.bind(this)}
+          searchBar={this.onSearchChange.bind(this)}
         />
       </View>
     );
