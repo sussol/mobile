@@ -16,24 +16,17 @@ import React, {
 import { ListView } from 'realm/react-native';
 
 export class Row extends Component {
-  static defaultProps = {
-    expandable: false
-  }
-  static propTypes = {
-    expandable: React.PropTypes.bool,
-  }
   constructor(props) {
     super(props);
     this.state = {
       expanded: false
     }
-    this.render = this.render.bind(this)
     this.expandRow = this.expandRow.bind(this)
   }
 
   expandRow() {
     this.setState({
-      expanded: this.state.expanded === true ? false : true,
+      expanded: this.state.expanded ? false : true,
     });
     console.log("is Expanded: " + this.state.expanded);
   }
@@ -42,8 +35,9 @@ export class Row extends Component {
     return (
       <TouchableOpacity
         style={[styles.row, this.state.expanded && styles.expanded]}
-        onPress={this.props.expandable && this.expandRow}>
+        onPress={typeof this.props.expansion === 'function' && this.expandRow}>
         {this.props.children}
+        {this.state.expanded && this.props.expansion()}
       </TouchableOpacity>
     )
   }
@@ -61,10 +55,10 @@ export class Cell extends Component {
   }
 }
 
-export class CellView extends Component {
+export class RowView extends Component {
   render() {
     return (
-      <View style={styles.cellView}>
+      <View style={styles.rowView}>
         {this.props.children}
       </View>
     )
@@ -146,13 +140,23 @@ export class Header extends Component {
 
 export class HeaderCell extends Component {
   render() {
-    return (
-      <View style={[styles.headerCell, {flex: this.props.width}]}>
-        <Text style={this.props.style}>
-          {this.props.children}
-        </Text>
-      </View>
-    );
+    if (typeof this.props.onPress === 'function') {
+      return (
+        <TouchableOpacity style={[styles.headerCell, {flex: this.props.width}]} onPress={this.props.onPress}>
+          <Text style={this.props.style}>
+            {this.props.children}
+          </Text>
+        </TouchableOpacity>
+      );
+    } else {
+      return (
+        <View style={[styles.headerCell, {flex: this.props.width}]}>
+          <Text style={this.props.style}>
+            {this.props.children}
+          </Text>
+        </View>
+      );
+    }
   }
 }
 
@@ -195,7 +199,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  cellView:{
+  rowView:{
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'nowrap',
