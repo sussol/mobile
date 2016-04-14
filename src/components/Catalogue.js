@@ -38,48 +38,56 @@ export class Catalogue extends Component {
     let dataSource = new ListView.DataSource({
       rowHasChanged: (row1, row2) => row1 !== row2
     });
-    let data = realm.objects('Item').sorted('name')
-    let ids = data.map(item => item.code)
+
     this.state = {
       query:'item_name=@',
-      id: (item) => item.id,
-      dataSource: dataSource.cloneWithRows(dataSource, ids),
-      items: realm.objects('Item').sorted('name'),
+      items: realm.objects('Item'),
+      dataSource: dataSource,
       sortBy: 'name',
       reverseSort: false,
       loaded: false,
     };
-    this.onSearchChange = this.onSearchChange.bind(this);
     this.componentDidMount = this.componentDidMount.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.nameSort = this.nameSort.bind(this);
+    this.getHeader = this.getHeader.bind(this);
+    this.deleteButton = this.deleteButton.bind(this);
+    this.onEndEditing = this.onEndEditing.bind(this);
+    this.expansion = this.expansion.bind(this);
+    this.renderRow = this.renderRow.bind(this);
   }
 
   componentDidMount() {
+    // console.log("componentDidMount was called")
+    let data = this.state.items.sorted(this.state.sortBy)
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.items),
+      dataSource: this.state.dataSource.cloneWithRows(data),
       loaded: true,
     });
   }
 
   onSearchChange(event: Object) {
-    let itemName = event.nativeEvent.text;
+    let term = event.nativeEvent.text;
+    let sortBy = this.state.sortBy
+    // console.log("itemName: " + itemName);
+    let data = this.state.items.filtered((sortBy + ' CONTAINS[c] $0'), term).sorted(sortBy)
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(
-        this.state.items.filtered('name CONTAINS[c] $0', itemName).sorted(this.state.sortBy))
+      dataSource: this.state.dataSource.cloneWithRows(data)
     });
   }
 
   nameSort(){
     console.log("Sort direction on name column pressed " + this.state.reverseSort);
-    // TODO: Below is terrible and needs to have a better implementation.
-    // Trying to trigger rerender.
     this.setState({
       reverseSort: this.state.reverseSort ? false : true,
-      DataSource: this.state.dataSource.cloneWithRows(
-        this.state.items.sorted(this.state.sortBy, this.state.reverseSort))
-      });
+    });
+    let data = this.state.items.sorted(this.state.sortBy, this.state.reverseSort)
+    this.setState({
+      DataSource: this.state.dataSource.cloneWithRows(data)
+    });
   }
 
-  header() {
+  getHeader() {
     return (
       <Header>
         <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
@@ -89,34 +97,22 @@ export class Catalogue extends Component {
     );
   }
 
-  getItemDepartmentName(item) {
-    let code = item.code;
-    // console.log("item:      " + item)
-    // console.log("code:      " + code)
-    // console.log("typeofCode:   " + typeof code)
-    if (code) {
-      // console.log("code True: true")
-      return item.department.name
-    }
-    // console.log("code True: false");
-    return "Undefined"
-  }
-
   deleteButton(item) {
     //TODO: needs a modal dialog, deleting needs confirmation!!
-    console.log("Pressed deleteButton for item: " + item.name);
+    // console.log("Pressed deleteButton for item: " + item.name);
     realm.write(() => {
       realm.delete(item)
-    })
+    });
 
+    let ids = this.state.items.map(item => item.id)
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.items)
+      dataSource: this.state.dataSource.cloneWithRows(this.state.items, ids)
     });
   }
 
   onEndEditing(item, value) {
       realm.write(() => {
-        console.log('In edit write for : '+ item.name);
+        // console.log('In edit write for : '+ item.name);
         item.defaultPackSize = parseFloat(value)
       })
   }
@@ -125,7 +121,7 @@ export class Catalogue extends Component {
     return(
       <Expansion>
         <ExpansionView>
-          <Text style={styles.text}>Department: {this.getItemDepartmentName(item)}</Text>
+          <Text style={styles.text}>Department: {item.department.name}</Text>
           <Text style={styles.text}>Description: {item.description}</Text>
         </ExpansionView>
         <TableButton onPress={() => this.deleteButton(item)}>
@@ -136,15 +132,20 @@ export class Catalogue extends Component {
   }
 
   renderRow(item) {
-    console.log("Row of rendered for: " + item.code)
+  //  console.log("Row of rendered for: " + item.code)
     return (
       <Row expansion={() => this.expansion(item)}>
         <RowView>
           <Cell style={styles.text} width={1}>{item.code}</Cell>
           <Cell style={styles.text} width={5}>{item.name}</Cell>
-          <EditableCell style={styles.packSize} width={2} onEndEditing={this.onEndEditing} item={item}>
-            {item.defaultPackSize}
-          </EditableCell>
+          <EditableCell
+            style={styles.packSize}
+            width={2}
+            keyboardType='number-pad'
+            onEndEditing={this.onEndEditing}
+            target={item}
+            value={item.defaultPackSize}
+          />
         </RowView>
       </Row>
     );
@@ -156,9 +157,9 @@ export class Catalogue extends Component {
         <Text>Text Component outside of TableView</Text>
         <TableView
           dataSource={this.state.dataSource}
-          renderRow={this.renderRow.bind(this)}
-          header={this.header.bind(this)}
-          searchBar={this.onSearchChange.bind(this)}
+          renderRow={this.renderRow}
+          header={this.getHeader}
+          searchBar={this.onSearchChange}
         />
       </View>
     );

@@ -76,12 +76,12 @@ export class EditableCell extends Component {
 
   componentDidMount() {
     this.setState({
-      value: String(this.props.children)
+      value: String(this.props.value)
     });
   }
 
   onEndEditing() {
-    this.props.onEndEditing(this.props.item, this.state.value)
+    this.props.onEndEditing(this.props.target, this.state.value)
   }
 
   render() {
@@ -89,6 +89,7 @@ export class EditableCell extends Component {
       <View style={[styles.editableCell, {flex: this.props.width}]}>
         <TextInput
           style={this.props.style}
+          keyboardType={this.props.keyboardType}
           onChange = {(event) => this.setState({value: event.nativeEvent.text})}
           onEndEditing={() => this.onEndEditing()}
           value={this.state.value}
@@ -142,7 +143,9 @@ export class HeaderCell extends Component {
   render() {
     if (typeof this.props.onPress === 'function') {
       return (
-        <TouchableOpacity style={[styles.headerCell, {flex: this.props.width}]} onPress={this.props.onPress}>
+        <TouchableOpacity style={[styles.headerCell, {flex: this.props.width}]}
+          onPress={this.props.onPress}
+        >
           <Text style={this.props.style}>
             {this.props.children}
           </Text>
