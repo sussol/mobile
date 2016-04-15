@@ -60,9 +60,9 @@ export class Catalogue extends Component {
       rowHasChanged: (row1, row2) => row1 !== row2,
     });
     this.state = {
+      dataSource,
       query: 'item_name=@',
       items: realm.objects('Item'),
-      dataSource,
       sortBy: 'name',
       reverseSort: false,
       loaded: false,

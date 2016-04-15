@@ -79,10 +79,6 @@ const styles = StyleSheet.create({
 });
 
 export class Row extends Component {
-  // static PropTypes = {
-  //   expansion: React.PropTypes.func,
-  //   children: React.PropTypes.any,
-  // }
   constructor(props) {
     super(props);
     this.state = {
@@ -147,7 +143,7 @@ export class EditableCell extends Component {
     this.state = {
       value: 'N/A',
     };
-    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentWillMount = this.componentWillMount.bind(this);
   }
 
   componentWillMount() {
@@ -233,22 +229,22 @@ Header.propTypes = {
 
 
 export function HeaderCell(props) {
-  if (typeof this.props.onPress === 'function') {
+  if (typeof props.onPress === 'function') {
     return (
       <TouchableOpacity
         style={[styles.headerCell, { flex: props.width }]}
-        onPress={this.props.onPress}
+        onPress={props.onPress}
       >
-        <Text style={this.props.style}>
-          {this.props.children}
+        <Text style={props.style}>
+          {props.children}
         </Text>
       </TouchableOpacity>
     );
   }
   return (
-    <View style={[styles.headerCell, { flex: this.props.width }]}>
-      <Text style={this.props.style}>
-        {this.props.children}
+    <View style={[styles.headerCell, { flex: props.width }]}>
+      <Text style={props.style}>
+        {props.children}
       </Text>
     </View>
   );
@@ -286,6 +282,6 @@ export default function TableView(props) {
 TableView.propTypes = {
   searchBar: React.PropTypes.func,
   header: React.PropTypes.func,
-  dataSource: React.PropTypes.object,
-  renderRow: React.PropTypes.func,
+  dataSource: React.PropTypes.object.isRequired,
+  renderRow: React.PropTypes.func.isRequired,
 };
