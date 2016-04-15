@@ -12,7 +12,7 @@ import React, {
   View,
 } from 'react-native';
 
-import DataTable from '../DataTable/DataTable';
+import DataTable from './DataTable/DataTable';
 import Row from './DataTable/Row';
 import Cell from './DataTable/Cell';
 import RowView from './DataTable/RowView';
