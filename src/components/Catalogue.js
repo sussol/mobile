@@ -12,16 +12,17 @@ import React, {
   View,
 } from 'react-native';
 
-import DataTable from './DataTable/DataTable';
-import Row from './DataTable/Row';
-import Cell from './DataTable/Cell';
-import RowView from './DataTable/RowView';
-import EditableCell from './DataTable/EditableCell';
-import Expansion from './DataTable/Expansion';
-import ExpansionView from './DataTable/ExpansionView';
-import TableButton from './DataTable/TableButton';
-import Header from './DataTable/Header';
-import HeaderCell from './DataTable/HeaderCell';
+import TableView, {
+  Row,
+  Cell,
+  RowView,
+  EditableCell,
+  Expansion,
+  ExpansionView,
+  TableButton,
+  Header,
+  HeaderCell,
+} from './TableView';
 
 import realm from '../schema/Realm';
 import { ListView } from 'realm/react-native';
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginRight: 20,
   },
-  DataTable: {
+  TableView: {
     flex: 1,
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
@@ -179,8 +180,8 @@ export class Catalogue extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Text Component outside of DataTable</Text>
-        <DataTable
+        <Text>Text Component outside of TableView</Text>
+        <TableView
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           header={this.getHeader}
