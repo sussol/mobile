@@ -79,6 +79,10 @@ const styles = StyleSheet.create({
 });
 
 export class Row extends Component {
+  // static PropTypes = {
+  //   expansion: React.PropTypes.func,
+  //   children: React.PropTypes.any,
+  // }
   constructor(props) {
     super(props);
     this.state = {
@@ -91,69 +95,78 @@ export class Row extends Component {
     this.setState({
       expanded: this.state.expanded !== true,
     });
-    console.log("is Expanded: " + this.state.expanded);
+    // console.log(`Is Expanded: ${this.state.expanded}`);
   }
 
   render() {
     return (
       <TouchableOpacity
         style={[styles.row, this.state.expanded && styles.expanded]}
-        onPress={typeof this.props.expansion === 'function' && this.expandRow}>
+        onPress={typeof this.props.expansion === 'function' && this.expandRow}
+      >
         {this.props.children}
         {this.state.expanded && this.props.expansion()}
       </TouchableOpacity>
     );
   }
 }
+Row.propTypes = {
+  expansion: React.PropTypes.func,
+  children: React.PropTypes.any,
+};
 
-export class Cell extends Component {
-  render() {
-    return (
-      <View style={[styles.cell, { flex: this.props.width}]}>
-        <Text style={this.props.style}>
-          {this.props.children}
-        </Text>
-      </View>
-    );
-  }
+export function Cell(props) {
+  return (
+    <View style={[styles.cell, { flex: props.width }]}>
+      <Text style={props.style}>
+        {props.children}
+      </Text>
+    </View>
+  );
 }
+Cell.propTypes = {
+  style: React.PropTypes.number,
+  width: React.PropTypes.number,
+  children: React.PropTypes.any,
+};
 
-export class RowView extends Component {
-  render() {
-    return (
-      <View style={styles.rowView}>
-        {this.props.children}
-      </View>
-    );
-  }
+export function RowView(props) {
+  return (
+    <View style={styles.rowView}>
+      {props.children}
+    </View>
+  );
 }
+RowView.propTypes = {
+  children: React.PropTypes.any,
+};
 
 export class EditableCell extends Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      value: "N/A"
-    }
-    this.componentDidMount = this.componentDidMount.bind(this)
+      value: 'N/A',
+    };
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.setState({
-      value: String(this.props.value)
+      value: String(this.props.value),
     });
   }
 
   onEndEditing() {
-    this.props.onEndEditing(this.props.target, this.state.value)
+    this.props.onEndEditing(this.props.target, this.state.value);
   }
 
   render() {
     return (
-      <View style={[styles.editableCell, {flex: this.props.width}]}>
+      <View style={[styles.editableCell, { flex: this.props.width }]}>
         <TextInput
           style={this.props.style}
           keyboardType={this.props.keyboardType}
-          onChange = {(event) => this.setState({value: event.nativeEvent.text})}
+          onChange = {(event) => this.setState({ value: event.nativeEvent.text })}
           onEndEditing={() => this.onEndEditing()}
           value={this.state.value}
         />
@@ -161,92 +174,118 @@ export class EditableCell extends Component {
     );
   }
 }
+EditableCell.propTypes = {
+  style: React.PropTypes.number,
+  width: React.PropTypes.number,
+  keyboardType: React.PropTypes.string,
+  onEndEditing: React.PropTypes.func,
+  target: React.PropTypes.object,
+  value: React.PropTypes.oneOfType([
+    React.PropTypes.string,
+    React.PropTypes.number,
+  ]),
+};
 
-export class Expansion extends Component {
-  render() {
-    return (
-      <View style={styles.expansion}>
-        {this.props.children}
-      </View>
-    );
-  }
+export function Expansion(props) {
+  return (
+    <View style={styles.expansion}>
+      {props.children}
+    </View>
+  );
 }
+Expansion.propTypes = {
+  children: React.PropTypes.any,
+};
 
-export class ExpansionView extends Component {
-  render() {
-    return (
-      <View style={styles.expansionView}>
-        {this.props.children}
-      </View>
-    );
-  }
+export function ExpansionView(props) {
+  return (
+    <View style={styles.expansionView}>
+      {props.children}
+    </View>
+  );
 }
+ExpansionView.propTypes = {
+  children: React.PropTypes.any,
+};
 
-export class TableButton extends Component {
-  render() {
-    return (
-      <TouchableOpacity style={styles.tableButton} onPress={this.props.onPress}>
-        {this.props.children}
-      </TouchableOpacity>
-    )
-  }
+export function TableButton(props) {
+  return (
+    <TouchableOpacity style={styles.tableButton} onPress={props.onPress}>
+      {props.children}
+    </TouchableOpacity>
+  );
 }
+TableButton.propTypes = {
+  children: React.PropTypes.any,
+  onPress: React.PropTypes.func,
+};
 
-export class Header extends Component {
-  render() {
-    return (
-      <View style={styles.header}>
-        {this.props.children}
-      </View>
-    );
-  }
+export function Header(props) {
+  return (
+    <View style={styles.header}>
+      {props.children}
+    </View>
+  );
 }
+Header.propTypes = {
+  children: React.PropTypes.any,
+};
 
-export class HeaderCell extends Component {
-  render() {
-    if (typeof this.props.onPress === 'function') {
-      return (
-        <TouchableOpacity style={[styles.headerCell, {flex: this.props.width}]}
-          onPress={this.props.onPress}
-        >
-          <Text style={this.props.style}>
-            {this.props.children}
-          </Text>
-        </TouchableOpacity>
-      );
-    }
+
+export function HeaderCell(props) {
+  if (typeof this.props.onPress === 'function') {
     return (
-      <View style={[styles.headerCell, {flex: this.props.width}]}>
+      <TouchableOpacity
+        style={[styles.headerCell, { flex: props.width }]}
+        onPress={this.props.onPress}
+      >
         <Text style={this.props.style}>
           {this.props.children}
         </Text>
-      </View>
+      </TouchableOpacity>
     );
   }
+  return (
+    <View style={[styles.headerCell, { flex: this.props.width }]}>
+      <Text style={this.props.style}>
+        {this.props.children}
+      </Text>
+    </View>
+  );
 }
+HeaderCell.propTypes = {
+  style: React.PropTypes.number,
+  width: React.PropTypes.number,
+  onPress: React.PropTypes.func,
+  children: React.PropTypes.any,
+};
 
-export default class TableView extends Component {
 
-  render() {
-    return (
-      <View style={styles.verticalContainer}>
-        {
-          (typeof this.props.searchBar === 'function') &&
-            <TextInput
-              style={styles.searchBar}
-              onChange={(event) => this.props.searchBar(event)}
-              placeholder="Search"
-            />
-        }
-        {this.props.header()}
-        <ListView
-          style={styles.listview}
-          dataSource={this.props.dataSource}
-          renderRow={this.props.renderRow}
-          showsVerticalScrollIndicator
-          scrollRenderAheadDistance={5000}
-        />
-      </View>
-    );
-  }
+export default function TableView(props) {
+  return (
+    <View style={styles.verticalContainer}>
+      {
+        (typeof props.searchBar === 'function') &&
+          <TextInput
+            style={styles.searchBar}
+            onChange={(event) => props.searchBar(event)}
+            placeholder="Search"
+          />
+      }
+      {props.header()}
+      <ListView
+        style={styles.listview}
+        dataSource={props.dataSource}
+        renderRow={props.renderRow}
+        showsVerticalScrollIndicator
+        scrollRenderAheadDistance={5000}
+      />
+    </View>
+  );
 }
+TableView.propTypes = {
+  searchBar: React.PropTypes.func,
+  header: React.PropTypes.func,
+  dataSource: React.PropTypes.object,
+  renderRow: React.PropTypes.func,
+};

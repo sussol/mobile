@@ -59,7 +59,6 @@ export class Catalogue extends Component {
     const dataSource = new ListView.DataSource({
       rowHasChanged: (row1, row2) => row1 !== row2,
     });
-
     this.state = {
       query: 'item_name=@',
       items: realm.objects('Item'),
@@ -68,7 +67,7 @@ export class Catalogue extends Component {
       reverseSort: false,
       loaded: false,
     };
-    this.componentDidMount = this.componentDidMount.bind(this);
+    this.componentWillMount = this.componentWillMount.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.nameSort = this.nameSort.bind(this);
     this.getHeader = this.getHeader.bind(this);
@@ -78,8 +77,8 @@ export class Catalogue extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
 
-  componentDidMount() {
-    // console.log("componentDidMount was called")
+  componentWillMount() {
+    // console.log("componentWillMount was called")
     const data = this.state.items.sorted(this.state.sortBy);
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(data),
@@ -121,7 +120,7 @@ export class Catalogue extends Component {
   }
 
   nameSort() {
-    console.log('Sort direction on name column pressed ${this.state.reverseSort}');
+    // console.log(`Sort direction on name column pressed ${this.state.reverseSort}`);
     this.setState({
       reverseSort: this.state.reverseSort !== true,
     });
@@ -145,7 +144,7 @@ export class Catalogue extends Component {
   }
 
   expansion(item) {
-    return(
+    return (
       <Expansion>
         <ExpansionView>
           <Text style={styles.text}>Department: {item.department.name}</Text>
