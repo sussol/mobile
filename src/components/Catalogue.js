@@ -98,8 +98,9 @@ export class Catalogue extends Component {
 
   onEndEditing(item, value) {
     realm.write(() => {
+      realm.create('Item', { id: item.code, defaultPackSize: value });
       // console.log('In edit write for : '+ item.name);
-      item.defaultPackSize = parseFloat(value);
+      // item.defaultPackSize = parseFloat(value);
     });
   }
 
