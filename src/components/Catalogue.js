@@ -88,9 +88,9 @@ export class Catalogue extends Component {
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    const { items, sortBy, dataSource } = this.state;
+    const { items, sortBy, dataSource, reverseSort } = this.state;
     // console.log(`term sortBy: ${typeof items} ++++++++++++++++++++++++++++++++++++++`);
-    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy);
+    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
@@ -133,13 +133,14 @@ export class Catalogue extends Component {
   deleteButton(item) {
     // TODO: needs a modal dialog, deleting needs confirmation!!
     // console.log("Pressed deleteButton for item: " + item.name);
+    const { dataSource, items, sortBy, reverseSort } = this.state;
+
     realm.write(() => {
       realm.delete(item);
     });
 
-    const ids = this.state.items.map(i => i.id);
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.items, ids),
+      dataSource: dataSource.cloneWithRows(items.sorted(sortBy, reverseSort)),
     });
   }
 

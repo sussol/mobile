@@ -28,7 +28,7 @@ export default function Cell(props) {
   );
 }
 Cell.propTypes = {
-  style: React.PropTypes.number,
+  style: React.PropTypes.object,
   width: React.PropTypes.number,
   children: React.PropTypes.any,
 };
