@@ -7,6 +7,7 @@
 
 import React, {
   Component,
+  View,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
@@ -43,7 +44,9 @@ export default class Row extends Component {
         style={[styles.row, this.props.style]}
         onPress={typeof this.props.renderExpansion === 'function' && this.expandRow}
       >
-        {this.props.children}
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+          {this.props.children}
+        </View>
         {this.state.expanded && this.props.renderExpansion()}
       </TouchableOpacity>
     );
