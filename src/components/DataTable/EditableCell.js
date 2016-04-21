@@ -12,13 +12,6 @@ import React, {
   View,
 } from 'react-native';
 
-const styles = StyleSheet.create({
-  editableCell: {
-    flex: 1,
-    backgroundColor: 'blue',
-  },
-});
-
 export default class EditableCell extends Component {
   constructor(props) {
     super(props);
@@ -68,3 +61,10 @@ EditableCell.propTypes = {
 EditableCell.defaultProps = {
   width: 1,
 };
+
+const styles = StyleSheet.create({
+  editableCell: {
+    flex: 1,
+    backgroundColor: 'blue',
+  },
+});

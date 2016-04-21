@@ -12,17 +12,6 @@ import React, {
   TouchableOpacity,
 } from 'react-native';
 
-const styles = StyleSheet.create({
-  row: {
-    flex: 1,
-    flexDirection: 'column',
-    flexWrap: 'nowrap',
-    justifyContent: 'flex-start',
-    alignItems: 'stretch',
-    backgroundColor: '#d6f3ff',
-  },
-});
-
 export default class Row extends Component {
   constructor(props) {
     super(props);
@@ -58,3 +47,14 @@ Row.propTypes = {
   children: React.PropTypes.any,
   style: React.PropTypes.object,
 };
+
+const styles = StyleSheet.create({
+  row: {
+    flex: 1,
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+    backgroundColor: '#d6f3ff',
+  },
+});

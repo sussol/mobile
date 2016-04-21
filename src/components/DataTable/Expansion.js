@@ -10,14 +10,6 @@ import React, {
   View,
 } from 'react-native';
 
-const styles = StyleSheet.create({
-  expansion: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'magenta',
-  },
-});
-
 export default function Expansion(props) {
   return (
     <View style={styles.expansion}>
@@ -29,3 +21,11 @@ export default function Expansion(props) {
 Expansion.propTypes = {
   children: React.PropTypes.any,
 };
+
+const styles = StyleSheet.create({
+  expansion: {
+    flex: 1,
+    flexDirection: 'row',
+    backgroundColor: 'magenta',
+  },
+});

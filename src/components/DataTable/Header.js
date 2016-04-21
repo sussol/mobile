@@ -10,18 +10,9 @@ import React, {
   View,
 } from 'react-native';
 
-const styles = StyleSheet.create({
-  header: {
-    flex: 0.08,
-    flexDirection: 'row',
-    flexWrap: 'nowrap',
-    backgroundColor: 'grey',
-  },
-});
-
 export default function Header(props) {
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { flex: props.height }]}>
       {props.children}
     </View>
   );
@@ -29,4 +20,13 @@ export default function Header(props) {
 
 Header.propTypes = {
   children: React.PropTypes.any,
+  height: React.PropTypes.number,
 };
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    backgroundColor: 'grey',
+  },
+});

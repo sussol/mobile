@@ -12,13 +12,6 @@ import React, {
   TouchableOpacity,
 } from 'react-native';
 
-const styles = StyleSheet.create({
-  headerCell: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
-
 export default function HeaderCell(props) {
   if (typeof props.onPress === 'function') {
     return (
@@ -51,3 +44,10 @@ HeaderCell.propTypes = {
 HeaderCell.defaultProps = {
   width: 1,
 };
+
+const styles = StyleSheet.create({
+  headerCell: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});

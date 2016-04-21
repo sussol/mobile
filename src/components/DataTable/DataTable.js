@@ -13,12 +13,6 @@ import React, {
 } from 'react-native';
 import { ListView } from 'realm/react-native';
 
-const styles = StyleSheet.create({
-  verticalContainer: {
-    flex: 1,
-  },
-});
-
 export default function DataTable(props) {
   return (
     <View style={styles.verticalContainer}>
@@ -48,3 +42,9 @@ DataTable.propTypes = {
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
 };
+
+const styles = StyleSheet.create({
+  verticalContainer: {
+    flex: 1,
+  },
+});

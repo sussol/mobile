@@ -11,13 +11,6 @@ import React, {
   View,
 } from 'react-native';
 
-const styles = StyleSheet.create({
-  cell: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-});
-
 export default function Cell(props) {
   return (
     <View style={[styles.cell, { flex: props.width }]}>
@@ -37,3 +30,10 @@ Cell.propTypes = {
 Cell.defaultProps = {
   width: 1,
 };
+
+const styles = StyleSheet.create({
+  cell: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});

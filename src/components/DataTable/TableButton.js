@@ -11,13 +11,6 @@ import React, {
   TouchableOpacity,
 } from 'react-native';
 
-const styles = StyleSheet.create({
-  tableButton: {
-    flex: 0.5,
-    backgroundColor: 'green',
-  },
-});
-
 export default function TableButton(props) {
   return (
     <TouchableOpacity style={styles.tableButton} onPress={props.onPress}>
@@ -30,3 +23,10 @@ TableButton.propTypes = {
   children: React.PropTypes.any,
   onPress: React.PropTypes.func,
 };
+
+const styles = StyleSheet.create({
+  tableButton: {
+    flex: 0.5,
+    backgroundColor: 'green',
+  },
+});
