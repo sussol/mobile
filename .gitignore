@@ -24,6 +24,7 @@ project.xcworkspace
 
 # Android/IJ
 #
+*.keystore
 .idea
 .gradle
 local.properties
