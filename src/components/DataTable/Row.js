@@ -52,6 +52,7 @@ export default class Row extends Component {
     );
   }
 }
+
 Row.propTypes = {
   renderExpansion: React.PropTypes.func,
   children: React.PropTypes.any,

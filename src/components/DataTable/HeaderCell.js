@@ -40,12 +40,14 @@ export default function HeaderCell(props) {
     </View>
   );
 }
+
 HeaderCell.propTypes = {
   style: React.PropTypes.number,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
   children: React.PropTypes.any,
 };
+
 HeaderCell.defaultProps = {
   width: 1,
 };

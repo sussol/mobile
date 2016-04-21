@@ -26,6 +26,7 @@ export default function Header(props) {
     </View>
   );
 }
+
 Header.propTypes = {
   children: React.PropTypes.any,
 };

@@ -27,11 +27,13 @@ export default function Cell(props) {
     </View>
   );
 }
+
 Cell.propTypes = {
   style: React.PropTypes.object,
   width: React.PropTypes.number,
   children: React.PropTypes.any,
 };
+
 Cell.defaultProps = {
   width: 1,
 };

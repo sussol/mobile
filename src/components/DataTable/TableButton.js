@@ -25,6 +25,7 @@ export default function TableButton(props) {
     </TouchableOpacity>
   );
 }
+
 TableButton.propTypes = {
   children: React.PropTypes.any,
   onPress: React.PropTypes.func,

@@ -41,6 +41,7 @@ export default function DataTable(props) {
     </View>
   );
 }
+
 DataTable.propTypes = {
   searchBar: React.PropTypes.func,
   renderHeader: React.PropTypes.func,

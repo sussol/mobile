@@ -25,6 +25,7 @@ export default function Expansion(props) {
     </View>
   );
 }
+
 Expansion.propTypes = {
   children: React.PropTypes.any,
 };
