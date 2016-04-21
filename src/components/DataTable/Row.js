@@ -35,22 +35,22 @@ export default class Row extends Component {
     this.setState({
       expanded: this.state.expanded !== true,
     });
-    // console.log(`Is Expanded: ${this.state.expanded}`);
   }
 
   render() {
     return (
       <TouchableOpacity
-        style={[styles.row, this.state.expanded && styles.expanded]}
-        onPress={typeof this.props.expansion === 'function' && this.expandRow}
+        style={[styles.row, this.props.style]}
+        onPress={typeof this.props.renderExpansion === 'function' && this.expandRow}
       >
         {this.props.children}
-        {this.state.expanded && this.props.expansion()}
+        {this.state.expanded && this.props.renderExpansion()}
       </TouchableOpacity>
     );
   }
 }
 Row.propTypes = {
-  expansion: React.PropTypes.func,
+  renderExpansion: React.PropTypes.func,
   children: React.PropTypes.any,
+  style: React.PropTypes.object,
 };

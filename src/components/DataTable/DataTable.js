@@ -30,7 +30,7 @@ export default function DataTable(props) {
             placeholder="Search"
           />
       }
-      {props.header()}
+      {typeof props.renderHeader === 'function' && props.renderHeader()}
       <ListView
         style={styles.listview}
         dataSource={props.dataSource}
@@ -43,7 +43,7 @@ export default function DataTable(props) {
 }
 DataTable.propTypes = {
   searchBar: React.PropTypes.func,
-  header: React.PropTypes.func,
+  renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
 };

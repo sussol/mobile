@@ -18,13 +18,151 @@ import Cell from './DataTable/Cell';
 import RowView from './DataTable/RowView';
 import EditableCell from './DataTable/EditableCell';
 import Expansion from './DataTable/Expansion';
-import ExpansionView from './DataTable/ExpansionView';
 import TableButton from './DataTable/TableButton';
 import Header from './DataTable/Header';
 import HeaderCell from './DataTable/HeaderCell';
 
 import realm from '../schema/Realm';
 import { ListView } from 'realm/react-native';
+
+export class Catalogue extends Component {
+
+  constructor(props) {
+    super(props);
+    const dataSource = new ListView.DataSource({
+      rowHasChanged: (row1, row2) => row1 !== row2,
+    });
+    this.state = {
+      dataSource,
+      query: 'item_name=@',
+      items: realm.objects('Item'),
+      sortBy: 'name',
+      reverseSort: false,
+      loaded: false,
+    };
+    this.componentWillMount = this.componentWillMount.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.columnSort = this.columnSort.bind(this);
+    this.renderHeader = this.renderHeader.bind(this);
+    this.onDeleteBtnPress = this.onDeleteBtnPress.bind(this);
+    this.onEndEditing = this.onEndEditing.bind(this);
+    this.renderExpansion = this.renderExpansion.bind(this);
+    this.renderRow = this.renderRow.bind(this);
+  }
+
+  componentWillMount() {
+    const data = this.state.items.sorted(this.state.sortBy);
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(data),
+      loaded: true,
+    });
+  }
+
+
+  onSearchChange(event) {
+    const term = event.nativeEvent.text;
+    const { items, sortBy, dataSource, reverseSort } = this.state;
+    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
+    this.setState({
+      dataSource: dataSource.cloneWithRows(data),
+    });
+  }
+
+  onEndEditing(item, value) {
+    // TODO: Needs to check if value is correct type (i.e. Number).
+    // Show dialog/error if wrong type. Might have to rerender
+    // to show old value. Such a dialog/modal should be a common
+    // component.
+    realm.write(() => {
+      realm.create('Item', { id: item.id, defaultPackSize: value }, true);
+    });
+  }
+
+  columnSort() {
+    this.setState({
+      reverseSort: this.state.reverseSort !== true,
+    });
+    const data = this.state.items.sorted(this.state.sortBy, this.state.reverseSort);
+    this.setState({
+      dataSource: this.state.dataSource.cloneWithRows(data),
+    });
+  }
+
+  onDeleteBtnPress(item) {
+    // TODO: needs a modal dialog, deleting needs confirmation!!
+    const { dataSource, items, sortBy, reverseSort } = this.state;
+
+    realm.write(() => {
+      realm.delete(item);
+    });
+
+    this.setState({
+      dataSource: dataSource.cloneWithRows(items.sorted(sortBy, reverseSort)),
+    });
+  }
+
+  renderHeader() {
+    return (
+      <Header>
+        <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
+        <HeaderCell style={styles.text}
+          width={5}
+          onPress={() => this.columnSort()}
+        >
+          Item Name
+        </HeaderCell>
+        <HeaderCell style={styles.packSize} width={2}>Default Pack Size</HeaderCell>
+      </Header>
+    );
+  }
+
+  renderExpansion(item) {
+    return (
+      <Expansion>
+        <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
+          <Text style={styles.text}>Department: {item.department.name}</Text>
+          <Text style={styles.text}>Description: {item.description}</Text>
+        </View>
+        <TableButton onPress={() => this.onDeleteBtnPress(item)}>
+          <Text style={styles.text} >Delete Item</Text>
+        </TableButton>
+      </Expansion>
+    );
+  }
+
+  renderRow(item) {
+    return (
+      <Row renderExpansion={() => this.renderExpansion(item)}>
+        <RowView>
+          <Cell style={styles.text} width={1}>{item.code}</Cell>
+          <Cell style={styles.text} width={5}>{item.name}</Cell>
+          <EditableCell
+            style={styles.packSize}
+            width={2}
+            keyboardType="number-pad"
+            onEndEditing={this.onEndEditing}
+            target={item}
+            value={item.defaultPackSize}
+          />
+        </RowView>
+      </Row>
+    );
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <Text>Text Component outside of DataTable</Text>
+        <DataTable
+          dataSource={this.state.dataSource}
+          renderRow={this.renderRow}
+          renderHeader={this.renderHeader}
+          searchBar={this.onSearchChange}
+        />
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -50,145 +188,3 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5FCFF',
   },
 });
-
-export class Catalogue extends Component {
-
-  constructor(props) {
-    super(props);
-    const dataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-    });
-    this.state = {
-      dataSource,
-      query: 'item_name=@',
-      items: realm.objects('Item'),
-      sortBy: 'name',
-      reverseSort: false,
-      loaded: false,
-    };
-    this.componentWillMount = this.componentWillMount.bind(this);
-    this.onSearchChange = this.onSearchChange.bind(this);
-    this.nameSort = this.nameSort.bind(this);
-    this.getHeader = this.getHeader.bind(this);
-    this.deleteButton = this.deleteButton.bind(this);
-    this.onEndEditing = this.onEndEditing.bind(this);
-    this.expansion = this.expansion.bind(this);
-    this.renderRow = this.renderRow.bind(this);
-  }
-
-  componentWillMount() {
-    // console.log("componentWillMount was called")
-    const data = this.state.items.sorted(this.state.sortBy);
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(data),
-      loaded: true,
-    });
-  }
-
-
-  onSearchChange(event) {
-    const term = event.nativeEvent.text;
-    const { items, sortBy, dataSource, reverseSort } = this.state;
-    // console.log(`term sortBy: ${typeof items} ++++++++++++++++++++++++++++++++++++++`);
-    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
-    this.setState({
-      dataSource: dataSource.cloneWithRows(data),
-    });
-  }
-
-  onEndEditing(item, value) {
-    realm.write(() => {
-      realm.create('Item', { id: item.code, defaultPackSize: value });
-      // console.log('In edit write for : '+ item.name);
-      // item.defaultPackSize = parseFloat(value);
-    });
-  }
-
-  getHeader() {
-    return (
-      <Header>
-        <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
-        <HeaderCell style={styles.text}
-          width={5}
-          onPress={() => this.nameSort()}
-        >
-          Item Name
-        </HeaderCell>
-        <HeaderCell style={styles.packSize} width={2}>Default Pack Size</HeaderCell>
-      </Header>
-    );
-  }
-
-  nameSort() {
-    // console.log(`Sort direction on name column pressed ${this.state.reverseSort}`);
-    this.setState({
-      reverseSort: this.state.reverseSort !== true,
-    });
-    const data = this.state.items.sorted(this.state.sortBy, this.state.reverseSort);
-    this.setState({
-      DataSource: this.state.dataSource.cloneWithRows(data),
-    });
-  }
-
-  deleteButton(item) {
-    // TODO: needs a modal dialog, deleting needs confirmation!!
-    // console.log("Pressed deleteButton for item: " + item.name);
-    const { dataSource, items, sortBy, reverseSort } = this.state;
-
-    realm.write(() => {
-      realm.delete(item);
-    });
-
-    this.setState({
-      dataSource: dataSource.cloneWithRows(items.sorted(sortBy, reverseSort)),
-    });
-  }
-
-  expansion(item) {
-    return (
-      <Expansion>
-        <ExpansionView>
-          <Text style={styles.text}>Department: {item.department.name}</Text>
-          <Text style={styles.text}>Description: {item.description}</Text>
-        </ExpansionView>
-        <TableButton onPress={() => this.deleteButton(item)}>
-          <Text style={styles.text} >Delete Item</Text>
-        </TableButton>
-      </Expansion>
-    );
-  }
-
-  renderRow(item) {
-  //  console.log("Row of rendered for: " + item.code)
-    return (
-      <Row expansion={() => this.expansion(item)}>
-        <RowView>
-          <Cell style={styles.text} width={1}>{item.code}</Cell>
-          <Cell style={styles.text} width={5}>{item.name}</Cell>
-          <EditableCell
-            style={styles.packSize}
-            width={2}
-            keyboardType="number-pad"
-            onEndEditing={this.onEndEditing}
-            target={item}
-            value={item.defaultPackSize}
-          />
-        </RowView>
-      </Row>
-    );
-  }
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Text Component outside of DataTable</Text>
-        <DataTable
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          header={this.getHeader}
-          searchBar={this.onSearchChange}
-        />
-      </View>
-    );
-  }
-}

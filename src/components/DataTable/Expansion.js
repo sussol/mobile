@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * OfflineMobile dataTable Expansion
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
