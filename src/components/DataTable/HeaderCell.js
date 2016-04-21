@@ -46,3 +46,6 @@ HeaderCell.propTypes = {
   onPress: React.PropTypes.func,
   children: React.PropTypes.any,
 };
+HeaderCell.defaultProps = {
+  width: 1,
+};

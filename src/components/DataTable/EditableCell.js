@@ -63,3 +63,6 @@ EditableCell.propTypes = {
     React.PropTypes.number,
   ]),
 };
+EditableCell.defaultProps = {
+  width: 1,
+};

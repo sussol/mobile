@@ -32,3 +32,6 @@ Cell.propTypes = {
   width: React.PropTypes.number,
   children: React.PropTypes.any,
 };
+Cell.defaultProps = {
+  width: 1,
+};
