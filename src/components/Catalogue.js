@@ -15,7 +15,6 @@ import React, {
 import DataTable from './DataTable/DataTable';
 import Row from './DataTable/Row';
 import Cell from './DataTable/Cell';
-import RowView from './DataTable/RowView';
 import EditableCell from './DataTable/EditableCell';
 import Expansion from './DataTable/Expansion';
 import TableButton from './DataTable/TableButton';
@@ -42,10 +41,10 @@ export class Catalogue extends Component {
     };
     this.componentWillMount = this.componentWillMount.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
-    this.columnSort = this.columnSort.bind(this);
+    this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.onDeleteBtnPress = this.onDeleteBtnPress.bind(this);
-    this.onEndEditing = this.onEndEditing.bind(this);
+    this.onEndDefaultPackSizeEdit = this.onEndDefaultPackSizeEdit.bind(this);
     this.renderExpansion = this.renderExpansion.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
@@ -68,7 +67,7 @@ export class Catalogue extends Component {
     });
   }
 
-  onEndEditing(item, value) {
+  onEndDefaultPackSizeEdit(item, value) {
     // TODO: Needs to check if value is correct type (i.e. Number).
     // Show dialog/error if wrong type. Might have to rerender
     // to show old value. Such a dialog/modal should be a common
@@ -78,7 +77,7 @@ export class Catalogue extends Component {
     });
   }
 
-  columnSort() {
+  onColumnSort() {
     this.setState({
       reverseSort: this.state.reverseSort !== true,
     });
@@ -107,7 +106,7 @@ export class Catalogue extends Component {
         <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
         <HeaderCell style={styles.text}
           width={5}
-          onPress={() => this.columnSort()}
+          onPress={() => this.onColumnSort()}
         >
           Item Name
         </HeaderCell>
@@ -133,18 +132,16 @@ export class Catalogue extends Component {
   renderRow(item) {
     return (
       <Row renderExpansion={() => this.renderExpansion(item)}>
-        <RowView>
-          <Cell style={styles.text} width={1}>{item.code}</Cell>
-          <Cell style={styles.text} width={5}>{item.name}</Cell>
-          <EditableCell
-            style={styles.packSize}
-            width={2}
-            keyboardType="number-pad"
-            onEndEditing={this.onEndEditing}
-            target={item}
-            value={item.defaultPackSize}
-          />
-        </RowView>
+        <Cell style={styles.text} width={1}>{item.code}</Cell>
+        <Cell style={styles.text} width={5}>{item.name}</Cell>
+        <EditableCell
+          style={styles.packSize}
+          width={2}
+          keyboardType="number-pad"
+          onEndEditing={this.onEndDefaultPackSizeEdit}
+          target={item}
+          value={item.defaultPackSize}
+        />
       </Row>
     );
   }
