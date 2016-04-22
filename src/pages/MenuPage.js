@@ -7,68 +7,41 @@
 
 import React, {
   StyleSheet,
-  Text,
-  TouchableHighlight,
   View,
 } from 'react-native';
 
-function NavButton(props) {
-  return (
-    <TouchableHighlight
-      style={styles.button}
-      underlayColor="#B5B5B5"
-      onPress={props.onPress}>
-      <Text style={styles.buttonText}>{props.text}</Text>
-    </TouchableHighlight>
-  );
-}
+import {
+  Actions,
+} from 'react-native-router-flux';
 
-export function MenuPage(props) {
+import {
+  Button,
+} from '../widgets';
+
+export default function MenuPage() {
   return (
     <View style={styles.container}>
-      <NavButton
+      <Button
         text="Stock"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'stock' });
-          }}
+        onPress={Actions.stock}
       />
-      <NavButton
+      <Button
         text="Stocktakes"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'stocktakes' });
-          }}
+        onPress={Actions.stocktakes}
       />
-      <NavButton
-        text="Orders"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'orders' });
-          }}
+      <Button
+        text="Supplier Invoices"
+        onPress={Actions.supplierInvoices}
       />
-      <NavButton
+      <Button
         text="Customer Invoices"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'customerInvoices' });
-          }}
+        onPress={Actions.customerInvoices}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#CDCDCD',
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: '500',
-  },
   container: {
     flex: 1,
     justifyContent: 'center',

@@ -10,21 +10,10 @@ import React, {
   View,
 } from 'react-native';
 
-import { Actions } from 'react-native-router-flux';
-import { Button } from '../widgets';
-
 export default function StocktakesPage(props) {
   return (
     <View style={props.style}>
-      <Text>Stocktakes go here.</Text>
-      <Button
-        text="Edit"
-        onPress={Actions.pop}
-      />
-      <Button
-        text="New"
-        onPress={Actions.stocktakeManager}
-      />
+      <Text>You can manage a stocktake.</Text>
     </View>
   );
 }

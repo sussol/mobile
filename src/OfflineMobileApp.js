@@ -7,16 +7,25 @@
 
 import React, {
   Component,
-  Navigator,
   StyleSheet,
 } from 'react-native';
 
-import { CustomerInvoicesPage } from './pages/CustomerInvoicesPage';
-import { MenuPage } from './pages/MenuPage';
-import { OrdersPage } from './pages/OrdersPage';
-import { StockPage } from './pages/StockPage';
-import { StocktakesPage } from './pages/StocktakesPage';
+import {
+  CustomerInvoicesPage,
+  MenuPage,
+  SupplierInvoicesPage,
+  StockPage,
+  StocktakeEditor,
+  StocktakeManager,
+  StocktakesPage,
+} from './pages';
+
 import Synchronizer from './sync/Synchronizer';
+
+import {
+  Router,
+  Scene,
+} from 'react-native-router-flux';
 
 export default class OfflineMobileApp extends Component {
 
@@ -26,36 +35,60 @@ export default class OfflineMobileApp extends Component {
     this.synchronizer.synchronize();
   }
 
-  _renderScene(route, nav) {
-    switch (route.id) {
-      case 'stock':
-        return <StockPage />;
-      case 'stocktakes':
-        return <StocktakesPage />;
-      case 'customerInvoices':
-        return <CustomerInvoicesPage />;
-      case 'orders':
-        return <OrdersPage />;
-      default:
-        return <MenuPage navigator={nav} />;
-    }
-  }
-
   render() {
     return (
-      <Navigator
-        style={styles.container}
-        initialRoute={{ id: 'menuPage' }}
-        renderScene={this._renderScene}
-        configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-      />
+      <Router>
+        <Scene key="root" >
+          <Scene
+            key="menu"
+            initial
+            hideNavBar
+            component={MenuPage}
+          />
+          <Scene
+            key="stock"
+            component={StockPage}
+            title="Stock"
+            sceneStyle={styles.navBarOffset}
+          />
+          <Scene
+            key="stocktakes"
+            component={StocktakesPage}
+            title="Stocktakes"
+            sceneStyle={styles.navBarOffset}
+          >
+            <Scene
+              key="stocktakeEditor"
+              component={StocktakeEditor}
+              title="Stocktake"
+              sceneStyle={styles.navBarOffset}
+            />
+            <Scene
+              key="stocktakeManager"
+              component={StocktakeManager}
+              sceneStyle={styles.navBarOffset}
+            />
+          </Scene>
+          <Scene
+            key="customerInvoices"
+            component={CustomerInvoicesPage}
+            title="Customer Invoices"
+            sceneStyle={styles.navBarOffset}
+          />
+          <Scene
+            key="supplierInvoices"
+            component={SupplierInvoicesPage}
+            title="Supplier Invoices"
+            sceneStyle={styles.navBarOffset}
+          />
+        </Scene>
+      </Router>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
+  navBarOffset: {
+    paddingTop: 68,
   },
 });

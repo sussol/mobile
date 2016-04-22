@@ -11,6 +11,7 @@ import React, {
   TextInput,
   View,
 } from 'react-native';
+
 import { ListView } from 'realm/react-native';
 
 export default function DataTable(props) {

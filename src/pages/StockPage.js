@@ -6,21 +6,19 @@
  */
 
 import React, {
-  Component,
-  Navigator,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View
+  View,
 } from 'react-native';
 
-import {Catalogue} from './Catalogue';
+import Catalogue from './Catalogue';
 
-export class StockPage extends Component {
-
-  render() {
-    return (
+export default function StockPage(props) {
+  return (
+    <View style={props.style}>
       <Catalogue />
-    );
-  }
+    </View>
+  );
 }
+
+StockPage.propTypes = {
+  style: View.propTypes.style,
+};

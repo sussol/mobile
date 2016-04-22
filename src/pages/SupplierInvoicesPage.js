@@ -10,14 +10,14 @@ import React, {
   View,
 } from 'react-native';
 
-export default function CustomerInvoicesPage(props) {
+export default function SupplierInvoicesPage(props) {
   return (
     <View style={props.style}>
-      <Text>Customer Invoices go here.</Text>
+      <Text>Supplier Invoices go here.</Text>
     </View>
   );
 }
 
-CustomerInvoicesPage.propTypes = {
+SupplierInvoicesPage.propTypes = {
   style: View.propTypes.style,
 };
