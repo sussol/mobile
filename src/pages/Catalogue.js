@@ -12,16 +12,19 @@ import React, {
   View,
 } from 'react-native';
 
-import DataTable from './DataTable/DataTable';
-import Row from './DataTable/Row';
-import Cell from './DataTable/Cell';
-import EditableCell from './DataTable/EditableCell';
-import Expansion from './DataTable/Expansion';
-import TableButton from './DataTable/TableButton';
-import Header from './DataTable/Header';
-import HeaderCell from './DataTable/HeaderCell';
+// import {
+import Cell from '../widgets/DataTable/Cell';
+import DataTable from '../widgets/DataTable/DataTable';
+import EditableCell from '../widgets/DataTable/EditableCell';
+import Expansion from '../widgets/DataTable/Expansion';
+import Header from '../widgets/DataTable/Header';
+import HeaderCell from '../widgets/DataTable/HeaderCell';
+import Row from '../widgets/DataTable/Row';
+import TableButton from '../widgets/DataTable/TableButton';
+// } from '../widgets/DataTable';
 
-import realm from '../schema/Realm';
+
+import realm from '../database/realm';
 import { ListView } from 'realm/react-native';
 
 export class Catalogue extends Component {

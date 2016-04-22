@@ -3,10 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import realm from '../schema/Realm';
-import realmMock from '../schema/mockDBInstantiator'
+import realm from '../database/realm';
+import realmMock from '../database/mockDBInstantiator';
 
-let REQUEST_URL = 'http://192.168.4.111:8088/mobile/item?item_name=@';
+const REQUEST_URL = 'http://192.168.4.111:8088/mobile/item?item_name=@';
 
 export default class Datastore {
 

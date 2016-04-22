@@ -1,4 +1,4 @@
-import realm from '../schema/Realm';
+import realm from '../database/realm';
 
 export default function instantiate(){
   realm.write(() => {
