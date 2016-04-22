@@ -9,16 +9,14 @@ import React, {
   Component,
   Navigator,
   StyleSheet,
-  Text,
-  View
 } from 'react-native';
 
-import { CustomerInvoicesPage } from './CustomerInvoicesPage';
-import { MenuPage } from './MenuPage';
-import { OrdersPage } from './OrdersPage';
-import { StockPage } from './StockPage';
-import { StocktakesPage } from './StocktakesPage';
-import Synchronizer from '../reducers/Synchronizer';
+import { CustomerInvoicesPage } from './pages/CustomerInvoicesPage';
+import { MenuPage } from './pages/MenuPage';
+import { OrdersPage } from './pages/OrdersPage';
+import { StockPage } from './pages/StockPage';
+import { StocktakesPage } from './pages/StocktakesPage';
+import Synchronizer from './sync/Synchronizer';
 
 export default class OfflineMobileApp extends Component {
 
@@ -31,15 +29,15 @@ export default class OfflineMobileApp extends Component {
   _renderScene(route, nav) {
     switch (route.id) {
       case 'stock':
-        return <StockPage />
+        return <StockPage />;
       case 'stocktakes':
-        return <StocktakesPage />
+        return <StocktakesPage />;
       case 'customerInvoices':
-        return <CustomerInvoicesPage />
+        return <CustomerInvoicesPage />;
       case 'orders':
-        return <OrdersPage />
+        return <OrdersPage />;
       default:
-        return <MenuPage navigator={nav} />
+        return <MenuPage navigator={nav} />;
     }
   }
 
@@ -47,9 +45,9 @@ export default class OfflineMobileApp extends Component {
     return (
       <Navigator
         style={styles.container}
-        initialRoute={{id: 'menuPage'}}
+        initialRoute={{ id: 'menuPage' }}
         renderScene={this._renderScene}
-        configureScene={(route) => Navigator.SceneConfigs.FloatFromRight}
+        configureScene={() => Navigator.SceneConfigs.FloatFromRight}
       />
     );
   }
@@ -59,5 +57,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5FCFF',
-  }
+  },
 });
