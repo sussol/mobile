@@ -17,11 +17,17 @@ function NavButton(props) {
     <TouchableHighlight
       style={styles.button}
       underlayColor="#B5B5B5"
-      onPress={props.onPress}>
+      onPress={props.onPress}
+    >
       <Text style={styles.buttonText}>{props.text}</Text>
     </TouchableHighlight>
   );
 }
+
+NavButton.propTypes = {
+  onPress: React.PropTypes.func,
+  text: React.PropTypes.string,
+};
 
 export function MenuPage(props) {
   return (
@@ -57,6 +63,11 @@ export function MenuPage(props) {
     </View>
   );
 }
+
+MenuPage.propTypes = {
+  database: React.PropTypes.object,
+  navigator: React.PropTypes.object,
+};
 
 const styles = StyleSheet.create({
   button: {
