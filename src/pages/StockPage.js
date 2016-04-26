@@ -14,13 +14,17 @@ import React, {
   View
 } from 'react-native';
 
-import {Catalogue} from './Catalogue';
+import { Catalogue } from './Catalogue';
 
 export class StockPage extends Component {
 
   render() {
     return (
-      <Catalogue />
+      <Catalogue database={this.props.database} />
     );
   }
 }
+
+StockPage.propTypes = {
+  database: React.PropTypes.object,
+};
