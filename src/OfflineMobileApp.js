@@ -38,50 +38,47 @@ export default class OfflineMobileApp extends Component {
   render() {
     return (
       <Router>
-        <Scene key="root" >
-          <Scene
-            key="menu"
-            initial
-            hideNavBar
-            component={MenuPage}
-          />
-          <Scene
-            key="stock"
-            component={StockPage}
-            title="Stock"
-            sceneStyle={styles.navBarOffset}
-          />
-          <Scene
-            key="stocktakes"
-            component={StocktakesPage}
-            title="Stocktakes"
-            sceneStyle={styles.navBarOffset}
-          >
-            <Scene
-              key="stocktakeEditor"
-              component={StocktakeEditor}
-              title="Stocktake"
-              sceneStyle={styles.navBarOffset}
-            />
-            <Scene
-              key="stocktakeManager"
-              component={StocktakeManager}
-              sceneStyle={styles.navBarOffset}
-            />
-          </Scene>
-          <Scene
-            key="customerInvoices"
-            component={CustomerInvoicesPage}
-            title="Customer Invoices"
-            sceneStyle={styles.navBarOffset}
-          />
-          <Scene
-            key="supplierInvoices"
-            component={SupplierInvoicesPage}
-            title="Supplier Invoices"
-            sceneStyle={styles.navBarOffset}
-          />
-        </Scene>
+        <Scene
+          key="menu"
+          initial
+          hideNavBar
+          component={MenuPage}
+        />
+        <Scene
+          key="stock"
+          component={StockPage}
+          title="Stock"
+          sceneStyle={styles.navBarOffset}
+        />
+        <Scene
+          key="stocktakes"
+          component={StocktakesPage}
+          title="Stocktakes"
+          sceneStyle={styles.navBarOffset}
+        />
+        <Scene
+          key="stocktakeEditor"
+          component={StocktakeEditor}
+          title="Stocktake"
+          sceneStyle={styles.navBarOffset}
+        />
+        <Scene
+          key="stocktakeManager"
+          component={StocktakeManager}
+          sceneStyle={styles.navBarOffset}
+        />
+        <Scene
+          key="customerInvoices"
+          component={CustomerInvoicesPage}
+          title="Customer Invoices"
+          sceneStyle={styles.navBarOffset}
+        />
+        <Scene
+          key="supplierInvoices"
+          component={SupplierInvoicesPage}
+          title="Supplier Invoices"
+          sceneStyle={styles.navBarOffset}
+        />
       </Router>
     );
   }
