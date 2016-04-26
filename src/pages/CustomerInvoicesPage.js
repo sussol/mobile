@@ -6,7 +6,6 @@
  */
 
 import React, {
-  Component,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -26,46 +25,43 @@ function NavButton(props) {
 }
 
 NavButton.propTypes = {
-  onPress: React.PropTypes.object,
-  text: React.PropTypes.Text,
+  onPress: React.PropTypes.func,
+  text: React.PropTypes.string,
 };
 
-export class CustomerInvoicesPage extends Component {
-
-  render() {
-    return (
-      <View>
-        <NavButton
-          text={'Stock'}
-          onPress={
-            () => {
-              this.props.navigator.push({ id: 'stock' });
-            }}
-        />
-        <NavButton
-          text={'Stocktakes'}
-          onPress={
-            () => {
-              this.props.navigator.push({ id: 'stocktakes' });
-            }}
-        />
-        <NavButton
-          text={'Orders'}
-          onPress={
-            () => {
-              this.props.navigator.push({ id: 'orders' });
-            }}
-        />
-        <NavButton
-          text={'Customer Invoices'}
-          onPress={
-            () => {
-              this.props.navigator.push({ id: 'customerInvoices' });
-            }}
-        />
-      </View>
-    );
-  }
+export function CustomerInvoicesPage(props) {
+  return (
+    <View style={styles.container}>
+      <NavButton
+        text="Stock"
+        onPress={
+          () => {
+            props.navigator.push({ id: 'stock' });
+          }}
+      />
+      <NavButton
+        text="Stocktakes"
+        onPress={
+          () => {
+            props.navigator.push({ id: 'stocktakes' });
+          }}
+      />
+      <NavButton
+        text="Orders"
+        onPress={
+          () => {
+            props.navigator.push({ id: 'orders' });
+          }}
+      />
+      <NavButton
+        text="Customer Invoices"
+        onPress={
+          () => {
+            props.navigator.push({ id: 'customerInvoices' });
+          }}
+      />
+    </View>
+  );
 }
 
 CustomerInvoicesPage.propTypes = {
