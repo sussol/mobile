@@ -17,6 +17,7 @@ import { OrdersPage } from './pages/OrdersPage';
 import { StockPage } from './pages/StockPage';
 import { StocktakesPage } from './pages/StocktakesPage';
 import Synchronizer from './sync/Synchronizer';
+import realm from './database/realm';
 
 export default class OfflineMobileApp extends Component {
 
@@ -29,13 +30,13 @@ export default class OfflineMobileApp extends Component {
   _renderScene(route, nav) {
     switch (route.id) {
       case 'stock':
-        return <StockPage />;
+        return <StockPage database={realm} />;
       case 'stocktakes':
-        return <StocktakesPage />;
+        return <StocktakesPage database={realm} />;
       case 'customerInvoices':
-        return <CustomerInvoicesPage />;
+        return <CustomerInvoicesPage database={realm} />;
       case 'orders':
-        return <OrdersPage />;
+        return <OrdersPage database={realm} />;
       default:
         return <MenuPage navigator={nav} />;
     }

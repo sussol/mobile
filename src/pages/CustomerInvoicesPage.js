@@ -13,18 +13,22 @@ import React, {
   View,
 } from 'react-native';
 
-class NavButton extends Component {
-  render() {
-    return (
-      <TouchableHighlight
-        style={styles.button}
-        underlayColor="#B5B5B5"
-        onPress={this.props.onPress}>
-        <Text style={styles.buttonText}>{this.props.text}</Text>
-      </TouchableHighlight>
-    );
-  }
+function NavButton(props) {
+  return (
+    <TouchableHighlight
+      style={styles.button}
+      underlayColor="#B5B5B5"
+      onPress={props.onPress}
+    >
+      <Text style={styles.buttonText}>{props.text}</Text>
+    </TouchableHighlight>
+  );
 }
+
+NavButton.propTypes = {
+  onPress: React.PropTypes.object,
+  text: React.PropTypes.Text,
+};
 
 export class CustomerInvoicesPage extends Component {
 
@@ -32,31 +36,31 @@ export class CustomerInvoicesPage extends Component {
     return (
       <View>
         <NavButton
-          text='Stock'
+          text={'Stock'}
           onPress={
-            ()=>{
-              this.props.navigator.push({id: 'stock'});
+            () => {
+              this.props.navigator.push({ id: 'stock' });
             }}
         />
         <NavButton
-          text='Stocktakes'
+          text={'Stocktakes'}
           onPress={
-            ()=>{
-              this.props.navigator.push({id: 'stocktakes'});
+            () => {
+              this.props.navigator.push({ id: 'stocktakes' });
             }}
         />
         <NavButton
-          text='Orders'
+          text={'Orders'}
           onPress={
-            ()=>{
-              this.props.navigator.push({id: 'orders'});
+            () => {
+              this.props.navigator.push({ id: 'orders' });
             }}
         />
         <NavButton
-          text='Customer Invoices'
+          text={'Customer Invoices'}
           onPress={
-            ()=>{
-              this.props.navigator.push({id: 'customerInvoices'});
+            () => {
+              this.props.navigator.push({ id: 'customerInvoices' });
             }}
         />
       </View>
@@ -64,7 +68,12 @@ export class CustomerInvoicesPage extends Component {
   }
 }
 
-var styles = StyleSheet.create({
+CustomerInvoicesPage.propTypes = {
+  database: React.PropTypes.object,
+  navigator: React.PropTypes.object,
+};
+
+const styles = StyleSheet.create({
   button: {
     backgroundColor: 'white',
     padding: 15,
@@ -74,7 +83,5 @@ var styles = StyleSheet.create({
   buttonText: {
     fontSize: 17,
     fontWeight: '500',
-  }
+  },
 });
-
-// TODO Add proptype validation
