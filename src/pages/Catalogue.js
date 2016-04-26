@@ -23,7 +23,6 @@ import {
   TableButton,
 } from '../widgets/DataTable';
 
-
 import realm from '../database/realm';
 import { ListView } from 'realm/react-native';
 
