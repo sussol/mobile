@@ -1,4 +1,5 @@
-jest.unmock('react-native-mock/mock');
+jest.unmock('react-native-mock');
 
-import React from 'react-native-mock/mock';
-export default React;
+import React from 'react-native-mock/build/react-native';
+
+module.exports = React;
