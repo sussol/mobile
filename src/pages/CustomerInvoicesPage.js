@@ -7,11 +7,10 @@
 
 import React, {
   Component,
-  Navigator,
   StyleSheet,
   Text,
   TouchableHighlight,
-  View
+  View,
 } from 'react-native';
 
 class NavButton extends Component {
@@ -27,11 +26,11 @@ class NavButton extends Component {
   }
 }
 
-export class MenuPage extends Component {
+export class CustomerInvoicesPage extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <NavButton
           text='Stock'
           onPress={
@@ -75,12 +74,6 @@ var styles = StyleSheet.create({
   buttonText: {
     fontSize: 17,
     fontWeight: '500',
-  },
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
   }
 });
 
