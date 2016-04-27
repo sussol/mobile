@@ -32,17 +32,22 @@ const {
 } = NavigationExperimental;
 
 const BACK_ACTION = NavigationRootContainer.getBackAction().type;
+const PUSH_ACTION = 'push';
+const INITIAL_ACTION = 'RootContainerInitialAction';
 
 const NavigationReducer = (currentState, action) => {
   switch (action.type) {
-    case 'RootContainerInitialAction':
+    case INITIAL_ACTION:
       return {
         index: 0,
         key: 'root',
         children: [{ key: 'menu' }],
       };
-    case 'push':
-      return NavigationStateUtils.push(currentState, { key: action.key });
+    case PUSH_ACTION:
+      return NavigationStateUtils.push(currentState, {
+        key: action.key,
+        title: action.title,
+      });
     case BACK_ACTION:
       return currentState.index > 0 ?
         NavigationStateUtils.pop(currentState) :
@@ -87,17 +92,17 @@ export default class OfflineMobileApp extends Component {
     );
   }
 
-  renderTitleComponent() {
+  renderTitleComponent(props) {
     return (
       <NavigationHeader.Title>
-        Hello
+        {props.scene.navigationState.title && props.scene.navigationState.title}
       </NavigationHeader.Title>
     );
   }
 
   renderScene(props) {
-    const navigateTo = (key) => {
-      props.onNavigate({ type: 'push', key });
+    const navigateTo = (key, title) => {
+      props.onNavigate({ type: 'push', key, title });
     };
     let page;
     switch (props.scene.navigationState.key) {

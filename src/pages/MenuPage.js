@@ -19,19 +19,19 @@ export default function MenuPage(props) {
     <View style={styles.container}>
       <Button
         text="Stock"
-        onPress={() => props.navigateTo('stock')}
+        onPress={() => props.navigateTo('stock', 'Stock')}
       />
       <Button
         text="Stocktakes"
-        onPress={() => props.navigateTo('stocktakes')}
+        onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
       />
       <Button
         text="Supplier Invoices"
-        onPress={() => props.navigateTo('supplierInvoices')}
+        onPress={() => props.navigateTo('supplierInvoices', 'Supplier Invoices')}
       />
       <Button
         text="Customer Invoices"
-        onPress={() => props.navigateTo('customerInvoices')}
+        onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
       />
     </View>
   );

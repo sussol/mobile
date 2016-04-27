@@ -18,11 +18,11 @@ export default function StocktakesPage(props) {
       <Text>Stocktakes go here.</Text>
       <Button
         text="Edit"
-        onPress={() => props.navigateTo('stocktakeEditor')}
+        onPress={() => props.navigateTo('stocktakeEditor', 'Edit Stocktake')}
       />
       <Button
         text="New"
-        onPress={() => props.navigateTo('stocktakeManager')}
+        onPress={() => props.navigateTo('stocktakeManager', 'Create Stocktake')}
       />
     </View>
   );
