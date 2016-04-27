@@ -11,35 +11,35 @@ import React, {
 } from 'react-native';
 
 import {
-  Actions,
-} from 'react-native-router-flux';
-
-import {
   Button,
 } from '../widgets';
 
-export default function MenuPage() {
+export default function MenuPage(props) {
   return (
     <View style={styles.container}>
       <Button
         text="Stock"
-        onPress={Actions.stock}
+        onPress={() => props.navigateTo('stock')}
       />
       <Button
         text="Stocktakes"
-        onPress={Actions.stocktakes}
+        onPress={() => props.navigateTo('stocktakes')}
       />
       <Button
         text="Supplier Invoices"
-        onPress={Actions.supplierInvoices}
+        onPress={() => props.navigateTo('supplierInvoices')}
       />
       <Button
         text="Customer Invoices"
-        onPress={Actions.customerInvoices}
+        onPress={() => props.navigateTo('customerInvoices')}
       />
     </View>
   );
 }
+
+MenuPage.propTypes = {
+  navigateTo: React.PropTypes.func.isRequired,
+};
 
 const styles = StyleSheet.create({
   container: {

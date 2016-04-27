@@ -10,7 +10,6 @@ import React, {
   View,
 } from 'react-native';
 
-import { Actions } from 'react-native-router-flux';
 import { Button } from '../widgets';
 
 export default function StocktakesPage(props) {
@@ -19,16 +18,17 @@ export default function StocktakesPage(props) {
       <Text>Stocktakes go here.</Text>
       <Button
         text="Edit"
-        onPress={Actions.pop}
+        onPress={() => props.navigateTo('stocktakeEditor')}
       />
       <Button
         text="New"
-        onPress={Actions.stocktakeManager}
+        onPress={() => props.navigateTo('stocktakeManager')}
       />
     </View>
   );
 }
 
 StocktakesPage.propTypes = {
+  navigateTo: React.PropTypes.func.isRequired,
   style: View.propTypes.style,
 };
