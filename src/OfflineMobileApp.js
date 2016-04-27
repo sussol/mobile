@@ -9,6 +9,7 @@ import React, {
   Component,
   NavigationExperimental,
   StyleSheet,
+  View,
 } from 'react-native';
 
 import {
@@ -30,6 +31,8 @@ const {
   RootContainer: NavigationRootContainer,
 } = NavigationExperimental;
 
+const BACK_ACTION = NavigationRootContainer.getBackAction().type;
+
 const NavigationReducer = (currentState, action) => {
   switch (action.type) {
     case 'RootContainerInitialAction':
@@ -40,8 +43,7 @@ const NavigationReducer = (currentState, action) => {
       };
     case 'push':
       return NavigationStateUtils.push(currentState, { key: action.key });
-    case 'back':
-    case 'pop':
+    case BACK_ACTION:
       return currentState.index > 0 ?
         NavigationStateUtils.pop(currentState) :
         currentState;
@@ -72,7 +74,6 @@ export default class OfflineMobileApp extends Component {
         onNavigate={onNavigate}
         renderScene={this.renderScene}
         renderOverlay={this.renderNavigationBar}
-        style={styles.main}
       />
     );
   }
@@ -98,24 +99,37 @@ export default class OfflineMobileApp extends Component {
     const navigateTo = (key) => {
       props.onNavigate({ type: 'push', key });
     };
+    let page;
     switch (props.scene.navigationState.key) {
       case 'menu':
-        return <MenuPage navigateTo={navigateTo} />;
+        page = <MenuPage navigateTo={navigateTo} />;
+        break;
       case 'stock':
-        return <StockPage navigateTo={navigateTo} />;
+        page = <StockPage navigateTo={navigateTo} />;
+        break;
       case 'stocktakes':
-        return <StocktakesPage navigateTo={navigateTo} />;
+        page = <StocktakesPage navigateTo={navigateTo} />;
+        break;
       case 'stocktakeEditor':
-        return <StocktakeEditor navigateTo={navigateTo} />;
+        page = <StocktakeEditor navigateTo={navigateTo} />;
+        break;
       case 'stocktakeManager':
-        return <StocktakeManager navigateTo={navigateTo} />;
+        page = <StocktakeManager navigateTo={navigateTo} />;
+        break;
       case 'customerInvoices':
-        return <CustomerInvoicesPage navigateTo={navigateTo} />;
+        page = <CustomerInvoicesPage navigateTo={navigateTo} />;
+        break;
       case 'supplierInvoices':
-        return <SupplierInvoicesPage navigateTo={navigateTo} />;
+        page = <SupplierInvoicesPage navigateTo={navigateTo} />;
+        break;
       default:
-        return <MenuPage navigateTo={navigateTo} />;
+        page = <MenuPage navigateTo={navigateTo} />;
     }
+    return (
+      <View style={[styles.navBarOffset, styles.main]}>
+        {page}
+      </View>
+    );
   }
 
   render() {
@@ -124,14 +138,16 @@ export default class OfflineMobileApp extends Component {
         reducer={NavigationReducer}
         ref={navRootContainer => { this.navRootContainer = navRootContainer; }}
         renderNavigation={this.renderNavigation}
-        style={styles.navBarOffset}
       />
     );
   }
 }
 
 const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+  },
   navBarOffset: {
-    marginTop: 64,
+    marginTop: NavigationHeader.HEIGHT,
   },
 });
