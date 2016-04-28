@@ -28,7 +28,6 @@ describe('Row', () => {
     const wrapper = shallow(
       <Row renderExpansion={jest.fn()} />
     );
-    console.log(wrapper.debug());
     expect(wrapper.state('expanded')).toEqual(false, 'before press');
     wrapper.find(TouchableOpacity).simulate('press');
     expect(wrapper.state('expanded')).toEqual(true, 'after press');
@@ -48,8 +47,9 @@ describe('Row', () => {
     const wrapper = shallow(
       <Row renderExpansion={() => renderExpansion()} />
     );
-    expect(wrapper.find(TouchableOpacity).length).toBe(1);
+    expect(wrapper.find(Text).length).toEqual(0);
     wrapper.find(TouchableOpacity).simulate('press');
     expect(renderExpansion.calledOnce).toBe(true, 'Button press');
+    expect(wrapper.find(Text).length).toEqual(1);
   });
 });

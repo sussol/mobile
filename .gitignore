@@ -34,4 +34,6 @@ local.properties
 node_modules/
 npm-debug.log
 
+
+# Jest Coverage
 coverage/
