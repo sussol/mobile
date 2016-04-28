@@ -22,6 +22,10 @@ export default function MenuPage(props) {
         onPress={() => props.navigateTo('stock', 'Stock')}
       />
       <Button
+        text="Customers"
+        onPress={() => props.navigateTo('customers', 'Customers')}
+      />
+      <Button
         text="Stocktakes"
         onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
       />
@@ -32,6 +36,10 @@ export default function MenuPage(props) {
       <Button
         text="Customer Invoices"
         onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
+      />
+      <Button
+        text="Stock Histories"
+        onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
       />
     </View>
   );

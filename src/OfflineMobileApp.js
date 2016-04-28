@@ -13,13 +13,19 @@ import React, {
 } from 'react-native';
 
 import {
+  CustomerInvoicePage,
   CustomerInvoicesPage,
+  CustomerPage,
+  CustomersPage,
   MenuPage,
-  SupplierInvoicesPage,
+  StockHistoriesPage,
+  StockHistoryPage,
   StockPage,
-  StocktakeEditor,
-  StocktakeManager,
+  StocktakeEditPage,
+  StocktakeManagePage,
   StocktakesPage,
+  SupplierInvoicePage,
+  SupplierInvoicesPage,
 } from './pages';
 
 import Synchronizer from './sync/Synchronizer';
@@ -109,6 +115,12 @@ export default class OfflineMobileApp extends Component {
       case 'menu':
         page = <MenuPage navigateTo={navigateTo} />;
         break;
+      case 'customers':
+        page = <CustomersPage navigateTo={navigateTo} />;
+        break;
+      case 'customer':
+        page = <CustomerPage navigateTo={navigateTo} />;
+        break;
       case 'stock':
         page = <StockPage navigateTo={navigateTo} />;
         break;
@@ -116,16 +128,28 @@ export default class OfflineMobileApp extends Component {
         page = <StocktakesPage navigateTo={navigateTo} />;
         break;
       case 'stocktakeEditor':
-        page = <StocktakeEditor navigateTo={navigateTo} />;
+        page = <StocktakeEditPage navigateTo={navigateTo} />;
         break;
       case 'stocktakeManager':
-        page = <StocktakeManager navigateTo={navigateTo} />;
+        page = <StocktakeManagePage navigateTo={navigateTo} />;
         break;
       case 'customerInvoices':
         page = <CustomerInvoicesPage navigateTo={navigateTo} />;
         break;
+      case 'customerInvoice':
+        page = <CustomerInvoicePage navigateTo={navigateTo} />;
+        break;
       case 'supplierInvoices':
         page = <SupplierInvoicesPage navigateTo={navigateTo} />;
+        break;
+      case 'supplierInvoice':
+        page = <SupplierInvoicePage navigateTo={navigateTo} />;
+        break;
+      case 'stockHistories':
+        page = <StockHistoriesPage navigateTo={navigateTo} />;
+        break;
+      case 'stockHistory':
+        page = <StockHistoryPage navigateTo={navigateTo} />;
         break;
       default:
         page = <MenuPage navigateTo={navigateTo} />;

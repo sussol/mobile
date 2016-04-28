@@ -12,19 +12,19 @@ import React, {
 
 import Button from '../widgets/Button';
 
-export default function SupplierInvoicesPage(props) {
+export default function StocktakeEditor(props) {
   return (
     <View style={props.style}>
-      <Text>Supplier Invoices go here.</Text>
+      <Text>You can edit a stocktake.</Text>
         <Button
-          text="View an invoice"
-          onPress={() => props.navigateTo('supplierInvoice', 'Invoice Number')}
+          text="Or Manage a Stocktake"
+          onPress={() => props.navigateTo('stocktakeManager', 'Manage Stocktake')}
         />
     </View>
   );
 }
 
-SupplierInvoicesPage.propTypes = {
-  navigateTo: React.PropTypes.func.isRequired,
+StocktakeEditor.propTypes = {
   style: View.propTypes.style,
+  navigateTo: React.PropTypes.func.isRequired,
 };

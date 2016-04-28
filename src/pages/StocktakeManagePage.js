@@ -10,7 +10,7 @@ import React, {
   View,
 } from 'react-native';
 
-export default function StocktakesPage(props) {
+export default function StocktakeManager(props) {
   return (
     <View style={props.style}>
       <Text>You can manage a stocktake.</Text>
@@ -18,6 +18,6 @@ export default function StocktakesPage(props) {
   );
 }
 
-StocktakesPage.propTypes = {
+StocktakeManager.propTypes = {
   style: View.propTypes.style,
 };
