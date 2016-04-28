@@ -14,7 +14,7 @@ describe('Header', () => {
     );
     expect(wrapper.find(View).length).toBe(1);
   });
-  it('renders some arbituary components', () => {
+  it('renders some arbitrary components', () => {
     const onBtnPress = sinon.spy();
     const wrapper = shallow(
       <Header>

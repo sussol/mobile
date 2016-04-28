@@ -14,21 +14,17 @@ describe('HeaderCell', () => {
     );
     expect(wrapper.find(TouchableOpacity).length).toBe(1);
   });
-  it('renders a view when not given onPress prop', () => {
+  it('renders a view and not TouchableOpacity when not given onPress prop', () => {
     const wrapper = shallow(
       <HeaderCell />
     );
+    expect(wrapper.find(TouchableOpacity).length).toBe(0);
     expect(wrapper.find(View).length).toBe(1);
   });
   it('Calls given func when pressed', () => {
     const onBtnPress = sinon.spy();
-    const wrapper = shallow(
-      <HeaderCell onPress={() => onBtnPress()}>
-        Foo
-      </HeaderCell>
-    );
+    const wrapper = shallow(<HeaderCell onPress={() => onBtnPress()} />);
     expect(wrapper.find(TouchableOpacity).length).toBe(1);
-    expect(wrapper.contains('Foo')).toBe(true, 'Contains Foo');
     wrapper.find(TouchableOpacity).simulate('press');
     expect(onBtnPress.calledOnce).toBe(true, 'Button press');
   });

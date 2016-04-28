@@ -18,7 +18,7 @@ describe('EditableCell', () => {
     expect(wrapper.find(View).length).toBe(1);
     expect(wrapper.find(TextInput).length).toBe(1);
   });
-  it('componentWillMount sets state to value as string', () => {
+  it('sets state to value as string', () => {
     const wrapper = shallow(
       <EditableCell
         value={50}

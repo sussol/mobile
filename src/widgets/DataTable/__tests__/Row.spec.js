@@ -18,10 +18,13 @@ describe('Row', () => {
   it('renders children', () => {
     const wrapper = shallow(
       <Row>
-        <Text />
+        <View><Text /></View>
+        <View><Text /></View>
+        <View><Text /></View>
       </Row>
     );
-    expect(wrapper.find(Text).length).toEqual(1);
+    expect(wrapper.find(Text).length).toEqual(3);
+    expect(wrapper.find(View).length).toEqual(4);
   });
 
   it('changes expanded state when given an expansion function and pressed', () => {
