@@ -38,7 +38,7 @@ HeaderCell.propTypes = {
   style: React.PropTypes.number,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
-  children: React.PropTypes.any,
+  children: React.PropTypes.string,
 };
 
 HeaderCell.defaultProps = {

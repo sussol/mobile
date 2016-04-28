@@ -29,6 +29,7 @@ import {
 } from './pages';
 
 import Synchronizer from './sync/Synchronizer';
+import realm from './database/realm';
 
 const {
   CardStack: NavigationCardStack,
@@ -122,10 +123,10 @@ export default class OfflineMobileApp extends Component {
         page = <CustomerPage navigateTo={navigateTo} />;
         break;
       case 'stock':
-        page = <StockPage navigateTo={navigateTo} />;
+        page = <StockPage database={realm} navigateTo={navigateTo} />;
         break;
       case 'stocktakes':
-        page = <StocktakesPage navigateTo={navigateTo} />;
+        page = <StocktakesPage database={realm} navigateTo={navigateTo} />;
         break;
       case 'stocktakeEditor':
         page = <StocktakeEditPage navigateTo={navigateTo} />;
@@ -134,7 +135,7 @@ export default class OfflineMobileApp extends Component {
         page = <StocktakeManagePage navigateTo={navigateTo} />;
         break;
       case 'customerInvoices':
-        page = <CustomerInvoicesPage navigateTo={navigateTo} />;
+        page = <CustomerInvoicesPage database={realm} navigateTo={navigateTo} />;
         break;
       case 'customerInvoice':
         page = <CustomerInvoicePage navigateTo={navigateTo} />;

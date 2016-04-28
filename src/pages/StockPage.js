@@ -14,7 +14,7 @@ import Catalogue from './Catalogue';
 export default function StockPage(props) {
   return (
     <View style={props.style}>
-      <Catalogue />
+      <Catalogue database={this.props.database} />
     </View>
   );
 }

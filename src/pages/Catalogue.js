@@ -23,8 +23,6 @@ import {
   TableButton,
 } from '../widgets/DataTable';
 
-
-import realm from '../database/realm';
 import { ListView } from 'realm/react-native';
 
 export default class Catalogue extends Component {
@@ -37,7 +35,7 @@ export default class Catalogue extends Component {
     this.state = {
       dataSource,
       query: 'item_name=@',
-      items: realm.objects('Item'),
+      items: props.database.objects('Item'),
       sortBy: 'name',
       reverseSort: false,
       loaded: false,
@@ -75,8 +73,9 @@ export default class Catalogue extends Component {
     // Show dialog/error if wrong type. Might have to rerender
     // to show old value. Such a dialog/modal should be a common
     // component.
-    realm.write(() => {
-      realm.create('Item', { id: item.id, defaultPackSize: value }, true);
+    const { database } = this.props;
+    database.write(() => {
+      database.create('Item', { id: item.id, defaultPackSize: value }, true);
     });
   }
 
@@ -93,9 +92,9 @@ export default class Catalogue extends Component {
   onDeleteBtnPress(item) {
     // TODO: needs a modal dialog, deleting needs confirmation!!
     const { dataSource, items, sortBy, reverseSort } = this.state;
-
-    realm.write(() => {
-      realm.delete(item);
+    const { database } = this.props;
+    database.write(() => {
+      database.delete(item);
     });
 
     this.setState({
@@ -163,6 +162,10 @@ export default class Catalogue extends Component {
     );
   }
 }
+
+Catalogue.propTypes = {
+  database: React.PropTypes.object,
+};
 
 const styles = StyleSheet.create({
   container: {
