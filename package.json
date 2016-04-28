@@ -4,24 +4,17 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest --coverage"
+    "test": "jest"
   },
   "jest": {
-    "preprocessorIgnorePatterns": [
-      "node_modules/enzyme"
-    ],
     "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
-    "setupEnvScriptFile": "node_modules/react-native/jestSupport/env.js",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "packager/react-packager/src/Activity/"
-    ],
     "globals": {
       "__DEV__": true
     },
     "unmockedModulePathPatterns": [
       "react",
       "react-dom",
+      "react-native",
       "react-addons-test-utils",
       "react-native-mock",
       "enzyme"
@@ -37,7 +30,6 @@
     "babel-core": "^6.7.2",
     "babel-jest": "^11.0.2",
     "babel-polyfill": "^6.7.4",
-    "babel-preset-airbnb": "^1.1.1",
     "babel-preset-react": "^6.5.0",
     "babel-preset-react-native": "^1.5.2",
     "enzyme": "^2.1.0",
