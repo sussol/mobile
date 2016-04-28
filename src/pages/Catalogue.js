@@ -12,16 +12,16 @@ import React, {
   View,
 } from 'react-native';
 
-import {
-  Cell,
-  DataTable,
-  EditableCell,
-  Expansion,
-  Header,
-  HeaderCell,
-  Row,
-  TableButton,
-} from '../widgets/DataTable';
+// import {
+import Cell from '../widgets/DataTable/Cell';
+import DataTable from '../widgets/DataTable/DataTable';
+import EditableCell from '../widgets/DataTable/EditableCell';
+import Expansion from '../widgets/DataTable/Expansion';
+import Header from '../widgets/DataTable/Header';
+import HeaderCell from '../widgets/DataTable/HeaderCell';
+import Row from '../widgets/DataTable/Row';
+import TableButton from '../widgets/DataTable/TableButton';
+// } from '../widgets/DataTable';
 
 import { ListView } from 'realm/react-native';
 

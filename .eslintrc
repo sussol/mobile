@@ -1,9 +1,5 @@
 "extends": "airbnb"
 
-"env": {
-  "jest": true;
-  }
-
 "rules": {
         "no-use-before-define": "off"
         }
