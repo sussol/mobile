@@ -7,10 +7,9 @@
 
 import React, {
   Component,
-  NavigationExperimental,
-  StyleSheet,
-  View,
 } from 'react-native';
+
+import { Navigator } from './navigation';
 
 import {
   CustomerInvoicePage,
@@ -31,39 +30,6 @@ import {
 import Synchronizer from './sync/Synchronizer';
 import realm from './database/realm';
 
-const {
-  CardStack: NavigationCardStack,
-  Header: NavigationHeader,
-  StateUtils: NavigationStateUtils,
-  RootContainer: NavigationRootContainer,
-} = NavigationExperimental;
-
-const BACK_ACTION = NavigationRootContainer.getBackAction().type;
-const PUSH_ACTION = 'push';
-const INITIAL_ACTION = 'RootContainerInitialAction';
-
-const NavigationReducer = (currentState, action) => {
-  switch (action.type) {
-    case INITIAL_ACTION:
-      return {
-        index: 0,
-        key: 'root',
-        children: [{ key: 'menu' }],
-      };
-    case PUSH_ACTION:
-      return NavigationStateUtils.push(currentState, {
-        key: action.key,
-        title: action.title,
-      });
-    case BACK_ACTION:
-      return currentState.index > 0 ?
-        NavigationStateUtils.pop(currentState) :
-        currentState;
-    default:
-      return currentState;
-  }
-};
-
 export default class OfflineMobileApp extends Component {
 
   constructor() {
@@ -73,111 +39,47 @@ export default class OfflineMobileApp extends Component {
 
   componentWillMount() {
     this.synchronizer.synchronize();
-    this.renderNavigation = this.renderNavigation.bind(this);
-    this.renderNavigationBar = this.renderNavigationBar.bind(this);
     this.renderScene = this.renderScene.bind(this);
-    this.renderTitleComponent = this.renderTitleComponent.bind(this);
-  }
-
-  renderNavigation(navigationState, onNavigate) {
-    return (
-      <NavigationCardStack
-        navigationState={navigationState}
-        onNavigate={onNavigate}
-        renderScene={this.renderScene}
-        renderOverlay={this.renderNavigationBar}
-      />
-    );
-  }
-
-  renderNavigationBar(props) {
-    return (
-      <NavigationHeader
-        {...props}
-        renderTitleComponent={this.renderTitleComponent}
-      />
-    );
-  }
-
-  renderTitleComponent(props) {
-    return (
-      <NavigationHeader.Title>
-        {props.scene.navigationState.title && props.scene.navigationState.title}
-      </NavigationHeader.Title>
-    );
   }
 
   renderScene(props) {
     const navigateTo = (key, title) => {
       props.onNavigate({ type: 'push', key, title });
     };
-    let page;
+
     switch (props.scene.navigationState.key) {
       case 'menu':
-        page = <MenuPage navigateTo={navigateTo} />;
-        break;
+        return <MenuPage navigateTo={navigateTo} />;
       case 'customers':
-        page = <CustomersPage navigateTo={navigateTo} />;
-        break;
+        return <CustomersPage navigateTo={navigateTo} />;
       case 'customer':
-        page = <CustomerPage navigateTo={navigateTo} />;
-        break;
+        return <CustomerPage navigateTo={navigateTo} />;
       case 'stock':
-        page = <StockPage database={realm} navigateTo={navigateTo} />;
-        break;
+        return <StockPage database={realm} navigateTo={navigateTo} />;
       case 'stocktakes':
-        page = <StocktakesPage database={realm} navigateTo={navigateTo} />;
-        break;
+        return <StocktakesPage database={realm} navigateTo={navigateTo} />;
       case 'stocktakeEditor':
-        page = <StocktakeEditPage navigateTo={navigateTo} />;
-        break;
+        return <StocktakeEditPage navigateTo={navigateTo} />;
       case 'stocktakeManager':
-        page = <StocktakeManagePage navigateTo={navigateTo} />;
-        break;
+        return <StocktakeManagePage navigateTo={navigateTo} />;
       case 'customerInvoices':
-        page = <CustomerInvoicesPage database={realm} navigateTo={navigateTo} />;
-        break;
+        return <CustomerInvoicesPage database={realm} navigateTo={navigateTo} />;
       case 'customerInvoice':
-        page = <CustomerInvoicePage navigateTo={navigateTo} />;
-        break;
+        return <CustomerInvoicePage navigateTo={navigateTo} />;
       case 'supplierInvoices':
-        page = <SupplierInvoicesPage navigateTo={navigateTo} />;
-        break;
+        return <SupplierInvoicesPage navigateTo={navigateTo} />;
       case 'supplierInvoice':
-        page = <SupplierInvoicePage navigateTo={navigateTo} />;
-        break;
+        return <SupplierInvoicePage navigateTo={navigateTo} />;
       case 'stockHistories':
-        page = <StockHistoriesPage navigateTo={navigateTo} />;
-        break;
+        return <StockHistoriesPage navigateTo={navigateTo} />;
       case 'stockHistory':
-        page = <StockHistoryPage navigateTo={navigateTo} />;
-        break;
+        return <StockHistoryPage navigateTo={navigateTo} />;
       default:
-        page = <MenuPage navigateTo={navigateTo} />;
+        return <MenuPage navigateTo={navigateTo} />;
     }
-    return (
-      <View style={[styles.navBarOffset, styles.main]}>
-        {page}
-      </View>
-    );
   }
 
   render() {
-    return (
-      <NavigationRootContainer
-        reducer={NavigationReducer}
-        ref={navRootContainer => { this.navRootContainer = navRootContainer; }}
-        renderNavigation={this.renderNavigation}
-      />
-    );
+    return <Navigator renderScene={this.renderScene} />;
   }
 }
-
-const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-  },
-  navBarOffset: {
-    marginTop: NavigationHeader.HEIGHT,
-  },
-});
