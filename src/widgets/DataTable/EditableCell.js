@@ -60,6 +60,7 @@ EditableCell.propTypes = {
 
 EditableCell.defaultProps = {
   width: 1,
+  value: 'N/A',
 };
 
 const styles = StyleSheet.create({
