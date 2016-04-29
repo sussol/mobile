@@ -14,11 +14,12 @@ import Catalogue from './Catalogue';
 export default function StockPage(props) {
   return (
     <View style={props.style}>
-      <Catalogue database={this.props.database} />
+      <Catalogue database={props.database} />
     </View>
   );
 }
 
 StockPage.propTypes = {
+  database: React.PropTypes.object,
   style: View.propTypes.style,
 };
