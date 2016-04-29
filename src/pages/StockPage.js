@@ -12,11 +12,7 @@ import React, {
 import Catalogue from './Catalogue';
 
 export default function StockPage(props) {
-  return (
-    <View style={props.style}>
-      <Catalogue database={props.database} />
-    </View>
-  );
+  return <Catalogue database={props.database} />;
 }
 
 StockPage.propTypes = {
