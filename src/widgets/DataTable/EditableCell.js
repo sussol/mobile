@@ -37,7 +37,7 @@ export default class EditableCell extends Component {
         <TextInput
           style={this.props.style}
           keyboardType={this.props.keyboardType}
-          onChange = {(event) => this.setState({ value: event.nativeEvent.text })}
+          onChangeText = {(text) => this.setState({ value: text })}
           onEndEditing={() => this.onEndEditing()}
           value={this.state.value}
         />
@@ -60,6 +60,7 @@ EditableCell.propTypes = {
 
 EditableCell.defaultProps = {
   width: 1,
+  value: 'N/A',
 };
 
 const styles = StyleSheet.create({

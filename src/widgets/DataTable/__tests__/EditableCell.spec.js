@@ -11,13 +11,23 @@ import React, {
 } from 'react-native';
 
 describe('EditableCell', () => {
-  it('renders a View and TextInput', () => {
+  it('renders a View and TextInput with default props', () => {
     const wrapper = shallow(
       <EditableCell />
     );
+    expect(wrapper.state('value')).toEqual('N/A');
+    expect(wrapper.find(View).prop('style')[1]).toEqual({ flex: 1 });
     expect(wrapper.find(View).length).toBe(1);
     expect(wrapper.find(TextInput).length).toBe(1);
   });
+
+  it('takes a width argument and applies it to styles', () => {
+    const wrapper = shallow(
+      <EditableCell width={1337} />
+    );
+    expect(wrapper.find(View).prop('style')[1]).toEqual({ flex: 1337 });
+  });
+
   it('sets state to value as string', () => {
     const wrapper = shallow(
       <EditableCell
@@ -26,16 +36,27 @@ describe('EditableCell', () => {
     );
     expect(wrapper.state('value')).toEqual('50');
   });
-  // it('onPress works', () => {
-  //   const callback = sinon.spy();
-  //   const wrapper = shallow(
-  //     <EditableCell
-  //       value={'Foo'}
-  //       onEndEditing={callback}
-  //     />
-  //   );
-  //   wrapper.find(TextInput).simulate('focusin');
-  //   wrapper.find(TextInput).simulate('focusout');
-  //   expect(callback.called).toBe(true);
-  // });
+
+  it('changes state with onChange event', () => {
+    const wrapper = shallow(
+      <EditableCell />
+    );
+    expect(wrapper.state('value')).toEqual('N/A');
+    wrapper.find(TextInput).simulate('changeText', 'foo');
+    expect(wrapper.state('value')).toEqual('foo');
+  });
+
+  it('onEndEditing event triggers callback', () => {
+    const callback = sinon.spy();
+    const obj = {};
+    const wrapper = shallow(
+      <EditableCell
+        value={'foo'}
+        onEndEditing={callback}
+        target={obj}
+      />
+    );
+    wrapper.find(TextInput).simulate('endEditing');
+    expect(callback.calledWithExactly(obj, 'foo')).toBe(true);
+  });
 });
