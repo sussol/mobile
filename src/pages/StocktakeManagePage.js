@@ -13,7 +13,7 @@ import React, {
 export default function StocktakeManager(props) {
   return (
     <View style={props.style}>
-      <Text>You can manage a stocktake.</Text>
+      <Text>You can manage a Stocktake.</Text>
     </View>
   );
 }
