@@ -7,79 +7,49 @@
 
 import React, {
   StyleSheet,
-  Text,
-  TouchableHighlight,
   View,
 } from 'react-native';
 
-function NavButton(props) {
-  return (
-    <TouchableHighlight
-      style={styles.button}
-      underlayColor="#B5B5B5"
-      onPress={props.onPress}
-    >
-      <Text style={styles.buttonText}>{props.text}</Text>
-    </TouchableHighlight>
-  );
-}
+import {
+  Button,
+} from '../widgets';
 
-NavButton.propTypes = {
-  onPress: React.PropTypes.func,
-  text: React.PropTypes.string,
-};
-
-export function MenuPage(props) {
+export default function MenuPage(props) {
   return (
     <View style={styles.container}>
-      <NavButton
+      <Button
         text="Stock"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'stock' });
-          }}
+        onPress={() => props.navigateTo('stock', 'Stock')}
       />
-      <NavButton
+      <Button
+        text="Customers"
+        onPress={() => props.navigateTo('customers', 'Customers')}
+      />
+      <Button
         text="Stocktakes"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'stocktakes' });
-          }}
+        onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
       />
-      <NavButton
-        text="Orders"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'orders' });
-          }}
+      <Button
+        text="Supplier Invoices"
+        onPress={() => props.navigateTo('supplierInvoices', 'Supplier Invoices')}
       />
-      <NavButton
+      <Button
         text="Customer Invoices"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'customerInvoices' });
-          }}
+        onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
+      />
+      <Button
+        text="Stock Histories"
+        onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
       />
     </View>
   );
 }
 
 MenuPage.propTypes = {
-  database: React.PropTypes.object,
-  navigator: React.PropTypes.object,
+  navigateTo: React.PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#CDCDCD',
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: '500',
-  },
   container: {
     flex: 1,
     justifyContent: 'center',

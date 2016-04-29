@@ -6,78 +6,29 @@
  */
 
 import React, {
-  StyleSheet,
   Text,
-  TouchableHighlight,
   View,
 } from 'react-native';
 
-function NavButton(props) {
-  return (
-    <TouchableHighlight
-      style={styles.button}
-      underlayColor="#B5B5B5"
-      onPress={props.onPress}
-    >
-      <Text style={styles.buttonText}>{props.text}</Text>
-    </TouchableHighlight>
-  );
-}
+import { Button } from '../widgets';
 
-NavButton.propTypes = {
-  onPress: React.PropTypes.func,
-  text: React.PropTypes.string,
-};
-
-export function StocktakesPage(props) {
+export default function StocktakesPage(props) {
   return (
-    <View style={styles.container}>
-      <NavButton
-        text="Stock"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'stock' });
-          }}
+    <View style={props.style}>
+      <Text>Stocktakes go here.</Text>
+      <Button
+        text="Edit"
+        onPress={() => props.navigateTo('stocktakeEditor', 'Edit Stocktake')}
       />
-      <NavButton
-        text="Stocktakes"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'stocktakes' });
-          }}
-      />
-      <NavButton
-        text="Orders"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'orders' });
-          }}
-      />
-      <NavButton
-        text="Customer Invoices"
-        onPress={
-          () => {
-            props.navigator.push({ id: 'customerInvoices' });
-          }}
+      <Button
+        text="New"
+        onPress={() => props.navigateTo('stocktakeManager', 'Create Stocktake')}
       />
     </View>
   );
 }
 
 StocktakesPage.propTypes = {
-  database: React.PropTypes.object,
-  navigator: React.PropTypes.object,
+  navigateTo: React.PropTypes.func.isRequired,
+  style: View.propTypes.style,
 };
-
-const styles = StyleSheet.create({
-  button: {
-    backgroundColor: 'white',
-    padding: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#CDCDCD',
-  },
-  buttonText: {
-    fontSize: 17,
-    fontWeight: '500',
-  },
-});

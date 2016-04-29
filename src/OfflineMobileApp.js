@@ -7,15 +7,26 @@
 
 import React, {
   Component,
-  Navigator,
-  StyleSheet,
 } from 'react-native';
 
-import { CustomerInvoicesPage } from './pages/CustomerInvoicesPage';
-import { MenuPage } from './pages/MenuPage';
-import { OrdersPage } from './pages/OrdersPage';
-import { StockPage } from './pages/StockPage';
-import { StocktakesPage } from './pages/StocktakesPage';
+import { Navigator } from './navigation';
+
+import {
+  CustomerInvoicePage,
+  CustomerInvoicesPage,
+  CustomerPage,
+  CustomersPage,
+  MenuPage,
+  StockHistoriesPage,
+  StockHistoryPage,
+  StockPage,
+  StocktakeEditPage,
+  StocktakeManagePage,
+  StocktakesPage,
+  SupplierInvoicePage,
+  SupplierInvoicesPage,
+} from './pages';
+
 import Synchronizer from './sync/Synchronizer';
 import realm from './database/realm';
 
@@ -24,39 +35,51 @@ export default class OfflineMobileApp extends Component {
   constructor() {
     super();
     this.synchronizer = new Synchronizer();
-    this.synchronizer.synchronize();
   }
 
-  _renderScene(route, nav) {
-    switch (route.id) {
+  componentWillMount() {
+    this.synchronizer.synchronize();
+    this.renderScene = this.renderScene.bind(this);
+  }
+
+  renderScene(props) {
+    const navigateTo = (key, title) => {
+      props.onNavigate({ type: 'push', key, title });
+    };
+
+    switch (props.scene.navigationState.key) {
+      case 'menu':
+        return <MenuPage navigateTo={navigateTo} />;
+      case 'customers':
+        return <CustomersPage navigateTo={navigateTo} />;
+      case 'customer':
+        return <CustomerPage navigateTo={navigateTo} />;
       case 'stock':
-        return <StockPage database={realm} />;
+        return <StockPage database={realm} navigateTo={navigateTo} />;
       case 'stocktakes':
-        return <StocktakesPage database={realm} />;
+        return <StocktakesPage database={realm} navigateTo={navigateTo} />;
+      case 'stocktakeEditor':
+        return <StocktakeEditPage navigateTo={navigateTo} />;
+      case 'stocktakeManager':
+        return <StocktakeManagePage navigateTo={navigateTo} />;
       case 'customerInvoices':
-        return <CustomerInvoicesPage database={realm} />;
-      case 'orders':
-        return <OrdersPage database={realm} />;
+        return <CustomerInvoicesPage database={realm} navigateTo={navigateTo} />;
+      case 'customerInvoice':
+        return <CustomerInvoicePage navigateTo={navigateTo} />;
+      case 'supplierInvoices':
+        return <SupplierInvoicesPage navigateTo={navigateTo} />;
+      case 'supplierInvoice':
+        return <SupplierInvoicePage navigateTo={navigateTo} />;
+      case 'stockHistories':
+        return <StockHistoriesPage navigateTo={navigateTo} />;
+      case 'stockHistory':
+        return <StockHistoryPage navigateTo={navigateTo} />;
       default:
-        return <MenuPage navigator={nav} />;
+        return <MenuPage navigateTo={navigateTo} />;
     }
   }
 
   render() {
-    return (
-      <Navigator
-        style={styles.container}
-        initialRoute={{ id: 'menuPage' }}
-        renderScene={this._renderScene}
-        configureScene={() => Navigator.SceneConfigs.FloatFromRight}
-      />
-    );
+    return <Navigator renderScene={this.renderScene} />;
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5FCFF',
-  },
-});
