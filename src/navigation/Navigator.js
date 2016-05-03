@@ -6,6 +6,7 @@
  */
 
 import React, {
+  BackAndroid,
   Component,
   NavigationExperimental,
   StyleSheet,
@@ -52,6 +53,14 @@ export default class Navigator extends Component {
     this.renderNavigationBar = this.renderNavigationBar.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderTitleComponent = this.renderTitleComponent.bind(this);
+    BackAndroid.addEventListener('hardwareBackPress', () =>
+      this.navRootContainer &&
+      this.navRootContainer.handleNavigation({ type: BACK_ACTION })
+    );
+  }
+
+  componentWillUnmount() {
+    BackAndroid.removeEventListener('hardwareBackPress');
   }
 
   renderNavigation(navigationState, onNavigate) {
