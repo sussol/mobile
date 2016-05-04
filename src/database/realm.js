@@ -1,6 +1,6 @@
 import Realm from 'realm';
 
-class Address {};
+class Address {}
 Address.schema = {
   name: 'Address',
   primaryKey: 'id',
@@ -8,11 +8,11 @@ Address.schema = {
     id: 'string',
     line1: 'string',
     line2: 'string',
-    line3: 'string'
-  }
-}
+    line3: 'string',
+  },
+};
 
-class Item {};
+class Item {}
 Item.schema = {
   name: 'Item',
   primaryKey: 'id',
@@ -21,15 +21,15 @@ Item.schema = {
     code: 'string',
     name: 'string',
     defaultPackSize: 'double',
-    lines: { type:'list', objectType: 'ItemLine' },
+    lines: { type: 'list', objectType: 'ItemLine' },
     typeOf: 'string',
     department: 'ItemDepartment',
     description: 'string',
-    category: 'ItemCategory'
-  }
-}
+    category: 'ItemCategory',
+  },
+};
 
-class ItemLine {};
+class ItemLine {}
 ItemLine.schema = {
   name: 'ItemLine',
   primaryKey: 'id',
@@ -42,35 +42,33 @@ ItemLine.schema = {
     expiryDate: 'date',
     batch: 'string',
     costPrice: 'double',
-    sellPrice: 'double'
-  }
-}
+    sellPrice: 'double',
+  },
+};
 
-class ItemDepartment {};
+class ItemDepartment {}
 ItemDepartment.schema = {
   name: 'ItemDepartment',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
-    parentDepartment: 'ItemDepartment'
-  }
-}
+    parentDepartment: 'ItemDepartment',
+  },
+};
 
-class ItemCategory {};
+class ItemCategory {}
 ItemCategory.schema = {
   name: 'ItemCategory',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
-    parentCategory: 'ItemCategory'
-  }
-}
+    parentCategory: 'ItemCategory',
+  },
+};
 
-class Invoice {};
-class CustomerInvoice extends Invoice {};
-class SupplierInvoice extends Invoice {};
+class Invoice {}
 Invoice.schema = {
   name: 'Invoice',
   primaryKey: 'id',
@@ -85,22 +83,22 @@ Invoice.schema = {
     confirmDate: 'date',
     enteredBy: 'User',
     theirRef: 'string', // An external reference code
-    lines: {type: 'list', objectType: 'InvoiceLine'}
-  }
-}
+    lines: { type: 'list', objectType: 'InvoiceLine' },
+  },
+};
 
-class InvoiceCategory {};
+class InvoiceCategory {}
 InvoiceCategory.schema = {
   name: 'InvoiceCategory',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
-    parentCategory: 'InvoiceCategory'
-  }
-}
+    parentCategory: 'InvoiceCategory',
+  },
+};
 
-class InvoiceLine {};
+class InvoiceLine {}
 InvoiceLine.schema = {
   name: 'InvoiceLine',
   primaryKey: 'id',
@@ -110,10 +108,10 @@ InvoiceLine.schema = {
     packSize: 'double',
     numberOfPacks: 'double',
     invoice: 'Invoice',
-  }
-}
+  },
+};
 
-class MasterList {};
+class MasterList {}
 MasterList.schema = {
   name: 'MasterList',
   primaryKey: 'id',
@@ -121,11 +119,11 @@ MasterList.schema = {
     id: 'string',
     name: 'string',
     description: 'string',
-    lines: {type: 'list', objectType: 'MasterListLine'}
-  }
-}
+    lines: { type: 'list', objectType: 'MasterListLine' },
+  },
+};
 
-class MasterListLine {};
+class MasterListLine {}
 MasterListLine.schema = {
   name: 'MasterListLine',
   primaryKey: 'id',
@@ -133,13 +131,11 @@ MasterListLine.schema = {
     id: 'string',
     masterList: 'MasterList',
     item: 'Item',
-    imprestQuantity: 'double'
-  }
-}
+    imprestQuantity: 'double',
+  },
+};
 
-class Name {};
-class Customer extends Name {};
-class Supplier extends Name {};
+class Name {}
 Name.schema = {
   name: 'Name',
   primaryKey: 'id',
@@ -151,11 +147,11 @@ Name.schema = {
     billingAddress: 'Address',
     type: 'string',
     masterList: 'MasterList',
-    invoices: {type: 'list', objectType: 'Invoice'}
-  }
-}
+    invoices: { type: 'list', objectType: 'Invoice' },
+  },
+};
 
-class Requisition {};
+class Requisition {}
 Requisition.schema = {
   name: 'Requisition',
   primaryKey: 'id',
@@ -165,11 +161,11 @@ Requisition.schema = {
     entryDate: 'date',
     monthsToSupply: 'double',
     serialNumber: 'int',
-    lines: {type: 'list', objectType: 'RequisitionLine'}
-  }
-}
+    lines: { type: 'list', objectType: 'RequisitionLine' },
+  },
+};
 
-class RequisitionLine {};
+class RequisitionLine {}
 RequisitionLine.schema = {
   name: 'RequisitionLine',
   primaryKey: 'id',
@@ -182,23 +178,23 @@ RequisitionLine.schema = {
     suggestedQuantity: 'double',
     imprestQuantity: 'double',
     requiredQuantity: 'double',
-    comment: 'string'
-  }
-}
+    comment: 'string',
+  },
+};
 
-
-class SyncOut {};
-SyncOut.schema = {
-  name: 'SyncOut',
+class Setting {}
+Setting.schema = {
+  name: 'Setting',
   primaryKey: 'id',
   properties: {
     id: 'string',
-    recordType: 'string', // i.e. Table name
-    recordId: 'string'
-  }
-}
+    key: 'string',
+    value: 'string',
+    user: 'User',
+  },
+};
 
-class Stocktake {};
+class Stocktake {}
 Stocktake.schema = {
   name: 'Stocktake',
   primaryKey: 'id',
@@ -207,14 +203,14 @@ Stocktake.schema = {
     createdDate: 'date', // Includes time
     stocktakeDate: 'date',
     status: 'string',
-    created_by: 'User',
-    finalised_by: 'User',
+    createdBy: 'User',
+    finalisedBy: 'User',
     comment: 'string',
-    serialNumber: 'int'
-  }
-}
+    serialNumber: 'int',
+  },
+};
 
-class StocktakeLine {};
+class StocktakeLine {}
 StocktakeLine.schema = {
   name: 'StocktakeLine',
   primaryKey: 'id',
@@ -224,11 +220,22 @@ StocktakeLine.schema = {
     itemLine: 'ItemLine',
     snapshotQuantity: 'double',
     snapshotPacksize: 'double',
-    countedQuantity: 'double'
-  }
-}
+    countedQuantity: 'double',
+  },
+};
 
-class User {};
+class SyncOut {}
+SyncOut.schema = {
+  name: 'SyncOut',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    recordType: 'string', // i.e. Table name
+    recordId: 'string',
+  },
+};
+
+class User {}
 User.schema = {
   name: 'User',
   primaryKey: 'id',
@@ -240,9 +247,9 @@ User.schema = {
     lastName: 'string',
     email: 'string',
     password: 'string',
-    salt: 'string'
-  }
-}
+    salt: 'string',
+  },
+};
 
 const schema =
   [
@@ -258,10 +265,10 @@ const schema =
     Name,
     Requisition,
     RequisitionLine,
-    SyncOut,
     Stocktake,
     StocktakeLine,
-    User
+    SyncOut,
+    User,
   ];
 
-export default new Realm({ schema: schema, schemaVersion: 2 });
+export default new Realm({ schema, schemaVersion: 2 });

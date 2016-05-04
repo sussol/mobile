@@ -30,7 +30,7 @@ const NavigationReducer = (currentState, action) => {
       return {
         index: 0,
         key: 'root',
-        children: [{ key: 'menu' }],
+        children: [{ key: 'root' }],
       };
     case PUSH_ACTION:
       return NavigationStateUtils.push(currentState, {

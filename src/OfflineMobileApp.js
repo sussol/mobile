@@ -16,6 +16,8 @@ import {
   CustomerInvoicesPage,
   CustomerPage,
   CustomersPage,
+  FirstUsePage,
+  LoginPage,
   MenuPage,
   StockHistoriesPage,
   StockHistoryPage,
@@ -48,6 +50,8 @@ export default class OfflineMobileApp extends Component {
     };
 
     switch (props.scene.navigationState.key) {
+      case 'login':
+        return <LoginPage database={realm} navigateTo={navigateTo} />;
       case 'menu':
         return <MenuPage navigateTo={navigateTo} />;
       case 'customers':
@@ -74,8 +78,9 @@ export default class OfflineMobileApp extends Component {
         return <StockHistoriesPage navigateTo={navigateTo} />;
       case 'stockHistory':
         return <StockHistoryPage navigateTo={navigateTo} />;
+      case 'root':
       default:
-        return <MenuPage navigateTo={navigateTo} />;
+        return <FirstUsePage navigateTo={navigateTo} />;
     }
   }
 
