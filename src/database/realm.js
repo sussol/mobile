@@ -1,7 +1,6 @@
 import Realm from 'realm';
 
-class Address {}
-Address.schema = {
+const AddressSchema = {
   name: 'Address',
   primaryKey: 'id',
   properties: {
@@ -12,8 +11,7 @@ Address.schema = {
   },
 };
 
-class Item {}
-Item.schema = {
+const ItemSchema = {
   name: 'Item',
   primaryKey: 'id',
   properties: {
@@ -29,8 +27,7 @@ Item.schema = {
   },
 };
 
-class ItemLine {}
-ItemLine.schema = {
+const ItemLineSchema = {
   name: 'ItemLine',
   primaryKey: 'id',
   properties: {
@@ -46,8 +43,7 @@ ItemLine.schema = {
   },
 };
 
-class ItemDepartment {}
-ItemDepartment.schema = {
+const ItemDepartmentSchema = {
   name: 'ItemDepartment',
   primaryKey: 'id',
   properties: {
@@ -57,8 +53,7 @@ ItemDepartment.schema = {
   },
 };
 
-class ItemCategory {}
-ItemCategory.schema = {
+const ItemCategorySchema = {
   name: 'ItemCategory',
   primaryKey: 'id',
   properties: {
@@ -68,8 +63,7 @@ ItemCategory.schema = {
   },
 };
 
-class Invoice {}
-Invoice.schema = {
+const InvoiceSchema = {
   name: 'Invoice',
   primaryKey: 'id',
   properties: {
@@ -87,8 +81,7 @@ Invoice.schema = {
   },
 };
 
-class InvoiceCategory {}
-InvoiceCategory.schema = {
+const InvoiceCategorySchema = {
   name: 'InvoiceCategory',
   primaryKey: 'id',
   properties: {
@@ -98,8 +91,7 @@ InvoiceCategory.schema = {
   },
 };
 
-class InvoiceLine {}
-InvoiceLine.schema = {
+const InvoiceLineSchema = {
   name: 'InvoiceLine',
   primaryKey: 'id',
   properties: {
@@ -111,8 +103,7 @@ InvoiceLine.schema = {
   },
 };
 
-class MasterList {}
-MasterList.schema = {
+const MasterListSchema = {
   name: 'MasterList',
   primaryKey: 'id',
   properties: {
@@ -123,8 +114,7 @@ MasterList.schema = {
   },
 };
 
-class MasterListLine {}
-MasterListLine.schema = {
+const MasterListLineSchema = {
   name: 'MasterListLine',
   primaryKey: 'id',
   properties: {
@@ -135,8 +125,7 @@ MasterListLine.schema = {
   },
 };
 
-class Name {}
-Name.schema = {
+const NameSchema = {
   name: 'Name',
   primaryKey: 'id',
   properties: {
@@ -151,8 +140,7 @@ Name.schema = {
   },
 };
 
-class Requisition {}
-Requisition.schema = {
+const RequisitionSchema = {
   name: 'Requisition',
   primaryKey: 'id',
   properties: {
@@ -165,8 +153,7 @@ Requisition.schema = {
   },
 };
 
-class RequisitionLine {}
-RequisitionLine.schema = {
+const RequisitionLineSchema = {
   name: 'RequisitionLine',
   primaryKey: 'id',
   properties: {
@@ -182,8 +169,7 @@ RequisitionLine.schema = {
   },
 };
 
-class Setting {}
-Setting.schema = {
+SettingSchema = {
   name: 'Setting',
   primaryKey: 'id',
   properties: {
@@ -194,8 +180,15 @@ Setting.schema = {
   },
 };
 
-class Stocktake {}
-Stocktake.schema = {
+const SyncOutSchema = {
+  name: 'SyncOut',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+  },
+};
+
+const StocktakeSchema = {
   name: 'Stocktake',
   primaryKey: 'id',
   properties: {
@@ -210,8 +203,7 @@ Stocktake.schema = {
   },
 };
 
-class StocktakeLine {}
-StocktakeLine.schema = {
+const StocktakeLineSchema = {
   name: 'StocktakeLine',
   primaryKey: 'id',
   properties: {
@@ -224,19 +216,7 @@ StocktakeLine.schema = {
   },
 };
 
-class SyncOut {}
-SyncOut.schema = {
-  name: 'SyncOut',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    recordType: 'string', // i.e. Table name
-    recordId: 'string',
-  },
-};
-
-class User {}
-User.schema = {
+const UserSchema = {
   name: 'User',
   primaryKey: 'id',
   properties: {
@@ -253,22 +233,23 @@ User.schema = {
 
 const schema =
   [
-    Address,
-    Item,
-    ItemLine,
-    ItemDepartment,
-    ItemCategory,
-    Invoice,
-    InvoiceLine,
-    MasterList,
-    MasterListLine,
-    Name,
-    Requisition,
-    RequisitionLine,
-    Stocktake,
-    StocktakeLine,
-    SyncOut,
-    User,
+    AddressSchema,
+    ItemSchema,
+    ItemLineSchema,
+    ItemDepartmentSchema,
+    ItemCategorySchema,
+    InvoiceSchema,
+    InvoiceLineSchema,
+    MasterListSchema,
+    MasterListLineSchema,
+    NameSchema,
+    RequisitionSchema,
+    RequisitionLineSchema,
+	SettingSchema,
+    SyncOutSchema,
+    StocktakeSchema,
+    StocktakeLineSchema,
+    UserSchema,
   ];
 
 export default new Realm({ schema, schemaVersion: 2 });
