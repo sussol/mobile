@@ -169,7 +169,7 @@ const RequisitionLineSchema = {
   },
 };
 
-SettingSchema = {
+const SettingSchema = {
   name: 'Setting',
   primaryKey: 'id',
   properties: {
@@ -238,6 +238,7 @@ const schema =
     ItemLineSchema,
     ItemDepartmentSchema,
     ItemCategorySchema,
+    InvoiceCategorySchema,
     InvoiceSchema,
     InvoiceLineSchema,
     MasterListSchema,
@@ -245,7 +246,7 @@ const schema =
     NameSchema,
     RequisitionSchema,
     RequisitionLineSchema,
-	SettingSchema,
+    SettingSchema,
     SyncOutSchema,
     StocktakeSchema,
     StocktakeLineSchema,

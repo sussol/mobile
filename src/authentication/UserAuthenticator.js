@@ -1,7 +1,7 @@
 export default class UserAuthenticator {
   constructor(database) {
     this.database = database;
-    const serverURL = this.database.objects('Setting').filtered(`name = "${serverURL}"`)[0];
+    const serverURL = this.database.objects('Setting').filtered('key = "ServerURL"')[0].value;
     this.authURL = `${serverURL}/mobile/user`;
   }
 
@@ -33,21 +33,13 @@ export default class UserAuthenticator {
     .then((response) => response.json())
     .then((responseJson) => {
       if (responseJson.id && !responseJson.error) { // Valid, save in local db
-        if (!user) {
-          onFailure(`username = ${username}, password = ${password}, id = ${responseJson.id}`);
-          this.database.write(() => {
-            this.database.create('User', {
-              id: responseJson.id,
-              username: username,
-              password: password,
-            });
-          });
-        } else if (user.password !== password | user.id !== responseJson.id) {
-          this.database.write(() => {
-            user.password = password;
-            user.id = responseJson.id;
-          });
-        }
+        this.database.write(() => {
+          this.database.create('User', {
+            id: responseJson.id,
+            username: username,
+            password: password,
+          }, true);
+        });
         onSuccess();
       } else { // Username/password invalid, clear from local db if it exists
         if (user && user.password === password) {
@@ -58,9 +50,9 @@ export default class UserAuthenticator {
         onFailure('Invalid username or password');
       }
     })
-    .catch((error) => { // Error with connection, check against local database
-      if (user && user.password === password) onSuccess();
-      else onFailure(`Failed to connect: ${error}`);
+    .catch(() => { // Error with connection, check against local database
+      if (user && user.password && user.password === password) onSuccess();
+      else onFailure('Unable to connect and username/password not cached.');
     });
   }
 }

@@ -17,9 +17,10 @@ export default function FirstUsePage(props) {
         onPress={() => {
           props.database.write(() => {
             props.database.create('Setting', {
+              id: '122',
               key: 'ServerURL',
               value: 'http://192.168.4.102:8088',
-            });
+            }, true);
           });
           props.navigateTo('login', 'Log In');
         }}
