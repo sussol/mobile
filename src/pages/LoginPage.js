@@ -65,8 +65,8 @@ export default class LoginPage extends React.Component {
 }
 
 LoginPage.propTypes = {
-  navigateTo: React.PropTypes.func.isRequired,
   database: React.PropTypes.object.isRequired,
+  navigateTo: React.PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({

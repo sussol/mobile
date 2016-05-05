@@ -1,8 +1,8 @@
-import React from 'react-native';
-
 export default class UserAuthenticator {
   constructor(database) {
     this.database = database;
+    const serverURL = this.database.objects('Setting').filtered(`name = "${serverURL}"`)[0];
+    this.authURL = `${serverURL}/mobile/user`;
   }
 
 /**
@@ -18,18 +18,49 @@ export default class UserAuthenticator {
  * @return {none}
  */
   authenticate(username, password, onSuccess, onFailure) {
-    fetch('http://jsonplaceholder.typicode.com/users/1')
-    .then((response) => response.text())
-    .then((responseText) => {
-      onFailure(responseText);
+    if (!username | !password) { // Missing username or password, return early
+      onFailure('Enter a username and password');
+      return;
+    }
+
+    // Get the cached user from the database, if they exist
+    const user = this.database.objects('User').filtered(`username = "${username}"`)[0];
+    fetch(this.authURL, {
+      headers: {
+        Authorization: 'Basic U3Vzc29sOmthdGhtYW5kdTMxMg==',
+      },
     })
-    .catch((error) => {
-      onFailure(error.message);
+    .then((response) => response.json())
+    .then((responseJson) => {
+      if (responseJson.id && !responseJson.error) { // Valid, save in local db
+        if (!user) {
+          onFailure(`username = ${username}, password = ${password}, id = ${responseJson.id}`);
+          this.database.write(() => {
+            this.database.create('User', {
+              id: responseJson.id,
+              username: username,
+              password: password,
+            });
+          });
+        } else if (user.password !== password | user.id !== responseJson.id) {
+          this.database.write(() => {
+            user.password = password;
+            user.id = responseJson.id;
+          });
+        }
+        onSuccess();
+      } else { // Username/password invalid, clear from local db if it exists
+        if (user && user.password === password) {
+          this.database.write(() => {
+            user.password = '';
+          });
+        }
+        onFailure('Invalid username or password');
+      }
+    })
+    .catch((error) => { // Error with connection, check against local database
+      if (user && user.password === password) onSuccess();
+      else onFailure(`Failed to connect: ${error}`);
     });
-    // Check if internet connection is available
-      // Authenticate against HTTP server
-      // Cache details locally
-    // Else
-      // Authenticate against locally cached details
   }
 }

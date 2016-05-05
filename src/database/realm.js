@@ -190,7 +190,7 @@ Setting.schema = {
     id: 'string',
     key: 'string',
     value: 'string',
-    user: 'User',
+    user: { type: 'User', optional: true },
   },
 };
 
@@ -242,12 +242,12 @@ User.schema = {
   properties: {
     id: 'string',
     username: 'string',
-    lastLogin: 'date',
-    firstName: 'string',
-    lastName: 'string',
-    email: 'string',
+    lastLogin: { type: 'date', optional: true },
+    firstName: { type: 'string', optional: true },
+    lastName: { type: 'string', optional: true },
+    email: { type: 'string', optional: true },
     password: 'string',
-    salt: 'string',
+    salt: { type: 'string', optional: true },
   },
 };
 

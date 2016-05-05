@@ -14,13 +14,22 @@ export default function FirstUsePage(props) {
       <TextInput placeholder="Sync Site Password" />
       <Button
         text="Connect to mSupply"
-        onPress={() => props.navigateTo('login', 'Log In')}
+        onPress={() => {
+          props.database.write(() => {
+            props.database.create('Setting', {
+              key: 'ServerURL',
+              value: 'http://192.168.4.102:8088',
+            });
+          });
+          props.navigateTo('login', 'Log In');
+        }}
       />
     </View>
   );
 }
 
 FirstUsePage.propTypes = {
+  database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
 

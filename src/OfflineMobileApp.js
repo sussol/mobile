@@ -48,7 +48,6 @@ export default class OfflineMobileApp extends Component {
     const navigateTo = (key, title) => {
       props.onNavigate({ type: 'push', key, title });
     };
-
     switch (props.scene.navigationState.key) {
       case 'login':
         return <LoginPage database={realm} navigateTo={navigateTo} />;
@@ -80,7 +79,7 @@ export default class OfflineMobileApp extends Component {
         return <StockHistoryPage navigateTo={navigateTo} />;
       case 'root':
       default:
-        return <FirstUsePage navigateTo={navigateTo} />;
+        return <FirstUsePage database={realm} navigateTo={navigateTo} />;
     }
   }
 
