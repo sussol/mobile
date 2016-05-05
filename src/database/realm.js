@@ -1,19 +1,17 @@
 import Realm from 'realm';
 
-class Address {};
-Address.schema = {
+const AddressSchema = {
   name: 'Address',
   primaryKey: 'id',
   properties: {
     id: 'string',
     line1: 'string',
     line2: 'string',
-    line3: 'string'
-  }
-}
+    line3: 'string',
+  },
+};
 
-class Item {};
-Item.schema = {
+const ItemSchema = {
   name: 'Item',
   primaryKey: 'id',
   properties: {
@@ -21,16 +19,15 @@ Item.schema = {
     code: 'string',
     name: 'string',
     defaultPackSize: 'double',
-    lines: { type:'list', objectType: 'ItemLine' },
+    lines: { type: 'list', objectType: 'ItemLine' },
     typeOf: 'string',
     department: 'ItemDepartment',
     description: 'string',
-    category: 'ItemCategory'
-  }
-}
+    category: 'ItemCategory',
+  },
+};
 
-class ItemLine {};
-ItemLine.schema = {
+const ItemLineSchema = {
   name: 'ItemLine',
   primaryKey: 'id',
   properties: {
@@ -42,36 +39,31 @@ ItemLine.schema = {
     expiryDate: 'date',
     batch: 'string',
     costPrice: 'double',
-    sellPrice: 'double'
-  }
-}
+    sellPrice: 'double',
+  },
+};
 
-class ItemDepartment {};
-ItemDepartment.schema = {
+const ItemDepartmentSchema = {
   name: 'ItemDepartment',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
-    parentDepartment: 'ItemDepartment'
-  }
-}
+    parentDepartment: 'ItemDepartment',
+  },
+};
 
-class ItemCategory {};
-ItemCategory.schema = {
+const ItemCategorySchema = {
   name: 'ItemCategory',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
-    parentCategory: 'ItemCategory'
-  }
-}
+    parentCategory: 'ItemCategory',
+  },
+};
 
-class Invoice {};
-class CustomerInvoice extends Invoice {};
-class SupplierInvoice extends Invoice {};
-Invoice.schema = {
+const InvoiceSchema = {
   name: 'Invoice',
   primaryKey: 'id',
   properties: {
@@ -85,23 +77,21 @@ Invoice.schema = {
     confirmDate: 'date',
     enteredBy: 'User',
     theirRef: 'string', // An external reference code
-    lines: {type: 'list', objectType: 'InvoiceLine'}
-  }
-}
+    lines: { type: 'list', objectType: 'InvoiceLine' },
+  },
+};
 
-class InvoiceCategory {};
-InvoiceCategory.schema = {
+const InvoiceCategorySchema = {
   name: 'InvoiceCategory',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
-    parentCategory: 'InvoiceCategory'
-  }
-}
+    parentCategory: 'InvoiceCategory',
+  },
+};
 
-class InvoiceLine {};
-InvoiceLine.schema = {
+const InvoiceLineSchema = {
   name: 'InvoiceLine',
   primaryKey: 'id',
   properties: {
@@ -110,37 +100,32 @@ InvoiceLine.schema = {
     packSize: 'double',
     numberOfPacks: 'double',
     invoice: 'Invoice',
-  }
-}
+  },
+};
 
-class MasterList {};
-MasterList.schema = {
+const MasterListSchema = {
   name: 'MasterList',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
     description: 'string',
-    lines: {type: 'list', objectType: 'MasterListLine'}
-  }
-}
+    lines: { type: 'list', objectType: 'MasterListLine' },
+  },
+};
 
-class MasterListLine {};
-MasterListLine.schema = {
+const MasterListLineSchema = {
   name: 'MasterListLine',
   primaryKey: 'id',
   properties: {
     id: 'string',
     masterList: 'MasterList',
     item: 'Item',
-    imprestQuantity: 'double'
-  }
-}
+    imprestQuantity: 'double',
+  },
+};
 
-class Name {};
-class Customer extends Name {};
-class Supplier extends Name {};
-Name.schema = {
+const NameSchema = {
   name: 'Name',
   primaryKey: 'id',
   properties: {
@@ -151,12 +136,11 @@ Name.schema = {
     billingAddress: 'Address',
     type: 'string',
     masterList: 'MasterList',
-    invoices: {type: 'list', objectType: 'Invoice'}
-  }
-}
+    invoices: { type: 'list', objectType: 'Invoice' },
+  },
+};
 
-class Requisition {};
-Requisition.schema = {
+const RequisitionSchema = {
   name: 'Requisition',
   primaryKey: 'id',
   properties: {
@@ -165,12 +149,11 @@ Requisition.schema = {
     entryDate: 'date',
     monthsToSupply: 'double',
     serialNumber: 'int',
-    lines: {type: 'list', objectType: 'RequisitionLine'}
-  }
-}
+    lines: { type: 'list', objectType: 'RequisitionLine' },
+  },
+};
 
-class RequisitionLine {};
-RequisitionLine.schema = {
+const RequisitionLineSchema = {
   name: 'RequisitionLine',
   primaryKey: 'id',
   properties: {
@@ -182,24 +165,21 @@ RequisitionLine.schema = {
     suggestedQuantity: 'double',
     imprestQuantity: 'double',
     requiredQuantity: 'double',
-    comment: 'string'
-  }
-}
+    comment: 'string',
+  },
+};
 
-
-class SyncOut {};
-SyncOut.schema = {
+const SyncOutSchema = {
   name: 'SyncOut',
   primaryKey: 'id',
   properties: {
     id: 'string',
     recordType: 'string', // i.e. Table name
-    recordId: 'string'
-  }
-}
+    recordId: 'string',
+  },
+};
 
-class Stocktake {};
-Stocktake.schema = {
+const StocktakeSchema = {
   name: 'Stocktake',
   primaryKey: 'id',
   properties: {
@@ -210,12 +190,11 @@ Stocktake.schema = {
     created_by: 'User',
     finalised_by: 'User',
     comment: 'string',
-    serialNumber: 'int'
-  }
-}
+    serialNumber: 'int',
+  },
+};
 
-class StocktakeLine {};
-StocktakeLine.schema = {
+const StocktakeLineSchema = {
   name: 'StocktakeLine',
   primaryKey: 'id',
   properties: {
@@ -224,12 +203,11 @@ StocktakeLine.schema = {
     itemLine: 'ItemLine',
     snapshotQuantity: 'double',
     snapshotPacksize: 'double',
-    countedQuantity: 'double'
-  }
-}
+    countedQuantity: 'double',
+  },
+};
 
-class User {};
-User.schema = {
+const UserSchema = {
   name: 'User',
   primaryKey: 'id',
   properties: {
@@ -240,28 +218,28 @@ User.schema = {
     lastName: 'string',
     email: 'string',
     password: 'string',
-    salt: 'string'
-  }
-}
+    salt: 'string',
+  },
+};
 
 const schema =
   [
-    Address,
-    Item,
-    ItemLine,
-    ItemDepartment,
-    ItemCategory,
-    Invoice,
-    InvoiceLine,
-    MasterList,
-    MasterListLine,
-    Name,
-    Requisition,
-    RequisitionLine,
-    SyncOut,
-    Stocktake,
-    StocktakeLine,
-    User
+    AddressSchema,
+    ItemSchema,
+    ItemLineSchema,
+    ItemDepartmentSchema,
+    ItemCategorySchema,
+    InvoiceSchema,
+    InvoiceLineSchema,
+    MasterListSchema,
+    MasterListLineSchema,
+    NameSchema,
+    RequisitionSchema,
+    RequisitionLineSchema,
+    SyncOutSchema,
+    StocktakeSchema,
+    StocktakeLineSchema,
+    UserSchema,
   ];
 
 export default new Realm({ schema: schema, schemaVersion: 2 });
