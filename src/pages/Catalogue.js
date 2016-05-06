@@ -23,10 +23,11 @@ import {
   TableButton,
 } from '../widgets/DataTable';
 
+import globalStyles from '../styles';
+import ConfirmModal from '../widgets/modals/ConfirmModal';
 import { ListView } from 'realm/react-native';
 
 export default class Catalogue extends Component {
-
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
@@ -39,12 +40,15 @@ export default class Catalogue extends Component {
       sortBy: 'name',
       reverseSort: false,
       loaded: false,
+      deleteTargetItem: {},
+      deleteModalOpen: false,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.onDeleteBtnPress = this.onDeleteBtnPress.bind(this);
+    this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
     this.onEndDefaultPackSizeEdit = this.onEndDefaultPackSizeEdit.bind(this);
     this.renderExpansion = this.renderExpansion.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -54,6 +58,7 @@ export default class Catalogue extends Component {
     const data = this.state.items.sorted(this.state.sortBy);
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(data),
+      deleteTargetItem: this.state.items[0],
       loaded: true,
     });
   }
@@ -75,7 +80,7 @@ export default class Catalogue extends Component {
     // component.
     const { database } = this.props;
     database.write(() => {
-      database.create('Item', { id: item.id, defaultPackSize: value }, true);
+      database.create('Item', { id: item.id, defaultPackSize: parseFloat(value) }, true);
     });
   }
 
@@ -90,15 +95,24 @@ export default class Catalogue extends Component {
   }
 
   onDeleteBtnPress(item) {
-    // TODO: needs a modal dialog, deleting needs confirmation!!
+    this.setState({
+      deleteTargetItem: item,
+      deleteModalOpen: true,
+    });
+  }
+
+  onDeleteConfirm(item) {
     const { dataSource, items, sortBy, reverseSort } = this.state;
     const { database } = this.props;
+
     database.write(() => {
       database.delete(item);
     });
 
+    const data = items.sorted(sortBy, reverseSort);
     this.setState({
-      dataSource: dataSource.cloneWithRows(items.sorted(sortBy, reverseSort)),
+      dataSource: dataSource.cloneWithRows(data),
+      deleteModalOpen: false,
     });
   }
 
@@ -158,6 +172,17 @@ export default class Catalogue extends Component {
           renderHeader={this.renderHeader}
           searchBar={this.onSearchChange}
         />
+        <ConfirmModal
+          isOpen={this.state.deleteModalOpen}
+          style={[globalStyles.modal, styles.modal]}
+          textStyle={globalStyles.text}
+          questionText={`Are you sure you want to delete ${
+            this.state.deleteTargetItem.isValid() ?
+            this.state.deleteTargetItem.name : 'undefined'
+          }`}
+          onCancel={() => this.setState({ deleteModalOpen: false })}
+          onConfirm={() => this.onDeleteConfirm(this.state.deleteTargetItem)}
+        />
       </View>
     );
   }
@@ -170,6 +195,9 @@ Catalogue.propTypes = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  modal: {
+    backgroundColor: 'red', // for hurting your eyes
   },
   button: {
     backgroundColor: 'rgba(130, 171, 189, 0.7)',
