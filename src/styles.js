@@ -14,7 +14,14 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   navBarOffset: {
     paddingTop: 68,
+  },
+  text: {
+    fontSize: 18,
   },
 });
