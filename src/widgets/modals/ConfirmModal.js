@@ -13,13 +13,12 @@ import React, {
 } from 'react-native';
 import Button from '../Button';
 import Modal from 'react-native-modalbox';
-import globalStyles from '../../styles';
 
 export default function ConfirmModal(props) {
-  const { onCancel, onConfirm, questionText, style, ...other } = props;
+  const { onCancel, onConfirm, questionText, style, globalStyles, ...modalProps } = props;
   return (
-    <Modal {...other}
-      style={[globalStyles.modal, localStyles.modal, style.modal]}
+    <Modal {...modalProps}
+      style={[globalStyles.modal, localStyles.modal, style]}
     >
       <Text style={globalStyles.text}>
         {questionText}
@@ -33,6 +32,8 @@ export default function ConfirmModal(props) {
 }
 
 ConfirmModal.propTypes = {
+  style: React.PropTypes.number,
+  globalStyles: React.PropTypes.number,
   isOpen: React.PropTypes.bool.isRequired,
   questionText: React.PropTypes.string.isRequired,
   onCancel: React.PropTypes.func.isRequired,
@@ -40,7 +41,9 @@ ConfirmModal.propTypes = {
 };
 ConfirmModal.defaultProps = {
   style: {},
-  swipeToClose: false,
+  globalStyles: {},
+  swipeToClose: false, // negating the default.
+  backdropPressToClose: false, // negating the default.
 };
 
 const localStyles = StyleSheet.create({

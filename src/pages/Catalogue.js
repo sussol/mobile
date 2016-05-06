@@ -23,14 +23,11 @@ import {
   TableButton,
 } from '../widgets/DataTable';
 
-import Button from '../widgets/Button';
+import globalStyles from '../styles';
 import ConfirmModal from '../widgets/modals/ConfirmModal';
-
-import Modal from 'react-native-modalbox';
 import { ListView } from 'realm/react-native';
 
 export default class Catalogue extends Component {
-
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
@@ -177,6 +174,8 @@ export default class Catalogue extends Component {
         />
         <ConfirmModal
           isOpen={this.state.deleteModalOpen}
+          style={styles.modal}
+          globalStyles={globalStyles}
           questionText={`Are you sure you want to delete ${
             this.state.deleteTargetItem.isValid() ?
             this.state.deleteTargetItem.name : 'undefined'
@@ -196,6 +195,9 @@ Catalogue.propTypes = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  modal: {
+    backgroundColor: 'red', // for hurting your eyes
   },
   button: {
     backgroundColor: 'rgba(130, 171, 189, 0.7)',
