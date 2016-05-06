@@ -1,3 +1,5 @@
+import Base64 from 'base-64';
+
 export default class UserAuthenticator {
   constructor(database) {
     this.database = database;
@@ -27,7 +29,7 @@ export default class UserAuthenticator {
     const user = this.database.objects('User').filtered(`username = "${username}"`)[0];
     fetch(this.authURL, {
       headers: {
-        Authorization: 'Basic U3Vzc29sOmthdGhtYW5kdTMxMg==',
+        Authorization: `Basic ${Base64.encode(`${username}:${password}`)}`,
       },
     })
     .then((response) => response.json())

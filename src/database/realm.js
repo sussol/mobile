@@ -171,10 +171,9 @@ const RequisitionLineSchema = {
 
 const SettingSchema = {
   name: 'Setting',
-  primaryKey: 'id',
+  primaryKey: 'key',
   properties: {
-    id: 'string',
-    key: 'string',
+    key: 'string', // Includes the user's UUID if it is per-user
     value: 'string',
     user: { type: 'User', optional: true },
   },
