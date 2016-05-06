@@ -15,15 +15,15 @@ import Button from '../Button';
 import Modal from 'react-native-modalbox';
 
 export default function ConfirmModal(props) {
-  const { onCancel, onConfirm, questionText, style, globalStyles, ...modalProps } = props;
+const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
     <Modal {...modalProps}
-      style={[globalStyles.modal, localStyles.modal, style]}
+      style={[localStyles.modal, style]}
     >
-      <Text style={globalStyles.text}>
+      <Text style={textStyle}>
         {questionText}
       </Text>
-      <View style={[globalStyles.container, localStyles.buttonContainer]}>
+      <View style={localStyles.buttonContainer}>
         <Button text={'Cancel'} onPress={onCancel} />
         <Button text={'Confirm'} onPress={onConfirm} />
       </View>
@@ -32,8 +32,8 @@ export default function ConfirmModal(props) {
 }
 
 ConfirmModal.propTypes = {
-  style: React.PropTypes.number,
-  globalStyles: React.PropTypes.number,
+  style: React.PropTypes.array,
+  textStyle: React.PropTypes.number,
   isOpen: React.PropTypes.bool.isRequired,
   questionText: React.PropTypes.string.isRequired,
   onCancel: React.PropTypes.func.isRequired,

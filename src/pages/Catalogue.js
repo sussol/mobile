@@ -80,7 +80,7 @@ export default class Catalogue extends Component {
     // component.
     const { database } = this.props;
     database.write(() => {
-      database.create('Item', { id: item.id, defaultPackSize: value }, true);
+      database.create('Item', { id: item.id, defaultPackSize: parseFloat(value) }, true);
     });
   }
 
@@ -174,8 +174,8 @@ export default class Catalogue extends Component {
         />
         <ConfirmModal
           isOpen={this.state.deleteModalOpen}
-          style={styles.modal}
-          globalStyles={globalStyles}
+          style={[globalStyles.modal, styles.modal]}
+          textStyle={globalStyles.text}
           questionText={`Are you sure you want to delete ${
             this.state.deleteTargetItem.isValid() ?
             this.state.deleteTargetItem.name : 'undefined'
