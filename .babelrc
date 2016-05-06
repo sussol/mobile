@@ -30,5 +30,6 @@
     "transform-regenerator",
     "transform-es2015-for-of"
   ],
-  "sourceMaps": false
+  "sourceMaps": false,
+  "ignore": "./coverage/"
 }
