@@ -30,7 +30,7 @@ import {
   SupplierInvoicesPage,
 } from './pages';
 
-import { LoginModal } from './widgets';
+import { Button, LoginModal } from './widgets';
 
 import Synchronizer from './sync/Synchronizer';
 import { UserAuthenticator } from './authentication';
@@ -52,6 +52,15 @@ export default class OfflineMobileApp extends Component {
   componentWillMount() {
     this.synchronizer.synchronize();
     this.renderScene = this.renderScene.bind(this);
+    this.renderLogoutButton = this.renderLogoutButton.bind(this);
+  }
+
+  renderLogoutButton() {
+    return (
+      <Button
+        text="Logout"
+        onPress={() => this.setState({ authenticated: false })}
+      />);
   }
 
   renderScene(props) {
@@ -102,7 +111,10 @@ export default class OfflineMobileApp extends Component {
     // }
     return (
       <View style={styles.container}>
-        <Navigator renderScene={this.renderScene} />
+        <Navigator
+          renderScene={this.renderScene}
+          renderRightComponent={this.renderLogoutButton}
+        />
         <LoginModal
           authenticator={this.authenticator}
           isAuthenticated={this.state.authenticated}

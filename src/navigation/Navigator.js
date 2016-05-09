@@ -80,6 +80,7 @@ export default class Navigator extends Component {
         {...props}
         navigationProps={props}
         renderTitleComponent={this.renderTitleComponent}
+        renderRightComponent={this.props.renderRightComponent}
       />
     );
   }
@@ -114,6 +115,7 @@ export default class Navigator extends Component {
 
 Navigator.propTypes = {
   renderScene: React.PropTypes.func.isRequired,
+  renderRightComponent: React.PropTypes.func,
 };
 
 const styles = StyleSheet.create({
