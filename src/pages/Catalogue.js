@@ -148,8 +148,20 @@ export default class Catalogue extends Component {
   renderRow(item) {
     return (
       <Row renderExpansion={() => this.renderExpansion(item)}>
-        <Cell style={styles.text} width={1}>{item.code}</Cell>
-        <Cell style={styles.text} width={5}>{item.name}</Cell>
+        <Cell
+          style={globalStyles.cell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={1}
+        >
+          {item.code}
+        </Cell>
+        <Cell
+          style={globalStyles.cell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={1}
+        >
+          {item.name}
+        </Cell>
         <EditableCell
           style={styles.packSize}
           width={2}

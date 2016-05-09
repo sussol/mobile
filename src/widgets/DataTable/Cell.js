@@ -12,18 +12,20 @@ import React, {
 } from 'react-native';
 
 export default function Cell(props) {
+  const { children, style, textStyle, width, ...viewProps } = props;
   return (
-    <View style={[styles.cell, { flex: props.width }]}>
-      <Text style={props.style}>
-        {props.children}
+    <View {...viewProps} style={[styles.cell, style, { flex: width }]}>
+      <Text style={textStyle}>
+        {children}
       </Text>
     </View>
   );
 }
 
 Cell.propTypes = {
-  style: React.PropTypes.object,
+  style: React.PropTypes.number,
   width: React.PropTypes.number,
+  textStyle: React.PropTypes.number,
   children: React.PropTypes.any,
 };
 

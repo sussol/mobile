@@ -24,4 +24,7 @@ export default StyleSheet.create({
   text: {
     fontSize: 18,
   },
+  cell: {
+    backgroundColor: '#ffdda3',
+  },
 });
