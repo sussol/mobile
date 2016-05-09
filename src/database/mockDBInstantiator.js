@@ -58,7 +58,7 @@ export default function instantiate() {
       });
 
       itemOne.lines.push({
-        id: `${i}LI`,
+        id: `${i}aLI`,
         item: itemOne,
         packSize: 12,
         numberOfPacks: 10,
@@ -68,21 +68,19 @@ export default function instantiate() {
         costPrice: 0.50,
         sellPrice: 1.00,
       });
-      //
-      // itemOne.lines.push({
-      //   id: (i + i) + 'LI',
-      //   item: itemOne,
-      //   packSize: '100',
-      //   numberOfPacks: '5000',
-      //   totalQuantity: '500000',  // Should be kept consistent with packSize x numberOfPacks
-      //   expiryDate: new Date(2017, 7, 31),
-      //   batch: '200',
-      //   costPrice: '2.50',
-      //   sellPrice: '5.00'
-      // });
-      //
+      itemOne.lines.push({
+        id: `${i + 1}aLI`,
+        item: itemOne,
+        packSize: 100,
+        numberOfPacks: 5000,
+        totalQuantity: 500000,
+        expiryDate: new Date(2017, 7, 31),
+        batch: '200',
+        costPrice: 2.50,
+        sellPrice: 5.00,
+      });
       itemTwo.lines.push({
-        id: `${i + 1}${i + 1}LI`,
+        id: `${i}bLI`,
         item: itemTwo,
         packSize: 24,
         numberOfPacks: 100,
