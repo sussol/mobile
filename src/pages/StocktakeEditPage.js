@@ -11,6 +11,7 @@ import React, {
 } from 'react-native';
 
 import Button from '../widgets/Button';
+import globalStyles from '../styles';
 
 export default function StocktakeEditor(props) {
   return (
