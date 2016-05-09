@@ -11,16 +11,17 @@ import React, {
 } from 'react-native';
 
 export default function Header(props) {
+  const { children, style, ...viewProps } = props;
   return (
-    <View style={[styles.header, { flex: props.height }]}>
-      {props.children}
+    <View {...viewProps} style={[styles.header, style]}>
+      {children}
     </View>
   );
 }
 
 Header.propTypes = {
+  style: React.PropTypes.number,
   children: React.PropTypes.any,
-  height: React.PropTypes.number,
 };
 
 const styles = StyleSheet.create({
