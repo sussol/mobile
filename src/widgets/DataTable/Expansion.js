@@ -11,14 +11,16 @@ import React, {
 } from 'react-native';
 
 export default function Expansion(props) {
+  const { children, style, ...viewProps } = props;
   return (
-    <View style={styles.expansion}>
-      {props.children}
+    <View {...viewProps} style={[styles.expansion, style]}>
+      {children}
     </View>
   );
 }
 
 Expansion.propTypes = {
+  style: React.PropTypes.number,
   children: React.PropTypes.any,
 };
 
@@ -26,6 +28,5 @@ const styles = StyleSheet.create({
   expansion: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'magenta',
   },
 });
