@@ -5,6 +5,10 @@ import React, {
 } from 'react-native';
 
 import { Button } from '../widgets';
+import { authenticationUtils } from '../authentication';
+const {
+  hashPassword,
+} = authenticationUtils;
 
 export default class FirstUsePage extends React.Component {
   constructor(props) {
@@ -19,24 +23,29 @@ export default class FirstUsePage extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-          <TextInput
-            placeholder="Primary Server URL"
-            value={this.state.serverURL}
-            onChangeText={ (text) => { this.setState({ serverURL: text }); }}
-          />
-          <TextInput
-            placeholder="Sync Site Name"
-            value={this.state.syncSiteName}
-            onChangeText={ (text) => { this.setState({ syncSiteName: text }); }}
-          />
         <TextInput
+          style={styles.textInput}
+          placeholder="Primary Server URL"
+          value={this.state.serverURL}
+          onChangeText={ (text) => { this.setState({ serverURL: text }); }}
+        />
+        <TextInput
+          style={styles.textInput}
+          placeholder="Sync Site Name"
+          value={this.state.syncSiteName}
+          onChangeText={ (text) => { this.setState({ syncSiteName: text }); }}
+        />
+        <TextInput
+          style={styles.textInput}
           placeholder="Sync Site Password"
           value={this.state.syncSitePassword}
+          secureTextEntry
           onChangeText={ (text) => { this.setState({ syncSitePassword: text }); }}
         />
         <Button
           text="Connect to mSupply"
           onPress={() => {
+            const passwordHash = hashPassword(this.state.syncSitePassword);
             this.props.database.write(() => {
               this.props.database.create('Setting', {
                 key: 'ServerURL',
@@ -47,11 +56,11 @@ export default class FirstUsePage extends React.Component {
                 value: this.state.syncSiteName,
               }, true);
               this.props.database.create('Setting', {
-                key: 'SyncSitePassword',
-                value: this.state.syncSitePassword,
+                key: 'SyncSitePasswordHash',
+                value: passwordHash,
               }, true);
             });
-            this.props.navigateTo('login', 'Log In');
+            this.props.onInitialised();
           }}
         />
       </View>
@@ -61,7 +70,7 @@ export default class FirstUsePage extends React.Component {
 
 FirstUsePage.propTypes = {
   database: React.PropTypes.object.isRequired,
-  navigateTo: React.PropTypes.func.isRequired,
+  onInitialised: React.PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({
@@ -70,5 +79,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    fontFamily: 'Comic Sans',
   },
 });

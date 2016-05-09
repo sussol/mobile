@@ -225,7 +225,7 @@ const UserSchema = {
     firstName: { type: 'string', optional: true },
     lastName: { type: 'string', optional: true },
     email: { type: 'string', optional: true },
-    password: 'string',
+    passwordHash: 'string',
     salt: { type: 'string', optional: true },
   },
 };

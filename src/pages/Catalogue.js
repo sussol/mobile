@@ -24,7 +24,7 @@ import {
 } from '../widgets/DataTable';
 
 import globalStyles from '../styles';
-import ConfirmModal from '../widgets/modals/ConfirmModal';
+import { ConfirmModal } from '../widgets';
 import { ListView } from 'realm/react-native';
 
 export default class Catalogue extends Component {

@@ -1,3 +1,7 @@
 import UserAuthenticator from './UserAuthenticator';
+import authenticationUtils from './authenticationUtils';
 
-export { UserAuthenticator };
+export {
+  UserAuthenticator,
+  authenticationUtils,
+};

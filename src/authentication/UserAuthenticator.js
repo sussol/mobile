@@ -1,4 +1,5 @@
 import Base64 from 'base-64';
+import authenticationUtils from './authenticationUtils';
 
 export default class UserAuthenticator {
   constructor(database) {
@@ -25,11 +26,13 @@ export default class UserAuthenticator {
       return;
     }
 
+    const passwordHash = authenticationUtils.hashPassword(password);
+
     // Get the cached user from the database, if they exist
     const user = this.database.objects('User').filtered(`username = "${username}"`)[0];
     fetch(this.authURL, {
       headers: {
-        Authorization: `Basic ${Base64.encode(`${username}:${password}`)}`,
+        Authorization: `Basic ${Base64.encode(`${username}:${passwordHash}`)}`,
       },
     })
     .then((response) => response.json())
@@ -39,21 +42,21 @@ export default class UserAuthenticator {
           this.database.create('User', {
             id: responseJson.id,
             username: username,
-            password: password,
+            passwordHash: passwordHash,
           }, true);
         });
         onSuccess();
       } else { // Username/password invalid, clear from local db if it exists
-        if (user && user.password === password) {
+        if (user && user.passwordHash === passwordHash) {
           this.database.write(() => {
-            user.password = '';
+            user.passwordHash = '';
           });
         }
         onFailure('Invalid username or password');
       }
     })
     .catch(() => { // Error with connection, check against local database
-      if (user && user.password && user.password === password) onSuccess();
+      if (user && user.passwordHash && user.passwordHash === passwordHash) onSuccess();
       else onFailure('Unable to connect and username/password not cached.');
     });
   }

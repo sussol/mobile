@@ -5,8 +5,8 @@ import React, {
   View,
 } from 'react-native';
 
-import { UserAuthenticator } from '../authentication';
 import { Button } from '../widgets';
+import { UserAuthenticator } from '../authentication';
 
 export default class LoginPage extends React.Component {
 
@@ -44,13 +44,16 @@ export default class LoginPage extends React.Component {
     return (
       <View style={styles.container}>
         <TextInput
+          style={styles.textInput}
           placeholder="Username"
           value={this.state.username}
           onChangeText={ (text) => { this.setState({ username: text }); }}
         />
         <TextInput
+          style={styles.textInput}
           placeholder="Password"
           value={this.state.password}
+          secureTextEntry
           onChangeText={ (text) => { this.setState({ password: text }); }}
         />
         <Button
@@ -75,5 +78,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
   },
 });

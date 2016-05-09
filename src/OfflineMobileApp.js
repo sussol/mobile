@@ -7,6 +7,8 @@
 
 import React, {
   Component,
+  StyleSheet,
+  View,
 } from 'react-native';
 
 import { Navigator } from './navigation';
@@ -17,7 +19,6 @@ import {
   CustomerPage,
   CustomersPage,
   FirstUsePage,
-  LoginPage,
   MenuPage,
   StockHistoriesPage,
   StockHistoryPage,
@@ -29,7 +30,10 @@ import {
   SupplierInvoicesPage,
 } from './pages';
 
+import { LoginModal } from './widgets';
+
 import Synchronizer from './sync/Synchronizer';
+import { UserAuthenticator } from './authentication';
 import realm from './database/realm';
 
 export default class OfflineMobileApp extends Component {
@@ -37,6 +41,12 @@ export default class OfflineMobileApp extends Component {
   constructor() {
     super();
     this.synchronizer = new Synchronizer();
+    this.authenticator = new UserAuthenticator(realm);
+    const initialised = realm.objects('Setting').filtered('key = "ServerURL"').length > 0;
+    this.state = {
+      initialised: initialised,
+      authenticated: false,
+    };
   }
 
   componentWillMount() {
@@ -49,8 +59,6 @@ export default class OfflineMobileApp extends Component {
       props.onNavigate({ type: 'push', key, title });
     };
     switch (props.scene.navigationState.key) {
-      case 'login':
-        return <LoginPage database={realm} navigateTo={navigateTo} />;
       case 'menu':
         return <MenuPage navigateTo={navigateTo} />;
       case 'customers':
@@ -79,11 +87,34 @@ export default class OfflineMobileApp extends Component {
         return <StockHistoryPage navigateTo={navigateTo} />;
       case 'root':
       default:
-        return <FirstUsePage database={realm} navigateTo={navigateTo} />;
+        return <MenuPage navigateTo={navigateTo} />;
     }
   }
 
   render() {
-    return <Navigator renderScene={this.renderScene} />;
+    // if (!this.state.initialised) {
+    //   return (
+    //     <FirstUsePage
+    //       database={realm}
+    //       onInitialised={() => this.setState({ initialised: true })}
+    //     />
+    //   );
+    // }
+    return (
+      <View style={styles.container}>
+        <Navigator renderScene={this.renderScene} />
+        <LoginModal
+          authenticator={this.authenticator}
+          isAuthenticated={this.state.authenticated}
+          onAuthentication={() => this.setState({ authenticated: true })}
+        />
+      </View>
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
