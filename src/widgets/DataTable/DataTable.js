@@ -15,37 +15,59 @@ import React, {
 import { ListView } from 'realm/react-native';
 
 export default function DataTable(props) {
+  const {
+    style,
+    listViewStyle,
+    searchBar,
+    searchBarStyle,
+    renderHeader,
+    dataSource,
+    renderRow,
+    ...listViewProps,
+  } = props;
   return (
-    <View style={styles.verticalContainer}>
+    <View style={[styles.verticalContainer, style]}>
       {
-        (typeof props.searchBar === 'function') &&
+        (typeof searchBar === 'function') &&
           <TextInput
-            style={styles.searchBar}
-            onChange={(event) => props.searchBar(event)}
+            style={[styles.searchBar, searchBarStyle]}
+            onChange={(event) => searchBar(event)}
             placeholder="Search"
           />
       }
-      {typeof props.renderHeader === 'function' && props.renderHeader()}
+      {typeof renderHeader === 'function' && renderHeader()}
       <ListView
-        style={styles.listview}
-        dataSource={props.dataSource}
-        renderRow={props.renderRow}
-        showsVerticalScrollIndicator
-        scrollRenderAheadDistance={5000}
+        {...listViewProps}
+        style={[styles.listview, listViewStyle]}
+        dataSource={dataSource}
+        renderRow={renderRow}
       />
     </View>
   );
 }
 
 DataTable.propTypes = {
+  style: React.PropTypes.number,
+  listViewStyle: React.PropTypes.number,
   searchBar: React.PropTypes.func,
+  searchBarStyle: React.PropTypes.number,
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
 };
+DataTable.defaultProps = {
+  showsVerticalScrollIndicator: true,
+  scrollRenderAheadDistance: 5000,
+};
 
 const styles = StyleSheet.create({
   verticalContainer: {
+    flex: 1,
+  },
+  searchBar: {
+    backgroundColor: '#86e6f4',
+  },
+  listView: {
     flex: 1,
   },
 });

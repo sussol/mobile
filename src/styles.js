@@ -24,6 +24,9 @@ export default StyleSheet.create({
   text: {
     fontSize: 18,
   },
+  searchBar: {
+    backgroundColor: '#f9e4c2',
+  },
   cell: {
     backgroundColor: '#ffdda3',
   },

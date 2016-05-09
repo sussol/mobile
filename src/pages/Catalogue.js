@@ -176,13 +176,16 @@ export default class Catalogue extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={globalStyles.container}>
         <Text>Text Component outside of DataTable</Text>
         <DataTable
+          style={globalStyles.container}
+          listViewStyle={globalStyles.container}
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           renderHeader={this.renderHeader}
           searchBar={this.onSearchChange}
+          searchBarStyle={globalStyles.searchBar}
         />
         <ConfirmModal
           isOpen={this.state.deleteModalOpen}
