@@ -118,7 +118,7 @@ export default class Catalogue extends Component {
 
   renderHeader() {
     return (
-      <Header>
+      <Header style={globalStyles.header}>
         <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
         <HeaderCell style={styles.text}
           width={5}

@@ -27,6 +27,9 @@ export default StyleSheet.create({
   searchBar: {
     backgroundColor: '#f9e4c2',
   },
+  header: {
+    backgroundColor: '#fcb947',
+  },
   cell: {
     backgroundColor: '#ffdda3',
   },
