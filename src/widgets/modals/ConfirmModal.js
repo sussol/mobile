@@ -15,7 +15,7 @@ import Button from '../Button';
 import Modal from 'react-native-modalbox';
 
 export default function ConfirmModal(props) {
-const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
+  const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
     <Modal {...modalProps}
       style={[localStyles.modal, style]}

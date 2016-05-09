@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.7.2",
+    "babel-eslint": "^6.0.4",
     "babel-jest": "^11.0.2",
     "babel-plugin-transform-es2015-constants": "^6.1.4",
     "babel-polyfill": "^6.7.4",
