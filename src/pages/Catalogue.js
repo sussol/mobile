@@ -163,7 +163,8 @@ export default class Catalogue extends Component {
           {item.name}
         </Cell>
         <EditableCell
-          style={styles.packSize}
+          style={[globalStyles.cell, globalStyles.editableCell]}
+          textStyle={[globalStyles.text, globalStyles.editableCell, styles.packSize]}
           width={2}
           keyboardType="number-pad"
           onEndEditing={this.onEndDefaultPackSizeEdit}

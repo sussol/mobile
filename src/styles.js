@@ -30,4 +30,7 @@ export default StyleSheet.create({
   cell: {
     backgroundColor: '#ffdda3',
   },
+  editableCell: {
+    backgroundColor: '#f9e4c2',
+  },
 });
