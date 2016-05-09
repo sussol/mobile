@@ -119,14 +119,25 @@ export default class Catalogue extends Component {
   renderHeader() {
     return (
       <Header style={globalStyles.header}>
-        <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
-        <HeaderCell style={styles.text}
+        <HeaderCell
+          style={globalStyles.headerCell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={1}
+          text={'Item Code'}
+        />
+        <HeaderCell
+          style={globalStyles.headerCell}
+          textStyle={[globalStyles.text, styles.text]}
           width={5}
           onPress={() => this.onColumnSort()}
-        >
-          Item Name
-        </HeaderCell>
-        <HeaderCell style={styles.packSize} width={2}>Default Pack Size</HeaderCell>
+          text={'Item Name'}
+        />
+        <HeaderCell
+          style={globalStyles.headerCell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={2}
+          text={'Default Pack Size'}
+        />
       </Header>
     );
   }
@@ -135,11 +146,11 @@ export default class Catalogue extends Component {
     return (
       <Expansion>
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-          <Text style={styles.text}>Department: {item.department.name}</Text>
-          <Text style={styles.text}>Description: {item.description}</Text>
+          <Text style={[globalStyles.text, styles.text]}>Department: {item.department.name}</Text>
+          <Text style={[globalStyles.text, styles.text]}>Description: {item.description}</Text>
         </View>
         <TableButton onPress={() => this.onDeleteBtnPress(item)}>
-          <Text style={styles.text} >Delete Item</Text>
+          <Text style={[globalStyles.text, styles.text]} >Delete Item</Text>
         </TableButton>
       </Expansion>
     );

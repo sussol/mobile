@@ -28,6 +28,9 @@ export default StyleSheet.create({
     backgroundColor: '#f9e4c2',
   },
   header: {
+    backgroundColor: '#F5FCFF',
+  },
+  headerCell: {
     backgroundColor: '#fcb947',
   },
   cell: {

@@ -13,22 +13,24 @@ import React, {
 } from 'react-native';
 
 export default function HeaderCell(props) {
-  if (typeof props.onPress === 'function') {
+  const { style, textStyle, width, onPress, text, ...containerProps } = props;
+  if (typeof onPress === 'function') {
     return (
       <TouchableOpacity
-        style={[styles.headerCell, { flex: props.width }]}
-        onPress={props.onPress}
+        {...containerProps}
+        style={[styles.headerCell, style, { flex: width }]}
+        onPress={onPress}
       >
-        <Text style={props.style}>
-          {props.children}
+        <Text style={textStyle}>
+          {text}
         </Text>
       </TouchableOpacity>
     );
   }
   return (
-    <View style={[styles.headerCell, { flex: props.width }]}>
-      <Text style={props.style}>
-        {props.children}
+    <View {...containerProps} style={[styles.headerCell, style, { flex: width }]}>
+      <Text style={textStyle}>
+        {text}
       </Text>
     </View>
   );
@@ -36,9 +38,10 @@ export default function HeaderCell(props) {
 
 HeaderCell.propTypes = {
   style: React.PropTypes.number,
+  textStyle: React.PropTypes.number,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
-  children: React.PropTypes.string,
+  text: React.PropTypes.string,
 };
 
 HeaderCell.defaultProps = {
