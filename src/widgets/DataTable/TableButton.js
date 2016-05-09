@@ -12,21 +12,27 @@ import React, {
 } from 'react-native';
 
 export default function TableButton(props) {
+  const { style, onPress, children, ...touchableOpacityProps } = props;
   return (
-    <TouchableOpacity style={styles.tableButton} onPress={props.onPress}>
-      {props.children}
+    <TouchableOpacity
+      {...touchableOpacityProps}
+      style={[styles.tableButton, style]}
+      onPress={onPress}
+    >
+      {children}
     </TouchableOpacity>
   );
 }
 
 TableButton.propTypes = {
-  children: React.PropTypes.any,
+  style: React.PropTypes.number,
   onPress: React.PropTypes.func,
+  children: React.PropTypes.any,
 };
 
 const styles = StyleSheet.create({
   tableButton: {
-    flex: 0.5,
+    flex: 1,
     backgroundColor: 'green',
   },
 });

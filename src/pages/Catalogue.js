@@ -149,8 +149,8 @@ export default class Catalogue extends Component {
           <Text style={[globalStyles.text, styles.text]}>Department: {item.department.name}</Text>
           <Text style={[globalStyles.text, styles.text]}>Description: {item.description}</Text>
         </View>
-        <TableButton onPress={() => this.onDeleteBtnPress(item)}>
-          <Text style={[globalStyles.text, styles.text]} >Delete Item</Text>
+        <TableButton style={globalStyles.tableButton} onPress={() => this.onDeleteBtnPress(item)}>
+          <Text style={[globalStyles.text, styles.text]}>Delete Item</Text>
         </TableButton>
       </Expansion>
     );

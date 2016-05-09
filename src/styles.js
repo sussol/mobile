@@ -42,4 +42,10 @@ export default StyleSheet.create({
   editableCell: {
     backgroundColor: '#f9e4c2',
   },
+  tableButton: {
+    backgroundColor: '#ffdb9d',
+    borderColor: '#fcb947',
+    borderRadius: 8,
+    borderWidth: 2,
+  },
 });
