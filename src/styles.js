@@ -33,6 +33,9 @@ export default StyleSheet.create({
   headerCell: {
     backgroundColor: '#fcb947',
   },
+  row: {
+    backgroundColor: '#F5FCFF',
+  },
   cell: {
     backgroundColor: '#ffdda3',
   },

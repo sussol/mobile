@@ -158,7 +158,7 @@ export default class Catalogue extends Component {
 
   renderRow(item) {
     return (
-      <Row renderExpansion={() => this.renderExpansion(item)}>
+      <Row style={globalStyles.row} renderExpansion={() => this.renderExpansion(item)}>
         <Cell
           style={globalStyles.cell}
           textStyle={[globalStyles.text, styles.text]}
