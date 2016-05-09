@@ -93,9 +93,10 @@ export default class Navigator extends Component {
   }
 
   renderTitleComponent(props) {
+    if (!props.scene.navigationState.title) return null;
     return (
       <NavigationHeader.Title>
-        {props.scene.navigationState.title && props.scene.navigationState.title}
+        {props.scene.navigationState.title}
       </NavigationHeader.Title>
     );
   }
