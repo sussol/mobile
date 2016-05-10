@@ -10,6 +10,7 @@ import React, {
 } from 'react-native';
 
 import Catalogue from './Catalogue';
+import globalStyles from '../globalStyles';
 
 export default function StockPage(props) {
   return <Catalogue database={props.database} />;

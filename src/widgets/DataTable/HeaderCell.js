@@ -13,39 +13,42 @@ import React, {
 } from 'react-native';
 
 export default function HeaderCell(props) {
-  if (typeof props.onPress === 'function') {
+  const { style, textStyle, width, onPress, text, ...containerProps } = props;
+  if (typeof onPress === 'function') {
     return (
       <TouchableOpacity
-        style={[styles.headerCell, { flex: props.width }]}
-        onPress={props.onPress}
+        {...containerProps}
+        style={[defaultStyles.headerCell, style, { flex: width }]}
+        onPress={onPress}
       >
-        <Text style={props.style}>
-          {props.children}
+        <Text style={textStyle}>
+          {text}
         </Text>
       </TouchableOpacity>
     );
   }
   return (
-    <View style={[styles.headerCell, { flex: props.width }]}>
-      <Text style={props.style}>
-        {props.children}
+    <View {...containerProps} style={[defaultStyles.headerCell, style, { flex: width }]}>
+      <Text style={textStyle}>
+        {text}
       </Text>
     </View>
   );
 }
 
 HeaderCell.propTypes = {
-  style: React.PropTypes.number,
+  style: React.View.propTypes.style,
+  textStyle: React.Text.propTypes.style,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
-  children: React.PropTypes.string,
+  text: React.PropTypes.string,
 };
 
 HeaderCell.defaultProps = {
   width: 1,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   headerCell: {
     flex: 1,
     justifyContent: 'center',
