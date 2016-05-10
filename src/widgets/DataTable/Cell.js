@@ -14,7 +14,7 @@ import React, {
 export default function Cell(props) {
   const { children, style, textStyle, width, ...viewProps } = props;
   return (
-    <View {...viewProps} style={[styles.cell, style, { flex: width }]}>
+    <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
       <Text style={textStyle}>
         {children}
       </Text>
@@ -33,7 +33,7 @@ Cell.defaultProps = {
   width: 1,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   cell: {
     flex: 1,
     justifyContent: 'center',

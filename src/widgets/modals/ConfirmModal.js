@@ -18,12 +18,12 @@ export default function ConfirmModal(props) {
   const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
     <Modal {...modalProps}
-      style={[localStyles.modal, style]}
+      style={[defaultStyle.modal, style]}
     >
       <Text style={textStyle}>
         {questionText}
       </Text>
-      <View style={localStyles.buttonContainer}>
+      <View style={defaultStyle.buttonContainer}>
         <Button text={'Cancel'} onPress={onCancel} />
         <Button text={'Confirm'} onPress={onConfirm} />
       </View>
@@ -46,7 +46,7 @@ ConfirmModal.defaultProps = {
   backdropPressToClose: false, // negating the default.
 };
 
-const localStyles = StyleSheet.create({
+const defaultStyle = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     flexDirection: 'row',

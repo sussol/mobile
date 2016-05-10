@@ -13,7 +13,7 @@ import React, {
 export default function Header(props) {
   const { children, style, ...viewProps } = props;
   return (
-    <View {...viewProps} style={[styles.header, style]}>
+    <View {...viewProps} style={[defaultStyles.header, style]}>
       {children}
     </View>
   );
@@ -24,7 +24,7 @@ Header.propTypes = {
   children: React.PropTypes.any,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     flexWrap: 'nowrap',

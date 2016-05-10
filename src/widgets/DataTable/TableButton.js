@@ -16,7 +16,7 @@ export default function TableButton(props) {
   return (
     <TouchableOpacity
       {...touchableOpacityProps}
-      style={[styles.tableButton, style]}
+      style={[defaultStyles.tableButton, style]}
       onPress={onPress}
     >
       {children}
@@ -30,7 +30,7 @@ TableButton.propTypes = {
   children: React.PropTypes.any,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   tableButton: {
     flex: 1,
     backgroundColor: 'green',

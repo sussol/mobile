@@ -18,7 +18,7 @@ export default function HeaderCell(props) {
     return (
       <TouchableOpacity
         {...containerProps}
-        style={[styles.headerCell, style, { flex: width }]}
+        style={[defaultStyles.headerCell, style, { flex: width }]}
         onPress={onPress}
       >
         <Text style={textStyle}>
@@ -28,7 +28,7 @@ export default function HeaderCell(props) {
     );
   }
   return (
-    <View {...containerProps} style={[styles.headerCell, style, { flex: width }]}>
+    <View {...containerProps} style={[defaultStyles.headerCell, style, { flex: width }]}>
       <Text style={textStyle}>
         {text}
       </Text>
@@ -48,7 +48,7 @@ HeaderCell.defaultProps = {
   width: 1,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   headerCell: {
     flex: 1,
     justifyContent: 'center',

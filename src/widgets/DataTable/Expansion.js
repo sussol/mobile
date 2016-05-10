@@ -13,7 +13,7 @@ import React, {
 export default function Expansion(props) {
   const { children, style, ...viewProps } = props;
   return (
-    <View {...viewProps} style={[styles.expansion, style]}>
+    <View {...viewProps} style={[defaultStyles.expansion, style]}>
       {children}
     </View>
   );
@@ -24,7 +24,7 @@ Expansion.propTypes = {
   children: React.PropTypes.any,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   expansion: {
     flex: 1,
     flexDirection: 'row',

@@ -32,7 +32,7 @@ export default class Row extends Component {
     return (
       <TouchableOpacity
         {...touchableOpacityProps}
-        style={[styles.row, style]}
+        style={[defaultStyles.row, style]}
         onPress={typeof renderExpansion === 'function' && this.expandRow}
       >
         <View style={{ flex: 1, flexDirection: 'row' }}>
@@ -50,7 +50,7 @@ Row.propTypes = {
   renderExpansion: React.PropTypes.func,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   row: {
     flex: 1,
     flexDirection: 'column',

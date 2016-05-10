@@ -26,11 +26,11 @@ export default function DataTable(props) {
     ...listViewProps,
   } = props;
   return (
-    <View style={[styles.verticalContainer, style]}>
+    <View style={[defaultStyles.verticalContainer, style]}>
       {
         (typeof searchBar === 'function') &&
           <TextInput
-            style={[styles.searchBar, searchBarStyle]}
+            style={[defaultStyles.searchBar, searchBarStyle]}
             onChange={(event) => searchBar(event)}
             placeholder="Search"
           />
@@ -38,7 +38,7 @@ export default function DataTable(props) {
       {typeof renderHeader === 'function' && renderHeader()}
       <ListView
         {...listViewProps}
-        style={[styles.listview, listViewStyle]}
+        style={[defaultStyles.listview, listViewStyle]}
         dataSource={dataSource}
         renderRow={renderRow}
       />
@@ -60,7 +60,7 @@ DataTable.defaultProps = {
   scrollRenderAheadDistance: 5000,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   verticalContainer: {
     flex: 1,
   },
