@@ -45,7 +45,7 @@ export default class Row extends Component {
 }
 
 Row.propTypes = {
-  style: React.PropTypes.number,
+  style: React.View.propTypes.style,
   children: React.PropTypes.any,
   renderExpansion: React.PropTypes.func,
 };
