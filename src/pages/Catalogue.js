@@ -23,7 +23,7 @@ import {
   TableButton,
 } from '../widgets/DataTable';
 
-import globalStyles from '../styles';
+import globalStyles from '../globalStyles';
 import ConfirmModal from '../widgets/modals/ConfirmModal';
 import { ListView } from 'realm/react-native';
 

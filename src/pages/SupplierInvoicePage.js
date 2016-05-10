@@ -10,7 +10,7 @@ import React, {
   View,
 } from 'react-native';
 
-import globalStyles from '../styles';
+import globalStyles from '../globalStyles';
 
 export default function SupplierInvoicePage(props) {
   return (
