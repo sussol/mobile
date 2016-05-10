@@ -101,14 +101,14 @@ export default class OfflineMobileApp extends Component {
   }
 
   render() {
-    // if (!this.state.initialised) {
-    //   return (
-    //     <FirstUsePage
-    //       database={realm}
-    //       onInitialised={() => this.setState({ initialised: true })}
-    //     />
-    //   );
-    // }
+    if (!this.state.initialised) {
+      return (
+        <FirstUsePage
+          database={realm}
+          onInitialised={() => this.setState({ initialised: true })}
+        />
+      );
+    }
     return (
       <View style={styles.container}>
         <Navigator

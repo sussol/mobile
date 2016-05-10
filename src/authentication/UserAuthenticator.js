@@ -4,8 +4,6 @@ import authenticationUtils from './authenticationUtils';
 export default class UserAuthenticator {
   constructor(database) {
     this.database = database;
-    const serverURL = this.database.objects('Setting').filtered('key = "ServerURL"')[0].value;
-    this.authURL = `${serverURL}/mobile/user`;
   }
 
 /**
@@ -27,10 +25,12 @@ export default class UserAuthenticator {
     }
 
     const passwordHash = authenticationUtils.hashPassword(password);
+    const serverURL = this.database.objects('Setting').filtered('key = "ServerURL"')[0].value;
+    const authURL = `${serverURL}/mobile/user`;
 
     // Get the cached user from the database, if they exist
     const user = this.database.objects('User').filtered(`username = "${username}"`)[0];
-    fetch(this.authURL, {
+    fetch(authURL, {
       headers: {
         Authorization: `Basic ${Base64.encode(`${username}:${passwordHash}`)}`,
       },
