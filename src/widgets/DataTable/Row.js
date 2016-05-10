@@ -28,27 +28,29 @@ export default class Row extends Component {
   }
 
   render() {
+    const { style, children, renderExpansion, ...touchableOpacityProps } = this.props;
     return (
       <TouchableOpacity
-        style={[styles.row, this.props.style]}
-        onPress={typeof this.props.renderExpansion === 'function' && this.expandRow}
+        {...touchableOpacityProps}
+        style={[defaultStyles.row, style]}
+        onPress={typeof renderExpansion === 'function' && this.expandRow}
       >
         <View style={{ flex: 1, flexDirection: 'row' }}>
-          {this.props.children}
+          {children}
         </View>
-        {this.state.expanded && this.props.renderExpansion()}
+        {this.state.expanded && renderExpansion()}
       </TouchableOpacity>
     );
   }
 }
 
 Row.propTypes = {
-  renderExpansion: React.PropTypes.func,
+  style: React.View.propTypes.style,
   children: React.PropTypes.any,
-  style: React.PropTypes.object,
+  renderExpansion: React.PropTypes.func,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   row: {
     flex: 1,
     flexDirection: 'column',

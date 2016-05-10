@@ -7,7 +7,6 @@
 
 import React, {
   Component,
-  StyleSheet,
   TextInput,
   View,
 } from 'react-native';
@@ -32,11 +31,12 @@ export default class EditableCell extends Component {
   }
 
   render() {
+    const { style, width, textStyle, ...textInputProps } = this.props;
     return (
-      <View style={[styles.editableCell, { flex: this.props.width }]}>
+      <View style={[style, { flex: width }]}>
         <TextInput
-          style={this.props.style}
-          keyboardType={this.props.keyboardType}
+          {...textInputProps}
+          style={textStyle}
           onChangeText = {(text) => this.setState({ value: text })}
           onEndEditing={() => this.onEndEditing()}
           value={this.state.value}
@@ -47,9 +47,9 @@ export default class EditableCell extends Component {
 }
 
 EditableCell.propTypes = {
-  style: React.PropTypes.object,
+  style: React.View.propTypes.style,
+  textStyle: React.TextInput.propTypes.style,
   width: React.PropTypes.number,
-  keyboardType: React.PropTypes.string,
   onEndEditing: React.PropTypes.func,
   target: React.PropTypes.object,
   value: React.PropTypes.oneOfType([
@@ -62,10 +62,3 @@ EditableCell.defaultProps = {
   width: 1,
   value: 'N/A',
 };
-
-const styles = StyleSheet.create({
-  editableCell: {
-    flex: 1,
-    backgroundColor: 'blue',
-  },
-});

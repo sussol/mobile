@@ -12,17 +12,19 @@ import React, {
 } from 'react-native';
 
 export default function Cell(props) {
+  const { style, textStyle, width, children, ...viewProps } = props;
   return (
-    <View style={[styles.cell, { flex: props.width }]}>
-      <Text style={props.style}>
-        {props.children}
+    <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
+      <Text style={textStyle}>
+        {children}
       </Text>
     </View>
   );
 }
 
 Cell.propTypes = {
-  style: React.PropTypes.object,
+  style: React.View.propTypes.style,
+  textStyle: React.Text.propTypes.style,
   width: React.PropTypes.number,
   children: React.PropTypes.any,
 };
@@ -31,7 +33,7 @@ Cell.defaultProps = {
   width: 1,
 };
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   cell: {
     flex: 1,
     justifyContent: 'center',

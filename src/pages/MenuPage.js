@@ -10,6 +10,7 @@ import React, {
   View,
 } from 'react-native';
 
+import globalStyles from '../globalStyles';
 import {
   Button,
 } from '../widgets';

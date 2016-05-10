@@ -21,7 +21,7 @@ describe('EditableCell', () => {
     expect(wrapper.find(TextInput).length).toBe(1);
   });
 
-  it('takes a width argument and applies it to styles', () => {
+  it('takes a width argument and applies it to defaultStyles', () => {
     const wrapper = shallow(
       <EditableCell width={1337} />
     );

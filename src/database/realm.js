@@ -63,8 +63,8 @@ const ItemCategorySchema = {
   },
 };
 
-const InvoiceSchema = {
-  name: 'Invoice',
+const TransactionSchema = {
+  name: 'Transaction',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -77,29 +77,30 @@ const InvoiceSchema = {
     confirmDate: 'date',
     enteredBy: 'User',
     theirRef: 'string', // An external reference code
-    lines: { type: 'list', objectType: 'InvoiceLine' },
+    category: 'TransactionCategory',
+    lines: { type: 'list', objectType: 'TransactionLine' },
   },
 };
 
-const InvoiceCategorySchema = {
-  name: 'InvoiceCategory',
+const TransactionCategorySchema = {
+  name: 'TransactionCategory',
   primaryKey: 'id',
   properties: {
     id: 'string',
     name: 'string',
-    parentCategory: 'InvoiceCategory',
+    parentCategory: 'TransactionCategory',
   },
 };
 
-const InvoiceLineSchema = {
-  name: 'InvoiceLine',
+const TransactionLineSchema = {
+  name: 'TransactionLine',
   primaryKey: 'id',
   properties: {
     id: 'string',
     itemLine: 'ItemLine',
     packSize: 'double',
     numberOfPacks: 'double',
-    invoice: 'Invoice',
+    invoice: 'Transaction',
   },
 };
 
@@ -136,7 +137,7 @@ const NameSchema = {
     billingAddress: 'Address',
     type: 'string',
     masterList: 'MasterList',
-    invoices: { type: 'list', objectType: 'Invoice' },
+    invoices: { type: 'list', objectType: 'Transaction' },
   },
 };
 
@@ -237,9 +238,9 @@ const schema =
     ItemLineSchema,
     ItemDepartmentSchema,
     ItemCategorySchema,
-    InvoiceCategorySchema,
-    InvoiceSchema,
-    InvoiceLineSchema,
+    TransactionSchema,
+    TransactionLineSchema,
+    TransactionCategorySchema,
     MasterListSchema,
     MasterListLineSchema,
     NameSchema,
@@ -252,4 +253,4 @@ const schema =
     UserSchema,
   ];
 
-export default new Realm({ schema, schemaVersion: 2 });
+export default new Realm({ schema: schema, schemaVersion: 3 });
