@@ -25,7 +25,7 @@ export default function TableButton(props) {
 }
 
 TableButton.propTypes = {
-  style: React.PropTypes.number,
+  style: React.View.propTypes.style,
   onPress: React.PropTypes.func,
   children: React.PropTypes.any,
 };

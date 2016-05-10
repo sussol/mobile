@@ -47,8 +47,8 @@ export default class EditableCell extends Component {
 }
 
 EditableCell.propTypes = {
-  style: React.PropTypes.number,
-  textStyle: React.PropTypes.number,
+  style: React.View.propTypes.style,
+  textStyle: React.TextInput.propTypes.style,
   width: React.PropTypes.number,
   onEndEditing: React.PropTypes.func,
   target: React.PropTypes.object,

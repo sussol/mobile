@@ -244,4 +244,4 @@ const schema =
     UserSchema,
   ];
 
-export default new Realm({ schema: schema, schemaVersion: 2 });
+export default new Realm({ schema: schema, schemaVersion: 3 });

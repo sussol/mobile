@@ -37,8 +37,8 @@ export default function HeaderCell(props) {
 }
 
 HeaderCell.propTypes = {
-  style: React.PropTypes.number,
-  textStyle: React.PropTypes.number,
+  style: React.View.propTypes.style,
+  textStyle: React.Text.propTypes.style,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,

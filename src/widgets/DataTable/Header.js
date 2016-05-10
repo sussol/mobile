@@ -20,7 +20,7 @@ export default function Header(props) {
 }
 
 Header.propTypes = {
-  style: React.PropTypes.number,
+  style: React.View.propTypes.style,
   children: React.PropTypes.any,
 };
 

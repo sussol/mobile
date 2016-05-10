@@ -47,7 +47,7 @@ export default function DataTable(props) {
 }
 
 DataTable.propTypes = {
-  style: React.PropTypes.number,
+  style: React.View.propTypes.style,
   listViewStyle: React.PropTypes.number,
   searchBar: React.PropTypes.func,
   searchBarStyle: React.PropTypes.number,
