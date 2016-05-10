@@ -23,7 +23,7 @@ import {
   TableButton,
 } from '../widgets/DataTable';
 
-import globalStyles from '../styles';
+import globalStyles from '../globalStyles';
 import ConfirmModal from '../widgets/modals/ConfirmModal';
 import { ListView } from 'realm/react-native';
 
@@ -118,15 +118,26 @@ export default class Catalogue extends Component {
 
   renderHeader() {
     return (
-      <Header>
-        <HeaderCell style={styles.text} width={1}>Item Code</HeaderCell>
-        <HeaderCell style={styles.text}
+      <Header style={globalStyles.header}>
+        <HeaderCell
+          style={globalStyles.headerCell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={1}
+          text={'Item Code'}
+        />
+        <HeaderCell
+          style={globalStyles.headerCell}
+          textStyle={[globalStyles.text, styles.text]}
           width={5}
           onPress={() => this.onColumnSort()}
-        >
-          Item Name
-        </HeaderCell>
-        <HeaderCell style={styles.packSize} width={2}>Default Pack Size</HeaderCell>
+          text={'Item Name'}
+        />
+        <HeaderCell
+          style={globalStyles.headerCell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={2}
+          text={'Default Pack Size'}
+        />
       </Header>
     );
   }
@@ -135,11 +146,11 @@ export default class Catalogue extends Component {
     return (
       <Expansion>
         <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-          <Text style={styles.text}>Department: {item.department.name}</Text>
-          <Text style={styles.text}>Description: {item.description}</Text>
+          <Text style={[globalStyles.text, styles.text]}>Department: {item.department.name}</Text>
+          <Text style={[globalStyles.text, styles.text]}>Description: {item.description}</Text>
         </View>
-        <TableButton onPress={() => this.onDeleteBtnPress(item)}>
-          <Text style={styles.text} >Delete Item</Text>
+        <TableButton style={globalStyles.tableButton} onPress={() => this.onDeleteBtnPress(item)}>
+          <Text style={[globalStyles.text, styles.text]}>Delete Item</Text>
         </TableButton>
       </Expansion>
     );
@@ -147,11 +158,24 @@ export default class Catalogue extends Component {
 
   renderRow(item) {
     return (
-      <Row renderExpansion={() => this.renderExpansion(item)}>
-        <Cell style={styles.text} width={1}>{item.code}</Cell>
-        <Cell style={styles.text} width={5}>{item.name}</Cell>
+      <Row style={globalStyles.row} renderExpansion={() => this.renderExpansion(item)}>
+        <Cell
+          style={globalStyles.cell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={1}
+        >
+          {item.code}
+        </Cell>
+        <Cell
+          style={globalStyles.cell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={1}
+        >
+          {item.name}
+        </Cell>
         <EditableCell
-          style={styles.packSize}
+          style={[globalStyles.cell, globalStyles.editableCell]}
+          textStyle={[globalStyles.text, globalStyles.editableCell, styles.packSize]}
           width={2}
           keyboardType="number-pad"
           onEndEditing={this.onEndDefaultPackSizeEdit}
@@ -164,13 +188,16 @@ export default class Catalogue extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={globalStyles.container}>
         <Text>Text Component outside of DataTable</Text>
         <DataTable
+          style={globalStyles.container}
+          listViewStyle={globalStyles.container}
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           renderHeader={this.renderHeader}
           searchBar={this.onSearchChange}
+          searchBarStyle={globalStyles.searchBar}
         />
         <ConfirmModal
           isOpen={this.state.deleteModalOpen}

@@ -10,6 +10,8 @@ import React, {
   View,
 } from 'react-native';
 
+import globalStyles from '../globalStyles';
+
 export default function SupplierInvoicePage(props) {
   return (
     <View style={props.style}>
