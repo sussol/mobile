@@ -85,8 +85,8 @@ LoginModal.propTypes = {
   authenticator: React.PropTypes.object.isRequired,
   isAuthenticated: React.PropTypes.bool.isRequired,
   onAuthentication: React.PropTypes.func.isRequired,
-  style: React.PropTypes.object,
-  textStyle: React.PropTypes.number,
+  style: React.View.propTypes.style,
+  textStyle: React.Text.propTypes.style,
 };
 LoginModal.defaultProps = {
   style: {},

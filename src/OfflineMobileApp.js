@@ -58,7 +58,12 @@ export default class OfflineMobileApp extends Component {
     this.renderScene = this.renderScene.bind(this);
     this.renderLogoutButton = this.renderLogoutButton.bind(this);
     this.scheduler.schedule(this.synchronizer.synchronize, SYNC_INTERVAL);
-    this.scheduler.schedule(this.authenticator.reauthenticate, AUTHENTICATION_INTERVAL);
+    this.scheduler.schedule(() => {
+      this.authenticator.reauthenticate((authenticated) => {
+        this.setState({ authenticated: authenticated });
+      });
+    },
+      AUTHENTICATION_INTERVAL);
   }
 
   componentWillUnmount() {
