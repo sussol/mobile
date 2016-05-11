@@ -12,10 +12,7 @@ export default class Synchronizer {
 
   constructor(database) {
     this.database = database;
-  }
-
-  synchronize() {
-    if (!this.isInitialised()) return; // Not yet initialised, don't sync
+    this.synchronize = this.synchronize.bind(this);
   }
 
   initialise(serverURL, syncSiteName, syncSitePassword, onInitialised) {
@@ -46,34 +43,8 @@ export default class Synchronizer {
     return this.database.objects('Setting').filtered('key = "ServerURL"').length > 0;
   }
 
-  _getAllItems() {
-    const requestMetadata = {
-      method: 'GET',
-      headers: {
-        Authorization: 'Basic U3Vzc29sOmthdGhtYW5kdTMxMg==',
-      },
-    };
-
-    const requestURL = REQUEST_URL;
-    fetch(requestURL, requestMetadata)
-      .then((response) => response.json())
-      .then((responseData) => {
-        this.database.write(() => {
-          for (item of responseData) {
-            this.database.create('Item', {
-              id: item.id,
-              code: item.code,
-              name: item.item_name,
-              defaultPackSize: item.default_pack_size,
-              stockOnHand: item.stock_on_hand_tot
-            }, true); // true param allows for updating objects at existing ids (primary key)
-          }
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .done();
+  synchronize() {
+    if (!this.isInitialised()) return; // Not yet initialised, don't sync
   }
 
 }
