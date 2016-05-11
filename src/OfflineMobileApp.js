@@ -32,17 +32,22 @@ import {
 
 import { Button, LoginModal } from './widgets';
 
-import Synchronizer from './sync/Synchronizer';
+import { Synchronizer } from './sync';
 import { UserAuthenticator } from './authentication';
 import realm from './database/realm';
+import Scheduler from './Scheduler';
+
+const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 export default class OfflineMobileApp extends Component {
 
   constructor() {
     super();
-    this.synchronizer = new Synchronizer();
     this.authenticator = new UserAuthenticator(realm);
-    const initialised = realm.objects('Setting').filtered('key = "ServerURL"').length > 0;
+    this.synchronizer = new Synchronizer(realm);
+    this.scheduler = new Scheduler();
+    const initialised = this.synchronizer.isInitialised();
     this.state = {
       initialised: initialised,
       authenticated: false,
@@ -50,9 +55,14 @@ export default class OfflineMobileApp extends Component {
   }
 
   componentWillMount() {
-    this.synchronizer.synchronize();
     this.renderScene = this.renderScene.bind(this);
     this.renderLogoutButton = this.renderLogoutButton.bind(this);
+    this.scheduler.schedule(this.synchronizer.synchronize, SYNC_INTERVAL);
+    this.scheduler.schedule(this.authenticator.reauthenticate, AUTHENTICATION_INTERVAL);
+  }
+
+  componentWillUnmount() {
+    this.scheduler.clearAll();
   }
 
   renderLogoutButton() {
@@ -105,7 +115,12 @@ export default class OfflineMobileApp extends Component {
       return (
         <FirstUsePage
           database={realm}
-          onInitialised={() => this.setState({ initialised: true })}
+          onInitialise={(serverURL, syncSiteName, syncSitePassword) => {
+            this.synchronizer.initialise(serverURL,
+                                         syncSiteName,
+                                         syncSitePassword,
+                                         () => this.setState({ initialised: true }));
+          }}
         />
       );
     }

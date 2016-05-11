@@ -5,10 +5,6 @@ import React, {
 } from 'react-native';
 
 import { Button } from '../widgets';
-import { authenticationUtils } from '../authentication';
-const {
-  hashPassword,
-} = authenticationUtils;
 
 export default class FirstUsePage extends React.Component {
   constructor(props) {
@@ -44,24 +40,10 @@ export default class FirstUsePage extends React.Component {
         />
         <Button
           text="Connect to mSupply"
-          onPress={() => {
-            const passwordHash = hashPassword(this.state.syncSitePassword);
-            this.props.database.write(() => {
-              this.props.database.create('Setting', {
-                key: 'ServerURL',
-                value: this.state.serverURL,
-              }, true);
-              this.props.database.create('Setting', {
-                key: 'SyncSiteName',
-                value: this.state.syncSiteName,
-              }, true);
-              this.props.database.create('Setting', {
-                key: 'SyncSitePasswordHash',
-                value: passwordHash,
-              }, true);
-            });
-            this.props.onInitialised();
-          }}
+          onPress={() => this.props.onInitialise(this.state.serverURL,
+                                                 this.state.syncSiteName,
+                                                 this.state.syncSitePassword)
+          }
         />
       </View>
     );
@@ -69,8 +51,7 @@ export default class FirstUsePage extends React.Component {
 }
 
 FirstUsePage.propTypes = {
-  database: React.PropTypes.object.isRequired,
-  onInitialised: React.PropTypes.func.isRequired,
+  onInitialise: React.PropTypes.func.isRequired,
 };
 
 const styles = StyleSheet.create({
