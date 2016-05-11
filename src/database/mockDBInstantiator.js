@@ -92,4 +92,74 @@ export default function instantiate() {
       });
     }
   });
+  // 10000 transactions on 100 items distributed over 1 year
+  function newDate(currIndex, totalTrans) {
+    const date = new Date();
+    date.setYear(date.getFullYear() - 1);
+    date.setDate(date.getDate() + 365 / totalTrans * currIndex);
+    return date;
+  }
+
+  realm.write(() => {
+    const name = realm.create('Name', {
+      id: '1',
+      name: 'Borg',
+      code: 'borg1',
+      phoneNumber: '08002674',
+      billingAddress: undefined,
+      type: 'Customer AND supplier',
+      masterList: undefined,
+      invoices: [],
+    });
+
+    const user = realm.create('User', {
+      id: '1',
+      username: 'chrisSussol',
+      lastLogin: new Date(),
+      firstName: 'Chris',
+      lastName: 'Petty',
+      email: 'Chris@Petty.com',
+      password: 'password totally not stored as a string',
+      salt: 'sodium chloride',
+    });
+
+    const transCat = realm.create('TransactionCategory', {
+      id: '1',
+      name: 'TransactionCategory 1',
+      parentCategory: undefined,
+    });
+
+    const numberOfTransactions = 1000;
+    const items = realm.objects('Item').sorted('id');
+    let currItem = 0;
+
+    for (let t = 0; t < numberOfTransactions; t++) {
+      const transaction = realm.create('Transaction', {
+        id: `t${t}`,
+        serialNumber: t,
+        otherParty: name,
+        comment: 'comment is here',
+        entryDate: newDate(t, numberOfTransactions),
+        type: 'stock_out',
+        status: 'cn',
+        confirmDate: new Date(),
+        enteredBy: user,
+        theirRef: `borg${t}`, // An external reference code
+        category: transCat,
+        lines: [],
+      });
+      name.invoices.push(transaction);
+      for (let i = 0; i < 10; i++) {
+        transaction.lines.push({
+          id: `t${t}i${i}`,
+          itemLine: items[currItem].lines[i],
+          packSize: 1,
+          numberOfPacks: 1,
+          invoice: transaction,
+        });
+        currItem++;
+        currItem = currItem >= 100 ? 0 : currItem;
+      }
+    }
+  });
 }
