@@ -52,6 +52,7 @@ export default class LoginModal extends React.Component {
         style={[localStyles.modal, this.props.style]}
         backdropPressToClose={false}
         swipeToClose={false}
+        startOpen
       >
         <View style={[localStyles.container, this.props.style.container]}>
           <TextInput
