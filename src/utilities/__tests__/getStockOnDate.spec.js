@@ -1,7 +1,6 @@
 jest.unmock('../getStockOnDate');
 jest.unmock('../../database/realm');
 jest.unmock('enzyme');
-jest.mock('NativeModules.Realm.debugHosts');
 
 import getStockOnDate from '../getStockOnDate';
 import realm from '../../database/realm';
@@ -13,7 +12,8 @@ describe('getStockOnDate', () => {
   });
 
   it('returns a Realm.Results object', () => {
-    // TODO:
+    const actual = getStockOnDate(new Date(), realm.objects('Items'));
+    expect(typeof actual === 'object').toEqual(true); // TODO: Test for Realm.Results object
   });
 
   describe('filters by date, passed with Date object', () => {
