@@ -1,13 +1,21 @@
 jest.unmock('../getStockOnDate');
 jest.unmock('../../database/realm');
 jest.unmock('enzyme');
+jest.mock('NativeModules.Realm.debugHosts');
 
 import getStockOnDate from '../getStockOnDate';
-import React, { View } from 'react-native';
 import realm from '../../database/realm';
 
 
 describe('getStockOnDate', () => {
+  afterEach(() => {
+    realm.deleteAll();
+  });
+
+  it('returns a Realm.Results object', () => {
+    // TODO:
+  });
+
   describe('filters by date, passed with Date object', () => {
     it('filters correctly with date in the near past', () => {
       // TODO:
@@ -20,16 +28,8 @@ describe('getStockOnDate', () => {
     });
   });
 
-  describe('filters by items passed with array', () => {
-    it('returns results only for items in array', () => {
-      // TODO:
-    });
-    it('handles and empty array correctly', () => {
-      // TODO: I think it should just return results for all items.
-    });
-    it('filters by all items when array arg not given', () => {
-      // TODO:
-    });
+  it('When 2nd arg is empty Realm.Results, skip func body and return empty Realm.Results', () => {
+    // TODO: make sure that his takes less than 0.1 seconds, say.
   });
 
   it('ignores transactions with no confirm date', () => {
@@ -37,22 +37,25 @@ describe('getStockOnDate', () => {
   });
 
   describe('treats customer/supplier invoices and credit correctly', () => {
-    it('does subtraction with invoices', () => {
+    it('does subtraction with customer invoices', () => {
       // TODO:
     });
-    it('does addition with credit', () => {
+    it('does addition with customer credit', () => {
       // TODO:
     });
-    it('does addition with invoices', () => {
+    it('does addition with supplier invoices', () => {
       // TODO:
     });
-    it('does subtraction with credit', () => {
+    it('does subtraction with supplier credit', () => {
       // TODO:
     });
   });
 
-  it('gives correct result on ', () => {
-
+  it('gives correct result on small data set of 10 transactions', () => {
+    // TODO:
+  });
+  it('takes no more than 3 seconds on large data set of 10000 transactions', () => {
+    // TODO:
   });
 
   describe('with a small data set (10 transactions)', () => {
@@ -67,7 +70,7 @@ describe('getStockOnDate', () => {
     });
   });
 
-  it('does not change the realm it works on', () => {
+  it('does not change the realm DB it works on', () => {
     // TODO:
   });
 });
