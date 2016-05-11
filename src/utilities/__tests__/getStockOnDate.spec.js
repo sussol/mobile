@@ -36,7 +36,7 @@ describe('getStockOnDate', () => {
     // TODO:
   });
 
-  describe('treats customer/supplier invoices and credit correctly', () => {
+  describe('treats transaction types correctly', () => {
     it('does subtraction with customer invoices', () => {
       // TODO:
     });
@@ -49,23 +49,25 @@ describe('getStockOnDate', () => {
     it('does subtraction with supplier credit', () => {
       // TODO:
     });
-  });
-
-  it('gives correct result on small data set of 10 transactions', () => {
-    // TODO:
-  });
-  it('takes no more than 3 seconds on large data set of 10000 transactions', () => {
-    // TODO:
-  });
-
-  describe('with a small data set (10 transactions)', () => {
-    it('gives correct result', () => {
+    it('takes no action on other types', () => {
       // TODO:
     });
   });
 
-  describe('with a large data set (10000 transactions)', () => {
+  describe('on small data set of 10 transactions', () => {
     it('gives correct result', () => {
+      // TODO:
+    });
+    it('takes no more than 0.1 seconds', () => {
+      // TODO:
+    });
+  });
+
+  describe('on large data set 10000 transactions', () => {
+    it('gives correct result', () => {
+      // TODO:
+    });
+    it('takes no more than 3 seconds', () => {
       // TODO:
     });
   });
