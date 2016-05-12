@@ -60,9 +60,9 @@ export default function instantiate() {
       itemOne.lines.push({
         id: `${i}aLI`,
         item: itemOne,
-        packSize: 12,
-        numberOfPacks: 10,
-        totalQuantity: 120,  // Should be kept consistent with packSize x numberOfPacks
+        packSize: 1,
+        numberOfPacks: 1,
+        totalQuantity: 1,  // Should be kept consistent with packSize x numberOfPacks
         expiryDate: new Date(2016, 12, 31),
         batch: '100',
         costPrice: 0.50,
@@ -71,9 +71,9 @@ export default function instantiate() {
       itemOne.lines.push({
         id: `${i + 1}aLI`,
         item: itemOne,
-        packSize: 100,
-        numberOfPacks: 5000,
-        totalQuantity: 500000,
+        packSize: 9,
+        numberOfPacks: 1,
+        totalQuantity: 9,
         expiryDate: new Date(2017, 7, 31),
         batch: '200',
         costPrice: 2.50,
@@ -82,9 +82,9 @@ export default function instantiate() {
       itemTwo.lines.push({
         id: `${i}bLI`,
         item: itemTwo,
-        packSize: 24,
-        numberOfPacks: 100,
-        totalQuantity: 2400,
+        packSize: 1,
+        numberOfPacks: 1,
+        totalQuantity: 1,
         expiryDate: new Date(2020, 1, 31),
         batch: '300',
         costPrice: 0.10,
@@ -129,7 +129,7 @@ export default function instantiate() {
       parentCategory: undefined,
     });
 
-    const numberOfTransactions = 1000;
+    const numberOfTransactions = 10;
     const items = realm.objects('Item').sorted('id');
     let currItem = 0;
 
