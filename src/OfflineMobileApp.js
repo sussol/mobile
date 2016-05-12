@@ -33,7 +33,7 @@ import {
 import { Button, LoginModal } from './widgets';
 
 import { Synchronizer } from './sync';
-import { UserAuthenticator } from './authentication';
+import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import realm from './database/realm';
 import Scheduler from './Scheduler';
 
@@ -44,8 +44,8 @@ export default class OfflineMobileApp extends Component {
 
   constructor() {
     super();
-    this.authenticator = new UserAuthenticator(realm);
-    this.synchronizer = new Synchronizer(realm);
+    this.userAuthenticator = new UserAuthenticator(realm);
+    this.synchronizer = new Synchronizer(realm, new SyncAuthenticator(realm));
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
     this.state = {
@@ -57,17 +57,24 @@ export default class OfflineMobileApp extends Component {
   componentWillMount() {
     this.renderScene = this.renderScene.bind(this);
     this.renderLogoutButton = this.renderLogoutButton.bind(this);
-    this.scheduler.schedule(this.synchronizer.synchronize, SYNC_INTERVAL);
-    this.scheduler.schedule(() => {
-      this.authenticator.reauthenticate((authenticated) => {
-        this.setState({ authenticated: authenticated });
-      });
-    },
-      AUTHENTICATION_INTERVAL);
+    this.onAuthentication = this.onAuthentication.bind(this);
+    this.onInitialised = this.onInitialised.bind(this);
+    this.scheduler.schedule(this.synchronizer.synchronize,
+                            SYNC_INTERVAL);
+    this.scheduler.schedule(() => this.userAuthenticator.reauthenticate(this.onAuthentication),
+                            AUTHENTICATION_INTERVAL);
   }
 
   componentWillUnmount() {
     this.scheduler.clearAll();
+  }
+
+  onAuthentication(authenticated) {
+    this.setState({ authenticated: authenticated });
+  }
+
+  onInitialised() {
+    this.setState({ initialised: true });
   }
 
   renderLogoutButton() {
@@ -119,13 +126,8 @@ export default class OfflineMobileApp extends Component {
     if (!this.state.initialised) {
       return (
         <FirstUsePage
-          database={realm}
-          onInitialise={(serverURL, syncSiteName, syncSitePassword) => {
-            this.synchronizer.initialise(serverURL,
-                                         syncSiteName,
-                                         syncSitePassword,
-                                         () => this.setState({ initialised: true }));
-          }}
+          synchronizer={this.synchronizer}
+          onInitialised={this.onInitialised}
         />
       );
     }
@@ -136,9 +138,9 @@ export default class OfflineMobileApp extends Component {
           renderRightComponent={this.renderLogoutButton}
         />
         <LoginModal
-          authenticator={this.authenticator}
+          authenticator={this.userAuthenticator}
           isAuthenticated={this.state.authenticated}
-          onAuthentication={() => this.setState({ authenticated: true })}
+          onAuthentication={this.onAuthentication}
         />
       </View>
     );

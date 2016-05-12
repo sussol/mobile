@@ -1,5 +1,6 @@
 import React, {
   StyleSheet,
+  Text,
   TextInput,
   View,
 } from 'react-native';
@@ -10,10 +11,28 @@ export default class FirstUsePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      progress: 'uninitialised', // uninitialised, initialising, initialised, error
+      error: '',
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
     };
+  }
+
+  componentWillMount() {
+    this.onPressConnect = this.onPressConnect.bind(this);
+  }
+
+  onPressConnect() {
+    this.props.synchronizer.initialise(this.state.serverURL,
+                                       this.state.syncSiteName,
+                                       this.state.syncSitePassword,
+                                       (error) => this.setState({ error: error }))
+      .then(this.props.onInitialised,
+      (error) => {
+        this.setState({ error: error });
+      }
+    );
   }
 
   render() {
@@ -40,18 +59,17 @@ export default class FirstUsePage extends React.Component {
         />
         <Button
           text="Connect to mSupply"
-          onPress={() => this.props.onInitialise(this.state.serverURL,
-                                                 this.state.syncSiteName,
-                                                 this.state.syncSitePassword)
-          }
+          onPress={this.onPressConnect}
         />
+        <Text>{this.state.error}</Text>
       </View>
     );
   }
 }
 
 FirstUsePage.propTypes = {
-  onInitialise: React.PropTypes.func.isRequired,
+  onInitialised: React.PropTypes.func.isRequired,
+  synchronizer: React.PropTypes.object.isRequired,
 };
 
 const styles = StyleSheet.create({

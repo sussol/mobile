@@ -1,7 +1,7 @@
+import SyncAuthenticator from './SyncAuthenticator';
 import UserAuthenticator from './UserAuthenticator';
-import authenticationUtils from './authenticationUtils';
 
 export {
+  SyncAuthenticator,
   UserAuthenticator,
-  authenticationUtils,
 };

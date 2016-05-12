@@ -4,39 +4,28 @@
  */
 
 import realmMock from '../database/mockDBInstantiator';
-import { authenticationUtils } from '../authentication';
-const { hashPassword } = authenticationUtils;
-
 
 export default class Synchronizer {
 
-  constructor(database) {
+  constructor(database, authenticator) {
     this.database = database;
+    this.authenticator = authenticator;
     this.synchronize = this.synchronize.bind(this);
   }
 
-  initialise(serverURL, syncSiteName, syncSitePassword, onInitialised) {
-    this.database.write(() => { this.database.deleteAll(); });
+  initialise(serverURL, syncSiteName, syncSitePassword) {
+    return new Promise((resolve, reject) => {
+      this.database.write(() => { this.database.deleteAll(); });
 
-    const passwordHash = hashPassword(syncSitePassword);
-    this.database.write(() => {
-      this.database.create('Setting', {
-        key: 'ServerURL',
-        value: serverURL,
-      }, true);
-      this.database.create('Setting', {
-        key: 'SyncSiteName',
-        value: syncSiteName,
-      }, true);
-      this.database.create('Setting', {
-        key: 'SyncSitePasswordHash',
-        value: passwordHash,
-      }, true);
+      this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword)
+        .then(() => { // Successfully authenticated
+          realmMock(); // Initialise using mock db
+          resolve();
+        }, (error) => { // Did not authenticate
+          reject(error);
+        }
+      );
     });
-    if (this.database.objects('Item').length === 0) {
-      realmMock();
-    }
-    onInitialised();
   }
 
   isInitialised() {
