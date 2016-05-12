@@ -74,7 +74,7 @@ const TransactionSchema = {
     entryDate: 'date',
     type: 'string',
     status: 'string',
-    confirmDate: 'date',
+    confirmDate: { type: 'date', optional: true },
     enteredBy: 'User',
     theirRef: 'string', // An external reference code
     category: 'TransactionCategory',
@@ -244,4 +244,4 @@ const schema =
     UserSchema,
   ];
 
-export default new Realm({ schema: schema, schemaVersion: 3 });
+export default new Realm({ schema: schema, schemaVersion: 4 });

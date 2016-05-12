@@ -11,7 +11,7 @@ const REQUEST_URL = 'http://192.168.4.111:8088/mobile/item?item_name=@';
 export default class Datastore {
 
   synchronize() {
-    // realm.write(() => { realm.deleteAll(); });
+    // realm.write(() => realm.deleteAll());
     if (realm.objects('Item').length === 0) {
       realmMock();
     }

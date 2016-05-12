@@ -32,7 +32,7 @@ export default function instantiate() {
       parentCategory: antidoteCat,
     });
 
-    for (let i = 1; i < 1000; i += 2) {
+    for (let i = 1; i < 100; i += 2) {
       const itemOne = realm.create('Item', {
         id: `${i}I`,
         code: `MI${i}`,
@@ -129,36 +129,44 @@ export default function instantiate() {
       parentCategory: undefined,
     });
 
-    const numberOfTransactions = 10;
-    const items = realm.objects('Item').sorted('id');
-    let currItem = 0;
+    const numberOfTransactions = 10000;
+    const items = realm.objects('Item');
 
     for (let t = 0; t < numberOfTransactions; t++) {
+      console.log(`making transaction ${t}`);
+      const confirmDate = newDate(t, numberOfTransactions);
+      const entryDate = newDate(t, numberOfTransactions);
+      entryDate.setDate(entryDate.getDate() - 5);
+
       const transaction = realm.create('Transaction', {
         id: `t${t}`,
         serialNumber: t,
         otherParty: name,
         comment: 'comment is here',
-        entryDate: newDate(t, numberOfTransactions),
-        type: 'stock_out',
+        entryDate: entryDate,
+        type: 'customer_invoice',
         status: 'cn',
-        confirmDate: new Date(),
+        confirmDate: confirmDate,
         enteredBy: user,
         theirRef: `borg${t}`, // An external reference code
         category: transCat,
         lines: [],
       });
       name.invoices.push(transaction);
-      for (let i = 0; i < 10; i++) {
+
+      let currItem = 0;
+      for (let i = 0; i < 100; i++) {
         transaction.lines.push({
           id: `t${t}i${i}`,
-          itemLine: items[currItem].lines[i],
+          itemLine: items[currItem].lines[0],
           packSize: 1,
           numberOfPacks: 1,
           invoice: transaction,
         });
         currItem++;
-        currItem = currItem >= 100 ? 0 : currItem;
+        if (currItem >= 100) {
+          currItem = 0;
+        }
       }
     }
   });

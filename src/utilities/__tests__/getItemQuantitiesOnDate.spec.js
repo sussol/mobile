@@ -13,7 +13,8 @@ describe('getStockOnDate', () => {
 
   it('returns a Realm.Results object', () => {
     const actual = getStockOnDate(new Date(), realm.objects('Items'));
-    expect(typeof actual === 'object').toEqual(true); // TODO: Test for Realm.Results object
+    expect(typeof actual === 'object').toEqual(true);
+    // TODO: use actual.toString()
   });
 
   describe('filters by date, passed with Date object', () => {

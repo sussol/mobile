@@ -13,6 +13,11 @@ import React, {
 } from 'react-native';
 
 import {
+  getItemQuantity,
+  getItemQuantitiesOnDate,
+} from '../utilities';
+
+import {
   Cell,
   DataTable,
   EditableCell,
@@ -173,6 +178,14 @@ export default class Catalogue extends Component {
         >
           {item.name}
         </Cell>
+        <Cell
+          style={globalStyles.cell}
+          textStyle={[globalStyles.text, styles.text]}
+          width={1}
+        >
+          {getItemQuantity(item)}
+        </Cell>
+
         <EditableCell
           style={[globalStyles.cell, globalStyles.editableCell]}
           textStyle={[globalStyles.text, globalStyles.editableCell, styles.packSize]}
@@ -187,6 +200,17 @@ export default class Catalogue extends Component {
   }
 
   render() {
+    const { items } = this.state;
+    const date = new Date();
+    date.setDate(date.getDate() - 150);
+    console.log('before');
+    const quants = getItemQuantitiesOnDate(items, date);
+    console.log('after');
+    // for (const itemKey in quants) {
+    //   if (quants.hasOwnProperty(itemKey)) {
+    //     console.log(`${itemKey} Quantity: ${quants[itemKey]}`);
+    //   }
+    // }
     return (
       <View style={globalStyles.container}>
         <Text>Text Component outside of DataTable</Text>
