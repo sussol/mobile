@@ -200,12 +200,23 @@ export default class Catalogue extends Component {
   }
 
   render() {
-    const { items } = this.state;
+    const items = this.props.database.objects('Item');
     const date = new Date();
     date.setDate(date.getDate() - 150);
-    console.log('before');
+    // console.log('before');
+    const start = new Date().getTime();
     const quants = getItemQuantitiesOnDate(items, date);
-    console.log('after');
+    const quants2 = getItemQuantitiesOnDate(items, date);
+    const quants3 = getItemQuantitiesOnDate(items, date);
+    const quants4 = getItemQuantitiesOnDate(items, date);
+    const quants5 = getItemQuantitiesOnDate(items, date);
+    const quants6 = getItemQuantitiesOnDate(items, date);
+    const quants7 = getItemQuantitiesOnDate(items, date);
+    const quants8 = getItemQuantitiesOnDate(items, date);
+    const quants9 = getItemQuantitiesOnDate(items, date);
+    const quants10 = getItemQuantitiesOnDate(items, date);
+    const end = new Date().getTime();
+    // console.log('after');
     // for (const itemKey in quants) {
     //   if (quants.hasOwnProperty(itemKey)) {
     //     console.log(`${itemKey} Quantity: ${quants[itemKey]}`);
@@ -213,7 +224,7 @@ export default class Catalogue extends Component {
     // }
     return (
       <View style={globalStyles.container}>
-        <Text>Text Component outside of DataTable</Text>
+        <Text>Average: {(end - start) / 10}</Text>
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}

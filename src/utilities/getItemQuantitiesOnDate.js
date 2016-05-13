@@ -25,8 +25,8 @@ export default function getItemQuantitiesOnDate(items: Realm.Results, date: Date
     // console.log(transaction.id);
     transaction.lines.forEach((line) => {
       // console.log(`transactionLine: ${line.id}`);
-      const itemId = line.itemLine.item.id;
-      const transactionQuantity = line.packSize * line.numberOfPacks;
+      const itemId = line.itemId;
+      const transactionQuantity = line.total;
       if (typeof itemQuantities[itemId] === 'number') {
         switch (transactionType) {
           case 'customer_invoice':
@@ -36,12 +36,11 @@ export default function getItemQuantitiesOnDate(items: Realm.Results, date: Date
             break;
           case 'customer_credit':
           case 'supplier_invoice':
-            // console.log('lower caseseseses');
-            itemQuantities[itemId] -= transactionQuantity;
+            // console.log(`switch lower cases ${itemId}`);
+            itemQuantities[itemId] = itemQuantities[itemId] - transactionQuantity;
             break;
           default:
-            // console.log('switch default');
-            break;
+            // console.log(`switch default ${itemId}`);
         }
       }
     });

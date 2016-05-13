@@ -32,7 +32,7 @@ export default function instantiate() {
       parentCategory: antidoteCat,
     });
 
-    for (let i = 1; i < 100; i += 2) {
+    for (let i = 1; i < 1000; i += 2) {
       const itemOne = realm.create('Item', {
         id: `${i}I`,
         code: `MI${i}`,
@@ -93,10 +93,10 @@ export default function instantiate() {
     }
   });
   // 10000 transactions on 100 items distributed over 1 year
-  function newDate(currIndex, totalTrans) {
+  function newDate(currIndex, numberOfTransactions) {
     const date = new Date();
     date.setYear(date.getFullYear() - 1);
-    date.setDate(date.getDate() + 365 / totalTrans * currIndex);
+    date.setDate(date.getDate() + 365 / numberOfTransactions * currIndex);
     return date;
   }
 
@@ -129,11 +129,11 @@ export default function instantiate() {
       parentCategory: undefined,
     });
 
-    const numberOfTransactions = 10000;
+    const numberOfTransactions = 1000;
     const items = realm.objects('Item');
 
     for (let t = 0; t < numberOfTransactions; t++) {
-      console.log(`making transaction ${t}`);
+      ((t % 100) === 0) && console.log(`making transaction ${t}`);
       const confirmDate = newDate(t, numberOfTransactions);
       const entryDate = newDate(t, numberOfTransactions);
       entryDate.setDate(entryDate.getDate() - 5);
@@ -158,9 +158,11 @@ export default function instantiate() {
       for (let i = 0; i < 100; i++) {
         transaction.lines.push({
           id: `t${t}i${i}`,
+          itemId: items[currItem].id,
           itemLine: items[currItem].lines[0],
           packSize: 1,
           numberOfPacks: 1,
+          totalQuantity: 1,
           invoice: transaction,
         });
         currItem++;

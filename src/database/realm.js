@@ -97,9 +97,11 @@ const TransactionLineSchema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
+    itemId: 'string',
     itemLine: 'ItemLine',
     packSize: 'double',
     numberOfPacks: 'double',
+    totalQuantity: 'double',
     invoice: 'Transaction',
   },
 };
@@ -244,4 +246,4 @@ const schema =
     UserSchema,
   ];
 
-export default new Realm({ schema: schema, schemaVersion: 4 });
+export default new Realm({ schema: schema, schemaVersion: 6 });
