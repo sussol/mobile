@@ -36,7 +36,10 @@ export default class LoginModal extends React.Component {
       .then(() => {
         this.setState({ authStatus: 'authenticated' });
         this.props.onAuthentication(true);
-      }, (error) => this.setState({ authStatus: 'error', error: error }));
+      }, (error) => {
+        this.setState({ authStatus: 'error', error: error });
+        this.props.onAuthentication(false);
+      });
   }
 
   render() {

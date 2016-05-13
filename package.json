@@ -55,6 +55,7 @@
     "expect-jsx": "^2.3.0",
     "flow-bin": "^0.22.1",
     "jest-cli": "^11.0.2",
+    "promise-sync-es6": "0.0.4",
     "react": "^0.14.7",
     "react-addons-test-utils": "^0.14.7",
     "react-dom": "^0.14.7",
