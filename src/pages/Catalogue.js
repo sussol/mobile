@@ -13,11 +13,6 @@ import React, {
 } from 'react-native';
 
 import {
-  getItemQuantity,
-  getItemQuantitiesOnDate,
-} from '../utilities';
-
-import {
   Cell,
   DataTable,
   EditableCell,
@@ -178,14 +173,6 @@ export default class Catalogue extends Component {
         >
           {item.name}
         </Cell>
-        <Cell
-          style={globalStyles.cell}
-          textStyle={[globalStyles.text, styles.text]}
-          width={1}
-        >
-          {getItemQuantity(item)}
-        </Cell>
-
         <EditableCell
           style={[globalStyles.cell, globalStyles.editableCell]}
           textStyle={[globalStyles.text, globalStyles.editableCell, styles.packSize]}
@@ -200,31 +187,9 @@ export default class Catalogue extends Component {
   }
 
   render() {
-    const items = this.props.database.objects('Item');
-    const date = new Date();
-    date.setDate(date.getDate() - 150);
-    // console.log('before');
-    const start = new Date().getTime();
-    const quants = getItemQuantitiesOnDate(items, date);
-    const quants2 = getItemQuantitiesOnDate(items, date);
-    const quants3 = getItemQuantitiesOnDate(items, date);
-    const quants4 = getItemQuantitiesOnDate(items, date);
-    const quants5 = getItemQuantitiesOnDate(items, date);
-    const quants6 = getItemQuantitiesOnDate(items, date);
-    const quants7 = getItemQuantitiesOnDate(items, date);
-    const quants8 = getItemQuantitiesOnDate(items, date);
-    const quants9 = getItemQuantitiesOnDate(items, date);
-    const quants10 = getItemQuantitiesOnDate(items, date);
-    const end = new Date().getTime();
-    // console.log('after');
-    // for (const itemKey in quants) {
-    //   if (quants.hasOwnProperty(itemKey)) {
-    //     console.log(`${itemKey} Quantity: ${quants[itemKey]}`);
-    //   }
-    // }
     return (
       <View style={globalStyles.container}>
-        <Text>Average: {(end - start) / 10}</Text>
+        <Text>Text outside DataTable</Text>
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}

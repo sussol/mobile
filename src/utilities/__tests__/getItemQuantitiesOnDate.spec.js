@@ -11,10 +11,10 @@ describe('getStockOnDate', () => {
     realm.deleteAll();
   });
 
-  it('returns a Realm.Results object', () => {
+  it('returns a Map object', () => {
     const actual = getStockOnDate(new Date(), realm.objects('Items'));
     expect(typeof actual === 'object').toEqual(true);
-    // TODO: use actual.toString()
+    // TODO: use actual.toString() rather than typeof
   });
 
   describe('filters by date, passed with Date object', () => {
@@ -29,7 +29,7 @@ describe('getStockOnDate', () => {
     });
   });
 
-  it('When 2nd arg is empty Realm.Results, skip func body and return empty Realm.Results', () => {
+  it('When 2nd arg is empty Realm.Results, skip func body and return empty Map object', () => {
     // TODO: make sure that his takes less than 0.1 seconds, say.
   });
 
@@ -55,7 +55,7 @@ describe('getStockOnDate', () => {
     });
   });
 
-  describe('on small data set of 10 transactions', () => {
+  describe('on small data set of 10 transactions with 10 lines each', () => {
     it('gives correct result', () => {
       // TODO:
     });
@@ -64,7 +64,7 @@ describe('getStockOnDate', () => {
     });
   });
 
-  describe('on large data set 10000 transactions', () => {
+  describe('on large data set 10000 transactions with 10 lines each', () => {
     it('gives correct result', () => {
       // TODO:
     });

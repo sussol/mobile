@@ -92,7 +92,7 @@ export default function instantiate() {
       });
     }
   });
-  // 10000 transactions on 100 items distributed over 1 year
+
   function newDate(currIndex, numberOfTransactions) {
     const date = new Date();
     date.setYear(date.getFullYear() - 1);
@@ -119,7 +119,7 @@ export default function instantiate() {
       firstName: 'Chris',
       lastName: 'Petty',
       email: 'Chris@Petty.com',
-      password: 'password totally not stored as a string',
+      password: '9d24f53c0071bce340a741b367c5af8aba614123a2054650594b3769d6dfe1ae', // sussol
       salt: 'sodium chloride',
     });
 
@@ -133,7 +133,7 @@ export default function instantiate() {
     const items = realm.objects('Item');
 
     for (let t = 0; t < numberOfTransactions; t++) {
-      ((t % 100) === 0) && console.log(`making transaction ${t}`);
+      // ((t % 100) === 0) && console.log(`making transaction ${t}`);
       const confirmDate = newDate(t, numberOfTransactions);
       const entryDate = newDate(t, numberOfTransactions);
       entryDate.setDate(entryDate.getDate() - 5);
@@ -155,7 +155,7 @@ export default function instantiate() {
       name.invoices.push(transaction);
 
       let currItem = 0;
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 10; i++) {
         transaction.lines.push({
           id: `t${t}i${i}`,
           itemId: items[currItem].id,
