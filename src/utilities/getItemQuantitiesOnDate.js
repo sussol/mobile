@@ -10,10 +10,10 @@ import database from '../database/realm';
 import { getItemQuantity } from './index';
 
 export default function getItemQuantitiesOnDate(items: Realm.Results, date: Date) {
-  const itemQuantities = {};
+  const itemQuantities = new Map();
   items.forEach((item) => {
     // console.log(item.id);
-    itemQuantities[item.id] = getItemQuantity(item);
+    itemQuantities.set(item.id, getItemQuantity(item));
   });
 
   const transactions = database.objects('Transaction').filtered('confirmDate >= $0', date);
@@ -26,18 +26,18 @@ export default function getItemQuantitiesOnDate(items: Realm.Results, date: Date
     transaction.lines.forEach((line) => {
       // console.log(`transactionLine: ${line.id}`);
       const itemId = line.itemId;
-      const transactionQuantity = line.total;
-      if (typeof itemQuantities[itemId] === 'number') {
+      const transactionQuantity = line.totalQuantity;
+      if (itemQuantities.has(itemId)) {
         switch (transactionType) {
           case 'customer_invoice':
           case 'supplier_credit':
             // console.log(`upper caseseseses ${itemId}`);
-            itemQuantities[itemId] = itemQuantities[itemId] + transactionQuantity;
+            itemQuantities.set(itemId, itemQuantities.get(itemId) + transactionQuantity);
             break;
           case 'customer_credit':
           case 'supplier_invoice':
             // console.log(`switch lower cases ${itemId}`);
-            itemQuantities[itemId] = itemQuantities[itemId] - transactionQuantity;
+            itemQuantities.set(itemId, itemQuantities.get(itemId) - transactionQuantity);
             break;
           default:
             // console.log(`switch default ${itemId}`);
