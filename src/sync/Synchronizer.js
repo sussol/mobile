@@ -3,50 +3,37 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import realm from '../database/realm';
 import realmMock from '../database/mockDBInstantiator';
 
-const REQUEST_URL = 'http://192.168.4.111:8088/mobile/item?item_name=@';
+export default class Synchronizer {
 
-export default class Datastore {
-
-  synchronize() {
-    // realm.write(() => { realm.deleteAll(); });
-    if (realm.objects('Item').length === 0) {
-      realmMock();
-    }
-
-  //  this._getAllItems();
+  constructor(database, authenticator) {
+    this.database = database;
+    this.authenticator = authenticator;
+    this.synchronize = this.synchronize.bind(this);
   }
 
-  _getAllItems() {
-    let requestMetadata = {
-      method: 'GET',
-      headers: {
-        'Authorization' : 'Basic U3Vzc29sOmthdGhtYW5kdTMxMg==',
-      },
-    }
+  initialise(serverURL, syncSiteName, syncSitePassword) {
+    return new Promise((resolve, reject) => {
+      this.database.write(() => { this.database.deleteAll(); });
 
-    let requestURL = REQUEST_URL;
-    fetch(requestURL, requestMetadata)
-      .then((response) => response.json())
-      .then((responseData) => {
-        realm.write(() => {
-            for(item of responseData) {
-              realm.create('Item', {
-                id: item.id,
-                code: item.code,
-                name: item.item_name,
-                defaultPackSize: item.default_pack_size,
-                stockOnHand: item.stock_on_hand_tot
-              }, true); // true param allows for updating objects at existing ids (primary key)
-            }
-        });
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      .done();
+      this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword)
+        .then(() => { // Successfully authenticated
+          realmMock(); // Initialise using mock db
+          resolve();
+        }, (error) => { // Did not authenticate
+          reject(error);
+        }
+      );
+    });
+  }
+
+  isInitialised() {
+    return this.database.objects('Setting').filtered('key = "ServerURL"').length > 0;
+  }
+
+  synchronize() {
+    if (!this.isInitialised()) return; // Not yet initialised, don't sync
   }
 
 }

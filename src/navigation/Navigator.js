@@ -30,7 +30,7 @@ const NavigationReducer = (currentState, action) => {
       return {
         index: 0,
         key: 'root',
-        children: [{ key: 'menu' }],
+        children: [{ key: 'root' }],
       };
     case PUSH_ACTION:
       return NavigationStateUtils.push(currentState, {
@@ -80,6 +80,7 @@ export default class Navigator extends Component {
         {...props}
         navigationProps={props}
         renderTitleComponent={this.renderTitleComponent}
+        renderRightComponent={this.props.renderRightComponent}
       />
     );
   }
@@ -93,9 +94,10 @@ export default class Navigator extends Component {
   }
 
   renderTitleComponent(props) {
+    if (!props.scene.navigationState.title) return null;
     return (
       <NavigationHeader.Title>
-        {props.scene.navigationState.title && props.scene.navigationState.title}
+        {props.scene.navigationState.title}
       </NavigationHeader.Title>
     );
   }
@@ -113,6 +115,7 @@ export default class Navigator extends Component {
 
 Navigator.propTypes = {
   renderScene: React.PropTypes.func.isRequired,
+  renderRightComponent: React.PropTypes.func,
 };
 
 const styles = StyleSheet.create({

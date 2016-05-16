@@ -48,4 +48,10 @@ export default StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
   },
+  textInput: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    fontFamily: 'Comic Sans',
+  },
 });
