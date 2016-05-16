@@ -3,8 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { Timer } from 'react-native';
-
 export default class Scheduler {
   constructor() {
     this.intervalIds = [];
