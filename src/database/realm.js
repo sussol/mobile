@@ -173,6 +173,16 @@ const RequisitionLineSchema = {
   },
 };
 
+const SettingSchema = {
+  name: 'Setting',
+  primaryKey: 'key',
+  properties: {
+    key: 'string', // Includes the user's UUID if it is per-user
+    value: 'string',
+    user: { type: 'User', optional: true },
+  },
+};
+
 const SyncOutSchema = {
   name: 'SyncOut',
   primaryKey: 'id',
@@ -191,8 +201,8 @@ const StocktakeSchema = {
     createdDate: 'date', // Includes time
     stocktakeDate: 'date',
     status: 'string',
-    created_by: 'User',
-    finalised_by: 'User',
+    createdBy: 'User',
+    finalisedBy: 'User',
     comment: 'string',
     serialNumber: 'int',
   },
@@ -217,12 +227,12 @@ const UserSchema = {
   properties: {
     id: 'string',
     username: 'string',
-    lastLogin: 'date',
-    firstName: 'string',
-    lastName: 'string',
-    email: 'string',
-    password: 'string',
-    salt: 'string',
+    lastLogin: { type: 'date', optional: true },
+    firstName: { type: 'string', optional: true },
+    lastName: { type: 'string', optional: true },
+    email: { type: 'string', optional: true },
+    passwordHash: 'string',
+    salt: { type: 'string', optional: true },
   },
 };
 
@@ -241,6 +251,7 @@ const schema =
     NameSchema,
     RequisitionSchema,
     RequisitionLineSchema,
+    SettingSchema,
     SyncOutSchema,
     StocktakeSchema,
     StocktakeLineSchema,

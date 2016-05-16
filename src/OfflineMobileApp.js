@@ -7,6 +7,8 @@
 
 import React, {
   Component,
+  StyleSheet,
+  View,
 } from 'react-native';
 
 import { Navigator } from './navigation';
@@ -16,6 +18,7 @@ import {
   CustomerInvoicesPage,
   CustomerPage,
   CustomersPage,
+  FirstUsePage,
   MenuPage,
   StockHistoriesPage,
   StockHistoryPage,
@@ -27,26 +30,65 @@ import {
   SupplierInvoicesPage,
 } from './pages';
 
-import Synchronizer from './sync/Synchronizer';
+import { Button, LoginModal } from './widgets';
+
+import { Synchronizer } from './sync';
+import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import realm from './database/realm';
+import Scheduler from './Scheduler';
+
+const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 export default class OfflineMobileApp extends Component {
 
   constructor() {
     super();
-    this.synchronizer = new Synchronizer();
+    this.userAuthenticator = new UserAuthenticator(realm);
+    this.synchronizer = new Synchronizer(realm, new SyncAuthenticator(realm));
+    this.scheduler = new Scheduler();
+    const initialised = this.synchronizer.isInitialised();
+    this.state = {
+      initialised: initialised,
+      authenticated: false,
+    };
   }
 
   componentWillMount() {
-    this.synchronizer.synchronize();
     this.renderScene = this.renderScene.bind(this);
+    this.renderLogoutButton = this.renderLogoutButton.bind(this);
+    this.onAuthentication = this.onAuthentication.bind(this);
+    this.onInitialised = this.onInitialised.bind(this);
+    this.scheduler.schedule(this.synchronizer.synchronize,
+                            SYNC_INTERVAL);
+    this.scheduler.schedule(() => this.userAuthenticator.reauthenticate(this.onAuthentication),
+                            AUTHENTICATION_INTERVAL);
+  }
+
+  componentWillUnmount() {
+    this.scheduler.clearAll();
+  }
+
+  onAuthentication(authenticated) {
+    this.setState({ authenticated: authenticated });
+  }
+
+  onInitialised() {
+    this.setState({ initialised: true });
+  }
+
+  renderLogoutButton() {
+    return (
+      <Button
+        text="Logout"
+        onPress={() => this.setState({ authenticated: false })}
+      />);
   }
 
   renderScene(props) {
     const navigateTo = (key, title) => {
       props.onNavigate({ type: 'push', key, title });
     };
-
     switch (props.scene.navigationState.key) {
       case 'menu':
         return <MenuPage navigateTo={navigateTo} />;
@@ -74,12 +116,39 @@ export default class OfflineMobileApp extends Component {
         return <StockHistoriesPage navigateTo={navigateTo} />;
       case 'stockHistory':
         return <StockHistoryPage navigateTo={navigateTo} />;
+      case 'root':
       default:
         return <MenuPage navigateTo={navigateTo} />;
     }
   }
 
   render() {
-    return <Navigator renderScene={this.renderScene} />;
+    if (!this.state.initialised) {
+      return (
+        <FirstUsePage
+          synchronizer={this.synchronizer}
+          onInitialised={this.onInitialised}
+        />
+      );
+    }
+    return (
+      <View style={styles.container}>
+        <Navigator
+          renderScene={this.renderScene}
+          renderRightComponent={this.renderLogoutButton}
+        />
+        <LoginModal
+          authenticator={this.userAuthenticator}
+          isAuthenticated={this.state.authenticated}
+          onAuthentication={this.onAuthentication}
+        />
+      </View>
+    );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});
