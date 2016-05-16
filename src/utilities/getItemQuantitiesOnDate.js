@@ -5,18 +5,16 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import database from '../database/realm';
 import getItemQuantity from './getItemQuantity';
 
-// items: Realm.Results, date: Date
-export default function getItemQuantitiesOnDate(items, date) {
+// items: Realm.Results, date: Date, database: Realm
+export default function getItemQuantitiesOnDate(items, date, database) {
   const itemQuantities = new Map();
   items.forEach((item) => {
     itemQuantities.set(item.id, getItemQuantity(item));
   });
 
   const transactions = database.objects('Transaction').filtered('confirmDate >= $0', date);
-
   transactions.forEach((transaction) => {
     let transactionTypeMultiplier;
     switch (transaction.type) {
@@ -29,9 +27,8 @@ export default function getItemQuantitiesOnDate(items, date) {
         transactionTypeMultiplier = -1;
         break;
       default:
-        return;
+        return; // effectively 'continue;' for the containing forEach loop.
     }
-
     transaction.lines.forEach((line) => {
       const itemId = line.itemId;
       const transactionQuantity = line.totalQuantity;
@@ -43,6 +40,5 @@ export default function getItemQuantitiesOnDate(items, date) {
       }
     });
   });
-
   return itemQuantities;
 }

@@ -136,8 +136,9 @@ export default function instantiate() {
 
     for (let t = 0; t < numberOfTransactions; t++) {
       // ((t % 100) === 0) && console.log(`making transaction ${t}`);
-      const entryDate = newDate(t, numberOfTransactions);
-      const confirmDate = new Date(entryDate.getDate() - 5);
+      const confirmDate = newDate(t, numberOfTransactions);
+      const entryDate = confirmDate;
+      entryDate.setDate(entryDate.getDate() - 5);
 
       const transaction = realm.create('Transaction', {
         id: `t${t}`,

@@ -13,6 +13,11 @@ import React, {
 } from 'react-native';
 
 import {
+  getItemQuantity,
+  getItemQuantitiesOnDate,
+} from '../utilities';
+
+import {
   Cell,
   DataTable,
   EditableCell,
@@ -187,9 +192,17 @@ export default class Catalogue extends Component {
   }
 
   render() {
+    const items = this.props.database.objects('Item');
+    const date = new Date();
+    date.setDate(date.getDate() - 182.5);
+
+    const start = new Date().getTime();
+    const testoutput = getItemQuantitiesOnDate(items, date, this.props.database);
+    const end = new Date().getTime();
+
     return (
       <View style={globalStyles.container}>
-        <Text>Text outside DataTable</Text>
+        <Text>getItemQuantitiesOnDate Time taken: {end - start}</Text>
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}
