@@ -1,11 +1,11 @@
 import React, {
-  StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
 
 import { Button } from '../widgets';
+import globalStyles from '../globalStyles';
 
 export default class FirstUsePage extends React.Component {
   constructor(props) {
@@ -37,21 +37,21 @@ export default class FirstUsePage extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={globalStyles.container}>
         <TextInput
-          style={styles.textInput}
+          style={globalStyles.textInput}
           placeholder="Primary Server URL"
           value={this.state.serverURL}
           onChangeText={ (text) => { this.setState({ serverURL: text }); }}
         />
         <TextInput
-          style={styles.textInput}
+          style={globalStyles.textInput}
           placeholder="Sync Site Name"
           value={this.state.syncSiteName}
           onChangeText={ (text) => { this.setState({ syncSiteName: text }); }}
         />
         <TextInput
-          style={styles.textInput}
+          style={globalStyles.textInput}
           placeholder="Sync Site Password"
           value={this.state.syncSitePassword}
           secureTextEntry
@@ -71,18 +71,3 @@ FirstUsePage.propTypes = {
   onInitialised: React.PropTypes.func.isRequired,
   synchronizer: React.PropTypes.object.isRequired,
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    fontFamily: 'Comic Sans',
-  },
-});
