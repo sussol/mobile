@@ -7,7 +7,10 @@
 
 import getItemQuantity from './getItemQuantity';
 
-// items: Realm.Results, date: Date, database: Realm
+
+/**
+ * items: Realm.Results, date: Date, database: Realm
+ */
 export default function getItemQuantitiesOnDate(items, date, database) {
   const itemQuantities = new Map();
   items.forEach((item) => {

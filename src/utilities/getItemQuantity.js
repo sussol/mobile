@@ -5,7 +5,9 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-// Item should be a Realm.object
+ /**
+  * item: Realm.object
+  */
 export default function getItemQuantity(item) {
   let total = 0;
 
