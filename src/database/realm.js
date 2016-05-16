@@ -185,6 +185,8 @@ const SyncOutSchema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
+    recordType: 'string', // i.e. Table name
+    recordId: 'string',
   },
 };
 
