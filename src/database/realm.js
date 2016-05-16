@@ -98,6 +98,7 @@ const TransactionLineSchema = {
   properties: {
     id: 'string',
     itemId: 'string',
+    itemName: 'string',
     itemLine: 'ItemLine',
     packSize: 'double',
     numberOfPacks: 'double',

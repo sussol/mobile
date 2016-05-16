@@ -130,6 +130,8 @@ export default function instantiate() {
     });
 
     const numberOfTransactions = 1000;
+    const numberOfTransactionLines = 10;
+    const numberOfItemsToTransact = 100; // From start index of what ever order items below is.
     const items = realm.objects('Item');
 
     for (let t = 0; t < numberOfTransactions; t++) {
@@ -155,10 +157,11 @@ export default function instantiate() {
       name.invoices.push(transaction);
 
       let currItem = 0;
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < numberOfTransactionLines; i++) {
         transaction.lines.push({
           id: `t${t}i${i}`,
           itemId: items[currItem].id,
+          itemName: items[currItem].name,
           itemLine: items[currItem].lines[0],
           packSize: 1,
           numberOfPacks: 1,
@@ -166,7 +169,7 @@ export default function instantiate() {
           invoice: transaction,
         });
         currItem++;
-        if (currItem >= 100) {
+        if (currItem >= numberOfItemsToTransact) {
           currItem = 0;
         }
       }

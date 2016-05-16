@@ -128,7 +128,7 @@ export default class Catalogue extends Component {
         <HeaderCell
           style={globalStyles.headerCell}
           textStyle={[globalStyles.text, styles.text]}
-          width={5}
+          width={1}
           onPress={() => this.onColumnSort()}
           text={'Item Name'}
         />
