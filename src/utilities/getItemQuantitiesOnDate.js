@@ -5,11 +5,11 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import Realm from 'realm';
 import database from '../database/realm';
-import { getItemQuantity } from './index';
+import getItemQuantity from './getItemQuantity';
 
-export default function getItemQuantitiesOnDate(items: Realm.Results, date: Date) {
+// items: Realm.Results, date: Date
+export default function getItemQuantitiesOnDate(items, date) {
   const itemQuantities = new Map();
   items.forEach((item) => {
     itemQuantities.set(item.id, getItemQuantity(item));
@@ -18,22 +18,28 @@ export default function getItemQuantitiesOnDate(items: Realm.Results, date: Date
   const transactions = database.objects('Transaction').filtered('confirmDate >= $0', date);
 
   transactions.forEach((transaction) => {
-    const transactionType = transaction.type;
+    let transactionTypeMultiplier;
+    switch (transaction.type) {
+      case 'customer_invoice':
+      case 'supplier_credit':
+        transactionTypeMultiplier = 1;
+        break;
+      case 'customer_credit':
+      case 'supplier_invoice':
+        transactionTypeMultiplier = -1;
+        break;
+      default:
+        return;
+    }
+
     transaction.lines.forEach((line) => {
       const itemId = line.itemId;
       const transactionQuantity = line.totalQuantity;
       if (itemQuantities.has(itemId)) {
-        switch (transactionType) {
-          case 'customer_invoice':
-          case 'supplier_credit':
-            itemQuantities.set(itemId, itemQuantities.get(itemId) + transactionQuantity);
-            break;
-          case 'customer_credit':
-          case 'supplier_invoice':
-            itemQuantities.set(itemId, itemQuantities.get(itemId) - transactionQuantity);
-            break;
-          default:
-        }
+        itemQuantities.set(
+          itemId,
+          itemQuantities.get(itemId) + transactionQuantity * transactionTypeMultiplier
+        );
       }
     });
   });

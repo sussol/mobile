@@ -5,9 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import Realm from 'realm';
-
-export default function getItemQuantity(item: Realm.Object) {
+// Item should be a Realm.object
+export default function getItemQuantity(item) {
   let total = 0;
 
   item.lines.forEach((line) => {
