@@ -119,7 +119,7 @@ export default function instantiate() {
       firstName: 'Chris',
       lastName: 'Petty',
       email: 'Chris@Petty.com',
-      password: '9d24f53c0071bce340a741b367c5af8aba614123a2054650594b3769d6dfe1ae', // sussol
+      passwordHash: '9d24f53c0071bce340a741b367c5af8aba614123a2054650594b3769d6dfe1ae', // sussol
       salt: 'sodium chloride',
     });
 
