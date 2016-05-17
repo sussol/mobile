@@ -34,18 +34,18 @@ export default class SyncAuthenticator {
       authenticateAsync(authURL, username, passwordHash)
         .then(() => { // Valid, save in local db
           this.database.write(() => {
-            this.database.create('Setting', {
+            this.database.update('Setting', {
               key: 'ServerURL',
               value: serverURL,
-            }, true);
-            this.database.create('Setting', {
+            });
+            this.database.update('Setting', {
               key: 'SyncSiteName',
               value: username,
-            }, true);
-            this.database.create('Setting', {
+            });
+            this.database.update('Setting', {
               key: 'SyncSitePasswordHash',
               value: passwordHash,
-            }, true);
+            });
           });
           resolve();
         }, (error) => reject(error) // Pass error up

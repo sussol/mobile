@@ -1,5 +1,3 @@
-import Realm from 'realm';
-
 const AddressSchema = {
   name: 'Address',
   primaryKey: 'id',
@@ -237,25 +235,28 @@ const UserSchema = {
 };
 
 const schema =
-  [
-    AddressSchema,
-    ItemSchema,
-    ItemLineSchema,
-    ItemDepartmentSchema,
-    ItemCategorySchema,
-    TransactionSchema,
-    TransactionLineSchema,
-    TransactionCategorySchema,
-    MasterListSchema,
-    MasterListLineSchema,
-    NameSchema,
-    RequisitionSchema,
-    RequisitionLineSchema,
-    SettingSchema,
-    SyncOutSchema,
-    StocktakeSchema,
-    StocktakeLineSchema,
-    UserSchema,
-  ];
+  {
+    schema: [
+      AddressSchema,
+      ItemSchema,
+      ItemLineSchema,
+      ItemDepartmentSchema,
+      ItemCategorySchema,
+      TransactionSchema,
+      TransactionLineSchema,
+      TransactionCategorySchema,
+      MasterListSchema,
+      MasterListLineSchema,
+      NameSchema,
+      RequisitionSchema,
+      RequisitionLineSchema,
+      SettingSchema,
+      SyncOutSchema,
+      StocktakeSchema,
+      StocktakeLineSchema,
+      UserSchema,
+    ],
+    schemaVersion: 1,
+  };
 
-export default new Realm({ schema: schema, schemaVersion: 6 });
+export default schema;

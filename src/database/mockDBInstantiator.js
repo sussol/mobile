@@ -1,39 +1,37 @@
-import realm from '../database/realm';
-
-export default function instantiate() {
-  realm.write(() => {
-    const hospitalDept = realm.create('ItemDepartment', {
+export default function instantiate(database) {
+  database.write(() => {
+    const hospitalDept = database.create('ItemDepartment', {
       id: '111DI',
       name: 'Hospital',
       parentDepartment: undefined,
     });
 
-    const pharmacyDept = realm.create('ItemDepartment', {
+    const pharmacyDept = database.create('ItemDepartment', {
       id: '222DI',
       name: 'Pharmacy',
       parentDepartment: hospitalDept,
     });
 
-    const antidoteCat = realm.create('ItemCategory', {
+    const antidoteCat = database.create('ItemCategory', {
       id: '111CI',
       name: 'Antidote',
       parentCategory: undefined,
     });
 
-    const antidoteSpecficCat = realm.create('ItemCategory', {
+    const antidoteSpecficCat = database.create('ItemCategory', {
       id: '222CI',
       name: 'Antidote, specific',
       parentCategory: antidoteCat,
     });
 
-    const antidoteNonSpecificCat = realm.create('ItemCategory', {
+    const antidoteNonSpecificCat = database.create('ItemCategory', {
       id: '333CI',
       name: 'Antidote, non specific',
       parentCategory: antidoteCat,
     });
 
     for (let i = 1; i < 1000; i += 2) {
-      const itemOne = realm.create('Item', {
+      const itemOne = database.create('Item', {
         id: `${i}I`,
         code: `MI${i}`,
         name: `MockItem${i}`,
@@ -45,7 +43,7 @@ export default function instantiate() {
         category: antidoteSpecficCat,
       });
 
-      const itemTwo = realm.create('Item', {
+      const itemTwo = database.create('Item', {
         id: `${i + 1}I`,
         code: `MI${i + 1}`,
         name: `MockItem${i + 1}`,
@@ -100,8 +98,8 @@ export default function instantiate() {
     return date;
   }
 
-  realm.write(() => {
-    const name = realm.create('Name', {
+  database.write(() => {
+    const name = database.create('Name', {
       id: '1',
       name: 'Borg',
       code: 'borg1',
@@ -112,18 +110,18 @@ export default function instantiate() {
       invoices: [],
     });
 
-    const user = realm.create('User', {
+    const user = database.create('User', {
       id: '1',
       username: 'chrisSussol',
       lastLogin: new Date(),
       firstName: 'Chris',
       lastName: 'Petty',
       email: 'Chris@Petty.com',
-      password: '9d24f53c0071bce340a741b367c5af8aba614123a2054650594b3769d6dfe1ae', // sussol
+      passwordHash: '9d24f53c0071bce340a741b367c5af8aba614123a2054650594b3769d6dfe1ae', // sussol
       salt: 'sodium chloride',
     });
 
-    const transCat = realm.create('TransactionCategory', {
+    const transCat = database.create('TransactionCategory', {
       id: '1',
       name: 'TransactionCategory 1',
       parentCategory: undefined,
@@ -132,7 +130,7 @@ export default function instantiate() {
     const numberOfTransactions = 1000;
     const numberOfTransactionLines = 10;
     const numberOfItemsToTransact = 100; // From start index of what ever order items below is.
-    const items = realm.objects('Item');
+    const items = database.objects('Item');
 
     for (let t = 0; t < numberOfTransactions; t++) {
       // ((t % 100) === 0) && console.log(`making transaction ${t}`);
@@ -140,7 +138,7 @@ export default function instantiate() {
       const entryDate = confirmDate;
       entryDate.setDate(entryDate.getDate() - 5);
 
-      const transaction = realm.create('Transaction', {
+      const transaction = database.create('Transaction', {
         id: `t${t}`,
         serialNumber: t,
         otherParty: name,

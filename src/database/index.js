@@ -1,7 +1,9 @@
+import Database from './Database';
 import databaseUtils from './databaseUtils';
-import realm from './realm';
+import schema from './schema';
 
 export {
+  Database,
   databaseUtils,
-  realm,
+  schema,
 };

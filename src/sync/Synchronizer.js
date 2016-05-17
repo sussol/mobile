@@ -19,7 +19,7 @@ export default class Synchronizer {
 
       this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword)
         .then(() => { // Successfully authenticated
-          realmMock(); // Initialise using mock db
+          realmMock(this.database); // Initialise using mock db
           resolve();
         }, (error) => { // Did not authenticate
           reject(error);

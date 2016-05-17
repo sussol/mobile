@@ -85,7 +85,7 @@ export default class Catalogue extends Component {
     // component.
     const { database } = this.props;
     database.write(() => {
-      database.create('Item', { id: item.id, defaultPackSize: parseFloat(value) }, true);
+      database.update('Item', { id: item.id, defaultPackSize: parseFloat(value) });
     });
   }
 
@@ -111,7 +111,7 @@ export default class Catalogue extends Component {
     const { database } = this.props;
 
     database.write(() => {
-      database.delete(item);
+      database.delete('Item', item);
     });
 
     const data = items.sorted(sortBy, reverseSort);

@@ -34,7 +34,7 @@ import { Button, LoginModal } from './widgets';
 
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import realm from './database/realm';
+import { Database, schema } from './database';
 import Scheduler from './Scheduler';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -44,8 +44,9 @@ export default class OfflineMobileApp extends Component {
 
   constructor() {
     super();
-    this.userAuthenticator = new UserAuthenticator(realm);
-    this.synchronizer = new Synchronizer(realm, new SyncAuthenticator(realm));
+    this.database = new Database(schema, schema.schemaVersion);
+    this.userAuthenticator = new UserAuthenticator(this.database);
+    this.synchronizer = new Synchronizer(this.database, new SyncAuthenticator(this.database));
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
     this.state = {
@@ -97,15 +98,15 @@ export default class OfflineMobileApp extends Component {
       case 'customer':
         return <CustomerPage navigateTo={navigateTo} />;
       case 'stock':
-        return <StockPage database={realm} navigateTo={navigateTo} />;
+        return <StockPage database={this.database} navigateTo={navigateTo} />;
       case 'stocktakes':
-        return <StocktakesPage database={realm} navigateTo={navigateTo} />;
+        return <StocktakesPage database={this.database} navigateTo={navigateTo} />;
       case 'stocktakeEditor':
         return <StocktakeEditPage navigateTo={navigateTo} />;
       case 'stocktakeManager':
         return <StocktakeManagePage navigateTo={navigateTo} />;
       case 'customerInvoices':
-        return <CustomerInvoicesPage database={realm} navigateTo={navigateTo} />;
+        return <CustomerInvoicesPage database={this.database} navigateTo={navigateTo} />;
       case 'customerInvoice':
         return <CustomerInvoicePage navigateTo={navigateTo} />;
       case 'supplierInvoices':

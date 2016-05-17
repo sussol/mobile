@@ -53,11 +53,11 @@ export default class UserAuthenticator {
         .then((userJson) => {
           if (userJson.id) { // Valid, save in local db
             this.database.write(() => {
-              this.database.create('User', {
+              this.database.update('User', {
                 id: userJson.id,
                 username: username,
                 passwordHash: passwordHash,
-              }, true);
+              });
             });
             resolve();
           } else reject('Unexpected response from server');
