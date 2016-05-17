@@ -7,8 +7,10 @@
 
 import React, {
   Component,
-  View,
+  Picker,
   StyleSheet,
+  TextInput,
+  View,
 } from 'react-native';
 
 import { DataTable } from '../widgets/DataTable';
@@ -155,14 +157,20 @@ export default class StockPage extends Component {
   render() {
     return (
       <View style={globalStyles.container}>
+        <View style={styles.horizontalContainer}>
+          <TextInput
+            style={[globalStyles.searchBar, { flex: 2 }]}
+            onChange={(event) => this.onSearchChange(event)}
+            placeholder="Search"
+          />
+          <Picker style={{ flex: 1 }} />
+        </View>
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           renderHeader={this.renderHeader}
-          searchBar={this.onSearchChange}
-          searchBarStyle={globalStyles.searchBar}
         />
       </View>
     );
@@ -177,6 +185,10 @@ StockPage.propTypes = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  horizontalContainer: {
+    flex: 1,
+    flexDirection: 'row',
   },
   modal: {
     backgroundColor: 'red', // for hurting your eyes
@@ -196,7 +208,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   DataTable: {
-    flex: 1,
+    flex: 9,
     paddingTop: 20,
     backgroundColor: '#F5FCFF',
   },
