@@ -7,7 +7,6 @@
 
 import React, {
   Component,
-  Picker,
   StyleSheet,
   TextInput,
   View,
