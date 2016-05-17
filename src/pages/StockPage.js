@@ -163,7 +163,6 @@ export default class StockPage extends Component {
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
-          <Picker style={{ flex: 1 }} />
         </View>
         <DataTable
           style={globalStyles.container}
