@@ -6,8 +6,10 @@
  */
 
  /**
-  * item: Realm.object
-  */
+ * Get the total quantity of provided provided Item, calculated from its ItemLines.
+ * @param  {Realm.object}  item  The item to get the total quantity of.
+ * @return {number}
+ */
 export default function getItemQuantity(item) {
   let total = 0;
 

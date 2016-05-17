@@ -11,6 +11,16 @@ import getItemQuantity from './getItemQuantity';
 /**
  * items: Realm.Results, date: Date, database: Realm
  */
+
+ /**
+ * Get the total quantity of provided items on a specifed date. Returns empty map if
+ * provided Realm.results object is empty.
+ * @param  {Realm.results}   items          the items to get the past totalQuantity of.
+ * @param  {Date}            date           The date of which to roll back transactions to.
+ * @param  {Realm}           database       The realm database that the function is to work on,
+ *                                          The same database the items are from.
+ * @return {Map([item.id: totalQuantity])}
+ */
 export default function getItemQuantitiesOnDate(items, date, database) {
   const itemQuantities = new Map();
   items.forEach((item) => {
