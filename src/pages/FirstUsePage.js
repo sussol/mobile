@@ -37,7 +37,7 @@ export default class FirstUsePage extends React.Component {
 
   render() {
     return (
-      <View style={globalStyles.container}>
+      <View style={[globalStyles.container, globalStyles.modal]}>
         <TextInput
           style={globalStyles.textInput}
           placeholder="Primary Server URL"
