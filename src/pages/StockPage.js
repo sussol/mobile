@@ -21,6 +21,14 @@ const {
   Row,
 } = DataTable;
 
+import DropDown from 'react-native-dropdown';
+const {
+  Option,
+  OptionList,
+  Select,
+  UpdatePosition,
+} = DropDown;
+
 import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
 import globalStyles from '../globalStyles';
@@ -162,6 +170,11 @@ export default class StockPage extends Component {
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
+          <Select
+            style={{ flex: 1 }}
+            defaultValue={'Category'}
+          >
+          </Select>
         </View>
         <DataTable
           style={globalStyles.container}
