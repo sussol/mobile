@@ -16,6 +16,7 @@ export default StyleSheet.create({
   },
   pageContentContainer: {
     flex: 1,
+    margin: 15,
     backgroundColor: '#ecf3fc',
   },
   modal: {
