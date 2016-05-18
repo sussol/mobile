@@ -8,7 +8,6 @@
 
 import React, {
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -51,9 +50,6 @@ DataTable.defaultProps = {
 const defaultStyles = StyleSheet.create({
   verticalContainer: {
     flex: 1,
-  },
-  searchBar: {
-    backgroundColor: '#86e6f4',
   },
   listView: {
     flex: 1,

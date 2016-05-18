@@ -92,23 +92,23 @@ export default class StockPage extends Component {
 
   renderHeader() {
     return (
-      <Header style={globalStyles.header}>
+      <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
-          style={globalStyles.headerCell}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={[globalStyles.text, styles.text]}
           onPress={() => this.onColumnSort('code')}
           width={columnWidths[0]}
           text={'ITEM CODE'}
         />
         <HeaderCell
-          style={globalStyles.headerCell}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('name')}
           text={'ITEM NAME'}
         />
         <HeaderCell
-          style={globalStyles.headerCell}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[2]}
           text={'STOCK ON HAND'}
@@ -142,23 +142,23 @@ export default class StockPage extends Component {
 
   renderRow(item) {
     return (
-      <Row style={globalStyles.row} renderExpansion={() => this.renderExpansion(item)}>
+      <Row style={globalStyles.dataTableRow} renderExpansion={() => this.renderExpansion(item)}>
         <Cell
-          style={globalStyles.cell}
+          style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[0]}
         >
           {item.code}
         </Cell>
         <Cell
-          style={globalStyles.cell}
+          style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[1]}
         >
           {item.name}
         </Cell>
         <Cell
-          style={globalStyles.cell}
+          style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[2]}
         >

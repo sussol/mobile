@@ -23,26 +23,27 @@ export default StyleSheet.create({
   },
   text: {
     fontSize: 18,
+    fontFamily: 'Comic Sans',
   },
-  searchBar: {
+  dataTableSearchBar: {
     // backgroundColor: 'rgba(252, 252, 252, 0)',
   },
-  header: {
+  dataTableHeader: {
     backgroundColor: '#ffffff',
   },
-  headerCell: {
+  dataTableHeaderCell: {
     backgroundColor: '#ffffff',
   },
-  row: {
+  dataTableRow: {
     backgroundColor: '#ffffff',
   },
-  cell: {
+  dataTableCell: {
     backgroundColor: '#f8fbfe',
   },
-  editableCell: {
+  dataTableEditableCell: {
     backgroundColor: '#f9e4c2',
   },
-  tableButton: {
+  dataTableButton: {
     backgroundColor: '#ffdb9d',
     borderColor: '#fcb947',
     borderRadius: 8,
