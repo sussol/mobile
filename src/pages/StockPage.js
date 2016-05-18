@@ -51,6 +51,7 @@ export default class StockPage extends Component {
       dataSource,
       query: 'item_name=@',
       items: props.database.objects('Item'),
+      category: '',
       sortBy: 'name',
       reverseSort: false,
     };
@@ -70,11 +71,12 @@ export default class StockPage extends Component {
     });
   }
 
-
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    const { items, sortBy, dataSource, reverseSort } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
+    const { items, sortBy, category, dataSource, reverseSort } = this.state;
+    const data = items
+      .filtered(`category.name CONTAINS[c] $0 && ${sortBy} CONTAINS[c] $1`, category, term)
+      .sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
@@ -181,6 +183,9 @@ export default class StockPage extends Component {
             style={[globalStyles.dataTableDropDown, { flex: 0.5 }]}
             defaultValue={'Category'}
           >
+            {
+
+            }
           </Select>
         </View>
         <DataTable
