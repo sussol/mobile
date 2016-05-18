@@ -5,21 +5,29 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+ /* @flow weak */
+
+ /**
+  * OfflineMobile Android Index
+  * Sustainable Solutions (NZ) Ltd. 2016
+  */
+
 import React, {
-  Component,
-  StyleSheet,
-  TextInput,
-  View,
+ Component,
+ StyleSheet,
+ Text,
+ TextInput,
+ View,
 } from 'react-native';
 
-import { DataTable } from '../widgets/DataTable';
-const {
-  Cell,
-  Expansion,
-  Header,
-  HeaderCell,
-  Row,
-} = DataTable;
+import {
+ Cell,
+ DataTable,
+ Expansion,
+ Header,
+ HeaderCell,
+ Row,
+} from '../widgets/DataTable';
 
 import DropDown from 'react-native-dropdown';
 const {
@@ -50,7 +58,6 @@ export default class StockPage extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
-    this.onEndDefaultPackSizeEdit = this.onEndDefaultPackSizeEdit.bind(this);
     this.renderExpansion = this.renderExpansion.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
@@ -63,18 +70,18 @@ export default class StockPage extends Component {
     });
   }
 
+
   onSearchChange(event) {
     const term = event.nativeEvent.text;
     const { items, sortBy, dataSource, reverseSort } = this.state;
-    const data = items.filtered('name CONTAINS[c] $0', term).sorted(sortBy, reverseSort);
+    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
   }
 
-  onColumnSort(sortBy) {
+  onColumnSort() {
     this.setState({
-      sortBy: sortBy,
       reverseSort: this.state.reverseSort !== true,
     });
     const data = this.state.items.sorted(this.state.sortBy, this.state.reverseSort);
@@ -90,20 +97,20 @@ export default class StockPage extends Component {
           style={globalStyles.headerCell}
           textStyle={[globalStyles.text, styles.text]}
           onPress={() => this.onColumnSort('code')}
-          width={1.3}
+          width={columnWidths[0]}
           text={'ITEM CODE'}
         />
         <HeaderCell
           style={globalStyles.headerCell}
           textStyle={[globalStyles.text, styles.text]}
-          width={7.2}
+          width={columnWidths[1]}
           onPress={() => this.onColumnSort('name')}
           text={'ITEM NAME'}
         />
         <HeaderCell
           style={globalStyles.headerCell}
           textStyle={[globalStyles.text, styles.text]}
-          width={1.6}
+          width={columnWidths[2]}
           text={'STOCK ON HAND'}
         />
       </Header>
@@ -113,8 +120,8 @@ export default class StockPage extends Component {
   renderExpansion(item) {
     return (
       <Expansion>
-        <View style={{ flex: 1.3 }} />
-        <View style={{ flex: 7.2 }}>
+        <View style={{ flex: columnWidths[0] }} />
+        <View style={{ flex: columnWidths[1], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
             <Text style={[globalStyles.text, styles.text]}>Category: {item.category.name}</Text>
             <Text style={[globalStyles.text, styles.text]}>Department: {item.department.name}</Text>
@@ -128,7 +135,7 @@ export default class StockPage extends Component {
             </Text>
           </View>
         </View>
-        <View style={{ flex: 1.6 }} />
+        <View style={{ flex: columnWidths[2] }} />
       </Expansion>
     );
   }
@@ -139,21 +146,21 @@ export default class StockPage extends Component {
         <Cell
           style={globalStyles.cell}
           textStyle={[globalStyles.text, styles.text]}
-          width={1.3}
+          width={columnWidths[0]}
         >
           {item.code}
         </Cell>
         <Cell
           style={globalStyles.cell}
           textStyle={[globalStyles.text, styles.text]}
-          width={7.2}
+          width={columnWidths[1]}
         >
           {item.name}
         </Cell>
         <Cell
           style={globalStyles.cell}
           textStyle={[globalStyles.text, styles.text]}
-          width={1.6}
+          width={columnWidths[2]}
         >
           {getItemQuantity(item)}
         </Cell>
@@ -166,18 +173,18 @@ export default class StockPage extends Component {
       <View style={globalStyles.container}>
         <View style={styles.horizontalContainer}>
           <TextInput
-            style={[globalStyles.searchBar, { flex: 2 }]}
+            style={[globalStyles.searchBar, { flex: 1 }]}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
           <Select
-            style={{ flex: 1 }}
+            style={{ flex: 0.5 }}
             defaultValue={'Category'}
           >
           </Select>
         </View>
         <DataTable
-          style={globalStyles.container}
+          style={globalStyles.dataTable}
           listViewStyle={globalStyles.container}
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
@@ -192,35 +199,20 @@ StockPage.propTypes = {
   database: React.PropTypes.object,
   style: View.propTypes.style,
 };
-
+const columnWidths = [1.3, 7.2, 1.6];
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   horizontalContainer: {
-    flex: 1,
     flexDirection: 'row',
-  },
-  modal: {
-    backgroundColor: 'red', // for hurting your eyes
-  },
-  button: {
-    backgroundColor: 'rgba(130, 171, 189, 0.7)',
   },
   text: {
     fontSize: 20,
     marginLeft: 20,
     textAlign: 'left',
   },
-  packSize: {
-    fontSize: 20,
-    height: 45,
-    textAlign: 'right',
-    marginRight: 20,
-  },
-  DataTable: {
-    flex: 9,
-    paddingTop: 20,
-    backgroundColor: '#F5FCFF',
+  dataTable: {
+    flex: 1,
   },
 });
