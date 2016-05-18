@@ -158,7 +158,7 @@ export default class StockPage extends Component {
           {item.name}
         </Cell>
         <Cell
-          style={globalStyles.dataTableCell}
+          style={[globalStyles.dataTableCell, styles.cellLast]}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[2]}
         >
@@ -170,15 +170,15 @@ export default class StockPage extends Component {
 
   render() {
     return (
-      <View style={globalStyles.container}>
+      <View style={globalStyles.pageContentContainer}>
         <View style={styles.horizontalContainer}>
           <TextInput
-            style={[globalStyles.searchBar, { flex: 1 }]}
+            style={[globalStyles.dataTableSearchBar, { flex: 1 }]}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
           <Select
-            style={{ flex: 0.5 }}
+            style={[globalStyles.dataTableDropDown, { flex: 0.5 }]}
             defaultValue={'Category'}
           >
           </Select>
@@ -211,6 +211,9 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 20,
     textAlign: 'left',
+  },
+  cellLast: {
+    borderRightWidth: 0,
   },
   dataTable: {
     flex: 1,

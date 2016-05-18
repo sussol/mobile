@@ -14,6 +14,10 @@ export default StyleSheet.create({
     flex: 1,
     backgroundColor: '#ecf3fc',
   },
+  pageContentContainer: {
+    flex: 1,
+    backgroundColor: '#ecf3fc',
+  },
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -26,7 +30,11 @@ export default StyleSheet.create({
     fontFamily: 'Comic Sans',
   },
   dataTableSearchBar: {
+    marginHorizontal: 15,
     // backgroundColor: 'rgba(252, 252, 252, 0)',
+  },
+  dataTableDropDown: {
+    marginHorizontal: 15,
   },
   dataTableHeader: {
     backgroundColor: '#ffffff',
@@ -39,6 +47,8 @@ export default StyleSheet.create({
   },
   dataTableCell: {
     backgroundColor: '#f8fbfe',
+    borderRightWidth: 2,
+    borderColor: '#ecf3fc',
   },
   dataTableEditableCell: {
     backgroundColor: '#f9e4c2',
