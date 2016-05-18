@@ -94,21 +94,21 @@ export default class StockPage extends Component {
     return (
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
+          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, styles.text]}
           onPress={() => this.onColumnSort('code')}
           width={columnWidths[0]}
           text={'ITEM CODE'}
         />
         <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
+          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('name')}
           text={'ITEM NAME'}
         />
         <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
+          style={[globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[2]}
           text={'STOCK ON HAND'}
