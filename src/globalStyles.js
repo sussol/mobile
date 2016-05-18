@@ -12,7 +12,7 @@ import {
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#ecf3fc',
   },
   modal: {
     justifyContent: 'center',
@@ -25,19 +25,19 @@ export default StyleSheet.create({
     fontSize: 18,
   },
   searchBar: {
-    backgroundColor: '#f9e4c2',
+    // backgroundColor: 'rgba(252, 252, 252, 0)',
   },
   header: {
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#ffffff',
   },
   headerCell: {
-    backgroundColor: '#fcb947',
+    backgroundColor: '#ffffff',
   },
   row: {
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#ffffff',
   },
   cell: {
-    backgroundColor: '#ffdda3',
+    backgroundColor: '#f8fbfe',
   },
   editableCell: {
     backgroundColor: '#f9e4c2',
