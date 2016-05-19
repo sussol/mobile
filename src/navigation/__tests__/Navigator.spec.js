@@ -12,7 +12,7 @@
 // jest.unmock('../Navigator');
 // jest.unmock('enzyme');
 //
-// import Navigator from '../Navigator';
+// import { Navigator } from '../Navigator';
 // import React, {
 //   TouchableHighlight,
 // } from 'react-native';

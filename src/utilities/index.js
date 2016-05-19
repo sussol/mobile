@@ -1,7 +1,2 @@
-import getItemQuantity from './getItemQuantity';
-import getItemQuantitiesOnDate from './getItemQuantitiesOnDate';
-
-export {
-  getItemQuantity,
-  getItemQuantitiesOnDate,
-};
+export { getItemQuantity } from './getItemQuantity';
+export { getItemQuantitiesOnDate } from './getItemQuantitiesOnDate';

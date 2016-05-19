@@ -1,9 +1,10 @@
-import Database from './Database';
-import databaseUtils from './databaseUtils';
-import schema from './schema';
+export { Database } from './Database';
+export { generateUUID } from './utilities';
+export { schema } from './schema';
 
-export {
-  Database,
-  databaseUtils,
-  schema,
+export const CHANGE_TYPES = {
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+  WIPE: 'wipe',
 };

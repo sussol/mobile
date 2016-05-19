@@ -12,10 +12,10 @@ import React, {
   TextInput,
   View,
 } from 'react-native';
-import Button from '../Button';
+import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
 
-export default class LoginModal extends React.Component {
+export class LoginModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

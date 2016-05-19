@@ -15,7 +15,7 @@ import {
   Button,
 } from '../widgets';
 
-export default function MenuPage(props) {
+export function MenuPage(props) {
   return (
     <View style={styles.container}>
       <Button

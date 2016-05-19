@@ -13,7 +13,7 @@ import React, {
 import globalStyles from '../globalStyles';
 import { Button } from '../widgets';
 
-export default function StocktakesPage(props) {
+export function StocktakesPage(props) {
   return (
     <View style={props.style}>
       <Text>Stocktakes go here.</Text>

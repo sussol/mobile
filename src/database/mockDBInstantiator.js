@@ -1,4 +1,4 @@
-export default function instantiate(database) {
+export function instantiate(database) {
   database.write(() => {
     const hospitalDept = database.create('ItemDepartment', {
       id: '111DI',

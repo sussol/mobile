@@ -11,7 +11,7 @@ import React, {
   View,
 } from 'react-native';
 
-export default function Cell(props) {
+export function Cell(props) {
   const { style, textStyle, width, children, ...viewProps } = props;
   return (
     <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>

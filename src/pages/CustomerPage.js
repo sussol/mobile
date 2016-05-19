@@ -13,7 +13,7 @@ import React, {
 import globalStyles from '../globalStyles';
 import Button from '../widgets/Button';
 
-export default function CustomerPage(props) {
+export function CustomerPage(props) {
   return (
     <View style={props.style}>
       <Text>A specific customer, with their billing address and invoices.</Text>

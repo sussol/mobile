@@ -5,7 +5,7 @@ import React, {
   TouchableHighlight,
 } from 'react-native';
 
-export default function Button(props) {
+export function Button(props) {
   return (
     <TouchableHighlight
       style={styles.button}

@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import getItemQuantity from './getItemQuantity';
+import { getItemQuantity } from './getItemQuantity';
 
 
 /**
@@ -21,7 +21,7 @@ import getItemQuantity from './getItemQuantity';
  *                                          The same database the items are from.
  * @return {Map([item.id: totalQuantity])}
  */
-export default function getItemQuantitiesOnDate(items, date, database) {
+export function getItemQuantitiesOnDate(items, date, database) {
   const itemQuantities = new Map();
   items.forEach((item) => {
     itemQuantities.set(item.id, getItemQuantity(item));

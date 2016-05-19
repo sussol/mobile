@@ -2,7 +2,7 @@ jest.unmock('../TableButton');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import TableButton from '../TableButton';
+import { TableButton } from '../TableButton';
 import React, { TouchableOpacity } from 'react-native';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';

@@ -35,7 +35,7 @@ import { Button, LoginModal } from './widgets';
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema } from './database';
-import Scheduler from './Scheduler';
+import { Scheduler } from './Scheduler';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -44,7 +44,7 @@ export default class OfflineMobileApp extends Component {
 
   constructor() {
     super();
-    this.database = new Database(schema, schema.schemaVersion);
+    this.database = new Database(schema);
     this.userAuthenticator = new UserAuthenticator(this.database);
     this.synchronizer = new Synchronizer(this.database, new SyncAuthenticator(this.database));
     this.scheduler = new Scheduler();
@@ -94,7 +94,7 @@ export default class OfflineMobileApp extends Component {
       case 'menu':
         return <MenuPage navigateTo={navigateTo} />;
       case 'customers':
-        return <CustomersPage navigateTo={navigateTo} />;
+        return <CustomersPage database={this.database} navigateTo={navigateTo} />;
       case 'customer':
         return <CustomerPage navigateTo={navigateTo} />;
       case 'stock':

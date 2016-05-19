@@ -11,9 +11,9 @@ import React, {
 } from 'react-native';
 
 import globalStyles from '../globalStyles';
-import Button from '../widgets/Button';
+import { Button } from '../widgets';
 
-export default function StockHistoriesPage(props) {
+export function StockHistoriesPage(props) {
   return (
     <View style={props.style}>
       <Text>Stock Histories go here.</Text>

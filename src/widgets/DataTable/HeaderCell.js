@@ -12,7 +12,7 @@ import React, {
   TouchableOpacity,
 } from 'react-native';
 
-export default function HeaderCell(props) {
+export function HeaderCell(props) {
   const { style, textStyle, width, onPress, text, ...containerProps } = props;
   if (typeof onPress === 'function') {
     return (

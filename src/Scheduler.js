@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-export default class Scheduler {
+export class Scheduler {
   constructor() {
     this.intervalIds = [];
   }

@@ -1,5 +1,1 @@
-import Synchronizer from './Synchronizer';
-
-export {
-  Synchronizer,
-};
+export { Synchronizer } from './Synchronizer';

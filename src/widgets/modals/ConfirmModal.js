@@ -11,10 +11,10 @@ import React, {
   View,
   Dimensions,
 } from 'react-native';
-import Button from '../Button';
+import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
 
-export default function ConfirmModal(props) {
+export function ConfirmModal(props) {
   const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
     <Modal {...modalProps}

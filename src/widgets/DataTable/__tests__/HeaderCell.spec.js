@@ -2,7 +2,7 @@ jest.unmock('../HeaderCell');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import HeaderCell from '../HeaderCell';
+import { HeaderCell } from '../HeaderCell';
 import React, { View, TouchableOpacity } from 'react-native';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';

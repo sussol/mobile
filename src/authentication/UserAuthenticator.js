@@ -11,7 +11,7 @@ const {
 
 const AUTH_ENDPOINT = '/mobile/user';
 
-export default class UserAuthenticator {
+export class UserAuthenticator {
   constructor(database) {
     this.database = database;
     this.activeUsername = '';

@@ -5,7 +5,7 @@ import {
 
 const AUTH_ENDPOINT = '/mobile/user'; // TODO Replace with real URL
 
-export default class SyncAuthenticator {
+export class SyncAuthenticator {
   constructor(database) {
     this.database = database;
   }

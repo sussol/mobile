@@ -10,7 +10,7 @@ import React, {
   View,
 } from 'react-native';
 
-export default function Header(props) {
+export function Header(props) {
   const { children, style, ...viewProps } = props;
   return (
     <View {...viewProps} style={[defaultStyles.header, style]}>

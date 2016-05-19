@@ -1,11 +1,3 @@
-import Button from './Button';
-import { ConfirmModal, LoginModal } from './modals';
-import DataTable from './DataTable';
-
-
-export {
-  Button,
-  ConfirmModal,
-  DataTable,
-  LoginModal,
-};
+export { Button } from './Button';
+export { ConfirmModal, LoginModal } from './modals';
+export { DataTable } from './DataTable';

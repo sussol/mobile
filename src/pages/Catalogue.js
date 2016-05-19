@@ -32,7 +32,7 @@ import globalStyles from '../globalStyles';
 import { ConfirmModal } from '../widgets';
 import { ListView } from 'realm/react-native';
 
-export default class Catalogue extends Component {
+export class Catalogue extends Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({

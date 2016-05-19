@@ -1,16 +1,9 @@
 import Realm from 'realm';
-import generateUUID from './databaseUtils';
+import { generateUUID } from './utilities';
+import { CHANGE_TYPES } from './index.js';
+// const { CREATE, UPDATE, DELETE, WIPE } = CHANGE_TYPES;
 
-const CHANGE_TYPES = {
-  CREATE: 'create',
-  UPDATE: 'update',
-  DELETE: 'delete',
-  WIPE: 'wipe',
-};
-
-const { CREATE, UPDATE, DELETE, WIPE } = CHANGE_TYPES;
-
-export default class Database {
+export class Database {
 
   /**
    * Create a new database with the given schema.
@@ -30,7 +23,7 @@ export default class Database {
    *                            and an object representing the record pre-change.
    * @return {string}          The id of the callback being added
    */
-  addChangeListener(callback) {
+  addListener(callback) {
     const id = generateUUID();
     this.listeners.set(id, callback);
     return id;
@@ -41,7 +34,7 @@ export default class Database {
    * @param  {string} id Id of the callback to remove
    * @return {none}
    */
-  removeChangeListener(id) {
+  removeListener(id) {
     this.listeners.delete(id);
   }
 
@@ -51,7 +44,7 @@ export default class Database {
    * @return {none}
    */
   alertListeners(...args) {
-    this.listeners.forEach((id, callback) => callback(...args));
+    this.listeners.forEach((callback) => callback(...args));
   }
 
   /**
@@ -63,7 +56,7 @@ export default class Database {
    */
   create(type, properties) {
     const object = this.realm.create(type, properties);
-    this.alertListeners(CREATE, type, object);
+    this.alertListeners(CHANGE_TYPES.CREATE, type, object);
     return object;
   }
 
@@ -73,8 +66,9 @@ export default class Database {
    * @return {none}
    */
   delete(type, object) {
+    const record = { ...object };
     this.realm.delete(object);
-    this.alertListeners(DELETE, type, object);
+    this.alertListeners(CHANGE_TYPES.DELETE, type, record);
   }
 
   /**
@@ -83,7 +77,7 @@ export default class Database {
    */
   deleteAll() {
     this.realm.deleteAll();
-    this.alertListeners(WIPE);
+    this.alertListeners(CHANGE_TYPES.WIPE);
   }
 
   /**
@@ -106,7 +100,7 @@ export default class Database {
    */
   update(type, properties) {
     const object = this.realm.create(type, properties, true);
-    this.alertListeners(UPDATE, type, object);
+    this.alertListeners(CHANGE_TYPES.UPDATE, type, object);
     return object;
   }
 

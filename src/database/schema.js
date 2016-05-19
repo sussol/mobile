@@ -181,16 +181,6 @@ const SettingSchema = {
   },
 };
 
-const SyncOutSchema = {
-  name: 'SyncOut',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    recordType: 'string', // i.e. Table name
-    recordId: 'string',
-  },
-};
-
 const StocktakeSchema = {
   name: 'Stocktake',
   primaryKey: 'id',
@@ -219,6 +209,18 @@ const StocktakeLineSchema = {
   },
 };
 
+const SyncOutSchema = {
+  name: 'SyncOut',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    changeTime: 'int', // In seconds since the epoch
+    changeType: 'string', // create, update, or delete
+    recordType: 'string', // i.e. Table name
+    recordId: 'string',
+  },
+};
+
 const UserSchema = {
   name: 'User',
   primaryKey: 'id',
@@ -234,7 +236,7 @@ const UserSchema = {
   },
 };
 
-const schema =
+export const schema =
   {
     schema: [
       AddressSchema,
@@ -258,5 +260,3 @@ const schema =
     ],
     schemaVersion: 1,
   };
-
-export default schema;

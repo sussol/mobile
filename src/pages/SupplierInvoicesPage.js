@@ -11,9 +11,9 @@ import React, {
 } from 'react-native';
 
 import globalStyles from '../globalStyles';
-import Button from '../widgets/Button';
+import { Button } from '../widgets';
 
-export default function SupplierInvoicesPage(props) {
+export function SupplierInvoicesPage(props) {
   return (
     <View style={props.style}>
       <Text>Supplier Invoices go here.</Text>

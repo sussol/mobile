@@ -7,7 +7,7 @@ import React, {
 import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 
-export default class FirstUsePage extends React.Component {
+export class FirstUsePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
