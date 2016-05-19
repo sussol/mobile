@@ -7,6 +7,11 @@ const recordTypesSynced = [
   'TransactionLine',
 ];
 
+/**
+ * Maintains the queue of records to be synced: listens to database changes,
+ * queues sync records, provides them when asked, and removes them when they allRecords
+ * used. First changed first out, i.e. the oldest changes are synced first.
+ */
 export class SyncQueue {
   constructor(database) {
     this.database = database;
@@ -14,20 +19,29 @@ export class SyncQueue {
     this.databaseListenerId = null;
   }
 
+  /**
+   * Start the queue listening to database changes
+   * @return {none}
+   */
   enable() {
     this.databaseListenerId = this.database.addListener(this.onDatabaseEvent);
   }
 
+  /**
+   * Stop the queue listening to database changes
+   * @return {none}
+   */
   disable() {
     this.database.removeListener(this.databaseListenerId);
   }
 
   /**
-   * Must be called from within a database write transaction
-   * @param  {[type]} changeType [description]
-   * @param  {[type]} recordType [description]
-   * @param  {[type]} record     [description]
-   * @return {[type]}            [description]
+   * Respond to a database change event. Must be called from within a database
+   * write transaction.
+   * @param  {string} changeType The type of database change, e.g. CREATE, UPDATE, DELETE
+   * @param  {string} recordType The type of record changed (from database schema)
+   * @param  {object} record     The record changed
+   * @return {none}
    */
   onDatabaseEvent(changeType, recordType, record) {
     if (recordTypesSynced.indexOf(recordType) >= 0) {
@@ -62,16 +76,30 @@ export class SyncQueue {
     }
   }
 
+  /**
+   * Return the number of records in the sync queue.
+   * @return {integer} Number of records awaiting sync
+   */
   length() {
     return this.database.objects('SyncOut').count;
   }
 
+  /**
+   * Return the next x records to be synced.
+   * @param  {integer}   numberOfRecords The number of records to return (defaults to 1)
+   * @return {array}                     An array of the top x records in the sync queue
+   */
   next(numberOfRecords) {
     const numberToReturn = numberOfRecords || 1;
     const allRecords = this.database.objects('SyncOut').sorted();
     return allRecords.slice(0, numberToReturn);
   }
 
+  /**
+   * Remove the given records from the sync queue.
+   * @param  {array} records An array of the records that have been used
+   * @return {none}
+   */
   use(records) {
     this.database.write(() => {
       this.database.delete(records);
