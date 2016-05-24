@@ -34,7 +34,7 @@ const {
   Option,
   OptionList,
   Select,
-  updatePosition,
+  UpdatePosition,
 } = DropDown;
 
 import { getItemQuantity } from '../utilities';
@@ -56,14 +56,11 @@ export default class StockPage extends Component {
       reverseSort: false,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
-    this.componentDidMount = this.componentDidMount.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderExpansion = this.renderExpansion.bind(this);
     this.renderRow = this.renderRow.bind(this);
-    this.setCategory = this.setCategory.bind(this);
-    this.getCategoryOptionList = this.getCategoryOptionList.bind(this);
   }
 
   componentWillMount() {
@@ -72,12 +69,6 @@ export default class StockPage extends Component {
       dataSource: this.state.dataSource.cloneWithRows(data),
       deleteTargetItem: this.state.items[0],
     });
-  }
-
-  componentDidMount() {
-    console.log('componentDidMount HERERR');
-    updatePosition(this.refs.SELECT);
-    updatePosition(this.refs.OPTIONLIST);
   }
 
   onSearchChange(event) {
@@ -179,19 +170,7 @@ export default class StockPage extends Component {
     );
   }
 
-  setCategory(categoryName) {
-    this.setState({
-      category: categoryName,
-    });
-  }
-
-  getCategoryOptionList() {
-    console.log('this was called');
-    return this.refs.OPTIONLIST;
-  }
-
   render() {
-    console.log(`Category: ${this.state.category}`);
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={styles.horizontalContainer}>
@@ -202,18 +181,12 @@ export default class StockPage extends Component {
           />
           <Select
             style={[globalStyles.dataTableDropDown, { flex: 0.5 }]}
-            ref="SELECT"
-            optionListRef={this.getCategoryOptionList}
             defaultValue={'Category'}
-            onSelect={this.setCategory}
           >
             {
-              this.props.database.objects('ItemCategory').map(category =>
-                <Option>{category.name}</Option>
-              )
+
             }
           </Select>
-
         </View>
         <DataTable
           style={globalStyles.dataTable}
@@ -222,7 +195,6 @@ export default class StockPage extends Component {
           renderRow={this.renderRow}
           renderHeader={this.renderHeader}
         />
-        <OptionList ref="OPTIONLIST" />
       </View>
     );
   }
