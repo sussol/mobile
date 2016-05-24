@@ -75,6 +75,7 @@ export default class StockPage extends Component {
   }
 
   componentDidMount() {
+    console.log('componentDidMount HERERR');
     updatePosition(this.refs.SELECT);
     updatePosition(this.refs.OPTIONLIST);
   }
@@ -98,18 +99,6 @@ export default class StockPage extends Component {
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(data),
     });
-  }
-
-  setCategory(categoryName) {
-    this.setState({
-      ...this.state,
-      category: categoryName,
-    });
-  }
-
-  getCategoryOptionList() {
-    console.log('this was called');
-    return this.refs.OPTIONLIST;
   }
 
   renderHeader() {
@@ -190,6 +179,17 @@ export default class StockPage extends Component {
     );
   }
 
+  setCategory(categoryName) {
+    this.setState({
+      category: categoryName,
+    });
+  }
+
+  getCategoryOptionList() {
+    console.log('this was called');
+    return this.refs.OPTIONLIST;
+  }
+
   render() {
     console.log(`Category: ${this.state.category}`);
     return (
@@ -201,20 +201,19 @@ export default class StockPage extends Component {
             placeholder="Search"
           />
           <Select
-            //  style={[globalStyles.dataTableDropDown, { flex: 0.5 }]}
-            width={250}
+            style={[globalStyles.dataTableDropDown, { flex: 0.5 }]}
             ref="SELECT"
             optionListRef={this.getCategoryOptionList}
             defaultValue={'Category'}
             onSelect={this.setCategory}
           >
-            <Option>Text Option</Option>
             {
               this.props.database.objects('ItemCategory').map(category =>
                 <Option>{category.name}</Option>
               )
             }
           </Select>
+
         </View>
         <DataTable
           style={globalStyles.dataTable}
