@@ -5,13 +5,6 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
- /* @flow weak */
-
- /**
-  * OfflineMobile Android Index
-  * Sustainable Solutions (NZ) Ltd. 2016
-  */
-
 import React, {
  Component,
  StyleSheet,
@@ -28,14 +21,6 @@ import {
  HeaderCell,
  Row,
 } from '../widgets/DataTable';
-
-import DropDown from 'react-native-dropdown';
-const {
-  Option,
-  OptionList,
-  Select,
-  UpdatePosition,
-} = DropDown;
 
 import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
@@ -177,11 +162,6 @@ export default class StockPage extends Component {
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
-          <Select
-            style={[globalStyles.dataTableDropDown, { flex: 0.5 }]}
-            defaultValue={'Category'}
-          >
-          </Select>
         </View>
         <DataTable
           style={globalStyles.dataTable}

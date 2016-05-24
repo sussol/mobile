@@ -32,6 +32,8 @@ export default StyleSheet.create({
   },
   dataTableSearchBar: {
     marginHorizontal: 15,
+    borderBottomWidth: 2,
+    borderBottomColor: 'orange',
     // backgroundColor: 'rgba(252, 252, 252, 0)',
   },
   dataTableDropDown: {
