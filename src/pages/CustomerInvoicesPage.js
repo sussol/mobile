@@ -25,6 +25,7 @@ import {
 
 import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
+import Button from '../widgets/Button';
 import globalStyles from '../globalStyles';
 
 export default class StockPage extends Component {
@@ -117,7 +118,10 @@ export default class StockPage extends Component {
 
   renderRow(invoice) {
     return (
-      <Row style={globalStyles.dataTableRow}>
+      <Row
+        style={globalStyles.dataTableRow}
+        onPress={() => this.props.navigateTo('customerInvoice', 'Invoice Number')}
+      >
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, styles.text]}
@@ -162,9 +166,15 @@ export default class StockPage extends Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={styles.horizontalContainer}>
           <TextInput
-            style={[globalStyles.dataTableSearchBar, { flex: 1 }]}
+            style={[globalStyles.dataTableSearchBar, { flex: 5 }]}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
+          />
+          <View style={{ flex: 1 }} />
+          <Button
+            style={{ flex: 1 }}
+            text="New Invoice"
+            onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
           />
         </View>
         <DataTable
