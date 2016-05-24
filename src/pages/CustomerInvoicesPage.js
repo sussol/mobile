@@ -106,16 +106,9 @@ export default class StockPage extends Component {
           text={'ENTERED DATE'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
-          width={columnWidths[4]}
-          onPress={() => this.onColumnSort('lines.length')}
-          text={'ITEMS'}
-        />
-        <HeaderCell
           style={[globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, styles.text]}
-          width={columnWidths[5]}
+          width={columnWidths[4]}
           text={'COMMENT'}
         />
       </Header>
@@ -154,16 +147,9 @@ export default class StockPage extends Component {
           {invoice.entryDate.toDateString()}
         </Cell>
         <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, styles.text]}
-          width={columnWidths[4]}
-        >
-          {invoice.lines.length}
-        </Cell>
-        <Cell
           style={[globalStyles.dataTableCell, styles.cellLast]}
           textStyle={[globalStyles.text, styles.text]}
-          width={columnWidths[5]}
+          width={columnWidths[4]}
         >
           {invoice.comment}
         </Cell>
@@ -198,7 +184,7 @@ StockPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
   style: View.propTypes.style,
 };
-const columnWidths = [4.5, 1, 1, 2, 1, 4];
+const columnWidths = [4.5, 1, 1, 2, 4];
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -207,7 +193,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   text: {
-    fontSize: 20,
+    fontSize: 16,
     marginLeft: 20,
     textAlign: 'left',
   },

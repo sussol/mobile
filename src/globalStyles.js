@@ -40,12 +40,14 @@ export default StyleSheet.create({
     marginHorizontal: 15,
   },
   dataTableHeader: {
+    height: 40,
     backgroundColor: '#ffffff',
   },
   dataTableHeaderCell: {
     backgroundColor: '#ffffff',
   },
   dataTableRow: {
+    height: 40,
     backgroundColor: '#ffffff',
   },
   dataTableCell: {
