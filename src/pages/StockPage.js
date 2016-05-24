@@ -6,20 +6,20 @@
  */
 
 import React, {
- Component,
- StyleSheet,
- Text,
- TextInput,
- View,
+  Component,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 
 import {
- Cell,
- DataTable,
- Expansion,
- Header,
- HeaderCell,
- Row,
+  Cell,
+  DataTable,
+  Expansion,
+  Header,
+  HeaderCell,
+  Row,
 } from '../widgets/DataTable';
 
 import { getItemQuantity } from '../utilities';
