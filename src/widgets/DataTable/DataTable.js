@@ -8,7 +8,6 @@
 
 import React, {
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -18,8 +17,6 @@ export default function DataTable(props) {
   const {
     style,
     listViewStyle,
-    searchBar,
-    searchBarStyle,
     renderHeader,
     dataSource,
     renderRow,
@@ -27,14 +24,6 @@ export default function DataTable(props) {
   } = props;
   return (
     <View style={[defaultStyles.verticalContainer, style]}>
-      {
-        (typeof searchBar === 'function') &&
-          <TextInput
-            style={[defaultStyles.searchBar, searchBarStyle]}
-            onChange={(event) => searchBar(event)}
-            placeholder="Search"
-          />
-      }
       {typeof renderHeader === 'function' && renderHeader()}
       <ListView
         {...listViewProps}
@@ -49,8 +38,6 @@ export default function DataTable(props) {
 DataTable.propTypes = {
   style: React.View.propTypes.style,
   listViewStyle: React.PropTypes.number,
-  searchBar: React.PropTypes.func,
-  searchBarStyle: React.PropTypes.number,
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
@@ -63,9 +50,6 @@ DataTable.defaultProps = {
 const defaultStyles = StyleSheet.create({
   verticalContainer: {
     flex: 1,
-  },
-  searchBar: {
-    backgroundColor: '#86e6f4',
   },
   listView: {
     flex: 1,

@@ -12,7 +12,12 @@ import {
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#ecf3fc',
+  },
+  pageContentContainer: {
+    flex: 1,
+    margin: 15,
+    backgroundColor: '#ecf3fc',
   },
   modal: {
     justifyContent: 'center',
@@ -23,26 +28,35 @@ export default StyleSheet.create({
   },
   text: {
     fontSize: 18,
+    fontFamily: 'Comic Sans',
   },
-  searchBar: {
+  dataTableSearchBar: {
+    marginHorizontal: 15,
+    borderBottomWidth: 2,
+    borderBottomColor: 'orange',
+    // backgroundColor: 'rgba(252, 252, 252, 0)',
+  },
+  dataTableDropDown: {
+    marginHorizontal: 15,
+  },
+  dataTableHeader: {
+    backgroundColor: '#ffffff',
+  },
+  dataTableHeaderCell: {
+    backgroundColor: '#ffffff',
+  },
+  dataTableRow: {
+    backgroundColor: '#ffffff',
+  },
+  dataTableCell: {
+    backgroundColor: '#f8fbfe',
+    borderRightWidth: 2,
+    borderColor: '#ecf3fc',
+  },
+  dataTableEditableCell: {
     backgroundColor: '#f9e4c2',
   },
-  header: {
-    backgroundColor: '#F5FCFF',
-  },
-  headerCell: {
-    backgroundColor: '#fcb947',
-  },
-  row: {
-    backgroundColor: '#F5FCFF',
-  },
-  cell: {
-    backgroundColor: '#ffdda3',
-  },
-  editableCell: {
-    backgroundColor: '#f9e4c2',
-  },
-  tableButton: {
+  dataTableButton: {
     backgroundColor: '#ffdb9d',
     borderColor: '#fcb947',
     borderRadius: 8,
