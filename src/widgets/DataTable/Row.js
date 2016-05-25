@@ -28,7 +28,34 @@ export default class Row extends Component {
   }
 
   render() {
-    const { style, children, renderExpansion, ...touchableOpacityProps } = this.props;
+    const { style, children, renderExpansion, onPress, ...touchableOpacityProps } = this.props;
+    if (typeof renderExpansion === 'function') {
+      return (
+        <TouchableOpacity
+          {...touchableOpacityProps}
+          style={[defaultStyles.row, style]}
+          onPress={this.expandRow}
+        >
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            {children}
+          </View>
+          {this.state.expanded && renderExpansion()}
+        </TouchableOpacity>
+      );
+    }
+    if (onPress) {
+      return (
+        <TouchableOpacity
+          {...touchableOpacityProps}
+          style={[defaultStyles.row, style]}
+          onPress={onPress}
+        >
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            {children}
+          </View>
+        </TouchableOpacity>
+      );
+    }
     return (
       <TouchableOpacity
         {...touchableOpacityProps}
@@ -47,6 +74,7 @@ export default class Row extends Component {
 Row.propTypes = {
   style: React.View.propTypes.style,
   children: React.PropTypes.any,
+  onPress: React.PropTypes.func,
   renderExpansion: React.PropTypes.func,
 };
 

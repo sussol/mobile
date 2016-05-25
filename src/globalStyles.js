@@ -29,6 +29,7 @@ export default StyleSheet.create({
     fontSize: 18,
   },
   searchBar: {
+    width: 500,
     marginHorizontal: 15,
     borderBottomWidth: 2,
     borderBottomColor: 'orange',
@@ -37,12 +38,14 @@ export default StyleSheet.create({
     marginHorizontal: 15,
   },
   dataTableHeader: {
+    height: 40,
     backgroundColor: '#ffffff',
   },
   dataTableHeaderCell: {
     backgroundColor: '#ffffff',
   },
   dataTableRow: {
+    height: 40,
     backgroundColor: '#ffffff',
   },
   dataTableCell: {
