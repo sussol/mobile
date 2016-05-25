@@ -86,20 +86,20 @@ export default class StockPage extends Component {
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, localStyles.text]}
           onPress={() => this.onColumnSort('code')}
-          width={columnWidths[0]}
+          width={COLUMN_WIDTHS[0]}
           text={'ITEM CODE'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, localStyles.text]}
-          width={columnWidths[1]}
+          width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('name')}
           text={'ITEM NAME'}
         />
         <HeaderCell
           style={[globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, localStyles.text]}
-          width={columnWidths[2]}
+          width={COLUMN_WIDTHS[2]}
           text={'STOCK ON HAND'}
         />
       </Header>
@@ -109,8 +109,8 @@ export default class StockPage extends Component {
   renderExpansion(item) {
     return (
       <Expansion>
-        <View style={{ flex: columnWidths[0] }} />
-        <View style={{ flex: columnWidths[1], flexDirection: 'row' }}>
+        <View style={{ flex: COLUMN_WIDTHS[0] }} />
+      <View style={{ flex: COLUMN_WIDTHS[1], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
             <Text style={[globalStyles.text, localStyles.text]}>
               Category: {item.category.name}
@@ -128,7 +128,7 @@ export default class StockPage extends Component {
             </Text>
           </View>
         </View>
-        <View style={{ flex: columnWidths[2] }} />
+        <View style={{ flex: COLUMN_WIDTHS[2] }} />
       </Expansion>
     );
   }
@@ -139,21 +139,21 @@ export default class StockPage extends Component {
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, localStyles.text]}
-          width={columnWidths[0]}
+          width={COLUMN_WIDTHS[0]}
         >
           {item.code}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, localStyles.text]}
-          width={columnWidths[1]}
+          width={COLUMN_WIDTHS[1]}
         >
           {item.name}
         </Cell>
         <Cell
           style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
           textStyle={[globalStyles.text, localStyles.text]}
-          width={columnWidths[2]}
+          width={COLUMN_WIDTHS[2]}
         >
           {getItemQuantity(item)}
         </Cell>
@@ -187,7 +187,7 @@ StockPage.propTypes = {
   database: React.PropTypes.object,
   style: View.propTypes.style,
 };
-const columnWidths = [1.3, 7.2, 1.6];
+const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
