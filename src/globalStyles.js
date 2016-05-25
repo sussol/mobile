@@ -45,10 +45,10 @@ export default StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   dataTableRow: {
-    height: 40,
     backgroundColor: '#ffffff',
   },
   dataTableCell: {
+    height: 40,
     backgroundColor: '#f8fbfe',
     borderRightWidth: 2,
     borderColor: '#ecf3fc',
