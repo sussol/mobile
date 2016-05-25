@@ -59,7 +59,7 @@ export default class StockPage extends Component {
   onSearchChange(event) {
     const term = event.nativeEvent.text;
     const { items, sortBy, dataSource, reverseSort } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
+    const data = items.filtered(`${sortBy} CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
@@ -158,7 +158,7 @@ export default class StockPage extends Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={styles.horizontalContainer}>
           <TextInput
-            style={[globalStyles.dataTableSearchBar, { flex: 1 }]}
+            style={globalStyles.dataTableSearchBar}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
