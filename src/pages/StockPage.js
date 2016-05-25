@@ -83,21 +83,21 @@ export default class StockPage extends Component {
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           onPress={() => this.onColumnSort('code')}
           width={columnWidths[0]}
           text={'ITEM CODE'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('name')}
           text={'ITEM NAME'}
         />
         <HeaderCell
           style={[globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[2]}
           text={'STOCK ON HAND'}
         />
@@ -111,14 +111,18 @@ export default class StockPage extends Component {
         <View style={{ flex: columnWidths[0] }} />
         <View style={{ flex: columnWidths[1], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-            <Text style={[globalStyles.text, styles.text]}>Category: {item.category.name}</Text>
-            <Text style={[globalStyles.text, styles.text]}>Department: {item.department.name}</Text>
+            <Text style={[globalStyles.text, localStyles.text]}>
+              Category: {item.category.name}
+            </Text>
+            <Text style={[globalStyles.text, localStyles.text]}>
+              Department: {item.department.name}
+            </Text>
           </View>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-            <Text style={[globalStyles.text, styles.text]}>
+            <Text style={[globalStyles.text, localStyles.text]}>
               Number of batches: {item.lines.length}
             </Text>
-            <Text style={[globalStyles.text, styles.text]}>
+            <Text style={[globalStyles.text, localStyles.text]}>
               Nearest expiry: value
             </Text>
           </View>
@@ -133,21 +137,21 @@ export default class StockPage extends Component {
       <Row style={globalStyles.dataTableRow} renderExpansion={() => this.renderExpansion(item)}>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[0]}
         >
           {item.code}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[1]}
         >
           {item.name}
         </Cell>
         <Cell
-          style={[globalStyles.dataTableCell, styles.cellLast]}
-          textStyle={[globalStyles.text, styles.text]}
+          style={[globalStyles.dataTableCell, localStyles.cellLast]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[2]}
         >
           {getItemQuantity(item)}
@@ -159,7 +163,7 @@ export default class StockPage extends Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={styles.horizontalContainer}>
+        <View style={localStyles.horizontalContainer}>
           <TextInput
             style={globalStyles.dataTableSearchBar}
             onChange={(event) => this.onSearchChange(event)}
@@ -183,7 +187,7 @@ StockPage.propTypes = {
   style: View.propTypes.style,
 };
 const columnWidths = [1.3, 7.2, 1.6];
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
