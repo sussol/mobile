@@ -28,7 +28,7 @@ export default StyleSheet.create({
   text: {
     fontSize: 18,
   },
-  dataTableSearchBar: {
+  searchBar: {
     marginHorizontal: 15,
     borderBottomWidth: 2,
     borderBottomColor: 'orange',

@@ -34,7 +34,6 @@ export default class StockPage extends Component {
     });
     this.state = {
       dataSource,
-      query: 'item_name=@',
       items: props.database.objects('Item'),
       sortBy: 'name',
       reverseSort: false,
@@ -51,7 +50,6 @@ export default class StockPage extends Component {
     const data = this.state.items.sorted(this.state.sortBy);
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(data),
-      deleteTargetItem: this.state.items[0],
     });
   }
 
@@ -162,7 +160,7 @@ export default class StockPage extends Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={localStyles.horizontalContainer}>
           <TextInput
-            style={[globalStyles.dataTableSearchBar, { flex: 1 }]}
+            style={[globalStyles.searchBar, { flex: 1 }]}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
