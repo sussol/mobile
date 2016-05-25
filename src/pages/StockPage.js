@@ -33,7 +33,7 @@ export default class StockPage extends Component {
       rowHasChanged: (row1, row2) => row1 !== row2,
     });
     this.state = {
-      dataSource,
+      dataSource: dataSource,
       items: props.database.objects('Item'),
       sortBy: 'name',
       reverseSort: false,
