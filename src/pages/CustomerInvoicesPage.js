@@ -9,7 +9,6 @@
 import React, {
   Component,
   StyleSheet,
-  Text,
   TextInput,
   View,
 } from 'react-native';
@@ -17,13 +16,11 @@ import React, {
 import {
   Cell,
   DataTable,
-  Expansion,
   Header,
   HeaderCell,
   Row,
 } from '../widgets/DataTable';
 
-import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
 import Button from '../widgets/Button';
 import globalStyles from '../globalStyles';
@@ -37,6 +34,7 @@ export default class StockPage extends Component {
     this.state = {
       dataSource,
       items: props.database.objects('Transaction').filtered('type CONTAINS "customer_invoice"'),
+      searchTerm: '',
       sortBy: 'id',
       reverseSort: false,
     };
@@ -55,23 +53,26 @@ export default class StockPage extends Component {
     });
   }
 
-
   onSearchChange(event) {
     const term = event.nativeEvent.text;
     const { items, sortBy, dataSource, reverseSort } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
+    this.setState({
+      searchTerm: term,
+    });
+    const data = items.filtered(`${sortBy} CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
   }
 
   onColumnSort() {
+    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
     this.setState({
       reverseSort: this.state.reverseSort !== true,
     });
-    const data = this.state.items.sorted(this.state.sortBy, this.state.reverseSort);
+    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(data),
+      dataSource: dataSource.cloneWithRows(data),
     });
   }
 
@@ -120,14 +121,14 @@ export default class StockPage extends Component {
     return (
       <Row
         style={globalStyles.dataTableRow}
-        onPress={() => this.props.navigateTo('customerInvoice', 'Invoice Number')}
+        onPress={() => this.props.navigateTo('customerInvoice', `Invoice ${invoice.serialNumber}`)}
       >
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, styles.text]}
           width={columnWidths[0]}
         >
-          {invoice.type}
+          {invoice.otherParty.name}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
@@ -166,11 +167,10 @@ export default class StockPage extends Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={styles.horizontalContainer}>
           <TextInput
-            style={[globalStyles.dataTableSearchBar, { flex: 5 }]}
+            style={globalStyles.dataTableSearchBar}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
-          <View style={{ flex: 1 }} />
           <Button
             style={{ flex: 1 }}
             text="New Invoice"
@@ -194,13 +194,17 @@ StockPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
   style: View.propTypes.style,
 };
-const columnWidths = [4.5, 1, 1, 2, 4];
+const columnWidths = [4, 1, 1, 2, 4];
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  button: {
+    width: 140,
+  },
   horizontalContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   text: {
     fontSize: 16,

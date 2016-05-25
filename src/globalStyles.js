@@ -31,6 +31,7 @@ export default StyleSheet.create({
     fontFamily: 'Comic Sans',
   },
   dataTableSearchBar: {
+    width: 500,
     marginHorizontal: 15,
     borderBottomWidth: 2,
     borderBottomColor: 'orange',
