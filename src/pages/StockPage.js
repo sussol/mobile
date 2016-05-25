@@ -51,7 +51,6 @@ export default class StockPage extends Component {
     const data = this.state.items.sorted(this.state.sortBy);
     this.setState({
       dataSource: this.state.dataSource.cloneWithRows(data),
-      deleteTargetItem: this.state.items[0],
     });
   }
 
