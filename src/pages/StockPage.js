@@ -68,13 +68,15 @@ export default class StockPage extends Component {
     });
   }
 
-  onColumnSort() {
+  onColumnSort(newSortBy) {
     this.setState({
+      sortBy: newSortBy,
       reverseSort: this.state.reverseSort !== true,
     });
-    const data = this.state.items.sorted(this.state.sortBy, this.state.reverseSort);
+    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(data),
+      dataSource: dataSource.cloneWithRows(data),
     });
   }
 

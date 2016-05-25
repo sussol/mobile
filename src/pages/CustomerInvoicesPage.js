@@ -59,18 +59,19 @@ export default class StockPage extends Component {
     this.setState({
       searchTerm: term,
     });
-    const data = items.filtered(`${sortBy} CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
+    const data = items.filtered(`id CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
   }
 
-  onColumnSort() {
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+  onColumnSort(newSortBy) {
     this.setState({
+      sortBy: newSortBy,
       reverseSort: this.state.reverseSort !== true,
     });
-    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
+    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+    const data = items.filtered(`id CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort); // change id to search name instead, somehow
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
@@ -82,7 +83,7 @@ export default class StockPage extends Component {
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, localStyles.text]}
-          onPress={() => this.onColumnSort('otherParty.name')}
+          onPress={() => this.onColumnSort('id')} // change id to search name instead, somehow
           width={columnWidths[0]}
           text={'Customer'}
         />
