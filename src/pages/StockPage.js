@@ -33,9 +33,9 @@ export default class StockPage extends Component {
       rowHasChanged: (row1, row2) => row1 !== row2,
     });
     this.state = {
-      dataSource,
-      query: 'item_name=@',
+      dataSource: dataSource,
       items: props.database.objects('Item'),
+      searchTerm: '',
       sortBy: 'name',
       reverseSort: false,
     };
@@ -59,6 +59,9 @@ export default class StockPage extends Component {
   onSearchChange(event) {
     const term = event.nativeEvent.text;
     const { items, sortBy, dataSource, reverseSort } = this.state;
+    this.setState({
+      searchTerm: term,
+    });
     const data = items.filtered(`${sortBy} CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),

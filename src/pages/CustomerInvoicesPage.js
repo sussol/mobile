@@ -32,8 +32,8 @@ export default class StockPage extends Component {
       rowHasChanged: (row1, row2) => row1 !== row2,
     });
     this.state = {
-      dataSource,
-      items: props.database.objects('Transaction').filtered('type CONTAINS "customer_invoice"'),
+      dataSource: dataSource,
+      items: props.database.objects('Transaction').filtered('type == "customer_invoice"'),
       searchTerm: '',
       sortBy: 'id',
       reverseSort: false,
