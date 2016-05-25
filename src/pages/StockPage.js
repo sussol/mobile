@@ -110,7 +110,7 @@ export default class StockPage extends Component {
     return (
       <Expansion>
         <View style={{ flex: COLUMN_WIDTHS[0] }} />
-      <View style={{ flex: COLUMN_WIDTHS[1], flexDirection: 'row' }}>
+        <View style={{ flex: COLUMN_WIDTHS[1] + COLUMN_WIDTHS[2], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
             <Text style={[globalStyles.text, localStyles.text]}>
               Category: {item.category.name}
@@ -128,7 +128,6 @@ export default class StockPage extends Component {
             </Text>
           </View>
         </View>
-        <View style={{ flex: COLUMN_WIDTHS[2] }} />
       </Expansion>
     );
   }
