@@ -81,35 +81,35 @@ export default class StockPage extends Component {
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           onPress={() => this.onColumnSort('otherParty.name')}
           width={columnWidths[0]}
           text={'Customer'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('id')}
           text={'ID'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[2]}
           onPress={() => this.onColumnSort('status')}
           text={'STATUS'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[3]}
           onPress={() => this.onColumnSort('entryDate')}
           text={'ENTERED DATE'}
         />
         <HeaderCell
           style={[globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[4]}
           text={'COMMENT'}
         />
@@ -125,35 +125,35 @@ export default class StockPage extends Component {
       >
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[0]}
         >
           {invoice.otherParty.name}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[1]}
         >
           {invoice.id}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[2]}
         >
           {invoice.status}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, styles.text]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[3]}
         >
           {invoice.entryDate.toDateString()}
         </Cell>
         <Cell
-          style={[globalStyles.dataTableCell, styles.cellLast]}
-          textStyle={[globalStyles.text, styles.text]}
+          style={[globalStyles.dataTableCell, localStyles.cellLast]}
+          textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[4]}
         >
           {invoice.comment}
@@ -165,7 +165,7 @@ export default class StockPage extends Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={styles.horizontalContainer}>
+        <View style={localStyles.horizontalContainer}>
           <TextInput
             style={globalStyles.dataTableSearchBar}
             onChange={(event) => this.onSearchChange(event)}
@@ -195,7 +195,7 @@ StockPage.propTypes = {
   style: View.propTypes.style,
 };
 const columnWidths = [4, 1, 1, 2, 4];
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
