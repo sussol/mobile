@@ -12,7 +12,6 @@ import {
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ecf3fc',
   },
   pageContentContainer: {
     flex: 1,
@@ -28,13 +27,11 @@ export default StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    fontFamily: 'Comic Sans',
   },
   dataTableSearchBar: {
     marginHorizontal: 15,
     borderBottomWidth: 2,
     borderBottomColor: 'orange',
-    // backgroundColor: 'rgba(252, 252, 252, 0)',
   },
   dataTableDropDown: {
     marginHorizontal: 15,
