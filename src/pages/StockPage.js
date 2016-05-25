@@ -151,7 +151,7 @@ export default class StockPage extends Component {
           {item.name}
         </Cell>
         <Cell
-          style={[globalStyles.dataTableCell, localStyles.cellLast]}
+          style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
           textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[2]}
         >
@@ -197,7 +197,7 @@ const localStyles = StyleSheet.create({
     marginLeft: 20,
     textAlign: 'left',
   },
-  cellLast: {
+  rightMostCell: {
     borderRightWidth: 0,
   },
   dataTable: {
