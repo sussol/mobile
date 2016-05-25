@@ -57,11 +57,11 @@ export default class StockPage extends Component {
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    const { items, sortBy, dataSource, reverseSort } = this.state;
     this.setState({
       searchTerm: term,
     });
-    const data = items.filtered(`${sortBy} CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
+    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
