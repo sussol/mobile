@@ -167,7 +167,7 @@ export default class StockPage extends Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={localStyles.horizontalContainer}>
           <TextInput
-            style={globalStyles.dataTableSearchBar}
+            style={globalStyles.searchBar}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
@@ -218,36 +218,3 @@ const localStyles = StyleSheet.create({
     flex: 1,
   },
 });
-
-
-// import React, {
-//   Component,
-//   StyleSheet,
-//   Text,
-//   TextInput,
-//   View,
-// } from 'react-native';
-//
-// import globalStyles from '../globalStyles';
-// import Button from '../widgets/Button';
-//
-// export default function CustomerInvoicesPage(props) {
-//   return (
-//     <View style={props.style}>
-//       <Text>Customer Invoices go here.</Text>
-//       <Button
-//         text="New Invoice"
-//         onPress={() => props.navigateTo('customerInvoice', 'New Invoice')}
-//       />
-//       <Button
-//         text="View/Edit an invoice"
-//         onPress={() => props.navigateTo('customerInvoice', 'Invoice Number')}
-//       />
-//     </View>
-//   );
-// }
-//
-// CustomerInvoicesPage.propTypes = {
-//   navigateTo: React.PropTypes.func.isRequired,
-//   style: View.propTypes.style,
-// };

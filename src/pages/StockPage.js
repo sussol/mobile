@@ -165,7 +165,7 @@ export default class StockPage extends Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={localStyles.horizontalContainer}>
           <TextInput
-            style={globalStyles.dataTableSearchBar}
+            style={globalStyles.searchBar}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
