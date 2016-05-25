@@ -189,9 +189,6 @@ StockPage.propTypes = {
 };
 const columnWidths = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   horizontalContainer: {
     flexDirection: 'row',
   },
