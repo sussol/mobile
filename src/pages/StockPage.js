@@ -6,20 +6,20 @@
  */
 
 import React, {
- Component,
- StyleSheet,
- Text,
- TextInput,
- View,
+  Component,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 
 import {
- Cell,
- DataTable,
- Expansion,
- Header,
- HeaderCell,
- Row,
+  Cell,
+  DataTable,
+  Expansion,
+  Header,
+  HeaderCell,
+  Row,
 } from '../widgets/DataTable';
 
 import { getItemQuantity } from '../utilities';
@@ -35,6 +35,7 @@ export default class StockPage extends Component {
     this.state = {
       dataSource: dataSource,
       items: props.database.objects('Item'),
+      searchTerm: '',
       sortBy: 'name',
       reverseSort: false,
     };
@@ -57,19 +58,24 @@ export default class StockPage extends Component {
   onSearchChange(event) {
     const term = event.nativeEvent.text;
     const { items, sortBy, dataSource, reverseSort } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] $0`, term).sorted(sortBy, reverseSort);
+    this.setState({
+      searchTerm: term,
+    });
+    const data = items.filtered(`${sortBy} CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
   }
 
-  onColumnSort() {
+  onColumnSort(newSortBy) {
     this.setState({
+      sortBy: newSortBy,
       reverseSort: this.state.reverseSort !== true,
     });
-    const data = this.state.items.sorted(this.state.sortBy, this.state.reverseSort);
+    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(data),
+      dataSource: dataSource.cloneWithRows(data),
     });
   }
 
@@ -160,7 +166,7 @@ export default class StockPage extends Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={localStyles.horizontalContainer}>
           <TextInput
-            style={[globalStyles.searchBar, { flex: 1 }]}
+            style={globalStyles.searchBar}
             onChange={(event) => this.onSearchChange(event)}
             placeholder="Search"
           />
