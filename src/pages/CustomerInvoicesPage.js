@@ -83,7 +83,7 @@ export default class StockPage extends Component {
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, localStyles.text]}
-          onPress={() => this.onColumnSort('id')} // change id to search name instead, somehow
+          onPress={() => this.onColumnSort('otherParty.name')} // change id to search name instead, somehow
           width={columnWidths[0]}
           text={'Customer'}
         />
