@@ -61,19 +61,26 @@ export default class StockPage extends Component {
       searchTerm: term,
     });
     const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
+    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
   }
 
-  onColumnSort(newSortBy) {
-    this.setState({
-      sortBy: newSortBy,
-      reverseSort: this.state.reverseSort !== true,
-    });
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
+  onColumnSort(sortBy) {
+    if (this.state.sortBy === sortBy) {
+      this.setState({
+        sortBy: sortBy,
+        reverseSort: !this.state.reverseSort,
+      });
+    } else {
+      this.setState({
+        sortBy: sortBy,
+      });
+    }
+
+    const { items, dataSource, reverseSort, searchTerm } = this.state;
+    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
