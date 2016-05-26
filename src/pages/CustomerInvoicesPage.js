@@ -43,6 +43,7 @@ export default class StockPage extends Component {
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
+    this.refreshData = this.refreshData.bind(this);
   }
 
   componentWillMount() {
@@ -55,26 +56,24 @@ export default class StockPage extends Component {
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    this.setState({
-      searchTerm: term,
-    });
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
-    this.setState({
-      dataSource: dataSource.cloneWithRows(data),
-    });
+    this.setState({ searchTerm: term });
+    this.refreshData();
   }
 
-  onColumnSort(newSortBy) {
-    this.setState({
-      sortBy: newSortBy,
-      reverseSort: this.state.reverseSort !== true,
-    });
+  onColumnSort(sortBy) {
+    if (this.state.sortBy === sortBy) {
+      this.setState({ reverseSort: !this.state.reverseSort });
+    } else {
+      this.setState({ sortBy: sortBy });
+    }
+    this.refreshData();
+  }
+
+  refreshData() {
     const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort); // change id to search name instead, somehow
-    this.setState({
-      dataSource: dataSource.cloneWithRows(data),
-    });
+    const data = items.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
+                  .sorted(sortBy, reverseSort);
+    this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
   renderHeader() {
