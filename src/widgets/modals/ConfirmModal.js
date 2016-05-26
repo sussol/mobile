@@ -13,6 +13,7 @@ import React, {
 } from 'react-native';
 import Button from '../Button';
 import Modal from 'react-native-modalbox';
+import globalStyles from '../../globalStyles';
 
 export default function ConfirmModal(props) {
   const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
@@ -24,8 +25,18 @@ export default function ConfirmModal(props) {
         {questionText}
       </Text>
       <View style={defaultStyles.buttonContainer}>
-        <Button text={'Cancel'} onPress={onCancel} />
-        <Button text={'Confirm'} onPress={onConfirm} />
+        <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
+          text={'Cancel'}
+          onPress={onCancel}
+        />
+        <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
+          text={'Confirm'}
+          onPress={onConfirm}
+        />
       </View>
     </Modal>
    );

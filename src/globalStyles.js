@@ -26,14 +26,24 @@ export default StyleSheet.create({
     paddingTop: 68,
   },
   text: {
-    fontSize: 18,
+    fontSize: 16,
+  },
+  buttonText: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: '#e95c30',
   },
   button: {
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 4,
+    padding: 15,
     margin: 5,
-    backgroundColor: 'yellow',
     borderColor: '#e95c30',
+  },
+  menuButtonText: {
+    fontSize: 17,
+    fontWeight: '500',
+    color: '#333333',
   },
   menuButton: {
     backgroundColor: 'white',

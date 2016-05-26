@@ -18,6 +18,8 @@ export default function SupplierInvoicesPage(props) {
     <View style={props.style}>
       <Text>Supplier Invoices go here.</Text>
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="View an invoice"
           onPress={() => props.navigateTo('supplierInvoice', 'Invoice Number')}
         />

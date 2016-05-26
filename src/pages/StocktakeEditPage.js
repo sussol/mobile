@@ -18,6 +18,8 @@ export default function StocktakeEditor(props) {
     <View style={props.style}>
       <Text>You can edit a stocktake.</Text>
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="Or Manage a Stocktake"
           onPress={() => props.navigateTo('stocktakeManager', 'Manage Stocktake')}
         />

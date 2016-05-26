@@ -14,7 +14,7 @@ export default function Button(props) {
         props.onPress();
       }}
     >
-      <Text style={styles.textStyle}>{props.text}</Text>
+      <Text style={props.textStyle}>{props.text}</Text>
     </TouchableHighlight>
   );
 }
@@ -41,4 +41,5 @@ const styles = StyleSheet.create({
 
 Button.defaultProps = { // 'styles' needs to be declared before use!
   style: styles.button,
+  textStyle: styles.buttonText,
 };

@@ -14,6 +14,7 @@ import React, {
 } from 'react-native';
 import Button from '../Button';
 import Modal from 'react-native-modalbox';
+import globalStyles from '../../globalStyles';
 
 export default class LoginModal extends React.Component {
   constructor(props) {
@@ -66,7 +67,8 @@ export default class LoginModal extends React.Component {
             onChangeText={ (text) => { this.setState({ password: text }); }}
           />
           <Button
-            style={this.props.textStyle}
+            style={globalStyles.button}
+            textStyle={globalStyles.buttonText}
             text="Log In"
             onPress={this.onLogin}
           />

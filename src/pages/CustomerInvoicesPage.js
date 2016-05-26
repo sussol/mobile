@@ -173,7 +173,7 @@ export default class StockPage extends Component {
           />
           <Button
             style={globalStyles.button}
-            textStyle={globalStyles.text}
+            textStyle={globalStyles.buttonText}
             text="New Invoice"
             onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
           />
