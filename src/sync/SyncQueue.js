@@ -1,8 +1,11 @@
 import { CHANGE_TYPES, generateUUID } from '../database';
 const { CREATE, UPDATE, DELETE } = CHANGE_TYPES;
 const recordTypesSynced = [
-  'Item',
   'ItemLine',
+  'Requisition',
+  'RequisitionLine',
+  'Stocktake',
+  'StocktakeLine',
   'Transaction',
   'TransactionLine',
 ];

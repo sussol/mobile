@@ -33,7 +33,7 @@ export function authenticateAsync(authURL, username, password) {
 
     fetch(authURL, {
       headers: {
-        Authorization: `Basic ${Base64.encode(`${username}:${password}`)}`,
+        Authorization: getAuthHeader(username, password),
       },
     })
     .then((response) => response.json())
@@ -48,6 +48,10 @@ export function authenticateAsync(authURL, username, password) {
       reject(CONNECTION_FAILURE);
     });
   });
+}
+
+export function getAuthHeader(username, password) {
+  return `Basic ${Base64.encode(`${username}:${password}`)}`;
 }
 
 export function hashPassword(password) {

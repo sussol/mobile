@@ -1,5 +1,6 @@
 import {
   authenticateAsync,
+  getAuthHeader,
   hashPassword,
  } from './authenticationUtils';
 
@@ -51,5 +52,18 @@ export class SyncAuthenticator {
         }, (error) => reject(error) // Pass error up
       );
     });
+  }
+
+  /**
+   * Returns the basic base64 encoded authorization header value for this sync site
+   * @return {string} Authorization header value
+   */
+  getAuthHeader() {
+    const settings = this.database.objects('Setting');
+    const usernameResult = settings.filtered('SyncSiteName');
+    const username = usernameResult ? usernameResult[0] : '';
+    const passwordResult = settings.filtered('SyncSitePasswordHash');
+    const password = passwordResult ? passwordResult[0] : '';
+    return getAuthHeader(username, password);
   }
 }

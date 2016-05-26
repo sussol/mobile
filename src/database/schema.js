@@ -22,6 +22,7 @@ const ItemSchema = {
     department: 'ItemDepartment',
     description: 'string',
     category: 'ItemCategory',
+    defaultPrice: 'double',
   },
 };
 
@@ -38,6 +39,8 @@ const ItemLineSchema = {
     batch: 'string',
     costPrice: 'double',
     sellPrice: 'double',
+    supplier: 'Name',
+    sortIndex: 'int',
   },
 };
 
@@ -58,50 +61,6 @@ const ItemCategorySchema = {
     id: 'string',
     name: 'string',
     parentCategory: 'ItemCategory',
-  },
-};
-
-const TransactionSchema = {
-  name: 'Transaction',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    serialNumber: 'int',
-    otherParty: 'Name',
-    comment: 'string',
-    entryDate: 'date',
-    type: 'string',
-    status: 'string',
-    confirmDate: { type: 'date', optional: true },
-    enteredBy: 'User',
-    theirRef: 'string', // An external reference code
-    category: 'TransactionCategory',
-    lines: { type: 'list', objectType: 'TransactionLine' },
-  },
-};
-
-const TransactionCategorySchema = {
-  name: 'TransactionCategory',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    name: 'string',
-    parentCategory: 'TransactionCategory',
-  },
-};
-
-const TransactionLineSchema = {
-  name: 'TransactionLine',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    itemId: 'string',
-    itemName: 'string',
-    itemLine: 'ItemLine',
-    packSize: 'double',
-    numberOfPacks: 'double',
-    totalQuantity: 'double',
-    invoice: 'Transaction',
   },
 };
 
@@ -138,7 +97,7 @@ const NameSchema = {
     billingAddress: 'Address',
     type: 'string',
     masterList: 'MasterList',
-    invoices: { type: 'list', objectType: 'Transaction' },
+    transactions: { type: 'list', objectType: 'Transaction' },
   },
 };
 
@@ -149,8 +108,9 @@ const RequisitionSchema = {
     id: 'string',
     status: 'string',
     entryDate: 'date',
-    monthsToSupply: 'double',
+    daysToSupply: 'double',
     serialNumber: 'int',
+    user: 'User',
     lines: { type: 'list', objectType: 'RequisitionLine' },
   },
 };
@@ -193,6 +153,8 @@ const StocktakeSchema = {
     finalisedBy: 'User',
     comment: 'string',
     serialNumber: 'int',
+    additions: 'Transaction',
+    subtractions: 'Transaction',
   },
 };
 
@@ -206,6 +168,7 @@ const StocktakeLineSchema = {
     snapshotQuantity: 'double',
     snapshotPacksize: 'double',
     countedQuantity: 'double',
+    sortIndex: 'int',
   },
 };
 
@@ -218,6 +181,54 @@ const SyncOutSchema = {
     changeType: 'string', // create, update, or delete
     recordType: 'string', // i.e. Table name
     recordId: 'string',
+  },
+};
+
+
+const TransactionSchema = {
+  name: 'Transaction',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    serialNumber: 'int',
+    otherParty: 'Name',
+    comment: 'string',
+    entryDate: 'date',
+    type: 'string',
+    status: 'string',
+    confirmDate: { type: 'date', optional: true },
+    enteredBy: 'User',
+    theirRef: 'string', // An external reference code
+    category: 'TransactionCategory',
+    lines: { type: 'list', objectType: 'TransactionLine' },
+  },
+};
+
+const TransactionCategorySchema = {
+  name: 'TransactionCategory',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    name: 'string',
+    parentCategory: 'TransactionCategory',
+  },
+};
+
+const TransactionLineSchema = {
+  name: 'TransactionLine',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    itemId: 'string',
+    itemName: 'string',
+    itemLine: 'ItemLine',
+    packSize: 'double',
+    numberOfPacks: 'double',
+    totalQuantity: 'double',
+    transaction: 'Transaction',
+    note: 'string',
+    costPrice: 'double',
+    sellPrice: 'double',
   },
 };
 
