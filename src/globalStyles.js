@@ -28,6 +28,25 @@ export default StyleSheet.create({
   text: {
     fontSize: 18,
   },
+  button: {
+    borderWidth: 2,
+    borderRadius: 4,
+    margin: 5,
+    backgroundColor: 'yellow',
+    borderColor: '#e95c30',
+  },
+  menuButton: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#CDCDCD',
+  },
+  navButton: {
+    backgroundColor: 'white',
+    padding: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#CDCDCD',
+  },
   searchBar: {
     width: 500,
     marginHorizontal: 15,

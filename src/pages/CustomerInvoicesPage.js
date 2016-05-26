@@ -172,7 +172,8 @@ export default class StockPage extends Component {
             placeholder="Search"
           />
           <Button
-            style={{ flex: 1 }}
+            style={globalStyles.button}
+            textStyle={globalStyles.text}
             text="New Invoice"
             onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
           />
@@ -198,9 +199,6 @@ const columnWidths = [4, 1, 1, 2, 4];
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  button: {
-    width: 140,
   },
   horizontalContainer: {
     flexDirection: 'row',
