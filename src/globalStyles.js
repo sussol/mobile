@@ -29,9 +29,9 @@ export default StyleSheet.create({
     fontSize: 18,
   },
   searchBar: {
+    width: 500,
     marginHorizontal: 15,
     borderBottomWidth: 2,
-    borderBottomColor: 'orange',
   },
   dataTableDropDown: {
     marginHorizontal: 15,
