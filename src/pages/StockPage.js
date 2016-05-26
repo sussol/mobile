@@ -61,19 +61,26 @@ export default class StockPage extends Component {
       searchTerm: term,
     });
     const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
+    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
   }
 
-  onColumnSort(newSortBy) {
-    this.setState({
-      sortBy: newSortBy,
-      reverseSort: this.state.reverseSort !== true,
-    });
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`${sortBy} CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
+  onColumnSort(sortBy) {
+    if (this.state.sortBy === sortBy) {
+      this.setState({
+        sortBy: sortBy,
+        reverseSort: !this.state.reverseSort,
+      });
+    } else {
+      this.setState({
+        sortBy: sortBy,
+      });
+    }
+
+    const { items, dataSource, reverseSort, searchTerm } = this.state;
+    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
@@ -110,7 +117,7 @@ export default class StockPage extends Component {
     return (
       <Expansion>
         <View style={{ flex: COLUMN_WIDTHS[0] }} />
-        <View style={{ flex: COLUMN_WIDTHS[1], flexDirection: 'row' }}>
+        <View style={{ flex: COLUMN_WIDTHS[1] + COLUMN_WIDTHS[2], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
             <Text style={[globalStyles.text, localStyles.text]}>
               Category: {item.category.name}
@@ -128,7 +135,6 @@ export default class StockPage extends Component {
             </Text>
           </View>
         </View>
-        <View style={{ flex: COLUMN_WIDTHS[2] }} />
       </Expansion>
     );
   }
@@ -151,7 +157,7 @@ export default class StockPage extends Component {
           {item.name}
         </Cell>
         <Cell
-          style={[globalStyles.dataTableCell, localStyles.cellLast]}
+          style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
           textStyle={[globalStyles.text, localStyles.text]}
           width={COLUMN_WIDTHS[2]}
         >
@@ -189,9 +195,6 @@ StockPage.propTypes = {
 };
 const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   horizontalContainer: {
     flexDirection: 'row',
   },
@@ -200,7 +203,7 @@ const localStyles = StyleSheet.create({
     marginLeft: 20,
     textAlign: 'left',
   },
-  cellLast: {
+  rightMostCell: {
     borderRightWidth: 0,
   },
   dataTable: {

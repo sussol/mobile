@@ -55,11 +55,11 @@ export default class StockPage extends Component {
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    const { items, sortBy, dataSource, reverseSort } = this.state;
     this.setState({
       searchTerm: term,
     });
-    const data = items.filtered(`id CONTAINS[c] "${term}"`).sorted(sortBy, reverseSort);
+    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+    const data = items.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
@@ -71,7 +71,7 @@ export default class StockPage extends Component {
       reverseSort: this.state.reverseSort !== true,
     });
     const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`id CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort); // change id to search name instead, somehow
+    const data = items.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort); // change id to search name instead, somehow
     this.setState({
       dataSource: dataSource.cloneWithRows(data),
     });
@@ -83,7 +83,7 @@ export default class StockPage extends Component {
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, localStyles.text]}
-          onPress={() => this.onColumnSort('otherParty.name')} // change id to search name instead, somehow
+          onPress={() => this.onColumnSort('id')} // TODO: otherParty.name
           width={columnWidths[0]}
           text={'Customer'}
         />
@@ -153,7 +153,7 @@ export default class StockPage extends Component {
           {invoice.entryDate.toDateString()}
         </Cell>
         <Cell
-          style={[globalStyles.dataTableCell, localStyles.cellLast]}
+          style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
           textStyle={[globalStyles.text, localStyles.text]}
           width={columnWidths[4]}
         >
@@ -212,7 +212,7 @@ const localStyles = StyleSheet.create({
     marginLeft: 20,
     textAlign: 'left',
   },
-  cellLast: {
+  rightMostCell: {
     borderRightWidth: 0,
   },
   dataTable: {
