@@ -70,7 +70,6 @@ export default class StockPage extends Component {
   onColumnSort(sortBy) {
     if (this.state.sortBy === sortBy) {
       this.setState({
-        sortBy: sortBy,
         reverseSort: !this.state.reverseSort,
       });
     } else {
