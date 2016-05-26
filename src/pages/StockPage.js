@@ -50,16 +50,12 @@ export default class StockPage extends Component {
 
   componentWillMount() {
     const data = this.state.items.sorted(this.state.sortBy);
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(data),
-    });
+    this.setState({ dataSource: this.state.dataSource.cloneWithRows(data) });
   }
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    this.setState({
-      searchTerm: term,
-    });
+    this.setState({ searchTerm: term });
     this.refreshData();
   }
 
