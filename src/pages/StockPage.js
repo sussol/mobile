@@ -40,50 +40,38 @@ export default class StockPage extends Component {
       reverseSort: false,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
-    this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
-    this.renderHeader = this.renderHeader.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.refreshData = this.refreshData.bind(this);
     this.renderExpansion = this.renderExpansion.bind(this);
+    this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
 
   componentWillMount() {
     const data = this.state.items.sorted(this.state.sortBy);
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(data),
-    });
+    this.setState({ dataSource: this.state.dataSource.cloneWithRows(data) });
   }
-
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    this.setState({
-      searchTerm: term,
-    });
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
-    this.setState({
-      dataSource: dataSource.cloneWithRows(data),
-    });
+    this.setState({ searchTerm: term });
+    this.refreshData();
   }
 
   onColumnSort(sortBy) {
     if (this.state.sortBy === sortBy) {
-      this.setState({
-        sortBy: sortBy,
-        reverseSort: !this.state.reverseSort,
-      });
+      this.setState({ reverseSort: !this.state.reverseSort });
     } else {
-      this.setState({
-        sortBy: sortBy,
-      });
+      this.setState({ sortBy: sortBy });
     }
+    this.refreshData();
+  }
 
-    const { items, dataSource, reverseSort, searchTerm } = this.state;
+  refreshData() {
+    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
     const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
-    this.setState({
-      dataSource: dataSource.cloneWithRows(data),
-    });
+    this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
   renderHeader() {
