@@ -2,6 +2,7 @@ import realm from '../database/realm';
 
 export default function instantiate() {
   realm.write(() => {
+    realm.deleteAll();
     const hospitalDept = realm.create('ItemDepartment', {
       id: '111DI',
       name: 'Hospital',
@@ -101,6 +102,20 @@ export default function instantiate() {
   }
 
   realm.write(() => {
+    const names = [];
+    for (let i = 0; i < 10; i++) {
+      const name = realm.create('Name', {
+        id: `n${i}`,
+        name: `Borg${i}`,
+        code: `borg${i}`,
+        phoneNumber: '0800267${i}',
+        billingAddress: undefined,
+        type: 'Customer AND supplier',
+        masterList: undefined,
+        invoices: [],
+      });
+      names.push(name);
+    }
     const name = realm.create('Name', {
       id: '1',
       name: 'Borg',
@@ -143,7 +158,7 @@ export default function instantiate() {
       const transaction = realm.create('Transaction', {
         id: `t${t}`,
         serialNumber: t,
-        otherParty: name,
+        otherParty: names[t % 10],
         comment: 'comment is here',
         entryDate: entryDate,
         type: 'customer_invoice',

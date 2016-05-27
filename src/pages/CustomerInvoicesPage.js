@@ -33,9 +33,9 @@ export default class StockPage extends Component {
     });
     this.state = {
       dataSource: dataSource,
-      items: props.database.objects('Transaction').filtered('type == "customer_invoice"'),
+      transactions: props.database.objects('Transaction').filtered('type == "customer_invoice"'),
       searchTerm: '',
-      sortBy: 'id',
+      sortBy: 'otherParty.name',
       reverseSort: false,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
@@ -47,10 +47,10 @@ export default class StockPage extends Component {
   }
 
   componentWillMount() {
-    const data = this.state.items.sorted(this.state.sortBy);
+    this.refreshData();
     this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(data),
-      deleteTargetItem: this.state.items[0],
+      dataSource: this.state.dataSource.cloneWithRows(this.state.transactions),
+      deleteTargetItem: this.state.transactions[0],
     });
   }
 
@@ -70,9 +70,17 @@ export default class StockPage extends Component {
   }
 
   refreshData() {
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
-                  .sorted(sortBy, reverseSort);
+    const { transactions, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+    let data;
+    if (sortBy === 'otherParty.name') {
+      data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
+              .slice()
+              .sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
+      if (reverseSort) data.reverse();
+    } else {
+      data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
+              .sorted(sortBy, reverseSort);
+    }
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
@@ -82,7 +90,7 @@ export default class StockPage extends Component {
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={[globalStyles.text, localStyles.text]}
-          onPress={() => this.onColumnSort('id')} // TODO: otherParty.name
+          onPress={() => this.onColumnSort('otherParty.name')}
           width={columnWidths[0]}
           text={'Customer'}
         />
