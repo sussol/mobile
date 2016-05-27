@@ -5,8 +5,12 @@
 
 import { instantiate as realmMock } from '../database/mockDBInstantiator';
 import { SyncQueue } from './SyncQueue';
-import { generateSyncJson } from './generateSyncJson';
-import { parseSyncJson } from './parseSyncJson';
+import { generateSyncJson } from './outgoingSyncUtils';
+import {
+  integrateRecords,
+  getIncomingRecordBatch,
+  getWaitingRecordCount,
+} from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
 const {
   SYNC_SERVER_ID,
@@ -14,7 +18,7 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
-const SIZE_OF_SYNC_BATCH = 1; // Number of records to sync at one time
+const BATCH_SIZE = 1; // Number of records to sync at one time
 const MOCK = true;
 
 export class Synchronizer {
@@ -83,7 +87,7 @@ export class Synchronizer {
     let recordsToSync;
     let translatedRecords;
     while (this.syncQueue.length() > 0) {
-      recordsToSync = this.syncQueue.next(SIZE_OF_SYNC_BATCH);
+      recordsToSync = this.syncQueue.next(BATCH_SIZE);
       translatedRecords = recordsToSync.map((record) => generateSyncJson(this.database, record));
       await this.pushRecords(translatedRecords);
       this.syncQueue.use(recordsToSync);
@@ -97,10 +101,12 @@ export class Synchronizer {
    */
   pushRecords(records) {
     const serverURL = this.settings.get(SYNC_URL);
-    const fromSiteId = this.settings.get(SYNC_SITE_ID);
-    const toSiteId = this.settings.get(SYNC_SERVER_ID);
+    const thisSiteId = this.settings.get(SYNC_SITE_ID);
+    const serverId = this.settings.get(SYNC_SERVER_ID);
     return Promise.all(records.map((record) => fetch(
-      `${serverURL}/sync/v2/queued_records/?from_site=${fromSiteId}&to_site=${toSiteId}`,
+      `${serverURL}/sync/v2/queued_records/
+        ?from_site=${thisSiteId}
+        &to_site=${serverId}`,
       {
         method: 'POST',
         headers: {
@@ -111,8 +117,35 @@ export class Synchronizer {
     ));
   }
 
-  pull() {
+  /**
+   * Pulls any changes to data on the sync server down to the local database
+   * @return {Promise} Resolves if successful, or passes up any error thrown
+   */
+  async pull() {
     const serverURL = this.settings.get(SYNC_URL);
+    const thisSiteId = this.settings.get(SYNC_SITE_ID);
+    const serverId = this.settings.get(SYNC_SERVER_ID);
+    await this.recursivePull(serverURL, thisSiteId, serverId);
+  }
+
+  /**
+   * Recursively checks how many records left to pull, pulls in a batch, and calls
+   * itself
+   * @param  {string} serverURL  The URL of the sync server
+   * @param  {string} thisSiteId The sync ID of this sync site
+   * @param  {string} serverId   The sync ID of the server
+   * @return {Promise}          Resolves if successful, or passes up any error thrown
+   */
+  async recursivePull(serverURL, thisSiteId, serverId) {
+    const waitingRecordCount = await getWaitingRecordCount(serverURL, thisSiteId, serverId);
+    if (waitingRecordCount === 0) return; // Done recursing through records
+
+    // Get a batch of records and integrate them
+    const incomingRecords = await getIncomingRecordBatch(serverURL, thisSiteId, serverId);
+    integrateRecords(this.database, incomingRecords);
+
+    // Recurse to get the next batch of records from the server
+    await this.recursivePull(serverURL, thisSiteId, serverId);
   }
 
 }
