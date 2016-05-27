@@ -23,6 +23,7 @@ import {
 
 import { ListView } from 'realm/react-native';
 import Button from '../widgets/Button';
+import SearchBar from '../widgets/SearchBar';
 import globalStyles from '../globalStyles';
 
 export default class StockPage extends Component {
@@ -174,10 +175,8 @@ export default class StockPage extends Component {
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={localStyles.horizontalContainer}>
-          <TextInput
-            style={globalStyles.searchBar}
+          <SearchBar
             onChange={(event) => this.onSearchChange(event)}
-            placeholder="Search"
           />
           <Button
             style={globalStyles.button}
