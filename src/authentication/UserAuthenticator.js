@@ -4,6 +4,9 @@ import {
   hashPassword,
  } from './authenticationUtils';
 
+import { SETTINGS_KEYS } from '../settings';
+const { SYNC_URL } = SETTINGS_KEYS;
+
 const {
    CONNECTION_FAILURE,
    INVALID_PASSWORD,
@@ -12,8 +15,9 @@ const {
 const AUTH_ENDPOINT = '/mobile/user';
 
 export class UserAuthenticator {
-  constructor(database) {
+  constructor(database, settings) {
     this.database = database;
+    this.settings = settings;
     this.activeUsername = '';
     this.activePassword = '';
   }
@@ -41,12 +45,11 @@ export class UserAuthenticator {
       const user = this.database.objects('User').filtered(`username = "${username}"`)[0];
 
       // Get the HTTP endpoint to authenticate against
-      const serverURLResult = this.database.objects('Setting').filtered('key = "ServerURL"')[0];
-      if (!serverURLResult) { // No valid server URL configured, fail early
+      const serverURL = this.settings.get(SYNC_URL);
+      if (serverURL.length === 0) { // No valid server URL configured, fail early
         reject('Server URL not configured');
         return;
       }
-      const serverURL = serverURLResult.value;
       const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
       authenticateAsync(authURL, username, passwordHash)

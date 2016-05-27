@@ -36,6 +36,7 @@ import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema } from './database';
 import { Scheduler } from './Scheduler';
+import { Settings } from './Settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -45,8 +46,10 @@ export default class OfflineMobileApp extends Component {
   constructor() {
     super();
     this.database = new Database(schema);
-    this.userAuthenticator = new UserAuthenticator(this.database);
-    this.synchronizer = new Synchronizer(this.database, new SyncAuthenticator(this.database));
+    this.settings = new Settings(this.database);
+    this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
+    const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
+    this.synchronizer = new Synchronizer(this.database, syncAuthenticator, this.settings);
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
     this.state = {

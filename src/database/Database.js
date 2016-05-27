@@ -1,7 +1,6 @@
 import Realm from 'realm';
 import { generateUUID } from './utilities';
 import { CHANGE_TYPES } from './index.js';
-// const { CREATE, UPDATE, DELETE, WIPE } = CHANGE_TYPES;
 
 export class Database {
 

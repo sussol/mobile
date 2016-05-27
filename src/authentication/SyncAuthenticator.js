@@ -4,11 +4,19 @@ import {
   hashPassword,
  } from './authenticationUtils';
 
+import { SETTINGS_KEYS } from '../settings';
+const {
+   SYNC_URL,
+   SYNC_SITE_NAME,
+   SYNC_SITE_PASSWORD_HASH,
+ } = SETTINGS_KEYS;
+
 const AUTH_ENDPOINT = '/mobile/user'; // TODO Replace with real URL
 
 export class SyncAuthenticator {
-  constructor(database) {
+  constructor(database, settings) {
     this.database = database;
+    this.settings = settings;
   }
 
 /**
@@ -34,20 +42,10 @@ export class SyncAuthenticator {
 
       authenticateAsync(authURL, username, passwordHash)
         .then(() => { // Valid, save in local db
-          this.database.write(() => {
-            this.database.update('Setting', {
-              key: 'ServerURL',
-              value: serverURL,
-            });
-            this.database.update('Setting', {
-              key: 'SyncSiteName',
-              value: username,
-            });
-            this.database.update('Setting', {
-              key: 'SyncSitePasswordHash',
-              value: passwordHash,
-            });
-          });
+          this.settings.set(SYNC_URL, serverURL);
+          this.settings.set(SYNC_SITE_NAME, username);
+          this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);
+          // TODO get site id, store id and server id from response and save
           resolve();
         }, (error) => reject(error) // Pass error up
       );

@@ -7,14 +7,22 @@ import { instantiate as realmMock } from '../database/mockDBInstantiator';
 import { SyncQueue } from './SyncQueue';
 import { generateSyncJson } from './generateSyncJson';
 import { parseSyncJson } from './parseSyncJson';
+import { SETTINGS_KEYS } from '../settings';
+const {
+  SYNC_SERVER_ID,
+  SYNC_SITE_ID,
+  SYNC_URL,
+} = SETTINGS_KEYS;
 
 const SIZE_OF_SYNC_BATCH = 1; // Number of records to sync at one time
+const MOCK = true;
 
 export class Synchronizer {
 
-  constructor(database, authenticator) {
+  constructor(database, authenticator, settings) {
     this.database = database;
     this.authenticator = authenticator;
+    this.settings = settings;
     this.syncQueue = new SyncQueue(database);
     this.synchronize = this.synchronize.bind(this);
     if (this.isInitialised()) this.syncQueue.enable();
@@ -35,7 +43,8 @@ export class Synchronizer {
     this.database.write(() => { this.database.deleteAll(); });
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
-      await this.pull();
+      if (MOCK) realmMock(this.database); // Instantiate mock db
+      else await this.pull();
     } catch (error) { // Did not authenticate or internet failed, wipe db and pass error up
       this.database.write(() => { this.database.deleteAll(); });
       throw new Error(error);
@@ -49,7 +58,7 @@ export class Synchronizer {
    * @return {Boolean} Whether the synchronizer is initialised
    */
   isInitialised() {
-    return this.database.objects('Setting').filtered('key = "ServerURL"').length > 0;
+    return this.settings.get(SYNC_URL).length > 0;
   }
 
   /**
@@ -87,9 +96,9 @@ export class Synchronizer {
    * @return {Promise}         Resolves if successful, or passes up any error thrown
    */
   pushRecords(records) {
-    const serverURL = this.database.objects('Setting', 'ServerURL')[0].value;
-    const fromSiteId = 2;
-    const toSiteId = 1; // TODO Get these dynamically
+    const serverURL = this.settings.get(SYNC_URL);
+    const fromSiteId = this.settings.get(SYNC_SITE_ID);
+    const toSiteId = this.settings.get(SYNC_SERVER_ID);
     return Promise.all(records.map((record) => fetch(
       `${serverURL}/sync/v2/queued_records/?from_site=${fromSiteId}&to_site=${toSiteId}`,
       {
@@ -103,7 +112,7 @@ export class Synchronizer {
   }
 
   pull() {
-    realmMock(this.database); // Instantiate mock db
+    const serverURL = this.settings.get(SYNC_URL);
   }
 
 }
