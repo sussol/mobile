@@ -25,7 +25,7 @@ import Button from '../widgets/Button';
 import SearchBar from '../widgets/SearchBar';
 import globalStyles from '../globalStyles';
 
-export default class StockPage extends Component {
+export default class CustomerInvoicesPage extends Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
@@ -207,7 +207,7 @@ export default class StockPage extends Component {
   }
 }
 
-StockPage.propTypes = {
+CustomerInvoicesPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
   style: View.propTypes.style,
