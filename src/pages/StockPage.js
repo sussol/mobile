@@ -79,21 +79,25 @@ export default class StockPage extends Component {
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
-          onPress={() => this.onColumnSort('code')}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[0]}
+          onPress={() => this.onColumnSort('code')}
+          reverseSort={this.state.reverseSort}
+          selected={this.state.sortBy === 'code'}
           text={'ITEM CODE'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('name')}
+          reverseSort={this.state.reverseSort}
+          selected={this.state.sortBy === 'name'}
           text={'ITEM NAME'}
         />
         <HeaderCell
           style={[globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
           text={'STOCK ON HAND'}
         />
@@ -132,21 +136,21 @@ export default class StockPage extends Component {
       <Row style={globalStyles.dataTableRow} renderExpansion={() => this.renderExpansion(item)}>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[0]}
         >
           {item.code}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
         >
           {item.name}
         </Cell>
         <Cell
           style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
         >
           {getItemQuantity(item)}

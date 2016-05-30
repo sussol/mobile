@@ -28,7 +28,6 @@ Button.propTypes = {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: 'blue',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',

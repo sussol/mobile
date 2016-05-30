@@ -8,6 +8,7 @@
 import {
   StyleSheet,
 } from 'react-native';
+const appFontFamily = 'sans-serif';
 
 export default StyleSheet.create({
   container: {
@@ -26,9 +27,11 @@ export default StyleSheet.create({
     paddingTop: 68,
   },
   text: {
+    fontFamily: appFontFamily,
     fontSize: 16,
   },
   buttonText: {
+    fontFamily: appFontFamily,
     fontSize: 17,
     fontWeight: '500',
     color: '#e95c30',
@@ -56,6 +59,12 @@ export default StyleSheet.create({
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
+  },
+  dataTableText: {
+    fontFamily: appFontFamily,
+    fontSize: 14,
+    marginLeft: 20,
+    textAlign: 'left',
   },
   dataTableDropDown: {
     marginHorizontal: 15,

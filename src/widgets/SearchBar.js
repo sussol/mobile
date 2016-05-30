@@ -6,7 +6,7 @@ import React, {
 
 import Icon from 'react-native-vector-icons/EvilIcons';
 
-const styles = StyleSheet.create({
+const defaultStyles = StyleSheet.create({
   container: {
     borderBottomColor: '#e95c30',
     borderBottomWidth: 1,
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
 
 export default function searchBar(props) {
   return (
-    <View style={styles.container}>
+    <View style={defaultStyles.container}>
       <Icon name="search" size={50} color="#e95c30" />
       <TextInput
         style={props.style}
@@ -41,5 +41,5 @@ searchBar.propTypes = {
 };
 
 searchBar.defaultProps = {
-  style: styles.searchBar,
+  style: defaultStyles.searchBar,
 };

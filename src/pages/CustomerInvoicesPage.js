@@ -9,7 +9,6 @@
 import React, {
   Component,
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -65,7 +64,10 @@ export default class StockPage extends Component {
     if (this.state.sortBy === sortBy) {
       this.setState({ reverseSort: !this.state.reverseSort });
     } else {
-      this.setState({ sortBy: sortBy });
+      this.setState({
+        sortBy: sortBy,
+        reverseSort: false,
+      });
     }
     this.refreshData();
   }
@@ -90,35 +92,43 @@ export default class StockPage extends Component {
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
-          onPress={() => this.onColumnSort('otherParty.name')}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[0]}
-          text={'Customer'}
+          onPress={() => this.onColumnSort('otherParty.name')}
+          reverseSort={this.state.reverseSort}
+          selected={this.state.sortBy === 'otherParty.name'}
+          text={'CUSTOMER'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('id')}
+          reverseSort={this.state.reverseSort}
+          selected={this.state.sortBy === 'id'}
           text={'ID'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[2]}
           onPress={() => this.onColumnSort('status')}
+          reverseSort={this.state.reverseSort}
+          selected={this.state.sortBy === 'status'}
           text={'STATUS'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[3]}
           onPress={() => this.onColumnSort('entryDate')}
+          reverseSort={this.state.reverseSort}
+          selected={this.state.sortBy === 'entryDate'}
           text={'ENTERED DATE'}
         />
         <HeaderCell
           style={[globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[4]}
           text={'COMMENT'}
         />
@@ -134,35 +144,35 @@ export default class StockPage extends Component {
       >
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[0]}
         >
           {invoice.otherParty.name}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[1]}
         >
           {invoice.id}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[2]}
         >
           {invoice.status}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[3]}
         >
           {invoice.entryDate.toDateString()}
         </Cell>
         <Cell
           style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={columnWidths[4]}
         >
           {invoice.comment}
