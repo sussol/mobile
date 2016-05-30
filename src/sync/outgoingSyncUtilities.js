@@ -24,18 +24,25 @@ export function generateSyncJson(database, syncOutRecord) {
   if (!syncOutRecord.recordType || !syncOutRecord.id) throw new Error('Malformed sync out record');
   const recordType = syncOutRecord.recordType;
 
-  // Get the record the syncOutRecord refers to from the database
-  const recordResults = database.objects(recordType, `id == ${syncOutRecord.id}`);
-  if (!recordResults || recordResults.length === 0) { // No such record
-    throw new Error(`${syncOutRecord.type} with id = ${syncOutRecord.id} missing`);
-  } else if (recordResults.length > 1) { // Duplicate records
-    throw new Error(`Multiple ${syncOutRecord.type} records with id = ${syncOutRecord.id}`);
+  let syncData;
+  if(syncOutRecord.changeType === 'delete') {
+    // If record has been deleted, just sync up the ID
+    syncData = { ID: syncOutRecord.recordId };
   }
-  const record = recordResults[0];
+  else {
+    // Get the record the syncOutRecord refers to from the database
+    const recordResults = database.objects(recordType, `id == ${syncOutRecord.id}`);
+    if (!recordResults || recordResults.length === 0) { // No such record
+      throw new Error(`${syncOutRecord.type} with id = ${syncOutRecord.id} missing`);
+    } else if (recordResults.length > 1) { // Duplicate records
+      throw new Error(`Multiple ${syncOutRecord.type} records with id = ${syncOutRecord.id}`);
+    }
+    const record = recordResults[0];
 
-  // Generate the appropriate data for the sync object to carry, representing the
-  // record in its upstream form
-  const syncData = generateSyncData(recordType, record);
+    // Generate the appropriate data for the sync object to carry, representing the
+    // record in its upstream form
+    const syncData = generateSyncData(recordType, record);
+  }
 
   // Create the JSON object to sync
   const syncJson = {
