@@ -57,11 +57,6 @@ export default StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
   },
-  searchBar: {
-    width: 500,
-    marginHorizontal: 15,
-    borderBottomWidth: 2,
-  },
   dataTableDropDown: {
     marginHorizontal: 15,
   },
