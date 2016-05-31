@@ -153,6 +153,12 @@ export default function instantiate() {
       // ((t % 100) === 0) && console.log(`making transaction ${t}`);
       const confirmDate = newDate(t, numberOfTransactions);
       const entryDate = confirmDate;
+      const transactionTypes = [
+        'customer_invoice',
+        'customer_credit',
+        'supplier_invoice',
+        'supplier_credit',
+      ];
       entryDate.setDate(entryDate.getDate() - 5);
 
       const transaction = realm.create('Transaction', {
@@ -161,7 +167,7 @@ export default function instantiate() {
         otherParty: names[t % 10],
         comment: 'comment is here',
         entryDate: entryDate,
-        type: 'supplier_invoice',
+        type: transactionTypes[t % 4],
         status: 'cn',
         confirmDate: confirmDate,
         enteredBy: user,
