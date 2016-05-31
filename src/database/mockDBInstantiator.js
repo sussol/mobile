@@ -163,7 +163,7 @@ export default function instantiate() {
 
       const transaction = realm.create('Transaction', {
         id: `t${t}`,
-        serialNumber: t,
+        serialNumber: `${t}`,
         otherParty: names[t % 10],
         comment: 'comment is here',
         entryDate: entryDate,

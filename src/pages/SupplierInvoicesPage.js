@@ -34,7 +34,7 @@ export default class SupplierInvoicePage extends Component {
     this.state = {
       dataSource: dataSource,
       transactions: props.database.objects('Transaction').filtered('type == "supplier_invoice"'),
-      searchTerm: 0,
+      searchTerm: '',
       sortBy: 'serialNumber',
       reverseSort: false,
     };
@@ -55,13 +55,7 @@ export default class SupplierInvoicePage extends Component {
   }
 
   onSearchChange(event) {
-    let term = event.nativeEvent.text;
-    if (term === '') {
-      term = 0;
-    } else {
-      const parsed = parseInt(term, 10);
-      term = isNaN(parsed) ? 0 : parsed; // stops RSOD, could give modal/warning to use numbers.
-    }
+    const term = event.nativeEvent.text;
     this.setState({ searchTerm: term });
     this.refreshData();
   }
@@ -80,8 +74,13 @@ export default class SupplierInvoicePage extends Component {
 
   refreshData() {
     const { transactions, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = transactions.filtered(`serialNumber >= "${searchTerm}"`)
-            .sorted(sortBy, reverseSort);
+    let data = transactions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
+    if (sortBy === 'serialNumber') {
+      data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber);
+      if (reverseSort) data.reverse();
+    } else {
+      data = data.sorted(sortBy, reverseSort);
+    }
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 

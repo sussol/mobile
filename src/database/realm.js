@@ -68,7 +68,7 @@ const TransactionSchema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    serialNumber: 'int',
+    serialNumber: 'string',
     otherParty: 'Name',
     comment: 'string',
     entryDate: 'date',
