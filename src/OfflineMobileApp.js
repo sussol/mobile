@@ -107,7 +107,7 @@ export default class OfflineMobileApp extends Component {
       case 'customerInvoice':
         return <CustomerInvoicePage navigateTo={navigateTo} />;
       case 'supplierInvoices':
-        return <SupplierInvoicesPage navigateTo={navigateTo} />;
+        return <SupplierInvoicesPage database={realm} navigateTo={navigateTo} />;
       case 'supplierInvoice':
         return <SupplierInvoicePage navigateTo={navigateTo} />;
       case 'stockHistories':

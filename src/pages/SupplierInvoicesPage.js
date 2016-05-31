@@ -33,9 +33,9 @@ export default class SupplierInvoicePage extends Component {
     });
     this.state = {
       dataSource: dataSource,
-      transactions: props.database.objects('Transaction').filtered('type == "customer_invoice"'),
-      searchTerm: '',
-      sortBy: 'otherParty.name',
+      transactions: props.database.objects('Transaction').filtered('type == "supplier_invoice"'),
+      searchTerm: 0,
+      sortBy: 'serialNumber',
       reverseSort: false,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
@@ -55,7 +55,13 @@ export default class SupplierInvoicePage extends Component {
   }
 
   onSearchChange(event) {
-    const term = event.nativeEvent.text;
+    let term = event.nativeEvent.text;
+    if (term === '') {
+      term = 0;
+    } else {
+      const parsed = parseInt(term, 10);
+      term = isNaN(parsed) ? 0 : parsed; // stops RSOD, could give modal/warning to use numbers.
+    }
     this.setState({ searchTerm: term });
     this.refreshData();
   }
@@ -74,16 +80,8 @@ export default class SupplierInvoicePage extends Component {
 
   refreshData() {
     const { transactions, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    let data;
-    if (sortBy === 'otherParty.name') {
-      data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
-              .slice()
-              .sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
-      if (reverseSort) data.reverse();
-    } else {
-      data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
-              .sorted(sortBy, reverseSort);
-    }
+    const data = transactions.filtered(`serialNumber >= "${searchTerm}"`)
+            .sorted(sortBy, reverseSort);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
@@ -94,24 +92,15 @@ export default class SupplierInvoicePage extends Component {
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[0]}
-          onPress={() => this.onColumnSort('otherParty.name')}
+          onPress={() => this.onColumnSort('serialNumber')}
           reverseSort={this.state.reverseSort}
-          selected={this.state.sortBy === 'otherParty.name'}
-          text={'CUSTOMER'}
+          selected={this.state.sortBy === 'serialNumber'}
+          text={'INVOICE NO.'}
         />
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[1]}
-          onPress={() => this.onColumnSort('id')}
-          reverseSort={this.state.reverseSort}
-          selected={this.state.sortBy === 'id'}
-          text={'ID'}
-        />
-        <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={globalStyles.dataTableText}
-          width={columnWidths[2]}
           onPress={() => this.onColumnSort('status')}
           reverseSort={this.state.reverseSort}
           selected={this.state.sortBy === 'status'}
@@ -120,7 +109,7 @@ export default class SupplierInvoicePage extends Component {
         <HeaderCell
           style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[3]}
+          width={columnWidths[2]}
           onPress={() => this.onColumnSort('entryDate')}
           reverseSort={this.state.reverseSort}
           selected={this.state.sortBy === 'entryDate'}
@@ -129,7 +118,7 @@ export default class SupplierInvoicePage extends Component {
         <HeaderCell
           style={[globalStyles.dataTableHeaderCell]}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[4]}
+          width={columnWidths[3]}
           text={'COMMENT'}
         />
       </Header>
@@ -147,33 +136,26 @@ export default class SupplierInvoicePage extends Component {
           textStyle={globalStyles.dataTableText}
           width={columnWidths[0]}
         >
-          {invoice.otherParty.name}
+          {invoice.serialNumber}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[1]}
         >
-          {invoice.id}
+          {invoice.status}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[2]}
         >
-          {invoice.status}
-        </Cell>
-        <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={columnWidths[3]}
-        >
           {invoice.entryDate.toDateString()}
         </Cell>
         <Cell
           style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[4]}
+          width={columnWidths[3]}
         >
           {invoice.comment}
         </Cell>
@@ -187,6 +169,7 @@ export default class SupplierInvoicePage extends Component {
         <View style={localStyles.horizontalContainer}>
           <SearchBar
             onChange={(event) => this.onSearchChange(event)}
+            keyboardType="numeric"
           />
           <Button
             style={globalStyles.button}
@@ -212,7 +195,7 @@ SupplierInvoicePage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
   style: View.propTypes.style,
 };
-const columnWidths = [4, 1, 1, 2, 4];
+const columnWidths = [1, 1, 1, 3];
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,

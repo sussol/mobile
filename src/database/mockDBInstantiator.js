@@ -161,7 +161,7 @@ export default function instantiate() {
         otherParty: names[t % 10],
         comment: 'comment is here',
         entryDate: entryDate,
-        type: 'customer_invoice',
+        type: 'supplier_invoice',
         status: 'cn',
         confirmDate: confirmDate,
         enteredBy: user,

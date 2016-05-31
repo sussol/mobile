@@ -28,7 +28,7 @@ export default function searchBar(props) {
     <View style={defaultStyles.container}>
       <Icon name="search" size={50} color="#e95c30" />
       <TextInput
-        style={props.style}
+        {...props}
         onChange={(event) => props.onChange(event)}
       />
     </View>
