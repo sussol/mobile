@@ -74,15 +74,12 @@ export default class CustomerInvoicesPage extends Component {
 
   refreshData() {
     const { transactions, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    let data;
+    let data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`);
     if (sortBy === 'otherParty.name') {
-      data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
-              .slice()
-              .sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
+      data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
       if (reverseSort) data.reverse();
     } else {
-      data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`)
-              .sorted(sortBy, reverseSort);
+      data = data.sorted(sortBy, reverseSort);
     }
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
