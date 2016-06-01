@@ -8,8 +8,12 @@
 import {
   StyleSheet,
 } from 'react-native';
-const appFontFamily = 'Museo_Slab_500';
-const sussolOrange = '#e95c30';
+const APP_FONT_FAMILY = 'Museo_Slab_500';
+const SUSSOL_ORANGE = '#e95c30';
+const BLUE_WHITE = '#ecf3fc';
+const BACKGROUND = '#f8fbfe';
+const DARK = '#4a4a4a';
+const DARKER = '#333333';
 
 export default StyleSheet.create({
   container: {
@@ -18,7 +22,7 @@ export default StyleSheet.create({
   pageContentContainer: {
     flex: 1,
     margin: 15,
-    backgroundColor: '#ecf3fc',
+    backgroundColor: BLUE_WHITE,
   },
   horizontalContainer: {
     flexDirection: 'row',
@@ -33,13 +37,13 @@ export default StyleSheet.create({
     paddingTop: 68,
   },
   text: {
-    fontFamily: appFontFamily,
+    fontFamily: APP_FONT_FAMILY,
     fontSize: 16,
   },
   buttonText: {
-    fontFamily: appFontFamily,
+    fontFamily: APP_FONT_FAMILY,
     fontSize: 12,
-    color: sussolOrange,
+    color: SUSSOL_ORANGE,
   },
   button: {
     alignItems: 'center',
@@ -49,17 +53,17 @@ export default StyleSheet.create({
     borderRadius: 4,
     padding: 15,
     margin: 5,
-    borderColor: sussolOrange,
+    borderColor: SUSSOL_ORANGE,
   },
   menuButtonText: {
-    fontFamily: appFontFamily,
+    fontFamily: APP_FONT_FAMILY,
     fontSize: 17,
-    color: '#333333',
+    color: DARKER,
   },
   menuButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
@@ -67,13 +71,13 @@ export default StyleSheet.create({
   navButton: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
   },
   dataTableText: {
-    fontFamily: appFontFamily,
+    fontFamily: APP_FONT_FAMILY,
     fontSize: 14,
     marginLeft: 20,
     textAlign: 'left',
@@ -82,37 +86,41 @@ export default StyleSheet.create({
     marginHorizontal: 15,
   },
   dataTableHeader: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
   },
   dataTableHeaderCell: {
     height: 30,
     borderRightWidth: 2,
-    backgroundColor: '#ffffff',
-    borderColor: '#ecf3fc',
+    backgroundColor: 'white',
+    borderColor: BLUE_WHITE,
   },
   dataTableRow: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
   },
   dataTableCell: {
     height: 40,
-    backgroundColor: '#f8fbfe',
+    backgroundColor: BACKGROUND,
     borderTopWidth: 2,
     borderRightWidth: 2,
-    borderColor: '#ecf3fc',
+    borderColor: BLUE_WHITE,
   },
   dataTableEditableCell: {
     backgroundColor: '#f9e4c2',
   },
   dataTableButton: {
-    backgroundColor: '#ffdb9d',
-    borderColor: '#fcb947',
-    borderRadius: 8,
-    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 15,
+    margin: 5,
+    borderColor: SUSSOL_ORANGE,
   },
   appFontFamily: {
-    fontFamily: appFontFamily,
+    fontFamily: APP_FONT_FAMILY,
   },
   appOrangeBorder: {
-    borderColor: sussolOrange,
+    borderColor: SUSSOL_ORANGE,
   },
 });
