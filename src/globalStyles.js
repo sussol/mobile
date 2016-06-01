@@ -8,7 +8,8 @@
 import {
   StyleSheet,
 } from 'react-native';
-const appFontFamily = 'sans-serif';
+const appFontFamily = 'OpenSans';
+const sussolOrange = '#e95c30';
 
 export default StyleSheet.create({
   container: {
@@ -34,28 +35,32 @@ export default StyleSheet.create({
     fontFamily: appFontFamily,
     fontSize: 17,
     fontWeight: '500',
-    color: '#e95c30',
+    color: sussolOrange,
   },
   button: {
+    alignItems: 'center',
     borderWidth: 1,
     borderRadius: 4,
     padding: 15,
     margin: 5,
-    borderColor: '#e95c30',
+    borderColor: sussolOrange,
   },
   menuButtonText: {
+    // fontFamily: appFontFamily,
     fontSize: 17,
     fontWeight: '500',
     color: '#333333',
   },
   menuButton: {
-    backgroundColor: 'white',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
   },
   navButton: {
-    backgroundColor: 'white',
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
@@ -82,6 +87,7 @@ export default StyleSheet.create({
   dataTableCell: {
     height: 40,
     backgroundColor: '#f8fbfe',
+    borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: '#ecf3fc',
   },
@@ -94,10 +100,8 @@ export default StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
   },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    fontFamily: 'Comic Sans',
+  searchBar: {
+    borderColor: sussolOrange,
+    fontFamily: appFontFamily,
   },
 });
