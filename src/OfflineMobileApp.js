@@ -30,17 +30,12 @@ import {
   SupplierInvoicesPage,
 } from './pages';
 
-import { Button, LoginModal } from './widgets';
+import { LoginModal } from './widgets';
 
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import realm from './database/realm';
 import Scheduler from './Scheduler';
-import globalStyles from './globalStyles';
-
-// TODO: oh god delete this
-console.log('DELETE THIS LINE AND THE ONE BELOW');
-import mockit from './database/mockDBInstantiator';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -53,11 +48,9 @@ export default class OfflineMobileApp extends Component {
     this.synchronizer = new Synchronizer(realm, new SyncAuthenticator(realm));
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
-    console.log('DELETE THIS LINE AND THE ONE BELOW');
-    mockit();
     this.state = {
-      initialised: true,
-      authenticated: true,
+      initialised: initialised,
+      authenticated: false,
     };
   }
 
