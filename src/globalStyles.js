@@ -112,8 +112,10 @@ export default StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
   },
-  searchBar: {
-    borderColor: sussolOrange,
+  appFontFamily: {
     fontFamily: appFontFamily,
+  },
+  appOrangeBorder: {
+    borderColor: sussolOrange,
   },
 });

@@ -22,8 +22,8 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
-defaultStyles.textInput = [defaultStyles.textInput, globalStyles.searchBar];
-defaultStyles.container = [defaultStyles.container, globalStyles.searchBar];
+defaultStyles.textInput = [defaultStyles.textInput, globalStyles.appFontFamily];
+defaultStyles.container = [defaultStyles.container, globalStyles.appOrangeBorder];
 
 export default function searchBar(props) {
   return (
