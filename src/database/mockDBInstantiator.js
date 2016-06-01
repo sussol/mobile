@@ -116,16 +116,6 @@ export default function instantiate() {
       });
       names.push(name);
     }
-    const name = realm.create('Name', {
-      id: '1',
-      name: 'Borg',
-      code: 'borg1',
-      phoneNumber: '08002674',
-      billingAddress: undefined,
-      type: 'Customer AND supplier',
-      masterList: undefined,
-      invoices: [],
-    });
 
     const user = realm.create('User', {
       id: '1',
@@ -153,6 +143,7 @@ export default function instantiate() {
       // ((t % 100) === 0) && console.log(`making transaction ${t}`);
       const confirmDate = newDate(t, numberOfTransactions);
       const entryDate = confirmDate;
+      const name = names[t % 10];
       const transactionTypes = [
         'customer_invoice',
         'customer_credit',
@@ -161,10 +152,11 @@ export default function instantiate() {
       ];
       entryDate.setDate(entryDate.getDate() - 5);
 
+
       const transaction = realm.create('Transaction', {
         id: `t${t}`,
         serialNumber: `${t}`,
-        otherParty: names[t % 10],
+        otherParty: name,
         comment: 'comment is here',
         entryDate: entryDate,
         type: transactionTypes[t % 4],
