@@ -43,6 +43,7 @@ export default StyleSheet.create({
     color: sussolOrange,
   },
   button: {
+    alignItems: 'center',
     justifyContent: 'center',
     height: 50,
     borderWidth: 1,
@@ -59,6 +60,7 @@ export default StyleSheet.create({
   },
   menuButton: {
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -66,6 +68,7 @@ export default StyleSheet.create({
   },
   navButton: {
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
