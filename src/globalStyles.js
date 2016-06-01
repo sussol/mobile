@@ -8,7 +8,7 @@
 import {
   StyleSheet,
 } from 'react-native';
-const appFontFamily = 'OpenSans';
+const appFontFamily = 'Museo_Slab_500';
 const sussolOrange = '#e95c30';
 
 export default StyleSheet.create({
@@ -38,14 +38,13 @@ export default StyleSheet.create({
   },
   buttonText: {
     fontFamily: appFontFamily,
-    fontSize: 17,
-    fontWeight: '500',
+    fontSize: 12,
     color: sussolOrange,
   },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
+    height: 40,
     borderWidth: 1,
     borderRadius: 4,
     padding: 15,
@@ -55,7 +54,6 @@ export default StyleSheet.create({
   menuButtonText: {
     fontFamily: appFontFamily,
     fontSize: 17,
-    fontWeight: '500',
     color: '#333333',
   },
   menuButton: {
@@ -84,11 +82,10 @@ export default StyleSheet.create({
     marginHorizontal: 15,
   },
   dataTableHeader: {
-    height: 40,
     backgroundColor: '#ffffff',
   },
   dataTableHeaderCell: {
-    height: 40,
+    height: 30,
     borderRightWidth: 2,
     backgroundColor: '#ffffff',
     borderColor: '#ecf3fc',

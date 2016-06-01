@@ -15,9 +15,9 @@ const defaultStyles = StyleSheet.create({
     margin: 15,
   },
   textInput: {
-    height: 50,
+    height: 40,
     width: 500,
-    fontSize: 20,
+    fontSize: 16,
     backgroundColor: 'rgba(0, 0, 0, 0)',
   },
 });
@@ -28,7 +28,7 @@ defaultStyles.container = [defaultStyles.container, globalStyles.appOrangeBorder
 export default function searchBar(props) {
   return (
     <View style={defaultStyles.container}>
-      <Icon name="search" size={45} color="#e95c30" />
+      <Icon name="search" size={40} color="#e95c30" />
       <TextInput
         {...props}
         onChange={(event) => props.onChange(event)}
