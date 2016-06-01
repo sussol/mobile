@@ -36,6 +36,11 @@ import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import realm from './database/realm';
 import Scheduler from './Scheduler';
+import globalStyles from './globalStyles';
+
+// TODO: oh god delete this
+console.log('DELETE THIS LINE AND THE ONE BELOW');
+import mockit from './database/mockDBInstantiator';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -48,15 +53,16 @@ export default class OfflineMobileApp extends Component {
     this.synchronizer = new Synchronizer(realm, new SyncAuthenticator(realm));
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
+    console.log('DELETE THIS LINE AND THE ONE BELOW');
+    mockit();
     this.state = {
-      initialised: initialised,
-      authenticated: false,
+      initialised: true,
+      authenticated: true,
     };
   }
 
   componentWillMount() {
     this.renderScene = this.renderScene.bind(this);
-    this.renderLogoutButton = this.renderLogoutButton.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
     this.scheduler.schedule(this.synchronizer.synchronize,
@@ -75,14 +81,6 @@ export default class OfflineMobileApp extends Component {
 
   onInitialised() {
     this.setState({ initialised: true });
-  }
-
-  renderLogoutButton() {
-    return (
-      <Button
-        text="Logout"
-        onPress={() => this.setState({ authenticated: false })}
-      />);
   }
 
   renderScene(props) {
@@ -109,7 +107,7 @@ export default class OfflineMobileApp extends Component {
       case 'customerInvoice':
         return <CustomerInvoicePage navigateTo={navigateTo} />;
       case 'supplierInvoices':
-        return <SupplierInvoicesPage navigateTo={navigateTo} />;
+        return <SupplierInvoicesPage database={realm} navigateTo={navigateTo} />;
       case 'supplierInvoice':
         return <SupplierInvoicePage navigateTo={navigateTo} />;
       case 'stockHistories':
@@ -135,7 +133,6 @@ export default class OfflineMobileApp extends Component {
       <View style={styles.container}>
         <Navigator
           renderScene={this.renderScene}
-          renderRightComponent={this.renderLogoutButton}
         />
         <LoginModal
           authenticator={this.userAuthenticator}

@@ -5,17 +5,16 @@ import React, {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/EvilIcons';
+import globalStyles from '../globalStyles';
 
 const defaultStyles = StyleSheet.create({
   container: {
-    borderBottomColor: '#e95c30',
     borderBottomWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    width: 500,
     margin: 15,
   },
-  searchBar: {
+  textInput: {
     height: 50,
     width: 500,
     fontSize: 20,
@@ -23,12 +22,15 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
+defaultStyles.textInput = [defaultStyles.textInput, globalStyles.appFontFamily];
+defaultStyles.container = [defaultStyles.container, globalStyles.appOrangeBorder];
+
 export default function searchBar(props) {
   return (
     <View style={defaultStyles.container}>
-      <Icon name="search" size={50} color="#e95c30" />
+      <Icon name="search" size={45} color="#e95c30" />
       <TextInput
-        style={props.style}
+        {...props}
         onChange={(event) => props.onChange(event)}
       />
     </View>
@@ -41,5 +43,5 @@ searchBar.propTypes = {
 };
 
 searchBar.defaultProps = {
-  style: defaultStyles.searchBar,
+  style: defaultStyles.textInput,
 };

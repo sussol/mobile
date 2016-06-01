@@ -24,6 +24,7 @@ import {
 
 import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
+import SearchBar from '../widgets/SearchBar';
 import globalStyles from '../globalStyles';
 
 export default class StockPage extends Component {
@@ -78,7 +79,7 @@ export default class StockPage extends Component {
     return (
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[0]}
           onPress={() => this.onColumnSort('code')}
@@ -87,7 +88,7 @@ export default class StockPage extends Component {
           text={'ITEM CODE'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('name')}
@@ -96,7 +97,7 @@ export default class StockPage extends Component {
           text={'ITEM NAME'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableHeaderCell]}
+          style={[globalStyles.dataTableHeaderCell, localStyles.rightMostCell]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
           text={'STOCK ON HAND'}
@@ -162,11 +163,9 @@ export default class StockPage extends Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={localStyles.horizontalContainer}>
-          <TextInput
-            style={globalStyles.searchBar}
+        <View style={globalStyles.horizontalContainer}>
+          <SearchBar
             onChange={(event) => this.onSearchChange(event)}
-            placeholder="Search"
           />
         </View>
         <DataTable
@@ -187,9 +186,6 @@ StockPage.propTypes = {
 };
 const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
-  horizontalContainer: {
-    flexDirection: 'row',
-  },
   text: {
     fontSize: 20,
     marginLeft: 20,

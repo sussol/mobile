@@ -88,7 +88,7 @@ export default class CustomerInvoicesPage extends Component {
     return (
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[0]}
           onPress={() => this.onColumnSort('otherParty.name')}
@@ -97,7 +97,7 @@ export default class CustomerInvoicesPage extends Component {
           text={'CUSTOMER'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('id')}
@@ -106,7 +106,7 @@ export default class CustomerInvoicesPage extends Component {
           text={'ID'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[2]}
           onPress={() => this.onColumnSort('status')}
@@ -115,7 +115,7 @@ export default class CustomerInvoicesPage extends Component {
           text={'STATUS'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[3]}
           onPress={() => this.onColumnSort('entryDate')}
@@ -124,7 +124,7 @@ export default class CustomerInvoicesPage extends Component {
           text={'ENTERED DATE'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableHeaderCell]}
+          style={[globalStyles.dataTableHeaderCell, localStyles.rightMostCell]}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[4]}
           text={'COMMENT'}
@@ -181,7 +181,7 @@ export default class CustomerInvoicesPage extends Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={localStyles.horizontalContainer}>
+        <View style={globalStyles.horizontalContainer}>
           <SearchBar
             onChange={(event) => this.onSearchChange(event)}
           />
@@ -214,10 +214,7 @@ const localStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  horizontalContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
+
   text: {
     fontSize: 16,
     marginLeft: 20,

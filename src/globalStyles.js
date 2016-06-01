@@ -8,7 +8,8 @@
 import {
   StyleSheet,
 } from 'react-native';
-const appFontFamily = 'sans-serif';
+const appFontFamily = 'OpenSans';
+const sussolOrange = '#e95c30';
 
 export default StyleSheet.create({
   container: {
@@ -18,6 +19,11 @@ export default StyleSheet.create({
     flex: 1,
     margin: 15,
     backgroundColor: '#ecf3fc',
+  },
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   modal: {
     justifyContent: 'center',
@@ -34,28 +40,36 @@ export default StyleSheet.create({
     fontFamily: appFontFamily,
     fontSize: 17,
     fontWeight: '500',
-    color: '#e95c30',
+    color: sussolOrange,
   },
   button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
     borderWidth: 1,
     borderRadius: 4,
     padding: 15,
     margin: 5,
-    borderColor: '#e95c30',
+    borderColor: sussolOrange,
   },
   menuButtonText: {
+    fontFamily: appFontFamily,
     fontSize: 17,
     fontWeight: '500',
     color: '#333333',
   },
   menuButton: {
-    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
   },
   navButton: {
-    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
@@ -74,7 +88,10 @@ export default StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   dataTableHeaderCell: {
+    height: 40,
+    borderRightWidth: 2,
     backgroundColor: '#ffffff',
+    borderColor: '#ecf3fc',
   },
   dataTableRow: {
     backgroundColor: '#ffffff',
@@ -82,6 +99,7 @@ export default StyleSheet.create({
   dataTableCell: {
     height: 40,
     backgroundColor: '#f8fbfe',
+    borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: '#ecf3fc',
   },
@@ -94,10 +112,10 @@ export default StyleSheet.create({
     borderRadius: 8,
     borderWidth: 2,
   },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    fontFamily: 'Comic Sans',
+  appFontFamily: {
+    fontFamily: appFontFamily,
+  },
+  appOrangeBorder: {
+    borderColor: sussolOrange,
   },
 });
