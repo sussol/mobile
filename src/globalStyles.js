@@ -20,6 +20,11 @@ export default StyleSheet.create({
     margin: 15,
     backgroundColor: '#ecf3fc',
   },
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -38,7 +43,8 @@ export default StyleSheet.create({
     color: sussolOrange,
   },
   button: {
-    alignItems: 'center',
+    justifyContent: 'center',
+    height: 50,
     borderWidth: 1,
     borderRadius: 4,
     padding: 15,
@@ -46,7 +52,7 @@ export default StyleSheet.create({
     borderColor: sussolOrange,
   },
   menuButtonText: {
-    // fontFamily: appFontFamily,
+    fontFamily: appFontFamily,
     fontSize: 17,
     fontWeight: '500',
     color: '#333333',
@@ -79,7 +85,10 @@ export default StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   dataTableHeaderCell: {
+    height: 40,
+    borderRightWidth: 2,
     backgroundColor: '#ffffff',
+    borderColor: '#ecf3fc',
   },
   dataTableRow: {
     backgroundColor: '#ffffff',

@@ -88,7 +88,7 @@ export default class SupplierInvoicePage extends Component {
     return (
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[0]}
           onPress={() => this.onColumnSort('serialNumber')}
@@ -97,7 +97,7 @@ export default class SupplierInvoicePage extends Component {
           text={'INVOICE NO.'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('status')}
@@ -106,7 +106,7 @@ export default class SupplierInvoicePage extends Component {
           text={'STATUS'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[2]}
           onPress={() => this.onColumnSort('entryDate')}
@@ -115,7 +115,7 @@ export default class SupplierInvoicePage extends Component {
           text={'ENTERED DATE'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableHeaderCell]}
+          style={[globalStyles.dataTableHeaderCell, localStyles.rightMostCell]}
           textStyle={globalStyles.dataTableText}
           width={columnWidths[3]}
           text={'COMMENT'}
@@ -165,7 +165,7 @@ export default class SupplierInvoicePage extends Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={localStyles.horizontalContainer}>
+        <View style={globalStyles.horizontalContainer}>
           <SearchBar
             onChange={(event) => this.onSearchChange(event)}
             keyboardType="numeric"
@@ -198,10 +198,6 @@ const columnWidths = [1, 1, 1, 3];
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  horizontalContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
   },
   text: {
     fontSize: 16,
