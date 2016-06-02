@@ -21,8 +21,7 @@ import {
 } from '../widgets/DataTable';
 
 import { ListView } from 'realm/react-native';
-import Button from '../widgets/Button';
-import SearchBar from '../widgets/SearchBar';
+import { Button, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
 
 export default class CustomerInvoicesPage extends Component {
