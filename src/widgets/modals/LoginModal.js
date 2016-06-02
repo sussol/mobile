@@ -30,16 +30,16 @@ export class LoginModal extends React.Component {
     this.onLogin = this.onLogin.bind(this);
   }
 
-  onLogin() {
+  async onLogin() {
     this.setState({ authStatus: 'authenticating' });
-    this.props.authenticator.authenticate(this.state.username, this.state.password)
-      .then(() => {
-        this.setState({ authStatus: 'authenticated' });
-        this.props.onAuthentication(true);
-      }, (error) => {
-        this.setState({ authStatus: 'error', error: error });
-        this.props.onAuthentication(false);
-      });
+    try {
+      await this.props.authenticator.authenticate(this.state.username, this.state.password);
+      this.setState({ authStatus: 'authenticated' });
+      this.props.onAuthentication(true);
+    } catch (error) {
+      this.setState({ authStatus: 'error', error: error.message });
+      this.props.onAuthentication(false);
+    }
   }
 
   render() {

@@ -6,6 +6,7 @@
 import { SyncQueue } from './SyncQueue';
 import { generateSyncJson } from './outgoingSyncUtils';
 import {
+  acknowledgeRecords,
   integrateRecords,
   getIncomingRecords,
   getWaitingRecordCount,
@@ -69,8 +70,8 @@ export class Synchronizer {
    * @return {Boolean} Whether the synchronizer is initialised
    */
   isInitialised() {
-    const syncServerURL = this.settings.get(SYNC_URL);
-    return syncServerURL && syncServerURL.length > 0;
+    const syncURL = this.settings.get(SYNC_URL);
+    return syncURL && syncURL.length > 0;
   }
 
   /**
@@ -160,9 +161,10 @@ export class Synchronizer {
                                                      authHeader,
                                                      BATCH_SIZE);
     integrateRecords(this.database, incomingRecords);
+    await acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
 
     // Recurse to get the next batch of records from the server
-    await this.recursivePull(serverURL, thisSiteId, serverId);
+    await this.recursivePull(serverURL, thisSiteId, serverId, setProgress);
   }
 
 }

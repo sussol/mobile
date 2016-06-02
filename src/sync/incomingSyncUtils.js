@@ -443,3 +443,21 @@ export async function getWaitingRecordCount(serverURL, thisSiteId, serverId, aut
     .then((response) => response.json())
     .then((responseJson) => responseJson.NumRecords);
 }
+
+export async function acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, records) {
+  const syncIds = records.map((record) => record.SyncID);
+  const requestBody = {
+    FromID: parseInt(serverId, 10), // one // three
+    ToID: parseInt(thisSiteId, 10),
+    acknowledged_records: { ItemFields: syncIds }, // two
+  };
+  await fetch(
+    `${serverURL}/sync/v2/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,
+    {
+      method: 'POST',
+      headers: {
+        Authorization: authHeader,
+      },
+      body: JSON.stringify(requestBody),
+    });
+}
