@@ -65,7 +65,12 @@ export default StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     padding: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginVertical: 12,
+    marginHorizontal: 30,
+    width: 240,
+    height: 60,
+    borderWidth: 1,
+    borderRadius: 4,
     borderBottomColor: '#CDCDCD',
   },
   navButton: {
@@ -73,7 +78,6 @@ export default StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     padding: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: '#CDCDCD',
   },
   dataTableText: {
