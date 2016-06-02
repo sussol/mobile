@@ -81,10 +81,16 @@ export default class CustomerInvoicesPage extends Component {
     this.refreshData();
   }
 
+  /**
+   * Updates data within dataSource in state according to the state of searchTerm, sortBy and
+   * isAscending. Special case for otherParty.name as realm does not allow sorting on
+   * object properties properties.
+   */
   refreshData() {
     const { transactions, sortBy, dataSource, isAscending, searchTerm } = this.state;
     let data = transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`);
     if (sortBy === 'otherParty.name') {
+      // Convert to javascript array obj then sort with standard array functions.
       data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
       if (!isAscending) data.reverse();
     } else {

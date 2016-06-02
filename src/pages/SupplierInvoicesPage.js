@@ -81,12 +81,18 @@ export default class SupplierInvoicePage extends Component {
     this.refreshData();
   }
 
+  /**
+   * Updates data within dataSource in state according to the state of searchTerm, sortBy and
+   * isAscending. Special case for sorting by serialNumber due to needing number based sorting but
+   * the value is stored as a string.
+   */
   refreshData() {
     const { transactions, sortBy, dataSource, isAscending, searchTerm } = this.state;
     let data = transactions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
-    if (sortBy === 'serialNumber') {
-      data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber);
-      if (!isAscending) data.reverse();
+    if (sortBy === 'serialNumber') { // Special case for correct number based sorting
+      // Convert to javascript array obj then sort with standard array functions.
+      data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
+      if (!isAscending) data.reverse(); // ...3,2,1,0
     } else {
       data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     }
