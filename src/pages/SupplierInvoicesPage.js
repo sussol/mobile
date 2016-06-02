@@ -105,7 +105,7 @@ export default class SupplierInvoicePage extends Component {
         <HeaderCell
           style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[0]}
+          width={COLUMN_WIDTHS[0]}
           onPress={() => this.onColumnSort('serialNumber')}
           isAscending={this.state.isAscending}
           isSelected={this.state.sortBy === 'serialNumber'}
@@ -114,7 +114,7 @@ export default class SupplierInvoicePage extends Component {
         <HeaderCell
           style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[1]}
+          width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('status')}
           isAscending={this.state.isAscending}
           isSelected={this.state.sortBy === 'status'}
@@ -123,7 +123,7 @@ export default class SupplierInvoicePage extends Component {
         <HeaderCell
           style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[2]}
+          width={COLUMN_WIDTHS[2]}
           onPress={() => this.onColumnSort('entryDate')}
           isAscending={this.state.isAscending}
           isSelected={this.state.sortBy === 'entryDate'}
@@ -132,7 +132,7 @@ export default class SupplierInvoicePage extends Component {
         <HeaderCell
           style={[globalStyles.dataTableHeaderCell, localStyles.rightMostCell]}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[3]}
+          width={COLUMN_WIDTHS[3]}
           text={'COMMENT'}
         />
       </Header>
@@ -148,28 +148,28 @@ export default class SupplierInvoicePage extends Component {
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[0]}
+          width={COLUMN_WIDTHS[0]}
         >
           {invoice.serialNumber}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[1]}
+          width={COLUMN_WIDTHS[1]}
         >
           {invoice.status}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[2]}
+          width={COLUMN_WIDTHS[2]}
         >
           {invoice.entryDate.toDateString()}
         </Cell>
         <Cell
           style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
           textStyle={globalStyles.dataTableText}
-          width={columnWidths[3]}
+          width={COLUMN_WIDTHS[3]}
         >
           {invoice.comment}
         </Cell>
@@ -208,7 +208,7 @@ SupplierInvoicePage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
 };
-const columnWidths = [1, 1, 1, 3];
+const COLUMN_WIDTHS = [1, 1, 1, 3];
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,
