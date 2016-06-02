@@ -23,16 +23,18 @@ export class FirstUsePage extends React.Component {
     this.onPressConnect = this.onPressConnect.bind(this);
   }
 
-  onPressConnect() {
-    this.props.synchronizer.initialise(this.state.serverURL,
-                                       this.state.syncSiteName,
-                                       this.state.syncSitePassword,
-                                       (error) => this.setState({ error: error }))
-      .then(this.props.onInitialised,
-      (error) => {
-        this.setState({ error: error });
-      }
-    );
+  async onPressConnect() {
+    try {
+      await this.props.synchronizer.initialise(this.state.serverURL,
+                                               this.state.syncSiteName,
+                                               this.state.syncSitePassword,
+                                               (progressMessage) => {
+                                                 this.setState({ error: progressMessage });
+                                               });
+      this.props.onInitialised();
+    } catch (error) {
+      this.setState({ error: error.message });
+    }
   }
 
   render() {

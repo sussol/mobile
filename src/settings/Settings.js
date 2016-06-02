@@ -17,7 +17,7 @@ export class Settings {
 
   get(key) {
     const results = this.database.objects('Setting').filtered('key = $0', key);
-    if (results) return results[0];
+    if (results && results.length > 0) return results[0].value;
     return ''; // Return empty string if no setting with the given key
   }
 }

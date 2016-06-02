@@ -1,35 +1,41 @@
 import {
   getPriceExtension,
-  getStoreId,
   getTransactionTotalPrice,
 } from '../utilities';
 
 import {
   INTERNAL_TO_EXTERNAL,
   RECORD_TYPES,
+  REQUISITION_TYPES,
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_LINE_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
 
+import {
+  SUPPLYING_STORE_ID,
+  THIS_STORE_ID,
+  THIS_STORE_NAME_ID,
+} from '../settings';
+
 /**
  * Returns a json object fulfilling the requirements of the mSupply primary sync
  * server, based on a given syncOutRecord
  * @param  {Realm}        database      The local database
+ * @param  {Settings}     settings      Access to local settings
  * @param  {Realm.object} syncOutRecord The sync out record to be translated
  * @return {object}                     The generated json object, ready to sync
  */
-export function generateSyncJson(database, syncOutRecord) {
+export function generateSyncJson(database, settings, syncOutRecord) {
   if (!syncOutRecord.recordType || !syncOutRecord.id) throw new Error('Malformed sync out record');
   const recordType = syncOutRecord.recordType;
 
   let syncData;
-  if(syncOutRecord.changeType === 'delete') {
+  if (syncOutRecord.changeType === 'delete') {
     // If record has been deleted, just sync up the ID
     syncData = { ID: syncOutRecord.recordId };
-  }
-  else {
+  } else {
     // Get the record the syncOutRecord refers to from the database
     const recordResults = database.objects(recordType, `id == ${syncOutRecord.id}`);
     if (!recordResults || recordResults.length === 0) { // No such record
@@ -41,7 +47,7 @@ export function generateSyncJson(database, syncOutRecord) {
 
     // Generate the appropriate data for the sync object to carry, representing the
     // record in its upstream form
-    const syncData = generateSyncData(recordType, record);
+    syncData = generateSyncData(recordType, record);
   }
 
   // Create the JSON object to sync
@@ -49,7 +55,7 @@ export function generateSyncJson(database, syncOutRecord) {
     SyncID: syncOutRecord.id,
     RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
     SyncType: SYNC_TYPES.translate(syncOutRecord.changeType, INTERNAL_TO_EXTERNAL),
-    StoreID: getStoreId(),
+    StoreID: settings.get(THIS_STORE_ID),
     Data: syncData,
   };
   return syncJson;
@@ -58,16 +64,22 @@ export function generateSyncJson(database, syncOutRecord) {
 /**
  * Turn an internal database object into data representing a record in the
  * mSupply primary server, ready for sync
+ * @param  {Realm}        database   The local database
+ * @param  {Settings}     settings   Access to local settings
  * @param  {string}       recordType Internal type of record being synced
  * @param  {Realm.object} record     The record being synced
  * @return {object}                  The data to sync (in the form of upstream record)
  */
-function generateSyncData(recordType, record) {
+function generateSyncData(database, settings, recordType, record) {
+  let getNumPacks;
+  let totalPrice;
+  let transaction;
+  let itemLine;
   switch (recordType) {
     case 'ItemLine':
       return {
         ID: record.id,
-        store_ID: getStoreId(database),
+        store_ID: settings.get(THIS_STORE_ID),
         item_ID: record.item.id,
         pack_size: record.packSize,
         expiry_date: record.expiryDate.toISOString(),
@@ -83,37 +95,45 @@ function generateSyncData(recordType, record) {
     case 'Requisition':
       return {
         ID: record.id,
-        date_stock_take: ,
         date_entered: record.entryDate.toISOString(),
         user_ID: record.user.id,
-        name_ID:
+        name_ID: settings.get(THIS_STORE_NAME_ID),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         daysToSupply: record.daysToSupply,
-        store_ID: ,
+        store_ID: settings.get(SUPPLYING_STORE_ID),
         serial_number: record.serialNumber,
+        type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
       };
     case 'RequisitionLine':
       return {
-
+        ID: record.id,
+        requisition_ID: record.requisition.id,
+        item_ID: record.item.id,
+        stock_on_hand: record.stockOnHand,
+        actualQuan: record.requiredQuantity,
+        imprest_or_prev_quantity: record.imprestQuantity,
+        line_number: record.sortIndex,
+        Cust_stock_order: record.suggestedQuantity,
+        comment: record.comment,
       };
     case 'Stocktake':
       return {
         ID: record.id,
-        stock_take_date:record.stocktakeDate.toISOString(),
-        stock_take_time:record.stocktakeDate.toTimeString().substring(0,8),
+        stock_take_date: record.stocktakeDate.toISOString(),
+        stock_take_time: record.stocktakeDate.toTimeString().substring(0, 8),
         created_by_ID: record.createdBy.id,
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         finalised_by_ID: record.finalisedBy.id,
         invad_additions_ID: record.additions.id,
         invad_reductions_ID: record.subtractions.id,
-        store_ID: getStoreId(database),
+        store_ID: settings.get(THIS_STORE_ID),
         comment: record.comment,
         stock_take_created_date: record.createdDate.toISOString(),
         serial_number: record.serialNumber,
       };
     case 'StocktakeLine':
-      const itemLine = record.itemLine;
-      const getNumPacks = (numPieces, packSize) => packSize !== 0 ? numPieces / packSize : 0;
+      itemLine = record.itemLine;
+      getNumPacks = (numPieces, packSize) => (packSize === 0 ? 0 : numPieces / packSize);
       return {
         ID: record.id,
         stock_take_ID: record.Stocktake.id,
@@ -129,7 +149,7 @@ function generateSyncData(recordType, record) {
         item_ID: itemLine.item.id,
       };
     case 'Transaction':
-      const totalPrice = getTransactionTotalPrice(record);
+      totalPrice = getTransactionTotalPrice(record);
       return {
         ID: record.id,
         name_ID: record.otherParty.id,
@@ -144,12 +164,12 @@ function generateSyncData(recordType, record) {
         subtotal: totalPrice,
         user_ID: record.enteredBy.id,
         category_ID: record.category.id,
-        confirm_time: record.confirmDate.toTimeString().substring(0,8),
-        store_ID: getStoreId(database),
+        confirm_time: record.confirmDate.toTimeString().substring(0, 8),
+        store_ID: settings.get(THIS_STORE_ID),
       };
     case 'TransactionLine':
-      const itemLine = record.itemLine;
-      const transaction = record.transaction;
+      itemLine = record.itemLine;
+      transaction = record.transaction;
       return {
         ID: record.id,
         transaction_ID: record.transaction.id,
@@ -160,7 +180,6 @@ function generateSyncData(recordType, record) {
         cost_price: record.costPrice,
         sell_price: record.sellPrice,
         expiry_date: itemLine.expiryDate,
-        cost_price: itemLine.costPrice,
         pack_size: record.packSize,
         quantity: record.numberOfPacks,
         item_line_ID: itemLine.id,

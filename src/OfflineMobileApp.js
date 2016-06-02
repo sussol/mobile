@@ -36,7 +36,7 @@ import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema } from './database';
 import { Scheduler } from './Scheduler';
-import { Settings } from './Settings';
+import { Settings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
