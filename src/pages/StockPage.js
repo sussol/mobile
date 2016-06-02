@@ -125,19 +125,19 @@ export default class StockPage extends Component {
         <View style={{ flex: COLUMN_WIDTHS[0] }} />
         <View style={{ flex: COLUMN_WIDTHS[1] + COLUMN_WIDTHS[2], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-            <Text style={[globalStyles.text, localStyles.text]}>
+            <Text style={globalStyles.text}>
               Category: {item.category.name}
             </Text>
-            <Text style={[globalStyles.text, localStyles.text]}>
+            <Text style={globalStyles.text}>
               Department: {item.department.name}
             </Text>
           </View>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-            <Text style={[globalStyles.text, localStyles.text]}>
+            <Text style={globalStyles.text}>
               Number of batches: {item.lines.length}
             </Text>
-            <Text style={[globalStyles.text, localStyles.text]}>
-              Nearest expiry: value
+            <Text style={globalStyles.text}>
+              Nearest expiry: TODO: make function for this
             </Text>
           </View>
         </View>
@@ -199,11 +199,6 @@ StockPage.propTypes = {
 };
 const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
-  text: {
-    fontSize: 20,
-    marginLeft: 20,
-    textAlign: 'left',
-  },
   rightMostCell: {
     borderRightWidth: 0,
   },

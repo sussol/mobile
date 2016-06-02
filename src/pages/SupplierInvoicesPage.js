@@ -213,11 +213,6 @@ const localStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  text: {
-    fontSize: 16,
-    marginLeft: 20,
-    textAlign: 'left',
-  },
   rightMostCell: {
     borderRightWidth: 0,
   },
