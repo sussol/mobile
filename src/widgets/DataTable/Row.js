@@ -57,7 +57,7 @@ export default class Row extends Component {
       );
     }
     return (
-      <View style={[defaultStyles.row, style]}>
+      <View style={[defaultStyles.row, { flexDirection: 'row' }, style]}>
         {children}
       </View>
     );
