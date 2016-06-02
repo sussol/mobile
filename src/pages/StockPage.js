@@ -24,9 +24,19 @@ import {
 
 import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
-import SearchBar from '../widgets/SearchBar';
+import { SearchBar } from '../widgets/';
 import globalStyles from '../globalStyles';
 
+/**
+* Renders the page for displaying all Items in the DB.
+* @prop {Realm} database   app wide database.
+* @prop {func}  navigateTo   callBack for navigation stack.
+* @state  {Realm} dataSource    app wide database (from prop).
+* @state  {Realm.Results} items    filtered to have only Item objects.
+* @state  {string}  searchTerm    current term user has entered in the SearchBar.
+* @state  {string}  sortBy    the property of Item to sort by (selected by column press).
+* @state  {boolean} reverseSort   direction sortBy should sort (ascending/descending:true/false).
+*/
 export default class StockPage extends Component {
   constructor(props) {
     super(props);
@@ -182,7 +192,7 @@ export default class StockPage extends Component {
 
 StockPage.propTypes = {
   database: React.PropTypes.object,
-  style: View.propTypes.style,
+  navigateTo: React.PropTypes.func.isRequired,
 };
 const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({

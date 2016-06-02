@@ -24,6 +24,16 @@ import { ListView } from 'realm/react-native';
 import { Button, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
 
+/**
+* Renders the page for displaying CustomerInvoices.
+* @prop {Realm} database   app wide database.
+* @prop {func}  navigateTo   callBack for navigation stack.
+* @state  {Realm} dataSource    app wide database (from prop).
+* @state  {Realm.Results} transactions    filtered to have only customer_invoice.
+* @state  {string}  searchTerm    current term user has entered in the SearchBar.
+* @state  {string}  sortBy    the property of the transaction to sort by (selected by column press).
+* @state  {boolean} reverseSort   direction sortBy should sort (ascending/descending:true/false).
+*/
 export default class CustomerInvoicesPage extends Component {
   constructor(props) {
     super(props);
@@ -206,7 +216,6 @@ export default class CustomerInvoicesPage extends Component {
 CustomerInvoicesPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
-  style: View.propTypes.style,
 };
 const columnWidths = [4, 1, 1, 2, 4];
 const localStyles = StyleSheet.create({
