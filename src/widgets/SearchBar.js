@@ -5,30 +5,29 @@ import React, {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/EvilIcons';
-import globalStyles from '../globalStyles';
+import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 
 const defaultStyles = StyleSheet.create({
   container: {
     borderBottomWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    borderColor: SUSSOL_ORANGE,
     margin: 15,
   },
   textInput: {
     height: 40,
     width: 500,
     fontSize: 16,
+    fontFamily: APP_FONT_FAMILY,
     backgroundColor: 'rgba(0, 0, 0, 0)',
   },
 });
 
-defaultStyles.textInput = [defaultStyles.textInput, globalStyles.appFontFamily];
-defaultStyles.container = [defaultStyles.container, globalStyles.appOrangeBorder];
-
 export default function searchBar(props) {
   return (
     <View style={defaultStyles.container}>
-      <Icon name="search" size={40} color="#e95c30" />
+      <Icon name="search" size={40} color={SUSSOL_ORANGE} />
       <TextInput
         {...props}
         onChange={(event) => props.onChange(event)}

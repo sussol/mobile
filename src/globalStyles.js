@@ -117,10 +117,13 @@ export default StyleSheet.create({
     margin: 5,
     borderColor: SUSSOL_ORANGE,
   },
-  appFontFamily: {
-    fontFamily: APP_FONT_FAMILY,
-  },
-  appOrangeBorder: {
-    borderColor: SUSSOL_ORANGE,
-  },
 });
+
+export {
+  APP_FONT_FAMILY,
+  SUSSOL_ORANGE,
+  BLUE_WHITE,
+  BACKGROUND,
+  DARK,
+  DARKER,
+};
