@@ -22,15 +22,15 @@ export default function HeaderCell(props) {
     onPress,
     text,
     selected,
-    reverseSort,
+    isAscending,
     ...containerProps,
   } = props;
 
   function renderSortArrow() {
     if (selected) {
-      // reverseSort = true = z to a
-      if (reverseSort) return <Icon name="sort-desc" size={16} style={defaultStyles.icon} />;
-      return <Icon name="sort-asc" size={16} style={defaultStyles.icon} />;
+      // isAscending = true = a to z
+      if (isAscending) return <Icon name="sort-asc" size={16} style={defaultStyles.icon} />;
+      return <Icon name="sort-desc" size={16} style={defaultStyles.icon} />;
     }
     return <Icon name="sort" size={16} style={defaultStyles.icon} />;
   }
@@ -60,7 +60,7 @@ export default function HeaderCell(props) {
 
 HeaderCell.propTypes = {
   selected: React.PropTypes.bool,
-  reverseSort: React.PropTypes.bool,
+  isAscending: React.PropTypes.bool,
   style: React.View.propTypes.style,
   textStyle: React.Text.propTypes.style,
   width: React.PropTypes.number,

@@ -35,7 +35,7 @@ import globalStyles from '../globalStyles';
 * @state  {Realm.Results} items    filtered to have only Item objects.
 * @state  {string}  searchTerm    current term user has entered in the SearchBar.
 * @state  {string}  sortBy    the property of Item to sort by (selected by column press).
-* @state  {boolean} reverseSort   direction sortBy should sort (ascending/descending:true/false).
+* @state  {boolean} isAscending   direction sortBy should sort (ascending/descending:true/false).
 */
 export default class StockPage extends Component {
   constructor(props) {
@@ -48,7 +48,7 @@ export default class StockPage extends Component {
       items: props.database.objects('Item'),
       searchTerm: '',
       sortBy: 'name',
-      reverseSort: false,
+      isAscending: true,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
@@ -71,17 +71,20 @@ export default class StockPage extends Component {
   }
 
   onColumnSort(sortBy) {
-    if (this.state.sortBy === sortBy) {
-      this.setState({ reverseSort: !this.state.reverseSort });
-    } else {
-      this.setState({ sortBy: sortBy });
+    if (this.state.sortBy === sortBy) { // changed column sort direction.
+      this.setState({ isAscending: !this.state.isAscending });
+    } else { // Changed sorting column.
+      this.setState({
+        sortBy: sortBy,
+        isAscending: true,
+      });
     }
     this.refreshData();
   }
 
   refreshData() {
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
+    const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
+    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
@@ -93,7 +96,7 @@ export default class StockPage extends Component {
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[0]}
           onPress={() => this.onColumnSort('code')}
-          reverseSort={this.state.reverseSort}
+          isAscending={this.state.isAscending}
           selected={this.state.sortBy === 'code'}
           text={'ITEM CODE'}
         />
@@ -102,7 +105,7 @@ export default class StockPage extends Component {
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('name')}
-          reverseSort={this.state.reverseSort}
+          isAscending={this.state.isAscending}
           selected={this.state.sortBy === 'name'}
           text={'ITEM NAME'}
         />

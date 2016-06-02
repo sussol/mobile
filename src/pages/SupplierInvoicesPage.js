@@ -32,7 +32,7 @@ import globalStyles from '../globalStyles';
 * @state  {Realm.Results} transactions    filtered to have only supplier_invoice.
 * @state  {string}  searchTerm    current term user has entered in the SearchBar.
 * @state  {string}  sortBy    the property of the transaction to sort by (selected by column press).
-* @state  {boolean} reverseSort   direction sortBy should sort (ascending/descending:true/false).
+* @state  {boolean} isAscending   direction sortBy should sort (ascending/descending:true/false).
 */
 export default class SupplierInvoicePage extends Component {
   constructor(props) {
@@ -45,7 +45,7 @@ export default class SupplierInvoicePage extends Component {
       transactions: props.database.objects('Transaction').filtered('type == "supplier_invoice"'),
       searchTerm: '',
       sortBy: 'serialNumber',
-      reverseSort: false,
+      isAscending: true,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -70,25 +70,25 @@ export default class SupplierInvoicePage extends Component {
   }
 
   onColumnSort(sortBy) {
-    if (this.state.sortBy === sortBy) {
-      this.setState({ reverseSort: !this.state.reverseSort });
-    } else {
+    if (this.state.sortBy === sortBy) { // changed column sort direction.
+      this.setState({ isAscending: !this.state.isAscending });
+    } else { // Changed sorting column.
       this.setState({
         sortBy: sortBy,
-        reverseSort: false,
+        isAscending: true,
       });
     }
     this.refreshData();
   }
 
   refreshData() {
-    const { transactions, sortBy, dataSource, reverseSort, searchTerm } = this.state;
+    const { transactions, sortBy, dataSource, isAscending, searchTerm } = this.state;
     let data = transactions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
     if (sortBy === 'serialNumber') {
       data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber);
-      if (reverseSort) data.reverse();
+      if (!isAscending) data.reverse();
     } else {
-      data = data.sorted(sortBy, reverseSort);
+      data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     }
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
@@ -101,7 +101,7 @@ export default class SupplierInvoicePage extends Component {
           textStyle={globalStyles.dataTableText}
           width={columnWidths[0]}
           onPress={() => this.onColumnSort('serialNumber')}
-          reverseSort={this.state.reverseSort}
+          isAscending={this.state.isAscending}
           selected={this.state.sortBy === 'serialNumber'}
           text={'INVOICE NO.'}
         />
@@ -110,7 +110,7 @@ export default class SupplierInvoicePage extends Component {
           textStyle={globalStyles.dataTableText}
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('status')}
-          reverseSort={this.state.reverseSort}
+          isAscending={this.state.isAscending}
           selected={this.state.sortBy === 'status'}
           text={'STATUS'}
         />
@@ -119,7 +119,7 @@ export default class SupplierInvoicePage extends Component {
           textStyle={globalStyles.dataTableText}
           width={columnWidths[2]}
           onPress={() => this.onColumnSort('entryDate')}
-          reverseSort={this.state.reverseSort}
+          isAscending={this.state.isAscending}
           selected={this.state.sortBy === 'entryDate'}
           text={'ENTERED DATE'}
         />
