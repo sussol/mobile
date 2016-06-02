@@ -57,10 +57,8 @@ export default class Row extends Component {
       );
     }
     return (
-      <View {...touchableOpacityProps} style={[defaultStyles.row, style]}>
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          {children}
-        </View>
+      <View style={[defaultStyles.row, style]}>
+        {children}
       </View>
     );
   }
