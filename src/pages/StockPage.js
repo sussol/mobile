@@ -34,7 +34,7 @@ import globalStyles from '../globalStyles';
 * @state  {Realm} dataSource    app wide database (from prop).
 * @state  {Realm.Results} items    filtered to have only Item objects.
 * @state  {string}  searchTerm    current term user has entered in the SearchBar.
-* @state  {string}  sortBy    the property of Item to sort by (selected by column press).
+* @state  {string}  sortBy    the property of Item to sort by (isSelected by column press).
 * @state  {boolean} isAscending   direction sortBy should sort (ascending/descending:true/false).
 */
 export default class StockPage extends Component {
@@ -97,7 +97,7 @@ export default class StockPage extends Component {
           width={COLUMN_WIDTHS[0]}
           onPress={() => this.onColumnSort('code')}
           isAscending={this.state.isAscending}
-          selected={this.state.sortBy === 'code'}
+          isSelected={this.state.sortBy === 'code'}
           text={'ITEM CODE'}
         />
         <HeaderCell
@@ -106,7 +106,7 @@ export default class StockPage extends Component {
           width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('name')}
           isAscending={this.state.isAscending}
-          selected={this.state.sortBy === 'name'}
+          isSelected={this.state.sortBy === 'name'}
           text={'ITEM NAME'}
         />
         <HeaderCell

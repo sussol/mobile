@@ -31,7 +31,7 @@ import globalStyles from '../globalStyles';
 * @state  {Realm} dataSource    app wide database (from prop).
 * @state  {Realm.Results} transactions    filtered to have only supplier_invoice.
 * @state  {string}  searchTerm    current term user has entered in the SearchBar.
-* @state  {string}  sortBy    the property of the transaction to sort by (selected by column press).
+* @state  {string}  sortBy    the property of the transaction to sort by (isSelected by column press).
 * @state  {boolean} isAscending   direction sortBy should sort (ascending/descending:true/false).
 */
 export default class SupplierInvoicePage extends Component {
@@ -108,7 +108,7 @@ export default class SupplierInvoicePage extends Component {
           width={columnWidths[0]}
           onPress={() => this.onColumnSort('serialNumber')}
           isAscending={this.state.isAscending}
-          selected={this.state.sortBy === 'serialNumber'}
+          isSelected={this.state.sortBy === 'serialNumber'}
           text={'INVOICE NO.'}
         />
         <HeaderCell
@@ -117,7 +117,7 @@ export default class SupplierInvoicePage extends Component {
           width={columnWidths[1]}
           onPress={() => this.onColumnSort('status')}
           isAscending={this.state.isAscending}
-          selected={this.state.sortBy === 'status'}
+          isSelected={this.state.sortBy === 'status'}
           text={'STATUS'}
         />
         <HeaderCell
@@ -126,7 +126,7 @@ export default class SupplierInvoicePage extends Component {
           width={columnWidths[2]}
           onPress={() => this.onColumnSort('entryDate')}
           isAscending={this.state.isAscending}
-          selected={this.state.sortBy === 'entryDate'}
+          isSelected={this.state.sortBy === 'entryDate'}
           text={'ENTERED DATE'}
         />
         <HeaderCell
