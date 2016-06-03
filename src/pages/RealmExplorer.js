@@ -58,7 +58,7 @@ export class RealmExplorer extends React.Component {
   }
 
   componentWillMount() {
-    const data = this.props.database.objects('Name');
+    const data = this.props.database.objects('User');
     this.setState({
       data: data,
       dataSource: this.state.dataSource.cloneWithRows(data),
@@ -83,6 +83,7 @@ export class RealmExplorer extends React.Component {
         if (firstObject.hasOwnProperty(field)) {
           headerCells.push(
             <HeaderCell
+              key={field}
               style={globalStyles.headerCell}
               textStyle={globalStyles.text}
               width={1}
@@ -107,11 +108,12 @@ export class RealmExplorer extends React.Component {
         if (firstObject.hasOwnProperty(field)) {
           cells.push(
             <Cell
+              key={field}
               style={globalStyles.cell}
               textStyle={globalStyles.text}
               width={1}
             >
-              {item[field]}
+              {(typeof item[field] === 'string') && item[field]}
             </Cell>
           );
         }
