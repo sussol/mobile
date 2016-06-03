@@ -49,14 +49,18 @@ export class RealmExplorer extends React.Component {
       rowHasChanged: (row1, row2) => row1 !== row2,
     });
     this.state = {
+      data: null,
       dataSource: dataSource,
     };
     this.onSearchChange = this.onSearchChange.bind(this);
+    this.renderHeader = this.renderHeader.bind(this);
+    this.renderRow = this.renderRow.bind(this);
   }
 
   componentWillMount() {
     const data = this.props.database.objects('Name');
     this.setState({
+      data: data,
       dataSource: this.state.dataSource.cloneWithRows(data),
     });
   }
@@ -66,33 +70,56 @@ export class RealmExplorer extends React.Component {
     if (OBJECT_TYPES.indexOf(term) < 0) return;
     const data = this.props.database.objects(term);
     this.setState({
+      data: data,
       dataSource: this.state.dataSource.cloneWithRows(data),
     });
   }
 
   renderHeader() {
+    const headerCells = [];
+    if (this.state.data && this.state.data.length > 0) {
+      const firstObject = this.state.data[0];
+      for (let field in firstObject) {
+        if (firstObject.hasOwnProperty(field)) {
+          headerCells.push(
+            <HeaderCell
+              style={globalStyles.headerCell}
+              textStyle={globalStyles.text}
+              width={1}
+              text={field}
+            />
+          );
+        }
+      }
+    }
     return (
       <Header style={globalStyles.header}>
-        <HeaderCell
-          style={globalStyles.headerCell}
-          textStyle={globalStyles.text}
-          width={1}
-          text={'Id'}
-        />
+        {headerCells}
       </Header>
     );
   }
 
   renderRow(item) {
+    const cells = [];
+    if (this.state.data && this.state.data.length > 0) {
+      const firstObject = this.state.data[0];
+      for (const field in firstObject) {
+        if (firstObject.hasOwnProperty(field)) {
+          cells.push(
+            <Cell
+              style={globalStyles.cell}
+              textStyle={globalStyles.text}
+              width={1}
+            >
+              {item[field]}
+            </Cell>
+          );
+        }
+      }
+    }
     return (
-      <Row style={globalStyles.row} renderExpansion={() => this.renderExpansion(item)}>
-        <Cell
-          style={globalStyles.cell}
-          textStyle={globalStyles.text}
-          width={1}
-        >
-          {item.id}
-        </Cell>
+      <Row style={globalStyles.row}>
+        {cells}
       </Row>
     );
   }
