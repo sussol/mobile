@@ -28,6 +28,7 @@ import {
   StocktakesPage,
   SupplierInvoicePage,
   SupplierInvoicesPage,
+  RealmExplorer,
 } from './pages';
 
 import { Button, LoginModal } from './widgets';
@@ -120,6 +121,8 @@ export default class OfflineMobileApp extends Component {
         return <StockHistoriesPage navigateTo={navigateTo} />;
       case 'stockHistory':
         return <StockHistoryPage navigateTo={navigateTo} />;
+      case 'realmExplorer':
+        return <RealmExplorer navigateTo={navigateTo} database={this.database} />;
       case 'root':
       default:
         return <MenuPage navigateTo={navigateTo} />;

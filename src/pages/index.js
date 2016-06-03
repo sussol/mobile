@@ -12,3 +12,4 @@ export { StocktakeManagePage } from './StocktakeManagePage';
 export { StocktakesPage } from './StocktakesPage';
 export { SupplierInvoicePage } from './SupplierInvoicePage';
 export { SupplierInvoicesPage } from './SupplierInvoicesPage';
+export { RealmExplorer } from './RealmExplorer';

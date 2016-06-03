@@ -42,6 +42,10 @@ export function MenuPage(props) {
         text="Stock Histories"
         onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
       />
+      <Button
+        text="Realm Explorer"
+        onPress={() => props.navigateTo('realmExplorer', 'Realm Contents')}
+      />
     </View>
   );
 }
