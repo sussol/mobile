@@ -19,11 +19,10 @@ class SyncTranslator {
   translate(key, direction) {
     switch (direction) {
       case INTERNAL_TO_EXTERNAL:
+      default:
         return this.internalToExternal[key];
       case EXTERNAL_TO_INTERNAL:
         return this.externalToInternal[key];
-      default:
-        return this.internalToExternal[key];
     }
   }
 }
