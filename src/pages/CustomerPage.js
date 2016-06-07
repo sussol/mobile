@@ -11,7 +11,7 @@ import React, {
 } from 'react-native';
 
 import globalStyles from '../globalStyles';
-import Button from '../widgets/Button';
+import { Button } from '../widgets';
 
 export function CustomerPage(props) {
   return (

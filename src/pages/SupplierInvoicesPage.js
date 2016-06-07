@@ -23,7 +23,6 @@ import {
 import { ListView } from 'realm/react-native';
 import { Button, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
-import { Button } from '../widgets';
 
 /**
 * Renders the page for displaying SupplierInvoices.
