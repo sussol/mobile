@@ -41,6 +41,11 @@ import { Settings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const SYNC_STATES = {
+  WAITING: 'sync_waiting',
+  SYNCING: 'sync_active',
+  ERROR: 'sync_error',
+};
 
 export default class OfflineMobileApp extends Component {
 
@@ -56,6 +61,7 @@ export default class OfflineMobileApp extends Component {
     this.state = {
       initialised: initialised,
       authenticated: false,
+      syncState: SYNC_STATES.WAITING,
     };
   }
 
@@ -63,7 +69,7 @@ export default class OfflineMobileApp extends Component {
     this.renderScene = this.renderScene.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
-    this.scheduler.schedule(this.synchronizer.synchronize,
+    this.scheduler.schedule(this.synchronize,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => this.userAuthenticator.reauthenticate(this.onAuthentication),
                             AUTHENTICATION_INTERVAL);
@@ -79,6 +85,16 @@ export default class OfflineMobileApp extends Component {
 
   onInitialised() {
     this.setState({ initialised: true });
+  }
+
+  async synchronize() {
+    try {
+      this.setState({ syncState: SYNC_STATES.SYNCING });
+      await this.synchronizer.synchronize();
+      this.setState({ syncState: SYNC_STATES.WAITING });
+    } catch (error) {
+      this.setState({ syncState: SYNC_STATES.ERROR });
+    }
   }
 
   renderScene(props) {
