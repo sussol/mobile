@@ -82,7 +82,10 @@ export const TRANSACTION_LINE_TYPES = new SyncTranslator({
 });
 
 export const NAME_TYPES = new SyncTranslator({
-  'invad': 'inventory_adjustment',
+  'inventory_adjustment': 'invad',
   'facility': 'facility',
   'patient': 'patient',
+  'build': 'build',
+  'store': 'store',
+  'repack': 'repack',
 });

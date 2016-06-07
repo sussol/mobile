@@ -31,34 +31,34 @@ export function integrateRecords(database, syncJson) {
     let transactionLine;
     syncJson.forEach((object) => {
       const record = object.data;
-      const recordType = RECORD_TYPES.translate(record.RecordType, EXTERNAL_TO_INTERNAL);
+      const recordType = RECORD_TYPES.translate(object.RecordType, EXTERNAL_TO_INTERNAL);
       switch (recordType) {
         case 'Item':
           internalRecord = {
             id: record.ID,
             category: getObject(database, 'ItemCategory', record.category_ID),
             code: record.code,
-            defaultPackSize: record.default_pack_size,
-            defaultPrice: record.buy_price,
+            defaultPackSize: parseFloat(record.default_pack_size),
+            defaultPrice: parseFloat(record.buy_price),
             department: getObject(database, 'ItemDepartment', record.department_ID),
             description: record.description,
             name: record.item_name,
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'ItemCategory':
           internalRecord = {
             id: record.ID,
             name: record.Description,
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'ItemDepartment':
           internalRecord = {
             id: record.ID,
             name: record.department,
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'ItemLine':
           item = getObject(database, 'Item', record.item_ID);
@@ -66,17 +66,17 @@ export function integrateRecords(database, syncJson) {
             id: record.ID,
             item: item,
             packSize: 1, // Every item line in mobile should be pack-to-one
-            numberOfPacks: record.quantity * record.pack_size,
-            totalQuantity: record.quantity * record.pack_size,
+            numberOfPacks: parseFloat(record.quantity) * parseFloat(record.pack_size),
+            totalQuantity: parseFloat(record.quantity) * parseFloat(record.pack_size),
             expiryDate: getDate(record.expiry_date),
             batch: record.batch,
-            costPrice: record.cost_price,
-            sellPrice: record.sell_price,
+            costPrice: parseFloat(record.cost_price),
+            sellPrice: parseFloat(record.sell_price),
             supplier: getObject(database, 'Name', record.name_ID),
           };
-          itemLine = this.database.update(recordType, internalRecord);
+          itemLine = database.update(recordType, internalRecord);
           item.lines.push(itemLine);
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'MasterListNameJoin':
           name = getObject(database, 'Name', record.name_ID);
@@ -89,15 +89,15 @@ export function integrateRecords(database, syncJson) {
             name: record.description,
             note: record.note,
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'MasterListLine':
           internalRecord = {
             id: record.ID,
             item: getObject(database, 'Item', record.item_ID),
-            imprestQuantity: record.imprest_quan,
+            imprestQuantity: parseFloat(record.imprest_quan),
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'Name':
           internalRecord = {
@@ -105,7 +105,8 @@ export function integrateRecords(database, syncJson) {
             name: record.name,
             code: record.code,
             phoneNumber: record.phone,
-            billingAddress: getOrCreateAddress(record.bill_address1,
+            billingAddress: getOrCreateAddress(database,
+                                               record.bill_address1,
                                                record.bill_address2,
                                                record.bill_address3,
                                                record.bill_address4,
@@ -113,19 +114,19 @@ export function integrateRecords(database, syncJson) {
             emailAddress: record.email,
             type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'Requisition':
           internalRecord = {
             id: record.ID,
             status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
             entryDate: getDate(record.date_entered),
-            daysToSupply: record.daysToSupply,
-            serialNumber: record.serial_number,
+            daysToSupply: parseFloat(record.daysToSupply),
+            serialNumber: parseFloat(record.serial_number),
             user: getObject(database, 'User', record.user_ID),
             type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'RequisitionLine':
           requisition = getObject(database, 'Requisition', record.requisition_ID);
@@ -133,14 +134,14 @@ export function integrateRecords(database, syncJson) {
             id: record.ID,
             requisition: requisition,
             item: getObject(database, 'Item', record.item_ID),
-            stockOnHand: record.stock_on_hand,
-            suggestedQuantity: record.Cust_stock_order,
-            imprestQuantity: record.imprest_or_prev_quantity,
-            requiredQuantity: record.actualQuan,
+            stockOnHand: parseFloat(record.stock_on_hand),
+            suggestedQuantity: parseFloat(record.Cust_stock_order),
+            imprestQuantity: parseFloat(record.imprest_or_prev_quantity),
+            requiredQuantity: parseFloat(record.actualQuan),
             comment: record.comment,
-            sortIndex: record.line_number,
+            sortIndex: parseFloat(record.line_number),
           };
-          requisitionLine = this.database.update(recordType, internalRecord);
+          requisitionLine = database.update(recordType, internalRecord);
           requisition.lines.push(requisitionLine);
           break;
         case 'Stocktake':
@@ -153,11 +154,11 @@ export function integrateRecords(database, syncJson) {
             createdBy: getObject(database, 'User', record.created_by_ID),
             finalisedBy: getObject(database, 'User', record.finalised_by_ID),
             comment: record.comment,
-            serialNumber: record.serialNumber,
+            serialNumber: parseFloat(record.serialNumber),
             additions: getObject(database, 'Transaction', record.invad_additions_ID),
             reductions: getObject(database, 'Transaction', record.invad_reductions_ID),
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'StocktakeLine':
           stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
@@ -165,23 +166,23 @@ export function integrateRecords(database, syncJson) {
             id: record.ID,
             stocktake: stocktake,
             itemLine: getObject(database, 'ItemLine', record.item_line_ID),
-            snapshotQuantity: record.snapshot_qty * record.snapshotPacksize,
+            snapshotQuantity: parseFloat(record.snapshot_qty) * parseFloat(record.snapshotPacksize),
             snapshotPacksize: 1, // Pack to one all mobile data
             expiry: getDate(record.expiry),
             batch: record.Batch,
-            costPrice: record.costPrice,
-            sellPrice: record.sellPrice,
-            countedQuantity: record.stock_take_qty,
-            sortIndex: record.line_number,
+            costPrice: parseFloat(record.costPrice),
+            sellPrice: parseFloat(record.sellPrice),
+            countedQuantity: parseFloat(record.stock_take_qty),
+            sortIndex: parseFloat(record.line_number),
           };
-          stocktakeLine = this.database.update(recordType, internalRecord);
+          stocktakeLine = database.update(recordType, internalRecord);
           stocktake.lines.push(stocktakeLine);
           break;
         case 'Transaction':
           otherParty = getObject(database, 'Name', record.name_ID);
           internalRecord = {
             id: record.ID,
-            serialNumber: record.invoice_num,
+            serialNumber: parseFloat(record.invoice_num),
             otherParty: otherParty,
             comment: record.comment,
             entryDate: getDate(record.entry_date),
@@ -192,7 +193,7 @@ export function integrateRecords(database, syncJson) {
             theirRef: record.their_ref,
             category: getObject(database, 'TransactionCategory', record.category_ID),
           };
-          transaction = this.database.update(recordType, internalRecord);
+          transaction = database.update(recordType, internalRecord);
           otherParty.transactions.push(transaction);
           break;
         case 'TransactionCategory':
@@ -202,7 +203,7 @@ export function integrateRecords(database, syncJson) {
             code: record.code,
             type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
           };
-          this.database.update(recordType, internalRecord);
+          database.update(recordType, internalRecord);
           break;
         case 'TransactionLine':
           transaction = getObject(database, 'Transaction', record.transaction_ID);
@@ -212,17 +213,17 @@ export function integrateRecords(database, syncJson) {
             itemName: record.item_name,
             itemLine: getObject(database, 'ItemLine', record.item_line_ID),
             packSize: 1, // Pack to one all mobile data
-            numberOfPacks: record.quantity * record.pack_size,
-            totalQuantity: record.quantity * record.pack_size,
+            numberOfPacks: parseFloat(record.quantity) * parseFloat(record.pack_size),
+            totalQuantity: parseFloat(record.quantity) * parseFloat(record.pack_size),
             transaction: transaction,
             note: record.note,
-            costPrice: record.cost_price,
-            sellPrice: record.sell_price,
-            sortIndex: record.line_number,
+            costPrice: parseFloat(record.cost_price),
+            sellPrice: parseFloat(record.sell_price),
+            sortIndex: parseFloat(record.line_number),
             expiryDate: record.expiry_date,
             batch: record.batch,
           };
-          transactionLine = this.database.update(recordType, internalRecord);
+          transactionLine = database.update(recordType, internalRecord);
           transaction.lines.push(transactionLine);
           break;
         default:
@@ -246,7 +247,7 @@ function getObject(database, type, id) {
   const results = database.objects(type).filtered('id == $0', id);
   if (results.length > 0) return results[0];
   const placeholder = generatePlaceholder(type, id);
-  return this.database.create(type, placeholder);
+  return database.create(type, placeholder);
 }
 
 /**
@@ -366,18 +367,18 @@ function generatePlaceholder(type, id) {
  */
 function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   let results = database.objects('Address');
-  if (line1) results = results.filtered('line1 = $0', line1);
-  if (line2) results = results.filtered('line2 = $0', line2);
-  if (line3) results = results.filtered('line3 = $0', line3);
-  if (line4) results = results.filtered('line4 = $0', line4);
-  if (zipCode) results = results.filtered('zipCode = $0', zipCode);
+  if (typeof line1 === 'string') results = results.filtered('line1 = $0', line1);
+  if (typeof line2 === 'string') results = results.filtered('line2 = $0', line2);
+  if (typeof line3 === 'string') results = results.filtered('line3 = $0', line3);
+  if (typeof line4 === 'string') results = results.filtered('line4 = $0', line4);
+  if (typeof zipCode === 'string') results = results.filtered('zipCode = $0', zipCode);
   if (results.length > 0) return results[0];
   const address = { id: generateUUID() };
-  if (line1) address.line1 = line1;
-  if (line2) address.line2 = line2;
-  if (line3) address.line3 = line3;
-  if (line4) address.line4 = line4;
-  if (zipCode) address.zipCode = zipCode;
+  if (typeof line1 === 'string') address.line1 = line1;
+  if (typeof line2 === 'string') address.line2 = line2;
+  if (typeof line3 === 'string') address.line3 = line3;
+  if (typeof line4 === 'string') address.line4 = line4;
+  if (typeof zipCode === 'string') address.zipCode = zipCode;
   return database.create('Address', address);
 }
 

@@ -128,7 +128,7 @@ export class RealmExplorer extends React.Component {
 
   render() {
     return (
-      <View style={this.props.style}>
+      <View style={[globalStyles.container, this.props.style]}>
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}
