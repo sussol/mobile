@@ -12,8 +12,8 @@ const APP_FONT_FAMILY = 'Museo_Slab_500';
 const SUSSOL_ORANGE = '#e95c30';
 const BLUE_WHITE = '#ecf3fc';
 const BACKGROUND = '#f8fbfe';
-const DARK = '#4a4a4a';
-const DARKER = '#333333';
+const DARK_GREY = '#4a4a4a';
+const DARKER_GREY = '#333333';
 
 export default StyleSheet.create({
   container: {
@@ -58,7 +58,7 @@ export default StyleSheet.create({
   menuButtonText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 17,
-    color: DARKER,
+    color: DARKER_GREY,
   },
   menuButton: {
     alignItems: 'center',
@@ -124,6 +124,6 @@ export {
   SUSSOL_ORANGE,
   BLUE_WHITE,
   BACKGROUND,
-  DARK,
-  DARKER,
+  DARK_GREY,
+  DARKER_GREY,
 };
