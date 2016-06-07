@@ -18,10 +18,14 @@ export function CustomerPage(props) {
     <View style={props.style}>
       <Text>A specific customer, with their billing address and invoices.</Text>
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="View Existing Customer Invoice"
           onPress={() => props.navigateTo('customerInvoice', 'Invoice Num')}
         />
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="New Customer Invoice"
           onPress={() => props.navigateTo('customerInvoice', 'Invoice Num')}
         />

@@ -23,6 +23,7 @@ const {
 const BACK_ACTION = NavigationRootContainer.getBackAction().type;
 const PUSH_ACTION = 'push';
 const INITIAL_ACTION = 'RootContainerInitialAction';
+import globalStyles from '../globalStyles';
 
 const NavigationReducer = (currentState, action) => {
   switch (action.type) {
@@ -96,7 +97,7 @@ export class Navigator extends Component {
   renderTitleComponent(props) {
     if (!props.scene.navigationState.title) return null;
     return (
-      <NavigationHeader.Title>
+      <NavigationHeader.Title textStyle={globalStyles.appFontFamily}>
         {props.scene.navigationState.title}
       </NavigationHeader.Title>
     );

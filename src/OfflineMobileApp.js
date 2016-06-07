@@ -31,7 +31,7 @@ import {
   RealmExplorer,
 } from './pages';
 
-import { Button, LoginModal } from './widgets';
+import { LoginModal } from './widgets';
 
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
@@ -61,7 +61,6 @@ export default class OfflineMobileApp extends Component {
 
   componentWillMount() {
     this.renderScene = this.renderScene.bind(this);
-    this.renderLogoutButton = this.renderLogoutButton.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
     this.scheduler.schedule(this.synchronizer.synchronize,
@@ -80,14 +79,6 @@ export default class OfflineMobileApp extends Component {
 
   onInitialised() {
     this.setState({ initialised: true });
-  }
-
-  renderLogoutButton() {
-    return (
-      <Button
-        text="Logout"
-        onPress={() => this.setState({ authenticated: false })}
-      />);
   }
 
   renderScene(props) {
@@ -114,7 +105,7 @@ export default class OfflineMobileApp extends Component {
       case 'customerInvoice':
         return <CustomerInvoicePage navigateTo={navigateTo} />;
       case 'supplierInvoices':
-        return <SupplierInvoicesPage navigateTo={navigateTo} />;
+        return <SupplierInvoicesPage database={realm} navigateTo={navigateTo} />;
       case 'supplierInvoice':
         return <SupplierInvoicePage navigateTo={navigateTo} />;
       case 'stockHistories':
@@ -142,7 +133,6 @@ export default class OfflineMobileApp extends Component {
       <View style={styles.container}>
         <Navigator
           renderScene={this.renderScene}
-          renderRightComponent={this.renderLogoutButton}
         />
         <LoginModal
           authenticator={this.userAuthenticator}

@@ -18,6 +18,8 @@ export function StockHistoriesPage(props) {
     <View style={props.style}>
       <Text>Stock Histories go here.</Text>
       <Button
+        style={globalStyles.button}
+        textStyle={globalStyles.buttonText}
         text="View a stock history"
         onPress={() => props.navigateTo('stockHistory', 'Stock History')}
       />

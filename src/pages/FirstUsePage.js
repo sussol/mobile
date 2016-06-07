@@ -60,6 +60,8 @@ export class FirstUsePage extends React.Component {
           onChangeText={ (text) => { this.setState({ syncSitePassword: text }); }}
         />
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="Connect to mSupply"
           onPress={this.onPressConnect}
         />
