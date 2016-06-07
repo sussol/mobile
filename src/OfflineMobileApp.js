@@ -55,6 +55,7 @@ export default class OfflineMobileApp extends Component {
   }
 
   componentWillMount() {
+    this.logOut = this.logOut.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
@@ -76,13 +77,19 @@ export default class OfflineMobileApp extends Component {
     this.setState({ initialised: true });
   }
 
+  logOut() {
+    this.setState({ authenticated: false });
+  }
+
   renderScene(props) {
     const navigateTo = (key, title) => {
       props.onNavigate({ type: 'push', key, title });
     };
     switch (props.scene.navigationState.key) {
       case 'menu':
-        return <MenuPage navigateTo={navigateTo} />;
+      case 'root':
+      default:
+        return <MenuPage logOut={() => this.logOut} navigateTo={navigateTo} />;
       case 'customers':
         return <CustomersPage navigateTo={navigateTo} />;
       case 'customer':
@@ -107,9 +114,6 @@ export default class OfflineMobileApp extends Component {
         return <StockHistoriesPage navigateTo={navigateTo} />;
       case 'stockHistory':
         return <StockHistoryPage navigateTo={navigateTo} />;
-      case 'root':
-      default:
-        return <MenuPage navigateTo={navigateTo} />;
     }
   }
 
