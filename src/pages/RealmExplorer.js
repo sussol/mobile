@@ -6,6 +6,8 @@
  */
 
 import React, {
+  StyleSheet,
+  TextInput,
   View,
 } from 'react-native';
 
@@ -113,7 +115,11 @@ export class RealmExplorer extends React.Component {
               textStyle={globalStyles.text}
               width={1}
             >
-              {(typeof item[field] === 'string') && item[field]}
+              {item[field]
+                && ((typeof item[field] === 'string')
+                || (typeof item[field] === 'number')
+                || (typeof item[field].getMonth === 'function'))
+                && item[field]}
             </Cell>
           );
         }
@@ -129,14 +135,19 @@ export class RealmExplorer extends React.Component {
   render() {
     return (
       <View style={[globalStyles.container, this.props.style]}>
+        <View style={localStyles.horizontalContainer}>
+          <TextInput
+            style={globalStyles.searchBar}
+            onChange={(event) => this.onSearchChange(event)}
+            placeholder="Search"
+          />
+        </View>
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           renderHeader={this.renderHeader}
-          searchBar={this.onSearchChange}
-          searchBarStyle={globalStyles.searchBar}
         />
       </View>
     );
@@ -148,3 +159,9 @@ RealmExplorer.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
   style: View.propTypes.style,
 };
+
+const localStyles = StyleSheet.create({
+  horizontalContainer: {
+    flexDirection: 'row',
+  },
+});
