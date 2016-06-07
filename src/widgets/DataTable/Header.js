@@ -26,7 +26,6 @@ Header.propTypes = {
 
 const defaultStyles = StyleSheet.create({
   header: {
-    flex: 0.08,
     flexDirection: 'row',
     flexWrap: 'nowrap',
     backgroundColor: 'grey',

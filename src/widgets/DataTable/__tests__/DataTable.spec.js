@@ -28,26 +28,6 @@ describe('DataTable', () => {
     expect(wrapper.find(TextInput).length).toEqual(0); // No searchBar
     expect(wrapper.prop('renderHeader')).toBeFalsy(); // No prop
   });
-  describe('searchBar', () => {
-    const searchBar = sinon.spy();
-    const wrapper = shallow(
-      <DataTable
-        dataSource={dataSource}
-        renderRow={jest.fn()}
-        searchBar={() => searchBar()}
-      />
-    );
-
-    it('renders a searchBar when callback provided as prop', () => {
-      expect(wrapper.find(TextInput).length).toEqual(1);
-    });
-
-    it('can call the callback onChange', () => {
-      expect(searchBar.calledOnce).toEqual(false, 'before change');
-      wrapper.find(TextInput).simulate('change');
-      expect(searchBar.calledOnce).toEqual(true, 'after change');
-    });
-  });
 
   describe('renderHeader', () => {
     const renderHeader = sinon.spy(() => <View><Text>foo</Text></View>);

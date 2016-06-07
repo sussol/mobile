@@ -1,19 +1,19 @@
-jest.unmock('../getStockOnDate');
+jest.unmock('../getItemQuantitiesOnDate');
 jest.unmock('../../database/realm');
 jest.unmock('enzyme');
 
-import getStockOnDate from '../getStockOnDate';
-import realm from '../../database/realm';
+import getItemQuantitiesOnDate from '../getItemQuantitiesOnDate';
+// import realm from '../../database/realm';
 
 
-describe('getStockOnDate', () => {
-  afterEach(() => {
-    realm.deleteAll();
-  });
+describe('getItemQuantitiesOnDate', () => {
+  // afterEach(() => {
+  //   realm.deleteAll();
+  // });
 
   it('returns a Map object', () => {
-    const actual = getStockOnDate(new Date(), realm.objects('Items'));
-    expect(typeof actual === 'object').toEqual(true);
+    // const actual = getItemQuantitiesOnDate(new Date(), realm.objects('Items'));
+    // expect(typeof actual === 'object').toEqual(true);
     // TODO: use actual.toString() rather than typeof
   });
 

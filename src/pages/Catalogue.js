@@ -123,22 +123,22 @@ export class Catalogue extends Component {
 
   renderHeader() {
     return (
-      <Header style={globalStyles.header}>
+      <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
-          style={globalStyles.headerCell}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={[globalStyles.text, styles.text]}
           width={1}
           text={'Item Code'}
         />
         <HeaderCell
-          style={globalStyles.headerCell}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={[globalStyles.text, styles.text]}
           width={1}
           onPress={() => this.onColumnSort()}
           text={'Item Name'}
         />
         <HeaderCell
-          style={globalStyles.headerCell}
+          style={globalStyles.dataTableHeaderCell}
           textStyle={[globalStyles.text, styles.text]}
           width={2}
           text={'Default Pack Size'}
@@ -154,7 +154,7 @@ export class Catalogue extends Component {
           <Text style={[globalStyles.text, styles.text]}>Department: {item.department.name}</Text>
           <Text style={[globalStyles.text, styles.text]}>Description: {item.description}</Text>
         </View>
-        <TableButton style={globalStyles.tableButton} onPress={() => this.onDeleteBtnPress(item)}>
+        <TableButton style={globalStyles.dataTableButton} onPress={() => this.onDeleteBtnPress(item)}>
           <Text style={[globalStyles.text, styles.text]}>Delete Item</Text>
         </TableButton>
       </Expansion>
@@ -163,24 +163,24 @@ export class Catalogue extends Component {
 
   renderRow(item) {
     return (
-      <Row style={globalStyles.row} renderExpansion={() => this.renderExpansion(item)}>
+      <Row style={globalStyles.dataTableRow} renderExpansion={() => this.renderExpansion(item)}>
         <Cell
-          style={globalStyles.cell}
+          style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, styles.text]}
           width={1}
         >
           {item.code}
         </Cell>
         <Cell
-          style={globalStyles.cell}
+          style={globalStyles.dataTableCell}
           textStyle={[globalStyles.text, styles.text]}
           width={1}
         >
           {item.name}
         </Cell>
         <EditableCell
-          style={[globalStyles.cell, globalStyles.editableCell]}
-          textStyle={[globalStyles.text, globalStyles.editableCell, styles.packSize]}
+          style={[globalStyles.dataTableCell, globalStyles.dataTableEditableCell]}
+          textStyle={[globalStyles.text, globalStyles.dataTableEditableCell, styles.packSize]}
           width={2}
           keyboardType="number-pad"
           onEndEditing={this.onEndDefaultPackSizeEdit}
@@ -209,8 +209,6 @@ export class Catalogue extends Component {
           dataSource={this.state.dataSource}
           renderRow={this.renderRow}
           renderHeader={this.renderHeader}
-          searchBar={this.onSearchChange}
-          searchBarStyle={globalStyles.searchBar}
         />
         <ConfirmModal
           isOpen={this.state.deleteModalOpen}
