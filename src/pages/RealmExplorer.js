@@ -11,6 +11,7 @@ import React, {
   View,
 } from 'react-native';
 
+import { SearchBar } from '../widgets';
 import {
   Cell,
   DataTable,
@@ -135,13 +136,7 @@ export class RealmExplorer extends React.Component {
   render() {
     return (
       <View style={[globalStyles.container, this.props.style]}>
-        <View style={localStyles.horizontalContainer}>
-          <TextInput
-            style={globalStyles.searchBar}
-            onChange={(event) => this.onSearchChange(event)}
-            placeholder="Search"
-          />
-        </View>
+        <SearchBar onChange={(event) => this.onSearchChange(event)} />
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}

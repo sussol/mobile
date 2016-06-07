@@ -55,6 +55,8 @@ export function MenuPage(props) {
         onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
       />
       <Button
+        style={globalStyles.menuButton}
+        textStyle={globalStyles.menuButtonText}
         text="Realm Explorer"
         onPress={() => props.navigateTo('realmExplorer', 'Realm Contents')}
       />
