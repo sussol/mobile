@@ -180,25 +180,27 @@ export default class SupplierInvoicePage extends Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.horizontalContainer}>
-          <SearchBar
-            onChange={(event) => this.onSearchChange(event)}
-            keyboardType="numeric"
-          />
-          <Button
-            style={globalStyles.button}
-            textStyle={globalStyles.buttonText}
-            text="New Invoice"
-            onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
+        <View style={globalStyles.container}>
+          <View style={globalStyles.horizontalContainer}>
+            <SearchBar
+              onChange={(event) => this.onSearchChange(event)}
+              keyboardType="numeric"
+            />
+            <Button
+              style={globalStyles.button}
+              textStyle={globalStyles.buttonText}
+              text="New Invoice"
+              onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
+            />
+          </View>
+          <DataTable
+            style={globalStyles.dataTable}
+            listViewStyle={localStyles.listView}
+            dataSource={this.state.dataSource}
+            renderRow={this.renderRow}
+            renderHeader={this.renderHeader}
           />
         </View>
-        <DataTable
-          style={globalStyles.dataTable}
-          listViewStyle={globalStyles.container}
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          renderHeader={this.renderHeader}
-        />
       </View>
     );
   }
@@ -210,7 +212,7 @@ SupplierInvoicePage.propTypes = {
 };
 const COLUMN_WIDTHS = [1, 1, 1, 3];
 const localStyles = StyleSheet.create({
-  container: {
+  listView: {
     flex: 1,
   },
   rightMostCell: {
