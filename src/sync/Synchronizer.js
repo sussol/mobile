@@ -20,6 +20,11 @@ const {
 
 const BATCH_SIZE = 1; // Number of records to sync at one time
 
+/**
+ * Provides core synchronization functionality, initilising the database with an
+ * initial full sync, pushing, and pulling (any regular scheduling of synchronization
+ * must be coordinated externally)
+ */
 export class Synchronizer {
 
   constructor(database, authenticator, settings) {
@@ -42,7 +47,7 @@ export class Synchronizer {
    *                                   initialised, otherwise throw error
    */
   async initialise(serverURL, syncSiteName, syncSitePassword, setProgress) {
-    setProgress('Initialising...');
+    if (setProgress) setProgress('Initialising...');
     this.syncQueue.disable(); // Stop sync queue listening to database changes
     this.database.write(() => { this.database.deleteAll(); });
     try {
@@ -151,7 +156,7 @@ export class Synchronizer {
                                                            thisSiteId,
                                                            serverId,
                                                            authHeader);
-    setProgress(`${waitingRecordCount} records to go`);
+    if (setProgress) setProgress(`${waitingRecordCount} records to go`);
     if (waitingRecordCount === 0) return; // Done recursing through records
 
     // Get a batch of records and integrate them
