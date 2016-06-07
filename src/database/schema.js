@@ -111,7 +111,7 @@ const RequisitionSchema = {
     type: 'string', // imprest or forecast
     entryDate: 'date',
     daysToSupply: 'double',
-    serialNumber: 'int',
+    serialNumber: 'string',
     user: { type: 'User', optional: true },
     lines: { type: 'list', objectType: 'RequisitionLine' },
   },
@@ -156,7 +156,7 @@ const StocktakeSchema = {
     createdBy: { type: 'User', optional: true },
     finalisedBy: { type: 'User', optional: true },
     comment: { type: 'string', optional: true },
-    serialNumber: 'int',
+    serialNumber: 'string',
     lines: { type: 'list', objectType: 'StocktakeLine' },
     additions: { type: 'Transaction', optional: true },
     reductions: { type: 'Transaction', optional: true },

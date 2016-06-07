@@ -122,7 +122,7 @@ export function integrateRecords(database, syncJson) {
             status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
             entryDate: getDate(record.date_entered),
             daysToSupply: parseFloat(record.daysToSupply),
-            serialNumber: parseFloat(record.serial_number),
+            serialNumber: record.serial_number,
             user: getObject(database, 'User', record.user_ID),
             type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
           };
@@ -154,7 +154,7 @@ export function integrateRecords(database, syncJson) {
             createdBy: getObject(database, 'User', record.created_by_ID),
             finalisedBy: getObject(database, 'User', record.finalised_by_ID),
             comment: record.comment,
-            serialNumber: parseFloat(record.serialNumber),
+            serialNumber: record.serialNumber,
             additions: getObject(database, 'Transaction', record.invad_additions_ID),
             reductions: getObject(database, 'Transaction', record.invad_reductions_ID),
           };
@@ -182,7 +182,7 @@ export function integrateRecords(database, syncJson) {
           otherParty = getObject(database, 'Name', record.name_ID);
           internalRecord = {
             id: record.ID,
-            serialNumber: parseFloat(record.invoice_num),
+            serialNumber: record.invoice_num,
             otherParty: otherParty,
             comment: record.comment,
             entryDate: getDate(record.entry_date),
