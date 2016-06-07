@@ -11,7 +11,7 @@ import {
 const APP_FONT_FAMILY = 'Museo_Slab_500';
 const SUSSOL_ORANGE = '#e95c30';
 const BLUE_WHITE = '#ecf3fc';
-const BACKGROUND = '#f8fbfe';
+const BACKGROUND_COLOR = '#f8fbfe';
 const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
 const DARK_GREY = '#4a4a4a';
 const DARKER_GREY = '#333333';
@@ -27,7 +27,7 @@ export default StyleSheet.create({
   pageContentContainer: {
     flex: 1,
     padding: 15,
-    backgroundColor: BACKGROUND,
+    backgroundColor: BACKGROUND_COLOR,
   },
   horizontalContainer: {
     flexDirection: 'row',
@@ -132,7 +132,7 @@ export {
   APP_FONT_FAMILY,
   SUSSOL_ORANGE,
   BLUE_WHITE,
-  BACKGROUND,
+  BACKGROUND_COLOR,
   SHADOW_BORDER,
   DARK_GREY,
   DARKER_GREY,
