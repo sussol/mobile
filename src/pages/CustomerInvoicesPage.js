@@ -26,13 +26,15 @@ import globalStyles from '../globalStyles';
 
 /**
 * Renders the page for displaying CustomerInvoices.
-* @prop {Realm} database   app wide database.
-* @prop {func}  navigateTo   callBack for navigation stack.
-* @state  {Realm} dataSource    app wide database (from prop).
-* @state  {Realm.Results} transactions    filtered to have only customer_invoice.
-* @state  {string}  searchTerm    current term user has entered in the SearchBar.
-* @state  {string}  sortBy    the property of the transaction to sort by (isSelected by column press).
-* @state  {boolean} isAscending   direction sortBy should sort (ascending/descending:true/false).
+* @prop   {Realm}               database      App wide database.
+* @prop   {func}                navigateTo    CallBack for navigation stack.
+* @state  {ListView.DataSource} dataSource    App wide database (from prop).
+* @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
+* @state  {string}              searchTerm    Current term user has entered in the SearchBar.
+* @state  {string}              sortBy        The property of the transaction to sort by (isSelected
+*                                             by column press).
+* @state  {boolean}             isAscending   Direction sortBy should sort
+*                                             (ascending/descending:true/false).
 */
 export default class CustomerInvoicesPage extends Component {
   constructor(props) {
