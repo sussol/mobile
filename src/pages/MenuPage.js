@@ -8,63 +8,80 @@
 import React, {
   Image,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 
-import globalStyles from '../globalStyles';
 import {
   Button,
 } from '../widgets';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
+import globalStyles, { APP_FONT_FAMILY, DARK, DARKER, SHADOW_BORDER } from '../globalStyles';
 
 export default function MenuPage(props) {
   return (
-    <View style={[globalStyles.horizontalContainer, { flex: 1 }]}>
-      <View style={localStyles.container}>
-        <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
-        <Button
-          style={globalStyles.menuButton}
-          textStyle={globalStyles.menuButtonText}
-          text="Customers"
-          onPress={() => props.navigateTo('customers', 'Customers')}
-        />
-        <Button
-          style={globalStyles.menuButton}
-          textStyle={globalStyles.menuButtonText}
-          text="Customer Invoices"
-          onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
-        />
-      </View>
+    <View style={[globalStyles.pageContentContainer, { padding: 0 }]}>
+      <View style={[globalStyles.horizontalContainer, { flex: 9 }]}>
+        <View style={localStyles.container}>
+          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Customers"
+            onPress={() => props.navigateTo('customers', 'Customers')}
+          />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Customer Invoices"
+            onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
+          />
+        </View>
 
-      <View style={localStyles.container}>
-        <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
-        <Button
-          style={globalStyles.menuButton}
-          textStyle={globalStyles.menuButtonText}
-          text="Supplier Invoices"
-          onPress={() => props.navigateTo('supplierInvoices', 'Supplier Invoices')}
-        />
-        <Button
-          style={globalStyles.menuButton}
-          textStyle={globalStyles.menuButtonText}
-          text="Stock"
-          onPress={() => props.navigateTo('stock', 'Stock')}
-        />
-      </View>
+        <View style={localStyles.container}>
+          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Supplier Invoices"
+            onPress={() => props.navigateTo('supplierInvoices', 'Supplier Invoices')}
+          />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Stock Histories"
+            onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
+          />
+        </View>
 
-      <View style={localStyles.container}>
-        <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
-        <Button
-          style={globalStyles.menuButton}
-          textStyle={globalStyles.menuButtonText}
-          text="Stocktakes"
-          onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
-        />
-        <Button
-          style={globalStyles.menuButton}
-          textStyle={globalStyles.menuButtonText}
-          text="Stock Histories"
-          onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
-        />
+        <View style={localStyles.container}>
+          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Current Stock"
+            onPress={() => props.navigateTo('stock', 'Stock')}
+          />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Stocktakes"
+            onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
+          />
+        </View>
+      </View>
+      <View style={[globalStyles.horizontalContainer, { flex: 1, marginHorizontal: 20 }]}>
+        <Icon.Button
+          name="power-off"
+          underlayColor="#888888"
+          iconStyle={localStyles.logOutIcon}
+          borderRadius={4}
+          backgroundColor="rgba(255,255,255,0)"
+          onPress={props.logOut()}
+        >
+          <Text style={localStyles.logOutText}>LOG OUT</Text>
+        </Icon.Button>
       </View>
     </View>
   );
@@ -72,6 +89,7 @@ export default function MenuPage(props) {
 
 MenuPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
+  logOut: React.PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({
@@ -80,7 +98,8 @@ const localStyles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 30,
     marginHorizontal: 20,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderColor: SHADOW_BORDER,
+    borderWidth: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -88,6 +107,12 @@ const localStyles = StyleSheet.create({
   image: {
     height: 150,
     width: 150,
-    backgroundColor: 'blue',
+  },
+  logOutText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: DARKER,
+  },
+  logOutIcon: {
+    color: DARK,
   },
 });
