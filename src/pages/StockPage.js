@@ -26,7 +26,7 @@ import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
 import globalStyles from '../globalStyles';
 
-export default class StockPage extends Component {
+export class StockPage extends Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
