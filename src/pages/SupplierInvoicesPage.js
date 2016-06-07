@@ -28,7 +28,7 @@ import globalStyles from '../globalStyles';
 * Renders the page for displaying SupplierInvoices.
 * @prop   {Realm}               database      App wide database.
 * @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {ListView.DataSource} dataSource    App wide database (from prop).
+* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
 * @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
 * @state  {string}              searchTerm    Current term user has entered in the SearchBar.
 * @state  {string}              sortBy        The property of the transaction to sort by (isSelected
