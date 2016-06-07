@@ -14,7 +14,7 @@ export class Scheduler {
   }
 
   clearAll() {
-    for (let intervalId of this.intervalIds) {
+    for (const intervalId of this.intervalIds) {
       clearInterval(intervalId);
     }
     this.intervalIds = [];
