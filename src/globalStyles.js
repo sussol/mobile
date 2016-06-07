@@ -11,7 +11,7 @@ import {
 const APP_FONT_FAMILY = 'Museo_Slab_500';
 const SUSSOL_ORANGE = '#e95c30';
 const BLUE_WHITE = '#ecf3fc';
-const BACKGROUND = '#f8fbfe';
+const BACKGROUND_COLOR = '#f8fbfe';
 const DARK_GREY = '#4a4a4a';
 const DARKER_GREY = '#333333';
 
@@ -99,7 +99,7 @@ export default StyleSheet.create({
   },
   dataTableCell: {
     height: 40,
-    backgroundColor: BACKGROUND,
+    backgroundColor: BACKGROUND_COLOR,
     borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
@@ -123,7 +123,7 @@ export {
   APP_FONT_FAMILY,
   SUSSOL_ORANGE,
   BLUE_WHITE,
-  BACKGROUND,
+  BACKGROUND_COLOR,
   DARK_GREY,
   DARKER_GREY,
 };
