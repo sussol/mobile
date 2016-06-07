@@ -7,11 +7,6 @@
 
 import getItemQuantity from './getItemQuantity';
 
-
-/**
- * items: Realm.Results, date: Date, database: Realm
- */
-
  /**
  * Get the total quantity of provided items on a specifed date. Returns empty map if
  * provided Realm.results object is empty.

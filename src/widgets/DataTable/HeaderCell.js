@@ -12,8 +12,29 @@ import React, {
   TouchableOpacity,
 } from 'react-native';
 
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 export default function HeaderCell(props) {
-  const { style, textStyle, width, onPress, text, ...containerProps } = props;
+  const {
+    style,
+    textStyle,
+    width,
+    onPress,
+    text,
+    isSelected,
+    isAscending,
+    ...containerProps,
+  } = props;
+
+  function renderSortArrow() {
+    if (isSelected) {
+      // isAscending = true = a to z
+      if (isAscending) return <Icon name="sort-asc" size={16} style={defaultStyles.icon} />;
+      return <Icon name="sort-desc" size={16} style={defaultStyles.icon} />;
+    }
+    return <Icon name="sort" size={16} style={defaultStyles.icon} />;
+  }
+
   if (typeof onPress === 'function') {
     return (
       <TouchableOpacity
@@ -24,6 +45,7 @@ export default function HeaderCell(props) {
         <Text style={textStyle}>
           {text}
         </Text>
+        {renderSortArrow()}
       </TouchableOpacity>
     );
   }
@@ -37,6 +59,8 @@ export default function HeaderCell(props) {
 }
 
 HeaderCell.propTypes = {
+  isSelected: React.PropTypes.bool,
+  isAscending: React.PropTypes.bool,
   style: React.View.propTypes.style,
   textStyle: React.Text.propTypes.style,
   width: React.PropTypes.number,
@@ -51,6 +75,11 @@ HeaderCell.defaultProps = {
 const defaultStyles = StyleSheet.create({
   headerCell: {
     flex: 1,
-    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  icon: {
+    marginRight: 10,
   },
 });

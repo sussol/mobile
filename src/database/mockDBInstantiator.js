@@ -2,6 +2,7 @@ import realm from '../database/realm';
 
 export default function instantiate() {
   realm.write(() => {
+    realm.deleteAll();
     const hospitalDept = realm.create('ItemDepartment', {
       id: '111DI',
       name: 'Hospital',
@@ -101,16 +102,20 @@ export default function instantiate() {
   }
 
   realm.write(() => {
-    const name = realm.create('Name', {
-      id: '1',
-      name: 'Borg',
-      code: 'borg1',
-      phoneNumber: '08002674',
-      billingAddress: undefined,
-      type: 'Customer AND supplier',
-      masterList: undefined,
-      invoices: [],
-    });
+    const names = [];
+    for (let i = 0; i < 10; i++) {
+      const name = realm.create('Name', {
+        id: `n${i}`,
+        name: `Borg${i}`,
+        code: `borg${i}`,
+        phoneNumber: '0800267${i}',
+        billingAddress: undefined,
+        type: 'Customer AND supplier',
+        masterList: undefined,
+        invoices: [],
+      });
+      names.push(name);
+    }
 
     const user = realm.create('User', {
       id: '1',
@@ -138,15 +143,23 @@ export default function instantiate() {
       // ((t % 100) === 0) && console.log(`making transaction ${t}`);
       const confirmDate = newDate(t, numberOfTransactions);
       const entryDate = confirmDate;
+      const name = names[t % 10];
+      const transactionTypes = [
+        'customer_invoice',
+        'customer_credit',
+        'supplier_invoice',
+        'supplier_credit',
+      ];
       entryDate.setDate(entryDate.getDate() - 5);
+
 
       const transaction = realm.create('Transaction', {
         id: `t${t}`,
-        serialNumber: t,
+        serialNumber: `${t}`,
         otherParty: name,
         comment: 'comment is here',
         entryDate: entryDate,
-        type: 'customer_invoice',
+        type: transactionTypes[t % 4],
         status: 'cn',
         confirmDate: confirmDate,
         enteredBy: user,

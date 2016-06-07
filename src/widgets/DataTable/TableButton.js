@@ -33,6 +33,5 @@ TableButton.propTypes = {
 const defaultStyles = StyleSheet.create({
   tableButton: {
     flex: 1,
-    backgroundColor: 'green',
   },
 });

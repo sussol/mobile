@@ -8,6 +8,12 @@
 import {
   StyleSheet,
 } from 'react-native';
+const APP_FONT_FAMILY = 'Museo_Slab_500';
+const SUSSOL_ORANGE = '#e95c30';
+const BLUE_WHITE = '#ecf3fc';
+const BACKGROUND_COLOR = '#f8fbfe';
+const DARK_GREY = '#4a4a4a';
+const DARKER_GREY = '#333333';
 
 export default StyleSheet.create({
   container: {
@@ -16,7 +22,12 @@ export default StyleSheet.create({
   pageContentContainer: {
     flex: 1,
     margin: 15,
-    backgroundColor: '#ecf3fc',
+    backgroundColor: BLUE_WHITE,
+  },
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   modal: {
     justifyContent: 'center',
@@ -26,43 +37,93 @@ export default StyleSheet.create({
     paddingTop: 68,
   },
   text: {
-    fontSize: 18,
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 16,
   },
-  searchBar: {
-    width: 500,
-    marginHorizontal: 15,
-    borderBottomWidth: 2,
+  buttonText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: SUSSOL_ORANGE,
+  },
+  button: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 15,
+    margin: 5,
+    borderColor: SUSSOL_ORANGE,
+  },
+  menuButtonText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 17,
+    color: DARKER_GREY,
+  },
+  menuButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    padding: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#CDCDCD',
+  },
+  navButton: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'white',
+    padding: 15,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#CDCDCD',
+  },
+  dataTableText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 14,
+    marginLeft: 20,
+    textAlign: 'left',
   },
   dataTableDropDown: {
     marginHorizontal: 15,
   },
   dataTableHeader: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
   },
   dataTableHeaderCell: {
-    backgroundColor: '#ffffff',
+    height: 30,
+    borderRightWidth: 2,
+    backgroundColor: 'white',
+    borderColor: BLUE_WHITE,
   },
   dataTableRow: {
-    backgroundColor: '#ffffff',
+    backgroundColor: 'white',
   },
   dataTableCell: {
-    backgroundColor: '#f8fbfe',
+    height: 40,
+    backgroundColor: BACKGROUND_COLOR,
+    borderTopWidth: 2,
     borderRightWidth: 2,
-    borderColor: '#ecf3fc',
+    borderColor: BLUE_WHITE,
   },
   dataTableEditableCell: {
     backgroundColor: '#f9e4c2',
   },
   dataTableButton: {
-    backgroundColor: '#ffdb9d',
-    borderColor: '#fcb947',
-    borderRadius: 8,
-    borderWidth: 2,
-  },
-  textInput: {
-    height: 40,
-    borderColor: 'gray',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30,
     borderWidth: 1,
-    fontFamily: 'Comic Sans',
+    borderRadius: 4,
+    padding: 15,
+    margin: 5,
+    borderColor: SUSSOL_ORANGE,
   },
 });
+
+export {
+  APP_FONT_FAMILY,
+  SUSSOL_ORANGE,
+  BLUE_WHITE,
+  BACKGROUND_COLOR,
+  DARK_GREY,
+  DARKER_GREY,
+};

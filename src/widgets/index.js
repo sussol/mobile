@@ -1,6 +1,7 @@
-import Button from './Button';
 import { ConfirmModal, LoginModal } from './modals';
+import Button from './Button';
 import DataTable from './DataTable';
+import SearchBar from './SearchBar';
 
 
 export {
@@ -8,4 +9,5 @@ export {
   ConfirmModal,
   DataTable,
   LoginModal,
+  SearchBar,
 };
