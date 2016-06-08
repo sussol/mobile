@@ -22,7 +22,7 @@ const {
 *                              authentication
 * @param  {function} onFailure The function to call if there is an error, with
 *                              the errror message as a parameter
-* @return {none}
+* @return {object}             JSON formatted response object
 */
 export async function authenticateAsync(authURL, username, password) {
   if (username.length === 0 | password.length === 0) { // Missing username or password
