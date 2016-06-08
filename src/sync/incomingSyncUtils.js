@@ -511,9 +511,9 @@ export async function getIncomingRecords(serverURL, thisSiteId, serverId, authHe
 
 /**
  * Returns the number of records left to pull
- * @param  {string} serverURL  The URL of the sync server
- * @param  {string} thisSiteId The sync ID of this sync site
- * @param  {string} serverId   The sync ID of the server
+ * @param  {string} serverURL  URL of the sync server
+ * @param  {string} thisSiteId Sync ID of this sync site
+ * @param  {string} serverId   Sync ID of the server
  * @return {Promise}           Resolves with the record count, or passes up any error thrown
  */
 export async function getWaitingRecordCount(serverURL, thisSiteId, serverId, authHeader) {
@@ -528,6 +528,15 @@ export async function getWaitingRecordCount(serverURL, thisSiteId, serverId, aut
     .then((responseJson) => responseJson.NumRecords);
 }
 
+/**
+ * Sends the sync server a message to indicate the sync records have been consumed
+ * @param  {string}  serverURL  Base URL of the sync server
+ * @param  {string}  thisSiteId Sync id of this mobile site
+ * @param  {string}  serverId   Sync id of the primary server
+ * @param  {string}  authHeader Base64 encoded Basic auth header
+ * @param  {array}   records    Sync records that have been integrated
+ * @return {none}
+ */
 export async function acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, records) {
   const syncIds = records.map((record) => record.SyncID);
   const requestBody = {
