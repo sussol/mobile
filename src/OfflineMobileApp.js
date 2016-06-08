@@ -8,6 +8,7 @@
 import React, {
   Component,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 
@@ -66,9 +67,11 @@ export default class OfflineMobileApp extends Component {
   }
 
   componentWillMount() {
-    this.renderScene = this.renderScene.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
+    this.renderScene = this.renderScene.bind(this);
+    this.renderSyncState = this.renderSyncState.bind(this);
+    this.synchronize = this.synchronize.bind(this);
     this.scheduler.schedule(this.synchronize,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => this.userAuthenticator.reauthenticate(this.onAuthentication),
@@ -136,6 +139,14 @@ export default class OfflineMobileApp extends Component {
     }
   }
 
+  renderSyncState() {
+    return (
+      <Text>
+        {this.state.syncState}
+      </Text>
+    );
+  }
+
   render() {
     if (!this.state.initialised) {
       return (
@@ -149,6 +160,7 @@ export default class OfflineMobileApp extends Component {
       <View style={styles.container}>
         <Navigator
           renderScene={this.renderScene}
+          renderRightComponent={this.renderSyncState}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
