@@ -17,220 +17,292 @@ import { generateUUID } from '../database';
  */
 export function integrateRecords(database, syncJson) {
   database.write(() => {
-    let internalRecord;
-    let item;
-    let itemLine;
-    let masterList;
-    let name;
-    let otherParty;
-    let requisition;
-    let requisitionLine;
-    let stocktake;
-    let stocktakeLine;
-    let transaction;
-    let transactionLine;
     syncJson.forEach((object) => {
+      if (!object.data) return; // No data for the sync record, ignore it
       const record = object.data;
       const recordType = RECORD_TYPES.translate(object.RecordType, EXTERNAL_TO_INTERNAL);
-      switch (recordType) {
-        case 'Item':
-          internalRecord = {
-            id: record.ID,
-            category: getObject(database, 'ItemCategory', record.category_ID),
-            code: record.code,
-            defaultPackSize: parseFloat(record.default_pack_size),
-            defaultPrice: parseFloat(record.buy_price),
-            department: getObject(database, 'ItemDepartment', record.department_ID),
-            description: record.description,
-            name: record.item_name,
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'ItemCategory':
-          internalRecord = {
-            id: record.ID,
-            name: record.Description,
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'ItemDepartment':
-          internalRecord = {
-            id: record.ID,
-            name: record.department,
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'ItemLine':
-          item = getObject(database, 'Item', record.item_ID);
-          internalRecord = {
-            id: record.ID,
-            item: item,
-            packSize: 1, // Every item line in mobile should be pack-to-one
-            numberOfPacks: parseFloat(record.quantity) * parseFloat(record.pack_size),
-            totalQuantity: parseFloat(record.quantity) * parseFloat(record.pack_size),
-            expiryDate: getDate(record.expiry_date),
-            batch: record.batch,
-            costPrice: parseFloat(record.cost_price),
-            sellPrice: parseFloat(record.sell_price),
-            supplier: getObject(database, 'Name', record.name_ID),
-          };
-          itemLine = database.update(recordType, internalRecord);
-          item.lines.push(itemLine);
-          database.update(recordType, internalRecord);
-          break;
-        case 'MasterListNameJoin':
-          name = getObject(database, 'Name', record.name_ID);
-          masterList = getObject(database, 'MasterList', record.master_group_ID);
-          name.masterList = masterList;
-          break;
-        case 'MasterList':
-          internalRecord = {
-            id: record.ID,
-            name: record.description,
-            note: record.note,
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'MasterListLine':
-          internalRecord = {
-            id: record.ID,
-            item: getObject(database, 'Item', record.item_ID),
-            imprestQuantity: parseFloat(record.imprest_quan),
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'Name':
-          internalRecord = {
-            id: record.ID,
-            name: record.name,
-            code: record.code,
-            phoneNumber: record.phone,
-            billingAddress: getOrCreateAddress(database,
-                                               record.bill_address1,
-                                               record.bill_address2,
-                                               record.bill_address3,
-                                               record.bill_address4,
-                                               record.bill_postal_zip_code),
-            emailAddress: record.email,
-            type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'Requisition':
-          internalRecord = {
-            id: record.ID,
-            status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
-            entryDate: getDate(record.date_entered),
-            daysToSupply: parseFloat(record.daysToSupply),
-            serialNumber: record.serial_number,
-            user: getObject(database, 'User', record.user_ID),
-            type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'RequisitionLine':
-          requisition = getObject(database, 'Requisition', record.requisition_ID);
-          internalRecord = {
-            id: record.ID,
-            requisition: requisition,
-            item: getObject(database, 'Item', record.item_ID),
-            stockOnHand: parseFloat(record.stock_on_hand),
-            suggestedQuantity: parseFloat(record.Cust_stock_order),
-            imprestQuantity: parseFloat(record.imprest_or_prev_quantity),
-            requiredQuantity: parseFloat(record.actualQuan),
-            comment: record.comment,
-            sortIndex: parseFloat(record.line_number),
-          };
-          requisitionLine = database.update(recordType, internalRecord);
-          requisition.lines.push(requisitionLine);
-          break;
-        case 'Stocktake':
-          internalRecord = {
-            id: record.ID,
-            name: record.Description,
-            createdDate: getDate(record.stock_take_created_date),
-            stocktakeDate: getDate(record.stock_take_date, record.stock_take_time),
-            status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
-            createdBy: getObject(database, 'User', record.created_by_ID),
-            finalisedBy: getObject(database, 'User', record.finalised_by_ID),
-            comment: record.comment,
-            serialNumber: record.serialNumber,
-            additions: getObject(database, 'Transaction', record.invad_additions_ID),
-            reductions: getObject(database, 'Transaction', record.invad_reductions_ID),
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'StocktakeLine':
-          stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
-          internalRecord = {
-            id: record.ID,
-            stocktake: stocktake,
-            itemLine: getObject(database, 'ItemLine', record.item_line_ID),
-            snapshotQuantity: parseFloat(record.snapshot_qty) * parseFloat(record.snapshotPacksize),
-            snapshotPacksize: 1, // Pack to one all mobile data
-            expiry: getDate(record.expiry),
-            batch: record.Batch,
-            costPrice: parseFloat(record.costPrice),
-            sellPrice: parseFloat(record.sellPrice),
-            countedQuantity: parseFloat(record.stock_take_qty),
-            sortIndex: parseFloat(record.line_number),
-          };
-          stocktakeLine = database.update(recordType, internalRecord);
-          stocktake.lines.push(stocktakeLine);
-          break;
-        case 'Transaction':
-          otherParty = getObject(database, 'Name', record.name_ID);
-          internalRecord = {
-            id: record.ID,
-            serialNumber: record.invoice_num,
-            otherParty: otherParty,
-            comment: record.comment,
-            entryDate: getDate(record.entry_date),
-            type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
-            status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
-            confirmDate: getDate(record.confirm_date),
-            enteredBy: getObject(database, 'User', record.user_ID),
-            theirRef: record.their_ref,
-            category: getObject(database, 'TransactionCategory', record.category_ID),
-          };
-          transaction = database.update(recordType, internalRecord);
-          otherParty.transactions.push(transaction);
-          break;
-        case 'TransactionCategory':
-          internalRecord = {
-            id: record.ID,
-            name: record.category,
-            code: record.code,
-            type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
-          };
-          database.update(recordType, internalRecord);
-          break;
-        case 'TransactionLine':
-          transaction = getObject(database, 'Transaction', record.transaction_ID);
-          internalRecord = {
-            id: record.ID,
-            itemId: record.item_ID,
-            itemName: record.item_name,
-            itemLine: getObject(database, 'ItemLine', record.item_line_ID),
-            packSize: 1, // Pack to one all mobile data
-            numberOfPacks: parseFloat(record.quantity) * parseFloat(record.pack_size),
-            totalQuantity: parseFloat(record.quantity) * parseFloat(record.pack_size),
-            transaction: transaction,
-            note: record.note,
-            costPrice: parseFloat(record.cost_price),
-            sellPrice: parseFloat(record.sell_price),
-            sortIndex: parseFloat(record.line_number),
-            expiryDate: record.expiry_date,
-            batch: record.batch,
-          };
-          transactionLine = database.update(recordType, internalRecord);
-          transaction.lines.push(transactionLine);
-          break;
-        default:
-          break; // Silently ignore record types we don't want to sync into mobile
+      // If the sync record doesn't have appropriate format for the record type, ignore it
+      if (sanityCheck(recordType, record)) {
+        integrateRecord(database, recordType, record);
       }
     });
   });
+}
+
+/**
+ * Take the data from a sync record, and integrate it into the local database as
+ * the given recordType. Will update an existing record if an id matches, or create
+ * a new one if not.
+ * @param  {Realm}  database   The local database
+ * @param  {string} recordType Internal record type
+ * @param  {object} record     The data from sync representing the record
+ * @return {none}
+ */
+function integrateRecord(database, recordType, record) {
+  // All variables used in the switch statement need to be declared prior
+  let internalRecord;
+  let item;
+  let itemLine;
+  let masterList;
+  let name;
+  let otherParty;
+  let requisition;
+  let requisitionLine;
+  let stocktake;
+  let stocktakeLine;
+  let transaction;
+  let transactionLine;
+  switch (recordType) {
+    case 'Item':
+      internalRecord = {
+        id: record.ID,
+        category: getObject(database, 'ItemCategory', record.category_ID),
+        code: record.code,
+        defaultPackSize: parseNumber(record.default_pack_size),
+        defaultPrice: parseNumber(record.buy_price),
+        department: getObject(database, 'ItemDepartment', record.department_ID),
+        description: record.description,
+        name: record.item_name,
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'ItemCategory':
+      internalRecord = {
+        id: record.ID,
+        name: record.Description,
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'ItemDepartment':
+      internalRecord = {
+        id: record.ID,
+        name: record.department,
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'ItemLine':
+      item = getObject(database, 'Item', record.item_ID);
+      internalRecord = {
+        id: record.ID,
+        item: item,
+        packSize: 1, // Every item line in mobile should be pack-to-one
+        numberOfPacks: parseNumber(record.quantity) * parseNumber(record.pack_size),
+        totalQuantity: parseNumber(record.quantity) * parseNumber(record.pack_size),
+        expiryDate: parseDate(record.expiry_date),
+        batch: record.batch,
+        costPrice: parseNumber(record.cost_price),
+        sellPrice: parseNumber(record.sell_price),
+        supplier: getObject(database, 'Name', record.name_ID),
+      };
+      itemLine = database.update(recordType, internalRecord);
+      item.lines.push(itemLine);
+      database.update(recordType, internalRecord);
+      break;
+    case 'MasterListNameJoin':
+      name = getObject(database, 'Name', record.name_ID);
+      masterList = getObject(database, 'MasterList', record.master_group_ID);
+      name.masterList = masterList;
+      break;
+    case 'MasterList':
+      internalRecord = {
+        id: record.ID,
+        name: record.description,
+        note: record.note,
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'MasterListLine':
+      internalRecord = {
+        id: record.ID,
+        item: getObject(database, 'Item', record.item_ID),
+        imprestQuantity: parseNumber(record.imprest_quan),
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'Name':
+      internalRecord = {
+        id: record.ID,
+        name: record.name,
+        code: record.code,
+        phoneNumber: record.phone,
+        billingAddress: getOrCreateAddress(database,
+                                           record.bill_address1,
+                                           record.bill_address2,
+                                           record.bill_address3,
+                                           record.bill_address4,
+                                           record.bill_postal_zip_code),
+        emailAddress: record.email,
+        type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'Requisition':
+      internalRecord = {
+        id: record.ID,
+        status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        entryDate: parseDate(record.date_entered),
+        daysToSupply: parseNumber(record.daysToSupply),
+        serialNumber: record.serial_number,
+        user: getObject(database, 'User', record.user_ID),
+        type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'RequisitionLine':
+      requisition = getObject(database, 'Requisition', record.requisition_ID);
+      internalRecord = {
+        id: record.ID,
+        requisition: requisition,
+        item: getObject(database, 'Item', record.item_ID),
+        stockOnHand: parseNumber(record.stock_on_hand),
+        suggestedQuantity: parseNumber(record.Cust_stock_order),
+        imprestQuantity: parseNumber(record.imprest_or_prev_quantity),
+        requiredQuantity: parseNumber(record.actualQuan),
+        comment: record.comment,
+        sortIndex: parseNumber(record.line_number),
+      };
+      requisitionLine = database.update(recordType, internalRecord);
+      requisition.lines.push(requisitionLine);
+      break;
+    case 'Stocktake':
+      internalRecord = {
+        id: record.ID,
+        name: record.Description,
+        createdDate: parseDate(record.stock_take_created_date),
+        stocktakeDate: parseDate(record.stock_take_date, record.stock_take_time),
+        status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        createdBy: getObject(database, 'User', record.created_by_ID),
+        finalisedBy: getObject(database, 'User', record.finalised_by_ID),
+        comment: record.comment,
+        serialNumber: record.serial_number,
+        additions: getObject(database, 'Transaction', record.invad_additions_ID),
+        reductions: getObject(database, 'Transaction', record.invad_reductions_ID),
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'StocktakeLine':
+      stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
+      internalRecord = {
+        id: record.ID,
+        stocktake: stocktake,
+        itemLine: getObject(database, 'ItemLine', record.item_line_ID),
+        snapshotQuantity: parseNumber(record.snapshot_qty) * parseNumber(record.snapshotPacksize),
+        snapshotPacksize: 1, // Pack to one all mobile data
+        expiry: parseDate(record.expiry),
+        batch: record.Batch,
+        costPrice: parseNumber(record.cost_price),
+        sellPrice: parseNumber(record.sell_price),
+        countedQuantity: parseNumber(record.stock_take_qty),
+        sortIndex: parseNumber(record.line_number),
+      };
+      stocktakeLine = database.update(recordType, internalRecord);
+      stocktake.lines.push(stocktakeLine);
+      break;
+    case 'Transaction':
+      otherParty = getObject(database, 'Name', record.name_ID);
+      internalRecord = {
+        id: record.ID,
+        serialNumber: record.invoice_num,
+        otherParty: otherParty,
+        comment: record.comment,
+        entryDate: parseDate(record.entry_date),
+        type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+        status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        confirmDate: parseDate(record.confirm_date),
+        enteredBy: getObject(database, 'User', record.user_ID),
+        theirRef: record.their_ref,
+        category: getObject(database, 'TransactionCategory', record.category_ID),
+      };
+      transaction = database.update(recordType, internalRecord);
+      otherParty.transactions.push(transaction);
+      break;
+    case 'TransactionCategory':
+      internalRecord = {
+        id: record.ID,
+        name: record.category,
+        code: record.code,
+        type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+      };
+      database.update(recordType, internalRecord);
+      break;
+    case 'TransactionLine':
+      transaction = getObject(database, 'Transaction', record.transaction_ID);
+      internalRecord = {
+        id: record.ID,
+        itemId: record.item_ID,
+        itemName: record.item_name,
+        itemLine: getObject(database, 'ItemLine', record.item_line_ID),
+        packSize: 1, // Pack to one all mobile data
+        numberOfPacks: parseNumber(record.quantity) * parseNumber(record.pack_size),
+        totalQuantity: parseNumber(record.quantity) * parseNumber(record.pack_size),
+        transaction: transaction,
+        note: record.note,
+        costPrice: parseNumber(record.cost_price),
+        sellPrice: parseNumber(record.sell_price),
+        sortIndex: parseNumber(record.line_number),
+        expiryDate: parseDate(record.expiry_date),
+        batch: record.batch,
+      };
+      transactionLine = database.update(recordType, internalRecord);
+      transaction.lines.push(transactionLine);
+      break;
+    default:
+      break; // Silently ignore record types we don't want to sync into mobile
+  }
+}
+
+/**
+ * Ensure the given record has the right data to create an internal record of the
+ * given recordType
+ * @param  {string} recordType The internal record type this sync record should be used for
+ * @param  {object} record     The data from the sync record
+ * @return {boolean}           Whether the data is sufficient to create an internal record from
+ */
+function sanityCheck(recordType, record) {
+  if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
+  switch (recordType) {
+    case 'Item':
+      return record.code && record.item_name && record.default_pack_size;
+    case 'ItemCategory':
+      return typeof record.Description === 'string';
+    case 'ItemDepartment':
+      return typeof record.department === 'string';
+    case 'ItemLine':
+      return record.item_ID && record.pack_size && record.quantity && record.pack_size
+             && record.batch && record.expiry_date && record.cost_price && record.sell_price;
+    case 'MasterListNameJoin':
+      return record.name_ID && record.master_group_ID;
+    case 'MasterList':
+      return typeof record.description === 'string';
+    case 'MasterListLine':
+      return record.item_ID;
+    case 'Name':
+      return record.name && record.code && record.type;
+    case 'Requisition':
+      return record.status && record.date_entered && record.type && record.daysToSupply
+             && record.serial_number;
+    case 'RequisitionLine':
+      return record.requisition_ID && record.item_ID && record.stock_on_hand
+             && record.Cust_stock_order;
+    case 'Stocktake':
+      return record.Description && record.stock_take_created_date && record.status
+             && record.serial_number;
+    case 'StocktakeLine':
+      return record.stock_take_ID && record.item_line_ID && record.snapshot_qty
+             && record.snapshot_packsize && record.expiry && record.Batch
+             && record.cost_price && record.sell_price;
+    case 'Transaction':
+      return record.invoice_num && record.name_ID && record.entry_date && record.type
+             && record.status && record.user_ID;
+    case 'TransactionCategory':
+      return record.category && record.code && record.type;
+    case 'TransactionLine':
+      return record.item_ID && record.item_name && record.item_line_ID && record.batch
+             && record.expiry_date && record.pack_size && record.quantity && record.transaction_ID
+             && record.cost_price && record.sell_price;
+    default:
+      return false; // Reject record types we don't want to sync into mobile
+  }
 }
 
 /**
@@ -243,7 +315,7 @@ export function integrateRecords(database, syncJson) {
  *                           id, or a placeholder if none
  */
 function getObject(database, type, id) {
-  if (!id) return null;
+  if (!id || id.length < 1) return null;
   const results = database.objects(type).filtered('id == $0', id);
   if (results.length > 0) return results[0];
   const placeholder = generatePlaceholder(type, id);
@@ -388,15 +460,26 @@ function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
  * @param  {string} ISOTime The time in ISO 8601 format
  * @return {Date}           The Date object described by the params
  */
-function getDate(ISODate, ISOTime) {
+function parseDate(ISODate, ISOTime) {
+  if (!ISODate || ISODate.length < 1) return null;
   const date = new Date(ISODate);
-  if (ISOTime) {
+  if (ISOTime && ISOTime.length >= 6) {
     const hours = ISOTime.substring(0, 2);
     const minutes = ISOTime.substring(2, 4);
     const seconds = ISOTime.substring(4, 6);
     date.setHours(hours, minutes, seconds);
   }
   return date;
+}
+
+/**
+ * Returns the number string as a float, or null if none passed
+ * @param  {string} numberString The string to convert to a number
+ * @return {float}               The numeric representation of the string
+ */
+function parseNumber(numberString) {
+  if (!numberString || numberString.length < 1) return null;
+  return parseFloat(numberString);
 }
 
 /**

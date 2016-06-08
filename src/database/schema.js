@@ -201,13 +201,13 @@ const TransactionSchema = {
     id: 'string',
     serialNumber: 'string',
     otherParty: { type: 'Name', optional: true },
-    comment: 'string',
+    comment: { type: 'string', optional: true },
     entryDate: 'date',
     type: 'string',
     status: 'string',
     confirmDate: { type: 'date', optional: true },
     enteredBy: { type: 'User', optional: true },
-    theirRef: 'string', // An external reference code
+    theirRef: { type: 'string', optional: true }, // An external reference code
     category: { type: 'TransactionCategory', optional: true },
     lines: { type: 'list', objectType: 'TransactionLine' },
   },
