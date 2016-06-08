@@ -8,8 +8,6 @@ import { generateSyncJson } from './outgoingSyncUtils';
 import {
   acknowledgeRecords,
   integrateRecords,
-  getIncomingRecords,
-  getWaitingRecordCount,
 } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
 const {
@@ -170,6 +168,52 @@ export class Synchronizer {
 
     // Recurse to get the next batch of records from the server
     await this.recursivePull(serverURL, thisSiteId, serverId, setProgress);
+  }
+
+  /**
+   * Returns the number of records left to pull
+   * @param  {string} serverURL  URL of the sync server
+   * @param  {string} thisSiteId Sync ID of this sync site
+   * @param  {string} serverId   Sync ID of the server
+   * @return {Promise}           Resolves with the record count, or passes up any error thrown
+   */
+  async getWaitingRecordCount(serverURL, thisSiteId, serverId, authHeader) {
+    return await fetch(
+      `${serverURL}/sync/v2/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
+      {
+        headers: {
+          Authorization: authHeader,
+        },
+      })
+      .then((response) => response.json())
+      .then((responseJson) => responseJson.NumRecords);
+  }
+
+  /**
+   * Sends the sync server a message to indicate the sync records have been consumed
+   * @param  {string}  serverURL  Base URL of the sync server
+   * @param  {string}  thisSiteId Sync id of this mobile site
+   * @param  {string}  serverId   Sync id of the primary server
+   * @param  {string}  authHeader Base64 encoded Basic auth header
+   * @param  {array}   records    Sync records that have been integrated
+   * @return {none}
+   */
+  async acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, records) {
+    const syncIds = records.map((record) => record.SyncID);
+    const requestBody = {
+      FromID: parseInt(serverId, 10), // one // three
+      ToID: parseInt(thisSiteId, 10),
+      acknowledged_records: { ItemFields: syncIds }, // two
+    };
+    await fetch(
+      `${serverURL}/sync/v2/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: authHeader,
+        },
+        body: JSON.stringify(requestBody),
+      });
   }
 
 }
