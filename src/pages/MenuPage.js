@@ -17,7 +17,12 @@ import {
 } from '../widgets';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import globalStyles, { APP_FONT_FAMILY, DARK, DARKER, SHADOW_BORDER } from '../globalStyles';
+import globalStyles, {
+  APP_FONT_FAMILY,
+  DARK_GREY,
+  DARKER_GREY,
+  SHADOW_BORDER,
+} from '../globalStyles';
 
 export default function MenuPage(props) {
   return (
@@ -110,9 +115,9 @@ const localStyles = StyleSheet.create({
   },
   logOutText: {
     fontFamily: APP_FONT_FAMILY,
-    color: DARKER,
+    color: DARKER_GREY,
   },
   logOutIcon: {
-    color: DARK,
+    color: DARK_GREY,
   },
 });
