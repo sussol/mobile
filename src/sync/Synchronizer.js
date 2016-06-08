@@ -6,8 +6,8 @@
 import { SyncQueue } from './SyncQueue';
 import { generateSyncJson } from './outgoingSyncUtils';
 import {
-  acknowledgeRecords,
-  integrateRecords,
+  integrateIncomingRecord,
+  sanityCheckIncomingRecord,
 } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
 const {
@@ -150,7 +150,7 @@ export class Synchronizer {
    */
   async recursivePull(serverURL, thisSiteId, serverId, setProgress) {
     const authHeader = this.authenticator.getAuthHeader();
-    const waitingRecordCount = await getWaitingRecordCount(serverURL,
+    const waitingRecordCount = await this.getWaitingRecordCount(serverURL,
                                                            thisSiteId,
                                                            serverId,
                                                            authHeader);
@@ -158,13 +158,13 @@ export class Synchronizer {
     if (waitingRecordCount === 0) return; // Done recursing through records
 
     // Get a batch of records and integrate them
-    const incomingRecords = await getIncomingRecords(serverURL,
+    const incomingRecords = await this.getIncomingRecords(serverURL,
                                                      thisSiteId,
                                                      serverId,
                                                      authHeader,
                                                      BATCH_SIZE);
-    integrateRecords(this.database, incomingRecords);
-    await acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
+    this.integrateIncomingRecords(incomingRecords);
+    await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
 
     // Recurse to get the next batch of records from the server
     await this.recursivePull(serverURL, thisSiteId, serverId, setProgress);
@@ -187,6 +187,53 @@ export class Synchronizer {
       })
       .then((response) => response.json())
       .then((responseJson) => responseJson.NumRecords);
+  }
+
+    /**
+   * Returns the next batch of incoming sync records
+   * @param  {string}  serverURL  The URL of the sync server
+   * @param  {string}  thisSiteId The sync ID of this sync site
+   * @param  {string}  serverId   The sync ID of the server
+   * @param  {integer} numRecords The number of records to fetch
+   * @return {Promise}            Resolves with the records, or passes up any error thrown
+   */
+  async getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
+    const response = await fetch(
+      `${serverURL}/sync/v2/queued_records`
+      + `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
+      {
+        headers: {
+          Authorization: authHeader,
+        },
+      });
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error('Connection failure while pulling sync records.');
+    }
+    const responseJson = await response.json();
+    if (responseJson.error && responseJson.error.length > 0) {
+      throw new Error(responseJson.error);
+    }
+    return responseJson;
+  }
+
+
+  /**
+   * Parse the batch of incoming records, and integrate them into the local database
+   * @param  {Realm}  database The local database
+   * @param  {object} records  The json object the server sent to represent records
+   * @return {none}
+   */
+  integrateIncomingRecords(syncJson) {
+    this.database.write(() => {
+      syncJson.forEach((object) => {
+        if (!object.data) return; // No data for the sync record, ignore it
+        const record = object.data;
+        // If the sync record doesn't have appropriate format for the record type, ignore it
+        if (sanityCheckIncomingRecord(record)) {
+          integrateIncomingRecord(this.database, record);
+        }
+      });
+    });
   }
 
   /**

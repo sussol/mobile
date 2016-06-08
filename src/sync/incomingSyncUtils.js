@@ -1,33 +1,12 @@
 import {
   EXTERNAL_TO_INTERNAL,
   NAME_TYPES,
-  RECORD_TYPES,
   REQUISITION_TYPES,
   STATUSES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
 
 import { generateUUID } from '../database';
-
-/**
- * Parse the batch of incoming records, and integrate them into the local database
- * @param  {Realm}  database The local database
- * @param  {object} records  The json object the server sent to represent records
- * @return {none}
- */
-export function integrateRecords(database, syncJson) {
-  database.write(() => {
-    syncJson.forEach((object) => {
-      if (!object.data) return; // No data for the sync record, ignore it
-      const record = object.data;
-      const recordType = RECORD_TYPES.translate(object.RecordType, EXTERNAL_TO_INTERNAL);
-      // If the sync record doesn't have appropriate format for the record type, ignore it
-      if (sanityCheck(recordType, record)) {
-        integrateRecord(database, recordType, record);
-      }
-    });
-  });
-}
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -38,7 +17,7 @@ export function integrateRecords(database, syncJson) {
  * @param  {object} record     The data from sync representing the record
  * @return {none}
  */
-function integrateRecord(database, recordType, record) {
+export function integrateIncomingRecord(database, recordType, record) {
   // All variables used in the switch statement need to be declared prior
   let internalRecord;
   let item;
@@ -258,7 +237,7 @@ function integrateRecord(database, recordType, record) {
  * @param  {object} record     The data from the sync record
  * @return {boolean}           Whether the data is sufficient to create an internal record from
  */
-function sanityCheck(recordType, record) {
+export function sanityCheckIncomingRecord(recordType, record) {
   if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
   switch (recordType) {
     case 'Item':
@@ -480,31 +459,4 @@ function parseDate(ISODate, ISOTime) {
 function parseNumber(numberString) {
   if (!numberString || numberString.length < 1) return null;
   return parseFloat(numberString);
-}
-
-/**
- * Returns the next batch of incoming sync records
- * @param  {string}  serverURL  The URL of the sync server
- * @param  {string}  thisSiteId The sync ID of this sync site
- * @param  {string}  serverId   The sync ID of the server
- * @param  {integer} numRecords The number of records to fetch
- * @return {Promise}            Resolves with the records, or passes up any error thrown
- */
-export async function getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
-  const response = await fetch(
-    `${serverURL}/sync/v2/queued_records`
-    + `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
-    {
-      headers: {
-        Authorization: authHeader,
-      },
-    });
-  if (response.status < 200 || response.status >= 300) {
-    throw new Error('Connection failure while pulling sync records.');
-  }
-  const responseJson = await response.json();
-  if (responseJson.error && responseJson.error.length > 0) {
-    throw new Error(responseJson.error);
-  }
-  return responseJson;
 }
