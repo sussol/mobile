@@ -118,7 +118,7 @@ export class Synchronizer {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
-    await fetch(
+    const response = await fetch(
       `${serverURL}/sync/v2/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         method: 'POST',
@@ -127,6 +127,8 @@ export class Synchronizer {
         },
         body: JSON.stringify(records),
       });
+    const responseJson = await response.json();
+    if (responseJson.error.length > 0) throw new Error('Server rejected pushed records');
   }
 
   /**
