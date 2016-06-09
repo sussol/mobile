@@ -87,7 +87,6 @@ export class Synchronizer {
     // Using async/await here means that any errors thrown by push or pull
     // will be passed up as a rejection of the promise returned by synchronize
     await this.push();
-    console.log('pushed');
     await this.pull();
   }
 
