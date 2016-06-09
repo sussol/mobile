@@ -7,7 +7,6 @@
 
 import React, {
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -154,9 +153,3 @@ RealmExplorer.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
   style: View.propTypes.style,
 };
-
-const localStyles = StyleSheet.create({
-  horizontalContainer: {
-    flexDirection: 'row',
-  },
-});
