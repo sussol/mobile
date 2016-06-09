@@ -25,7 +25,7 @@ const {
 * @return {object}             JSON formatted response object
 */
 export async function authenticateAsync(authURL, username, password) {
-  if (username.length === 0 | password.length === 0) { // Missing username or password
+  if (username.length === 0 || password.length === 0) { // Missing username or password
     throw new Error(MISSING_CREDENTIALS);
   }
 
