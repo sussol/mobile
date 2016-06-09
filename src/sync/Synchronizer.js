@@ -179,15 +179,24 @@ export class Synchronizer {
    * @return {Promise}           Resolves with the record count, or passes up any error thrown
    */
   async getWaitingRecordCount(serverURL, thisSiteId, serverId, authHeader) {
-    return await fetch(
+    const response = await fetch(
       `${serverURL}/sync/v2/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         headers: {
           Authorization: authHeader,
         },
-      })
-      .then((response) => response.json())
-      .then((responseJson) => responseJson.NumRecords);
+      });
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error('Connection failure while attempting to sync.');
+    }
+    const responseJson = await response.json();
+    if (responseJson.error && responseJson.error.length > 0) {
+      throw new Error(responseJson.error);
+    }
+    if (typeof responseJson.NumRecords !== 'number') {
+      throw new Error('Unexpected response from server');
+    }
+    return responseJson.NumRecords;
   }
 
     /**
