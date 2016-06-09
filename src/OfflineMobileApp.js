@@ -63,6 +63,7 @@ export default class OfflineMobileApp extends Component {
       initialised: initialised,
       authenticated: false,
       syncState: SYNC_STATES.WAITING,
+      syncError: '',
     };
   }
 
@@ -96,7 +97,10 @@ export default class OfflineMobileApp extends Component {
       await this.synchronizer.synchronize();
       this.setState({ syncState: SYNC_STATES.WAITING });
     } catch (error) {
-      this.setState({ syncState: SYNC_STATES.ERROR });
+      this.setState({
+        syncState: SYNC_STATES.ERROR,
+        syncError: error.message,
+      });
     }
   }
 
