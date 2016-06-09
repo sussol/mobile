@@ -64,7 +64,7 @@ export class UserAuthenticator {
       }
     } catch (error) {
       if (error === CONNECTION_FAILURE) { // Error with connection, check against local database
-        if (user !== user.passwordHash || user.passwordHash !== passwordHash) {
+        if (!user || user.username !== username || user.passwordHash !== passwordHash) {
           error.setMessage(`${error.message} and username and password not cached`);
           throw error; // User doesn't match cached credentials
         }
