@@ -18,4 +18,10 @@ describe('RECORD_TYPES', () => {
     const internalFormat = RECORD_TYPES.translate(externalFormat, EXTERNAL_TO_INTERNAL);
     expect(internalFormat).toBe('ItemLine');
   });
+
+  it('returns undefined when given an unsupported key', () => {
+    const externalFormat = 'unsupported';
+    const internalFormat = RECORD_TYPES.translate(externalFormat, EXTERNAL_TO_INTERNAL);
+    expect(internalFormat).toBe(undefined);
+  });
 });
