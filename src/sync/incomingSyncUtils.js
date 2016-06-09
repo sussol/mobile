@@ -250,8 +250,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
     case 'ItemDepartment':
       return typeof record.department === 'string';
     case 'ItemLine':
-      return record.item_ID && record.pack_size && record.quantity && record.pack_size
-             && record.batch && record.expiry_date && record.cost_price && record.sell_price;
+      return record.item_ID && record.pack_size && record.quantity && record.batch
+             && record.expiry_date && record.cost_price && record.sell_price;
     case 'MasterListNameJoin':
       return record.name_ID && record.master_group_ID;
     case 'MasterList':
