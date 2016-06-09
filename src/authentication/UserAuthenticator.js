@@ -52,11 +52,11 @@ export class UserAuthenticator {
 
     try {
       const userJson = await authenticateAsync(authURL, username, passwordHash);
-      if (!userJson || !userJson.id) throw new Error('Unexpected response from server');
+      if (!userJson || !userJson.UserID) throw new Error('Unexpected response from server');
       else { // Success, save user to database
         this.database.write(() => {
           this.database.update('User', {
-            id: userJson.id,
+            id: userJson.UserID,
             username: username,
             passwordHash: passwordHash,
           });

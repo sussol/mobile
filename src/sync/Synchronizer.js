@@ -16,7 +16,7 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
-const BATCH_SIZE = 1; // Number of records to sync at one time
+const BATCH_SIZE = 20; // Number of records to sync at one time
 
 /**
  * Provides core synchronization functionality, initilising the database with an
@@ -87,6 +87,7 @@ export class Synchronizer {
     // Using async/await here means that any errors thrown by push or pull
     // will be passed up as a rejection of the promise returned by synchronize
     await this.push();
+    console.log('pushed');
     await this.pull();
   }
 
@@ -113,20 +114,19 @@ export class Synchronizer {
    * @param  {array}   records The records to push
    * @return {Promise}         Resolves if successful, or passes up any error thrown
    */
-  pushRecords(records) {
+  async pushRecords(records) {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
-    return Promise.all(records.map((record) => fetch(
+    await fetch(
       `${serverURL}/sync/v2/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         method: 'POST',
         headers: {
           Authorization: this.authenticator.getAuthHeader(),
         },
-        body: JSON.stringify(record),
-      })
-    ));
+        body: JSON.stringify(records),
+      });
   }
 
   /**
@@ -228,9 +228,11 @@ export class Synchronizer {
       syncJson.forEach((object) => {
         if (!object.data) return; // No data for the sync record, ignore it
         const record = object.data;
+        if (!object.RecordType) return; // RecordType unknown, ignore the record
+        const recordType = object.RecordType;
         // If the sync record doesn't have appropriate format for the record type, ignore it
-        if (sanityCheckIncomingRecord(record)) {
-          integrateIncomingRecord(this.database, record);
+        if (sanityCheckIncomingRecord(recordType, record)) {
+          integrateIncomingRecord(this.database, recordType, record);
         }
       });
     });

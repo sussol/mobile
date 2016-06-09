@@ -84,7 +84,7 @@ export class SyncQueue {
    * @return {integer} Number of records awaiting sync
    */
   length() {
-    return this.database.objects('SyncOut').count;
+    return this.database.objects('SyncOut').length;
   }
 
   /**
@@ -94,7 +94,7 @@ export class SyncQueue {
    */
   next(numberOfRecords) {
     const numberToReturn = numberOfRecords || 1;
-    const allRecords = this.database.objects('SyncOut').sorted();
+    const allRecords = this.database.objects('SyncOut').sorted('changeTime');
     return allRecords.slice(0, numberToReturn);
   }
 
@@ -104,8 +104,10 @@ export class SyncQueue {
    * @return {none}
    */
   use(records) {
-    this.database.write(() => {
-      this.database.delete(records);
+    records.forEach((record) => {
+      this.database.write(() => {
+        this.database.delete(record);
+      });
     });
   }
 }

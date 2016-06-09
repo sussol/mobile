@@ -13,11 +13,12 @@ import {
   TRANSACTION_TYPES,
 } from './syncTranslators';
 
-import {
+import { SETTINGS_KEYS } from '../settings';
+const {
   SUPPLYING_STORE_ID,
   THIS_STORE_ID,
   THIS_STORE_NAME_ID,
-} from '../settings';
+} = SETTINGS_KEYS;
 
 /**
  * Returns a json object fulfilling the requirements of the mSupply primary sync
@@ -47,7 +48,7 @@ export function generateSyncJson(database, settings, syncOutRecord) {
 
     // Generate the appropriate data for the sync object to carry, representing the
     // record in its upstream form
-    syncData = generateSyncData(recordType, record);
+    syncData = generateSyncData(settings, recordType, record);
   }
 
   // Create the JSON object to sync
@@ -64,13 +65,12 @@ export function generateSyncJson(database, settings, syncOutRecord) {
 /**
  * Turn an internal database object into data representing a record in the
  * mSupply primary server, ready for sync
- * @param  {Realm}        database   The local database
  * @param  {Settings}     settings   Access to local settings
  * @param  {string}       recordType Internal type of record being synced
  * @param  {Realm.object} record     The record being synced
  * @return {object}                  The data to sync (in the form of upstream record)
  */
-function generateSyncData(database, settings, recordType, record) {
+function generateSyncData(settings, recordType, record) {
   let getNumPacks;
   let totalPrice;
   let transaction;
@@ -152,7 +152,7 @@ function generateSyncData(database, settings, recordType, record) {
       totalPrice = getTransactionTotalPrice(record);
       return {
         ID: record.id,
-        name_ID: record.otherParty.id,
+        name_ID: record.otherParty && record.otherParty.id,
         invoice_num: record.serialNumber,
         comment: record.comment,
         entry_date: record.entryDate,
@@ -160,11 +160,11 @@ function generateSyncData(database, settings, recordType, record) {
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         total: totalPrice,
         their_ref: record.theirRef,
-        confirm_date: record.confirmDate.toISOString(), // TODO What if there is no date
+        confirm_date: record.confirmDate && record.confirmDate.toISOString(),
         subtotal: totalPrice,
-        user_ID: record.enteredBy.id,
-        category_ID: record.category.id,
-        confirm_time: record.confirmDate.toTimeString().substring(0, 8),
+        user_ID: record.enteredBy && record.enteredBy.id,
+        category_ID: record.category && record.category.id,
+        confirm_time: record.confirmDate && record.confirmDate.toTimeString().substring(0, 8),
         store_ID: settings.get(THIS_STORE_ID),
       };
     case 'TransactionLine':

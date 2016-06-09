@@ -1,6 +1,7 @@
 import {
   EXTERNAL_TO_INTERNAL,
   NAME_TYPES,
+  RECORD_TYPES,
   REQUISITION_TYPES,
   STATUSES,
   TRANSACTION_TYPES,
@@ -13,8 +14,8 @@ import { generateUUID } from '../database';
  * the given recordType. Will update an existing record if an id matches, or create
  * a new one if not.
  * @param  {Realm}  database   The local database
- * @param  {string} recordType Internal record type
- * @param  {object} record     The data from sync representing the record
+ * @param  {string} recordType External record type
+ * @param  {object} record     Data from sync representing the record
  * @return {none}
  */
 export function integrateIncomingRecord(database, recordType, record) {
@@ -31,7 +32,8 @@ export function integrateIncomingRecord(database, recordType, record) {
   let stocktakeLine;
   let transaction;
   let transactionLine;
-  switch (recordType) {
+  const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
+  switch (internalType) {
     case 'Item':
       internalRecord = {
         id: record.ID,
@@ -43,21 +45,21 @@ export function integrateIncomingRecord(database, recordType, record) {
         description: record.description,
         name: record.item_name,
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'ItemCategory':
       internalRecord = {
         id: record.ID,
         name: record.Description,
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'ItemDepartment':
       internalRecord = {
         id: record.ID,
         name: record.department,
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'ItemLine':
       item = getObject(database, 'Item', record.item_ID);
@@ -73,9 +75,9 @@ export function integrateIncomingRecord(database, recordType, record) {
         sellPrice: parseNumber(record.sell_price),
         supplier: getObject(database, 'Name', record.name_ID),
       };
-      itemLine = database.update(recordType, internalRecord);
+      itemLine = database.update(internalType, internalRecord);
       item.lines.push(itemLine);
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'MasterListNameJoin':
       name = getObject(database, 'Name', record.name_ID);
@@ -88,7 +90,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         name: record.description,
         note: record.note,
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'MasterListLine':
       internalRecord = {
@@ -96,7 +98,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         item: getObject(database, 'Item', record.item_ID),
         imprestQuantity: parseNumber(record.imprest_quan),
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'Name':
       internalRecord = {
@@ -113,7 +115,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'Requisition':
       internalRecord = {
@@ -125,7 +127,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         user: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'RequisitionLine':
       requisition = getObject(database, 'Requisition', record.requisition_ID);
@@ -140,7 +142,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };
-      requisitionLine = database.update(recordType, internalRecord);
+      requisitionLine = database.update(internalType, internalRecord);
       requisition.lines.push(requisitionLine);
       break;
     case 'Stocktake':
@@ -157,7 +159,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         additions: getObject(database, 'Transaction', record.invad_additions_ID),
         reductions: getObject(database, 'Transaction', record.invad_reductions_ID),
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'StocktakeLine':
       stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
@@ -174,7 +176,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         countedQuantity: parseNumber(record.stock_take_qty),
         sortIndex: parseNumber(record.line_number),
       };
-      stocktakeLine = database.update(recordType, internalRecord);
+      stocktakeLine = database.update(internalType, internalRecord);
       stocktake.lines.push(stocktakeLine);
       break;
     case 'Transaction':
@@ -192,7 +194,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         theirRef: record.their_ref,
         category: getObject(database, 'TransactionCategory', record.category_ID),
       };
-      transaction = database.update(recordType, internalRecord);
+      transaction = database.update(internalType, internalRecord);
       otherParty.transactions.push(transaction);
       break;
     case 'TransactionCategory':
@@ -202,7 +204,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         code: record.code,
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
-      database.update(recordType, internalRecord);
+      database.update(internalType, internalRecord);
       break;
     case 'TransactionLine':
       transaction = getObject(database, 'Transaction', record.transaction_ID);
@@ -222,7 +224,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
       };
-      transactionLine = database.update(recordType, internalRecord);
+      transactionLine = database.update(internalType, internalRecord);
       transaction.lines.push(transactionLine);
       break;
     default:
@@ -233,13 +235,14 @@ export function integrateIncomingRecord(database, recordType, record) {
 /**
  * Ensure the given record has the right data to create an internal record of the
  * given recordType
- * @param  {string} recordType The internal record type this sync record should be used for
+ * @param  {string} recordType The external record type this sync record should be used for
  * @param  {object} record     The data from the sync record
  * @return {boolean}           Whether the data is sufficient to create an internal record from
  */
 export function sanityCheckIncomingRecord(recordType, record) {
+  const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
-  switch (recordType) {
+  switch (internalType) {
     case 'Item':
       return record.code && record.item_name && record.default_pack_size;
     case 'ItemCategory':
