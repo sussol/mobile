@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Dimensions,
   StyleSheet,
   Text,
@@ -84,8 +85,8 @@ LoginModal.propTypes = {
   authenticator: React.PropTypes.object.isRequired,
   isAuthenticated: React.PropTypes.bool.isRequired,
   onAuthentication: React.PropTypes.func.isRequired,
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
 };
 LoginModal.defaultProps = {
   style: {},

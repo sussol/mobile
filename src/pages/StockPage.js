@@ -5,8 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
-  Component,
+import React from 'react';
+import {
   StyleSheet,
   Text,
   View,
@@ -38,7 +38,7 @@ import globalStyles from '../globalStyles';
 * @state  {boolean}             isAscending Direction sortBy should sort
 *                                           (ascending/descending:true/false).
 */
-export class StockPage extends Component {
+export class StockPage extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({

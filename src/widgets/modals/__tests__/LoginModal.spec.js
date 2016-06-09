@@ -5,7 +5,8 @@ jest.unmock('promise-sync-es6');
 
 import { LoginModal } from '../LoginModal';
 import Promise from 'promise-sync-es6';
-import React, { TextInput } from 'react-native';
+import React from 'react';
+import { TextInput } from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 import { Button } from '../../Button';

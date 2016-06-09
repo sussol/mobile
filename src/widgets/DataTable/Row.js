@@ -5,14 +5,14 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
-  Component,
+import React from 'react';
+import {
   View,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 
-export class Row extends Component {
+export class Row extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -65,7 +65,7 @@ export class Row extends Component {
 }
 
 Row.propTypes = {
-  style: React.View.propTypes.style,
+  style: View.propTypes.style,
   children: React.PropTypes.any,
   onPress: React.PropTypes.func,
   renderExpansion: React.PropTypes.func,

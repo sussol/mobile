@@ -5,8 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
-  Component,
+import React from 'react';
+import {
   StyleSheet,
   Text,
   View,
@@ -48,7 +48,7 @@ const SYNC_STATES = {
   ERROR: 'sync_error',
 };
 
-export default class OfflineMobileApp extends Component {
+export default class OfflineMobileApp extends React.Component {
 
   constructor() {
     super();

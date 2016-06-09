@@ -2,7 +2,8 @@ jest.unmock('../Cell');
 jest.unmock('enzyme');
 
 import { Cell } from '../Cell';
-import React, { View } from 'react-native';
+import React from 'react';
+import { View } from 'react-native';
 
 import { shallow } from 'enzyme';
 
