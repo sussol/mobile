@@ -6,7 +6,6 @@
  */
 
 import React, {
-  StyleSheet,
   View,
 } from 'react-native';
 
@@ -44,6 +43,13 @@ const OBJECT_TYPES = [
   'User',
 ];
 
+/**
+* A page to explore the contents of the local database. Allows searching for any
+* database object type, and will show the related data in a table.
+* @prop   {Realm}               database      App wide database.
+* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
+* @state  {Realm.Results}       data          Holds the data that get put into the dataSource
+*/
 export class RealmExplorer extends React.Component {
   constructor(props) {
     super(props);
@@ -134,7 +140,7 @@ export class RealmExplorer extends React.Component {
 
   render() {
     return (
-      <View style={[globalStyles.container, this.props.style]}>
+      <View style={[globalStyles.container]}>
         <SearchBar onChange={(event) => this.onSearchChange(event)} />
         <DataTable
           style={globalStyles.container}
@@ -150,6 +156,4 @@ export class RealmExplorer extends React.Component {
 
 RealmExplorer.propTypes = {
   database: React.PropTypes.object.isRequired,
-  navigateTo: React.PropTypes.func.isRequired,
-  style: View.propTypes.style,
 };
