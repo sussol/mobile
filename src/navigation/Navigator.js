@@ -47,7 +47,7 @@ const NavigationReducer = (currentState, action) => {
   }
 };
 
-export default class Navigator extends Component {
+export class Navigator extends Component {
 
   componentWillMount() {
     this.renderNavigation = this.renderNavigation.bind(this);

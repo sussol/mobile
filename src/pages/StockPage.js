@@ -38,7 +38,7 @@ import globalStyles from '../globalStyles';
 * @state  {boolean}             isAscending Direction sortBy should sort
 *                                           (ascending/descending:true/false).
 */
-export default class StockPage extends Component {
+export class StockPage extends Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({

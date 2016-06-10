@@ -1,7 +1,7 @@
 jest.unmock('../Scheduler');
 jest.unmock('sinon');
 
-import Scheduler from '../Scheduler';
+import { Scheduler } from '../Scheduler';
 import sinon from 'sinon';
 
 const MAX_INTERVAL = 100000;

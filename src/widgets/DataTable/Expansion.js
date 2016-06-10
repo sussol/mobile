@@ -10,7 +10,7 @@ import React, {
   View,
 } from 'react-native';
 
-export default function Expansion(props) {
+export function Expansion(props) {
   const { children, style, ...viewProps } = props;
   return (
     <View {...viewProps} style={[defaultStyles.expansion, style]}>

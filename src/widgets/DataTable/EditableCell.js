@@ -11,7 +11,7 @@ import React, {
   View,
 } from 'react-native';
 
-export default class EditableCell extends Component {
+export class EditableCell extends Component {
   constructor(props) {
     super(props);
     this.state = {

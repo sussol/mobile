@@ -3,12 +3,12 @@ jest.unmock('enzyme');
 jest.unmock('sinon');
 jest.unmock('promise-sync-es6');
 
-import LoginModal from '../LoginModal';
+import { LoginModal } from '../LoginModal';
 import Promise from 'promise-sync-es6';
 import React, { TextInput } from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import Button from '../../Button';
+import { Button } from '../../Button';
 
 const VALID_USERNAME = 'valid';
 const VALID_PASSWORD = 'valid';

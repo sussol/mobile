@@ -2,7 +2,7 @@ jest.unmock('../EditableCell');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import EditableCell from '../EditableCell';
+import { EditableCell } from '../EditableCell';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 import React, {

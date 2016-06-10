@@ -11,7 +11,7 @@ import React, {
   TouchableOpacity,
 } from 'react-native';
 
-export default function TableButton(props) {
+export function TableButton(props) {
   const { style, onPress, children, ...touchableOpacityProps } = props;
   return (
     <TouchableOpacity

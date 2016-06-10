@@ -15,7 +15,7 @@ import {
   Button,
 } from '../widgets';
 
-export default function MenuPage(props) {
+export function MenuPage(props) {
   return (
     <View style={styles.container}>
       <Button
@@ -53,6 +53,12 @@ export default function MenuPage(props) {
         textStyle={globalStyles.menuButtonText}
         text="Stock Histories"
         onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
+      />
+      <Button
+        style={globalStyles.menuButton}
+        textStyle={globalStyles.menuButtonText}
+        text="Realm Explorer"
+        onPress={() => props.navigateTo('realmExplorer', 'Realm Contents')}
       />
     </View>
   );

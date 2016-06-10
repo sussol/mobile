@@ -12,7 +12,7 @@ import React, {
 
 import globalStyles from '../globalStyles';
 
-export default function StocktakeManager(props) {
+export function StocktakeManager(props) {
   return (
     <View style={props.style}>
       <Text>You can manage a Stocktake.</Text>

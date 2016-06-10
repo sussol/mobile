@@ -36,7 +36,7 @@ import globalStyles from '../globalStyles';
 * @state  {boolean}             isAscending   Direction sortBy should sort
 *                                             (ascending/descending:true/false).
 */
-export default class SupplierInvoicePage extends Component {
+export class SupplierInvoicesPage extends Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
@@ -206,7 +206,7 @@ export default class SupplierInvoicePage extends Component {
   }
 }
 
-SupplierInvoicePage.propTypes = {
+SupplierInvoicesPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
 };

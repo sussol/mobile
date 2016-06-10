@@ -2,7 +2,7 @@ jest.unmock('../DataTable');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import DataTable from '../DataTable';
+import { DataTable } from '../DataTable';
 import React, { View, TextInput } from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';

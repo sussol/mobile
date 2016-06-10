@@ -14,7 +14,7 @@ import React, {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function HeaderCell(props) {
+export function HeaderCell(props) {
   const {
     style,
     textStyle,

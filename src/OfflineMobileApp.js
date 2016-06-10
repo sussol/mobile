@@ -8,6 +8,7 @@
 import React, {
   Component,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 
@@ -28,37 +29,51 @@ import {
   StocktakesPage,
   SupplierInvoicePage,
   SupplierInvoicesPage,
+  RealmExplorer,
 } from './pages';
 
 import { LoginModal } from './widgets';
 
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import realm from './database/realm';
-import Scheduler from './Scheduler';
+import { Database, schema } from './database';
+import { Scheduler } from './Scheduler';
+import { Settings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const SYNC_STATES = {
+  WAITING: 'sync_waiting',
+  SYNCING: 'sync_active',
+  ERROR: 'sync_error',
+};
 
 export default class OfflineMobileApp extends Component {
 
   constructor() {
     super();
-    this.userAuthenticator = new UserAuthenticator(realm);
-    this.synchronizer = new Synchronizer(realm, new SyncAuthenticator(realm));
+    this.database = new Database(schema);
+    this.settings = new Settings(this.database);
+    this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
+    const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
+    this.synchronizer = new Synchronizer(this.database, syncAuthenticator, this.settings);
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
     this.state = {
       initialised: initialised,
       authenticated: false,
+      syncState: SYNC_STATES.WAITING,
+      syncError: '',
     };
   }
 
   componentWillMount() {
-    this.renderScene = this.renderScene.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
-    this.scheduler.schedule(this.synchronizer.synchronize,
+    this.renderScene = this.renderScene.bind(this);
+    this.renderSyncState = this.renderSyncState.bind(this);
+    this.synchronize = this.synchronize.bind(this);
+    this.scheduler.schedule(this.synchronize,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => this.userAuthenticator.reauthenticate(this.onAuthentication),
                             AUTHENTICATION_INTERVAL);
@@ -76,6 +91,20 @@ export default class OfflineMobileApp extends Component {
     this.setState({ initialised: true });
   }
 
+  async synchronize() {
+    if (this.state.syncState === SYNC_STATES.SYNCING) return; // If already syncing, skip
+    try {
+      this.setState({ syncState: SYNC_STATES.SYNCING });
+      await this.synchronizer.synchronize();
+      this.setState({ syncState: SYNC_STATES.WAITING });
+    } catch (error) {
+      this.setState({
+        syncState: SYNC_STATES.ERROR,
+        syncError: error.message,
+      });
+    }
+  }
+
   renderScene(props) {
     const navigateTo = (key, title) => {
       props.onNavigate({ type: 'push', key, title });
@@ -84,33 +113,43 @@ export default class OfflineMobileApp extends Component {
       case 'menu':
         return <MenuPage navigateTo={navigateTo} />;
       case 'customers':
-        return <CustomersPage navigateTo={navigateTo} />;
+        return <CustomersPage database={this.database} navigateTo={navigateTo} />;
       case 'customer':
         return <CustomerPage navigateTo={navigateTo} />;
       case 'stock':
-        return <StockPage database={realm} navigateTo={navigateTo} />;
+        return <StockPage database={this.database} navigateTo={navigateTo} />;
       case 'stocktakes':
-        return <StocktakesPage database={realm} navigateTo={navigateTo} />;
+        return <StocktakesPage database={this.database} navigateTo={navigateTo} />;
       case 'stocktakeEditor':
         return <StocktakeEditPage navigateTo={navigateTo} />;
       case 'stocktakeManager':
         return <StocktakeManagePage navigateTo={navigateTo} />;
       case 'customerInvoices':
-        return <CustomerInvoicesPage database={realm} navigateTo={navigateTo} />;
+        return <CustomerInvoicesPage database={this.database} navigateTo={navigateTo} />;
       case 'customerInvoice':
         return <CustomerInvoicePage navigateTo={navigateTo} />;
       case 'supplierInvoices':
-        return <SupplierInvoicesPage database={realm} navigateTo={navigateTo} />;
+        return <SupplierInvoicesPage database={this.database} navigateTo={navigateTo} />;
       case 'supplierInvoice':
         return <SupplierInvoicePage navigateTo={navigateTo} />;
       case 'stockHistories':
         return <StockHistoriesPage navigateTo={navigateTo} />;
       case 'stockHistory':
         return <StockHistoryPage navigateTo={navigateTo} />;
+      case 'realmExplorer':
+        return <RealmExplorer navigateTo={navigateTo} database={this.database} />;
       case 'root':
       default:
         return <MenuPage navigateTo={navigateTo} />;
     }
+  }
+
+  renderSyncState() {
+    return (
+      <Text>
+        {this.state.syncState}
+      </Text>
+    );
   }
 
   render() {
@@ -126,6 +165,7 @@ export default class OfflineMobileApp extends Component {
       <View style={styles.container}>
         <Navigator
           renderScene={this.renderScene}
+          renderRightComponent={this.renderSyncState}
         />
         <LoginModal
           authenticator={this.userAuthenticator}

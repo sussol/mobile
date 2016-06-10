@@ -20,6 +20,7 @@ import {
   Row,
 } from '../widgets/DataTable';
 
+import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
@@ -36,7 +37,7 @@ import globalStyles from '../globalStyles';
 * @state  {boolean}             isAscending   Direction sortBy should sort
 *                                             (ascending/descending:true/false).
 */
-export default class CustomerInvoicesPage extends Component {
+export class CustomerInvoicesPage extends Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
@@ -55,6 +56,7 @@ export default class CustomerInvoicesPage extends Component {
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.refreshData = this.refreshData.bind(this);
+    this.onNewInvoice = this.onNewInvoice.bind(this);
   }
 
   componentWillMount() {
@@ -81,6 +83,20 @@ export default class CustomerInvoicesPage extends Component {
       });
     }
     this.refreshData();
+  }
+
+  onNewInvoice() {
+    this.props.database.write(() => {
+      this.props.database.create('Transaction', {
+        id: generateUUID(),
+        serialNumber: '1',
+        entryDate: new Date(),
+        type: 'customer_invoice',
+        status: 'new',
+        comment: 'Testing sync',
+      });
+    });
+    this.props.navigateTo('customerInvoice', 'New Invoice');
   }
 
   /**
@@ -206,7 +222,7 @@ export default class CustomerInvoicesPage extends Component {
             style={globalStyles.button}
             textStyle={globalStyles.buttonText}
             text="New Invoice"
-            onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
+            onPress={this.onNewInvoice}
           />
         </View>
         <DataTable

@@ -1,13 +1,27 @@
 import {
   authenticateAsync,
+  getAuthHeader,
   hashPassword,
  } from './authenticationUtils';
 
-const AUTH_ENDPOINT = '/mobile/user'; // TODO Replace with real URL
+import { SETTINGS_KEYS } from '../settings';
+const {
+   SUPPLYING_STORE_ID,
+   SYNC_URL,
+   SYNC_SERVER_ID,
+   SYNC_SITE_ID,
+   SYNC_SITE_NAME,
+   SYNC_SITE_PASSWORD_HASH,
+   THIS_STORE_ID,
+   THIS_STORE_NAME_ID,
+ } = SETTINGS_KEYS;
 
-export default class SyncAuthenticator {
-  constructor(database) {
+const AUTH_ENDPOINT = '/sync/v2/site';
+
+export class SyncAuthenticator {
+  constructor(database, settings) {
     this.database = database;
+    this.settings = settings;
   }
 
 /**
@@ -20,36 +34,45 @@ export default class SyncAuthenticator {
  *                                     any error message as a second parameter
  * @return {none}
  */
-  authenticate(serverURL, username, password) {
-    return new Promise((resolve, reject) => {
-      if (serverURL.length === 0) reject('Enter a server URL');
-      if (username.length === 0) reject('Enter the sync site username');
-      if (password.length === 0) reject('Enter the sync site password');
+  async authenticate(serverURL, username, password) {
+    if (serverURL.length === 0) throw new Error('Enter a server URL');
+    if (username.length === 0) throw new Error('Enter the sync site username');
+    if (password.length === 0) throw new Error('Enter the sync site password');
 
-      // Hash the password
-      const passwordHash = hashPassword(password);
+    // Hash the password
+    const passwordHash = hashPassword(password);
 
-      const authURL = `${serverURL}${AUTH_ENDPOINT}`;
+    const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
-      authenticateAsync(authURL, username, passwordHash)
-        .then(() => { // Valid, save in local db
-          this.database.write(() => {
-            this.database.create('Setting', {
-              key: 'ServerURL',
-              value: serverURL,
-            }, true);
-            this.database.create('Setting', {
-              key: 'SyncSiteName',
-              value: username,
-            }, true);
-            this.database.create('Setting', {
-              key: 'SyncSitePasswordHash',
-              value: passwordHash,
-            }, true);
-          });
-          resolve();
-        }, (error) => reject(error) // Pass error up
-      );
-    });
+    try {
+      await authenticateAsync(authURL, username, passwordHash);
+      const responseJson = { // TODO Get from authenticateAsync when server auth changed
+        ServerID: '1',
+        SiteID: '2',
+        StoreID: 'CB7B46602B81494DBC03330FF0001EB8',
+        SupplyingStoreID: 'E6343A6B3A72433B8F892F8BF156FAD8',
+        NameID: 'C5B489AFEB5240908A02A25B7192F99C',
+      };
+      this.settings.set(SYNC_URL, serverURL);
+      this.settings.set(SYNC_SITE_NAME, username);
+      this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);
+      this.settings.set(SYNC_SERVER_ID, responseJson.ServerID);
+      this.settings.set(SYNC_SITE_ID, responseJson.SiteID);
+      this.settings.set(THIS_STORE_ID, responseJson.StoreID);
+      this.settings.set(SUPPLYING_STORE_ID, responseJson.SupplyingStoreID);
+      this.settings.set(THIS_STORE_NAME_ID, responseJson.NameID);
+    } catch (error) { // Pass error up
+      throw error;
+    }
+  }
+
+  /**
+   * Returns the basic base64 encoded authorization header value for this sync site
+   * @return {string} Authorization header value
+   */
+  getAuthHeader() {
+    const username = this.settings.get('SyncSiteName');
+    const password = this.settings.get('SyncSitePasswordHash');
+    return getAuthHeader(username, password);
   }
 }

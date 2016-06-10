@@ -12,7 +12,7 @@ import React, {
   TouchableOpacity,
 } from 'react-native';
 
-export default class Row extends Component {
+export class Row extends Component {
   constructor(props) {
     super(props);
     this.state = {

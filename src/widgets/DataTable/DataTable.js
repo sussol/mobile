@@ -13,7 +13,7 @@ import React, {
 
 import { ListView } from 'realm/react-native';
 
-export default function DataTable(props) {
+export function DataTable(props) {
   const {
     style,
     listViewStyle,
