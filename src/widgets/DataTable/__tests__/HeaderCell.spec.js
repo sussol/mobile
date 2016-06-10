@@ -2,8 +2,9 @@ jest.unmock('../HeaderCell');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import HeaderCell from '../HeaderCell';
-import React, { View, TouchableOpacity } from 'react-native';
+import { HeaderCell } from '../HeaderCell';
+import React from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 import Icon from 'react-native-vector-icons/FontAwesome';

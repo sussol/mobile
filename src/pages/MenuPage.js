@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Image,
   StyleSheet,
   Text,
@@ -24,7 +25,7 @@ import globalStyles, {
   SHADOW_BORDER,
 } from '../globalStyles';
 
-export default function MenuPage(props) {
+export function MenuPage(props) {
   return (
     <View style={[globalStyles.pageContentContainer, { padding: 0 }]}>
       <View style={[globalStyles.horizontalContainer, { flex: 9 }]}>
@@ -73,6 +74,12 @@ export default function MenuPage(props) {
             textStyle={globalStyles.menuButtonText}
             text="Stocktakes"
             onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
+          />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Realm Explorer"
+            onPress={() => props.navigateTo('realmExplorer', 'Database Contents')}
           />
         </View>
       </View>

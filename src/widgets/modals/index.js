@@ -1,4 +1,2 @@
-import ConfirmModal from './ConfirmModal';
-import LoginModal from './LoginModal';
-
-export { ConfirmModal, LoginModal };
+export { ConfirmModal } from './ConfirmModal';
+export { LoginModal } from './LoginModal';

@@ -5,13 +5,14 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 
-export default function Cell(props) {
+export function Cell(props) {
   const { style, textStyle, width, children, ...viewProps } = props;
   return (
     <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
@@ -23,8 +24,8 @@ export default function Cell(props) {
 }
 
 Cell.propTypes = {
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
   width: React.PropTypes.number,
   children: React.PropTypes.any,
 };

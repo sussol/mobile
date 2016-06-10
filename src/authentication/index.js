@@ -1,7 +1,2 @@
-import SyncAuthenticator from './SyncAuthenticator';
-import UserAuthenticator from './UserAuthenticator';
-
-export {
-  SyncAuthenticator,
-  UserAuthenticator,
-};
+export { SyncAuthenticator } from './SyncAuthenticator';
+export { UserAuthenticator } from './UserAuthenticator';

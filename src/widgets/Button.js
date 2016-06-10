@@ -1,11 +1,12 @@
-import React, {
-  PropTypes,
+import React from 'react';
+import {
   StyleSheet,
   Text,
   TouchableHighlight,
+  View,
 } from 'react-native';
 
-export default function Button(props) {
+export function Button(props) {
   return (
     <TouchableHighlight
       style={props.style}
@@ -20,10 +21,10 @@ export default function Button(props) {
 }
 
 Button.propTypes = {
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
-  onPress: PropTypes.func,
-  text: PropTypes.string,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
+  onPress: React.PropTypes.func,
+  text: React.PropTypes.string,
 };
 
 const styles = StyleSheet.create({

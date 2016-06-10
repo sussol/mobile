@@ -5,15 +5,16 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Text,
   View,
 } from 'react-native';
 
-import Button from '../widgets/Button';
+import { Button } from '../widgets/Button';
 import globalStyles from '../globalStyles';
 
-export default function StocktakeEditor(props) {
+export function StocktakeEditor(props) {
   return (
     <View style={props.style}>
       <Text>You can edit a stocktake.</Text>

@@ -10,7 +10,7 @@
  * @param  {Realm.object}  item  The item to get the total quantity of.
  * @return {number}
  */
-export default function getItemQuantity(item) {
+export function getItemQuantity(item) {
   let total = 0;
 
   item.lines.forEach((line) => {

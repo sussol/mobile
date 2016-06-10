@@ -5,14 +5,15 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Text,
   View,
 } from 'react-native';
 
 import globalStyles from '../globalStyles';
 
-export default function StockHistoryPage(props) {
+export function StockHistoryPage(props) {
   return (
     <View style={props.style}>
       <Text>You can interact with a Stock History.</Text>

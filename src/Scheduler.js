@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-export default class Scheduler {
+export class Scheduler {
   constructor() {
     this.intervalIds = [];
   }
@@ -14,7 +14,7 @@ export default class Scheduler {
   }
 
   clearAll() {
-    for (let intervalId of this.intervalIds) {
+    for (const intervalId of this.intervalIds) {
       clearInterval(intervalId);
     }
     this.intervalIds = [];

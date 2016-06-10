@@ -1,4 +1,5 @@
-import React, {
+import React from 'react';
+import {
   StyleSheet,
   TextInput,
   View,
@@ -24,7 +25,7 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
-export default function searchBar(props) {
+export function SearchBar(props) {
   return (
     <View style={defaultStyles.container}>
       <Icon name="search" size={40} color={SUSSOL_ORANGE} />
@@ -36,11 +37,11 @@ export default function searchBar(props) {
   );
 }
 
-searchBar.propTypes = {
+SearchBar.propTypes = {
   style: TextInput.propTypes.style,
   onChange: React.PropTypes.func,
 };
 
-searchBar.defaultProps = {
+SearchBar.defaultProps = {
   style: defaultStyles.textInput,
 };
