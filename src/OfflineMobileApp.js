@@ -64,6 +64,7 @@ export default class OfflineMobileApp extends React.Component {
       authenticated: false,
       syncState: SYNC_STATES.WAITING,
       syncError: '',
+
     };
   }
 

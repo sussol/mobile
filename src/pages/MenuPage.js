@@ -30,7 +30,10 @@ export function MenuPage(props) {
     <View style={[globalStyles.pageContentContainer, { padding: 0 }]}>
       <View style={[globalStyles.horizontalContainer, { flex: 9 }]}>
         <View style={localStyles.container}>
-          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Image
+            style={localStyles.image}
+            source={require('../images/menu_people.png')}
+          />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
@@ -46,7 +49,10 @@ export function MenuPage(props) {
         </View>
 
         <View style={localStyles.container}>
-          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Image
+            style={localStyles.image}
+            source={require('../images/menu_truck.png')}
+          />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
@@ -62,7 +68,10 @@ export function MenuPage(props) {
         </View>
 
         <View style={localStyles.container}>
-          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Image
+            style={localStyles.image}
+            source={require('../images/menu_pc_clipboard.png')}
+          />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
