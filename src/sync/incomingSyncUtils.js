@@ -424,11 +424,11 @@ function generatePlaceholder(type, id) {
  */
 function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   let results = database.objects('Address');
-  if (typeof line1 === 'string') results = results.filtered('line1 = $0', line1);
-  if (typeof line2 === 'string') results = results.filtered('line2 = $0', line2);
-  if (typeof line3 === 'string') results = results.filtered('line3 = $0', line3);
-  if (typeof line4 === 'string') results = results.filtered('line4 = $0', line4);
-  if (typeof zipCode === 'string') results = results.filtered('zipCode = $0', zipCode);
+  if (typeof line1 === 'string') results = results.filtered('line1 == $0', line1);
+  if (typeof line2 === 'string') results = results.filtered('line2 == $0', line2);
+  if (typeof line3 === 'string') results = results.filtered('line3 == $0', line3);
+  if (typeof line4 === 'string') results = results.filtered('line4 == $0', line4);
+  if (typeof zipCode === 'string') results = results.filtered('zipCode == $0', zipCode);
   if (results.length > 0) return results[0];
   const address = { id: generateUUID() };
   if (typeof line1 === 'string') address.line1 = line1;
