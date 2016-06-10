@@ -22,6 +22,9 @@ const BATCH_SIZE = 20; // Number of records to sync at one time
  * Provides core synchronization functionality, initilising the database with an
  * initial full sync, pushing, and pulling (any regular scheduling of synchronization
  * must be coordinated externally)
+ * @param  {Realm}             database       The local database
+ * @param  {SyncAuthenticator} authenticator  Provides authentication with the sync server
+ * @param  {Settings}          settings       Access to locally stored settings
  */
 export class Synchronizer {
 
