@@ -92,6 +92,7 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   async synchronize() {
+    if (this.state.syncState === SYNC_STATES.SYNCING) return; // If already syncing, skip
     try {
       this.setState({ syncState: SYNC_STATES.SYNCING });
       await this.synchronizer.synchronize();

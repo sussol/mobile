@@ -12,7 +12,7 @@ const recordTypesSynced = [
 
 /**
  * Maintains the queue of records to be synced: listens to database changes,
- * queues sync records, provides them when asked, and removes them when they allRecords
+ * queues sync records, provides them when asked, and removes them when marked as
  * used. First changed first out, i.e. the oldest changes are synced first.
  */
 export class SyncQueue {
@@ -104,8 +104,9 @@ export class SyncQueue {
    * @return {none}
    */
   use(records) {
-    records.forEach((record) => {
-      this.database.write(() => {
+    this.database.write(() => {
+      records.forEach((record) => {
+        if (!record.isValid()) return; // Already deleted
         this.database.delete(record);
       });
     });

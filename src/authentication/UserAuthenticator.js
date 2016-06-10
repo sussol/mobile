@@ -41,7 +41,7 @@ export class UserAuthenticator {
     const passwordHash = hashPassword(password);
 
     // Get the cached user from the database, if they exist
-    const user = this.database.objects('User').filtered(`username = "${username}"`)[0];
+    const user = this.database.objects('User').filtered('username == $0', username)[0];
 
     // Get the HTTP endpoint to authenticate against
     const serverURL = this.settings.get(SYNC_URL);

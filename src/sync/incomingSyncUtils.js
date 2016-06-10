@@ -19,22 +19,10 @@ import { generateUUID } from '../database';
  * @return {none}
  */
 export function integrateIncomingRecord(database, recordType, record) {
-  // All variables used in the switch statement need to be declared prior
   let internalRecord;
-  let item;
-  let itemLine;
-  let masterList;
-  let name;
-  let otherParty;
-  let requisition;
-  let requisitionLine;
-  let stocktake;
-  let stocktakeLine;
-  let transaction;
-  let transactionLine;
   const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   switch (internalType) {
-    case 'Item':
+    case 'Item':  {
       internalRecord = {
         id: record.ID,
         category: getObject(database, 'ItemCategory', record.category_ID),
@@ -47,22 +35,25 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       database.update(internalType, internalRecord);
       break;
-    case 'ItemCategory':
+    }
+    case 'ItemCategory': {
       internalRecord = {
         id: record.ID,
         name: record.Description,
       };
       database.update(internalType, internalRecord);
       break;
-    case 'ItemDepartment':
+    }
+    case 'ItemDepartment': {
       internalRecord = {
         id: record.ID,
         name: record.department,
       };
       database.update(internalType, internalRecord);
       break;
-    case 'ItemLine':
-      item = getObject(database, 'Item', record.item_ID);
+    }
+    case 'ItemLine': {
+      const item = getObject(database, 'Item', record.item_ID);
       internalRecord = {
         id: record.ID,
         item: item,
@@ -75,16 +66,18 @@ export function integrateIncomingRecord(database, recordType, record) {
         sellPrice: parseNumber(record.sell_price),
         supplier: getObject(database, 'Name', record.name_ID),
       };
-      itemLine = database.update(internalType, internalRecord);
+      const itemLine = database.update(internalType, internalRecord);
       item.lines.push(itemLine);
       database.update(internalType, internalRecord);
       break;
-    case 'MasterListNameJoin':
-      name = getObject(database, 'Name', record.name_ID);
-      masterList = getObject(database, 'MasterList', record.master_group_ID);
+    }
+    case 'MasterListNameJoin': {
+      const name = getObject(database, 'Name', record.name_ID);
+      const masterList = getObject(database, 'MasterList', record.master_group_ID);
       name.masterList = masterList;
       break;
-    case 'MasterList':
+    }
+    case 'MasterList': {
       internalRecord = {
         id: record.ID,
         name: record.description,
@@ -92,7 +85,8 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       database.update(internalType, internalRecord);
       break;
-    case 'MasterListLine':
+    }
+    case 'MasterListLine': {
       internalRecord = {
         id: record.ID,
         item: getObject(database, 'Item', record.item_ID),
@@ -100,7 +94,8 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       database.update(internalType, internalRecord);
       break;
-    case 'Name':
+    }
+    case 'Name': {
       internalRecord = {
         id: record.ID,
         name: record.name,
@@ -117,7 +112,8 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       database.update(internalType, internalRecord);
       break;
-    case 'Requisition':
+    }
+    case 'Requisition': {
       internalRecord = {
         id: record.ID,
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
@@ -129,8 +125,9 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       database.update(internalType, internalRecord);
       break;
-    case 'RequisitionLine':
-      requisition = getObject(database, 'Requisition', record.requisition_ID);
+    }
+    case 'RequisitionLine': {
+      const requisition = getObject(database, 'Requisition', record.requisition_ID);
       internalRecord = {
         id: record.ID,
         requisition: requisition,
@@ -142,10 +139,11 @@ export function integrateIncomingRecord(database, recordType, record) {
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };
-      requisitionLine = database.update(internalType, internalRecord);
+      const requisitionLine = database.update(internalType, internalRecord);
       requisition.lines.push(requisitionLine);
       break;
-    case 'Stocktake':
+    }
+    case 'Stocktake': {
       internalRecord = {
         id: record.ID,
         name: record.Description,
@@ -161,8 +159,9 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       database.update(internalType, internalRecord);
       break;
-    case 'StocktakeLine':
-      stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
+    }
+    case 'StocktakeLine': {
+      const stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
       internalRecord = {
         id: record.ID,
         stocktake: stocktake,
@@ -176,11 +175,12 @@ export function integrateIncomingRecord(database, recordType, record) {
         countedQuantity: parseNumber(record.stock_take_qty),
         sortIndex: parseNumber(record.line_number),
       };
-      stocktakeLine = database.update(internalType, internalRecord);
+      const stocktakeLine = database.update(internalType, internalRecord);
       stocktake.lines.push(stocktakeLine);
       break;
-    case 'Transaction':
-      otherParty = getObject(database, 'Name', record.name_ID);
+    }
+    case 'Transaction': {
+      const otherParty = getObject(database, 'Name', record.name_ID);
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
@@ -194,10 +194,11 @@ export function integrateIncomingRecord(database, recordType, record) {
         theirRef: record.their_ref,
         category: getObject(database, 'TransactionCategory', record.category_ID),
       };
-      transaction = database.update(internalType, internalRecord);
+      const transaction = database.update(internalType, internalRecord);
       otherParty.transactions.push(transaction);
       break;
-    case 'TransactionCategory':
+    }
+    case 'TransactionCategory': {
       internalRecord = {
         id: record.ID,
         name: record.category,
@@ -206,8 +207,9 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       database.update(internalType, internalRecord);
       break;
-    case 'TransactionLine':
-      transaction = getObject(database, 'Transaction', record.transaction_ID);
+    }
+    case 'TransactionLine': {
+      const transaction = getObject(database, 'Transaction', record.transaction_ID);
       internalRecord = {
         id: record.ID,
         itemId: record.item_ID,
@@ -224,9 +226,10 @@ export function integrateIncomingRecord(database, recordType, record) {
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
       };
-      transactionLine = database.update(internalType, internalRecord);
+      const transactionLine = database.update(internalType, internalRecord);
       transaction.lines.push(transactionLine);
       break;
+    }
     default:
       break; // Silently ignore record types we don't want to sync into mobile
   }
@@ -421,11 +424,11 @@ function generatePlaceholder(type, id) {
  */
 function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   let results = database.objects('Address');
-  if (typeof line1 === 'string') results = results.filtered('line1 = $0', line1);
-  if (typeof line2 === 'string') results = results.filtered('line2 = $0', line2);
-  if (typeof line3 === 'string') results = results.filtered('line3 = $0', line3);
-  if (typeof line4 === 'string') results = results.filtered('line4 = $0', line4);
-  if (typeof zipCode === 'string') results = results.filtered('zipCode = $0', zipCode);
+  if (typeof line1 === 'string') results = results.filtered('line1 == $0', line1);
+  if (typeof line2 === 'string') results = results.filtered('line2 == $0', line2);
+  if (typeof line3 === 'string') results = results.filtered('line3 == $0', line3);
+  if (typeof line4 === 'string') results = results.filtered('line4 == $0', line4);
+  if (typeof zipCode === 'string') results = results.filtered('zipCode == $0', zipCode);
   if (results.length > 0) return results[0];
   const address = { id: generateUUID() };
   if (typeof line1 === 'string') address.line1 = line1;

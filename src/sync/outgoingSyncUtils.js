@@ -29,20 +29,24 @@ const {
  * @return {object}                     The generated json object, ready to sync
  */
 export function generateSyncJson(database, settings, syncOutRecord) {
-  if (!syncOutRecord.recordType || !syncOutRecord.id) throw new Error('Malformed sync out record');
+  if (!syncOutRecord.isValid()) throw new Error('Attempting to sync a missing sync out record');
+  if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
+    throw new Error('Malformed sync out record');
+  }
   const recordType = syncOutRecord.recordType;
 
   let syncData;
+  const recordId = syncOutRecord.recordId;
   if (syncOutRecord.changeType === 'delete') {
     // If record has been deleted, just sync up the ID
-    syncData = { ID: syncOutRecord.recordId };
+    syncData = { ID: recordId };
   } else {
     // Get the record the syncOutRecord refers to from the database
-    const recordResults = database.objects(recordType, `id == ${syncOutRecord.id}`);
+    const recordResults = database.objects(recordType, `id == ${recordId}`);
     if (!recordResults || recordResults.length === 0) { // No such record
-      throw new Error(`${syncOutRecord.type} with id = ${syncOutRecord.id} missing`);
+      throw new Error(`${syncOutRecord.type} with id = ${recordId} missing`);
     } else if (recordResults.length > 1) { // Duplicate records
-      throw new Error(`Multiple ${syncOutRecord.type} records with id = ${syncOutRecord.id}`);
+      throw new Error(`Multiple ${syncOutRecord.type} records with id = ${recordId}`);
     }
     const record = recordResults[0];
 
@@ -55,6 +59,7 @@ export function generateSyncJson(database, settings, syncOutRecord) {
   const syncJson = {
     SyncID: syncOutRecord.id,
     RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
+    RecordID: recordId,
     SyncType: SYNC_TYPES.translate(syncOutRecord.changeType, INTERNAL_TO_EXTERNAL),
     StoreID: settings.get(THIS_STORE_ID),
     Data: syncData,
@@ -71,12 +76,8 @@ export function generateSyncJson(database, settings, syncOutRecord) {
  * @return {object}                  The data to sync (in the form of upstream record)
  */
 function generateSyncData(settings, recordType, record) {
-  let getNumPacks;
-  let totalPrice;
-  let transaction;
-  let itemLine;
   switch (recordType) {
-    case 'ItemLine':
+    case 'ItemLine': {
       return {
         ID: record.id,
         store_ID: settings.get(THIS_STORE_ID),
@@ -92,7 +93,8 @@ function generateSyncData(settings, recordType, record) {
         total_cost: record.costPrice * record.numberOfPacks,
         name_ID: record.supplier.id,
       };
-    case 'Requisition':
+    }
+    case 'Requisition': {
       return {
         ID: record.id,
         date_entered: record.entryDate.toISOString(),
@@ -104,7 +106,8 @@ function generateSyncData(settings, recordType, record) {
         serial_number: record.serialNumber,
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
       };
-    case 'RequisitionLine':
+    }
+    case 'RequisitionLine': {
       return {
         ID: record.id,
         requisition_ID: record.requisition.id,
@@ -116,7 +119,8 @@ function generateSyncData(settings, recordType, record) {
         Cust_stock_order: record.suggestedQuantity,
         comment: record.comment,
       };
-    case 'Stocktake':
+    }
+    case 'Stocktake': {
       return {
         ID: record.id,
         stock_take_date: record.stocktakeDate.toISOString(),
@@ -131,9 +135,10 @@ function generateSyncData(settings, recordType, record) {
         stock_take_created_date: record.createdDate.toISOString(),
         serial_number: record.serialNumber,
       };
-    case 'StocktakeLine':
-      itemLine = record.itemLine;
-      getNumPacks = (numPieces, packSize) => (packSize === 0 ? 0 : numPieces / packSize);
+    }
+    case 'StocktakeLine': {
+      const itemLine = record.itemLine;
+      const getNumPacks = (numPieces, packSize) => (packSize === 0 ? 0 : numPieces / packSize);
       return {
         ID: record.id,
         stock_take_ID: record.Stocktake.id,
@@ -148,8 +153,9 @@ function generateSyncData(settings, recordType, record) {
         Batch: itemLine.batch,
         item_ID: itemLine.item.id,
       };
-    case 'Transaction':
-      totalPrice = getTransactionTotalPrice(record);
+    }
+    case 'Transaction': {
+      const totalPrice = getTransactionTotalPrice(record);
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
@@ -167,9 +173,10 @@ function generateSyncData(settings, recordType, record) {
         confirm_time: record.confirmDate && record.confirmDate.toTimeString().substring(0, 8),
         store_ID: settings.get(THIS_STORE_ID),
       };
-    case 'TransactionLine':
-      itemLine = record.itemLine;
-      transaction = record.transaction;
+    }
+    case 'TransactionLine': {
+      const itemLine = record.itemLine;
+      const transaction = record.transaction;
       return {
         ID: record.id,
         transaction_ID: record.transaction.id,
@@ -188,6 +195,7 @@ function generateSyncData(settings, recordType, record) {
         is_from_inventory_adjustment: transaction.otherParty.type === 'inventory_adjustment',
         type: TRANSACTION_LINE_TYPES.translate(record, INTERNAL_TO_EXTERNAL),
       };
+    }
     default:
       throw new Error('Sync out record type not supported.');
   }
