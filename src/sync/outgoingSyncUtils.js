@@ -29,20 +29,24 @@ const {
  * @return {object}                     The generated json object, ready to sync
  */
 export function generateSyncJson(database, settings, syncOutRecord) {
-  if (!syncOutRecord.recordType || !syncOutRecord.id) throw new Error('Malformed sync out record');
+  if (!syncOutRecord.isValid()) throw new Error('Attempting to sync a missing sync out record');
+  if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
+    throw new Error('Malformed sync out record');
+  }
   const recordType = syncOutRecord.recordType;
 
   let syncData;
+  const recordId = syncOutRecord.recordId;
   if (syncOutRecord.changeType === 'delete') {
     // If record has been deleted, just sync up the ID
-    syncData = { ID: syncOutRecord.recordId };
+    syncData = { ID: recordId };
   } else {
     // Get the record the syncOutRecord refers to from the database
-    const recordResults = database.objects(recordType, `id == ${syncOutRecord.id}`);
+    const recordResults = database.objects(recordType, `id == ${recordId}`);
     if (!recordResults || recordResults.length === 0) { // No such record
-      throw new Error(`${syncOutRecord.type} with id = ${syncOutRecord.id} missing`);
+      throw new Error(`${syncOutRecord.type} with id = ${recordId} missing`);
     } else if (recordResults.length > 1) { // Duplicate records
-      throw new Error(`Multiple ${syncOutRecord.type} records with id = ${syncOutRecord.id}`);
+      throw new Error(`Multiple ${syncOutRecord.type} records with id = ${recordId}`);
     }
     const record = recordResults[0];
 
@@ -55,6 +59,7 @@ export function generateSyncJson(database, settings, syncOutRecord) {
   const syncJson = {
     SyncID: syncOutRecord.id,
     RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
+    RecordID: recordId,
     SyncType: SYNC_TYPES.translate(syncOutRecord.changeType, INTERNAL_TO_EXTERNAL),
     StoreID: settings.get(THIS_STORE_ID),
     Data: syncData,
