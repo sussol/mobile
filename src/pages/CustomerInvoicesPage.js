@@ -6,8 +6,8 @@
  */
 
 
-import React, {
-  Component,
+import React from 'react';
+import {
   StyleSheet,
   View,
 } from 'react-native';
@@ -37,7 +37,7 @@ import globalStyles from '../globalStyles';
 * @state  {boolean}             isAscending   Direction sortBy should sort
 *                                             (ascending/descending:true/false).
 */
-export class CustomerInvoicesPage extends Component {
+export class CustomerInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({

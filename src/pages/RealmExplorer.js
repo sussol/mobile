@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   View,
 } from 'react-native';
 

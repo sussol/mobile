@@ -3,7 +3,8 @@ jest.unmock('enzyme');
 jest.unmock('sinon');
 
 import { Row } from '../Row';
-import React, { View, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 

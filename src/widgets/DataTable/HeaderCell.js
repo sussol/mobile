@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   StyleSheet,
   Text,
   View,
@@ -61,8 +62,8 @@ export function HeaderCell(props) {
 HeaderCell.propTypes = {
   isSelected: React.PropTypes.bool,
   isAscending: React.PropTypes.bool,
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,

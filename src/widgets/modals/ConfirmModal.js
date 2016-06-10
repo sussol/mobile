@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Text,
   StyleSheet,
   View,
@@ -43,8 +44,8 @@ export function ConfirmModal(props) {
 }
 
 ConfirmModal.propTypes = {
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
   isOpen: React.PropTypes.bool.isRequired,
   questionText: React.PropTypes.string.isRequired,
   onCancel: React.PropTypes.func.isRequired,

@@ -5,7 +5,8 @@ jest.unmock('sinon');
 import { EditableCell } from '../EditableCell';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import React, {
+import React from 'react';
+import {
   TextInput,
   View,
 } from 'react-native';
