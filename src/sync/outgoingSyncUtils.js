@@ -34,19 +34,19 @@ export function generateSyncJson(database, settings, syncOutRecord) {
     throw new Error('Malformed sync out record');
   }
   const recordType = syncOutRecord.recordType;
+  const recordId = syncOutRecord.recordId;
 
   let syncData;
-  const recordId = syncOutRecord.recordId;
   if (syncOutRecord.changeType === 'delete') {
     // If record has been deleted, just sync up the ID
     syncData = { ID: recordId };
   } else {
     // Get the record the syncOutRecord refers to from the database
-    const recordResults = database.objects(recordType, `id == ${recordId}`);
+    const recordResults = database.objects(recordType).filtered('id == $0', recordId);
     if (!recordResults || recordResults.length === 0) { // No such record
-      throw new Error(`${syncOutRecord.type} with id = ${recordId} missing`);
+      throw new Error(`${recordType} with id = ${recordId} missing`);
     } else if (recordResults.length > 1) { // Duplicate records
-      throw new Error(`Multiple ${syncOutRecord.type} records with id = ${recordId}`);
+      throw new Error(`Multiple ${recordType} records with id = ${recordId}`);
     }
     const record = recordResults[0];
 

@@ -145,9 +145,11 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   renderSyncState() {
+    let syncText = this.state.syncState;
+    if (syncText === SYNC_STATES.ERROR) syncText = this.state.syncError;
     return (
       <Text>
-        {this.state.syncState}
+        {syncText}
       </Text>
     );
   }

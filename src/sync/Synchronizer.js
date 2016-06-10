@@ -129,7 +129,12 @@ export class Synchronizer {
         },
         body: JSON.stringify(records),
       });
-    const responseJson = await response.json();
+    let responseJson;
+    try {
+      responseJson = await response.json();
+    } catch (error) {
+      throw new Error('Unexpected response from sync server');
+    }
     if (responseJson.error.length > 0) throw new Error('Server rejected pushed records');
   }
 
