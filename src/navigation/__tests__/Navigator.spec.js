@@ -14,7 +14,7 @@
 //
 // import { Navigator } from '../Navigator';
 // import React from 'react';
-import {
+// import {
 //   TouchableHighlight,
 // } from 'react-native';
 // import { shallow, mount, render } from 'enzyme';
