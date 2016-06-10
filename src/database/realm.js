@@ -258,4 +258,4 @@ const schema =
     UserSchema,
   ];
 
-export default new Realm({ schema: schema, schemaVersion: 6 });
+export default new Realm({ schema: schema, schemaVersion: 1 });
