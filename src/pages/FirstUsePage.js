@@ -23,10 +23,11 @@ export class FirstUsePage extends React.Component {
 
   async onPressConnect() {
     try {
-      await this.props.synchronizer.initialise(this.state.serverURL,
-                                               this.state.syncSiteName,
-                                               this.state.syncSitePassword,
-                                               this.setProgress);
+      await this.props.synchronizer.initialise(
+        this.state.serverURL,
+        this.state.syncSiteName,
+        this.state.syncSitePassword,
+        this.setProgress);
       this.props.onInitialised();
     } catch (error) {
       this.setProgress(error.message);
