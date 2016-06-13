@@ -32,6 +32,7 @@ export function MenuPage(props) {
         <View style={localStyles.container}>
           <Image
             style={localStyles.image}
+            resizeMode="contain"
             source={require('../images/menu_people.png')}
           />
           <Button
@@ -51,6 +52,7 @@ export function MenuPage(props) {
         <View style={localStyles.container}>
           <Image
             style={localStyles.image}
+            resizeMode="contain"
             source={require('../images/menu_truck.png')}
           />
           <Button
@@ -70,6 +72,7 @@ export function MenuPage(props) {
         <View style={localStyles.container}>
           <Image
             style={localStyles.image}
+            resizeMode="contain"
             source={require('../images/menu_pc_clipboard.png')}
           />
           <Button
