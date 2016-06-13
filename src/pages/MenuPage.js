@@ -126,11 +126,12 @@ const localStyles = StyleSheet.create({
   container: {
     alignSelf: 'stretch',
     flex: 1,
+    paddingTop: 30,
     paddingHorizontal: 30,
     marginHorizontal: 20,
     borderColor: SHADOW_BORDER,
     borderWidth: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: 'white',
   },
