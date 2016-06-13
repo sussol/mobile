@@ -27,8 +27,8 @@ import globalStyles, {
 
 export function MenuPage(props) {
   return (
-    <View style={[globalStyles.pageContentContainer, { padding: 0 }]}>
-      <View style={[globalStyles.horizontalContainer, { flex: 9 }]}>
+    <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
+      <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
         <View style={localStyles.container}>
           <Image
             style={localStyles.image}
@@ -117,6 +117,12 @@ MenuPage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
+  pageContentContainer: {
+    padding: 0,
+  },
+  horizontalContainer: {
+    flex: 9,
+  },
   container: {
     alignSelf: 'stretch',
     flex: 1,
