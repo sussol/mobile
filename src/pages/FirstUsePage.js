@@ -1,4 +1,5 @@
-import React, {
+import React from 'react';
+import {
   Text,
   TextInput,
   View,
@@ -7,32 +8,35 @@ import React, {
 import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 
-export default class FirstUsePage extends React.Component {
+export class FirstUsePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       progress: 'uninitialised', // uninitialised, initialising, initialised, error
-      error: '',
+      progressMessage: '',
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
     };
-  }
-
-  componentWillMount() {
     this.onPressConnect = this.onPressConnect.bind(this);
+    this.setProgress = this.setProgress.bind(this);
   }
 
-  onPressConnect() {
-    this.props.synchronizer.initialise(this.state.serverURL,
-                                       this.state.syncSiteName,
-                                       this.state.syncSitePassword,
-                                       (error) => this.setState({ error: error }))
-      .then(this.props.onInitialised,
-      (error) => {
-        this.setState({ error: error });
-      }
-    );
+  async onPressConnect() {
+    try {
+      await this.props.synchronizer.initialise(
+        this.state.serverURL,
+        this.state.syncSiteName,
+        this.state.syncSitePassword,
+        this.setProgress);
+      this.props.onInitialised();
+    } catch (error) {
+      this.setProgress(error.message);
+    }
+  }
+
+  setProgress(progressMessage) {
+    this.setState({ progressMessage: progressMessage });
   }
 
   render() {
@@ -58,10 +62,12 @@ export default class FirstUsePage extends React.Component {
           onChangeText={ (text) => { this.setState({ syncSitePassword: text }); }}
         />
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="Connect to mSupply"
           onPress={this.onPressConnect}
         />
-        <Text>{this.state.error}</Text>
+        <Text>{this.state.progressMessage}</Text>
       </View>
     );
   }

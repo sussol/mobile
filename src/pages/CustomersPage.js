@@ -5,23 +5,28 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Text,
   View,
 } from 'react-native';
 
 import globalStyles from '../globalStyles';
-import Button from '../widgets/Button';
+import { Button } from '../widgets';
 
-export default function CustomersPage(props) {
+export function CustomersPage(props) {
   return (
     <View style={props.style}>
       <Text>Customers go here.</Text>
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="Specific Customer"
           onPress={() => props.navigateTo('customer', 'Customer Name')}
         />
         <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
           text="New Customer Invoice"
           onPress={() => props.navigateTo('customerInvoice', 'Invoice Num')}
         />

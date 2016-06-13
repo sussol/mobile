@@ -5,16 +5,18 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Text,
   StyleSheet,
   View,
   Dimensions,
 } from 'react-native';
-import Button from '../Button';
+import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
+import globalStyles from '../../globalStyles';
 
-export default function ConfirmModal(props) {
+export function ConfirmModal(props) {
   const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
     <Modal {...modalProps}
@@ -24,16 +26,26 @@ export default function ConfirmModal(props) {
         {questionText}
       </Text>
       <View style={defaultStyles.buttonContainer}>
-        <Button text={'Cancel'} onPress={onCancel} />
-        <Button text={'Confirm'} onPress={onConfirm} />
+        <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
+          text={'Cancel'}
+          onPress={onCancel}
+        />
+        <Button
+          style={globalStyles.button}
+          textStyle={globalStyles.buttonText}
+          text={'Confirm'}
+          onPress={onConfirm}
+        />
       </View>
     </Modal>
    );
 }
 
 ConfirmModal.propTypes = {
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
   isOpen: React.PropTypes.bool.isRequired,
   questionText: React.PropTypes.string.isRequired,
   onCancel: React.PropTypes.func.isRequired,

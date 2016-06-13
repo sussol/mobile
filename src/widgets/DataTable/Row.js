@@ -5,14 +5,14 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
-  Component,
+import React from 'react';
+import {
   View,
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
 
-export default class Row extends Component {
+export class Row extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -28,25 +28,46 @@ export default class Row extends Component {
   }
 
   render() {
-    const { style, children, renderExpansion, ...touchableOpacityProps } = this.props;
+    const { style, children, renderExpansion, onPress, ...touchableOpacityProps } = this.props;
+    if (renderExpansion) {
+      return (
+        <TouchableOpacity
+          {...touchableOpacityProps}
+          style={[defaultStyles.row, style]}
+          onPress={this.expandRow}
+        >
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            {children}
+          </View>
+          {this.state.expanded && renderExpansion()}
+        </TouchableOpacity>
+      );
+    }
+    if (onPress) {
+      return (
+        <TouchableOpacity
+          {...touchableOpacityProps}
+          style={[defaultStyles.row, style]}
+          onPress={onPress}
+        >
+          <View style={{ flex: 1, flexDirection: 'row' }}>
+            {children}
+          </View>
+        </TouchableOpacity>
+      );
+    }
     return (
-      <TouchableOpacity
-        {...touchableOpacityProps}
-        style={[defaultStyles.row, style]}
-        onPress={typeof renderExpansion === 'function' && this.expandRow}
-      >
-        <View style={{ flex: 1, flexDirection: 'row' }}>
-          {children}
-        </View>
-        {this.state.expanded && renderExpansion()}
-      </TouchableOpacity>
+      <View style={[defaultStyles.row, { flexDirection: 'row' }, style]}>
+        {children}
+      </View>
     );
   }
 }
 
 Row.propTypes = {
-  style: React.View.propTypes.style,
+  style: View.propTypes.style,
   children: React.PropTypes.any,
+  onPress: React.PropTypes.func,
   renderExpansion: React.PropTypes.func,
 };
 

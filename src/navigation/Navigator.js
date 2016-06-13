@@ -5,9 +5,9 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   BackAndroid,
-  Component,
   NavigationExperimental,
   StyleSheet,
   View,
@@ -17,14 +17,114 @@ const {
   CardStack: NavigationCardStack,
   Header: NavigationHeader,
   StateUtils: NavigationStateUtils,
-  RootContainer: NavigationRootContainer,
 } = NavigationExperimental;
 
-const BACK_ACTION = NavigationRootContainer.getBackAction().type;
+const BACK_ACTION = 'BackAction';
 const PUSH_ACTION = 'push';
-const INITIAL_ACTION = 'RootContainerInitialAction';
+const INITIAL_ACTION = 'initial';
 
-const NavigationReducer = (currentState, action) => {
+
+export class Navigator extends React.Component {
+
+  constructor(props, context) {
+    super(props, context);
+    this.state = {
+      navigationState: getNewNavState(undefined, { type: INITIAL_ACTION }),
+    };
+    this.renderNavigationBar = this.renderNavigationBar.bind(this);
+    this.renderScene = this.renderScene.bind(this);
+    this.renderTitleComponent = this.renderTitleComponent.bind(this);
+    this.handleNavigation = this.handleNavigation.bind(this);
+  }
+
+  componentWillMount() {
+    BackAndroid.addEventListener('hardwareBackPress', () =>
+      this.handleNavigation({ type: BACK_ACTION })
+    );
+  }
+
+  componentWillUnmount() {
+    BackAndroid.removeEventListener('hardwareBackPress');
+  }
+
+  handleNavigation(action) {
+    if (!action) {
+      return false;
+    }
+    const newState = getNewNavState(this.state.navigationState, action);
+    if (newState === this.state.navigationState) {
+      return false;
+    }
+    this.setState({
+      navigationState: newState,
+    });
+    return true;
+  }
+
+  renderNavigationBar(props) {
+    return (
+      <NavigationHeader
+        {...props}
+        navigationProps={props}
+        renderTitleComponent={this.renderTitleComponent}
+        renderRightComponent={this.props.renderRightComponent}
+      />
+    );
+  }
+
+  renderScene(props) {
+    return (
+      <View style={[styles.navBarOffset, styles.main, props.style]}>
+        {this.props.renderScene(props)}
+      </View>
+    );
+  }
+
+  renderTitleComponent(props) {
+    if (!props.scene.navigationState.title) return null;
+    return (
+      <NavigationHeader.Title>
+        {props.scene.navigationState.title}
+      </NavigationHeader.Title>
+    );
+  }
+
+  render() {
+    return (
+      <NavigationCardStack
+        direction={'horizontal'}
+        navigationState={this.state.navigationState}
+        onNavigate={this.handleNavigation}
+        renderScene={this.renderScene}
+        renderOverlay={this.renderNavigationBar}
+      />
+    );
+  }
+}
+
+Navigator.propTypes = {
+  renderScene: React.PropTypes.func.isRequired,
+  renderRightComponent: React.PropTypes.func,
+};
+
+const styles = StyleSheet.create({
+  main: {
+    flex: 1,
+  },
+  navBarOffset: {
+    marginTop: NavigationHeader.HEIGHT,
+  },
+});
+
+/**
+ * Given the current navigation state, and an action to perform, will return the
+ * new navigation state. Essentially a navigation reducer.
+ * @param  {object} currentState The current navigation state
+ * @param  {object} action       A navigation action to perform, with a type and
+ *                               optionally a key and title
+ * @return {object}              The new navigation state
+ */
+function getNewNavState(currentState, action) {
   switch (action.type) {
     case INITIAL_ACTION:
       return {
@@ -44,85 +144,4 @@ const NavigationReducer = (currentState, action) => {
     default:
       return currentState;
   }
-};
-
-export default class Navigator extends Component {
-
-  componentWillMount() {
-    this.renderNavigation = this.renderNavigation.bind(this);
-    this.renderNavigationBar = this.renderNavigationBar.bind(this);
-    this.renderScene = this.renderScene.bind(this);
-    this.renderTitleComponent = this.renderTitleComponent.bind(this);
-    BackAndroid.addEventListener('hardwareBackPress', () =>
-      this.navRootContainer &&
-      this.navRootContainer.handleNavigation({ type: BACK_ACTION })
-    );
-  }
-
-  componentWillUnmount() {
-    BackAndroid.removeEventListener('hardwareBackPress');
-  }
-
-  renderNavigation(navigationState, onNavigate) {
-    return (
-      <NavigationCardStack
-        navigationState={navigationState}
-        onNavigate={onNavigate}
-        renderScene={this.renderScene}
-        renderOverlay={this.renderNavigationBar}
-      />
-    );
-  }
-
-  renderNavigationBar(props) {
-    return (
-      <NavigationHeader
-        {...props}
-        navigationProps={props}
-        renderTitleComponent={this.renderTitleComponent}
-        renderRightComponent={this.props.renderRightComponent}
-      />
-    );
-  }
-
-  renderScene(props) {
-    return (
-      <View style={[styles.navBarOffset, styles.main]}>
-        {this.props.renderScene(props)}
-      </View>
-    );
-  }
-
-  renderTitleComponent(props) {
-    if (!props.scene.navigationState.title) return null;
-    return (
-      <NavigationHeader.Title>
-        {props.scene.navigationState.title}
-      </NavigationHeader.Title>
-    );
-  }
-
-  render() {
-    return (
-      <NavigationRootContainer
-        reducer={NavigationReducer}
-        ref={navRootContainer => { this.navRootContainer = navRootContainer; }}
-        renderNavigation={this.renderNavigation}
-      />
-    );
-  }
 }
-
-Navigator.propTypes = {
-  renderScene: React.PropTypes.func.isRequired,
-  renderRightComponent: React.PropTypes.func,
-};
-
-const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-  },
-  navBarOffset: {
-    marginTop: NavigationHeader.HEIGHT,
-  },
-});

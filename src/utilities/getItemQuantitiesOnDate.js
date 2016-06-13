@@ -5,12 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import getItemQuantity from './getItemQuantity';
-
-
-/**
- * items: Realm.Results, date: Date, database: Realm
- */
+import { getItemQuantity } from './getItemQuantity';
 
  /**
  * Get the total quantity of provided items on a specifed date. Returns empty map if
@@ -21,7 +16,7 @@ import getItemQuantity from './getItemQuantity';
  *                                          The same database the items are from.
  * @return {Map([item.id: totalQuantity])}
  */
-export default function getItemQuantitiesOnDate(items, date, database) {
+export function getItemQuantitiesOnDate(items, date, database) {
   const itemQuantities = new Map();
   items.forEach((item) => {
     itemQuantities.set(item.id, getItemQuantity(item));

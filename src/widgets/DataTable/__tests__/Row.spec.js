@@ -2,17 +2,18 @@ jest.unmock('../Row');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import Row from '../Row';
-import React, { View, TouchableOpacity } from 'react-native';
+import { Row } from '../Row';
+import React from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 
 describe('Row', () => {
-  it('renders a TouchableOpacity', () => {
+  it('renders a View', () => {
     const wrapper = shallow(
       <Row />
     );
-    expect(wrapper.find(TouchableOpacity).length).toBe(1);
+    expect(wrapper.find(View).length).toBe(1);
   });
 
   it('renders children', () => {
@@ -45,7 +46,7 @@ describe('Row', () => {
     expect(wrapper.state('expanded')).toEqual(false);
   });
 
-  it('Calls given expansion func when pressed', () => {
+  it('Calls given expansion func when pressed and given renderExpansion prop', () => {
     const renderExpansion = sinon.spy(() => <Text>foo</Text>);
     const wrapper = shallow(
       <Row renderExpansion={() => renderExpansion()} />
@@ -54,5 +55,14 @@ describe('Row', () => {
     wrapper.find(TouchableOpacity).simulate('press');
     expect(renderExpansion.calledOnce).toBe(true, 'Button press');
     expect(wrapper.find(Text).length).toEqual(1);
+  });
+  it('Calls a given function callback when pressed and given onPress', () => {
+    const onBtnPress = sinon.spy();
+    const wrapper = shallow(<Row onPress={() => onBtnPress()} />);
+    expect(wrapper.find(TouchableOpacity).length).toBe(1);
+    expect(wrapper.state('expanded')).toEqual(false);
+    wrapper.find(TouchableOpacity).simulate('press');
+    expect(onBtnPress.calledOnce).toBe(true, 'Button press');
+    expect(wrapper.state('expanded')).toEqual(false);
   });
 });

@@ -5,12 +5,13 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   StyleSheet,
   View,
 } from 'react-native';
 
-export default function Header(props) {
+export function Header(props) {
   const { children, style, ...viewProps } = props;
   return (
     <View {...viewProps} style={[defaultStyles.header, style]}>
@@ -20,7 +21,7 @@ export default function Header(props) {
 }
 
 Header.propTypes = {
-  style: React.View.propTypes.style,
+  style: View.propTypes.style,
   children: React.PropTypes.any,
 };
 

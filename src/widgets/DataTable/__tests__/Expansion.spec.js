@@ -2,8 +2,9 @@ jest.unmock('../Expansion');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import Expansion from '../Expansion';
-import React, { View, TouchableOpacity } from 'react-native';
+import { Expansion } from '../Expansion';
+import React from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import sinon from 'sinon';
 import { shallow } from 'enzyme';
 

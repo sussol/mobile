@@ -22,32 +22,33 @@ const {
 *                              authentication
 * @param  {function} onFailure The function to call if there is an error, with
 *                              the errror message as a parameter
-* @return {none}
+* @return {object}             JSON formatted response object
 */
-export function authenticateAsync(authURL, username, password) {
-  return new Promise((resolve, reject) => {
-    if (username.length === 0 | password.length === 0) { // Missing username or password
-      reject(MISSING_CREDENTIALS);
-      return;
-    }
+export async function authenticateAsync(authURL, username, password) {
+  if (username.length === 0 || password.length === 0) { // Missing username or password
+    throw new Error(MISSING_CREDENTIALS);
+  }
 
-    fetch(authURL, {
+  let responseJson;
+  try {
+    const response = await fetch(authURL, {
       headers: {
-        Authorization: `Basic ${Base64.encode(`${username}:${password}`)}`,
+        Authorization: getAuthHeader(username, password),
       },
-    })
-    .then((response) => response.json())
-    .then((responseJson) => {
-      if (!responseJson.error) { // Valid
-        resolve(responseJson);
-      } else { // Username/password invalid
-        reject(INVALID_PASSWORD);
-      }
-    })
-    .catch(() => { // Error with connection
-      reject(CONNECTION_FAILURE);
     });
-  });
+    responseJson = await response.json();
+  } catch (error) {
+    throw new Error(CONNECTION_FAILURE);
+  }
+
+  if (responseJson.error) { // Username/password invalid
+    throw new Error(INVALID_PASSWORD);
+  }
+  return responseJson;
+}
+
+export function getAuthHeader(username, password) {
+  return `Basic ${Base64.encode(`${username}:${password}`)}`;
 }
 
 export function hashPassword(password) {

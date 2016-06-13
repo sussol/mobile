@@ -6,12 +6,14 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   StyleSheet,
   TouchableOpacity,
+  View,
 } from 'react-native';
 
-export default function TableButton(props) {
+export function TableButton(props) {
   const { style, onPress, children, ...touchableOpacityProps } = props;
   return (
     <TouchableOpacity
@@ -25,7 +27,7 @@ export default function TableButton(props) {
 }
 
 TableButton.propTypes = {
-  style: React.View.propTypes.style,
+  style: View.propTypes.style,
   onPress: React.PropTypes.func,
   children: React.PropTypes.any,
 };
@@ -33,6 +35,5 @@ TableButton.propTypes = {
 const defaultStyles = StyleSheet.create({
   tableButton: {
     flex: 1,
-    backgroundColor: 'green',
   },
 });

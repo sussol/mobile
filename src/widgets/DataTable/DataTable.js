@@ -6,14 +6,15 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   StyleSheet,
   View,
 } from 'react-native';
 
 import { ListView } from 'realm/react-native';
 
-export default function DataTable(props) {
+export function DataTable(props) {
   const {
     style,
     listViewStyle,
@@ -36,7 +37,7 @@ export default function DataTable(props) {
 }
 
 DataTable.propTypes = {
-  style: React.View.propTypes.style,
+  style: View.propTypes.style,
   listViewStyle: React.PropTypes.number,
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,

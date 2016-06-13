@@ -7,5 +7,6 @@
 "rules": {
         "no-use-before-define": "off",
         "object-shorthand": "off",
-        "strict": 0
+        "strict": 0,
+        "no-confusing-arrow": ["error", {"allowParens": true}],
         }

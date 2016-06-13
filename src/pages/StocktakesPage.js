@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Text,
   View,
 } from 'react-native';
@@ -13,15 +14,19 @@ import React, {
 import globalStyles from '../globalStyles';
 import { Button } from '../widgets';
 
-export default function StocktakesPage(props) {
+export function StocktakesPage(props) {
   return (
     <View style={props.style}>
       <Text>Stocktakes go here.</Text>
       <Button
+        style={globalStyles.button}
+        textStyle={globalStyles.buttonText}
         text="Edit"
         onPress={() => props.navigateTo('stocktakeEditor', 'Edit Stocktake')}
       />
       <Button
+        style={globalStyles.button}
+        textStyle={globalStyles.buttonText}
         text="New"
         onPress={() => props.navigateTo('stocktakeManager', 'Create Stocktake')}
       />

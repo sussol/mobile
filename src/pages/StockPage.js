@@ -5,11 +5,10 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
-  Component,
+import React from 'react';
+import {
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -24,9 +23,22 @@ import {
 
 import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
+import { SearchBar } from '../widgets/';
 import globalStyles from '../globalStyles';
 
-export default class StockPage extends Component {
+/**
+* Renders the page for displaying all Items in the DB.
+* @prop   {Realm}               database    App wide database.
+* @prop   {func}                navigateTo  CallBack for navigation stack.
+* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
+* @state  {Realm.Results}       items       Filtered to have only Item objects.
+* @state  {string}              searchTerm  Current term user has entered in the SearchBar.
+* @state  {string}              sortBy      The property of Item to sort by (isSelected
+*                                           by column press).
+* @state  {boolean}             isAscending Direction sortBy should sort
+*                                           (ascending/descending:true/false).
+*/
+export class StockPage extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
@@ -37,7 +49,7 @@ export default class StockPage extends Component {
       items: props.database.objects('Item'),
       searchTerm: '',
       sortBy: 'name',
-      reverseSort: false,
+      isAscending: true,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
@@ -60,17 +72,20 @@ export default class StockPage extends Component {
   }
 
   onColumnSort(sortBy) {
-    if (this.state.sortBy === sortBy) {
-      this.setState({ reverseSort: !this.state.reverseSort });
-    } else {
-      this.setState({ sortBy: sortBy });
+    if (this.state.sortBy === sortBy) { // changed column sort direction.
+      this.setState({ isAscending: !this.state.isAscending });
+    } else { // Changed sorting column.
+      this.setState({
+        sortBy: sortBy,
+        isAscending: true,
+      });
     }
     this.refreshData();
   }
 
   refreshData() {
-    const { items, sortBy, dataSource, reverseSort, searchTerm } = this.state;
-    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, reverseSort);
+    const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
+    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
@@ -78,22 +93,26 @@ export default class StockPage extends Component {
     return (
       <Header style={globalStyles.dataTableHeader}>
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
-          onPress={() => this.onColumnSort('code')}
+          style={globalStyles.dataTableHeaderCell}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[0]}
+          onPress={() => this.onColumnSort('code')}
+          isAscending={this.state.isAscending}
+          isSelected={this.state.sortBy === 'code'}
           text={'ITEM CODE'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          style={globalStyles.dataTableHeaderCell}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('name')}
+          isAscending={this.state.isAscending}
+          isSelected={this.state.sortBy === 'name'}
           text={'ITEM NAME'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableHeaderCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          style={[globalStyles.dataTableHeaderCell, localStyles.rightMostCell]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
           text={'STOCK ON HAND'}
         />
@@ -107,19 +126,19 @@ export default class StockPage extends Component {
         <View style={{ flex: COLUMN_WIDTHS[0] }} />
         <View style={{ flex: COLUMN_WIDTHS[1] + COLUMN_WIDTHS[2], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-            <Text style={[globalStyles.text, localStyles.text]}>
+            <Text style={globalStyles.text}>
               Category: {item.category.name}
             </Text>
-            <Text style={[globalStyles.text, localStyles.text]}>
+            <Text style={globalStyles.text}>
               Department: {item.department.name}
             </Text>
           </View>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
-            <Text style={[globalStyles.text, localStyles.text]}>
+            <Text style={globalStyles.text}>
               Number of batches: {item.lines.length}
             </Text>
-            <Text style={[globalStyles.text, localStyles.text]}>
-              Nearest expiry: value
+            <Text style={globalStyles.text}>
+              Nearest expiry: TODO: make function for this
             </Text>
           </View>
         </View>
@@ -132,21 +151,21 @@ export default class StockPage extends Component {
       <Row style={globalStyles.dataTableRow} renderExpansion={() => this.renderExpansion(item)}>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[0]}
         >
           {item.code}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
         >
           {item.name}
         </Cell>
         <Cell
           style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
-          textStyle={[globalStyles.text, localStyles.text]}
+          textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
         >
           {getItemQuantity(item)}
@@ -158,20 +177,20 @@ export default class StockPage extends Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={localStyles.horizontalContainer}>
-          <TextInput
-            style={globalStyles.searchBar}
-            onChange={(event) => this.onSearchChange(event)}
-            placeholder="Search"
+        <View style={globalStyles.container}>
+          <View style={globalStyles.horizontalContainer}>
+            <SearchBar
+              onChange={(event) => this.onSearchChange(event)}
+            />
+          </View>
+          <DataTable
+            style={globalStyles.dataTable}
+            listViewStyle={localStyles.listView}
+            dataSource={this.state.dataSource}
+            renderRow={this.renderRow}
+            renderHeader={this.renderHeader}
           />
         </View>
-        <DataTable
-          style={globalStyles.dataTable}
-          listViewStyle={globalStyles.container}
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          renderHeader={this.renderHeader}
-        />
       </View>
     );
   }
@@ -179,17 +198,12 @@ export default class StockPage extends Component {
 
 StockPage.propTypes = {
   database: React.PropTypes.object,
-  style: View.propTypes.style,
+  navigateTo: React.PropTypes.func.isRequired,
 };
 const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
-  horizontalContainer: {
-    flexDirection: 'row',
-  },
-  text: {
-    fontSize: 20,
-    marginLeft: 20,
-    textAlign: 'left',
+  listView: {
+    flex: 1,
   },
   rightMostCell: {
     borderRightWidth: 0,
