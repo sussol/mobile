@@ -6,8 +6,8 @@
  */
 
 
-import React, {
-  Component,
+import React from 'react';
+import {
   StyleSheet,
   View,
 } from 'react-native';
@@ -20,21 +20,24 @@ import {
   Row,
 } from '../widgets/DataTable';
 
+import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button, SearchBar } from '../widgets';
 import globalStyles from '../globalStyles';
 
 /**
 * Renders the page for displaying CustomerInvoices.
-* @prop {Realm} database   app wide database.
-* @prop {func}  navigateTo   callBack for navigation stack.
-* @state  {Realm} dataSource    app wide database (from prop).
-* @state  {Realm.Results} transactions    filtered to have only customer_invoice.
-* @state  {string}  searchTerm    current term user has entered in the SearchBar.
-* @state  {string}  sortBy    the property of the transaction to sort by (isSelected by column press).
-* @state  {boolean} isAscending   direction sortBy should sort (ascending/descending:true/false).
+* @prop   {Realm}               database      App wide database.
+* @prop   {func}                navigateTo    CallBack for navigation stack.
+* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
+* @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
+* @state  {string}              searchTerm    Current term user has entered in the SearchBar.
+* @state  {string}              sortBy        The property of the transaction to sort by (isSelected
+*                                             by column press).
+* @state  {boolean}             isAscending   Direction sortBy should sort
+*                                             (ascending/descending:true/false).
 */
-export default class CustomerInvoicesPage extends Component {
+export class CustomerInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
@@ -53,6 +56,7 @@ export default class CustomerInvoicesPage extends Component {
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.refreshData = this.refreshData.bind(this);
+    this.onNewInvoice = this.onNewInvoice.bind(this);
   }
 
   componentWillMount() {
@@ -79,6 +83,20 @@ export default class CustomerInvoicesPage extends Component {
       });
     }
     this.refreshData();
+  }
+
+  onNewInvoice() {
+    this.props.database.write(() => {
+      this.props.database.create('Transaction', {
+        id: generateUUID(),
+        serialNumber: '1',
+        entryDate: new Date(),
+        type: 'customer_invoice',
+        status: 'new',
+        comment: 'Testing sync',
+      });
+    });
+    this.props.navigateTo('customerInvoice', 'New Invoice');
   }
 
   /**
@@ -205,7 +223,7 @@ export default class CustomerInvoicesPage extends Component {
               style={globalStyles.button}
               textStyle={globalStyles.buttonText}
               text="New Invoice"
-              onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
+              onPress={this.onNewInvoice}
             />
           </View>
           <DataTable

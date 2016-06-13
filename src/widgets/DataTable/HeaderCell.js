@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   StyleSheet,
   Text,
   View,
@@ -14,7 +15,7 @@ import React, {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function HeaderCell(props) {
+export function HeaderCell(props) {
   const {
     style,
     textStyle,
@@ -61,8 +62,8 @@ export default function HeaderCell(props) {
 HeaderCell.propTypes = {
   isSelected: React.PropTypes.bool,
   isAscending: React.PropTypes.bool,
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,

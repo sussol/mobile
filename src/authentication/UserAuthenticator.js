@@ -4,6 +4,9 @@ import {
   hashPassword,
  } from './authenticationUtils';
 
+import { SETTINGS_KEYS } from '../settings';
+const { SYNC_URL } = SETTINGS_KEYS;
+
 const {
    CONNECTION_FAILURE,
    INVALID_PASSWORD,
@@ -11,9 +14,10 @@ const {
 
 const AUTH_ENDPOINT = '/mobile/user';
 
-export default class UserAuthenticator {
-  constructor(database) {
+export class UserAuthenticator {
+  constructor(database, settings) {
     this.database = database;
+    this.settings = settings;
     this.activeUsername = '';
     this.activePassword = '';
   }
@@ -26,57 +30,54 @@ export default class UserAuthenticator {
  * @param  {string}   password         The password to test
  * @return {none}
  */
-  authenticate(username, password) {
-    return new Promise((resolve, reject) => {
-      if (username.length === 0) reject('Enter a username');
-      if (password.length === 0) reject('Enter a password');
+  async authenticate(username, password) {
+    if (username.length === 0) throw new Error('Enter a username');
+    if (password.length === 0) throw new Error('Enter a password');
 
-      this.activeUsername = username;
-      this.activePassword = password;
+    this.activeUsername = username;
+    this.activePassword = password;
 
-      // Hash the password
-      const passwordHash = hashPassword(password);
+    // Hash the password
+    const passwordHash = hashPassword(password);
 
-      // Get the cached user from the database, if they exist
-      const user = this.database.objects('User').filtered(`username = "${username}"`)[0];
+    // Get the cached user from the database, if they exist
+    const user = this.database.objects('User').filtered('username == $0', username)[0];
 
-      // Get the HTTP endpoint to authenticate against
-      const serverURLResult = this.database.objects('Setting').filtered('key = "ServerURL"')[0];
-      if (!serverURLResult) { // No valid server URL configured, fail early
-        reject('Server URL not configured');
-        return;
-      }
-      const serverURL = serverURLResult.value;
-      const authURL = `${serverURL}${AUTH_ENDPOINT}`;
+    // Get the HTTP endpoint to authenticate against
+    const serverURL = this.settings.get(SYNC_URL);
+    if (serverURL.length === 0) { // No valid server URL configured, fail early
+      throw new Error('Server URL not configured');
+    }
+    const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
-      authenticateAsync(authURL, username, passwordHash)
-        .then((userJson) => {
-          if (userJson.id) { // Valid, save in local db
-            this.database.write(() => {
-              this.database.create('User', {
-                id: userJson.id,
-                username: username,
-                passwordHash: passwordHash,
-              }, true);
-            });
-            resolve();
-          } else reject('Unexpected response from server');
-        }, (error) => {
-          if (error === CONNECTION_FAILURE) { // Error with connection, check against local database
-            if (user && user.passwordHash && user.passwordHash === passwordHash) {
-              resolve();
-            } else reject('Unable to connect and username/password not cached.');
-          } else if (error === INVALID_PASSWORD) { // Password not valid
-            if (user && user.passwordHash === passwordHash) {
-              // Clear invalid password from db, if saved
-              this.database.write(() => {
-                user.passwordHash = '';
-              });
-            }
-            reject(error);
-          } else reject(error); // Most likely an empty username or password
+    try {
+      const userJson = await authenticateAsync(authURL, username, passwordHash);
+      if (!userJson || !userJson.UserID) throw new Error('Unexpected response from server');
+      else { // Success, save user to database
+        this.database.write(() => {
+          this.database.update('User', {
+            id: userJson.UserID,
+            username: username,
+            passwordHash: passwordHash,
+          });
         });
-    });
+      }
+    } catch (error) {
+      if (error === CONNECTION_FAILURE) { // Error with connection, check against local database
+        if (!user || user.username !== username || user.passwordHash !== passwordHash) {
+          error.setMessage(`${error.message} and username and password not cached`);
+          throw error; // User doesn't match cached credentials
+        }
+      } else if (error === INVALID_PASSWORD) { // Password not valid
+        if (user && user.passwordHash === passwordHash) {
+          // Clear invalid password from db, if saved
+          this.database.write(() => {
+            user.passwordHash = '';
+          });
+        }
+        throw error;
+      } else throw error; // Most likely an empty username or password
+    }
   }
 
 /**

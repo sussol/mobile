@@ -5,7 +5,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Image,
   StyleSheet,
   Text,
@@ -24,12 +25,16 @@ import globalStyles, {
   SHADOW_BORDER,
 } from '../globalStyles';
 
-export default function MenuPage(props) {
+export function MenuPage(props) {
   return (
-    <View style={[globalStyles.pageContentContainer, { padding: 0 }]}>
-      <View style={[globalStyles.horizontalContainer, { flex: 9 }]}>
+    <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
+      <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
         <View style={localStyles.container}>
-          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Image
+            style={localStyles.image}
+            resizeMode="contain"
+            source={require('../images/menu_people.png')}
+          />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
@@ -45,7 +50,11 @@ export default function MenuPage(props) {
         </View>
 
         <View style={localStyles.container}>
-          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Image
+            style={localStyles.image}
+            resizeMode="contain"
+            source={require('../images/menu_truck.png')}
+          />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
@@ -61,7 +70,11 @@ export default function MenuPage(props) {
         </View>
 
         <View style={localStyles.container}>
-          <Image style={localStyles.image} source={{ uri: 'http://msupply.org.nz//images/274.jpg' }} />
+          <Image
+            style={localStyles.image}
+            resizeMode="contain"
+            source={require('../images/menu_pc_clipboard.png')}
+          />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
@@ -73,6 +86,12 @@ export default function MenuPage(props) {
             textStyle={globalStyles.menuButtonText}
             text="Stocktakes"
             onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
+          />
+          <Button
+            style={globalStyles.menuButton}
+            textStyle={globalStyles.menuButtonText}
+            text="Realm Explorer"
+            onPress={() => props.navigateTo('realmExplorer', 'Database Contents')}
           />
         </View>
       </View>
@@ -98,6 +117,12 @@ MenuPage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
+  pageContentContainer: {
+    padding: 0,
+  },
+  horizontalContainer: {
+    flex: 9,
+  },
   container: {
     alignSelf: 'stretch',
     flex: 1,
@@ -112,6 +137,7 @@ const localStyles = StyleSheet.create({
   image: {
     height: 150,
     width: 150,
+    marginBottom: 25,
   },
   logOutText: {
     fontFamily: APP_FONT_FAMILY,

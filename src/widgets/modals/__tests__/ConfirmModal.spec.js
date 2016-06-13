@@ -2,11 +2,11 @@ jest.unmock('../ConfirmModal');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 
-import ConfirmModal from '../ConfirmModal';
+import { ConfirmModal } from '../ConfirmModal';
 import React from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import Button from '../../Button';
+import { Button } from '../../Button';
 
 describe('ConfirmModal', () => {
   let cancelCallBack;

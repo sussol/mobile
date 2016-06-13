@@ -5,18 +5,19 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Dimensions,
   StyleSheet,
   Text,
   TextInput,
   View,
 } from 'react-native';
-import Button from '../Button';
+import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
 import globalStyles from '../../globalStyles';
 
-export default class LoginModal extends React.Component {
+export class LoginModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -31,16 +32,16 @@ export default class LoginModal extends React.Component {
     this.onLogin = this.onLogin.bind(this);
   }
 
-  onLogin() {
+  async onLogin() {
     this.setState({ authStatus: 'authenticating' });
-    this.props.authenticator.authenticate(this.state.username, this.state.password)
-      .then(() => {
-        this.setState({ authStatus: 'authenticated' });
-        this.props.onAuthentication(true);
-      }, (error) => {
-        this.setState({ authStatus: 'error', error: error });
-        this.props.onAuthentication(false);
-      });
+    try {
+      await this.props.authenticator.authenticate(this.state.username, this.state.password);
+      this.setState({ authStatus: 'authenticated' });
+      this.props.onAuthentication(true);
+    } catch (error) {
+      this.setState({ authStatus: 'error', error: error.message });
+      this.props.onAuthentication(false);
+    }
   }
 
   render() {
@@ -84,8 +85,8 @@ LoginModal.propTypes = {
   authenticator: React.PropTypes.object.isRequired,
   isAuthenticated: React.PropTypes.bool.isRequired,
   onAuthentication: React.PropTypes.func.isRequired,
-  style: React.View.propTypes.style,
-  textStyle: React.Text.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: Text.propTypes.style,
 };
 LoginModal.defaultProps = {
   style: {},

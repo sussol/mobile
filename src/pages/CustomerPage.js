@@ -5,15 +5,16 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
+import React from 'react';
+import {
   Text,
   View,
 } from 'react-native';
 
 import globalStyles from '../globalStyles';
-import Button from '../widgets/Button';
+import { Button } from '../widgets';
 
-export default function CustomerPage(props) {
+export function CustomerPage(props) {
   return (
     <View style={props.style}>
       <Text>A specific customer, with their billing address and invoices.</Text>

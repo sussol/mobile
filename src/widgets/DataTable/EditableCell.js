@@ -5,13 +5,13 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
-  Component,
+import React from 'react';
+import {
   TextInput,
   View,
 } from 'react-native';
 
-export default class EditableCell extends Component {
+export class EditableCell extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,8 +47,8 @@ export default class EditableCell extends Component {
 }
 
 EditableCell.propTypes = {
-  style: React.View.propTypes.style,
-  textStyle: React.TextInput.propTypes.style,
+  style: View.propTypes.style,
+  textStyle: TextInput.propTypes.style,
   width: React.PropTypes.number,
   onEndEditing: React.PropTypes.func,
   target: React.PropTypes.object,

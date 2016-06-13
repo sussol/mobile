@@ -5,11 +5,10 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React, {
-  Component,
+import React from 'react';
+import {
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 
@@ -29,15 +28,17 @@ import globalStyles from '../globalStyles';
 
 /**
 * Renders the page for displaying all Items in the DB.
-* @prop {Realm} database   app wide database.
-* @prop {func}  navigateTo   callBack for navigation stack.
-* @state  {Realm} dataSource    app wide database (from prop).
-* @state  {Realm.Results} items    filtered to have only Item objects.
-* @state  {string}  searchTerm    current term user has entered in the SearchBar.
-* @state  {string}  sortBy    the property of Item to sort by (isSelected by column press).
-* @state  {boolean} isAscending   direction sortBy should sort (ascending/descending:true/false).
+* @prop   {Realm}               database    App wide database.
+* @prop   {func}                navigateTo  CallBack for navigation stack.
+* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
+* @state  {Realm.Results}       items       Filtered to have only Item objects.
+* @state  {string}              searchTerm  Current term user has entered in the SearchBar.
+* @state  {string}              sortBy      The property of Item to sort by (isSelected
+*                                           by column press).
+* @state  {boolean}             isAscending Direction sortBy should sort
+*                                           (ascending/descending:true/false).
 */
-export default class StockPage extends Component {
+export class StockPage extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({

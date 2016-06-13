@@ -1,7 +1,10 @@
-import databaseUtils from './databaseUtils';
-import realm from './realm';
+export { Database } from './Database';
+export { generateUUID } from './utilities';
+export { schema } from './schema';
 
-export {
-  databaseUtils,
-  realm,
+export const CHANGE_TYPES = {
+  CREATE: 'create',
+  UPDATE: 'update',
+  DELETE: 'delete',
+  WIPE: 'wipe',
 };
