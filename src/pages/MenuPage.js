@@ -131,6 +131,7 @@ const localStyles = StyleSheet.create({
   image: {
     height: 150,
     width: 150,
+    marginBottom: 25,
   },
   logOutText: {
     fontFamily: APP_FONT_FAMILY,
