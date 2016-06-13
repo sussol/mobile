@@ -12,17 +12,22 @@ const APP_FONT_FAMILY = 'Museo_Slab_500';
 const SUSSOL_ORANGE = '#e95c30';
 const BLUE_WHITE = '#ecf3fc';
 const BACKGROUND_COLOR = '#f8fbfe';
+const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
 const DARK_GREY = '#4a4a4a';
 const DARKER_GREY = '#333333';
+const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 
 export default StyleSheet.create({
   container: {
     flex: 1,
+    borderWidth: 1,
+    borderColor: SHADOW_BORDER,
+    backgroundColor: BLUE_WHITE,
   },
   pageContentContainer: {
     flex: 1,
-    margin: 15,
-    backgroundColor: BLUE_WHITE,
+    padding: 15,
+    backgroundColor: BACKGROUND_COLOR,
   },
   horizontalContainer: {
     flexDirection: 'row',
@@ -65,16 +70,20 @@ export default StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     padding: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#CDCDCD',
+    marginVertical: 12,
+    marginHorizontal: 30,
+    width: 240,
+    height: 60,
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: DARK_GREY,
   },
   navButton: {
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
     padding: 15,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#CDCDCD',
+    borderColor: DARK_GREY,
   },
   dataTableText: {
     fontFamily: APP_FONT_FAMILY,
@@ -89,7 +98,7 @@ export default StyleSheet.create({
     backgroundColor: 'white',
   },
   dataTableHeaderCell: {
-    height: 30,
+    height: 40,
     borderRightWidth: 2,
     backgroundColor: 'white',
     borderColor: BLUE_WHITE,
@@ -98,8 +107,8 @@ export default StyleSheet.create({
     backgroundColor: 'white',
   },
   dataTableCell: {
-    height: 40,
-    backgroundColor: BACKGROUND_COLOR,
+    height: 45,
+    backgroundColor: ROW_BLUE,
     borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
@@ -124,6 +133,8 @@ export {
   SUSSOL_ORANGE,
   BLUE_WHITE,
   BACKGROUND_COLOR,
+  SHADOW_BORDER,
   DARK_GREY,
   DARKER_GREY,
+  ROW_BLUE,
 };

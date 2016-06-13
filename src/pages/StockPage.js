@@ -177,18 +177,20 @@ export class StockPage extends React.Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.horizontalContainer}>
-          <SearchBar
-            onChange={(event) => this.onSearchChange(event)}
+        <View style={globalStyles.container}>
+          <View style={globalStyles.horizontalContainer}>
+            <SearchBar
+              onChange={(event) => this.onSearchChange(event)}
+            />
+          </View>
+          <DataTable
+            style={globalStyles.dataTable}
+            listViewStyle={localStyles.listView}
+            dataSource={this.state.dataSource}
+            renderRow={this.renderRow}
+            renderHeader={this.renderHeader}
           />
         </View>
-        <DataTable
-          style={globalStyles.dataTable}
-          listViewStyle={globalStyles.container}
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          renderHeader={this.renderHeader}
-        />
       </View>
     );
   }
@@ -200,6 +202,9 @@ StockPage.propTypes = {
 };
 const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
+  listView: {
+    flex: 1,
+  },
   rightMostCell: {
     borderRightWidth: 0,
   },

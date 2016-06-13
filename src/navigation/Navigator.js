@@ -22,7 +22,6 @@ const {
 const BACK_ACTION = 'BackAction';
 const PUSH_ACTION = 'push';
 const INITIAL_ACTION = 'initial';
-import globalStyles from '../globalStyles';
 
 
 export class Navigator extends React.Component {
@@ -75,7 +74,7 @@ export class Navigator extends React.Component {
 
   renderScene(props) {
     return (
-      <View style={[styles.navBarOffset, styles.main]}>
+      <View style={[styles.navBarOffset, styles.main, props.style]}>
         {this.props.renderScene(props)}
       </View>
     );
@@ -84,7 +83,7 @@ export class Navigator extends React.Component {
   renderTitleComponent(props) {
     if (!props.scene.navigationState.title) return null;
     return (
-      <NavigationHeader.Title textStyle={globalStyles.appFontFamily}>
+      <NavigationHeader.Title>
         {props.scene.navigationState.title}
       </NavigationHeader.Title>
     );

@@ -214,24 +214,26 @@ export class CustomerInvoicesPage extends React.Component {
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.horizontalContainer}>
-          <SearchBar
-            onChange={(event) => this.onSearchChange(event)}
-          />
-          <Button
-            style={globalStyles.button}
-            textStyle={globalStyles.buttonText}
-            text="New Invoice"
-            onPress={this.onNewInvoice}
+        <View style={globalStyles.container}>
+          <View style={globalStyles.horizontalContainer}>
+            <SearchBar
+              onChange={(event) => this.onSearchChange(event)}
+            />
+            <Button
+              style={globalStyles.button}
+              textStyle={globalStyles.buttonText}
+              text="New Invoice"
+              onPress={this.onNewInvoice}
+            />
+          </View>
+          <DataTable
+            style={globalStyles.dataTable}
+            listViewStyle={localStyles.listView}
+            dataSource={this.state.dataSource}
+            renderRow={this.renderRow}
+            renderHeader={this.renderHeader}
           />
         </View>
-        <DataTable
-          style={globalStyles.dataTable}
-          listViewStyle={globalStyles.container}
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
-          renderHeader={this.renderHeader}
-        />
       </View>
     );
   }
@@ -243,7 +245,7 @@ CustomerInvoicesPage.propTypes = {
 };
 const COLUMN_WIDTHS = [4, 1, 1, 2, 4];
 const localStyles = StyleSheet.create({
-  container: {
+  listView: {
     flex: 1,
   },
   rightMostCell: {

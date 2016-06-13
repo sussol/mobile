@@ -1,6 +1,6 @@
 export function instantiate(database) {
   database.write(() => {
-	database.deleteAll();
+    database.deleteAll();
     const hospitalDept = database.create('ItemDepartment', {
       id: '111DI',
       name: 'Hospital',

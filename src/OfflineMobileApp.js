@@ -64,10 +64,12 @@ export default class OfflineMobileApp extends React.Component {
       authenticated: false,
       syncState: SYNC_STATES.WAITING,
       syncError: '',
+
     };
   }
 
   componentWillMount() {
+    this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
     this.renderScene = this.renderScene.bind(this);
@@ -105,13 +107,19 @@ export default class OfflineMobileApp extends React.Component {
     }
   }
 
+  logOut() {
+    this.setState({ authenticated: false });
+  }
+
   renderScene(props) {
     const navigateTo = (key, title) => {
       props.onNavigate({ type: 'push', key, title });
     };
     switch (props.scene.navigationState.key) {
       case 'menu':
-        return <MenuPage navigateTo={navigateTo} />;
+      case 'root':
+      default:
+        return <MenuPage logOut={() => this.logOut} navigateTo={navigateTo} />;
       case 'customers':
         return <CustomersPage database={this.database} navigateTo={navigateTo} />;
       case 'customer':
@@ -138,9 +146,6 @@ export default class OfflineMobileApp extends React.Component {
         return <StockHistoryPage navigateTo={navigateTo} />;
       case 'realmExplorer':
         return <RealmExplorer navigateTo={navigateTo} database={this.database} />;
-      case 'root':
-      default:
-        return <MenuPage navigateTo={navigateTo} />;
     }
   }
 
