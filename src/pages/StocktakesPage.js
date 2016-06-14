@@ -48,6 +48,7 @@ export class StocktakesPage extends React.Component {
       isAscending: false,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
+    this.deleteSelection = this.deleteSelection.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -66,13 +67,6 @@ export class StocktakesPage extends React.Component {
     this.refreshData();
   }
 
-  onDelete(stocktake) {
-    this.props.database.write(() => {
-      this.props.database.delete('Stocktake', stocktake);
-    });
-    this.refreshData();
-  }
-
   onNewStockTake() {
     this.props.database.write(() => {
       this.props.database.create('Stocktake', {
@@ -86,6 +80,21 @@ export class StocktakesPage extends React.Component {
       });
     });
     this.props.navigateTo('stocktakeManager', 'New StockTake');
+  }
+
+  /**
+   * Takes an array of stocktakes and deletes them from database
+   * @param {array} stocktakes  the array of stocktakes to delete
+   */
+  deleteSelection(stocktakes) {
+    this.props.database.write(() => {
+      for (const stocktake in stocktakes) {
+        if (stocktakes.hasOwnProperty(stocktake)) {
+          this.props.database.delete('Stocktake', stocktake);
+        }
+      }
+    });
+    this.refreshData();
   }
 
   /**
