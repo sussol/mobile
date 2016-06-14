@@ -43,10 +43,6 @@ export class Navigator extends React.Component {
     );
   }
 
-  componentWillUnmount() {
-    BackAndroid.removeEventListener('hardwareBackPress');
-  }
-
   handleNavigation(action) {
     if (!action) {
       return false;
@@ -62,19 +58,24 @@ export class Navigator extends React.Component {
   }
 
   renderNavigationBar(props) {
+    const renderRightComponent = () =>
+      <View style={localStyles.horizontalContainer}>
+        {this.props.renderCentreComponent && this.props.renderCentreComponent()}
+        {this.props.renderRightComponent && this.props.renderRightComponent()}
+      </View>;
     return (
       <NavigationHeader
         {...props}
         navigationProps={props}
         renderTitleComponent={this.renderTitleComponent}
-        renderRightComponent={this.props.renderRightComponent}
+        renderRightComponent={renderRightComponent}
       />
     );
   }
 
   renderScene(props) {
     return (
-      <View style={[styles.navBarOffset, styles.main, props.style]}>
+      <View style={[localStyles.navBarOffset, localStyles.main, props.style]}>
         {this.props.renderScene(props)}
       </View>
     );
@@ -93,7 +94,7 @@ export class Navigator extends React.Component {
     return (
       <NavigationCardStack
         direction={'horizontal'}
-        navigationState={this.state.navigationState}
+        navigationState={{ ...this.state.navigationState }} // Clone so CardStack detects change
         onNavigate={this.handleNavigation}
         renderScene={this.renderScene}
         renderOverlay={this.renderNavigationBar}
@@ -105,11 +106,17 @@ export class Navigator extends React.Component {
 Navigator.propTypes = {
   renderScene: React.PropTypes.func.isRequired,
   renderRightComponent: React.PropTypes.func,
+  renderCentreComponent: React.PropTypes.func,
 };
 
-const styles = StyleSheet.create({
+const localStyles = StyleSheet.create({
   main: {
     flex: 1,
+  },
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   navBarOffset: {
     marginTop: NavigationHeader.HEIGHT,
