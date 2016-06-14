@@ -61,10 +61,6 @@ export class CustomerInvoicesPage extends React.Component {
 
   componentWillMount() {
     this.refreshData();
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.transactions),
-      deleteTargetItem: this.state.transactions[0],
-    });
   }
 
   onSearchChange(event) {
