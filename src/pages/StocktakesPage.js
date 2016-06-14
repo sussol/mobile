@@ -66,6 +66,13 @@ export class StocktakesPage extends React.Component {
     this.refreshData();
   }
 
+  onDelete(stocktake) {
+    this.props.database.write(() => {
+      this.props.database.delete('Stocktake', stocktake);
+    });
+    this.refreshData();
+  }
+
   onNewStockTake() {
     this.props.database.write(() => {
       this.props.database.create('Stocktake', {
