@@ -20,6 +20,7 @@ import {
   Row,
 } from '../widgets/DataTable';
 
+import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button } from '../widgets';
@@ -173,7 +174,7 @@ export class StocktakesPage extends React.Component {
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[3]}
         >
-          Del. But.
+          <Icon name="md-remove-circle" size={15} color="grey" />
         </Cell>
       </Row>
     );
