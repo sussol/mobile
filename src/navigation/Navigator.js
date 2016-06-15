@@ -9,6 +9,7 @@ import React from 'react';
 import {
   BackAndroid,
   Dimensions,
+  Platform,
   NavigationExperimental,
   StyleSheet,
   View,
@@ -23,6 +24,7 @@ const {
 const BACK_ACTION = 'BackAction';
 const PUSH_ACTION = 'push';
 const INITIAL_ACTION = 'initial';
+const APPBAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
 
 
 export class Navigator extends React.Component {
@@ -59,7 +61,7 @@ export class Navigator extends React.Component {
   }
 
   renderNavigationBar(props) {
-    const windowWidth = Dimensions.get('window').width;
+    const windowWidth = Dimensions.get('window').width; // Used to centre the centreComponent
     const renderRightComponent = () => (
       <View style={[
         localStyles.horizontalContainer,
@@ -68,8 +70,12 @@ export class Navigator extends React.Component {
         <View style={{
           position: 'absolute',
           width: windowWidth * 0.5,
+          height: APPBAR_HEIGHT,
           right: windowWidth * 0.25,
-          top: 20 }}
+          top: 0,
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
         >
           <View style={[localStyles.horizontalContainer]}>
             {this.props.renderCentreComponent && this.props.renderCentreComponent()}
