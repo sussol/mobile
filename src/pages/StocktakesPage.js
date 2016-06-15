@@ -49,7 +49,7 @@ export class StocktakesPage extends React.Component {
       isAscending: false,
     };
     this.componentWillMount = this.componentWillMount.bind(this);
-    this.deleteSelection = this.deleteSelection.bind(this);
+    this.onDelete = this.onDelete.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -87,12 +87,10 @@ export class StocktakesPage extends React.Component {
    * Takes an array of stocktakes and deletes them from database
    * @param {array} stocktakes  the array of stocktakes to delete
    */
-  deleteSelection(stocktakes) {
+  onDelete(stocktakes) {
     this.props.database.write(() => {
-      for (const stocktake in stocktakes) {
-        if (stocktakes.hasOwnProperty(stocktake)) {
-          this.props.database.delete('Stocktake', stocktake);
-        }
+      for (const stocktake of stocktakes) {
+        this.props.database.delete('Stocktake', stocktake);
       }
     });
     this.refreshData();
