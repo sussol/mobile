@@ -17,10 +17,9 @@ import {
  * @param   {object}  props         Properties passed where component was created.
  * @prop    {StyleSheet} style      Style of the Cell (View props)
  * @prop    {StyleSheet} textStyle  Style of the text in the Cell
- * @prop    {number} width          flexbox flex property, gives weight to the Cell width
+ * @prop    {number} width          Flexbox flex property, gives weight to the Cell width
  * @prop    {string}  text          Text to render in Cell
- * @return  {React.Component}       Return TouchableOpacity with sort arrows if onPress is given a
- *                                  function. Otherwise return a View.
+ * @return  {React.Component}       A single View with children
  */
 export function Cell(props) {
   const { style, textStyle, width, children, ...viewProps } = props;
