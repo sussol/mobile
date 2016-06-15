@@ -35,6 +35,7 @@ export class Navigator extends React.Component {
       navigationState: getNewNavState(undefined, { type: INITIAL_ACTION }),
     };
     this.renderNavigationBar = this.renderNavigationBar.bind(this);
+    this.renderRightAndCentre = this.renderRightAndCentre.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderTitleComponent = this.renderTitleComponent.bind(this);
     this.handleNavigation = this.handleNavigation.bind(this);
@@ -61,8 +62,25 @@ export class Navigator extends React.Component {
   }
 
   renderNavigationBar(props) {
+    return (
+      <NavigationHeader
+        {...props}
+        navigationProps={props}
+        renderTitleComponent={this.renderTitleComponent}
+        renderRightComponent={this.renderRightAndCentre}
+        style={this.props.navBarStyle}
+      />
+    );
+  }
+
+  /**
+   * Renders the centre and right components of the navigation bar. Squeezes both
+   * into the 'rightComponent' section of NavigationExperimental's NavigationHeader.
+   * @return {object} Component that contains both the right and centre components
+   */
+  renderRightAndCentre() {
     const windowWidth = Dimensions.get('window').width; // Used to centre the centreComponent
-    const renderRightComponent = () => (
+    return (
       <View style={[
         localStyles.horizontalContainer,
         { width: windowWidth * 0.75, justifyContent: 'flex-end' }]}
@@ -83,15 +101,6 @@ export class Navigator extends React.Component {
         </View>
         {this.props.renderRightComponent && this.props.renderRightComponent()}
       </View>
-    );
-    return (
-      <NavigationHeader
-        {...props}
-        navigationProps={props}
-        renderTitleComponent={this.renderTitleComponent}
-        renderRightComponent={renderRightComponent}
-        style={this.props.navBarStyle}
-      />
     );
   }
 
