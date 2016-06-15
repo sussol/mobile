@@ -8,6 +8,7 @@
 import React from 'react';
 import {
   BackAndroid,
+  Dimensions,
   NavigationExperimental,
   StyleSheet,
   View,
@@ -58,11 +59,25 @@ export class Navigator extends React.Component {
   }
 
   renderNavigationBar(props) {
-    const renderRightComponent = () =>
-      <View style={localStyles.horizontalContainer}>
-        {this.props.renderCentreComponent && this.props.renderCentreComponent()}
+    const windowWidth = Dimensions.get('window').width;
+    const renderRightComponent = () => (
+      <View style={[
+        localStyles.horizontalContainer,
+        { width: windowWidth * 0.75, justifyContent: 'flex-end' }]}
+      >
+        <View style={{
+          position: 'absolute',
+          width: windowWidth * 0.5,
+          right: windowWidth * 0.25,
+          top: 20 }}
+        >
+          <View style={[localStyles.horizontalContainer]}>
+            {this.props.renderCentreComponent && this.props.renderCentreComponent()}
+          </View>
+        </View>
         {this.props.renderRightComponent && this.props.renderRightComponent()}
-      </View>;
+      </View>
+    );
     return (
       <NavigationHeader
         {...props}
@@ -82,10 +97,10 @@ export class Navigator extends React.Component {
   }
 
   renderTitleComponent(props) {
-    if (!props.scene.navigationState.title) return null;
+    const title = String(props.scene.navigationState.title || '');
     return (
       <NavigationHeader.Title>
-        {props.scene.navigationState.title}
+        {title}
       </NavigationHeader.Title>
     );
   }
@@ -108,20 +123,6 @@ Navigator.propTypes = {
   renderRightComponent: React.PropTypes.func,
   renderCentreComponent: React.PropTypes.func,
 };
-
-const localStyles = StyleSheet.create({
-  main: {
-    flex: 1,
-  },
-  horizontalContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  navBarOffset: {
-    marginTop: NavigationHeader.HEIGHT,
-  },
-});
 
 /**
  * Given the current navigation state, and an action to perform, will return the
@@ -152,3 +153,18 @@ function getNewNavState(currentState, action) {
       return currentState;
   }
 }
+
+const localStyles = StyleSheet.create({
+  main: {
+    flex: 1,
+  },
+  horizontalContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  navBarOffset: {
+    marginTop: NavigationHeader.HEIGHT,
+  },
+});
