@@ -131,7 +131,11 @@ export class StocktakesPage extends React.Component {
           text={'STATUS'}
         />
         <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
+          style={[
+            globalStyles.dataTableHeaderCell,
+            localStyles.rightMostCell,
+            localStyles.deleteCell,
+          ]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[3]}
           text={'DELETE'}
@@ -168,9 +172,10 @@ export class StocktakesPage extends React.Component {
           {stocktake.status}
         </Cell>
         <Cell
-          style={globalStyles.dataTableCell}
+          style={[globalStyles.dataTableCell, localStyles.rightMostCell, localStyles.deleteCell]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[3]}
+
         >
           <Icon name="md-remove-circle" size={15} color="grey" />
         </Cell>
@@ -211,6 +216,9 @@ const COLUMN_WIDTHS = [6, 2, 2, 1];
 const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
+  },
+  deleteCell: {
+    alignItems: 'center',
   },
   rightMostCell: {
     borderRightWidth: 0,
