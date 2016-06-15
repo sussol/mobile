@@ -103,12 +103,10 @@ export class StocktakesPage extends React.Component {
 
   onDeleteButtonPress(stocktake) {
     const { deleteSelection } = this.state;
-    console.log(deleteSelection.indexOf(stocktake.id) >= 0);
     if (deleteSelection.indexOf(stocktake.id) >= 0) {
-      deleteSelection.splice(deleteSelection.indexOf(stocktake.id) - 1, 1);
+      deleteSelection.splice(deleteSelection.indexOf(stocktake.id), 1);
     } else {
       deleteSelection.push(stocktake.id);
-      console.log(this.state.deleteSelection.length);
     }
     this.refreshData();
   }
