@@ -11,13 +11,17 @@ import {
 const APP_FONT_FAMILY = 'Museo_Slab_500';
 const SUSSOL_ORANGE = '#e95c30';
 const BLUE_WHITE = '#ecf3fc';
-const BACKGROUND_COLOR = '#f8fbfe';
+export const BACKGROUND_COLOR = '#f8fbfe';
 const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
 const DARK_GREY = '#4a4a4a';
 const DARKER_GREY = '#333333';
 const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 
 export default StyleSheet.create({
+  appBackground: {
+    flex: 1,
+    backgroundColor: BACKGROUND_COLOR,
+  },
   container: {
     flex: 1,
     borderWidth: 1,
@@ -40,6 +44,11 @@ export default StyleSheet.create({
   },
   navBarOffset: {
     paddingTop: 68,
+  },
+  navBarStyle: {
+    backgroundColor: BACKGROUND_COLOR,
+    borderBottomWidth: 0,
+    elevation: 0,
   },
   text: {
     fontFamily: APP_FONT_FAMILY,

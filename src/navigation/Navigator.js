@@ -90,6 +90,7 @@ export class Navigator extends React.Component {
         navigationProps={props}
         renderTitleComponent={this.renderTitleComponent}
         renderRightComponent={renderRightComponent}
+        style={this.props.navBarStyle}
       />
     );
   }
@@ -119,6 +120,7 @@ export class Navigator extends React.Component {
         onNavigate={this.handleNavigation}
         renderScene={this.renderScene}
         renderOverlay={this.renderNavigationBar}
+        cardStyle={{ backgroundColor: this.props.backgroundColor }}
       />
     );
   }
@@ -128,6 +130,8 @@ Navigator.propTypes = {
   renderScene: React.PropTypes.func.isRequired,
   renderRightComponent: React.PropTypes.func,
   renderCentreComponent: React.PropTypes.func,
+  navBarStyle: View.propTypes.style,
+  backgroundColor: React.PropTypes.string,
 };
 
 /**

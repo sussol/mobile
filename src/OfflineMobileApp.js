@@ -8,10 +8,11 @@
 import React from 'react';
 import {
   Image,
-  StyleSheet,
   Text,
   View,
 } from 'react-native';
+
+import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
 
 import { Navigator } from './navigation';
 
@@ -179,11 +180,13 @@ export default class OfflineMobileApp extends React.Component {
       );
     }
     return (
-      <View style={styles.container}>
+      <View style={globalStyles.appBackground}>
         <Navigator
           renderScene={this.renderScene}
           renderCentreComponent={this.renderLogo}
           renderRightComponent={this.renderSyncState}
+          navBarStyle={globalStyles.navBarStyle}
+          backgroundColor={BACKGROUND_COLOR}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
@@ -194,9 +197,3 @@ export default class OfflineMobileApp extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
