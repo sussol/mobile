@@ -102,7 +102,7 @@ export function MenuPage(props) {
           iconStyle={localStyles.logOutIcon}
           borderRadius={4}
           backgroundColor="rgba(255,255,255,0)"
-          onPress={props.logOut()}
+          onPress={props.logOut}
         >
           <Text style={localStyles.logOutText}>LOG OUT</Text>
         </Icon.Button>

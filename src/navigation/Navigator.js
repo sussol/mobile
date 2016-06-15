@@ -152,18 +152,16 @@ Navigator.propTypes = {
  * @return {object}              The new navigation state
  */
 function getNewNavState(currentState, action) {
-  switch (action.type) {
+  const { type, key, ...extraProps } = action;
+  switch (type) {
     case INITIAL_ACTION:
       return {
         index: 0,
         key: 'root',
-        children: [{ key: 'root' }],
+        children: [{ key: 'root', ...extraProps }],
       };
     case PUSH_ACTION:
-      return NavigationStateUtils.push(currentState, {
-        key: action.key,
-        title: action.title,
-      });
+      return NavigationStateUtils.push(currentState, { key: key, ...extraProps });
     case BACK_ACTION:
       return currentState.index > 0 ?
         NavigationStateUtils.pop(currentState) :

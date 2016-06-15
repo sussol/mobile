@@ -16,23 +16,7 @@ import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
 
 import { Navigator } from './navigation';
 
-import {
-  CustomerInvoicePage,
-  CustomerInvoicesPage,
-  CustomerPage,
-  CustomersPage,
-  FirstUsePage,
-  MenuPage,
-  StockHistoriesPage,
-  StockHistoryPage,
-  StockPage,
-  StocktakeEditPage,
-  StocktakeManagePage,
-  StocktakesPage,
-  SupplierInvoicePage,
-  SupplierInvoicesPage,
-  RealmExplorer,
-} from './pages';
+import { PAGES } from './pages';
 
 import { LoginModal } from './widgets';
 
@@ -114,41 +98,21 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   renderScene(props) {
-    const navigateTo = (key, title) => {
-      props.onNavigate({ type: 'push', key, title });
+    const navigateTo = (key, title, extraProps) => {
+      props.onNavigate({ type: 'push', key, title, ...extraProps });
     };
-    switch (props.scene.navigationState.key) {
-      case 'menu':
-      case 'root':
-      default:
-        return <MenuPage logOut={() => this.logOut} navigateTo={navigateTo} />;
-      case 'customers':
-        return <CustomersPage database={this.database} navigateTo={navigateTo} />;
-      case 'customer':
-        return <CustomerPage navigateTo={navigateTo} />;
-      case 'stock':
-        return <StockPage database={this.database} navigateTo={navigateTo} />;
-      case 'stocktakes':
-        return <StocktakesPage database={this.database} navigateTo={navigateTo} />;
-      case 'stocktakeEditor':
-        return <StocktakeEditPage navigateTo={navigateTo} />;
-      case 'stocktakeManager':
-        return <StocktakeManagePage navigateTo={navigateTo} />;
-      case 'customerInvoices':
-        return <CustomerInvoicesPage database={this.database} navigateTo={navigateTo} />;
-      case 'customerInvoice':
-        return <CustomerInvoicePage navigateTo={navigateTo} />;
-      case 'supplierInvoices':
-        return <SupplierInvoicesPage database={this.database} navigateTo={navigateTo} />;
-      case 'supplierInvoice':
-        return <SupplierInvoicePage navigateTo={navigateTo} />;
-      case 'stockHistories':
-        return <StockHistoriesPage navigateTo={navigateTo} />;
-      case 'stockHistory':
-        return <StockHistoryPage navigateTo={navigateTo} />;
-      case 'realmExplorer':
-        return <RealmExplorer navigateTo={navigateTo} database={this.database} />;
-    }
+    const { key, ...extraProps } = props.scene.navigationState;
+    const Page = PAGES[key]; // Get the page the navigation key relates to
+    // Return the requested page with any extra props passed to navigateTo in pageProps
+    console.log('1');
+    console.log(extraProps);
+    return (
+      <Page
+        navigateTo={navigateTo}
+        database={this.database}
+        logOut={this.logOut}
+        {...extraProps}
+      />);
   }
 
   renderSyncState() {
@@ -172,6 +136,7 @@ export default class OfflineMobileApp extends React.Component {
 
   render() {
     if (!this.state.initialised) {
+      const FirstUsePage = PAGES['firstUse'];
       return (
         <FirstUsePage
           synchronizer={this.synchronizer}
