@@ -10,6 +10,7 @@ import React from 'react';
 import {
   StyleSheet,
   View,
+  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -47,9 +48,11 @@ export class StocktakesPage extends React.Component {
       stocktakes: props.database.objects('Stocktake'),
       sortBy: 'createdDate',
       isAscending: false,
+      deleteSelection: [],
     };
     this.componentWillMount = this.componentWillMount.bind(this);
-    this.onDelete = this.onDelete.bind(this);
+    this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
+    this.onDeleteButtonPress = this.onDeleteButtonPress.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -87,12 +90,26 @@ export class StocktakesPage extends React.Component {
    * Takes an array of stocktakes and deletes them from database
    * @param {array} stocktakes  the array of stocktakes to delete
    */
-  onDelete(stocktakes) {
-    this.props.database.write(() => {
-      for (const stocktake of stocktakes) {
-        this.props.database.delete('Stocktake', stocktake);
+  onDeleteConfirm(deleteSelection) {
+    const { database, stocktakes } = this.state;
+    database.write(() => {
+      for (const stocktakeId of deleteSelection) {
+        const stocktake = stocktakes.filter('id == ${0}', stocktakeId)[0];
+        database.delete('Stocktake', stocktake);
       }
     });
+    this.refreshData();
+  }
+
+  onDeleteButtonPress(stocktake) {
+    const { deleteSelection } = this.state;
+    console.log(deleteSelection.indexOf(stocktake.id) >= 0);
+    if (deleteSelection.indexOf(stocktake.id) >= 0) {
+      deleteSelection.splice(deleteSelection.indexOf(stocktake.id) - 1, 1);
+    } else {
+      deleteSelection.push(stocktake.id);
+      console.log(this.state.deleteSelection.length);
+    }
     this.refreshData();
   }
 
@@ -171,14 +188,18 @@ export class StocktakesPage extends React.Component {
         >
           {stocktake.status}
         </Cell>
-        <Cell
-          style={[globalStyles.dataTableCell, localStyles.rightMostCell, localStyles.deleteCell]}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[3]}
-          onPress={() => console.log('THE BUTTON, THE BUTTON... IT WAS PRESSED')}
+        <TouchableOpacity
+          style={{ flex: COLUMN_WIDTHS[3] }}
+          onPress={() => this.onDeleteButtonPress(stocktake)}
         >
-          <Icon name="md-remove-circle" size={15} color="grey" />
-        </Cell>
+          <Cell
+            style={[globalStyles.dataTableCell, localStyles.rightMostCell, localStyles.deleteCell]}
+            textStyle={globalStyles.dataTableText}
+            width={COLUMN_WIDTHS[3]}
+          >
+            <Icon name="md-remove-circle" size={15} color="grey" />
+          </Cell>
+        </TouchableOpacity>
       </Row>
     );
   }
