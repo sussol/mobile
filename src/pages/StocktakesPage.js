@@ -148,7 +148,7 @@ export class StocktakesPage extends React.Component {
     return (
       <Row
         style={globalStyles.dataTableRow}
-        onPress={() => this.props.navigateTo('stocktakes', `StockTake ${stocktake.serialNumber}`)}
+        onPress={() => this.props.navigateTo('stocktakeManager', 'Create Stocktake')}
       >
         <Cell
           style={globalStyles.dataTableCell}
@@ -175,7 +175,7 @@ export class StocktakesPage extends React.Component {
           style={[globalStyles.dataTableCell, localStyles.rightMostCell, localStyles.deleteCell]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[3]}
-
+          onPress={() => console.log('THE BUTTON, THE BUTTON... IT WAS PRESSED')}
         >
           <Icon name="md-remove-circle" size={15} color="grey" />
         </Cell>
