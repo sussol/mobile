@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {
+  Image,
   StyleSheet,
   Text,
   View,
@@ -159,6 +160,15 @@ export default class OfflineMobileApp extends React.Component {
     );
   }
 
+  renderLogo() {
+    return (
+      <Image
+        resizeMode="contain"
+        source={require('./images/logo.png')}
+      />
+    );
+  }
+
   render() {
     if (!this.state.initialised) {
       return (
@@ -172,6 +182,7 @@ export default class OfflineMobileApp extends React.Component {
       <View style={styles.container}>
         <Navigator
           renderScene={this.renderScene}
+          renderCentreComponent={this.renderLogo}
           renderRightComponent={this.renderSyncState}
         />
         <LoginModal
