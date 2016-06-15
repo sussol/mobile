@@ -25,7 +25,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button } from '../widgets';
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 /**
 * Renders the page for displaying Stocktakes.
@@ -90,14 +90,15 @@ export class StocktakesPage extends React.Component {
    * Takes an array of stocktakes and deletes them from database
    * @param {array} stocktakes  the array of stocktakes to delete
    */
-  onDeleteConfirm(deleteSelection) {
-    const { database, stocktakes } = this.state;
+  onDeleteConfirm() {
+    const { database, stocktakes, deleteSelection } = this.state;
     database.write(() => {
       for (const stocktakeId of deleteSelection) {
         const stocktake = stocktakes.filter('id == ${0}', stocktakeId)[0];
         database.delete('Stocktake', stocktake);
       }
     });
+    this.setState({ deleteSelection: [] });
     this.refreshData();
   }
 
@@ -160,6 +161,8 @@ export class StocktakesPage extends React.Component {
   }
 
   renderRow(stocktake) {
+    const deleteColor = this.state.deleteSelection.indexOf(stocktake.id) >= 0 ?
+    SUSSOL_ORANGE : 'grey';
     return (
       <Row
         style={globalStyles.dataTableRow}
@@ -195,7 +198,7 @@ export class StocktakesPage extends React.Component {
             textStyle={globalStyles.dataTableText}
             width={COLUMN_WIDTHS[3]}
           >
-            <Icon name="md-remove-circle" size={15} color="grey" />
+            <Icon name="md-remove-circle" size={15} color={deleteColor} />
           </Cell>
         </TouchableOpacity>
       </Row>
