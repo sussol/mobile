@@ -219,19 +219,22 @@ export class StocktakesPage extends React.Component {
   }
 
   render() {
+    const { toggleCurrent } = this.state;
+    const currentStyle = toggleCurrent ? { backgroundColor: SUSSOL_ORANGE } : {};
+    const pastStyle = !toggleCurrent ? { backgroundColor: SUSSOL_ORANGE } : {};
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
             <View style={globalStyles.horizontalContainer}>
               <Button
-                style={[globalStyles.button, localStyles.toggleLeft]}
+                style={[globalStyles.button, localStyles.toggleLeft, currentStyle]}
                 textStyle={globalStyles.buttonText}
                 text="Current"
                 onPress={() => this.onToggle(true)}
               />
               <Button
-                style={[globalStyles.button, localStyles.toggleRight]}
+                style={[globalStyles.button, localStyles.toggleRight, pastStyle]}
                 textStyle={globalStyles.buttonText}
                 text="Past"
                 onPress={() => this.onToggle(false)}
