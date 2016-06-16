@@ -142,9 +142,9 @@ const localStyles = StyleSheet.create({
   },
   logOutText: {
     fontFamily: APP_FONT_FAMILY,
-    color: DARKER_GREY,
+    color: '#a8aaac',
   },
   logOutIcon: {
-    color: DARK_GREY,
+    color: '#909192',
   },
 });
