@@ -123,6 +123,7 @@ export class StocktakesPage extends React.Component {
     this.setState({
       toggleCurrent: isCurrent,
     });
+    this.refreshData();
   }
 
   /**
@@ -130,8 +131,11 @@ export class StocktakesPage extends React.Component {
    * isAscending. This sort by on this page is always 'createdDate'.
    */
   refreshData() {
-    const { stocktakes, sortBy, dataSource, isAscending } = this.state;
-    const data = stocktakes.sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
+    const { stocktakes, sortBy, toggleCurrent, dataSource, isAscending } = this.state;
+    const toggleFilter = toggleCurrent ? 'status == "new"' : 'status != "new"';
+    const data = stocktakes
+                  .filtered(toggleFilter)
+                  .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
@@ -222,6 +226,8 @@ export class StocktakesPage extends React.Component {
     const { toggleCurrent } = this.state;
     const currentStyle = toggleCurrent ? { backgroundColor: SUSSOL_ORANGE } : {};
     const pastStyle = !toggleCurrent ? { backgroundColor: SUSSOL_ORANGE } : {};
+    const currentTextStyle = toggleCurrent ? { color: 'white' } : {};
+    const pastTextStyle = !toggleCurrent ? { color: 'white' } : {};
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -229,13 +235,13 @@ export class StocktakesPage extends React.Component {
             <View style={globalStyles.horizontalContainer}>
               <Button
                 style={[globalStyles.button, localStyles.toggleLeft, currentStyle]}
-                textStyle={globalStyles.buttonText}
+                textStyle={[globalStyles.buttonText, currentTextStyle]}
                 text="Current"
                 onPress={() => this.onToggle(true)}
               />
               <Button
                 style={[globalStyles.button, localStyles.toggleRight, pastStyle]}
-                textStyle={globalStyles.buttonText}
+                textStyle={[globalStyles.buttonText, pastTextStyle]}
                 text="Past"
                 onPress={() => this.onToggle(false)}
               />
