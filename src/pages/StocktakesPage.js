@@ -24,7 +24,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
-import { Button } from '../widgets';
+import { Button, DeleteModal } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 /**
@@ -52,6 +52,7 @@ export class StocktakesPage extends React.Component {
     };
     this.componentWillMount = this.componentWillMount.bind(this);
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
+    this.onDeleteCancel = this.onDeleteCancel.bind(this);
     this.onDeleteButtonPress = this.onDeleteButtonPress.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
@@ -88,16 +89,26 @@ export class StocktakesPage extends React.Component {
 
   /**
    * Takes an array of stocktakes and deletes them from database
-   * @param {array} stocktakes  the array of stocktakes to delete
    */
   onDeleteConfirm() {
-    const { database, stocktakes, deleteSelection } = this.state;
+    const { stocktakes, deleteSelection } = this.state;
+    const { database } = this.props;
     database.write(() => {
-      for (const stocktakeId of deleteSelection) {
-        const stocktake = stocktakes.filter('id == ${0}', stocktakeId)[0];
+      for (let i = 0; i < deleteSelection.length; i++) {
+        const stocktake = stocktakes.filtered('id == $0', deleteSelection[i])[0];
         database.delete('Stocktake', stocktake);
       }
+
+      // for (const stocktakeId of deleteSelection) {
+      //   const stocktake = stocktakes.filter('id == $0', stocktakeId)[0];
+      //   database.delete('Stocktake', stocktake);
+      // }
     });
+    this.setState({ deleteSelection: [] });
+    this.refreshData();
+  }
+
+  onDeleteCancel() {
     this.setState({ deleteSelection: [] });
     this.refreshData();
   }
@@ -223,6 +234,12 @@ export class StocktakesPage extends React.Component {
             dataSource={this.state.dataSource}
             renderRow={this.renderRow}
             renderHeader={this.renderHeader}
+          />
+          <DeleteModal
+            isOpen={this.state.deleteSelection.length > 0}
+            questionText="Are you sure you want to delete these stocktakes?"
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
           />
         </View>
       </View>
