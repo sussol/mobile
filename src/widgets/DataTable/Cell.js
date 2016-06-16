@@ -25,7 +25,7 @@ export function Cell(props) {
   const { style, textStyle, width, children, ...viewProps } = props;
 
   // Render string child in a Text Component
-  if (typeof children === 'string') {
+  if (typeof children === 'string' || typeof children === 'number') {
     return (
       <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
         <Text style={textStyle}>
