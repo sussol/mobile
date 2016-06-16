@@ -104,8 +104,6 @@ export default class OfflineMobileApp extends React.Component {
     const { key, ...extraProps } = props.scene.navigationState;
     const Page = PAGES[key]; // Get the page the navigation key relates to
     // Return the requested page with any extra props passed to navigateTo in pageProps
-    console.log('1');
-    console.log(extraProps);
     return (
       <Page
         navigateTo={navigateTo}
