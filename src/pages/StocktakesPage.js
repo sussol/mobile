@@ -222,7 +222,7 @@ export class StocktakesPage extends React.Component {
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
-          <View style={globalStyles.horizontalContainer}>
+          <View style={globalStyles.pageTopSectionContainer}>
             <View style={globalStyles.horizontalContainer}>
               <Button
                 style={[globalStyles.button, localStyles.toggleLeft]}
@@ -280,7 +280,7 @@ const localStyles = StyleSheet.create({
   },
   toggleLeft: {
     margin: 0,
-    marginLeft: 20,
+    marginLeft: 5,
     borderRadius: 0,
     borderBottomLeftRadius: 4,
     borderTopLeftRadius: 4,

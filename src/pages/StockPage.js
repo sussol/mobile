@@ -178,7 +178,7 @@ export class StockPage extends React.Component {
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
-          <View style={globalStyles.horizontalContainer}>
+          <View style={globalStyles.pageTopSectionContainer}>
             <SearchBar
               onChange={(event) => this.onSearchChange(event)}
             />

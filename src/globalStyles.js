@@ -30,6 +30,14 @@ export default StyleSheet.create({
     padding: 15,
     backgroundColor: BACKGROUND_COLOR,
   },
+  pageTopSectionContainer: {
+    paddingTop: 20,
+    paddingHorizontal: 10,
+    paddingBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   horizontalContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -54,7 +62,8 @@ export default StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 45,
+    width: 140,
     borderWidth: 1,
     borderRadius: 4,
     padding: 15,

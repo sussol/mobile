@@ -81,11 +81,9 @@ const localStyles = StyleSheet.create({
   },
   cancelButton: {
     borderColor: 'white',
-    width: 140,
   },
   deleteButton: {
     borderColor: 'white',
     backgroundColor: SUSSOL_ORANGE,
-    width: 140,
   },
 });
