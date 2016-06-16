@@ -48,6 +48,7 @@ export class StocktakesPage extends React.Component {
       stocktakes: props.database.objects('Stocktake'),
       sortBy: 'createdDate',
       isAscending: false,
+      toggleCurrent: true,
       deleteSelection: [],
     };
     this.componentWillMount = this.componentWillMount.bind(this);
@@ -98,11 +99,6 @@ export class StocktakesPage extends React.Component {
         const stocktake = stocktakes.filtered('id == $0', deleteSelection[i])[0];
         database.delete('Stocktake', stocktake);
       }
-
-      // for (const stocktakeId of deleteSelection) {
-      //   const stocktake = stocktakes.filter('id == $0', stocktakeId)[0];
-      //   database.delete('Stocktake', stocktake);
-      // }
     });
     this.setState({ deleteSelection: [] });
     this.refreshData();
@@ -121,6 +117,12 @@ export class StocktakesPage extends React.Component {
       deleteSelection.push(stocktake.id);
     }
     this.refreshData();
+  }
+
+  onToggle(isCurrent) {
+    this.setState({
+      toggleCurrent: isCurrent,
+    });
   }
 
   /**
@@ -191,7 +193,7 @@ export class StocktakesPage extends React.Component {
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
         >
-          {stocktake.createdDate.toISOString()}
+          {stocktake.createdDate.toLocaleString()}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
@@ -221,12 +223,28 @@ export class StocktakesPage extends React.Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.horizontalContainer}>
-            <Button
-              style={globalStyles.button}
-              textStyle={globalStyles.buttonText}
-              text="New StockTake"
-              onPress={this.onNewStockTake}
-            />
+            <View style={globalStyles.horizontalContainer}>
+              <Button
+                style={[globalStyles.button, localStyles.toggleLeft]}
+                textStyle={globalStyles.buttonText}
+                text="Current"
+                onPress={() => this.onToggle(true)}
+              />
+              <Button
+                style={[globalStyles.button, localStyles.toggleRight]}
+                textStyle={globalStyles.buttonText}
+                text="Past"
+                onPress={() => this.onToggle(false)}
+              />
+            </View>
+            <View style={localStyles.buttonViewTop}>
+              <Button
+                style={globalStyles.button}
+                textStyle={globalStyles.buttonText}
+                text="New StockTake"
+                onPress={this.onNewStockTake}
+              />
+            </View>
           </View>
           <DataTable
             style={globalStyles.dataTable}
@@ -255,6 +273,24 @@ const COLUMN_WIDTHS = [6, 2, 2, 1];
 const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
+  },
+  buttonViewTop: {
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  toggleLeft: {
+    margin: 0,
+    marginLeft: 20,
+    borderRadius: 0,
+    borderBottomLeftRadius: 4,
+    borderTopLeftRadius: 4,
+  },
+  toggleRight: {
+    margin: 0,
+    marginRight: 5,
+    borderRadius: 0,
+    borderBottomRightRadius: 4,
+    borderTopRightRadius: 4,
   },
   deleteCell: {
     alignItems: 'center',
