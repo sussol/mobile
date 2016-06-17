@@ -9,7 +9,19 @@ import {
   Text,
 } from 'react-native';
 
-export default function ToggleBar(props) {
+/* <ToggleBar
+ *   style={StyleSheet}
+ *   buttonStyle={StyleSheet}
+ *   textStyle={StyleSheet}
+ *   selectedTextStyle={StyleSheet}
+ *   selectedStyle={StyleSheet}
+ * >
+ *   <ToggleButton onPress={func} selected={bool} />
+ *   <ToggleButton onPress={func} selected={bool} />
+ *   <ToggleButton onPress={func} selected={bool} />
+ * </ToggleBar>
+ */
+export function ToggleBar(props) {
   function renderLeftButton() {
 
   }
@@ -30,12 +42,21 @@ export default function ToggleBar(props) {
 }
 
 ToggleBar.propTypes = {
-  buttonFunctionPairs: PropTypes.object.isRequired,
-  selectedButtons: PropTypes.array.isRequired,
-  selectedStyle: TouchableOpacity.style,
-  style: TouchableOpacity.style,
-  textStyle: Text.style,
+
 };
 
 ToggleBar.defaultProps = {
+
+};
+
+export function ToggleButton(props) {
+
+}
+
+ToggleButton.propTypes = {
+
+};
+
+ToggleButton.defaultProps = {
+
 };
