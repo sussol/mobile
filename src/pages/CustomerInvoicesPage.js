@@ -9,6 +9,7 @@
 import React from 'react';
 import {
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 
@@ -98,7 +99,9 @@ export class CustomerInvoicesPage extends React.Component {
         otherParty: this.props.database.objects('Name')[0],
       });
     });
-    this.props.navigateTo('customerInvoice', 'New Invoice', { invoice });
+    this.props.navigateTo('customerInvoice', 'New Invoice', {
+      invoice: invoice,
+    });
   }
 
   /**

@@ -36,6 +36,7 @@ export class Navigator extends React.Component {
     };
     this.renderNavigationBar = this.renderNavigationBar.bind(this);
     this.renderRightAndCentre = this.renderRightAndCentre.bind(this);
+    this.renderRightComponent = this.renderRightComponent.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderTitleComponent = this.renderTitleComponent.bind(this);
     this.handleNavigation = this.handleNavigation.bind(this);
@@ -67,15 +68,13 @@ export class Navigator extends React.Component {
         {...props}
         navigationProps={props}
         renderTitleComponent={this.renderTitleComponent}
-        renderRightComponent={this.renderRightAndCentre}
         style={this.props.navBarStyle}
       />
     );
   }
 
   /**
-   * Renders the centre and right components of the navigation bar. Squeezes both
-   * into the 'rightComponent' section of NavigationExperimental's NavigationHeader.
+   * Renders the centre and right components of the navigation bar.
    * @return {object} Component that contains both the right and centre components
    */
   renderRightAndCentre() {
@@ -99,9 +98,26 @@ export class Navigator extends React.Component {
             {this.props.renderCentreComponent && this.props.renderCentreComponent()}
           </View>
         </View>
-        {this.props.renderRightComponent && this.props.renderRightComponent()}
+        {this.renderRightComponent()}
       </View>
     );
+  }
+
+  /**
+   * Return the right component provided by the renderRightComponent functin in
+   * the navigation state, if there is one. Failing that, if a renderRightComponent
+   * function was passed in through props, return the result.
+   * @return {[type]} [description]
+   */
+  renderRightComponent() {
+    // If the navigation state includes a function to render the right component,
+    // it will override any passed through by props
+    const navigationState = this.state.navigationState;
+    const topmostCard = navigationState.children[navigationState.children.length - 1];
+    if (typeof topmostCard.renderRightComponent === 'function') {
+      return topmostCard.renderRightComponent();
+    }
+    return this.props.renderRightComponent && this.props.renderRightComponent();
   }
 
   renderScene(props) {
@@ -123,14 +139,19 @@ export class Navigator extends React.Component {
 
   render() {
     return (
-      <NavigationCardStack
-        direction={'horizontal'}
-        navigationState={{ ...this.state.navigationState }} // Clone so CardStack detects change
-        onNavigate={this.handleNavigation}
-        renderScene={this.renderScene}
-        renderOverlay={this.renderNavigationBar}
-        cardStyle={{ backgroundColor: this.props.backgroundColor }}
-      />
+      <View style={ localStyles.main }>
+        <NavigationCardStack
+          direction={'horizontal'}
+          navigationState={{ ...this.state.navigationState }} // Clone so CardStack detects change
+          onNavigate={this.handleNavigation}
+          renderScene={this.renderScene}
+          renderOverlay={this.renderNavigationBar}
+          cardStyle={{ backgroundColor: this.props.backgroundColor }}
+        />
+      <View style={{ position: 'absolute', top: 0, right: 0 }}>
+          {this.renderRightAndCentre()}
+        </View>
+      </View>
     );
   }
 }

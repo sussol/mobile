@@ -32,3 +32,10 @@ export const PAGES = {
   stockHistory: StockHistoryPage,
   realmExplorer: RealmExplorer,
 };
+
+export const PAGES_WITH_FINALISE = [
+  'stocktakeEditor',
+  'customerInvoice',
+  'supplierInvoice',
+  'stockHistory',
+];

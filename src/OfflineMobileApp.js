@@ -16,7 +16,7 @@ import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
 
 import { Navigator } from './navigation';
 
-import { PAGES } from './pages';
+import { PAGES, PAGES_WITH_FINALISE } from './pages';
 
 import { LoginModal } from './widgets';
 
@@ -50,7 +50,6 @@ export default class OfflineMobileApp extends React.Component {
       authenticated: false,
       syncState: SYNC_STATES.WAITING,
       syncError: '',
-
     };
   }
 
@@ -99,7 +98,15 @@ export default class OfflineMobileApp extends React.Component {
 
   renderScene(props) {
     const navigateTo = (key, title, extraProps) => {
-      props.onNavigate({ type: 'push', key, title, ...extraProps });
+      const navigationProps = { key, title, ...extraProps };
+      if (PAGES_WITH_FINALISE.indexOf(key) >= 0) {
+        navigationProps.renderRightComponent = () => (
+          <Text>
+            Finalise
+          </Text>
+        );
+      }
+      props.onNavigate({ type: 'push', ...navigationProps });
     };
     const { key, ...extraProps } = props.scene.navigationState;
     const Page = PAGES[key]; // Get the page the navigation key relates to
@@ -134,7 +141,7 @@ export default class OfflineMobileApp extends React.Component {
 
   render() {
     if (!this.state.initialised) {
-      const FirstUsePage = PAGES['firstUse'];
+      const FirstUsePage = PAGES.firstUse;
       return (
         <FirstUsePage
           synchronizer={this.synchronizer}
