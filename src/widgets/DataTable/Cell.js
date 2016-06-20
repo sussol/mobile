@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 /**
- * Renders a Cell that supports being a string as children, or any component.
+ * Renders a Cell that supports having a string as children, or any component.
  * @param   {object}  props         Properties passed where component was created.
  * @prop    {StyleSheet} style      Style of the Cell (View props)
  * @prop    {StyleSheet} textStyle  Style of the text in the Cell
