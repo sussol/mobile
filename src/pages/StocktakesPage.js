@@ -224,28 +224,10 @@ export class StocktakesPage extends React.Component {
 
   render() {
     const { toggleCurrent } = this.state;
-    const currentStyle = toggleCurrent ? { backgroundColor: SUSSOL_ORANGE } : {};
-    const pastStyle = !toggleCurrent ? { backgroundColor: SUSSOL_ORANGE } : {};
-    const currentTextStyle = toggleCurrent ? { color: 'white' } : {};
-    const pastTextStyle = !toggleCurrent ? { color: 'white' } : {};
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.horizontalContainer}>
-              <Button
-                style={[globalStyles.button, localStyles.toggleLeft, currentStyle]}
-                textStyle={[globalStyles.buttonText, currentTextStyle]}
-                text="Current"
-                onPress={() => this.onToggle(true)}
-              />
-              <Button
-                style={[globalStyles.button, localStyles.toggleRight, pastStyle]}
-                textStyle={[globalStyles.buttonText, pastTextStyle]}
-                text="Past"
-                onPress={() => this.onToggle(false)}
-              />
-            </View>
             <ToggleBar
               options={[
                 { text: 'Current', onPress: () => this.onToggle(true), selected: toggleCurrent },
