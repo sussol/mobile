@@ -38,7 +38,7 @@ export function ToggleBar(props) {
 
   return (
     <View style={style} {...containerProps}>
-      {renderOptions(options.slice(0, -1))}
+      {renderOptions(options)}
     </View>
   );
 }

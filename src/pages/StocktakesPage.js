@@ -24,7 +24,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
-import { Button, DeleteModal, ToggleBar, ToggleButton } from '../widgets';
+import { Button, DeleteModal, ToggleBar } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 /**
