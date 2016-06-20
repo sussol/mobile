@@ -20,8 +20,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import globalStyles, {
   APP_FONT_FAMILY,
-  DARK_GREY,
-  DARKER_GREY,
   SHADOW_BORDER,
 } from '../globalStyles';
 
