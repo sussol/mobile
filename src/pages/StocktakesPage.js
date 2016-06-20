@@ -248,11 +248,8 @@ export class StocktakesPage extends React.Component {
             </View>
             <ToggleBar
               options={[
-                { text: 'first', onPress: () => {}, selected: false },
-                { text: 'mid1', onPress: () => {}, selected: false },
-                { text: 'mid2', onPress: () => {}, selected: true },
-                { text: 'mid3', onPress: () => {}, selected: false },
-                { text: 'last', onPress: () => {}, selected: true },
+                { text: 'Current', onPress: () => this.onToggle(true), selected: toggleCurrent },
+                { text: 'Past', onPress: () => this.onToggle(false), selected: !toggleCurrent },
               ]}
             />
             <View style={localStyles.buttonViewTop}>

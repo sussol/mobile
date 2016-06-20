@@ -27,7 +27,7 @@ export function ToggleBar(props) {
       const currentTextStyle = button.selected ? [textStyle, textSelectedStyle] : textStyle;
       const currentOptionStyle = button.selected ? [optionStyle, optionSelectedStyle] : optionStyle;
       renderOutput.push(
-        <TouchableOpacity style={currentOptionStyle}>
+        <TouchableOpacity style={currentOptionStyle} onPress={button.onPress}>
           <Text style={currentTextStyle}>{button.text}</Text>
         </TouchableOpacity>
       );
