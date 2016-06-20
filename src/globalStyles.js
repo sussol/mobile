@@ -15,7 +15,9 @@ const BACKGROUND_COLOR = '#f8fbfe';
 const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
 const DARK_GREY = '#4a4a4a';
 const DARKER_GREY = '#333333';
+const GREY = '#909192'
 const WARM_GREY = '#9b9b9b';
+const WARMER_GREY = '#a8aaac'
 const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 
 export default StyleSheet.create({
@@ -166,6 +168,8 @@ export {
   SHADOW_BORDER,
   DARK_GREY,
   DARKER_GREY,
+  GREY,
   WARM_GREY,
+  WARMER_GREY,
   ROW_BLUE,
 };
