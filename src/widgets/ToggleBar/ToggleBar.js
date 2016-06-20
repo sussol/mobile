@@ -23,11 +23,11 @@ export function ToggleBar(props) {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
-    buttons.forEach((button) => {
+    buttons.forEach((button, i) => {
       const currentTextStyle = button.selected ? [textStyle, textSelectedStyle] : textStyle;
       const currentOptionStyle = button.selected ? [optionStyle, optionSelectedStyle] : optionStyle;
       renderOutput.push(
-        <TouchableOpacity style={currentOptionStyle} onPress={button.onPress}>
+        <TouchableOpacity key={i} style={currentOptionStyle} onPress={button.onPress}>
           <Text style={currentTextStyle}>{button.text}</Text>
         </TouchableOpacity>
       );
@@ -50,7 +50,6 @@ ToggleBar.propTypes = {
   textStyle: Text.propTypes.style,
   optionSelectedStyle: TouchableOpacity.propTypes.style,
   textSelectedStyle: Text.propTypes.style,
-  children: React.PropTypes.array,
 };
 
 ToggleBar.defaultProps = {
