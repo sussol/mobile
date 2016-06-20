@@ -9,12 +9,34 @@ import {
   View,
 } from 'react-native';
 
+/**
+ * Renders a toggle bar with no limit to options. Selected toggles are controlled by state in
+ * parent.
+ * @param   {object}          props               Properties passed where component was created.
+ * @prop    {StyleSheet}      style               Style of the containing View.
+ * @prop    {StyleSheet}      optionStyle         Style of the TouchableOpacities when not selected.
+ * @prop    {StyleSheet}      optionSelectedStyle Style of the TouchableOpacities when selected.
+ * @prop    {StyleSheet}      textStyle           Style of the Text when not selected.
+ * @prop    {StyleSheet}      textSelectedStyle   Style of the Text when  selected.
+ * @prop    {array<object>}   options             Array of objects representing each button in the
+ *                                                toggle bar, in order left to right, top to bottom.
+ * @return  {React.Component}                     Returns a View containing the toggle
+ *                                                buttons (TouchableOpacity).
+ *
+ * Option array format: [{
+                          text: 'string',
+                          onPress: 'func',
+                          selected: 'boolean',
+                        }]
+ *
+ */
+
 export function ToggleBar(props) {
   const {
     style,
     optionStyle,
-    textStyle,
     optionSelectedStyle,
+    textStyle,
     textSelectedStyle,
     options,
     ...containerProps,
@@ -53,17 +75,17 @@ ToggleBar.propTypes = {
   style: View.propTypes.style,
   options: PropTypes.array,
   optionStyle: View.propTypes.style,
-  textStyle: Text.propTypes.style,
   optionSelectedStyle: View.propTypes.style,
+  textStyle: Text.propTypes.style,
   textSelectedStyle: Text.propTypes.style,
 };
 
 ToggleBar.defaultProps = {
   style: {},
   optionStyle: {},
+  optionSelectedStyle: {},
   textStyle: {},
   textSelectedStyle: {},
-  optionSelectedStyle: {},
 };
 
 const localStyles = StyleSheet.create({
@@ -75,10 +97,8 @@ const localStyles = StyleSheet.create({
     borderWidth: 1,
   },
   textStyle: {
-    fontSize: 20,
   },
   textSelectedStyle: {
-    fontSize: 20,
   },
   optionStyle: {
     flex: 1,

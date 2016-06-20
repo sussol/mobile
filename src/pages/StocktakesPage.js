@@ -29,13 +29,15 @@ import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 /**
 * Renders the page for displaying Stocktakes.
-* @prop   {Realm}               database    App wide database.
-* @prop   {func}                navigateTo  callBack for navigation stack.
-* @state  {ListView.DataSource} dataSource  DataTable input, used to update rows being rendered.
-* @state  {Realm.Results}       Stocktakes  Filtered to have only customer_stocktake.
-* @state  {string}              sortBy      Locked to createdDate created date column.
-* @state  {boolean}             isAscending Direction sortBy should sort
-*                                           (ascending/descending:true/false).
+* @prop   {Realm}               database      App wide database.
+* @prop   {func}                navigateTo    callBack for navigation stack.
+* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
+* @state  {Realm.Results}       Stocktakes    Filtered to have only customer_stocktake.
+* @state  {string}              sortBy        Locked to createdDate created date column.
+* @state  {boolean}             isAscending   Direction sortBy should sort
+*                                             (ascending/descending:true/false).
+* @state  {boolean}             toggleCurrent Boolean control of toggle bar options.
+* @state  {array}             deleteSelection Stores id of the stocktakes selected for deletion.
 */
 export class StocktakesPage extends React.Component {
   constructor(props) {
