@@ -47,7 +47,7 @@ Cell.propTypes = {
   style: View.propTypes.style,
   textStyle: Text.propTypes.style,
   width: React.PropTypes.number,
-  children: React.PropTypes.any,
+  children: React.PropTypes.array,
 };
 
 Cell.defaultProps = {
