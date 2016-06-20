@@ -24,7 +24,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
-import { Button, DeleteModal } from '../widgets';
+import { Button, DeleteModal, ToggleBar, ToggleButton } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 /**
@@ -246,6 +246,15 @@ export class StocktakesPage extends React.Component {
                 onPress={() => this.onToggle(false)}
               />
             </View>
+            <ToggleBar
+              options={[
+                { text: 'first', onPress: () => {}, selected: false },
+                { text: 'mid1', onPress: () => {}, selected: false },
+                { text: 'mid2', onPress: () => {}, selected: true },
+                { text: 'mid3', onPress: () => {}, selected: false },
+                { text: 'last', onPress: () => {}, selected: true },
+              ]}
+            />
             <View style={localStyles.buttonViewTop}>
               <Button
                 style={globalStyles.button}

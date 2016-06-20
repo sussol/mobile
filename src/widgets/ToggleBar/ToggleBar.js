@@ -3,51 +3,32 @@ import React, {
 } from 'react';
 
 import {
-  StyleSheet,
   View,
   TouchableOpacity,
   Text,
 } from 'react-native';
 
-/* <ToggleBar
- *   style={StyleSheet}
- *   buttonStyle={StyleSheet}
- *   textStyle={StyleSheet}
- *   selectedTextStyle={StyleSheet}
- *   selectedButtonStyle={StyleSheet}
- * >
- *   <ToggleButton text="" onPress={func} selected={bool} />
- *   <ToggleButton text="" onPress={func} selected={bool} />
- *   <ToggleButton text="" onPress={func} selected={bool} />
- * </ToggleBar>
- */
 export function ToggleBar(props) {
   const {
     style,
-    buttonStyle,
+    optionStyle,
     textStyle,
-    selectedButtonStyle,
-    selectedTextStyle,
-    children,
+    optionSelectedStyle,
+    textSelectedStyle,
+    options,
     ...containerProps,
   } = props;
 
-  function renderLeftButton(button) {
-    return (
-      <TouchableOpacity style={{ backgroundColor: 'green' }}>
-        <Text>start</Text>
-      </TouchableOpacity>
-    );
-  }
-
-  function renderMiddleButtons(buttons) {
+  function renderOptions(buttons) {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
     buttons.forEach((button) => {
+      const currentTextStyle = button.selected ? [textStyle, textSelectedStyle] : textStyle;
+      const currentOptionStyle = button.selected ? [optionStyle, optionSelectedStyle] : optionStyle;
       renderOutput.push(
-        <TouchableOpacity style={{ backgroundColor: 'red' }}>
-          <Text>mid</Text>
+        <TouchableOpacity style={currentOptionStyle}>
+          <Text style={currentTextStyle}>{button.text}</Text>
         </TouchableOpacity>
       );
     });
@@ -55,32 +36,44 @@ export function ToggleBar(props) {
     return renderOutput;
   }
 
-  function renderRightButton(button) {
-    return (
-      <TouchableOpacity style={{ backgroundColor: 'blue' }}>
-        <Text>end</Text>
-      </TouchableOpacity>
-    );
-  }
-
   return (
-    <View style={style}>
-    {renderLeftButton(children[0])}
-    {renderMiddleButtons(children.slice(1, -1))}
-    {renderRightButton(children[children.length - 1])}
+    <View style={style} {...containerProps}>
+      {renderOptions(options.slice(0, -1))}
     </View>
   );
 }
 
 ToggleBar.propTypes = {
   style: View.propTypes.style,
-  buttonStyle: TouchableOpacity.propTypes.style,
+  options: PropTypes.array,
+  optionStyle: TouchableOpacity.propTypes.style,
   textStyle: Text.propTypes.style,
-  selectedButtonStyle: TouchableOpacity.propTypes.style,
-  selectedTextStyle: Text.propTypes.style,
+  optionSelectedStyle: TouchableOpacity.propTypes.style,
+  textSelectedStyle: Text.propTypes.style,
   children: React.PropTypes.array,
 };
 
 ToggleBar.defaultProps = {
-
+  style: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    justifyContent: 'center',
+    height: 45,
+    borderWidth: 1,
+    borderRadius: 4,
+  },
+  optionStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 140,
+  },
+  textStyle: {
+    fontSize: 20,
+  },
+  optionSelectedStyle: {
+    backgroundColor: 'rgb(114, 211, 242)',
+  },
+  textSelectedStyle: {
+  },
 };
