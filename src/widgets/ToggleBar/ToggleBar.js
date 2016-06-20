@@ -29,8 +29,8 @@ export function ToggleBar(props) {
         [localStyles.textSelectedStyle, textSelectedStyle] :
         [localStyles.textStyle, textStyle];
       const currentOptionStyle = button.selected ?
-         [localStyles.optionSelectedStyle, optionSelectedStyle] :
-         [localStyles.optionStyle, optionStyle];
+        [localStyles.optionSelectedStyle, optionSelectedStyle] :
+        [localStyles.optionStyle, optionStyle];
 
       renderOutput.push(
         <TouchableOpacity key={i} style={currentOptionStyle} onPress={button.onPress}>
