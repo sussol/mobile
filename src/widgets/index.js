@@ -1,4 +1,5 @@
 export { Button } from './Button';
-export { ConfirmModal, LoginModal } from './modals';
+export { ConfirmModal, FinaliseModal, LoginModal } from './modals';
 export { DataTable } from './DataTable';
 export { SearchBar } from './SearchBar';
+export { FinaliseButton } from './FinaliseButton';

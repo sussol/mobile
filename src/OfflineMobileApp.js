@@ -16,9 +16,13 @@ import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
 
 import { Navigator } from './navigation';
 
-import { PAGES, PAGES_WITH_FINALISE } from './pages';
+import { PAGES } from './pages';
 
-import { LoginModal } from './widgets';
+import {
+  FinaliseButton,
+  FinaliseModal,
+  LoginModal,
+} from './widgets';
 
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
@@ -50,6 +54,8 @@ export default class OfflineMobileApp extends React.Component {
       authenticated: false,
       syncState: SYNC_STATES.WAITING,
       syncError: '',
+      confirmFinalise: false,
+      recordToFinalise: null,
     };
   }
 
@@ -57,6 +63,7 @@ export default class OfflineMobileApp extends React.Component {
     this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
+    this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronize = this.synchronize.bind(this);
@@ -96,16 +103,35 @@ export default class OfflineMobileApp extends React.Component {
     this.setState({ authenticated: false });
   }
 
+  renderFinaliseButton() {
+    return (
+      <FinaliseButton
+        isFinalised={this.state.recordToFinalise.status === 'finalised'}
+        onPress={() => this.setState({ confirmFinalise: true })}
+      />);
+  }
+
+  renderLogo() {
+    return (
+      <Image
+        resizeMode="contain"
+        source={require('./images/logo.png')}
+      />
+    );
+  }
+
   renderScene(props) {
     const navigateTo = (key, title, extraProps) => {
+      // If the page we're going to takes in a record that can be finalised, retain it in state
+      let recordToFinalise = null;
+      if (extraProps && 'invoice' in extraProps) recordToFinalise = extraProps.invoice;
+      else if (extraProps && 'requisition' in extraProps) recordToFinalise = extraProps.requisition;
+      else if (extraProps && 'stocktake' in extraProps) recordToFinalise = extraProps.stocktake;
+      this.setState({ recordToFinalise: recordToFinalise });
+
+      // Now navigate to the page, passing on any extra props and the finalise button if required
       const navigationProps = { key, title, ...extraProps };
-      if (PAGES_WITH_FINALISE.indexOf(key) >= 0) {
-        navigationProps.renderRightComponent = () => (
-          <Text>
-            Finalise
-          </Text>
-        );
-      }
+      if (recordToFinalise) navigationProps.renderRightComponent = this.renderFinaliseButton;
       props.onNavigate({ type: 'push', ...navigationProps });
     };
     const { key, ...extraProps } = props.scene.navigationState;
@@ -130,15 +156,6 @@ export default class OfflineMobileApp extends React.Component {
     );
   }
 
-  renderLogo() {
-    return (
-      <Image
-        resizeMode="contain"
-        source={require('./images/logo.png')}
-      />
-    );
-  }
-
   render() {
     if (!this.state.initialised) {
       const FirstUsePage = PAGES.firstUse;
@@ -157,6 +174,12 @@ export default class OfflineMobileApp extends React.Component {
           renderRightComponent={this.renderSyncState}
           navBarStyle={globalStyles.navBarStyle}
           backgroundColor={BACKGROUND_COLOR}
+        />
+        <FinaliseModal
+          database={this.database}
+          isOpen={this.state.confirmFinalise}
+          onClose={() => this.setState({ confirmFinalise: false })}
+          record={this.state.recordToFinalise}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
