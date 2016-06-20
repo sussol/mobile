@@ -136,6 +136,26 @@ export default StyleSheet.create({
     margin: 5,
     borderColor: SUSSOL_ORANGE,
   },
+  toggleBar: {
+    borderColor: SUSSOL_ORANGE,
+    marginHorizontal: 5,
+    borderRadius: 4,
+  },
+  toggleText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: SUSSOL_ORANGE,
+  },
+  toggleTextSelected: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: 'white',
+  },
+  toggleOption: {
+  },
+  toggleOptionSelected: {
+    backgroundColor: SUSSOL_ORANGE,
+  },
 });
 
 export {

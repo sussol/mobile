@@ -3,9 +3,10 @@ import React, {
 } from 'react';
 
 import {
-  View,
-  TouchableOpacity,
+  StyleSheet,
   Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 
 export function ToggleBar(props) {
@@ -24,8 +25,13 @@ export function ToggleBar(props) {
     const renderOutput = [];
 
     buttons.forEach((button, i) => {
-      const currentTextStyle = button.selected ? [textStyle, textSelectedStyle] : textStyle;
-      const currentOptionStyle = button.selected ? [optionStyle, optionSelectedStyle] : optionStyle;
+      const currentTextStyle = button.selected ?
+        [localStyles.textSelectedStyle, textSelectedStyle] :
+        [localStyles.textStyle, textStyle];
+      const currentOptionStyle = button.selected ?
+         [localStyles.optionSelectedStyle, optionSelectedStyle] :
+         [localStyles.optionStyle, optionStyle];
+
       renderOutput.push(
         <TouchableOpacity key={i} style={currentOptionStyle} onPress={button.onPress}>
           <Text style={currentTextStyle}>{button.text}</Text>
@@ -37,7 +43,7 @@ export function ToggleBar(props) {
   }
 
   return (
-    <View style={style} {...containerProps}>
+    <View style={[localStyles.container, style]} {...containerProps}>
       {renderOptions(options)}
     </View>
   );
@@ -46,20 +52,33 @@ export function ToggleBar(props) {
 ToggleBar.propTypes = {
   style: View.propTypes.style,
   options: PropTypes.array,
-  optionStyle: TouchableOpacity.propTypes.style,
+  optionStyle: View.propTypes.style,
   textStyle: Text.propTypes.style,
-  optionSelectedStyle: TouchableOpacity.propTypes.style,
+  optionSelectedStyle: View.propTypes.style,
   textSelectedStyle: Text.propTypes.style,
 };
 
 ToggleBar.defaultProps = {
-  style: {
+  style: {},
+  optionStyle: {},
+  textStyle: {},
+  textSelectedStyle: {},
+  optionSelectedStyle: {},
+};
+
+const localStyles = StyleSheet.create({
+  container: {
     flexDirection: 'row',
     alignItems: 'stretch',
     justifyContent: 'center',
     height: 45,
     borderWidth: 1,
-    borderRadius: 4,
+  },
+  textStyle: {
+    fontSize: 20,
+  },
+  textSelectedStyle: {
+    fontSize: 20,
   },
   optionStyle: {
     flex: 1,
@@ -67,12 +86,11 @@ ToggleBar.defaultProps = {
     justifyContent: 'center',
     width: 140,
   },
-  textStyle: {
-    fontSize: 20,
-  },
   optionSelectedStyle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 140,
     backgroundColor: 'rgb(114, 211, 242)',
   },
-  textSelectedStyle: {
-  },
-};
+});

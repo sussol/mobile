@@ -229,6 +229,11 @@ export class StocktakesPage extends React.Component {
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
             <ToggleBar
+              style={globalStyles.toggleBar}
+              textStyle={globalStyles.toggleText}
+              textSelectedStyle={globalStyles.toggleTextSelected}
+              optionStyle={globalStyles.toggleOption}
+              optionSelectedStyle={globalStyles.toggleOptionSelected}
               options={[
                 { text: 'Current', onPress: () => this.onToggle(true), selected: toggleCurrent },
                 { text: 'Past', onPress: () => this.onToggle(false), selected: !toggleCurrent },
@@ -274,20 +279,6 @@ const localStyles = StyleSheet.create({
   buttonViewTop: {
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  toggleLeft: {
-    margin: 0,
-    marginLeft: 5,
-    borderRadius: 0,
-    borderBottomLeftRadius: 4,
-    borderTopLeftRadius: 4,
-  },
-  toggleRight: {
-    margin: 0,
-    marginRight: 5,
-    borderRadius: 0,
-    borderBottomRightRadius: 4,
-    borderTopRightRadius: 4,
   },
   deleteCell: {
     alignItems: 'center',
