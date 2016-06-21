@@ -230,20 +230,20 @@ export class StocktakesPage extends React.Component {
           <View style={globalStyles.pageTopSectionContainer}>
             <ToggleBar
               style={globalStyles.toggleBar}
-              textStyle={globalStyles.toggleText}
-              textSelectedStyle={globalStyles.toggleTextSelected}
-              optionStyle={globalStyles.toggleOption}
-              optionSelectedStyle={globalStyles.toggleOptionSelected}
-              options={[
+              textOffStyle={globalStyles.toggleText}
+              textOnStyle={globalStyles.toggleTextSelected}
+              toggleOffStyle={globalStyles.toggleOption}
+              toggleOnStyle={globalStyles.toggleOptionSelected}
+              toggles={[
                 {
                   text: 'Current',
                   onPress: () => this.onToggleStatusFilter(true),
-                  isSelected: showCurrent,
+                  isOn: showCurrent,
                 },
                 {
                   text: 'Past',
                   onPress: () => this.onToggleStatusFilter(false),
-                  isSelected: !showCurrent,
+                  isOn: !showCurrent,
                 },
               ]}
             />

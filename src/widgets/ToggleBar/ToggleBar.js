@@ -10,23 +10,23 @@ import {
 } from 'react-native';
 
 /**
- * Renders a bar of multiple toggling buttons, defined by the array of 'options' passed in.
- * Selected toggles are controlled by state in parent.
- * @param   {object}          props               Properties passed where component was created.
- * @prop    {StyleSheet}      style               Style of the containing View.
- * @prop    {StyleSheet}      optionStyle         Style of the TouchableOpacities when not isSelected.
- * @prop    {StyleSheet}      optionSelectedStyle Style of the TouchableOpacities when isSelected.
- * @prop    {StyleSheet}      textStyle           Style of the Text when not isSelected.
- * @prop    {StyleSheet}      textSelectedStyle   Style of the Text when  isSelected.
- * @prop    {array<object>}   options             Array of objects representing each button in the
- *                                                toggle bar, in order left to right, top to bottom.
- * @return  {React.Component}                     Returns a View containing the toggle
- *                                                buttons (TouchableOpacity).
+ * Renders a bar of multiple toggling buttons, defined by the array 'toggles' passed in.
+ * State in the parent should control the isOn of each toggle.
+ * @param   {object}          props             Properties passed where component was created.
+ * @prop    {StyleSheet}      style             Style of the containing View.
+ * @prop    {StyleSheet}      toggleOffStyle    Style of the TouchableOpacities when not isOn.
+ * @prop    {StyleSheet}      toggleOnStyle     Style of the TouchableOpacities when isOn.
+ * @prop    {StyleSheet}      textOffStyle         Style of the Text when not isOn.
+ * @prop    {StyleSheet}      textOnStyle Style of the Text when  isOn.
+ * @prop    {array<object>}   toggles           Array of objects representing each button in the
+ *                                              toggle bar, in order left to right, top to bottom.
+ * @return  {React.Component}                   Returns a View containing the toggle
+ *                                              buttons (TouchableOpacity).
  *
  * Option array format: [{
                           text: 'string',
                           onPress: 'func',
-                          isSelected: 'boolean',
+                          isOn: 'boolean',
                         }]
  *
  */
@@ -34,11 +34,11 @@ import {
 export function ToggleBar(props) {
   const {
     style,
-    optionStyle,
-    optionSelectedStyle,
-    textStyle,
-    textSelectedStyle,
-    options,
+    toggleOffStyle,
+    toggleOnStyle,
+    textOffStyle,
+    textOnStyle,
+    toggles,
     ...containerProps,
   } = props;
 
@@ -47,12 +47,12 @@ export function ToggleBar(props) {
     const renderOutput = [];
 
     buttons.forEach((button, i) => {
-      const currentTextStyle = button.isSelected ?
-        [localStyles.textSelectedStyle, textSelectedStyle] :
-        [localStyles.textStyle, textStyle];
-      const currentOptionStyle = button.isSelected ?
-        [localStyles.optionSelectedStyle, optionSelectedStyle] :
-        [localStyles.optionStyle, optionStyle];
+      const currentTextStyle = button.isOn ?
+        [localStyles.textOnStyle, textOnStyle] :
+        [localStyles.textOffStyle, textOffStyle];
+      const currentOptionStyle = button.isOn ?
+        [localStyles.toggleOnStyle, toggleOnStyle] :
+        [localStyles.toggleOffStyle, toggleOffStyle];
 
       renderOutput.push(
         <TouchableOpacity key={i} style={currentOptionStyle} onPress={button.onPress}>
@@ -66,26 +66,26 @@ export function ToggleBar(props) {
 
   return (
     <View style={[localStyles.container, style]} {...containerProps}>
-      {renderOptions(options)}
+      {renderOptions(toggles)}
     </View>
   );
 }
 
 ToggleBar.propTypes = {
   style: View.propTypes.style,
-  options: PropTypes.array,
-  optionStyle: View.propTypes.style,
-  optionSelectedStyle: View.propTypes.style,
-  textStyle: Text.propTypes.style,
-  textSelectedStyle: Text.propTypes.style,
+  toggles: PropTypes.array,
+  toggleOffStyle: View.propTypes.style,
+  toggleOnStyle: View.propTypes.style,
+  textOffStyle: Text.propTypes.style,
+  textOnStyle: Text.propTypes.style,
 };
 
 ToggleBar.defaultProps = {
   style: {},
-  optionStyle: {},
-  optionSelectedStyle: {},
-  textStyle: {},
-  textSelectedStyle: {},
+  toggleOffStyle: {},
+  toggleOnStyle: {},
+  textOffStyle: {},
+  textOnStyle: {},
 };
 
 const localStyles = StyleSheet.create({
@@ -96,17 +96,17 @@ const localStyles = StyleSheet.create({
     height: 45,
     borderWidth: 1,
   },
-  textStyle: {
+  textOffStyle: {
   },
-  textSelectedStyle: {
+  textOnStyle: {
   },
-  optionStyle: {
+  toggleOffStyle: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,
   },
-  optionSelectedStyle: {
+  toggleOnStyle: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
