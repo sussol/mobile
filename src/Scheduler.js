@@ -1,5 +1,5 @@
 /**
- * OfflineMobile Android Index
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 

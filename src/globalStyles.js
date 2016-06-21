@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -13,9 +13,11 @@ export const SUSSOL_ORANGE = '#e95c30';
 export const BLUE_WHITE = '#ecf3fc';
 export const BACKGROUND_COLOR = '#f8fbfe';
 export const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
-export const GREY = '#9b9b9b';
 export const DARK_GREY = '#4a4a4a';
 export const DARKER_GREY = '#333333';
+export const GREY = '#909192'
+export const WARM_GREY = '#9b9b9b';
+export const WARMER_GREY = '#a8aaac'
 export const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_VERTICAL = 10;
@@ -38,6 +40,14 @@ export default StyleSheet.create({
     paddingTop: PAGE_CONTENT_PADDING_VERTICAL,
     paddingBottom: PAGE_CONTENT_PADDING_VERTICAL,
     backgroundColor: BACKGROUND_COLOR,
+  },
+  pageTopSectionContainer: {
+    paddingTop: 20,
+    paddingHorizontal: 10,
+    paddingBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   horizontalContainer: {
     flexDirection: 'row',
@@ -68,7 +78,8 @@ export default StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 45,
+    width: 140,
     borderWidth: 1,
     borderRadius: 4,
     padding: 15,
@@ -140,5 +151,25 @@ export default StyleSheet.create({
     padding: 15,
     margin: 5,
     borderColor: SUSSOL_ORANGE,
+  },
+  toggleBar: {
+    borderColor: SUSSOL_ORANGE,
+    marginHorizontal: 5,
+    borderRadius: 4,
+  },
+  toggleText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: SUSSOL_ORANGE,
+  },
+  toggleTextSelected: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: 'white',
+  },
+  toggleOption: {
+  },
+  toggleOptionSelected: {
+    backgroundColor: SUSSOL_ORANGE,
   },
 });

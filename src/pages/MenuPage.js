@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -20,9 +20,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import globalStyles, {
   APP_FONT_FAMILY,
-  DARK_GREY,
-  DARKER_GREY,
   SHADOW_BORDER,
+  GREY,
+  WARMER_GREY,
 } from '../globalStyles';
 
 export function MenuPage(props) {
@@ -145,9 +145,9 @@ const localStyles = StyleSheet.create({
   },
   logOutText: {
     fontFamily: APP_FONT_FAMILY,
-    color: DARKER_GREY,
+    color: WARMER_GREY,
   },
   logOutIcon: {
-    color: DARK_GREY,
+    color: GREY,
   },
 });

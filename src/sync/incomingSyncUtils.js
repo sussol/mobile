@@ -22,7 +22,7 @@ export function integrateIncomingRecord(database, recordType, record) {
   let internalRecord;
   const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   switch (internalType) {
-    case 'Item':  {
+    case 'Item': {
       internalRecord = {
         id: record.ID,
         category: getObject(database, 'ItemCategory', record.category_ID),
