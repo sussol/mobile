@@ -15,8 +15,8 @@ import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
 
-export function DeleteModal(props) {
-  const { onCancel, onConfirm, questionText, ...modalProps } = props;
+export function BottomModal(props) {
+  const { onCancel, onConfirm, questionText, confirmText, cancelText, ...modalProps } = props;
   return (
     <Modal {...modalProps}
       style={localStyles.modal}
@@ -28,13 +28,13 @@ export function DeleteModal(props) {
         <Button
           style={[globalStyles.button, localStyles.cancelButton]}
           textStyle={[globalStyles.buttonText, localStyles.buttonText]}
-          text={'Cancel'}
+          text={cancelText}
           onPress={onCancel}
         />
         <Button
           style={[globalStyles.button, localStyles.deleteButton]}
           textStyle={[globalStyles.buttonText, localStyles.buttonText]}
-          text={'Delete'}
+          text={confirmText}
           onPress={onConfirm}
         />
       </View>
@@ -42,15 +42,19 @@ export function DeleteModal(props) {
    );
 }
 
-DeleteModal.propTypes = {
+BottomModal.propTypes = {
   style: View.propTypes.style,
   isOpen: React.PropTypes.bool.isRequired,
   questionText: React.PropTypes.string.isRequired,
   onCancel: React.PropTypes.func.isRequired,
   onConfirm: React.PropTypes.func.isRequired,
+  cancelText: React.PropTypes.string,
+  confirmText: React.PropTypes.string,
 };
-DeleteModal.defaultProps = {
+BottomModal.defaultProps = {
   style: {},
+  cancelText: 'Cancel',
+  confirmText: 'Confirm',
   globalStyles: {},
   swipeToClose: false, // negating the default.
   backdropPressToClose: false, // negating the default.

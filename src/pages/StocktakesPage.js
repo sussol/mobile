@@ -24,7 +24,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
-import { Button, DeleteModal, ToggleBar } from '../widgets';
+import { Button, BottomModal, ToggleBar } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 const SORT_BY = 'createdDate'
 /**
@@ -263,11 +263,12 @@ export class StocktakesPage extends React.Component {
             renderRow={this.renderRow}
             renderHeader={this.renderHeader}
           />
-          <DeleteModal
+          <BottomModal
             isOpen={this.state.deleteSelection.length > 0}
             questionText="Are you sure you want to delete these stocktakes?"
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
+            confirm='Delete'
           />
         </View>
       </View>
