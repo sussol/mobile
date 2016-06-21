@@ -26,16 +26,16 @@ import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button, DeleteModal, ToggleBar } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
-
+const SORT_BY = 'createdDate'
 /**
 * Renders the page for displaying Stocktakes.
 * @prop   {Realm}               database        App wide database.
 * @prop   {func}                navigateTo      callback for navigation stack.
+* @const  {string}              SORT_BY          Locked to createdDate via created date column.
 * @state  {ListView.DataSource} dataSource      DataTable input, used to update rows being rendered.
 * @state  {Realm.Results}       Stocktakes      Results object containing all objects in the
 *                                               Database of type Stocktake.
-* @state  {string}              sortBy          Locked to createdDate via created date column.
-* @state  {boolean}             isAscending     Direction sortBy should sort.
+* @state  {boolean}             isAscending     Direction SORT_BY should sort.
 *                                               (ascending/descending:true/false).
 * @state  {boolean}             showCurrent     Boolean control of toggle bar options.
 * @state  {array}               deleteSelection Stores id of the stocktakes selected for deletion.
@@ -49,7 +49,6 @@ export class StocktakesPage extends React.Component {
     this.state = {
       dataSource: dataSource,
       stocktakes: props.database.objects('Stocktake'),
-      sortBy: 'createdDate',
       isAscending: false,
       showCurrent: true,
       deleteSelection: [],
@@ -130,15 +129,15 @@ export class StocktakesPage extends React.Component {
   }
 
   /**
-   * Updates data within dataSource in state according to the state of sortBy and
-   * isAscending. This sort by on this page is always 'createdDate'.
+   * Updates data within dataSource in state according to SORT_BY and
+   * isAscending. SortBy is const set to 'createdDate'.
    */
   refreshData() {
-    const { stocktakes, sortBy, showCurrent, dataSource, isAscending } = this.state;
+    const { stocktakes, showCurrent, dataSource, isAscending } = this.state;
     const toggleFilter = showCurrent ? 'status == "new"' : 'status != "new"';
     const data = stocktakes
                   .filtered(toggleFilter)
-                  .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
+                  .sorted(SORT_BY, !isAscending); // 2nd arg: reverse sort order if true
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
