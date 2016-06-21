@@ -53,7 +53,6 @@ export class StocktakesPage extends React.Component {
       showCurrent: true,
       deleteSelection: [],
     };
-    this.componentWillMount = this.componentWillMount.bind(this);
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
     this.onDeleteCancel = this.onDeleteCancel.bind(this);
     this.onDeleteButtonPress = this.onDeleteButtonPress.bind(this);
