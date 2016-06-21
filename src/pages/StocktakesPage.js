@@ -37,7 +37,7 @@ import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 * @state  {string}              sortBy          Locked to createdDate via created date column.
 * @state  {boolean}             isAscending     Direction sortBy should sort.
 *                                               (ascending/descending:true/false).
-* @state  {boolean}             toggleCurrent   Boolean control of toggle bar options.
+* @state  {boolean}             showCurrent     Boolean control of toggle bar options.
 * @state  {array}               deleteSelection Stores id of the stocktakes selected for deletion.
 */
 export class StocktakesPage extends React.Component {
@@ -51,7 +51,7 @@ export class StocktakesPage extends React.Component {
       stocktakes: props.database.objects('Stocktake'),
       sortBy: 'createdDate',
       isAscending: false,
-      toggleCurrent: true,
+      showCurrent: true,
       deleteSelection: [],
     };
     this.componentWillMount = this.componentWillMount.bind(this);
@@ -122,9 +122,9 @@ export class StocktakesPage extends React.Component {
     this.refreshData();
   }
 
-  onToggle(isCurrent) {
+  onToggleStatusFilter(isCurrent) {
     this.setState({
-      toggleCurrent: isCurrent,
+      showCurrent: isCurrent,
     });
     this.refreshData();
   }
@@ -134,8 +134,8 @@ export class StocktakesPage extends React.Component {
    * isAscending. This sort by on this page is always 'createdDate'.
    */
   refreshData() {
-    const { stocktakes, sortBy, toggleCurrent, dataSource, isAscending } = this.state;
-    const toggleFilter = toggleCurrent ? 'status == "new"' : 'status != "new"';
+    const { stocktakes, sortBy, showCurrent, dataSource, isAscending } = this.state;
+    const toggleFilter = showCurrent ? 'status == "new"' : 'status != "new"';
     const data = stocktakes
                   .filtered(toggleFilter)
                   .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
@@ -226,7 +226,7 @@ export class StocktakesPage extends React.Component {
   }
 
   render() {
-    const { toggleCurrent } = this.state;
+    const { showCurrent } = this.state;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -238,8 +238,16 @@ export class StocktakesPage extends React.Component {
               optionStyle={globalStyles.toggleOption}
               optionSelectedStyle={globalStyles.toggleOptionSelected}
               options={[
-                { text: 'Current', onPress: () => this.onToggle(true), selected: toggleCurrent },
-                { text: 'Past', onPress: () => this.onToggle(false), selected: !toggleCurrent },
+                {
+                  text: 'Current',
+                  onPress: () => this.onToggleStatusFilter(true),
+                  selected: showCurrent,
+                },
+                {
+                  text: 'Past',
+                  onPress: () => this.onToggleStatusFilter(false),
+                  selected: !showCurrent,
+                },
               ]}
             />
             <View style={localStyles.buttonViewTop}>
