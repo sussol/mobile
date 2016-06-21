@@ -51,10 +51,6 @@ BottomConfirmModal.defaultProps = {
   style: {},
   cancelText: 'Cancel',
   confirmText: 'Confirm',
-  swipeToClose: false, // negating the default.
-  backdropPressToClose: false, // negating the default.
-  position: 'bottom',
-  backdrop: false,
 };
 
 const localStyles = StyleSheet.create({
