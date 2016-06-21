@@ -238,12 +238,12 @@ export class StocktakesPage extends React.Component {
                 {
                   text: 'Current',
                   onPress: () => this.onToggleStatusFilter(true),
-                  selected: showCurrent,
+                  isSelected: showCurrent,
                 },
                 {
                   text: 'Past',
                   onPress: () => this.onToggleStatusFilter(false),
-                  selected: !showCurrent,
+                  isSelected: !showCurrent,
                 },
               ]}
             />

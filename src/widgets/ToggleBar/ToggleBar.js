@@ -14,10 +14,10 @@ import {
  * Selected toggles are controlled by state in parent.
  * @param   {object}          props               Properties passed where component was created.
  * @prop    {StyleSheet}      style               Style of the containing View.
- * @prop    {StyleSheet}      optionStyle         Style of the TouchableOpacities when not selected.
- * @prop    {StyleSheet}      optionSelectedStyle Style of the TouchableOpacities when selected.
- * @prop    {StyleSheet}      textStyle           Style of the Text when not selected.
- * @prop    {StyleSheet}      textSelectedStyle   Style of the Text when  selected.
+ * @prop    {StyleSheet}      optionStyle         Style of the TouchableOpacities when not isSelected.
+ * @prop    {StyleSheet}      optionSelectedStyle Style of the TouchableOpacities when isSelected.
+ * @prop    {StyleSheet}      textStyle           Style of the Text when not isSelected.
+ * @prop    {StyleSheet}      textSelectedStyle   Style of the Text when  isSelected.
  * @prop    {array<object>}   options             Array of objects representing each button in the
  *                                                toggle bar, in order left to right, top to bottom.
  * @return  {React.Component}                     Returns a View containing the toggle
@@ -26,7 +26,7 @@ import {
  * Option array format: [{
                           text: 'string',
                           onPress: 'func',
-                          selected: 'boolean',
+                          isSelected: 'boolean',
                         }]
  *
  */
@@ -47,10 +47,10 @@ export function ToggleBar(props) {
     const renderOutput = [];
 
     buttons.forEach((button, i) => {
-      const currentTextStyle = button.selected ?
+      const currentTextStyle = button.isSelected ?
         [localStyles.textSelectedStyle, textSelectedStyle] :
         [localStyles.textStyle, textStyle];
-      const currentOptionStyle = button.selected ?
+      const currentOptionStyle = button.isSelected ?
         [localStyles.optionSelectedStyle, optionSelectedStyle] :
         [localStyles.optionStyle, optionStyle];
 
