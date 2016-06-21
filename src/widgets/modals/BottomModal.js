@@ -28,6 +28,7 @@ export function BottomModal(props) {
 
 BottomModal.propTypes = {
   isOpen: React.PropTypes.bool.isRequired,
+  children: React.PropTypes.any,
 };
 BottomModal.defaultProps = {
   style: {},
