@@ -11,6 +11,7 @@ import {
 } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
 const {
+  SYNC_LAST_SUCCESS,
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
@@ -91,6 +92,7 @@ export class Synchronizer {
     // will be passed up as a rejection of the promise returned by synchronize
     await this.push();
     await this.pull();
+    this.settings.set(SYNC_LAST_SUCCESS, new Date());
   }
 
   /**
@@ -268,9 +270,7 @@ export class Synchronizer {
   async acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, records) {
     const syncIds = records.map((record) => record.SyncID);
     const requestBody = {
-      FromID: parseInt(serverId, 10), // one // three
-      ToID: parseInt(thisSiteId, 10),
-      acknowledged_records: { ItemFields: syncIds }, // two
+      SyncRecordIDs: syncIds,
     };
     await fetch(
       `${serverURL}/sync/v2/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,

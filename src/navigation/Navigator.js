@@ -24,8 +24,6 @@ const {
 const BACK_ACTION = 'BackAction';
 const PUSH_ACTION = 'push';
 const INITIAL_ACTION = 'initial';
-const APPBAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
-
 
 export class Navigator extends React.Component {
 
@@ -78,27 +76,18 @@ export class Navigator extends React.Component {
    * @return {object} Component that contains both the right and centre components
    */
   renderRightAndCentre() {
-    const windowWidth = Dimensions.get('window').width; // Used to centre the centreComponent
     return (
-      <View style={[
-        localStyles.horizontalContainer,
-        { width: windowWidth * 0.75, justifyContent: 'flex-end' }]}
-      >
-        <View style={{
-          position: 'absolute',
-          width: windowWidth * 0.5,
-          height: APPBAR_HEIGHT,
-          right: windowWidth * 0.25,
-          top: 0,
-          flexDirection: 'column',
-          justifyContent: 'center',
-        }}
-        >
+      <View style={[localStyles.horizontalContainer, localStyles.rightAndCentreInnerContainer]}>
+        <View style={localStyles.centreComponentContainer}>
           <View style={[localStyles.horizontalContainer]}>
             {this.props.renderCentreComponent && this.props.renderCentreComponent()}
           </View>
         </View>
-        {this.renderRightComponent()}
+        <View style={localStyles.rightComponentContainer}>
+          <View style={[localStyles.horizontalContainer]}>
+            {this.renderRightComponent()}
+          </View>
+        </View>
       </View>
     );
   }
@@ -148,7 +137,7 @@ export class Navigator extends React.Component {
           renderOverlay={this.renderNavigationBar}
           cardStyle={{ backgroundColor: this.props.backgroundColor }}
         />
-      <View style={{ position: 'absolute', top: 0, right: 0 }}>
+      <View style={localStyles.rightAndCentreOuterContainer}>
           {this.renderRightAndCentre()}
         </View>
       </View>
@@ -192,6 +181,9 @@ function getNewNavState(currentState, action) {
   }
 }
 
+const WINDOW_WIDTH = Dimensions.get('window').width; // Used to centre the centreComponent
+const APPBAR_HEIGHT = Platform.OS === 'ios' ? 44 : 56; // Taken from NavigationExperimental
+const HORIZONTAL_MARGIN = Platform.OS === 'ios' ? 10 : 20;
 const localStyles = StyleSheet.create({
   main: {
     flex: 1,
@@ -204,5 +196,29 @@ const localStyles = StyleSheet.create({
   },
   navBarOffset: {
     marginTop: NavigationHeader.HEIGHT,
+  },
+  rightAndCentreOuterContainer: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+  },
+  rightAndCentreInnerContainer: {
+    width: WINDOW_WIDTH * 0.75,
+    justifyContent: 'flex-end',
+  },
+  centreComponentContainer: {
+    position: 'absolute',
+    width: WINDOW_WIDTH * 0.5,
+    height: APPBAR_HEIGHT,
+    right: WINDOW_WIDTH * 0.25,
+    top: 0,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  rightComponentContainer: {
+    flexDirection: 'column',
+    height: APPBAR_HEIGHT,
+    justifyContent: 'center',
+    marginRight: HORIZONTAL_MARGIN,
   },
 });

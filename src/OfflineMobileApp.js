@@ -8,7 +8,6 @@
 import React from 'react';
 import {
   Image,
-  Text,
   View,
 } from 'react-native';
 
@@ -22,6 +21,7 @@ import {
   FinaliseButton,
   FinaliseModal,
   LoginModal,
+  SyncState,
 } from './widgets';
 
 import { Synchronizer } from './sync';
@@ -30,13 +30,8 @@ import { Database, schema } from './database';
 import { Scheduler } from './Scheduler';
 import { Settings } from './settings';
 
-const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const SYNC_INTERVAL = 0.1 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
-const SYNC_STATES = {
-  WAITING: 'sync_waiting',
-  SYNCING: 'sync_active',
-  ERROR: 'sync_error',
-};
 
 export default class OfflineMobileApp extends React.Component {
 
@@ -52,8 +47,9 @@ export default class OfflineMobileApp extends React.Component {
     this.state = {
       initialised: initialised,
       authenticated: false,
-      syncState: SYNC_STATES.WAITING,
+      isSyncing: false,
       syncError: '',
+      lastSync: null, // Date of the last successful sync
       confirmFinalise: false,
       recordToFinalise: null,
     };
@@ -86,14 +82,14 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   async synchronize() {
-    if (this.state.syncState === SYNC_STATES.SYNCING) return; // If already syncing, skip
+    if (this.state.isSyncing) return; // If already syncing, skip
     try {
-      this.setState({ syncState: SYNC_STATES.SYNCING });
+      this.setState({ isSyncing: true });
       await this.synchronizer.synchronize();
-      this.setState({ syncState: SYNC_STATES.WAITING });
+      this.setState({ isSyncing: false });
     } catch (error) {
       this.setState({
-        syncState: SYNC_STATES.ERROR,
+        isSyncing: false,
         syncError: error.message,
       });
     }
@@ -147,12 +143,12 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   renderSyncState() {
-    let syncText = this.state.syncState;
-    if (syncText === SYNC_STATES.ERROR) syncText = this.state.syncError;
     return (
-      <Text>
-        {syncText}
-      </Text>
+      <SyncState
+        isSyncing={this.state.isSyncing}
+        syncError={this.state.syncError}
+        settings={this.settings}
+      />
     );
   }
 

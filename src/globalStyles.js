@@ -8,14 +8,17 @@
 import {
   StyleSheet,
 } from 'react-native';
-const APP_FONT_FAMILY = 'Museo_Slab_500';
-const SUSSOL_ORANGE = '#e95c30';
-const BLUE_WHITE = '#ecf3fc';
+export const APP_FONT_FAMILY = 'Museo_Slab_500';
+export const SUSSOL_ORANGE = '#e95c30';
+export const BLUE_WHITE = '#ecf3fc';
 export const BACKGROUND_COLOR = '#f8fbfe';
-const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
-const DARK_GREY = '#4a4a4a';
-const DARKER_GREY = '#333333';
-const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
+export const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
+export const GREY = '#9b9b9b';
+export const DARK_GREY = '#4a4a4a';
+export const DARKER_GREY = '#333333';
+export const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
+export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
+export const PAGE_CONTENT_PADDING_VERTICAL = 10;
 
 export default StyleSheet.create({
   appBackground: {
@@ -30,7 +33,10 @@ export default StyleSheet.create({
   },
   pageContentContainer: {
     flex: 1,
-    padding: 15,
+    paddingLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
+    paddingRight: PAGE_CONTENT_PADDING_HORIZONTAL,
+    paddingTop: PAGE_CONTENT_PADDING_VERTICAL,
+    paddingBottom: PAGE_CONTENT_PADDING_VERTICAL,
     backgroundColor: BACKGROUND_COLOR,
   },
   horizontalContainer: {
@@ -136,14 +142,3 @@ export default StyleSheet.create({
     borderColor: SUSSOL_ORANGE,
   },
 });
-
-export {
-  APP_FONT_FAMILY,
-  SUSSOL_ORANGE,
-  BLUE_WHITE,
-  BACKGROUND_COLOR,
-  SHADOW_BORDER,
-  DARK_GREY,
-  DARKER_GREY,
-  ROW_BLUE,
-};
