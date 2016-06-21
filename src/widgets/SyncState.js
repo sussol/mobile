@@ -29,8 +29,8 @@ export function SyncState(props) {
 
   if (props.syncError && props.syncError.length > 0) {
     const lastSync = props.settings.get(SETTINGS.SYNC_LAST_SUCCESS);
-    text = 'SYNC ERROR. ';
-    text = `${text} LAST SYNC ${lastSync.toDateString()}`;
+    text = 'SYNC ERROR.';
+    if (lastSync) text = `${text} LAST SYNC ${lastSync.toDateString()}`;
     cloudColor = INACTIVE_COLOR;
     arrowsColor = INACTIVE_COLOR;
     wifiColor = INACTIVE_COLOR;
