@@ -157,7 +157,7 @@ export class StocktakesPage extends React.Component {
           width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort()}
           isAscending={this.state.isAscending}
-          isSelected={this.state.sortBy === 'createdDate'}
+          isSelected={true}
           text={'CREATED DATE'}
         />
         <HeaderCell
