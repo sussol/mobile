@@ -7,55 +7,30 @@
 
 import React from 'react';
 import {
-  Text,
   StyleSheet,
   View,
 } from 'react-native';
-import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
-import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
+import globalStyles, { WARM_GREY } from '../../globalStyles';
 
 export function BottomModal(props) {
-  const { onCancel, onConfirm, questionText, confirmText, cancelText, ...modalProps } = props;
+  const { children, ...modalProps } = props;
   return (
     <Modal {...modalProps}
       style={localStyles.modal}
     >
-      <View style={localStyles.buttonContainer}>
-        <Text style={[globalStyles.text, localStyles.questionText]}>
-          {questionText}
-        </Text>
-        <Button
-          style={[globalStyles.button, localStyles.cancelButton]}
-          textStyle={[globalStyles.buttonText, localStyles.buttonText]}
-          text={cancelText}
-          onPress={onCancel}
-        />
-        <Button
-          style={[globalStyles.button, localStyles.deleteButton]}
-          textStyle={[globalStyles.buttonText, localStyles.buttonText]}
-          text={confirmText}
-          onPress={onConfirm}
-        />
+      <View style={localStyles.container}>
+        {children}
       </View>
     </Modal>
    );
 }
 
 BottomModal.propTypes = {
-  style: View.propTypes.style,
   isOpen: React.PropTypes.bool.isRequired,
-  questionText: React.PropTypes.string.isRequired,
-  onCancel: React.PropTypes.func.isRequired,
-  onConfirm: React.PropTypes.func.isRequired,
-  cancelText: React.PropTypes.string,
-  confirmText: React.PropTypes.string,
 };
 BottomModal.defaultProps = {
   style: {},
-  cancelText: 'Cancel',
-  confirmText: 'Confirm',
-  globalStyles: {},
   swipeToClose: false, // negating the default.
   backdropPressToClose: false, // negating the default.
   position: 'bottom',
@@ -63,7 +38,7 @@ BottomModal.defaultProps = {
 };
 
 const localStyles = StyleSheet.create({
-  buttonContainer: {
+  container: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -74,20 +49,5 @@ const localStyles = StyleSheet.create({
   modal: {
     height: 60,
     backgroundColor: WARM_GREY,
-  },
-  questionText: {
-    color: 'white',
-    fontSize: 22,
-    paddingRight: 10,
-  },
-  buttonText: {
-    color: 'white',
-  },
-  cancelButton: {
-    borderColor: 'white',
-  },
-  deleteButton: {
-    borderColor: 'white',
-    backgroundColor: SUSSOL_ORANGE,
   },
 });
