@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 
 /**
- * Renders a toggle bar with no limit to options. Selected toggles are controlled by state in
- * parent.
+ * Renders a bar of multiple toggling buttons, defined by the array of 'options' passed in.
+ * Selected toggles are controlled by state in parent.
  * @param   {object}          props               Properties passed where component was created.
  * @prop    {StyleSheet}      style               Style of the containing View.
  * @prop    {StyleSheet}      optionStyle         Style of the TouchableOpacities when not selected.
