@@ -14,7 +14,7 @@ const defaultStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderColor: SUSSOL_ORANGE,
-    margin: 15,
+    marginHorizontal: 5,
   },
   textInput: {
     height: 40,

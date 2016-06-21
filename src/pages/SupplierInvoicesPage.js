@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -59,10 +59,6 @@ export class SupplierInvoicesPage extends React.Component {
 
   componentWillMount() {
     this.refreshData();
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(this.state.transactions),
-      deleteTargetItem: this.state.transactions[0],
-    });
   }
 
   onSearchChange(event) {
@@ -183,7 +179,7 @@ export class SupplierInvoicesPage extends React.Component {
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
-          <View style={globalStyles.horizontalContainer}>
+          <View style={globalStyles.pageTopSectionContainer}>
             <SearchBar
               onChange={(event) => this.onSearchChange(event)}
               keyboardType="numeric"

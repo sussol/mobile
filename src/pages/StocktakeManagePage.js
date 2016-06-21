@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -13,7 +13,7 @@ import {
 
 import globalStyles from '../globalStyles';
 
-export function StocktakeManager(props) {
+export function StocktakeManagePage(props) {
   return (
     <View style={props.style}>
       <Text>You can manage a Stocktake.</Text>
@@ -21,6 +21,6 @@ export function StocktakeManager(props) {
   );
 }
 
-StocktakeManager.propTypes = {
+StocktakeManagePage.propTypes = {
   style: View.propTypes.style,
 };

@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android getStockOnDate function
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 

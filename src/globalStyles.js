@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -15,6 +15,9 @@ const BACKGROUND_COLOR = '#f8fbfe';
 const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
 const DARK_GREY = '#4a4a4a';
 const DARKER_GREY = '#333333';
+const GREY = '#909192'
+const WARM_GREY = '#9b9b9b';
+const WARMER_GREY = '#a8aaac'
 const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 
 export default StyleSheet.create({
@@ -28,6 +31,14 @@ export default StyleSheet.create({
     flex: 1,
     padding: 15,
     backgroundColor: BACKGROUND_COLOR,
+  },
+  pageTopSectionContainer: {
+    paddingTop: 20,
+    paddingHorizontal: 10,
+    paddingBottom: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   horizontalContainer: {
     flexDirection: 'row',
@@ -53,7 +64,8 @@ export default StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 40,
+    height: 45,
+    width: 140,
     borderWidth: 1,
     borderRadius: 4,
     padding: 15,
@@ -126,6 +138,26 @@ export default StyleSheet.create({
     margin: 5,
     borderColor: SUSSOL_ORANGE,
   },
+  toggleBar: {
+    borderColor: SUSSOL_ORANGE,
+    marginHorizontal: 5,
+    borderRadius: 4,
+  },
+  toggleText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: SUSSOL_ORANGE,
+  },
+  toggleTextSelected: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 12,
+    color: 'white',
+  },
+  toggleOption: {
+  },
+  toggleOptionSelected: {
+    backgroundColor: SUSSOL_ORANGE,
+  },
 });
 
 export {
@@ -136,5 +168,8 @@ export {
   SHADOW_BORDER,
   DARK_GREY,
   DARKER_GREY,
+  GREY,
+  WARM_GREY,
+  WARMER_GREY,
   ROW_BLUE,
 };
