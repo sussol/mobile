@@ -42,7 +42,7 @@ export function ToggleBar(props) {
     ...containerProps,
   } = props;
 
-  function renderToggle(buttons) {
+  function renderToggles(buttons) {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
@@ -66,7 +66,7 @@ export function ToggleBar(props) {
 
   return (
     <View style={[localStyles.container, style]} {...containerProps}>
-      {renderOptions(toggles)}
+      {renderToggles(toggles)}
     </View>
   );
 }
