@@ -25,7 +25,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
  * @prop    {StyleSheet} style      Style of the headerCell (View props)
  * @prop    {StyleSheet} textStyle  Style of the text in the HeaderCell
  * @prop    {number} width          flexbox flex property, gives weight to the headerCell width
- * @prop    {func} onPress          CallBack (i.e. should change sort order in parent)
+ * @prop    {func} onPress          CallBack (should change sort order in parent)
  * @prop    {string}  text          Text to render in headerCell
  * @return  {React.Component}       Return TouchableOpacity with sort arrows if onPress is given a
  *                                  function. Otherwise return a View.
