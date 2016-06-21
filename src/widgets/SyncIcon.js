@@ -13,17 +13,20 @@ export function SyncIcon(props) {
       <Icon
         name="md-cloud"
         size={props.size * 30}
-        style={[localStyles.icon, { color: props.cloudColor, top: props.size * 4 }]}
+        style={[localStyles.icon, { top: props.size * 4 }]}
+        color={props.cloudColor}
       />
       <Icon
         name="md-swap"
         size={props.size * 22}
-        style={[localStyles.icon, { color: props.arrowsColor }]}
+        style={localStyles.icon}
+        color={props.arrowsColor}
       />
       <Icon
         name="logo-rss"
         size={props.size * 22}
-        style={[localStyles.icon, { color: props.wifiColor }]}
+        style={localStyles.icon}
+        color={props.wifiColor}
       />
     </View>
   );
