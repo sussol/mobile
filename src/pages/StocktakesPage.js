@@ -96,7 +96,7 @@ export class StocktakesPage extends React.Component {
     database.write(() => {
       for (let i = 0; i < deleteSelection.length; i++) {
         const stocktake = stocktakes.filtered('id == $0', deleteSelection[i])[0];
-        database.delete('Stocktake', stocktake);
+        if (stocktake.isValid()) database.delete('Stocktake', stocktake);
       }
     });
     this.setState({ deleteSelection: [] });
