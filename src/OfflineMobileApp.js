@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * OfflineMobile Android
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -61,7 +61,7 @@ export default class OfflineMobileApp extends React.Component {
     const initialised = this.synchronizer.isInitialised();
     this.state = {
       initialised: initialised,
-      authenticated: true,
+      authenticated: false,
       syncState: SYNC_STATES.WAITING,
       syncError: '',
 
