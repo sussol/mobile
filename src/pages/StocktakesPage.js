@@ -182,7 +182,8 @@ export class StocktakesPage extends React.Component {
 
   renderRow(stocktake) {
     const deleteColor = this.state.deleteSelection.indexOf(stocktake.id) >= 0 ?
-    SUSSOL_ORANGE : 'grey';
+                                          SUSSOL_ORANGE :
+                                          'grey';
     return (
       <Row
         style={globalStyles.dataTableRow}
