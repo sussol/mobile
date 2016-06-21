@@ -16,14 +16,14 @@ import {
  * @prop    {StyleSheet}      style             Style of the containing View.
  * @prop    {StyleSheet}      toggleOffStyle    Style of the TouchableOpacities when not isOn.
  * @prop    {StyleSheet}      toggleOnStyle     Style of the TouchableOpacities when isOn.
- * @prop    {StyleSheet}      textOffStyle         Style of the Text when not isOn.
- * @prop    {StyleSheet}      textOnStyle Style of the Text when  isOn.
+ * @prop    {StyleSheet}      textOffStyle      Style of the Text when not isOn.
+ * @prop    {StyleSheet}      textOnStyle       Style of the Text when  isOn.
  * @prop    {array<object>}   toggles           Array of objects representing each button in the
  *                                              toggle bar, in order left to right, top to bottom.
  * @return  {React.Component}                   Returns a View containing the toggle
  *                                              buttons (TouchableOpacity).
  *
- * Option array format: [{
+ * toggles array format: [{
                           text: 'string',
                           onPress: 'func',
                           isOn: 'boolean',
@@ -42,7 +42,7 @@ export function ToggleBar(props) {
     ...containerProps,
   } = props;
 
-  function renderOptions(buttons) {
+  function renderToggle(buttons) {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
@@ -50,12 +50,12 @@ export function ToggleBar(props) {
       const currentTextStyle = button.isOn ?
         [localStyles.textOnStyle, textOnStyle] :
         [localStyles.textOffStyle, textOffStyle];
-      const currentOptionStyle = button.isOn ?
+      const currentToggleStyle = button.isOn ?
         [localStyles.toggleOnStyle, toggleOnStyle] :
         [localStyles.toggleOffStyle, toggleOffStyle];
 
       renderOutput.push(
-        <TouchableOpacity key={i} style={currentOptionStyle} onPress={button.onPress}>
+        <TouchableOpacity key={i} style={currentToggleStyle} onPress={button.onPress}>
           <Text style={currentTextStyle}>{button.text}</Text>
         </TouchableOpacity>
       );
