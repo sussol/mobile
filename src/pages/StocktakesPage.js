@@ -197,7 +197,7 @@ export class StocktakesPage extends React.Component {
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
         >
-          {stocktake.createdDate.toLocaleString()}
+          {stocktake.createdDate.toDateString()}
         </Cell>
         <Cell
           style={globalStyles.dataTableCell}
