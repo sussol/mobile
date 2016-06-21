@@ -69,9 +69,7 @@ export class StocktakesPage extends React.Component {
   }
 
   onColumnSort() {
-    this.setState({
-      isAscending: !this.state.isAscending,
-    });
+    this.setState({ isAscending: !this.state.isAscending });
     this.refreshData();
   }
 
