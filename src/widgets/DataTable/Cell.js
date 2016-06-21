@@ -34,7 +34,7 @@ export function Cell(props) {
       </View>
     );
   }
-  // Render any type of child component(s)
+  // Render any non-string child component(s)
   return (
     <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
       {children}
