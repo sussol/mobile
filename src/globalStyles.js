@@ -15,10 +15,12 @@ export const BACKGROUND_COLOR = '#f8fbfe';
 export const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
 export const DARK_GREY = '#4a4a4a';
 export const DARKER_GREY = '#333333';
-export const GREY = '#909192'
+export const GREY = '#909192';
 export const WARM_GREY = '#9b9b9b';
-export const WARMER_GREY = '#a8aaac'
+export const WARMER_GREY = '#a8aaac';
 export const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
+export const FINALISE_GREEN = '#219d1b';
+export const FINALISED_RED = '#f63b30';
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_VERTICAL = 10;
 
@@ -111,6 +113,20 @@ export default StyleSheet.create({
     padding: 15,
     borderColor: DARK_GREY,
   },
+  navBarText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 10,
+    color: GREY,
+    alignSelf: 'flex-end',
+    marginRight: 15,
+  },
+  navBarRightContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    bottom: 6,
+  },
   dataTableText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 14,
@@ -151,6 +167,16 @@ export default StyleSheet.create({
     padding: 15,
     margin: 5,
     borderColor: SUSSOL_ORANGE,
+  },
+  finaliseButton: {
+    color: FINALISE_GREEN,
+    fontSize: 40,
+  },
+  finalisedLock: {
+    color: FINALISED_RED,
+    fontSize: 28,
+    marginHorizontal: 8,
+    bottom: 6,
   },
   toggleBar: {
     borderColor: SUSSOL_ORANGE,

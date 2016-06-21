@@ -10,16 +10,13 @@ import { SyncIcon } from './SyncIcon';
 
 import { SETTINGS_KEYS as SETTINGS } from '../settings';
 
-import {
-  APP_FONT_FAMILY,
+import globalStyles, {
   GREY,
   DARK_GREY,
 } from '../globalStyles';
 
 const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
-
-const FONT_SIZE = 10;
 
 export function SyncState(props) {
   let text = 'SYNC ENABLED';
@@ -39,8 +36,8 @@ export function SyncState(props) {
   }
 
   return (
-    <View style={localStyles.horizontalContainer}>
-      <Text style={localStyles.text}>{text}</Text>
+    <View style={globalStyles.navBarRightContainer}>
+      <Text style={globalStyles.navBarText}>{text}</Text>
       <SyncIcon cloudColor={cloudColor} arrowsColor={arrowsColor} wifiColor={wifiColor} />
     </View>
   );
@@ -53,24 +50,10 @@ SyncState.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  horizontalContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-    bottom: 6,
-  },
   iconActive: {
     color: DARK_GREY,
   },
   iconInactive: {
     color: GREY,
-  },
-  text: {
-    fontFamily: APP_FONT_FAMILY,
-    fontSize: FONT_SIZE,
-    color: GREY,
-    alignSelf: 'flex-end',
-    marginRight: 15,
   },
 });
