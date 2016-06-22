@@ -45,14 +45,7 @@ export class SyncAuthenticator {
     const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
     try {
-      await authenticateAsync(authURL, username, passwordHash);
-      const responseJson = { // TODO Get from authenticateAsync when server auth changed
-        ServerID: '1',
-        SiteID: '2',
-        StoreID: 'CB7B46602B81494DBC03330FF0001EB8',
-        SupplyingStoreID: 'E6343A6B3A72433B8F892F8BF156FAD8',
-        NameID: 'C5B489AFEB5240908A02A25B7192F99C',
-      };
+      const responseJson = await authenticateAsync(authURL, username, passwordHash);
       this.settings.set(SYNC_URL, serverURL);
       this.settings.set(SYNC_SITE_NAME, username);
       this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);

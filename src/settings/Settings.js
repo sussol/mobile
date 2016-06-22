@@ -10,7 +10,7 @@ export class Settings {
     this.database.write(() => {
       this.database.update('Setting', {
         key: key,
-        value: value,
+        value: value.toString(),
       });
     });
   }
