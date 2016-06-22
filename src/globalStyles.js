@@ -22,7 +22,8 @@ export const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 export const FINALISE_GREEN = '#219d1b';
 export const FINALISED_RED = '#f63b30';
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
-export const PAGE_CONTENT_PADDING_VERTICAL = 10;
+export const PAGE_CONTENT_PADDING_TOP = 10;
+export const PAGE_CONTENT_PADDING_BOTTOM = 20;
 
 export default StyleSheet.create({
   appBackground: {
@@ -38,7 +39,8 @@ export default StyleSheet.create({
   pageContentContainer: {
     flex: 1,
     paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
-    paddingVertical: PAGE_CONTENT_PADDING_VERTICAL,
+    paddingTop: PAGE_CONTENT_PADDING_TOP,
+    paddingBottom: PAGE_CONTENT_PADDING_BOTTOM,
     backgroundColor: BACKGROUND_COLOR,
   },
   pageTopSectionContainer: {
