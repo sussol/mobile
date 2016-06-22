@@ -131,7 +131,7 @@ export default class OfflineMobileApp extends React.Component {
       case 'stocktakeEditor':
         return <StocktakeEditPage navigateTo={navigateTo} />;
       case 'stocktakeManager':
-        return <StocktakeManagePage navigateTo={navigateTo} />;
+        return <StocktakeManagePage database={this.database} navigateTo={navigateTo} />;
       case 'customerInvoices':
         return <CustomerInvoicesPage database={this.database} navigateTo={navigateTo} />;
       case 'customerInvoice':
