@@ -137,7 +137,7 @@ export class Navigator extends React.Component {
           renderOverlay={this.renderNavigationBar}
           cardStyle={{ backgroundColor: this.props.backgroundColor }}
         />
-      <View style={localStyles.rightAndCentreOuterContainer}>
+        <View style={localStyles.rightAndCentreOuterContainer}>
           {this.renderRightAndCentre()}
         </View>
       </View>
