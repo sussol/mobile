@@ -37,10 +37,8 @@ export default StyleSheet.create({
   },
   pageContentContainer: {
     flex: 1,
-    paddingLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
-    paddingRight: PAGE_CONTENT_PADDING_HORIZONTAL,
-    paddingTop: PAGE_CONTENT_PADDING_VERTICAL,
-    paddingBottom: PAGE_CONTENT_PADDING_VERTICAL,
+    paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
+    paddingVertical: PAGE_CONTENT_PADDING_VERTICAL,
     backgroundColor: BACKGROUND_COLOR,
   },
   pageTopSectionContainer: {
