@@ -1,6 +1,7 @@
 export { Settings } from './Settings';
 export const SETTINGS_KEYS = {
   SUPPLYING_STORE_ID: 'SupplyingStoreId',
+  SYNC_LAST_SUCCESS: 'SyncLastSuccess',
   SYNC_URL: 'SyncURL',
   SYNC_SITE_ID: 'SyncSiteId',
   SYNC_SERVER_ID: 'SyncServerId',

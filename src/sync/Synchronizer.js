@@ -92,7 +92,7 @@ export class Synchronizer {
     // will be passed up as a rejection of the promise returned by synchronize
     await this.push();
     await this.pull();
-    this.settings.set(SYNC_LAST_SUCCESS, new Date());
+    this.settings.set(SYNC_LAST_SUCCESS, new Date().toDateString());
   }
 
   /**
@@ -137,7 +137,9 @@ export class Synchronizer {
     } catch (error) {
       throw new Error('Unexpected response from sync server');
     }
-    if (responseJson.error.length > 0) throw new Error('Server rejected pushed records');
+    if (responseJson.error.length > 0) {
+      throw new Error('Server rejected pushed records');
+    }
   }
 
   /**

@@ -377,13 +377,13 @@ function generatePlaceholder(type, id) {
         name: placeholderString,
         createdDate: placeholderDate,
         status: placeholderString,
-        serialNumber: placeholderNumber,
+        serialNumber: placeholderString,
       };
       return placeholder;
     case 'Transaction':
       placeholder = {
         id: id,
-        serialNumber: placeholderNumber,
+        serialNumber: placeholderString,
         comment: placeholderString,
         entryDate: placeholderDate,
         type: placeholderString,
