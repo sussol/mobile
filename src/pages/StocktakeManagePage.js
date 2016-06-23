@@ -11,7 +11,6 @@ import {
   StyleSheet,
   View,
   TouchableOpacity,
-  TextInput,
 } from 'react-native';
 
 import {
@@ -25,7 +24,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
-import { Button, BottomModal, SearchBar, ToggleBar } from '../widgets';
+import { Button, BottomModal, TextInput, SearchBar, ToggleBar } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 /**
@@ -106,14 +105,14 @@ export class StocktakeManagePage extends React.Component {
 
   toggleShowSelected() {
     this.setState({
-      showSelected: !this.state.showSelected
+      showSelected: !this.state.showSelected,
     });
     this.refreshData();
   }
 
   toggleShowNoStock() {
     this.setState({
-      showNoStock: !this.state.showNoStock
+      showNoStock: !this.state.showNoStock,
     });
     this.refreshData();
   }
@@ -122,7 +121,7 @@ export class StocktakeManagePage extends React.Component {
    * Updates data within dataSource in state according to SORT_BY and
    * isAscending. SortBy is const set to 'createdDate'.
    */
-   refreshData() {
+  refreshData() {
      const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
      const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
      this.setState({ dataSource: dataSource.cloneWithRows(data) });
@@ -201,7 +200,11 @@ export class StocktakeManagePage extends React.Component {
           onPress={() => this.onRadioButtonPress(item)}
         >
           <Cell
-            style={[globalStyles.dataTableCell, localStyles.rightMostCell, localStyles.selectedCell]}
+            style={[
+              globalStyles.dataTableCell,
+              localStyles.rightMostCell,
+              localStyles.selectedCell,
+            ]}
             textStyle={globalStyles.dataTableText}
             width={COLUMN_WIDTHS[3]}
           >
@@ -255,9 +258,9 @@ export class StocktakeManagePage extends React.Component {
           >
             <TextInput
               style={localStyles.modalTextInput}
+              textStyle={localStyles.modalTextInputText}
               placeholderTextColor="white"
               placeholder="Give your stocktake a name"
-
             />
           </BottomModal>
         </View>
@@ -277,7 +280,10 @@ const localStyles = StyleSheet.create({
   },
   modalTextInput: {
     width: 560,
-    color: '#ffffff',
+    borderColor: 'white',
+  },
+  modalTextInputText: {
+    color: 'white',
   },
   toggleBarView: {
     justifyContent: 'flex-end',
