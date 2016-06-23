@@ -119,8 +119,8 @@ export class StocktakeManagePage extends React.Component {
   }
 
   /**
-   * Updates data within dataSource in state according to SORT_BY and
-   * isAscending. SortBy is const set to 'createdDate'.
+   * Updates data within dataSource in state according to SortBy and
+   * isAscending.
    */
   refreshData() {
     const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
