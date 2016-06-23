@@ -92,7 +92,7 @@ export class Synchronizer {
     // will be passed up as a rejection of the promise returned by synchronize
     await this.push();
     await this.pull();
-    this.settings.set(SYNC_LAST_SUCCESS, new Date().toDateString());
+    this.settings.set(SYNC_LAST_SUCCESS, new Date().toLocaleFormat('%d.%m.%y'));
   }
 
   /**
