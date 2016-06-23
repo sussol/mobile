@@ -54,6 +54,7 @@ export class StocktakeManagePage extends React.Component {
       showSelected: true,
       showNoStock: false,
       sortBy: 'name',
+      stocktakeName: '',
       itemSelection: [],
     };
     this.onColumnSort = this.onColumnSort.bind(this);
@@ -67,8 +68,8 @@ export class StocktakeManagePage extends React.Component {
     this.refreshData();
   }
 
-  onColumnSort() {
-    this.setState({ isAscending: !this.state.isAscending });
+  onColumnSort(newSortBy) {
+    this.setState({ isAscending: !this.state.isAscending, sortBy: newSortBy });
     this.refreshData();
   }
 
@@ -122,10 +123,10 @@ export class StocktakeManagePage extends React.Component {
    * isAscending. SortBy is const set to 'createdDate'.
    */
   refreshData() {
-     const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
-     const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
-     this.setState({ dataSource: dataSource.cloneWithRows(data) });
-   }
+    const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
+    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
+    this.setState({ dataSource: dataSource.cloneWithRows(data) });
+  }
 
   renderHeader() {
     return (
@@ -134,13 +135,16 @@ export class StocktakeManagePage extends React.Component {
           style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[0]}
+          onPress={() => this.onColumnSort('code')}
+          isAscending={this.state.isAscending}
+          isSelected={true}
           text={'ITEM CODE'}
         />
         <HeaderCell
           style={globalStyles.dataTableHeaderCell}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[1]}
-          onPress={() => this.onColumnSort()}
+          onPress={() => this.onColumnSort('name')}
           isAscending={this.state.isAscending}
           isSelected={true}
           text={'ITEM NAME'}
@@ -159,6 +163,9 @@ export class StocktakeManagePage extends React.Component {
           ]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[3]}
+          onPress={() => this.onColumnSort('selected')}
+          isAscending={this.state.isAscending}
+          isSelected={true}
           text={'SELECTED'}
         />
       </Header>
@@ -261,6 +268,8 @@ export class StocktakeManagePage extends React.Component {
               textStyle={localStyles.modalTextInputText}
               placeholderTextColor="white"
               placeholder="Give your stocktake a name"
+              value={this.state.stocktakeName}
+              onChange={(text) => this.setState({ stocktakeName: text })}
             />
           </BottomModal>
         </View>
