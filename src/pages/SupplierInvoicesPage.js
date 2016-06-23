@@ -184,12 +184,6 @@ export class SupplierInvoicesPage extends React.Component {
               onChange={(event) => this.onSearchChange(event)}
               keyboardType="numeric"
             />
-            <Button
-              style={globalStyles.button}
-              textStyle={globalStyles.buttonText}
-              text="New Invoice"
-              onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
-            />
           </View>
           <DataTable
             style={globalStyles.dataTable}
