@@ -5,14 +5,14 @@ import {
  } from './authenticationUtils';
 
 import { SETTINGS_KEYS } from '../settings';
-const { SYNC_URL } = SETTINGS_KEYS;
+const { SYNC_URL, THIS_STORE_ID } = SETTINGS_KEYS;
 
 const {
    CONNECTION_FAILURE,
    INVALID_PASSWORD,
  } = AUTH_ERROR_CODES;
 
-const AUTH_ENDPOINT = '/mobile/user';
+const AUTH_ENDPOINT = '/sync/v2/user';
 
 export class UserAuthenticator {
   constructor(database, settings) {
@@ -48,7 +48,7 @@ export class UserAuthenticator {
     if (serverURL.length === 0) { // No valid server URL configured, fail early
       throw new Error('Server URL not configured');
     }
-    const authURL = `${serverURL}${AUTH_ENDPOINT}`;
+    const authURL = `${serverURL}${AUTH_ENDPOINT}?store=${this.settings.get(THIS_STORE_ID)}`;
 
     try {
       const userJson = await authenticateAsync(authURL, username, passwordHash);

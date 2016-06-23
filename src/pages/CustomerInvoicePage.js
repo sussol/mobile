@@ -16,11 +16,12 @@ import globalStyles from '../globalStyles';
 export function CustomerInvoicePage(props) {
   return (
     <View style={props.style}>
-      <Text>You can edit a Customer Invoice.</Text>
+      <Text>{props.invoice.id}</Text>
     </View>
   );
 }
 
 CustomerInvoicePage.propTypes = {
   style: View.propTypes.style,
+  invoice: React.PropTypes.object,
 };

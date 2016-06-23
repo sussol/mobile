@@ -5,7 +5,7 @@
   }
 
 "rules": {
-        "jsx-boolean-value": "always",
+        "jsx-boolean-value": "off",
         "no-use-before-define": "off",
         "object-shorthand": "off",
         "strict": 0,
