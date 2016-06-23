@@ -49,7 +49,7 @@ export function MenuPage(props) {
           />
         </View>
 
-        <View style={localStyles.container}>
+        <View style={[localStyles.container, localStyles.centralContainer]}>
           <Image
             style={localStyles.image}
             resizeMode="contain"
@@ -102,7 +102,7 @@ export function MenuPage(props) {
           iconStyle={localStyles.logOutIcon}
           borderRadius={4}
           backgroundColor="rgba(255,255,255,0)"
-          onPress={props.logOut()}
+          onPress={props.logOut}
         >
           <Text style={localStyles.logOutText}>LOG OUT</Text>
         </Icon.Button>
@@ -122,18 +122,21 @@ const localStyles = StyleSheet.create({
   },
   horizontalContainer: {
     flex: 9,
+    justifyContent: 'space-between',
   },
   container: {
     alignSelf: 'stretch',
     flex: 1,
     paddingTop: 30,
     paddingHorizontal: 30,
-    marginHorizontal: 20,
     borderColor: SHADOW_BORDER,
     borderWidth: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  centralContainer: {
+    marginHorizontal: 40,
   },
   image: {
     height: 150,

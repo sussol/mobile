@@ -8,19 +8,28 @@
 import {
   StyleSheet,
 } from 'react-native';
-const APP_FONT_FAMILY = 'Museo_Slab_500';
-const SUSSOL_ORANGE = '#e95c30';
-const BLUE_WHITE = '#ecf3fc';
-const BACKGROUND_COLOR = '#f8fbfe';
-const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
-const DARK_GREY = '#4a4a4a';
-const DARKER_GREY = '#333333';
-const GREY = '#909192'
-const WARM_GREY = '#9b9b9b';
-const WARMER_GREY = '#a8aaac'
-const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
+export const APP_FONT_FAMILY = 'Museo_Slab_500';
+export const SUSSOL_ORANGE = '#e95c30';
+export const BLUE_WHITE = '#ecf3fc';
+export const BACKGROUND_COLOR = '#f8fbfe';
+export const SHADOW_BORDER = 'rgba(0, 0, 0, 0.1)';
+export const DARK_GREY = '#4a4a4a';
+export const DARKER_GREY = '#333333';
+export const GREY = '#909192';
+export const WARM_GREY = '#9b9b9b';
+export const WARMER_GREY = '#a8aaac';
+export const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
+export const FINALISE_GREEN = '#219d1b';
+export const FINALISED_RED = '#f63b30';
+export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
+export const PAGE_CONTENT_PADDING_TOP = 10;
+export const PAGE_CONTENT_PADDING_BOTTOM = 20;
 
 export default StyleSheet.create({
+  appBackground: {
+    flex: 1,
+    backgroundColor: BACKGROUND_COLOR,
+  },
   container: {
     flex: 1,
     borderWidth: 1,
@@ -29,7 +38,9 @@ export default StyleSheet.create({
   },
   pageContentContainer: {
     flex: 1,
-    padding: 15,
+    paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
+    paddingTop: PAGE_CONTENT_PADDING_TOP,
+    paddingBottom: PAGE_CONTENT_PADDING_BOTTOM,
     backgroundColor: BACKGROUND_COLOR,
   },
   pageTopSectionContainer: {
@@ -51,6 +62,11 @@ export default StyleSheet.create({
   },
   navBarOffset: {
     paddingTop: 68,
+  },
+  navBarStyle: {
+    backgroundColor: BACKGROUND_COLOR,
+    borderBottomWidth: 0,
+    elevation: 0,
   },
   text: {
     fontFamily: APP_FONT_FAMILY,
@@ -97,6 +113,20 @@ export default StyleSheet.create({
     padding: 15,
     borderColor: DARK_GREY,
   },
+  navBarText: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 10,
+    color: GREY,
+    alignSelf: 'flex-end',
+    marginRight: 15,
+  },
+  navBarRightContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'flex-end',
+    bottom: 6,
+  },
   dataTableText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 14,
@@ -138,6 +168,16 @@ export default StyleSheet.create({
     margin: 5,
     borderColor: SUSSOL_ORANGE,
   },
+  finaliseButton: {
+    color: FINALISE_GREEN,
+    fontSize: 40,
+  },
+  finalisedLock: {
+    color: FINALISED_RED,
+    fontSize: 28,
+    marginHorizontal: 8,
+    bottom: 6,
+  },
   toggleBar: {
     borderColor: SUSSOL_ORANGE,
     marginHorizontal: 5,
@@ -159,17 +199,3 @@ export default StyleSheet.create({
     backgroundColor: SUSSOL_ORANGE,
   },
 });
-
-export {
-  APP_FONT_FAMILY,
-  SUSSOL_ORANGE,
-  BLUE_WHITE,
-  BACKGROUND_COLOR,
-  SHADOW_BORDER,
-  DARK_GREY,
-  DARKER_GREY,
-  GREY,
-  WARM_GREY,
-  WARMER_GREY,
-  ROW_BLUE,
-};

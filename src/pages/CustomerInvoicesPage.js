@@ -82,17 +82,21 @@ export class CustomerInvoicesPage extends React.Component {
   }
 
   onNewInvoice() {
+    let invoice;
     this.props.database.write(() => {
-      this.props.database.create('Transaction', {
+      invoice = this.props.database.create('Transaction', {
         id: generateUUID(),
         serialNumber: '1',
         entryDate: new Date(),
         type: 'customer_invoice',
         status: 'new',
         comment: 'Testing sync',
+        otherParty: this.props.database.objects('Name')[0],
       });
     });
-    this.props.navigateTo('customerInvoice', 'New Invoice');
+    this.props.navigateTo('customerInvoice', 'New Invoice', {
+      invoice: invoice,
+    });
   }
 
   /**

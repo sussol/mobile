@@ -7,32 +7,22 @@
 
 import React from 'react';
 import {
-  StyleSheet,
-  Text,
+  Image,
   View,
 } from 'react-native';
 
+import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
+
 import { Navigator } from './navigation';
 
-import {
-  CustomerInvoicePage,
-  CustomerInvoicesPage,
-  CustomerPage,
-  CustomersPage,
-  FirstUsePage,
-  MenuPage,
-  StockHistoriesPage,
-  StockHistoryPage,
-  StockPage,
-  StocktakeEditPage,
-  StocktakeManagePage,
-  StocktakesPage,
-  SupplierInvoicePage,
-  SupplierInvoicesPage,
-  RealmExplorer,
-} from './pages';
+import { PAGES } from './pages';
 
-import { LoginModal } from './widgets';
+import {
+  FinaliseButton,
+  FinaliseModal,
+  LoginModal,
+  SyncState,
+} from './widgets';
 
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
@@ -42,11 +32,6 @@ import { Settings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
-const SYNC_STATES = {
-  WAITING: 'sync_waiting',
-  SYNCING: 'sync_active',
-  ERROR: 'sync_error',
-};
 
 export default class OfflineMobileApp extends React.Component {
 
@@ -62,9 +47,11 @@ export default class OfflineMobileApp extends React.Component {
     this.state = {
       initialised: initialised,
       authenticated: false,
-      syncState: SYNC_STATES.WAITING,
+      isSyncing: false,
       syncError: '',
-
+      lastSync: null, // Date of the last successful sync
+      confirmFinalise: false,
+      recordToFinalise: null,
     };
   }
 
@@ -72,6 +59,7 @@ export default class OfflineMobileApp extends React.Component {
     this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
+    this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronize = this.synchronize.bind(this);
@@ -94,14 +82,14 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   async synchronize() {
-    if (this.state.syncState === SYNC_STATES.SYNCING) return; // If already syncing, skip
+    if (this.state.isSyncing) return; // If already syncing, skip
     try {
-      this.setState({ syncState: SYNC_STATES.SYNCING });
+      this.setState({ isSyncing: true });
       await this.synchronizer.synchronize();
-      this.setState({ syncState: SYNC_STATES.WAITING });
+      this.setState({ isSyncing: false });
     } catch (error) {
       this.setState({
-        syncState: SYNC_STATES.ERROR,
+        isSyncing: false,
         syncError: error.message,
       });
     }
@@ -111,56 +99,62 @@ export default class OfflineMobileApp extends React.Component {
     this.setState({ authenticated: false });
   }
 
+  renderFinaliseButton() {
+    return (
+      <FinaliseButton
+        isFinalised={this.state.recordToFinalise.status === 'finalised'}
+        onPress={() => this.setState({ confirmFinalise: true })}
+      />);
+  }
+
+  renderLogo() {
+    return (
+      <Image
+        resizeMode="contain"
+        source={require('./images/logo.png')}
+      />
+    );
+  }
+
   renderScene(props) {
-    const navigateTo = (key, title) => {
-      props.onNavigate({ type: 'push', key, title });
+    const navigateTo = (key, title, extraProps) => {
+      // If the page we're going to takes in a record that can be finalised, retain it in state
+      let recordToFinalise = null;
+      if (extraProps && 'invoice' in extraProps) recordToFinalise = extraProps.invoice;
+      else if (extraProps && 'requisition' in extraProps) recordToFinalise = extraProps.requisition;
+      else if (extraProps && 'stocktake' in extraProps) recordToFinalise = extraProps.stocktake;
+      this.setState({ recordToFinalise: recordToFinalise });
+
+      // Now navigate to the page, passing on any extra props and the finalise button if required
+      const navigationProps = { key, title, ...extraProps };
+      if (recordToFinalise) navigationProps.renderRightComponent = this.renderFinaliseButton;
+      props.onNavigate({ type: 'push', ...navigationProps });
     };
-    switch (props.scene.navigationState.key) {
-      case 'menu':
-      case 'root':
-      default:
-        return <MenuPage logOut={() => this.logOut} navigateTo={navigateTo} />;
-      case 'customers':
-        return <CustomersPage database={this.database} navigateTo={navigateTo} />;
-      case 'customer':
-        return <CustomerPage navigateTo={navigateTo} />;
-      case 'stock':
-        return <StockPage database={this.database} navigateTo={navigateTo} />;
-      case 'stocktakes':
-        return <StocktakesPage database={this.database} navigateTo={navigateTo} />;
-      case 'stocktakeEditor':
-        return <StocktakeEditPage navigateTo={navigateTo} />;
-      case 'stocktakeManager':
-        return <StocktakeManagePage navigateTo={navigateTo} />;
-      case 'customerInvoices':
-        return <CustomerInvoicesPage database={this.database} navigateTo={navigateTo} />;
-      case 'customerInvoice':
-        return <CustomerInvoicePage navigateTo={navigateTo} />;
-      case 'supplierInvoices':
-        return <SupplierInvoicesPage database={this.database} navigateTo={navigateTo} />;
-      case 'supplierInvoice':
-        return <SupplierInvoicePage navigateTo={navigateTo} />;
-      case 'stockHistories':
-        return <StockHistoriesPage navigateTo={navigateTo} />;
-      case 'stockHistory':
-        return <StockHistoryPage navigateTo={navigateTo} />;
-      case 'realmExplorer':
-        return <RealmExplorer navigateTo={navigateTo} database={this.database} />;
-    }
+    const { key, ...extraProps } = props.scene.navigationState;
+    const Page = PAGES[key]; // Get the page the navigation key relates to
+    // Return the requested page with any extra props passed to navigateTo in pageProps
+    return (
+      <Page
+        navigateTo={navigateTo}
+        database={this.database}
+        logOut={this.logOut}
+        {...extraProps}
+      />);
   }
 
   renderSyncState() {
-    let syncText = this.state.syncState;
-    if (syncText === SYNC_STATES.ERROR) syncText = this.state.syncError;
     return (
-      <Text>
-        {syncText}
-      </Text>
+      <SyncState
+        isSyncing={this.state.isSyncing}
+        syncError={this.state.syncError}
+        settings={this.settings}
+      />
     );
   }
 
   render() {
     if (!this.state.initialised) {
+      const FirstUsePage = PAGES.firstUse;
       return (
         <FirstUsePage
           synchronizer={this.synchronizer}
@@ -169,10 +163,19 @@ export default class OfflineMobileApp extends React.Component {
       );
     }
     return (
-      <View style={styles.container}>
+      <View style={globalStyles.appBackground}>
         <Navigator
           renderScene={this.renderScene}
+          renderCentreComponent={this.renderLogo}
           renderRightComponent={this.renderSyncState}
+          navBarStyle={globalStyles.navBarStyle}
+          backgroundColor={BACKGROUND_COLOR}
+        />
+        <FinaliseModal
+          database={this.database}
+          isOpen={this.state.confirmFinalise}
+          onClose={() => this.setState({ confirmFinalise: false })}
+          record={this.state.recordToFinalise}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
@@ -183,9 +186,3 @@ export default class OfflineMobileApp extends React.Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
