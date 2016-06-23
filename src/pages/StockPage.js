@@ -127,10 +127,10 @@ export class StockPage extends React.Component {
         <View style={{ flex: COLUMN_WIDTHS[1] + COLUMN_WIDTHS[2], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
             <Text style={globalStyles.text}>
-              Category: {item.category.name}
+              Category: {item.category ? item.category.name : 'N/A'} { /* check category null */ }
             </Text>
             <Text style={globalStyles.text}>
-              Department: {item.department.name}
+              Department: {item.department ? item.department.name : 'N/A'}
             </Text>
           </View>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
