@@ -58,6 +58,7 @@ export class StockPage extends React.Component {
     this.renderExpansion = this.renderExpansion.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
+    this.getNearestExpiryDateString = this.getNearestExpiryDateString.bind(this);
   }
 
   componentWillMount() {
@@ -81,6 +82,14 @@ export class StockPage extends React.Component {
       });
     }
     this.refreshData();
+  }
+
+  getNearestExpiryDateString(item) {
+    let nearest = 0;
+    item.lines.forEach((line) => {
+      nearest = (line.expiryDate > nearest) ? line.expiry : nearest;
+    });
+    return (nearest) ? nearest.toDateString() : 'N/A'; // safe for item.lines.length === 0
   }
 
   refreshData() {
@@ -138,7 +147,9 @@ export class StockPage extends React.Component {
               Number of batches: {item.lines.length}
             </Text>
             <Text style={globalStyles.text}>
-              Nearest expiry: TODO: make function for this
+              Nearest expiry: {
+                item.lines.length > 0 ? this.getNearestExpiryDateString() : 'No Batches'
+              }
             </Text>
           </View>
         </View>
