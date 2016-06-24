@@ -31,7 +31,7 @@ import { SearchBar } from '../widgets';
  *         											 don't override if row should not be pressable
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
- *         											 may optionally also contain a boolean 'searchable'.
+ *         											 may optionally also contain a boolean 'sortable'.
  * @state  {ListView.DataSource} dataSource    DataTable input, used to update rows
  *         																		 being rendered
  * @state  {string}              searchTerm    Current term user has entered in search bar
