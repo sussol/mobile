@@ -77,8 +77,8 @@ export class CustomerInvoicesPage extends GenericTablePage {
       default:
       case 'otherParty.name':
         return invoice.otherParty && invoice.otherParty.name;
-      case 'id':
-        return invoice.id;
+      case 'serialNumber':
+        return invoice.serialNumber;
       case 'status':
         return invoice.status;
       case 'entryDate':
@@ -121,9 +121,9 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'id',
+    key: 'serialNumber',
     width: 1,
-    title: 'ID',
+    title: 'INVOICE NO.',
     sortable: true,
   },
   {
