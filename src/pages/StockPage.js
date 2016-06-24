@@ -85,9 +85,9 @@ export class StockPage extends React.Component {
   }
 
   getNearestExpiryDateString(item) {
-    let nearest = 0;
+    let nearest = null;
     item.lines.forEach((line) => {
-      nearest = (line.expiryDate > nearest) ? line.expiry : nearest;
+      if (line.expiryDate > nearest) nearest = line.expiryDate;
     });
     return (nearest) ? nearest.toDateString() : 'N/A'; // safe for item.lines.length === 0
   }
@@ -136,7 +136,7 @@ export class StockPage extends React.Component {
         <View style={{ flex: COLUMN_WIDTHS[1] + COLUMN_WIDTHS[2], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
             <Text style={globalStyles.text}>
-              Category: {item.category ? item.category.name : 'N/A'} { /* check category null */ }
+              Category: {item.category ? item.category.name : 'N/A'}
             </Text>
             <Text style={globalStyles.text}>
               Department: {item.department ? item.department.name : 'N/A'}
@@ -148,7 +148,7 @@ export class StockPage extends React.Component {
             </Text>
             <Text style={globalStyles.text}>
               Nearest expiry: {
-                item.lines.length > 0 ? this.getNearestExpiryDateString() : 'No Batches'
+                item.lines.length > 0 ? this.getNearestExpiryDateString(item) : 'No Batches'
               }
             </Text>
           </View>
