@@ -52,7 +52,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   onRowPress(invoice) {
-    this.props.navigateTo('customerInvoice', `Invoice ${invoice.serialNumber}`);
+    this.props.navigateTo('customerInvoice', `Invoice ${invoice.serialNumber}`, { invoice });
   }
 
   /**

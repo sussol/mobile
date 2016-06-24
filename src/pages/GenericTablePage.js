@@ -134,7 +134,7 @@ export class GenericTablePage extends React.Component {
     return (
       <Row
         style={globalStyles.dataTableRow}
-        onPress={this.onRowPress}
+        onPress={() => this.onRowPress(item)}
       >
         {cells}
       </Row>
