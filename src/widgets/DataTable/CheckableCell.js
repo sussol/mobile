@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {
+  View,
   TouchableOpacity,
 } from 'react-native';
 
@@ -20,9 +21,11 @@ export class CheckableCell extends React.Component {
   }
 
   componentWillMount() {
-    this.setState({
-      isChecked: this.props.isChecked,
-    });
+    this.setState({ isChecked: this.props.isChecked });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ isChecked: nextProps.isChecked });
   }
 
   onPress() {
@@ -46,7 +49,7 @@ export class CheckableCell extends React.Component {
 }
 
 CheckableCell.propTypes = {
-  style: TouchableOpacity.propTypes.style,
+  style: View.propTypes.style,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
   renderIsChecked: React.PropTypes.object,
