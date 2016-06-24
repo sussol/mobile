@@ -15,6 +15,7 @@ import {
 
 import {
   Cell,
+  CheckableCell,
   DataTable,
   Header,
   HeaderCell,
@@ -95,7 +96,6 @@ export class StocktakeManagePage extends React.Component {
     } else {
       itemSelection.push(item.id);
     }
-    this.refreshData();
   }
 
   onSearchChange(event) {
@@ -202,22 +202,18 @@ export class StocktakeManagePage extends React.Component {
         >
           {item.quantity}
         </Cell>
-        <TouchableOpacity
-          style={{ flex: COLUMN_WIDTHS[3] }}
+        <CheckableCell
+          style={[
+            globalStyles.dataTableCell,
+            localStyles.rightMostCell,
+            localStyles.CheckableCell,
+          ]}
+          width={COLUMN_WIDTHS[3]}
           onPress={() => this.onRadioButtonPress(item)}
-        >
-          <Cell
-            style={[
-              globalStyles.dataTableCell,
-              localStyles.rightMostCell,
-              localStyles.selectedCell,
-            ]}
-            textStyle={globalStyles.dataTableText}
-            width={COLUMN_WIDTHS[3]}
-          >
-            {radioButton}
-          </Cell>
-        </TouchableOpacity>
+          renderIsChecked={<Icon name="md-radio-button-on" size={15} color={SUSSOL_ORANGE} />}
+          renderIsNotChecked={<Icon name="md-radio-button-off" size={15} color={SUSSOL_ORANGE} />}
+          isChecked={this.state.itemSelection.indexOf(item.id) >= 0}
+        />
       </Row>
     );
   }
@@ -302,7 +298,8 @@ const localStyles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'center',
   },
-  selectedCell: {
+  CheckableCell: {
+    justifyContent: 'center',
     alignItems: 'center',
   },
   rightMostCell: {
