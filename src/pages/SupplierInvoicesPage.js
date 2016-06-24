@@ -75,30 +75,28 @@ SupplierInvoicesPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
 };
 
-
-const COLUMN_WIDTHS = [1, 1, 1, 3];
 const COLUMNS = [
   {
     key: 'serialNumber',
-    width: COLUMN_WIDTHS[0],
+    width: 1,
     title: 'INVOICE NO.',
     sortable: true,
   },
   {
     key: 'status',
-    width: COLUMN_WIDTHS[1],
+    width: 1,
     title: 'STATUS',
     sortable: true,
   },
   {
     key: 'entryDate',
-    width: COLUMN_WIDTHS[2],
+    width: 1,
     title: 'ENTERED DATE',
     sortable: true,
   },
   {
     key: 'comment',
-    width: COLUMN_WIDTHS[3],
+    width: 3,
     title: 'COMMENT',
   },
 ];

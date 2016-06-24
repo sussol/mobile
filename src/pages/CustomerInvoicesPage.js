@@ -76,7 +76,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
     switch (key) {
       default:
       case 'otherParty.name':
-        return invoice.otherParty.name;
+        return invoice.otherParty && invoice.otherParty.name;
       case 'id':
         return invoice.id;
       case 'status':
@@ -113,35 +113,34 @@ CustomerInvoicesPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
 };
 
-const COLUMN_WIDTHS = [4, 1, 1, 2, 4];
 const COLUMNS = [
   {
     key: 'otherParty.name',
-    width: COLUMN_WIDTHS[0],
+    width: 4,
     title: 'CUSTOMER',
     sortable: true,
   },
   {
     key: 'id',
-    width: COLUMN_WIDTHS[1],
+    width: 1,
     title: 'ID',
     sortable: true,
   },
   {
     key: 'status',
-    width: COLUMN_WIDTHS[2],
+    width: 1,
     title: 'STATUS',
     sortable: true,
   },
   {
     key: 'entryDate',
-    width: COLUMN_WIDTHS[3],
+    width: 2,
     title: 'ENTERED DATE',
     sortable: true,
   },
   {
     key: 'comment',
-    width: COLUMN_WIDTHS[4],
+    width: 4,
     title: 'COMMENT',
   },
 ];
