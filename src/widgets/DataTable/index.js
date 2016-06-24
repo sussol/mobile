@@ -1,4 +1,5 @@
 export { Cell } from './Cell';
+export { CheckableCell } from './CheckableCell';
 export { DataTable } from './DataTable';
 export { EditableCell } from './EditableCell';
 export { Expansion } from './Expansion';
