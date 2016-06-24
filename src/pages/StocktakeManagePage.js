@@ -10,7 +10,6 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -52,7 +51,7 @@ export class StocktakeManagePage extends React.Component {
       items: props.database.objects('Item'),
       searchTerm: '',
       isAscending: false,
-      showSelected: true,
+      isSelectAllItems: false,
       showNoStock: false,
       sortBy: 'name',
       stocktakeName: '',
@@ -104,11 +103,15 @@ export class StocktakeManagePage extends React.Component {
     this.refreshData();
   }
 
-  toggleShowSelected() {
+  toggleSelectAllItems() {
+    const isSelectAllItems = !this.state.isSelectAllItems;
+    const { items } = this.state;
+    const newSelection = [];
+    if (isSelectAllItems) items.forEach((item) => newSelection.push(item.id));
     this.setState({
-      showSelected: !this.state.showSelected,
-    });
-    this.refreshData();
+      isSelectAllItems: isSelectAllItems,
+      itemSelection: newSelection,
+    }, this.refreshData);
   }
 
   toggleShowNoStock() {
@@ -173,9 +176,6 @@ export class StocktakeManagePage extends React.Component {
   }
 
   renderRow(item) {
-    const radioButton = this.state.itemSelection.indexOf(item.id) >= 0 ?
-              <Icon name="md-radio-button-on" size={15} color={SUSSOL_ORANGE} /> :
-              <Icon name="md-radio-button-off" size={15} color={SUSSOL_ORANGE} />;
     return (
       <Row
         style={globalStyles.dataTableRow}
@@ -219,7 +219,7 @@ export class StocktakeManagePage extends React.Component {
   }
 
   render() {
-    const { showSelected, showNoStock } = this.state;
+    const { isSelectAllItems, showNoStock } = this.state;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -236,14 +236,14 @@ export class StocktakeManagePage extends React.Component {
                 toggleOnStyle={globalStyles.toggleOptionSelected}
                 toggles={[
                   {
-                    text: 'Show Selected',
-                    onPress: () => this.toggleShowSelected(),
-                    isOn: showSelected,
-                  },
-                  {
                     text: 'Show No Stock',
                     onPress: () => this.toggleShowNoStock(),
                     isOn: showNoStock,
+                  },
+                  {
+                    text: 'Select All Items',
+                    onPress: () => this.toggleSelectAllItems(),
+                    isOn: isSelectAllItems,
                   },
                 ]}
               />
