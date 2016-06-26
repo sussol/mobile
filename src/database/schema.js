@@ -1,3 +1,7 @@
+/**
+ * Schema objects
+ */
+
 const AddressSchema = {
   name: 'Address',
   primaryKey: 'id',
@@ -237,7 +241,6 @@ const TransactionLineSchema = {
     expiryDate: 'date',
     packSize: 'double',
     numberOfPacks: 'double',
-    totalQuantity: 'double',
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
     costPrice: 'double',
@@ -261,6 +264,23 @@ const UserSchema = {
   },
 };
 
+/**
+ * Classes
+ */
+class TransactionLine {
+  get totalQuantity() {
+    return this.numberOfPacks * this.packSize;
+  }
+
+  set totalQuantity(quantity) {
+    this.numberOfPacks = quantity / this.packSize;
+  }
+}
+TransactionLine.schema = TransactionLineSchema;
+
+/**
+ * Put it all together
+ */
 export const schema =
   {
     schema: [
@@ -270,7 +290,7 @@ export const schema =
       ItemDepartmentSchema,
       ItemCategorySchema,
       TransactionSchema,
-      TransactionLineSchema,
+      TransactionLine, // Class
       TransactionCategorySchema,
       MasterListSchema,
       MasterListLineSchema,

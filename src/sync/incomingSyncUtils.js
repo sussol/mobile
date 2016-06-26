@@ -184,17 +184,17 @@ export function integrateIncomingRecord(database, recordType, record) {
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
-        otherParty: otherParty,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
-        enteredBy: getObject(database, 'User', record.user_ID),
         theirRef: record.their_ref,
-        category: getObject(database, 'TransactionCategory', record.category_ID),
       };
       const transaction = database.update(internalType, internalRecord);
+      transaction.otherParty = otherParty;
+      transaction.enteredBy = getObject(database, 'User', record.user_ID);
+      transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
       otherParty.transactions.push(transaction);
       break;
     }
@@ -217,7 +217,6 @@ export function integrateIncomingRecord(database, recordType, record) {
         itemLine: getObject(database, 'ItemLine', record.item_line_ID),
         packSize: 1, // Pack to one all mobile data
         numberOfPacks: parseNumber(record.quantity) * parseNumber(record.pack_size),
-        totalQuantity: parseNumber(record.quantity) * parseNumber(record.pack_size),
         transaction: transaction,
         note: record.note,
         costPrice: parseNumber(record.cost_price),
@@ -278,7 +277,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
              && record.cost_price && record.sell_price;
     case 'Transaction':
       return record.invoice_num && record.name_ID && record.entry_date && record.type
-             && record.status && record.user_ID;
+             && record.status;
     case 'TransactionCategory':
       return record.category && record.code && record.type;
     case 'TransactionLine':
@@ -446,7 +445,7 @@ function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
  * @return {Date}           The Date object described by the params
  */
 function parseDate(ISODate, ISOTime) {
-  if (!ISODate || ISODate.length < 1) return null;
+  if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') return null;
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 6) {
     const hours = ISOTime.substring(0, 2);
@@ -464,5 +463,11 @@ function parseDate(ISODate, ISOTime) {
  */
 function parseNumber(numberString) {
   if (!numberString || numberString.length < 1) return null;
-  return parseFloat(numberString);
+  try {
+    return parseFloat(numberString);
+  } catch (error) {
+    console.log(error);
+    console.log(numberString);
+    throw error;
+  }
 }
