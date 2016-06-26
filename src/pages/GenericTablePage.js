@@ -12,6 +12,7 @@ import globalStyles from '../globalStyles';
 import {
   Cell,
   DataTable,
+  EditableCell,
   Header,
   HeaderCell,
   Row,
@@ -28,6 +29,8 @@ import { SearchBar } from '../widgets';
  * @method renderCell(key, item) Should define what to render in a cell with the
  *         											 given column key and database item
  * @method onRowPress(key, item) Should define behaviour when a row is pressed,
+ *         											 don't override if row should not be pressable
+ * @method onEndEditing(key, item, newValue) Handles user input to an editable cell
  *         											 don't override if row should not be pressable
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
@@ -120,21 +123,36 @@ export class GenericTablePage extends React.Component {
   renderRow(item) {
     const cells = [];
     this.columns.forEach((column) => {
-      cells.push(
-        <Cell
-          key={column.key}
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={column.width}
-        >
-          {this.renderCell(column.key, item)}
-        </Cell>
-      );
+      let cell;
+      if (column.editable) {
+        cell = (
+          <EditableCell
+            key={column.key}
+            style={globalStyles.dataTableCell}
+            textStyle={globalStyles.dataTableText}
+            width={column.width}
+            onEndEditing={this.onEndEditing &&
+                          ((target, value) => this.onEndEditing(column.key, target, value))}
+            target={item}
+            value={this.renderCell(column.key, item)}
+          />);
+      } else {
+        cell = (
+          <Cell
+            key={column.key}
+            style={globalStyles.dataTableCell}
+            textStyle={globalStyles.dataTableText}
+            width={column.width}
+          >
+            {this.renderCell(column.key, item)}
+          </Cell>);
+      }
+      cells.push(cell);
     });
     return (
       <Row
         style={globalStyles.dataTableRow}
-        onPress={() => this.onRowPress(item)}
+        onPress={this.onRowPress && (() => this.onRowPress(item))}
       >
         {cells}
       </Row>
