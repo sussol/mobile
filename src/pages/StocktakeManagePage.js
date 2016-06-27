@@ -25,6 +25,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button, BottomModal, TextInput, SearchBar, ToggleBar } from '../widgets';
+import { getItemQuantity } from '../utilities';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 /**
@@ -50,7 +51,7 @@ export class StocktakeManagePage extends React.Component {
       dataSource: dataSource,
       items: props.database.objects('Item'),
       searchTerm: '',
-      isAscending: false,
+      isAscending: true,
       isSelectAllItems: false,
       showNoStock: false,
       sortBy: 'name',
@@ -69,7 +70,14 @@ export class StocktakeManagePage extends React.Component {
   }
 
   onColumnSort(newSortBy) {
-    this.setState({ isAscending: !this.state.isAscending, sortBy: newSortBy });
+    if (this.state.sortBy === newSortBy) { // changed column sort direction.
+      this.setState({ isAscending: !this.state.isAscending });
+    } else { // Changed sorting column.
+      this.setState({
+        sortBy: newSortBy,
+        isAscending: true,
+      });
+    }
     this.refreshData();
   }
 
@@ -126,8 +134,38 @@ export class StocktakeManagePage extends React.Component {
    * isAscending.
    */
   refreshData() {
-    const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
-    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
+    const {
+      items,
+      sortBy,
+      dataSource,
+      isAscending,
+      searchTerm,
+      itemSelection,
+      showNoStock,
+    } = this.state;
+    let data;
+    data = items.filtered(`name CONTAINS[c] "${searchTerm}"`);
+    switch (sortBy) {
+      // 'selected' case lists the selected in alphabetical order, followed by unselected in
+      // alphabetical order. This requires the itemSelection array to store the item ids in the
+      // same alphabetical order as their respective items.
+      case 'selected':
+        itemSelection.sort((a, b) => {
+          const allItems = this.props.database.objects('Item');
+          const aName = allItems.find(item => item.id === a).name;
+          const bName = allItems.find(item => item.id === b).name;
+          return bName.localeCompare(aName);
+        });
+        data = data.sorted('name', !isAscending).slice()
+                  .sort((a, b) => itemSelection.indexOf(b.id) - itemSelection.indexOf(a.id));
+        if (!isAscending) data.reverse();
+        break;
+      default:
+        data = data.sorted(sortBy, !isAscending);
+    }
+    if (!showNoStock) {
+      data = data.slice().filter((item) => getItemQuantity(item) !== 0);
+    }
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
@@ -140,7 +178,7 @@ export class StocktakeManagePage extends React.Component {
           width={COLUMN_WIDTHS[0]}
           onPress={() => this.onColumnSort('code')}
           isAscending={this.state.isAscending}
-          isSelected={true}
+          isSelected={this.state.sortBy === 'code'}
           text={'ITEM CODE'}
         />
         <HeaderCell
@@ -149,7 +187,7 @@ export class StocktakeManagePage extends React.Component {
           width={COLUMN_WIDTHS[1]}
           onPress={() => this.onColumnSort('name')}
           isAscending={this.state.isAscending}
-          isSelected={true}
+          isSelected={this.state.sortBy === 'name'}
           text={'ITEM NAME'}
         />
         <HeaderCell
@@ -168,7 +206,7 @@ export class StocktakeManagePage extends React.Component {
           width={COLUMN_WIDTHS[3]}
           onPress={() => this.onColumnSort('selected')}
           isAscending={this.state.isAscending}
-          isSelected={true}
+          isSelected={this.state.sortBy === 'selected'}
           text={'SELECTED'}
         />
       </Header>
