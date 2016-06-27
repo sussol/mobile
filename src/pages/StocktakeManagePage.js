@@ -97,12 +97,13 @@ export class StocktakeManagePage extends React.Component {
   }
 
   onRadioButtonPress(item) {
-    const { itemSelection } = this.state;
-    if (itemSelection.indexOf(item.id) >= 0) {
-      itemSelection.splice(itemSelection.indexOf(item.id), 1);
+    const newItemSelection = [...this.state.itemSelection];
+    if (newItemSelection.indexOf(item.id) >= 0) {
+      newItemSelection.splice(newItemSelection.indexOf(item.id), 1);
     } else {
-      itemSelection.push(item.id);
+      newItemSelection.push(item.id);
     }
+    this.setState({ itemSelection: newItemSelection });
   }
 
   onSearchChange(event) {
@@ -304,6 +305,12 @@ export class StocktakeManagePage extends React.Component {
               placeholder="Give your stocktake a name"
               value={this.state.stocktakeName}
               onChange={(text) => this.setState({ stocktakeName: text })}
+            />
+            <Button
+              style={globalStyles.button}
+              textStyle={globalStyles.buttonText}
+              text={'Create'}
+              onPress={() => {}}
             />
           </BottomModal>
         </View>

@@ -268,7 +268,7 @@ export class StocktakesPage extends React.Component {
             questionText="Are you sure you want to delete these stocktakes?"
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText='Delete'
+            confirmText="Delete"
           />
         </View>
       </View>
