@@ -210,13 +210,17 @@ export function integrateIncomingRecord(database, recordType, record) {
     }
     case 'TransactionLine': {
       const transaction = getObject(database, 'Transaction', record.transaction_ID);
+      const itemLine = getObject(database, 'ItemLine', record.item_line_ID);
+      const item = getObject(database, 'Item', record.item_ID);
+      itemLine.item = item;
       internalRecord = {
         id: record.ID,
         itemId: record.item_ID,
         itemName: record.item_name,
-        itemLine: getObject(database, 'ItemLine', record.item_line_ID),
+        itemLine: itemLine,
         packSize: 1, // Pack to one all mobile data
         numberOfPacks: parseNumber(record.quantity) * parseNumber(record.pack_size),
+        totalQuantitySent: parseNumber(record.quantity) * parseNumber(record.pack_size),
         transaction: transaction,
         note: record.note,
         costPrice: parseNumber(record.cost_price),
@@ -466,8 +470,6 @@ function parseNumber(numberString) {
   try {
     return parseFloat(numberString);
   } catch (error) {
-    console.log(error);
-    console.log(numberString);
     throw error;
   }
 }

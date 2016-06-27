@@ -241,6 +241,7 @@ const TransactionLineSchema = {
     expiryDate: 'date',
     packSize: 'double',
     numberOfPacks: 'double',
+    totalQuantitySent: { type: 'double', optional: true },
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
     costPrice: 'double',
@@ -267,6 +268,18 @@ const UserSchema = {
 /**
  * Classes
  */
+
+class Transaction {
+  get isFinalised() {
+    return this.status === 'finalised';
+  }
+
+  finalise() {
+    this.status = 'finalised';
+  }
+}
+Transaction.schema = TransactionSchema;
+
 class TransactionLine {
   get totalQuantity() {
     return this.numberOfPacks * this.packSize;
@@ -289,7 +302,7 @@ export const schema =
       ItemLineSchema,
       ItemDepartmentSchema,
       ItemCategorySchema,
-      TransactionSchema,
+      Transaction, // Class
       TransactionLine, // Class
       TransactionCategorySchema,
       MasterListSchema,

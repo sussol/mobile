@@ -123,6 +123,7 @@ export default class OfflineMobileApp extends React.Component {
       if (extraProps && 'invoice' in extraProps) recordToFinalise = extraProps.invoice;
       else if (extraProps && 'requisition' in extraProps) recordToFinalise = extraProps.requisition;
       else if (extraProps && 'stocktake' in extraProps) recordToFinalise = extraProps.stocktake;
+      else if (extraProps && 'transaction' in extraProps) recordToFinalise = extraProps.transaction;
       this.setState({ recordToFinalise: recordToFinalise });
 
       // Now navigate to the page, passing on any extra props and the finalise button if required

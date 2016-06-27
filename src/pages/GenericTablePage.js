@@ -123,8 +123,9 @@ export class GenericTablePage extends React.Component {
   renderRow(item) {
     const cells = [];
     this.columns.forEach((column) => {
+      const renderedCell = this.renderCell(column.key, item);
       let cell;
-      if (column.editable) {
+      if (renderedCell.editable) {
         cell = (
           <EditableCell
             key={column.key}
@@ -134,7 +135,7 @@ export class GenericTablePage extends React.Component {
             onEndEditing={this.onEndEditing &&
                           ((target, value) => this.onEndEditing(column.key, target, value))}
             target={item}
-            value={this.renderCell(column.key, item)}
+            value={renderedCell.cellContents}
           />);
       } else {
         cell = (
@@ -144,7 +145,7 @@ export class GenericTablePage extends React.Component {
             textStyle={globalStyles.dataTableText}
             width={column.width}
           >
-            {this.renderCell(column.key, item)}
+            {renderedCell.cellContents ? renderedCell.cellContents : renderedCell}
           </Cell>);
       }
       cells.push(cell);

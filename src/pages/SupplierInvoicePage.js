@@ -8,20 +8,15 @@
 import React from 'react';
 
 import { GenericTablePage } from './GenericTablePage';
-const SORT_PROPERTIES = {
-  name: 'itemName',
-  code: 'itemName', // TODO Sorting by code
-  numSent: 'totalQuantity',
-  numReceived: 'totalQuantity',
-};
 
 export class SupplierInvoicePage extends GenericTablePage {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'name';
+    this.state.sortBy = 'itemName';
     this.columns = COLUMNS;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
+    this.renderCell = this.renderCell.bind(this);
   }
 
   /**
@@ -29,7 +24,20 @@ export class SupplierInvoicePage extends GenericTablePage {
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     let data = this.props.transaction.lines.filtered(`itemName BEGINSWITH "${searchTerm}"`);
-    data = data.sorted(SORT_PROPERTIES[sortBy], !isAscending); // 2nd arg: reverse sort
+    switch (sortBy) {
+      case 'itemCode':
+        data = data.slice().sort((a, b) =>
+          a.itemLine.item.code.localeCompare(b.itemLine.item.code));
+        if (!isAscending) data.reverse();
+        break;
+      case 'numReceived':
+        data = data.slice().sort((a, b) => a.totalQuantity - b.totalQuantity);
+        if (!isAscending) data.reverse();
+        break;
+      default:
+        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+        break;
+    }
     return data;
   }
 
@@ -43,23 +51,28 @@ export class SupplierInvoicePage extends GenericTablePage {
   onEndEditing(key, transactionLine, newValue) {
     if (key !== 'numReceived') return;
     this.props.database.write(() => {
-      transactionLine.quantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
+      transactionLine.totalQuantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
     });
   }
 
   renderCell(key, transactionLine) {
     switch (key) {
       default:
-      case 'name':
+      case 'itemName':
         return transactionLine.itemName;
-      case 'code': {
+      case 'itemCode': {
         const item = transactionLine.itemLine && transactionLine.itemLine.item;
         return item && item.code;
       }
       case 'numSent':
-        return transactionLine.totalQuantity;
-      case 'numReceived':
-        return transactionLine.totalQuantity;
+        return transactionLine.totalQuantitySent;
+      case 'numReceived': {
+        const renderedCell = {
+          cellContents: transactionLine.totalQuantity,
+          editable: !this.props.transaction.isFinalised,
+        };
+        return renderedCell;
+      }
     }
   }
 }
@@ -70,13 +83,13 @@ SupplierInvoicePage.propTypes = {
 
 const COLUMNS = [
   {
-    key: 'name',
+    key: 'itemName',
     width: 2,
     title: 'ITEM NAME',
     sortable: true,
   },
   {
-    key: 'code',
+    key: 'itemCode',
     width: 1,
     title: 'CODE',
     sortable: true,
@@ -92,6 +105,5 @@ const COLUMNS = [
     width: 1,
     title: 'NO. RECEIVED',
     sortable: true,
-    editable: true,
   },
 ];

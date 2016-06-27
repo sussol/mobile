@@ -11,7 +11,7 @@ export function FinaliseModal(props) {
                   + 'to take effect.'}
       onConfirm={() => {
         const record = props.record;
-        if (record) props.database.write(() => { record.status = 'finalised'; });
+        if (record) props.database.write(() => record.finalise());
         if (props.onClose) props.onClose();
       }}
       onCancel={() => { if (props.onClose) props.onClose(); } }
