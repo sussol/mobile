@@ -60,6 +60,24 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  modalButton: {
+    borderColor: 'white',
+  },
+  modalButtonText: {
+    color: 'white',
+  },
+  modalOrangeButton: {
+    borderColor: 'white',
+    backgroundColor: SUSSOL_ORANGE,
+  },
+  modalTextInput: {
+    width: 560,
+    borderColor: BACKGROUND_COLOR,
+  },
+  modalText: {
+    color: 'white',
+    fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text unfortunately
+  },
   navBarOffset: {
     paddingTop: 68,
   },

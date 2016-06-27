@@ -147,7 +147,7 @@ export class StocktakeManagePage extends React.Component {
     let data;
     data = items.filtered(`name CONTAINS[c] "${searchTerm}"`);
     switch (sortBy) {
-      // 'selected' case lists the selected in alphabetical order, followed by unselected in
+      // 'selected' case lists the selected items in alphabetical order, followed by unselected in
       // alphabetical order. This requires the itemSelection array to store the item ids in the
       // same alphabetical order as their respective items.
       case 'selected':
@@ -297,18 +297,19 @@ export class StocktakeManagePage extends React.Component {
           />
           <BottomModal
             isOpen={this.state.itemSelection.length > 0}
+            style={localStyles.bottomModal}
           >
             <TextInput
-              style={localStyles.modalTextInput}
-              textStyle={localStyles.modalTextInputText}
+              style={globalStyles.modalTextInput}
+              textStyle={globalStyles.modalText}
               placeholderTextColor="white"
               placeholder="Give your stocktake a name"
               value={this.state.stocktakeName}
               onChange={(text) => this.setState({ stocktakeName: text })}
             />
             <Button
-              style={globalStyles.button}
-              textStyle={globalStyles.buttonText}
+              style={[globalStyles.button, globalStyles.modalOrangeButton]}
+              textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
               text={'Create'}
               onPress={() => {}}
             />
@@ -328,12 +329,9 @@ const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
   },
-  modalTextInput: {
-    width: 560,
-    borderColor: 'white',
-  },
-  modalTextInputText: {
-    color: 'white',
+  bottomModal: {
+    justifyContent: 'space-between',
+    paddingLeft: 20,
   },
   toggleBarView: {
     justifyContent: 'flex-end',
