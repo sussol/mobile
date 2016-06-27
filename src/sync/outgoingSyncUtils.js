@@ -91,7 +91,7 @@ function generateSyncData(settings, recordType, record) {
         cost_price: record.costPrice,
         sell_price: record.sellPrice,
         total_cost: record.costPrice * record.numberOfPacks,
-        name_ID: record.supplier.id,
+        name_ID: settings.get(SUPPLYING_STORE_ID),
       };
     }
     case 'Requisition': {
