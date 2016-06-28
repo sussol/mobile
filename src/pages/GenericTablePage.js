@@ -42,6 +42,7 @@ import { SearchBar } from '../widgets';
  *                                             by column press).
  * @state  {boolean}             isAscending   Direction sortBy should sort
  *                                             (ascending/descending:true/false).
+ * N.B. Take care to call parent method if overriding any of the react life cycle methods.
  */
 export class GenericTablePage extends React.Component {
   constructor(props) {
