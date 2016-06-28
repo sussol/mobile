@@ -15,6 +15,7 @@ import {
 
 import {
   Cell,
+  CheckableCell,
   DataTable,
   Header,
   HeaderCell,
@@ -109,13 +110,13 @@ export class StocktakesPage extends React.Component {
   }
 
   onDeleteButtonPress(stocktake) {
-    const { deleteSelection } = this.state;
-    if (deleteSelection.indexOf(stocktake.id) >= 0) {
-      deleteSelection.splice(deleteSelection.indexOf(stocktake.id), 1);
+    const selection = [...this.state.deleteSelection];
+    if (selection.indexOf(stocktake.id) >= 0) {
+      selection.splice(selection.indexOf(stocktake.id), 1);
     } else {
-      deleteSelection.push(stocktake.id);
+      selection.push(stocktake.id);
     }
-    this.refreshData();
+    this.setState({ deleteSelection: selection });
   }
 
   onToggleStatusFilter(isCurrent) {
@@ -176,9 +177,6 @@ export class StocktakesPage extends React.Component {
   }
 
   renderRow(stocktake) {
-    const deleteColor = this.state.deleteSelection.indexOf(stocktake.id) >= 0 ?
-                                          SUSSOL_ORANGE :
-                                          'grey';
     return (
       <Row
         style={globalStyles.dataTableRow}
@@ -209,18 +207,18 @@ export class StocktakesPage extends React.Component {
         >
           {stocktake.status}
         </Cell>
-        <TouchableOpacity
-          style={{ flex: COLUMN_WIDTHS[3] }}
+        <CheckableCell
+          style={[
+            globalStyles.dataTableCell,
+            globalStyles.dataTableRightMostCell,
+            globalStyles.dataTableCheckableCell,
+          ]}
+          width={COLUMN_WIDTHS[3]}
           onPress={() => this.onDeleteButtonPress(stocktake)}
-        >
-          <Cell
-            style={[globalStyles.dataTableCell, localStyles.rightMostCell, localStyles.deleteCell]}
-            textStyle={globalStyles.dataTableText}
-            width={COLUMN_WIDTHS[3]}
-          >
-            <Icon name="md-remove-circle" size={15} color={deleteColor} />
-          </Cell>
-        </TouchableOpacity>
+          renderIsChecked={<Icon name="md-remove-circle" size={15} color={SUSSOL_ORANGE} />}
+          renderIsNotChecked={<Icon name="md-remove-circle" size={15} color={'grey'} />}
+          isChecked={this.state.deleteSelection.indexOf(stocktake.id) >= 0}
+        />
       </Row>
     );
   }
