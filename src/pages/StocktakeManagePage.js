@@ -180,9 +180,8 @@ export class StocktakeManagePage extends React.Component {
       // same alphabetical order as their respective items.
       case 'selected':
         itemSelection.sort((a, b) => {
-          const allItems = this.props.database.objects('Item');
-          const aName = allItems.find(item => item.id === a).name;
-          const bName = allItems.find(item => item.id === b).name;
+          const aName = items.find(item => item.id === a).name;
+          const bName = items.find(item => item.id === b).name;
           return bName.localeCompare(aName);
         });
         data = data.sorted('name', !isAscending).slice()
