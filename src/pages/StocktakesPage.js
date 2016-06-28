@@ -26,7 +26,7 @@ import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
-const SORT_BY = 'createdDate'
+const SORT_BY = 'createdDate';
 /**
 * Renders the page for displaying Stocktakes.
 * @prop   {Realm}               database        App wide database.
@@ -183,7 +183,11 @@ export class StocktakesPage extends React.Component {
     return (
       <Row
         style={globalStyles.dataTableRow}
-        onPress={() => this.props.navigateTo('stocktakeManager', 'Create Stocktake')}
+        onPress={() => this.props.navigateTo(
+            'stocktakeManager',
+            stocktake.name,
+            { stocktake: stocktake },
+          )}
       >
         <Cell
           style={globalStyles.dataTableCell}
@@ -252,7 +256,7 @@ export class StocktakesPage extends React.Component {
                 style={globalStyles.button}
                 textStyle={globalStyles.buttonText}
                 text="New StockTake"
-                onPress={this.onNewStockTake}
+                onPress={() => this.props.navigateTo('stocktakeManager', 'New StockTake')}
               />
             </View>
           </View>
