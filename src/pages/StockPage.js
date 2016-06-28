@@ -111,7 +111,7 @@ export class StockPage extends React.Component {
           text={'ITEM NAME'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableHeaderCell, localStyles.rightMostCell]}
+          style={[globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
           text={'STOCK ON HAND'}
@@ -164,7 +164,7 @@ export class StockPage extends React.Component {
           {item.name}
         </Cell>
         <Cell
-          style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
+          style={[globalStyles.dataTableCell, globalStyles.dataTableRightMostCell]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
         >
@@ -204,9 +204,6 @@ const COLUMN_WIDTHS = [1.3, 7.2, 1.6];
 const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
-  },
-  rightMostCell: {
-    borderRightWidth: 0,
   },
   dataTable: {
     flex: 1,

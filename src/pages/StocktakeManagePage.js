@@ -200,8 +200,7 @@ export class StocktakeManagePage extends React.Component {
         <HeaderCell
           style={[
             globalStyles.dataTableHeaderCell,
-            localStyles.rightMostCell,
-            localStyles.selectedCell,
+            globalStyles.dataTableRightMostCell,
           ]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[3]}
@@ -244,8 +243,8 @@ export class StocktakeManagePage extends React.Component {
         <CheckableCell
           style={[
             globalStyles.dataTableCell,
-            localStyles.rightMostCell,
-            localStyles.CheckableCell,
+            globalStyles.dataTableRightMostCell,
+            globalStyles.dataTableCheckableCell,
           ]}
           width={COLUMN_WIDTHS[3]}
           onPress={() => this.onRadioButtonPress(item)}
@@ -340,13 +339,6 @@ const localStyles = StyleSheet.create({
   buttonViewTop: {
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  CheckableCell: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  rightMostCell: {
-    borderRightWidth: 0,
   },
   dataTable: {
     flex: 1,

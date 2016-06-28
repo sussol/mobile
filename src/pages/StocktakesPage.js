@@ -165,8 +165,7 @@ export class StocktakesPage extends React.Component {
         <HeaderCell
           style={[
             globalStyles.dataTableHeaderCell,
-            localStyles.rightMostCell,
-            localStyles.deleteCell,
+            globalStyles.dataTableRightMostCell,
           ]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[3]}
@@ -292,12 +291,6 @@ const localStyles = StyleSheet.create({
   buttonViewTop: {
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  deleteCell: {
-    alignItems: 'center',
-  },
-  rightMostCell: {
-    borderRightWidth: 0,
   },
   dataTable: {
     flex: 1,

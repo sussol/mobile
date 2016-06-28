@@ -157,7 +157,7 @@ export class CustomerInvoicesPage extends React.Component {
           text={'ENTERED DATE'}
         />
         <HeaderCell
-          style={[globalStyles.dataTableHeaderCell, localStyles.rightMostCell]}
+          style={[globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[4]}
           text={'COMMENT'}
@@ -201,7 +201,7 @@ export class CustomerInvoicesPage extends React.Component {
           {invoice.entryDate.toDateString()}
         </Cell>
         <Cell
-          style={[globalStyles.dataTableCell, localStyles.rightMostCell]}
+          style={[globalStyles.dataTableCell, globalStyles.dataTableRightMostCell]}
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[4]}
         >
@@ -247,9 +247,6 @@ const COLUMN_WIDTHS = [4, 1, 1, 2, 4];
 const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
-  },
-  rightMostCell: {
-    borderRightWidth: 0,
   },
   dataTable: {
     flex: 1,

@@ -173,6 +173,13 @@ export default StyleSheet.create({
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
   },
+  dataTableRightMostCell: {
+    borderRightWidth: 0,
+  },
+  dataTableCheckableCell: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   dataTableEditableCell: {
     backgroundColor: '#f9e4c2',
   },
