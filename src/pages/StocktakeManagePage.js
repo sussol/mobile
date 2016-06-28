@@ -64,7 +64,7 @@ export class StocktakeManagePage extends React.Component {
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.refreshData = this.refreshData.bind(this);
-    this.onNewStockTake = this.onNewStockTake.bind(this);
+    this.onConfirmPress = this.onConfirmPress.bind(this);
   }
 
   componentWillMount() {
@@ -109,19 +109,48 @@ export class StocktakeManagePage extends React.Component {
     this.refreshData();
   }
 
-  onNewStockTake() {
+  onConfirmPress() {
+    const { stocktake, itemSelection, items } = this.state;
+    let { stocktakeName } = this.state;
+    const stocktakeLines = [];
+
+    if (stocktakeName === '') stocktakeName = `Stocktake ${stocktake.createdDate}`;
+
     this.props.database.write(() => {
-      this.props.database.create('Stocktake', {
-        id: generateUUID(),
-        name: 'best item',
-        createdDate: new Date(),
-        status: 'new',
-        comment: 'Testing StocktakesPage',
-        serialNumber: '1337',
-        lines: [],
+      stocktake.lines.forEach((line, i, lines) => {
+        const item = line.itemLine.item;
+        const itemIdIndex = itemSelection.indexOf(item.id);
+        // If a stocktakeLine for an item already exists in the stocktake, remove it from the
+        // itemSelection array.
+        if (itemIdIndex >= 0) {
+          itemSelection.slice(itemIdIndex, 1);
+        }
+        // Remove stocktakeLines of items that are not in the selection.
+        if (!itemSelection.includes(item.id)) lines.slice(i, 1);
       });
+
+      itemSelection.forEach((itemId) => {
+        const item = items.find(i => i.id === itemId);
+        item.lines.forEach((itemLine) => {
+          const stocktakeLine = this.props.database.create('StocktakeLine', {
+            id: generateUUID(),
+            stocktake: stocktake,
+            itemLine: itemLine,
+            snapshotQuantity: itemLine.numberOfPacks,
+            snapshotPacksize: 1,
+            expiryDate: itemLine.numberOfPacks,
+            batch: itemLine.numberOfPacks,
+            costPrice: itemLine.numberOfPacks,
+            sellPrice: itemLine.numberOfPacks,
+          });
+          stocktakeLines.push(stocktakeLine);
+        });
+      });
+
+      stocktake.name = stocktakeName;
+      stocktake.lines = stocktake.lines.concat(stocktakeLines);
+      this.props.database.update('Stocktake', stocktake);
     });
-    this.props.navigateTo('stocktakeManager', 'New StockTake');
   }
 
   onRadioButtonPress(item) {
@@ -336,8 +365,8 @@ export class StocktakeManagePage extends React.Component {
             <Button
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
               textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-              text={'Create'}
-              onPress={() => {}}
+              text={this.state.isNewStocktake ? 'Create' : 'Confirm'}
+              onPress={() => this.onConfirmPress}
             />
           </BottomModal>
         </View>
