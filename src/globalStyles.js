@@ -132,6 +132,7 @@ export default StyleSheet.create({
     fontSize: 14,
     marginLeft: 20,
     textAlign: 'left',
+    color: DARK_GREY,
   },
   dataTableDropDown: {
     marginHorizontal: 15,
@@ -154,9 +155,6 @@ export default StyleSheet.create({
     borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
-  },
-  dataTableEditableCell: {
-    backgroundColor: '#f9e4c2',
   },
   dataTableButton: {
     alignItems: 'center',
