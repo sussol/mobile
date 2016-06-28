@@ -1,14 +1,24 @@
 import React from 'react';
-
 import { ConfirmModal } from './ConfirmModal';
+import globalStyles, { DARK_GREY } from '../../globalStyles';
+
+const text = 'Finalise will lock this record permanently and cause stock level changes '
+           + 'to take effect.';
 
 export function FinaliseModal(props) {
   return (
     <ConfirmModal
+      style={[globalStyles.finaliseModal]}
+      textStyle={globalStyles.finaliseModalText}
+      buttonContainerStyle={globalStyles.finaliseModalButtonContainer}
+      cancelButtonStyle={globalStyles.finaliseModalButton}
+      confirmButtonStyle={[globalStyles.finaliseModalButton,
+                           globalStyles.finaliseModalConfirmButton]}
+      backdropColor={DARK_GREY}
+      backdropOpacity={0.97}
+      buttonTextStyle={globalStyles.finaliseModalButtonText}
       isOpen={props.isOpen}
-      questionText={'Are you sure you wish to finalise? This will lock this '
-                  + 'record permanently, and will cause any stock level changes '
-                  + 'to take effect.'}
+      questionText={text}
       onConfirm={() => {
         const record = props.record;
         if (record) {
