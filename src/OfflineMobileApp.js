@@ -47,7 +47,7 @@ export default class OfflineMobileApp extends React.Component {
     const initialised = this.synchronizer.isInitialised();
     this.state = {
       initialised: initialised,
-      authenticated: true,
+      currentUser: null,
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
@@ -75,8 +75,8 @@ export default class OfflineMobileApp extends React.Component {
     this.scheduler.clearAll();
   }
 
-  onAuthentication(authenticated) {
-    this.setState({ authenticated: authenticated });
+  onAuthentication(user) {
+    this.setState({ currentUser: user });
   }
 
   onInitialised() {
@@ -98,7 +98,7 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   logOut() {
-    this.setState({ authenticated: false });
+    this.setState({ currentUser: null });
   }
 
   renderFinaliseButton() {
@@ -189,10 +189,12 @@ export default class OfflineMobileApp extends React.Component {
           isOpen={this.state.confirmFinalise}
           onClose={() => this.setState({ confirmFinalise: false })}
           record={this.state.recordToFinalise}
+          recordType={this.state.recordTypeToFinalise}
+          user={this.state.currentUser}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
-          isAuthenticated={this.state.authenticated}
+          isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
       </View>

@@ -11,7 +11,12 @@ export function FinaliseModal(props) {
                   + 'to take effect.'}
       onConfirm={() => {
         const record = props.record;
-        if (record) props.database.write(() => record.finalise());
+        if (record) {
+          props.database.write(() => {
+            record.finalise(props.database, props.user);
+            props.database.save(props.recordType, record);
+          });
+        }
         if (props.onClose) props.onClose();
       }}
       onCancel={() => { if (props.onClose) props.onClose(); } }
@@ -23,6 +28,8 @@ FinaliseModal.propTypes = {
   isOpen: React.PropTypes.bool,
   onClose: React.PropTypes.func,
   record: React.PropTypes.object,
+  recordType: React.PropTypes.string,
+  user: React.PropTypes.object,
 };
 
 FinaliseModal.defaultProps = {

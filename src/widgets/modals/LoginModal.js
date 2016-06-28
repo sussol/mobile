@@ -35,12 +35,13 @@ export class LoginModal extends React.Component {
   async onLogin() {
     this.setState({ authStatus: 'authenticating' });
     try {
-      await this.props.authenticator.authenticate(this.state.username, this.state.password);
+      const user = await this.props.authenticator.authenticate(this.state.username,
+                                                               this.state.password);
       this.setState({ authStatus: 'authenticated' });
-      this.props.onAuthentication(true);
+      this.props.onAuthentication(user);
     } catch (error) {
       this.setState({ authStatus: 'error', error: error.message });
-      this.props.onAuthentication(false);
+      this.props.onAuthentication(null);
     }
   }
 
