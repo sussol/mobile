@@ -213,6 +213,7 @@ export function integrateIncomingRecord(database, recordType, record) {
       const itemLine = getObject(database, 'ItemLine', record.item_line_ID);
       const item = getObject(database, 'Item', record.item_ID);
       itemLine.item = item;
+      item.lines.push(itemLine);
       internalRecord = {
         id: record.ID,
         itemId: record.item_ID,
@@ -320,7 +321,7 @@ function getObject(database, type, id) {
 function generatePlaceholder(type, id) {
   let placeholder;
   const placeholderString = 'placeholder';
-  const placeholderNumber = 1;
+  const placeholderNumber = 0;
   const placeholderDate = new Date();
   switch (type) {
     case 'Address':

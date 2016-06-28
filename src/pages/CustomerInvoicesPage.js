@@ -14,6 +14,8 @@ import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
+
 /**
 * Renders the page for displaying CustomerInvoices.
 * @prop   {Realm}               database      App wide database.
@@ -27,6 +29,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
                                             .filtered('type == "customer_invoice"');
     this.state.sortBy = 'otherParty.name';
     this.columns = COLUMNS;
+    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);

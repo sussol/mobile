@@ -9,14 +9,18 @@ import React from 'react';
 
 import { GenericTablePage } from './GenericTablePage';
 
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine', 'Item', 'ItemLine'];
+
 export class SupplierInvoicePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
     this.columns = COLUMNS;
+    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
+    this.databaseListenerId = null;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
-    this.renderCell = this.renderCell.bind(this);
+    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
   }
 
   /**
@@ -52,6 +56,7 @@ export class SupplierInvoicePage extends GenericTablePage {
     if (key !== 'numReceived') return;
     this.props.database.write(() => {
       transactionLine.totalQuantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
+      this.props.database.save('TransactionLine', transactionLine);
     });
   }
 

@@ -9,6 +9,8 @@ import React from 'react';
 import { SearchBar } from '../widgets';
 import { GenericTablePage } from './GenericTablePage';
 
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
+
 /**
 * Renders the page for displaying SupplierInvoices.
 * @prop   {Realm}               database      App wide database.
@@ -22,6 +24,7 @@ export class SupplierInvoicesPage extends GenericTablePage {
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "supplier_invoice"');
     this.columns = COLUMNS;
+    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
   }

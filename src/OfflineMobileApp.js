@@ -31,6 +31,7 @@ import { Scheduler } from './Scheduler';
 import { Settings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const SYNC_INTERVAL = 0.1 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 export default class OfflineMobileApp extends React.Component {
@@ -52,6 +53,7 @@ export default class OfflineMobileApp extends React.Component {
       lastSync: null, // Date of the last successful sync
       confirmFinalise: false,
       recordToFinalise: null,
+      recordTypeToFinalise: null,
     };
   }
 
@@ -120,11 +122,21 @@ export default class OfflineMobileApp extends React.Component {
     const navigateTo = (key, title, extraProps) => {
       // If the page we're going to takes in a record that can be finalised, retain it in state
       let recordToFinalise = null;
-      if (extraProps && 'invoice' in extraProps) recordToFinalise = extraProps.invoice;
-      else if (extraProps && 'requisition' in extraProps) recordToFinalise = extraProps.requisition;
-      else if (extraProps && 'stocktake' in extraProps) recordToFinalise = extraProps.stocktake;
-      else if (extraProps && 'transaction' in extraProps) recordToFinalise = extraProps.transaction;
-      this.setState({ recordToFinalise: recordToFinalise });
+      let recordType = null;
+      if (extraProps && 'invoice' in extraProps) {
+        recordToFinalise = extraProps.invoice;
+        recordType = 'Transaction';
+      } else if (extraProps && 'requisition' in extraProps) {
+        recordToFinalise = extraProps.requisition;
+        recordType = 'Requisition';
+      } else if (extraProps && 'stocktake' in extraProps) {
+        recordToFinalise = extraProps.stocktake;
+        recordType = 'Stocktake';
+      } else if (extraProps && 'transaction' in extraProps) {
+        recordToFinalise = extraProps.transaction;
+        recordType = 'Transaction';
+      }
+      this.setState({ recordToFinalise: recordToFinalise, recordTypeToFinalise: recordType });
 
       // Now navigate to the page, passing on any extra props and the finalise button if required
       const navigationProps = { key, title, ...extraProps };

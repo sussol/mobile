@@ -29,7 +29,7 @@ const {
  * @return {object}                     The generated json object, ready to sync
  */
 export function generateSyncJson(database, settings, syncOutRecord) {
-  if (!syncOutRecord.isValid()) throw new Error('Attempting to sync a missing sync out record');
+  if (!syncOutRecord || !syncOutRecord.isValid()) throw new Error('Missing sync out record');
   if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
     throw new Error('Malformed sync out record');
   }

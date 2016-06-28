@@ -55,18 +55,28 @@ export class GenericTablePage extends React.Component {
       sortBy: '',
       isAscending: true,
     };
-    this.componentWillMount = this.componentWillMount.bind(this);
+    this.columns = null;
+    this.dataTypesDisplayed = [];
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
+    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.renderCell = this.renderCell.bind(this);
     this.refreshData = this.refreshData.bind(this);
-    this.columns = null;
   }
 
   componentWillMount() {
+    this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     this.refreshData();
+  }
+
+  componentWillUnmount() {
+    this.props.database.removeListener(this.databaseListenerId);
+  }
+
+  onDatabaseEvent(changeType, recordType) {
+    if (this.dataTypesDisplayed.indexOf(recordType) >= 0) this.refreshData();
   }
 
   onSearchChange(event) {
@@ -76,9 +86,9 @@ export class GenericTablePage extends React.Component {
   }
 
   onColumnSort(sortBy) {
-    if (this.state.sortBy === sortBy) { // changed column sort direction.
+    if (this.state.sortBy === sortBy) { // Changed column sort direction
       this.setState({ isAscending: !this.state.isAscending }, this.refreshData);
-    } else { // Changed sorting column.
+    } else { // Changed sorting column
       this.setState({
         sortBy: sortBy,
         isAscending: true,
@@ -191,6 +201,10 @@ export class GenericTablePage extends React.Component {
     );
   }
 }
+
+GenericTablePage.propTypes = {
+  database: React.PropTypes.object,
+};
 
 const localStyles = StyleSheet.create({
   listView: {
