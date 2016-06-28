@@ -50,13 +50,15 @@ export class StocktakeManagePage extends React.Component {
     this.state = {
       dataSource: dataSource,
       items: props.database.objects('Item'),
+      itemSelection: [],
+      stocktake: {},
+      stocktakeName: '',
+      isNewStocktake: false,
       searchTerm: '',
       isAscending: true,
       isSelectAllItems: false,
       showNoStock: false,
       sortBy: 'name',
-      stocktakeName: '',
-      itemSelection: [],
     };
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
@@ -66,6 +68,32 @@ export class StocktakeManagePage extends React.Component {
   }
 
   componentWillMount() {
+    if (!this.props.stocktake) {
+      let stocktake;
+      this.props.database.write(() => {
+        stocktake = this.props.database.create('Stocktake', {
+          id: generateUUID(),
+          name: '',
+          createdDate: new Date(),
+          status: 'new',
+          comment: 'Testing StocktakesPage',
+          serialNumber: '1337',
+          lines: [],
+        });
+      });
+      this.setState({ stocktake: stocktake, isNewStocktake: true });
+    } else {
+      const selected = [];
+      this.props.stocktake.lines.forEach((line) => {
+        const item = line.itemLine.item;
+        if (item) selected.push(item.id);
+      });
+      this.setState({
+        stocktake: this.props.stocktake,
+        itemSelection: selected,
+        stocktakeName: this.props.stocktake.name,
+      });
+    }
     this.refreshData();
   }
 
@@ -320,7 +348,8 @@ export class StocktakeManagePage extends React.Component {
 }
 
 StocktakeManagePage.propTypes = {
-  database: React.PropTypes.object,
+  stocktake: React.PropTypes.object,
+  database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
 const COLUMN_WIDTHS = [2, 6, 2, 1];
