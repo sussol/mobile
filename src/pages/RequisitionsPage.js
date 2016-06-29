@@ -17,44 +17,48 @@ import { GenericTablePage } from './GenericTablePage';
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
 
 /**
-* Renders the page for displaying CustomerInvoices.
+* Renders the page for displaying Requisitions.
 * @prop   {Realm}               database      App wide database.
 * @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
+* @state  {Realm.Results}       requisitions  Results object containing all Requisition records.
 */
 export class RequisitionsPage extends GenericTablePage {
   constructor(props) {
     super(props);
-    this.state.transactions = props.database.objects('Requisition')
-    this.state.sortBy = 'otherParty.name';
+    this.state.requisitions = props.database.objects('Requisition');
+    this.state.sortBy = 'serialNumber';
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
-    this.onNewInvoice = this.onNewInvoice.bind(this);
+    this.onNewRequisition = this.onNewRequisition.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.renderCell = this.renderCell.bind(this);
   }
 
-  onNewInvoice() {
-    let invoice;
+  onNewRequisition() {
+    let requisition;
     this.props.database.write(() => {
-      invoice = this.props.database.create('Transaction', {
+      requisition = this.props.database.create('Transaction', {
         id: generateUUID(),
         serialNumber: '1',
         entryDate: new Date(),
-        type: 'customer_invoice',
+        type: '',
         status: 'new',
         comment: 'Testing sync',
         otherParty: this.props.database.objects('Name')[0],
       });
     });
-    this.props.navigateTo('customerInvoice', 'New Invoice', {
-      invoice: invoice,
+    this.props.navigateTo('Requisition', 'New Requisition', {
+      requisition: requisition,
     });
   }
 
-  onRowPress(invoice) {
-    this.props.navigateTo('customerInvoice', `Invoice ${invoice.serialNumber}`, { invoice });
+  onRowPress(requisition) {
+    this.props.navigateTo(
+      'Requisition',
+      `Requisition ${requisition.serialNumber}`,
+      { requisition },
+    );
   }
 
   /**
@@ -63,7 +67,7 @@ export class RequisitionsPage extends GenericTablePage {
    * properties.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`);
+    let data = this.state.requisitions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`);
     if (sortBy === 'otherParty.name') {
       // Convert to javascript array obj then sort with standard array functions.
       data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
@@ -74,19 +78,17 @@ export class RequisitionsPage extends GenericTablePage {
     return data;
   }
 
-  renderCell(key, invoice) {
+  renderCell(key, requisition) {
     switch (key) {
       default:
-      case 'otherParty.name':
-        return invoice.otherParty && invoice.otherParty.name;
       case 'serialNumber':
-        return invoice.serialNumber;
-      case 'status':
-        return invoice.status;
+        return requisition.lines;
       case 'entryDate':
-        return invoice.entryDate.toDateString();
-      case 'comment':
-        return invoice.comment;
+        return requisition.entryDate.toDateString();
+      case 'lines.length':
+        return requisition.lines.length;
+      case 'status':
+        return requisition.status;
     }
   }
 
@@ -99,8 +101,8 @@ export class RequisitionsPage extends GenericTablePage {
             <Button
               style={globalStyles.button}
               textStyle={globalStyles.buttonText}
-              text="New Invoice"
-              onPress={this.onNewInvoice}
+              text="New Requisition"
+              onPress={this.onNewRequisition}
             />
           </View>
           {this.renderDataTable()}
@@ -117,32 +119,27 @@ RequisitionsPage.propTypes = {
 
 const COLUMNS = [
   {
-    key: 'otherParty.name',
-    width: 4,
-    title: 'CUSTOMER',
-    sortable: true,
-  },
-  {
     key: 'serialNumber',
-    width: 1,
-    title: 'INVOICE NO.',
-    sortable: true,
-  },
-  {
-    key: 'status',
-    width: 1,
-    title: 'STATUS',
+    width: 4,
+    title: 'REQUISITION NO.',
     sortable: true,
   },
   {
     key: 'entryDate',
-    width: 2,
-    title: 'ENTERED DATE',
+    width: 1,
+    title: 'DATE ENTERED',
     sortable: true,
   },
   {
-    key: 'comment',
-    width: 4,
-    title: 'COMMENT',
+    key: 'lines.length',
+    width: 1,
+    title: 'AMOUNT OF ITEMS',
+    sortable: true,
+  },
+  {
+    key: 'status',
+    width: 2,
+    title: 'STATUS',
+    sortable: true,
   },
 ];
