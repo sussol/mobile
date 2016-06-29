@@ -62,9 +62,9 @@ export class RequisitionsPage extends GenericTablePage {
   }
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending. Special
-   * case for otherParty.name as realm does not allow sorting on object properties
-   * properties.
+   * Returns updated data according to searchTerm, sortBy and isAscending. Special case for
+   * 'serialNumber' to sort numbers correctly. Special case for lines.length for correct number
+   * sort and also realm does not allow sorting on the properties of an object property.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     let data = this.state.requisitions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
