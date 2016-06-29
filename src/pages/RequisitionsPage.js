@@ -38,13 +38,13 @@ export class RequisitionsPage extends GenericTablePage {
   onNewRequisition() {
     let requisition;
     this.props.database.write(() => {
-      requisition = this.props.database.create('Transaction', {
+      requisition = this.props.database.create('Requisition', {
         id: generateUUID(),
         status: 'new',
         type: 'request', // imprest or forecast
         entryDate: new Date(),
-        daysToSupply: 'double',
-        serialNumber: '90',
+        daysToSupply: 90,
+        serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
         user: this.props.currentUser,
       });
     });
