@@ -14,7 +14,7 @@ import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
-const DATA_TYPES_DISPLAYED = ['Requisition'];
+const DATA_TYPES_DISPLAYED = ['Requisition', 'RequisitionLine'];
 
 /**
 * Renders the page for displaying Requisitions.
@@ -120,7 +120,8 @@ export class RequisitionsPage extends GenericTablePage {
 }
 
 RequisitionsPage.propTypes = {
-  database: React.PropTypes.object,
+  database: React.PropTypes.object.isRequired,
+  currentUser: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
 
