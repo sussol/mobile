@@ -171,7 +171,7 @@ export class StocktakeManagePage extends React.Component {
 
   toggleSelectAllItems() {
     const isSelectAllItems = !this.state.isSelectAllItems;
-    const { items, itemSelection } = this.state;
+    const { items } = this.state;
     this.setState({
       isSelectAllItems: isSelectAllItems,
       itemSelection: isSelectAllItems ? items.map(item => item.id) : [],
