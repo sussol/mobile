@@ -14,7 +14,7 @@ import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
-const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
+const DATA_TYPES_DISPLAYED = ['Requisition'];
 
 /**
 * Renders the page for displaying Requisitions.
