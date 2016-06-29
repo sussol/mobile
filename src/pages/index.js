@@ -4,6 +4,7 @@ import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { FirstUsePage } from './FirstUsePage';
 import { MenuPage } from './MenuPage';
+import { RequisitionsPage } from './RequisitionsPage';
 import { StockHistoriesPage } from './StockHistoriesPage';
 import { StockHistoryPage } from './StockHistoryPage';
 import { StockPage } from './StockPage';
@@ -22,6 +23,7 @@ export const PAGES = {
   firstUse: FirstUsePage,
   menu: MenuPage,
   realmExplorer: RealmExplorer,
+  requisitionsPage: RequisitionsPage,
   root: MenuPage,
   stock: StockPage,
   stockHistories: StockHistoriesPage,
