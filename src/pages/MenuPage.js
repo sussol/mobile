@@ -64,8 +64,8 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Stock Histories"
-            onPress={() => props.navigateTo('stockHistories', 'Stock Histories')}
+            text="Requistions"
+            onPress={() => props.navigateTo('requisitions', 'Requistions')}
           />
         </View>
 

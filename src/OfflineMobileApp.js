@@ -152,6 +152,7 @@ export default class OfflineMobileApp extends React.Component {
         navigateTo={navigateTo}
         database={this.database}
         logOut={this.logOut}
+        currentUser={this.state.currentUser}
         {...extraProps}
       />);
   }
