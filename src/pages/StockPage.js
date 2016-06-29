@@ -58,6 +58,7 @@ export class StockPage extends React.Component {
     this.renderExpansion = this.renderExpansion.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
+    this.getNearestExpiryDateString = this.getNearestExpiryDateString.bind(this);
   }
 
   componentWillMount() {
@@ -81,6 +82,14 @@ export class StockPage extends React.Component {
       });
     }
     this.refreshData();
+  }
+
+  getNearestExpiryDateString(item) {
+    let nearest = null;
+    item.lines.forEach((line) => {
+      if (line.expiryDate > nearest) nearest = line.expiryDate;
+    });
+    return (nearest) ? nearest.toDateString() : 'N/A'; // safe for item.lines.length === 0
   }
 
   refreshData() {
@@ -127,10 +136,10 @@ export class StockPage extends React.Component {
         <View style={{ flex: COLUMN_WIDTHS[1] + COLUMN_WIDTHS[2], flexDirection: 'row' }}>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
             <Text style={globalStyles.text}>
-              Category: {item.category.name}
+              Category: {item.category ? item.category.name : 'N/A'}
             </Text>
             <Text style={globalStyles.text}>
-              Department: {item.department.name}
+              Department: {item.department ? item.department.name : 'N/A'}
             </Text>
           </View>
           <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
@@ -138,7 +147,9 @@ export class StockPage extends React.Component {
               Number of batches: {item.lines.length}
             </Text>
             <Text style={globalStyles.text}>
-              Nearest expiry: TODO: make function for this
+              Nearest expiry: {
+                item.lines.length > 0 ? this.getNearestExpiryDateString(item) : 'No Batches'
+              }
             </Text>
           </View>
         </View>
