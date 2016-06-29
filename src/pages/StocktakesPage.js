@@ -10,7 +10,6 @@ import React from 'react';
 import {
   StyleSheet,
   View,
-  TouchableOpacity,
 } from 'react-native';
 
 import {
@@ -23,7 +22,6 @@ import {
 } from '../widgets/DataTable';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-import { generateUUID } from '../database';
 import { ListView } from 'realm/react-native';
 import { Button, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
@@ -74,17 +72,6 @@ export class StocktakesPage extends React.Component {
   }
 
   onNewStockTake() {
-    this.props.database.write(() => {
-      this.props.database.create('Stocktake', {
-        id: generateUUID(),
-        name: 'best stocktake',
-        createdDate: new Date(),
-        status: 'new',
-        comment: 'Testing StocktakesPage',
-        serialNumber: '1337',
-        lines: [],
-      });
-    });
     this.props.navigateTo('stocktakeManager', 'New StockTake');
   }
 
