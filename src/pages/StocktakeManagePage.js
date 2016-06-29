@@ -171,12 +171,10 @@ export class StocktakeManagePage extends React.Component {
 
   toggleSelectAllItems() {
     const isSelectAllItems = !this.state.isSelectAllItems;
-    const { items } = this.state;
-    const newSelection = [];
-    if (isSelectAllItems) items.forEach((item) => newSelection.push(item.id));
+    const { items, itemSelection } = this.state;
     this.setState({
       isSelectAllItems: isSelectAllItems,
-      itemSelection: newSelection,
+      itemSelection: isSelectAllItems ? items.map(item => item.id) : [],
     }, this.refreshData);
   }
 
