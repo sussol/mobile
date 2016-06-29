@@ -15,6 +15,6 @@ export class Requisition extends Realm.Object {}
 export class RequisitionLine extends Realm.Object {}
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
-export class Stocktake extends Realm.Object {}
-export class StocktakeLine extends Realm.Object {}
+export { Stocktake } from './Stocktake';
+export { StocktakeLine } from './StocktakeLine';
 export class User extends Realm.Object {}

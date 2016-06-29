@@ -138,14 +138,13 @@ function generateSyncData(settings, recordType, record) {
     }
     case 'StocktakeLine': {
       const itemLine = record.itemLine;
-      const getNumPacks = (numPieces, packSize) => (packSize === 0 ? 0 : numPieces / packSize);
       return {
         ID: record.id,
         stock_take_ID: record.Stocktake.id,
         item_line_ID: itemLine.id,
-        snapshot_qty: getNumPacks(record.snapshotQuantity, record.snapshotPacksize),
-        snapshot_packsize: record.snapshotPacksize,
-        stock_take_qty: getNumPacks(record.countedQuantity, record.snapshotPacksize),
+        snapshot_qty: record.snapshotNumberOfPacks,
+        snapshot_packsize: record.packSize,
+        stock_take_qty: record.countedNumberOfPacks,
         line_number: record.sortIndex,
         expiry: itemLine.expiryDate.toISOString(),
         cost_price: itemLine.costPrice,

@@ -162,20 +162,22 @@ export function integrateIncomingRecord(database, recordType, record) {
     }
     case 'StocktakeLine': {
       const stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
+      const packToOne = (numberOfPacksString, packSizeString) =>
+        parseNumber(numberOfPacksString) * parseNumber(packSizeString);
       internalRecord = {
         id: record.ID,
         stocktake: stocktake,
         itemLine: getObject(database, 'ItemLine', record.item_line_ID),
-        snapshotQuantity: parseNumber(record.snapshot_qty) * parseNumber(record.snapshotPacksize),
-        snapshotPacksize: 1, // Pack to one all mobile data
+        snapshotNumberOfPacks: packToOne(record.snapshot_qty, record.snapshot_packsize),
+        packSize: 1, // Pack to one all mobile data
         expiry: parseDate(record.expiry),
         batch: record.Batch,
         costPrice: parseNumber(record.cost_price),
         sellPrice: parseNumber(record.sell_price),
-        countedQuantity: parseNumber(record.stock_take_qty),
         sortIndex: parseNumber(record.line_number),
       };
       const stocktakeLine = database.update(internalType, internalRecord);
+      stocktakeLine.countedNumberOfPacks = parseNumber(record.stock_take_qty);
       stocktake.lines.push(stocktakeLine);
       break;
     }
