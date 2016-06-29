@@ -90,6 +90,18 @@ export class Database {
   }
 
   /**
+   * This method should always be called after a realm object is edited directly
+   * by setting properties using dot notation. It is a bit of a hack to make sure
+   * listeners are notified of the database update, and will be replaced in future.
+   * @param  {string} type       Database object type being updated
+   * @param  {object} object     The edited datbase object
+   * @return {none}
+   */
+  save(type, object) {
+    this.alertListeners(CHANGE_TYPES.UPDATE, type, object);
+  }
+
+  /**
    * Updates an item already in the database, with the primary key matching
    * that passed in with the properties. If none exists, will create a new
    * object. Also notifies listeners of the database update.

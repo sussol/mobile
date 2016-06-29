@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {
+  StyleSheet,
   TextInput,
   View,
 } from 'react-native';
@@ -33,7 +34,7 @@ export class EditableCell extends React.Component {
   render() {
     const { style, width, textStyle, ...textInputProps } = this.props;
     return (
-      <View style={[style, { flex: width }]}>
+      <View style={[defaultStyles.cell, style, { flex: width }]}>
         <TextInput
           {...textInputProps}
           style={textStyle}
@@ -62,3 +63,10 @@ EditableCell.defaultProps = {
   width: 1,
   value: 'N/A',
 };
+
+const defaultStyles = StyleSheet.create({
+  cell: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});

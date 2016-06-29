@@ -50,11 +50,12 @@ export const RECORD_TYPES = new SyncTranslator({
 export const REQUISITION_TYPES = new SyncTranslator({
   'imprest': 'im',
   'forecast': 'sh',
+  'request': 'request',
 });
 
 // Map of internal database change types to external sync types
 export const SYNC_TYPES = new SyncTranslator({
-  'create': 'C',
+  'create': 'I', // For 'insert'
   'update': 'U',
   'delete': 'D',
 });
