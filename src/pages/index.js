@@ -4,8 +4,8 @@ import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { FirstUsePage } from './FirstUsePage';
 import { MenuPage } from './MenuPage';
-import { StockHistoriesPage } from './StockHistoriesPage';
-import { StockHistoryPage } from './StockHistoryPage';
+import { RequisitionsPage } from './RequisitionsPage';
+import { RequisitionPage } from './RequisitionPage';
 import { StockPage } from './StockPage';
 import { StocktakeEditPage } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
@@ -24,8 +24,8 @@ export const PAGES = {
   realmExplorer: RealmExplorer,
   root: MenuPage,
   stock: StockPage,
-  stockHistories: StockHistoriesPage,
-  stockHistory: StockHistoryPage,
+  requisitions: RequisitionsPage,
+  requisition: RequisitionPage,
   stocktakeEditor: StocktakeEditPage,
   stocktakeManager: StocktakeManagePage,
   stocktakes: StocktakesPage,
