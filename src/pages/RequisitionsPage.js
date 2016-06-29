@@ -55,7 +55,7 @@ export class RequisitionsPage extends GenericTablePage {
 
   onRowPress(requisition) {
     this.props.navigateTo(
-      'Requisition',
+      'requisition',
       `Requisition ${requisition.serialNumber}`,
       { requisition },
     );

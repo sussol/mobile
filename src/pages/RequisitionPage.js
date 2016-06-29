@@ -13,7 +13,7 @@ import {
 
 import globalStyles from '../globalStyles';
 
-export function StockHistoryPage(props) {
+export function RequisitionPage(props) {
   return (
     <View style={props.style}>
       <Text>You can interact with a Stock History.</Text>
@@ -21,7 +21,7 @@ export function StockHistoryPage(props) {
   );
 }
 
-StockHistoryPage.propTypes = {
+RequisitionPage.propTypes = {
   style: View.propTypes.style,
   navigateTo: React.PropTypes.func.isRequired,
 };
