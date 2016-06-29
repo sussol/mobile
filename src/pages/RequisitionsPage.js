@@ -20,6 +20,7 @@ const DATA_TYPES_DISPLAYED = ['Requisition', 'RequisitionLine'];
 * Renders the page for displaying Requisitions.
 * @prop   {Realm}               database      App wide database.
 * @prop   {func}                navigateTo    CallBack for navigation stack.
+* @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
 * @state  {Realm.Results}       requisitions  Results object containing all Requisition records.
 */
 export class RequisitionsPage extends GenericTablePage {
@@ -33,6 +34,7 @@ export class RequisitionsPage extends GenericTablePage {
     this.onNewRequisition = this.onNewRequisition.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.renderCell = this.renderCell.bind(this);
+    this.navigateToRequisition = this.navigateToRequisition.bind(this);
   }
 
   onNewRequisition() {
@@ -41,19 +43,21 @@ export class RequisitionsPage extends GenericTablePage {
       requisition = this.props.database.create('Requisition', {
         id: generateUUID(),
         status: 'new',
-        type: 'request', // imprest or forecast
+        type: 'request',
         entryDate: new Date(),
-        daysToSupply: 90,
+        daysToSupply: 90, // 3 months
         serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
         user: this.props.currentUser,
       });
     });
-    this.props.navigateTo('requisition', `Requisition ${requisition.serialNumber}`, {
-      requisition: requisition,
-    });
+    this.navigateToRequisition(requisition);
   }
 
   onRowPress(requisition) {
+    this.navigateToRequisition(requisition);
+  }
+
+  navigateToRequisition(requisition) {
     this.props.navigateTo(
       'requisition',
       `Requisition ${requisition.serialNumber}`,
@@ -74,7 +78,7 @@ export class RequisitionsPage extends GenericTablePage {
         data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
         if (!isAscending) data.reverse(); // ...3,2,1,0
         break;
-      case 'lines.length': // Cannot use realm Result.sort() with a property of a property
+      case 'lines.length': // Cannot use realm Result.sorted() with a property of a property
         data = data.slice().sort((a, b) => a.lines.length - b.lines.length); // 0,1,2,3...
         if (!isAscending) data.reverse(); // ...3,2,1,0
         break;
