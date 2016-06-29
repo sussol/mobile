@@ -40,15 +40,15 @@ export class RequisitionsPage extends GenericTablePage {
     this.props.database.write(() => {
       requisition = this.props.database.create('Transaction', {
         id: generateUUID(),
-        serialNumber: '1',
-        entryDate: new Date(),
-        type: '',
         status: 'new',
-        comment: 'Testing sync',
-        otherParty: this.props.database.objects('Name')[0],
+        type: 'request', // imprest or forecast
+        entryDate: new Date(),
+        daysToSupply: 'double',
+        serialNumber: '90',
+        user: this.props.currentUser,
       });
     });
-    this.props.navigateTo('Requisition', 'New Requisition', {
+    this.props.navigateTo('requisition', `Requisition ${requisition.serialNumber}`, {
       requisition: requisition,
     });
   }
@@ -67,14 +67,8 @@ export class RequisitionsPage extends GenericTablePage {
    * properties.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.requisitions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`);
-    if (sortBy === 'otherParty.name') {
-      // Convert to javascript array obj then sort with standard array functions.
-      data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
-      if (!isAscending) data.reverse();
-    } else {
-      data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
-    }
+    let data = this.state.requisitions.filtered(`serialNumber CONTAINS[c] "${searchTerm}"`);
+    data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     return data;
   }
 
@@ -120,7 +114,7 @@ RequisitionsPage.propTypes = {
 const COLUMNS = [
   {
     key: 'serialNumber',
-    width: 4,
+    width: 2,
     title: 'REQUISITION NO.',
     sortable: true,
   },
@@ -138,7 +132,7 @@ const COLUMNS = [
   },
   {
     key: 'status',
-    width: 2,
+    width: 1,
     title: 'STATUS',
     sortable: true,
   },

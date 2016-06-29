@@ -128,7 +128,7 @@ Requisition.schema = {
   properties: {
     id: 'string',
     status: 'string',
-    type: 'string', // imprest or forecast
+    type: 'string', // imprest, forecast or request (request only used in mobile)
     entryDate: 'date',
     daysToSupply: 'double',
     serialNumber: 'string',
