@@ -66,8 +66,10 @@ export default class OfflineMobileApp extends React.Component {
     this.synchronize = this.synchronize.bind(this);
     this.scheduler.schedule(this.synchronize,
                             SYNC_INTERVAL);
-    this.scheduler.schedule(() => this.userAuthenticator.reauthenticate(this.onAuthentication),
-                            AUTHENTICATION_INTERVAL);
+    this.scheduler.schedule(() => {
+      if (this.state.currentUser !== null) { // Only reauthenticate if currently logged in
+        this.userAuthenticator.reauthenticate(this.onAuthentication);
+      }}, AUTHENTICATION_INTERVAL);
   }
 
   componentWillUnmount() {
