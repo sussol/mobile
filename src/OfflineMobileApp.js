@@ -46,12 +46,13 @@ export default class OfflineMobileApp extends React.Component {
     const initialised = this.synchronizer.isInitialised();
     this.state = {
       initialised: initialised,
-      authenticated: true,
+      currentUser: null,
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
       confirmFinalise: false,
       recordToFinalise: null,
+      recordTypeToFinalise: null,
     };
   }
 
@@ -73,8 +74,8 @@ export default class OfflineMobileApp extends React.Component {
     this.scheduler.clearAll();
   }
 
-  onAuthentication(authenticated) {
-    this.setState({ authenticated: authenticated });
+  onAuthentication(user) {
+    this.setState({ currentUser: user });
   }
 
   onInitialised() {
@@ -82,7 +83,7 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   async synchronize() {
-    if (this.state.isSyncing) return; // If already syncing, skip
+    if (!this.state.initialised || this.state.isSyncing) return; // If already syncing, skip
     try {
       this.setState({ isSyncing: true });
       await this.synchronizer.synchronize();
@@ -96,7 +97,7 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   logOut() {
-    this.setState({ authenticated: false });
+    this.setState({ currentUser: null });
   }
 
   renderFinaliseButton() {
@@ -120,10 +121,21 @@ export default class OfflineMobileApp extends React.Component {
     const navigateTo = (key, title, extraProps) => {
       // If the page we're going to takes in a record that can be finalised, retain it in state
       let recordToFinalise = null;
-      if (extraProps && 'invoice' in extraProps) recordToFinalise = extraProps.invoice;
-      else if (extraProps && 'requisition' in extraProps) recordToFinalise = extraProps.requisition;
-      else if (extraProps && 'stocktake' in extraProps) recordToFinalise = extraProps.stocktake;
-      this.setState({ recordToFinalise: recordToFinalise });
+      let recordType = null;
+      if (extraProps && 'invoice' in extraProps) {
+        recordToFinalise = extraProps.invoice;
+        recordType = 'Transaction';
+      } else if (extraProps && 'requisition' in extraProps) {
+        recordToFinalise = extraProps.requisition;
+        recordType = 'Requisition';
+      } else if (extraProps && 'stocktake' in extraProps) {
+        recordToFinalise = extraProps.stocktake;
+        recordType = 'Stocktake';
+      } else if (extraProps && 'transaction' in extraProps) {
+        recordToFinalise = extraProps.transaction;
+        recordType = 'Transaction';
+      }
+      this.setState({ recordToFinalise: recordToFinalise, recordTypeToFinalise: recordType });
 
       // Now navigate to the page, passing on any extra props and the finalise button if required
       const navigationProps = { key, title, ...extraProps };
@@ -176,10 +188,12 @@ export default class OfflineMobileApp extends React.Component {
           isOpen={this.state.confirmFinalise}
           onClose={() => this.setState({ confirmFinalise: false })}
           record={this.state.recordToFinalise}
+          recordType={this.state.recordTypeToFinalise}
+          user={this.state.currentUser}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
-          isAuthenticated={this.state.authenticated}
+          isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
       </View>

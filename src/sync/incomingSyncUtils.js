@@ -184,17 +184,17 @@ export function integrateIncomingRecord(database, recordType, record) {
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
-        otherParty: otherParty,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
-        enteredBy: getObject(database, 'User', record.user_ID),
         theirRef: record.their_ref,
-        category: getObject(database, 'TransactionCategory', record.category_ID),
       };
       const transaction = database.update(internalType, internalRecord);
+      transaction.otherParty = otherParty;
+      transaction.enteredBy = getObject(database, 'User', record.user_ID);
+      transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
       otherParty.transactions.push(transaction);
       break;
     }
@@ -210,14 +210,18 @@ export function integrateIncomingRecord(database, recordType, record) {
     }
     case 'TransactionLine': {
       const transaction = getObject(database, 'Transaction', record.transaction_ID);
+      const itemLine = getObject(database, 'ItemLine', record.item_line_ID);
+      const item = getObject(database, 'Item', record.item_ID);
+      itemLine.item = item;
+      item.lines.push(itemLine);
       internalRecord = {
         id: record.ID,
         itemId: record.item_ID,
         itemName: record.item_name,
-        itemLine: getObject(database, 'ItemLine', record.item_line_ID),
+        itemLine: itemLine,
         packSize: 1, // Pack to one all mobile data
         numberOfPacks: parseNumber(record.quantity) * parseNumber(record.pack_size),
-        totalQuantity: parseNumber(record.quantity) * parseNumber(record.pack_size),
+        totalQuantitySent: parseNumber(record.quantity) * parseNumber(record.pack_size),
         transaction: transaction,
         note: record.note,
         costPrice: parseNumber(record.cost_price),
@@ -278,7 +282,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
              && record.cost_price && record.sell_price;
     case 'Transaction':
       return record.invoice_num && record.name_ID && record.entry_date && record.type
-             && record.status && record.user_ID;
+             && record.status;
     case 'TransactionCategory':
       return record.category && record.code && record.type;
     case 'TransactionLine':
@@ -317,7 +321,7 @@ function getObject(database, type, id) {
 function generatePlaceholder(type, id) {
   let placeholder;
   const placeholderString = 'placeholder';
-  const placeholderNumber = 1;
+  const placeholderNumber = 0;
   const placeholderDate = new Date();
   switch (type) {
     case 'Address':
@@ -377,13 +381,13 @@ function generatePlaceholder(type, id) {
         name: placeholderString,
         createdDate: placeholderDate,
         status: placeholderString,
-        serialNumber: placeholderNumber,
+        serialNumber: placeholderString,
       };
       return placeholder;
     case 'Transaction':
       placeholder = {
         id: id,
-        serialNumber: placeholderNumber,
+        serialNumber: placeholderString,
         comment: placeholderString,
         entryDate: placeholderDate,
         type: placeholderString,
@@ -446,7 +450,7 @@ function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
  * @return {Date}           The Date object described by the params
  */
 function parseDate(ISODate, ISOTime) {
-  if (!ISODate || ISODate.length < 1) return null;
+  if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') return null;
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 6) {
     const hours = ISOTime.substring(0, 2);
@@ -464,5 +468,9 @@ function parseDate(ISODate, ISOTime) {
  */
 function parseNumber(numberString) {
   if (!numberString || numberString.length < 1) return null;
-  return parseFloat(numberString);
+  try {
+    return parseFloat(numberString);
+  } catch (error) {
+    throw error;
+  }
 }

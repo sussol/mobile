@@ -29,7 +29,7 @@ const {
  * @return {object}                     The generated json object, ready to sync
  */
 export function generateSyncJson(database, settings, syncOutRecord) {
-  if (!syncOutRecord.isValid()) throw new Error('Attempting to sync a missing sync out record');
+  if (!syncOutRecord || !syncOutRecord.isValid()) throw new Error('Missing sync out record');
   if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
     throw new Error('Malformed sync out record');
   }
@@ -91,7 +91,7 @@ function generateSyncData(settings, recordType, record) {
         cost_price: record.costPrice,
         sell_price: record.sellPrice,
         total_cost: record.costPrice * record.numberOfPacks,
-        name_ID: record.supplier.id,
+        name_ID: settings.get(SUPPLYING_STORE_ID),
       };
     }
     case 'Requisition': {
@@ -182,7 +182,7 @@ function generateSyncData(settings, recordType, record) {
         transaction_ID: record.transaction.id,
         item_ID: record.itemId,
         batch: itemLine.batch,
-        price_extension: getPriceExtension(record),
+        price_extension: getPriceExtension(record, record.transaction.type),
         note: record.note,
         cost_price: record.costPrice,
         sell_price: record.sellPrice,
@@ -192,7 +192,8 @@ function generateSyncData(settings, recordType, record) {
         item_line_ID: itemLine.id,
         line_number: record.sortIndex,
         item_name: record.itemName,
-        is_from_inventory_adjustment: transaction.otherParty.type === 'inventory_adjustment',
+        is_from_inventory_adjustment: transaction.otherParty &&
+                                      transaction.otherParty.type === 'inventory_adjustment',
         type: TRANSACTION_LINE_TYPES.translate(record, INTERNAL_TO_EXTERNAL),
       };
     }

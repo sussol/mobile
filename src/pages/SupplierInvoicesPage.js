@@ -5,88 +5,43 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
+import { SearchBar } from '../widgets';
+import { GenericTablePage } from './GenericTablePage';
 
-import {
-  Cell,
-  DataTable,
-  Header,
-  HeaderCell,
-  Row,
-} from '../widgets/DataTable';
-
-import { ListView } from 'realm/react-native';
-import { Button, SearchBar } from '../widgets';
-import globalStyles from '../globalStyles';
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
 
 /**
 * Renders the page for displaying SupplierInvoices.
 * @prop   {Realm}               database      App wide database.
 * @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
 * @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
-* @state  {string}              searchTerm    Current term user has entered in the SearchBar.
-* @state  {string}              sortBy        The property of the transaction to sort by (isSelected
-*                                             By column press).
-* @state  {boolean}             isAscending   Direction sortBy should sort
-*                                             (ascending/descending:true/false).
 */
-export class SupplierInvoicesPage extends React.Component {
+export class SupplierInvoicesPage extends GenericTablePage {
   constructor(props) {
     super(props);
-    const dataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-    });
-    this.state = {
-      dataSource: dataSource,
-      transactions: props.database.objects('Transaction').filtered('type == "supplier_invoice"'),
-      searchTerm: '',
-      sortBy: 'serialNumber',
-      isAscending: true,
-    };
-    this.componentWillMount = this.componentWillMount.bind(this);
-    this.onSearchChange = this.onSearchChange.bind(this);
-    this.onColumnSort = this.onColumnSort.bind(this);
-    this.renderHeader = this.renderHeader.bind(this);
-    this.renderRow = this.renderRow.bind(this);
-    this.refreshData = this.refreshData.bind(this);
+    this.state.sortBy = 'serialNumber';
+    this.state.transactions = props.database.objects('Transaction')
+                                            .filtered('type == "supplier_invoice"');
+    this.columns = COLUMNS;
+    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
+    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.onRowPress = this.onRowPress.bind(this);
   }
 
-  componentWillMount() {
-    this.refreshData();
-  }
-
-  onSearchChange(event) {
-    const term = event.nativeEvent.text;
-    this.setState({ searchTerm: term });
-    this.refreshData();
-  }
-
-  onColumnSort(sortBy) {
-    if (this.state.sortBy === sortBy) { // changed column sort direction.
-      this.setState({ isAscending: !this.state.isAscending });
-    } else { // Changed sorting column.
-      this.setState({
-        sortBy: sortBy,
-        isAscending: true,
-      });
-    }
-    this.refreshData();
+  onRowPress(invoice) {
+    this.props.navigateTo('supplierInvoice',
+                          `Invoice ${invoice.serialNumber}`,
+                          { transaction: invoice });
   }
 
   /**
-   * Updates data within dataSource in state according to the state of searchTerm, sortBy and
-   * isAscending. Special case for sorting by serialNumber due to needing number based sorting but
-   * the value is stored as a string.
+   * Returns updated data according to searchTerm, sortBy and isAscending. Special
+   * case for sorting by serialNumber due to needing number based sorting but the
+   * value is stored as a string.
    */
-  refreshData() {
-    const { transactions, sortBy, dataSource, isAscending, searchTerm } = this.state;
-    let data = transactions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
+  getUpdatedData(searchTerm, sortBy, isAscending) {
+    let data = this.state.transactions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
     if (sortBy === 'serialNumber') { // Special case for correct number based sorting
       // Convert to javascript array obj then sort with standard array functions.
       data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
@@ -94,113 +49,29 @@ export class SupplierInvoicesPage extends React.Component {
     } else {
       data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     }
-    this.setState({ dataSource: dataSource.cloneWithRows(data) });
+    return data;
   }
 
-  renderHeader() {
-    return (
-      <Header style={globalStyles.dataTableHeader}>
-        <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[0]}
-          onPress={() => this.onColumnSort('serialNumber')}
-          isAscending={this.state.isAscending}
-          isSelected={this.state.sortBy === 'serialNumber'}
-          text={'INVOICE NO.'}
-        />
-        <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[1]}
-          onPress={() => this.onColumnSort('status')}
-          isAscending={this.state.isAscending}
-          isSelected={this.state.sortBy === 'status'}
-          text={'STATUS'}
-        />
-        <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[2]}
-          onPress={() => this.onColumnSort('entryDate')}
-          isAscending={this.state.isAscending}
-          isSelected={this.state.sortBy === 'entryDate'}
-          text={'ENTERED DATE'}
-        />
-        <HeaderCell
-          style={[globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell]}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[3]}
-          text={'COMMENT'}
-        />
-      </Header>
-    );
+  renderCell(key, invoice) {
+    switch (key) {
+      default:
+      case 'serialNumber':
+        return invoice.serialNumber;
+      case 'status':
+        return invoice.status;
+      case 'entryDate':
+        return invoice.entryDate.toDateString();
+      case 'comment':
+        return invoice.comment;
+    }
   }
 
-  renderRow(invoice) {
+  renderSearchBar() {
     return (
-      <Row
-        style={globalStyles.dataTableRow}
-        onPress={() => this.props.navigateTo('customerInvoice', `Invoice ${invoice.serialNumber}`)}
-      >
-        <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[0]}
-        >
-          {invoice.serialNumber}
-        </Cell>
-        <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[1]}
-        >
-          {invoice.status}
-        </Cell>
-        <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[2]}
-        >
-          {invoice.entryDate.toDateString()}
-        </Cell>
-        <Cell
-          style={[globalStyles.dataTableCell, globalStyles.dataTableRightMostCell]}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[3]}
-        >
-          {invoice.comment}
-        </Cell>
-      </Row>
-    );
-  }
-
-  render() {
-    return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <SearchBar
-              onChange={(event) => this.onSearchChange(event)}
-              keyboardType="numeric"
-            />
-            <Button
-              style={globalStyles.button}
-              textStyle={globalStyles.buttonText}
-              text="New Invoice"
-              onPress={() => this.props.navigateTo('customerInvoice', 'New Invoice')}
-            />
-          </View>
-          <DataTable
-            style={globalStyles.dataTable}
-            listViewStyle={localStyles.listView}
-            dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
-            renderHeader={this.renderHeader}
-          />
-        </View>
-      </View>
-    );
+      <SearchBar
+        onChange={(event) => this.onSearchChange(event)}
+        keyboardType="numeric"
+      />);
   }
 }
 
@@ -208,12 +79,29 @@ SupplierInvoicesPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
 };
-const COLUMN_WIDTHS = [1, 1, 1, 3];
-const localStyles = StyleSheet.create({
-  listView: {
-    flex: 1,
+
+const COLUMNS = [
+  {
+    key: 'serialNumber',
+    width: 1,
+    title: 'INVOICE NO.',
+    sortable: true,
   },
-  dataTable: {
-    flex: 1,
+  {
+    key: 'status',
+    width: 1,
+    title: 'STATUS',
+    sortable: true,
   },
-});
+  {
+    key: 'entryDate',
+    width: 1,
+    title: 'ENTERED DATE',
+    sortable: true,
+  },
+  {
+    key: 'comment',
+    width: 3,
+    title: 'COMMENT',
+  },
+];

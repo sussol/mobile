@@ -25,16 +25,16 @@ export function ConfirmModal(props) {
       <Text style={textStyle}>
         {questionText}
       </Text>
-      <View style={defaultStyles.buttonContainer}>
+      <View style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}>
         <Button
-          style={globalStyles.button}
-          textStyle={globalStyles.buttonText}
+          style={[globalStyles.button, props.cancelButtonStyle]}
+          textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
           text={'Cancel'}
           onPress={onCancel}
         />
         <Button
-          style={globalStyles.button}
-          textStyle={globalStyles.buttonText}
+          style={[globalStyles.button, props.confirmButtonStyle]}
+          textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
           text={'Confirm'}
           onPress={onConfirm}
         />
@@ -45,6 +45,10 @@ export function ConfirmModal(props) {
 
 ConfirmModal.propTypes = {
   style: View.propTypes.style,
+  buttonContainerStyle: View.propTypes.style,
+  buttonTextStyle: Text.propTypes.style,
+  cancelButtonStyle: View.propTypes.style,
+  confirmButtonStyle: View.propTypes.style,
   textStyle: Text.propTypes.style,
   isOpen: React.PropTypes.bool.isRequired,
   questionText: React.PropTypes.string.isRequired,

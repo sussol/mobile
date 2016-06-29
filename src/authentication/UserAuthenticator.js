@@ -78,19 +78,23 @@ export class UserAuthenticator {
         throw error;
       } else throw error; // Most likely an empty username or password
     }
+    return user;
   }
 
 /**
  * Check that the user's details are still valid
- * @param  {function} onAuthentication A callback function expecting a boolean
- *                                     parameter that represents the success or
- *                                     failure of reauthentication
+ * @param  {function} onAuthentication A callback function expecting a user
+ *                                     parameter that will be either the successfully
+ *                                     authenticated user, or null on failure
  * @return {none}
  */
-  reauthenticate(onAuthentication) {
+  async reauthenticate(onAuthentication) {
     if (!this.activeUsername | !this.activePassword) onAuthentication(false);
-    this.authenticate(this.activeUsername, this.activePassword)
-      .then(() => onAuthentication(true),
-      () => onAuthentication(false));
+    try {
+      const user = await this.authenticate(this.activeUsername, this.activePassword);
+      onAuthentication(user);
+    } catch (error) {
+      onAuthentication(null);
+    }
   }
 }

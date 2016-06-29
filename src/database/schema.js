@@ -1,4 +1,25 @@
-const AddressSchema = {
+import {
+  Address,
+  Item,
+  ItemLine,
+  ItemDepartment,
+  ItemCategory,
+  Transaction,
+  TransactionCategory,
+  TransactionLine,
+  MasterList,
+  MasterListLine,
+  Name,
+  Requisition,
+  RequisitionLine,
+  Setting,
+  SyncOut,
+  Stocktake,
+  StocktakeLine,
+  User,
+} from './DataTypes';
+
+Address.schema = {
   name: 'Address',
   primaryKey: 'id',
   properties: {
@@ -11,7 +32,7 @@ const AddressSchema = {
   },
 };
 
-const ItemSchema = {
+Item.schema = {
   name: 'Item',
   primaryKey: 'id',
   properties: {
@@ -27,7 +48,7 @@ const ItemSchema = {
   },
 };
 
-const ItemCategorySchema = {
+ItemCategory.schema = {
   name: 'ItemCategory',
   primaryKey: 'id',
   properties: {
@@ -37,7 +58,7 @@ const ItemCategorySchema = {
   },
 };
 
-const ItemDepartmentSchema = {
+ItemDepartment.schema = {
   name: 'ItemDepartment',
   primaryKey: 'id',
   properties: {
@@ -47,7 +68,7 @@ const ItemDepartmentSchema = {
   },
 };
 
-const ItemLineSchema = {
+ItemLine.schema = {
   name: 'ItemLine',
   primaryKey: 'id',
   properties: {
@@ -55,7 +76,6 @@ const ItemLineSchema = {
     item: { type: 'Item', optional: true },
     packSize: 'double',
     numberOfPacks: 'double',
-    totalQuantity: 'double',  // Should be kept consistent with packSize x numberOfPacks
     expiryDate: 'date',
     batch: 'string',
     costPrice: 'double',
@@ -64,7 +84,7 @@ const ItemLineSchema = {
   },
 };
 
-const MasterListSchema = {
+MasterList.schema = {
   name: 'MasterList',
   primaryKey: 'id',
   properties: {
@@ -75,7 +95,7 @@ const MasterListSchema = {
   },
 };
 
-const MasterListLineSchema = {
+MasterListLine.schema = {
   name: 'MasterListLine',
   primaryKey: 'id',
   properties: {
@@ -86,7 +106,7 @@ const MasterListLineSchema = {
   },
 };
 
-const NameSchema = {
+Name.schema = {
   name: 'Name',
   primaryKey: 'id',
   properties: {
@@ -102,7 +122,7 @@ const NameSchema = {
   },
 };
 
-const RequisitionSchema = {
+Requisition.schema = {
   name: 'Requisition',
   primaryKey: 'id',
   properties: {
@@ -117,7 +137,7 @@ const RequisitionSchema = {
   },
 };
 
-const RequisitionLineSchema = {
+RequisitionLine.schema = {
   name: 'RequisitionLine',
   primaryKey: 'id',
   properties: {
@@ -134,7 +154,7 @@ const RequisitionLineSchema = {
   },
 };
 
-const SettingSchema = {
+Setting.schema = {
   name: 'Setting',
   primaryKey: 'key',
   properties: {
@@ -144,7 +164,7 @@ const SettingSchema = {
   },
 };
 
-const StocktakeSchema = {
+Stocktake.schema = {
   name: 'Stocktake',
   primaryKey: 'id',
   properties: {
@@ -163,7 +183,7 @@ const StocktakeSchema = {
   },
 };
 
-const StocktakeLineSchema = {
+StocktakeLine.schema = {
   name: 'StocktakeLine',
   primaryKey: 'id',
   properties: {
@@ -181,7 +201,7 @@ const StocktakeLineSchema = {
   },
 };
 
-const SyncOutSchema = {
+SyncOut.schema = {
   name: 'SyncOut',
   primaryKey: 'id',
   properties: {
@@ -194,7 +214,7 @@ const SyncOutSchema = {
 };
 
 
-const TransactionSchema = {
+Transaction.schema = {
   name: 'Transaction',
   primaryKey: 'id',
   properties: {
@@ -213,7 +233,7 @@ const TransactionSchema = {
   },
 };
 
-const TransactionCategorySchema = {
+TransactionCategory.schema = {
   name: 'TransactionCategory',
   primaryKey: 'id',
   properties: {
@@ -225,7 +245,7 @@ const TransactionCategorySchema = {
   },
 };
 
-const TransactionLineSchema = {
+TransactionLine.schema = {
   name: 'TransactionLine',
   primaryKey: 'id',
   properties: {
@@ -237,7 +257,7 @@ const TransactionLineSchema = {
     expiryDate: 'date',
     packSize: 'double',
     numberOfPacks: 'double',
-    totalQuantity: 'double',
+    totalQuantitySent: { type: 'double', optional: true },
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
     costPrice: 'double',
@@ -246,7 +266,7 @@ const TransactionLineSchema = {
   },
 };
 
-const UserSchema = {
+User.schema = {
   name: 'User',
   primaryKey: 'id',
   properties: {
@@ -264,24 +284,24 @@ const UserSchema = {
 export const schema =
   {
     schema: [
-      AddressSchema,
-      ItemSchema,
-      ItemLineSchema,
-      ItemDepartmentSchema,
-      ItemCategorySchema,
-      TransactionSchema,
-      TransactionLineSchema,
-      TransactionCategorySchema,
-      MasterListSchema,
-      MasterListLineSchema,
-      NameSchema,
-      RequisitionSchema,
-      RequisitionLineSchema,
-      SettingSchema,
-      SyncOutSchema,
-      StocktakeSchema,
-      StocktakeLineSchema,
-      UserSchema,
+      Address,
+      Item,
+      ItemLine,
+      ItemDepartment,
+      ItemCategory,
+      Transaction,
+      TransactionLine,
+      TransactionCategory,
+      MasterList,
+      MasterListLine,
+      Name,
+      Requisition,
+      RequisitionLine,
+      Setting,
+      SyncOut,
+      Stocktake,
+      StocktakeLine,
+      User,
     ],
     schemaVersion: 1,
   };
