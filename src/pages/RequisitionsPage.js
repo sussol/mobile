@@ -67,8 +67,21 @@ export class RequisitionsPage extends GenericTablePage {
    * properties.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.requisitions.filtered(`serialNumber CONTAINS[c] "${searchTerm}"`);
-    data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+    let data = this.state.requisitions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
+    switch (sortBy) {
+      case 'serialNumber': // Special case for correct number based sorting
+        // Convert to javascript array obj then sort with standard array functions.
+        data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
+        if (!isAscending) data.reverse(); // ...3,2,1,0
+        break;
+      case 'lines.length': // Cannot use realm Result.sort() with a property of a property
+        data = data.slice().sort((a, b) => a.lines.length - b.lines.length); // 0,1,2,3...
+        if (!isAscending) data.reverse(); // ...3,2,1,0
+        break;
+      default:
+        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+    }
+
     return data;
   }
 
@@ -76,7 +89,7 @@ export class RequisitionsPage extends GenericTablePage {
     switch (key) {
       default:
       case 'serialNumber':
-        return requisition.lines;
+        return requisition.serialNumber;
       case 'entryDate':
         return requisition.entryDate.toDateString();
       case 'lines.length':
