@@ -62,6 +62,7 @@ export default StyleSheet.create({
   },
   loginModal: {
     backgroundColor: BACKGROUND_COLOR,
+    justifyContent: 'flex-start',
   },
   loginTextInputStyle: {
     marginHorizontal: 60,
@@ -69,6 +70,7 @@ export default StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
   },
   loginContainer: {
+    marginTop: 110,
     marginHorizontal: 300,
     alignItems: 'center',
     justifyContent: 'flex-start',
