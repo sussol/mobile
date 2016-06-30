@@ -34,7 +34,9 @@ export class LoginModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (!nextProps.isAuthenticated) this.setState({ authStatus: 'unauthenticated' });
+    if (this.state.authStatus === 'authenticated' && !nextProps.isAuthenticated) {
+      this.setState({ authStatus: 'unauthenticated' });
+    }
   }
 
   async onLogin() {
@@ -47,6 +49,10 @@ export class LoginModal extends React.Component {
     } catch (error) {
       this.setState({ authStatus: 'error', error: error.message });
       this.props.onAuthentication(null);
+      if (!error.message.startsWith('Invalid username or password')) {
+        // After ten seconds of displaying the error, re-enable the button
+        setTimeout(() => this.setState({ authStatus: 'unauthenticated' }), 10 * 1000);
+      }
     }
   }
 
@@ -64,7 +70,7 @@ export class LoginModal extends React.Component {
       case 'authenticated':
         return 'Logging in...';
       case 'error':
-        return 'Login failed.';
+        return this.state.error;
       default:
         return 'Login';
     }
@@ -74,21 +80,21 @@ export class LoginModal extends React.Component {
     return (
       <Modal
         isOpen={!this.props.isAuthenticated}
-        style={[globalStyles.modal, globalStyles.loginModal]}
+        style={[globalStyles.modal, globalStyles.authFormModal]}
         backdropPressToClose={false}
         backdropOpacity={1}
         swipeToClose={false}
         position="top"
         startOpen
       >
-        <View style={[globalStyles.loginContainer]}>
+        <View style={[globalStyles.authFormContainer]}>
           <Image
             resizeMode="contain"
-            style={globalStyles.loginLogo}
+            style={globalStyles.authFormLogo}
             source={require('../../images/logo_large.png')}
           />
           <TextInput
-            style={globalStyles.loginTextInputStyle}
+            style={globalStyles.authFormTextInputStyle}
             placeholder="User Name"
             placeholderTextColor={SUSSOL_ORANGE}
             underlineColorAndroid={SUSSOL_ORANGE}
@@ -99,7 +105,7 @@ export class LoginModal extends React.Component {
             }}
           />
           <TextInput
-            style={globalStyles.loginTextInputStyle}
+            style={globalStyles.authFormTextInputStyle}
             placeholder="Password"
             placeholderTextColor={SUSSOL_ORANGE}
             underlineColorAndroid={SUSSOL_ORANGE}
@@ -110,10 +116,10 @@ export class LoginModal extends React.Component {
               this.setState({ password: text, authStatus: 'unauthenticated' });
             }}
           />
-          <View style={globalStyles.loginButtonContainer}>
+          <View style={globalStyles.authFormButtonContainer}>
             <Button
-              style={globalStyles.loginButton}
-              textStyle={globalStyles.loginButtonText}
+              style={[globalStyles.authFormButton, globalStyles.loginButton]}
+              textStyle={globalStyles.authFormButtonText}
               text={this.getButtonText()}
               onPress={this.onLogin}
               disabledColor={WARM_GREY}

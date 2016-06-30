@@ -60,17 +60,17 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  loginModal: {
+  authFormModal: {
     backgroundColor: BACKGROUND_COLOR,
     justifyContent: 'flex-start',
   },
-  loginTextInputStyle: {
+  authFormTextInputStyle: {
     marginHorizontal: 60,
     color: SUSSOL_ORANGE,
     fontFamily: APP_FONT_FAMILY,
   },
-  loginContainer: {
-    marginTop: 110,
+  authFormContainer: {
+    marginTop: 80,
     marginHorizontal: 300,
     alignItems: 'center',
     justifyContent: 'flex-start',
@@ -80,24 +80,30 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderRadius: 1,
   },
-  loginButton: {
+  authFormButton: {
     backgroundColor: SUSSOL_ORANGE,
-    marginTop: 60,
   },
-  loginButtonContainer: {
+  authFormButtonContainer: {
     flex: 1,
     alignSelf: 'stretch',
   },
-  loginButtonText: {
+  authFormButtonText: {
     color: 'white',
     fontFamily: APP_FONT_FAMILY,
     textAlign: 'center',
     fontSize: 22,
     marginVertical: 15,
   },
-  loginLogo: {
+  authFormLogo: {
     marginTop: 30,
     marginBottom: 60,
+  },
+  loginButton: {
+    marginTop: 60,
+  },
+  initialisationStateIcon: {
+    marginTop: 46,
+    marginBottom: 24,
   },
   navBarOffset: {
     paddingTop: 68,
