@@ -111,12 +111,20 @@ export class StocktakeManagePage extends React.Component {
 
   onConfirmPress() {
     const { stocktake, itemSelection, items } = this.state;
+    const { database, navigateTo } = this.props;
     let { stocktakeName } = this.state;
     const stocktakeLines = [];
 
-    if (stocktakeName === '') stocktakeName = `Stocktake ${stocktake.createdDate}`;
+    function getDateTimeString(date) {
+      return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ` +
+             `${date.getHours()}:${date.getMinutes()}`;
+    }
 
-    this.props.database.write(() => {
+    if (stocktakeName === '') {
+      stocktakeName = `Stocktake ${getDateTimeString(stocktake.createdDate)}`;
+    }
+
+    database.write(() => {
       stocktake.lines.forEach((line, i, lines) => {
         const item = line.itemLine.item;
         const itemIdIndex = itemSelection.indexOf(item.id);
@@ -132,25 +140,26 @@ export class StocktakeManagePage extends React.Component {
       itemSelection.forEach((itemId) => {
         const item = items.find(i => i.id === itemId);
         item.lines.forEach((itemLine) => {
-          const stocktakeLine = this.props.database.create('StocktakeLine', {
+          const stocktakeLine = database.create('StocktakeLine', {
             id: generateUUID(),
             stocktake: stocktake,
             itemLine: itemLine,
             snapshotNumberOfPacks: itemLine.numberOfPacks,
             packSize: 1,
-            expiryDate: itemLine.numberOfPacks,
-            batch: itemLine.numberOfPacks,
-            costPrice: itemLine.numberOfPacks,
-            sellPrice: itemLine.numberOfPacks,
+            expiryDate: itemLine.expiryDate,
+            batch: itemLine.batch,
+            costPrice: itemLine.costPrice,
+            sellPrice: itemLine.sellPrice,
           });
           stocktakeLines.push(stocktakeLine);
         });
       });
 
       stocktake.name = stocktakeName;
-      stocktake.lines = stocktake.lines.concat(stocktakeLines);
+      stocktakeLines.forEach(line => stocktake.lines.push(line));
       this.props.database.update('Stocktake', stocktake);
     });
+    navigateTo('stocktakeEditor', stocktake.name, { stocktake: stocktake });
   }
 
   onRadioButtonPress(item) {
@@ -364,7 +373,7 @@ export class StocktakeManagePage extends React.Component {
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
               textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
               text={this.state.isNewStocktake ? 'Create' : 'Confirm'}
-              onPress={() => this.onConfirmPress}
+              onPress={() => this.onConfirmPress()}
             />
           </BottomModal>
         </View>

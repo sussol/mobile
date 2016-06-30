@@ -14,7 +14,7 @@ import {
 import { Button } from '../widgets/Button';
 import globalStyles from '../globalStyles';
 
-export function StocktakeEditor(props) {
+export function StocktakeEditPage(props) {
   return (
     <View style={props.style}>
       <Text>You can edit a stocktake.</Text>
@@ -28,7 +28,7 @@ export function StocktakeEditor(props) {
   );
 }
 
-StocktakeEditor.propTypes = {
+StocktakeEditPage.propTypes = {
   style: View.propTypes.style,
   navigateTo: React.PropTypes.func.isRequired,
 };
