@@ -60,6 +60,43 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  loginModal: {
+    backgroundColor: BACKGROUND_COLOR,
+  },
+  loginTextInputStyle: {
+    marginHorizontal: 60,
+    color: SUSSOL_ORANGE,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  loginContainer: {
+    marginHorizontal: 300,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: 'white',
+    elevation: 3,
+    borderColor: WARMER_GREY,
+    borderWidth: 1,
+    borderRadius: 1,
+  },
+  loginButton: {
+    backgroundColor: SUSSOL_ORANGE,
+    marginTop: 60,
+  },
+  loginButtonContainer: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
+  loginButtonText: {
+    color: 'white',
+    fontFamily: APP_FONT_FAMILY,
+    textAlign: 'center',
+    fontSize: 22,
+    marginVertical: 15,
+  },
+  loginLogo: {
+    marginTop: 30,
+    marginBottom: 60,
+  },
   navBarOffset: {
     paddingTop: 68,
   },
