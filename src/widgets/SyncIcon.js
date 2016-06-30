@@ -13,7 +13,7 @@ export function SyncIcon(props) {
       <Icon
         name="md-cloud"
         size={props.size * 30}
-        style={[localStyles.icon, { top: props.size * 4 }]}
+        style={{ top: props.size * 4 }}
         color={props.cloudColor}
       />
       <Icon

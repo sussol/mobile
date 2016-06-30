@@ -78,6 +78,51 @@ export default StyleSheet.create({
     color: 'white',
     fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text unfortunately
   },
+  authFormModal: {
+    backgroundColor: BACKGROUND_COLOR,
+    justifyContent: 'flex-start',
+  },
+  authFormTextInputStyle: {
+    marginHorizontal: 60,
+    color: SUSSOL_ORANGE,
+    fontFamily: APP_FONT_FAMILY,
+  },
+  authFormContainer: {
+    marginTop: 80,
+    marginHorizontal: 300,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    backgroundColor: 'white',
+    elevation: 3,
+    borderColor: WARMER_GREY,
+    borderWidth: 1,
+    borderRadius: 1,
+  },
+  authFormButton: {
+    backgroundColor: SUSSOL_ORANGE,
+  },
+  authFormButtonContainer: {
+    flex: 1,
+    alignSelf: 'stretch',
+  },
+  authFormButtonText: {
+    color: 'white',
+    fontFamily: APP_FONT_FAMILY,
+    textAlign: 'center',
+    fontSize: 22,
+    marginVertical: 15,
+  },
+  authFormLogo: {
+    marginTop: 30,
+    marginBottom: 60,
+  },
+  loginButton: {
+    marginTop: 60,
+  },
+  initialisationStateIcon: {
+    marginTop: 46,
+    marginBottom: 24,
+  },
   navBarOffset: {
     paddingTop: 68,
   },

@@ -46,7 +46,7 @@ export default class OfflineMobileApp extends React.Component {
     const initialised = this.synchronizer.isInitialised();
     this.state = {
       initialised: initialised,
-      currentUser: this.database.objects('User')[0],
+      currentUser: null,
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
