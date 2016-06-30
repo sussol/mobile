@@ -1,12 +1,15 @@
 import React from 'react';
 import {
-  Text,
+  Image,
   TextInput,
   View,
 } from 'react-native';
 
-import { Button } from '../widgets';
-import globalStyles from '../globalStyles';
+import { Button, SyncState } from '../widgets';
+import globalStyles, {
+  SUSSOL_ORANGE,
+  WARM_GREY,
+} from '../globalStyles';
 
 export class FirstUsePage extends React.Component {
   constructor(props) {
@@ -24,14 +27,21 @@ export class FirstUsePage extends React.Component {
 
   async onPressConnect() {
     try {
+      this.setState({ progress: 'initialising' });
       await this.props.synchronizer.initialise(
         this.state.serverURL,
         this.state.syncSiteName,
         this.state.syncSitePassword,
         this.setProgress);
+      this.setState({ progress: 'initialised' });
       this.props.onInitialised();
     } catch (error) {
+      this.setState({ progress: 'error' });
       this.setProgress(error.message);
+      if (!error.message.startsWith('Invalid username or password')) {
+        // After ten seconds of displaying the error, re-enable the button
+        setTimeout(() => this.setState({ progress: 'uninitialised' }), 10 * 1000);
+      }
     }
   }
 
@@ -39,35 +49,85 @@ export class FirstUsePage extends React.Component {
     this.setState({ progressMessage: progressMessage });
   }
 
+  getButtonDisabled() {
+    return (
+      this.state.progress !== 'uninitialised' ||
+      this.state.serverURL.length === 0 ||
+      this.state.syncSiteName.length === 0 ||
+      this.state.syncSitePassword.length === 0
+    );
+  }
+
+  getButtonText() {
+    switch (this.state.progress) {
+      case 'initialising':
+      case 'error':
+        return this.state.progressMessage;
+      case 'initialised':
+        return 'Success!';
+      default:
+        return 'Connect';
+    }
+  }
+
   render() {
     return (
-      <View style={[globalStyles.container, globalStyles.modal]}>
+      <View style={[globalStyles.authFormContainer]}>
+        <Image
+          resizeMode="contain"
+          style={globalStyles.authFormLogo}
+          source={require('../images/logo_large.png')}
+        />
         <TextInput
-          style={globalStyles.textInput}
+          style={globalStyles.authFormTextInputStyle}
+          placeholderTextColor={SUSSOL_ORANGE}
+          underlineColorAndroid={SUSSOL_ORANGE}
           placeholder="Primary Server URL"
           value={this.state.serverURL}
-          onChangeText={ (text) => { this.setState({ serverURL: text }); }}
+          editable={this.state.progress !== 'initialising'}
+          onChangeText={ (text) => {
+            this.setState({ serverURL: text, progress: 'uninitialised' });
+          }}
         />
         <TextInput
-          style={globalStyles.textInput}
+          style={globalStyles.authFormTextInputStyle}
+          placeholderTextColor={SUSSOL_ORANGE}
+          underlineColorAndroid={SUSSOL_ORANGE}
           placeholder="Sync Site Name"
           value={this.state.syncSiteName}
-          onChangeText={ (text) => { this.setState({ syncSiteName: text }); }}
+          editable={this.state.progress !== 'initialising'}
+          onChangeText={ (text) => {
+            this.setState({ syncSiteName: text, progress: 'uninitialised' });
+          }}
         />
         <TextInput
-          style={globalStyles.textInput}
+          style={globalStyles.authFormTextInputStyle}
           placeholder="Sync Site Password"
+          placeholderTextColor={SUSSOL_ORANGE}
+          underlineColorAndroid={SUSSOL_ORANGE}
           value={this.state.syncSitePassword}
           secureTextEntry
-          onChangeText={ (text) => { this.setState({ syncSitePassword: text }); }}
+          editable={this.state.progress !== 'initialising'}
+          onChangeText={ (text) => {
+            this.setState({ syncSitePassword: text, progress: 'uninitialised' });
+          }}
         />
-        <Button
-          style={globalStyles.button}
-          textStyle={globalStyles.buttonText}
-          text="Connect to mSupply"
-          onPress={this.onPressConnect}
+        <SyncState
+          style={globalStyles.initialisationStateIcon}
+          isSyncing={this.state.progress === 'initialising'}
+          syncError={this.state.progress === 'error' ? 'error' : ''}
+          showText={false}
         />
-        <Text>{this.state.progressMessage}</Text>
+        <View style={globalStyles.authFormButtonContainer}>
+          <Button
+            style={globalStyles.authFormButton}
+            textStyle={globalStyles.authFormButtonText}
+            text={this.getButtonText()}
+            onPress={this.onPressConnect}
+            disabledColor={WARM_GREY}
+            disabled={this.getButtonDisabled()}
+          />
+        </View>
       </View>
     );
   }

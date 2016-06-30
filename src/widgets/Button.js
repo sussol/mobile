@@ -7,6 +7,13 @@ import {
 } from 'react-native';
 
 export function Button(props) {
+  if (props.disabled) {
+    return (
+      <View style={[props.style, { backgroundColor: props.disabledColor }]}>
+        <Text style={props.textStyle}>{props.text}</Text>
+      </View>
+    );
+  }
   return (
     <TouchableHighlight
       style={props.style}
@@ -25,6 +32,8 @@ Button.propTypes = {
   textStyle: Text.propTypes.style,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,
+  disabled: React.PropTypes.bool,
+  disabledColor: React.PropTypes.string,
 };
 
 const styles = StyleSheet.create({
