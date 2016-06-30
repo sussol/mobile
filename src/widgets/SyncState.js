@@ -25,7 +25,7 @@ export function SyncState(props) {
   let wifiColor = ACTIVE_COLOR;
 
   if (props.syncError && props.syncError.length > 0) {
-    const lastSync = props.settings.get(SETTINGS.SYNC_LAST_SUCCESS);
+    const lastSync = props.settings ? props.settings.get(SETTINGS.SYNC_LAST_SUCCESS) : '';
     text = 'SYNC ERROR.';
     if (lastSync) text = `${text} LAST SYNC ${lastSync}`;
     cloudColor = INACTIVE_COLOR;
@@ -36,8 +36,8 @@ export function SyncState(props) {
   }
 
   return (
-    <View style={globalStyles.navBarRightContainer}>
-      <Text style={globalStyles.navBarText}>{text}</Text>
+    <View style={[globalStyles.navBarRightContainer, props.style]}>
+      {props.showText && <Text style={[globalStyles.navBarText, localStyles.text]}>{text}</Text>}
       <SyncIcon cloudColor={cloudColor} arrowsColor={arrowsColor} wifiColor={wifiColor} />
     </View>
   );
@@ -46,7 +46,12 @@ export function SyncState(props) {
 SyncState.propTypes = {
   isSyncing: React.PropTypes.bool.isRequired,
   syncError: React.PropTypes.string,
-  settings: React.PropTypes.object.isRequired,
+  settings: React.PropTypes.object,
+  showText: React.PropTypes.bool,
+  style: View.propTypes.style,
+};
+SyncState.defaultProps = {
+  showText: true,
 };
 
 const localStyles = StyleSheet.create({
@@ -55,5 +60,8 @@ const localStyles = StyleSheet.create({
   },
   iconInactive: {
     color: GREY,
+  },
+  text: {
+    marginRight: 25,
   },
 });
