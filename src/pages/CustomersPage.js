@@ -20,7 +20,7 @@ const DATA_TYPES_DISPLAYED = ['Customer'];
 export class CustomersPage extends GenericTablePage {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'serialNumber';
+    this.state.sortBy = 'name';
     this.state.customers = props.database.objects('Name')
                                             .filtered('type == "store" OR type == "patient"');
     this.columns = COLUMNS;
@@ -41,7 +41,7 @@ export class CustomersPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.customers.filtered(`name BEGINSWITH "${searchTerm}"`);
+    let data = this.state.customers.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
     data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     return data;
   }
@@ -79,7 +79,6 @@ const COLUMNS = [
     key: 'code',
     width: 1,
     title: 'CODE',
-    sortable: true,
   },
   {
     key: 'name',
@@ -91,7 +90,6 @@ const COLUMNS = [
     key: 'transactions.length',
     width: 1,
     title: 'ENTERED DATE',
-    sortable: true,
   },
   {
     key: 'selected',
