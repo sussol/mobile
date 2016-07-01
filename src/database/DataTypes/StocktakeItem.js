@@ -18,13 +18,13 @@ export class StocktakeItem extends Realm.Object {
    * @param {double} quantity The total quantity to set across all lines
    */
   set countedNumberOfPacks(quantity) {
-    let quantityToSubtract = this.countedTotalQuantity - quantity;
+    let subtractQuantity = this.countedTotalQuantity - quantity;
     const lines = this.lines.sorted('expiryDate');
     const index = 0;
-    while (quantityToSubtract !== 0 && index < lines.length) {
-      const toSubtractThisLine = Math.min(quantityToSubtract, lines[index].countedTotalQuantity);
-      lines[index].countedTotalQuantity = lines[index].countedTotalQuantity - toSubtractThisLine;
-      quantityToSubtract = quantityToSubtract - toSubtractThisLine;
+    while (subtractQuantity !== 0 && index < lines.length) {
+      const lineSubtractQuantity = Math.min(subtractQuantity, lines[index].countedTotalQuantity);
+      lines[index].countedTotalQuantity = lines[index].countedTotalQuantity - lineSubtractQuantity;
+      subtractQuantity = subtractQuantity - lineSubtractQuantity;
     }
   }
 
