@@ -5,16 +5,19 @@ import {
   ItemDepartment,
   ItemCategory,
   Transaction,
+  TransactionItem,
   TransactionCategory,
   TransactionLine,
   MasterList,
   MasterListLine,
   Name,
   Requisition,
+  RequisitionItem,
   RequisitionLine,
   Setting,
   SyncOut,
   Stocktake,
+  StocktakeItem,
   StocktakeLine,
   User,
 } from './DataTypes';
@@ -133,6 +136,17 @@ Requisition.schema = {
     daysToSupply: 'double',
     serialNumber: 'string',
     user: { type: 'User', optional: true },
+    items: { type: 'list', objectType: 'RequisitionItem' },
+  },
+};
+
+RequisitionItem.schema = {
+  name: 'RequisitionItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    requisition: 'Requisition',
     lines: { type: 'list', objectType: 'RequisitionLine' },
   },
 };
@@ -177,9 +191,20 @@ Stocktake.schema = {
     finalisedBy: { type: 'User', optional: true },
     comment: { type: 'string', optional: true },
     serialNumber: 'string',
-    lines: { type: 'list', objectType: 'StocktakeLine' },
+    items: { type: 'list', objectType: 'StocktakeItem' },
     additions: { type: 'Transaction', optional: true },
     reductions: { type: 'Transaction', optional: true },
+  },
+};
+
+StocktakeItem.schema = {
+  name: 'StocktakeItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    stocktake: 'Stocktake',
+    lines: { type: 'list', objectType: 'StocktakeLine' },
   },
 };
 
@@ -229,7 +254,7 @@ Transaction.schema = {
     enteredBy: { type: 'User', optional: true },
     theirRef: { type: 'string', optional: true }, // An external reference code
     category: { type: 'TransactionCategory', optional: true },
-    lines: { type: 'list', objectType: 'TransactionLine' },
+    items: { type: 'list', objectType: 'TransactionItem' },
   },
 };
 
@@ -245,6 +270,17 @@ TransactionCategory.schema = {
   },
 };
 
+TransactionItem.schema = {
+  name: 'TransactionItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    transaction: 'Transaction',
+    lines: { type: 'list', objectType: 'TransactionLine' },
+  },
+};
+
 TransactionLine.schema = {
   name: 'TransactionLine',
   primaryKey: 'id',
@@ -257,7 +293,7 @@ TransactionLine.schema = {
     expiryDate: 'date',
     packSize: 'double',
     numberOfPacks: 'double',
-    totalQuantitySent: { type: 'double', optional: true },
+    numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
     costPrice: 'double',
@@ -290,16 +326,19 @@ export const schema =
       ItemDepartment,
       ItemCategory,
       Transaction,
+      TransactionItem,
       TransactionLine,
       TransactionCategory,
       MasterList,
       MasterListLine,
       Name,
       Requisition,
+      RequisitionItem,
       RequisitionLine,
       Setting,
       SyncOut,
       Stocktake,
+      StocktakeItem,
       StocktakeLine,
       User,
     ],

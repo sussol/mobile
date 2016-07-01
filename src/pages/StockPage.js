@@ -21,7 +21,6 @@ import {
   Row,
 } from '../widgets/DataTable';
 
-import { getItemQuantity } from '../utilities';
 import { ListView } from 'realm/react-native';
 import { SearchBar } from '../widgets/';
 import globalStyles from '../globalStyles';
@@ -179,7 +178,7 @@ export class StockPage extends React.Component {
           textStyle={globalStyles.dataTableText}
           width={COLUMN_WIDTHS[2]}
         >
-          {getItemQuantity(item)}
+          {item.totalQuantity}
         </Cell>
       </Row>
     );

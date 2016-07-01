@@ -1,15 +1,15 @@
 import Realm from 'realm';
 
 export class StocktakeLine extends Realm.Object {
-  get snapshotQuantity() {
+  get snapshotTotalQuantity() {
     return this.snapshotNumberOfPacks * this.packSize;
   }
 
-  get countedQuantity() {
+  get countedTotalQuantity() {
     return this.countedNumberOfPacks * this.packSize;
   }
 
-  set countedQuantity(quantity) {
+  set countedTotalQuantity(quantity) {
     this.countedNumberOfPacks = quantity / this.packSize;
   }
 }

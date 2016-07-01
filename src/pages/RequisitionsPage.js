@@ -78,8 +78,8 @@ export class RequisitionsPage extends GenericTablePage {
         data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
         if (!isAscending) data.reverse(); // ...3,2,1,0
         break;
-      case 'lines.length': // Cannot use realm Result.sorted() with a property of a property
-        data = data.slice().sort((a, b) => a.lines.length - b.lines.length); // 0,1,2,3...
+      case 'numberOfItems': // Cannot use realm Result.sorted() with a property of a property
+        data = data.slice().sort((a, b) => a.items.length - b.items.length); // 0,1,2,3...
         if (!isAscending) data.reverse(); // ...3,2,1,0
         break;
       default:
@@ -96,8 +96,8 @@ export class RequisitionsPage extends GenericTablePage {
         return requisition.serialNumber;
       case 'entryDate':
         return requisition.entryDate.toDateString();
-      case 'lines.length':
-        return requisition.lines.length;
+      case 'numberOfItems':
+        return requisition.items.length;
       case 'status':
         return requisition.status;
     }
@@ -143,7 +143,7 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'lines.length',
+    key: 'numberOfItems',
     width: 1,
     title: 'AMOUNT OF ITEMS',
     sortable: true,
