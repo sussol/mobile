@@ -27,7 +27,7 @@ export class SupplierInvoicePage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.transaction.items.filtered(`item.name BEGINSWITH "${searchTerm}"`);
+    let data = this.props.transaction.items.filtered(`item.name BEGINSWITH[c] "${searchTerm}"`);
     switch (sortBy) {
       case 'itemName':
         data = data.slice().sort((a, b) =>

@@ -12,7 +12,7 @@ export class TransactionItem extends Realm.Object {
   }
 
   get totalPrice() {
-    return getTotal(this.lines, 'priceExtension');
+    return getTotal(this.lines, 'totalPrice');
   }
 
   /**

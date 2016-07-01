@@ -1,9 +1,4 @@
 import {
-  getPriceExtension,
-  getTransactionTotalPrice,
-} from '../utilities';
-
-import {
   INTERNAL_TO_EXTERNAL,
   RECORD_TYPES,
   REQUISITION_TYPES,
@@ -154,7 +149,6 @@ function generateSyncData(settings, recordType, record) {
       };
     }
     case 'Transaction': {
-      const totalPrice = getTransactionTotalPrice(record);
       return {
         ID: record.id,
         name_ID: record.otherParty && record.otherParty.id,
@@ -163,10 +157,10 @@ function generateSyncData(settings, recordType, record) {
         entry_date: getDateString(record.entryDate),
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
-        total: String(totalPrice),
+        total: String(record.totalPrice),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate.toISOString()),
-        subtotal: String(totalPrice),
+        subtotal: String(record.totalPrice),
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
@@ -181,7 +175,7 @@ function generateSyncData(settings, recordType, record) {
         transaction_ID: record.transaction.id,
         item_ID: record.itemId,
         batch: record.batch,
-        price_extension: String(record.priceExtension),
+        price_extension: String(record.totalPrice),
         note: record.note,
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),

@@ -13,7 +13,7 @@ export class TransactionLine extends Realm.Object {
     return this.numberOfPacksSent * this.packSize;
   }
 
-  get priceExtension() {
+  get totalPrice() {
     if (!this.numberOfPacks) return 0;
     if (this.type === 'customer_invoice') {
       if (!this.sellPrice) return 0;
