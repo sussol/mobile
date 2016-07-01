@@ -7,6 +7,7 @@ export class ItemDepartment extends Realm.Object {}
 export class ItemCategory extends Realm.Object {}
 export { Transaction } from './Transaction';
 export class TransactionCategory extends Realm.Object {}
+export { TransactionItem } from './TransactionItem';
 export { TransactionLine } from './TransactionLine';
 export class MasterList extends Realm.Object {}
 export class MasterListLine extends Realm.Object {}

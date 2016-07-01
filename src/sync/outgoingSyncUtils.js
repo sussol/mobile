@@ -82,26 +82,26 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         store_ID: settings.get(THIS_STORE_ID),
         item_ID: record.item.id,
-        pack_size: record.packSize,
-        expiry_date: record.expiryDate.toISOString(),
+        pack_size: String(record.packSize),
+        expiry_date: getDateString(record.expiryDate),
         batch: record.batch,
-        available: record.numberOfPacks,
-        quantity: record.numberOfPacks,
-        stock_on_hand_tot: record.totalQuantity,
-        cost_price: record.costPrice,
-        sell_price: record.sellPrice,
-        total_cost: record.costPrice * record.numberOfPacks,
+        available: String(record.numberOfPacks),
+        quantity: String(record.numberOfPacks),
+        stock_on_hand_tot: String(record.totalQuantity),
+        cost_price: String(record.costPrice),
+        sell_price: String(record.sellPrice),
+        total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: settings.get(SUPPLYING_STORE_ID),
       };
     }
     case 'Requisition': {
       return {
         ID: record.id,
-        date_entered: record.entryDate.toISOString(),
+        date_entered: getDateString(record.entryDate),
         user_ID: record.user.id,
         name_ID: settings.get(THIS_STORE_NAME_ID),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
-        daysToSupply: record.daysToSupply,
+        daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(SUPPLYING_STORE_ID),
         serial_number: record.serialNumber,
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
@@ -112,19 +112,19 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         requisition_ID: record.requisition.id,
         item_ID: record.item.id,
-        stock_on_hand: record.stockOnHand,
-        actualQuan: record.requiredQuantity,
-        imprest_or_prev_quantity: record.imprestQuantity,
-        line_number: record.sortIndex,
-        Cust_stock_order: record.suggestedQuantity,
+        stock_on_hand: String(record.stockOnHand),
+        actualQuan: String(record.requiredQuantity),
+        imprest_or_prev_quantity: String(record.imprestQuantity),
+        line_number: String(record.sortIndex),
+        Cust_stock_order: String(record.suggestedQuantity),
         comment: record.comment,
       };
     }
     case 'Stocktake': {
       return {
         ID: record.id,
-        stock_take_date: record.stocktakeDate.toISOString(),
-        stock_take_time: record.stocktakeDate.toTimeString().substring(0, 8),
+        stock_take_date: getDateString(record.stocktakeDate),
+        stock_take_time: getTimeString(record.stocktakeDate),
         created_by_ID: record.createdBy.id,
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         finalised_by_ID: record.finalisedBy.id,
@@ -132,7 +132,7 @@ function generateSyncData(settings, recordType, record) {
         invad_reductions_ID: record.subtractions.id,
         store_ID: settings.get(THIS_STORE_ID),
         comment: record.comment,
-        stock_take_created_date: record.createdDate.toISOString(),
+        stock_take_created_date: getDateString(record.createdDate),
         serial_number: record.serialNumber,
       };
     }
@@ -143,13 +143,13 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         stock_take_ID: record.Stocktake.id,
         item_line_ID: itemLine.id,
-        snapshot_qty: getNumPacks(record.snapshotQuantity, record.snapshotPacksize),
-        snapshot_packsize: record.snapshotPacksize,
-        stock_take_qty: getNumPacks(record.countedQuantity, record.snapshotPacksize),
-        line_number: record.sortIndex,
-        expiry: itemLine.expiryDate.toISOString(),
-        cost_price: itemLine.costPrice,
-        sell_price: itemLine.sellPrice,
+        snapshot_qty: String(getNumPacks(record.snapshotQuantity, record.snapshotPacksize)),
+        snapshot_packsize: String(record.snapshotPacksize),
+        stock_take_qty: String(getNumPacks(record.countedQuantity, record.snapshotPacksize)),
+        line_number: String(record.sortIndex),
+        expiry: getDateString(itemLine.expiryDate),
+        cost_price: String(itemLine.costPrice),
+        sell_price: String(itemLine.sellPrice),
         Batch: itemLine.batch,
         item_ID: itemLine.item.id,
       };
@@ -161,16 +161,16 @@ function generateSyncData(settings, recordType, record) {
         name_ID: record.otherParty && record.otherParty.id,
         invoice_num: record.serialNumber,
         comment: record.comment,
-        entry_date: record.entryDate,
+        entry_date: getDateString(record.entryDate),
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
-        total: totalPrice,
+        total: String(totalPrice),
         their_ref: record.theirRef,
-        confirm_date: record.confirmDate && record.confirmDate.toISOString(),
-        subtotal: totalPrice,
+        confirm_date: getDateString(record.confirmDate.toISOString()),
+        subtotal: String(totalPrice),
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
-        confirm_time: record.confirmDate && record.confirmDate.toTimeString().substring(0, 8),
+        confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
       };
     }
@@ -181,16 +181,16 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         transaction_ID: record.transaction.id,
         item_ID: record.itemId,
-        batch: itemLine.batch,
-        price_extension: getPriceExtension(record, record.transaction.type),
+        batch: record.batch,
+        price_extension: String(getPriceExtension(record, record.transaction.type)),
         note: record.note,
-        cost_price: record.costPrice,
-        sell_price: record.sellPrice,
-        expiry_date: itemLine.expiryDate,
-        pack_size: record.packSize,
-        quantity: record.numberOfPacks,
+        cost_price: String(record.costPrice),
+        sell_price: String(record.sellPrice),
+        expiry_date: getDateString(record.expiryDate),
+        pack_size: String(record.packSize),
+        quantity: String(record.numberOfPacks),
         item_line_ID: itemLine.id,
-        line_number: record.sortIndex,
+        line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.otherParty &&
                                       transaction.otherParty.type === 'inventory_adjustment',
@@ -200,4 +200,14 @@ function generateSyncData(settings, recordType, record) {
     default:
       throw new Error('Sync out record type not supported.');
   }
+}
+
+function getDateString(date) {
+  if (typeof date !== 'object') return '0000-00-00T00:00:00';
+  return date.toISOString();
+}
+
+function getTimeString(date) {
+  if (typeof date !== 'object') return '00:00:00';
+  return date.toTimeString().substring(0, 8);
 }

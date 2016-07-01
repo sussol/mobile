@@ -27,11 +27,16 @@ export class SupplierInvoicePage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.transaction.lines.filtered(`itemName BEGINSWITH "${searchTerm}"`);
+    let data = this.props.transaction.items.filtered(`item.name BEGINSWITH "${searchTerm}"`);
     switch (sortBy) {
+      case 'itemName':
+        data = data.slice().sort((a, b) =>
+          a.item.name.localeCompare(b.item.name));
+        if (!isAscending) data.reverse();
+        break;
       case 'itemCode':
         data = data.slice().sort((a, b) =>
-          a.itemLine.item.code.localeCompare(b.itemLine.item.code));
+          a.item.code.localeCompare(b.item.code));
         if (!isAscending) data.reverse();
         break;
       case 'numReceived':
@@ -48,32 +53,31 @@ export class SupplierInvoicePage extends GenericTablePage {
   /**
    * Respond to the user editing the number in the number received column
    * @param  {string} key             Should always be 'numReceived'
-   * @param  {object} transactionLine The transaction line from the row being edited
+   * @param  {object} transactionItem The transaction item from the row being edited
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
    */
-  onEndEditing(key, transactionLine, newValue) {
+  onEndEditing(key, transactionItem, newValue) {
     if (key !== 'numReceived') return;
     this.props.database.write(() => {
-      transactionLine.totalQuantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
-      this.props.database.save('TransactionLine', transactionLine);
+      transactionItem.totalQuantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
+      this.props.database.save('TransactionItem', transactionItem);
     });
   }
 
-  renderCell(key, transactionLine) {
+  renderCell(key, transactionItem) {
     switch (key) {
       default:
       case 'itemName':
-        return transactionLine.itemName;
+        return transactionItem.item && transactionItem.item.name;
       case 'itemCode': {
-        const item = transactionLine.itemLine && transactionLine.itemLine.item;
-        return item && item.code;
+        return transactionItem.item && transactionItem.item.code;
       }
       case 'numSent':
-        return transactionLine.totalQuantitySent;
+        return transactionItem.totalQuantitySent;
       case 'numReceived': {
         const renderedCell = {
-          cellContents: transactionLine.totalQuantity,
+          cellContents: transactionItem.totalQuantity,
           editable: !this.props.transaction.isFinalised,
         };
         return renderedCell;

@@ -5,6 +5,7 @@ import {
   ItemDepartment,
   ItemCategory,
   Transaction,
+  TransactionItem,
   TransactionCategory,
   TransactionLine,
   MasterList,
@@ -229,7 +230,7 @@ Transaction.schema = {
     enteredBy: { type: 'User', optional: true },
     theirRef: { type: 'string', optional: true }, // An external reference code
     category: { type: 'TransactionCategory', optional: true },
-    lines: { type: 'list', objectType: 'TransactionLine' },
+    items: { type: 'list', objectType: 'TransactionItem' },
   },
 };
 
@@ -245,6 +246,17 @@ TransactionCategory.schema = {
   },
 };
 
+TransactionItem.schema = {
+  name: 'TransactionItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    transaction: 'Transaction',
+    lines: { type: 'list', objectType: 'TransactionLine' },
+  },
+};
+
 TransactionLine.schema = {
   name: 'TransactionLine',
   primaryKey: 'id',
@@ -257,7 +269,7 @@ TransactionLine.schema = {
     expiryDate: 'date',
     packSize: 'double',
     numberOfPacks: 'double',
-    totalQuantitySent: { type: 'double', optional: true },
+    numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
     costPrice: 'double',
@@ -290,6 +302,7 @@ export const schema =
       ItemDepartment,
       ItemCategory,
       Transaction,
+      TransactionItem,
       TransactionLine,
       TransactionCategory,
       MasterList,

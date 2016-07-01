@@ -27,8 +27,8 @@ export function integrateIncomingRecord(database, recordType, record) {
         id: record.ID,
         category: getObject(database, 'ItemCategory', record.category_ID),
         code: record.code,
-        defaultPackSize: parseNumber(record.default_pack_size),
-        defaultPrice: parseNumber(record.buy_price),
+        defaultPackSize: 1, // Every item line in mobile should be pack-to-one
+        defaultPrice: parseNumber(record.buy_price) / parseNumber(record.default_pack_size),
         department: getObject(database, 'ItemDepartment', record.department_ID),
         description: record.description,
         name: record.item_name,
@@ -62,19 +62,20 @@ export function integrateIncomingRecord(database, recordType, record) {
         totalQuantity: parseNumber(record.quantity) * parseNumber(record.pack_size),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
-        costPrice: parseNumber(record.cost_price),
-        sellPrice: parseNumber(record.sell_price),
+        costPrice: parseNumber(record.cost_price) / parseNumber(record.pack_size),
+        sellPrice: parseNumber(record.sell_price) / parseNumber(record.pack_size),
         supplier: getObject(database, 'Name', record.name_ID),
       };
       const itemLine = database.update(internalType, internalRecord);
       item.lines.push(itemLine);
-      database.update(internalType, internalRecord);
+      database.save('Item', item);
       break;
     }
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
       const masterList = getObject(database, 'MasterList', record.master_group_ID);
       name.masterList = masterList;
+      database.save('Name', name);
       break;
     }
     case 'MasterList': {
@@ -141,6 +142,7 @@ export function integrateIncomingRecord(database, recordType, record) {
       };
       const requisitionLine = database.update(internalType, internalRecord);
       requisition.lines.push(requisitionLine);
+      database.save('Requisition', requisition);
       break;
     }
     case 'Stocktake': {
@@ -166,17 +168,18 @@ export function integrateIncomingRecord(database, recordType, record) {
         id: record.ID,
         stocktake: stocktake,
         itemLine: getObject(database, 'ItemLine', record.item_line_ID),
-        snapshotQuantity: parseNumber(record.snapshot_qty) * parseNumber(record.snapshotPacksize),
+        snapshotQuantity: parseNumber(record.snapshot_qty) * parseNumber(record.snapshot_packsize),
         snapshotPacksize: 1, // Pack to one all mobile data
         expiry: parseDate(record.expiry),
         batch: record.Batch,
-        costPrice: parseNumber(record.cost_price),
-        sellPrice: parseNumber(record.sell_price),
+        costPrice: parseNumber(record.cost_price) / parseNumber(record.snapshot_packsize),
+        sellPrice: parseNumber(record.sell_price) / parseNumber(record.snapshot_packsize),
         countedQuantity: parseNumber(record.stock_take_qty),
         sortIndex: parseNumber(record.line_number),
       };
       const stocktakeLine = database.update(internalType, internalRecord);
       stocktake.lines.push(stocktakeLine);
+      database.save('Stocktake', stocktake);
       break;
     }
     case 'Transaction': {
@@ -196,6 +199,7 @@ export function integrateIncomingRecord(database, recordType, record) {
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
       otherParty.transactions.push(transaction);
+      database.save('Name', otherParty);
       break;
     }
     case 'TransactionCategory': {
@@ -221,17 +225,18 @@ export function integrateIncomingRecord(database, recordType, record) {
         itemLine: itemLine,
         packSize: 1, // Pack to one all mobile data
         numberOfPacks: parseNumber(record.quantity) * parseNumber(record.pack_size),
-        totalQuantitySent: parseNumber(record.quantity) * parseNumber(record.pack_size),
+        numberOfPacksSent: parseNumber(record.quantity) * parseNumber(record.pack_size),
         transaction: transaction,
         note: record.note,
-        costPrice: parseNumber(record.cost_price),
-        sellPrice: parseNumber(record.sell_price),
+        costPrice: parseNumber(record.cost_price) / parseNumber(record.pack_size),
+        sellPrice: parseNumber(record.sell_price) / parseNumber(record.pack_size),
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
       };
       const transactionLine = database.update(internalType, internalRecord);
-      transaction.lines.push(transactionLine);
+      transaction.addLine(database, transactionLine);
+      database.save('Transaction', transaction);
       break;
     }
     default:

@@ -8,4 +8,8 @@ export class TransactionLine extends Realm.Object {
   set totalQuantity(quantity) {
     this.numberOfPacks = quantity / this.packSize;
   }
+
+  get totalQuantitySent() {
+    return this.numberOfPacksSent * this.packSize;
+  }
 }
