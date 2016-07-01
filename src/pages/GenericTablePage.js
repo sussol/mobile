@@ -57,6 +57,7 @@ export class GenericTablePage extends React.Component {
       searchTerm: '',
       sortBy: '',
       isAscending: true,
+      selection: [],
     };
     this.columns = null;
     this.dataTypesDisplayed = [];
@@ -100,13 +101,20 @@ export class GenericTablePage extends React.Component {
   }
 
   onCheckablePress(item) {
-    this.setState({ selection: [...this.state.selection.push(item.id)] });
+    const newSelection = [...this.state.selection];
+    if (newSelection.indexOf(item.id) >= 0) {
+      newSelection.splice(newSelection.indexOf(item.id), 1);
+    } else {
+      newSelection.push(item.id);
+    }
+    this.setState({ selection: newSelection });
   }
 
   refreshData() {
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
+    console.log(this.state.selection);
   }
 
   renderCell() {

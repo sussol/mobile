@@ -56,7 +56,9 @@ export class CustomersPage extends GenericTablePage {
       case 'transactions.length':
         return customer.transactions.length;
       case 'selected':
-        return customer.name;
+        return {
+          type: 'checkable',
+        };
     }
   }
 
@@ -82,18 +84,18 @@ const COLUMNS = [
   },
   {
     key: 'name',
-    width: 1,
+    width: 5,
     title: 'NAME',
     sortable: true,
   },
   {
     key: 'transactions.length',
     width: 1,
-    title: 'ENTERED DATE',
+    title: 'INVOICES',
   },
   {
     key: 'selected',
-    width: 3,
+    width: 1,
     title: 'MASTER LIST',
   },
 ];

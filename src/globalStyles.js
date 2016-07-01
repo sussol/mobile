@@ -60,6 +60,24 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  modalButton: {
+    borderColor: 'white',
+  },
+  modalButtonText: {
+    color: 'white',
+  },
+  modalOrangeButton: {
+    borderColor: 'white',
+    backgroundColor: SUSSOL_ORANGE,
+  },
+  modalTextInput: {
+    width: 560,
+    borderColor: BACKGROUND_COLOR,
+  },
+  modalText: {
+    color: 'white',
+    fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text unfortunately
+  },
   authFormModal: {
     backgroundColor: BACKGROUND_COLOR,
     justifyContent: 'flex-start',
@@ -200,6 +218,16 @@ export default StyleSheet.create({
     borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
+  },
+  dataTableRightMostCell: {
+    borderRightWidth: 0,
+  },
+  dataTableCheckableCell: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dataTableEditableCell: {
+    backgroundColor: '#f9e4c2',
   },
   dataTableButton: {
     alignItems: 'center',
