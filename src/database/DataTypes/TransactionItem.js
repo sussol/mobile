@@ -1,6 +1,6 @@
 import Realm from 'realm';
 
-import { getTotal } from '../utilities';
+import { applyDifferenceToShortestBatch, getTotal } from '../utilities';
 
 export class TransactionItem extends Realm.Object {
   get totalQuantity() {
@@ -15,6 +15,18 @@ export class TransactionItem extends Realm.Object {
     return getTotal(this.lines, 'totalPrice');
   }
 
+  // For customer invoices, return how much can be issued in total, accounting
+  // for the fact that any issued in a confirmed customer invoice has already
+  // been taken off the total
+  get availableQuantity() {
+    if (this.type === 'customer_invoice' &&
+       (this.status === 'confirmed' ||
+        this.status === 'finalised')) {
+      return this.item.totalQuantity + this.totalQuantity;
+    }
+    return this.item.totalQuantity;
+  }
+
   /**
    * Sets the quantity for the current item by applying the difference to the
    * shortest expiry batches possible. N.B. Supplier invoices do not take effect
@@ -23,20 +35,7 @@ export class TransactionItem extends Realm.Object {
    * @param {double} quantity The total quantity to set across all lines
    */
   set totalQuantity(quantity) {
-    if (this.transaction.type === 'supplier_invoice') {
-      let quantityToSubtract = this.totalQuantity - quantity;
-      const lines = this.lines.sorted('expiryDate');
-      const index = 0;
-      while (quantityToSubtract !== 0 && index < lines.length) {
-        const toSubtractFromThisLine = Math.min(quantityToSubtract, lines[index].totalQuantity);
-        lines[index].totalQuantity = lines[index].totalQuantity - toSubtractFromThisLine;
-        quantityToSubtract = quantityToSubtract - toSubtractFromThisLine;
-      }
-    } else { // This is a customer invoice, need to deal with adding and deleting lines
-      if (quantity > this.item.totalQuantity) {
-        throw new Error('Cannot issue more stock than available.');
-      }
-      // TODO organise allocating quantity to lines for customer invoices
-    }
+    const difference = quantity - this.totalQuantity; // Positive if new quantity is greater
+    applyDifferenceToShortestBatch(this.lines, difference);
   }
 }

@@ -6,7 +6,19 @@ export class TransactionLine extends Realm.Object {
   }
 
   set totalQuantity(quantity) {
+    if (this.transaction.isFinalised) {
+      throw new Error('Cannot change quantity of lines in a finalised transaction');
+    }
+
     this.numberOfPacks = quantity / this.packSize;
+
+    if (this.transaction.isConfirmed) {
+      if (this.transction.type === 'customer_invoice') {
+        this.itemLine.totalQuantity = this.itemLine.totalQuantity - this.quantity;
+      } else if (this.transaction.type === 'supplier_invoice') {
+        this.itemLine.totalQuantity = this.itemLine.totalQuantity + this.quantity;
+      }
+    }
   }
 
   get totalQuantitySent() {
