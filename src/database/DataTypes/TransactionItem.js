@@ -2,18 +2,15 @@ import Realm from 'realm';
 
 export class TransactionItem extends Realm.Object {
   get totalQuantity() {
-    const total = this.lines.reduce((sum, line) => sum + line.totalQuantity, 0);
-    return total;
+    return this.getTotal('totalQuantity');
   }
 
   get totalQuantitySent() {
-    const total = this.lines.reduce((sum, line) => sum + line.totalQuantitySent, 0);
-    return total;
+    return this.getTotal('totalQuantitySent');
   }
 
   getTotal(key) {
-    const total = this.lines.reduce((sum, line) => sum + line[key], 0);
-    return total;
+    return this.lines.reduce((sum, line) => sum + line[key], 0);
   }
 
   /**
