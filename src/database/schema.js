@@ -12,10 +12,12 @@ import {
   MasterListLine,
   Name,
   Requisition,
+  RequisitionItem,
   RequisitionLine,
   Setting,
   SyncOut,
   Stocktake,
+  StocktakeItem,
   StocktakeLine,
   User,
 } from './DataTypes';
@@ -134,6 +136,17 @@ Requisition.schema = {
     daysToSupply: 'double',
     serialNumber: 'string',
     user: { type: 'User', optional: true },
+    items: { type: 'list', objectType: 'RequisitionItem' },
+  },
+};
+
+RequisitionItem.schema = {
+  name: 'RequisitionItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    requisition: 'Requisition',
     lines: { type: 'list', objectType: 'RequisitionLine' },
   },
 };
@@ -178,9 +191,20 @@ Stocktake.schema = {
     finalisedBy: { type: 'User', optional: true },
     comment: { type: 'string', optional: true },
     serialNumber: 'string',
-    lines: { type: 'list', objectType: 'StocktakeLine' },
+    items: { type: 'list', objectType: 'StocktakeItem' },
     additions: { type: 'Transaction', optional: true },
     reductions: { type: 'Transaction', optional: true },
+  },
+};
+
+StocktakeItem.schema = {
+  name: 'StocktakeItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    stocktake: 'Stocktake',
+    lines: { type: 'list', objectType: 'StocktakeLine' },
   },
 };
 
@@ -191,13 +215,13 @@ StocktakeLine.schema = {
     id: 'string',
     stocktake: 'Stocktake',
     itemLine: 'ItemLine',
-    snapshotQuantity: 'double',
-    snapshotPacksize: 'double',
+    snapshotNumberOfPacks: 'double',
+    packSize: 'double',
     expiryDate: 'date',
     batch: 'string',
     costPrice: 'double',
     sellPrice: 'double',
-    countedQuantity: { type: 'double', optional: true },
+    countedNumberOfPacks: { type: 'double', optional: true },
     sortIndex: { type: 'int', optional: true },
   },
 };
@@ -309,10 +333,12 @@ export const schema =
       MasterListLine,
       Name,
       Requisition,
+      RequisitionItem,
       RequisitionLine,
       Setting,
       SyncOut,
       Stocktake,
+      StocktakeItem,
       StocktakeLine,
       User,
     ],

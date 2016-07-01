@@ -138,14 +138,13 @@ function generateSyncData(settings, recordType, record) {
     }
     case 'StocktakeLine': {
       const itemLine = record.itemLine;
-      const getNumPacks = (numPieces, packSize) => (packSize === 0 ? 0 : numPieces / packSize);
       return {
         ID: record.id,
         stock_take_ID: record.Stocktake.id,
         item_line_ID: itemLine.id,
-        snapshot_qty: String(getNumPacks(record.snapshotQuantity, record.snapshotPacksize)),
-        snapshot_packsize: String(record.snapshotPacksize),
-        stock_take_qty: String(getNumPacks(record.countedQuantity, record.snapshotPacksize)),
+        snapshot_qty: String(record.snapshotNumberOfPacks),
+        snapshot_packsize: String(record.packSize),
+        stock_take_qty: String(record.countedNumberOfPacks),
         line_number: String(record.sortIndex),
         expiry: getDateString(itemLine.expiryDate),
         cost_price: String(itemLine.costPrice),
@@ -182,7 +181,7 @@ function generateSyncData(settings, recordType, record) {
         transaction_ID: record.transaction.id,
         item_ID: record.itemId,
         batch: record.batch,
-        price_extension: String(getPriceExtension(record, record.transaction.type)),
+        price_extension: String(record.priceExtension),
         note: record.note,
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),

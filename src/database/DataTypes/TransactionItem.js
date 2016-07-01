@@ -1,16 +1,18 @@
 import Realm from 'realm';
 
+import { getTotal } from '../utilities';
+
 export class TransactionItem extends Realm.Object {
   get totalQuantity() {
-    return this.getTotal('totalQuantity');
+    return getTotal(this.lines, 'totalQuantity');
   }
 
   get totalQuantitySent() {
-    return this.getTotal('totalQuantitySent');
+    return getTotal(this.lines, 'totalQuantitySent');
   }
 
-  getTotal(key) {
-    return this.lines.reduce((sum, line) => sum + line[key], 0);
+  get totalPrice() {
+    return getTotal(this.lines, 'priceExtension');
   }
 
   /**

@@ -1,25 +1,28 @@
 import Realm from 'realm';
-import { generateUUID } from '../utilities';
+import {
+  addLineToParent,
+  generateUUID,
+  getTotal,
+} from '../utilities';
 
 export class Transaction extends Realm.Object {
   get isFinalised() {
     return this.status === 'finalised';
   }
 
+  get totalPrice() {
+    return getTotal(this.items, 'totalPrice');
+  }
+
+  // Adds a TransactionLine, incorporating it into a matching TransactionItem
   addLine(database, transactionLine) {
-    let transactionItem = null;
-    this.items.forEach((item) => {
-      if (item.item.id === transactionLine.itemId) transactionItem = item;
-    });
-    if (!transactionItem) { // This transaction doesn't have a matching item yet, make one
-      transactionItem = database.create('TransactionItem', {
+    addLineToParent(transactionLine, this, () =>
+      database.create('TransactionItem', {
         id: generateUUID(),
         item: transactionLine.itemLine.item,
         transaction: this,
-      });
-    }
-    transactionItem.lines.push(transactionLine);
-    this.items.push(transactionItem);
+      })
+    );
   }
 
   finalise(database, user) {
