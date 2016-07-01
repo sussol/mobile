@@ -126,6 +126,31 @@ export class GenericTablePage extends React.Component {
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
+/**
+ * Cell formats:
+ * 1. item.name;
+ * 2. {
+ *      type: 'cell',
+ *      cellContents: item.name,
+ *    };
+ * 3. {
+ *      type: 'editable',
+ *      cellContents: transactionItem.totalQuantity,
+ *      editable: !this.props.transaction.isFinalised,
+ *    };
+ * 4. {
+ *      type: 'checkable',
+ *    };
+ * 5. {
+ *      type: 'checkable',
+ *      icon: 'md-remove-circle', // will use for both Checked and NotChecked, only colour changes
+ *    };
+ * 6. {
+ *      type: 'checkable',
+ *      iconChecked: 'md-radio-button-on',
+ *      iconNotChecked: 'md-radio-button-off',
+ *    };
+ */
   renderCell() {
     return 'DEFAULT CELL';
   }
