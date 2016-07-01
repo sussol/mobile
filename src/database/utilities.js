@@ -18,3 +18,24 @@ export function addLineToParent(line, parent, createAggregateItem) {
   }
   aggregateItem.lines.push(line);
 }
+
+/**
+ * Applies the given difference to the shortest expiry batches possible.
+ * @param {Realm.list} unsortedLines The lines to apply the difference to. Must be
+ *                                   sortable by expiryDate and have a totalQuantity.
+ * @param {double}     difference    The difference in quantity to set across all lines.
+ *                                   Will be positive if greater new quantity, negative
+ *                                   if lesser.
+ */
+export function applyDifferenceToShortestBatch(unsortedLines, difference) {
+  let addQuantity = difference;
+  const lines = unsortedLines.sorted('expiryDate');
+  const index = 0;
+  while (addQuantity !== 0 && index < lines.length) {
+    const lineAddQuantity = addQuantity > 0 ?
+                              addQuantity :
+                              Math.min(addQuantity, -lines[index].totalQuantity);
+    lines[index].totalQuantity = lines[index].totalQuantity + lineAddQuantity;
+    addQuantity = addQuantity - lineAddQuantity;
+  }
+}
