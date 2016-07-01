@@ -33,6 +33,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
+    this.navigateToInvoice = this.navigateToInvoice.bind(this);
     this.renderCell = this.renderCell.bind(this);
   }
 
@@ -49,13 +50,17 @@ export class CustomerInvoicesPage extends GenericTablePage {
         otherParty: this.props.database.objects('Name')[0],
       });
     });
-    this.props.navigateTo('customerInvoice', 'New Invoice', {
-      invoice: invoice,
-    });
+    this.navigateToInvoice(invoice);
   }
 
   onRowPress(invoice) {
-    this.props.navigateTo('customerInvoice', `Invoice ${invoice.serialNumber}`, { invoice });
+    this.navigateToInvoice(invoice);
+  }
+
+  navigateToInvoice(invoice) {
+    this.props.navigateTo('customerInvoice',
+                          `Invoice ${invoice.serialNumber}`,
+                          { transaction: invoice });
   }
 
   /**
