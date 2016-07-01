@@ -114,7 +114,6 @@ export class GenericTablePage extends React.Component {
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
-    console.log(this.state.selection);
   }
 
   renderCell() {
