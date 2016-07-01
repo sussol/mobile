@@ -37,6 +37,18 @@ export class CustomersPage extends GenericTablePage {
     );
   }
 
+  onCheckablePress(customer) {
+    super.onCheckablePress(customer);
+    this.props.database.write(() => {
+      if (!customer.useMasterList) {
+        customer.useMasterList = true; // eslint-disable-line no-param-reassign
+      } else {
+        customer.useMasterList = !customer.useMasterList; // eslint-disable-line no-param-reassign
+      }
+      this.props.database.save('Name', customer);
+    });
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
@@ -58,6 +70,7 @@ export class CustomersPage extends GenericTablePage {
       case 'selected':
         return {
           type: 'checkable',
+          isChecked: customer.useMasterList,
         };
     }
   }
