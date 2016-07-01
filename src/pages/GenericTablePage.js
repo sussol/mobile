@@ -7,10 +7,11 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 import {
   Cell,
+  CheckableCell,
   DataTable,
   EditableCell,
   Header,
@@ -18,6 +19,7 @@ import {
   Row,
 } from '../widgets/DataTable';
 
+import Icon from 'react-native-vector-icons/Ionicons';
 import { ListView } from 'realm/react-native';
 import { SearchBar } from '../widgets';
 
@@ -97,6 +99,10 @@ export class GenericTablePage extends React.Component {
     }
   }
 
+  onCheckablePress(item) {
+    this.setState({ selection: [...this.state.selection.push(item.id)] });
+  }
+
   refreshData() {
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
@@ -136,28 +142,65 @@ export class GenericTablePage extends React.Component {
     this.columns.forEach((column) => {
       const renderedCell = this.renderCell(column.key, item);
       let cell;
-      if (renderedCell.editable) {
-        cell = (
-          <EditableCell
-            key={column.key}
-            style={globalStyles.dataTableCell}
-            textStyle={globalStyles.dataTableText}
-            width={column.width}
-            onEndEditing={this.onEndEditing &&
-                          ((target, value) => this.onEndEditing(column.key, target, value))}
-            target={item}
-            value={renderedCell.cellContents}
-          />);
-      } else {
-        cell = (
-          <Cell
-            key={column.key}
-            style={globalStyles.dataTableCell}
-            textStyle={globalStyles.dataTableText}
-            width={column.width}
-          >
-            {renderedCell.cellContents ? renderedCell.cellContents : renderedCell}
-          </Cell>);
+      switch (renderedCell.type) {
+        case 'custom':
+          cell = renderedCell.cell;
+          break;
+        case 'checkable': {
+          let iconChecked;
+          let iconNotChecked;
+          if (renderedCell.iconChecked && renderedCell.iconNotChecked) {
+            iconChecked = renderedCell.iconChecked;
+            iconNotChecked = renderedCell.iconNotChecked;
+          } else if (renderedCell.icon) {
+            iconChecked = renderedCell.icon;
+            iconNotChecked = renderedCell.icon;
+          } else {
+            iconChecked = 'md-radio-button-on';
+            iconNotChecked = 'md-radio-button-off';
+          }
+          cell = (
+            <CheckableCell
+              style={[
+                globalStyles.dataTableCell,
+                globalStyles.dataTableCheckableCell,
+              ]}
+              width={column.width}
+              onPress={() => this.onCheckablePress(item)}
+              renderIsChecked={<Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
+              renderIsNotChecked={<Icon name={iconNotChecked} size={15} color={'grey'} />}
+              isChecked={this.state.selection.indexOf(item.id) >= 0}
+            />
+          );
+          break;
+        }
+        case 'editable':
+          cell = (
+            <EditableCell
+              key={column.key}
+              style={globalStyles.dataTableCell}
+              textStyle={globalStyles.dataTableText}
+              width={column.width}
+              onEndEditing={this.onEndEditing &&
+                            ((target, value) => this.onEndEditing(column.key, target, value))}
+              target={item}
+              value={renderedCell.cellContents}
+            />
+          );
+          break;
+        case 'finalised':
+        case 'cell':
+        default:
+          cell = (
+            <Cell
+              key={column.key}
+              style={globalStyles.dataTableCell}
+              textStyle={globalStyles.dataTableText}
+              width={column.width}
+            >
+              {renderedCell.cellContents ? renderedCell.cellContents : renderedCell}
+            </Cell>
+          );
       }
       cells.push(cell);
     });
