@@ -70,6 +70,12 @@ export class GenericTablePage extends React.Component {
     this.refreshData = this.refreshData.bind(this);
   }
 
+
+  /**
+   * If overridden, first line of this method should be duplicated. May need to be overridden to
+   * populate selection in state if CheckableCells are used and need to
+   * remember their selected state.
+   */
   componentWillMount() {
     this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     this.refreshData();
@@ -100,6 +106,10 @@ export class GenericTablePage extends React.Component {
     }
   }
 
+  /**
+   * Adds/removes item.id to/from the selection array in state. Must call this within any overrides.
+   * i.e. super.onCheckablePress(item);
+   */
   onCheckablePress(item) {
     const newSelection = [...this.state.selection];
     if (newSelection.indexOf(item.id) >= 0) {
@@ -154,6 +164,8 @@ export class GenericTablePage extends React.Component {
           cell = renderedCell.cell;
           break;
         case 'checkable': {
+          const isChecked = renderedCell.isChecked ?
+            renderedCell.isChecked : this.state.selection.indexOf(item.id) >= 0;
           let iconChecked;
           let iconNotChecked;
           if (renderedCell.iconChecked && renderedCell.iconNotChecked) {
@@ -176,7 +188,7 @@ export class GenericTablePage extends React.Component {
               onPress={() => this.onCheckablePress(item)}
               renderIsChecked={<Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
               renderIsNotChecked={<Icon name={iconNotChecked} size={15} color={'grey'} />}
-              isChecked={this.state.selection.indexOf(item.id) >= 0}
+              isChecked={isChecked}
             />
           );
           break;
