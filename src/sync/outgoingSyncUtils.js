@@ -159,7 +159,7 @@ function generateSyncData(settings, recordType, record) {
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         total: String(record.totalPrice),
         their_ref: record.theirRef,
-        confirm_date: getDateString(record.confirmDate.toISOString()),
+        confirm_date: getDateString(record.confirmDate),
         subtotal: String(record.totalPrice),
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
@@ -196,11 +196,11 @@ function generateSyncData(settings, recordType, record) {
 }
 
 function getDateString(date) {
-  if (typeof date !== 'object') return '0000-00-00T00:00:00';
+  if (!date || typeof date !== 'object') return '0000-00-00T00:00:00';
   return date.toISOString();
 }
 
 function getTimeString(date) {
-  if (typeof date !== 'object') return '00:00:00';
+  if (!date || typeof date !== 'object') return '00:00:00';
   return date.toTimeString().substring(0, 8);
 }
