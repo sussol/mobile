@@ -24,6 +24,7 @@ export const FINALISED_RED = '#f63b30';
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_TOP = 10;
 export const PAGE_CONTENT_PADDING_BOTTOM = 20;
+export const SEARCH_BAR_WIDTH = 500;
 
 export default StyleSheet.create({
   appBackground: {
@@ -54,6 +55,11 @@ export default StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  verticalContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   modal: {
