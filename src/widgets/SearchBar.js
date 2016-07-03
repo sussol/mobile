@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 import Icon from 'react-native-vector-icons/EvilIcons';
-import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
+import { APP_FONT_FAMILY, SEARCH_BAR_WIDTH, SUSSOL_ORANGE } from '../globalStyles';
 
 const defaultStyles = StyleSheet.create({
   container: {
@@ -18,7 +18,7 @@ const defaultStyles = StyleSheet.create({
   },
   textInput: {
     height: 40,
-    width: 500,
+    width: SEARCH_BAR_WIDTH,
     fontSize: 16,
     fontFamily: APP_FONT_FAMILY,
     backgroundColor: 'rgba(0, 0, 0, 0)',
