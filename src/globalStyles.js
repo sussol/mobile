@@ -76,7 +76,7 @@ export default StyleSheet.create({
   },
   modalText: {
     color: 'white',
-    fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text unfortunately
+    fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text - RN 0.27
   },
   authFormModal: {
     backgroundColor: BACKGROUND_COLOR,
@@ -225,9 +225,6 @@ export default StyleSheet.create({
   dataTableCheckableCell: {
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  dataTableEditableCell: {
-    backgroundColor: '#f9e4c2',
   },
   dataTableButton: {
     alignItems: 'center',
