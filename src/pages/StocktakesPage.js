@@ -30,7 +30,6 @@ export class StocktakesPage extends GenericTablePage {
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
-    this.onNewStockTake = this.onNewStockTake.bind(this);
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
     this.onDeleteCancel = this.onDeleteCancel.bind(this);
     this.onToggleStatusFilter = this.onToggleStatusFilter.bind(this);
@@ -107,7 +106,7 @@ export class StocktakesPage extends GenericTablePage {
   }
 
   render() {
-    const { showCurrent } = this.state;
+    const { showCurrent, selection } = this.state;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -141,14 +140,14 @@ export class StocktakesPage extends GenericTablePage {
             </View>
           </View>
           {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={selection.length > 0}
+            questionText="Are you sure you want to delete these stocktakes?"
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText="Delete"
+          />
         </View>
-        <BottomConfirmModal
-          isOpen={this.state.selection.length > 0}
-          questionText="Are you sure you want to delete these stocktakes?"
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText="Delete"
-        />
       </View>
     );
   }
