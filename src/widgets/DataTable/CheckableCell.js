@@ -18,10 +18,12 @@ import {
  * separate to maintain responsiveness of the cell.
  * @param   {object}  props             Properties passed where component was created.
  * @prop    {StyleSheet} style          Style of the CheckableCell (View props).
- * @prop    {number} width              flexbox flex property, gives weight to the CheckableCell width
+ * @prop    {number} width              Flexbox flex property, gives weight to the CheckableCell width
  * @prop    {object} renderIsChecked    Object is rendered as child in CheckableCell if checked.
  * @prop    {object} renderIsNotChecked Object is rendered as child in CheckableCell if notchecked.
- * @prop    {boolean} isChecked         controls the isChecked state of the CheckableCell.
+ * @prop    {boolean} isChecked         Used to set the initial state of the cell when the
+ *                                      component mounts or rerenders (e.g. table sort
+ *                                      order change).
  * @return  {React.Component}           Return TouchableOpacity with child rendered according to the
  *                                      above 3 props.
  */
