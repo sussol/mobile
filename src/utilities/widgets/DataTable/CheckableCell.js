@@ -11,6 +11,22 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+/**
+ * Renders a CheckableCell that renders either renderIsChecked or renderIsNotChecked when isChecked
+ * is true or false respectively. Whole cell returned is pressable. Callback should affect state of
+ * Parent in some way that keeps the state of parent in sync with state of the CheckableCell. Kept
+ * separate to maintain responsiveness of the cell.
+ * @param   {object}  props             Properties passed where component was created.
+ * @prop    {StyleSheet} style          Style of the CheckableCell (View props).
+ * @prop    {number} width              Flexbox flex property, gives weight to the CheckableCell width
+ * @prop    {object} renderIsChecked    Object is rendered as child in CheckableCell if checked.
+ * @prop    {object} renderIsNotChecked Object is rendered as child in CheckableCell if notchecked.
+ * @prop    {boolean} isChecked         Used to set the initial state of the cell when the
+ *                                      component mounts or rerenders (e.g. table sort
+ *                                      order change).
+ * @return  {React.Component}           Return TouchableOpacity with child rendered according to the
+ *                                      above 3 props.
+ */
 export class CheckableCell extends React.Component {
   constructor(props) {
     super(props);
@@ -54,7 +70,6 @@ CheckableCell.propTypes = {
   onPress: React.PropTypes.func,
   renderIsChecked: React.PropTypes.object,
   renderIsNotChecked: React.PropTypes.object,
-  target: React.PropTypes.object,
   isChecked: React.PropTypes.bool,
 };
 
