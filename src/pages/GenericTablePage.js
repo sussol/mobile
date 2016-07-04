@@ -205,6 +205,7 @@ export class GenericTablePage extends React.Component {
           }
           cell = (
             <CheckableCell
+              key={column.key}
               style={[
                 globalStyles.dataTableCell,
                 globalStyles.dataTableCheckableCell,
