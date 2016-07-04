@@ -132,7 +132,7 @@ export class GenericTablePage extends React.Component {
  *                                          // the extending class.
  * 2. item.name;
  * 3. {
- *      type: 'cell',
+ *      type: 'text',
  *      cellContents: item.name,
  *    };
  * 4. {
