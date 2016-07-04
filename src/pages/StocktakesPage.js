@@ -13,7 +13,7 @@ import { generateUUID } from '../database';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
-const DATA_TYPES_DISPLAYED = ['StockTake'];
+const DATA_TYPES_DISPLAYED = ['Stocktake'];
 
 /**
 * Renders the page for displaying Customers.
