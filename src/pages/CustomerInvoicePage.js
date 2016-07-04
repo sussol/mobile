@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {
+  StyleSheet,
   View,
 } from 'react-native';
 
@@ -21,13 +22,14 @@ export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
-    this.state.isUsingMasterList = this.props.transaction.useMasterList;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.databaseListenerId = null;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
+    this.onAddMasterList = this.onAddMasterList.bind(this);
+    this.onNewItem = this.onNewItem.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
   }
 
@@ -69,8 +71,12 @@ export class CustomerInvoicePage extends GenericTablePage {
     });
   }
 
-  toggleMasterList() {
-    this.setState({ isUsingMasterList: !this.state.isUsingMasterList });
+  onAddMasterList() {
+    return;
+  }
+
+  onNewItem() {
+    return;
   }
 
   renderPageInfo() {
@@ -135,24 +141,16 @@ export class CustomerInvoicePage extends GenericTablePage {
             </View>
             <View style={globalStyles.verticalContainer}>
               <Button
-                style={globalStyles.button}
+                style={[globalStyles.button, localStyles.button]}
                 textStyle={globalStyles.buttonText}
                 text="New Item"
-                onPress={this.onNewInvoice}
+                onPress={this.onNewItem}
               />
-              <ToggleBar
-                style={globalStyles.toggleBar}
-                textOffStyle={globalStyles.toggleText}
-                textOnStyle={globalStyles.toggleTextSelected}
-                toggleOffStyle={globalStyles.toggleOption}
-                toggleOnStyle={globalStyles.toggleOptionSelected}
-                toggles={[
-                  {
-                    text: 'Use Master List',
-                    onPress: () => this.toggleMasterList(),
-                    isOn: this.state.isUsingMasterList,
-                  },
-                ]}
+              <Button
+                style={[globalStyles.button, localStyles.button]}
+                textStyle={globalStyles.buttonText}
+                text="Add Master Items"
+                onPress={this.onAddMasterList}
               />
             </View>
           </View>
@@ -199,3 +197,9 @@ const COLUMNS = [
     title: 'REMOVE',
   },
 ];
+
+const localStyles = StyleSheet.create({
+  button: {
+    marginBottom: 10,
+  },
+});
