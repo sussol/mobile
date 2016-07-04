@@ -191,6 +191,8 @@ export class GenericTablePage extends React.Component {
           cell = renderedCell.cell;
           break;
         case 'checkable': {
+          // if provided, use isChecked prop, else set isChecked according to item.id
+          // being in selection array.
           const isChecked = renderedCell.isChecked ?
             renderedCell.isChecked : this.state.selection.indexOf(item.id) >= 0;
           let iconChecked;
