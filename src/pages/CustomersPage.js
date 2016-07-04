@@ -33,7 +33,7 @@ export class CustomersPage extends GenericTablePage {
     this.props.navigateTo(
       'customer',
       `${customer.name}`,
-      { transaction: customer },
+      { customer: customer },
     );
   }
 
