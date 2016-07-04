@@ -76,10 +76,11 @@ export class SupplierInvoicePage extends GenericTablePage {
       case 'numSent':
         return transactionItem.totalQuantitySent;
       case 'numReceived': {
+        const isEditable = !this.props.transaction.isFinalised;
+        const type = isEditable ? 'editable' : 'finalised';
         const renderedCell = {
-          type: 'editable',
+          type: type,
           cellContents: transactionItem.totalQuantity,
-          editable: !this.props.transaction.isFinalised,
         };
         return renderedCell;
       }

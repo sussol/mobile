@@ -138,7 +138,6 @@ export class GenericTablePage extends React.Component {
  * 4. {
  *      type: 'editable',
  *      cellContents: transactionItem.totalQuantity,
- *      editable: !this.props.transaction.isFinalised,
  *    };
  * 5. {
  *      type: 'checkable',
