@@ -127,25 +127,27 @@ export class GenericTablePage extends React.Component {
   }
 
 /**
- * Cell formats:
- * 1. item.name;
- * 2. {
+ * Accepted Cell formats:
+ * 1. <Cell style={styles.cell} width={3}/> // Or any other react component. Must be styled within
+ *                                          // the extending class.
+ * 2. item.name;
+ * 3. {
  *      type: 'cell',
  *      cellContents: item.name,
  *    };
- * 3. {
+ * 4. {
  *      type: 'editable',
  *      cellContents: transactionItem.totalQuantity,
  *      editable: !this.props.transaction.isFinalised,
  *    };
- * 4. {
+ * 5. {
  *      type: 'checkable',
  *    };
- * 5. {
+ * 6. {
  *      type: 'checkable',
  *      icon: 'md-remove-circle', // will use for both Checked and NotChecked, only colour changes
  *    };
- * 6. {
+ * 7. {
  *      type: 'checkable',
  *      iconChecked: 'md-radio-button-on',
  *      iconNotChecked: 'md-radio-button-off',
