@@ -31,7 +31,7 @@ export class CustomersPage extends GenericTablePage {
 
   onRowPress(customer) {
     this.props.navigateTo(
-      'Customers',
+      'customer',
       `${customer.name}`,
       { transaction: customer },
     );
