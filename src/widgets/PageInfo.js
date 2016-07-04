@@ -5,7 +5,7 @@ import {
   Text,
 } from 'react-native';
 
-import globalStyles, {
+import {
   APP_FONT_FAMILY,
   DARK_GREY,
   SEARCH_BAR_WIDTH,
@@ -17,24 +17,24 @@ export function PageInfo(props) {
     <View
       style={[localStyles.horizontalContainer]}
     >
-      {props.columns.map((columnData, index) =>
+      {props.columns.map((columnData, columnIndex) =>
           <View
-            key={`Column ${index}`}
+            key={`Column ${columnIndex}`}
             style={localStyles.columnContainer}
           >
             <View>
-              {columnData.map((rowData) =>
+              {columnData.map((rowData, rowIndex) =>
                 <Text
-                  key={rowData.title}
+                  key={`Title ${columnIndex}-${rowIndex}`}
                   style={[localStyles.text, localStyles.titleText]}
                 >
                   {rowData.title}
                 </Text>)}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((rowData) =>
+              {columnData.map((rowData, rowIndex) =>
                 <Text
-                  key={rowData.info}
+                  key={`Info ${columnIndex}-${rowIndex}`}
                   style={localStyles.text}
                 >
                   {rowData.info}
