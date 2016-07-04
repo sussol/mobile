@@ -236,8 +236,7 @@ export class GenericTablePage extends React.Component {
             />
           );
           break;
-        case 'finalised':
-        case 'cell':
+        case 'text':
         default:
           cell = (
             <Cell
