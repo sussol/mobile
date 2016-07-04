@@ -28,7 +28,7 @@ export function PageInfo(props) {
                   key={`Title ${columnIndex}-${rowIndex}`}
                   style={[localStyles.text, localStyles.titleText]}
                 >
-                  {rowData.title}
+                  {rowData.title ? rowData.title : ' ' /** Space if null to avoid squishing row **/}
                 </Text>)}
             </View>
             <View style={localStyles.infoContainer}>
@@ -37,7 +37,7 @@ export function PageInfo(props) {
                   key={`Info ${columnIndex}-${rowIndex}`}
                   style={localStyles.text}
                 >
-                  {rowData.info}
+                  {rowData.info ? rowData.info : ' ' /** Space if null to avoid squishing row **/}
                 </Text>)}
             </View>
           </View>)}
