@@ -60,7 +60,7 @@ export class SupplierInvoicePage extends GenericTablePage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'numReceived') return;
     this.props.database.write(() => {
-      transactionItem.totalQuantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
+      transactionItem.totalQuantity = parseFloat(newValue);
       this.props.database.save('TransactionItem', transactionItem);
     });
   }

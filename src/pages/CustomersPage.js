@@ -41,9 +41,9 @@ export class CustomersPage extends GenericTablePage {
     super.onCheckablePress(customer);
     this.props.database.write(() => {
       if (!customer.useMasterList) {
-        customer.useMasterList = true; // eslint-disable-line no-param-reassign
+        customer.useMasterList = true;
       } else {
-        customer.useMasterList = !customer.useMasterList; // eslint-disable-line no-param-reassign
+        customer.useMasterList = !customer.useMasterList;
       }
       this.props.database.save('Name', customer);
     });
