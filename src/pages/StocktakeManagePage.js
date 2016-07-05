@@ -81,7 +81,7 @@ export class StocktakeManagePage extends GenericTablePage {
     const { stocktake, selection, items } = this.state;
     const { database, navigateTo } = this.props;
     let { stocktakeName } = this.state;
-    const stocktakeLines = [];
+    const stocktakeItems = [];
 
     if (stocktakeName === '') {
       stocktakeName = stocktake.name;
@@ -102,24 +102,17 @@ export class StocktakeManagePage extends GenericTablePage {
 
       selection.forEach((itemId) => {
         const item = items.find(i => i.id === itemId);
-        item.lines.forEach((itemLine) => {
-          const stocktakeLine = database.create('StocktakeLine', {
-            id: generateUUID(),
-            stocktake: stocktake,
-            itemLine: itemLine,
-            snapshotNumberOfPacks: itemLine.numberOfPacks,
-            packSize: 1,
-            expiryDate: itemLine.expiryDate,
-            batch: itemLine.batch,
-            costPrice: itemLine.costPrice,
-            sellPrice: itemLine.sellPrice,
-          });
-          stocktakeLines.push(stocktakeLine);
+        const stocktakeItem = database.create('StocktakeItem', {
+          id: generateUUID(),
+          item: item,
+          stocktake: stocktake,
+          lines: [],
         });
+        stocktakeItems.push(stocktakeItem);
       });
 
       stocktake.name = stocktakeName;
-      stocktakeLines.forEach(line => stocktake.lines.push(line));
+      stocktakeItems.forEach(item => stocktake.items.push(item));
       this.props.database.update('Stocktake', stocktake);
     });
     navigateTo('stocktakeEditor', stocktake.name, { stocktake: stocktake });
