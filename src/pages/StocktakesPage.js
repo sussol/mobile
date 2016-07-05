@@ -64,8 +64,7 @@ export class StocktakesPage extends GenericTablePage {
   onToggleStatusFilter(isCurrent) {
     this.setState({
       showCurrent: isCurrent,
-    });
-    this.refreshData();
+    }, this.refreshData);
   }
 
   /**
