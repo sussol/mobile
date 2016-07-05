@@ -16,6 +16,7 @@ import { generateUUID } from '../database';
 import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { formatDateAndTime } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
 
@@ -52,7 +53,7 @@ export class StocktakeManagePage extends GenericTablePage {
         const date = new Date();
         stocktake = this.props.database.create('Stocktake', {
           id: generateUUID(),
-          name: `Stocktake ${date}`,
+          name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
           createdDate: date,
           status: 'new',
           comment: 'Testing StocktakesPage',
@@ -63,8 +64,8 @@ export class StocktakeManagePage extends GenericTablePage {
       this.setState({ stocktake: stocktake, isNewStocktake: true });
     } else {
       const selected = [];
-      this.props.stocktake.lines.forEach((line) => {
-        const item = line.itemLine.item;
+      this.props.stocktake.items.forEach((stocktakeItem) => {
+        const item = stocktakeItem.item;
         if (item) selected.push(item.id);
       });
       this.setState({
@@ -82,13 +83,8 @@ export class StocktakeManagePage extends GenericTablePage {
     let { stocktakeName } = this.state;
     const stocktakeLines = [];
 
-    function getDateTimeString(date) {
-      return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ` +
-             `${date.getHours()}:${date.getMinutes()}`;
-    }
-
     if (stocktakeName === '') {
-      stocktakeName = `Stocktake ${getDateTimeString(stocktake.createdDate)}`;
+      stocktakeName = stocktake.name;
     }
 
     database.write(() => {
