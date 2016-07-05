@@ -1,5 +1,12 @@
+export {
+  BottomConfirmModal,
+  BottomModal,
+  ConfirmModal,
+  FinaliseModal,
+  LoginModal,
+  SelectModal,
+} from './modals';
 export { Button } from './Button';
-export { BottomModal, BottomConfirmModal, ConfirmModal, FinaliseModal, LoginModal } from './modals';
 export { DataTable } from './DataTable';
 export { FinaliseButton } from './FinaliseButton';
 export { PageInfo } from './PageInfo';

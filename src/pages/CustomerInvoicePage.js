@@ -13,7 +13,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { Button, PageInfo, ToggleBar } from '../widgets';
+import { Button, PageInfo, SelectModal } from '../widgets';
 import { formatDate } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine', 'Item', 'ItemLine'];
@@ -22,6 +22,7 @@ export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
+    this.state.isAddingNewItem = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.databaseListenerId = null;
@@ -37,7 +38,7 @@ export class CustomerInvoicePage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.transaction.items.filtered(`item.name BEGINSWITH[c] "${searchTerm}"`);
+    let data = this.props.transaction.items.filtered('item.name BEGINSWITH[c] $0', searchTerm);
     switch (sortBy) {
       case 'itemCode':
         data = data.slice().sort((a, b) =>
@@ -76,7 +77,7 @@ export class CustomerInvoicePage extends GenericTablePage {
   }
 
   onNewItem() {
-    return;
+    this.setState({ isAddingNewItem: true });
   }
 
   renderPageInfo() {
@@ -156,6 +157,17 @@ export class CustomerInvoicePage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
         </View>
+        <SelectModal
+          isOpen={this.state.isAddingNewItem}
+          options={this.props.database.objects('Item')}
+          queryString={'name BEGINSWITH[c] $0'}
+          getItemString={(item) => `${item.code} - ${item.name}`}
+          onSelect={(item) => {
+            console.log(`Adding ${item.name}`);
+            this.setState({ isAddingNewItem: false });
+          }}
+          onCancel={() => this.setState({ isAddingNewItem: false })}
+        />
       </View>
     );
   }
