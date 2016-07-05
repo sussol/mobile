@@ -5,4 +5,8 @@ export class Item extends Realm.Object {
   get totalQuantity() {
     return getTotal(this.lines, 'totalQuantity');
   }
+
+  toString() {
+    return `${this.code} - ${this.name}`;
+  }
 }
