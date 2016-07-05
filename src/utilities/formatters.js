@@ -8,3 +8,15 @@ export function formatDate(date, format) {
       return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
   }
 }
+
+export function formatDateAndTime(date, format) {
+  switch (format) {
+    default:
+    case 'slashes':
+      return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ` +
+             `${date.getHours()}:${date.getMinutes()}`;
+    case 'dots':
+      return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ` +
+             `${date.getHours()}:${date.getMinutes()}`;
+  }
+}
