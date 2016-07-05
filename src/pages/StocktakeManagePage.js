@@ -52,7 +52,7 @@ export class StocktakeManagePage extends GenericTablePage {
         const date = new Date();
         stocktake = this.props.database.create('Stocktake', {
           id: generateUUID(),
-          name: 'New Stocktake',
+          name: `Stocktake ${date}`,
           createdDate: date,
           status: 'new',
           comment: 'Testing StocktakesPage',
