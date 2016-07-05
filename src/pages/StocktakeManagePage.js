@@ -12,69 +12,50 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Cell,
-  CheckableCell,
-  DataTable,
-  Header,
-  HeaderCell,
-  Row,
-} from '../widgets/DataTable';
-
-import Icon from 'react-native-vector-icons/Ionicons';
 import { generateUUID } from '../database';
-import { ListView } from 'realm/react-native';
-import { Button, BottomModal, TextInput, SearchBar, ToggleBar } from '../widgets';
-import { getItemQuantity } from '../utilities';
-import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
+import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
+import globalStyles from '../globalStyles';
+import { GenericTablePage } from './GenericTablePage';
+
+const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
 
 /**
-* Renders the page for displaying Stocktakes.
-* @prop   {Realm}               database        App wide database.
-* @prop   {func}                navigateTo      callback for navigation stack.
-* @state  {string}              SORT_BY         Locked to createdDate via created date column.
-* @state  {ListView.DataSource} dataSource      DataTable input, used to update rows being rendered.
-* @state  {Realm.Results}       Stocktakes      Results object containing all objects in the
-*                                               Database of type Stocktake.
-* @state  {boolean}             isAscending     Direction SORT_BY should sort.
-*                                               (ascending/descending:true/false).
-* @state  {boolean}             showNoStock     Boolean control of toggle bar options.
-* @state  {array}               itemSelection Stores id of the stocktakes selected for deletion.
+* Renders the page for managing a stocktake.
+* @prop   {Realm}               database    App wide database.
+* @prop   {func}                navigateTo  CallBack for navigation stack.
+* @state  {Realm.Results}       items       Filtered to have only Items.
 */
-export class StocktakeManagePage extends React.Component {
+export class StocktakeManagePage extends GenericTablePage {
   constructor(props) {
     super(props);
-    const dataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-    });
-    this.state = {
-      dataSource: dataSource,
-      items: props.database.objects('Item'),
-      itemSelection: [],
-      stocktake: {},
-      stocktakeName: '',
-      isNewStocktake: false,
-      searchTerm: '',
-      isAscending: true,
-      isSelectAllItems: false,
-      showNoStock: false,
-      sortBy: 'name',
-    };
+    this.state.items = props.database.objects('Item');
+    this.state.stocktake = {};
+    this.state.stocktakeName = '';
+    this.state.isNewStocktake = false;
+    this.state.searchTerm = '';
+    this.state.isAscending = true;
+    this.state.isSelectAllItems = false;
+    this.state.showNoStock = false;
+    this.state.sortBy = 'name';
+    this.columns = COLUMNS;
+    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.onColumnSort = this.onColumnSort.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
-    this.refreshData = this.refreshData.bind(this);
+    this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onConfirmPress = this.onConfirmPress.bind(this);
   }
 
   componentWillMount() {
+    this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     if (!this.props.stocktake) {
       let stocktake;
       this.props.database.write(() => {
+        const date = new Date();
         stocktake = this.props.database.create('Stocktake', {
           id: generateUUID(),
-          name: '',
-          createdDate: new Date(),
+          name: 'New Stocktake',
+          createdDate: date,
           status: 'new',
           comment: 'Testing StocktakesPage',
           serialNumber: '1337',
@@ -90,7 +71,7 @@ export class StocktakeManagePage extends React.Component {
       });
       this.setState({
         stocktake: this.props.stocktake,
-        itemSelection: selected,
+        selection: selected,
         stocktakeName: this.props.stocktake.name,
       });
     }
@@ -110,7 +91,7 @@ export class StocktakeManagePage extends React.Component {
   }
 
   onConfirmPress() {
-    const { stocktake, itemSelection, items } = this.state;
+    const { stocktake, selection, items } = this.state;
     const { database, navigateTo } = this.props;
     let { stocktakeName } = this.state;
     const stocktakeLines = [];
@@ -127,17 +108,17 @@ export class StocktakeManagePage extends React.Component {
     database.write(() => {
       stocktake.lines.forEach((line, i, lines) => {
         const item = line.itemLine.item;
-        const itemIdIndex = itemSelection.indexOf(item.id);
+        const itemIdIndex = selection.indexOf(item.id);
         // If a stocktakeLine for an item already exists in the stocktake, remove it from the
-        // itemSelection array.
+        // selection array.
         if (itemIdIndex >= 0) {
-          itemSelection.slice(itemIdIndex, 1);
+          selection.slice(itemIdIndex, 1);
         }
         // Remove stocktakeLines of items that are not in the selection.
-        if (!itemSelection.includes(item.id)) lines.slice(i, 1);
+        if (!selection.includes(item.id)) lines.slice(i, 1);
       });
 
-      itemSelection.forEach((itemId) => {
+      selection.forEach((itemId) => {
         const item = items.find(i => i.id === itemId);
         item.lines.forEach((itemLine) => {
           const stocktakeLine = database.create('StocktakeLine', {
@@ -162,28 +143,12 @@ export class StocktakeManagePage extends React.Component {
     navigateTo('stocktakeEditor', stocktake.name, { stocktake: stocktake });
   }
 
-  onRadioButtonPress(item) {
-    const newItemSelection = [...this.state.itemSelection];
-    if (newItemSelection.indexOf(item.id) >= 0) {
-      newItemSelection.splice(newItemSelection.indexOf(item.id), 1);
-    } else {
-      newItemSelection.push(item.id);
-    }
-    this.setState({ itemSelection: newItemSelection });
-  }
-
-  onSearchChange(event) {
-    const term = event.nativeEvent.text;
-    this.setState({ searchTerm: term });
-    this.refreshData();
-  }
-
   toggleSelectAllItems() {
     const isSelectAllItems = !this.state.isSelectAllItems;
     const { items } = this.state;
     this.setState({
       isSelectAllItems: isSelectAllItems,
-      itemSelection: isSelectAllItems ? items.map(item => item.id) : [],
+      selection: isSelectAllItems ? items.map(item => item.id) : [],
     }, this.refreshData);
   }
 
@@ -198,125 +163,51 @@ export class StocktakeManagePage extends React.Component {
    * Updates data within dataSource in state according to SortBy and
    * isAscending.
    */
-  refreshData() {
+  getUpdatedData(searchTerm, sortBy, isAscending) {
     const {
       items,
-      sortBy,
-      dataSource,
-      isAscending,
-      searchTerm,
-      itemSelection,
+      selection,
       showNoStock,
     } = this.state;
     let data;
     data = items.filtered(`name CONTAINS[c] "${searchTerm}"`);
     switch (sortBy) {
       // 'selected' case lists the selected items in alphabetical order, followed by unselected in
-      // alphabetical order. This requires the itemSelection array to store the item ids in the
+      // alphabetical order. This requires the selection array to store the item ids in the
       // same alphabetical order as their respective items.
       case 'selected':
-        itemSelection.sort((a, b) => {
+        selection.sort((a, b) => {
           const aName = items.find(item => item.id === a).name;
           const bName = items.find(item => item.id === b).name;
           return bName.localeCompare(aName);
         });
         data = data.sorted('name', !isAscending).slice()
-                  .sort((a, b) => itemSelection.indexOf(b.id) - itemSelection.indexOf(a.id));
+                  .sort((a, b) => selection.indexOf(b.id) - selection.indexOf(a.id));
         if (!isAscending) data.reverse();
         break;
       default:
         data = data.sorted(sortBy, !isAscending);
     }
     if (!showNoStock) {
-      data = data.slice().filter((item) => getItemQuantity(item) !== 0);
+      data = data.slice().filter((item) => item.getTotal !== 0);
     }
-    this.setState({ dataSource: dataSource.cloneWithRows(data) });
+    return data;
   }
 
-  renderHeader() {
-    return (
-      <Header style={globalStyles.dataTableHeader}>
-        <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[0]}
-          onPress={() => this.onColumnSort('code')}
-          isAscending={this.state.isAscending}
-          isSelected={this.state.sortBy === 'code'}
-          text={'ITEM CODE'}
-        />
-        <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[1]}
-          onPress={() => this.onColumnSort('name')}
-          isAscending={this.state.isAscending}
-          isSelected={this.state.sortBy === 'name'}
-          text={'ITEM NAME'}
-        />
-        <HeaderCell
-          style={globalStyles.dataTableHeaderCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[2]}
-          text={'SNAPSHOT QUANTITY'}
-        />
-        <HeaderCell
-          style={[
-            globalStyles.dataTableHeaderCell,
-            globalStyles.dataTableRightMostCell,
-          ]}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[3]}
-          onPress={() => this.onColumnSort('selected')}
-          isAscending={this.state.isAscending}
-          isSelected={this.state.sortBy === 'selected'}
-          text={'SELECTED'}
-        />
-      </Header>
-    );
-  }
-
-  renderRow(item) {
-    return (
-      <Row
-        style={globalStyles.dataTableRow}
-        onPress={() => this.props.navigateTo('stocktakeManager', 'Create Stocktake')}
-      >
-        <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[0]}
-        >
-          {item.code}
-        </Cell>
-        <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[1]}
-        >
-          {item.name}
-        </Cell>
-        <Cell
-          style={globalStyles.dataTableCell}
-          textStyle={globalStyles.dataTableText}
-          width={COLUMN_WIDTHS[2]}
-        >
-          {item.quantity}
-        </Cell>
-        <CheckableCell
-          style={[
-            globalStyles.dataTableCell,
-            globalStyles.dataTableRightMostCell,
-            globalStyles.dataTableCheckableCell,
-          ]}
-          width={COLUMN_WIDTHS[3]}
-          onPress={() => this.onRadioButtonPress(item)}
-          renderIsChecked={<Icon name="md-radio-button-on" size={15} color={SUSSOL_ORANGE} />}
-          renderIsNotChecked={<Icon name="md-radio-button-off" size={15} color={SUSSOL_ORANGE} />}
-          isChecked={this.state.itemSelection.indexOf(item.id) >= 0}
-        />
-      </Row>
-    );
+  renderCell(key, item) {
+    switch (key) {
+      default:
+      case 'code':
+        return item.code;
+      case 'name':
+        return item.name;
+      case 'snapshotQuantity':
+        return 1337;
+      case 'selected':
+        return {
+          type: 'checkable',
+        };
+    }
   }
 
   render() {
@@ -325,9 +216,7 @@ export class StocktakeManagePage extends React.Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            <SearchBar
-              onChange={(event) => this.onSearchChange(event)}
-            />
+            {this.renderSearchBar()}
             <View style={localStyles.toggleBarView}>
               <ToggleBar
                 style={globalStyles.toggleBar}
@@ -350,15 +239,9 @@ export class StocktakeManagePage extends React.Component {
               />
             </View>
           </View>
-          <DataTable
-            style={globalStyles.dataTable}
-            listViewStyle={localStyles.listView}
-            dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
-            renderHeader={this.renderHeader}
-          />
+          {this.renderDataTable()}
           <BottomModal
-            isOpen={this.state.itemSelection.length > 0}
+            isOpen={this.state.selection.length > 0}
             style={localStyles.bottomModal}
           >
             <TextInput
@@ -387,11 +270,33 @@ StocktakeManagePage.propTypes = {
   database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
-const COLUMN_WIDTHS = [2, 6, 2, 1];
-const localStyles = StyleSheet.create({
-  listView: {
-    flex: 1,
+
+const COLUMNS = [
+  {
+    key: 'code',
+    width: 2,
+    title: 'ITEM CODE',
+    sortable: true,
   },
+  {
+    key: 'name',
+    width: 6,
+    title: 'ITEM NAME',
+    sortable: true,
+  },
+  {
+    key: 'snapshotQuantity',
+    width: 2,
+    title: 'SNAPSHOT QUANTITY',
+  },
+  {
+    key: 'selected',
+    width: 1,
+    title: 'SELECTED',
+  },
+];
+
+const localStyles = StyleSheet.create({
   bottomModal: {
     justifyContent: 'space-between',
     paddingLeft: 20,
@@ -399,12 +304,5 @@ const localStyles = StyleSheet.create({
   toggleBarView: {
     justifyContent: 'flex-end',
     alignItems: 'center',
-  },
-  buttonViewTop: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  dataTable: {
-    flex: 1,
   },
 });
