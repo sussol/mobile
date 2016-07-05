@@ -185,7 +185,7 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   render() {
-    const { isSelectAllItems, showNoStock } = this.state;
+    const { isSelectAllItems, showNoStock, stocktake, selection } = this.state;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -215,7 +215,7 @@ export class StocktakeManagePage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
           <BottomModal
-            isOpen={this.state.selection.length > 0}
+            isOpen={selection.length > 0 && !stocktake.isFinalised()}
             style={localStyles.bottomModal}
           >
             <TextInput
