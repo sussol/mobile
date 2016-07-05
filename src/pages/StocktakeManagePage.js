@@ -88,16 +88,16 @@ export class StocktakeManagePage extends GenericTablePage {
     }
 
     database.write(() => {
-      stocktake.lines.forEach((line, i, lines) => {
-        const item = line.itemLine.item;
+      stocktake.items.forEach((stocktakeItem) => {
+        const item = stocktakeItem.item;
         const itemIdIndex = selection.indexOf(item.id);
-        // If a stocktakeLine for an item already exists in the stocktake, remove it from the
+        // If a stocktakeItem for an item already exists in the stocktake, remove it from the
         // selection array.
         if (itemIdIndex >= 0) {
           selection.slice(itemIdIndex, 1);
         }
-        // Remove stocktakeLines of items that are not in the selection.
-        if (!selection.includes(item.id)) lines.slice(i, 1);
+        // Remove StocktakeItem of Items that are not in the selection.
+        if (!selection.includes(item.id)) stocktake.deleteStocktakeItem(database, item);
       });
 
       selection.forEach((itemId) => {

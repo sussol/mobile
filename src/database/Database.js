@@ -65,9 +65,12 @@ export class Database {
    * @return {none}
    */
   delete(type, object) {
-    const record = { ...object };
-    this.realm.delete(object);
-    this.alertListeners(CHANGE_TYPES.DELETE, type, record);
+    const objects = objects instanceof Array ? object : [object];
+    objects.forEach(obj => {
+      const record = { ...obj };
+      this.realm.delete(obj);
+      this.alertListeners(CHANGE_TYPES.DELETE, type, record);
+    });
   }
 
   /**

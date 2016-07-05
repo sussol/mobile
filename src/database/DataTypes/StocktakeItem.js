@@ -27,5 +27,4 @@ export class StocktakeItem extends Realm.Object {
       subtractQuantity = subtractQuantity - lineSubtractQuantity;
     }
   }
-
 }
