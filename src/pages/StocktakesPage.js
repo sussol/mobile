@@ -37,7 +37,7 @@ export class StocktakesPage extends GenericTablePage {
 
   onRowPress(stocktake) {
     this.props.navigateTo(
-      'stocktakeManager',
+      'stocktakeEditor',
       `${stocktake.name}`,
       { stocktake: stocktake },
     );

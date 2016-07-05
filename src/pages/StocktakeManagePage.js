@@ -61,7 +61,7 @@ export class StocktakeManagePage extends GenericTablePage {
           lines: [],
         });
       });
-      this.setState({ stocktake: stocktake, isNewStocktake: true });
+      this.setState({ stocktake: stocktake, isNewStocktake: true }, this.refreshData);
     } else {
       const selected = [];
       this.props.stocktake.items.forEach((stocktakeItem) => {
@@ -72,9 +72,8 @@ export class StocktakeManagePage extends GenericTablePage {
         stocktake: this.props.stocktake,
         selection: selected,
         stocktakeName: this.props.stocktake.name,
-      });
+      }, this.refreshData);
     }
-    this.refreshData();
   }
 
   onConfirmPress() {
@@ -108,12 +107,29 @@ export class StocktakeManagePage extends GenericTablePage {
           stocktake: stocktake,
           lines: [],
         });
+        item.lines.forEach(line => {
+          const stocktakeLine = database.create('StocktakeLine', {
+            id: generateUUID(),
+            stocktake: stocktake,
+            itemLine: line,
+            snapshotNumberOfPacks: line.totalQuantity,
+            packSize: line.packSize,
+            expiryDate: line.expiryDate,
+            batch: line.batch,
+            costPrice: line.costPrice,
+            sellPrice: line.sellPrice,
+            countedNumberOfPacks: 0,
+            sortIndex: 0,
+          });
+          stocktakeItem.lines.push(stocktakeLine);
+        });
+        database.save('StocktakeItem', stocktakeItem);
         stocktakeItems.push(stocktakeItem);
       });
 
       stocktake.name = stocktakeName;
       stocktakeItems.forEach(item => stocktake.items.push(item));
-      this.props.database.update('Stocktake', stocktake);
+      database.save('Stocktake', stocktake);
     });
     navigateTo('stocktakeEditor', stocktake.name, { stocktake: stocktake });
   }
@@ -175,8 +191,11 @@ export class StocktakeManagePage extends GenericTablePage {
         return item.code;
       case 'name':
         return item.name;
-      case 'snapshotQuantity':
-        return 1337;
+      case 'snapshotQuantity': {
+        const stocktakeItem = this.state.stocktake.items.find(sti => sti.item.id === item.id);
+        if (stocktakeItem) return stocktakeItem.snapshotTotalQuantity;
+        return item.totalQuantity;
+      }
       case 'selected':
         return {
           type: 'checkable',
@@ -215,7 +234,7 @@ export class StocktakeManagePage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
           <BottomModal
-            isOpen={selection.length > 0 && !stocktake.isFinalised()}
+            isOpen={selection.length > 0 && !stocktake.isFinalised}
             style={localStyles.bottomModal}
           >
             <TextInput
