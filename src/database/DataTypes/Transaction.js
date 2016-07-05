@@ -18,6 +18,16 @@ export class Transaction extends Realm.Object {
     return getTotal(this.items, 'totalPrice');
   }
 
+  addItem(database, item) {
+    if (this.items.find(transactionItem => transactionItem.id === item.id)) return;
+    const transactionItem = database.create('TransactionItem', {
+      id: generateUUID(),
+      item: item,
+      transaction: this,
+    });
+    this.items.push(transactionItem);
+  }
+
   // Adds a TransactionLine, incorporating it into a matching TransactionItem
   addLine(database, transactionLine) {
     addLineToParent(transactionLine, this, () =>
