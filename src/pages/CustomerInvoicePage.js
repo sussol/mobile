@@ -126,8 +126,10 @@ export class CustomerInvoicePage extends GenericTablePage {
       case 'quantityToIssue':
         return {
           cellContents: transactionItem.totalQuantity,
-          editable: !this.props.transaction.isFinalised,
+          type: this.props.transaction.isFinalised ? 'text' : 'editable',
         };
+      case 'remove':
+        return 'hi';
     }
   }
 
@@ -163,7 +165,10 @@ export class CustomerInvoicePage extends GenericTablePage {
           queryString={'name BEGINSWITH[c] $0'}
           getItemString={(item) => `${item.code} - ${item.name}`}
           onSelect={(item) => {
-            console.log(`Adding ${item.name}`);
+            this.props.database.write(() => {
+              this.props.transaction.addItem(this.props.database, item);
+              this.props.database.save('Transaction', this.props.transaction);
+            });
             this.setState({ isAddingNewItem: false });
           }}
           onCancel={() => this.setState({ isAddingNewItem: false })}
@@ -198,7 +203,7 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'totalQuantity',
+    key: 'quantityToIssue',
     width: 2,
     title: 'QUANTITY',
     sortable: true,
