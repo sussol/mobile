@@ -32,8 +32,6 @@ export class StocktakeManagePage extends GenericTablePage {
     this.state.stocktake = {};
     this.state.stocktakeName = '';
     this.state.isNewStocktake = false;
-    this.state.searchTerm = '';
-    this.state.isAscending = true;
     this.state.isSelectAllItems = false;
     this.state.showNoStock = false;
     this.state.sortBy = 'name';
@@ -73,18 +71,6 @@ export class StocktakeManagePage extends GenericTablePage {
         stocktake: this.props.stocktake,
         selection: selected,
         stocktakeName: this.props.stocktake.name,
-      });
-    }
-    this.refreshData();
-  }
-
-  onColumnSort(newSortBy) {
-    if (this.state.sortBy === newSortBy) { // changed column sort direction.
-      this.setState({ isAscending: !this.state.isAscending });
-    } else { // Changed sorting column.
-      this.setState({
-        sortBy: newSortBy,
-        isAscending: true,
       });
     }
     this.refreshData();
@@ -155,8 +141,7 @@ export class StocktakeManagePage extends GenericTablePage {
   toggleShowNoStock() {
     this.setState({
       showNoStock: !this.state.showNoStock,
-    });
-    this.refreshData();
+    }, this.refreshData);
   }
 
   /**
@@ -189,7 +174,7 @@ export class StocktakeManagePage extends GenericTablePage {
         data = data.sorted(sortBy, !isAscending);
     }
     if (!showNoStock) {
-      data = data.slice().filter((item) => item.getTotal !== 0);
+      data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
     return data;
   }
@@ -293,6 +278,7 @@ const COLUMNS = [
     key: 'selected',
     width: 1,
     title: 'SELECTED',
+    sortable: true,
   },
 ];
 
