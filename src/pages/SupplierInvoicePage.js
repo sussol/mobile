@@ -60,7 +60,7 @@ export class SupplierInvoicePage extends GenericTablePage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'numReceived') return;
     this.props.database.write(() => {
-      transactionItem.totalQuantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
+      transactionItem.totalQuantity = parseFloat(newValue);
       this.props.database.save('TransactionItem', transactionItem);
     });
   }
@@ -76,9 +76,11 @@ export class SupplierInvoicePage extends GenericTablePage {
       case 'numSent':
         return transactionItem.totalQuantitySent;
       case 'numReceived': {
+        const isEditable = !this.props.transaction.isFinalised;
+        const type = isEditable ? 'editable' : 'text';
         const renderedCell = {
+          type: type,
           cellContents: transactionItem.totalQuantity,
-          editable: !this.props.transaction.isFinalised,
         };
         return renderedCell;
       }

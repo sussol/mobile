@@ -120,6 +120,7 @@ Name.schema = {
     billingAddress: { type: 'Address', optional: true },
     emailAddress: { type: 'string', optional: true },
     type: 'string',
+    useMasterList: { type: 'bool', optional: true },
     masterList: { type: 'MasterList', optional: true },
     transactions: { type: 'list', objectType: 'Transaction' },
   },

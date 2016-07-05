@@ -7,10 +7,11 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 import {
   Cell,
+  CheckableCell,
   DataTable,
   EditableCell,
   Header,
@@ -18,6 +19,7 @@ import {
   Row,
 } from '../widgets/DataTable';
 
+import Icon from 'react-native-vector-icons/Ionicons';
 import { ListView } from 'realm/react-native';
 import { SearchBar } from '../widgets';
 
@@ -55,6 +57,7 @@ export class GenericTablePage extends React.Component {
       searchTerm: '',
       sortBy: '',
       isAscending: true,
+      selection: [],
     };
     this.columns = null;
     this.dataTypesDisplayed = [];
@@ -67,6 +70,12 @@ export class GenericTablePage extends React.Component {
     this.refreshData = this.refreshData.bind(this);
   }
 
+
+  /**
+   * If overridden, first line of this method should be duplicated. May need to be overridden to
+   * populate selection in state if CheckableCells are used and need to
+   * remember their selected state.
+   */
   componentWillMount() {
     this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     this.refreshData();
@@ -97,12 +106,52 @@ export class GenericTablePage extends React.Component {
     }
   }
 
+  /**
+   * Adds/removes item.id to/from the selection array in state. Must call this within any overrides.
+   * i.e. super.onCheckablePress(item);
+   */
+  onCheckablePress(item) {
+    const newSelection = [...this.state.selection];
+    if (newSelection.indexOf(item.id) >= 0) {
+      newSelection.splice(newSelection.indexOf(item.id), 1);
+    } else {
+      newSelection.push(item.id);
+    }
+    this.setState({ selection: newSelection });
+  }
+
   refreshData() {
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
+/**
+ * Accepted Cell formats:
+ * 1. <Cell style={styles.cell} width={3}/> // Or any other react component. Must be styled within
+ *                                          // the extending class.
+ * 2. item.name;
+ * 3. {
+ *      type: 'text',
+ *      cellContents: item.name,
+ *    };
+ * 4. {
+ *      type: 'editable',
+ *      cellContents: transactionItem.totalQuantity,
+ *    };
+ * 5. {
+ *      type: 'checkable',
+ *    };
+ * 6. {
+ *      type: 'checkable',
+ *      icon: 'md-remove-circle', // will use for both Checked and NotChecked, only colour changes
+ *    };
+ * 7. {
+ *      type: 'checkable',
+ *      iconChecked: 'md-radio-button-on',
+ *      iconNotChecked: 'md-radio-button-off',
+ *    };
+ */
   renderCell() {
     return 'DEFAULT CELL';
   }
@@ -136,28 +185,69 @@ export class GenericTablePage extends React.Component {
     this.columns.forEach((column) => {
       const renderedCell = this.renderCell(column.key, item);
       let cell;
-      if (renderedCell.editable) {
-        cell = (
-          <EditableCell
-            key={column.key}
-            style={globalStyles.dataTableCell}
-            textStyle={globalStyles.dataTableText}
-            width={column.width}
-            onEndEditing={this.onEndEditing &&
-                          ((target, value) => this.onEndEditing(column.key, target, value))}
-            target={item}
-            value={renderedCell.cellContents}
-          />);
-      } else {
-        cell = (
-          <Cell
-            key={column.key}
-            style={globalStyles.dataTableCell}
-            textStyle={globalStyles.dataTableText}
-            width={column.width}
-          >
-            {renderedCell.cellContents ? renderedCell.cellContents : renderedCell}
-          </Cell>);
+      switch (renderedCell.type) {
+        case 'custom':
+          cell = renderedCell.cell;
+          break;
+        case 'checkable': {
+          // if provided, use isChecked prop, else set isChecked according to item.id
+          // being in selection array.
+          const isChecked = renderedCell.isChecked ?
+            renderedCell.isChecked : this.state.selection.indexOf(item.id) >= 0;
+          let iconChecked;
+          let iconNotChecked;
+          if (renderedCell.iconChecked && renderedCell.iconNotChecked) {
+            iconChecked = renderedCell.iconChecked;
+            iconNotChecked = renderedCell.iconNotChecked;
+          } else if (renderedCell.icon) {
+            iconChecked = renderedCell.icon;
+            iconNotChecked = renderedCell.icon;
+          } else {
+            iconChecked = 'md-radio-button-on';
+            iconNotChecked = 'md-radio-button-off';
+          }
+          cell = (
+            <CheckableCell
+              key={column.key}
+              style={[
+                globalStyles.dataTableCell,
+                globalStyles.dataTableCheckableCell,
+              ]}
+              width={column.width}
+              onPress={() => this.onCheckablePress(item)}
+              renderIsChecked={<Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
+              renderIsNotChecked={<Icon name={iconNotChecked} size={15} color={'grey'} />}
+              isChecked={isChecked}
+            />
+          );
+          break;
+        }
+        case 'editable':
+          cell = (
+            <EditableCell
+              key={column.key}
+              style={globalStyles.dataTableCell}
+              textStyle={globalStyles.dataTableText}
+              width={column.width}
+              onEndEditing={this.onEndEditing &&
+                            ((target, value) => this.onEndEditing(column.key, target, value))}
+              target={item}
+              value={renderedCell.cellContents}
+            />
+          );
+          break;
+        case 'text':
+        default:
+          cell = (
+            <Cell
+              key={column.key}
+              style={globalStyles.dataTableCell}
+              textStyle={globalStyles.dataTableText}
+              width={column.width}
+            >
+              {renderedCell.cellContents ? renderedCell.cellContents : renderedCell}
+            </Cell>
+          );
       }
       cells.push(cell);
     });
