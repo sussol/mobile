@@ -1,2 +1,2 @@
 export { getItemQuantitiesOnDate } from './getItemQuantitiesOnDate';
-export { formatDate } from './formatters';
+export { formatDate, formatDateAndTime } from './formatters';
