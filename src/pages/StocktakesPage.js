@@ -49,7 +49,7 @@ export class StocktakesPage extends GenericTablePage {
     database.write(() => {
       for (let i = 0; i < selection.length; i++) {
         const stocktake = stocktakes.find(s => s.id === selection[i]);
-        if (stocktake.isValid()) database.delete('Stocktake', stocktake);
+        if (stocktake.isValid() && !stocktake.isFinalised) database.delete('Stocktake', stocktake);
       }
     });
     this.setState({ selection: [] });
@@ -140,7 +140,7 @@ export class StocktakesPage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
           <BottomConfirmModal
-            isOpen={selection.length > 0}
+            isOpen={selection.length > 0 && showCurrent}
             questionText="Are you sure you want to delete these stocktakes?"
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
