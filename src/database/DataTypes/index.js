@@ -12,12 +12,12 @@ export { TransactionLine } from './TransactionLine';
 export class MasterList extends Realm.Object {}
 export class MasterListLine extends Realm.Object {}
 export class Name extends Realm.Object {}
-export class Requisition extends Realm.Object {}
+export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
 export class RequisitionLine extends Realm.Object {}
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
-export class Stocktake extends Realm.Object {}
+export { Stocktake } from './Stocktake';
 export { StocktakeItem } from './StocktakeItem';
-export class StocktakeLine extends Realm.Object {}
+export { StocktakeLine } from './StocktakeItem';
 export class User extends Realm.Object {}
