@@ -32,6 +32,7 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  item      The object of type 'Item' to be removed from the stocktake.
    */
   deleteStocktakeItem(database, item) {
+    if (this.isFinalised) throw new Error('Cannot delete from finalised Stocktake');
     const stocktakeItems = this.items;
     const stocktakeItemIndex = stocktakeItems
                                 .findIndex(stocktakeItem => stocktakeItem.item.id === item.id);
