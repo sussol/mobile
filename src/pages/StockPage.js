@@ -93,7 +93,7 @@ export class StockPage extends React.Component {
 
   refreshData() {
     const { items, sortBy, dataSource, isAscending, searchTerm } = this.state;
-    const data = items.filtered(`name CONTAINS[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
+    const data = items.filtered(`name BEGINSWITH[c] "${searchTerm}"`).sorted(sortBy, !isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 

@@ -161,7 +161,7 @@ export class StocktakeManagePage extends GenericTablePage {
       showNoStock,
     } = this.state;
     let data;
-    data = items.filtered(`name CONTAINS[c] "${searchTerm}"`);
+    data = items.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
     switch (sortBy) {
       // 'selected' case lists the selected items in alphabetical order, followed by unselected in
       // alphabetical order. This requires the selection array to store the item ids in the
