@@ -16,9 +16,9 @@ const DATA_TYPES_DISPLAYED = ['Stocktake'];
 
 /**
 * Renders the page for displaying Stocktakes.
-* @prop   {Realm}               database      App wide database.
-* @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       stocktakes  Filtered to have only Stocktakes.
+* @prop   {Realm}               database    App wide database.
+* @prop   {func}                navigateTo  CallBack for navigation stack.
+* @state  {Realm.Results}       stocktakes  Realm.Result object containing all Items.
 */
 export class StocktakesPage extends GenericTablePage {
   constructor(props) {
