@@ -133,8 +133,8 @@ export class StocktakesPage extends GenericTablePage {
               <Button
                 style={globalStyles.button}
                 textStyle={globalStyles.buttonText}
-                text="New StockTake"
-                onPress={() => this.props.navigateTo('stocktakeManager', 'New StockTake')}
+                text="New Stocktake"
+                onPress={() => this.props.navigateTo('stocktakeManager', 'New Stocktake')}
               />
             </View>
           </View>

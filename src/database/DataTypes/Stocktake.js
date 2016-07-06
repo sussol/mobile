@@ -39,6 +39,6 @@ export class Stocktake extends Realm.Object {
     database.delete('StocktakeLine', stocktakeItems[stocktakeItemIndex].lines);
     database.delete('StocktakeItem', stocktakeItems[stocktakeItemIndex]);
     stocktakeItems.slice(stocktakeItemIndex, 1);
-    database.save('StockTake', this);
+    database.save('Stocktake', this);
   }
 }
