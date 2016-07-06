@@ -13,6 +13,12 @@ import {
   TextInput as RNTextInput,
 } from 'react-native';
 
+/**
+ * Renders a View containing a RN TextInput. For allowing changing underline color of the the
+ * TextInput, supported in Android and iOS.
+ * @param   {object}  props   Properties passed where component was created.
+ * @return  {React.Component} View containing a TextInput
+ */
 export function TextInput(props) {
   const { style, textStyle, ...textInputProps } = props;
   return (
