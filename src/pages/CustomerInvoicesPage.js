@@ -45,7 +45,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
         serialNumber: '1',
         entryDate: new Date(),
         type: 'customer_invoice',
-        status: 'new',
+        status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
         comment: 'Testing sync',
         otherParty: this.props.database.objects('Name')[0],
       });

@@ -15,13 +15,14 @@ export class TransactionLine extends Realm.Object {
       throw new Error('Cannot change quantity of lines in a finalised transaction');
     }
 
-    this.numberOfPacks = quantity / this.packSize;
+    const difference = quantity - this.totalQuantity;
+    this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
 
     if (this.transaction.isConfirmed) {
-      if (this.transction.type === 'customer_invoice') {
-        this.itemLine.totalQuantity = this.itemLine.totalQuantity - this.quantity;
-      } else if (this.transaction.type === 'supplier_invoice') {
-        this.itemLine.totalQuantity = this.itemLine.totalQuantity + this.quantity;
+      if (this.transaction.isCustomerInvoice) {
+        this.itemLine.totalQuantity -= difference;
+      } else if (this.transaction.isSupplierInvoice) {
+        this.itemLine.totalQuantity += difference;
       }
     }
   }
@@ -39,6 +40,21 @@ export class TransactionLine extends Realm.Object {
     // Must be a supplier invoice
     if (!this.costPrice) return 0;
     return this.costPrice * this.numberOfPacks;
+  }
+
+  /**
+   * Returns the maximum amount of the given quantity that can be allocated to this line.
+   * N.B. quantity may be positive or negative.
+   * @param  {double} quantity Quantity to allocate (can be positive or negative)
+   * @return {double}          The maximum that can be allocated
+   */
+  getAmountToAllocate(quantity) {
+    // Max that can be removed is the total quantity currently in the transaction line
+    if (quantity < 0) return Math.max(quantity, -this.totalQuantity);
+    // For customer invoice, max that can be added is amount in item line
+    if (this.transaction.isCustomerInvoice) return Math.min(quantity, this.itemLine.totalQuantity);
+    // For supplier invoice, there is no maximum amount that can be added
+    return quantity;
   }
 
 }

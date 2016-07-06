@@ -6,6 +6,6 @@ export class ItemLine extends Realm.Object {
   }
 
   set totalQuantity(quantity) {
-    this.numberOfPacks = quantity / this.packSize;
+    this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 }

@@ -7,7 +7,6 @@ import { AppRegistry } from 'react-native';
 import OfflineMobileApp from './src/OfflineMobileApp';
 
 // Disable AutoComplete warning as we use realm results instead of an array
-console.ignoredYellowBox = ['Warning: Failed propType: Invalid prop `data` of type ' // eslint-disable-line
-                           + '`object` supplied to `AutoComplete`, expected `array`.'
-                           + ' Check the render method of `SelectModal`.'];
+console.ignoredYellowBox = // eslint-disable-line no-console
+  ['Warning: Failed prop type: Invalid prop `data` of type `object` supplied to `AutoComplete`'];
 AppRegistry.registerComponent('offlineMobile', () => OfflineMobileApp);

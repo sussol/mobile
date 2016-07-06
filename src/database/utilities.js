@@ -26,16 +26,21 @@ export function addLineToParent(line, parent, createAggregateItem) {
  * @param {double}     difference    The difference in quantity to set across all lines.
  *                                   Will be positive if greater new quantity, negative
  *                                   if lesser.
+ * @param {function}   saveLine      Function to save the edited line in the database
+ * @return {double}    remainder     The difference not able to be applied to the lines
+ *                                   passed in.
  */
-export function applyDifferenceToShortestBatch(unsortedLines, difference) {
+export function applyDifferenceToShortestBatch(unsortedLines, difference, saveLine) {
   let addQuantity = difference;
   const lines = unsortedLines.sorted('expiryDate');
   const index = 0;
+
+  // First apply as much of the quantity as possible to existing lines
   while (addQuantity !== 0 && index < lines.length) {
-    const lineAddQuantity = addQuantity > 0 ?
-                              addQuantity :
-                              Math.min(addQuantity, -lines[index].totalQuantity);
-    lines[index].totalQuantity = lines[index].totalQuantity + lineAddQuantity;
-    addQuantity = addQuantity - lineAddQuantity;
+    const lineAddQuantity = lines[index].getAmountToAllocate(addQuantity);
+    lines[index].totalQuantity += lineAddQuantity;
+    addQuantity -= lineAddQuantity;
+    saveLine(lines[index]);
   }
+  return addQuantity; // The remainder, not able to be allocated to the lines passed in
 }

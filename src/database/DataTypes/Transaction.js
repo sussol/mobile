@@ -14,6 +14,14 @@ export class Transaction extends Realm.Object {
     return this.status === 'confirmed';
   }
 
+  get isCustomerInvoice() {
+    return this.type === 'customer_invoice';
+  }
+
+  get isSupplierInvoice() {
+    return this.type === 'supplier_invoice';
+  }
+
   get totalPrice() {
     return getTotal(this.items, 'totalPrice');
   }
@@ -43,11 +51,9 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   removeItem(database, transactionItem) {
-    console.log(`Number of items before = ${this.items.length}`);
     if (this.isFinalised) throw new Error('Cannot remove items from a finalised transaction');
     if (!this.items.find(item => transactionItem.id === item.id)) return;
     database.delete('TransactionItem', transactionItem);
-    console.log(`Number of items after = ${this.items.length}`);
   }
 
   /**

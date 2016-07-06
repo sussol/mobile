@@ -67,7 +67,7 @@ export class CustomerInvoicePage extends GenericTablePage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'quantityToIssue') return;
     this.props.database.write(() => {
-      transactionItem.totalQuantity = parseFloat(newValue); // eslint-disable-line no-param-reassign
+      transactionItem.setTotalQuantity(this.props.database, parseFloat(newValue));
       this.props.database.save('TransactionItem', transactionItem);
     });
   }
@@ -187,7 +187,7 @@ export class CustomerInvoicePage extends GenericTablePage {
             questionText="Are you sure you want to remove these items?"
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Delete"
+            confirmText="Remove"
           />
           <SelectModal
             isOpen={this.state.isAddingNewItem}
