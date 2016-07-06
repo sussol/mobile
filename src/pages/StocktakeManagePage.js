@@ -38,9 +38,6 @@ export class StocktakeManagePage extends GenericTablePage {
     this.state.sortBy = 'name';
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
-    this.renderHeader = this.renderHeader.bind(this);
-    this.renderRow = this.renderRow.bind(this);
-    this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onConfirmPress = this.onConfirmPress.bind(this);
   }
 
