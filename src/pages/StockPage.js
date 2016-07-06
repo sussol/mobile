@@ -29,8 +29,8 @@ import globalStyles from '../globalStyles';
 * Renders the page for displaying all Items in the DB.
 * @prop   {Realm}               database    App wide database.
 * @prop   {func}                navigateTo  CallBack for navigation stack.
-* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
-* @state  {Realm.Results}       items       Filtered to have only Item objects.
+* @state  {ListView.DataSource} dataSource  DataTable input, used to update rows being rendered.
+* @state  {Realm.Results}       items       Realm.Result object containing all Items.
 * @state  {string}              searchTerm  Current term user has entered in the SearchBar.
 * @state  {string}              sortBy      The property of Item to sort by (isSelected
 *                                           by column press).
