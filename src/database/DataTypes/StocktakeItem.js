@@ -3,6 +3,13 @@ import Realm from 'realm';
 import { getTotal } from '../utilities';
 
 export class StocktakeItem extends Realm.Object {
+  destructor(database) {
+    if (this.stocktake && this.stocktake.isFinalised) {
+      throw new Error('Cannot delete a StocktakeItem belonging to a finalised stocktake');
+    }
+    database.delete('StocktakeLine', this.lines);
+  }
+
   get snapshotTotalQuantity() {
     return getTotal(this.lines, 'snapshotTotalQuantity');
   }

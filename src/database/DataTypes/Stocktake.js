@@ -2,6 +2,10 @@ import Realm from 'realm';
 import { addLineToParent, generateUUID } from '../utilities';
 
 export class Stocktake extends Realm.Object {
+  destructor(database) {
+    if (this.isFinalised) throw new Error('Cannot delete a finalised Stocktake');
+    database.delete('StocktakeItem', this.items);
+  }
 
   // Adds a StocktakeLine, incorporating it into a matching StocktakeItem
   addLine(database, stocktakeLine) {
@@ -32,12 +36,11 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  item      The object of type 'Item' to be removed from the stocktake.
    */
   deleteStocktakeItem(database, item) {
-    if (this.isFinalised) throw new Error('Cannot delete from finalised Stocktake');
+    if (this.isFinalised) throw new Error('Cannot delete from a finalised Stocktake');
     const stocktakeItems = this.items;
     const stocktakeItem = stocktakeItems.find(currentStocktakeItem =>
       currentStocktakeItem.item.id === item.id
     );
-    database.delete('StocktakeLine', stocktakeItem.lines);
     database.delete('StocktakeItem', stocktakeItem);
     database.save('Stocktake', this);
   }
