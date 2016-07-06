@@ -13,7 +13,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { Button, PageInfo, SelectModal } from '../widgets';
+import { BottomConfirmModal, Button, PageInfo, SelectModal } from '../widgets';
 import { formatDate } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine', 'Item', 'ItemLine'];
@@ -80,6 +80,27 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.setState({ isAddingNewItem: true });
   }
 
+  onDeleteConfirm() {
+    const { selection } = this.state;
+    const { transaction, database } = this.props;
+    database.write(() => {
+      for (let i = 0; i < selection.length; i++) {
+        const transactionItem = transaction.items.find(s => s.id === selection[i]);
+        if (transactionItem.isValid()) {
+          transaction.removeItem(database, transactionItem);
+        }
+      }
+    });
+    database.save('Transaction', transaction);
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
   renderPageInfo() {
     const infoColumns = [
       [
@@ -129,7 +150,10 @@ export class CustomerInvoicePage extends GenericTablePage {
           type: this.props.transaction.isFinalised ? 'text' : 'editable',
         };
       case 'remove':
-        return 'hi';
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+        };
     }
   }
 
@@ -158,21 +182,28 @@ export class CustomerInvoicePage extends GenericTablePage {
             </View>
           </View>
           {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0}
+            questionText="Are you sure you want to remove these items?"
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText="Delete"
+          />
+          <SelectModal
+            isOpen={this.state.isAddingNewItem}
+            options={this.props.database.objects('Item')}
+            queryString={'name BEGINSWITH[c] $0'}
+            getItemString={(item) => `${item.code} - ${item.name}`}
+            onSelect={(item) => {
+              this.props.database.write(() => {
+                this.props.transaction.addItem(this.props.database, item);
+                this.props.database.save('Transaction', this.props.transaction);
+              });
+              this.setState({ isAddingNewItem: false });
+            }}
+            onCancel={() => this.setState({ isAddingNewItem: false })}
+          />
         </View>
-        <SelectModal
-          isOpen={this.state.isAddingNewItem}
-          options={this.props.database.objects('Item')}
-          queryString={'name BEGINSWITH[c] $0'}
-          getItemString={(item) => `${item.code} - ${item.name}`}
-          onSelect={(item) => {
-            this.props.database.write(() => {
-              this.props.transaction.addItem(this.props.database, item);
-              this.props.database.save('Transaction', this.props.transaction);
-            });
-            this.setState({ isAddingNewItem: false });
-          }}
-          onCancel={() => this.setState({ isAddingNewItem: false })}
-        />
       </View>
     );
   }

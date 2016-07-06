@@ -1,6 +1,11 @@
 import Realm from 'realm';
 
 export class TransactionLine extends Realm.Object {
+
+  destructor() {
+    this.totalQuantity = 0; // Ensure it reverts any stock changes to item lines
+  }
+
   get totalQuantity() {
     return this.numberOfPacks * this.packSize;
   }

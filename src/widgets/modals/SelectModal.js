@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
 } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -21,7 +20,6 @@ import
 {
   APP_FONT_FAMILY,
   DARK_GREY,
-  PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
 } from '../../globalStyles';
 
@@ -95,8 +93,6 @@ const localStyles = StyleSheet.create({
   modal: {
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width - 2 * PAGE_CONTENT_PADDING_HORIZONTAL,
-    marginTop: PAGE_CONTENT_PADDING_TOP,
-    marginHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
     alignSelf: 'center',
     backgroundColor: DARK_GREY,
     opacity: 0.96,

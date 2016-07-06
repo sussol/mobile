@@ -3,6 +3,14 @@ import Realm from 'realm';
 import { applyDifferenceToShortestBatch, getTotal } from '../utilities';
 
 export class TransactionItem extends Realm.Object {
+
+  destructor(database) {
+    if (this.transaction.isFinalised) {
+      throw new Error('Cannot delete an item from a finalised transaction');
+    }
+    this.lines.forEach(transactionLine => database.delete('TransactionLine', transactionLine));
+  }
+
   get totalQuantity() {
     return getTotal(this.lines, 'totalQuantity');
   }

@@ -18,8 +18,15 @@ export class Transaction extends Realm.Object {
     return getTotal(this.items, 'totalPrice');
   }
 
+  /**
+   * Add a TransactionItem to this transaction, based on the given item. If it already
+   * exists, do nothing.
+   * @param {Realm}  database The app wide local database
+   * @param {object} item     The Item to base the TransactionItem on
+   */
   addItem(database, item) {
-    if (this.items.find(transactionItem => transactionItem.id === item.id)) return;
+    if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
+    if (this.items.find(transactionItem => transactionItem.item.id === item.id)) return;
     const transactionItem = database.create('TransactionItem', {
       id: generateUUID(),
       item: item,
@@ -28,7 +35,27 @@ export class Transaction extends Realm.Object {
     this.items.push(transactionItem);
   }
 
-  // Adds a TransactionLine, incorporating it into a matching TransactionItem
+  /**
+   * Remove the given TransactionItem from this transaction, along with all the
+   * associated lines.
+   * @param  {[type]} database        [description]
+   * @param  {[type]} transactionItem [description]
+   * @return {none}
+   */
+  removeItem(database, transactionItem) {
+    console.log(`Number of items before = ${this.items.length}`);
+    if (this.isFinalised) throw new Error('Cannot remove items from a finalised transaction');
+    if (!this.items.find(item => transactionItem.id === item.id)) return;
+    database.delete('TransactionItem', transactionItem);
+    console.log(`Number of items after = ${this.items.length}`);
+  }
+
+  /**
+   * Adds a TransactionLine, incorporating it into a matching TransactionItem. Will
+   * create a new TransactionItem if none exists already.
+   * @param {Realm}  database        The app wide local database
+   * @param {object} transactionLine The TransactionLine to add to this Transaction
+   */
   addLine(database, transactionLine) {
     addLineToParent(transactionLine, this, () =>
       database.create('TransactionItem', {
@@ -39,6 +66,13 @@ export class Transaction extends Realm.Object {
     );
   }
 
+  /**
+   * Finalise this transaction, generating the associated item lines, linking them
+   * to their items, and setting the status so that this transaction is locked down.
+   * @param  {Realm}  database The app wide local database
+   * @param  {object} user     The user who finalised this transaction
+   * @return {none}
+   */
   finalise(database, user) {
     if (this.type === 'supplier_invoice') { // If a supplier invoice, add item lines to inventory
       this.enteredBy = user;
