@@ -40,7 +40,7 @@ export function applyDifferenceToShortestBatch(unsortedLines, difference, saveLi
     const lineAddQuantity = lines[index].getAmountToAllocate(addQuantity);
     lines[index].totalQuantity += lineAddQuantity;
     addQuantity -= lineAddQuantity;
-    saveLine(lines[index]);
+    if (saveLine) saveLine(lines[index]);
   }
   return addQuantity; // The remainder, not able to be allocated to the lines passed in
 }

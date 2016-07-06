@@ -72,7 +72,7 @@ export class TransactionItem extends Realm.Object {
             batch: batch,
             expiryDate: expiryDate,
             packSize: packSize,
-            numberOfPacks: 0, // TODO
+            numberOfPacks: 0,
             costPrice: costPrice,
             sellPrice: sellPrice,
             transaction: this.transaction,

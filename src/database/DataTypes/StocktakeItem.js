@@ -19,7 +19,7 @@ export class StocktakeItem extends Realm.Object {
    */
   set countedNumberOfPacks(quantity) {
     const difference = quantity - this.countedTotalQuantity; // Positive if new quantity greater
-    applyDifferenceToShortestBatch(this.lines, difference);
+    applyDifferenceToShortestBatch(this.lines, difference); // TODO add save line so change syncs
   }
 
 }
