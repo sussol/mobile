@@ -205,7 +205,7 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   render() {
-    const { isSelectAllItems, showNoStock, stocktake, selection } = this.state;
+    const { isSelectAllItems, showNoStock, stocktake, selection, isNewStocktake } = this.state;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -235,7 +235,7 @@ export class StocktakeManagePage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
           <BottomModal
-            isOpen={selection.length > 0 && !stocktake.isFinalised}
+            isOpen={!stocktake.isFinalised && !isNewStocktake || selection.length > 0}
             style={localStyles.bottomModal}
           >
             <TextInput
@@ -249,7 +249,7 @@ export class StocktakeManagePage extends GenericTablePage {
             <Button
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
               textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-              text={this.state.isNewStocktake ? 'Create' : 'Confirm'}
+              text={isNewStocktake ? 'Create' : 'Confirm'}
               onPress={() => this.onConfirmPress()}
             />
           </BottomModal>
