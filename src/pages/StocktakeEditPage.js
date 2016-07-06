@@ -21,8 +21,10 @@ export function StocktakeEditPage(props) {
         <Button
           style={globalStyles.button}
           textStyle={globalStyles.buttonText}
-          text="Or Manage a Stocktake"
-          onPress={() => props.navigateTo('stocktakeManager', 'Manage Stocktake')}
+          text="Manage this stocktake"
+          onPress={() => props.navigateTo('stocktakeManager', 'Manage Stocktake', {
+            stocktake: props.stocktake,
+          })}
         />
     </View>
   );
@@ -30,5 +32,6 @@ export function StocktakeEditPage(props) {
 
 StocktakeEditPage.propTypes = {
   style: View.propTypes.style,
+  stocktake: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
