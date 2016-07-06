@@ -30,9 +30,7 @@ export class StocktakeManagePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.items = props.database.objects('Item');
-    this.state.stocktake = {};
     this.state.stocktakeName = '';
-    this.state.isNewStocktake = false;
     this.state.isSelectAllItems = false;
     this.state.showItemsWithNoStock = false;
     this.state.sortBy = 'name';
@@ -44,20 +42,7 @@ export class StocktakeManagePage extends GenericTablePage {
   componentWillMount() {
     this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     if (!this.props.stocktake) {
-      let stocktake;
-      this.props.database.write(() => {
-        const date = new Date();
-        stocktake = this.props.database.create('Stocktake', {
-          id: generateUUID(),
-          name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
-          createdDate: date,
-          status: 'new',
-          comment: 'Testing StocktakesPage',
-          serialNumber: '1337',
-          lines: [],
-        });
-      });
-      this.setState({ stocktake: stocktake, isNewStocktake: true }, this.refreshData);
+      this.refreshData();
     } else {
       const selected = [];
       this.props.stocktake.items.forEach((stocktakeItem) => {
@@ -65,7 +50,6 @@ export class StocktakeManagePage extends GenericTablePage {
         if (item) selected.push(item.id);
       });
       this.setState({
-        stocktake: this.props.stocktake,
         selection: selected,
         stocktakeName: this.props.stocktake.name,
       }, this.refreshData);
@@ -73,15 +57,32 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   onConfirmPress() {
-    const { stocktake, selection, items, isNewStocktake } = this.state;
+    const { selection, items } = this.state;
     const { database, navigateTo } = this.props;
-    let { stocktakeName } = this.state;
     const stocktakeItems = [];
-    if (stocktakeName === '') {
-      stocktakeName = stocktake.name;
-    }
+    const date = new Date();
+    let stocktake;
+    let { stocktakeName } = this.state;
 
     database.write(() => {
+      // Get stocktake from props or make a new one.
+      if (this.props.stocktake) {
+        stocktake = this.props.stocktake;
+      } else {
+        stocktake = this.props.database.create('Stocktake', {
+          id: generateUUID(),
+          name: '',
+          createdDate: date,
+          status: 'new',
+          comment: 'Testing StocktakesPage',
+          serialNumber: '1337',
+          items: [],
+        });
+      }
+      if (stocktakeName === '') {
+        stocktakeName = `Stocktake ${formatDateAndTime(date, 'slashes')}`;
+      }
+
       stocktake.items.forEach((stocktakeItem) => {
         const item = stocktakeItem.item;
         const itemIdIndex = selection.indexOf(item.id);
@@ -130,7 +131,7 @@ export class StocktakeManagePage extends GenericTablePage {
       stocktake.name,
       { stocktake: stocktake },
       // coming from StocktakesPage : coming from StocktakesEditPage.
-      isNewStocktake ? 'replace' : 'replacePreviousAndPop',
+      !this.props.stocktake ? 'replace' : 'replacePreviousAndPop',
     );
   }
 
@@ -202,10 +203,9 @@ export class StocktakeManagePage extends GenericTablePage {
     const {
       isSelectAllItems,
       showItemsWithNoStock,
-      stocktake,
       selection,
-      isNewStocktake,
     } = this.state;
+    const { stocktake } = this.props;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -235,7 +235,7 @@ export class StocktakeManagePage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
           <BottomModal
-            isOpen={!stocktake.isFinalised && !isNewStocktake || selection.length > 0}
+            isOpen={!(stocktake && stocktake.isFinalised) && selection.length > 0}
             style={localStyles.bottomModal}
           >
             <TextInput
@@ -249,7 +249,7 @@ export class StocktakeManagePage extends GenericTablePage {
             <Button
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
               textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-              text={isNewStocktake ? 'Create' : 'Confirm'}
+              text={!stocktake ? 'Create' : 'Confirm'}
               onPress={() => this.onConfirmPress()}
             />
           </BottomModal>
