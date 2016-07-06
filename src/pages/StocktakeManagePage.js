@@ -34,7 +34,7 @@ export class StocktakeManagePage extends GenericTablePage {
     this.state.stocktakeName = '';
     this.state.isNewStocktake = false;
     this.state.isSelectAllItems = false;
-    this.state.showNoStock = false;
+    this.state.showItemsWithNoStock = false;
     this.state.sortBy = 'name';
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
@@ -129,7 +129,7 @@ export class StocktakeManagePage extends GenericTablePage {
       'stocktakeEditor',
       stocktake.name,
       { stocktake: stocktake },
-      // coming from StocktakesPage : coming from StocktakesEditPage
+      // coming from StocktakesPage : coming from StocktakesEditPage.
       isNewStocktake ? 'replace' : 'replacePreviousAndPop',
     );
   }
@@ -143,21 +143,21 @@ export class StocktakeManagePage extends GenericTablePage {
     }, this.refreshData);
   }
 
-  toggleShowNoStock() {
+  toggleShowItemsWithNoStock() {
     this.setState({
-      showNoStock: !this.state.showNoStock,
+      showItemsWithNoStock: !this.state.showItemsWithNoStock,
     }, this.refreshData);
   }
 
   /**
-   * Updates data within dataSource in state according to SortBy and
-   * isAscending.
+   * Updates data within dataSource in state according to sortBy and
+   * isAscending. Also filters data according to showItemsWithNoStock.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const {
       items,
       selection,
-      showNoStock,
+      showItemsWithNoStock,
     } = this.state;
     let data;
     data = items.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
@@ -178,7 +178,7 @@ export class StocktakeManagePage extends GenericTablePage {
       default:
         data = data.sorted(sortBy, !isAscending);
     }
-    if (!showNoStock) {
+    if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
     return data;
@@ -204,7 +204,13 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   render() {
-    const { isSelectAllItems, showNoStock, stocktake, selection, isNewStocktake } = this.state;
+    const {
+      isSelectAllItems,
+      showItemsWithNoStock,
+      stocktake,
+      selection,
+      isNewStocktake,
+    } = this.state;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -220,8 +226,8 @@ export class StocktakeManagePage extends GenericTablePage {
                 toggles={[
                   {
                     text: 'Show No Stock',
-                    onPress: () => this.toggleShowNoStock(),
-                    isOn: showNoStock,
+                    onPress: () => this.toggleShowItemsWithNoStock(),
+                    isOn: showItemsWithNoStock,
                   },
                   {
                     text: 'Select All Items',
