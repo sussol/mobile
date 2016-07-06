@@ -61,7 +61,9 @@ export class Database {
 
   /**
    * Deletes a specific object from the database.
-   * @param  {Realm.Object} object Object to be deleted
+   * @param  {Realm.Object} object  Object to be deleted, also can accept an array of Objects
+   *                                of same type to be deleted.
+   * @param  {string} type          Type of the object(s) to be deleted
    * @return {none}
    */
   delete(type, object) {
