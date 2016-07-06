@@ -243,7 +243,7 @@ export class StocktakeManagePage extends GenericTablePage {
               placeholderTextColor="white"
               placeholder="Give your stocktake a name"
               value={this.state.stocktakeName}
-              onChange={(text) => this.setState({ stocktakeName: text })}
+              onChangeText={(text) => this.setState({ stocktakeName: text })}
             />
             <Button
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
