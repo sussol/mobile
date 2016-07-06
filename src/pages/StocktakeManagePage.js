@@ -96,7 +96,8 @@ export class StocktakeManagePage extends GenericTablePage {
           selection.slice(itemIdIndex, 1);
         }
         // Remove StocktakeItem of Items that are not in the selection.
-        if (!selection.includes(item.id)) stocktake.deleteStocktakeItem(database, item);
+        console.log(stocktake.id);
+        if (!selection.some(id => id === item.id)) stocktake.deleteStocktakeItem(database, item);
       });
 
       selection.forEach((itemId) => {
