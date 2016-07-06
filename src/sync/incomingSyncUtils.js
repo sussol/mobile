@@ -481,7 +481,6 @@ function parseNumber(numberString) {
   try {
     return parseFloat(numberString);
   } catch (error) {
-    console.log(error);
     throw error;
   }
 }
