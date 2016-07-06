@@ -77,11 +77,10 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   onConfirmPress() {
-    const { stocktake, selection, items } = this.state;
+    const { stocktake, selection, items, isNewStocktake } = this.state;
     const { database, navigateTo } = this.props;
     let { stocktakeName } = this.state;
     const stocktakeItems = [];
-
     if (stocktakeName === '') {
       stocktakeName = stocktake.name;
     }
@@ -126,12 +125,17 @@ export class StocktakeManagePage extends GenericTablePage {
         database.save('StocktakeItem', stocktakeItem);
         stocktakeItems.push(stocktakeItem);
       });
-
       stocktake.name = stocktakeName;
       stocktakeItems.forEach(item => stocktake.items.push(item));
       database.save('Stocktake', stocktake);
     });
-    navigateTo('stocktakeEditor', stocktake.name, { stocktake: stocktake });
+    navigateTo(
+      'stocktakeEditor',
+      stocktake.name,
+      { stocktake: stocktake },
+      // coming from StocktakesPage : coming from StocktakesEditPage
+      isNewStocktake ? 'replace' : 'replacePreviousAndPop',
+    );
   }
 
   toggleSelectAllItems() {
