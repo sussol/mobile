@@ -123,7 +123,8 @@ export default class OfflineMobileApp extends React.Component {
     const navigateTo = (key, title, extraProps, NavType) => {
       if (!NavType) NavType = 'push';
       const navigationProps = { key, title, ...extraProps };
-      // If the page we're going to takes in a record that can be finalised, retain it in state
+      // If the page we're going to has a key value pair in FINALISABLE_PAGES, get recordToFinalise
+      // and recordType corresponding to that key. Set the new state and render the Finalise Button
       if (FINALISABLE_PAGES[key]) {
         const recordToFinalise = extraProps[FINALISABLE_PAGES[key].recordToFinaliseKey];
         const recordType = FINALISABLE_PAGES[key].recordType;
