@@ -191,13 +191,6 @@ export class StocktakeManagePage extends GenericTablePage {
         return item.code;
       case 'name':
         return item.name;
-      case 'snapshotQuantity': {
-        const stocktakeItem = this.state.stocktake.items.find(currentStocktakeItem =>
-          currentStocktakeItem.item.id === item.id
-        );
-        if (stocktakeItem) return stocktakeItem.snapshotTotalQuantity;
-        return item.totalQuantity;
-      }
       case 'selected':
         return {
           type: 'checkable',
@@ -284,11 +277,6 @@ const COLUMNS = [
     width: 6,
     title: 'ITEM NAME',
     sortable: true,
-  },
-  {
-    key: 'snapshotQuantity',
-    width: 2,
-    title: 'SNAPSHOT QUANTITY',
   },
   {
     key: 'selected',
