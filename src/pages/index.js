@@ -32,3 +32,22 @@ export const PAGES = {
   supplierInvoice: SupplierInvoicePage,
   supplierInvoices: SupplierInvoicesPage,
 };
+
+export const FINALISABLE_PAGES = {
+  supplierInvoice: {
+    recordType: 'Transaction',
+    recordToFinaliseKey: 'transaction',
+  },
+  customerInvoice: {
+    recordType: 'Transaction',
+    recordToFinaliseKey: 'invoice',
+  },
+  requisition: {
+    recordType: 'Requisition',
+    recordToFinaliseKey: 'requisition',
+  },
+  stocktakeEditor: {
+    recordType: 'Stocktake',
+    recordToFinaliseKey: 'stocktake',
+  },
+};
