@@ -34,7 +34,9 @@ export class Stocktake extends Realm.Object {
   deleteStocktakeItem(database, item) {
     if (this.isFinalised) throw new Error('Cannot delete from finalised Stocktake');
     const stocktakeItems = this.items;
-    const stocktakeItem = stocktakeItems.find(i => i.item.id === item.id);
+    const stocktakeItem = stocktakeItems.find(currentStocktakeItem =>
+      currentStocktakeItem.item.id === item.id
+    );
     database.delete('StocktakeLine', stocktakeItem.lines);
     database.delete('StocktakeItem', stocktakeItem);
     database.save('Stocktake', this);

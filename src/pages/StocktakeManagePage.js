@@ -192,7 +192,9 @@ export class StocktakeManagePage extends GenericTablePage {
       case 'name':
         return item.name;
       case 'snapshotQuantity': {
-        const stocktakeItem = this.state.stocktake.items.find(sti => sti.item.id === item.id);
+        const stocktakeItem = this.state.stocktake.items.find(currentStocktakeItem =>
+          currentStocktakeItem.item.id === item.id
+        );
         if (stocktakeItem) return stocktakeItem.snapshotTotalQuantity;
         return item.totalQuantity;
       }
