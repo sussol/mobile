@@ -10,5 +10,6 @@ export function formatDate(date, format) {
 }
 
 export function formatDateAndTime(date, format) {
-  return `${formatDate(date, format)} ${date.toLocaleTimeString()}`;
+  const time = date.toLocaleTimeString();
+  return `${formatDate(date, format)} ${time.substring(0, time.length - 3)}`;
 }
