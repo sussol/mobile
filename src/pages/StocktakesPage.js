@@ -23,7 +23,7 @@ const DATA_TYPES_DISPLAYED = ['Stocktake'];
 export class StocktakesPage extends GenericTablePage {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'name';
+    this.state.sortBy = 'createdDate';
     this.state.showCurrent = true;
     this.state.stocktakes = props.database.objects('Stocktake');
     this.columns = COLUMNS;
