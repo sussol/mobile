@@ -10,13 +10,5 @@ export function formatDate(date, format) {
 }
 
 export function formatDateAndTime(date, format) {
-  switch (format) {
-    default:
-    case 'slashes':
-      return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()} ` +
-             `${date.getHours()}:${date.getMinutes()}`;
-    case 'dots':
-      return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()} ` +
-             `${date.getHours()}:${date.getMinutes()}`;
-  }
+  return `${formatDate(date, format)} ${date.toLocaleTimeString()}`;
 }
