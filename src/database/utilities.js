@@ -16,6 +16,8 @@ export function addLineToParent(line, parent, createAggregateItem) {
     aggregateItem = createAggregateItem();
     parent.items.push(aggregateItem);
   }
+  // If the line is already in the aggregateItem, we don't want to add it again
+  if (aggregateItem.lines.find(currentLine => currentLine.id === line.id)) return;
   aggregateItem.lines.push(line);
 }
 

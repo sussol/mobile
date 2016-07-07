@@ -69,7 +69,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         supplier: getObject(database, 'Name', record.name_ID),
       };
       const itemLine = database.update(internalType, internalRecord);
-      item.lines.push(itemLine);
+      item.addLine(itemLine);
       database.save('Item', item);
       break;
     }
@@ -90,12 +90,15 @@ export function integrateIncomingRecord(database, recordType, record) {
       break;
     }
     case 'MasterListLine': {
+      const masterList = getObject(database, 'MasterList', record.item_master_ID);
       internalRecord = {
         id: record.ID,
         item: getObject(database, 'Item', record.item_ID),
         imprestQuantity: parseNumber(record.imprest_quan),
+        masterList: masterList,
       };
-      database.update(internalType, internalRecord);
+      const masterListLine = database.update(internalType, internalRecord);
+      masterList.addLine(masterListLine);
       break;
     }
     case 'Name': {
@@ -202,7 +205,7 @@ export function integrateIncomingRecord(database, recordType, record) {
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
-      otherParty.transactions.push(transaction);
+      otherParty.addTransaction(transaction);
       database.save('Name', otherParty);
       break;
     }
@@ -221,7 +224,7 @@ export function integrateIncomingRecord(database, recordType, record) {
       const itemLine = getObject(database, 'ItemLine', record.item_line_ID);
       const item = getObject(database, 'Item', record.item_ID);
       itemLine.item = item;
-      item.lines.push(itemLine);
+      item.addLine(itemLine);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
         id: record.ID,
