@@ -146,6 +146,9 @@ export default StyleSheet.create({
     fontSize: 12,
     color: SUSSOL_ORANGE,
   },
+  disabledButtonText: {
+    color: WARM_GREY,
+  },
   button: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -156,6 +159,9 @@ export default StyleSheet.create({
     padding: 15,
     margin: 5,
     borderColor: SUSSOL_ORANGE,
+  },
+  disabledButton: {
+    borderColor: WARMER_GREY,
   },
   menuButtonText: {
     fontFamily: APP_FONT_FAMILY,

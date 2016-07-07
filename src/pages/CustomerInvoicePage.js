@@ -13,7 +13,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { BottomConfirmModal, Button, PageInfo, SelectModal } from '../widgets';
+import { BottomConfirmModal, PageButton, PageInfo, SelectModal } from '../widgets';
 import { formatDate } from '../utilities';
 
 const DATA_TYPES_DISPLAYED =
@@ -145,6 +145,7 @@ export class CustomerInvoicePage extends GenericTablePage {
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
+          isDisabled: this.props.transaction.isFinalised,
         };
     }
   }
@@ -159,15 +160,12 @@ export class CustomerInvoicePage extends GenericTablePage {
               {this.renderSearchBar()}
             </View>
             <View style={globalStyles.verticalContainer}>
-              <Button
-                style={[globalStyles.button, localStyles.button]}
-                textStyle={globalStyles.buttonText}
+              <PageButton
                 text="New Item"
                 onPress={() => this.setState({ isAddingNewItem: true })}
+                isDisabled={this.props.transaction.isFinalised}
               />
-              <Button
-                style={[globalStyles.button, localStyles.button]}
-                textStyle={globalStyles.buttonText}
+              <PageButton
                 text="Add Master Items"
                 onPress={this.props.transaction && this.props.transaction.addItemsFromMasterList}
               />
@@ -175,17 +173,16 @@ export class CustomerInvoicePage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
           <BottomConfirmModal
-            isOpen={this.state.selection.length > 0}
+            isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
             questionText="Are you sure you want to remove these items?"
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
             confirmText="Remove"
           />
           <SelectModal
-            isOpen={this.state.isAddingNewItem}
+            isOpen={this.state.isAddingNewItem && !this.props.transaction.isFinalised}
             options={this.props.database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0'}
-            getItemString={(item) => `${item.code} - ${item.name}`}
+            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             onSelect={(item) => {
               this.props.database.write(() => {
                 this.props.transaction.addItem(this.props.database, item);

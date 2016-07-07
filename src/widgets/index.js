@@ -9,6 +9,7 @@ export {
 export { Button } from './Button';
 export { DataTable } from './DataTable';
 export { FinaliseButton } from './FinaliseButton';
+export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
 export { SearchBar } from './SearchBar';
 export { SyncState } from './SyncState';

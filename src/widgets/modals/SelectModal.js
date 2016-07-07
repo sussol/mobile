@@ -38,7 +38,6 @@ export class SelectModal extends React.Component {
       onSelect,
       queryString,
       placeholderText,
-      getItemString,
       ...modalProps,
     } = this.props;
 
@@ -60,7 +59,7 @@ export class SelectModal extends React.Component {
           renderItem={(item) => (
             <TouchableOpacity onPress={() => onSelect(item)}>
               <Text style={[localStyles.text, localStyles.itemText]}>
-                {getItemString(item)}
+                {item.toString()}
               </Text>
             </TouchableOpacity>
           )}
@@ -72,7 +71,6 @@ export class SelectModal extends React.Component {
 
 SelectModal.propTypes = {
   isOpen: React.PropTypes.bool.isRequired,
-  getItemString: React.PropTypes.func.isRequired,
   options: React.PropTypes.object.isRequired,
   queryString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,

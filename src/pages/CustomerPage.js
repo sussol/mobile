@@ -11,22 +11,17 @@ import {
   View,
 } from 'react-native';
 
-import globalStyles from '../globalStyles';
-import { Button } from '../widgets';
+import { PageButton } from '../widgets';
 
 export function CustomerPage(props) {
   return (
     <View style={props.style}>
       <Text>A specific customer, with their billing address and invoices.</Text>
-        <Button
-          style={globalStyles.button}
-          textStyle={globalStyles.buttonText}
+        <PageButton
           text="View Existing Customer Invoice"
           onPress={() => props.navigateTo('customerInvoice', 'Invoice Num')}
         />
-        <Button
-          style={globalStyles.button}
-          textStyle={globalStyles.buttonText}
+        <PageButton
           text="New Customer Invoice"
           onPress={() => props.navigateTo('customerInvoice', 'Invoice Num')}
         />
