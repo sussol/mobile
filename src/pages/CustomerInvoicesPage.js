@@ -47,9 +47,10 @@ export class CustomerInvoicesPage extends GenericTablePage {
         entryDate: new Date(),
         type: 'customer_invoice',
         status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
-        comment: 'Testing sync',
+        comment: '',
         otherParty: otherParty,
       });
+      if (otherParty.useMasterList) invoice.addItemsFromMasterList(this.props.database);
     });
     this.navigateToInvoice(invoice);
   }
