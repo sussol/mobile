@@ -9,6 +9,7 @@ Sustainable Solutions' Mobile app for use with the mSupply medical inventory con
 * Open the .apk on the tablet and follow the install instructions (need to allow apps from unknown sources)
 
 ### Building from Source
+* Assumes you have [npm](https://nodejs.org/en/download/) and the [react-native](https://facebook.github.io/react-native/docs/getting-started.html#dependencies-for-mac-ios) dev tools installed
 * Clone the repo
 * ```$ npm install```
 * Get the signing key from a Sussol insider
@@ -18,6 +19,7 @@ Sustainable Solutions' Mobile app for use with the mSupply medical inventory con
 * More here: https://facebook.github.io/react-native/docs/signed-apk-android.html
 
 ### Running in Debug
+* Assumes you have [npm](https://nodejs.org/en/download/) and the [react-native](https://facebook.github.io/react-native/docs/getting-started.html#dependencies-for-mac-ios) dev tools installed
 * Clone the repo
 * ```$ npm install```
 * Connect an Android tablet, with developer settings configured to allow remote debugging
