@@ -143,7 +143,7 @@ export default StyleSheet.create({
   },
   buttonText: {
     fontFamily: APP_FONT_FAMILY,
-    fontSize: 12,
+    fontSize: 10,
     color: SUSSOL_ORANGE,
   },
   disabledButtonText: {
