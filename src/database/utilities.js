@@ -33,10 +33,9 @@ export function addLineToParent(line, parent, createAggregateItem) {
 export function applyDifferenceToShortestBatch(unsortedLines, difference, saveLine) {
   let addQuantity = difference;
   const lines = unsortedLines.sorted('expiryDate');
-  const index = 0;
 
   // First apply as much of the quantity as possible to existing lines
-  while (addQuantity !== 0 && index < lines.length) {
+  for (let index = 0; addQuantity !== 0 && index < lines.length; index++) {
     const lineAddQuantity = lines[index].getAmountToAllocate(addQuantity);
     lines[index].totalQuantity += lineAddQuantity;
     addQuantity -= lineAddQuantity;

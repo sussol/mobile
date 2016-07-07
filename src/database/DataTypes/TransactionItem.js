@@ -82,7 +82,7 @@ export class TransactionItem extends Realm.Object {
       }
     }
     if (remainder > 0) { // Something went wrong
-      throw new Error(`Failed to allocate ${remainder} of quantity to TransactionItem`);
+      throw new Error(`Failed to allocate ${remainder} of ${quantity} to ${this.item.name}`);
     }
   }
 }
