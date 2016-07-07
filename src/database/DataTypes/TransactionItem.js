@@ -47,6 +47,7 @@ export class TransactionItem extends Realm.Object {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot set quantity of an item in a finalised transaction');
     }
+    if (quantity < 0) throw new Error('Cannot set a negative quantity on a transaction item');
     const difference = quantity - this.totalQuantity; // Positive if new quantity is greater
     const saveLine = line => database.save('TransactionLine', line);
     let remainder = applyDifferenceToShortestBatch(this.lines, difference, saveLine);
