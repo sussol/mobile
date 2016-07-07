@@ -75,7 +75,7 @@ export function integrateIncomingRecord(database, recordType, record) {
     }
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
-      const masterList = getObject(database, 'MasterList', record.master_group_ID);
+      const masterList = getObject(database, 'MasterList', record.list_master_ID);
       name.masterList = masterList;
       database.save('Name', name);
       break;
@@ -115,6 +115,9 @@ export function integrateIncomingRecord(database, recordType, record) {
                                            record.bill_postal_zip_code),
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+        isCustomer: parseBoolean(record.customer),
+        isSupplier: parseBoolean(record.supplier),
+        isManufacturer: parseBoolean(record.manufacturer),
       };
       database.update(internalType, internalRecord);
       break;
@@ -273,13 +276,14 @@ export function sanityCheckIncomingRecord(recordType, record) {
       return record.item_ID && record.pack_size && record.quantity && record.batch
              && record.expiry_date && record.cost_price && record.sell_price;
     case 'MasterListNameJoin':
-      return record.name_ID && record.master_group_ID;
+      return record.name_ID && record.list_master_ID;
     case 'MasterList':
       return typeof record.description === 'string';
     case 'MasterListLine':
       return record.item_ID;
     case 'Name':
-      return record.name && record.code && record.type;
+      return record.name && record.code && record.type && record.customer
+      && record.supplier && record.manufacturer;
     case 'Requisition':
       return record.status && record.date_entered && record.type && record.daysToSupply
              && record.serial_number;
@@ -386,6 +390,9 @@ function generatePlaceholder(type, id) {
         name: placeholderString,
         code: placeholderString,
         type: placeholderString,
+        isCustomer: false,
+        isSupplier: false,
+        isManufacturer: false,
       };
       return placeholder;
     case 'Stocktake':
@@ -486,4 +493,14 @@ function parseNumber(numberString) {
   } catch (error) {
     throw error;
   }
+}
+
+/**
+ * Returns the boolean string as a boolean (false if none passed)
+ * @param  {string} numberString The string to convert to a boolean
+ * @return {boolean}               The boolean representation of the string
+ */
+function parseBoolean(booleanString) {
+  const trueStrings = ['true', 'True', 'TRUE'];
+  return booleanString && trueStrings.indexOf(booleanString) >= 0;
 }

@@ -28,6 +28,7 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.databaseListenerId = null;
     this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
@@ -56,6 +57,13 @@ export class CustomerInvoicePage extends GenericTablePage {
     return data;
   }
 
+  onAddMasterItems() {
+    this.props.database.write(() => {
+      this.props.transaction.addItemsFromMasterList(this.props.database);
+      this.props.database.save('Transaction', this.props.transaction);
+    });
+  }
+
   /**
    * Respond to the user editing the number in the number received column
    * @param  {string} key             Should always be 'numReceived'
@@ -82,8 +90,8 @@ export class CustomerInvoicePage extends GenericTablePage {
           transaction.removeItem(database, transactionItem);
         }
       }
+      database.save('Transaction', transaction);
     });
-    database.save('Transaction', transaction);
     this.setState({ selection: [] });
     this.refreshData();
   }
@@ -167,7 +175,8 @@ export class CustomerInvoicePage extends GenericTablePage {
               />
               <PageButton
                 text="Add Master Items"
-                onPress={this.props.transaction && this.props.transaction.addItemsFromMasterList}
+                onPress={this.onAddMasterItems}
+                isDisabled={this.props.transaction.isFinalised}
               />
             </View>
           </View>
