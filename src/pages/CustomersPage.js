@@ -22,7 +22,11 @@ export class CustomersPage extends GenericTablePage {
     super(props);
     this.state.sortBy = 'name';
     this.state.customers = props.database.objects('Name')
-                                            .filtered('type == "store" OR type == "patient"');
+                                            .filtered(
+                                              'type == "store" ' +
+                                              'OR type == "patient" ' +
+                                              'OR type == "facility"'
+                                            );
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
