@@ -30,8 +30,6 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
-    this.onAddMasterList = this.onAddMasterList.bind(this);
-    this.onNewItem = this.onNewItem.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
   }
 
@@ -72,14 +70,6 @@ export class CustomerInvoicePage extends GenericTablePage {
       transactionItem.setTotalQuantity(this.props.database, quantity);
       this.props.database.save('TransactionItem', transactionItem);
     });
-  }
-
-  onAddMasterList() {
-    return;
-  }
-
-  onNewItem() {
-    this.setState({ isAddingNewItem: true });
   }
 
   onDeleteConfirm() {
@@ -173,13 +163,13 @@ export class CustomerInvoicePage extends GenericTablePage {
                 style={[globalStyles.button, localStyles.button]}
                 textStyle={globalStyles.buttonText}
                 text="New Item"
-                onPress={this.onNewItem}
+                onPress={() => this.setState({ isAddingNewItem: true })}
               />
               <Button
                 style={[globalStyles.button, localStyles.button]}
                 textStyle={globalStyles.buttonText}
                 text="Add Master Items"
-                onPress={this.onAddMasterList}
+                onPress={this.props.transaction && this.props.transaction.addItemsFromMasterList}
               />
             </View>
           </View>
