@@ -121,6 +121,7 @@ export class RealmExplorer extends React.Component {
             || (typeof item[field].getMonth === 'function'))
             && String(item[field]);
           if (!itemString && item[field] && item[field].length) itemString = item[field].length;
+          if (typeof item[field] === 'boolean') itemString = item[field] ? 'True' : 'False';
           cells.push(
             <Cell
               key={field}
