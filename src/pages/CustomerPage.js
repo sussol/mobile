@@ -9,7 +9,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { generateUUID } from '../database';
+import { createCustomerInvoice } from '../database';
 import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
@@ -35,38 +35,24 @@ export class CustomerPage extends GenericTablePage {
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.navigateToInvoice = this.navigateToInvoice.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.renderCell = this.renderCell.bind(this);
   }
 
   onNewInvoice() {
-    const { customer, database, navigateTo } = this.props;
-    let invoice;
-    database.write(() => {
-      invoice = database.create('Transaction', {
-        id: generateUUID(),
-        serialNumber: '1',
-        entryDate: new Date(),
-        type: 'customer_invoice',
-        status: 'new',
-        // comment: 'Testing sync',
-        otherParty: customer,
-      });
-      customer.transactions.push(invoice);
-      database.save('Name', customer);
-    });
-    navigateTo('customerInvoice', 'New Invoice', {
-      invoice: invoice,
-    });
+    const invoice = createCustomerInvoice(this.props.database, this.props.customer);
+    this.navigateToInvoice(invoice);
   }
 
-  onRowPress(transaction) {
-    this.props.navigateTo(
-      'transaction',
-      `Invoice ${transaction.serialNumber}`,
-      { transaction },
-    );
+  onRowPress(invoice) {
+    this.navigateToInvoice(invoice);
+  }
+
+  navigateToInvoice(invoice) {
+    const pageTitle = `Invoice ${invoice.serialNumber}`;
+    this.props.navigateTo('customerInvoice', pageTitle, { transaction: invoice });
   }
 
   /**
