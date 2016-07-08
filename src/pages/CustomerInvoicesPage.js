@@ -10,7 +10,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { generateUUID } from '../database';
-import { Button } from '../widgets';
+import { PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
@@ -28,15 +28,17 @@ export class CustomerInvoicesPage extends GenericTablePage {
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "customer_invoice"');
     this.state.sortBy = 'otherParty.name';
+    this.state.isCreatingInvoice = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
+    this.navigateToInvoice = this.navigateToInvoice.bind(this);
     this.renderCell = this.renderCell.bind(this);
   }
 
-  onNewInvoice() {
+  onNewInvoice(otherParty) {
     let invoice;
     this.props.database.write(() => {
       invoice = this.props.database.create('Transaction', {
@@ -44,18 +46,26 @@ export class CustomerInvoicesPage extends GenericTablePage {
         serialNumber: '1',
         entryDate: new Date(),
         type: 'customer_invoice',
-        status: 'new',
-        comment: 'Testing sync',
-        otherParty: this.props.database.objects('Name')[0],
+        status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
+        comment: '',
+        otherParty: otherParty,
       });
+      if (otherParty.useMasterList) invoice.addItemsFromMasterList(this.props.database);
+      this.props.database.save('Transaction', invoice);
+      otherParty.addTransaction(invoice);
+      this.props.database.save('Name', otherParty);
     });
-    this.props.navigateTo('customerInvoice', 'New Invoice', {
-      invoice: invoice,
-    });
+    this.navigateToInvoice(invoice);
   }
 
   onRowPress(invoice) {
-    this.props.navigateTo('customerInvoice', `Invoice ${invoice.serialNumber}`, { invoice });
+    this.navigateToInvoice(invoice);
+  }
+
+  navigateToInvoice(invoice) {
+    this.props.navigateTo('customerInvoice',
+                          `Invoice ${invoice.serialNumber}`,
+                          { transaction: invoice });
   }
 
   /**
@@ -97,14 +107,23 @@ export class CustomerInvoicesPage extends GenericTablePage {
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
             {this.renderSearchBar()}
-            <Button
-              style={globalStyles.button}
-              textStyle={globalStyles.buttonText}
+            <PageButton
               text="New Invoice"
-              onPress={this.onNewInvoice}
+              onPress={() => this.setState({ isCreatingInvoice: true })}
             />
           </View>
           {this.renderDataTable()}
+          <SelectModal
+            isOpen={this.state.isCreatingInvoice}
+            options={this.props.database.objects('Name').filtered('isCustomer == true')}
+            placeholderText="Start typing to select customer"
+            queryString={'name BEGINSWITH[c] $0'}
+            onSelect={name => {
+              this.onNewInvoice(name);
+              this.setState({ isCreatingInvoice: false });
+            }}
+            onCancel={() => this.setState({ isCreatingInvoice: false })}
+          />
         </View>
       </View>
     );

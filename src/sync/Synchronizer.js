@@ -10,6 +10,7 @@ import {
   sanityCheckIncomingRecord,
 } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
+import { formatDate } from '../utilities';
 const {
   SYNC_LAST_SUCCESS,
   SYNC_SERVER_ID,
@@ -92,7 +93,7 @@ export class Synchronizer {
     // will be passed up as a rejection of the promise returned by synchronize
     await this.push();
     await this.pull();
-    this.settings.set(SYNC_LAST_SUCCESS, getCurrentDateString());
+    this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));
   }
 
   /**
@@ -285,9 +286,4 @@ export class Synchronizer {
       });
   }
 
-}
-
-function getCurrentDateString() {
-  const date = new Date();
-  return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
 }

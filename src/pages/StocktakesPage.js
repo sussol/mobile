@@ -8,7 +8,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { SearchBar, Button, BottomConfirmModal, ToggleBar } from '../widgets';
+import { SearchBar, PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
@@ -130,11 +130,17 @@ export class StocktakesPage extends GenericTablePage {
               ]}
             />
             <View style={localStyles.buttonViewTop}>
+<<<<<<< HEAD
               <Button
                 style={globalStyles.button}
                 textStyle={globalStyles.buttonText}
                 text="New Stocktake"
                 onPress={() => this.props.navigateTo('stocktakeManager', 'New Stocktake')}
+=======
+              <PageButton
+                text="New StockTake"
+                onPress={this.onNewStockTake}
+>>>>>>> master
               />
             </View>
           </View>

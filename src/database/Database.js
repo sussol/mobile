@@ -75,7 +75,6 @@ export class Database {
       this.alertListeners(CHANGE_TYPES.DELETE, type, record);
     });
   }
-
   /**
    * Deletes all objects from the database.
    * @return {none}

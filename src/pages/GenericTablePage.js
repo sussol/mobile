@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, WARM_GREY, WARMER_GREY } from '../globalStyles';
 
 import {
   Cell,
@@ -140,15 +140,18 @@ export class GenericTablePage extends React.Component {
  *    };
  * 5. {
  *      type: 'checkable',
+ *      isDisabled: false,
  *    };
  * 6. {
  *      type: 'checkable',
  *      icon: 'md-remove-circle', // will use for both Checked and NotChecked, only colour changes
+ *      isDisabled: false,
  *    };
  * 7. {
  *      type: 'checkable',
  *      iconChecked: 'md-radio-button-on',
  *      iconNotChecked: 'md-radio-button-off',
+ *      isDisabled: false,
  *    };
  */
   renderCell() {
@@ -214,9 +217,11 @@ export class GenericTablePage extends React.Component {
               ]}
               width={column.width}
               onPress={() => this.onCheckablePress(item)}
-              renderIsChecked={<Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
-              renderIsNotChecked={<Icon name={iconNotChecked} size={15} color={'grey'} />}
+              renderDisabled={() => <Icon name={iconNotChecked} size={15} color={WARMER_GREY} />}
+              renderIsChecked={() => <Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
+              renderIsNotChecked={() => <Icon name={iconNotChecked} size={15} color={WARM_GREY} />}
               isChecked={isChecked}
+              isDisabled={renderedCell.isDisabled}
             />
           );
           break;
@@ -244,7 +249,9 @@ export class GenericTablePage extends React.Component {
               textStyle={globalStyles.dataTableText}
               width={column.width}
             >
-              {renderedCell.cellContents ? renderedCell.cellContents : renderedCell}
+              {renderedCell.hasOwnProperty('cellContents') ?
+                renderedCell.cellContents :
+                renderedCell}
             </Cell>
           );
       }

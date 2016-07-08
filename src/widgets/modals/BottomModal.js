@@ -13,17 +13,18 @@ import {
 import Modal from 'react-native-modalbox';
 import { DARK_GREY } from '../../globalStyles';
 
+
 export function BottomModal(props) {
   const { children, style, ...modalProps } = props;
   return (
     <Modal {...modalProps}
-      style={localStyles.modal}
+      style={[localStyles.modal, props.style]}
     >
       <View style={[localStyles.container, style]}>
         {children}
       </View>
     </Modal>
-   );
+  );
 }
 
 BottomModal.propTypes = {

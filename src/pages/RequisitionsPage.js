@@ -10,7 +10,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { generateUUID } from '../database';
-import { Button } from '../widgets';
+import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
@@ -109,9 +109,7 @@ export class RequisitionsPage extends GenericTablePage {
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
             {this.renderSearchBar()}
-            <Button
-              style={globalStyles.button}
-              textStyle={globalStyles.buttonText}
+            <PageButton
               text="New Requisition"
               onPress={this.onNewRequisition}
             />

@@ -120,11 +120,11 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         stock_take_date: getDateString(record.stocktakeDate),
         stock_take_time: getTimeString(record.stocktakeDate),
-        created_by_ID: record.createdBy.id,
+        created_by_ID: record.createdBy && record.createdBy.id,
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
-        finalised_by_ID: record.finalisedBy.id,
-        invad_additions_ID: record.additions.id,
-        invad_reductions_ID: record.subtractions.id,
+        finalised_by_ID: record.finalisedBy && record.finalisedBy.id,
+        invad_additions_ID: record.additions && record.additions.id,
+        invad_reductions_ID: record.subtractions && record.subtractions.id,
         store_ID: settings.get(THIS_STORE_ID),
         comment: record.comment,
         stock_take_created_date: getDateString(record.createdDate),
@@ -159,7 +159,7 @@ function generateSyncData(settings, recordType, record) {
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         total: String(record.totalPrice),
         their_ref: record.theirRef,
-        confirm_date: getDateString(record.confirmDate.toISOString()),
+        confirm_date: getDateString(record.confirmDate),
         subtotal: String(record.totalPrice),
         user_ID: record.enteredBy && record.enteredBy.id,
         category_ID: record.category && record.category.id,
@@ -196,11 +196,11 @@ function generateSyncData(settings, recordType, record) {
 }
 
 function getDateString(date) {
-  if (typeof date !== 'object') return '0000-00-00T00:00:00';
+  if (!date || typeof date !== 'object') return '0000-00-00T00:00:00';
   return date.toISOString();
 }
 
 function getTimeString(date) {
-  if (typeof date !== 'object') return '00:00:00';
+  if (!date || typeof date !== 'object') return '00:00:00';
   return date.toTimeString().substring(0, 8);
 }
