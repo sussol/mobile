@@ -157,6 +157,7 @@ function generateSyncData(settings, recordType, record) {
         entry_date: getDateString(record.entryDate),
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
+        mode: 'store',
         total: String(record.totalPrice),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),
