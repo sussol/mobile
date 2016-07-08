@@ -14,7 +14,7 @@ import {
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { BottomConfirmModal, PageButton, PageInfo, SelectModal } from '../widgets';
-import { formatDate } from '../utilities';
+import { formatDate, parsePositiveNumber } from '../utilities';
 
 const DATA_TYPES_DISPLAYED =
         ['Transaction', 'TransactionLine', 'TransactionItem', 'Item', 'ItemLine'];
@@ -74,7 +74,7 @@ export class CustomerInvoicePage extends GenericTablePage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'quantityToIssue') return;
     this.props.database.write(() => {
-      const quantity = Math.min(parseFloat(newValue), transactionItem.availableQuantity);
+      const quantity = Math.min(parsePositiveNumber(newValue), transactionItem.availableQuantity);
       transactionItem.setTotalQuantity(this.props.database, quantity);
       this.props.database.save('TransactionItem', transactionItem);
     });
