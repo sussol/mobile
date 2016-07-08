@@ -18,10 +18,6 @@ export class ItemLine extends Realm.Object {
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
-  setTotalQuantity(database, quantity) {
-    this.totalQuantity = quantity;
-  }
-
   toString() {
     return `${this.itemName} - Batch ${this.batch}`;
   }
