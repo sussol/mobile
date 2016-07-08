@@ -71,7 +71,6 @@ export class Database {
     objects.forEach(obj => {
       const record = { ...obj };
       if (obj && obj.destructor instanceof Function) obj.destructor(this);
-      console.log(`${obj} && ${obj.destructor instanceof Function}`);
       this.realm.delete(obj);
       this.alertListeners(CHANGE_TYPES.DELETE, type, record);
     });
