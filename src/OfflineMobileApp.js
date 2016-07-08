@@ -89,7 +89,10 @@ export default class OfflineMobileApp extends React.Component {
     try {
       this.setState({ isSyncing: true });
       await this.synchronizer.synchronize();
-      this.setState({ isSyncing: false });
+      this.setState({
+        isSyncing: false,
+        syncError: null,
+      });
     } catch (error) {
       this.setState({
         isSyncing: false,
