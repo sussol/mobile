@@ -115,6 +115,13 @@ export class RealmExplorer extends React.Component {
       const firstObject = this.state.data[0];
       for (const field in firstObject) {
         if (firstObject.hasOwnProperty(field)) {
+          let itemString = item[field]
+            && ((typeof item[field] === 'string')
+            || (typeof item[field] === 'number')
+            || (typeof item[field].getMonth === 'function'))
+            && String(item[field]);
+          if (!itemString && item[field] && item[field].length) itemString = item[field].length;
+          if (typeof item[field] === 'boolean') itemString = item[field] ? 'True' : 'False';
           cells.push(
             <Cell
               key={field}
@@ -122,11 +129,7 @@ export class RealmExplorer extends React.Component {
               textStyle={globalStyles.text}
               width={1}
             >
-              {item[field]
-                && ((typeof item[field] === 'string')
-                || (typeof item[field] === 'number')
-                || (typeof item[field].getMonth === 'function'))
-                && item[field]}
+              {itemString}
             </Cell>
           );
         }

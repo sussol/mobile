@@ -50,15 +50,30 @@ export class CheckableCell extends React.Component {
   }
 
   render() {
-    const { style,
+    const {
+      isDisabled,
+      style,
       width,
+      renderDisabled,
       renderIsChecked,
       renderIsNotChecked,
     } = this.props;
 
+    if (isDisabled) {
+      let renderFunction = renderDisabled;
+      if (!renderFunction) {
+        renderFunction = this.state.isChecked ? renderIsChecked : renderIsNotChecked;
+      }
+      return (
+        <View style={[style, { flex: width }]} >
+          {renderFunction()}
+        </View>
+      );
+    }
+
     return (
       <TouchableOpacity style={[style, { flex: width }]} onPress={() => this.onPress()}>
-        {this.state.isChecked ? renderIsChecked : renderIsNotChecked}
+        {this.state.isChecked ? renderIsChecked() : renderIsNotChecked()}
       </TouchableOpacity>
     );
   }
@@ -68,9 +83,11 @@ CheckableCell.propTypes = {
   style: View.propTypes.style,
   width: React.PropTypes.number,
   onPress: React.PropTypes.func,
-  renderIsChecked: React.PropTypes.object,
-  renderIsNotChecked: React.PropTypes.object,
+  renderDisabled: React.PropTypes.func,
+  renderIsChecked: React.PropTypes.func,
+  renderIsNotChecked: React.PropTypes.func,
   isChecked: React.PropTypes.bool,
+  isDisabled: React.PropTypes.bool,
 };
 
 CheckableCell.defaultProps = {

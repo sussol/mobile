@@ -60,12 +60,14 @@ export class Database {
   }
 
   /**
-   * Deletes a specific object from the database.
+   * Deletes a specific object from the database. Calls the object's destructor if
+   * it has one, to give it an opportunity to clean up.
    * @param  {Realm.Object} object Object to be deleted
    * @return {none}
    */
   delete(type, object) {
     const record = { ...object };
+    if (object && object.destructor instanceof Function) object.destructor(this);
     this.realm.delete(object);
     this.alertListeners(CHANGE_TYPES.DELETE, type, record);
   }

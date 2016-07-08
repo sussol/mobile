@@ -1,6 +1,6 @@
 import Realm from 'realm';
 
-import { getTotal } from '../utilities';
+import { applyDifferenceToShortestBatch, getTotal } from '../utilities';
 
 export class StocktakeItem extends Realm.Object {
   get snapshotTotalQuantity() {
@@ -18,14 +18,8 @@ export class StocktakeItem extends Realm.Object {
    * @param {double} quantity The total quantity to set across all lines
    */
   set countedNumberOfPacks(quantity) {
-    let subtractQuantity = this.countedTotalQuantity - quantity;
-    const lines = this.lines.sorted('expiryDate');
-    const index = 0;
-    while (subtractQuantity !== 0 && index < lines.length) {
-      const lineSubtractQuantity = Math.min(subtractQuantity, lines[index].countedTotalQuantity);
-      lines[index].countedTotalQuantity = lines[index].countedTotalQuantity - lineSubtractQuantity;
-      subtractQuantity = subtractQuantity - lineSubtractQuantity;
-    }
+    const difference = quantity - this.countedTotalQuantity; // Positive if new quantity greater
+    applyDifferenceToShortestBatch(this.lines, difference); // TODO add save line so change syncs
   }
 
 }
