@@ -7,6 +7,7 @@ export {
   SelectModal,
 } from './modals';
 export { Button } from './Button';
+export { TextInput } from './TextInput';
 export { DataTable } from './DataTable';
 export { FinaliseButton } from './FinaliseButton';
 export { PageButton } from './PageButton';
