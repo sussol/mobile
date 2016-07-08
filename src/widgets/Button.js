@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 export function Button(props) {
-  if (props.disabled) {
+  if (props.isDisabled) {
     return (
       <View style={[props.style, { backgroundColor: props.disabledColor }]}>
         <Text style={props.textStyle}>{props.text}</Text>
@@ -32,7 +32,7 @@ Button.propTypes = {
   textStyle: Text.propTypes.style,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,
-  disabled: React.PropTypes.bool,
+  isDisabled: React.PropTypes.bool,
   disabledColor: React.PropTypes.string,
 };
 

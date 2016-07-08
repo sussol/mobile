@@ -35,7 +35,7 @@ export const RECORD_TYPES = new SyncTranslator({
   'ItemCategory': 'item_category',
   'MasterList': 'list_master',
   'MasterListLine': 'list_master_line',
-  'MasterListNameJoin': 'list_group',
+  'MasterListNameJoin': 'list_master_name_join',
   'Name': 'name',
   'Requisition': 'requisition',
   'RequisitionLine': 'requisition_line',

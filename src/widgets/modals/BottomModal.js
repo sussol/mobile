@@ -11,13 +11,13 @@ import {
   View,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
-import globalStyles, { WARM_GREY } from '../../globalStyles';
+import { WARM_GREY } from '../../globalStyles';
 
 export function BottomModal(props) {
   const { children, ...modalProps } = props;
   return (
     <Modal {...modalProps}
-      style={localStyles.modal}
+      style={[localStyles.modal, props.style]}
     >
       <View style={localStyles.container}>
         {children}
@@ -29,6 +29,7 @@ export function BottomModal(props) {
 BottomModal.propTypes = {
   isOpen: React.PropTypes.bool.isRequired,
   children: React.PropTypes.any,
+  style: View.propTypes.style,
 };
 BottomModal.defaultProps = {
   style: {},

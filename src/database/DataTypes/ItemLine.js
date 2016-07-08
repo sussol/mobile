@@ -6,6 +6,11 @@ export class ItemLine extends Realm.Object {
   }
 
   set totalQuantity(quantity) {
-    this.numberOfPacks = quantity / this.packSize;
+    if (quantity < 0) throw new Error('Cannot set a negative item line quantity');
+    this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
+  }
+
+  toString() {
+    return `${this.item.name} - Batch ${this.batch}`;
   }
 }

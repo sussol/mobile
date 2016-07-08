@@ -123,7 +123,7 @@ export class LoginModal extends React.Component {
               text={this.getButtonText()}
               onPress={this.onLogin}
               disabledColor={WARM_GREY}
-              disabled={this.getButtonDisabled()}
+              isDisabled={this.getButtonDisabled()}
             />
           </View>
         </View>

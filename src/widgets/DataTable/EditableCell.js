@@ -27,6 +27,12 @@ export class EditableCell extends React.Component {
     });
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      value: String(nextProps.value),
+    });
+  }
+
   onEndEditing() {
     this.props.onEndEditing(this.props.target, this.state.value);
   }

@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { Button } from '../Button';
 import { BottomModal } from './BottomModal';
-import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 
 export function BottomConfirmModal(props) {
   const { onCancel, onConfirm, questionText, confirmText, cancelText, ...modalProps } = props;

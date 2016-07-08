@@ -9,9 +9,9 @@ export { Transaction } from './Transaction';
 export class TransactionCategory extends Realm.Object {}
 export { TransactionItem } from './TransactionItem';
 export { TransactionLine } from './TransactionLine';
-export class MasterList extends Realm.Object {}
+export { MasterList } from './MasterList';
 export class MasterListLine extends Realm.Object {}
-export class Name extends Realm.Object {}
+export { Name } from './Name';
 export class Requisition extends Realm.Object {}
 export { RequisitionItem } from './RequisitionItem';
 export class RequisitionLine extends Realm.Object {}

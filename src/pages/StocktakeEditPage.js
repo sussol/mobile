@@ -11,16 +11,13 @@ import {
   View,
 } from 'react-native';
 
-import { Button } from '../widgets/Button';
-import globalStyles from '../globalStyles';
+import { PageButton } from '../widgets';
 
 export function StocktakeEditor(props) {
   return (
     <View style={props.style}>
       <Text>You can edit a stocktake.</Text>
-        <Button
-          style={globalStyles.button}
-          textStyle={globalStyles.buttonText}
+        <PageButton
           text="Or Manage a Stocktake"
           onPress={() => props.navigateTo('stocktakeManager', 'Manage Stocktake')}
         />

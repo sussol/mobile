@@ -125,7 +125,7 @@ export class FirstUsePage extends React.Component {
             text={this.getButtonText()}
             onPress={this.onPressConnect}
             disabledColor={WARM_GREY}
-            disabled={this.getButtonDisabled()}
+            isDisabled={this.getButtonDisabled()}
           />
         </View>
       </View>

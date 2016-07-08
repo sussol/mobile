@@ -1,6 +1,6 @@
 # mSupply Mobile
 
-Sustainable Solutions' Mobile app for use with the mSupply medical inventory control software. See http://msupply.nz
+Sustainable Solutions' Mobile app for use with the mSupply medical inventory control software. See http://msupply.org.nz
 
 ### Get the Latest Release
 * Available at Jottacloud/mSupply Mobile Builds/mSupplyMobile.apk.zip
@@ -37,7 +37,7 @@ Sustainable Solutions' Mobile app for use with the mSupply medical inventory con
 * Otherwise configure your data file like so:
   * Each mobile store needs its own sync site
   * On the primary server
-    * Each mobile store should be set as a Transfer store on the primary sync site (id 1)
+    * Each mobile store should be set as a Collector store on the primary sync site (id 1)
     * Each mobile store should be set as an Active/Collector store, with local checked, on its own sattelite sync site
   * The name associated with each mobile store should have the central store selected as its Supplying Store
   * Users who should be able to log in to the mobile store need to have that store set as their default
