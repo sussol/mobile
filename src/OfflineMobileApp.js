@@ -30,7 +30,7 @@ import { Database, schema } from './database';
 import { Scheduler } from './Scheduler';
 import { Settings } from './settings';
 
-const SYNC_INTERVAL = 10 * 10 * 1000; // 10 minutes in milliseconds
+const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 export default class OfflineMobileApp extends React.Component {
