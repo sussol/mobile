@@ -61,26 +61,28 @@ export class StocktakeManagePage extends GenericTablePage {
     let stocktake;
     const { stocktakeName } = this.state;
 
-    database.write(() => {
-      // Get stocktake from props or make a new one.
-      if (this.props.stocktake) {
-        stocktake = this.props.stocktake;
-      } else {
-        stocktake = createStocktake(database, user);
+
+    // Get stocktake from props or make a new one.
+    if (this.props.stocktake) {
+      stocktake = this.props.stocktake;
+    } else {
+      stocktake = createStocktake(database, user);
+    }
+
+    stocktake.items.forEach((stocktakeItem) => {
+      const item = stocktakeItem.item;
+      const itemIdIndex = selection.indexOf(item.id);
+      // If a stocktakeItem for an item already exists in the stocktake, remove it from the
+      // selection array.
+      if (itemIdIndex >= 0) {
+        selection.slice(itemIdIndex, 1);
       }
-
-      stocktake.items.forEach((stocktakeItem) => {
-        const item = stocktakeItem.item;
-        const itemIdIndex = selection.indexOf(item.id);
-        // If a stocktakeItem for an item already exists in the stocktake, remove it from the
-        // selection array.
-        if (itemIdIndex >= 0) {
-          selection.slice(itemIdIndex, 1);
-        }
-        // Remove StocktakeItem of Items that are not in the selection.
-        if (!selection.some(id => id === item.id)) stocktake.deleteStocktakeItem(database, item);
-      });
-
+      // Remove StocktakeItem of Items that are not in the selection.
+      if (!selection.some(id => id === item.id)) {
+        database.write(() => { stocktake.deleteStocktakeItem(database, item); });
+      }
+    });
+    database.write(() => {
       selection.forEach((itemId) => {
         const item = items.find(i => i.id === itemId);
         const stocktakeItem = database.create('StocktakeItem', {
@@ -111,6 +113,7 @@ export class StocktakeManagePage extends GenericTablePage {
       stocktakeItems.forEach(item => stocktake.items.push(item));
       database.save('Stocktake', stocktake);
     });
+
     navigateTo(
       'stocktakeEditor',
       stocktake.name,
