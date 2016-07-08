@@ -40,7 +40,7 @@ export const FINALISABLE_PAGES = {
   },
   customerInvoice: {
     recordType: 'Transaction',
-    recordToFinaliseKey: 'invoice',
+    recordToFinaliseKey: 'transaction',
   },
   requisition: {
     recordType: 'Requisition',
