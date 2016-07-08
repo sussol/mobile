@@ -11,6 +11,10 @@ export class TransactionItem extends Realm.Object {
     this.lines.forEach(transactionLine => database.delete('TransactionLine', transactionLine));
   }
 
+  get itemId() {
+    return this.item ? this.item.id : '';
+  }
+
   get totalQuantity() {
     return getTotal(this.lines, 'totalQuantity');
   }

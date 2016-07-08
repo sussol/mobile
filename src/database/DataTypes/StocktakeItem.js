@@ -11,6 +11,10 @@ export class StocktakeItem extends Realm.Object {
     return getTotal(this.lines, 'countedTotalQuantity');
   }
 
+  get itemId() {
+    return this.item ? this.item.id : '';
+  }
+
   /**
    * Sets the counted quantity for the current item by applying the difference to the
    * shortest expiry batches possible, i.e. increase => all to shortest expiry,
