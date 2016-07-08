@@ -41,9 +41,7 @@ export class StocktakeManagePage extends GenericTablePage {
 
   componentWillMount() {
     this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
-    if (!this.props.stocktake) {
-      this.refreshData();
-    } else {
+    if (this.props.stocktake) {
       const selected = [];
       this.props.stocktake.items.forEach((stocktakeItem) => {
         const item = stocktakeItem.item;
@@ -130,7 +128,7 @@ export class StocktakeManagePage extends GenericTablePage {
       'stocktakeEditor',
       stocktake.name,
       { stocktake: stocktake },
-      // coming from StocktakesPage : coming from StocktakesEditPage.
+      // Coming from StocktakesPage : coming from StocktakeEditPage.
       !this.props.stocktake ? 'replace' : 'replacePreviousAndPop',
     );
   }
