@@ -19,7 +19,9 @@ export function StocktakeEditPage(props) {
       <Text>You can edit a stocktake.</Text>
         <PageButton
           text="Or Manage a Stocktake"
-          onPress={() => props.navigateTo('stocktakeManager', 'Manage Stocktake')}
+          onPress={() => props.navigateTo('stocktakeManager', 'Manage Stocktake', {
+            stocktake: props.stocktake,
+          })}
         />
     </View>
   );
