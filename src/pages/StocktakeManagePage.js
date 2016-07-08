@@ -15,7 +15,7 @@ import {
 import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { createStocktake, createStocktakeItem } from '../database/';
+import { createStocktake, createStocktakeItem } from '../database';
 
 const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
 
