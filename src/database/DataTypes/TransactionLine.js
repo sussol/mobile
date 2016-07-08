@@ -2,15 +2,15 @@ import Realm from 'realm';
 
 export class TransactionLine extends Realm.Object {
 
-  destructor() {
-    this.totalQuantity = 0; // Ensure it reverts any stock changes to item lines
+  destructor(database) {
+    this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item lines
   }
 
   get totalQuantity() {
     return this.numberOfPacks * this.packSize;
   }
 
-  set totalQuantity(quantity) {
+  setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot change quantity of lines in a finalised transaction');
     }
@@ -21,8 +21,10 @@ export class TransactionLine extends Realm.Object {
     if (this.transaction.isConfirmed) {
       if (this.transaction.isCustomerInvoice) {
         this.itemLine.totalQuantity -= difference;
+        database.save('ItemLine', this.itemLine);
       } else if (this.transaction.isSupplierInvoice) {
         this.itemLine.totalQuantity += difference;
+        database.save('ItemLine', this.itemLine);
       }
     }
   }
