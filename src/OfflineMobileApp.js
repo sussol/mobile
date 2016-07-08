@@ -30,7 +30,7 @@ import { Database, schema } from './database';
 import { Scheduler } from './Scheduler';
 import { Settings } from './settings';
 
-const SYNC_INTERVAL = 10 * 1 * 1000; // 10 minutes in milliseconds
+const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 export default class OfflineMobileApp extends React.Component {
@@ -46,7 +46,7 @@ export default class OfflineMobileApp extends React.Component {
     const initialised = this.synchronizer.isInitialised();
     this.state = {
       initialised: initialised,
-      currentUser: this.database.objects('User')[0],
+      currentUser: null,
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
