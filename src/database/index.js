@@ -1,7 +1,7 @@
 export { Database } from './Database';
 export { generateUUID } from './utilities';
 export { schema } from './schema';
-export { createCustomerInvoice, createStocktake } from './creators';
+export { createCustomerInvoice, createStocktake, createStocktakeItem } from './creators';
 
 export const CHANGE_TYPES = {
   CREATE: 'create',

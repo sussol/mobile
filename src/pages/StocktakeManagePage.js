@@ -12,11 +12,10 @@ import {
   View,
 } from 'react-native';
 
-import { generateUUID } from '../database';
 import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { createStocktake } from '../database/';
+import { createStocktake, createStocktakeItem } from '../database/';
 
 const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
 
@@ -57,7 +56,6 @@ export class StocktakeManagePage extends GenericTablePage {
   onConfirmPress() {
     const { selection, items } = this.state;
     const { database, navigateTo, user } = this.props;
-    const stocktakeItems = [];
     let stocktake;
     const { stocktakeName } = this.state;
 
@@ -72,47 +70,29 @@ export class StocktakeManagePage extends GenericTablePage {
     stocktake.items.forEach((stocktakeItem) => {
       const item = stocktakeItem.item;
       const itemIdIndex = selection.indexOf(item.id);
-      // If a stocktakeItem for an item already exists in the stocktake, remove it from the
-      // selection array.
+      // If an item in selection already exists in the stocktake, remove it from selection.
       if (itemIdIndex >= 0) {
         selection.slice(itemIdIndex, 1);
       }
       // Remove StocktakeItem of Items that are not in the selection.
+      // If the item in the stocktake is not in the selection, remove it from the stocktake.
       if (!selection.some(id => id === item.id)) {
         database.write(() => { stocktake.deleteStocktakeItem(database, item); });
       }
     });
-    database.write(() => {
-      selection.forEach((itemId) => {
-        const item = items.find(i => i.id === itemId);
-        const stocktakeItem = database.create('StocktakeItem', {
-          id: generateUUID(),
-          item: item,
-          stocktake: stocktake,
-        });
-        item.lines.forEach(line => {
-          const stocktakeLine = database.create('StocktakeLine', {
-            id: generateUUID(),
-            stocktake: stocktake,
-            itemLine: line,
-            snapshotNumberOfPacks: line.totalQuantity,
-            packSize: line.packSize,
-            expiryDate: line.expiryDate,
-            batch: line.batch,
-            costPrice: line.costPrice,
-            sellPrice: line.sellPrice,
-            countedNumberOfPacks: 0,
-            sortIndex: 0,
-          });
-          stocktakeItem.lines.push(stocktakeLine);
-        });
-        database.save('StocktakeItem', stocktakeItem);
-        stocktakeItems.push(stocktakeItem);
-      });
-      if (!stocktakeName === '') stocktake.name = stocktakeName;
-      stocktakeItems.forEach(item => stocktake.items.push(item));
-      database.save('Stocktake', stocktake);
+    // Add StocktakeItem for each Item.id in selection to the stocktake.
+    selection.forEach((itemId) => {
+      const item = items.find(i => i.id === itemId);
+      createStocktakeItem(database, stocktake, item);
     });
+
+    // Change the name of stocktake if edited.
+    if (stocktakeName !== '' && stocktakeName !== stocktake.name) {
+      database.write(() => {
+        stocktake.name = stocktakeName;
+        database.save('Stocktake', stocktake);
+      });
+    }
 
     navigateTo(
       'stocktakeEditor',

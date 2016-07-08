@@ -37,3 +37,18 @@ export function createStocktake(database, user) {
   });
   return stocktake;
 }
+
+// Creates a stocktakeItem and adds it to the stocktake.
+export function createStocktakeItem(database, stocktake, item) {
+  let stocktakeItem;
+  database.write(() => {
+    stocktakeItem = database.create('StocktakeItem', {
+      id: generateUUID(),
+      item: item,
+      stocktake: stocktake,
+    });
+    stocktake.items.push(stocktakeItem);
+    database.save('Stocktake', stocktake);
+  });
+  return stocktakeItem;
+}
