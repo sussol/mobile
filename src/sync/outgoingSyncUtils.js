@@ -135,7 +135,7 @@ function generateSyncData(settings, recordType, record) {
       const itemLine = record.itemLine;
       return {
         ID: record.id,
-        stock_take_ID: record.Stocktake.id,
+        stock_take_ID: record.stocktake && record.stocktake.id,
         item_line_ID: itemLine.id,
         snapshot_qty: String(record.snapshotNumberOfPacks),
         snapshot_packsize: String(record.packSize),
@@ -145,7 +145,7 @@ function generateSyncData(settings, recordType, record) {
         cost_price: String(itemLine.costPrice),
         sell_price: String(itemLine.sellPrice),
         Batch: itemLine.batch,
-        item_ID: itemLine.item.id,
+        item_ID: itemLine.itemId,
       };
     }
     case 'Transaction': {

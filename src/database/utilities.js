@@ -11,7 +11,7 @@ export function getTotal(lines, key) {
 }
 
 export function addLineToParent(line, parent, createAggregateItem) {
-  let aggregateItem = parent.items.find(item => item.id === line.item.id);
+  let aggregateItem = parent.items.find(item => item.id === line.itemId);
   if (!aggregateItem) { // This parent doesn't have a matching item yet, make one
     aggregateItem = createAggregateItem();
     parent.items.push(aggregateItem);
