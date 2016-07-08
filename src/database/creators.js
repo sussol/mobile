@@ -1,4 +1,5 @@
 import { generateUUID } from '../database';
+import { formatDateAndTime } from '../utilities';
 
 export function createCustomerInvoice(database, customer) {
   let invoice;
@@ -18,4 +19,17 @@ export function createCustomerInvoice(database, customer) {
     database.save('Name', customer);
   });
   return invoice;
+}
+
+export function createStocktake(database, user) {
+  const date = new Date();
+  return database.create('Stocktake', {
+    id: generateUUID(),
+    name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
+    createdDate: date,
+    status: 'new',
+    comment: '',
+    createdBy: user,
+    serialNumber: '1337',
+  });
 }

@@ -30,6 +30,7 @@ export class StocktakesPage extends GenericTablePage {
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
+    this.onNewStockTake = this.onNewStockTake.bind(this);
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
     this.onDeleteCancel = this.onDeleteCancel.bind(this);
     this.onToggleStatusFilter = this.onToggleStatusFilter.bind(this);
@@ -41,6 +42,10 @@ export class StocktakesPage extends GenericTablePage {
       `${stocktake.name}`,
       { stocktake: stocktake },
     );
+  }
+
+  onNewStockTake() {
+    this.props.navigateTo('stocktakeManager', 'New Stocktake');
   }
 
   onDeleteConfirm() {

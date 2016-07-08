@@ -16,7 +16,7 @@ import { generateUUID } from '../database';
 import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { formatDateAndTime } from '../utilities';
+import { createStocktake } from '../database/';
 
 const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
 
@@ -56,29 +56,17 @@ export class StocktakeManagePage extends GenericTablePage {
 
   onConfirmPress() {
     const { selection, items } = this.state;
-    const { database, navigateTo } = this.props;
+    const { database, navigateTo, user } = this.props;
     const stocktakeItems = [];
-    const date = new Date();
     let stocktake;
-    let { stocktakeName } = this.state;
+    const { stocktakeName } = this.state;
 
     database.write(() => {
       // Get stocktake from props or make a new one.
       if (this.props.stocktake) {
         stocktake = this.props.stocktake;
       } else {
-        stocktake = this.props.database.create('Stocktake', {
-          id: generateUUID(),
-          name: '',
-          createdDate: date,
-          status: 'new',
-          comment: 'Testing StocktakesPage',
-          serialNumber: '1337',
-          items: [],
-        });
-      }
-      if (stocktakeName === '') {
-        stocktakeName = `Stocktake ${formatDateAndTime(date, 'slashes')}`;
+        stocktake = createStocktake(database, user);
       }
 
       stocktake.items.forEach((stocktakeItem) => {
@@ -99,7 +87,6 @@ export class StocktakeManagePage extends GenericTablePage {
           id: generateUUID(),
           item: item,
           stocktake: stocktake,
-          lines: [],
         });
         item.lines.forEach(line => {
           const stocktakeLine = database.create('StocktakeLine', {
@@ -120,7 +107,7 @@ export class StocktakeManagePage extends GenericTablePage {
         database.save('StocktakeItem', stocktakeItem);
         stocktakeItems.push(stocktakeItem);
       });
-      stocktake.name = stocktakeName;
+      if (!stocktakeName === '') stocktake.name = stocktakeName;
       stocktakeItems.forEach(item => stocktake.items.push(item));
       database.save('Stocktake', stocktake);
     });
