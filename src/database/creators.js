@@ -23,13 +23,17 @@ export function createCustomerInvoice(database, customer) {
 
 export function createStocktake(database, user) {
   const date = new Date();
-  return database.create('Stocktake', {
-    id: generateUUID(),
-    name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
-    createdDate: date,
-    status: 'new',
-    comment: '',
-    createdBy: user,
-    serialNumber: '1337',
+  let stocktake;
+  database.write(() => {
+    stocktake = database.create('Stocktake', {
+      id: generateUUID(),
+      name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
+      createdDate: date,
+      status: 'new',
+      comment: '',
+      createdBy: user,
+      serialNumber: '1337',
+    });
   });
+  return stocktake;
 }
