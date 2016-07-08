@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 
 /**
- * Renders a View containing a RN TextInput. For allowing changing underline color of the the
- * TextInput, supported in Android and iOS.
+ * Renders a View containing a RN TextInput. For allowing changing underline color of the TextInput
+ * in both Android and iOS, which is not supported in the current RN TextInput (v0.27).
  * @param   {object}  props   Properties passed where component was created.
  * @return  {React.Component} View containing a TextInput
  */
