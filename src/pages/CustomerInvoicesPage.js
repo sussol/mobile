@@ -8,11 +8,10 @@
 
 import React from 'react';
 import { View } from 'react-native';
-
-import { generateUUID } from '../database';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { createCustomerInvoice } from '../database';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
 
@@ -39,22 +38,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   onNewInvoice(otherParty) {
-    let invoice;
-    this.props.database.write(() => {
-      invoice = this.props.database.create('Transaction', {
-        id: generateUUID(),
-        serialNumber: '1',
-        entryDate: new Date(),
-        type: 'customer_invoice',
-        status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
-        comment: '',
-        otherParty: otherParty,
-      });
-      if (otherParty.useMasterList) invoice.addItemsFromMasterList(this.props.database);
-      this.props.database.save('Transaction', invoice);
-      otherParty.addTransaction(invoice);
-      this.props.database.save('Name', otherParty);
-    });
+    const invoice = createCustomerInvoice(this.props.database, otherParty);
     this.navigateToInvoice(invoice);
   }
 
