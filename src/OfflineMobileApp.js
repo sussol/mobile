@@ -133,7 +133,7 @@ export default class OfflineMobileApp extends React.Component {
       }
 
       // Now navigate to the page, passing on any extra props and the finalise button if required
-      props.onNavigate({ type: NavType, ...navigationProps });
+      props.onNavigate({ type: navType, ...navigationProps });
     };
     const { key, ...extraProps } = props.scene.navigationState;
     const Page = PAGES[key]; // Get the page the navigation key relates to
