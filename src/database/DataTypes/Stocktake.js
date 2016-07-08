@@ -42,6 +42,5 @@ export class Stocktake extends Realm.Object {
       currentStocktakeItem.item.id === item.id
     );
     database.delete('StocktakeItem', stocktakeItem);
-    database.save('Stocktake', this);
   }
 }
