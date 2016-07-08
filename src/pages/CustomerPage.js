@@ -21,9 +21,9 @@ const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem'];
 * @prop   {Realm}               database      App wide database.
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
-* @prop   {Realm.Object}        customer      current customer object being viewed
-* @state  {Realm.Results}       transactions  Results object containing all Invoice records
-*                                             filtered to be only be those belonging by the Customer
+* @prop   {Realm.Object}        customer      Current customer object being viewed
+* @state  {Realm.Results}       transactions  Results object containing all Transaction records
+*                                             filtered to be only be those belonging to the Customer
 *                                             being viewed.
 */
 export class CustomerPage extends GenericTablePage {
@@ -38,7 +38,6 @@ export class CustomerPage extends GenericTablePage {
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.renderCell = this.renderCell.bind(this);
-    this.navigateToInvoice = this.navigateToInvoice.bind(this);
   }
 
   onNewInvoice() {
@@ -51,7 +50,7 @@ export class CustomerPage extends GenericTablePage {
         entryDate: new Date(),
         type: 'customer_invoice',
         status: 'new',
-        comment: 'Testing sync',
+        // comment: 'Testing sync',
         otherParty: customer,
       });
       customer.transactions.push(invoice);
@@ -63,14 +62,6 @@ export class CustomerPage extends GenericTablePage {
   }
 
   onRowPress(transaction) {
-    this.props.navigateTo(
-      'transaction',
-      `Invoice ${transaction.serialNumber}`,
-      { transaction },
-    );
-  }
-
-  navigateToInvoice(transaction) {
     this.props.navigateTo(
       'transaction',
       `Invoice ${transaction.serialNumber}`,
@@ -113,7 +104,7 @@ export class CustomerPage extends GenericTablePage {
       case 'items':
         return transaction.items.length;
       case 'comment':
-        return transaction.comment;
+        return transaction.comment ? transaction.comment : '';
     }
   }
 
