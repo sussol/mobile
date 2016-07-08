@@ -23,7 +23,7 @@ const {
 
 const BACK_ACTION = 'BackAction';
 const PUSH_ACTION = 'push';
-const REPLACE = 'replace';
+const REPLACE_ACTION = 'replace';
 const REPLACE_PREVIOUS_AND_POP_ACTION = 'replacePreviousAndPop';
 const INITIAL_ACTION = 'initial';
 
@@ -179,7 +179,7 @@ function getNewNavState(currentState, action) {
         NavigationStateUtils.pop(currentState) :
         currentState;
     // Replace current route with new route
-    case REPLACE: // TODO: broken, RN Bug. JIRA bug OM-99
+    case REPLACE_ACTION: // TODO: broken, RN Bug. JIRA bug OM-99
       return NavigationStateUtils.replaceAtIndex(
         { ...currentState },
         currentState.index,
