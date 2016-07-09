@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import { createCustomerInvoice } from '../database';
 import { formatStatus } from '../utilities';
 
-const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem', 'TransactionBatch'];
 
 /**
 * Renders the page for displaying CustomerInvoices.

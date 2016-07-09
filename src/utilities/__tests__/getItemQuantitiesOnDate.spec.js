@@ -55,7 +55,7 @@ describe('getItemQuantitiesOnDate', () => {
     });
   });
 
-  describe('on small data set of 10 transactions with 10 lines each', () => {
+  describe('on small data set of 10 transactions with 10 items each', () => {
     it('gives correct result', () => {
       // TODO:
     });
@@ -64,7 +64,7 @@ describe('getItemQuantitiesOnDate', () => {
     });
   });
 
-  describe('on large data set 10000 transactions with 10 lines each', () => {
+  describe('on large data set 10000 transactions with 10 batches each', () => {
     it('gives correct result', () => {
       // TODO:
     });

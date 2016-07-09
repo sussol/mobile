@@ -61,7 +61,7 @@ export class CustomerPage extends GenericTablePage {
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending. Special case for
-   * 'serialNumber' to sort numbers correctly. Special case for lines.length for correct number
+   * 'serialNumber' to sort numbers correctly. Special case for items.length for correct number
    * sort and also realm does not allow sorting on the properties of an object property.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {

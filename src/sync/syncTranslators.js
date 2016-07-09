@@ -30,20 +30,20 @@ class SyncTranslator {
 // Map of internal database object types to external record types
 export const RECORD_TYPES = new SyncTranslator({
   'Item': 'item',
-  'ItemLine': 'item_line',
+  'ItemBatch': 'item_line',
   'ItemDepartment': 'item_department',
   'ItemCategory': 'item_category',
   'MasterList': 'list_master',
-  'MasterListLine': 'list_master_line',
+  'MasterListItem': 'list_master_line',
   'MasterListNameJoin': 'list_master_name_join',
   'Name': 'name',
   'Requisition': 'requisition',
-  'RequisitionLine': 'requisition_line',
+  'RequisitionItem': 'requisition_line',
   'Stocktake': 'Stock_take',
-  'StocktakeLine': 'Stock_take_lines',
+  'StocktakeBatch': 'Stock_take_lines',
   'Transaction': 'transact',
   'TransactionCategory': 'transaction_category',
-  'TransactionLine': 'trans_line',
+  'TransactionBatch': 'trans_line',
   'User': 'user',
 });
 
@@ -67,6 +67,11 @@ export const STATUSES = new SyncTranslator({
   'new': 'nw',
 });
 
+export const REQUISITION_STATUSES = new SyncTranslator({
+  'new': 'wp',
+  'finalised': 'wf',
+});
+
 export const TRANSACTION_TYPES = new SyncTranslator({
   'customer_invoice': 'ci',
   'customer_credit': 'cc',
@@ -75,7 +80,7 @@ export const TRANSACTION_TYPES = new SyncTranslator({
   'inventory_adjustment': 'in',
 });
 
-export const TRANSACTION_LINE_TYPES = new SyncTranslator({
+export const TRANSACTION_BATCH_TYPES = new SyncTranslator({
   'customer_invoice': 'stock_out',
   'customer_credit': 'stock_in',
   'supplier_invoice': 'stock_in',

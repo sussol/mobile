@@ -1,6 +1,6 @@
 import Realm from 'realm';
 
-export class StocktakeLine extends Realm.Object {
+export class StocktakeBatch extends Realm.Object {
   get snapshotTotalQuantity() {
     return this.snapshotNumberOfPacks * this.packSize;
   }
@@ -10,8 +10,8 @@ export class StocktakeLine extends Realm.Object {
   }
 
   get itemId() {
-    if (!this.itemLine) return '';
-    return this.itemLine.item ? this.itemLine.item.id : '';
+    if (!this.itemBatch) return '';
+    return this.itemBatch.item ? this.itemBatch.item.id : '';
   }
 
   set countedTotalQuantity(quantity) {
@@ -19,14 +19,14 @@ export class StocktakeLine extends Realm.Object {
   }
 
   /**
-   * Returns the maximum amount of the given quantity that can be allocated to this line.
+   * Returns the maximum amount of the given quantity that can be allocated to this batch.
    * N.B. quantity may be positive or negative.
    * @param  {double} quantity Quantity to allocate (can be positive or negative)
    * @return {double}          The maximum that can be allocated
    */
   getAmountToAllocate(quantity) {
-    // Max that can be removed is the total quantity currently in the associated item line
-    if (quantity < 0) return Math.max(quantity, -this.itemLine.totalQuantity);
+    // Max that can be removed is the total quantity currently in the associated item batch
+    if (quantity < 0) return Math.max(quantity, -this.itemBatch.totalQuantity);
     // There is no maximum amount that can be added
     return quantity;
   }

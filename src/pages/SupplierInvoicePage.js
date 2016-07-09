@@ -9,7 +9,7 @@ import React from 'react';
 
 import { GenericTablePage } from './GenericTablePage';
 
-const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine', 'Item', 'ItemLine'];
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem', 'Item', 'ItemBatch'];
 
 export class SupplierInvoicePage extends GenericTablePage {
   constructor(props) {

@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import { addLineToParent, generateUUID } from '../utilities';
+import { addBatchToParent, generateUUID } from '../utilities';
 import { createStocktakeItem } from '../creators';
 
 
@@ -9,12 +9,12 @@ export class Stocktake extends Realm.Object {
     database.delete('StocktakeItem', this.items);
   }
 
-  // Adds a StocktakeLine, incorporating it into a matching StocktakeItem.
-  addLine(database, stocktakeLine) {
-    addLineToParent(stocktakeLine, this, () =>
+  // Adds a StocktakeBatch, incorporating it into a matching StocktakeItem.
+  addBatch(database, stocktakeBatch) {
+    addBatchToParent(stocktakeBatch, this, () =>
       database.create('StocktakeItem', {
         id: generateUUID(),
-        item: stocktakeLine.itemLine.item,
+        item: stocktakeBatch.itemBatch.item,
         stocktake: this,
       })
     );

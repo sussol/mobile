@@ -1,24 +1,23 @@
 import {
   Address,
   Item,
-  ItemLine,
-  ItemDepartment,
+  ItemBatch,
   ItemCategory,
-  Transaction,
-  TransactionItem,
-  TransactionCategory,
-  TransactionLine,
+  ItemDepartment,
   MasterList,
-  MasterListLine,
+  MasterListItem,
   Name,
   Requisition,
   RequisitionItem,
-  RequisitionLine,
   Setting,
-  SyncOut,
   Stocktake,
+  StocktakeBatch,
   StocktakeItem,
-  StocktakeLine,
+  SyncOut,
+  Transaction,
+  TransactionBatch,
+  TransactionCategory,
+  TransactionItem,
   User,
 } from './DataTypes';
 
@@ -43,7 +42,7 @@ Item.schema = {
     code: 'string',
     name: 'string',
     defaultPackSize: 'double',
-    lines: { type: 'list', objectType: 'ItemLine' },
+    batches: { type: 'list', objectType: 'ItemBatch' },
     department: { type: 'ItemDepartment', optional: true },
     description: { type: 'string', optional: true },
     category: { type: 'ItemCategory', optional: true },
@@ -71,8 +70,8 @@ ItemDepartment.schema = {
   },
 };
 
-ItemLine.schema = {
-  name: 'ItemLine',
+ItemBatch.schema = {
+  name: 'ItemBatch',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -94,12 +93,12 @@ MasterList.schema = {
     id: 'string',
     name: 'string',
     note: { type: 'string', optional: true },
-    lines: { type: 'list', objectType: 'MasterListLine' },
+    items: { type: 'list', objectType: 'MasterListItem' },
   },
 };
 
-MasterListLine.schema = {
-  name: 'MasterListLine',
+MasterListItem.schema = {
+  name: 'MasterListItem',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -146,17 +145,6 @@ Requisition.schema = {
 
 RequisitionItem.schema = {
   name: 'RequisitionItem',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    item: 'Item',
-    requisition: 'Requisition',
-    lines: { type: 'list', objectType: 'RequisitionLine' },
-  },
-};
-
-RequisitionLine.schema = {
-  name: 'RequisitionLine',
   primaryKey: 'id',
   properties: {
     id: 'string',
@@ -208,17 +196,17 @@ StocktakeItem.schema = {
     id: 'string',
     item: 'Item',
     stocktake: 'Stocktake',
-    lines: { type: 'list', objectType: 'StocktakeLine' },
+    batches: { type: 'list', objectType: 'StocktakeBatch' },
   },
 };
 
-StocktakeLine.schema = {
-  name: 'StocktakeLine',
+StocktakeBatch.schema = {
+  name: 'StocktakeBatch',
   primaryKey: 'id',
   properties: {
     id: 'string',
     stocktake: 'Stocktake',
-    itemLine: 'ItemLine',
+    itemBatch: 'ItemBatch',
     snapshotNumberOfPacks: 'double',
     packSize: 'double',
     expiryDate: 'date',
@@ -281,18 +269,18 @@ TransactionItem.schema = {
     id: 'string',
     item: 'Item',
     transaction: 'Transaction',
-    lines: { type: 'list', objectType: 'TransactionLine' },
+    batches: { type: 'list', objectType: 'TransactionBatch' },
   },
 };
 
-TransactionLine.schema = {
-  name: 'TransactionLine',
+TransactionBatch.schema = {
+  name: 'TransactionBatch',
   primaryKey: 'id',
   properties: {
     id: 'string',
     itemId: 'string',
     itemName: 'string',
-    itemLine: 'ItemLine',
+    itemBatch: 'ItemBatch',
     batch: 'string',
     expiryDate: 'date',
     packSize: 'double',
@@ -326,24 +314,23 @@ export const schema =
     schema: [
       Address,
       Item,
-      ItemLine,
+      ItemBatch,
       ItemDepartment,
       ItemCategory,
       Transaction,
       TransactionItem,
-      TransactionLine,
+      TransactionBatch,
       TransactionCategory,
       MasterList,
-      MasterListLine,
+      MasterListItem,
       Name,
       Requisition,
       RequisitionItem,
-      RequisitionLine,
       Setting,
       SyncOut,
       Stocktake,
       StocktakeItem,
-      StocktakeLine,
+      StocktakeBatch,
       User,
     ],
     schemaVersion: 1,

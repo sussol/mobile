@@ -1,6 +1,6 @@
 import Realm from 'realm';
 
-export class ItemLine extends Realm.Object {
+export class ItemBatch extends Realm.Object {
   get totalQuantity() {
     return this.numberOfPacks * this.packSize;
   }
@@ -14,7 +14,7 @@ export class ItemLine extends Realm.Object {
   }
 
   set totalQuantity(quantity) {
-    if (quantity < 0) throw new Error('Cannot set a negative item line quantity');
+    if (quantity < 0) throw new Error('Cannot set a negative item batch quantity');
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 

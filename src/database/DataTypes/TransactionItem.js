@@ -8,7 +8,7 @@ export class TransactionItem extends Realm.Object {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot delete an item from a finalised transaction');
     }
-    this.lines.forEach(transactionLine => database.delete('TransactionLine', transactionLine));
+    this.batches.forEach(transactionBatch => database.delete('TransactionBatch', transactionBatch));
   }
 
   get itemId() {
@@ -16,15 +16,15 @@ export class TransactionItem extends Realm.Object {
   }
 
   get totalQuantity() {
-    return getTotal(this.lines, 'totalQuantity');
+    return getTotal(this.batches, 'totalQuantity');
   }
 
   get totalQuantitySent() {
-    return getTotal(this.lines, 'totalQuantitySent');
+    return getTotal(this.batches, 'totalQuantitySent');
   }
 
   get totalPrice() {
-    return getTotal(this.lines, 'totalPrice');
+    return getTotal(this.batches, 'totalPrice');
   }
 
   // For customer invoices, return how much can be issued in total, accounting
@@ -42,10 +42,10 @@ export class TransactionItem extends Realm.Object {
   /**
    * Sets the quantity for the current item by applying the difference to the
    * shortest expiry batches possible.
-   * N.B. For customer invoices, will create and delete transaction lines as appropriate.
+   * N.B. For customer invoices, will create and delete transaction batches as appropriate.
    * N.B. Supplier invoices do not take effect on the rest of the stock until they
    * are finalised, whereas customer invoices immediately influence stock levels.
-   * @param {double} quantity The total quantity to set across all lines
+   * @param {double} quantity The total quantity to set across all batches
    */
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
@@ -58,23 +58,23 @@ export class TransactionItem extends Realm.Object {
     // Apply the difference to make the new quantity
     let remainder = this.allocateDifferenceToBatches(database, difference);
 
-    // For customer invoices create/delete transaction lines to match new quantity
+    // For customer invoices create/delete transaction batches to match new quantity
     if (this.transaction.isCustomerInvoice) {
-      // Go through item lines in stock, adding as required to get rid of remainder
-      for (let index = 0; index < this.item.lines.length && remainder !== 0; index ++) {
-        const itemLine = this.item.lines[index];
+      // Go through item batches in stock, adding as required to get rid of remainder
+      for (let index = 0; index < this.item.batches.length && remainder !== 0; index ++) {
+        const itemBatch = this.item.batches[index];
 
-        // Skip if item line has no stock, or is already in this TransactionItem
-        if (itemLine.totalQuantity <= 0 ||
-          this.lines.find(transactionLine => transactionLine.itemLine === item)) continue;
+        // Skip if item batch has no stock, or is already in this TransactionItem
+        if (itemBatch.totalQuantity <= 0 ||
+          this.batches.find(transactionBatch => transactionBatch.itemBatch === item)) continue;
 
-        // Create the new transaction line
-        const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemLine;
-        this.lines.push(database.create('TransactionLine', {
+        // Create the new transaction batch
+        const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
+        this.batches.push(database.create('TransactionBatch', {
           id: generateUUID(),
           itemId: item.id,
           itemName: item.name,
-          itemLine: itemLine,
+          itemBatch: itemBatch,
           batch: batch,
           expiryDate: expiryDate,
           packSize: packSize,
@@ -88,12 +88,12 @@ export class TransactionItem extends Realm.Object {
         remainder = this.allocateDifferenceToBatches(database, remainder);
       }
 
-      // See if any lines can be pruned, i.e. have 0 quantity for this invoice
-      const linesToDelete = [];
-      this.lines.forEach(line => {
-        if (line.totalQuantity === 0) linesToDelete.push(line);
+      // See if any batches can be pruned, i.e. have 0 quantity for this invoice
+      const batchesToDelete = [];
+      this.batches.forEach(batch => {
+        if (batch.totalQuantity === 0) batchesToDelete.push(batch);
       });
-      database.delete('TransactionLine', linesToDelete);
+      database.delete('TransactionBatch', batchesToDelete);
     }
 
     if (remainder > 0) { // Something went wrong
@@ -108,25 +108,25 @@ export class TransactionItem extends Realm.Object {
    * and pessimistic with changes to supplier invoices (assumes you got more of the shortest
    * batch or less of the longest batch.)
    * @param {Realm}      database      App wide local database
-   * @param {double}     difference    The difference in quantity to set across all lines.
+   * @param {double}     difference    The difference in quantity to set across all batches.
    *                                   Will be positive if greater new quantity, negative
    *                                   if lesser.
-   * @return {double}    remainder     The difference not able to be applied to the lines
+   * @return {double}    remainder     The difference not able to be applied to the batches
    *                                   passed in.
    */
   allocateDifferenceToBatches(database, difference) {
     let addQuantity = difference;
 
-    // Sort lines shortest -> longest batch if increasing, longest -> shortest if reducing
-    const lines = this.lines.sorted('expiryDate', difference < 0);
+    // Sort batches shortest -> longest batch if increasing, longest -> shortest if reducing
+    const batches = this.batches.sorted('expiryDate', difference < 0);
 
-    // First apply as much of the quantity as possible to existing lines
-    for (let index = 0; addQuantity !== 0 && index < lines.length; index++) {
-      const lineAddQuantity = lines[index].getAmountToAllocate(addQuantity);
-      lines[index].setTotalQuantity(database, lines[index].totalQuantity + lineAddQuantity);
-      addQuantity -= lineAddQuantity;
-      database.save('TransactionLine', lines[index]);
+    // First apply as much of the quantity as possible to existing batches
+    for (let index = 0; addQuantity !== 0 && index < batches.length; index++) {
+      const batchAddQuantity = batches[index].getAmountToAllocate(addQuantity);
+      batches[index].setTotalQuantity(database, batches[index].totalQuantity + batchAddQuantity);
+      addQuantity -= batchAddQuantity;
+      database.save('TransactionBatch', batches[index]);
     }
-    return addQuantity; // The remainder, not able to be allocated to the lines passed in
+    return addQuantity; // The remainder, not able to be allocated to the batches passed in
   }
 }

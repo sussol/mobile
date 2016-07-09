@@ -1,9 +1,9 @@
 import Realm from 'realm';
 
-export class TransactionLine extends Realm.Object {
+export class TransactionBatch extends Realm.Object {
 
   destructor(database) {
-    this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item lines
+    this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item batches
   }
 
   get totalQuantity() {
@@ -12,7 +12,7 @@ export class TransactionLine extends Realm.Object {
 
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
-      throw new Error('Cannot change quantity of lines in a finalised transaction');
+      throw new Error('Cannot change quantity of batches in a finalised transaction');
     }
 
     const difference = quantity - this.totalQuantity;
@@ -20,11 +20,11 @@ export class TransactionLine extends Realm.Object {
 
     if (this.transaction.isConfirmed) {
       if (this.transaction.isCustomerInvoice) {
-        this.itemLine.totalQuantity -= difference;
-        database.save('ItemLine', this.itemLine);
+        this.itemBatch.totalQuantity -= difference;
+        database.save('ItemBatch', this.itemBatch);
       } else if (this.transaction.isSupplierInvoice) {
-        this.itemLine.totalQuantity += difference;
-        database.save('ItemLine', this.itemLine);
+        this.itemBatch.totalQuantity += difference;
+        database.save('ItemBatch', this.itemBatch);
       }
     }
   }
@@ -45,16 +45,16 @@ export class TransactionLine extends Realm.Object {
   }
 
   /**
-   * Returns the maximum amount of the given quantity that can be allocated to this line.
+   * Returns the maximum amount of the given quantity that can be allocated to this batch.
    * N.B. quantity may be positive or negative.
    * @param  {double} quantity Quantity to allocate (can be positive or negative)
    * @return {double}          The maximum that can be allocated
    */
   getAmountToAllocate(quantity) {
-    // Max that can be removed is the total quantity currently in the transaction line
+    // Max that can be removed is the total quantity currently in the transaction batch
     if (quantity < 0) return Math.max(quantity, -this.totalQuantity);
-    // For customer invoice, max that can be added is amount in item line
-    if (this.transaction.isCustomerInvoice) return Math.min(quantity, this.itemLine.totalQuantity);
+    // For customer invoice, max that can be added is amount in item batch
+    if (this.transaction.isCustomerInvoice) return Math.min(quantity, this.itemBatch.totalQuantity);
     // For supplier invoice, there is no maximum amount that can be added
     return quantity;
   }

@@ -1,6 +1,6 @@
 import Realm from 'realm';
 import {
-  addLineToParent,
+  addBatchToParent,
   generateUUID,
   getTotal,
 } from '../utilities';
@@ -54,14 +54,15 @@ export class Transaction extends Realm.Object {
   addItemsFromMasterList(database) {
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
-    if (this.otherParty && this.otherParty.masterList && this.otherParty.masterList.lines) {
-      this.otherParty.masterList.lines.forEach(line => this.addItem(database, line.item));
+    if (this.otherParty && this.otherParty.masterList && this.otherParty.masterList.items) {
+      this.otherParty.masterList.items.forEach(masterListItem =>
+                                                this.addItem(database, masterListItem.item));
     }
   }
 
   /**
    * Remove the given TransactionItem from this transaction, along with all the
-   * associated lines.
+   * associated batches.
    * @param  {[type]} database        [description]
    * @param  {[type]} transactionItem [description]
    * @return {none}
@@ -73,42 +74,42 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Adds a TransactionLine, incorporating it into a matching TransactionItem. Will
+   * Adds a TransactionBatch, incorporating it into a matching TransactionItem. Will
    * create a new TransactionItem if none exists already.
    * @param {Realm}  database        The app wide local database
-   * @param {object} transactionLine The TransactionLine to add to this Transaction
+   * @param {object} transactionBatch The TransactionBatch to add to this Transaction
    */
-  addLine(database, transactionLine) {
-    addLineToParent(transactionLine, this, () =>
+  addBatch(database, transactionBatch) {
+    addBatchToParent(transactionBatch, this, () =>
       database.create('TransactionItem', {
         id: generateUUID(),
-        item: transactionLine.itemLine.item,
+        item: transactionBatch.itemBatch.item,
         transaction: this,
       })
     );
   }
 
   /**
-   * Finalise this transaction, generating the associated item lines, linking them
+   * Finalise this transaction, generating the associated item batches, linking them
    * to their items, and setting the status so that this transaction is locked down.
    * @param  {Realm}  database The app wide local database
    * @param  {object} user     The user who finalised this transaction
    * @return {none}
    */
   finalise(database, user) {
-    if (this.type === 'supplier_invoice') { // If a supplier invoice, add item lines to inventory
+    if (this.type === 'supplier_invoice') { // If a supplier invoice, add item batches to inventory
       this.enteredBy = user;
       this.items.forEach((transactionItem) => {
-        transactionItem.lines.forEach((transactionLine) => {
-          const itemLine = transactionLine.itemLine;
-          itemLine.packSize = transactionLine.packSize;
-          itemLine.numberOfPacks = itemLine.numberOfPacks + transactionLine.numberOfPacks;
-          itemLine.expiryDate = transactionLine.expiryDate;
-          itemLine.batch = transactionLine.batch;
-          itemLine.costPrice = transactionLine.costPrice;
-          itemLine.sellPrice = transactionLine.sellPrice;
-          database.save('ItemLine', itemLine);
-          database.save('TransactionLine', transactionLine);
+        transactionItem.batches.forEach((transactionBatch) => {
+          const itemBatch = transactionBatch.itemBatch;
+          itemBatch.packSize = transactionBatch.packSize;
+          itemBatch.numberOfPacks = itemBatch.numberOfPacks + transactionBatch.numberOfPacks;
+          itemBatch.expiryDate = transactionBatch.expiryDate;
+          itemBatch.batch = transactionBatch.batch;
+          itemBatch.costPrice = transactionBatch.costPrice;
+          itemBatch.sellPrice = transactionBatch.sellPrice;
+          database.save('ItemBatch', itemBatch);
+          database.save('TransactionBatch', transactionBatch);
         });
       });
     }

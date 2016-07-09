@@ -17,7 +17,7 @@ import { BottomConfirmModal, PageButton, PageInfo, SelectModal } from '../widget
 import { formatDate, parsePositiveNumber } from '../utilities';
 
 const DATA_TYPES_DISPLAYED =
-        ['Transaction', 'TransactionLine', 'TransactionItem', 'Item', 'ItemLine'];
+        ['Transaction', 'TransactionBatch', 'TransactionItem', 'Item', 'ItemBatch'];
 
 export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
@@ -65,7 +65,7 @@ export class CustomerInvoicePage extends GenericTablePage {
 
   /**
    * Respond to the user editing the number in the number received column
-   * @param  {string} key             Should always be 'numReceived'
+   * @param  {string} key             Should always be 'quantityToIssue'
    * @param  {object} transactionItem The transaction item from the row being edited
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
