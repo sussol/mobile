@@ -4,7 +4,7 @@ import {
   REQUISITION_TYPES,
   STATUSES,
   SYNC_TYPES,
-  TRANSACTION_LINE_TYPES,
+  TRANSACTION_BATCH_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
 
@@ -75,7 +75,7 @@ export function generateSyncJson(database, settings, syncOutRecord) {
  */
 function generateSyncData(settings, recordType, record) {
   switch (recordType) {
-    case 'ItemLine': {
+    case 'ItemBatch': {
       return {
         ID: record.id,
         store_ID: settings.get(THIS_STORE_ID),
@@ -105,7 +105,7 @@ function generateSyncData(settings, recordType, record) {
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
       };
     }
-    case 'RequisitionLine': {
+    case 'RequisitionItem': {
       return {
         ID: record.id,
         requisition_ID: record.requisition.id,
@@ -134,21 +134,21 @@ function generateSyncData(settings, recordType, record) {
         serial_number: record.serialNumber,
       };
     }
-    case 'StocktakeLine': {
-      const itemLine = record.itemLine;
+    case 'StocktakeBatch': {
+      const itemBatch = record.itemBatch;
       return {
         ID: record.id,
         stock_take_ID: record.stocktake && record.stocktake.id,
-        item_line_ID: itemLine.id,
+        item_line_ID: itemBatch.id,
         snapshot_qty: String(record.snapshotNumberOfPacks),
         snapshot_packsize: String(record.packSize),
         stock_take_qty: String(record.countedNumberOfPacks),
         line_number: String(record.sortIndex),
-        expiry: getDateString(itemLine.expiryDate),
-        cost_price: String(itemLine.costPrice),
-        sell_price: String(itemLine.sellPrice),
-        Batch: itemLine.batch,
-        item_ID: itemLine.itemId,
+        expiry: getDateString(itemBatch.expiryDate),
+        cost_price: String(itemBatch.costPrice),
+        sell_price: String(itemBatch.sellPrice),
+        Batch: itemBatch.batch,
+        item_ID: itemBatch.itemId,
       };
     }
     case 'Transaction': {
@@ -171,8 +171,8 @@ function generateSyncData(settings, recordType, record) {
         store_ID: settings.get(THIS_STORE_ID),
       };
     }
-    case 'TransactionLine': {
-      const itemLine = record.itemLine;
+    case 'TransactionBatch': {
+      const itemBatch = record.itemBatch;
       const transaction = record.transaction;
       return {
         ID: record.id,
@@ -186,12 +186,12 @@ function generateSyncData(settings, recordType, record) {
         expiry_date: getDateString(record.expiryDate),
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
-        item_line_ID: itemLine.id,
+        item_line_ID: itemBatch.id,
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.otherParty &&
                                       transaction.otherParty.type === 'inventory_adjustment',
-        type: TRANSACTION_LINE_TYPES.translate(record, INTERNAL_TO_EXTERNAL),
+        type: TRANSACTION_BATCH_TYPES.translate(record, INTERNAL_TO_EXTERNAL),
       };
     }
     default:
