@@ -1,6 +1,7 @@
 import Realm from 'realm';
 
-import { generateUUID, getTotal } from '../utilities';
+import { getTotal } from '../utilities';
+import { createRecord } from '../createRecord';
 
 export class TransactionItem extends Realm.Object {
 
@@ -39,6 +40,10 @@ export class TransactionItem extends Realm.Object {
     return this.item.totalQuantity;
   }
 
+  addBatch(transactionBatch) {
+    this.batches.push(transactionBatch);
+  }
+
   /**
    * Sets the quantity for the current item by applying the difference to the
    * shortest expiry batches possible.
@@ -66,23 +71,11 @@ export class TransactionItem extends Realm.Object {
 
         // Skip if item batch has no stock, or is already in this TransactionItem
         if (itemBatch.totalQuantity <= 0 ||
-          this.batches.find(transactionBatch => transactionBatch.itemBatch === item)) continue;
+          this.batches.find(transactionBatch => transactionBatch.itemBatch === itemBatch)) continue;
 
-        // Create the new transaction batch
-        const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
-        this.batches.push(database.create('TransactionBatch', {
-          id: generateUUID(),
-          itemId: item.id,
-          itemName: item.name,
-          itemBatch: itemBatch,
-          batch: batch,
-          expiryDate: expiryDate,
-          packSize: packSize,
-          numberOfPacks: 0,
-          costPrice: costPrice,
-          sellPrice: sellPrice,
-          transaction: this.transaction,
-        }));
+        // Create the new transaction batch and attach it to this transaction item
+        createRecord(database, 'TransactionBatch', this, itemBatch);
+
 
         // Apply as much of the remainder to it as possible
         remainder = this.allocateDifferenceToBatches(database, remainder);

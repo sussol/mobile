@@ -9,7 +9,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { createCustomerInvoice } from '../database';
+import { createRecord } from '../database';
 import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
@@ -45,7 +45,7 @@ export class CustomerPage extends GenericTablePage {
   onNewInvoice() {
     let invoice;
     this.props.database.write(() => {
-      invoice = createCustomerInvoice(this.props.database, this.props.customer);
+      invoice = createRecord(this.props.database, 'CustomerInvoice', this.props.customer);
     });
     this.navigateToInvoice(invoice);
   }

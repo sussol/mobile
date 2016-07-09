@@ -11,7 +11,7 @@ import { View } from 'react-native';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { createCustomerInvoice } from '../database';
+import { createRecord } from '../database';
 import { formatStatus } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem', 'TransactionBatch'];
@@ -41,7 +41,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   onNewInvoice(otherParty) {
     let invoice;
     this.props.database.write(() => {
-      invoice = createCustomerInvoice(this.props.database, otherParty);
+      invoice = createRecord(this.props.database, 'CustomerInvoice', otherParty);
     });
     this.navigateToInvoice(invoice);
   }

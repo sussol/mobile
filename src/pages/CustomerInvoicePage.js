@@ -15,6 +15,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { BottomConfirmModal, PageButton, PageInfo, SelectModal } from '../widgets';
 import { formatDate, parsePositiveNumber } from '../utilities';
+import { createRecord } from '../database';
 
 const DATA_TYPES_DISPLAYED =
         ['Transaction', 'TransactionBatch', 'TransactionItem', 'Item', 'ItemBatch'];
@@ -193,8 +194,7 @@ export class CustomerInvoicePage extends GenericTablePage {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             onSelect={(item) => {
               this.props.database.write(() => {
-                this.props.transaction.addItem(this.props.database, item);
-                this.props.database.save('Transaction', this.props.transaction);
+                createRecord(this.props.database, 'TransactionItem', this.props.transaction, item);
               });
               this.setState({ isAddingNewItem: false });
             }}

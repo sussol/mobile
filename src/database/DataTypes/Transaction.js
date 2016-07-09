@@ -1,9 +1,9 @@
 import Realm from 'realm';
 import {
   addBatchToParent,
-  generateUUID,
   getTotal,
 } from '../utilities';
+import { createRecord } from '../creators';
 
 export class Transaction extends Realm.Object {
   constructor() {
@@ -34,17 +34,14 @@ export class Transaction extends Realm.Object {
   /**
    * Add a TransactionItem to this transaction, based on the given item. If it already
    * exists, do nothing.
-   * @param {Realm}  database The app wide local database
-   * @param {object} item     The Item to base the TransactionItem on
+   * @param {Realm}  database         The app wide local database
+   * @param {object} transactionItem  The TransactionItem to add
    */
-  addItem(database, item) {
+  addItem(database, transactionItem) {
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
-    if (this.items.find(transactionItem => transactionItem.item.id === item.id)) return;
-    const transactionItem = database.create('TransactionItem', {
-      id: generateUUID(),
-      item: item,
-      transaction: this,
-    });
+    if (this.items.find(testItem => testItem.item.id === transactionItem.item.id)) {
+      throw new Error('Should never add two of the same item to a transaction');
+    }
     this.items.push(transactionItem);
   }
 
@@ -56,7 +53,7 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
     if (this.otherParty && this.otherParty.masterList && this.otherParty.masterList.items) {
       this.otherParty.masterList.items.forEach(masterListItem =>
-                                                this.addItem(database, masterListItem.item));
+        createRecord(database, 'TransactionItem', this, masterListItem.item));
     }
   }
 
@@ -81,11 +78,7 @@ export class Transaction extends Realm.Object {
    */
   addBatch(database, transactionBatch) {
     addBatchToParent(transactionBatch, this, () =>
-      database.create('TransactionItem', {
-        id: generateUUID(),
-        item: transactionBatch.itemBatch.item,
-        transaction: this,
-      })
+      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item)
     );
   }
 

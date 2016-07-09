@@ -1,6 +1,6 @@
 import Realm from 'realm';
 import { addBatchToParent, generateUUID } from '../utilities';
-import { createStocktakeItem } from '../creators';
+import { createRecord } from '../createRecord';
 
 
 export class Stocktake extends Realm.Object {
@@ -12,11 +12,7 @@ export class Stocktake extends Realm.Object {
   // Adds a StocktakeBatch, incorporating it into a matching StocktakeItem.
   addBatch(database, stocktakeBatch) {
     addBatchToParent(stocktakeBatch, this, () =>
-      database.create('StocktakeItem', {
-        id: generateUUID(),
-        item: stocktakeBatch.itemBatch.item,
-        stocktake: this,
-      })
+      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
     );
   }
 
@@ -38,7 +34,7 @@ export class Stocktake extends Realm.Object {
     // Add StocktakeItem for each Item.id in newItemsIds to the stocktake.
     newItemsIds.forEach((itemId) => {
       const item = items.find(i => i.id === itemId);
-      createStocktakeItem(database, this, item);
+      createRecord(database, 'StocktakeItem', this, item);
     });
   }
 

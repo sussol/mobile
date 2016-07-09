@@ -9,7 +9,7 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { generateUUID } from '../database';
+import { createRecord } from '../database';
 import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
@@ -62,15 +62,7 @@ export class RequisitionsPage extends GenericTablePage {
   onNewRequisition() {
     let requisition;
     this.props.database.write(() => {
-      requisition = this.props.database.create('Requisition', {
-        id: generateUUID(),
-        status: 'new',
-        type: 'request',
-        entryDate: new Date(),
-        daysToSupply: 90, // 3 months
-        serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
-        user: this.props.currentUser,
-      });
+      requisition = createRecord(this.props.database, 'Requisition');
     });
     this.navigateToRequisition(requisition);
   }
