@@ -92,7 +92,6 @@ export class GenericTablePage extends React.Component {
   onSearchChange(event) {
     const term = event.nativeEvent.text;
     this.setState({ searchTerm: term }, this.refreshData);
-    this.refreshData();
   }
 
   onColumnSort(sortBy) {

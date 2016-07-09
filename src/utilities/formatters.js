@@ -9,6 +9,11 @@ export function formatDate(date, format) {
   }
 }
 
+export function formatDateAndTime(date, format) {
+  const time = date.toLocaleTimeString();
+  return `${formatDate(date, format)} ${time.substring(0, time.length - 3)}`;
+}
+
 export function formatStatus(status) {
   switch (status) {
     case 'finalised':

@@ -23,6 +23,8 @@ const {
 
 const BACK_ACTION = 'BackAction';
 const PUSH_ACTION = 'push';
+const REPLACE_ACTION = 'replace';
+const REPLACE_PREVIOUS_AND_POP_ACTION = 'replacePreviousAndPop';
 const INITIAL_ACTION = 'initial';
 
 export class Navigator extends React.Component {
@@ -176,6 +178,22 @@ function getNewNavState(currentState, action) {
       return currentState.index > 0 ?
         NavigationStateUtils.pop(currentState) :
         currentState;
+    // Replace current route with new route
+    case REPLACE_ACTION: // TODO: broken, RN Bug. JIRA bug OM-99
+      return NavigationStateUtils.replaceAtIndex(
+        { ...currentState },
+        currentState.index,
+        { key: key, ...extraProps }
+      );
+    // Replace previous route and pop to it. Will error if at root
+    case REPLACE_PREVIOUS_AND_POP_ACTION: {
+      const newState = NavigationStateUtils.replaceAtIndex(
+        currentState,
+        currentState.index - 1,
+        { key: key, ...extraProps }
+      );
+      return NavigationStateUtils.pop(newState);
+    }
     default:
       return currentState;
   }

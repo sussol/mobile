@@ -60,18 +60,21 @@ export class Database {
   }
 
   /**
-   * Deletes a specific object from the database. Calls the object's destructor if
-   * it has one, to give it an opportunity to clean up.
-   * @param  {Realm.Object} object Object to be deleted
+   * Deletes a specific object from the database.
+   * @param  {Realm.Object} object  Object to be deleted, also can accept an array of Objects
+   *                                of same type to be deleted.
+   * @param  {string} type          Type of the object(s) to be deleted
    * @return {none}
    */
   delete(type, object) {
-    const record = { ...object };
-    if (object && object.destructor instanceof Function) object.destructor(this);
-    this.realm.delete(object);
-    this.alertListeners(CHANGE_TYPES.DELETE, type, record);
+    const objects = objects instanceof Array ? object : [object];
+    objects.forEach(obj => {
+      const record = { ...obj };
+      if (obj && obj.destructor instanceof Function) obj.destructor(this);
+      this.realm.delete(obj);
+      this.alertListeners(CHANGE_TYPES.DELETE, type, record);
+    });
   }
-
   /**
    * Deletes all objects from the database.
    * @return {none}

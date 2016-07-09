@@ -39,7 +39,10 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   onNewInvoice(otherParty) {
-    const invoice = createCustomerInvoice(this.props.database, otherParty);
+    let invoice;
+    this.props.database.write(() => {
+      invoice = createCustomerInvoice(this.props.database, otherParty);
+    });
     this.navigateToInvoice(invoice);
   }
 
@@ -81,7 +84,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
    * properties.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.transactions.filtered(`otherParty.name CONTAINS[c] "${searchTerm}"`);
+    let data = this.state.transactions.filtered(`otherParty.name BEGINSWITH[c] "${searchTerm}"`);
     if (sortBy === 'otherParty.name') {
       // Convert to javascript array obj then sort with standard array functions.
       data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
