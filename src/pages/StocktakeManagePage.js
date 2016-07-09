@@ -15,7 +15,7 @@ import {
 import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { createStocktake, createStocktakeItem } from '../database';
+import { createStocktake } from '../database';
 
 const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
 
@@ -54,7 +54,7 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   onConfirmPress() {
-    const { selection, items } = this.state;
+    const { selection } = this.state;
     const { database, navigateTo, user } = this.props;
     let stocktake;
     const { stocktakeName } = this.state;
@@ -67,32 +67,14 @@ export class StocktakeManagePage extends GenericTablePage {
       stocktake = createStocktake(database, user);
     }
 
-    stocktake.items.forEach((stocktakeItem) => {
-      const item = stocktakeItem.item;
-      const itemIdIndex = selection.indexOf(item.id);
-      // If an item in selection already exists in the stocktake, remove it from selection.
-      if (itemIdIndex >= 0) {
-        selection.slice(itemIdIndex, 1);
-      }
-      // Remove StocktakeItem of Items that are not in the selection.
-      // If the item in the stocktake is not in the selection, remove it from the stocktake.
-      if (!selection.some(id => id === item.id)) {
-        database.write(() => { stocktake.deleteStocktakeItem(database, item); });
-      }
-    });
-    // Add StocktakeItem for each Item.id in selection to the stocktake.
-    selection.forEach((itemId) => {
-      const item = items.find(i => i.id === itemId);
-      createStocktakeItem(database, stocktake, item);
-    });
+    database.write(() => {
+      stocktake.setItemsByID(database, selection);
 
-    // Change the name of stocktake if edited.
-    if (stocktakeName !== '' && stocktakeName !== stocktake.name) {
-      database.write(() => {
+      if (stocktakeName !== '' && stocktakeName !== stocktake.name) {
         stocktake.name = stocktakeName;
-        database.save('Stocktake', stocktake);
-      });
-    }
+      }
+      database.save('Stocktake', stocktake);
+    });
 
     navigateTo(
       'stocktakeEditor',
@@ -203,7 +185,7 @@ export class StocktakeManagePage extends GenericTablePage {
           </View>
           {this.renderDataTable()}
           <BottomModal
-            isOpen={!(stocktake && stocktake.isFinalised) && selection.length > 0}
+            isOpen={!(stocktake && stocktake.isFinalised) && (selection.length > 0)}
             style={localStyles.bottomModal}
           >
             <TextInput
