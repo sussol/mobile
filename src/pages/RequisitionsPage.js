@@ -10,7 +10,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { generateUUID } from '../database';
-import { PageButton } from '../widgets';
+import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
@@ -38,6 +38,27 @@ export class RequisitionsPage extends GenericTablePage {
     this.navigateToRequisition = this.navigateToRequisition.bind(this);
   }
 
+  onDeleteConfirm() {
+    const { selection, requisitions } = this.state;
+    const { database } = this.props;
+    database.write(() => {
+      for (let i = 0; i < selection.length; i++) {
+        const requisition = requisitions.find(currentRequisition =>
+                                                currentRequisition.id === selection[i]);
+        if (requisition.isValid()) {
+          database.delete('Transaction', requisition);
+        }
+      }
+    });
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
   onNewRequisition() {
     let requisition;
     this.props.database.write(() => {
@@ -59,6 +80,7 @@ export class RequisitionsPage extends GenericTablePage {
   }
 
   navigateToRequisition(requisition) {
+    this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
       'requisition',
       `Requisition ${requisition.serialNumber}`,
@@ -101,6 +123,12 @@ export class RequisitionsPage extends GenericTablePage {
         return requisition.items.length;
       case 'status':
         return formatStatus(requisition.status);
+      case 'delete':
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+          isDisabled: requisition.isFinalised,
+        };
     }
   }
 
@@ -116,6 +144,13 @@ export class RequisitionsPage extends GenericTablePage {
             />
           </View>
           {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0}
+            questionText="Are you sure you want to delete these requsitions?"
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText="Delete"
+          />
         </View>
       </View>
     );
@@ -144,7 +179,7 @@ const COLUMNS = [
   {
     key: 'numberOfItems',
     width: 1,
-    title: 'AMOUNT OF ITEMS',
+    title: 'ITEMS',
     sortable: true,
   },
   {
@@ -152,5 +187,10 @@ const COLUMNS = [
     width: 1,
     title: 'STATUS',
     sortable: true,
+  },
+  {
+    key: 'delete',
+    width: 1,
+    title: 'DELETE',
   },
 ];
