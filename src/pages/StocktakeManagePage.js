@@ -56,18 +56,13 @@ export class StocktakeManagePage extends GenericTablePage {
   onConfirmPress() {
     const { selection } = this.state;
     const { database, navigateTo, user } = this.props;
-    let stocktake;
+    let { stocktake } = this.props;
     const { stocktakeName } = this.state;
 
-
-    // Get stocktake from props or make a new one.
-    if (this.props.stocktake) {
-      stocktake = this.props.stocktake;
-    } else {
-      stocktake = createStocktake(database, user);
-    }
-
     database.write(() => {
+      // If no stocktake came in props, make a new one
+      if (!stocktake) stocktake = createStocktake(database, user);
+
       stocktake.setItemsByID(database, selection);
 
       if (stocktakeName !== '' && stocktakeName !== stocktake.name) {

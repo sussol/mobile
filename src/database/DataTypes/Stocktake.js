@@ -21,20 +21,23 @@ export class Stocktake extends Realm.Object {
   }
 
   setItemsByID(database, newItemsIds) {
-    const itemsToDelete = [];
-    this.items.forEach(item => {
-      const itemIndex = newItemsIds.indexOf(item.id);
-      if (itemIndex < 0) itemsToDelete.push(item);
-      newItemsIds.slice(itemIndex, 1);
-    });
-    database.delete('StocktakeItem', itemsToDelete);
-
-    newItemsIds.forEach(itemId => {
-      const itemResults = database.objects('Item').filtered('id == $0', itemId);
-      if (itemResults && itemResults.length > 0) {
-        const item = itemResults[0];
-        this.items.push(createStocktakeItem(database, this, item));
+    const items = database.objects('Item');
+    this.items.forEach((stocktakeItem) => {
+      const item = stocktakeItem.item;
+      const itemIdIndex = newItemsIds.indexOf(item.id);
+      // If an item in newItemsIds already exists in the stocktake, remove it from newItemsIds.
+      if (itemIdIndex >= 0) {
+        newItemsIds.slice(itemIdIndex, 1);
       }
+      // If the item in the stocktake is not in the newItemsIds, remove it from the stocktake.
+      if (!newItemsIds.some(id => id === item.id)) {
+        database.delete('StocktakeItem', item);
+      }
+    });
+    // Add StocktakeItem for each Item.id in newItemsIds to the stocktake.
+    newItemsIds.forEach((itemId) => {
+      const item = items.find(i => i.id === itemId);
+      createStocktakeItem(database, this, item);
     });
   }
 
