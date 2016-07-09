@@ -8,3 +8,12 @@ export function formatDate(date, format) {
       return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
   }
 }
+
+export function formatStatus(status) {
+  switch (status) {
+    case 'finalised':
+      return 'Finalised';
+    default:
+      return 'In Progress';
+  }
+}

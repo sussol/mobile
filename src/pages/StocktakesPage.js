@@ -12,6 +12,7 @@ import { SearchBar, PageButton, BottomConfirmModal, ToggleBar } from '../widgets
 import { generateUUID } from '../database';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { formatStatus } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Stocktake'];
 
@@ -105,7 +106,7 @@ export class StocktakesPage extends GenericTablePage {
       case 'createdDate':
         return stocktake.createdDate.toDateString();
       case 'status':
-        return stocktake.status;
+        return formatStatus(tocktake.status);
       case 'selected':
         return {
           type: 'checkable',

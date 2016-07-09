@@ -13,6 +13,7 @@ import { generateUUID } from '../database';
 import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { formatStatus } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Requisition', 'RequisitionLine'];
 
@@ -99,7 +100,7 @@ export class RequisitionsPage extends GenericTablePage {
       case 'numberOfItems':
         return requisition.items.length;
       case 'status':
-        return requisition.status;
+        return formatStatus(requisition.status);
     }
   }
 

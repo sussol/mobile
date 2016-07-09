@@ -13,6 +13,7 @@ import { createCustomerInvoice } from '../database';
 import { Button } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { formatStatus } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem'];
 
@@ -84,7 +85,7 @@ export class CustomerPage extends GenericTablePage {
       case 'serialNumber':
         return transaction.serialNumber;
       case 'status':
-        return transaction.status;
+        return formatStatus(transaction.status);
       case 'entryDate':
         return transaction.entryDate.toDateString();
       case 'items':

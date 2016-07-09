@@ -1,3 +1,3 @@
 export { getItemQuantitiesOnDate } from './getItemQuantitiesOnDate';
-export { formatDate } from './formatters';
+export { formatDate, formatStatus } from './formatters';
 export { parsePositiveNumber } from './parsers';
