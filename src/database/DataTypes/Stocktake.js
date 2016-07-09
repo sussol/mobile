@@ -21,17 +21,18 @@ export class Stocktake extends Realm.Object {
   }
 
   setItemsByID(database, newItemsIds) {
+    if (this.isFinalised) throw new Error('Cannot add items to a finalised stocktake');
     const items = database.objects('Item');
     this.items.forEach((stocktakeItem) => {
-      const item = stocktakeItem.item;
-      const itemIdIndex = newItemsIds.indexOf(item.id);
+      const itemId = stocktakeItem.itemId;
+      const itemIdIndex = newItemsIds.indexOf(itemId);
       // If an item in newItemsIds already exists in the stocktake, remove it from newItemsIds.
       if (itemIdIndex >= 0) {
-        newItemsIds.slice(itemIdIndex, 1);
+        newItemsIds.splice(itemIdIndex, 1);
       }
       // If the item in the stocktake is not in the newItemsIds, remove it from the stocktake.
-      if (!newItemsIds.some(id => id === item.id)) {
-        database.delete('StocktakeItem', item);
+      if (!newItemsIds.some(id => id === itemId)) {
+        database.delete('StocktakeItem', stocktakeItem);
       }
     });
     // Add StocktakeItem for each Item.id in newItemsIds to the stocktake.
@@ -40,15 +41,6 @@ export class Stocktake extends Realm.Object {
       createStocktakeItem(database, this, item);
     });
   }
-
-  // Adds a stocktakeItem to the stocktake corresponding to an Item.
-  addItem(database, item) {
-    if (this.isFinalised) throw new Error('Cannot add an item to a finalised stocktake');
-    // Exit if item already in stocktake.
-    if (this.items.find(stocktakeItem => stocktakeItem.item.id === item.id)) return;
-    createStocktakeItem(database, this, item);
-  }
-
 
   get isFinalised() {
     return this.status === 'finalised';

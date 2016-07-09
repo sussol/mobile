@@ -43,8 +43,8 @@ export class StocktakeManagePage extends GenericTablePage {
     if (this.props.stocktake) {
       const selected = [];
       this.props.stocktake.items.forEach((stocktakeItem) => {
-        const item = stocktakeItem.item;
-        if (item) selected.push(item.id);
+        const itemId = stocktakeItem.itemId;
+        if (itemId !== '') selected.push(itemId);
       });
       this.setState({
         selection: selected,
