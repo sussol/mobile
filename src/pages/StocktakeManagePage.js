@@ -165,7 +165,7 @@ export class StocktakeManagePage extends GenericTablePage {
                 toggleOnStyle={globalStyles.toggleOptionSelected}
                 toggles={[
                   {
-                    text: 'Show No Stock',
+                    text: 'Show Stockouts',
                     onPress: () => this.toggleShowItemsWithNoStock(),
                     isOn: showItemsWithNoStock,
                   },

@@ -93,7 +93,7 @@ export class StocktakesPage extends GenericTablePage {
       case 'createdDate':
         return stocktake.createdDate.toDateString();
       case 'status':
-        return formatStatus(tocktake.status);
+        return formatStatus(stocktake.status);
       case 'selected':
         return {
           type: 'checkable',
