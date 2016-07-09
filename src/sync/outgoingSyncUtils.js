@@ -14,6 +14,7 @@ const {
   THIS_STORE_ID,
   THIS_STORE_NAME_ID,
 } = SETTINGS_KEYS;
+import { CHANGE_TYPES } from '../database';
 
 /**
  * Returns a json object fulfilling the requirements of the mSupply primary sync
@@ -28,8 +29,17 @@ export function generateSyncJson(database, settings, syncOutRecord) {
   if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
     throw new Error('Malformed sync out record');
   }
-  const recordType = syncOutRecord.recordType;
-  const recordId = syncOutRecord.recordId;
+  const { recordType, recordId, changeType } = syncOutRecord;
+
+  // Create the JSON object to sync
+  const syncJson = {
+    SyncID: syncOutRecord.id,
+    RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
+    RecordID: recordId,
+    SyncType: SYNC_TYPES.translate(changeType, INTERNAL_TO_EXTERNAL),
+    StoreID: settings.get(THIS_STORE_ID),
+  };
+  if (changeType === CHANGE_TYPES.DELETE) return syncJson; // Don't need record data for deletes
 
   let syncData;
   if (syncOutRecord.changeType === 'delete') {
@@ -50,15 +60,8 @@ export function generateSyncJson(database, settings, syncOutRecord) {
     syncData = generateSyncData(settings, recordType, record);
   }
 
-  // Create the JSON object to sync
-  const syncJson = {
-    SyncID: syncOutRecord.id,
-    RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
-    RecordID: recordId,
-    SyncType: SYNC_TYPES.translate(syncOutRecord.changeType, INTERNAL_TO_EXTERNAL),
-    StoreID: settings.get(THIS_STORE_ID),
-    Data: syncData,
-  };
+  // Attach the record data to the json object
+  syncJson.Data = syncData;
   return syncJson;
 }
 
@@ -135,7 +138,7 @@ function generateSyncData(settings, recordType, record) {
       const itemLine = record.itemLine;
       return {
         ID: record.id,
-        stock_take_ID: record.Stocktake.id,
+        stock_take_ID: record.stocktake && record.stocktake.id,
         item_line_ID: itemLine.id,
         snapshot_qty: String(record.snapshotNumberOfPacks),
         snapshot_packsize: String(record.packSize),
@@ -145,7 +148,7 @@ function generateSyncData(settings, recordType, record) {
         cost_price: String(itemLine.costPrice),
         sell_price: String(itemLine.sellPrice),
         Batch: itemLine.batch,
-        item_ID: itemLine.item.id,
+        item_ID: itemLine.itemId,
       };
     }
     case 'Transaction': {
@@ -157,6 +160,7 @@ function generateSyncData(settings, recordType, record) {
         entry_date: getDateString(record.entryDate),
         type: TRANSACTION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
+        mode: 'store',
         total: String(record.totalPrice),
         their_ref: record.theirRef,
         confirm_date: getDateString(record.confirmDate),

@@ -61,7 +61,6 @@ export function integrateIncomingRecord(database, recordType, record) {
         item: item,
         packSize: 1, // Every item line in mobile should be pack-to-one
         numberOfPacks: parseNumber(record.quantity) * packSize,
-        totalQuantity: parseNumber(record.quantity) * packSize,
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
         costPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
@@ -371,7 +370,6 @@ function generatePlaceholder(type, id) {
         id: id,
         packSize: placeholderNumber,
         numberOfPacks: placeholderNumber,
-        totalQuantity: placeholderNumber,
         expiryDate: placeholderDate,
         batch: placeholderString,
         costPrice: placeholderNumber,

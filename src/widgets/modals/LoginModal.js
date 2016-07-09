@@ -27,6 +27,7 @@ export class LoginModal extends React.Component {
       username: '',
       password: '',
     };
+    this.errorTimeoutId = null;
   }
 
   componentWillMount() {
@@ -37,6 +38,10 @@ export class LoginModal extends React.Component {
     if (this.state.authStatus === 'authenticated' && !nextProps.isAuthenticated) {
       this.setState({ authStatus: 'unauthenticated' });
     }
+  }
+
+  componentWillUpdate() {
+    if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 
   async onLogin() {
@@ -51,7 +56,10 @@ export class LoginModal extends React.Component {
       this.props.onAuthentication(null);
       if (!error.message.startsWith('Invalid username or password')) {
         // After ten seconds of displaying the error, re-enable the button
-        setTimeout(() => this.setState({ authStatus: 'unauthenticated' }), 10 * 1000);
+        this.errorTimeoutId = setTimeout(() => {
+          this.setState({ authStatus: 'unauthenticated' });
+          this.errorTimeoutId = null;
+        }, 10 * 1000);
       }
     }
   }

@@ -6,4 +6,8 @@ export class RequisitionItem extends Realm.Object {
   get totalQuantity() {
     return getTotal(this.lines, 'totalQuantity');
   }
+
+  get itemId() {
+    return this.item ? this.item.id : '';
+  }
 }

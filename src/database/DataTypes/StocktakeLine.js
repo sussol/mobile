@@ -9,6 +9,11 @@ export class StocktakeLine extends Realm.Object {
     return this.countedNumberOfPacks * this.packSize;
   }
 
+  get itemId() {
+    if (!this.itemLine) return '';
+    return this.itemLine.item ? this.itemLine.item.id : '';
+  }
+
   set countedTotalQuantity(quantity) {
     this.countedNumberOfPacks = quantity / this.packSize;
   }

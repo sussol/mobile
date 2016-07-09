@@ -24,15 +24,15 @@ export function SyncState(props) {
   let arrowsColor = ACTIVE_COLOR;
   let wifiColor = ACTIVE_COLOR;
 
-  if (props.syncError && props.syncError.length > 0) {
+  if (props.isSyncing) {
+    text = 'SYNC IN PROGRESS';
+  } else if (props.syncError && props.syncError.length > 0) {
     const lastSync = props.settings ? props.settings.get(SETTINGS.SYNC_LAST_SUCCESS) : '';
     text = 'SYNC ERROR.';
     if (lastSync) text = `${text} LAST SYNC ${lastSync}`;
     cloudColor = INACTIVE_COLOR;
     arrowsColor = INACTIVE_COLOR;
     wifiColor = INACTIVE_COLOR;
-  } else if (props.isSyncing) {
-    text = 'SYNC IN PROGRESS';
   }
 
   return (

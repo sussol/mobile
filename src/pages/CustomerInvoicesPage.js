@@ -8,7 +8,7 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import { PageButton, SelectModal } from '../widgets';
+import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createCustomerInvoice } from '../database';
@@ -42,11 +42,33 @@ export class CustomerInvoicesPage extends GenericTablePage {
     this.navigateToInvoice(invoice);
   }
 
+  onDeleteConfirm() {
+    const { selection, transactions } = this.state;
+    const { database } = this.props;
+    database.write(() => {
+      for (let i = 0; i < selection.length; i++) {
+        const transaction = transactions.find(currentTransaction =>
+                                                currentTransaction.id === selection[i]);
+        if (transaction.isValid()) {
+          database.delete('Transaction', transaction);
+        }
+      }
+    });
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
   onRowPress(invoice) {
     this.navigateToInvoice(invoice);
   }
 
   navigateToInvoice(invoice) {
+    this.setState({ selection: [] }); // Clear any invoices selected for delete
     this.props.navigateTo('customerInvoice',
                           `Invoice ${invoice.serialNumber}`,
                           { transaction: invoice });
@@ -82,6 +104,12 @@ export class CustomerInvoicesPage extends GenericTablePage {
         return invoice.entryDate.toDateString();
       case 'comment':
         return invoice.comment;
+      case 'delete':
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+          isDisabled: invoice.isFinalised,
+        };
     }
   }
 
@@ -97,6 +125,13 @@ export class CustomerInvoicesPage extends GenericTablePage {
             />
           </View>
           {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0}
+            questionText="Are you sure you want to delete these invoices?"
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText="Delete"
+          />
           <SelectModal
             isOpen={this.state.isCreatingInvoice}
             options={this.props.database.objects('Name').filtered('isCustomer == true')}
@@ -148,5 +183,10 @@ const COLUMNS = [
     key: 'comment',
     width: 4,
     title: 'COMMENT',
+  },
+  {
+    key: 'delete',
+    width: 1,
+    title: 'DELETE',
   },
 ];
