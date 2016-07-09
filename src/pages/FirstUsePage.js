@@ -21,8 +21,13 @@ export class FirstUsePage extends React.Component {
       syncSiteName: '',
       syncSitePassword: '',
     };
+    this.errorTimeoutId = null;
     this.onPressConnect = this.onPressConnect.bind(this);
     this.setProgress = this.setProgress.bind(this);
+  }
+
+  componentWillUpdate() {
+    if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 
   async onPressConnect() {
@@ -40,7 +45,10 @@ export class FirstUsePage extends React.Component {
       this.setProgress(error.message);
       if (!error.message.startsWith('Invalid username or password')) {
         // After ten seconds of displaying the error, re-enable the button
-        setTimeout(() => this.setState({ progress: 'uninitialised' }), 10 * 1000);
+        this.errorTimeoutId = setTimeout(() => {
+          this.setState({ progress: 'uninitialised' });
+          this.errorTimeoutId = null;
+        }, 10 * 1000);
       }
     }
   }

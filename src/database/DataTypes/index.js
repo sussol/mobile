@@ -10,11 +10,11 @@ export class TransactionCategory extends Realm.Object {}
 export { TransactionItem } from './TransactionItem';
 export { TransactionLine } from './TransactionLine';
 export { MasterList } from './MasterList';
-export class MasterListLine extends Realm.Object {}
-export { Requisition } from './Requisition';
+export { MasterListLine } from './MasterListLine';
 export { Name } from './Name';
+export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
-export class RequisitionLine extends Realm.Object {}
+export { RequisitionLine } from './RequisitionLine';
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export { Stocktake } from './Stocktake';
