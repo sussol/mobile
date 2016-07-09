@@ -42,7 +42,10 @@ export class CustomerPage extends GenericTablePage {
   }
 
   onNewInvoice() {
-    const invoice = createCustomerInvoice(this.props.database, this.props.customer);
+    let invoice;
+    this.props.database.write(() => {
+      invoice = createCustomerInvoice(this.props.database, this.props.customer);
+    });
     this.navigateToInvoice(invoice);
   }
 

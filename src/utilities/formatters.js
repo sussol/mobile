@@ -8,3 +8,8 @@ export function formatDate(date, format) {
       return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
   }
 }
+
+export function formatDateAndTime(date, format) {
+  const time = date.toLocaleTimeString();
+  return `${formatDate(date, format)} ${time.substring(0, time.length - 3)}`;
+}

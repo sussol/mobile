@@ -9,7 +9,6 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
 import { SearchBar, PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
-import { generateUUID } from '../database';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
@@ -17,14 +16,14 @@ const DATA_TYPES_DISPLAYED = ['Stocktake'];
 
 /**
 * Renders the page for displaying Stocktakes.
-* @prop   {Realm}               database      App wide database.
-* @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
+* @prop   {Realm}               database    App wide database.
+* @prop   {func}                navigateTo  CallBack for navigation stack.
+* @state  {Realm.Results}       stocktakes  Realm.Result object containing all Items.
 */
 export class StocktakesPage extends GenericTablePage {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'name';
+    this.state.sortBy = 'createdDate';
     this.state.showCurrent = true;
     this.state.stocktakes = props.database.objects('Stocktake');
     this.columns = COLUMNS;
@@ -37,27 +36,16 @@ export class StocktakesPage extends GenericTablePage {
     this.onToggleStatusFilter = this.onToggleStatusFilter.bind(this);
   }
 
-  onNewStockTake() {
-    this.props.database.write(() => {
-      this.props.database.create('Stocktake', {
-        id: generateUUID(),
-        name: Math.random().toString(),
-        createdDate: new Date(),
-        status: 'new',
-        comment: 'Testing StocktakesPage',
-        serialNumber: '1337',
-        lines: [],
-      });
-    });
-    this.props.navigateTo('stocktakeManager', 'New StockTake');
-  }
-
   onRowPress(stocktake) {
     this.props.navigateTo(
-      'stocktakeManager',
+      'stocktakeEditor',
       `${stocktake.name}`,
       { stocktake: stocktake },
     );
+  }
+
+  onNewStockTake() {
+    this.props.navigateTo('stocktakeManager', 'New Stocktake');
   }
 
   onDeleteConfirm() {
@@ -66,7 +54,7 @@ export class StocktakesPage extends GenericTablePage {
     database.write(() => {
       for (let i = 0; i < selection.length; i++) {
         const stocktake = stocktakes.find(s => s.id === selection[i]);
-        if (stocktake.isValid()) database.delete('Stocktake', stocktake);
+        if (stocktake.isValid() && !stocktake.isFinalised) database.delete('Stocktake', stocktake);
       }
     });
     this.setState({ selection: [] });
@@ -81,8 +69,7 @@ export class StocktakesPage extends GenericTablePage {
   onToggleStatusFilter(isCurrent) {
     this.setState({
       showCurrent: isCurrent,
-    });
-    this.refreshData();
+    }, this.refreshData);
   }
 
   /**
@@ -123,7 +110,7 @@ export class StocktakesPage extends GenericTablePage {
   }
 
   render() {
-    const { showCurrent } = this.state;
+    const { showCurrent, selection } = this.state;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -155,14 +142,14 @@ export class StocktakesPage extends GenericTablePage {
             </View>
           </View>
           {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={selection.length > 0 && showCurrent}
+            questionText="Are you sure you want to delete these stocktakes?"
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText="Delete"
+          />
         </View>
-        <BottomConfirmModal
-          isOpen={this.state.selection.length > 0}
-          questionText="Are you sure you want to delete these stocktakes?"
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText="Delete"
-        />
       </View>
     );
   }

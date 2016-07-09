@@ -15,7 +15,7 @@ import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
 
 import { Navigator } from './navigation';
 
-import { PAGES } from './pages';
+import { PAGES, FINALISABLE_PAGES } from './pages';
 
 import {
   FinaliseButton,
@@ -30,7 +30,7 @@ import { Database, schema } from './database';
 import { Scheduler } from './Scheduler';
 import { Settings } from './settings';
 
-const SYNC_INTERVAL = 0.1 * 60 * 1000; // 10 minutes in milliseconds
+const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 export default class OfflineMobileApp extends React.Component {
@@ -124,29 +124,20 @@ export default class OfflineMobileApp extends React.Component {
   }
 
   renderScene(props) {
-    const navigateTo = (key, title, extraProps) => {
-      // If the page we're going to takes in a record that can be finalised, retain it in state
-      let recordToFinalise = null;
-      let recordType = null;
-      if (extraProps && 'invoice' in extraProps) {
-        recordToFinalise = extraProps.invoice;
-        recordType = 'Transaction';
-      } else if (extraProps && 'requisition' in extraProps) {
-        recordToFinalise = extraProps.requisition;
-        recordType = 'Requisition';
-      } else if (extraProps && 'stocktake' in extraProps) {
-        recordToFinalise = extraProps.stocktake;
-        recordType = 'Stocktake';
-      } else if (extraProps && 'transaction' in extraProps) {
-        recordToFinalise = extraProps.transaction;
-        recordType = 'Transaction';
+    const navigateTo = (key, title, extraProps, navType) => {
+      if (!navType) navType = 'push';
+      const navigationProps = { key, title, ...extraProps };
+      // If the page we're going to has a key value pair in FINALISABLE_PAGES, get recordToFinalise
+      // and recordType corresponding to that key. Set the new state and render the finalise Button
+      if (FINALISABLE_PAGES[key]) {
+        const recordToFinalise = extraProps[FINALISABLE_PAGES[key].recordToFinaliseKey];
+        const recordType = FINALISABLE_PAGES[key].recordType;
+        this.setState({ recordToFinalise: recordToFinalise, recordTypeToFinalise: recordType });
+        navigationProps.renderRightComponent = this.renderFinaliseButton;
       }
-      this.setState({ recordToFinalise: recordToFinalise, recordTypeToFinalise: recordType });
 
       // Now navigate to the page, passing on any extra props and the finalise button if required
-      const navigationProps = { key, title, ...extraProps };
-      if (recordToFinalise) navigationProps.renderRightComponent = this.renderFinaliseButton;
-      props.onNavigate({ type: 'push', ...navigationProps });
+      props.onNavigate({ type: navType, ...navigationProps });
     };
     const { key, ...extraProps } = props.scene.navigationState;
     const Page = PAGES[key]; // Get the page the navigation key relates to
