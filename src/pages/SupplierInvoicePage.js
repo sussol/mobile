@@ -17,7 +17,6 @@ export class SupplierInvoicePage extends GenericTablePage {
     this.state.sortBy = 'itemName';
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
-    this.databaseListenerId = null;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);

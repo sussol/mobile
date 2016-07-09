@@ -26,7 +26,6 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.state.isAddingNewItem = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
-    this.databaseListenerId = null;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
