@@ -22,6 +22,14 @@ export class Requisition extends Realm.Object {
     return this.enteredBy ? this.enteredBy.id : '';
   }
 
+  get monthsToSupply() {
+    return this.daysToSupply / 30;
+  }
+
+  set monthsToSupply(months) {
+    this.daysToSupply = months * 30;
+  }
+
   // Adds a RequisitionItem to this Requisition
   addItem(requisitionItem) {
     this.items.push(requisitionItem);
