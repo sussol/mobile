@@ -136,12 +136,14 @@ export function integrateIncomingRecord(database, recordType, record) {
     }
     case 'RequisitionItem': {
       const requisition = getObject(database, 'Requisition', record.requisition_ID);
+      const dailyUsage = requisition.daysToSupply ?
+                           parseNumber(record.Cust_stock_order) / requisition.daysToSupply : 0;
       internalRecord = {
         id: record.ID,
         requisition: requisition,
         item: getObject(database, 'Item', record.item_ID),
         stockOnHand: parseNumber(record.stock_on_hand),
-        suggestedQuantity: parseNumber(record.Cust_stock_order),
+        dailyUsage: dailyUsage,
         imprestQuantity: parseNumber(record.imprest_or_prev_quantity),
         requiredQuantity: parseNumber(record.actualQuan),
         comment: record.comment,

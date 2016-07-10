@@ -59,6 +59,5 @@ export class Requisition extends Realm.Object {
 
   finalise() {
     this.status = 'finalised';
-    // TODO behaviour when requisition is finalised
   }
 }

@@ -24,8 +24,4 @@ export class RequisitionItem extends Realm.Object {
   get suggestedQuantity() {
     return this.requisition ? this.dailyUsage * this.requisition.daysToSupply : 0;
   }
-
-  set suggestedQuantity(quantity) {
-    // TODO!
-  }
 }
