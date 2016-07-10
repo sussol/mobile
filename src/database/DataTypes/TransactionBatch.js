@@ -10,6 +10,17 @@ export class TransactionBatch extends Realm.Object {
     return this.numberOfPacks * this.packSize;
   }
 
+  get usage() {
+    if (!this.transaction.isConfirmed && !this.transaction.isFinalised) return 0;
+    switch (this.transaction.type) {
+      case 'customer_invoice':
+        return this.totalQuantity;
+      case 'supplier_invoice':
+      default:
+        return 0;
+    }
+  }
+
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot change quantity of batches in a finalised transaction');
@@ -57,6 +68,11 @@ export class TransactionBatch extends Realm.Object {
     if (this.transaction.isCustomerInvoice) return Math.min(quantity, this.itemBatch.totalQuantity);
     // For supplier invoice, there is no maximum amount that can be added
     return quantity;
+  }
+
+  toString() {
+    const transactionType = this.isCustomerInvoice ? 'Customer Invoice' : 'Supplier Invoice';
+    return `${this.itemBatch} in a ${transactionType}`;
   }
 
 }

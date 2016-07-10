@@ -71,7 +71,7 @@ function createRequisition(database, user) {
     entryDate: new Date(),
     daysToSupply: 90, // 3 months
     serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
-    user: user,
+    enteredBy: user,
   });
   return requisition;
 }
@@ -85,7 +85,7 @@ function createRequisitionItem(database, requisition, item) {
     requistion: requisition,
     stockOnHand: item.totalQuantity,
     dailyUsage: dailyUsage,
-    requiredQuantity: dailyUsage,
+    requiredQuantity: 0,
     comment: '',
   });
   requisition.addItem(requisitionItem);

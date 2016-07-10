@@ -83,6 +83,7 @@ ItemBatch.schema = {
     costPrice: 'double',
     sellPrice: 'double',
     supplier: { type: 'Name', optional: true },
+    transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
   },
 };
 
@@ -138,7 +139,7 @@ Requisition.schema = {
     entryDate: 'date',
     daysToSupply: 'double',
     serialNumber: 'string',
-    user: { type: 'User', optional: true },
+    enteredBy: { type: 'User', optional: true },
     items: { type: 'list', objectType: 'RequisitionItem' },
   },
 };

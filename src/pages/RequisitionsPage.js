@@ -62,7 +62,7 @@ export class RequisitionsPage extends GenericTablePage {
   onNewRequisition() {
     let requisition;
     this.props.database.write(() => {
-      requisition = createRecord(this.props.database, 'Requisition');
+      requisition = createRecord(this.props.database, 'Requisition', this.props.currentUser);
     });
     this.navigateToRequisition(requisition);
   }
@@ -76,7 +76,7 @@ export class RequisitionsPage extends GenericTablePage {
     this.props.navigateTo(
       'requisition',
       `Requisition ${requisition.serialNumber}`,
-      { requisition },
+      { requisition: requisition },
     );
   }
 

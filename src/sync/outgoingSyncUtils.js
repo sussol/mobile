@@ -96,7 +96,7 @@ function generateSyncData(settings, recordType, record) {
       return {
         ID: record.id,
         date_entered: getDateString(record.entryDate),
-        user_ID: record.user.id,
+        user_ID: record.enteredById,
         name_ID: settings.get(THIS_STORE_NAME_ID),
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         daysToSupply: String(record.daysToSupply),
@@ -108,8 +108,8 @@ function generateSyncData(settings, recordType, record) {
     case 'RequisitionItem': {
       return {
         ID: record.id,
-        requisition_ID: record.requisition.id,
-        item_ID: record.item.id,
+        requisition_ID: record.requisitionId,
+        item_ID: record.itemId,
         stock_on_hand: String(record.stockOnHand),
         actualQuan: String(record.requiredQuantity),
         imprest_or_prev_quantity: String(record.imprestQuantity),

@@ -247,6 +247,8 @@ export function integrateIncomingRecord(database, recordType, record) {
       const transactionBatch = database.update(internalType, internalRecord);
       transaction.addBatch(database, transactionBatch);
       database.save('Transaction', transaction);
+      itemBatch.addTransactionBatch(transactionBatch);
+      database.save('ItemBatch', itemBatch);
       break;
     }
     default:

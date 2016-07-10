@@ -6,6 +6,10 @@ export class Item extends Realm.Object {
     return getTotal(this.batches, 'totalQuantity');
   }
 
+  get dailyUsage() {
+    return getTotal(this.batches, 'dailyUsage');
+  }
+
   addBatch(itemBatch) {
     // If the batch is already in the item, we don't want to add it again
     if (this.batches.find(currentItemBatch => currentItemBatch.id === itemBatch.id)) return;
