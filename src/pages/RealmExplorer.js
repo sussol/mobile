@@ -124,6 +124,7 @@ export class RealmExplorer extends React.Component {
             && String(item[field]);
           if (!itemString && item[field] && item[field].length) itemString = item[field].length;
           if (typeof item[field] === 'boolean') itemString = item[field] ? 'True' : 'False';
+          if (!itemString && item[field] && item[field].id) itemString = item[field].id;
           cells.push(
             <Cell
               key={field}
