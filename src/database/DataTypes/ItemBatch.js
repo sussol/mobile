@@ -32,16 +32,13 @@ export class ItemBatch extends Realm.Object {
 
     // Get the total usage over that period
     const totalUsage = getTotal(transactionBatches, 'usage');
-    console.log(`Total usage for ${this} = ${totalUsage}`);
 
     // Calculate and return the daily usage over either the usage period, or since this batch was
     // added if that is shorter
     const currentDate = new Date();
     const timeSinceAdded = currentDate.getTime() - this.addedDate.getTime();
-    console.log(`Time since added = ${timeSinceAdded}`);
     const usagePeriod = Math.min(toDays(USAGE_PERIOD_MILLISECONDS), toDays(timeSinceAdded));
     const dailyUsage = usagePeriod ? totalUsage / usagePeriod : 0;
-    console.log(`Daily usage for ${this} = ${dailyUsage}`);
     return dailyUsage;
   }
 
