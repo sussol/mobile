@@ -79,7 +79,6 @@ function createRequisition(database, user) {
 // Creates a RequisitionItem and adds it to the requisition.
 function createRequisitionItem(database, requisition, item) {
   const dailyUsage = item.dailyUsage;
-  console.log(`Got ${dailyUsage} as dailyUsage`);
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: item,
