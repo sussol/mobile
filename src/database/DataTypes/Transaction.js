@@ -38,7 +38,6 @@ export class Transaction extends Realm.Object {
    * @param {object} transactionItem  The TransactionItem to add
    */
   addItem(database, transactionItem) {
-    if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
     if (this.items.find(testItem => testItem.item.id === transactionItem.item.id)) {
       throw new Error('Should never add two of the same item to a transaction');
     }
