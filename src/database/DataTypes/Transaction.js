@@ -34,10 +34,9 @@ export class Transaction extends Realm.Object {
   /**
    * Add a TransactionItem to this transaction, based on the given item. If it already
    * exists, do nothing.
-   * @param {Realm}  database         The app wide local database
    * @param {object} transactionItem  The TransactionItem to add
    */
-  addItem(database, transactionItem) {
+  addItem(transactionItem) {
     if (this.items.find(testItem => testItem.item.id === transactionItem.item.id)) {
       throw new Error('Should never add two of the same item to a transaction');
     }

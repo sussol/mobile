@@ -59,11 +59,12 @@ function createTransactionItem(database, transaction, item) {
   });
   transaction.addItem(transactionItem);
   database.save('Transaction', transaction);
+  return transactionItem;
 }
 
 // Creates a Requisition
 function createRequisition(database) {
-  database.create('Requisition', {
+  const requisition = database.create('Requisition', {
     id: generateUUID(),
     status: 'new',
     type: 'request',
@@ -72,6 +73,7 @@ function createRequisition(database) {
     serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
     user: this.props.currentUser,
   });
+  return requisition;
 }
 
 // Creates a RequisitionItem and adds it to the requisition.
@@ -88,6 +90,7 @@ function createRequisitionItem(database, requisition, item) {
   });
   requisition.addItem(requisitionItem);
   database.save('Requisition', requisition);
+  return requisitionItem;
 }
 
 // Creates a Stocktake
@@ -137,4 +140,5 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
   database.save('TransactionItem', transactionItem);
   itemBatch.addTransactionBatch(transactionBatch);
   database.save('ItemBatch', itemBatch);
+  return transactionBatch;
 }
