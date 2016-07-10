@@ -63,7 +63,7 @@ function createTransactionItem(database, transaction, item) {
 }
 
 // Creates a Requisition
-function createRequisition(database) {
+function createRequisition(database, user) {
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     status: 'new',
@@ -71,7 +71,7 @@ function createRequisition(database) {
     entryDate: new Date(),
     daysToSupply: 90, // 3 months
     serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
-    user: this.props.currentUser,
+    user: user,
   });
   return requisition;
 }

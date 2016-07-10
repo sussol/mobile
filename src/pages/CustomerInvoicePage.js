@@ -84,12 +84,7 @@ export class CustomerInvoicePage extends GenericTablePage {
     const { selection } = this.state;
     const { transaction, database } = this.props;
     database.write(() => {
-      for (let i = 0; i < selection.length; i++) {
-        const transactionItem = transaction.items.find(s => s.id === selection[i]);
-        if (transactionItem.isValid()) {
-          transaction.removeItem(database, transactionItem);
-        }
-      }
+      transaction.removeItemsById(database, selection);
       database.save('Transaction', transaction);
     });
     this.setState({ selection: [] });

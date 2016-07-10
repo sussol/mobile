@@ -56,16 +56,21 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Remove the given TransactionItem from this transaction, along with all the
+   * Remove the transaction items with the given ids from this transaction, along with all the
    * associated batches.
-   * @param  {[type]} database        [description]
-   * @param  {[type]} transactionItem [description]
+   * @param  {Realm}  database        App wide local database
+   * @param  {array}  itemIds         The ids of transactionItems to remove
    * @return {none}
    */
-  removeItem(database, transactionItem) {
-    if (this.isFinalised) throw new Error('Cannot remove items from a finalised transaction');
-    if (!this.items.find(item => transactionItem.id === item.id)) return;
-    database.delete('TransactionItem', transactionItem);
+  removeItemsById(database, itemIds) {
+    const itemsToDelete = [];
+    for (let i = 0; i < itemIds.length; i++) {
+      const transactionItem = this.items.find(testItem => testItem.id === itemIds[i]);
+      if (transactionItem.isValid()) {
+        itemsToDelete.push(transactionItem);
+      }
+    }
+    database.delete('transactionItem', itemsToDelete);
   }
 
   /**
