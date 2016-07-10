@@ -16,7 +16,7 @@ export class ItemBatch extends Realm.Object {
   get addedDate() {
     return this.transactionBatches.reduce((oldestConfirmDate, transactionBatch) => {
       const confirmDate = transactionBatch.transaction.confirmDate;
-      if (!confirmDate || confirmDate > oldestConfirmDate) return oldestConfirmDate;
+      if (!confirmDate || confirmDate < oldestConfirmDate) return oldestConfirmDate;
       return confirmDate;
     }, new Date());
   }
