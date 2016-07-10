@@ -3,7 +3,7 @@ import {
   addBatchToParent,
   getTotal,
 } from '../utilities';
-import { createRecord } from '../creators';
+import { createRecord } from '../createRecord';
 
 export class Transaction extends Realm.Object {
   constructor() {
