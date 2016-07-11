@@ -68,7 +68,7 @@ function createRequisition(database, user) {
 // Creates a RequisitionItem and adds it to the requisition.
 function createRequisitionItem(database, requisition, item) {
   const existingRequisitionItem = requisition.items.find(requisitionItem =>
-                                    requisitionItem.item.id === item.id);
+                                    requisitionItem.itemId === item.id);
   if (existingRequisitionItem) return existingRequisitionItem;
 
   const dailyUsage = item.dailyUsage;
