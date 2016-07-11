@@ -27,7 +27,7 @@ export function createRecord(database, type, ...args) {
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
     default:
-      throw new Error('Cannot create an unsupported record type');
+      throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
 }
 
