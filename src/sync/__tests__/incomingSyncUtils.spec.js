@@ -3,9 +3,9 @@
 // import { sanityCheckIncomingRecord } from '../incomingSyncUtils';
 //
 // describe('sanityCheckIncomingRecord', () => {
-//   it('accepts a correctly formatted ItemLine record', () => {
+//   it('accepts a correctly formatted ItemBatch record', () => {
 //     const value = 'value';
-//     const recordType = 'ItemLine';
+//     const recordType = 'ItemBatch';
 //     const record = {
 //       ID: value,
 //       item_ID: value,
@@ -21,7 +21,7 @@
 //
 //   it('rejects a record without an id', () => {
 //     const value = 'value';
-//     const recordType = 'ItemLine';
+//     const recordType = 'ItemBatch';
 //     const record = {
 //       item_ID: value,
 //       pack_size: value,
@@ -34,12 +34,12 @@
 //     expect(sanityCheckIncomingRecord(recordType, record)).toBe(false);
 //   });
 //
-//   it('rejects an incorrectly formatted ItemLine record', () => {
+//   it('rejects an incorrectly formatted ItemBatch record', () => {
 //     const value = 'value';
-//     const recordType = 'ItemLine';
+//     const recordType = 'ItemBatch';
 //     const record = {
 //       ID: value,
-//       // item_ID: value, ItemLine with no item_ID should be rejected
+//       // item_ID: value, ItemBatch with no item_ID should be rejected
 //       pack_size: value,
 //       quantity: value,
 //       batch: value,

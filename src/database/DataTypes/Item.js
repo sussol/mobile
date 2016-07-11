@@ -3,13 +3,17 @@ import { getTotal } from '../utilities';
 
 export class Item extends Realm.Object {
   get totalQuantity() {
-    return getTotal(this.lines, 'totalQuantity');
+    return getTotal(this.batches, 'totalQuantity');
   }
 
-  addLine(itemLine) {
-    // If the line is already in the item, we don't want to add it again
-    if (this.lines.find(currentItemLine => currentItemLine.id === itemLine.id)) return;
-    this.lines.push(itemLine);
+  get dailyUsage() {
+    return getTotal(this.batches, 'dailyUsage');
+  }
+
+  addBatch(itemBatch) {
+    // If the batch is already in the item, we don't want to add it again
+    if (this.batches.find(currentItemBatch => currentItemBatch.id === itemBatch.id)) return;
+    this.batches.push(itemBatch);
   }
 
   toString() {

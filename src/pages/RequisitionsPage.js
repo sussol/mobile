@@ -9,12 +9,13 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { generateUUID } from '../database';
-import { PageButton } from '../widgets';
+import { createRecord } from '../database';
+import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { formatStatus } from '../utilities';
 
-const DATA_TYPES_DISPLAYED = ['Requisition', 'RequisitionLine'];
+const DATA_TYPES_DISPLAYED = ['Requisition', 'RequisitionItem'];
 
 /**
 * Renders the page for displaying Requisitions.
@@ -37,18 +38,31 @@ export class RequisitionsPage extends GenericTablePage {
     this.navigateToRequisition = this.navigateToRequisition.bind(this);
   }
 
+  onDeleteConfirm() {
+    const { selection, requisitions } = this.state;
+    const { database } = this.props;
+    database.write(() => {
+      for (let i = 0; i < selection.length; i++) {
+        const requisition = requisitions.find(currentRequisition =>
+                                                currentRequisition.id === selection[i]);
+        if (requisition.isValid()) {
+          database.delete('Transaction', requisition);
+        }
+      }
+    });
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] });
+    this.refreshData();
+  }
+
   onNewRequisition() {
     let requisition;
     this.props.database.write(() => {
-      requisition = this.props.database.create('Requisition', {
-        id: generateUUID(),
-        status: 'new',
-        type: 'request',
-        entryDate: new Date(),
-        daysToSupply: 90, // 3 months
-        serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
-        user: this.props.currentUser,
-      });
+      requisition = createRecord(this.props.database, 'Requisition', this.props.currentUser);
     });
     this.navigateToRequisition(requisition);
   }
@@ -58,16 +72,17 @@ export class RequisitionsPage extends GenericTablePage {
   }
 
   navigateToRequisition(requisition) {
+    this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
       'requisition',
       `Requisition ${requisition.serialNumber}`,
-      { requisition },
+      { requisition: requisition },
     );
   }
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending. Special case for
-   * 'serialNumber' to sort numbers correctly. Special case for lines.length for correct number
+   * 'serialNumber' to sort numbers correctly. Special case for items.length for correct number
    * sort and also realm does not allow sorting on the properties of an object property.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
@@ -99,7 +114,13 @@ export class RequisitionsPage extends GenericTablePage {
       case 'numberOfItems':
         return requisition.items.length;
       case 'status':
-        return requisition.status;
+        return formatStatus(requisition.status);
+      case 'delete':
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+          isDisabled: requisition.isFinalised,
+        };
     }
   }
 
@@ -115,6 +136,13 @@ export class RequisitionsPage extends GenericTablePage {
             />
           </View>
           {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0}
+            questionText="Are you sure you want to delete these requsitions?"
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText="Delete"
+          />
         </View>
       </View>
     );
@@ -143,7 +171,7 @@ const COLUMNS = [
   {
     key: 'numberOfItems',
     width: 1,
-    title: 'AMOUNT OF ITEMS',
+    title: 'ITEMS',
     sortable: true,
   },
   {
@@ -151,5 +179,10 @@ const COLUMNS = [
     width: 1,
     title: 'STATUS',
     sortable: true,
+  },
+  {
+    key: 'delete',
+    width: 1,
+    title: 'DELETE',
   },
 ];

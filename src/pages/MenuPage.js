@@ -38,14 +38,14 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Customers"
-            onPress={() => props.navigateTo('customers', 'Customers')}
+            text="Customer Invoices"
+            onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Customer Invoices"
-            onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
+            text="Customers"
+            onPress={() => props.navigateTo('customers', 'Customers')}
           />
         </View>
 

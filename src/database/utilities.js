@@ -5,18 +5,25 @@ export function generateUUID() {
   return uuid.v1().replace(/-/g, ''); // Strip canonical uuid of hyphens
 }
 
-// Return the sum of the given key across the given lines
-export function getTotal(lines, key) {
-  return lines.reduce((sum, line) => sum + line[key], 0);
+// Return the sum of the given key across the given records
+export function getTotal(records, key) {
+  return records.reduce((sum, record) => sum + record[key], 0);
 }
 
-export function addLineToParent(line, parent, createAggregateItem) {
-  let aggregateItem = parent.items.find(aggItem => aggItem.itemId === line.itemId);
-  if (!aggregateItem) { // This parent doesn't have a matching item yet, make one
-    aggregateItem = createAggregateItem();
-    parent.items.push(aggregateItem);
+/**
+ * Adds a batch to its parent, checking first if there is an existing item to add
+ * it to, and otherwise calling the creator passed in. Works for anything with a
+ * parent -> item -> batch hierarchy, e.g. Transactions and Stocktakes
+ * @param {object}   batch      The batch to add
+ * @param {object}   parent     The parent to add the batch to
+ * @param {function} createItem A function to create new items to add to the hierarchy
+ */
+export function addBatchToParent(batch, parent, createItem) {
+  let item = parent.items.find(aggItem => aggItem.itemId === batch.itemId);
+  if (!item) { // This parent doesn't have a matching item yet, make one
+    item = createItem(); // Should also take care of attaching item to its parent
   }
-  // If the line is already in the aggregateItem, we don't want to add it again
-  if (aggregateItem.lines.find(currentLine => currentLine.id === line.id)) return;
-  aggregateItem.lines.push(line);
+  // If the batch is already in the item, we don't want to add it again
+  if (item.batches.find(currentBatch => currentBatch.id === batch.id)) return;
+  item.batches.push(batch);
 }

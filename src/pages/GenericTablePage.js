@@ -61,6 +61,7 @@ export class GenericTablePage extends React.Component {
     };
     this.columns = null;
     this.dataTypesDisplayed = [];
+    this.databaseListenerId = null;
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);

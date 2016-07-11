@@ -1,8 +1,9 @@
 import React from 'react';
 import {
   StyleSheet,
-  View,
   Text,
+  TouchableHighlight,
+  View,
 } from 'react-native';
 
 import {
@@ -18,8 +19,8 @@ import {
  *        									with an entry in the array representing a column, which in
  *        									turn is an array of info objects containing a title and info.
  *        									E.g.
- *        									[[{title: 'col1', info: 'row1'}, {title: 'col1', info: 'row2'}],
- *        									[{title: 'col2', info: 'row1'}, {title: 'col2', info: 'row2'}]]
+ *        									[[{title: 'col1:', info: 'row1'}, {title: 'col1:', info: 'row2'}],
+ *        									[{title: 'col2:', info: 'row1'}, {title: 'col2:', info: 'row2'}]]
  *        									would display
  *        									col1: row1   col2: row1
  *        									col1: row2   col2: row2
@@ -44,13 +45,25 @@ export function PageInfo(props) {
                 </Text>)}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((rowData, rowIndex) =>
-                <Text
-                  key={`Info ${columnIndex}-${rowIndex}`}
-                  style={localStyles.text}
-                >
-                  {rowData.info ? rowData.info : ' ' /** Space if null to avoid squishing row **/}
-                </Text>)}
+              {columnData.map((rowData, rowIndex) => {
+                const textComponent = (
+                  <Text
+                    key={`Info ${columnIndex}-${rowIndex}`}
+                    style={localStyles.text}
+                  >
+                    {rowData.info ? rowData.info : ' ' /** Space if null to avoid squishing row **/}
+                  </Text>);
+                if (rowData.onPress) {
+                  return (
+                    <TouchableHighlight
+                      key={`Touchable ${columnIndex}-${rowIndex}`}
+                      onPress={rowData.onPress}
+                    >
+                      {textComponent}
+                    </TouchableHighlight>);
+                }
+                return textComponent;
+              })}
             </View>
           </View>)}
     </View>
@@ -65,7 +78,7 @@ const localStyles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     width: SEARCH_BAR_WIDTH,
     marginHorizontal: 5,
     marginBottom: 10,
@@ -73,6 +86,7 @@ const localStyles = StyleSheet.create({
   columnContainer: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
   infoContainer: {
     marginHorizontal: 16,

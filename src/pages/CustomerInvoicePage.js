@@ -15,9 +15,10 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { BottomConfirmModal, PageButton, PageInfo, SelectModal } from '../widgets';
 import { formatDate, parsePositiveNumber } from '../utilities';
+import { createRecord } from '../database';
 
 const DATA_TYPES_DISPLAYED =
-        ['Transaction', 'TransactionLine', 'TransactionItem', 'Item', 'ItemLine'];
+        ['Transaction', 'TransactionBatch', 'TransactionItem', 'Item', 'ItemBatch'];
 
 export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
@@ -26,7 +27,6 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.state.isAddingNewItem = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
-    this.databaseListenerId = null;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
@@ -66,7 +66,7 @@ export class CustomerInvoicePage extends GenericTablePage {
 
   /**
    * Respond to the user editing the number in the number received column
-   * @param  {string} key             Should always be 'numReceived'
+   * @param  {string} key             Should always be 'quantityToIssue'
    * @param  {object} transactionItem The transaction item from the row being edited
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
@@ -84,12 +84,7 @@ export class CustomerInvoicePage extends GenericTablePage {
     const { selection } = this.state;
     const { transaction, database } = this.props;
     database.write(() => {
-      for (let i = 0; i < selection.length; i++) {
-        const transactionItem = transaction.items.find(s => s.id === selection[i]);
-        if (transactionItem.isValid()) {
-          transaction.removeItem(database, transactionItem);
-        }
-      }
+      transaction.removeItemsById(database, selection);
       database.save('Transaction', transaction);
     });
     this.setState({ selection: [] });
@@ -194,8 +189,7 @@ export class CustomerInvoicePage extends GenericTablePage {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             onSelect={(item) => {
               this.props.database.write(() => {
-                this.props.transaction.addItem(this.props.database, item);
-                this.props.database.save('Transaction', this.props.transaction);
+                createRecord(this.props.database, 'TransactionItem', this.props.transaction, item);
               });
               this.setState({ isAddingNewItem: false });
             }}

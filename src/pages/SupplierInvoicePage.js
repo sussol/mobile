@@ -13,7 +13,7 @@ import { formatDate } from '../utilities';
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 
-const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine', 'Item', 'ItemLine'];
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem', 'Item', 'ItemBatch'];
 
 export class SupplierInvoicePage extends GenericTablePage {
   constructor(props) {
@@ -21,7 +21,6 @@ export class SupplierInvoicePage extends GenericTablePage {
     this.state.sortBy = 'itemName';
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
-    this.databaseListenerId = null;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);

@@ -36,9 +36,9 @@ export function getItemQuantitiesOnDate(items, date, database) {
         return; // effectively 'continue;' for the containing forEach loop.
     }
     transaction.items.forEach((transactionItem) => {
-      transactionItem.lines.forEach((line) => {
-        const itemId = line.itemId;
-        const transactionQuantity = line.totalQuantity;
+      transactionItem.batches.forEach((batch) => {
+        const itemId = batch.itemId;
+        const transactionQuantity = batch.totalQuantity;
         if (itemQuantities.has(itemId)) {
           itemQuantities.set(
             itemId,

@@ -11,6 +11,7 @@ import { View, StyleSheet } from 'react-native';
 import { SearchBar, PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { formatStatus } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Stocktake'];
 
@@ -92,7 +93,7 @@ export class StocktakesPage extends GenericTablePage {
       case 'createdDate':
         return stocktake.createdDate.toDateString();
       case 'status':
-        return stocktake.status;
+        return formatStatus(stocktake.status);
       case 'selected':
         return {
           type: 'checkable',

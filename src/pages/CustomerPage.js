@@ -9,10 +9,11 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { createCustomerInvoice } from '../database';
+import { createRecord } from '../database';
 import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { formatStatus } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem'];
 
@@ -45,7 +46,7 @@ export class CustomerPage extends GenericTablePage {
   onNewInvoice() {
     let invoice;
     this.props.database.write(() => {
-      invoice = createCustomerInvoice(this.props.database, this.props.customer);
+      invoice = createRecord(this.props.database, 'CustomerInvoice', this.props.customer);
     });
     this.navigateToInvoice(invoice);
   }
@@ -61,7 +62,7 @@ export class CustomerPage extends GenericTablePage {
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending. Special case for
-   * 'serialNumber' to sort numbers correctly. Special case for lines.length for correct number
+   * 'serialNumber' to sort numbers correctly. Special case for items.length for correct number
    * sort and also realm does not allow sorting on the properties of an object property.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
@@ -116,7 +117,7 @@ export class CustomerPage extends GenericTablePage {
       case 'serialNumber':
         return transaction.serialNumber;
       case 'status':
-        return transaction.status;
+        return formatStatus(transaction.status);
       case 'entryDate':
         return transaction.entryDate.toDateString();
       case 'items':

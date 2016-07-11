@@ -1,9 +1,9 @@
 import Realm from 'realm';
 import {
-  addLineToParent,
-  generateUUID,
+  addBatchToParent,
   getTotal,
 } from '../utilities';
+import { createRecord } from '../createRecord';
 
 export class Transaction extends Realm.Object {
   constructor() {
@@ -34,17 +34,12 @@ export class Transaction extends Realm.Object {
   /**
    * Add a TransactionItem to this transaction, based on the given item. If it already
    * exists, do nothing.
-   * @param {Realm}  database The app wide local database
-   * @param {object} item     The Item to base the TransactionItem on
+   * @param {object} transactionItem  The TransactionItem to add
    */
-  addItem(database, item) {
-    if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
-    if (this.items.find(transactionItem => transactionItem.item.id === item.id)) return;
-    const transactionItem = database.create('TransactionItem', {
-      id: generateUUID(),
-      item: item,
-      transaction: this,
-    });
+  addItem(transactionItem) {
+    if (this.items.find(testItem => testItem.itemId === transactionItem.itemId)) {
+      throw new Error('Should never add two of the same item to a transaction');
+    }
     this.items.push(transactionItem);
   }
 
@@ -54,64 +49,68 @@ export class Transaction extends Realm.Object {
   addItemsFromMasterList(database) {
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
-    if (this.otherParty && this.otherParty.masterList && this.otherParty.masterList.lines) {
-      this.otherParty.masterList.lines.forEach(line => this.addItem(database, line.item));
+    if (this.otherParty && this.otherParty.masterList && this.otherParty.masterList.items) {
+      this.otherParty.masterList.items.forEach(masterListItem =>
+        createRecord(database, 'TransactionItem', this, masterListItem.item));
     }
   }
 
   /**
-   * Remove the given TransactionItem from this transaction, along with all the
-   * associated lines.
-   * @param  {[type]} database        [description]
-   * @param  {[type]} transactionItem [description]
+   * Remove the transaction items with the given ids from this transaction, along with all the
+   * associated batches.
+   * @param  {Realm}  database        App wide local database
+   * @param  {array}  itemIds         The ids of transactionItems to remove
    * @return {none}
    */
-  removeItem(database, transactionItem) {
-    if (this.isFinalised) throw new Error('Cannot remove items from a finalised transaction');
-    if (!this.items.find(item => transactionItem.id === item.id)) return;
-    database.delete('TransactionItem', transactionItem);
+  removeItemsById(database, itemIds) {
+    const itemsToDelete = [];
+    for (let i = 0; i < itemIds.length; i++) {
+      const transactionItem = this.items.find(testItem => testItem.id === itemIds[i]);
+      if (transactionItem.isValid()) {
+        itemsToDelete.push(transactionItem);
+      }
+    }
+    database.delete('transactionItem', itemsToDelete);
   }
 
   /**
-   * Adds a TransactionLine, incorporating it into a matching TransactionItem. Will
+   * Adds a TransactionBatch, incorporating it into a matching TransactionItem. Will
    * create a new TransactionItem if none exists already.
-   * @param {Realm}  database        The app wide local database
-   * @param {object} transactionLine The TransactionLine to add to this Transaction
+   * @param {Realm}  database         The app wide local database
+   * @param {object} transactionBatch The TransactionBatch to add to this Transaction
    */
-  addLine(database, transactionLine) {
-    addLineToParent(transactionLine, this, () =>
-      database.create('TransactionItem', {
-        id: generateUUID(),
-        item: transactionLine.itemLine.item,
-        transaction: this,
-      })
+  addBatch(database, transactionBatch) {
+    addBatchToParent(transactionBatch, this, () =>
+      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item)
     );
   }
 
   /**
-   * Finalise this transaction, generating the associated item lines, linking them
+   * Finalise this transaction, generating the associated item batches, linking them
    * to their items, and setting the status so that this transaction is locked down.
    * @param  {Realm}  database The app wide local database
    * @param  {object} user     The user who finalised this transaction
    * @return {none}
    */
   finalise(database, user) {
-    if (this.type === 'supplier_invoice') { // If a supplier invoice, add item lines to inventory
+    if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
+    if (this.type === 'supplier_invoice') { // If a supplier invoice, add item batches to inventory
       this.enteredBy = user;
       this.items.forEach((transactionItem) => {
-        transactionItem.lines.forEach((transactionLine) => {
-          const itemLine = transactionLine.itemLine;
-          itemLine.packSize = transactionLine.packSize;
-          itemLine.numberOfPacks = itemLine.numberOfPacks + transactionLine.numberOfPacks;
-          itemLine.expiryDate = transactionLine.expiryDate;
-          itemLine.batch = transactionLine.batch;
-          itemLine.costPrice = transactionLine.costPrice;
-          itemLine.sellPrice = transactionLine.sellPrice;
-          database.save('ItemLine', itemLine);
-          database.save('TransactionLine', transactionLine);
+        transactionItem.batches.forEach((transactionBatch) => {
+          const itemBatch = transactionBatch.itemBatch;
+          itemBatch.packSize = transactionBatch.packSize;
+          itemBatch.numberOfPacks = itemBatch.numberOfPacks + transactionBatch.numberOfPacks;
+          itemBatch.expiryDate = transactionBatch.expiryDate;
+          itemBatch.batch = transactionBatch.batch;
+          itemBatch.costPrice = transactionBatch.costPrice;
+          itemBatch.sellPrice = transactionBatch.sellPrice;
+          database.save('ItemBatch', itemBatch);
+          database.save('TransactionBatch', transactionBatch);
         });
       });
     }
+    if (!this.isConfirmed) this.confirmDate = new Date();
     this.status = 'finalised';
   }
 }

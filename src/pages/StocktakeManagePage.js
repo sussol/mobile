@@ -15,7 +15,7 @@ import {
 import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { createStocktake } from '../database';
+import { createRecord } from '../database';
 
 const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
 
@@ -61,7 +61,7 @@ export class StocktakeManagePage extends GenericTablePage {
 
     database.write(() => {
       // If no stocktake came in props, make a new one
-      if (!stocktake) stocktake = createStocktake(database, user);
+      if (!stocktake) stocktake = createRecord(database, 'Stocktake', user);
 
       stocktake.setItemsByID(database, selection);
 
@@ -165,7 +165,7 @@ export class StocktakeManagePage extends GenericTablePage {
                 toggleOnStyle={globalStyles.toggleOptionSelected}
                 toggles={[
                   {
-                    text: 'Show No Stock',
+                    text: 'Show Stockouts',
                     onPress: () => this.toggleShowItemsWithNoStock(),
                     isOn: showItemsWithNoStock,
                   },

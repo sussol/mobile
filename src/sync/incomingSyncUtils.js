@@ -28,7 +28,7 @@ export function integrateIncomingRecord(database, recordType, record) {
         id: record.ID,
         category: getObject(database, 'ItemCategory', record.category_ID),
         code: record.code,
-        defaultPackSize: 1, // Every item line in mobile should be pack-to-one
+        defaultPackSize: 1, // Every item batch in mobile should be pack-to-one
         defaultPrice: packSize ? parseNumber(record.buy_price) / packSize : 0,
         department: getObject(database, 'ItemDepartment', record.department_ID),
         description: record.description,
@@ -53,13 +53,13 @@ export function integrateIncomingRecord(database, recordType, record) {
       database.update(internalType, internalRecord);
       break;
     }
-    case 'ItemLine': {
+    case 'ItemBatch': {
       const item = getObject(database, 'Item', record.item_ID);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
         id: record.ID,
         item: item,
-        packSize: 1, // Every item line in mobile should be pack-to-one
+        packSize: 1, // Every item batch in mobile should be pack-to-one
         numberOfPacks: parseNumber(record.quantity) * packSize,
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
@@ -67,8 +67,8 @@ export function integrateIncomingRecord(database, recordType, record) {
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: getObject(database, 'Name', record.name_ID),
       };
-      const itemLine = database.update(internalType, internalRecord);
-      item.addLine(itemLine);
+      const itemBatch = database.update(internalType, internalRecord);
+      item.addBatch(itemBatch);
       database.save('Item', item);
       break;
     }
@@ -88,7 +88,7 @@ export function integrateIncomingRecord(database, recordType, record) {
       database.update(internalType, internalRecord);
       break;
     }
-    case 'MasterListLine': {
+    case 'MasterListItem': {
       const masterList = getObject(database, 'MasterList', record.item_master_ID);
       internalRecord = {
         id: record.ID,
@@ -96,8 +96,8 @@ export function integrateIncomingRecord(database, recordType, record) {
         imprestQuantity: parseNumber(record.imprest_quan),
         masterList: masterList,
       };
-      const masterListLine = database.update(internalType, internalRecord);
-      masterList.addLine(masterListLine);
+      const masterListItem = database.update(internalType, internalRecord);
+      masterList.addItem(masterListItem);
       break;
     }
     case 'Name': {
@@ -134,21 +134,23 @@ export function integrateIncomingRecord(database, recordType, record) {
       database.update(internalType, internalRecord);
       break;
     }
-    case 'RequisitionLine': {
+    case 'RequisitionItem': {
       const requisition = getObject(database, 'Requisition', record.requisition_ID);
+      const dailyUsage = requisition.daysToSupply ?
+                           parseNumber(record.Cust_stock_order) / requisition.daysToSupply : 0;
       internalRecord = {
         id: record.ID,
         requisition: requisition,
         item: getObject(database, 'Item', record.item_ID),
         stockOnHand: parseNumber(record.stock_on_hand),
-        suggestedQuantity: parseNumber(record.Cust_stock_order),
+        dailyUsage: dailyUsage,
         imprestQuantity: parseNumber(record.imprest_or_prev_quantity),
         requiredQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };
-      const requisitionLine = database.update(internalType, internalRecord);
-      requisition.addLine(requisitionLine);
+      const requisitionItem = database.update(internalType, internalRecord);
+      requisition.addItem(requisitionItem);
       database.save('Requisition', requisition);
       break;
     }
@@ -169,14 +171,14 @@ export function integrateIncomingRecord(database, recordType, record) {
       database.update(internalType, internalRecord);
       break;
     }
-    case 'StocktakeLine': {
+    case 'StocktakeBatch': {
       const stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
       const packSize = parseNumber(record.snapshot_packsize);
       const numPacks = parseNumber(record.snapshot_qty) * packSize;
       internalRecord = {
         id: record.ID,
         stocktake: stocktake,
-        itemLine: getObject(database, 'ItemLine', record.item_line_ID),
+        itemBatch: getObject(database, 'ItemBatch', record.item_line_ID),
         snapshotNumberOfPacks: numPacks,
         packSize: 1, // Pack to one all mobile data
         expiry: parseDate(record.expiry),
@@ -186,8 +188,8 @@ export function integrateIncomingRecord(database, recordType, record) {
         countedNumberOfPacks: numPacks,
         sortIndex: parseNumber(record.line_number),
       };
-      const stocktakeLine = database.update(internalType, internalRecord);
-      stocktake.addLine(database, stocktakeLine);
+      const stocktakeBatch = database.update(internalType, internalRecord);
+      stocktake.addBatch(database, stocktakeBatch);
       database.save('Stocktake', stocktake);
       break;
     }
@@ -221,18 +223,18 @@ export function integrateIncomingRecord(database, recordType, record) {
       database.update(internalType, internalRecord);
       break;
     }
-    case 'TransactionLine': {
+    case 'TransactionBatch': {
       const transaction = getObject(database, 'Transaction', record.transaction_ID);
-      const itemLine = getObject(database, 'ItemLine', record.item_line_ID);
+      const itemBatch = getObject(database, 'ItemBatch', record.item_line_ID);
       const item = getObject(database, 'Item', record.item_ID);
-      itemLine.item = item;
-      item.addLine(itemLine);
+      itemBatch.item = item;
+      item.addBatch(itemBatch);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
         id: record.ID,
         itemId: record.item_ID,
         itemName: record.item_name,
-        itemLine: itemLine,
+        itemBatch: itemBatch,
         packSize: 1, // Pack to one all mobile data
         numberOfPacks: parseNumber(record.quantity) * packSize,
         numberOfPacksSent: parseNumber(record.quantity) * packSize,
@@ -244,9 +246,11 @@ export function integrateIncomingRecord(database, recordType, record) {
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
       };
-      const transactionLine = database.update(internalType, internalRecord);
-      transaction.addLine(database, transactionLine);
+      const transactionBatch = database.update(internalType, internalRecord);
+      transaction.addBatch(database, transactionBatch);
       database.save('Transaction', transaction);
+      itemBatch.addTransactionBatch(transactionBatch);
+      database.save('ItemBatch', itemBatch);
       break;
     }
     default:
@@ -271,14 +275,14 @@ export function sanityCheckIncomingRecord(recordType, record) {
       return typeof record.Description === 'string';
     case 'ItemDepartment':
       return typeof record.department === 'string';
-    case 'ItemLine':
+    case 'ItemBatch':
       return record.item_ID && record.pack_size && record.quantity && record.batch
              && record.expiry_date && record.cost_price && record.sell_price;
     case 'MasterListNameJoin':
       return record.name_ID && record.list_master_ID;
     case 'MasterList':
       return typeof record.description === 'string';
-    case 'MasterListLine':
+    case 'MasterListItem':
       return record.item_ID;
     case 'Name':
       return record.name && record.code && record.type && record.customer
@@ -286,13 +290,13 @@ export function sanityCheckIncomingRecord(recordType, record) {
     case 'Requisition':
       return record.status && record.date_entered && record.type && record.daysToSupply
              && record.serial_number;
-    case 'RequisitionLine':
+    case 'RequisitionItem':
       return record.requisition_ID && record.item_ID && record.stock_on_hand
              && record.Cust_stock_order;
     case 'Stocktake':
       return record.Description && record.stock_take_created_date && record.status
              && record.serial_number;
-    case 'StocktakeLine':
+    case 'StocktakeBatch':
       return record.stock_take_ID && record.item_line_ID && record.snapshot_qty
              && record.snapshot_packsize && record.expiry && record.Batch
              && record.cost_price && record.sell_price;
@@ -301,7 +305,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
              && record.status;
     case 'TransactionCategory':
       return record.category && record.code && record.type;
-    case 'TransactionLine':
+    case 'TransactionBatch':
       return record.item_ID && record.item_name && record.item_line_ID && record.batch
              && record.expiry_date && record.pack_size && record.quantity && record.transaction_ID
              && record.cost_price && record.sell_price;
@@ -365,7 +369,7 @@ function generatePlaceholder(type, id) {
         name: placeholderString,
       };
       return placeholder;
-    case 'ItemLine':
+    case 'ItemBatch':
       placeholder = {
         id: id,
         packSize: placeholderNumber,

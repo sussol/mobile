@@ -11,9 +11,10 @@ import { View } from 'react-native';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { createCustomerInvoice } from '../database';
+import { createRecord } from '../database';
+import { formatStatus } from '../utilities';
 
-const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine'];
+const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem', 'TransactionBatch'];
 
 /**
 * Renders the page for displaying CustomerInvoices.
@@ -40,7 +41,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   onNewInvoice(otherParty) {
     let invoice;
     this.props.database.write(() => {
-      invoice = createCustomerInvoice(this.props.database, otherParty);
+      invoice = createRecord(this.props.database, 'CustomerInvoice', otherParty);
     });
     this.navigateToInvoice(invoice);
   }
@@ -102,7 +103,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
       case 'serialNumber':
         return invoice.serialNumber;
       case 'status':
-        return invoice.status;
+        return formatStatus(invoice.status);
       case 'entryDate':
         return invoice.entryDate.toDateString();
       case 'comment':
