@@ -50,6 +50,8 @@ export class StocktakeManagePage extends GenericTablePage {
         selection: selected,
         stocktakeName: this.props.stocktake.name,
       }, this.refreshData);
+    } else {
+      this.refreshData();
     }
   }
 
