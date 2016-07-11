@@ -1,6 +1,7 @@
 import {
   INTERNAL_TO_EXTERNAL,
   RECORD_TYPES,
+  REQUISITION_STATUSES,
   REQUISITION_TYPES,
   STATUSES,
   SYNC_TYPES,
@@ -98,7 +99,7 @@ function generateSyncData(settings, recordType, record) {
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
         name_ID: settings.get(THIS_STORE_NAME_ID),
-        status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
+        status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(SUPPLYING_STORE_ID),
         serial_number: record.serialNumber,
