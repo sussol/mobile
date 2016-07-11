@@ -11,7 +11,7 @@ export { AutocompleteSelector } from './AutocompleteSelector';
 export { Button } from './Button';
 export { DataTable } from './DataTable';
 export { FinaliseButton } from './FinaliseButton';
-export { NumberSelector } from './NumberSelector';
+export { ToggleSelector } from './ToggleSelector';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
 export { SearchBar } from './SearchBar';
