@@ -8,6 +8,7 @@ export class Requisition extends Realm.Object {
     this.removeItemsById = this.removeItemsById.bind(this);
     this.addItemsFromMasterList = this.addItemsFromMasterList.bind(this);
     this.addItem = this.addItem.bind(this);
+    this.setRequestedToSuggested = this.setRequestedToSuggested.bind(this);
   }
 
   get isFinalised() {
@@ -55,6 +56,13 @@ export class Requisition extends Realm.Object {
       }
     }
     database.delete('RequisitionItem', itemsToDelete);
+  }
+
+  setRequestedToSuggested(database) {
+    this.items.forEach(requisitionItem => {
+      requisitionItem.requiredQuantity = requisitionItem.suggestedQuantity;
+      database.save('RequisitionItem', requisitionItem);
+    });
   }
 
   finalise() {

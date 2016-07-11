@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  StyleSheet,
   Text,
   View,
 } from 'react-native';
@@ -18,7 +19,7 @@ export function PageButton(props) {
   return (
     <Button
       {...buttonProps}
-      style={[...defaultButtonStyle, style]}
+      style={[...defaultButtonStyle, localStyles.button, style]}
       textStyle={[...defaultTextStyle, textStyle]}
     />
   );
@@ -31,3 +32,9 @@ PageButton.propTypes = {
   text: React.PropTypes.string,
   isDisabled: React.PropTypes.bool,
 };
+
+const localStyles = StyleSheet.create({
+  button: {
+    margin: 0,
+  },
+});

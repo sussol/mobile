@@ -45,11 +45,10 @@ export default StyleSheet.create({
     backgroundColor: BACKGROUND_COLOR,
   },
   pageTopSectionContainer: {
-    paddingTop: 20,
     paddingHorizontal: 10,
-    paddingBottom: 15,
+    paddingVertical: 15,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
   horizontalContainer: {

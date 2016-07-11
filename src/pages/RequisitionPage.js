@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {
+  StyleSheet,
   View,
 } from 'react-native';
 
@@ -42,7 +43,7 @@ export class RequisitionPage extends GenericTablePage {
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
-    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
+    this.onUseSuggestedQuantities = this.onUseSuggestedQuantities.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
     this.openMonthsSelector = this.openMonthsSelector.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
@@ -113,6 +114,14 @@ export class RequisitionPage extends GenericTablePage {
   onDeleteCancel() {
     this.setState({ selection: [] });
     this.refreshData();
+  }
+
+  onUseSuggestedQuantities() {
+    const { database, requisition } = this.props;
+    database.write(() => {
+      requisition.setRequestedToSuggested(database);
+      database.save('Requisition', requisition);
+    });
   }
 
   openItemSelector() {
@@ -193,7 +202,7 @@ export class RequisitionPage extends GenericTablePage {
       case MONTHS_SELECT:
         return (
           <ToggleSelector
-            numbers={[1, 2, 3, 4, 5, 6]}
+            options={[1, 2, 3, 4, 5, 6]}
             onSelect={(number) => {
               this.props.database.write(() => {
                 this.props.requisition.monthsToSupply = number;
@@ -217,6 +226,14 @@ export class RequisitionPage extends GenericTablePage {
             </View>
             <View style={globalStyles.verticalContainer}>
               <PageButton
+                text="Use Suggested Quantities"
+                onPress={this.onUseSuggestedQuantities}
+                isDisabled={this.props.requisition.isFinalised}
+              />
+            </View>
+            <View style={globalStyles.verticalContainer}>
+              <PageButton
+                style={localStyles.topButton}
                 text="New Item"
                 onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
                 isDisabled={this.props.requisition.isFinalised}
@@ -294,3 +311,9 @@ const COLUMNS = [
     title: 'REMOVE',
   },
 ];
+
+const localStyles = StyleSheet.create({
+  topButton: {
+    marginBottom: 10,
+  },
+});
