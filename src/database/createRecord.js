@@ -50,18 +50,6 @@ function createCustomerInvoice(database, customer) {
   return invoice;
 }
 
-// Creates a TransactionItem and adds it to the Transaction
-function createTransactionItem(database, transaction, item) {
-  const transactionItem = database.create('TransactionItem', {
-    id: generateUUID(),
-    item: item,
-    transaction: transaction,
-  });
-  transaction.addItem(transactionItem);
-  database.save('Transaction', transaction);
-  return transactionItem;
-}
-
 // Creates a Requisition
 function createRequisition(database, user) {
   const requisition = database.create('Requisition', {
@@ -78,6 +66,10 @@ function createRequisition(database, user) {
 
 // Creates a RequisitionItem and adds it to the requisition.
 function createRequisitionItem(database, requisition, item) {
+  const existingRequisitionItem = requisition.items.find(requisitionItem =>
+                                    requisitionItem.item.id === item.id);
+  if (existingRequisitionItem) return existingRequisitionItem;
+
   const dailyUsage = item.dailyUsage;
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
@@ -141,4 +133,19 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
   itemBatch.addTransactionBatch(transactionBatch);
   database.save('ItemBatch', itemBatch);
   return transactionBatch;
+}
+
+// Creates a TransactionItem and adds it to the Transaction
+function createTransactionItem(database, transaction, item) {
+  const existingTransactionItem = transaction.items.find(transactionItem =>
+                                    transactionItem.item.id === item.id);
+  if (existingTransactionItem) return existingTransactionItem;
+  const transactionItem = database.create('TransactionItem', {
+    id: generateUUID(),
+    item: item,
+    transaction: transaction,
+  });
+  transaction.addItem(transactionItem);
+  database.save('Transaction', transaction);
+  return transactionItem;
 }
