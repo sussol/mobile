@@ -6,8 +6,12 @@
  */
 
 import React from 'react';
+import { View } from 'react-native';
 
+import { PageInfo } from '../widgets';
+import { formatDate } from '../utilities';
 import { GenericTablePage } from './GenericTablePage';
+import globalStyles from '../globalStyles';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionLine', 'Item', 'ItemLine'];
 
@@ -65,6 +69,41 @@ export class SupplierInvoicePage extends GenericTablePage {
     });
   }
 
+  renderPageInfo() {
+    const { transaction } = this.props;
+    const infoColumns = [
+      [
+        {
+          title: 'Entry Date:',
+          info: formatDate(transaction.entryDate),
+        },
+        {
+          title: 'Confirm Date:',
+          info: formatDate(transaction.confirmDate),
+        },
+        {
+          title: 'Entered By:',
+          info: transaction.enteredBy && transaction.enteredBy.username,
+        },
+      ],
+      [
+        {
+          title: 'Name:',
+          info: transaction.otherParty && transaction.otherParty.name,
+        },
+        {
+          title: 'Their Ref:',
+          info: transaction.theirRef,
+        },
+        {
+          title: 'Comment:',
+          info: transaction.comment,
+        },
+      ],
+    ];
+    return <PageInfo columns={infoColumns} />;
+  }
+
   renderCell(key, transactionItem) {
     switch (key) {
       default:
@@ -85,6 +124,22 @@ export class SupplierInvoicePage extends GenericTablePage {
         return renderedCell;
       }
     }
+  }
+
+  render() {
+    return (
+      <View style={globalStyles.pageContentContainer}>
+        <View style={globalStyles.container}>
+          <View style={globalStyles.pageTopSectionContainer}>
+            <View style={globalStyles.verticalContainer}>
+              {this.renderPageInfo()}
+              {this.renderSearchBar()}
+            </View>
+          </View>
+          {this.renderDataTable()}
+        </View>
+      </View>
+    );
   }
 }
 
