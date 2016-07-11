@@ -12,19 +12,31 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { BottomConfirmModal, PageButton, PageInfo, SelectModal } from '../widgets';
 import { formatDate, parsePositiveNumber } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
+import {
+  AutocompleteSelector,
+  BottomConfirmModal,
+  PageButton,
+  PageInfo,
+  PageContentModal,
+  ToggleSelector,
+} from '../widgets';
 
 const DATA_TYPES_DISPLAYED =
         ['Requisition', 'RequisitionItem', 'Item', 'ItemBatch'];
+const MODAL_KEYS = {
+  ITEM_SELECT: 'itemSelect',
+  MONTHS_SELECT: 'monthsSelect',
+};
 
 export class RequisitionPage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
-    this.state.isAddingNewItem = false;
+    this.state.modalKey = null;
+    this.state.pageContentModalIsOpen = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
@@ -32,6 +44,10 @@ export class RequisitionPage extends GenericTablePage {
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
+    this.openMonthsSelector = this.openMonthsSelector.bind(this);
+    this.openItemSelector = this.openItemSelector.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   /**
@@ -99,6 +115,22 @@ export class RequisitionPage extends GenericTablePage {
     this.refreshData();
   }
 
+  openItemSelector() {
+    this.openModal(MODAL_KEYS.ITEM_SELECT);
+  }
+
+  openMonthsSelector() {
+    this.openModal(MODAL_KEYS.MONTHS_SELECT);
+  }
+
+  openModal(key) {
+    this.setState({ modalKey: key, pageContentModalIsOpen: true });
+  }
+
+  closeModal() {
+    this.setState({ pageContentModalIsOpen: false });
+  }
+
   renderPageInfo() {
     const infoColumns = [
       [
@@ -109,6 +141,13 @@ export class RequisitionPage extends GenericTablePage {
         {
           title: 'Entered By:',
           info: this.props.requisition.enteredByName,
+        },
+      ],
+      [
+        {
+          title: 'Months Stock Required:',
+          info: this.props.requisition.monthsToSupply,
+          onPress: this.openMonthsSelector,
         },
       ],
     ];
@@ -133,6 +172,40 @@ export class RequisitionPage extends GenericTablePage {
     }
   }
 
+  renderModalContent() {
+    const { ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
+    switch (this.state.modalKey) {
+      default:
+      case ITEM_SELECT:
+        return (
+          <AutocompleteSelector
+            options={this.props.database.objects('Item')}
+            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
+            onSelect={(item) => {
+              this.props.database.write(() => {
+                createRecord(this.props.database, 'RequisitionItem', this.props.requisition, item);
+                this.props.database.save('Requisition', this.props.requisition);
+              });
+              this.closeModal();
+            }}
+          />
+        );
+      case MONTHS_SELECT:
+        return (
+          <ToggleSelector
+            numbers={[1, 2, 3, 4, 5, 6]}
+            onSelect={(number) => {
+              this.props.database.write(() => {
+                this.props.requisition.monthsToSupply = number;
+              });
+              this.closeModal();
+            }}
+            selected={this.props.requisition.monthsToSupply}
+          />
+          );
+    }
+  }
+
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
@@ -145,7 +218,7 @@ export class RequisitionPage extends GenericTablePage {
             <View style={globalStyles.verticalContainer}>
               <PageButton
                 text="New Item"
-                onPress={() => this.setState({ isAddingNewItem: true })}
+                onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
                 isDisabled={this.props.requisition.isFinalised}
               />
               <PageButton
@@ -163,19 +236,12 @@ export class RequisitionPage extends GenericTablePage {
             onConfirm={() => this.onDeleteConfirm()}
             confirmText="Remove"
           />
-          <SelectModal
-            isOpen={this.state.isAddingNewItem && !this.props.requisition.isFinalised}
-            options={this.props.database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            onSelect={(item) => {
-              this.props.database.write(() => {
-                createRecord(this.props.database, 'RequisitionItem', this.props.requisition, item);
-                this.props.database.save('Requisition', this.props.requisition);
-              });
-              this.setState({ isAddingNewItem: false });
-            }}
-            onCancel={() => this.setState({ isAddingNewItem: false })}
-          />
+          <PageContentModal
+            isOpen={this.state.pageContentModalIsOpen && !this.props.requisition.isFinalised}
+            onClose={this.closeModal}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
         </View>
       </View>
     );
