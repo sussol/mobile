@@ -76,7 +76,7 @@ export class Transaction extends Realm.Object {
   /**
    * Adds a TransactionBatch, incorporating it into a matching TransactionItem. Will
    * create a new TransactionItem if none exists already.
-   * @param {Realm}  database        The app wide local database
+   * @param {Realm}  database         The app wide local database
    * @param {object} transactionBatch The TransactionBatch to add to this Transaction
    */
   addBatch(database, transactionBatch) {
