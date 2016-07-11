@@ -32,6 +32,21 @@ export class StocktakeEditPage extends GenericTablePage {
   }
 
   /**
+   * Respond to the user editing the number in the ACTUAL QUANTITY column.
+   * @param  {string} key           Should always be 'countedTotalQuantity'
+   * @param  {object} stocktakeItem The stocktake item from the row being edited
+   * @param  {string} newValue      The value the user entered in the cell
+   * @return {none}
+   */
+  onEndEditing(key, stocktakeItem, newValue) {
+    if (key !== 'countedTotalQuantity') return;
+    this.props.database.write(() => {
+      const quantity = Math.round(parseFloat(newValue));
+      stocktakeItem.setCountedNumberOfPacks(this.props.database, quantity);
+      this.props.database.save('StocktakeItem', stocktakeItem);
+    });
+  }
+  /**
    * Returns updated data according to searchTerm, sortBy and isAscending. Cannot search or sortby
    * class calculated fields.
    */
