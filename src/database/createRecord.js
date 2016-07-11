@@ -33,11 +33,12 @@ export function createRecord(database, type, ...args) {
 
 // Creates a customer invoice (Transaction) and adds it to the customer (Name)
 function createCustomerInvoice(database, customer) {
+  const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
     serialNumber: '1',
-    entryDate: new Date(),
-    confirmDate: new Date(), // Customer invoices always confirmed in mobile for easy stock tracking
+    entryDate: currentDate,
+    confirmDate: currentDate, // Customer invoices always confirmed in mobile
     type: 'customer_invoice',
     status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
     comment: '',
