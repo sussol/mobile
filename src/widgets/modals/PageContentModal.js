@@ -74,18 +74,17 @@ const localStyles = StyleSheet.create({
   modal: {
     height: Dimensions.get('window').height,
     width: Dimensions.get('window').width - 2 * PAGE_CONTENT_PADDING_HORIZONTAL,
-    alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: DARK_GREY,
-    opacity: 0.96,
+    opacity: 0.88,
   },
   childrenContainer: {
     flex: 1,
     position: 'absolute', // Otherwise it moves depending on size of autocomplete results
     top: 170,
-    left: 0,
-    right: 0,
+    left: PAGE_CONTENT_PADDING_HORIZONTAL,
+    right: PAGE_CONTENT_PADDING_HORIZONTAL - 7, // TODO get rid of -7
   },
   closeButton: {
     position: 'absolute',
