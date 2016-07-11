@@ -10,7 +10,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { createRecord } from '../database';
-import { Button } from '../widgets';
+import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
@@ -39,6 +39,7 @@ export class CustomerPage extends GenericTablePage {
     this.navigateToInvoice = this.navigateToInvoice.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
+    this.renderPageInfo = this.renderPageInfo.bind(this);
     this.renderCell = this.renderCell.bind(this);
   }
 
@@ -82,6 +83,34 @@ export class CustomerPage extends GenericTablePage {
     return data;
   }
 
+  renderPageInfo() {
+    const { customer } = this.props;
+    const infoColumns = [
+      [
+        {
+          title: 'Address:',
+          info: customer.billingAddress && customer.billingAddress.line1,
+        },
+        {
+          info: customer.billingAddress && customer.billingAddress.line2,
+        },
+        {
+          info: customer.billingAddress && customer.billingAddress.line3,
+        },
+        {
+          info: customer.billingAddress && customer.billingAddress.line4,
+        },
+      ],
+      [
+        {
+          title: 'Code:',
+          info: customer.code,
+        },
+      ],
+    ];
+    return <PageInfo columns={infoColumns} />;
+  }
+
   renderCell(key, transaction) {
     switch (key) {
       default:
@@ -103,9 +132,8 @@ export class CustomerPage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            <Button
-              style={globalStyles.button}
-              textStyle={globalStyles.buttonText}
+            {this.renderPageInfo()}
+            <PageButton
               text="New Invoice"
               onPress={this.onNewInvoice}
             />
