@@ -80,7 +80,7 @@ function generateSyncData(settings, recordType, record) {
       return {
         ID: record.id,
         store_ID: settings.get(THIS_STORE_ID),
-        item_ID: record.item.id,
+        item_ID: record.itemId,
         pack_size: String(record.packSize),
         expiry_date: getDateString(record.expiryDate),
         batch: record.batch,

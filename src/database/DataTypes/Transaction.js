@@ -37,7 +37,7 @@ export class Transaction extends Realm.Object {
    * @param {object} transactionItem  The TransactionItem to add
    */
   addItem(transactionItem) {
-    if (this.items.find(testItem => testItem.item.id === transactionItem.item.id)) {
+    if (this.items.find(testItem => testItem.itemId === transactionItem.itemId)) {
       throw new Error('Should never add two of the same item to a transaction');
     }
     this.items.push(transactionItem);
