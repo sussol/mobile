@@ -1,13 +1,12 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android
+ * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
 import React from 'react';
 import {
-  StyleSheet,
   View,
 } from 'react-native';
 
@@ -237,9 +236,3 @@ const COLUMNS = [
     title: 'REMOVE',
   },
 ];
-
-const localStyles = StyleSheet.create({
-  button: {
-    marginBottom: 10,
-  },
-});

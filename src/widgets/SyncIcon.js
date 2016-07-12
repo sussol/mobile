@@ -48,7 +48,6 @@ SyncIcon.defaultProps = {
 
 const localStyles = StyleSheet.create({
   horizontalContainer: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
   },

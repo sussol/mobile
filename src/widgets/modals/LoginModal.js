@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android
+ * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -95,44 +95,50 @@ export class LoginModal extends React.Component {
         position="top"
         startOpen
       >
-        <View style={[globalStyles.authFormContainer]}>
-          <Image
-            resizeMode="contain"
-            style={globalStyles.authFormLogo}
-            source={require('../../images/logo_large.png')}
-          />
-          <TextInput
-            style={globalStyles.authFormTextInputStyle}
-            placeholder="User Name"
-            placeholderTextColor={SUSSOL_ORANGE}
-            underlineColorAndroid={SUSSOL_ORANGE}
-            value={this.state.username}
-            editable={this.state.authStatus !== 'authenticating'}
-            onChangeText={ (text) => {
-              this.setState({ username: text, authStatus: 'unauthenticated' });
-            }}
-          />
-          <TextInput
-            style={globalStyles.authFormTextInputStyle}
-            placeholder="Password"
-            placeholderTextColor={SUSSOL_ORANGE}
-            underlineColorAndroid={SUSSOL_ORANGE}
-            value={this.state.password}
-            secureTextEntry
-            editable={this.state.authStatus !== 'authenticating'}
-            onChangeText={ (text) => {
-              this.setState({ password: text, authStatus: 'unauthenticated' });
-            }}
-          />
-          <View style={globalStyles.authFormButtonContainer}>
-            <Button
-              style={[globalStyles.authFormButton, globalStyles.loginButton]}
-              textStyle={globalStyles.authFormButtonText}
-              text={this.getButtonText()}
-              onPress={this.onLogin}
-              disabledColor={WARM_GREY}
-              isDisabled={this.getButtonDisabled()}
+        <View style={globalStyles.horizontalContainer}>
+          <View style={[globalStyles.authFormContainer]}>
+            <Image
+              resizeMode="contain"
+              style={globalStyles.authFormLogo}
+              source={require('../../images/logo_large.png')}
             />
+            <View style={globalStyles.horizontalContainer}>
+              <TextInput
+                style={globalStyles.authFormTextInputStyle}
+                placeholder="User Name"
+                placeholderTextColor={SUSSOL_ORANGE}
+                underlineColorAndroid={SUSSOL_ORANGE}
+                value={this.state.username}
+                editable={this.state.authStatus !== 'authenticating'}
+                onChangeText={(text) => {
+                  this.setState({ username: text, authStatus: 'unauthenticated' });
+                }}
+              />
+            </View>
+            <View style={globalStyles.horizontalContainer}>
+              <TextInput
+                style={globalStyles.authFormTextInputStyle}
+                placeholder="Password"
+                placeholderTextColor={SUSSOL_ORANGE}
+                underlineColorAndroid={SUSSOL_ORANGE}
+                value={this.state.password}
+                secureTextEntry
+                editable={this.state.authStatus !== 'authenticating'}
+                onChangeText={(text) => {
+                  this.setState({ password: text, authStatus: 'unauthenticated' });
+                }}
+              />
+            </View>
+            <View style={globalStyles.authFormButtonContainer}>
+              <Button
+                style={[globalStyles.authFormButton, globalStyles.loginButton]}
+                textStyle={globalStyles.authFormButtonText}
+                text={this.getButtonText()}
+                onPress={this.onLogin}
+                disabledColor={WARM_GREY}
+                isDisabled={this.getButtonDisabled()}
+              />
+            </View>
           </View>
         </View>
       </Modal>

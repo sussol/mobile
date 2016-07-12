@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android
+ * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -90,18 +90,16 @@ export class RealmExplorer extends React.Component {
     const headerCells = [];
     if (this.state.data && this.state.data.length > 0) {
       const firstObject = this.state.data[0];
-      for (let field in firstObject) {
-        if (firstObject.hasOwnProperty(field)) {
-          headerCells.push(
-            <HeaderCell
-              key={field}
-              style={globalStyles.headerCell}
-              textStyle={globalStyles.text}
-              width={1}
-              text={field}
-            />
-          );
-        }
+      for (const [key] of Object.entries(firstObject)) {
+        headerCells.push(
+          <HeaderCell
+            key={key}
+            style={globalStyles.headerCell}
+            textStyle={globalStyles.text}
+            width={1}
+            text={key}
+          />
+        );
       }
     }
     return (
@@ -115,27 +113,25 @@ export class RealmExplorer extends React.Component {
     const cells = [];
     if (this.state.data && this.state.data.length > 0) {
       const firstObject = this.state.data[0];
-      for (const field in firstObject) {
-        if (firstObject.hasOwnProperty(field)) {
-          let itemString = item[field]
-            && ((typeof item[field] === 'string')
-            || (typeof item[field] === 'number')
-            || (typeof item[field].getMonth === 'function'))
-            && String(item[field]);
-          if (!itemString && item[field] && item[field].length) itemString = item[field].length;
-          if (typeof item[field] === 'boolean') itemString = item[field] ? 'True' : 'False';
-          if (!itemString && item[field] && item[field].id) itemString = item[field].id;
-          cells.push(
-            <Cell
-              key={field}
-              style={globalStyles.cell}
-              textStyle={globalStyles.text}
-              width={1}
-            >
-              {itemString}
-            </Cell>
-          );
-        }
+      for (const [key] of Object.entries(firstObject)) {
+        let itemString = item[key]
+          && ((typeof item[key] === 'string')
+          || (typeof item[key] === 'number')
+          || (typeof item[key].getMonth === 'function'))
+          && String(item[key]);
+        if (!itemString && item[key] && item[key].length) itemString = item[key].length;
+        if (typeof item[key] === 'boolean') itemString = item[key] ? 'True' : 'False';
+        if (!itemString && item[key] && item[key].id) itemString = item[key].id;
+        cells.push(
+          <Cell
+            key={key}
+            style={globalStyles.cell}
+            textStyle={globalStyles.text}
+            width={1}
+          >
+            {itemString}
+          </Cell>
+        );
       }
     }
     return (

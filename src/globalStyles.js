@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android
+ * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -88,11 +88,13 @@ export default StyleSheet.create({
     justifyContent: 'flex-start',
   },
   authFormTextInputStyle: {
+    flex: 1,
     marginHorizontal: 60,
     color: SUSSOL_ORANGE,
     fontFamily: APP_FONT_FAMILY,
   },
   authFormContainer: {
+    flex: 1,
     marginTop: 80,
     marginHorizontal: 300,
     alignItems: 'center',
@@ -107,7 +109,6 @@ export default StyleSheet.create({
     backgroundColor: SUSSOL_ORANGE,
   },
   authFormButtonContainer: {
-    flex: 1,
     alignSelf: 'stretch',
   },
   authFormButtonText: {

@@ -80,61 +80,69 @@ export class FirstUsePage extends React.Component {
 
   render() {
     return (
-      <View style={[globalStyles.authFormContainer]}>
-        <Image
-          resizeMode="contain"
-          style={globalStyles.authFormLogo}
-          source={require('../images/logo_large.png')}
-        />
-        <TextInput
-          style={globalStyles.authFormTextInputStyle}
-          placeholderTextColor={SUSSOL_ORANGE}
-          underlineColorAndroid={SUSSOL_ORANGE}
-          placeholder="Primary Server URL"
-          value={this.state.serverURL}
-          editable={this.state.progress !== 'initialising'}
-          onChangeText={ (text) => {
-            this.setState({ serverURL: text, progress: 'uninitialised' });
-          }}
-        />
-        <TextInput
-          style={globalStyles.authFormTextInputStyle}
-          placeholderTextColor={SUSSOL_ORANGE}
-          underlineColorAndroid={SUSSOL_ORANGE}
-          placeholder="Sync Site Name"
-          value={this.state.syncSiteName}
-          editable={this.state.progress !== 'initialising'}
-          onChangeText={ (text) => {
-            this.setState({ syncSiteName: text, progress: 'uninitialised' });
-          }}
-        />
-        <TextInput
-          style={globalStyles.authFormTextInputStyle}
-          placeholder="Sync Site Password"
-          placeholderTextColor={SUSSOL_ORANGE}
-          underlineColorAndroid={SUSSOL_ORANGE}
-          value={this.state.syncSitePassword}
-          secureTextEntry
-          editable={this.state.progress !== 'initialising'}
-          onChangeText={ (text) => {
-            this.setState({ syncSitePassword: text, progress: 'uninitialised' });
-          }}
-        />
-        <SyncState
-          style={globalStyles.initialisationStateIcon}
-          isSyncing={this.state.progress === 'initialising'}
-          syncError={this.state.progress === 'error' ? 'error' : ''}
-          showText={false}
-        />
-        <View style={globalStyles.authFormButtonContainer}>
-          <Button
-            style={globalStyles.authFormButton}
-            textStyle={globalStyles.authFormButtonText}
-            text={this.getButtonText()}
-            onPress={this.onPressConnect}
-            disabledColor={WARM_GREY}
-            isDisabled={this.getButtonDisabled()}
+      <View style={globalStyles.horizontalContainer}>
+        <View style={[globalStyles.authFormContainer]}>
+          <Image
+            resizeMode="contain"
+            style={globalStyles.authFormLogo}
+            source={require('../images/logo_large.png')}
           />
+          <View style={globalStyles.horizontalContainer}>
+            <TextInput
+              style={globalStyles.authFormTextInputStyle}
+              placeholderTextColor={SUSSOL_ORANGE}
+              underlineColorAndroid={SUSSOL_ORANGE}
+              placeholder="Primary Server URL"
+              value={this.state.serverURL}
+              editable={this.state.progress !== 'initialising'}
+              onChangeText={(text) => {
+                this.setState({ serverURL: text, progress: 'uninitialised' });
+              }}
+            />
+          </View>
+          <View style={globalStyles.horizontalContainer}>
+            <TextInput
+              style={globalStyles.authFormTextInputStyle}
+              placeholderTextColor={SUSSOL_ORANGE}
+              underlineColorAndroid={SUSSOL_ORANGE}
+              placeholder="Sync Site Name"
+              value={this.state.syncSiteName}
+              editable={this.state.progress !== 'initialising'}
+              onChangeText={(text) => {
+                this.setState({ syncSiteName: text, progress: 'uninitialised' });
+              }}
+            />
+          </View>
+          <View style={globalStyles.horizontalContainer}>
+            <TextInput
+              style={globalStyles.authFormTextInputStyle}
+              placeholder="Sync Site Password"
+              placeholderTextColor={SUSSOL_ORANGE}
+              underlineColorAndroid={SUSSOL_ORANGE}
+              value={this.state.syncSitePassword}
+              secureTextEntry
+              editable={this.state.progress !== 'initialising'}
+              onChangeText={(text) => {
+                this.setState({ syncSitePassword: text, progress: 'uninitialised' });
+              }}
+            />
+          </View>
+          <SyncState
+            style={globalStyles.initialisationStateIcon}
+            isSyncing={this.state.progress === 'initialising'}
+            syncError={this.state.progress === 'error' ? 'error' : ''}
+            showText={false}
+          />
+          <View style={globalStyles.authFormButtonContainer}>
+            <Button
+              style={globalStyles.authFormButton}
+              textStyle={globalStyles.authFormButtonText}
+              text={this.getButtonText()}
+              onPress={this.onPressConnect}
+              disabledColor={WARM_GREY}
+              isDisabled={this.getButtonDisabled()}
+            />
+          </View>
         </View>
       </View>
     );
