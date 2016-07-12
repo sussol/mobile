@@ -27,56 +27,35 @@ import {
  * @return  {React.Component}           Return TouchableOpacity with child rendered according to the
  *                                      above 3 props.
  */
-export class CheckableCell extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isChecked: false,
-    };
-    this.onPress = this.onPress.bind(this);
-  }
+export function CheckableCell(props) {
+  const {
+    isDisabled,
+    style,
+    width,
+    renderDisabled,
+    renderIsChecked,
+    renderIsNotChecked,
+    isChecked,
+    onPress,
+  } = props;
 
-  componentWillMount() {
-    this.setState({ isChecked: this.props.isChecked });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ isChecked: nextProps.isChecked });
-  }
-
-  onPress() {
-    this.setState({ isChecked: !this.state.isChecked });
-    this.props.onPress();
-  }
-
-  render() {
-    const {
-      isDisabled,
-      style,
-      width,
-      renderDisabled,
-      renderIsChecked,
-      renderIsNotChecked,
-    } = this.props;
-
-    if (isDisabled) {
-      let renderFunction = renderDisabled;
-      if (!renderFunction) {
-        renderFunction = this.state.isChecked ? renderIsChecked : renderIsNotChecked;
-      }
-      return (
-        <View style={[style, { flex: width }]} >
-          {renderFunction()}
-        </View>
-      );
+  if (isDisabled) {
+    let renderFunction = renderDisabled;
+    if (!renderFunction) {
+      renderFunction = isChecked ? renderIsChecked : renderIsNotChecked;
     }
-
     return (
-      <TouchableOpacity style={[style, { flex: width }]} onPress={() => this.onPress()}>
-        {this.state.isChecked ? renderIsChecked() : renderIsNotChecked()}
-      </TouchableOpacity>
+      <View style={[style, { flex: width }]} >
+        {renderFunction()}
+      </View>
     );
   }
+
+  return (
+    <TouchableOpacity style={[style, { flex: width }]} onPress={() => onPress()}>
+      {isChecked ? renderIsChecked() : renderIsNotChecked()}
+    </TouchableOpacity>
+  );
 }
 
 CheckableCell.propTypes = {
