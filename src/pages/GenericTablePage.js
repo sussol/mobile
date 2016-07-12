@@ -44,14 +44,6 @@ import { SearchBar } from '../widgets';
  *                                             by column press).
  * @state  {boolean}             isAscending   Direction sortBy should sort
  *                                             (ascending/descending:true/false).
- * @const  {Object}              selection     Key pairs storing the ID of a row and a boolean
- *                                             representing if the row is selected/checked:
- *                                             {
- *                                              {rowId: boolean},
- *                                              {rowId: boolean},
- *                                              {rowId: boolean},
- *                                             }
- *                                             rowId is usually the id of the record associated.
  * N.B. Take care to call parent method if overriding any of the react life cycle methods.
  */
 export class GenericTablePage extends React.Component {
@@ -62,12 +54,11 @@ export class GenericTablePage extends React.Component {
     });
     this.state = {
       dataSource: dataSource,
-      currentDataBlob: {},
       searchTerm: '',
       sortBy: '',
       isAscending: true,
+      selection: [],
     };
-    this.selection = Object.create(null);
     this.columns = null;
     this.dataTypesDisplayed = [];
     this.databaseListenerId = null;
@@ -119,40 +110,20 @@ export class GenericTablePage extends React.Component {
    * Adds/removes item.id to/from the selection array in state. Must call this within any overrides.
    * i.e. super.onCheckablePress(item);
    */
-  onCheckablePress(rowData) {
-    const newSelection = { ...this.state.selection };
-    const newDataBlob = [...this.state.currentDataBlob];
-    if (newSelection[rowData.id]) { // Was selected, set to false to deselect
-      newSelection[rowData.id] = false;
-    } else { // Either no value for the key yet, or was false. Set to true.
-      newSelection[rowData.id] = true;
+  onCheckablePress(item) {
+    const newSelection = [...this.state.selection];
+    if (newSelection.indexOf(item.id) >= 0) {
+      newSelection.splice(newSelection.indexOf(item.id), 1);
+    } else {
+      newSelection.push(item.id);
     }
-
-    newDataBlob[rowData.id] = {
-      ...this.state.currentDataBlob[rowData.id],
-      isSelected: newSelection[rowData.id],
-    };
-
-    this.setState({
-      selection: newSelection,
-      currentDataBlob: newDataBlob,
-      dataSource: this.state.dataSource.cloneWithRows(newDataBlob),
-    });
+    this.setState({ selection: newSelection });
   }
 
   refreshData() {
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
-    const dataBlob = [];
-    const rowIds = [];
-    data.forEach((record, index) => {
-      dataBlob.push({ ...record, isSelected: this.selection[record.id] });
-      rowIds.push(index);
-    });
-    this.setState({
-      dataSource: dataSource.cloneWithRows(dataBlob, rowIds),
-      currentDataBlob: dataBlob,
-    });
+    this.setState({ dataSource: dataSource.cloneWithRows(data) });
   }
 
 /**
@@ -212,19 +183,20 @@ export class GenericTablePage extends React.Component {
     );
   }
 
-  renderRow(rowData, sectionId, rowId) {
-    console.log('render row time');
+  renderRow(item) {
     const cells = [];
     this.columns.forEach((column) => {
-      const renderedCell = this.renderCell(column.key, rowData);
+      const renderedCell = this.renderCell(column.key, item);
       let cell;
       switch (renderedCell.type) {
         case 'custom':
           cell = renderedCell.cell;
           break;
         case 'checkable': {
-          // if provided, use isChecked prop, else set isChecked according to rowData.id
+          // if provided, use isChecked prop, else set isChecked according to item.id
           // being in selection array.
+          const isChecked = renderedCell.isChecked ?
+            renderedCell.isChecked : this.state.selection.indexOf(item.id) >= 0;
           let iconChecked;
           let iconNotChecked;
           if (renderedCell.iconChecked && renderedCell.iconNotChecked) {
@@ -245,11 +217,11 @@ export class GenericTablePage extends React.Component {
                 globalStyles.dataTableCheckableCell,
               ]}
               width={column.width}
-              onPress={() => this.onCheckablePress(rowData, rowId)}
+              onPress={() => this.onCheckablePress(item)}
               renderDisabled={() => <Icon name={iconNotChecked} size={15} color={WARMER_GREY} />}
               renderIsChecked={() => <Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
               renderIsNotChecked={() => <Icon name={iconNotChecked} size={15} color={WARM_GREY} />}
-              isChecked={rowData.isChecked}
+              isChecked={isChecked}
               isDisabled={renderedCell.isDisabled}
             />
           );
