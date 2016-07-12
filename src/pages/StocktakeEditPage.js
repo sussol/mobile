@@ -68,7 +68,7 @@ export class StocktakeEditPage extends GenericTablePage {
         return item[key];
       case 'countedTotalQuantity':
         return {
-          type: 'editable',
+          type: this.props.stocktake.isFinalised ? 'text' : 'editable',
           cellContents: item.countedTotalQuantity,
         };
     }
