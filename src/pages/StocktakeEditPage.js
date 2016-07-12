@@ -85,6 +85,7 @@ export class StocktakeEditPage extends GenericTablePage {
               onPress={() => this.props.navigateTo('stocktakeManager', 'Manage Stocktake', {
                 stocktake: this.props.stocktake,
               })}
+              isDisabled={this.props.stocktake.isFinalised}
             />
           </View>
           {this.renderDataTable()}
