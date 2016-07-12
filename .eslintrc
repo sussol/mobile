@@ -11,4 +11,5 @@
         "object-shorthand": "off",
         "strict": 0,
         "no-confusing-arrow": ["error", {"allowParens": true}],
+        "global-require": "off",
         }

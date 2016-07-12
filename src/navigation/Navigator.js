@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android Index
+ * mSupply MobileAndroid Index
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -39,16 +39,16 @@ export class Navigator extends React.Component {
     this.renderRightComponent = this.renderRightComponent.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderTitleComponent = this.renderTitleComponent.bind(this);
-    this.handleNavigation = this.handleNavigation.bind(this);
+    this.onNavigate = this.onNavigate.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     BackAndroid.addEventListener('hardwareBackPress', () =>
-      this.handleNavigation({ type: BACK_ACTION })
+      this.onNavigate({ type: BACK_ACTION })
     );
   }
 
-  handleNavigation(action) {
+  onNavigate(action) {
     if (!action) {
       return false;
     }
@@ -69,6 +69,7 @@ export class Navigator extends React.Component {
         navigationProps={props}
         renderTitleComponent={this.renderTitleComponent}
         style={this.props.navBarStyle}
+        onNavigateBack={() => this.onNavigate({ type: BACK_ACTION })}
       />
     );
   }
@@ -104,7 +105,7 @@ export class Navigator extends React.Component {
     // If the navigation state includes a function to render the right component,
     // it will override any passed through by props
     const navigationState = this.state.navigationState;
-    const topmostCard = navigationState.children[navigationState.children.length - 1];
+    const topmostCard = navigationState.routes[navigationState.routes.length - 1];
     if (typeof topmostCard.renderRightComponent === 'function') {
       return topmostCard.renderRightComponent();
     }
@@ -114,13 +115,13 @@ export class Navigator extends React.Component {
   renderScene(props) {
     return (
       <View style={[localStyles.navBarOffset, localStyles.main, props.style]}>
-        {this.props.renderScene(props)}
+        {this.props.renderScene({ onNavigate: this.onNavigate, ...props })}
       </View>
     );
   }
 
   renderTitleComponent(props) {
-    const title = String(props.scene.navigationState.title || '');
+    const title = String(props.scene.route.title || '');
     return (
       <NavigationHeader.Title>
         {title}
@@ -130,11 +131,10 @@ export class Navigator extends React.Component {
 
   render() {
     return (
-      <View style={ localStyles.main }>
+      <View style={localStyles.main}>
         <NavigationCardStack
           direction={'horizontal'}
           navigationState={{ ...this.state.navigationState }} // Clone so CardStack detects change
-          onNavigate={this.handleNavigation}
           renderScene={this.renderScene}
           renderOverlay={this.renderNavigationBar}
           cardStyle={{ backgroundColor: this.props.backgroundColor }}
@@ -170,7 +170,7 @@ function getNewNavState(currentState, action) {
       return {
         index: 0,
         key: 'root',
-        children: [{ key: 'root', ...extraProps }],
+        routes: [{ key: 'root', ...extraProps }],
       };
     case PUSH_ACTION:
       return NavigationStateUtils.push(currentState, { key: key, ...extraProps });

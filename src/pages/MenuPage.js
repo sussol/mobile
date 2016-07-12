@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android
+ * mSupply MobileAndroid
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 

@@ -1,32 +1,26 @@
-package com.offlinemobile;
+package com.msupplymobile;
 
-import com.facebook.react.ReactActivity;
-import com.oblador.vectoricons.VectorIconsPackage;
-import io.realm.react.RealmReactPackage;
+import android.app.Application;
+import android.util.Log;
+
+import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactInstanceManager;
+import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
+
+import com.oblador.vectoricons.VectorIconsPackage;
+import io.realm.react.RealmReactPackage;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class MainActivity extends ReactActivity {
+public class MainApplication extends Application implements ReactApplication {
 
-    /**
-     * Returns the name of the main component registered from JavaScript.
-     * This is used to schedule rendering of the component.
-     */
-    @Override
-    protected String getMainComponentName() {
-        return "offlineMobile";
-    }
-
-    /**
-     * Returns whether dev mode should be enabled.
-     * This enables e.g. the dev menu.
-     */
+  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
     @Override
     protected boolean getUseDeveloperSupport() {
-        return BuildConfig.DEBUG;
+      return BuildConfig.DEBUG;
     }
 
     /**
@@ -41,4 +35,10 @@ public class MainActivity extends ReactActivity {
             new RealmReactPackage()
         );
     }
+  };
+
+  @Override
+  public ReactNativeHost getReactNativeHost() {
+      return mReactNativeHost;
+  }
 }

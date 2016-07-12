@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile dataTable Expansion
+ * mSupply MobiledataTable Expansion
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 

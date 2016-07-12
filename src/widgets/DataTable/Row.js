@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Row component
+ * mSupply MobileRow component
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 

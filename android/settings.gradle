@@ -1,4 +1,4 @@
-rootProject.name = 'offlineMobile'
+rootProject.name = 'mSupplyMobile'
 
 include ':app'
 include ':react-native-vector-icons'
