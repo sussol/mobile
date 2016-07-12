@@ -12,7 +12,7 @@ import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 
-const DATA_TYPES_DISPLAYED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
+const DATA_TYPES_DISPLAYED = ['Stocktake', 'StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
 /**
 * Renders the page for displaying StocktakeEditPage.
