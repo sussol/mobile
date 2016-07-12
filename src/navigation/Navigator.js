@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * mSupply MobileAndroid Index
+ * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 

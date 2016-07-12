@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * mSupply MobileCell component
+ * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
