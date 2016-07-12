@@ -1,7 +1,7 @@
 // /* @flow weak */
 //
 // /**
-//  * OfflineMobile Android
+//  * mSupply Mobile
 //  * Sustainable Solutions (NZ) Ltd. 2016
 //  */
 //
@@ -49,7 +49,7 @@
 //     props.onNavigate({ type: 'push', key, title });
 //   };
 //
-//   switch (props.scene.navigationState.key) {
+//   switch (props.scene.route.key) {
 //     case 'menu':
 //       return <MenuPage navigateTo={navigateTo} />;
 //     case 'stock':

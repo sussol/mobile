@@ -7,12 +7,8 @@ class SyncTranslator {
   constructor(internalToExternal) {
     this.internalToExternal = internalToExternal;
     this.externalToInternal = {};
-    for (const key in internalToExternal) {
-      // Guard against prototype values in iterator
-      if ({}.hasOwnProperty.call(internalToExternal, key)) {
-        const value = internalToExternal[key];
-        this.externalToInternal[value] = key;
-      }
+    for (const [key, value] of Object.entries(internalToExternal)) {
+      this.externalToInternal[value] = key;
     }
   }
 

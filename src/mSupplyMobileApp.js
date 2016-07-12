@@ -1,7 +1,7 @@
 /* @flow weak */
 
 /**
- * OfflineMobile Android
+ * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
@@ -33,7 +33,7 @@ import { Settings } from './settings';
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
-export default class OfflineMobileApp extends React.Component {
+export default class mSupplyMobileApp extends React.Component {
 
   constructor() {
     super();
@@ -69,7 +69,8 @@ export default class OfflineMobileApp extends React.Component {
     this.scheduler.schedule(() => {
       if (this.state.currentUser !== null) { // Only reauthenticate if currently logged in
         this.userAuthenticator.reauthenticate(this.onAuthentication);
-      }}, AUTHENTICATION_INTERVAL);
+      }
+    }, AUTHENTICATION_INTERVAL);
   }
 
   componentWillUnmount() {
@@ -139,7 +140,7 @@ export default class OfflineMobileApp extends React.Component {
       // Now navigate to the page, passing on any extra props and the finalise button if required
       props.onNavigate({ type: navType, ...navigationProps });
     };
-    const { key, ...extraProps } = props.scene.navigationState;
+    const { key, ...extraProps } = props.scene.route;
     const Page = PAGES[key]; // Get the page the navigation key relates to
     // Return the requested page with any extra props passed to navigateTo in pageProps
     return (
