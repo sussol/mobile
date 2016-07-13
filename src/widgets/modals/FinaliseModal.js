@@ -29,7 +29,7 @@ export function FinaliseModal(props) {
         }
         if (props.onClose) props.onClose();
       }}
-      onCancel={() => { if (props.onClose) props.onClose(); } }
+      onCancel={() => { if (props.onClose) props.onClose(); }}
     />);
 }
 
