@@ -98,16 +98,11 @@ export class CustomerInvoicesPage extends GenericTablePage {
   renderCell(key, invoice) {
     switch (key) {
       default:
-      case 'otherParty.name':
-        return invoice.otherParty && invoice.otherParty.name;
-      case 'serialNumber':
-        return invoice.serialNumber;
+        return invoice[key];
       case 'status':
         return formatStatus(invoice.status);
       case 'entryDate':
         return invoice.entryDate.toDateString();
-      case 'comment':
-        return invoice.comment;
       case 'delete':
         return {
           type: 'checkable',
@@ -160,7 +155,7 @@ CustomerInvoicesPage.propTypes = {
 
 const COLUMNS = [
   {
-    key: 'otherParty.name',
+    key: 'otherPartyName',
     width: 4,
     title: 'CUSTOMER',
     sortable: true,

@@ -17,7 +17,8 @@ import { DARK_GREY } from '../../globalStyles';
 export function BottomModal(props) {
   const { children, style, ...modalProps } = props;
   return (
-    <Modal {...modalProps}
+    <Modal
+      {...modalProps}
       style={[localStyles.modal, props.style]}
     >
       <View style={[localStyles.container, style]}>

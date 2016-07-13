@@ -27,6 +27,10 @@ export class Transaction extends Realm.Object {
     return this.type === 'supplier_invoice';
   }
 
+  get otherPartyName() {
+    return this.otherParty ? this.otherParty.name : '';
+  }
+
   get totalPrice() {
     return getTotal(this.items, 'totalPrice');
   }

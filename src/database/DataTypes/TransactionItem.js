@@ -16,6 +16,14 @@ export class TransactionItem extends Realm.Object {
     return this.item ? this.item.id : '';
   }
 
+  get itemName() {
+    return this.item ? this.item.name : '';
+  }
+
+  get itemCode() {
+    return this.item ? this.item.code : '';
+  }
+
   get totalQuantity() {
     return getTotal(this.batches, 'totalQuantity');
   }

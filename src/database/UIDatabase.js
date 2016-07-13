@@ -19,14 +19,14 @@ export class UIDatabase {
     return results;
   }
 
-  addListener(...args) { this.database.addListener(...args); }
-  removeListener(...args) { this.database.removeListener(...args); }
-  alertListeners(...args) { this.database.alertListeners(...args); }
-  create(...args) { this.database.create(...args); }
-  delete(...args) { this.database.delete(...args); }
-  deleteAll(...args) { this.database.deleteAll(...args); }
-  save(...args) { this.database.save(...args); }
-  update(...args) { this.database.update(...args); }
-  write(...args) { this.database.write(...args); }
+  addListener(...args) { return this.database.addListener(...args); }
+  removeListener(...args) { return this.database.removeListener(...args); }
+  alertListeners(...args) { return this.database.alertListeners(...args); }
+  create(...args) { return this.database.create(...args); }
+  delete(...args) { return this.database.delete(...args); }
+  deleteAll(...args) { return this.database.deleteAll(...args); }
+  save(...args) { return this.database.save(...args); }
+  update(...args) { return this.database.update(...args); }
+  write(...args) { return this.database.write(...args); }
 
 }
