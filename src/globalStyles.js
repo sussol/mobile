@@ -224,8 +224,9 @@ export default StyleSheet.create({
   },
   dataTableExpansion: {
     padding: 15,
-    borderWidth: 1,
-    borderColor: SUSSOL_ORANGE,
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: BLUE_WHITE,
   },
   dataTableCell: {
     height: 45,

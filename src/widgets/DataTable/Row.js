@@ -39,9 +39,7 @@ export class Row extends React.Component {
           <View style={defaultStyles.cellContainer}>
             {children}
           </View>
-          <View style={defaultStyles.expansionContainer}>
-            {this.state.expanded && renderExpansion()}
-          </View>
+          {this.state.expanded && renderExpansion()}
         </TouchableOpacity>
       );
     }
