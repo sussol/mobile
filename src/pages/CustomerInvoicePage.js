@@ -12,24 +12,41 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { BottomConfirmModal, PageButton, PageInfo, SelectModal } from '../widgets';
-import { formatDate, parsePositiveNumber } from '../utilities';
+import { formatDate, parsePositiveNumber, truncateString } from '../utilities';
 import { createRecord } from '../database';
+import {
+  AutocompleteSelector,
+  BottomConfirmModal,
+  PageButton,
+  PageContentModal,
+  PageInfo,
+  TextEditor,
+} from '../widgets';
 
 const DATA_TYPES_DISPLAYED =
         ['Transaction', 'TransactionBatch', 'TransactionItem', 'Item', 'ItemBatch'];
+const MODAL_KEYS = {
+  COMMENT_EDIT: 'commentEdit',
+  ITEM_SELECT: 'itemSelect',
+};
+const MAX_COMMENT_LENGTH = 30; // The longest comment that will fit tidily in the info area
 
 export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
-    this.state.isAddingNewItem = false;
+    this.state.modalKey = null;
+    this.state.pageContentModalIsOpen = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.openItemSelector = this.openItemSelector.bind(this);
+    this.openCommentEditor = this.openCommentEditor.bind(this);
+    this.closeModal = this.closeModal.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
   }
 
@@ -95,6 +112,22 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.refreshData();
   }
 
+  openItemSelector() {
+    this.openModal(MODAL_KEYS.ITEM_SELECT);
+  }
+
+  openCommentEditor() {
+    this.openModal(MODAL_KEYS.COMMENT_EDIT);
+  }
+
+  openModal(key) {
+    this.setState({ modalKey: key, pageContentModalIsOpen: true });
+  }
+
+  closeModal() {
+    this.setState({ pageContentModalIsOpen: false });
+  }
+
   renderPageInfo() {
     const infoColumns = [
       [
@@ -122,22 +155,23 @@ export class CustomerInvoicePage extends GenericTablePage {
         },
         {
           title: 'Comment:',
-          info: this.props.transaction.comment,
+          info: truncateString(this.props.transaction.comment, MAX_COMMENT_LENGTH),
+          onPress: this.openCommentEditor,
         },
       ],
     ];
-    return <PageInfo columns={infoColumns} />;
+    return (
+      <PageInfo
+        columns={infoColumns}
+        isEditingDisabled={this.props.transaction.isFinalised}
+      />
+    );
   }
 
   renderCell(key, transactionItem) {
     switch (key) {
       default:
-      case 'itemName':
-        return transactionItem.item && transactionItem.item.name;
-      case 'itemCode':
-        return transactionItem.item && transactionItem.item.code;
-      case 'availableQuantity':
-        return transactionItem.availableQuantity;
+        return transactionItem[key];
       case 'quantityToIssue':
         return {
           cellContents: transactionItem.totalQuantity,
@@ -149,6 +183,42 @@ export class CustomerInvoicePage extends GenericTablePage {
           icon: 'md-remove-circle',
           isDisabled: this.props.transaction.isFinalised,
         };
+    }
+  }
+
+  renderModalContent() {
+    const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
+    const { database, transaction } = this.props;
+    switch (this.state.modalKey) {
+      default:
+      case ITEM_SELECT:
+        return (
+          <AutocompleteSelector
+            options={database.objects('Item')}
+            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
+            onSelect={(item) => {
+              database.write(() => {
+                createRecord(database, 'TransactionItem', transaction, item);
+              });
+              this.closeModal();
+            }}
+          />
+        );
+      case COMMENT_EDIT:
+        return (
+          <TextEditor
+            text={transaction.comment}
+            onEndEditing={(newComment) => {
+              if (newComment !== transaction.comment) {
+                database.write(() => {
+                  transaction.comment = newComment;
+                  database.save('Transaction', transaction);
+                });
+              }
+              this.closeModal();
+            }}
+          />
+        );
     }
   }
 
@@ -164,7 +234,7 @@ export class CustomerInvoicePage extends GenericTablePage {
             <View style={globalStyles.verticalContainer}>
               <PageButton
                 text="New Item"
-                onPress={() => this.setState({ isAddingNewItem: true })}
+                onPress={this.openItemSelector}
                 isDisabled={this.props.transaction.isFinalised}
               />
               <PageButton
@@ -182,18 +252,12 @@ export class CustomerInvoicePage extends GenericTablePage {
             onConfirm={() => this.onDeleteConfirm()}
             confirmText="Remove"
           />
-          <SelectModal
-            isOpen={this.state.isAddingNewItem && !this.props.transaction.isFinalised}
-            options={this.props.database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            onSelect={(item) => {
-              this.props.database.write(() => {
-                createRecord(this.props.database, 'TransactionItem', this.props.transaction, item);
-              });
-              this.setState({ isAddingNewItem: false });
-            }}
-            onClose={() => this.setState({ isAddingNewItem: false })}
-          />
+          <PageContentModal
+            isOpen={this.state.pageContentModalIsOpen && !this.props.transaction.isFinalised}
+            onClose={this.closeModal}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
         </View>
       </View>
     );

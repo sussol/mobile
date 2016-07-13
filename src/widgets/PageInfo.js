@@ -31,47 +31,48 @@ export function PageInfo(props) {
       style={[localStyles.horizontalContainer]}
     >
       {props.columns.map((columnData, columnIndex) =>
-          <View
-            key={`Column ${columnIndex}`}
-            style={localStyles.columnContainer}
-          >
-            <View>
-              {columnData.map((rowData, rowIndex) =>
+        <View
+          key={`Column ${columnIndex}`}
+          style={localStyles.columnContainer}
+        >
+          <View>
+            {columnData.map((rowData, rowIndex) =>
+              <Text
+                key={`Title ${columnIndex}-${rowIndex}`}
+                style={[localStyles.text, localStyles.titleText]}
+              >
+                {rowData.title ? rowData.title : ' '/** Space if null to avoid squishing row **/}
+              </Text>)}
+          </View>
+          <View style={localStyles.infoContainer}>
+            {columnData.map((rowData, rowIndex) => {
+              const textComponent = (
                 <Text
-                  key={`Title ${columnIndex}-${rowIndex}`}
-                  style={[localStyles.text, localStyles.titleText]}
+                  key={`Info ${columnIndex}-${rowIndex}`}
+                  style={localStyles.text}
                 >
-                  {rowData.title ? rowData.title : ' ' /** Space if null to avoid squishing row **/}
-                </Text>)}
-            </View>
-            <View style={localStyles.infoContainer}>
-              {columnData.map((rowData, rowIndex) => {
-                const textComponent = (
-                  <Text
-                    key={`Info ${columnIndex}-${rowIndex}`}
-                    style={localStyles.text}
+                  {rowData.info ? rowData.info : ' '/** Space if null to avoid squishing row **/}
+                </Text>);
+              if (rowData.onPress && !props.isEditingDisabled) {
+                return (
+                  <TouchableHighlight
+                    key={`Touchable ${columnIndex}-${rowIndex}`}
+                    onPress={rowData.onPress}
                   >
-                    {rowData.info ? rowData.info : ' ' /** Space if null to avoid squishing row **/}
-                  </Text>);
-                if (rowData.onPress) {
-                  return (
-                    <TouchableHighlight
-                      key={`Touchable ${columnIndex}-${rowIndex}`}
-                      onPress={rowData.onPress}
-                    >
-                      {textComponent}
-                    </TouchableHighlight>);
-                }
-                return textComponent;
-              })}
-            </View>
-          </View>)}
+                    {textComponent}
+                  </TouchableHighlight>);
+              }
+              return textComponent;
+            })}
+          </View>
+        </View>)}
     </View>
   );
 }
 
 PageInfo.propTypes = {
   columns: React.PropTypes.array,
+  isEditingDisabled: React.PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({
