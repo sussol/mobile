@@ -131,6 +131,13 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
       database.update(internalType, internalRecord);
       break;
     }
+    case 'NameStoreJoin': {
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
+      const name = getObject(database, 'Name', record.name_ID);
+      name.isVisible = !parseBoolean(record.inactive);
+      database.save('Name', name);
+      break;
+    }
     case 'Requisition': {
       internalRecord = {
         id: record.ID,
@@ -289,7 +296,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       return record.item_ID && record.pack_size && record.quantity && record.batch
              && record.expiry_date && record.cost_price && record.sell_price;
     case 'ItemStoreJoin':
-      return record.item_ID;
+      return record.item_ID && record.store_ID;
     case 'MasterListNameJoin':
       return record.name_ID && record.list_master_ID;
     case 'MasterList':
@@ -299,6 +306,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
     case 'Name':
       return record.name && record.code && record.type && record.customer
       && record.supplier && record.manufacturer;
+    case 'NameStoreJoin':
+      return record.name_ID && record.store_ID;
     case 'Requisition':
       return record.status && record.date_entered && record.type && record.daysToSupply
              && record.serial_number;
