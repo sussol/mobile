@@ -160,7 +160,12 @@ export class RequisitionPage extends GenericTablePage {
         },
       ],
     ];
-    return <PageInfo columns={infoColumns} />;
+    return (
+      <PageInfo
+        columns={infoColumns}
+        isEditingDisabled={this.props.requisition.isFinalised}
+      />
+    );
   }
 
   renderCell(key, requisitionItem) {
