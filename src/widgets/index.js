@@ -16,5 +16,6 @@ export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
 export { SearchBar } from './SearchBar';
 export { SyncState } from './SyncState';
+export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar, ToggleButton } from './ToggleBar';
