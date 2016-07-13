@@ -161,12 +161,16 @@ export class GenericTablePage extends React.Component {
 
   renderHeader() {
     const headerCells = [];
-    this.columns.forEach((column) => {
+
+    this.columns.forEach((column, index, columns) => {
+      const cellStyle = index !== columns.length - 1 ?
+        globalStyles.dataTableHeaderCell :
+        [globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell];
       const sortFunction = column.sortable ? () => this.onColumnSort(column.key) : null;
       headerCells.push(
         <HeaderCell
           key={column.key}
-          style={globalStyles.dataTableHeaderCell}
+          style={cellStyle}
           textStyle={globalStyles.dataTableText}
           width={column.width}
           onPress={sortFunction}
@@ -183,9 +187,16 @@ export class GenericTablePage extends React.Component {
     );
   }
 
-  renderRow(item) {
+  renderRow(item, sectionId, rowId) {
+    console.log(rowId);
     const cells = [];
-    this.columns.forEach((column) => {
+    const rowStyle = rowId % 2 === 1 ?
+      globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
+
+    this.columns.forEach((column, index, columns) => {
+      const cellStyle = index !== columns.length - 1 ?
+        globalStyles.dataTableCell :
+        [globalStyles.dataTableCell, globalStyles.dataTableRightMostCell];
       const renderedCell = this.renderCell(column.key, item);
       let cell;
       switch (renderedCell.type) {
@@ -196,7 +207,7 @@ export class GenericTablePage extends React.Component {
           // if provided, use isChecked prop, else set isChecked according to item.id
           // being in selection array.
           const isChecked = renderedCell.isChecked ?
-            renderedCell.isChecked : this.state.selection.indexOf(item.id) >= 0;
+            renderedCell.isChecked : Object.keys(this.state.selection).indexOf(item.id) >= 0;
           let iconChecked;
           let iconNotChecked;
           if (renderedCell.iconChecked && renderedCell.iconNotChecked) {
@@ -213,7 +224,7 @@ export class GenericTablePage extends React.Component {
             <CheckableCell
               key={column.key}
               style={[
-                globalStyles.dataTableCell,
+                cellStyle,
                 globalStyles.dataTableCheckableCell,
               ]}
               width={column.width}
@@ -231,7 +242,7 @@ export class GenericTablePage extends React.Component {
           cell = (
             <EditableCell
               key={column.key}
-              style={globalStyles.dataTableCell}
+              style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
               onEndEditing={this.onEndEditing &&
@@ -246,7 +257,7 @@ export class GenericTablePage extends React.Component {
           cell = (
             <Cell
               key={column.key}
-              style={globalStyles.dataTableCell}
+              style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
             >
@@ -260,7 +271,7 @@ export class GenericTablePage extends React.Component {
     });
     return (
       <Row
-        style={globalStyles.dataTableRow}
+        style={rowStyle}
         onPress={this.onRowPress && (() => this.onRowPress(item))}
       >
         {cells}
