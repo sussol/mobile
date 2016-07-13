@@ -72,6 +72,12 @@ export function integrateIncomingRecord(database, recordType, record) {
       database.save('Item', item);
       break;
     }
+    case 'ItemStoreJoin': {
+      const item = getObject(database, 'Item', record.item_ID);
+      item.isVisible = true;
+      database.save('Item', item);
+      break;
+    }
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
       const masterList = getObject(database, 'MasterList', record.list_master_ID);
@@ -278,6 +284,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
     case 'ItemBatch':
       return record.item_ID && record.pack_size && record.quantity && record.batch
              && record.expiry_date && record.cost_price && record.sell_price;
+    case 'ItemStoreJoin':
+      return record.item_ID;
     case 'MasterListNameJoin':
       return record.name_ID && record.list_master_ID;
     case 'MasterList':

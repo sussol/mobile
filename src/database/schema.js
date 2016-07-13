@@ -47,6 +47,7 @@ Item.schema = {
     description: { type: 'string', optional: true },
     category: { type: 'ItemCategory', optional: true },
     defaultPrice: { type: 'double', optional: true },
+    isVisible: { type: 'bool', default: false },
   },
 };
 
