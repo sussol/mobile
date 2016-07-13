@@ -78,7 +78,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
     case 'ItemStoreJoin': {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
       const item = getObject(database, 'Item', record.item_ID);
-      item.isVisible = true;
+      item.isVisible = !parseBoolean(record.inactive);
       database.save('Item', item);
       break;
     }
