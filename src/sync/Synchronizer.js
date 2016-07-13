@@ -255,7 +255,7 @@ export class Synchronizer {
         const recordType = object.RecordType;
         // If the sync record doesn't have appropriate format for the record type, ignore it
         if (sanityCheckIncomingRecord(recordType, record)) {
-          integrateIncomingRecord(this.database, recordType, record);
+          integrateIncomingRecord(this.database, this.settings, recordType, record);
         }
       });
     });

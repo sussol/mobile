@@ -26,6 +26,7 @@ class SyncTranslator {
 // Map of internal database object types to external record types
 export const RECORD_TYPES = new SyncTranslator({
   'Item': 'item',
+  'ItemStoreJoin': 'item_store_join',
   'ItemBatch': 'item_line',
   'ItemDepartment': 'item_department',
   'ItemCategory': 'item_category',
@@ -33,6 +34,7 @@ export const RECORD_TYPES = new SyncTranslator({
   'MasterListItem': 'list_master_line',
   'MasterListNameJoin': 'list_master_name_join',
   'Name': 'name',
+  'NameStoreJoin': 'name_store_join',
   'Requisition': 'requisition',
   'RequisitionItem': 'requisition_line',
   'Stocktake': 'Stock_take',

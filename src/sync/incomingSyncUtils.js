@@ -7,6 +7,9 @@ import {
   TRANSACTION_TYPES,
 } from './syncTranslators';
 
+import { SETTINGS_KEYS } from '../settings';
+const { THIS_STORE_ID } = SETTINGS_KEYS;
+
 import { generateUUID } from '../database';
 
 /**
@@ -18,7 +21,7 @@ import { generateUUID } from '../database';
  * @param  {object} record     Data from sync representing the record
  * @return {none}
  */
-export function integrateIncomingRecord(database, recordType, record) {
+export function integrateIncomingRecord(database, settings, recordType, record) {
   let internalRecord;
   const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   switch (internalType) {
@@ -72,6 +75,13 @@ export function integrateIncomingRecord(database, recordType, record) {
       database.save('Item', item);
       break;
     }
+    case 'ItemStoreJoin': {
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
+      const item = getObject(database, 'Item', record.item_ID);
+      item.isVisible = !parseBoolean(record.inactive);
+      database.save('Item', item);
+      break;
+    }
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
       const masterList = getObject(database, 'MasterList', record.list_master_ID);
@@ -119,6 +129,13 @@ export function integrateIncomingRecord(database, recordType, record) {
         isManufacturer: parseBoolean(record.manufacturer),
       };
       database.update(internalType, internalRecord);
+      break;
+    }
+    case 'NameStoreJoin': {
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
+      const name = getObject(database, 'Name', record.name_ID);
+      name.isVisible = !parseBoolean(record.inactive);
+      database.save('Name', name);
       break;
     }
     case 'Requisition': {
@@ -278,6 +295,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
     case 'ItemBatch':
       return record.item_ID && record.pack_size && record.quantity && record.batch
              && record.expiry_date && record.cost_price && record.sell_price;
+    case 'ItemStoreJoin':
+      return record.item_ID && record.store_ID;
     case 'MasterListNameJoin':
       return record.name_ID && record.list_master_ID;
     case 'MasterList':
@@ -287,6 +306,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
     case 'Name':
       return record.name && record.code && record.type && record.customer
       && record.supplier && record.manufacturer;
+    case 'NameStoreJoin':
+      return record.name_ID && record.store_ID;
     case 'Requisition':
       return record.status && record.date_entered && record.type && record.daysToSupply
              && record.serial_number;
