@@ -26,7 +26,7 @@ import {
 
 import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema } from './database';
+import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
 import { Settings } from './settings';
 
@@ -37,11 +37,12 @@ export default class mSupplyMobileApp extends React.Component {
 
   constructor() {
     super();
-    this.database = new Database(schema);
+    const database = new Database(schema);
+    this.database = new UIDatabase(database);
     this.settings = new Settings(this.database);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
-    this.synchronizer = new Synchronizer(this.database, syncAuthenticator, this.settings);
+    this.synchronizer = new Synchronizer(database, syncAuthenticator, this.settings);
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
     this.state = {
