@@ -127,6 +127,7 @@ Name.schema = {
     useMasterList: { type: 'bool', optional: true },
     masterList: { type: 'MasterList', optional: true },
     transactions: { type: 'list', objectType: 'Transaction' },
+    isVisible: { type: 'bool', default: false },
   },
 };
 

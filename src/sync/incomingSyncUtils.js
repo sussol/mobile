@@ -7,6 +7,9 @@ import {
   TRANSACTION_TYPES,
 } from './syncTranslators';
 
+import { SETTINGS_KEYS } from '../settings';
+const { THIS_STORE_ID } = SETTINGS_KEYS;
+
 import { generateUUID } from '../database';
 
 /**
@@ -18,7 +21,7 @@ import { generateUUID } from '../database';
  * @param  {object} record     Data from sync representing the record
  * @return {none}
  */
-export function integrateIncomingRecord(database, recordType, record) {
+export function integrateIncomingRecord(database, settings, recordType, record) {
   let internalRecord;
   const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   switch (internalType) {
@@ -73,6 +76,7 @@ export function integrateIncomingRecord(database, recordType, record) {
       break;
     }
     case 'ItemStoreJoin': {
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
       const item = getObject(database, 'Item', record.item_ID);
       item.isVisible = true;
       database.save('Item', item);
