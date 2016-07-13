@@ -192,7 +192,7 @@ export class CustomerInvoicePage extends GenericTablePage {
               });
               this.setState({ isAddingNewItem: false });
             }}
-            onCancel={() => this.setState({ isAddingNewItem: false })}
+            onClose={() => this.setState({ isAddingNewItem: false })}
           />
         </View>
       </View>
