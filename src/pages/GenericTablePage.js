@@ -188,7 +188,6 @@ export class GenericTablePage extends React.Component {
   }
 
   renderRow(item, sectionId, rowId) {
-    console.log(rowId);
     const cells = [];
     const rowStyle = rowId % 2 === 1 ?
       globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
@@ -272,6 +271,7 @@ export class GenericTablePage extends React.Component {
     return (
       <Row
         style={rowStyle}
+        renderExpansion={() => this.renderExpansion(item)}
         onPress={this.onRowPress && (() => this.onRowPress(item))}
       >
         {cells}

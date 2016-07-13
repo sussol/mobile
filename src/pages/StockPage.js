@@ -7,14 +7,18 @@
 
 import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
+import { Expansion } from '../widgets/DataTable';
+import { PageInfo } from '../widgets';
+import globalStyles from '../globalStyles';
+import { formatDate } from '../utilities';
 
-const DATA_TYPES_DISPLAYED = ['Item'];
+const DATA_TYPES_DISPLAYED = ['Item', 'ItemBatch', 'ItemLine', 'ItemCategory'];
 
 /**
-* Renders the page for displaying Customers.
-* @prop   {Realm}               database      App wide database.
-* @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
+* Renders the page for all Items and their stock, with expansion of further details.
+* @prop   {Realm}               database    App wide database.
+* @prop   {func}                navigateTo  CallBack for navigation stack.
+* @state  {Realm.Results}       items       Contains all Items stored on the local database.
 */
 export class StockPage extends GenericTablePage {
   constructor(props) {
@@ -33,6 +37,36 @@ export class StockPage extends GenericTablePage {
     let data = this.state.items.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
     data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     return data;
+  }
+
+  renderExpansion(item) {
+    const infoColumns = [
+      [
+        {
+          title: 'Category:',
+          info: item.category && item.category.name,
+        },
+        {
+          title: 'Department:',
+          info: item.department && item.department.name,
+        },
+      ],
+      [
+        {
+          title: 'Number of batches:',
+          info: item.batches && item.batches.length,
+        },
+        {
+          title: 'Nearest expiry:',
+          info: item.nearestExpiryDate && formatDate(item.nearestExpiryDate),
+        },
+      ],
+    ];
+    return (
+      <Expansion style={globalStyles.dataTableExpansion}>
+        <PageInfo columns={infoColumns} />
+      </Expansion>
+    );
   }
 
   renderCell(key, item) {

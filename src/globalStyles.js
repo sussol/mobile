@@ -209,9 +209,6 @@ export default StyleSheet.create({
     textAlign: 'left',
     color: DARK_GREY,
   },
-  dataTableDropDown: {
-    marginHorizontal: 15,
-  },
   dataTableHeader: {
     backgroundColor: 'white',
   },
@@ -224,6 +221,11 @@ export default StyleSheet.create({
   },
   dataTableRow: {
     backgroundColor: BACKGROUND_COLOR,
+  },
+  dataTableExpansion: {
+    padding: 15,
+    borderWidth: 1,
+    borderColor: SUSSOL_ORANGE,
   },
   dataTableCell: {
     height: 45,

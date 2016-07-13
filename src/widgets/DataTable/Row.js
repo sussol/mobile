@@ -18,12 +18,12 @@ export class Row extends React.Component {
     this.state = {
       expanded: false,
     };
-    this.expandRow = this.expandRow.bind(this);
+    this.onRowPress = this.onRowPress.bind(this);
   }
 
-  expandRow() {
+  onRowPress() {
     this.setState({
-      expanded: this.state.expanded !== true,
+      expanded: !this.state.expanded,
     });
   }
 
@@ -34,12 +34,14 @@ export class Row extends React.Component {
         <TouchableOpacity
           {...touchableOpacityProps}
           style={[defaultStyles.row, style]}
-          onPress={this.expandRow}
+          onPress={this.onRowPress}
         >
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={defaultStyles.cellContainer}>
             {children}
           </View>
-          {this.state.expanded && renderExpansion()}
+          <View style={defaultStyles.expansionContainer}>
+            {this.state.expanded && renderExpansion()}
+          </View>
         </TouchableOpacity>
       );
     }
@@ -50,7 +52,7 @@ export class Row extends React.Component {
           style={[defaultStyles.row, style]}
           onPress={onPress}
         >
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={defaultStyles.cellContainer}>
             {children}
           </View>
         </TouchableOpacity>
@@ -73,11 +75,17 @@ Row.propTypes = {
 
 const defaultStyles = StyleSheet.create({
   row: {
-    flex: 1,
     flexDirection: 'column',
     flexWrap: 'nowrap',
     justifyContent: 'flex-start',
     alignItems: 'stretch',
     backgroundColor: '#d6f3ff',
+  },
+  cellContainer: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  expansionContainer: {
+    flex: 1,
   },
 });
