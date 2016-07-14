@@ -66,6 +66,16 @@ export class CustomerInvoicePage extends GenericTablePage {
           a.item.name.localeCompare(b.item.name));
         if (!isAscending) data.reverse();
         break;
+      case 'availableQuantity':
+        data = data.slice().sort((a, b) =>
+          a.availableQuantity.localeCompare(b.availableQuantity));
+        if (!isAscending) data.reverse();
+        break;
+      case 'totalQuantity':
+        data = data.slice().sort((a, b) =>
+          a.totalQuantity.localeCompare(b.totalQuantity));
+        if (!isAscending) data.reverse();
+        break;
       default:
         data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
         break;
@@ -82,13 +92,13 @@ export class CustomerInvoicePage extends GenericTablePage {
 
   /**
    * Respond to the user editing the number in the number received column
-   * @param  {string} key             Should always be 'quantityToIssue'
+   * @param  {string} key             Should always be 'totalQuantity'
    * @param  {object} transactionItem The transaction item from the row being edited
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
    */
   onEndEditing(key, transactionItem, newValue) {
-    if (key !== 'quantityToIssue') return;
+    if (key !== 'totalQuantity') return;
     this.props.database.write(() => {
       const quantity = Math.min(parsePositiveNumber(newValue), transactionItem.availableQuantity);
       transactionItem.setTotalQuantity(this.props.database, quantity);
@@ -172,7 +182,7 @@ export class CustomerInvoicePage extends GenericTablePage {
     switch (key) {
       default:
         return transactionItem[key];
-      case 'quantityToIssue':
+      case 'totalQuantity':
         return {
           cellContents: transactionItem.totalQuantity,
           type: this.props.transaction.isFinalised ? 'text' : 'editable',
@@ -289,7 +299,7 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'quantityToIssue',
+    key: 'totalQuantity',
     width: 2,
     title: 'QUANTITY',
     sortable: true,
