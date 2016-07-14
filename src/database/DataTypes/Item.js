@@ -12,8 +12,8 @@ export class Item extends Realm.Object {
 
   get earliestExpiryDate() {
     if (this.batches.length === 0) return null;
-    return this.batches.reduce((earliest, batch) => {
-      if (batch.totalQuantity !== 0 && earliest < batch.expiryDate) return earliest;
+    return this.batches.reduce((earliestDate, batch) => {
+      if (batch.totalQuantity === 0 && earliestDate < batch.expiryDate) return earliestDate;
       return batch.expiryDate;
     }, this.batches[0]);
   }
