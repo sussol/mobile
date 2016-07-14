@@ -135,10 +135,6 @@ export class GenericTablePage extends React.Component {
     this.setState({ expandedRows: newExpandedRows });
   }
 
-  onRowPress(rowData) {
-    this.onExpandablePress(rowData);
-  }
-
   refreshData() {
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
@@ -294,7 +290,10 @@ export class GenericTablePage extends React.Component {
         style={rowStyle}
         renderExpansion={this.renderExpansion && (() => this.renderExpansion(rowData))}
         isExpanded={isExpanded}
-        onPress={() => this.onRowPress(rowData)}
+        onPress={
+          this.renderExpansion && (() => this.onExpandablePress(rowData))
+            || this.onRowPress && (() => this.onRowPress(rowData))
+        }
       >
         {cells}
       </Row>
