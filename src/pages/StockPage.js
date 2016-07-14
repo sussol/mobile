@@ -73,12 +73,7 @@ export class StockPage extends GenericTablePage {
   }
 
   renderCell(key, item) {
-    switch (key) {
-      default:
-        return item[key];
-      case 'totalQuantity':
-        return item.totalQuantity;
-    }
+    return item[key];
   }
 }
 
