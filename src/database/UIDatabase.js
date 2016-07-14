@@ -19,6 +19,11 @@ export class UIDatabase {
     return results;
   }
 
+  getCustomersOfStore(storeId) {
+    return this.objects('Name')
+               .filtered('isCustomer == true AND supplyingStoreId == $0', storeId);
+  }
+
   addListener(...args) { return this.database.addListener(...args); }
   removeListener(...args) { return this.database.removeListener(...args); }
   alertListeners(...args) { return this.database.alertListeners(...args); }

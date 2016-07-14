@@ -1,15 +1,16 @@
 import sha256 from 'sha256';
 import Base64 from 'base-64';
+import validUrl from 'valid-url';
 
 export const AUTH_ERROR_CODES = {
-  INVALID_PASSWORD: 'Invalid username or password',
   CONNECTION_FAILURE: 'Unable to connect',
+  INVALID_URL: 'Invalid URL',
   MISSING_CREDENTIALS: 'Missing username and/or password',
 };
 
 const {
-  INVALID_PASSWORD,
   CONNECTION_FAILURE,
+  INVALID_URL,
   MISSING_CREDENTIALS,
 } = AUTH_ERROR_CODES;
 
@@ -25,6 +26,7 @@ const {
 * @return {object}             JSON formatted response object
 */
 export async function authenticateAsync(authURL, username, password) {
+  if (!validUrl.isWebUri(authURL)) throw new Error(INVALID_URL);
   if (username.length === 0 || password.length === 0) { // Missing username or password
     throw new Error(MISSING_CREDENTIALS);
   }

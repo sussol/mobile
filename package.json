@@ -49,7 +49,8 @@
     "react-native-uuid": "^1.4.8",
     "react-native-vector-icons": "^2.0.2",
     "realm": "^0.14.1",
-    "sha256": "^0.2.0"
+    "sha256": "^0.2.0",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",
