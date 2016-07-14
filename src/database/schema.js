@@ -153,6 +153,7 @@ Name.schema = {
     masterList: { type: 'MasterList', optional: true },
     transactions: { type: 'list', objectType: 'Transaction' },
     isVisible: { type: 'bool', default: false },
+    supplyingStoreId: { type: 'string', optional: true },
   },
 };
 

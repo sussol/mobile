@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import { SETTINGS_KEYS } from '../settings';
 import { SearchBar } from '../widgets';
 import { GenericTablePage } from './GenericTablePage';
 
@@ -21,12 +22,8 @@ export class CustomersPage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'name';
-    this.state.customers = props.database.objects('Name')
-                                            .filtered(
-                                              'type == "store" ' +
-                                              'OR type == "patient" ' +
-                                              'OR type == "facility"'
-                                            );
+    const thisStoreId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_ID);
+    this.state.customers = props.database.getCustomersOfStore(thisStoreId);
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
@@ -91,6 +88,7 @@ export class CustomersPage extends GenericTablePage {
 CustomersPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
+  settings: React.PropTypes.object.isRequired,
 };
 
 const COLUMNS = [
