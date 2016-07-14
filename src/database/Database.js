@@ -51,11 +51,14 @@ export class Database {
    * specified properties. Fails if there is a clashing primary key.
    * @param  {string} type       Database object type being updated
    * @param  {object} properties The properties for the database object
+   * Any extra params are passed directly on to change listeners. The use case is
+   * passing identifying information about the change, for example, changes caused
+   * by a sync system could have 'sync' passed through as an extra parameter.
    * @return {Realm.Object}      The database object that was created
    */
-  create(type, properties) {
+  create(type, properties, ...listenerArgs) {
     const object = this.realm.create(type, properties);
-    this.alertListeners(CHANGE_TYPES.CREATE, type, object);
+    this.alertListeners(CHANGE_TYPES.CREATE, type, object, ...listenerArgs);
     return object;
   }
 
@@ -64,24 +67,26 @@ export class Database {
    * @param  {Realm.Object} object  Object to be deleted, also can accept an array of Objects
    *                                of same type to be deleted.
    * @param  {string} type          Type of the object(s) to be deleted
+   * Any extra params are passed directly on to change listeners
    * @return {none}
    */
-  delete(type, object) {
+  delete(type, object, ...listenerArgs) {
     const objects = objects instanceof Array ? object : [object];
     objects.forEach(obj => {
       const record = { ...obj };
       if (obj && obj.destructor instanceof Function) obj.destructor(this);
       this.realm.delete(obj);
-      this.alertListeners(CHANGE_TYPES.DELETE, type, record);
+      this.alertListeners(CHANGE_TYPES.DELETE, type, record, ...listenerArgs);
     });
   }
   /**
    * Deletes all objects from the database.
+   * Any params are passed directly on to change listeners
    * @return {none}
    */
-  deleteAll() {
+  deleteAll(...listenerArgs) {
     this.realm.deleteAll();
-    this.alertListeners(CHANGE_TYPES.WIPE);
+    this.alertListeners(CHANGE_TYPES.WIPE, ...listenerArgs);
   }
 
   /**
@@ -100,10 +105,11 @@ export class Database {
    * listeners are notified of the database update, and will be replaced in future.
    * @param  {string} type       Database object type being updated
    * @param  {object} object     The edited datbase object
+   * Any extra params are passed directly on to change listeners
    * @return {none}
    */
-  save(type, object) {
-    this.alertListeners(CHANGE_TYPES.UPDATE, type, object);
+  save(type, object, ...listenerArgs) {
+    this.alertListeners(CHANGE_TYPES.UPDATE, type, object, ...listenerArgs);
   }
 
   /**
@@ -114,9 +120,9 @@ export class Database {
    * @param  {object} properties The new properties for the database object
    * @return {Realm.Object}      The database object that was updated or created
    */
-  update(type, properties) {
+  update(type, properties, ...listenerArgs) {
     const object = this.realm.create(type, properties, true);
-    this.alertListeners(CHANGE_TYPES.UPDATE, type, object);
+    this.alertListeners(CHANGE_TYPES.UPDATE, type, object, ...listenerArgs);
     return object;
   }
 

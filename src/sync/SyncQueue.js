@@ -44,9 +44,11 @@ export class SyncQueue {
    * @param  {string} changeType The type of database change, e.g. CREATE, UPDATE, DELETE
    * @param  {string} recordType The type of record changed (from database schema)
    * @param  {object} record     The record changed
+   * @param  {string} causedBy   The cause of this database event, either 'sync' or undefined
    * @return {none}
    */
-  onDatabaseEvent(changeType, recordType, record) {
+  onDatabaseEvent(changeType, recordType, record, causedBy) {
+    if (causedBy === 'sync') return; // Don't re-sync any changes caused by a sync
     if (recordTypesSynced.indexOf(recordType) >= 0) {
       // If a delete, first remove any sync out records that already have the id,
       // so that sync doesn't try to refer to them next time it does a push
