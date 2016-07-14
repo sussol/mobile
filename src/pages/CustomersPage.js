@@ -9,7 +9,7 @@ import React from 'react';
 import { SearchBar } from '../widgets';
 import { GenericTablePage } from './GenericTablePage';
 
-const DATA_TYPES_DISPLAYED = ['Customer'];
+const DATA_TYPES_DISPLAYED = ['Name'];
 
 /**
 * Renders the page for displaying Customers.
