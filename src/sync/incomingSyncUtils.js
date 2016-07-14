@@ -4,27 +4,60 @@ import {
   RECORD_TYPES,
   REQUISITION_TYPES,
   STATUSES,
+  SYNC_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
 
 import { SETTINGS_KEYS } from '../settings';
 const { THIS_STORE_ID } = SETTINGS_KEYS;
 
-import { generateUUID } from '../database';
+import { CHANGE_TYPES, generateUUID } from '../database';
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
- * the given recordType. Will update an existing record if an id matches, or create
- * a new one if not.
+ * the given recordType. If create or update, will update an existing record if
+ * an id matches, or create a new one if not. If delete, will just clean up/delete.
  * @param  {Realm}  database   The local database
- * @param  {string} recordType External record type
+ * @param  {object} settings   Access to app settings
+ * @param  {string} syncType   The type of change that created this sync record
+ * @param  {object} syncRecord Data representing the sync record
+ * @return {none}
+ */
+export function integrateRecord(database, settings, syncRecord) {
+  // If the sync record is missing either data, record type, sync type, or record ID, ignore
+  if (!syncRecord.RecordType || !syncRecord.SyncType) return;
+  const syncType = syncRecord.SyncType;
+  const recordType = syncRecord.RecordType;
+  const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
+  const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
+
+  switch (changeType) {
+    case CHANGE_TYPES.CREATE:
+    case CHANGE_TYPES.UPDATE:
+      if (!syncRecord.data) return; // If missing data representing record, ignore
+      createOrUpdateRecord(database, settings, internalRecordType, syncRecord.data);
+      break;
+    case CHANGE_TYPES.DELETE:
+      if (!syncRecord.RecordID) return; // If missing record id, ignore
+      deleteRecord(database, internalRecordType, syncRecord.RecordID);
+      break;
+    default:
+      throw new Error(`Cannot integrate sync record with sync type ${syncType}`);
+  }
+}
+
+/**
+ * Update an existing record or create a new one based on the sync record.
+ * @param  {Realm}  database   The local database
+ * @param  {object} settings   Access to app settings
+ * @param  {string} recordType Internal record type
  * @param  {object} record     Data from sync representing the record
  * @return {none}
  */
-export function integrateIncomingRecord(database, settings, recordType, record) {
+export function createOrUpdateRecord(database, settings, recordType, record) {
+  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported on malformed record
   let internalRecord;
-  const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
-  switch (internalType) {
+  switch (recordType) {
     case 'Item': {
       const packSize = parseNumber(record.default_pack_size);
       internalRecord = {
@@ -37,7 +70,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         description: record.description,
         name: record.item_name,
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'ItemCategory': {
@@ -45,7 +78,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         id: record.ID,
         name: record.Description,
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'ItemDepartment': {
@@ -53,7 +86,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         id: record.ID,
         name: record.department,
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'ItemBatch': {
@@ -70,16 +103,24 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: getObject(database, 'Name', record.name_ID),
       };
-      const itemBatch = database.update(internalType, internalRecord);
+      const itemBatch = database.update(recordType, internalRecord);
       item.addBatch(itemBatch);
       database.save('Item', item);
       break;
     }
     case 'ItemStoreJoin': {
-      if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
-      const item = getObject(database, 'Item', record.item_ID);
-      item.isVisible = !parseBoolean(record.inactive);
-      database.save('Item', item);
+      const joinsThisStore = record.store_ID === settings.get(THIS_STORE_ID);
+      internalRecord = {
+        id: record.ID,
+        itemId: record.item_ID,
+        joinsThisStore: joinsThisStore,
+      };
+      database.update(recordType, internalRecord);
+      if (joinsThisStore) { // If it joins this store, set the name's visibility
+        const item = getObject(database, 'Item', record.item_ID);
+        item.isVisible = !parseBoolean(record.inactive);
+        database.save('Item', item);
+      }
       break;
     }
     case 'MasterListNameJoin': {
@@ -87,6 +128,12 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
       const masterList = getObject(database, 'MasterList', record.list_master_ID);
       name.masterList = masterList;
       database.save('Name', name);
+      internalRecord = {
+        id: record.ID,
+        name: name,
+        masterList: masterList,
+      };
+      database.update(recordType, internalRecord);
       break;
     }
     case 'MasterList': {
@@ -95,7 +142,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         name: record.description,
         note: record.note,
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'MasterListItem': {
@@ -106,7 +153,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         imprestQuantity: parseNumber(record.imprest_quan),
         masterList: masterList,
       };
-      const masterListItem = database.update(internalType, internalRecord);
+      const masterListItem = database.update(recordType, internalRecord);
       masterList.addItem(masterListItem);
       break;
     }
@@ -128,14 +175,22 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         isSupplier: parseBoolean(record.supplier),
         isManufacturer: parseBoolean(record.manufacturer),
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'NameStoreJoin': {
-      if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
-      const name = getObject(database, 'Name', record.name_ID);
-      name.isVisible = !parseBoolean(record.inactive);
-      database.save('Name', name);
+      const joinsThisStore = record.store_ID === settings.get(THIS_STORE_ID);
+      internalRecord = {
+        id: record.ID,
+        nameId: record.name_ID,
+        joinsThisStore: joinsThisStore,
+      };
+      database.update(recordType, internalRecord);
+      if (joinsThisStore) { // If it joins this store, set the name's visibility
+        const name = getObject(database, 'Name', record.name_ID);
+        name.isVisible = !parseBoolean(record.inactive);
+        database.save('Name', name);
+      }
       break;
     }
     case 'Requisition': {
@@ -148,7 +203,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         user: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'RequisitionItem': {
@@ -166,7 +221,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };
-      const requisitionItem = database.update(internalType, internalRecord);
+      const requisitionItem = database.update(recordType, internalRecord);
       requisition.addItem(requisitionItem);
       database.save('Requisition', requisition);
       break;
@@ -185,7 +240,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         additions: getObject(database, 'Transaction', record.invad_additions_ID),
         reductions: getObject(database, 'Transaction', record.invad_reductions_ID),
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'StocktakeBatch': {
@@ -205,7 +260,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         countedNumberOfPacks: numPacks,
         sortIndex: parseNumber(record.line_number),
       };
-      const stocktakeBatch = database.update(internalType, internalRecord);
+      const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatch(database, stocktakeBatch);
       database.save('Stocktake', stocktake);
       break;
@@ -222,7 +277,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         confirmDate: parseDate(record.confirm_date),
         theirRef: record.their_ref,
       };
-      const transaction = database.update(internalType, internalRecord);
+      const transaction = database.update(recordType, internalRecord);
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
@@ -237,7 +292,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         code: record.code,
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
-      database.update(internalType, internalRecord);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'TransactionBatch': {
@@ -263,7 +318,7 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
       };
-      const transactionBatch = database.update(internalType, internalRecord);
+      const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatch(database, transactionBatch);
       database.save('Transaction', transaction);
       itemBatch.addTransactionBatch(transactionBatch);
@@ -276,16 +331,53 @@ export function integrateIncomingRecord(database, settings, recordType, record) 
 }
 
 /**
+ * Delete the record with the given id, relying on its destructor to initiate any
+ * changes that are required to clean up that type of record.
+ * @param  {Realm}  database   App wide local database
+ * @param  {string} recordType Internal record type
+ * @param  {string} recordId   The sync representation of the record to be deleted
+ * @return {none}
+ */
+function deleteRecord(database, recordType, recordId) {
+  console.log(`Deleting ${recordType}: ${recordId}`);
+  switch (recordType) {
+    case 'Item':
+    case 'ItemBatch':
+    case 'ItemCategory':
+    case 'ItemDepartment':
+    case 'ItemStoreJoin':
+    case 'MasterList':
+    case 'MasterListItem':
+    case 'MasterListNameJoin':
+    case 'Name':
+    case 'NameStoreJoin':
+    case 'Requisition':
+    case 'RequisitionItem':
+    case 'Stocktake':
+    case 'StocktakeBatch':
+    case 'Transaction':
+    case 'TransactionBatch':
+    case 'TransactionCategory': {
+      const recordToDelete = getObject(database, recordType, recordId);
+      console.log(recordToDelete);
+      database.delete(recordType, recordToDelete);
+      break;
+    }
+    default:
+      break; // Silently ignore record types we don't want to sync into mobile
+  }
+}
+
+/**
  * Ensure the given record has the right data to create an internal record of the
  * given recordType
- * @param  {string} recordType The external record type this sync record should be used for
+ * @param  {string} recordType The internal record type this sync record should be used for
  * @param  {object} record     The data from the sync record
  * @return {boolean}           Whether the data is sufficient to create an internal record from
  */
 export function sanityCheckIncomingRecord(recordType, record) {
-  const internalType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
-  switch (internalType) {
+  switch (recordType) {
     case 'Item':
       return record.code && record.item_name && record.default_pack_size;
     case 'ItemCategory':

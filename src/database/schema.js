@@ -4,9 +4,12 @@ import {
   ItemBatch,
   ItemCategory,
   ItemDepartment,
+  ItemStoreJoin,
   MasterList,
   MasterListItem,
+  MasterListNameJoin,
   Name,
+  NameStoreJoin,
   Requisition,
   RequisitionItem,
   Setting,
@@ -88,6 +91,17 @@ ItemBatch.schema = {
   },
 };
 
+// ItemStoreJoin never used internally, only held for sync delete functionality
+ItemStoreJoin.schema = {
+  name: 'ItemStoreJoin',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    itemId: 'string',
+    joinsThisStore: 'bool',
+  },
+};
+
 MasterList.schema = {
   name: 'MasterList',
   primaryKey: 'id',
@@ -110,6 +124,17 @@ MasterListItem.schema = {
   },
 };
 
+// MasterListNameJoin never used internally, only held for sync delete functionality
+MasterListNameJoin.schema = {
+  name: 'MasterListNameJoin',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    masterList: { type: 'MasterList', optional: true },
+    name: { type: 'Name', optional: true },
+  },
+};
+
 Name.schema = {
   name: 'Name',
   primaryKey: 'id',
@@ -128,6 +153,17 @@ Name.schema = {
     masterList: { type: 'MasterList', optional: true },
     transactions: { type: 'list', objectType: 'Transaction' },
     isVisible: { type: 'bool', default: false },
+  },
+};
+
+// NameStoreJoin never used internally, only held for sync delete functionality
+NameStoreJoin.schema = {
+  name: 'NameStoreJoin',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    nameId: 'string',
+    joinsThisStore: 'bool',
   },
 };
 
@@ -319,13 +355,16 @@ export const schema =
       ItemBatch,
       ItemDepartment,
       ItemCategory,
+      ItemStoreJoin,
       Transaction,
       TransactionItem,
       TransactionBatch,
       TransactionCategory,
       MasterList,
       MasterListItem,
+      MasterListNameJoin,
       Name,
+      NameStoreJoin,
       Requisition,
       RequisitionItem,
       Setting,
