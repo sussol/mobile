@@ -34,7 +34,10 @@ export class StockPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.items.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
+    let data = this.state.items.filtered(
+      'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
+      searchTerm
+    );
     data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     return data;
   }
@@ -44,11 +47,11 @@ export class StockPage extends GenericTablePage {
       [
         {
           title: 'Category:',
-          info: item.category && item.category.name,
+          info: item.categoryName,
         },
         {
           title: 'Department:',
-          info: item.department && item.department.name,
+          info: item.departmentName,
         },
       ],
       [
@@ -72,10 +75,7 @@ export class StockPage extends GenericTablePage {
   renderCell(key, item) {
     switch (key) {
       default:
-      case 'code':
-        return item.code;
-      case 'name':
-        return item.name;
+        return item[key];
       case 'totalQuantity':
         return item.totalQuantity;
     }

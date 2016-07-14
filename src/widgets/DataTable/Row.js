@@ -87,7 +87,4 @@ const defaultStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  expansionContainer: {
-    flex: 1,
-  },
 });

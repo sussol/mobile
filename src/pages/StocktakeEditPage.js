@@ -46,14 +46,18 @@ export class StocktakeEditPage extends GenericTablePage {
       this.props.database.save('StocktakeItem', stocktakeItem);
     });
   }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending. Cannot search or sortby
    * class calculated fields.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.items.filtered(`item.name BEGINSWITH[c] "${searchTerm}"`);
+    let data = this.state.items.filtered(
+      'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
+      searchTerm
+    );
     if (sortBy === 'itemName') {
-      // Convert to javascript array obj then sort with standard array functions.
+      // Convert to javascript array then sort with standard array functions.
       data = data.slice().sort((a, b) => a.item.name.localeCompare(b.item.name));
     } else {
       data = data.slice().sort((a, b) => a.item.code.localeCompare(b.item.code));
@@ -97,6 +101,7 @@ export class StocktakeEditPage extends GenericTablePage {
 
 StocktakeEditPage.propTypes = {
   database: React.PropTypes.object,
+  stocktake: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
 

@@ -123,7 +123,7 @@ export class GenericTablePage extends React.Component {
 
   /**
    * Adds/removes rowData.id to/from the expandedRows array in state. Must call this within any
-   * overrides i.e. super.onCheckablePress(rowData);
+   * overrides i.e. super.onExpandablePress(rowData);
    */
   onExpandablePress(rowData) {
     const newExpandedRows = [...this.state.expandedRows];
@@ -135,8 +135,7 @@ export class GenericTablePage extends React.Component {
     this.setState({ expandedRows: newExpandedRows });
   }
 
-  onRowPressGeneric(item) {
-    if (this.onRowPress instanceof Function) this.onRowPress(item);
+  onRowPress(item) {
     this.onExpandablePress(item);
   }
 
@@ -210,6 +209,7 @@ export class GenericTablePage extends React.Component {
   renderRow(item, sectionId, rowId) {
     const cells = [];
     const isExpanded = this.state.expandedRows.indexOf(item.id) >= 0;
+    // Make rows alternate background colour
     const rowStyle = rowId % 2 === 1 ?
       globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
 
@@ -294,7 +294,7 @@ export class GenericTablePage extends React.Component {
         style={rowStyle}
         renderExpansion={this.renderExpansion && (() => this.renderExpansion(item))}
         isExpanded={isExpanded}
-        onPress={() => this.onRowPressGeneric(item)}
+        onPress={() => this.onRowPress(item)}
       >
         {cells}
       </Row>
