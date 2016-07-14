@@ -4,6 +4,7 @@
  */
 
 import { SyncQueue } from './SyncQueue';
+import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { integrateRecord } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
@@ -28,10 +29,10 @@ const BATCH_SIZE = 20; // Number of records to sync at one time
 export class Synchronizer {
 
   constructor(database, authenticator, settings) {
-    this.database = database;
+    this.database = new SyncDatabase(database);
     this.authenticator = authenticator;
     this.settings = settings;
-    this.syncQueue = new SyncQueue(database);
+    this.syncQueue = new SyncQueue(this.database);
     this.synchronize = this.synchronize.bind(this);
     if (this.isInitialised()) this.syncQueue.enable();
   }
