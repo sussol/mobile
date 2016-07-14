@@ -18,6 +18,15 @@ export class Item extends Realm.Object {
     }, this.batches[0]);
   }
 
+  get categoryName() {
+    return this.category ? this.category.name : '';
+  }
+
+  get departmentName() {
+    return this.department ? this.department.name : '';
+  }
+
+
   addBatch(itemBatch) {
     // If the batch is already in the item, we don't want to add it again
     if (this.batches.find(currentItemBatch => currentItemBatch.id === itemBatch.id)) return;
