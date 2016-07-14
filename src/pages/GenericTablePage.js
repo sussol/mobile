@@ -108,8 +108,8 @@ export class GenericTablePage extends React.Component {
   }
 
   /**
-   * Adds/removes rowData.id to/from the selection array in state. Must call this within any overrides.
-   * i.e. super.onCheckablePress(rowData);
+   * Adds/removes rowData.id to/from the selection array in state. Must call this within any
+   * overrides. i.e. super.onCheckablePress(rowData);
    */
   onCheckablePress(rowData) {
     const newSelection = [...this.state.selection];
