@@ -11,7 +11,7 @@ export class Item extends Realm.Object {
   }
 
   get nearestExpiryDate() {
-    if (this.batches.length === 0) return undefined;
+    if (this.batches.length === 0) return null;
     return this.batches.reduce((nearest, batch) =>
       nearest < batch.expiryDate && batch.expiryDate, 0);
   }
