@@ -16,15 +16,18 @@ export class Row extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: false,
+      isExpanded: false,
     };
-    this.onRowPress = this.onRowPress.bind(this);
+    this.onPress = this.onPress.bind(this);
   }
 
-  onRowPress() {
-    this.setState({
-      expanded: !this.state.expanded,
-    });
+  componentWillReceiveProps(nextProps) {
+    this.setState({ isExpanded: nextProps.isExpanded });
+  }
+
+  onPress() {
+    this.setState({ isExpanded: !this.state.isExpanded });
+    this.props.onPress();
   }
 
   render() {
@@ -34,12 +37,12 @@ export class Row extends React.Component {
         <TouchableOpacity
           {...touchableOpacityProps}
           style={[defaultStyles.row, style]}
-          onPress={this.onRowPress}
+          onPress={this.onPress}
         >
           <View style={defaultStyles.cellContainer}>
             {children}
           </View>
-          {this.state.expanded && renderExpansion()}
+          {this.state.isExpanded && renderExpansion()}
         </TouchableOpacity>
       );
     }
@@ -48,7 +51,7 @@ export class Row extends React.Component {
         <TouchableOpacity
           {...touchableOpacityProps}
           style={[defaultStyles.row, style]}
-          onPress={onPress}
+          onPress={this.onPress}
         >
           <View style={defaultStyles.cellContainer}>
             {children}
@@ -68,6 +71,7 @@ Row.propTypes = {
   style: View.propTypes.style,
   children: React.PropTypes.any,
   onPress: React.PropTypes.func,
+  isExpanded: React.PropTypes.bool,
   renderExpansion: React.PropTypes.func,
 };
 

@@ -58,6 +58,7 @@ export class GenericTablePage extends React.Component {
       sortBy: '',
       isAscending: true,
       selection: [],
+      expandedRows: [],
     };
     this.columns = null;
     this.dataTypesDisplayed = [];
@@ -118,6 +119,25 @@ export class GenericTablePage extends React.Component {
       newSelection.push(item.id);
     }
     this.setState({ selection: newSelection });
+  }
+
+  /**
+   * Adds/removes rowData.id to/from the expandedRows array in state. Must call this within any
+   * overrides i.e. super.onCheckablePress(rowData);
+   */
+  onExpandablePress(rowData) {
+    const newExpandedRows = [...this.state.expandedRows];
+    if (newExpandedRows.indexOf(rowData.id) >= 0) {
+      newExpandedRows.splice(newExpandedRows.indexOf(rowData.id), 1);
+    } else {
+      newExpandedRows.push(rowData.id);
+    }
+    this.setState({ expandedRows: newExpandedRows });
+  }
+
+  onRowPressGeneric(item) {
+    if (this.onRowPress instanceof Function) this.onRowPress(item);
+    this.onExpandablePress(item);
   }
 
   refreshData() {
@@ -189,6 +209,7 @@ export class GenericTablePage extends React.Component {
 
   renderRow(item, sectionId, rowId) {
     const cells = [];
+    const isExpanded = this.state.expandedRows.indexOf(item.id) >= 0;
     const rowStyle = rowId % 2 === 1 ?
       globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
 
@@ -206,7 +227,7 @@ export class GenericTablePage extends React.Component {
           // if provided, use isChecked prop, else set isChecked according to item.id
           // being in selection array.
           const isChecked = renderedCell.isChecked ?
-            renderedCell.isChecked : Object.keys(this.state.selection).indexOf(item.id) >= 0;
+            renderedCell.isChecked : this.state.selection.indexOf(item.id) >= 0;
           let iconChecked;
           let iconNotChecked;
           if (renderedCell.iconChecked && renderedCell.iconNotChecked) {
@@ -271,8 +292,9 @@ export class GenericTablePage extends React.Component {
     return (
       <Row
         style={rowStyle}
-        renderExpansion={() => this.renderExpansion(item)}
-        onPress={this.onRowPress && (() => this.onRowPress(item))}
+        renderExpansion={this.renderExpansion && (() => this.renderExpansion(item))}
+        isExpanded={isExpanded}
+        onPress={() => this.onRowPressGeneric(item)}
       >
         {cells}
       </Row>
