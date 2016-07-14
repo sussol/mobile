@@ -5,10 +5,7 @@
 
 import { SyncQueue } from './SyncQueue';
 import { generateSyncJson } from './outgoingSyncUtils';
-import {
-  integrateIncomingRecord,
-  sanityCheckIncomingRecord,
-} from './incomingSyncUtils';
+import { integrateRecord } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
 import { formatDate } from '../utilities';
 const {
@@ -177,7 +174,7 @@ export class Synchronizer {
                                                      serverId,
                                                      authHeader,
                                                      BATCH_SIZE);
-    this.integrateIncomingRecords(incomingRecords);
+    this.integrateRecords(incomingRecords);
     await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
 
     // Recurse to get the next batch of records from the server
@@ -246,17 +243,10 @@ export class Synchronizer {
    * @param  {object} records  The json object the server sent to represent records
    * @return {none}
    */
-  integrateIncomingRecords(syncJson) {
+  integrateRecords(syncJson) {
     this.database.write(() => {
-      syncJson.forEach((object) => {
-        if (!object.data) return; // No data for the sync record, ignore it
-        const record = object.data;
-        if (!object.RecordType) return; // RecordType unknown, ignore the record
-        const recordType = object.RecordType;
-        // If the sync record doesn't have appropriate format for the record type, ignore it
-        if (sanityCheckIncomingRecord(recordType, record)) {
-          integrateIncomingRecord(this.database, this.settings, recordType, record);
-        }
+      syncJson.forEach((syncRecord) => {
+        integrateRecord(this.database, this.settings, syncRecord);
       });
     });
   }
