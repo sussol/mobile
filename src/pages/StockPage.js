@@ -61,7 +61,8 @@ export class StockPage extends GenericTablePage {
         },
         {
           title: 'Earliest expiry:',
-          info: item.earliestExpiryDate && formatDate(item.earliestExpiryDate),
+          info: item.earliestExpiringBatch
+                && formatDate(item.earliestExpiringBatch.expiryDate),
         },
       ],
     ];

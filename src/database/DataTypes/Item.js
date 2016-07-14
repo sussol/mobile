@@ -10,12 +10,18 @@ export class Item extends Realm.Object {
     return getTotal(this.batches, 'dailyUsage');
   }
 
-  get earliestExpiryDate() {
+  get earliestExpiringBatch() {
     if (this.batches.length === 0) return null;
-    return this.batches.reduce((earliestDate, batch) => {
-      if (batch.totalQuantity === 0 && earliestDate < batch.expiryDate) return earliestDate;
-      return batch.expiryDate;
-    }, this.batches[0]);
+    let earliestBatch = this.batches.find((batch) => batch.totalQuantity > 0);
+    // if no batches found with totalQuantity > 0, return null
+    if (!earliestBatch) return null;
+
+    this.batches.forEach((batch) => {
+      if (batch.totalQuantity > 0 && batch.expiryDate < earliestBatch.expiryDate) {
+        earliestBatch = batch;
+      }
+    });
+    return earliestBatch;
   }
 
   get categoryName() {
