@@ -53,7 +53,7 @@ export class StocktakeEditPage extends GenericTablePage {
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     let data = this.state.items.filtered(
-      'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
+      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
     if (sortBy === 'itemName') {
