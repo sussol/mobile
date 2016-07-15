@@ -13,7 +13,7 @@ export class Item extends Realm.Object {
   get earliestExpiringBatch() {
     if (this.batches.length === 0) return null;
     let earliestBatch = this.batches.find((batch) => batch.totalQuantity > 0);
-    // if no batches found with totalQuantity > 0, return null
+    // If no batches found with totalQuantity > 0, return null
     if (!earliestBatch) return null;
 
     this.batches.forEach((batch) => {
