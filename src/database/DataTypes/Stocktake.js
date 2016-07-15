@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import { addBatchToParent, generateUUID } from '../utilities';
+import { addBatchToParent } from '../utilities';
 import { createRecord } from '../createRecord';
 
 
@@ -48,11 +48,9 @@ export class Stocktake extends Realm.Object {
    * @param {Realm}         database App wide local database
    */
   finalise(database, user) {
-    this.status = 'finalised';
     const date = new Date();
     let additionTransaction;
-    let reductionTransaction = createRecord(
-      database, 'StockAdjustment', 'supplier_credit', user, date);
+    let reductionTransaction;
     const additionItems = [];
     const reductionItems = [];
 
@@ -107,6 +105,10 @@ export class Stocktake extends Realm.Object {
       reductionTransaction.finalise(database, user);
       this.additions = reductionTransaction;
     }
+
+    this.finalisedBy = user;
+    this.stocktakeDate = date;
+    this.status = 'finalised';
   }
 }
 
