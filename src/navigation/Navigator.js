@@ -49,7 +49,9 @@ export class Navigator extends React.Component {
   }
 
   onNavigate(action) {
-    if (!action) {
+    // If no action passed, or a route with the key is already in the card stack,
+    // ignore (two pushes can happen if user quickly double taps a navigation button)
+    if (!action || NavigationStateUtils.has(this.state.navigationState, action.key)) {
       return false;
     }
     const newState = getNewNavState(this.state.navigationState, action);
