@@ -48,3 +48,22 @@ export class Stocktake extends Realm.Object {
     // TODO Add finalisedBy user
   }
 }
+
+Stocktake.schema = {
+  name: 'Stocktake',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    name: 'string',
+    createdDate: 'date', // Includes time
+    stocktakeDate: { type: 'date', optional: true },
+    status: 'string',
+    createdBy: { type: 'User', optional: true },
+    finalisedBy: { type: 'User', optional: true },
+    comment: { type: 'string', optional: true },
+    serialNumber: 'string',
+    items: { type: 'list', objectType: 'StocktakeItem' },
+    additions: { type: 'Transaction', optional: true },
+    reductions: { type: 'Transaction', optional: true },
+  },
+};

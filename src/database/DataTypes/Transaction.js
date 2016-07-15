@@ -118,3 +118,22 @@ export class Transaction extends Realm.Object {
     this.status = 'finalised';
   }
 }
+
+Transaction.schema = {
+  name: 'Transaction',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    serialNumber: 'string',
+    otherParty: { type: 'Name', optional: true },
+    comment: { type: 'string', optional: true },
+    entryDate: 'date',
+    type: 'string',
+    status: 'string',
+    confirmDate: { type: 'date', optional: true },
+    enteredBy: { type: 'User', optional: true },
+    theirRef: { type: 'string', optional: true }, // An external reference code
+    category: { type: 'TransactionCategory', optional: true },
+    items: { type: 'list', objectType: 'TransactionItem' },
+  },
+};

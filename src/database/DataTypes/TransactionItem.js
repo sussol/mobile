@@ -131,3 +131,14 @@ export class TransactionItem extends Realm.Object {
     return addQuantity; // The remainder, not able to be allocated to the batches passed in
   }
 }
+
+TransactionItem.schema = {
+  name: 'TransactionItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    transaction: 'Transaction',
+    batches: { type: 'list', objectType: 'TransactionBatch' },
+  },
+};

@@ -31,3 +31,21 @@ export class StocktakeBatch extends Realm.Object {
     return quantity;
   }
 }
+
+StocktakeBatch.schema = {
+  name: 'StocktakeBatch',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    stocktake: 'Stocktake',
+    itemBatch: 'ItemBatch',
+    snapshotNumberOfPacks: 'double',
+    packSize: 'double',
+    expiryDate: 'date',
+    batch: 'string',
+    costPrice: 'double',
+    sellPrice: 'double',
+    countedNumberOfPacks: { type: 'double', optional: true },
+    sortIndex: { type: 'int', optional: true },
+  },
+};

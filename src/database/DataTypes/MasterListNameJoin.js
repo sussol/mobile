@@ -15,3 +15,14 @@ export class MasterListNameJoin extends Realm.Object {
     return `Joins master list ${this.masterListId} with name ${this.nameId}`;
   }
 }
+
+// MasterListNameJoin never used internally, only held for sync delete functionality
+MasterListNameJoin.schema = {
+  name: 'MasterListNameJoin',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    masterList: { type: 'MasterList', optional: true },
+    name: { type: 'Name', optional: true },
+  },
+};

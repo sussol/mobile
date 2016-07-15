@@ -42,3 +42,14 @@ export class StocktakeItem extends Realm.Object {
     // inventory adjustments
   }
 }
+
+StocktakeItem.schema = {
+  name: 'StocktakeItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    stocktake: 'Stocktake',
+    batches: { type: 'list', objectType: 'StocktakeBatch' },
+  },
+};

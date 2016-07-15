@@ -76,3 +76,24 @@ export class TransactionBatch extends Realm.Object {
   }
 
 }
+
+TransactionBatch.schema = {
+  name: 'TransactionBatch',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    itemId: 'string',
+    itemName: 'string',
+    itemBatch: 'ItemBatch',
+    batch: 'string',
+    expiryDate: 'date',
+    packSize: 'double',
+    numberOfPacks: 'double',
+    numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices
+    transaction: 'Transaction',
+    note: { type: 'string', optional: true },
+    costPrice: 'double',
+    sellPrice: 'double',
+    sortIndex: { type: 'int', optional: true },
+  },
+};
