@@ -42,7 +42,7 @@ export class StocktakeEditPage extends GenericTablePage {
     if (key !== 'countedTotalQuantity') return;
     this.props.database.write(() => {
       const quantity = Math.round(parseFloat(newValue));
-      stocktakeItem.setCountedNumberOfPacks(this.props.database, quantity);
+      stocktakeItem.countedTotalQuantity = quantity;
       this.props.database.save('StocktakeItem', stocktakeItem);
     });
   }
@@ -73,7 +73,7 @@ export class StocktakeEditPage extends GenericTablePage {
       case 'countedTotalQuantity':
         return {
           type: this.props.stocktake.isFinalised ? 'text' : 'editable',
-          cellContents: item.countedTotalQuantity,
+          cellContents: item.countedTotalQuantity ? item.countedTotalQuantity : '',
         };
     }
   }

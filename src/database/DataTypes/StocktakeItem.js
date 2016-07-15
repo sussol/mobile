@@ -14,10 +14,6 @@ export class StocktakeItem extends Realm.Object {
     return getTotal(this.batches, 'snapshotTotalQuantity');
   }
 
-  get countedTotalQuantity() {
-    return getTotal(this.batches, 'countedTotalQuantity');
-  }
-
   get itemId() {
     return this.item ? this.item.id : '';
   }
@@ -50,6 +46,7 @@ StocktakeItem.schema = {
     id: 'string',
     item: 'Item',
     stocktake: 'Stocktake',
+    countedTotalQuantity: { type: 'double', optional: true },
     batches: { type: 'list', objectType: 'StocktakeBatch' },
   },
 };
