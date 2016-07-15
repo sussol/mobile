@@ -209,25 +209,27 @@ export default StyleSheet.create({
     textAlign: 'left',
     color: DARK_GREY,
   },
-  dataTableDropDown: {
-    marginHorizontal: 15,
-  },
   dataTableHeader: {
     backgroundColor: 'white',
   },
   dataTableHeaderCell: {
     height: 40,
     borderRightWidth: 2,
+    borderBottomWidth: 2,
     backgroundColor: 'white',
     borderColor: BLUE_WHITE,
   },
   dataTableRow: {
-    backgroundColor: 'white',
+    backgroundColor: BACKGROUND_COLOR,
+  },
+  dataTableExpansion: {
+    padding: 15,
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: BLUE_WHITE,
   },
   dataTableCell: {
     height: 45,
-    backgroundColor: ROW_BLUE,
-    borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
   },

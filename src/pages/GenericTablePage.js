@@ -28,11 +28,11 @@ import { SearchBar } from '../widgets';
  * contains a searchable table. Should always be overridden, in particular the
  * following methods and instance variables (fields):
  * @method getUpdatedData(searchTerm, sortBy, isAscending) Should return updated data
- * @method renderCell(key, item) Should define what to render in a cell with the
- *         											 given column key and database item
- * @method onRowPress(key, item) Should define behaviour when a row is pressed,
+ * @method renderCell(key, record) Should define what to render in a cell with the
+ *         											 given column key and database record
+ * @method onRowPress(key, rowData) Should define behaviour when a row is pressed,
  *         											 don't override if row should not be pressable
- * @method onEndEditing(key, item, newValue) Handles user input to an editable cell
+ * @method onEndEditing(key, rowData, newValue) Handles user input to an editable cell
  *         											 don't override if row should not be pressable
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
@@ -58,6 +58,7 @@ export class GenericTablePage extends React.Component {
       sortBy: '',
       isAscending: true,
       selection: [],
+      expandedRows: [],
     };
     this.columns = null;
     this.dataTypesDisplayed = [];
@@ -107,17 +108,31 @@ export class GenericTablePage extends React.Component {
   }
 
   /**
-   * Adds/removes item.id to/from the selection array in state. Must call this within any overrides.
-   * i.e. super.onCheckablePress(item);
+   * Adds/removes rowData.id to/from the selection array in state. Must call this within any
+   * overrides. i.e. super.onCheckablePress(rowData);
    */
-  onCheckablePress(item) {
+  onCheckablePress(rowData) {
     const newSelection = [...this.state.selection];
-    if (newSelection.indexOf(item.id) >= 0) {
-      newSelection.splice(newSelection.indexOf(item.id), 1);
+    if (newSelection.indexOf(rowData.id) >= 0) {
+      newSelection.splice(newSelection.indexOf(rowData.id), 1);
     } else {
-      newSelection.push(item.id);
+      newSelection.push(rowData.id);
     }
     this.setState({ selection: newSelection });
+  }
+
+  /**
+   * Adds/removes rowData.id to/from the expandedRows array in state. Must call this within any
+   * overrides i.e. super.onExpandablePress(rowData);
+   */
+  onExpandablePress(rowData) {
+    const newExpandedRows = [...this.state.expandedRows];
+    if (newExpandedRows.indexOf(rowData.id) >= 0) {
+      newExpandedRows.splice(newExpandedRows.indexOf(rowData.id), 1);
+    } else {
+      newExpandedRows.push(rowData.id);
+    }
+    this.setState({ expandedRows: newExpandedRows });
   }
 
   refreshData() {
@@ -161,12 +176,16 @@ export class GenericTablePage extends React.Component {
 
   renderHeader() {
     const headerCells = [];
-    this.columns.forEach((column) => {
+
+    this.columns.forEach((column, index, columns) => {
+      const cellStyle = index !== columns.length - 1 ?
+        globalStyles.dataTableHeaderCell :
+        [globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell];
       const sortFunction = column.sortable ? () => this.onColumnSort(column.key) : null;
       headerCells.push(
         <HeaderCell
           key={column.key}
-          style={globalStyles.dataTableHeaderCell}
+          style={cellStyle}
           textStyle={globalStyles.dataTableText}
           width={column.width}
           onPress={sortFunction}
@@ -183,20 +202,28 @@ export class GenericTablePage extends React.Component {
     );
   }
 
-  renderRow(item) {
+  renderRow(rowData, sectionId, rowId) {
     const cells = [];
-    this.columns.forEach((column) => {
-      const renderedCell = this.renderCell(column.key, item);
+    const isExpanded = this.state.expandedRows.indexOf(rowData.id) >= 0;
+    // Make rows alternate background colour
+    const rowStyle = rowId % 2 === 1 ?
+      globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
+
+    this.columns.forEach((column, index, columns) => {
+      const cellStyle = index !== columns.length - 1 ?
+        globalStyles.dataTableCell :
+        [globalStyles.dataTableCell, globalStyles.dataTableRightMostCell];
+      const renderedCell = this.renderCell(column.key, rowData);
       let cell;
       switch (renderedCell.type) {
         case 'custom':
           cell = renderedCell.cell;
           break;
         case 'checkable': {
-          // if provided, use isChecked prop, else set isChecked according to item.id
+          // if provided, use isChecked prop, else set isChecked according to rowData.id
           // being in selection array.
           const isChecked = renderedCell.isChecked ?
-            renderedCell.isChecked : this.state.selection.indexOf(item.id) >= 0;
+            renderedCell.isChecked : this.state.selection.indexOf(rowData.id) >= 0;
           let iconChecked;
           let iconNotChecked;
           if (renderedCell.iconChecked && renderedCell.iconNotChecked) {
@@ -213,11 +240,11 @@ export class GenericTablePage extends React.Component {
             <CheckableCell
               key={column.key}
               style={[
-                globalStyles.dataTableCell,
+                cellStyle,
                 globalStyles.dataTableCheckableCell,
               ]}
               width={column.width}
-              onPress={() => this.onCheckablePress(item)}
+              onPress={() => this.onCheckablePress(rowData)}
               renderDisabled={() => <Icon name={iconNotChecked} size={15} color={WARMER_GREY} />}
               renderIsChecked={() => <Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
               renderIsNotChecked={() => <Icon name={iconNotChecked} size={15} color={WARM_GREY} />}
@@ -231,12 +258,12 @@ export class GenericTablePage extends React.Component {
           cell = (
             <EditableCell
               key={column.key}
-              style={globalStyles.dataTableCell}
+              style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
-              target={item}
+              target={rowData}
               value={renderedCell.cellContents}
             />
           );
@@ -246,7 +273,7 @@ export class GenericTablePage extends React.Component {
           cell = (
             <Cell
               key={column.key}
-              style={globalStyles.dataTableCell}
+              style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
             >
@@ -260,8 +287,13 @@ export class GenericTablePage extends React.Component {
     });
     return (
       <Row
-        style={globalStyles.dataTableRow}
-        onPress={this.onRowPress && (() => this.onRowPress(item))}
+        style={rowStyle}
+        renderExpansion={this.renderExpansion && (() => this.renderExpansion(rowData))}
+        isExpanded={isExpanded}
+        onPress={
+          this.renderExpansion && (() => this.onExpandablePress(rowData))
+            || this.onRowPress && (() => this.onRowPress(rowData))
+        }
       >
         {cells}
       </Row>
