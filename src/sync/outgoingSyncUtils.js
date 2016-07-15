@@ -3,6 +3,7 @@ import {
   RECORD_TYPES,
   REQUISITION_STATUSES,
   REQUISITION_TYPES,
+  SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_BATCH_TYPES,
@@ -91,6 +92,22 @@ function generateSyncData(settings, recordType, record) {
         sell_price: String(record.sellPrice),
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: settings.get(SUPPLYING_STORE_ID),
+      };
+    }
+    case 'NumberSequence': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      return {
+        ID: record.id,
+        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
+        value: String(record.highestNumberUsed),
+      };
+    }
+    case 'NumberToReuse': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      return {
+        ID: record.id,
+        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
+        number_to_use: String(record.number),
       };
     }
     case 'Requisition': {
