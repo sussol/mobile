@@ -42,10 +42,71 @@ export class Stocktake extends Realm.Object {
     return this.status === 'finalised';
   }
 
-  finalise() {
+  /**
+   * Finalises this stocktake, creating transactions to apply the stock changes across the app.
+   * @param {Realm.Object}  user  The User object representing the current user logged in.
+   * @param {Realm}         database App wide local database
+   */
+  finalise(database, user) {
     this.status = 'finalised';
-    // TODO Apply stocktake to inventory
-    // TODO Add finalisedBy user
+    const date = new Date();
+    let additionTransaction;
+    let reductionTransaction = createRecord(
+      database, 'StockAdjustment', 'supplier_credit', user, date);
+    const additionItems = [];
+    const reductionItems = [];
+
+    this.items.forEach((stocktakeItem) => {
+      if (stocktakeItem.countedTotalQuantity > stocktakeItem.snapshotTotalQuantity) {
+        additionItems.push(stocktakeItem);
+      } else if (stocktakeItem.countedTotalQuantity < stocktakeItem.snapshotTotalQuantity) {
+        reductionItems.push(stocktakeItem);
+      } else {
+        // No change in stock.
+        stocktakeItem.batches.forEach((stocktakeBatch) => {
+          stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
+        });
+      }
+    });
+
+    // Create transaction for additions, populate, finalise it and bind to this stocktake.
+    if (additionItems.length > 0) {
+      additionTransaction = createRecord(
+        database, 'StockAdjustment', 'supplier_invoice', user, date);
+
+      additionItems.forEach((stocktakeItem) => {
+        // Create and add TransactionItem to the transaction
+        const transactionItem = createRecord(
+          database, 'TransactionItem', additionTransaction, stocktakeItem.item);
+        additionTransaction.addItem(transactionItem);
+
+        // Create and add TransactionBatch with changes corresponding to each StocktakeBatch.
+        stocktakeItem.batches.forEach((StocktakeBatch) => {
+          const transactionBatch = createRecord(
+            database, 'TransactionBatch', additionTransaction, StocktakeBatch.item);
+          // TODO: function that gets the max amount of difference and applies it in corresponding batches.
+          additionTransaction.addBatch(transactionBatch);
+        });
+      });
+
+      additionTransaction.finalise(database, user);
+      this.additions = additionTransaction;
+    }
+
+    // Create transaction for reductions, populate, finalise it and bind to this stocktake.
+    if (reductionItems.length > 0) {
+      reductionTransaction = createRecord(
+        database, 'StockAdjustment', 'supplier_credit', user, date);
+
+      reductionItems.forEach((stocktakeItem) => {
+        // TODO: Probably same solution as above, but this needs to make the transactionItems
+        // and TransactionBatches to approriate items. Needs to update the stocktakeItem.batches
+        // correct countedNumberOfPacks corresponding to the transactionBatches.
+      });
+
+      reductionTransaction.finalise(database, user);
+      this.additions = reductionTransaction;
+    }
   }
 }
 

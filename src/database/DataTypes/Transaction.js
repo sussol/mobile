@@ -98,13 +98,19 @@ export class Transaction extends Realm.Object {
    */
   finalise(database, user) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
-    if (this.type === 'supplier_invoice') { // If a supplier invoice, add item batches to inventory
+    if (this.type === 'supplier_invoice' || this.type === 'supplier_credit') {
+      // If a supplier invoice, add item batches to inventory, supplier_credit subtract
       this.enteredBy = user;
       this.items.forEach((transactionItem) => {
         transactionItem.batches.forEach((transactionBatch) => {
           const itemBatch = transactionBatch.itemBatch;
+          // Add number of packs if supplier invoice, subtract if not (i.e. is supplier credit)
+          const newNumberOfPacks = this.type === 'supplier_invoice' ?
+            itemBatch.numberOfPacks + transactionBatch.numberOfPacks
+            : itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
+
           itemBatch.packSize = transactionBatch.packSize;
-          itemBatch.numberOfPacks = itemBatch.numberOfPacks + transactionBatch.numberOfPacks;
+          itemBatch.numberOfPacks = newNumberOfPacks;
           itemBatch.expiryDate = transactionBatch.expiryDate;
           itemBatch.batch = transactionBatch.batch;
           itemBatch.costPrice = transactionBatch.costPrice;
@@ -114,6 +120,7 @@ export class Transaction extends Realm.Object {
         });
       });
     }
+
     if (!this.isConfirmed) this.confirmDate = new Date();
     this.status = 'finalised';
   }
