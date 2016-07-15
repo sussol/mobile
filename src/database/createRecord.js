@@ -101,12 +101,29 @@ function createStocktake(database, user) {
   return stocktake;
 }
 
-// Creates a StocktakeItem and adds it to the Stocktake.
+// Creates a StocktakeItem and adds it to the Stocktake. Generates a StocktakeBatch corresponding to
+// each ItemBatch in item.batches.
 function createStocktakeItem(database, stocktake, item) {
+  const stocktakeBatches = item.batches.map((itemBatch) => {
+    const { totalQuantity, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+    return database.create('StocktakeBatch', {
+      id: generateUUID(),
+      stocktake: stocktake,
+      itemBatch: itemBatch,
+      snapshotNumberOfPacks: totalQuantity,
+      packSize: packSize,
+      expiryDate: expiryDate,
+      batch: batch,
+      costPrice: costPrice,
+      sellPrice: sellPrice,
+    });
+  });
+
   const stocktakeItem = database.create('StocktakeItem', {
     id: generateUUID(),
     item: item,
     stocktake: stocktake,
+    batches: stocktakeBatches,
   });
   stocktake.items.push(stocktakeItem);
   database.save('Stocktake', stocktake);
