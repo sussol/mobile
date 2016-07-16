@@ -71,7 +71,7 @@ export class Database {
    * @return {none}
    */
   delete(type, object, ...listenerArgs) {
-    const objects = objects instanceof Array ? object : [object];
+    const objects = Array.isArray(object) ? object : [object];
     objects.forEach(obj => {
       const record = { ...obj };
       if (obj && obj.destructor instanceof Function) obj.destructor(this);
