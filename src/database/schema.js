@@ -192,7 +192,6 @@ RequisitionItem.schema = {
     item: { type: 'Item', optional: true },
     stockOnHand: 'double',
     dailyUsage: { type: 'double', optional: true },
-    imprestQuantity: { type: 'double', optional: true },
     requiredQuantity: { type: 'double', optional: true },
     comment: { type: 'string', optional: true },
     sortIndex: { type: 'int', optional: true },

@@ -112,10 +112,9 @@ function generateSyncData(settings, recordType, record) {
         requisition_ID: record.requisitionId,
         item_ID: record.itemId,
         stock_on_hand: String(record.stockOnHand),
-        actualQuan: String(record.requiredQuantity),
-        imprest_or_prev_quantity: String(record.imprestQuantity),
+        daily_usage: String(record.dailyUsage),
         line_number: String(record.sortIndex),
-        Cust_stock_order: String(record.suggestedQuantity),
+        Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
       };
     }

@@ -209,16 +209,13 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'RequisitionItem': {
       const requisition = getObject(database, 'Requisition', record.requisition_ID);
-      const dailyUsage = requisition.daysToSupply ?
-                           parseNumber(record.Cust_stock_order) / requisition.daysToSupply : 0;
       internalRecord = {
         id: record.ID,
         requisition: requisition,
         item: getObject(database, 'Item', record.item_ID),
         stockOnHand: parseNumber(record.stock_on_hand),
-        dailyUsage: dailyUsage,
-        imprestQuantity: parseNumber(record.imprest_or_prev_quantity),
-        requiredQuantity: parseNumber(record.actualQuan),
+        dailyUsage: parseNumber(record.daily_usage),
+        requiredQuantity: parseNumber(record.Cust_stock_order),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };
