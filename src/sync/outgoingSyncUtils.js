@@ -122,6 +122,7 @@ function generateSyncData(settings, recordType, record) {
     case 'Stocktake': {
       return {
         ID: record.id,
+        Description: record.name,
         stock_take_date: getDateString(record.stocktakeDate),
         stock_take_time: getTimeString(record.stocktakeDate),
         created_by_ID: record.createdBy && record.createdBy.id,

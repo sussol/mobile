@@ -62,6 +62,7 @@ export const SYNC_TYPES = new SyncTranslator({
 export const STATUSES = new SyncTranslator({
   'confirmed': 'cn',
   'finalised': 'fn',
+  'suggested': 'sg',
   'new': 'nw',
 });
 
