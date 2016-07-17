@@ -136,20 +136,19 @@ function generateSyncData(settings, recordType, record) {
       };
     }
     case 'StocktakeBatch': {
-      const itemBatch = record.itemBatch;
       return {
         ID: record.id,
         stock_take_ID: record.stocktake && record.stocktake.id,
-        item_line_ID: itemBatch.id,
+        item_line_ID: record.itemBatchId,
         snapshot_qty: String(record.snapshotNumberOfPacks),
         snapshot_packsize: String(record.packSize),
         stock_take_qty: String(record.countedNumberOfPacks),
         line_number: String(record.sortIndex),
-        expiry: getDateString(itemBatch.expiryDate),
-        cost_price: String(itemBatch.costPrice),
-        sell_price: String(itemBatch.sellPrice),
-        Batch: itemBatch.batch,
-        item_ID: itemBatch.itemId,
+        expiry: getDateString(record.expiryDate),
+        cost_price: String(record.costPrice),
+        sell_price: String(record.sellPrice),
+        Batch: record.batch,
+        item_ID: record.itemId,
       };
     }
     case 'Transaction': {
