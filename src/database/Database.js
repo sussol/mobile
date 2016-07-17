@@ -79,6 +79,7 @@ export class Database {
       this.alertListeners(CHANGE_TYPES.DELETE, type, record, ...listenerArgs);
     });
   }
+
   /**
    * Deletes all objects from the database.
    * Any params are passed directly on to change listeners

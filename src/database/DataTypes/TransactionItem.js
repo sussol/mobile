@@ -40,7 +40,7 @@ export class TransactionItem extends Realm.Object {
   // for the fact that any issued in a confirmed customer invoice has already
   // been taken off the total
   get availableQuantity() {
-    if (this.transaction.isCustomerInvoice &&
+    if (this.transaction.isOutgoing &&
        (this.transaction.isConfirmed ||
         this.transaction.isFinalised)) {
       return this.item.totalQuantity + this.totalQuantity;
@@ -72,7 +72,7 @@ export class TransactionItem extends Realm.Object {
     let remainder = this.allocateDifferenceToBatches(database, difference);
 
     // For customer invoices create/delete transaction batches to match new quantity
-    if (this.transaction.isCustomerInvoice) {
+    if (this.transaction.isOutgoing) {
       // Go through item batches in stock, adding as required to get rid of remainder
       for (let index = 0; index < this.item.batches.length && remainder !== 0; index ++) {
         const itemBatch = this.item.batches[index];

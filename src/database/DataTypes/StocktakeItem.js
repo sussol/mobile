@@ -27,15 +27,29 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Sets the counted quantity for the current item by applying the difference to the
-   * shortest expiry batches possible, i.e. increase => all to shortest expiry,
-   * decrease => spread over shortest to expire batches until it is all accounted for.
-   * @param {Realm}  database The app wide local database
-   * @param {double} quantity The total quantity to set across all batches
+   * Returns the item attached to this stocktake with the item id supplied
+   * @param  {string} itemId The item id to look for
+   * @return {object}        The StocktakeItem with the matching item id
    */
-  setCountedNumberOfPacks() {
-    // TODO - think about how this ties in with finalising stocktake and making
-    // inventory adjustments
+  getBatch(itemBatchId) {
+    return this.batches.find(stocktakeBatch => stocktakeBatch.itemBatchId === itemBatchId);
+  }
+
+  /**
+   * Applies the adjustments to batches in the given transaction item to the batches
+   * in this stocktake item
+   * @param  {object}  transactionItem The transaction item
+   * @param  {Boolean} isAddition      Whether this should increase the count ()
+   * @return {none}
+   */
+  applyBatchAdjustments(transactionItem, isAddition) {
+    transactionItem.batches.forEach((transactionBatch) => {
+      const stocktakeBatch = this.getBatch(transactionBatch.itemBatchId);
+      const difference = isAddition ?
+                          transactionBatch.totalQuantity :
+                          -transactionBatch.totalQuantity;
+      stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity + difference;
+    });
   }
 }
 

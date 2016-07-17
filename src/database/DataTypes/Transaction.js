@@ -19,6 +19,14 @@ export class Transaction extends Realm.Object {
     return this.status === 'confirmed';
   }
 
+  get isIncoming() {
+    return this.type === 'supplier_invoice';
+  }
+
+  get isOutgoing() {
+    return this.type === 'customer_invoice' || this.type === 'supplier_credit';
+  }
+
   get isCustomerInvoice() {
     return this.type === 'customer_invoice';
   }
@@ -90,38 +98,47 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Finalise this transaction, generating the associated item batches, linking them
-   * to their items, and setting the status so that this transaction is locked down.
+   * Confirm this transaction, generating the associated item batches, linking them
+   * to their items, and setting the status to confirmed.
+   * @param  {Realm}  database The app wide local database
+   * @param  {object} user     The user who confirmed this transaction
+   * @return {none}
+   */
+  confirm(database, user) {
+    if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
+    this.enteredBy = user;
+    this.items.forEach((transactionItem) => {
+      transactionItem.batches.forEach((transactionBatch) => {
+        const itemBatch = transactionBatch.itemBatch;
+        const newNumberOfPacks = this.isIncoming ?
+          itemBatch.numberOfPacks + transactionBatch.numberOfPacks
+          : itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
+
+        itemBatch.packSize = transactionBatch.packSize;
+        itemBatch.numberOfPacks = newNumberOfPacks;
+        itemBatch.expiryDate = transactionBatch.expiryDate;
+        itemBatch.batch = transactionBatch.batch;
+        itemBatch.costPrice = transactionBatch.costPrice;
+        itemBatch.sellPrice = transactionBatch.sellPrice;
+        database.save('ItemBatch', itemBatch);
+        database.save('TransactionBatch', transactionBatch);
+      });
+    });
+    this.confirmDate = new Date();
+    this.status = 'confirmed';
+  }
+
+  /**
+   * Finalise this transaction, setting the status so that this transaction is
+   * locked down. If it has not already been confirmed (i.e. adjustments to inventory
+   * made), confirm it first
    * @param  {Realm}  database The app wide local database
    * @param  {object} user     The user who finalised this transaction
    * @return {none}
    */
   finalise(database, user) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
-    if (this.type === 'supplier_invoice' || this.type === 'supplier_credit') {
-      // If a supplier invoice, add item batches to inventory, supplier_credit subtract
-      this.enteredBy = user;
-      this.items.forEach((transactionItem) => {
-        transactionItem.batches.forEach((transactionBatch) => {
-          const itemBatch = transactionBatch.itemBatch;
-          // Add number of packs if supplier invoice, subtract if not (i.e. is supplier credit)
-          const newNumberOfPacks = this.type === 'supplier_invoice' ?
-            itemBatch.numberOfPacks + transactionBatch.numberOfPacks
-            : itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
-
-          itemBatch.packSize = transactionBatch.packSize;
-          itemBatch.numberOfPacks = newNumberOfPacks;
-          itemBatch.expiryDate = transactionBatch.expiryDate;
-          itemBatch.batch = transactionBatch.batch;
-          itemBatch.costPrice = transactionBatch.costPrice;
-          itemBatch.sellPrice = transactionBatch.sellPrice;
-          database.save('ItemBatch', itemBatch);
-          database.save('TransactionBatch', transactionBatch);
-        });
-      });
-    }
-
-    if (!this.isConfirmed) this.confirmDate = new Date();
+    if (!this.isConfirmed) this.confirm(database, user); // Confirm first to adjust inventory
     this.status = 'finalised';
   }
 }

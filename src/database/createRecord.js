@@ -23,7 +23,7 @@ export function createRecord(database, type, ...args) {
     case 'StocktakeItem':
       return createStocktakeItem(database, ...args);
     case 'StockAdjustment':
-      return stockAdjustment(database, ...args);
+      return createStockAdjustment(database, ...args);
     case 'TransactionItem':
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
@@ -132,13 +132,13 @@ function createStocktakeItem(database, stocktake, item) {
   return stocktakeItem;
 }
 
-function stockAdjustment(database, type, user, date) {
+function createStockAdjustment(database, type, user, date) {
   return database.create('Transaction', {
     id: generateUUID(),
     serialNumber: '1',
     entryDate: date,
     type: type,
-    status: 'new', // Customer invoices always confirmed in mobile for easy stock tracking
+    status: 'confirmed',
     comment: '',
     enteredBy: user,
     otherParty: database.objects('Name').find((name) => name.type === 'inventory_adjustment'),

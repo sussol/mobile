@@ -43,72 +43,85 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Finalises this stocktake, creating transactions to apply the stock changes across the app.
-   * @param {Realm.Object}  user  The User object representing the current user logged in.
+   * Returns the item attached to this stocktake with the item id supplied
+   * @param  {string} itemId The item id to look for
+   * @return {object}        The StocktakeItem with the matching item id
+   */
+  getItem(itemId) {
+    return this.items.find(stocktakeItem => stocktakeItem.itemId === itemId);
+  }
+
+  /**
+   * Finalises this stocktake, creating transactions to apply the stock changes to inventory
+   * @param {Realm.Object}  user     The current user logged in
    * @param {Realm}         database App wide local database
    */
   finalise(database, user) {
     const date = new Date();
-    let additionTransaction;
-    let reductionTransaction;
     const additionItems = [];
     const reductionItems = [];
 
+    // Go through the stocktake items, adding each to either addition items or reduction items if
+    // it was increased or decreased, otherwise setting the counted quantity to snapshot quantity
     this.items.forEach((stocktakeItem) => {
       if (stocktakeItem.countedTotalQuantity > stocktakeItem.snapshotTotalQuantity) {
         additionItems.push(stocktakeItem);
       } else if (stocktakeItem.countedTotalQuantity < stocktakeItem.snapshotTotalQuantity) {
         reductionItems.push(stocktakeItem);
       } else {
-        // No change in stock.
+        // No change in stock, set counted quantity to snapshot quantity
         stocktakeItem.batches.forEach((stocktakeBatch) => {
           stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
         });
       }
     });
 
-    // Create transaction for additions, populate, finalise it and bind to this stocktake.
-    if (additionItems.length > 0) {
-      additionTransaction = createRecord(
-        database, 'StockAdjustment', 'supplier_invoice', user, date);
+    // Adjust inventory
+    this.additionTransaction = this.adjustInventory(database, user, additionItems, true);
+    this.reductionTransaction = this.adjustInventory(database, user, reductionItems, false);
 
-      additionItems.forEach((stocktakeItem) => {
-        // Create and add TransactionItem to the transaction
-        const transactionItem = createRecord(
-          database, 'TransactionItem', additionTransaction, stocktakeItem.item);
-        additionTransaction.addItem(transactionItem);
-
-        // Create and add TransactionBatch with changes corresponding to each StocktakeBatch.
-        stocktakeItem.batches.forEach((StocktakeBatch) => {
-          const transactionBatch = createRecord(
-            database, 'TransactionBatch', additionTransaction, StocktakeBatch.item);
-          // TODO: function that gets the max amount of difference and applies it in corresponding batches.
-          additionTransaction.addBatch(transactionBatch);
-        });
-      });
-
-      additionTransaction.finalise(database, user);
-      this.additions = additionTransaction;
-    }
-
-    // Create transaction for reductions, populate, finalise it and bind to this stocktake.
-    if (reductionItems.length > 0) {
-      reductionTransaction = createRecord(
-        database, 'StockAdjustment', 'supplier_credit', user, date);
-
-      reductionItems.forEach((stocktakeItem) => {
-        // TODO: Probably same solution as above, but this needs to make the transactionItems
-        // and TransactionBatches to approriate items. Needs to update the stocktakeItem.batches
-        // correct countedNumberOfPacks corresponding to the transactionBatches.
-      });
-
-      reductionTransaction.finalise(database, user);
-      this.additions = reductionTransaction;
-    }
-
+    // Set the stocktake finalise details
     this.finalisedBy = user;
     this.stocktakeDate = date;
     this.status = 'finalised';
+  }
+
+  /**
+   * Create transaction for either additions or reductions, populate, confirm
+   * it and copy the resulting batch adjustments over to this stocktake
+   * @param  {Realm}   database       App wide database
+   * @param  {object}  user           The user that finalised this stocktake
+   * @param  {array}   stocktakeItems The items being either increased or decreased
+   * @param  {date}    date           The date the stocktake was finalised
+   * @param  {boolean} isAddition     Whether this is an addition (true) or reduction (false)
+   * @return {[type]}                [description]
+   */
+  adjustInventory(database, user, stocktakeItems, date, isAddition) {
+    const transactionType = isAddition ? 'supplier_invoice' : 'supplier_credit';
+
+    if (stocktakeItems.length <= 0) return null;
+
+    const transaction = createRecord(database, 'StockAdjustment', transactionType, user, date);
+
+    stocktakeItems.forEach((stocktakeItem) => {
+      // Create and add TransactionItem to the transaction
+      const transactionItem = createRecord(
+                                database, 'TransactionItem', transaction, stocktakeItem.item);
+      transaction.addItem(transactionItem);
+      transactionItem.totalQuantity = stocktakeItem.countedTotalQuantity;
+    });
+
+    // Confirm the transaction, causing it to handle batch logic and apply adjustments
+    // to inventory
+    transaction.confirm(database, user);
+
+    // Copy batch quantities from transaction to the stocktake
+    transaction.items.forEach((transactionItem) => {
+      const stocktakeItem = this.getItem(transactionItem.itemId);
+      stocktakeItem.applyBatchAdjustments(transactionItem, isAddition);
+    });
+
+    return transaction;
   }
 }
 
