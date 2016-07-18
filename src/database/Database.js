@@ -79,13 +79,15 @@ export class Database {
         objects.toString() === '[object Results]'
       ) objects = object;
 
-    // Go through each object, delete it, and alert any change listeners
+    // Go through each object, call its destructor, and alert any change listeners
     objects.forEach(obj => {
       const record = { ...obj };
       if (obj && obj.destructor instanceof Function) obj.destructor(this);
-      this.realm.delete(obj);
       this.alertListeners(CHANGE_TYPES.DELETE, type, record, ...listenerArgs);
     });
+
+    // Actually delete the objects from the database
+    this.realm.delete(objects);
   }
 
   /**
