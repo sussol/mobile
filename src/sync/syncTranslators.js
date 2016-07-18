@@ -35,6 +35,8 @@ export const RECORD_TYPES = new SyncTranslator({
   'MasterListNameJoin': 'list_master_name_join',
   'Name': 'name',
   'NameStoreJoin': 'name_store_join',
+  'NumberSequence': 'number',
+  'NumberToReuse': 'number_reuse',
   'Requisition': 'requisition',
   'RequisitionItem': 'requisition_line',
   'Stocktake': 'Stock_take',
@@ -93,4 +95,31 @@ export const NAME_TYPES = new SyncTranslator({
   'build': 'build',
   'store': 'store',
   'repack': 'repack',
+});
+
+/**
+ * Translates number sequence keys from internal to external formats, and vice versa.
+ * If translating external to internal, will return null if it is a sequence key
+ * not used by mobile, or if it relates to a different store.
+ */
+class SequenceKeyTranslator extends SyncTranslator {
+  translate(sequenceKey, direction, thisStoreId) {
+    let key = sequenceKey;
+    if (direction === EXTERNAL_TO_INTERNAL) {
+      if (key.length < thisStoreId.length) return null; // Definitely not a key we use
+      // The mSupply sequence keys we care about end with the store id they relate to
+      const storeId = key.substring(key.length - thisStoreId.length);
+      // If the sequence doesn't relate to this store, we will ignore it
+      if (storeId !== thisStoreId) return null;
+      key = key.substring(0, key.length - thisStoreId.length);
+    }
+    let translatedKey = super.translate(key, direction);
+    if (direction === INTERNAL_TO_EXTERNAL) translatedKey += thisStoreId;
+    return translatedKey;
+  }
+}
+export const SEQUENCE_KEYS = new SequenceKeyTranslator({
+  customer_invoice_serial_number: 'customer_invoice_number_for_store_',
+  requisition_serial_number: 'name_stock_history_number_for_store_',
+  stocktake_serial_number: 'stock_take_number_for_store_',
 });

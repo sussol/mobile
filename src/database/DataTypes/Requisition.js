@@ -1,6 +1,5 @@
 import Realm from 'realm';
-
-import { createRecord } from '../createRecord';
+import { createRecord } from '../utilities';
 
 export class Requisition extends Realm.Object {
   constructor() {

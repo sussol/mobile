@@ -1,7 +1,6 @@
 import Realm from 'realm';
 
-import { getTotal } from '../utilities';
-import { createRecord } from '../createRecord';
+import { createRecord, getTotal } from '../utilities';
 
 export class TransactionItem extends Realm.Object {
 
