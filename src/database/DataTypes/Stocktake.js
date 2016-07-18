@@ -63,7 +63,9 @@ export class Stocktake extends Realm.Object {
   /**
    * Applies differences in snapshot and counted quantities to the appropriate inventory
    * adjustment transactions. Will create this.additions and this.reductions if needed.
-   * @param  {Realm} database   App wide local database
+   * @param  {Realm}  database   App wide local database
+   * @param  {object} user       The user that finalised this stocktake
+   * @param  {Date}   date       The current date
    * @return {none}
    */
   adjustInventory(database, user, date) {
