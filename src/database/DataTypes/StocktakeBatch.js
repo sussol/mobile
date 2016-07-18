@@ -6,7 +6,7 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   get countedTotalQuantity() {
-    return this.countedNumberOfPacks * this.packSize;
+    return this.countedNumberOfPacks ? this.countedNumberOfPacks * this.packSize : null;
   }
 
   get itemId() {

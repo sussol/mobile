@@ -53,12 +53,8 @@ export class Stocktake extends Realm.Object {
     // Create the transactions for additions and reductions
     const date = new Date();
 
-    // Create inventory adjustments
-    this.additions = createRecord(database, 'InventoryAdjustment', user, date, true);
-    this.reductions = createRecord(database, 'InventoryAdjustment', user, date, false);
-
-    // Apply differences to appropriate inventory adjustment transactions
-    this.adjustInventory(database);
+    // Create inventory adjustment transactions as required, and allocate batches
+    this.adjustInventory(database, user, date);
 
     // Set the stocktake finalise details
     this.finalisedBy = user;
@@ -68,11 +64,11 @@ export class Stocktake extends Realm.Object {
 
   /**
    * Applies differences in snapshot and counted quantities to the appropriate inventory
-   * adjustment transactions. Assumes this.additions and this.reductions already exist.
+   * adjustment transactions. Will create this.additions and this.reductions if needed.
    * @param  {Realm} database   App wide local database
    * @return {none}
    */
-  adjustInventory(database) {
+  adjustInventory(database, user, date) {
     // Go through each item, add it to the appropriate transaction, then copy over the
     // batch quantities allocated by the transaction item
     const uncountedItems = [];
@@ -85,6 +81,15 @@ export class Stocktake extends Realm.Object {
 
       // Work out whether this should be in the additions or reductions transaction
       const difference = stocktakeItem.countedTotalQuantity - stocktakeItem.snapshotTotalQuantity;
+
+      // Lazily create additions/reductions as and when they are required
+      if (difference >= 0 && this.additions === null) {
+        this.additions = createRecord(database, 'InventoryAdjustment', user, date, true);
+      } else if (difference < 0 && this.reductions === null) {
+        this.reductions = createRecord(database, 'InventoryAdjustment', user, date, false);
+      }
+
+      // Get the appropriate transaction to use for this item
       const transaction = difference >= 0 ? this.additions : this.reductions;
 
       // Create and add TransactionItem to the transaction
