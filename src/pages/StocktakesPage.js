@@ -78,7 +78,7 @@ export class StocktakesPage extends GenericTablePage {
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const { stocktakes, showCurrent } = this.state;
-    const toggleFilter = showCurrent ? 'status == "new"' : 'status != "new"';
+    const toggleFilter = showCurrent ? 'status != "finalised"' : 'status == "finalised"';
     const data = stocktakes
                   .filtered(toggleFilter)
                   .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true

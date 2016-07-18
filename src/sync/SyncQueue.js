@@ -116,10 +116,7 @@ export class SyncQueue {
    */
   use(records) {
     this.database.write(() => {
-      records.forEach((record) => {
-        if (!record.isValid()) return; // Already deleted
-        this.database.delete('SyncOut', record);
-      });
+      this.database.delete('SyncOut', records);
     });
   }
 }

@@ -23,7 +23,8 @@ export class SupplierInvoicesPage extends GenericTablePage {
     super(props);
     this.state.sortBy = 'serialNumber';
     this.state.transactions = props.database.objects('Transaction')
-                                            .filtered('type == "supplier_invoice"');
+                                            .filtered('type == "supplier_invoice"')
+                                            .filtered('otherParty.type != "inventory_adjustment"');
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);

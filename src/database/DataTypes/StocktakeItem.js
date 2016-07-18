@@ -14,10 +14,6 @@ export class StocktakeItem extends Realm.Object {
     return getTotal(this.batches, 'snapshotTotalQuantity');
   }
 
-  get countedTotalQuantity() {
-    return getTotal(this.batches, 'countedTotalQuantity');
-  }
-
   get itemId() {
     return this.item ? this.item.id : '';
   }
@@ -30,15 +26,54 @@ export class StocktakeItem extends Realm.Object {
     return this.item ? this.item.code : '';
   }
 
+  addBatch(stocktakeBatch) {
+    this.batches.push(stocktakeBatch);
+    if (!this.countedTotalQuantity) this.countedTotalQuantity = stocktakeBatch.countedTotalQuantity;
+    else this.countedTotalQuantity += stocktakeBatch.countedTotalQuantity;
+  }
+
   /**
-   * Sets the counted quantity for the current item by applying the difference to the
-   * shortest expiry batches possible, i.e. increase => all to shortest expiry,
-   * decrease => spread over shortest to expire batches until it is all accounted for.
-   * @param {Realm}  database The app wide local database
-   * @param {double} quantity The total quantity to set across all batches
+   * Applies the adjustments to batches in the given transaction item to the batches
+   * in this stocktake item
+   * @param  {Realm}   database        App wide database
+   * @param  {object}  transactionItem The transaction item
+   * @return {none}
    */
-  setCountedNumberOfPacks() {
-    // TODO - think about how this ties in with finalising stocktake and making
-    // inventory adjustments
+  applyBatchAdjustments(database, transactionItem) {
+    this.batches.forEach((stocktakeBatch) => {
+      const transactionBatch = transactionItem.getBatch(stocktakeBatch.itemBatchId);
+      let difference = 0;
+      if (transactionBatch) { // If a matching transaction batch, work out the difference
+        difference = transactionItem.transaction.isIncoming ?
+                            transactionBatch.totalQuantity :
+                            -transactionBatch.totalQuantity;
+      }
+      stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity + difference;
+      database.save('StocktakeBatch', stocktakeBatch);
+    });
+  }
+
+  /**
+   * Deletes any batches from this stocktake item that had no stock and did not change
+   * @param  {Realm} database  App wide database
+   * @return {none}
+   */
+  pruneBatches(database) {
+    database.delete(
+      'StocktakeBatch',
+      this.batches.filtered('snapshotNumberOfPacks == 0 AND countedNumberOfPacks == 0')
+    );
   }
 }
+
+StocktakeItem.schema = {
+  name: 'StocktakeItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    stocktake: 'Stocktake',
+    countedTotalQuantity: { type: 'double', optional: true },
+    batches: { type: 'list', objectType: 'StocktakeBatch' },
+  },
+};

@@ -21,6 +21,10 @@ export class TransactionBatch extends Realm.Object {
     }
   }
 
+  get itemBatchId() {
+    return this.itemBatch ? this.itemBatch.id : '';
+  }
+
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot change quantity of batches in a finalised transaction');
@@ -30,13 +34,9 @@ export class TransactionBatch extends Realm.Object {
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
 
     if (this.transaction.isConfirmed) {
-      if (this.transaction.isCustomerInvoice) {
-        this.itemBatch.totalQuantity -= difference;
-        database.save('ItemBatch', this.itemBatch);
-      } else if (this.transaction.isSupplierInvoice) {
-        this.itemBatch.totalQuantity += difference;
-        database.save('ItemBatch', this.itemBatch);
-      }
+      const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
+      this.itemBatch.totalQuantity += inventoryDifference;
+      database.save('ItemBatch', this.itemBatch);
     }
   }
 
@@ -64,15 +64,35 @@ export class TransactionBatch extends Realm.Object {
   getAmountToAllocate(quantity) {
     // Max that can be removed is the total quantity currently in the transaction batch
     if (quantity < 0) return Math.max(quantity, -this.totalQuantity);
-    // For customer invoice, max that can be added is amount in item batch
-    if (this.transaction.isCustomerInvoice) return Math.min(quantity, this.itemBatch.totalQuantity);
+    // For outgoing transactions, max that can be added is amount in item batch
+    if (this.transaction.isOutgoing) return Math.min(quantity, this.itemBatch.totalQuantity);
     // For supplier invoice, there is no maximum amount that can be added
     return quantity;
   }
 
   toString() {
-    const transactionType = this.isCustomerInvoice ? 'Customer Invoice' : 'Supplier Invoice';
-    return `${this.itemBatch} in a ${transactionType}`;
+    return `${this.itemBatch} in a ${this.transaction.type}`;
   }
 
 }
+
+TransactionBatch.schema = {
+  name: 'TransactionBatch',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    itemId: 'string',
+    itemName: 'string',
+    itemBatch: 'ItemBatch',
+    batch: 'string',
+    expiryDate: { type: 'date', optional: true },
+    packSize: 'double',
+    numberOfPacks: 'double',
+    numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices
+    transaction: 'Transaction',
+    note: { type: 'string', optional: true },
+    costPrice: 'double',
+    sellPrice: 'double',
+    sortIndex: { type: 'int', optional: true },
+  },
+};

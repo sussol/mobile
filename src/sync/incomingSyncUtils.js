@@ -56,7 +56,7 @@ export function integrateRecord(database, settings, syncRecord) {
  * @return {none}
  */
 export function createOrUpdateRecord(database, settings, recordType, record) {
-  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported on malformed record
+  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record
   let internalRecord;
   switch (recordType) {
     case 'Item': {
@@ -275,18 +275,17 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'StocktakeBatch': {
       const stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
       const packSize = parseNumber(record.snapshot_packsize);
-      const numPacks = parseNumber(record.snapshot_qty) * packSize;
       internalRecord = {
         id: record.ID,
         stocktake: stocktake,
         itemBatch: getObject(database, 'ItemBatch', record.item_line_ID),
-        snapshotNumberOfPacks: numPacks,
+        snapshotNumberOfPacks: parseNumber(record.snapshot_qty) * packSize,
         packSize: 1, // Pack to one all mobile data
         expiry: parseDate(record.expiry),
         batch: record.Batch,
         costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
-        countedNumberOfPacks: numPacks,
+        countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
@@ -406,58 +405,34 @@ function deleteRecord(database, recordType, recordId) {
  */
 export function sanityCheckIncomingRecord(recordType, record) {
   if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
-  switch (recordType) {
-    case 'Item':
-      return record.code && record.item_name && record.default_pack_size;
-    case 'ItemCategory':
-      return typeof record.Description === 'string';
-    case 'ItemDepartment':
-      return typeof record.department === 'string';
-    case 'ItemBatch':
-      return record.item_ID && record.pack_size && record.quantity && record.batch
-             && record.expiry_date && record.cost_price && record.sell_price;
-    case 'ItemStoreJoin':
-      return record.item_ID && record.store_ID;
-    case 'MasterListNameJoin':
-      return record.name_ID && record.list_master_ID;
-    case 'MasterList':
-      return typeof record.description === 'string';
-    case 'MasterListItem':
-      return record.item_ID;
-    case 'Name':
-      return record.name && record.code && record.type && record.customer
-      && record.supplier && record.manufacturer;
-    case 'NameStoreJoin':
-      return record.name_ID && record.store_ID;
-    case 'NumberSequence':
-      return record.name && record.value;
-    case 'NumberToReuse':
-      return record.name && record.number_to_use;
-    case 'Requisition':
-      return record.status && record.date_entered && record.type && record.daysToSupply
-             && record.serial_number;
-    case 'RequisitionItem':
-      return record.requisition_ID && record.item_ID && record.stock_on_hand
-             && record.Cust_stock_order;
-    case 'Stocktake':
-      return record.Description && record.stock_take_created_date && record.status
-             && record.serial_number;
-    case 'StocktakeBatch':
-      return record.stock_take_ID && record.item_line_ID && record.snapshot_qty
-             && record.snapshot_packsize && record.expiry && record.Batch
-             && record.cost_price && record.sell_price;
-    case 'Transaction':
-      return record.invoice_num && record.name_ID && record.entry_date && record.type
-             && record.status;
-    case 'TransactionCategory':
-      return record.category && record.code && record.type;
-    case 'TransactionBatch':
-      return record.item_ID && record.item_name && record.item_line_ID && record.batch
-             && record.expiry_date && record.pack_size && record.quantity && record.transaction_ID
-             && record.cost_price && record.sell_price;
-    default:
-      return false; // Reject record types we don't want to sync into mobile
-  }
+  const requiredFields = {
+    Item: ['code', 'item_name', 'default_pack_size'],
+    ItemCategory: ['Description'],
+    ItemDepartment: ['department'],
+    ItemBatch: ['item_ID', 'pack_size', 'quantity', 'batch', 'expiry_date',
+                'cost_price', 'sell_price'],
+    ItemStoreJoin: ['item_ID', 'store_ID'],
+    MasterListNameJoin: ['name_ID', 'list_master_ID'],
+    MasterList: ['description'],
+    MasterListItem: ['item_ID'],
+    Name: ['name', 'code', 'type', 'customer', 'supplier', 'manufacturer'],
+    NameStoreJoin: ['name_ID', 'store_ID'],
+    NumberSequence: ['name', 'value'],
+    NumberReuse: ['name', 'number_to_use'],
+    Requisition: ['status', 'date_entered', 'type', 'daysToSupply', 'serial_number'],
+    RequisitionItem: ['requisition_ID', 'item_ID', 'stock_on_hand', 'Cust_stock_order'],
+    Stocktake: ['Description', 'stock_take_created_date', 'status', 'serial_number'],
+    StocktakeBatch: ['stock_take_ID', 'item_line_ID', 'snapshot_qty', 'snapshot_packsize',
+                     'expiry', 'Batch', 'cost_price', 'sell_price'],
+    Transaction: ['invoice_num', 'name_ID', 'entry_date', 'type', 'status'],
+    TransactionCategory: ['category', 'code', 'type'],
+    TransactionBatch: ['item_ID', 'item_name', 'item_line_ID', 'batch', 'expiry_date',
+                       'pack_size', 'quantity', 'transaction_ID', 'cost_price', 'sell_price'],
+  };
+  if (!requiredFields[recordType]) return false; // Unsupported record type
+  return requiredFields[recordType].reduce((containsAllFieldsSoFar, fieldName) =>
+                                              containsAllFieldsSoFar && record[fieldName] !== null,
+                                            true);
 }
 
 /**
@@ -475,7 +450,8 @@ function getObject(database, type, primaryKey, primaryKeyField = 'id') {
   const results = database.objects(type).filtered(`${primaryKeyField} == $0`, primaryKey);
   if (results.length > 0) return results[0];
   const placeholder = generatePlaceholder(type, primaryKey);
-  return database.create(type, placeholder);
+  const ret = database.create(type, placeholder);
+  return ret;
 }
 
 /**
@@ -629,8 +605,8 @@ function parseDate(ISODate, ISOTime) {
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 6) {
     const hours = ISOTime.substring(0, 2);
-    const minutes = ISOTime.substring(2, 4);
-    const seconds = ISOTime.substring(4, 6);
+    const minutes = ISOTime.substring(3, 5);
+    const seconds = ISOTime.substring(6, 8);
     date.setHours(hours, minutes, seconds);
   }
   return date;

@@ -68,3 +68,18 @@ export class Requisition extends Realm.Object {
     this.status = 'finalised';
   }
 }
+
+Requisition.schema = {
+  name: 'Requisition',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    status: 'string',
+    type: 'string', // imprest, forecast or request (request only used in mobile)
+    entryDate: 'date',
+    daysToSupply: 'double',
+    serialNumber: 'string',
+    enteredBy: { type: 'User', optional: true },
+    items: { type: 'list', objectType: 'RequisitionItem' },
+  },
+};

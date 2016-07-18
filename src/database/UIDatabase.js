@@ -11,7 +11,7 @@ export class UIDatabase {
         results = results.filtered('isVisible == true');
         break;
       case 'Name':
-        results = results.filtered('isVisible == TRUE');
+        results = results.filtered('isVisible == true OR type == "inventory_adjustment"');
         break;
       default:
         break;
