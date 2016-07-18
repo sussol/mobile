@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import globalStyles, { SUSSOL_ORANGE, WARM_GREY, WARMER_GREY } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, WARM_GREY, LIGHT_GREY } from '../globalStyles';
 
 import {
   Cell,
@@ -245,7 +245,7 @@ export class GenericTablePage extends React.Component {
               ]}
               width={column.width}
               onPress={() => this.onCheckablePress(rowData)}
-              renderDisabled={() => <Icon name={iconNotChecked} size={15} color={WARMER_GREY} />}
+              renderDisabled={() => <Icon name={iconNotChecked} size={15} color={LIGHT_GREY} />}
               renderIsChecked={() => <Icon name={iconChecked} size={15} color={SUSSOL_ORANGE} />}
               renderIsNotChecked={() => <Icon name={iconNotChecked} size={15} color={WARM_GREY} />}
               isChecked={isChecked}
