@@ -121,12 +121,12 @@ function createStocktake(database, user) {
 // each ItemBatch in item.batches.
 function createStocktakeItem(database, stocktake, item) {
   const stocktakeBatches = item.batches.map((itemBatch) => {
-    const { totalQuantity, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+    const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
     return database.create('StocktakeBatch', {
       id: generateUUID(),
       stocktake: stocktake,
       itemBatch: itemBatch,
-      snapshotNumberOfPacks: totalQuantity,
+      snapshotNumberOfPacks: numberOfPacks,
       packSize: packSize,
       expiryDate: expiryDate,
       batch: batch,

@@ -48,6 +48,15 @@ export class TransactionItem extends Realm.Object {
     return this.item.totalQuantity;
   }
 
+  /**
+   * Returns the batch attached to this transaction item with the given item batch id
+   * @param  {string} itemId The item id to look for
+   * @return {object}        The TransactionBatch with the matching item id
+   */
+  getBatch(itemBatchId) {
+    return this.batches.find(transactionBatch => transactionBatch.itemBatchId === itemBatchId);
+  }
+
   addBatch(transactionBatch) {
     this.batches.push(transactionBatch);
   }

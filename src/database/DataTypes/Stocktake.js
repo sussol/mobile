@@ -56,6 +56,12 @@ export class Stocktake extends Realm.Object {
     // Go through each item, add it to the appropriate transaction, then copy over the
     // batch quantities allocated by the transaction item
     this.items.forEach((stocktakeItem) => {
+      // If no counted quantity was entered, set it to the snapshot quantity
+      if (stocktakeItem.countedTotalQuantity === null) {
+        stocktakeItem.countedTotalQuantity = stocktakeItem.snapshotTotalQuantity;
+      }
+
+      // Work out whether this should be in the additions or reductions transaction
       const difference = stocktakeItem.countedTotalQuantity - stocktakeItem.snapshotTotalQuantity;
       const transaction = difference >= 0 ? this.additions : this.reductions;
 
@@ -69,6 +75,8 @@ export class Stocktake extends Realm.Object {
 
       // Copy batch quantities from transaction item to the stocktake item
       stocktakeItem.applyBatchAdjustments(database, transactionItem);
+      // Prune off any batches with 0 quantity that were unchanged
+      stocktakeItem.pruneBatches(database);
       database.save('StocktakeItem', stocktakeItem);
     });
 

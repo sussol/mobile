@@ -27,15 +27,6 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Returns the item attached to this stocktake with the item id supplied
-   * @param  {string} itemId The item id to look for
-   * @return {object}        The StocktakeItem with the matching item id
-   */
-  getBatch(itemBatchId) {
-    return this.batches.find(stocktakeBatch => stocktakeBatch.itemBatchId === itemBatchId);
-  }
-
-  /**
    * Applies the adjustments to batches in the given transaction item to the batches
    * in this stocktake item
    * @param  {Realm}   database        App wide database
@@ -43,14 +34,29 @@ export class StocktakeItem extends Realm.Object {
    * @return {none}
    */
   applyBatchAdjustments(database, transactionItem) {
-    transactionItem.batches.forEach((transactionBatch) => {
-      const stocktakeBatch = this.getBatch(transactionBatch.itemBatchId);
-      const difference = transactionItem.transaction.isIncoming ?
-                          transactionBatch.totalQuantity :
-                          -transactionBatch.totalQuantity;
+    this.batches.forEach((stocktakeBatch) => {
+      const transactionBatch = transactionItem.getBatch(stocktakeBatch.itemBatchId);
+      let difference = 0;
+      if (transactionBatch) { // If a matching transaction batch, work out the difference
+        difference = transactionItem.transaction.isIncoming ?
+                            transactionBatch.totalQuantity :
+                            -transactionBatch.totalQuantity;
+      }
       stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity + difference;
       database.save('StocktakeBatch', stocktakeBatch);
     });
+  }
+
+  /**
+   * Deletes any batches from this stocktake item that had no stock and did not change
+   * @param  {Realm} database  App wide database
+   * @return {none}
+   */
+  pruneBatches(database) {
+    database.delete(
+      'StocktakeBatch',
+      this.batches.filtered('snapshotNumberOfPacks == 0 AND countedNumberOfPacks == 0')
+    );
   }
 }
 
