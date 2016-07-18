@@ -9,6 +9,7 @@ import React from 'react';
 import {
   View,
   TouchableOpacity,
+  TouchableWithoutFeedback,
 } from 'react-native';
 
 /**
@@ -65,9 +66,10 @@ export class CheckableCell extends React.Component {
         renderFunction = this.state.isChecked ? renderIsChecked : renderIsNotChecked;
       }
       return (
-        <View style={[style, { flex: width }]} >
-          {renderFunction()}
-        </View>
+        // Filler function for onPress stops press through to parent component
+        <TouchableWithoutFeedback onPress={() => {}}>
+          <View style={[style, { flex: width }]}>{renderFunction()}</View>
+        </TouchableWithoutFeedback>
       );
     }
 
