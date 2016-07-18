@@ -57,11 +57,14 @@ function createCustomerInvoice(database, customer) {
   return invoice;
 }
 
+// Creates a transaction representing an inventory adjustment, either up (isAddition = true)
+// or down (isAddition = false)
 function createInventoryAdjustment(database, user, date, isAddition) {
   return database.create('Transaction', {
     id: generateUUID(),
     serialNumber: '1',
     entryDate: date,
+    confirmDate: date,
     type: isAddition ? 'supplier_invoice' : 'supplier_credit',
     status: 'confirmed',
     comment: '',
