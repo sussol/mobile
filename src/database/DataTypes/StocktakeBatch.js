@@ -49,7 +49,7 @@ StocktakeBatch.schema = {
     itemBatch: 'ItemBatch',
     snapshotNumberOfPacks: 'double',
     packSize: 'double',
-    expiryDate: 'date',
+    expiryDate: { type: 'date', optional: true },
     batch: 'string',
     costPrice: 'double',
     sellPrice: 'double',

@@ -34,7 +34,9 @@ export class Stocktake extends Realm.Object {
     // Add StocktakeItem for each Item.id in newItemsIds to the stocktake.
     newItemsIds.forEach((itemId) => {
       const item = items.find(i => i.id === itemId);
-      createRecord(database, 'StocktakeItem', this, item);
+      const stocktakeItem = createRecord(database, 'StocktakeItem', this, item);
+      item.batches.forEach((itemBatch) =>
+        createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch));
     });
   }
 
@@ -50,15 +52,35 @@ export class Stocktake extends Realm.Object {
   finalise(database, user) {
     // Create the transactions for additions and reductions
     const date = new Date();
-    this.additions = createRecord(database, 'InventoryAdjustment', 'supplier_invoice', user, date);
-    this.reductions = createRecord(database, 'InventoryAdjustment', 'supplier_credit', user, date);
 
+    // Create inventory adjustments
+    this.additions = createRecord(database, 'InventoryAdjustment', user, date, true);
+    this.reductions = createRecord(database, 'InventoryAdjustment', user, date, false);
+
+    // Apply differences to appropriate inventory adjustment transactions
+    this.adjustInventory(database);
+
+    // Set the stocktake finalise details
+    this.finalisedBy = user;
+    this.stocktakeDate = date;
+    this.status = 'finalised';
+  }
+
+  /**
+   * Applies differences in snapshot and counted quantities to the appropriate inventory
+   * adjustment transactions. Assumes this.additions and this.reductions already exist.
+   * @param  {Realm} database   App wide local database
+   * @return {none}
+   */
+  adjustInventory(database) {
     // Go through each item, add it to the appropriate transaction, then copy over the
     // batch quantities allocated by the transaction item
+    const uncountedItems = [];
     this.items.forEach((stocktakeItem) => {
-      // If no counted quantity was entered, set it to the snapshot quantity
+      // If no counted quantity was entered, remember the item to delete
       if (stocktakeItem.countedTotalQuantity === null) {
-        stocktakeItem.countedTotalQuantity = stocktakeItem.snapshotTotalQuantity;
+        uncountedItems.push(stocktakeItem);
+        return; // This is a 'continue' in the context of the forEach loop
       }
 
       // Work out whether this should be in the additions or reductions transaction
@@ -69,21 +91,27 @@ export class Stocktake extends Realm.Object {
       const item = stocktakeItem.item;
       const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
 
+      // If this item has not previously had stock, add a new empty batch
+      if (difference > 0 && item.batches.length === 0) {
+        const itemBatch = createRecord(database, 'ItemBatch', item);
+        createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch);
+      }
+
       // Set the transaction item's quantity, causing it to handle batch logic
       // and apply adjustments to inventory
       transactionItem.setTotalQuantity(database, Math.abs(difference));
 
       // Copy batch quantities from transaction item to the stocktake item
       stocktakeItem.applyBatchAdjustments(database, transactionItem);
+
       // Prune off any batches with 0 quantity that were unchanged
       stocktakeItem.pruneBatches(database);
+
+      // Save the stocktake item
       database.save('StocktakeItem', stocktakeItem);
     });
-
-    // Set the stocktake finalise details
-    this.finalisedBy = user;
-    this.stocktakeDate = date;
-    this.status = 'finalised';
+    // Prune off any items that did not get counted
+    database.delete('StocktakeItem', uncountedItems);
   }
 }
 

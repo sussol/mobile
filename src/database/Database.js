@@ -71,7 +71,15 @@ export class Database {
    * @return {none}
    */
   delete(type, object, ...listenerArgs) {
-    const objects = Array.isArray(object) ? object : [object];
+    let objects = [object];
+
+    // If object is an array, a realm list, or a realm results object, use it directly
+    if (Array.isArray(objects) ||
+        objects.toString() === '[object List]' ||
+        objects.toString() === '[object Results]'
+      ) objects = object;
+
+    // Go through each object, delete it, and alert any change listeners
     objects.forEach(obj => {
       const record = { ...obj };
       if (obj && obj.destructor instanceof Function) obj.destructor(this);

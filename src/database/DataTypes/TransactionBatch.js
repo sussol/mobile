@@ -85,7 +85,7 @@ TransactionBatch.schema = {
     itemName: 'string',
     itemBatch: 'ItemBatch',
     batch: 'string',
-    expiryDate: 'date',
+    expiryDate: { type: 'date', optional: true },
     packSize: 'double',
     numberOfPacks: 'double',
     numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices

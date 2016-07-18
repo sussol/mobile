@@ -40,7 +40,9 @@ export function generateSyncJson(database, settings, syncOutRecord) {
     SyncType: SYNC_TYPES.translate(changeType, INTERNAL_TO_EXTERNAL),
     StoreID: settings.get(THIS_STORE_ID),
   };
-  if (changeType === CHANGE_TYPES.DELETE) return syncJson; // Don't need record data for deletes
+  if (changeType === CHANGE_TYPES.DELETE) {
+    return syncJson; // Don't need record data for deletes
+  }
 
   let syncData;
   if (syncOutRecord.changeType === 'delete') {

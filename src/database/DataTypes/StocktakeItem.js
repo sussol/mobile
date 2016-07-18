@@ -26,6 +26,10 @@ export class StocktakeItem extends Realm.Object {
     return this.item ? this.item.code : '';
   }
 
+  addBatch(stocktakeBatch) {
+    this.batches.push(stocktakeBatch);
+  }
+
   /**
    * Applies the adjustments to batches in the given transaction item to the batches
    * in this stocktake item

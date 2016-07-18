@@ -340,7 +340,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
  * @return {none}
  */
 function deleteRecord(database, recordType, recordId) {
-  console.log(`Deleting ${recordType}: ${recordId}`);
   switch (recordType) {
     case 'Item':
     case 'ItemBatch':
@@ -360,7 +359,6 @@ function deleteRecord(database, recordType, recordId) {
     case 'TransactionBatch':
     case 'TransactionCategory': {
       const recordToDelete = getObject(database, recordType, recordId);
-      console.log(recordToDelete);
       database.delete(recordType, recordToDelete);
       break;
     }
@@ -442,7 +440,8 @@ function getObject(database, type, id) {
   const results = database.objects(type).filtered('id == $0', id);
   if (results.length > 0) return results[0];
   const placeholder = generatePlaceholder(type, id);
-  return database.create(type, placeholder);
+  const ret = database.create(type, placeholder);
+  return ret;
 }
 
 /**
@@ -590,8 +589,8 @@ function parseDate(ISODate, ISOTime) {
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 6) {
     const hours = ISOTime.substring(0, 2);
-    const minutes = ISOTime.substring(2, 4);
-    const seconds = ISOTime.substring(4, 6);
+    const minutes = ISOTime.substring(3, 5);
+    const seconds = ISOTime.substring(6, 8);
     date.setHours(hours, minutes, seconds);
   }
   return date;

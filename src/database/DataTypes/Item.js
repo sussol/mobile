@@ -17,7 +17,9 @@ export class Item extends Realm.Object {
     if (!earliestBatch) return null;
 
     this.batches.forEach((batch) => {
-      if (batch.totalQuantity > 0 && batch.expiryDate < earliestBatch.expiryDate) {
+      if (batch.totalQuantity > 0 &&
+          batch.expiryDate &&
+          batch.expiryDate < earliestBatch.expiryDate) {
         earliestBatch = batch;
       }
     });
