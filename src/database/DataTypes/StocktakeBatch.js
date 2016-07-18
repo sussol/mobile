@@ -19,7 +19,7 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   set countedTotalQuantity(quantity) {
-    this.countedNumberOfPacks = quantity / this.packSize;
+    this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
   /**
