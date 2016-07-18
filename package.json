@@ -43,7 +43,7 @@
     "base-64": "^0.1.0",
     "react": "^15.2.1",
     "react-dom": "^15.2.1",
-    "react-native": "^0.29.0",
+    "react-native": "^0.30.0-rc.0",
     "react-native-autocomplete-input": "^1.1.0",
     "react-native-modalbox": "edmofro/react-native-modalbox",
     "react-native-uuid": "^1.4.8",
