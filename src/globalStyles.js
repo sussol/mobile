@@ -18,6 +18,7 @@ export const DARKER_GREY = '#333333';
 export const GREY = '#909192';
 export const WARM_GREY = '#9b9b9b';
 export const WARMER_GREY = '#a8aaac';
+export const LIGHT_GREY = '#c9cccd';
 export const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 export const FINALISE_GREEN = '#219d1b';
 export const FINALISED_RED = '#f63b30';
@@ -209,25 +210,27 @@ export default StyleSheet.create({
     textAlign: 'left',
     color: DARK_GREY,
   },
-  dataTableDropDown: {
-    marginHorizontal: 15,
-  },
   dataTableHeader: {
     backgroundColor: 'white',
   },
   dataTableHeaderCell: {
     height: 40,
     borderRightWidth: 2,
+    borderBottomWidth: 2,
     backgroundColor: 'white',
     borderColor: BLUE_WHITE,
   },
   dataTableRow: {
-    backgroundColor: 'white',
+    backgroundColor: BACKGROUND_COLOR,
+  },
+  dataTableExpansion: {
+    padding: 15,
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: BLUE_WHITE,
   },
   dataTableCell: {
     height: 45,
-    backgroundColor: ROW_BLUE,
-    borderTopWidth: 2,
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
   },

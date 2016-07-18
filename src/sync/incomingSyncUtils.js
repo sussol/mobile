@@ -175,6 +175,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         isCustomer: parseBoolean(record.customer),
         isSupplier: parseBoolean(record.supplier),
         isManufacturer: parseBoolean(record.manufacturer),
+        supplyingStoreId: record.supplying_store_id,
       };
       database.update(recordType, internalRecord);
       break;

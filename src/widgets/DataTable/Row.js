@@ -16,15 +16,18 @@ export class Row extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: false,
+      isExpanded: false,
     };
-    this.expandRow = this.expandRow.bind(this);
+    this.onPress = this.onPress.bind(this);
   }
 
-  expandRow() {
-    this.setState({
-      expanded: this.state.expanded !== true,
-    });
+  componentWillReceiveProps(nextProps) {
+    this.setState({ isExpanded: nextProps.isExpanded });
+  }
+
+  onPress() {
+    this.setState({ isExpanded: !this.state.isExpanded });
+    this.props.onPress();
   }
 
   render() {
@@ -34,12 +37,12 @@ export class Row extends React.Component {
         <TouchableOpacity
           {...touchableOpacityProps}
           style={[defaultStyles.row, style]}
-          onPress={this.expandRow}
+          onPress={this.onPress}
         >
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={defaultStyles.cellContainer}>
             {children}
           </View>
-          {this.state.expanded && renderExpansion()}
+          {this.state.isExpanded && renderExpansion()}
         </TouchableOpacity>
       );
     }
@@ -48,9 +51,9 @@ export class Row extends React.Component {
         <TouchableOpacity
           {...touchableOpacityProps}
           style={[defaultStyles.row, style]}
-          onPress={onPress}
+          onPress={this.onPress}
         >
-          <View style={{ flex: 1, flexDirection: 'row' }}>
+          <View style={defaultStyles.cellContainer}>
             {children}
           </View>
         </TouchableOpacity>
@@ -68,16 +71,20 @@ Row.propTypes = {
   style: View.propTypes.style,
   children: React.PropTypes.any,
   onPress: React.PropTypes.func,
+  isExpanded: React.PropTypes.bool,
   renderExpansion: React.PropTypes.func,
 };
 
 const defaultStyles = StyleSheet.create({
   row: {
-    flex: 1,
     flexDirection: 'column',
     flexWrap: 'nowrap',
     justifyContent: 'flex-start',
     alignItems: 'stretch',
     backgroundColor: '#d6f3ff',
+  },
+  cellContainer: {
+    flex: 1,
+    flexDirection: 'row',
   },
 });
