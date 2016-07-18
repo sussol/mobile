@@ -109,7 +109,7 @@ class SequenceKeyTranslator extends SyncTranslator {
       // The mSupply sequence keys we care about end with the store id they relate to
       const storeId = key.substring(key.length - thisStoreId.length);
       // If the sequence doesn't relate to this store, we will ignore it
-      if (!storeId === thisStoreId) return null;
+      if (storeId !== thisStoreId) return null;
       key = key.substring(0, key.length - thisStoreId.length);
     }
     let translatedKey = super.translate(key, direction);
