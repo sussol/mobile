@@ -190,8 +190,7 @@ function generateSyncData(settings, recordType, record) {
         item_line_ID: itemBatch.id,
         line_number: String(record.sortIndex),
         item_name: record.itemName,
-        is_from_inventory_adjustment: transaction.otherParty &&
-                                      transaction.otherParty.type === 'inventory_adjustment',
+        is_from_inventory_adjustment: transaction.isInventoryAdjustment,
         type: TRANSACTION_BATCH_TYPES.translate(record, INTERNAL_TO_EXTERNAL),
       };
     }
