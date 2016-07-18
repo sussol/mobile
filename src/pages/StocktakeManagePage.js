@@ -29,6 +29,7 @@ export class StocktakeManagePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.items = props.database.objects('Item');
+    this.state.currentTableItemIds = [];
     this.state.stocktakeName = '';
     this.state.isSelectAllItems = false;
     this.state.showItemsWithNoStock = false;
@@ -84,10 +85,10 @@ export class StocktakeManagePage extends GenericTablePage {
 
   toggleSelectAllItems() {
     const isSelectAllItems = !this.state.isSelectAllItems;
-    const { items } = this.state;
+    const { currentTableItemIds } = this.state;
     this.setState({
       isSelectAllItems: isSelectAllItems,
-      selection: isSelectAllItems ? items.map(item => item.id) : [],
+      selection: isSelectAllItems ? currentTableItemIds : [],
     }, this.refreshData);
   }
 
@@ -129,6 +130,8 @@ export class StocktakeManagePage extends GenericTablePage {
     if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
+    // Populate currentTableItemIds with the ids of the items in the filtered data
+    this.setState({ currentTableItemIds: data.map((item) => item.id) });
     return data;
   }
 
