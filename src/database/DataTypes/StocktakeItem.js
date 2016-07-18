@@ -28,6 +28,8 @@ export class StocktakeItem extends Realm.Object {
 
   addBatch(stocktakeBatch) {
     this.batches.push(stocktakeBatch);
+    if (!this.countedTotalQuantity) this.countedTotalQuantity = 0;
+    this.countedTotalQuantity += stocktakeBatch.countedTotalQuantity;
   }
 
   /**
