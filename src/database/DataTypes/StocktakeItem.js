@@ -38,17 +38,18 @@ export class StocktakeItem extends Realm.Object {
   /**
    * Applies the adjustments to batches in the given transaction item to the batches
    * in this stocktake item
+   * @param  {Realm}   database        App wide database
    * @param  {object}  transactionItem The transaction item
-   * @param  {Boolean} isAddition      Whether this should increase the count ()
    * @return {none}
    */
-  applyBatchAdjustments(transactionItem, isAddition) {
+  applyBatchAdjustments(database, transactionItem) {
     transactionItem.batches.forEach((transactionBatch) => {
       const stocktakeBatch = this.getBatch(transactionBatch.itemBatchId);
-      const difference = isAddition ?
+      const difference = transactionItem.transaction.isIncoming ?
                           transactionBatch.totalQuantity :
                           -transactionBatch.totalQuantity;
       stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity + difference;
+      database.save('StocktakeBatch', stocktakeBatch);
     });
   }
 }

@@ -64,8 +64,8 @@ export class TransactionBatch extends Realm.Object {
   getAmountToAllocate(quantity) {
     // Max that can be removed is the total quantity currently in the transaction batch
     if (quantity < 0) return Math.max(quantity, -this.totalQuantity);
-    // For customer invoice, max that can be added is amount in item batch
-    if (this.transaction.isIncoming) return Math.min(quantity, this.itemBatch.totalQuantity);
+    // For outgoing transactions, max that can be added is amount in item batch
+    if (this.transaction.isOutgoing) return Math.min(quantity, this.itemBatch.totalQuantity);
     // For supplier invoice, there is no maximum amount that can be added
     return quantity;
   }

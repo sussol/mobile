@@ -34,6 +34,10 @@ export class StocktakeBatch extends Realm.Object {
     // There is no maximum amount that can be added
     return quantity;
   }
+
+  toString() {
+    return `Stocktake batch representing ${this.itemBatch}`;
+  }
 }
 
 StocktakeBatch.schema = {

@@ -22,8 +22,8 @@ export function createRecord(database, type, ...args) {
       return createStocktake(database, ...args);
     case 'StocktakeItem':
       return createStocktakeItem(database, ...args);
-    case 'StockAdjustment':
-      return createStockAdjustment(database, ...args);
+    case 'InventoryAdjustment':
+      return createInventoryAdjustment(database, ...args);
     case 'TransactionItem':
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
@@ -51,6 +51,19 @@ function createCustomerInvoice(database, customer) {
   customer.addTransaction(invoice);
   database.save('Name', customer);
   return invoice;
+}
+
+function createInventoryAdjustment(database, type, user, date) {
+  return database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: '1',
+    entryDate: date,
+    type: type,
+    status: 'confirmed',
+    comment: '',
+    enteredBy: user,
+    otherParty: database.objects('Name').find((name) => name.type === 'inventory_adjustment'),
+  });
 }
 
 // Creates a Requisition
@@ -131,19 +144,6 @@ function createStocktakeItem(database, stocktake, item) {
   stocktake.items.push(stocktakeItem);
   database.save('Stocktake', stocktake);
   return stocktakeItem;
-}
-
-function createStockAdjustment(database, type, user, date) {
-  return database.create('Transaction', {
-    id: generateUUID(),
-    serialNumber: '1',
-    entryDate: date,
-    type: type,
-    status: 'confirmed',
-    comment: '',
-    enteredBy: user,
-    otherParty: database.objects('Name').find((name) => name.type === 'inventory_adjustment'),
-  });
 }
 
 // Creates a TransactionBatch and adds it to the TransactionItem

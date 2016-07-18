@@ -71,31 +71,29 @@ export class TransactionItem extends Realm.Object {
     // Apply the difference to make the new quantity
     let remainder = this.allocateDifferenceToBatches(database, difference);
 
-    // For customer invoices create/delete transaction batches to match new quantity
-    if (this.transaction.isOutgoing) {
-      // Go through item batches in stock, adding as required to get rid of remainder
-      for (let index = 0; index < this.item.batches.length && remainder !== 0; index ++) {
-        const itemBatch = this.item.batches[index];
+    // Go through item batches in stock, adding new transaction batches as
+    // required to get rid of remainder
+    for (let index = 0; index < this.item.batches.length && remainder !== 0; index ++) {
+      const itemBatch = this.item.batches[index];
 
-        // Skip if item batch has no stock, or is already in this TransactionItem
-        if (itemBatch.totalQuantity <= 0 ||
-          this.batches.find(transactionBatch => transactionBatch.itemBatch === itemBatch)) continue;
+      // Skip if item batch has no stock, or is already in this TransactionItem
+      if (itemBatch.totalQuantity <= 0 ||
+        this.batches.find(transactionBatch => transactionBatch.itemBatch === itemBatch)) continue;
 
-        // Create the new transaction batch and attach it to this transaction item
-        createRecord(database, 'TransactionBatch', this, itemBatch);
+      // Create the new transaction batch and attach it to this transaction item
+      createRecord(database, 'TransactionBatch', this, itemBatch);
 
 
-        // Apply as much of the remainder to it as possible
-        remainder = this.allocateDifferenceToBatches(database, remainder);
-      }
-
-      // See if any batches can be pruned, i.e. have 0 quantity for this invoice
-      const batchesToDelete = [];
-      this.batches.forEach(batch => {
-        if (batch.totalQuantity === 0) batchesToDelete.push(batch);
-      });
-      database.delete('TransactionBatch', batchesToDelete);
+      // Apply as much of the remainder to it as possible
+      remainder = this.allocateDifferenceToBatches(database, remainder);
     }
+
+    // See if any batches can be pruned, i.e. have 0 quantity for this invoice
+    const batchesToDelete = [];
+    this.batches.forEach(batch => {
+      if (batch.totalQuantity === 0) batchesToDelete.push(batch);
+    });
+    database.delete('TransactionBatch', batchesToDelete);
 
     if (remainder > 0) { // Something went wrong
       throw new Error(`Failed to allocate ${remainder} of ${quantity} to ${this.item.name}`);
@@ -116,12 +114,11 @@ export class TransactionItem extends Realm.Object {
    *                                   passed in.
    */
   allocateDifferenceToBatches(database, difference) {
-    let addQuantity = difference;
-
     // Sort batches shortest -> longest batch if increasing, longest -> shortest if reducing
     const batches = this.batches.sorted('expiryDate', difference < 0);
 
     // First apply as much of the quantity as possible to existing batches
+    let addQuantity = difference;
     for (let index = 0; addQuantity !== 0 && index < batches.length; index++) {
       const batchAddQuantity = batches[index].getAmountToAllocate(addQuantity);
       batches[index].setTotalQuantity(database, batches[index].totalQuantity + batchAddQuantity);
