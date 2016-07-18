@@ -1,14 +1,22 @@
 import Realm from 'realm';
 import {
   addBatchToParent,
+  createRecord,
   getTotal,
+  reuseNumber as reuseSerialNumber,
 } from '../utilities';
-import { createRecord } from '../createRecord';
+import { SERIAL_NUMBER_KEYS } from '../index';
 
 export class Transaction extends Realm.Object {
   constructor() {
     super();
     this.addItemsFromMasterList = this.addItemsFromMasterList.bind(this);
+  }
+
+  destructor(database) {
+    if (this.isCustomerInvoice) {
+      reuseSerialNumber(database, SERIAL_NUMBER_KEYS.CUSTOMER_INVOICE, this.serialNumber);
+    }
   }
 
   get isFinalised() {

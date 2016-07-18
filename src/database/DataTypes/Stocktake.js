@@ -1,7 +1,5 @@
 import Realm from 'realm';
-import { addBatchToParent, generateUUID } from '../utilities';
-import { createRecord } from '../createRecord';
-
+import { addBatchToParent, createRecord } from '../utilities';
 
 export class Stocktake extends Realm.Object {
   destructor(database) {

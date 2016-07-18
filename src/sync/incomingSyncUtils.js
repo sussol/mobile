@@ -3,6 +3,7 @@ import {
   NAME_TYPES,
   RECORD_TYPES,
   REQUISITION_TYPES,
+  SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_TYPES,
@@ -194,6 +195,33 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       }
       break;
     }
+    case 'NumberSequence': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
+      internalRecord = {
+        id: record.ID,
+        sequenceKey: sequenceKey,
+        highestNumberUsed: parseNumber(record.value),
+      };
+      database.update(recordType, internalRecord);
+      break;
+    }
+    case 'NumberToReuse': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
+      const numberSequence = getObject(database, 'NumberSequence', sequenceKey, 'sequenceKey');
+      internalRecord = {
+        id: record.ID,
+        numberSequence: numberSequence,
+        number: parseNumber(record.number_to_use),
+      };
+      const numberToReuse = database.update(recordType, internalRecord);
+      // Attach the number to reuse to the number seqeunce
+      numberSequence.addNumberToReuse(numberToReuse);
+      break;
+    }
     case 'Requisition': {
       internalRecord = {
         id: record.ID,
@@ -340,7 +368,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
  * @return {none}
  */
 function deleteRecord(database, recordType, recordId) {
-  console.log(`Deleting ${recordType}: ${recordId}`);
   switch (recordType) {
     case 'Item':
     case 'ItemBatch':
@@ -352,6 +379,8 @@ function deleteRecord(database, recordType, recordId) {
     case 'MasterListNameJoin':
     case 'Name':
     case 'NameStoreJoin':
+    case 'NumberSequence':
+    case 'NumberToReuse':
     case 'Requisition':
     case 'RequisitionItem':
     case 'Stocktake':
@@ -360,7 +389,6 @@ function deleteRecord(database, recordType, recordId) {
     case 'TransactionBatch':
     case 'TransactionCategory': {
       const recordToDelete = getObject(database, recordType, recordId);
-      console.log(recordToDelete);
       database.delete(recordType, recordToDelete);
       break;
     }
@@ -401,6 +429,10 @@ export function sanityCheckIncomingRecord(recordType, record) {
       && record.supplier && record.manufacturer;
     case 'NameStoreJoin':
       return record.name_ID && record.store_ID;
+    case 'NumberSequence':
+      return record.name && record.value;
+    case 'NumberToReuse':
+      return record.name && record.number_to_use;
     case 'Requisition':
       return record.status && record.date_entered && record.type && record.daysToSupply
              && record.serial_number;
@@ -431,28 +463,29 @@ export function sanityCheckIncomingRecord(recordType, record) {
 /**
  * Returns the database object with the given id, if it exists, or creates a
  * placeholder with that id if it doesn't.
- * @param  {Realm}  database The local database
- * @param  {string} type     The type of database object
- * @param  {string} id       The id of the database object
- * @return {Realm.object}    Either the existing database object with the given
- *                           id, or a placeholder if none
+ * @param  {Realm}  database         The local database
+ * @param  {string} type             The type of database object
+ * @param  {string} primaryKey       The primary key of the database object, usually its id
+ * @param  {string} primaryKeyField  The field used as the primary key, defaults to 'id'
+ * @return {Realm.object}            Either the existing database object with the given
+ *                                   primary key, or a placeholder if none
  */
-function getObject(database, type, id) {
-  if (!id || id.length < 1) return null;
-  const results = database.objects(type).filtered('id == $0', id);
+function getObject(database, type, primaryKey, primaryKeyField = 'id') {
+  if (!primaryKey || primaryKey.length < 1) return null;
+  const results = database.objects(type).filtered(`${primaryKeyField} == $0`, primaryKey);
   if (results.length > 0) return results[0];
-  const placeholder = generatePlaceholder(type, id);
+  const placeholder = generatePlaceholder(type, primaryKey);
   return database.create(type, placeholder);
 }
 
 /**
  * Generate json representing the type of database object specified, with placeholder
- * values in all fields other than id.
- * @param  {string} type The type of database object
- * @param  {string} id   The id of the database object
- * @return {object}      Json object representing a placeholder of the given type
+ * values in all fields other than the primary key.
+ * @param  {string} type         The type of database object
+ * @param  {string} primaryKey   The primary key of the database object, usually its id
+ * @return {object}              Json object representing a placeholder of the given type
  */
-function generatePlaceholder(type, id) {
+function generatePlaceholder(type, primaryKey) {
   let placeholder;
   const placeholderString = 'placeholder';
   const placeholderNumber = 0;
@@ -460,12 +493,12 @@ function generatePlaceholder(type, id) {
   switch (type) {
     case 'Address':
       placeholder = {
-        id: id,
+        id: primaryKey,
       };
       return placeholder;
     case 'Item':
       placeholder = {
-        id: id,
+        id: primaryKey,
         code: placeholderString,
         name: placeholderString,
         defaultPackSize: placeholderNumber,
@@ -473,19 +506,19 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'ItemCategory':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
       };
       return placeholder;
     case 'ItemDepartment':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
       };
       return placeholder;
     case 'ItemBatch':
       placeholder = {
-        id: id,
+        id: primaryKey,
         packSize: placeholderNumber,
         numberOfPacks: placeholderNumber,
         expiryDate: placeholderDate,
@@ -496,13 +529,13 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'MasterList':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
       };
       return placeholder;
     case 'Name':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
         code: placeholderString,
         type: placeholderString,
@@ -511,9 +544,15 @@ function generatePlaceholder(type, id) {
         isManufacturer: false,
       };
       return placeholder;
+    case 'NumberSequence':
+      placeholder = {
+        id: generateUUID(),
+        sequenceKey: primaryKey,
+      };
+      return placeholder;
     case 'Stocktake':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
         createdDate: placeholderDate,
         status: placeholderString,
@@ -522,7 +561,7 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'Transaction':
       placeholder = {
-        id: id,
+        id: primaryKey,
         serialNumber: placeholderString,
         comment: placeholderString,
         entryDate: placeholderDate,
@@ -533,7 +572,7 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'TransactionCategory':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
         code: placeholderString,
         type: placeholderString,
@@ -541,7 +580,7 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'User':
       placeholder = {
-        id: id,
+        id: primaryKey,
         username: placeholderString,
         passwordHash: placeholderString,
       };
@@ -604,11 +643,7 @@ function parseDate(ISODate, ISOTime) {
  */
 function parseNumber(numberString) {
   if (!numberString || numberString.length < 1) return null;
-  try {
-    return parseFloat(numberString);
-  } catch (error) {
-    throw error;
-  }
+  return parseFloat(numberString);
 }
 
 /**
