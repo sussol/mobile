@@ -170,29 +170,6 @@ NameStoreJoin.schema = {
   },
 };
 
-// Number sequence has sequenceKey as primary key, to a) ensure it is always unique,
-// and b) allow us to change the id after it is created (i.e. on incoming sync)
-NumberSequence.schema = {
-  name: 'NumberSequence',
-  primaryKey: 'sequenceKey',
-  properties: {
-    id: 'string',
-    sequenceKey: 'string',
-    highestNumberUsed: { type: 'int', default: 0 },
-    numbersToReuse: { type: 'list', objectType: 'NumberToReuse' },
-  },
-};
-
-NumberToReuse.schema = {
-  name: 'NumberToReuse',
-  primaryKey: 'id',
-  properties: {
-    id: 'string',
-    numberSequence: 'NumberSequence',
-    number: 'int',
-  },
-};
-
 Requisition.schema = {
   name: 'Requisition',
   primaryKey: 'id',

@@ -10,3 +10,13 @@ export class NumberToReuse extends Realm.Object {
     return `${this.number} available for reuse in sequence ${this.sequenceKey}`;
   }
 }
+
+NumberToReuse.schema = {
+  name: 'NumberToReuse',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    numberSequence: 'NumberSequence',
+    number: 'int',
+  },
+};

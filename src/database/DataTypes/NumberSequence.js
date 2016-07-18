@@ -53,3 +53,17 @@ export class NumberSequence extends Realm.Object {
     return `Highest in sequence ${this.sequenceKey} is ${this.highestNumberUsed}`;
   }
 }
+
+
+// Number sequence has sequenceKey as primary key, to a) ensure it is always unique,
+// and b) allow us to change the id after it is created (i.e. on incoming sync)
+NumberSequence.schema = {
+  name: 'NumberSequence',
+  primaryKey: 'sequenceKey',
+  properties: {
+    id: 'string',
+    sequenceKey: 'string',
+    highestNumberUsed: { type: 'int', default: 0 },
+    numbersToReuse: { type: 'list', objectType: 'NumberToReuse' },
+  },
+};
