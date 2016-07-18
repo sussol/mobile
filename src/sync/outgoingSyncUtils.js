@@ -193,7 +193,7 @@ function generateSyncData(settings, recordType, record) {
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
-        type: TRANSACTION_BATCH_TYPES.translate(record, INTERNAL_TO_EXTERNAL),
+        type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
       };
     }
     default:
