@@ -7,7 +7,8 @@ import { MenuPage } from './MenuPage';
 import { RequisitionsPage } from './RequisitionsPage';
 import { RequisitionPage } from './RequisitionPage';
 import { StockPage } from './StockPage';
-import { StocktakeEditPage } from './StocktakeEditPage';
+import { StocktakeEditPage,
+         checkForFinaliseError as checkForStocktakeFinaliseError } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
@@ -47,6 +48,7 @@ export const FINALISABLE_PAGES = {
     recordToFinaliseKey: 'requisition',
   },
   stocktakeEditor: {
+    checkForFinaliseError: checkForStocktakeFinaliseError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
   },
