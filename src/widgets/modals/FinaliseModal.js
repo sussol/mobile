@@ -34,16 +34,17 @@ export function FinaliseModal(props) {
       isOpen={props.isOpen}
       questionText={errorText || text}
       cancelText="Got it"
-      onConfirm={!errorText ? () => {
-        const record = props.record;
-        if (record) {
-          props.database.write(() => {
-            record.finalise(props.database, props.user);
-            props.database.save(props.recordType, record);
-          });
-        }
-        if (props.onClose) props.onClose();
-      } : null}
+      onConfirm={
+        !errorText ? () => {
+          const record = props.record;
+          if (record) {
+            props.database.write(() => {
+              record.finalise(props.database, props.user);
+              props.database.save(props.recordType, record);
+            });
+          }
+          if (props.onClose) props.onClose();
+        } : null}
       onCancel={() => { if (props.onClose) props.onClose(); }}
     />);
 }
