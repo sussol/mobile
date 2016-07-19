@@ -14,25 +14,33 @@ export class Stocktake extends Realm.Object {
     );
   }
 
-  setItemsByID(database, newItemsIds) {
+  /**
+   * Sets the stocktake items attached to this stocktake, based on the array of
+   * item ids passed in
+   * @param   {Realm} database   App wide local database
+   * @param   {array} newItemIds The ids of the items to include in this stocktake
+   * @return  {none}
+   */
+  setItemsByID(database, newItemIds) {
     if (this.isFinalised) throw new Error('Cannot add items to a finalised stocktake');
-    const items = database.objects('Item');
+
+    // Remove any stocktake items that aren't in the array of new item ids
+    const itemsToRemove = [];
     this.items.forEach((stocktakeItem) => {
-      const itemId = stocktakeItem.itemId;
-      const itemIdIndex = newItemsIds.indexOf(itemId);
-      // If an item in newItemsIds already exists in the stocktake, remove it from newItemsIds.
-      if (itemIdIndex >= 0) {
-        newItemsIds.splice(itemIdIndex, 1);
-      }
-      // If the item in the stocktake is not in the newItemsIds, remove it from the stocktake.
-      if (!newItemsIds.some(id => id === itemId)) {
-        database.delete('StocktakeItem', stocktakeItem);
-      }
+      const itemIdIndex = newItemIds.indexOf(stocktakeItem.itemId);
+      if (itemIdIndex >= 0) itemsToRemove.push(stocktakeItem);
+      else newItemIds.splice(itemIdIndex, 1); // Already in this stocktake, no need to add
     });
-    // Add StocktakeItem for each Item.id in newItemsIds to the stocktake.
-    newItemsIds.forEach((itemId) => {
-      const item = items.find(i => i.id === itemId);
+    database.delete('StocktakeItem', itemsToRemove);
+
+    // Add a new StocktakeItem for each new item id
+    const items = database.objects('Item');
+    newItemIds.forEach((itemId) => {
+      // Find the matching database item and use it to create a stocktake item
+      const item = items.filtered('id == $0', itemId)[0];
       const stocktakeItem = createRecord(database, 'StocktakeItem', this, item);
+
+      // Add all item batches to the stocktake item as stocktake batches
       item.batches.forEach((itemBatch) =>
         createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch));
     });
