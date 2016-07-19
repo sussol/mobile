@@ -31,7 +31,6 @@ export class StocktakeManagePage extends GenericTablePage {
     this.state.items = props.database.objects('Item');
     this.state.currentTableItemIds = [];
     this.state.stocktakeName = '';
-    this.state.isSelectAllItems = false;
     this.state.showItemsWithNoStock = false;
     this.state.sortBy = 'name';
     this.columns = COLUMNS;
@@ -83,12 +82,26 @@ export class StocktakeManagePage extends GenericTablePage {
     );
   }
 
-  toggleSelectAllItems() {
-    const isSelectAllItems = !this.state.isSelectAllItems;
-    const { currentTableItemIds } = this.state;
+  toggleSelectAllItems(isAllItemsSelected) {
+    const { currentTableItemIds, selection } = this.state;
+
+    if (isAllItemsSelected) { // Deselect all in currentTableItemIds
+      currentTableItemIds.forEach((id) => {
+        const idIndex = selection.indexOf(id);
+        if (idIndex >= 0) {
+          selection.splice(idIndex, 1);
+        }
+      });
+    } else { // Add all ids in currentTableItemIds that aren't already in selection
+      currentTableItemIds.forEach((id) => {
+        if (!selection.includes(id)) {
+          selection.push(id);
+        }
+      });
+    }
+
     this.setState({
-      isSelectAllItems: isSelectAllItems,
-      selection: isSelectAllItems ? currentTableItemIds : [],
+      selection: [...selection],
     }, this.refreshData);
   }
 
@@ -151,11 +164,14 @@ export class StocktakeManagePage extends GenericTablePage {
 
   render() {
     const {
-      isSelectAllItems,
+      currentTableItemIds,
       showItemsWithNoStock,
       selection,
     } = this.state;
     const { stocktake } = this.props;
+    const isAllItemsSelected = currentTableItemIds.every((tableId) =>
+      selection.find((selectionId) => selectionId === tableId));
+
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -175,9 +191,9 @@ export class StocktakeManagePage extends GenericTablePage {
                     isOn: showItemsWithNoStock,
                   },
                   {
-                    text: 'Select All Items',
-                    onPress: () => this.toggleSelectAllItems(),
-                    isOn: isSelectAllItems,
+                    text: 'All Items Selected',
+                    onPress: () => this.toggleSelectAllItems(isAllItemsSelected),
+                    isOn: isAllItemsSelected,
                   },
                 ]}
               />
