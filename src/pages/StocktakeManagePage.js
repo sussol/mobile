@@ -169,8 +169,7 @@ export class StocktakeManagePage extends GenericTablePage {
       selection,
     } = this.state;
     const { stocktake } = this.props;
-    const isAllItemsSelected = currentTableItemIds.every((tableId) =>
-      selection.find((selectionId) => selectionId === tableId));
+    const isAllItemsSelected = currentTableItemIds.every((id) => selection.includes(id));
 
     return (
       <View style={globalStyles.pageContentContainer}>
