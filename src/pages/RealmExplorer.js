@@ -39,6 +39,8 @@ const OBJECT_TYPES = [
   'MasterListNameJoin',
   'Name',
   'NameStoreJoin',
+  'NumberSequence',
+  'NumberToReuse',
   'Requisition',
   'RequisitionItem',
   'Setting',

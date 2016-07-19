@@ -11,6 +11,7 @@ import { View } from 'react-native';
 import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { parsePositiveInteger } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Stocktake', 'StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -39,10 +40,10 @@ export class StocktakeEditPage extends GenericTablePage {
    * @return {none}
    */
   onEndEditing(key, stocktakeItem, newValue) {
-    if (key !== 'countedTotalQuantity') return;
+    if (key !== 'countedTotalQuantity' || newValue === '') return;
     this.props.database.write(() => {
-      const quantity = Math.round(parseFloat(newValue));
-      stocktakeItem.setCountedNumberOfPacks(this.props.database, quantity);
+      const quantity = parsePositiveInteger(newValue);
+      stocktakeItem.countedTotalQuantity = quantity;
       this.props.database.save('StocktakeItem', stocktakeItem);
     });
   }
@@ -73,7 +74,7 @@ export class StocktakeEditPage extends GenericTablePage {
       case 'countedTotalQuantity':
         return {
           type: this.props.stocktake.isFinalised ? 'text' : 'editable',
-          cellContents: item.countedTotalQuantity,
+          cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
         };
     }
   }

@@ -63,7 +63,7 @@ export class Synchronizer {
           },
         });
       await this.pull(setProgress);
-    } catch (error) { // Did not authenticate or internet failed, wipe db and pass error up
+    } catch (error) { // Did not authenticate, sync error, or no internet, wipe db and pass error up
       this.database.write(() => { this.database.deleteAll(); });
       throw error;
     }

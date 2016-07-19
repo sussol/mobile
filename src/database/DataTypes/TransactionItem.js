@@ -1,7 +1,6 @@
 import Realm from 'realm';
 
-import { getTotal } from '../utilities';
-import { createRecord } from '../createRecord';
+import { createRecord, getTotal } from '../utilities';
 
 export class TransactionItem extends Realm.Object {
 
@@ -40,12 +39,21 @@ export class TransactionItem extends Realm.Object {
   // for the fact that any issued in a confirmed customer invoice has already
   // been taken off the total
   get availableQuantity() {
-    if (this.transaction.isCustomerInvoice &&
+    if (this.transaction.isOutgoing &&
        (this.transaction.isConfirmed ||
         this.transaction.isFinalised)) {
       return this.item.totalQuantity + this.totalQuantity;
     }
     return this.item.totalQuantity;
+  }
+
+  /**
+   * Returns the batch attached to this transaction item with the given item batch id
+   * @param  {string} itemId The item id to look for
+   * @return {object}        The TransactionBatch with the matching item id
+   */
+  getBatch(itemBatchId) {
+    return this.batches.find(transactionBatch => transactionBatch.itemBatchId === itemBatchId);
   }
 
   addBatch(transactionBatch) {
@@ -71,31 +79,27 @@ export class TransactionItem extends Realm.Object {
     // Apply the difference to make the new quantity
     let remainder = this.allocateDifferenceToBatches(database, difference);
 
-    // For customer invoices create/delete transaction batches to match new quantity
-    if (this.transaction.isCustomerInvoice) {
-      // Go through item batches in stock, adding as required to get rid of remainder
-      for (let index = 0; index < this.item.batches.length && remainder !== 0; index ++) {
-        const itemBatch = this.item.batches[index];
+    // Go through item batches in stock, adding new transaction batches as
+    // required to get rid of remainder
+    for (let index = 0; index < this.item.batches.length && remainder !== 0; index ++) {
+      const itemBatch = this.item.batches[index];
 
-        // Skip if item batch has no stock, or is already in this TransactionItem
-        if (itemBatch.totalQuantity <= 0 ||
-          this.batches.find(transactionBatch => transactionBatch.itemBatch === itemBatch)) continue;
+      // Skip if item batch is already in this TransactionItem
+      if (this.batches.find(transactionBatch => transactionBatch.itemBatch === itemBatch)) continue;
 
-        // Create the new transaction batch and attach it to this transaction item
-        createRecord(database, 'TransactionBatch', this, itemBatch);
+      // Create the new transaction batch and attach it to this transaction item
+      createRecord(database, 'TransactionBatch', this, itemBatch);
 
-
-        // Apply as much of the remainder to it as possible
-        remainder = this.allocateDifferenceToBatches(database, remainder);
-      }
-
-      // See if any batches can be pruned, i.e. have 0 quantity for this invoice
-      const batchesToDelete = [];
-      this.batches.forEach(batch => {
-        if (batch.totalQuantity === 0) batchesToDelete.push(batch);
-      });
-      database.delete('TransactionBatch', batchesToDelete);
+      // Apply as much of the remainder to it as possible
+      remainder = this.allocateDifferenceToBatches(database, remainder);
     }
+
+    // See if any batches can be pruned, i.e. have 0 quantity for this invoice
+    const batchesToDelete = [];
+    this.batches.forEach(batch => {
+      if (batch.totalQuantity === 0) batchesToDelete.push(batch);
+    });
+    database.delete('TransactionBatch', batchesToDelete);
 
     if (remainder > 0) { // Something went wrong
       throw new Error(`Failed to allocate ${remainder} of ${quantity} to ${this.item.name}`);
@@ -116,12 +120,11 @@ export class TransactionItem extends Realm.Object {
    *                                   passed in.
    */
   allocateDifferenceToBatches(database, difference) {
-    let addQuantity = difference;
-
     // Sort batches shortest -> longest batch if increasing, longest -> shortest if reducing
-    const batches = this.batches.sorted('expiryDate', difference < 0);
+    const batches = this.batches.sorted('expiryDate', difference < 0); // TODO deal with null expiries
 
     // First apply as much of the quantity as possible to existing batches
+    let addQuantity = difference;
     for (let index = 0; addQuantity !== 0 && index < batches.length; index++) {
       const batchAddQuantity = batches[index].getAmountToAllocate(addQuantity);
       batches[index].setTotalQuantity(database, batches[index].totalQuantity + batchAddQuantity);
@@ -131,3 +134,14 @@ export class TransactionItem extends Realm.Object {
     return addQuantity; // The remainder, not able to be allocated to the batches passed in
   }
 }
+
+TransactionItem.schema = {
+  name: 'TransactionItem',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: 'Item',
+    transaction: 'Transaction',
+    batches: { type: 'list', objectType: 'TransactionBatch' },
+  },
+};

@@ -7,3 +7,14 @@ export class MasterList extends Realm.Object {
     this.items.push(masterListItem);
   }
 }
+
+MasterList.schema = {
+  name: 'MasterList',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    name: 'string',
+    note: { type: 'string', optional: true },
+    items: { type: 'list', objectType: 'MasterListItem' },
+  },
+};

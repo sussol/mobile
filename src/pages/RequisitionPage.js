@@ -13,7 +13,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveNumber } from '../utilities';
+import { formatDate, parsePositiveInteger } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import {
@@ -95,7 +95,7 @@ export class RequisitionPage extends GenericTablePage {
   onEndEditing(key, requisitionItem, newValue) {
     if (key !== 'requiredQuantity') return;
     this.props.database.write(() => {
-      requisitionItem.requiredQuantity = parsePositiveNumber(newValue);
+      requisitionItem.requiredQuantity = parsePositiveInteger(newValue);
       this.props.database.save('RequisitionItem', requisitionItem);
     });
   }

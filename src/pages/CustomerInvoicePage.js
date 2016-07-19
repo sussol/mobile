@@ -12,7 +12,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveNumber, truncateString } from '../utilities';
+import { formatDate, parsePositiveInteger, truncateString } from '../utilities';
 import { createRecord } from '../database';
 import {
   AutocompleteSelector,
@@ -100,7 +100,7 @@ export class CustomerInvoicePage extends GenericTablePage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'totalQuantity') return;
     this.props.database.write(() => {
-      const quantity = Math.min(parsePositiveNumber(newValue), transactionItem.availableQuantity);
+      const quantity = Math.min(parsePositiveInteger(newValue), transactionItem.availableQuantity);
       transactionItem.setTotalQuantity(this.props.database, quantity);
       this.props.database.save('TransactionItem', transactionItem);
     });

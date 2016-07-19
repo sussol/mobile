@@ -16,3 +16,14 @@ export class ItemStoreJoin extends Realm.Object {
     return `Joins item ${this.itemId} with ${this.joinsThisStore ? 'this' : 'another'} store`;
   }
 }
+
+// ItemStoreJoin never used internally, only held for sync delete functionality
+ItemStoreJoin.schema = {
+  name: 'ItemStoreJoin',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    itemId: 'string',
+    joinsThisStore: 'bool',
+  },
+};

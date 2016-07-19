@@ -2,6 +2,8 @@ import { CHANGE_TYPES, generateUUID } from '../database';
 const { CREATE, UPDATE, DELETE } = CHANGE_TYPES;
 const recordTypesSynced = [
   'ItemBatch',
+  'NumberSequence',
+  'NumberToReuse',
   'Requisition',
   'RequisitionItem',
   'Stocktake',
@@ -114,10 +116,7 @@ export class SyncQueue {
    */
   use(records) {
     this.database.write(() => {
-      records.forEach((record) => {
-        if (!record.isValid()) return; // Already deleted
-        this.database.delete('SyncOut', record);
-      });
+      this.database.delete('SyncOut', records);
     });
   }
 }

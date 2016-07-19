@@ -3,6 +3,7 @@ import {
   RECORD_TYPES,
   REQUISITION_STATUSES,
   REQUISITION_TYPES,
+  SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_BATCH_TYPES,
@@ -40,7 +41,9 @@ export function generateSyncJson(database, settings, syncOutRecord) {
     SyncType: SYNC_TYPES.translate(changeType, INTERNAL_TO_EXTERNAL),
     StoreID: settings.get(THIS_STORE_ID),
   };
-  if (changeType === CHANGE_TYPES.DELETE) return syncJson; // Don't need record data for deletes
+  if (changeType === CHANGE_TYPES.DELETE) {
+    return syncJson; // Don't need record data for deletes
+  }
 
   let syncData;
   if (syncOutRecord.changeType === 'delete') {
@@ -93,6 +96,22 @@ function generateSyncData(settings, recordType, record) {
         name_ID: settings.get(SUPPLYING_STORE_ID),
       };
     }
+    case 'NumberSequence': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      return {
+        ID: record.id,
+        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
+        value: String(record.highestNumberUsed),
+      };
+    }
+    case 'NumberToReuse': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      return {
+        ID: record.id,
+        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
+        number_to_use: String(record.number),
+      };
+    }
     case 'Requisition': {
       return {
         ID: record.id,
@@ -122,6 +141,7 @@ function generateSyncData(settings, recordType, record) {
     case 'Stocktake': {
       return {
         ID: record.id,
+        Description: record.name,
         stock_take_date: getDateString(record.stocktakeDate),
         stock_take_time: getTimeString(record.stocktakeDate),
         created_by_ID: record.createdBy && record.createdBy.id,
@@ -136,20 +156,19 @@ function generateSyncData(settings, recordType, record) {
       };
     }
     case 'StocktakeBatch': {
-      const itemBatch = record.itemBatch;
       return {
         ID: record.id,
         stock_take_ID: record.stocktake && record.stocktake.id,
-        item_line_ID: itemBatch.id,
+        item_line_ID: record.itemBatchId,
         snapshot_qty: String(record.snapshotNumberOfPacks),
         snapshot_packsize: String(record.packSize),
         stock_take_qty: String(record.countedNumberOfPacks),
         line_number: String(record.sortIndex),
-        expiry: getDateString(itemBatch.expiryDate),
-        cost_price: String(itemBatch.costPrice),
-        sell_price: String(itemBatch.sellPrice),
-        Batch: itemBatch.batch,
-        item_ID: itemBatch.itemId,
+        expiry: getDateString(record.expiryDate),
+        cost_price: String(record.costPrice),
+        sell_price: String(record.sellPrice),
+        Batch: record.batch,
+        item_ID: record.itemId,
       };
     }
     case 'Transaction': {
@@ -190,9 +209,8 @@ function generateSyncData(settings, recordType, record) {
         item_line_ID: itemBatch.id,
         line_number: String(record.sortIndex),
         item_name: record.itemName,
-        is_from_inventory_adjustment: transaction.otherParty &&
-                                      transaction.otherParty.type === 'inventory_adjustment',
-        type: TRANSACTION_BATCH_TYPES.translate(record, INTERNAL_TO_EXTERNAL),
+        is_from_inventory_adjustment: transaction.isInventoryAdjustment,
+        type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
       };
     }
     default:
