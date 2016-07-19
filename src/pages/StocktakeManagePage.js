@@ -29,7 +29,7 @@ export class StocktakeManagePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.items = props.database.objects('Item');
-    this.state.currentTableItemIds = [];
+    this.state.visibleItemIds = [];
     this.state.stocktakeName = '';
     this.state.showItemsWithNoStock = false;
     this.state.sortBy = 'name';
@@ -83,17 +83,17 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   toggleSelectAllItems(isAllItemsSelected) {
-    const { currentTableItemIds, selection } = this.state;
+    const { visibleItemIds, selection } = this.state;
 
-    if (isAllItemsSelected) { // Deselect all in currentTableItemIds
-      currentTableItemIds.forEach((id) => {
+    if (isAllItemsSelected) { // Deselect all visible items
+      visibleItemIds.forEach((id) => {
         const idIndex = selection.indexOf(id);
         if (idIndex >= 0) {
           selection.splice(idIndex, 1);
         }
       });
-    } else { // Add all ids in currentTableItemIds that aren't already in selection
-      currentTableItemIds.forEach((id) => {
+    } else { // Add all ids in visibleItemIds that aren't already in selection
+      visibleItemIds.forEach((id) => {
         if (!selection.includes(id)) {
           selection.push(id);
         }
@@ -143,8 +143,8 @@ export class StocktakeManagePage extends GenericTablePage {
     if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
-    // Populate currentTableItemIds with the ids of the items in the filtered data
-    this.setState({ currentTableItemIds: data.map((item) => item.id) });
+    // Populate visibleItemIds with the ids of the items in the filtered data
+    this.setState({ visibleItemIds: data.map((item) => item.id) });
     return data;
   }
 
@@ -164,12 +164,12 @@ export class StocktakeManagePage extends GenericTablePage {
 
   render() {
     const {
-      currentTableItemIds,
+      visibleItemIds,
       showItemsWithNoStock,
       selection,
     } = this.state;
     const { stocktake } = this.props;
-    const isAllItemsSelected = currentTableItemIds.every((id) => selection.includes(id));
+    const isAllItemsSelected = visibleItemIds.every((id) => selection.includes(id));
 
     return (
       <View style={globalStyles.pageContentContainer}>
