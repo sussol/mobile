@@ -151,10 +151,7 @@ export class StocktakeManagePage extends GenericTablePage {
   renderCell(key, item) {
     switch (key) {
       default:
-      case 'code':
-        return item.code;
-      case 'name':
-        return item.name;
+        return item[key];
       case 'selected':
         return {
           type: 'checkable',
