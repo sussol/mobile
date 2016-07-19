@@ -43,6 +43,27 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
+   * Check whether at least one stocktake item has a counted quantity set
+   * @return {boolean} True if one or more counted items, otherwise false
+   */
+  get hasSomeCountedItems() {
+    return this.items.filtered('countedTotalQuantity != null').length === 0;
+  }
+
+  /**
+   * Get any stocktake items that would cause a reduction larger than the amount
+   * of available stock in inventory if it were finalised.
+   * @return {array} All stocktake items that have been reduced below minimum level
+   */
+  get itemsBelowMinimum() {
+    const itemsBelowMinimum = [];
+    this.items.forEach((stocktakeItem) => {
+      if (stocktakeItem.isReducedBelowMinimum) itemsBelowMinimum.push(stocktakeItem);
+    });
+    return itemsBelowMinimum;
+  }
+
+  /**
    * Finalises this stocktake, creating transactions to apply the stock changes to inventory
    * @param {Realm.Object}  user     The current user logged in
    * @param {Realm}         database App wide local database
