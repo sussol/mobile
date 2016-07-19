@@ -54,7 +54,8 @@ export class CustomersPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.customers.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
+    let data = this.state.customers
+                         .filtered(`name BEGINSWITH[c] OR code BEGINSWITH[c] "${searchTerm}"`);
     data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     return data;
   }
@@ -74,14 +75,6 @@ export class CustomersPage extends GenericTablePage {
           isChecked: customer.useMasterList,
         };
     }
-  }
-
-  renderSearchBar() {
-    return (
-      <SearchBar
-        onChange={(event) => this.onSearchChange(event)}
-        keyboardType="numeric"
-      />);
   }
 }
 
