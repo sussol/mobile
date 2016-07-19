@@ -2,6 +2,7 @@ import {
   EXTERNAL_TO_INTERNAL,
   NAME_TYPES,
   RECORD_TYPES,
+  REQUISITION_STATUSES,
   REQUISITION_TYPES,
   SEQUENCE_KEYS,
   STATUSES,
@@ -225,7 +226,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'Requisition': {
       internalRecord = {
         id: record.ID,
-        status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
         serialNumber: record.serial_number,
