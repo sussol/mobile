@@ -104,14 +104,6 @@ export class StocktakesPage extends GenericTablePage {
     }
   }
 
-  renderSearchBar() {
-    return (
-      <SearchBar
-        onChange={(event) => this.onSearchChange(event)}
-        keyboardType="numeric"
-      />);
-  }
-
   render() {
     const { showCurrent, selection } = this.state;
     return (

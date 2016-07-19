@@ -85,7 +85,9 @@ export class CustomerInvoicesPage extends GenericTablePage {
    * properties.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.transactions.filtered(`otherParty.name BEGINSWITH[c] "${searchTerm}"`);
+    let data = this.state.transactions.filtered(
+                 'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
+                 searchTerm);
     if (sortBy === 'otherParty.name') {
       // Convert to javascript array obj then sort with standard array functions.
       data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));

@@ -86,7 +86,7 @@ export class RequisitionsPage extends GenericTablePage {
    * sort and also realm does not allow sorting on the properties of an object property.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.requisitions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
+    let data = this.state.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
     switch (sortBy) {
       case 'serialNumber': // Special case for correct number based sorting
         // Convert to javascript array obj then sort with standard array functions.
