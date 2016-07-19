@@ -1,4 +1,6 @@
 import Realm from 'realm';
+import { complement } from 'set-manipulator';
+
 import { addBatchToParent, createRecord } from '../utilities';
 
 export class Stocktake extends Realm.Object {
@@ -18,24 +20,23 @@ export class Stocktake extends Realm.Object {
    * Sets the stocktake items attached to this stocktake, based on the array of
    * item ids passed in
    * @param   {Realm} database   App wide local database
-   * @param   {array} newItemIds The ids of the items to include in this stocktake
+   * @param   {array} itemIds    The ids of the items to include in this stocktake
    * @return  {none}
    */
-  setItemsByID(database, newItemIds) {
+  setItemsByID(database, itemIds) {
     if (this.isFinalised) throw new Error('Cannot add items to a finalised stocktake');
 
-    // Remove any stocktake items that aren't in the array of new item ids
-    const itemsToRemove = [];
-    this.items.forEach((stocktakeItem) => {
-      const itemIdIndex = newItemIds.indexOf(stocktakeItem.itemId);
-      if (itemIdIndex >= 0) itemsToRemove.push(stocktakeItem);
-      else newItemIds.splice(itemIdIndex, 1); // Already in this stocktake, no need to add
-    });
-    database.delete('StocktakeItem', itemsToRemove);
+    // Delete any stocktake items that aren't in the new array of ids
+    const itemsToRemove = complement(this.items,
+                                     itemIds.map((itemId) => ({ itemId: itemId })),
+                                     (stocktakeItem) => stocktakeItem.itemId);
+    if (itemsToRemove && itemsToRemove.length > 0) database.delete('StocktakeItem', itemsToRemove);
 
-    // Add a new StocktakeItem for each new item id
+    // Add a new StocktakeItem for each new item id not currently in the stocktake
+    const itemIdsToAdd = complement(itemIds,
+                                    this.items.map((stocktakeItem) => stocktakeItem.itemId));
     const items = database.objects('Item');
-    newItemIds.forEach((itemId) => {
+    itemIdsToAdd.forEach((itemId) => {
       // Find the matching database item and use it to create a stocktake item
       const item = items.filtered('id == $0', itemId)[0];
       const stocktakeItem = createRecord(database, 'StocktakeItem', this, item);
