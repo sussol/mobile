@@ -55,7 +55,7 @@ export class CustomersPage extends GenericTablePage {
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     let data = this.state.customers
-                         .filtered(`name BEGINSWITH[c] OR code BEGINSWITH[c] "${searchTerm}"`);
+                         .filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
     data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     return data;
   }
