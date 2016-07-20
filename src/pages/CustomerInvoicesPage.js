@@ -27,7 +27,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
     super(props);
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "customer_invoice"');
-    this.state.sortBy = 'otherParty.name';
+    this.state.sortBy = 'otherPartyName';
     this.state.isCreatingInvoice = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
@@ -90,9 +90,9 @@ export class CustomerInvoicesPage extends GenericTablePage {
     let data = this.state.transactions.filtered(
                  'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
                  searchTerm);
-    if (sortBy === 'otherParty.name') {
+    if (sortBy === 'otherPartyName') {
       // Convert to javascript array obj then sort with standard array functions.
-      data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
+      data = data.slice().sort((a, b) => a.otherPartyName.localeCompare(b.otherPartyName));
       if (!isAscending) data.reverse();
     } else {
       data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
