@@ -50,7 +50,7 @@ export function createRecord(database, type, ...args) {
 }
 
 // Creates a customer invoice (Transaction) and adds it to the customer (Name)
-function createCustomerInvoice(database, customer) {
+function createCustomerInvoice(database, customer, user) {
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
@@ -61,6 +61,7 @@ function createCustomerInvoice(database, customer) {
     status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
     comment: '',
     otherParty: customer,
+    enteredBy: user,
   });
   if (customer.useMasterList) invoice.addItemsFromMasterList(database);
   database.save('Transaction', invoice);

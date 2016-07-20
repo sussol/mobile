@@ -57,13 +57,13 @@ export class StocktakeManagePage extends GenericTablePage {
 
   onConfirmPress() {
     const { selection } = this.state;
-    const { database, navigateTo, user } = this.props;
+    const { database, navigateTo, currentUser } = this.props;
     let { stocktake } = this.props;
     const { stocktakeName } = this.state;
 
     database.write(() => {
       // If no stocktake came in props, make a new one
-      if (!stocktake) stocktake = createRecord(database, 'Stocktake', user);
+      if (!stocktake) stocktake = createRecord(database, 'Stocktake', currentUser);
 
       stocktake.setItemsByID(database, selection);
 
@@ -224,6 +224,7 @@ export class StocktakeManagePage extends GenericTablePage {
 }
 
 StocktakeManagePage.propTypes = {
+  currentUser: React.PropTypes.object.isRequired,
   stocktake: React.PropTypes.object,
   database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
