@@ -44,7 +44,7 @@ export function integrateRecord(database, settings, syncRecord) {
       deleteRecord(database, internalRecordType, syncRecord.RecordID);
       break;
     default:
-      throw new Error(`Cannot integrate sync record with sync type ${syncType}`);
+      return; // Silently ignore change types we don't handle, e.g. merges
   }
 }
 
@@ -224,15 +224,19 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       break;
     }
     case 'Requisition': {
+      let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      // If not a special wp or wf status, use the normal status translation
+      if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       internalRecord = {
         id: record.ID,
         status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
         serialNumber: record.serial_number,
-        user: getObject(database, 'User', record.user_ID),
+        enteredBy: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
+      console.log(internalRecord);
       database.update(recordType, internalRecord);
       break;
     }
