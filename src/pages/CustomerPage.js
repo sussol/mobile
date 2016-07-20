@@ -132,7 +132,9 @@ export class CustomerPage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderPageInfo()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderPageInfo()}
+            </View>
             <PageButton
               text="New Invoice"
               onPress={this.onNewInvoice}

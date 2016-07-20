@@ -26,6 +26,7 @@ export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_TOP = 10;
 export const PAGE_CONTENT_PADDING_BOTTOM = 20;
 export const SEARCH_BAR_WIDTH = 500;
+const PAGE_TOP_LEFT_WIDTH = SEARCH_BAR_WIDTH;
 
 export default StyleSheet.create({
   appBackground: {
@@ -52,14 +53,20 @@ export default StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
-  horizontalContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  pageTopLeftSectionContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
+    width: PAGE_TOP_LEFT_WIDTH,
   },
   verticalContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   modal: {
