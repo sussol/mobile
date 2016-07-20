@@ -25,5 +25,5 @@ export function addBatchToParent(batch, parent, createItem) {
   }
   // If the batch is already in the item, we don't want to add it again
   if (item.batches.find(currentBatch => currentBatch.id === batch.id)) return;
-  item.batches.push(batch);
+  item.addBatch(batch);
 }

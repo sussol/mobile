@@ -44,7 +44,7 @@ export class EditableCell extends React.Component {
         <TextInput
           {...textInputProps}
           style={textStyle}
-          onChangeText = {(text) => this.setState({ value: text })}
+          onChangeText={(text) => this.setState({ value: text })}
           onEndEditing={() => this.onEndEditing()}
           value={this.state.value}
         />

@@ -18,6 +18,7 @@ export const DARKER_GREY = '#333333';
 export const GREY = '#909192';
 export const WARM_GREY = '#9b9b9b';
 export const WARMER_GREY = '#a8aaac';
+export const LIGHT_GREY = '#c9cccd';
 export const ROW_BLUE = 'rgba(73, 143, 226, 0.05)';
 export const FINALISE_GREEN = '#219d1b';
 export const FINALISED_RED = '#f63b30';
@@ -25,6 +26,7 @@ export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_TOP = 10;
 export const PAGE_CONTENT_PADDING_BOTTOM = 20;
 export const SEARCH_BAR_WIDTH = 500;
+const PAGE_TOP_LEFT_WIDTH = SEARCH_BAR_WIDTH;
 
 export default StyleSheet.create({
   appBackground: {
@@ -51,14 +53,26 @@ export default StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'space-between',
   },
-  horizontalContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  pageTopLeftSectionContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
+    width: PAGE_TOP_LEFT_WIDTH,
+  },
+  pageTopRightSectionContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   },
   verticalContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  horizontalContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   modal: {
@@ -162,6 +176,12 @@ export default StyleSheet.create({
   },
   disabledButton: {
     borderColor: WARMER_GREY,
+  },
+  topButton: {
+    marginBottom: 10,
+  },
+  leftButton: {
+    marginRight: 10,
   },
   menuButtonText: {
     fontFamily: APP_FONT_FAMILY,

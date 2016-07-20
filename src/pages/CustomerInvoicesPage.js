@@ -8,7 +8,6 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import { SETTINGS_KEYS } from '../settings';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
@@ -40,9 +39,10 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   onNewInvoice(otherParty) {
+    const { database, currentUser } = this.props;
     let invoice;
-    this.props.database.write(() => {
-      invoice = createRecord(this.props.database, 'CustomerInvoice', otherParty);
+    database.write(() => {
+      invoice = createRecord(database, 'CustomerInvoice', otherParty, currentUser);
     });
     this.navigateToInvoice(invoice);
   }
@@ -51,13 +51,15 @@ export class CustomerInvoicesPage extends GenericTablePage {
     const { selection, transactions } = this.state;
     const { database } = this.props;
     database.write(() => {
+      const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const transaction = transactions.find(currentTransaction =>
                                                 currentTransaction.id === selection[i]);
-        if (transaction.isValid()) {
-          database.delete('Transaction', transaction);
+        if (transaction.isValid() && !transaction.isFinalised) {
+          transactionsToDelete.push(transaction);
         }
       }
+      database.delete('Transaction', transactionsToDelete);
     });
     this.setState({ selection: [] });
     this.refreshData();
@@ -85,7 +87,9 @@ export class CustomerInvoicesPage extends GenericTablePage {
    * properties.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.transactions.filtered(`otherParty.name BEGINSWITH[c] "${searchTerm}"`);
+    let data = this.state.transactions.filtered(
+                 'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
+                 searchTerm);
     if (sortBy === 'otherParty.name') {
       // Convert to javascript array obj then sort with standard array functions.
       data = data.slice().sort((a, b) => a.otherParty.name.localeCompare(b.otherParty.name));
@@ -114,12 +118,13 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   render() {
-    const thisStoreId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_ID);
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
             <PageButton
               text="New Invoice"
               onPress={() => this.setState({ isCreatingInvoice: true })}
@@ -135,7 +140,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
           />
           <SelectModal
             isOpen={this.state.isCreatingInvoice}
-            options={this.props.database.getCustomersOfStore(thisStoreId)}
+            options={this.props.database.objects('Customer')}
             placeholderText="Start typing to select customer"
             queryString={'name BEGINSWITH[c] $0'}
             onSelect={name => {
@@ -151,6 +156,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
 }
 
 CustomerInvoicesPage.propTypes = {
+  currentUser: React.PropTypes.object.isRequired,
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
   settings: React.PropTypes.object.isRequired,

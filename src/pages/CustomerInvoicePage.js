@@ -12,7 +12,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveNumber, truncateString } from '../utilities';
+import { formatDate, parsePositiveInteger } from '../utilities';
 import { createRecord } from '../database';
 import {
   AutocompleteSelector,
@@ -29,7 +29,6 @@ const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   ITEM_SELECT: 'itemSelect',
 };
-const MAX_COMMENT_LENGTH = 30; // The longest comment that will fit tidily in the info area
 
 export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
@@ -54,7 +53,8 @@ export class CustomerInvoicePage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.transaction.items.filtered('item.name BEGINSWITH[c] $0', searchTerm);
+    let data = this.props.transaction.items
+                .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     switch (sortBy) {
       case 'itemCode':
         data = data.slice().sort((a, b) =>
@@ -100,7 +100,7 @@ export class CustomerInvoicePage extends GenericTablePage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'totalQuantity') return;
     this.props.database.write(() => {
-      const quantity = Math.min(parsePositiveNumber(newValue), transactionItem.availableQuantity);
+      const quantity = Math.min(parsePositiveInteger(newValue), transactionItem.availableQuantity);
       transactionItem.setTotalQuantity(this.props.database, quantity);
       this.props.database.save('TransactionItem', transactionItem);
     });
@@ -165,7 +165,7 @@ export class CustomerInvoicePage extends GenericTablePage {
         },
         {
           title: 'Comment:',
-          info: truncateString(this.props.transaction.comment, MAX_COMMENT_LENGTH),
+          info: this.props.transaction.comment,
           onPress: this.openCommentEditor,
         },
       ],
@@ -237,12 +237,13 @@ export class CustomerInvoicePage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.verticalContainer}>
+            <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderPageInfo()}
               {this.renderSearchBar()}
             </View>
             <View style={globalStyles.verticalContainer}>
               <PageButton
+                style={globalStyles.topButton}
                 text="New Item"
                 onPress={this.openItemSelector}
                 isDisabled={this.props.transaction.isFinalised}
@@ -310,3 +311,18 @@ const COLUMNS = [
     title: 'REMOVE',
   },
 ];
+
+/**
+ * Check whether a given customer invoice is safe to be finalised. Return null if it is,
+ * otherwise return an appropriate error message if not.
+ * @param  {object}  customerInvoice  The customer invoice to check
+ * @return {string}  An error message if not able to be finalised
+ */
+export function checkForFinaliseError(customerInvoice) {
+  if (customerInvoice.items.length === 0) {
+    return 'You need to add at least one item before finalising';
+  } else if (customerInvoice.totalQuantity === 0) {
+    return 'You need to record how much stock to issue before finalising';
+  }
+  return null;
+}

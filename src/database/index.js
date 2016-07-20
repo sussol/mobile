@@ -1,5 +1,4 @@
-export { createRecord } from './createRecord';
-export { generateUUID } from './utilities';
+export { createRecord, generateUUID, getNumberSequence } from './utilities';
 export { schema } from './schema';
 export { Database } from './Database';
 export { UIDatabase } from './UIDatabase';
@@ -9,4 +8,10 @@ export const CHANGE_TYPES = {
   UPDATE: 'update',
   DELETE: 'delete',
   WIPE: 'wipe',
+};
+
+export const SERIAL_NUMBER_KEYS = {
+  CUSTOMER_INVOICE: 'customer_invoice_serial_number',
+  REQUISITION: 'requisition_serial_number',
+  STOCKTAKE: 'stocktake_serial_number',
 };

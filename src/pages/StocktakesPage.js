@@ -8,7 +8,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { SearchBar, PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
+import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
@@ -53,10 +53,12 @@ export class StocktakesPage extends GenericTablePage {
     const { stocktakes, selection } = this.state;
     const { database } = this.props;
     database.write(() => {
+      const stocktakesToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const stocktake = stocktakes.find(s => s.id === selection[i]);
-        if (stocktake.isValid() && !stocktake.isFinalised) database.delete('Stocktake', stocktake);
+        if (stocktake.isValid() && !stocktake.isFinalised) stocktakesToDelete.push(stocktake);
       }
+      database.delete('Stocktake', stocktakesToDelete);
     });
     this.setState({ selection: [] });
     this.refreshData();
@@ -78,7 +80,7 @@ export class StocktakesPage extends GenericTablePage {
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const { stocktakes, showCurrent } = this.state;
-    const toggleFilter = showCurrent ? 'status == "new"' : 'status != "new"';
+    const toggleFilter = showCurrent ? 'status != "finalised"' : 'status == "finalised"';
     const data = stocktakes
                   .filtered(toggleFilter)
                   .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
@@ -98,16 +100,9 @@ export class StocktakesPage extends GenericTablePage {
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
+          isDisabled: stocktake.isFinalised,
         };
     }
-  }
-
-  renderSearchBar() {
-    return (
-      <SearchBar
-        onChange={(event) => this.onSearchChange(event)}
-        keyboardType="numeric"
-      />);
   }
 
   render() {

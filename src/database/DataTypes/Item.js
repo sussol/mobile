@@ -17,7 +17,9 @@ export class Item extends Realm.Object {
     if (!earliestBatch) return null;
 
     this.batches.forEach((batch) => {
-      if (batch.totalQuantity > 0 && batch.expiryDate < earliestBatch.expiryDate) {
+      if (batch.totalQuantity > 0 &&
+          batch.expiryDate &&
+          batch.expiryDate < earliestBatch.expiryDate) {
         earliestBatch = batch;
       }
     });
@@ -42,3 +44,20 @@ export class Item extends Realm.Object {
     return `${this.code} - ${this.name}`;
   }
 }
+
+Item.schema = {
+  name: 'Item',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    code: 'string',
+    name: 'string',
+    defaultPackSize: 'double',
+    batches: { type: 'list', objectType: 'ItemBatch' },
+    department: { type: 'ItemDepartment', optional: true },
+    description: { type: 'string', optional: true },
+    category: { type: 'ItemCategory', optional: true },
+    defaultPrice: { type: 'double', optional: true },
+    isVisible: { type: 'bool', default: false },
+  },
+};

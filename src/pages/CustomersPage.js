@@ -6,8 +6,6 @@
  */
 
 import React from 'react';
-import { SETTINGS_KEYS } from '../settings';
-import { SearchBar } from '../widgets';
 import { GenericTablePage } from './GenericTablePage';
 
 const DATA_TYPES_DISPLAYED = ['Name'];
@@ -22,8 +20,7 @@ export class CustomersPage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'name';
-    const thisStoreId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_ID);
-    this.state.customers = props.database.getCustomersOfStore(thisStoreId);
+    this.state.customers = props.database.objects('Customer');
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
@@ -54,7 +51,8 @@ export class CustomersPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.customers.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
+    let data = this.state.customers
+                         .filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
     data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     return data;
   }
@@ -74,14 +72,6 @@ export class CustomersPage extends GenericTablePage {
           isChecked: customer.useMasterList,
         };
     }
-  }
-
-  renderSearchBar() {
-    return (
-      <SearchBar
-        onChange={(event) => this.onSearchChange(event)}
-        keyboardType="numeric"
-      />);
   }
 }
 

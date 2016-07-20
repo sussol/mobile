@@ -9,7 +9,6 @@ import {
 import {
   APP_FONT_FAMILY,
   DARK_GREY,
-  SEARCH_BAR_WIDTH,
   SUSSOL_ORANGE,
 } from '../globalStyles';
 
@@ -36,22 +35,32 @@ export function PageInfo(props) {
           style={localStyles.columnContainer}
         >
           <View>
-            {columnData.map((rowData, rowIndex) =>
-              <Text
-                key={`Title ${columnIndex}-${rowIndex}`}
-                style={[localStyles.text, localStyles.titleText]}
-              >
-                {rowData.title ? rowData.title : ' '/** Space if null to avoid squishing row **/}
-              </Text>)}
+            {columnData.map((rowData, rowIndex) => {
+              // If null or empty string, use single space to avoid squishing row
+              const titleString = rowData.title ? rowData.title : ' ';
+              return (
+                <Text
+                  key={`Title ${columnIndex}-${rowIndex}`}
+                  style={[localStyles.text, localStyles.titleText]}
+                  numberOfLines={1}
+                >
+                  {titleString}
+                </Text>
+              );
+            })}
           </View>
           <View style={localStyles.infoContainer}>
             {columnData.map((rowData, rowIndex) => {
+              // If null or empty string, use single space to avoid squishing row
+              let infoString = rowData.info && String(rowData.info);
+              infoString = infoString && infoString.length > 0 ? infoString : ' ';
               const textComponent = (
                 <Text
                   key={`Info ${columnIndex}-${rowIndex}`}
                   style={localStyles.text}
+                  numberOfLines={1}
                 >
-                  {rowData.info ? rowData.info : ' '/** Space if null to avoid squishing row **/}
+                  {infoString}
                 </Text>);
               if (rowData.onPress && !props.isEditingDisabled) {
                 return (
@@ -78,9 +87,8 @@ PageInfo.propTypes = {
 const localStyles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    width: SEARCH_BAR_WIDTH,
     marginHorizontal: 5,
     marginBottom: 10,
   },
@@ -90,6 +98,8 @@ const localStyles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   infoContainer: {
+    flex: 1,
+    flexDirection: 'column',
     marginHorizontal: 16,
   },
   text: {
@@ -97,9 +107,9 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     color: SUSSOL_ORANGE,
     marginBottom: 4,
+    marginRight: 10,
   },
   titleText: {
     color: DARK_GREY,
-    marginRight: 10,
   },
 });

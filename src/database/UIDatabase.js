@@ -5,23 +5,21 @@ export class UIDatabase {
   }
 
   objects(type) {
-    let results = this.database.objects(type);
+    let results = this.database.objects(translateToCoreDatabaseType(type));
     switch (type) {
+      case 'Customer':
+        results = results.filtered('isVisible == true AND isCustomer == true');
+        break;
       case 'Item':
         results = results.filtered('isVisible == true');
         break;
       case 'Name':
-        results = results.filtered('isVisible == TRUE');
+        results = results.filtered('isVisible == true OR type == "inventory_adjustment"');
         break;
       default:
         break;
     }
     return results;
-  }
-
-  getCustomersOfStore(storeId) {
-    return this.objects('Name')
-               .filtered('isCustomer == true AND supplyingStoreId == $0', storeId);
   }
 
   addListener(...args) { return this.database.addListener(...args); }
@@ -34,4 +32,13 @@ export class UIDatabase {
   update(...args) { return this.database.update(...args); }
   write(...args) { return this.database.write(...args); }
 
+}
+
+function translateToCoreDatabaseType(type) {
+  switch (type) {
+    case 'Customer':
+      return 'Name';
+    default:
+      return type;
+  }
 }

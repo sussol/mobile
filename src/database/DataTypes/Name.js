@@ -14,3 +14,25 @@ export class Name extends Realm.Object {
     return this.name;
   }
 }
+
+Name.schema = {
+  name: 'Name',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    name: 'string',
+    code: 'string',
+    phoneNumber: { type: 'string', optional: true },
+    billingAddress: { type: 'Address', optional: true },
+    emailAddress: { type: 'string', optional: true },
+    type: 'string',
+    isCustomer: 'bool',
+    isSupplier: 'bool',
+    isManufacturer: 'bool',
+    useMasterList: { type: 'bool', optional: true },
+    masterList: { type: 'MasterList', optional: true },
+    transactions: { type: 'list', objectType: 'Transaction' },
+    isVisible: { type: 'bool', default: false },
+    supplyingStoreId: { type: 'string', optional: true },
+  },
+};

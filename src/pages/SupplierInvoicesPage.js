@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-import { SearchBar } from '../widgets';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
 
@@ -23,7 +22,8 @@ export class SupplierInvoicesPage extends GenericTablePage {
     super(props);
     this.state.sortBy = 'serialNumber';
     this.state.transactions = props.database.objects('Transaction')
-                                            .filtered('type == "supplier_invoice"');
+                                            .filtered('type == "supplier_invoice"')
+                                            .filtered('otherParty.type != "inventory_adjustment"');
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
@@ -42,7 +42,7 @@ export class SupplierInvoicesPage extends GenericTablePage {
    * value is stored as a string.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.transactions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
+    let data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
     if (sortBy === 'serialNumber') { // Special case for correct number based sorting
       // Convert to javascript array obj then sort with standard array functions.
       data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
@@ -65,14 +65,6 @@ export class SupplierInvoicesPage extends GenericTablePage {
       case 'comment':
         return invoice.comment;
     }
-  }
-
-  renderSearchBar() {
-    return (
-      <SearchBar
-        onChange={(event) => this.onSearchChange(event)}
-        keyboardType="numeric"
-      />);
   }
 }
 

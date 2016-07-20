@@ -11,6 +11,7 @@ import { View } from 'react-native';
 import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
+import { parsePositiveInteger, truncateString } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Stocktake', 'StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -39,10 +40,10 @@ export class StocktakeEditPage extends GenericTablePage {
    * @return {none}
    */
   onEndEditing(key, stocktakeItem, newValue) {
-    if (key !== 'countedTotalQuantity') return;
+    if (key !== 'countedTotalQuantity' || newValue === '') return;
     this.props.database.write(() => {
-      const quantity = Math.round(parseFloat(newValue));
-      stocktakeItem.setCountedNumberOfPacks(this.props.database, quantity);
+      const quantity = parsePositiveInteger(newValue);
+      stocktakeItem.countedTotalQuantity = quantity;
       this.props.database.save('StocktakeItem', stocktakeItem);
     });
   }
@@ -73,7 +74,7 @@ export class StocktakeEditPage extends GenericTablePage {
       case 'countedTotalQuantity':
         return {
           type: this.props.stocktake.isFinalised ? 'text' : 'editable',
-          cellContents: item.countedTotalQuantity,
+          cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
         };
     }
   }
@@ -83,7 +84,9 @@ export class StocktakeEditPage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
             <PageButton
               text="Manage Stocktake"
               onPress={() => this.props.navigateTo('stocktakeManager', 'Manage Stocktake', {
@@ -129,3 +132,30 @@ const COLUMNS = [
     title: 'ACTUAL QUANTITY',
   },
 ];
+
+const MAX_ITEMS_IN_ERROR_MESSAGE = 6; // Number of items to display in finalise error modal
+const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in error modal
+
+/**
+ * Check whether a given stocktake is safe to be finalised. Return null if it is,
+ * otherwise return an appropriate error message if not.
+ * @param  {object}  stocktake  The stocktake to check
+ * @return {string}  An error message if not able to be finalised
+ */
+export function checkForFinaliseError(stocktake) {
+  if (stocktake.hasSomeCountedItems) return "Can't finalise a stocktake with no counted items";
+  const itemsBelowMinimum = stocktake.itemsBelowMinimum;
+  if (itemsBelowMinimum.length > 0) {
+    let errorString = 'The following items have been reduced by more than the available stock:';
+    itemsBelowMinimum.forEach((stocktakeItem, index) => {
+      if (index > MAX_ITEMS_IN_ERROR_MESSAGE) return;
+      errorString += truncateString(`\n${stocktakeItem.itemCode} - ${stocktakeItem.itemName}`,
+                                    MAX_ITEM_STRING_LENGTH);
+    });
+    if (itemsBelowMinimum.length > MAX_ITEMS_IN_ERROR_MESSAGE) {
+      errorString += `\nand ${itemsBelowMinimum.length - MAX_ITEMS_IN_ERROR_MESSAGE} more.`;
+    }
+    return errorString;
+  }
+  return null;
+}
