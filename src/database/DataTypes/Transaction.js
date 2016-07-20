@@ -117,12 +117,10 @@ export class Transaction extends Realm.Object {
    * Confirm this transaction, generating the associated item batches, linking them
    * to their items, and setting the status to confirmed.
    * @param  {Realm}  database The app wide local database
-   * @param  {object} user     The user who confirmed this transaction
    * @return {none}
    */
-  confirm(database, user) {
+  confirm(database) {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
-    this.enteredBy = user;
     this.items.forEach((transactionItem) => {
       transactionItem.batches.forEach((transactionBatch) => {
         const itemBatch = transactionBatch.itemBatch;
@@ -149,12 +147,11 @@ export class Transaction extends Realm.Object {
    * locked down. If it has not already been confirmed (i.e. adjustments to inventory
    * made), confirm it first
    * @param  {Realm}  database The app wide local database
-   * @param  {object} user     The user who finalised this transaction
    * @return {none}
    */
-  finalise(database, user) {
+  finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
-    if (!this.isConfirmed) this.confirm(database, user); // Confirm first to adjust inventory
+    if (!this.isConfirmed) this.confirm(database); // Confirm first to adjust inventory
     this.status = 'finalised';
   }
 }
