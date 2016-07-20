@@ -8,7 +8,6 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import { SETTINGS_KEYS } from '../settings';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
@@ -118,7 +117,6 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   render() {
-    const thisStoreId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_ID);
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -141,7 +139,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
           />
           <SelectModal
             isOpen={this.state.isCreatingInvoice}
-            options={this.props.database.getCustomersOfStore(thisStoreId)}
+            options={this.props.database.objects('Customer')}
             placeholderText="Start typing to select customer"
             queryString={'name BEGINSWITH[c] $0'}
             onSelect={name => {
