@@ -236,7 +236,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         enteredBy: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
-      console.log(internalRecord);
       database.update(recordType, internalRecord);
       break;
     }
