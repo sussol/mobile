@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { StyleSheet, View, } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY, LIGHT_GREY } from '../globalStyles';
 
 import {
