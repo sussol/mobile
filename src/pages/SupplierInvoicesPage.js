@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-import { SearchBar } from '../widgets';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
 

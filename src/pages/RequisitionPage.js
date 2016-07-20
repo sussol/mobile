@@ -226,7 +226,7 @@ export class RequisitionPage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.verticalContainer}>
+            <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderPageInfo()}
               {this.renderSearchBar()}
             </View>
