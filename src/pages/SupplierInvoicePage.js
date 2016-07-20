@@ -81,16 +81,8 @@ export class SupplierInvoicePage extends GenericTablePage {
           title: 'Confirm Date:',
           info: formatDate(transaction.confirmDate),
         },
-        {
-          title: 'Entered By:',
-          info: transaction.enteredBy && transaction.enteredBy.username,
-        },
       ],
       [
-        {
-          title: 'Name:',
-          info: transaction.otherParty && transaction.otherParty.name,
-        },
         {
           title: 'Their Ref:',
           info: transaction.theirRef,

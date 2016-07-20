@@ -148,7 +148,7 @@ function generateSyncData(settings, recordType, record) {
         status: STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         finalised_by_ID: record.finalisedBy && record.finalisedBy.id,
         invad_additions_ID: record.additions && record.additions.id,
-        invad_reductions_ID: record.subtractions && record.subtractions.id,
+        invad_reductions_ID: record.reductions && record.reductions.id,
         store_ID: settings.get(THIS_STORE_ID),
         comment: record.comment,
         stock_take_created_date: getDateString(record.createdDate),

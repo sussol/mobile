@@ -59,6 +59,12 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     width: PAGE_TOP_LEFT_WIDTH,
   },
+  pageTopRightSectionContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
   verticalContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
@@ -170,6 +176,12 @@ export default StyleSheet.create({
   },
   disabledButton: {
     borderColor: WARMER_GREY,
+  },
+  topButton: {
+    marginBottom: 10,
+  },
+  leftButton: {
+    marginRight: 10,
   },
   menuButtonText: {
     fontFamily: APP_FONT_FAMILY,

@@ -6,10 +6,7 @@
  */
 
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
+import { View } from 'react-native';
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
@@ -156,7 +153,7 @@ export class RequisitionPage extends GenericTablePage {
       [
         {
           title: 'Months Stock Required:',
-          info: this.props.requisition.monthsToSupply,
+          info: Math.round(this.props.requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
         },
       ],
@@ -173,6 +170,9 @@ export class RequisitionPage extends GenericTablePage {
     switch (key) {
       default:
         return requisitionItem[key];
+      case 'monthlyUsage':
+      case 'suggestedQuantity':
+        return Math.round(requisitionItem[key]);
       case 'requiredQuantity':
         return {
           cellContents: requisitionItem.requiredQuantity,
@@ -230,25 +230,28 @@ export class RequisitionPage extends GenericTablePage {
               {this.renderPageInfo()}
               {this.renderSearchBar()}
             </View>
-            <View style={globalStyles.verticalContainer}>
-              <PageButton
-                text="Use Suggested Quantities"
-                onPress={this.onUseSuggestedQuantities}
-                isDisabled={this.props.requisition.isFinalised}
-              />
-            </View>
-            <View style={globalStyles.verticalContainer}>
-              <PageButton
-                style={localStyles.topButton}
-                text="New Item"
-                onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
-                isDisabled={this.props.requisition.isFinalised}
-              />
-              <PageButton
-                text="Add Master List Items"
-                onPress={this.onAddMasterItems}
-                isDisabled={this.props.requisition.isFinalised}
-              />
+            <View style={globalStyles.pageTopRightSectionContainer}>
+              <View style={globalStyles.verticalContainer}>
+                <PageButton
+                  style={globalStyles.leftButton}
+                  text="Use Suggested Quantities"
+                  onPress={this.onUseSuggestedQuantities}
+                  isDisabled={this.props.requisition.isFinalised}
+                />
+              </View>
+              <View style={globalStyles.verticalContainer}>
+                <PageButton
+                  style={globalStyles.topButton}
+                  text="New Item"
+                  onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
+                  isDisabled={this.props.requisition.isFinalised}
+                />
+                <PageButton
+                  text="Add Master List Items"
+                  onPress={this.onAddMasterItems}
+                  isDisabled={this.props.requisition.isFinalised}
+                />
+              </View>
             </View>
           </View>
           {this.renderDataTable()}
@@ -317,12 +320,6 @@ const COLUMNS = [
     title: 'REMOVE',
   },
 ];
-
-const localStyles = StyleSheet.create({
-  topButton: {
-    marginBottom: 10,
-  },
-});
 
 /**
  * Check whether a given requisition is safe to be finalised. Return null if it is,

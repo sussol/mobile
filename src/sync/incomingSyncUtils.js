@@ -296,11 +296,13 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'Transaction': {
       const otherParty = getObject(database, 'Name', record.name_ID);
+      const enteredBy = getObject(database, 'User', record.user_ID);
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
+        enteredBy: enteredBy,
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),

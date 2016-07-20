@@ -56,7 +56,8 @@ export function PageInfo(props) {
             <View style={localStyles.infoContainer}>
               {columnData.map((rowData, rowIndex) => {
                 // If null or empty string, use single space to avoid squishing row
-                const infoString = rowData.info && rowData.info.length > 0 ? rowData.info : ' ';
+                let infoString = rowData.info && String(rowData.info);
+                infoString = infoString && infoString.length > 0 ? infoString : ' ';
                 const textComponent = (
                   <Text
                     key={`Info ${columnIndex}-${rowIndex}`}

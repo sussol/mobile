@@ -42,21 +42,22 @@ export class AutocompleteSelector extends React.Component {
     } = this.props;
 
     return (
-        <Autocomplete
-          style={localStyles.text}
-          autoCapitalize="none"
-          autoCorrect={false}
-          data={options.filtered(queryString, this.state.queryText)}
-          onChangeText={text => this.setState({ queryText: text })}
-          placeholder={placeholderText}
-          renderItem={(item) => (
-            <TouchableOpacity onPress={() => onSelect(item)}>
-              <Text style={[localStyles.text, localStyles.itemText]}>
-                {item.toString()}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
+      <Autocomplete
+        style={localStyles.text}
+        autoFocus
+        autoCapitalize="none"
+        autoCorrect={false}
+        data={options.filtered(queryString, this.state.queryText)}
+        onChangeText={text => this.setState({ queryText: text })}
+        placeholder={placeholderText}
+        renderItem={(item) => (
+          <TouchableOpacity onPress={() => onSelect(item)}>
+            <Text style={[localStyles.text, localStyles.itemText]}>
+              {item.toString()}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
      );
   }
 }
