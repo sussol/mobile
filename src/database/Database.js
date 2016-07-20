@@ -74,7 +74,7 @@ export class Database {
     let objects = [object];
 
     // If object is an array, a realm list, or a realm results object, use it directly
-    if (Array.isArray(objects) ||
+    if (Array.isArray(object) ||
         objects.toString() === '[object List]' ||
         objects.toString() === '[object Results]'
       ) objects = object;
