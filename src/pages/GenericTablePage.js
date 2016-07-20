@@ -225,7 +225,7 @@ export class GenericTablePage extends React.Component {
 
   renderRow(rowData, sectionId, rowId) {
     const cells = [];
-    const isExpanded = this.state.expandedRows.indexOf(rowData.id) >= 0;
+    const isExpanded = this.state.expandedRows.includes(rowData.id);
     // Make rows alternate background colour
     const rowStyle = rowId % 2 === 1 ?
       globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];

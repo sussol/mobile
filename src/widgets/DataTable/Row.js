@@ -16,7 +16,7 @@ export class Row extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isExpanded: false,
+      isExpanded: props.isExpanded,
     };
     this.onPress = this.onPress.bind(this);
   }
