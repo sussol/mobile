@@ -172,7 +172,9 @@ export class StocktakeManagePage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
             <View style={localStyles.toggleBarView}>
               <ToggleBar
                 style={globalStyles.toggleBar}

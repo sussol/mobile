@@ -12,7 +12,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger, truncateString } from '../utilities';
+import { formatDate, parsePositiveInteger } from '../utilities';
 import { createRecord } from '../database';
 import {
   AutocompleteSelector,
@@ -29,7 +29,6 @@ const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   ITEM_SELECT: 'itemSelect',
 };
-const MAX_COMMENT_LENGTH = 30; // The longest comment that will fit tidily in the info area
 
 export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
@@ -166,7 +165,7 @@ export class CustomerInvoicePage extends GenericTablePage {
         },
         {
           title: 'Comment:',
-          info: truncateString(this.props.transaction.comment, MAX_COMMENT_LENGTH),
+          info: this.props.transaction.comment,
           onPress: this.openCommentEditor,
         },
       ],
@@ -238,7 +237,7 @@ export class CustomerInvoicePage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.verticalContainer}>
+            <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderPageInfo()}
               {this.renderSearchBar()}
             </View>

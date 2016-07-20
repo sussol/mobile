@@ -131,7 +131,9 @@ export class RequisitionsPage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
             <PageButton
               text="New Requisition"
               onPress={this.onNewRequisition}

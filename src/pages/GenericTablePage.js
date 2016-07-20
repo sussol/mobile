@@ -323,7 +323,9 @@ export class GenericTablePage extends React.Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
           </View>
           {this.renderDataTable()}
         </View>
