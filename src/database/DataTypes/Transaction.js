@@ -55,6 +55,10 @@ export class Transaction extends Realm.Object {
     return getTotal(this.items, 'totalPrice');
   }
 
+  get totalQuantity() {
+    return getTotal(this.items, 'totalQuantity');
+  }
+
   /**
    * Add a TransactionItem to this transaction, based on the given item. If it already
    * exists, do nothing.

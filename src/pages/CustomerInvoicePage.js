@@ -311,3 +311,18 @@ const COLUMNS = [
     title: 'REMOVE',
   },
 ];
+
+/**
+ * Check whether a given customer invoice is safe to be finalised. Return null if it is,
+ * otherwise return an appropriate error message if not.
+ * @param  {object}  customerInvoice  The customer invoice to check
+ * @return {string}  An error message if not able to be finalised
+ */
+export function checkForFinaliseError(customerInvoice) {
+  if (customerInvoice.items.length === 0) {
+    return 'You need to add at least one item before finalising';
+  } else if (customerInvoice.totalQuantity === 0) {
+    return 'You need to record how much stock to issue before finalising';
+  }
+  return null;
+}

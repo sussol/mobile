@@ -323,3 +323,18 @@ const localStyles = StyleSheet.create({
     marginBottom: 10,
   },
 });
+
+/**
+ * Check whether a given requisition is safe to be finalised. Return null if it is,
+ * otherwise return an appropriate error message if not.
+ * @param  {object}  requisition  The requisition to check
+ * @return {string}  An error message if not able to be finalised
+ */
+export function checkForFinaliseError(requisition) {
+  if (requisition.items.length === 0) {
+    return 'You need to add at least one item before finalising';
+  } else if (requisition.totalRequiredQuantity === 0) {
+    return 'You need to record how much stock is required before finalising';
+  }
+  return null;
+}

@@ -1,5 +1,5 @@
 import Realm from 'realm';
-import { createRecord } from '../utilities';
+import { createRecord, getTotal } from '../utilities';
 
 export class Requisition extends Realm.Object {
   constructor() {
@@ -24,6 +24,10 @@ export class Requisition extends Realm.Object {
 
   get monthsToSupply() {
     return this.daysToSupply / 30;
+  }
+
+  get totalRequiredQuantity() {
+    return getTotal(this.items, 'requiredQuantity');
   }
 
   set monthsToSupply(months) {

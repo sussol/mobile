@@ -8,7 +8,7 @@ export class TransactionItem extends Realm.Object {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot delete an item from a finalised transaction');
     }
-    this.batches.forEach(transactionBatch => database.delete('TransactionBatch', transactionBatch));
+    database.delete('TransactionBatch', this.batches);
   }
 
   get itemId() {
