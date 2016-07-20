@@ -276,6 +276,7 @@ export class GenericTablePage extends React.Component {
               style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
+              numberOfLines={renderedCell.lines}
             >
               {renderedCell.hasOwnProperty('cellContents') ?
                 renderedCell.cellContents :

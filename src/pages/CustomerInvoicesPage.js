@@ -163,14 +163,14 @@ CustomerInvoicesPage.propTypes = {
 const COLUMNS = [
   {
     key: 'otherPartyName',
-    width: 4,
+    width: 3,
     title: 'CUSTOMER',
     sortable: true,
   },
   {
     key: 'serialNumber',
     width: 1,
-    title: 'INVOICE NO.',
+    title: 'INVOICE\nNUMBER',
     sortable: true,
   },
   {
@@ -187,8 +187,9 @@ const COLUMNS = [
   },
   {
     key: 'comment',
-    width: 4,
+    width: 3,
     title: 'COMMENT',
+    lines: 2,
   },
   {
     key: 'delete',
