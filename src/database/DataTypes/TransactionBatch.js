@@ -16,6 +16,7 @@ export class TransactionBatch extends Realm.Object {
       case 'customer_invoice':
         return this.totalQuantity;
       case 'supplier_invoice':
+      case 'supplier_credit': // Don't include supplier credits as usage, may be discarding stock
       default:
         return 0;
     }

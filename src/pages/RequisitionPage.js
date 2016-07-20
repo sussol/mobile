@@ -156,7 +156,7 @@ export class RequisitionPage extends GenericTablePage {
       [
         {
           title: 'Months Stock Required:',
-          info: this.props.requisition.monthsToSupply,
+          info: Math.round(this.props.requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
         },
       ],
@@ -173,6 +173,9 @@ export class RequisitionPage extends GenericTablePage {
     switch (key) {
       default:
         return requisitionItem[key];
+      case 'monthlyUsage':
+      case 'suggestedQuantity':
+        return Math.round(requisitionItem[key]);
       case 'requiredQuantity':
         return {
           cellContents: requisitionItem.requiredQuantity,
