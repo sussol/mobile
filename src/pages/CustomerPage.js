@@ -44,9 +44,10 @@ export class CustomerPage extends GenericTablePage {
   }
 
   onNewInvoice() {
+    const { database, customer, currentUser } = this.props;
     let invoice;
-    this.props.database.write(() => {
-      invoice = createRecord(this.props.database, 'CustomerInvoice', this.props.customer);
+    database.write(() => {
+      invoice = createRecord(database, 'CustomerInvoice', customer, currentUser);
     });
     this.navigateToInvoice(invoice);
   }
@@ -148,8 +149,9 @@ export class CustomerPage extends GenericTablePage {
 }
 
 CustomerPage.propTypes = {
-  database: React.PropTypes.object.isRequired,
   currentUser: React.PropTypes.object.isRequired,
+  customer: React.PropTypes.object.isRequired,
+  database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
 
