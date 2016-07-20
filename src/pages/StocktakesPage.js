@@ -8,7 +8,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import { SearchBar, PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
+import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
@@ -100,6 +100,7 @@ export class StocktakesPage extends GenericTablePage {
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
+          isDisabled: stocktake.isFinalised,
         };
     }
   }
