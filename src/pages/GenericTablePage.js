@@ -34,6 +34,9 @@ import { SearchBar } from '../widgets';
  *         											 don't override if row should not be pressable
  * @method onEndEditing(key, rowData, newValue) Handles user input to an editable cell
  *         											 don't override if row should not be pressable
+ * @const  {array}  cellRefs     Stores references to TextInputs in editableCells so next button on
+ *                               native keyboard focuses the next cell. Order is left to
+ *                               right within a row, then next row.
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
  *         											 may optionally also contain a boolean 'sortable'.
@@ -60,6 +63,7 @@ export class GenericTablePage extends React.Component {
       selection: [],
       expandedRows: [],
     };
+    this.cellRefs = [];
     this.columns = null;
     this.dataTypesDisplayed = [];
     this.databaseListenerId = null;
@@ -136,11 +140,12 @@ export class GenericTablePage extends React.Component {
     this.setState({ expandedRows: newExpandedRows });
   }
 
-  focusNextField(nextFieldRef) {
-    console.log(this.refs);
-    console.log(nextFieldRef);
-    console.log(this.refs[String(nextFieldRef)]);
-    this.refs[String(nextFieldRef)].focus();
+  focusNextField(nextCellRefIndex) {
+    if (this.cellRefs[nextCellRefIndex]) {
+      this.cellRefs[nextCellRefIndex].focus();
+    } else {
+      this.cellRefs[nextCellRefIndex - 1].blur();
+    }
   }
 
   refreshData() {
@@ -274,7 +279,7 @@ export class GenericTablePage extends React.Component {
           cell = (
             <EditableCell
               key={column.key}
-              ref={rowId}
+              refCallBack={(reference) => this.cellRefs.push(reference)}
               style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
