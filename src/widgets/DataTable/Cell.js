@@ -22,13 +22,13 @@ import {
  * @return  {React.Component}       A single View with children
  */
 export function Cell(props) {
-  const { style, textStyle, width, children, ...viewProps } = props;
+  const { style, numberOfLines, textStyle, width, children, ...viewProps } = props;
 
   // Render string child in a Text Component
   if (typeof children === 'string' || typeof children === 'number') {
     return (
       <View {...viewProps} style={[defaultStyles.cell, style, { flex: width }]}>
-        <Text style={textStyle}>
+        <Text numberOfLines={numberOfLines} style={textStyle}>
           {children}
         </Text>
       </View>
@@ -48,10 +48,12 @@ Cell.propTypes = {
   textStyle: Text.propTypes.style,
   width: React.PropTypes.number,
   children: React.PropTypes.any,
+  numberOfLines: React.PropTypes.number,
 };
 
 Cell.defaultProps = {
   width: 1,
+  numberOfLines: 1,
 };
 
 const defaultStyles = StyleSheet.create({
