@@ -22,7 +22,9 @@ export class Row extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ isExpanded: nextProps.isExpanded });
+    if (nextProps.isExpanded !== this.state.isExpanded) {
+      this.setState({ isExpanded: nextProps.isExpanded });
+    }
   }
 
   onPress() {
