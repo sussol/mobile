@@ -243,6 +243,7 @@ export class CustomerInvoicePage extends GenericTablePage {
             </View>
             <View style={globalStyles.verticalContainer}>
               <PageButton
+                style={globalStyles.topButton}
                 text="New Item"
                 onPress={this.openItemSelector}
                 isDisabled={this.props.transaction.isFinalised}
