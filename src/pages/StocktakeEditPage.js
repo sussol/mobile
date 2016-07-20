@@ -106,6 +106,31 @@ StocktakeEditPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
 };
 
+const COLUMNS = [
+  {
+    key: 'itemCode',
+    width: 1,
+    title: 'ITEM CODE',
+    sortable: true,
+  },
+  {
+    key: 'itemName',
+    width: 3,
+    title: 'ITEM NAME',
+    sortable: true,
+  },
+  {
+    key: 'snapshotTotalQuantity',
+    width: 1,
+    title: 'SNAPSHOT QUANTITY',
+  },
+  {
+    key: 'countedTotalQuantity',
+    width: 1,
+    title: 'ACTUAL QUANTITY',
+  },
+];
+
 const MAX_ITEMS_IN_ERROR_MESSAGE = 6; // Number of items to display in finalise error modal
 const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in error modal
 
@@ -132,28 +157,3 @@ export function checkForFinaliseError(stocktake) {
   }
   return null;
 }
-
-const COLUMNS = [
-  {
-    key: 'itemCode',
-    width: 1,
-    title: 'ITEM CODE',
-    sortable: true,
-  },
-  {
-    key: 'itemName',
-    width: 3,
-    title: 'ITEM NAME',
-    sortable: true,
-  },
-  {
-    key: 'snapshotTotalQuantity',
-    width: 1,
-    title: 'SNAPSHOT QUANTITY',
-  },
-  {
-    key: 'countedTotalQuantity',
-    width: 1,
-    title: 'ACTUAL QUANTITY',
-  },
-];

@@ -79,6 +79,9 @@ export class Database {
         objects.toString() === '[object Results]'
       ) objects = object;
 
+    // If empty, ignore
+    if (!objects || objects.length === 0) return;
+
     // Go through each object, call its destructor, and alert any change listeners
     objects.forEach(obj => {
       const record = { ...obj };

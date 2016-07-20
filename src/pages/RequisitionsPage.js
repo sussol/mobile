@@ -42,13 +42,15 @@ export class RequisitionsPage extends GenericTablePage {
     const { selection, requisitions } = this.state;
     const { database } = this.props;
     database.write(() => {
+      const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const requisition = requisitions.find(currentRequisition =>
                                                 currentRequisition.id === selection[i]);
-        if (requisition.isValid()) {
-          database.delete('Transaction', requisition);
+        if (requisition.isValid() && !requisition.isFinalised) {
+          requisitionsToDelete.push(requisition);
         }
       }
+      database.delete('Requisition', requisitionsToDelete);
     });
     this.setState({ selection: [] });
     this.refreshData();
