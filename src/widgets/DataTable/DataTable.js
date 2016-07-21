@@ -20,6 +20,7 @@ export function DataTable(props) {
     listViewStyle,
     renderHeader,
     dataSource,
+    refCallback,
     renderRow,
     ...listViewProps,
   } = props;
@@ -28,6 +29,7 @@ export function DataTable(props) {
       {typeof renderHeader === 'function' && renderHeader()}
       <ListView
         {...listViewProps}
+        ref={refCallback}
         style={[defaultStyles.listview, listViewStyle]}
         dataSource={dataSource}
         renderRow={renderRow}
@@ -39,6 +41,7 @@ export function DataTable(props) {
 DataTable.propTypes = {
   style: View.propTypes.style,
   listViewStyle: React.PropTypes.number,
+  refCallback: React.PropTypes.func,
   renderHeader: React.PropTypes.func,
   dataSource: React.PropTypes.object.isRequired,
   renderRow: React.PropTypes.func.isRequired,
