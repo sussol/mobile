@@ -65,6 +65,7 @@ export class GenericTablePage extends React.Component {
     };
     this.cellRefs = [];
     this.columns = null;
+    this.dataTableRef = null;
     this.dataTypesDisplayed = [];
     this.databaseListenerId = null;
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -98,7 +99,10 @@ export class GenericTablePage extends React.Component {
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    this.setState({ searchTerm: term }, this.refreshData);
+    this.setState({ searchTerm: term }, () => {
+      this.refreshData();
+      if (this.dataTableRef) this.dataTableRef.scrollTo({ y: 0, animated: false });
+    });
   }
 
   onColumnSort(sortBy) {
@@ -279,7 +283,7 @@ export class GenericTablePage extends React.Component {
           cell = (
             <EditableCell
               key={column.key}
-              refCallBack={(reference) => this.cellRefs.push(reference)}
+              refCallback={(reference) => this.cellRefs.push(reference)}
               style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
@@ -338,6 +342,7 @@ export class GenericTablePage extends React.Component {
   renderDataTable() {
     return (
       <DataTable
+        refCallback={(reference) => (this.dataTableRef = reference)}
         style={globalStyles.dataTable}
         listViewStyle={localStyles.listView}
         dataSource={this.state.dataSource}
