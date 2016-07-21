@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
 
@@ -77,33 +78,10 @@ export class TransactionItem extends Realm.Object {
     const difference = quantity - this.totalQuantity; // Positive if new quantity is greater
 
     // Apply the difference to make the new quantity
-    let remainder = this.allocateDifferenceToBatches(database, difference);
-
-    // Go through item batches in stock, adding new transaction batches as
-    // required to get rid of remainder
-    for (let index = 0; index < this.item.batches.length && remainder !== 0; index ++) {
-      const itemBatch = this.item.batches[index];
-
-      // Skip if item batch is already in this TransactionItem
-      if (this.batches.find(transactionBatch => transactionBatch.itemBatch === itemBatch)) continue;
-
-      // Create the new transaction batch and attach it to this transaction item
-      createRecord(database, 'TransactionBatch', this, itemBatch);
-
-      // Apply as much of the remainder to it as possible
-      remainder = this.allocateDifferenceToBatches(database, remainder);
-    }
+    this.allocateDifferenceToBatches(database, difference);
 
     // See if any batches can be pruned, i.e. have 0 quantity for this invoice
-    const batchesToDelete = [];
-    this.batches.forEach(batch => {
-      if (batch.totalQuantity === 0) batchesToDelete.push(batch);
-    });
-    database.delete('TransactionBatch', batchesToDelete);
-
-    if (remainder > 0) { // Something went wrong
-      throw new Error(`Failed to allocate ${remainder} of ${quantity} to ${this.item.name}`);
-    }
+    this.pruneEmptyBatches(database);
   }
 
   /**
@@ -111,27 +89,80 @@ export class TransactionItem extends Realm.Object {
    * is an increase, it will apply to the shortest expiry batches possible. If a reduction,
    * it will apply to the longest batches possible. In this way it is FEFO for customer invoices,
    * and pessimistic with changes to supplier invoices (assumes you got more of the shortest
-   * batch or less of the longest batch.)
+   * batch or less of the longest batch.) Side effect, which we don't care about, is that
+   * it is FEFO for supplier credits made from stocktake inventory adjustments, which is
+   * optimistic, but it's all a guess about what is really going on in their stock anyway.
+   * Null expiries are treated as absolute shortest, which means they will be issued first.
+   *
    * @param {Realm}      database      App wide local database
    * @param {double}     difference    The difference in quantity to set across all batches.
    *                                   Will be positive if greater new quantity, negative
    *                                   if lesser.
-   * @return {double}    remainder     The difference not able to be applied to the batches
-   *                                   passed in.
+   * @return {none}
    */
   allocateDifferenceToBatches(database, difference) {
     // Sort batches shortest -> longest batch if increasing, longest -> shortest if reducing
-    const batches = this.batches.sorted('expiryDate', difference < 0); // TODO deal with null expiries
+    const batches = this.batches.sorted('expiryDate', difference < 0);
 
     // First apply as much of the quantity as possible to existing batches
-    let addQuantity = difference;
-    for (let index = 0; addQuantity !== 0 && index < batches.length; index++) {
-      const batchAddQuantity = batches[index].getAmountToAllocate(addQuantity);
-      batches[index].setTotalQuantity(database, batches[index].totalQuantity + batchAddQuantity);
-      addQuantity -= batchAddQuantity;
-      database.save('TransactionBatch', batches[index]);
+    let remainder = difference;
+    for (let index = 0; remainder !== 0 && index < batches.length; index++) {
+      remainder = this.allocateDifferenceToBatch(database, remainder, batches[index]);
     }
-    return addQuantity; // The remainder, not able to be allocated to the batches passed in
+
+    // If there is a positive remainder, i.e. more to allocate, add more batches
+    if (remainder > 0) {
+      // Sorted shortest to longest expiry date, so that customer invoices issue
+      // following a FEFO policy.
+      // Use complement to only get batches not already in the transaction.
+      const itemBatches = complement(this.item.batches.sorted('expiryDate'),
+                                     this.batches.map((transactionBatch) =>
+                                                        ({ id: transactionBatch.itemBatchId })),
+                                     (batch) => batch.id);
+
+      // Go through item batches, adding transaction batches and allocating remainder
+      // until no remainder left
+      for (let index = 0; index < itemBatches.length && remainder !== 0; index ++) {
+        // Create the new transaction batch and attach it to this transaction item
+        const newBatch = createRecord(database, 'TransactionBatch', this, itemBatches[index]);
+
+        // Apply as much of the remainder to it as possible
+        remainder = this.allocateDifferenceToBatch(database, remainder, newBatch);
+      }
+    }
+
+    if (remainder > 0) { // Something went wrong
+      throw new Error(`Failed to allocate ${remainder} of ${difference} to ${this.item.name}`);
+    }
+  }
+
+  /**
+   * Allocates as much as possible of the quantity passed in to the given batch
+   * @param  {Realm}  database    App wide local database
+   * @param  {number} difference  The difference in quantity to try to allocate
+   * @param  {object} batch       The TransactionBatch to apply the quantity to
+   * @return {integer}            The remainder that couldn't be applied
+   */
+  allocateDifferenceToBatch(database, difference, batch) {
+    const batchAddQuantity = batch.getAmountToAllocate(difference);
+    batch.setTotalQuantity(database, batch.totalQuantity + batchAddQuantity);
+    database.save('TransactionBatch', batch);
+    return difference - batchAddQuantity;
+  }
+
+  /**
+   * Delete any batches from this transaction that aren't contributing to the total
+   * E.g. if the quantity being issued in a customer invoice is reduced, we don't
+   * want to keep a batch that is no longer being issued in the transaction.
+   * @param  {Realm} database   App wide database
+   * @return {none}
+   */
+  pruneEmptyBatches(database) {
+    const batchesToDelete = [];
+    this.batches.forEach(batch => {
+      if (batch.totalQuantity === 0) batchesToDelete.push(batch);
+    });
+    database.delete('TransactionBatch', batchesToDelete);
   }
 }
 
