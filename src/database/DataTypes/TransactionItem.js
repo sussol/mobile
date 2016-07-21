@@ -111,11 +111,22 @@ export class TransactionItem extends Realm.Object {
     }
 
     // If there is a positive remainder, i.e. more to allocate, add more batches
-    if (remainder > 0) {
+    if (remainder > 0 && this.item.batches.length > this.batches.length) {
+      // Use only batches that have some stock on hand (only ones we can issue
+      // from, and also most likely batches to have found more of in stocktake)
       // Sorted shortest to longest expiry date, so that customer invoices issue
       // following a FEFO policy.
+      const batchesWithStock = this.item.batches.filtered('numberOfPacks > 0').sorted('expiryDate');
+
+      // Unless there are no batches with stock, in which case we use the batch
+      // that was most likely to be recently in stock, i.e. the one with the longest
+      // expiry date.
+      const batchesToUse = batchesWithStock.length > 0 ?
+                           batchesWithStock :
+                           [this.item.batches.sorted('expiryDate', true)[0]];
+
       // Use complement to only get batches not already in the transaction.
-      const itemBatches = complement(this.item.batches.sorted('expiryDate'),
+      const itemBatches = complement(batchesToUse,
                                      this.batches.map((transactionBatch) =>
                                                         ({ id: transactionBatch.itemBatchId })),
                                      (batch) => batch.id);
@@ -145,6 +156,7 @@ export class TransactionItem extends Realm.Object {
    */
   allocateDifferenceToBatch(database, difference, batch) {
     const batchAddQuantity = batch.getAmountToAllocate(difference);
+    console.log(`Allocating ${batchAddQuantity} of ${difference} to ${batch}`);
     batch.setTotalQuantity(database, batch.totalQuantity + batchAddQuantity);
     database.save('TransactionBatch', batch);
     return difference - batchAddQuantity;
