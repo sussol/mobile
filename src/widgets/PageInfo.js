@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {
   APP_FONT_FAMILY,
@@ -21,7 +21,9 @@ import {
  *        									turn is an array of info objects containing a title and info.
  *        									E.g.
  *        									[[{title: 'col1:', info: 'row1'}, {title: 'col1:', info: 'row2'}],
- *        									[{title: 'col2:', info: 'row1'}, {title: 'col2:', info: 'row2'}]]
+ *        									[{title: 'col2:', info: 'row1', editableType: 'selectable'},
+ *                           {title: 'col2:', info: 'row2', editableType: 'text'}
+ *                          ]]
  *        									would display
  *        									col1: row1   col2: row1
  *        									col1: row2   col2: row2
@@ -57,28 +59,42 @@ export function PageInfo(props) {
             </View>
             <View style={localStyles.infoContainer}>
               {columnData.map((rowData, rowIndex) => {
+                const editableType = rowData.editableType;
                 // If null or empty string, use single space to avoid squishing row
                 let infoString = rowData.info && String(rowData.info);
                 infoString = infoString && infoString.length > 0 ? infoString : ' ';
                 const textComponent = (
                   <Text
                     key={`Info ${columnIndex}-${rowIndex}`}
-                    style={localStyles.text}
+                    style={[localStyles.text, editableType === 'text' && localStyles.infoText]}
                     numberOfLines={1}
                   >
                     {infoString}
                   </Text>);
                 if (rowData.onPress && !props.isEditingDisabled) {
+                  let containerStyle;
+                  let iconName;
+                  switch (editableType) {
+                    case 'selectable':
+                      containerStyle = localStyles.selectContainer;
+                      iconName = 'angle-down';
+                      break;
+                    case 'text':
+                    default:
+                      containerStyle = localStyles.editableTextContainer;
+                      iconName = 'pencil';
+                      break;
+                  }
+
                   return (
                     <TouchableOpacity
                       key={`Touchable ${columnIndex}-${rowIndex}`}
                       onPress={rowData.onPress}
-                      on
                     >
-                      <View style={localStyles.editableInfoContainer}>
+                      <View style={containerStyle}>
                         {textComponent}
                         <Icon
-                          name="ios-arrow-down"
+                          name={iconName}
                           size={14}
                           style={localStyles.editIcon}
                           color={SUSSOL_ORANGE}
@@ -126,9 +142,12 @@ const localStyles = StyleSheet.create({
     flexDirection: 'column',
   },
   editableTextContainer: {
-    marginBottom: 4,
+    borderBottomWidth: 1,
+    borderColor: SUSSOL_ORANGE,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
   },
-  editableInfoContainer: {
+  selectContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
