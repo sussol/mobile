@@ -90,7 +90,7 @@ export default StyleSheet.create({
     backgroundColor: SUSSOL_ORANGE,
   },
   modalTextInput: {
-    width: 560,
+    width: SEARCH_BAR_WIDTH,
     borderColor: BACKGROUND_COLOR,
   },
   modalText: {
