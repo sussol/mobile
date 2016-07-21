@@ -75,7 +75,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   navigateToInvoice(invoice) {
-    this.setState({ selection: [] }); // Clear any invoices selected for delete
+    this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
     this.props.navigateTo('customerInvoice',
                           `Invoice ${invoice.serialNumber}`,
                           { transaction: invoice });

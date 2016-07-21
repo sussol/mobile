@@ -32,17 +32,15 @@ export class CheckableCell extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isChecked: false,
+      isChecked: props.isChecked,
     };
     this.onPress = this.onPress.bind(this);
   }
 
-  componentWillMount() {
-    this.setState({ isChecked: this.props.isChecked });
-  }
-
   componentWillReceiveProps(nextProps) {
-    this.setState({ isChecked: nextProps.isChecked });
+    if (nextProps.isChecked !== this.state.isChecked) {
+      this.setState({ isChecked: nextProps.isChecked });
+    }
   }
 
   onPress() {
