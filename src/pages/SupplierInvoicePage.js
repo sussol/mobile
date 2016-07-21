@@ -43,6 +43,10 @@ export class SupplierInvoicePage extends GenericTablePage {
           a.item.code.localeCompare(b.item.code));
         if (!isAscending) data.reverse();
         break;
+      case 'totalQuantitySent':
+        data = data.slice().sort((a, b) => a.totalQuantitySent - b.totalQuantitySent);
+        if (!isAscending) data.reverse();
+        break;
       case 'numReceived':
         data = data.slice().sort((a, b) => a.totalQuantity - b.totalQuantity);
         if (!isAscending) data.reverse();
@@ -99,13 +103,7 @@ export class SupplierInvoicePage extends GenericTablePage {
   renderCell(key, transactionItem) {
     switch (key) {
       default:
-      case 'itemName':
-        return transactionItem.item && transactionItem.item.name;
-      case 'itemCode': {
-        return transactionItem.item && transactionItem.item.code;
-      }
-      case 'numSent':
-        return transactionItem.totalQuantitySent;
+        return transactionItem[key];
       case 'numReceived': {
         const isEditable = !this.props.transaction.isFinalised;
         const type = isEditable ? 'editable' : 'text';
@@ -153,7 +151,7 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'numSent',
+    key: 'totalQuantitySent',
     width: 1,
     title: 'NO. SENT',
     sortable: true,
