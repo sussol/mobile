@@ -73,13 +73,14 @@ export function PageInfo(props) {
                     <TouchableOpacity
                       key={`Touchable ${columnIndex}-${rowIndex}`}
                       onPress={rowData.onPress}
+                      on
                     >
                       <View style={localStyles.editableInfoContainer}>
                         {textComponent}
                         <Icon
                           name="ios-arrow-down"
                           size={14}
-                          style={localStyles.editIconStyle}
+                          style={localStyles.editIcon}
                           color={SUSSOL_ORANGE}
                         />
                       </View>
@@ -129,8 +130,9 @@ const localStyles = StyleSheet.create({
   },
   editableInfoContainer: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
-  editIconStyle: {
+  editIcon: {
     marginLeft: 4,
   },
   text: {
@@ -142,5 +144,9 @@ const localStyles = StyleSheet.create({
   titleText: {
     color: DARK_GREY,
     marginRight: 25,
+  },
+  infoText: {
+    flex: 1,
+    alignSelf: 'stretch',
   },
 });
