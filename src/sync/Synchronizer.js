@@ -102,7 +102,7 @@ export class Synchronizer {
   async push() {
     let recordsToSync;
     let translatedRecords;
-    while (this.syncQueue.length() > 0) {
+    while (this.syncQueue.length > 0) {
       recordsToSync = this.syncQueue.next(BATCH_SIZE);
       translatedRecords = recordsToSync.map((record) => generateSyncJson(this.database,
                                                                          this.settings,

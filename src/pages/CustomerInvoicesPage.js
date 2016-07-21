@@ -143,6 +143,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
             options={this.props.database.objects('Customer')}
             placeholderText="Start typing to select customer"
             queryString={'name BEGINSWITH[c] $0'}
+            sortByString={'name'}
             onSelect={name => {
               this.onNewInvoice(name);
               this.setState({ isCreatingInvoice: false });

@@ -38,6 +38,7 @@ export class AutocompleteSelector extends React.Component {
       options,
       onSelect,
       queryString,
+      sortByString,
       placeholderText,
     } = this.props;
 
@@ -47,7 +48,7 @@ export class AutocompleteSelector extends React.Component {
         autoFocus
         autoCapitalize="none"
         autoCorrect={false}
-        data={options.filtered(queryString, this.state.queryText)}
+        data={options.filtered(queryString, this.state.queryText).sorted(sortByString)}
         onChangeText={text => this.setState({ queryText: text })}
         placeholder={placeholderText}
         renderItem={(item) => (
@@ -65,6 +66,7 @@ export class AutocompleteSelector extends React.Component {
 AutocompleteSelector.propTypes = {
   options: React.PropTypes.object.isRequired,
   queryString: React.PropTypes.string.isRequired,
+  sortByString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,
   onSelect: React.PropTypes.func.isRequired,
 };

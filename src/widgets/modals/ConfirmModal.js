@@ -12,11 +12,13 @@ import {
   View,
   Dimensions,
 } from 'react-native';
+import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
 import globalStyles from '../../globalStyles';
 
 export function ConfirmModal(props) {
+  if (props.isOpen) dismissKeyboard();
   const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
     <Modal
