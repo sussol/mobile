@@ -5,24 +5,25 @@ import {
   View,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/Ionicons';
+import IoniconIcon from 'react-native-vector-icons/Ionicons';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 export function SyncIcon(props) {
   return (
     <View style={localStyles.horizontalContainer}>
-      <Icon
+      <IoniconIcon
         name="md-cloud"
         size={props.size * 30}
         style={{ top: props.size * 4 }}
         color={props.cloudColor}
       />
-      <Icon
-        name="md-swap"
-        size={props.size * 22}
+      <FontAwesomeIcon
+        name="exchange"
+        size={props.size * 16}
         style={localStyles.icon}
         color={props.arrowsColor}
       />
-      <Icon
+      <IoniconIcon
         name="logo-rss"
         size={props.size * 22}
         style={localStyles.icon}
