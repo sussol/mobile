@@ -19,6 +19,7 @@ const text = 'Finalise will lock this record permanently and cause stock level c
  * @prop  {object}    user          The user who is finalising the record
  */
 export function FinaliseModal(props) {
+  if (!props.record || !props.record.isValid()) return null; // Record may have been deleted
   const errorText = props.checkForError && props.checkForError(props.record);
   return (
     <ConfirmModal
@@ -33,7 +34,7 @@ export function FinaliseModal(props) {
       buttonTextStyle={globalStyles.finaliseModalButtonText}
       isOpen={props.isOpen}
       questionText={errorText || text}
-      cancelText="Got it"
+      cancelText={errorText ? 'Got it' : 'Cancel'}
       onConfirm={
         !errorText ? () => {
           const record = props.record;
