@@ -94,7 +94,7 @@ export class SyncQueue {
    * Return the number of records in the sync queue.
    * @return {integer} Number of records awaiting sync
    */
-  length() {
+  get length() {
     return this.database.objects('SyncOut').length;
   }
 

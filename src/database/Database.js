@@ -75,8 +75,8 @@ export class Database {
 
     // If object is an array, a realm list, or a realm results object, use it directly
     if (Array.isArray(object) ||
-        objects.toString() === '[object List]' ||
-        objects.toString() === '[object Results]'
+        object.toString() === '[object List]' ||
+        object.toString() === '[object Results]'
       ) objects = object;
 
     // If empty, ignore
@@ -84,7 +84,7 @@ export class Database {
 
     // Go through each object, call its destructor, and alert any change listeners
     objects.forEach(obj => {
-      const record = { ...obj };
+      const record = { id: obj.id }; // If it is being deleted, only alert with the id
       if (obj && obj.destructor instanceof Function) obj.destructor(this);
       this.alertListeners(CHANGE_TYPES.DELETE, type, record, ...listenerArgs);
     });
