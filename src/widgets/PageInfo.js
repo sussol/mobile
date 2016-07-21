@@ -59,33 +59,33 @@ export function PageInfo(props) {
             </View>
             <View style={localStyles.infoContainer}>
               {columnData.map((rowData, rowIndex) => {
-                const editableType = rowData.editableType;
+                let editTextStyle;
+                let containerStyle;
+                let iconName;
+                switch (rowData.editableType) {
+                  case 'selectable':
+                    containerStyle = localStyles.selectContainer;
+                    iconName = 'angle-down';
+                    break;
+                  case 'text':
+                  default:
+                    containerStyle = localStyles.editableTextContainer;
+                    iconName = 'pencil';
+                    editTextStyle = localStyles.infoText;
+                    break;
+                }
                 // If null or empty string, use single space to avoid squishing row
                 let infoString = rowData.info && String(rowData.info);
                 infoString = infoString && infoString.length > 0 ? infoString : ' ';
                 const textComponent = (
                   <Text
                     key={`Info ${columnIndex}-${rowIndex}`}
-                    style={[localStyles.text, editableType === 'text' && localStyles.infoText]}
+                    style={[localStyles.text, editTextStyle]}
                     numberOfLines={1}
                   >
                     {infoString}
                   </Text>);
                 if (rowData.onPress && !props.isEditingDisabled) {
-                  let containerStyle;
-                  let iconName;
-                  switch (editableType) {
-                    case 'selectable':
-                      containerStyle = localStyles.selectContainer;
-                      iconName = 'angle-down';
-                      break;
-                    case 'text':
-                    default:
-                      containerStyle = localStyles.editableTextContainer;
-                      iconName = 'pencil';
-                      break;
-                  }
-
                   return (
                     <TouchableOpacity
                       key={`Touchable ${columnIndex}-${rowIndex}`}
