@@ -206,6 +206,7 @@ export class CustomerInvoicePage extends GenericTablePage {
           <AutocompleteSelector
             options={database.objects('Item')}
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
+            sortByString={'name'}
             onSelect={(item) => {
               database.write(() => {
                 createRecord(database, 'TransactionItem', transaction, item);
