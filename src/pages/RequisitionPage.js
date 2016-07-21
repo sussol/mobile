@@ -212,6 +212,7 @@ export class RequisitionPage extends GenericTablePage {
             onSelect={(number) => {
               this.props.database.write(() => {
                 this.props.requisition.monthsToSupply = number;
+                this.props.database.save('Requisition', this.props.requisition);
               });
               this.closeModal();
             }}
