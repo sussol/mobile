@@ -21,7 +21,7 @@ const {
   StateUtils: NavigationStateUtils,
 } = NavigationExperimental;
 
-const BACK_ACTION = 'BackAction';
+const BACK_ACTION = 'backAction';
 const PUSH_ACTION = 'push';
 const REPLACE_ACTION = 'replace';
 const REPLACE_PREVIOUS_AND_POP_ACTION = 'replacePreviousAndPop';
@@ -49,11 +49,8 @@ export class Navigator extends React.Component {
   }
 
   onNavigate(action) {
-    // If no action passed, or a route with the key is already in the card stack,
-    // ignore (two pushes can happen if user quickly double taps a navigation button)
-    if (!action || NavigationStateUtils.has(this.state.navigationState, action.key)) {
-      return false;
-    }
+    // If no action passed, stay in place.
+    if (!action) return false;
     const newState = getNewNavState(this.state.navigationState, action);
     if (newState === this.state.navigationState) {
       return false;
@@ -167,26 +164,36 @@ Navigator.propTypes = {
  */
 function getNewNavState(currentState, action) {
   const { type, key, ...extraProps } = action;
+  let newNavState;
   switch (type) {
     case INITIAL_ACTION:
-      return {
+      newNavState = {
         index: 0,
         key: 'root',
         routes: [{ key: 'root', ...extraProps }],
       };
+      break;
     case PUSH_ACTION:
-      return NavigationStateUtils.push(currentState, { key: key, ...extraProps });
+      // Don't push route if route already in navState (two pushes can happen if user quickly
+      // double taps a navigation button)
+      if (NavigationStateUtils.has(currentState, action.key)) {
+        return currentState;
+      }
+      newNavState = NavigationStateUtils.push(currentState, { key: key, ...extraProps });
+      break;
     case BACK_ACTION:
-      return currentState.index > 0 ?
+      newNavState = currentState.index > 0 ?
         NavigationStateUtils.pop(currentState) :
         currentState;
+      break;
     // Replace current route with new route
-    case REPLACE_ACTION: // TODO: broken, RN Bug. JIRA bug OM-99
-      return NavigationStateUtils.replaceAtIndex(
+    case REPLACE_ACTION:
+      newNavState = NavigationStateUtils.replaceAtIndex(
         { ...currentState },
         currentState.index,
         { key: key, ...extraProps }
       );
+      break;
     // Replace previous route and pop to it. Will error if at root
     case REPLACE_PREVIOUS_AND_POP_ACTION: {
       const newState = NavigationStateUtils.replaceAtIndex(
@@ -194,11 +201,14 @@ function getNewNavState(currentState, action) {
         currentState.index - 1,
         { key: key, ...extraProps }
       );
-      return NavigationStateUtils.pop(newState);
+      newNavState = NavigationStateUtils.pop(newState);
+      break;
     }
     default:
-      return currentState;
+      newNavState = currentState;
   }
+
+  return newNavState;
 }
 
 const WINDOW_WIDTH = Dimensions.get('window').width; // Used to centre the centreComponent
