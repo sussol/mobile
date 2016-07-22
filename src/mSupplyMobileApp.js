@@ -96,7 +96,6 @@ export default class mSupplyMobileApp extends React.Component {
         syncError: '',
       });
     } catch (error) {
-      console.log(error);
       this.setState({
         isSyncing: false,
         syncError: error.message,

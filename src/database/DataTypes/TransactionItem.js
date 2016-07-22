@@ -156,7 +156,6 @@ export class TransactionItem extends Realm.Object {
    */
   allocateDifferenceToBatch(database, difference, batch) {
     const batchAddQuantity = batch.getAmountToAllocate(difference);
-    console.log(`Allocating ${batchAddQuantity} of ${difference} to ${batch}`);
     batch.setTotalQuantity(database, batch.totalQuantity + batchAddQuantity);
     database.save('TransactionBatch', batch);
     return difference - batchAddQuantity;
