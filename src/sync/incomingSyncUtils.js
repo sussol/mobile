@@ -384,8 +384,6 @@ function deleteRecord(database, recordType, recordId) {
     case 'MasterListNameJoin':
     case 'Name':
     case 'NameStoreJoin':
-    case 'NumberSequence':
-    case 'NumberToReuse':
     case 'Requisition':
     case 'RequisitionItem':
     case 'Stocktake':
@@ -393,8 +391,14 @@ function deleteRecord(database, recordType, recordId) {
     case 'Transaction':
     case 'TransactionBatch':
     case 'TransactionCategory': {
-      const recordToDelete = getObject(database, recordType, recordId);
-      if (recordToDelete) database.delete(recordType, recordToDelete);
+      const deleteResults = database.objects(recordType).filtered('id == $0', recordId);
+      if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
+      break;
+    }
+    case 'NumberSequence':
+    case 'NumberToReuse': {
+      const deleteResults = database.objects(recordType).filtered('sequenceKey == $0', recordId);
+      if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
       break;
     }
     default:
