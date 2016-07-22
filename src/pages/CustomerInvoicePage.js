@@ -27,7 +27,7 @@ const DATA_TYPES_DISPLAYED =
         ['Transaction', 'TransactionBatch', 'TransactionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
-  THEIR_REF_EDIT: 'TheirRefEdit',
+  THEIR_REF_EDIT: 'theirRefEdit',
   ITEM_SELECT: 'itemSelect',
 };
 
