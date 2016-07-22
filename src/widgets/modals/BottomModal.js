@@ -15,19 +15,27 @@ import Modal from 'react-native-modalbox';
 import { DARK_GREY } from '../../globalStyles';
 
 
-export function BottomModal(props) {
-  if (props.isOpen) dismissKeyboard();
-  const { children, style, ...modalProps } = props;
-  return (
-    <Modal
-      {...modalProps}
-      style={[localStyles.modal, props.style]}
-    >
-      <View style={[localStyles.container, style]}>
-        {children}
-      </View>
-    </Modal>
-  );
+export class BottomModal extends React.Component {
+
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.isOpen && nextProps.isOpen) { // Opening modal, dismiss the keyboard
+      dismissKeyboard();
+    }
+  }
+
+  render() {
+    const { children, style, ...modalProps } = this.props;
+    return (
+      <Modal
+        {...modalProps}
+        style={[localStyles.modal, style]}
+      >
+        <View style={[localStyles.container, style]}>
+          {children}
+        </View>
+      </Modal>
+    );
+  }
 }
 
 BottomModal.propTypes = {
