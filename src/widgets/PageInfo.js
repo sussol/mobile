@@ -152,13 +152,14 @@ const localStyles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   editIcon: {
+    marginTop: 4,
     marginLeft: 4,
   },
   text: {
     fontSize: 12,
     fontFamily: APP_FONT_FAMILY,
     color: SUSSOL_ORANGE,
-    marginBottom: 4,
+    marginTop: 4,
   },
   titleText: {
     color: DARK_GREY,
