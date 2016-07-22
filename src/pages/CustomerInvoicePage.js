@@ -27,6 +27,7 @@ const DATA_TYPES_DISPLAYED =
         ['Transaction', 'TransactionBatch', 'TransactionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
+  THEIR_REF_EDIT: 'TheirRefEdit',
   ITEM_SELECT: 'itemSelect',
 };
 
@@ -45,6 +46,7 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.openModal = this.openModal.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
     this.openCommentEditor = this.openCommentEditor.bind(this);
+    this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
   }
@@ -130,6 +132,10 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.openModal(MODAL_KEYS.COMMENT_EDIT);
   }
 
+  openTheirRefEditor() {
+    this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
+  }
+
   openModal(key) {
     this.setState({ modalKey: key, pageContentModalIsOpen: true });
   }
@@ -162,6 +168,8 @@ export class CustomerInvoicePage extends GenericTablePage {
         {
           title: 'Their Ref:',
           info: this.props.transaction.theirRef,
+          onPress: this.openTheirRefEditor,
+          editableType: 'text',
         },
         {
           title: 'Comment:',
@@ -198,7 +206,7 @@ export class CustomerInvoicePage extends GenericTablePage {
   }
 
   renderModalContent() {
-    const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
+    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
     const { database, transaction } = this.props;
     switch (this.state.modalKey) {
       default:
@@ -224,6 +232,21 @@ export class CustomerInvoicePage extends GenericTablePage {
               if (newComment !== transaction.comment) {
                 database.write(() => {
                   transaction.comment = newComment;
+                  database.save('Transaction', transaction);
+                });
+              }
+              this.closeModal();
+            }}
+          />
+        );
+      case THEIR_REF_EDIT:
+        return (
+          <TextEditor
+            text={transaction.theirRef}
+            onEndEditing={(newTheirRef) => {
+              if (newTheirRef !== transaction.theirRef) {
+                database.write(() => {
+                  transaction.theirRef = newTheirRef;
                   database.save('Transaction', transaction);
                 });
               }
