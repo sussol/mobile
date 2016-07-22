@@ -90,13 +90,22 @@ export class CustomerInvoicesPage extends GenericTablePage {
     let data = this.state.transactions.filtered(
                  'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
                  searchTerm);
-    if (sortBy === 'otherPartyName') {
-      // Convert to javascript array obj then sort with standard array functions.
-      data = data.slice().sort((a, b) => a.otherPartyName.localeCompare(b.otherPartyName));
-      if (!isAscending) data.reverse();
-    } else {
-      data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+
+    switch (sortBy) {
+      case 'otherPartyName':
+        // Convert to javascript array obj then sort with standard array functions.
+        data = data.slice().sort((a, b) => a.otherPartyName.localeCompare(b.otherPartyName));
+        if (!isAscending) data.reverse();
+        break;
+      case 'serialNumber': // Special case for correct number based sorting
+        // Convert to javascript array obj then sort with standard array functions.
+        data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
+        if (!isAscending) data.reverse(); // ...3,2,1,0
+        break;
+      default:
+        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
     }
+
     return data;
   }
 
