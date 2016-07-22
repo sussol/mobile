@@ -2,9 +2,11 @@ import React from 'react';
 import {
   StyleSheet,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
 } from 'react-native';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {
   APP_FONT_FAMILY,
@@ -19,7 +21,9 @@ import {
  *        									turn is an array of info objects containing a title and info.
  *        									E.g.
  *        									[[{title: 'col1:', info: 'row1'}, {title: 'col1:', info: 'row2'}],
- *        									[{title: 'col2:', info: 'row1'}, {title: 'col2:', info: 'row2'}]]
+ *        									[{title: 'col2:', info: 'row1', editableType: 'selectable'},
+ *                           {title: 'col2:', info: 'row2', editableType: 'text'}
+ *                          ]]
  *        									would display
  *        									col1: row1   col2: row1
  *        									col1: row2   col2: row2
@@ -55,25 +59,48 @@ export function PageInfo(props) {
             </View>
             <View style={localStyles.infoContainer}>
               {columnData.map((rowData, rowIndex) => {
+                let editTextStyle;
+                let containerStyle;
+                let iconName;
+                switch (rowData.editableType) {
+                  case 'selectable':
+                    containerStyle = localStyles.selectContainer;
+                    iconName = 'angle-down';
+                    break;
+                  case 'text':
+                  default:
+                    containerStyle = localStyles.editableTextContainer;
+                    iconName = 'pencil';
+                    editTextStyle = localStyles.infoText;
+                    break;
+                }
                 // If null or empty string, use single space to avoid squishing row
                 let infoString = rowData.info && String(rowData.info);
                 infoString = infoString && infoString.length > 0 ? infoString : ' ';
                 const textComponent = (
                   <Text
                     key={`Info ${columnIndex}-${rowIndex}`}
-                    style={localStyles.text}
+                    style={[localStyles.text, editTextStyle]}
                     numberOfLines={1}
                   >
                     {infoString}
                   </Text>);
                 if (rowData.onPress && !props.isEditingDisabled) {
                   return (
-                    <TouchableHighlight
+                    <TouchableOpacity
                       key={`Touchable ${columnIndex}-${rowIndex}`}
                       onPress={rowData.onPress}
                     >
-                      {textComponent}
-                    </TouchableHighlight>);
+                      <View style={containerStyle}>
+                        {textComponent}
+                        <Icon
+                          name={iconName}
+                          size={14}
+                          style={localStyles.editIcon}
+                          color={SUSSOL_ORANGE}
+                        />
+                      </View>
+                    </TouchableOpacity>);
                 }
                 return textComponent;
               })}
@@ -114,6 +141,19 @@ const localStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
   },
+  editableTextContainer: {
+    borderBottomWidth: 1,
+    borderColor: SUSSOL_ORANGE,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  selectContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  editIcon: {
+    marginLeft: 4,
+  },
   text: {
     fontSize: 12,
     fontFamily: APP_FONT_FAMILY,
@@ -123,5 +163,9 @@ const localStyles = StyleSheet.create({
   titleText: {
     color: DARK_GREY,
     marginRight: 25,
+  },
+  infoText: {
+    flex: 1,
+    alignSelf: 'stretch',
   },
 });

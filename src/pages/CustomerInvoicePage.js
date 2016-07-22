@@ -167,6 +167,7 @@ export class CustomerInvoicePage extends GenericTablePage {
           title: 'Comment:',
           info: this.props.transaction.comment,
           onPress: this.openCommentEditor,
+          editableType: 'text',
         },
       ],
     ];

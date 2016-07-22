@@ -40,13 +40,13 @@ TextInput.propTypes = {
 const localStyles = StyleSheet.create({
   container: {
     borderBottomWidth: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     borderColor: 'white',
   },
   textInput: {
+    alignSelf: 'stretch',
     height: 40,
-    width: 500,
     fontSize: 14,
     backgroundColor: 'rgba(0, 0, 0, 0)',
   },

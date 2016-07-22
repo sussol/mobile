@@ -155,6 +155,7 @@ export class RequisitionPage extends GenericTablePage {
           title: 'Months Stock Required:',
           info: Math.round(this.props.requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
+          editableType: 'selectable',
         },
       ],
     ];
