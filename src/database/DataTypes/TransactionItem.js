@@ -116,7 +116,7 @@ export class TransactionItem extends Realm.Object {
       // from, and also most likely batches to have found more of in stocktake)
       // Sorted shortest to longest expiry date, so that customer invoices issue
       // following a FEFO policy.
-      const batchesWithStock = this.item.batches.filtered('numberOfPacks > 0').sorted('expiryDate');
+      const batchesWithStock = this.item.batchesWithStock.sorted('expiryDate');
 
       // Unless there are no batches with stock, in which case we use the batch
       // that was most likely to be recently in stock, i.e. the one with the longest
