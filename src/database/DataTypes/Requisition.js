@@ -10,6 +10,10 @@ export class Requisition extends Realm.Object {
     this.setRequestedToSuggested = this.setRequestedToSuggested.bind(this);
   }
 
+  get isConfirmed() {
+    return this.status === 'confirmed';
+  }
+
   get isFinalised() {
     return this.status === 'finalised';
   }
