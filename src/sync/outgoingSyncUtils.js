@@ -132,6 +132,7 @@ function generateSyncData(settings, recordType, record) {
         item_ID: record.itemId,
         stock_on_hand: String(record.stockOnHand),
         daily_usage: String(record.dailyUsage),
+        suggested_quantity: String(record.suggestedQuantity),
         line_number: String(record.sortIndex),
         Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
