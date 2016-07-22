@@ -38,13 +38,14 @@ export class EditableCell extends React.Component {
   }
 
   render() {
-    const { style, width, textStyle, ...textInputProps } = this.props;
+    const { style, width, textStyle, refCallback, ...textInputProps } = this.props;
     return (
       <View style={[defaultStyles.cell, style, { flex: width }]}>
         <TextInput
           {...textInputProps}
+          ref={refCallback}
           style={textStyle}
-          onChangeText = {(text) => this.setState({ value: text })}
+          onChangeText={(text) => this.setState({ value: text })}
           onEndEditing={() => this.onEndEditing()}
           value={this.state.value}
         />
@@ -55,6 +56,7 @@ export class EditableCell extends React.Component {
 
 EditableCell.propTypes = {
   style: View.propTypes.style,
+  refCallback: React.PropTypes.func,
   textStyle: TextInput.propTypes.style,
   width: React.PropTypes.number,
   onEndEditing: React.PropTypes.func,

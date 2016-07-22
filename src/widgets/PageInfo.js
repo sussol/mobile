@@ -9,7 +9,6 @@ import {
 import {
   APP_FONT_FAMILY,
   DARK_GREY,
-  SEARCH_BAR_WIDTH,
   SUSSOL_ORANGE,
 } from '../globalStyles';
 
@@ -30,42 +29,58 @@ export function PageInfo(props) {
     <View
       style={[localStyles.horizontalContainer]}
     >
-      {props.columns.map((columnData, columnIndex) =>
-        <View
-          key={`Column ${columnIndex}`}
-          style={localStyles.columnContainer}
-        >
-          <View>
-            {columnData.map((rowData, rowIndex) =>
-              <Text
-                key={`Title ${columnIndex}-${rowIndex}`}
-                style={[localStyles.text, localStyles.titleText]}
-              >
-                {rowData.title ? rowData.title : ' '/** Space if null to avoid squishing row **/}
-              </Text>)}
-          </View>
-          <View style={localStyles.infoContainer}>
-            {columnData.map((rowData, rowIndex) => {
-              const textComponent = (
-                <Text
-                  key={`Info ${columnIndex}-${rowIndex}`}
-                  style={localStyles.text}
-                >
-                  {rowData.info ? rowData.info : ' '/** Space if null to avoid squishing row **/}
-                </Text>);
-              if (rowData.onPress && !props.isEditingDisabled) {
+      {props.columns.map((columnData, columnIndex) => {
+        const isRightMostColumn = columnIndex === props.columns.length - 1;
+        return (
+          <View
+            key={`Column ${columnIndex}`}
+            style={isRightMostColumn ?
+                   localStyles.rightmostColumnContainer :
+                   localStyles.columnContainer}
+          >
+            <View>
+              {columnData.map((rowData, rowIndex) => {
+                // If null or empty string, use single space to avoid squishing row
+                const titleString = rowData.title ? rowData.title : ' ';
                 return (
-                  <TouchableHighlight
-                    key={`Touchable ${columnIndex}-${rowIndex}`}
-                    onPress={rowData.onPress}
+                  <Text
+                    key={`Title ${columnIndex}-${rowIndex}`}
+                    style={[localStyles.text, localStyles.titleText]}
+                    numberOfLines={1}
                   >
-                    {textComponent}
-                  </TouchableHighlight>);
-              }
-              return textComponent;
-            })}
+                    {titleString}
+                  </Text>
+                );
+              })}
+            </View>
+            <View style={localStyles.infoContainer}>
+              {columnData.map((rowData, rowIndex) => {
+                // If null or empty string, use single space to avoid squishing row
+                let infoString = rowData.info && String(rowData.info);
+                infoString = infoString && infoString.length > 0 ? infoString : ' ';
+                const textComponent = (
+                  <Text
+                    key={`Info ${columnIndex}-${rowIndex}`}
+                    style={localStyles.text}
+                    numberOfLines={1}
+                  >
+                    {infoString}
+                  </Text>);
+                if (rowData.onPress && !props.isEditingDisabled) {
+                  return (
+                    <TouchableHighlight
+                      key={`Touchable ${columnIndex}-${rowIndex}`}
+                      onPress={rowData.onPress}
+                    >
+                      {textComponent}
+                    </TouchableHighlight>);
+                }
+                return textComponent;
+              })}
+            </View>
           </View>
-        </View>)}
+        );
+      })}
     </View>
   );
 }
@@ -78,9 +93,8 @@ PageInfo.propTypes = {
 const localStyles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    width: SEARCH_BAR_WIDTH,
     marginHorizontal: 5,
     marginBottom: 10,
   },
@@ -88,9 +102,17 @@ const localStyles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-start',
+    marginRight: 25,
+  },
+  rightmostColumnContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginRight: 5,
   },
   infoContainer: {
-    marginHorizontal: 16,
+    flex: 1,
+    flexDirection: 'column',
   },
   text: {
     fontSize: 12,
@@ -100,6 +122,6 @@ const localStyles = StyleSheet.create({
   },
   titleText: {
     color: DARK_GREY,
-    marginRight: 10,
+    marginRight: 25,
   },
 });

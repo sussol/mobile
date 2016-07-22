@@ -2,7 +2,9 @@ import {
   EXTERNAL_TO_INTERNAL,
   NAME_TYPES,
   RECORD_TYPES,
+  REQUISITION_STATUSES,
   REQUISITION_TYPES,
+  SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_TYPES,
@@ -42,7 +44,7 @@ export function integrateRecord(database, settings, syncRecord) {
       deleteRecord(database, internalRecordType, syncRecord.RecordID);
       break;
     default:
-      throw new Error(`Cannot integrate sync record with sync type ${syncType}`);
+      return; // Silently ignore change types we don't handle, e.g. merges
   }
 }
 
@@ -55,7 +57,7 @@ export function integrateRecord(database, settings, syncRecord) {
  * @return {none}
  */
 export function createOrUpdateRecord(database, settings, recordType, record) {
-  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported on malformed record
+  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record
   let internalRecord;
   switch (recordType) {
     case 'Item': {
@@ -194,14 +196,44 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       }
       break;
     }
-    case 'Requisition': {
+    case 'NumberSequence': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
       internalRecord = {
         id: record.ID,
-        status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        sequenceKey: sequenceKey,
+        highestNumberUsed: parseNumber(record.value),
+      };
+      database.update(recordType, internalRecord);
+      break;
+    }
+    case 'NumberToReuse': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
+      const numberSequence = getObject(database, 'NumberSequence', sequenceKey, 'sequenceKey');
+      internalRecord = {
+        id: record.ID,
+        numberSequence: numberSequence,
+        number: parseNumber(record.number_to_use),
+      };
+      const numberToReuse = database.update(recordType, internalRecord);
+      // Attach the number to reuse to the number seqeunce
+      numberSequence.addNumberToReuse(numberToReuse);
+      break;
+    }
+    case 'Requisition': {
+      let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      // If not a special wp or wf status, use the normal status translation
+      if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      internalRecord = {
+        id: record.ID,
+        status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
         serialNumber: record.serial_number,
-        user: getObject(database, 'User', record.user_ID),
+        enteredBy: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
       database.update(recordType, internalRecord);
@@ -209,16 +241,13 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'RequisitionItem': {
       const requisition = getObject(database, 'Requisition', record.requisition_ID);
-      const dailyUsage = requisition.daysToSupply ?
-                           parseNumber(record.Cust_stock_order) / requisition.daysToSupply : 0;
       internalRecord = {
         id: record.ID,
         requisition: requisition,
         item: getObject(database, 'Item', record.item_ID),
         stockOnHand: parseNumber(record.stock_on_hand),
-        dailyUsage: dailyUsage,
-        imprestQuantity: parseNumber(record.imprest_or_prev_quantity),
-        requiredQuantity: parseNumber(record.actualQuan),
+        dailyUsage: parseNumber(record.daily_usage),
+        requiredQuantity: parseNumber(record.Cust_stock_order),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };
@@ -247,18 +276,17 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'StocktakeBatch': {
       const stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
       const packSize = parseNumber(record.snapshot_packsize);
-      const numPacks = parseNumber(record.snapshot_qty) * packSize;
       internalRecord = {
         id: record.ID,
         stocktake: stocktake,
         itemBatch: getObject(database, 'ItemBatch', record.item_line_ID),
-        snapshotNumberOfPacks: numPacks,
+        snapshotNumberOfPacks: parseNumber(record.snapshot_qty) * packSize,
         packSize: 1, // Pack to one all mobile data
         expiry: parseDate(record.expiry),
         batch: record.Batch,
         costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
-        countedNumberOfPacks: numPacks,
+        countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
@@ -268,11 +296,13 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'Transaction': {
       const otherParty = getObject(database, 'Name', record.name_ID);
+      const enteredBy = getObject(database, 'User', record.user_ID);
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
+        enteredBy: enteredBy,
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
@@ -340,7 +370,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
  * @return {none}
  */
 function deleteRecord(database, recordType, recordId) {
-  console.log(`Deleting ${recordType}: ${recordId}`);
   switch (recordType) {
     case 'Item':
     case 'ItemBatch':
@@ -352,6 +381,8 @@ function deleteRecord(database, recordType, recordId) {
     case 'MasterListNameJoin':
     case 'Name':
     case 'NameStoreJoin':
+    case 'NumberSequence':
+    case 'NumberToReuse':
     case 'Requisition':
     case 'RequisitionItem':
     case 'Stocktake':
@@ -360,7 +391,6 @@ function deleteRecord(database, recordType, recordId) {
     case 'TransactionBatch':
     case 'TransactionCategory': {
       const recordToDelete = getObject(database, recordType, recordId);
-      console.log(recordToDelete);
       database.delete(recordType, recordToDelete);
       break;
     }
@@ -378,81 +408,63 @@ function deleteRecord(database, recordType, recordId) {
  */
 export function sanityCheckIncomingRecord(recordType, record) {
   if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
-  switch (recordType) {
-    case 'Item':
-      return record.code && record.item_name && record.default_pack_size;
-    case 'ItemCategory':
-      return typeof record.Description === 'string';
-    case 'ItemDepartment':
-      return typeof record.department === 'string';
-    case 'ItemBatch':
-      return record.item_ID && record.pack_size && record.quantity && record.batch
-             && record.expiry_date && record.cost_price && record.sell_price;
-    case 'ItemStoreJoin':
-      return record.item_ID && record.store_ID;
-    case 'MasterListNameJoin':
-      return record.name_ID && record.list_master_ID;
-    case 'MasterList':
-      return typeof record.description === 'string';
-    case 'MasterListItem':
-      return record.item_ID;
-    case 'Name':
-      return record.name && record.code && record.type && record.customer
-      && record.supplier && record.manufacturer;
-    case 'NameStoreJoin':
-      return record.name_ID && record.store_ID;
-    case 'Requisition':
-      return record.status && record.date_entered && record.type && record.daysToSupply
-             && record.serial_number;
-    case 'RequisitionItem':
-      return record.requisition_ID && record.item_ID && record.stock_on_hand
-             && record.Cust_stock_order;
-    case 'Stocktake':
-      return record.Description && record.stock_take_created_date && record.status
-             && record.serial_number;
-    case 'StocktakeBatch':
-      return record.stock_take_ID && record.item_line_ID && record.snapshot_qty
-             && record.snapshot_packsize && record.expiry && record.Batch
-             && record.cost_price && record.sell_price;
-    case 'Transaction':
-      return record.invoice_num && record.name_ID && record.entry_date && record.type
-             && record.status;
-    case 'TransactionCategory':
-      return record.category && record.code && record.type;
-    case 'TransactionBatch':
-      return record.item_ID && record.item_name && record.item_line_ID && record.batch
-             && record.expiry_date && record.pack_size && record.quantity && record.transaction_ID
-             && record.cost_price && record.sell_price;
-    default:
-      return false; // Reject record types we don't want to sync into mobile
-  }
+  const requiredFields = {
+    Item: ['code', 'item_name', 'default_pack_size'],
+    ItemCategory: ['Description'],
+    ItemDepartment: ['department'],
+    ItemBatch: ['item_ID', 'pack_size', 'quantity', 'batch', 'expiry_date',
+                'cost_price', 'sell_price'],
+    ItemStoreJoin: ['item_ID', 'store_ID'],
+    MasterListNameJoin: ['name_ID', 'list_master_ID'],
+    MasterList: ['description'],
+    MasterListItem: ['item_ID'],
+    Name: ['name', 'code', 'type', 'customer', 'supplier', 'manufacturer'],
+    NameStoreJoin: ['name_ID', 'store_ID'],
+    NumberSequence: ['name', 'value'],
+    NumberReuse: ['name', 'number_to_use'],
+    Requisition: ['status', 'date_entered', 'type', 'daysToSupply', 'serial_number'],
+    RequisitionItem: ['requisition_ID', 'item_ID', 'stock_on_hand', 'Cust_stock_order'],
+    Stocktake: ['Description', 'stock_take_created_date', 'status', 'serial_number'],
+    StocktakeBatch: ['stock_take_ID', 'item_line_ID', 'snapshot_qty', 'snapshot_packsize',
+                     'expiry', 'Batch', 'cost_price', 'sell_price'],
+    Transaction: ['invoice_num', 'name_ID', 'entry_date', 'type', 'status'],
+    TransactionCategory: ['category', 'code', 'type'],
+    TransactionBatch: ['item_ID', 'item_name', 'item_line_ID', 'batch', 'expiry_date',
+                       'pack_size', 'quantity', 'transaction_ID', 'cost_price', 'sell_price'],
+  };
+  if (!requiredFields[recordType]) return false; // Unsupported record type
+  return requiredFields[recordType].reduce((containsAllFieldsSoFar, fieldName) =>
+                                              containsAllFieldsSoFar && record[fieldName] !== null,
+                                            true);
 }
 
 /**
  * Returns the database object with the given id, if it exists, or creates a
  * placeholder with that id if it doesn't.
- * @param  {Realm}  database The local database
- * @param  {string} type     The type of database object
- * @param  {string} id       The id of the database object
- * @return {Realm.object}    Either the existing database object with the given
- *                           id, or a placeholder if none
+ * @param  {Realm}  database         The local database
+ * @param  {string} type             The type of database object
+ * @param  {string} primaryKey       The primary key of the database object, usually its id
+ * @param  {string} primaryKeyField  The field used as the primary key, defaults to 'id'
+ * @return {Realm.object}            Either the existing database object with the given
+ *                                   primary key, or a placeholder if none
  */
-function getObject(database, type, id) {
-  if (!id || id.length < 1) return null;
-  const results = database.objects(type).filtered('id == $0', id);
+function getObject(database, type, primaryKey, primaryKeyField = 'id') {
+  if (!primaryKey || primaryKey.length < 1) return null;
+  const results = database.objects(type).filtered(`${primaryKeyField} == $0`, primaryKey);
   if (results.length > 0) return results[0];
-  const placeholder = generatePlaceholder(type, id);
-  return database.create(type, placeholder);
+  const placeholder = generatePlaceholder(type, primaryKey);
+  const ret = database.create(type, placeholder);
+  return ret;
 }
 
 /**
  * Generate json representing the type of database object specified, with placeholder
- * values in all fields other than id.
- * @param  {string} type The type of database object
- * @param  {string} id   The id of the database object
- * @return {object}      Json object representing a placeholder of the given type
+ * values in all fields other than the primary key.
+ * @param  {string} type         The type of database object
+ * @param  {string} primaryKey   The primary key of the database object, usually its id
+ * @return {object}              Json object representing a placeholder of the given type
  */
-function generatePlaceholder(type, id) {
+function generatePlaceholder(type, primaryKey) {
   let placeholder;
   const placeholderString = 'placeholder';
   const placeholderNumber = 0;
@@ -460,12 +472,12 @@ function generatePlaceholder(type, id) {
   switch (type) {
     case 'Address':
       placeholder = {
-        id: id,
+        id: primaryKey,
       };
       return placeholder;
     case 'Item':
       placeholder = {
-        id: id,
+        id: primaryKey,
         code: placeholderString,
         name: placeholderString,
         defaultPackSize: placeholderNumber,
@@ -473,19 +485,19 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'ItemCategory':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
       };
       return placeholder;
     case 'ItemDepartment':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
       };
       return placeholder;
     case 'ItemBatch':
       placeholder = {
-        id: id,
+        id: primaryKey,
         packSize: placeholderNumber,
         numberOfPacks: placeholderNumber,
         expiryDate: placeholderDate,
@@ -496,13 +508,13 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'MasterList':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
       };
       return placeholder;
     case 'Name':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
         code: placeholderString,
         type: placeholderString,
@@ -511,9 +523,15 @@ function generatePlaceholder(type, id) {
         isManufacturer: false,
       };
       return placeholder;
+    case 'NumberSequence':
+      placeholder = {
+        id: generateUUID(),
+        sequenceKey: primaryKey,
+      };
+      return placeholder;
     case 'Stocktake':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
         createdDate: placeholderDate,
         status: placeholderString,
@@ -522,7 +540,7 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'Transaction':
       placeholder = {
-        id: id,
+        id: primaryKey,
         serialNumber: placeholderString,
         comment: placeholderString,
         entryDate: placeholderDate,
@@ -533,7 +551,7 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'TransactionCategory':
       placeholder = {
-        id: id,
+        id: primaryKey,
         name: placeholderString,
         code: placeholderString,
         type: placeholderString,
@@ -541,7 +559,7 @@ function generatePlaceholder(type, id) {
       return placeholder;
     case 'User':
       placeholder = {
-        id: id,
+        id: primaryKey,
         username: placeholderString,
         passwordHash: placeholderString,
       };
@@ -590,8 +608,8 @@ function parseDate(ISODate, ISOTime) {
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 6) {
     const hours = ISOTime.substring(0, 2);
-    const minutes = ISOTime.substring(2, 4);
-    const seconds = ISOTime.substring(4, 6);
+    const minutes = ISOTime.substring(3, 5);
+    const seconds = ISOTime.substring(6, 8);
     date.setHours(hours, minutes, seconds);
   }
   return date;
@@ -604,11 +622,7 @@ function parseDate(ISODate, ISOTime) {
  */
 function parseNumber(numberString) {
   if (!numberString || numberString.length < 1) return null;
-  try {
-    return parseFloat(numberString);
-  } catch (error) {
-    throw error;
-  }
+  return parseFloat(numberString);
 }
 
 /**

@@ -29,8 +29,8 @@ export class StocktakeManagePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.items = props.database.objects('Item');
+    this.state.visibleItemIds = [];
     this.state.stocktakeName = '';
-    this.state.isSelectAllItems = false;
     this.state.showItemsWithNoStock = false;
     this.state.sortBy = 'name';
     this.columns = COLUMNS;
@@ -57,13 +57,13 @@ export class StocktakeManagePage extends GenericTablePage {
 
   onConfirmPress() {
     const { selection } = this.state;
-    const { database, navigateTo, user } = this.props;
+    const { database, navigateTo, currentUser } = this.props;
     let { stocktake } = this.props;
     const { stocktakeName } = this.state;
 
     database.write(() => {
       // If no stocktake came in props, make a new one
-      if (!stocktake) stocktake = createRecord(database, 'Stocktake', user);
+      if (!stocktake) stocktake = createRecord(database, 'Stocktake', currentUser);
 
       stocktake.setItemsByID(database, selection);
 
@@ -82,12 +82,26 @@ export class StocktakeManagePage extends GenericTablePage {
     );
   }
 
-  toggleSelectAllItems() {
-    const isSelectAllItems = !this.state.isSelectAllItems;
-    const { items } = this.state;
+  toggleSelectAllItems(isAllItemsSelected) {
+    const { visibleItemIds, selection } = this.state;
+
+    if (isAllItemsSelected) { // Deselect all visible items
+      visibleItemIds.forEach((id) => {
+        const idIndex = selection.indexOf(id);
+        if (idIndex >= 0) {
+          selection.splice(idIndex, 1);
+        }
+      });
+    } else { // Add all ids in visibleItemIds that aren't already in selection
+      visibleItemIds.forEach((id) => {
+        if (!selection.includes(id)) {
+          selection.push(id);
+        }
+      });
+    }
+
     this.setState({
-      isSelectAllItems: isSelectAllItems,
-      selection: isSelectAllItems ? items.map(item => item.id) : [],
+      selection: [...selection],
     }, this.refreshData);
   }
 
@@ -108,7 +122,7 @@ export class StocktakeManagePage extends GenericTablePage {
       showItemsWithNoStock,
     } = this.state;
     let data;
-    data = items.filtered(`name BEGINSWITH[c] "${searchTerm}"`);
+    data = items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
     switch (sortBy) {
       // 'selected' case lists the selected items in alphabetical order, followed by unselected in
       // alphabetical order. This requires the selection array to store the item ids in the
@@ -129,16 +143,15 @@ export class StocktakeManagePage extends GenericTablePage {
     if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
+    // Populate visibleItemIds with the ids of the items in the filtered data
+    this.setState({ visibleItemIds: data.map((item) => item.id) });
     return data;
   }
 
   renderCell(key, item) {
     switch (key) {
       default:
-      case 'code':
-        return item.code;
-      case 'name':
-        return item.name;
+        return item[key];
       case 'selected':
         return {
           type: 'checkable',
@@ -148,16 +161,20 @@ export class StocktakeManagePage extends GenericTablePage {
 
   render() {
     const {
-      isSelectAllItems,
+      visibleItemIds,
       showItemsWithNoStock,
       selection,
     } = this.state;
     const { stocktake } = this.props;
+    const isAllItemsSelected = visibleItemIds.every((id) => selection.includes(id));
+
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
             <View style={localStyles.toggleBarView}>
               <ToggleBar
                 style={globalStyles.toggleBar}
@@ -172,9 +189,9 @@ export class StocktakeManagePage extends GenericTablePage {
                     isOn: showItemsWithNoStock,
                   },
                   {
-                    text: 'Select All Items',
-                    onPress: () => this.toggleSelectAllItems(),
-                    isOn: isSelectAllItems,
+                    text: 'All Items Selected',
+                    onPress: () => this.toggleSelectAllItems(isAllItemsSelected),
+                    isOn: isAllItemsSelected,
                   },
                 ]}
               />
@@ -207,6 +224,7 @@ export class StocktakeManagePage extends GenericTablePage {
 }
 
 StocktakeManagePage.propTypes = {
+  currentUser: React.PropTypes.object.isRequired,
   stocktake: React.PropTypes.object,
   database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,

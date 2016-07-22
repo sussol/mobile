@@ -13,7 +13,6 @@ const defaultStyles = StyleSheet.create({
     borderBottomWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-end',
     borderColor: SUSSOL_ORANGE,
     marginHorizontal: 5,
   },

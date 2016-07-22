@@ -36,7 +36,10 @@ export class LoginModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.state.authStatus === 'authenticated' && !nextProps.isAuthenticated) {
-      this.setState({ authStatus: 'unauthenticated' });
+      this.setState({
+        authStatus: 'unauthenticated',
+        password: '',
+      });
     }
   }
 

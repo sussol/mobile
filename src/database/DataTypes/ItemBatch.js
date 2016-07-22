@@ -67,3 +67,20 @@ export class ItemBatch extends Realm.Object {
 function toDays(milliseconds) {
   return Math.ceil(milliseconds / MILLISECONDS_PER_DAY); // Round up to the nearest day
 }
+
+ItemBatch.schema = {
+  name: 'ItemBatch',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    item: { type: 'Item', optional: true },
+    packSize: 'double',
+    numberOfPacks: 'double',
+    expiryDate: { type: 'date', optional: true },
+    batch: { type: 'string', default: '' },
+    costPrice: 'double',
+    sellPrice: 'double',
+    supplier: { type: 'Name', optional: true },
+    transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
+  },
+};

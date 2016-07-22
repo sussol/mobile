@@ -1,13 +1,19 @@
 import { CustomerPage } from './CustomerPage';
 import { CustomersPage } from './CustomersPage';
-import { CustomerInvoicePage } from './CustomerInvoicePage';
+import { CustomerInvoicePage,
+         checkForFinaliseError as checkForCustomerInvoiceFinaliseError,
+       } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { FirstUsePage } from './FirstUsePage';
 import { MenuPage } from './MenuPage';
 import { RequisitionsPage } from './RequisitionsPage';
-import { RequisitionPage } from './RequisitionPage';
+import { RequisitionPage,
+         checkForFinaliseError as checkForRequisitionFinaliseError,
+       } from './RequisitionPage';
 import { StockPage } from './StockPage';
-import { StocktakeEditPage } from './StocktakeEditPage';
+import { StocktakeEditPage,
+         checkForFinaliseError as checkForStocktakeFinaliseError,
+       } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
@@ -39,14 +45,17 @@ export const FINALISABLE_PAGES = {
     recordToFinaliseKey: 'transaction',
   },
   customerInvoice: {
+    checkForFinaliseError: checkForCustomerInvoiceFinaliseError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
   },
   requisition: {
+    checkForFinaliseError: checkForRequisitionFinaliseError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
   },
   stocktakeEditor: {
+    checkForFinaliseError: checkForStocktakeFinaliseError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
   },

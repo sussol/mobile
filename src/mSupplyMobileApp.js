@@ -46,12 +46,12 @@ export default class mSupplyMobileApp extends React.Component {
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
     this.state = {
-      initialised: initialised,
+      confirmFinalise: false,
       currentUser: null,
+      initialised: initialised,
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
-      confirmFinalise: false,
       recordToFinalise: null,
       recordTypeToFinalise: null,
     };
@@ -134,7 +134,12 @@ export default class mSupplyMobileApp extends React.Component {
       if (FINALISABLE_PAGES[key]) {
         const recordToFinalise = extraProps[FINALISABLE_PAGES[key].recordToFinaliseKey];
         const recordType = FINALISABLE_PAGES[key].recordType;
-        this.setState({ recordToFinalise: recordToFinalise, recordTypeToFinalise: recordType });
+        const checkForFinaliseError = FINALISABLE_PAGES[key].checkForFinaliseError;
+        this.setState({
+          checkForFinaliseError: checkForFinaliseError,
+          recordToFinalise: recordToFinalise,
+          recordTypeToFinalise: recordType,
+        });
         navigationProps.renderRightComponent = this.renderFinaliseButton;
       }
 
@@ -190,6 +195,7 @@ export default class mSupplyMobileApp extends React.Component {
           onClose={() => this.setState({ confirmFinalise: false })}
           record={this.state.recordToFinalise}
           recordType={this.state.recordTypeToFinalise}
+          checkForError={this.state.checkForFinaliseError}
           user={this.state.currentUser}
         />
         <LoginModal

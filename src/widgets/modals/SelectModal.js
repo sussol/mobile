@@ -18,6 +18,7 @@ export function SelectModal(props) {
     options,
     placeholderText,
     queryString,
+    sortByString,
     ...modalProps,
   } = props;
 
@@ -31,6 +32,7 @@ export function SelectModal(props) {
         options={options}
         placeholderText={placeholderText}
         queryString={queryString}
+        sortByString={sortByString}
         onSelect={onSelect}
       />
     </PageContentModal>
@@ -41,6 +43,7 @@ SelectModal.propTypes = {
   isOpen: React.PropTypes.bool.isRequired,
   options: React.PropTypes.object.isRequired,
   queryString: React.PropTypes.string.isRequired,
+  sortByString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,
   onClose: React.PropTypes.func,
   onSelect: React.PropTypes.func.isRequired,

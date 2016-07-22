@@ -43,7 +43,8 @@ export class PageContentModal extends React.Component {
     } = this.props;
 
     return (
-      <BottomModal {...modalProps}
+      <BottomModal
+        {...modalProps}
         style={localStyles.modal}
       >
         <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>

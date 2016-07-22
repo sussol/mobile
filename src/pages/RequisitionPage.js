@@ -6,14 +6,11 @@
  */
 
 import React from 'react';
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
+import { View } from 'react-native';
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveNumber } from '../utilities';
+import { formatDate, parsePositiveInteger } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import {
@@ -55,7 +52,8 @@ export class RequisitionPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.requisition.items.filtered('item.name BEGINSWITH[c] $0', searchTerm);
+    let data = this.props.requisition.items
+                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     switch (sortBy) {
       case 'itemCode':
         data = data.slice().sort((a, b) =>
@@ -95,7 +93,7 @@ export class RequisitionPage extends GenericTablePage {
   onEndEditing(key, requisitionItem, newValue) {
     if (key !== 'requiredQuantity') return;
     this.props.database.write(() => {
-      requisitionItem.requiredQuantity = parsePositiveNumber(newValue);
+      requisitionItem.requiredQuantity = parsePositiveInteger(newValue);
       this.props.database.save('RequisitionItem', requisitionItem);
     });
   }
@@ -155,7 +153,7 @@ export class RequisitionPage extends GenericTablePage {
       [
         {
           title: 'Months Stock Required:',
-          info: this.props.requisition.monthsToSupply,
+          info: Math.round(this.props.requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
         },
       ],
@@ -172,6 +170,9 @@ export class RequisitionPage extends GenericTablePage {
     switch (key) {
       default:
         return requisitionItem[key];
+      case 'monthlyUsage':
+      case 'suggestedQuantity':
+        return Math.round(requisitionItem[key]);
       case 'requiredQuantity':
         return {
           cellContents: requisitionItem.requiredQuantity,
@@ -195,6 +196,7 @@ export class RequisitionPage extends GenericTablePage {
           <AutocompleteSelector
             options={this.props.database.objects('Item')}
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
+            sortByString={'name'}
             onSelect={(item) => {
               this.props.database.write(() => {
                 createRecord(this.props.database, 'RequisitionItem', this.props.requisition, item);
@@ -211,6 +213,7 @@ export class RequisitionPage extends GenericTablePage {
             onSelect={(number) => {
               this.props.database.write(() => {
                 this.props.requisition.monthsToSupply = number;
+                this.props.database.save('Requisition', this.props.requisition);
               });
               this.closeModal();
             }}
@@ -225,29 +228,32 @@ export class RequisitionPage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.verticalContainer}>
+            <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderPageInfo()}
               {this.renderSearchBar()}
             </View>
-            <View style={globalStyles.verticalContainer}>
-              <PageButton
-                text="Use Suggested Quantities"
-                onPress={this.onUseSuggestedQuantities}
-                isDisabled={this.props.requisition.isFinalised}
-              />
-            </View>
-            <View style={globalStyles.verticalContainer}>
-              <PageButton
-                style={localStyles.topButton}
-                text="New Item"
-                onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
-                isDisabled={this.props.requisition.isFinalised}
-              />
-              <PageButton
-                text="Add Master List Items"
-                onPress={this.onAddMasterItems}
-                isDisabled={this.props.requisition.isFinalised}
-              />
+            <View style={globalStyles.pageTopRightSectionContainer}>
+              <View style={globalStyles.verticalContainer}>
+                <PageButton
+                  style={globalStyles.leftButton}
+                  text="Use Suggested Quantities"
+                  onPress={this.onUseSuggestedQuantities}
+                  isDisabled={this.props.requisition.isFinalised}
+                />
+              </View>
+              <View style={globalStyles.verticalContainer}>
+                <PageButton
+                  style={globalStyles.topButton}
+                  text="New Item"
+                  onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
+                  isDisabled={this.props.requisition.isFinalised}
+                />
+                <PageButton
+                  text="Add Master List Items"
+                  onPress={this.onAddMasterItems}
+                  isDisabled={this.props.requisition.isFinalised}
+                />
+              </View>
             </View>
           </View>
           {this.renderDataTable()}
@@ -279,7 +285,7 @@ RequisitionPage.propTypes = {
 const COLUMNS = [
   {
     key: 'itemCode',
-    width: 2,
+    width: 1,
     title: 'CODE',
     sortable: true,
   },
@@ -317,8 +323,17 @@ const COLUMNS = [
   },
 ];
 
-const localStyles = StyleSheet.create({
-  topButton: {
-    marginBottom: 10,
-  },
-});
+/**
+ * Check whether a given requisition is safe to be finalised. Return null if it is,
+ * otherwise return an appropriate error message if not.
+ * @param  {object}  requisition  The requisition to check
+ * @return {string}  An error message if not able to be finalised
+ */
+export function checkForFinaliseError(requisition) {
+  if (requisition.items.length === 0) {
+    return 'You need to add at least one item before finalising';
+  } else if (requisition.totalRequiredQuantity === 0) {
+    return 'You need to record how much stock is required before finalising';
+  }
+  return null;
+}

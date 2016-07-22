@@ -38,25 +38,27 @@ export class AutocompleteSelector extends React.Component {
       options,
       onSelect,
       queryString,
+      sortByString,
       placeholderText,
     } = this.props;
 
     return (
-        <Autocomplete
-          style={localStyles.text}
-          autoCapitalize="none"
-          autoCorrect={false}
-          data={options.filtered(queryString, this.state.queryText)}
-          onChangeText={text => this.setState({ queryText: text })}
-          placeholder={placeholderText}
-          renderItem={(item) => (
-            <TouchableOpacity onPress={() => onSelect(item)}>
-              <Text style={[localStyles.text, localStyles.itemText]}>
-                {item.toString()}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
+      <Autocomplete
+        style={localStyles.text}
+        autoFocus
+        autoCapitalize="none"
+        autoCorrect={false}
+        data={options.filtered(queryString, this.state.queryText).sorted(sortByString)}
+        onChangeText={text => this.setState({ queryText: text })}
+        placeholder={placeholderText}
+        renderItem={(item) => (
+          <TouchableOpacity onPress={() => onSelect(item)}>
+            <Text style={[localStyles.text, localStyles.itemText]}>
+              {item.toString()}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
      );
   }
 }
@@ -64,6 +66,7 @@ export class AutocompleteSelector extends React.Component {
 AutocompleteSelector.propTypes = {
   options: React.PropTypes.object.isRequired,
   queryString: React.PropTypes.string.isRequired,
+  sortByString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,
   onSelect: React.PropTypes.func.isRequired,
 };

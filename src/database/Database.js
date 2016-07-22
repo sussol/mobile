@@ -71,14 +71,28 @@ export class Database {
    * @return {none}
    */
   delete(type, object, ...listenerArgs) {
-    const objects = Array.isArray(object) ? object : [object];
+    let objects = [object];
+
+    // If object is an array, a realm list, or a realm results object, use it directly
+    if (Array.isArray(object) ||
+        object.toString() === '[object List]' ||
+        object.toString() === '[object Results]'
+      ) objects = object;
+
+    // If empty, ignore
+    if (!objects || objects.length === 0) return;
+
+    // Go through each object, call its destructor, and alert any change listeners
     objects.forEach(obj => {
-      const record = { ...obj };
+      const record = { id: obj.id }; // If it is being deleted, only alert with the id
       if (obj && obj.destructor instanceof Function) obj.destructor(this);
-      this.realm.delete(obj);
       this.alertListeners(CHANGE_TYPES.DELETE, type, record, ...listenerArgs);
     });
+
+    // Actually delete the objects from the database
+    this.realm.delete(objects);
   }
+
   /**
    * Deletes all objects from the database.
    * Any params are passed directly on to change listeners

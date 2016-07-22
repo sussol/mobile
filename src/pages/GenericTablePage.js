@@ -34,6 +34,9 @@ import { SearchBar } from '../widgets';
  *         											 don't override if row should not be pressable
  * @method onEndEditing(key, rowData, newValue) Handles user input to an editable cell
  *         											 don't override if row should not be pressable
+ * @const  {array}  cellRefs     Stores references to TextInputs in editableCells so next button on
+ *                               native keyboard focuses the next cell. Order is left to
+ *                               right within a row, then next row.
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
  *         											 may optionally also contain a boolean 'sortable'.
@@ -60,12 +63,15 @@ export class GenericTablePage extends React.Component {
       selection: [],
       expandedRows: [],
     };
+    this.cellRefs = [];
     this.columns = null;
+    this.dataTableRef = null;
     this.dataTypesDisplayed = [];
     this.databaseListenerId = null;
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
+    this.focusNextField = this.focusNextField.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.renderCell = this.renderCell.bind(this);
@@ -93,7 +99,10 @@ export class GenericTablePage extends React.Component {
 
   onSearchChange(event) {
     const term = event.nativeEvent.text;
-    this.setState({ searchTerm: term }, this.refreshData);
+    this.setState({ searchTerm: term }, () => {
+      this.refreshData();
+      if (this.dataTableRef) this.dataTableRef.scrollTo({ y: 0, animated: false });
+    });
   }
 
   onColumnSort(sortBy) {
@@ -135,6 +144,14 @@ export class GenericTablePage extends React.Component {
     this.setState({ expandedRows: newExpandedRows });
   }
 
+  focusNextField(nextCellRefIndex) {
+    if (this.cellRefs[nextCellRefIndex]) {
+      this.cellRefs[nextCellRefIndex].focus();
+    } else {
+      this.cellRefs[nextCellRefIndex - 1].blur();
+    }
+  }
+
   refreshData() {
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
@@ -154,16 +171,24 @@ export class GenericTablePage extends React.Component {
  *      type: 'editable',
  *      cellContents: transactionItem.totalQuantity,
  *    };
- * 5. {
+ * 4. {
+ *      type: 'editable',
+ *      cellContents: item.countedTotalQuantity,
+ *      keyboardType: numeric,
+ *      selectTextOnFocus: true,
+ *      returnKeyType: 'next',
+ *      shouldFocusNextField: true,
+ *    };
+ * 6. {
  *      type: 'checkable',
  *      isDisabled: false,
  *    };
- * 6. {
+ * 7. {
  *      type: 'checkable',
  *      icon: 'md-remove-circle', // will use for both Checked and NotChecked, only colour changes
  *      isDisabled: false,
  *    };
- * 7. {
+ * 8. {
  *      type: 'checkable',
  *      iconChecked: 'md-radio-button-on',
  *      iconNotChecked: 'md-radio-button-off',
@@ -204,7 +229,7 @@ export class GenericTablePage extends React.Component {
 
   renderRow(rowData, sectionId, rowId) {
     const cells = [];
-    const isExpanded = this.state.expandedRows.indexOf(rowData.id) >= 0;
+    const isExpanded = this.state.expandedRows.includes(rowData.id);
     // Make rows alternate background colour
     const rowStyle = rowId % 2 === 1 ?
       globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
@@ -258,11 +283,17 @@ export class GenericTablePage extends React.Component {
           cell = (
             <EditableCell
               key={column.key}
+              refCallback={(reference) => this.cellRefs.push(reference)}
               style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
+              returnKeyType={renderedCell.returnKeyType}
+              selectTextOnFocus={renderedCell.selectTextOnFocus}
+              keyboardType={renderedCell.keyboardType}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
+              onSubmitEditing={renderedCell.shouldFocusNextField &&
+                            (() => this.focusNextField(parseInt(rowId, 10) + 1))}
               target={rowData}
               value={renderedCell.cellContents}
             />
@@ -276,6 +307,7 @@ export class GenericTablePage extends React.Component {
               style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
+              numberOfLines={renderedCell.lines}
             >
               {renderedCell.hasOwnProperty('cellContents') ?
                 renderedCell.cellContents :
@@ -310,6 +342,7 @@ export class GenericTablePage extends React.Component {
   renderDataTable() {
     return (
       <DataTable
+        refCallback={(reference) => (this.dataTableRef = reference)}
         style={globalStyles.dataTable}
         listViewStyle={localStyles.listView}
         dataSource={this.state.dataSource}
@@ -323,7 +356,9 @@ export class GenericTablePage extends React.Component {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
           </View>
           {this.renderDataTable()}
         </View>

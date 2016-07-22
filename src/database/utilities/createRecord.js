@@ -1,5 +1,13 @@
-import { generateUUID } from '../database';
-import { formatDateAndTime } from '../utilities';
+import { generateUUID } from './utilities';
+import { getNextNumber as getSerialNumber } from './numberSequenceUtilities';
+import { formatDateAndTime } from '../../utilities';
+
+const SERIAL_NUMBER_SEQUENCES = {
+  CUSTOMER_INVOICE: 'customer_invoice_serial_number',
+  REQUISITION: 'requisition_serial_number',
+  STOCKTAKE: 'stocktake_serial_number',
+};
+const { CUSTOMER_INVOICE, REQUISITION, STOCKTAKE } = SERIAL_NUMBER_SEQUENCES;
 
 /**
  * Creates a record of the given type, taking care of linking
@@ -14,6 +22,12 @@ export function createRecord(database, type, ...args) {
   switch (type) {
     case 'CustomerInvoice':
       return createCustomerInvoice(database, ...args);
+    case 'NumberSequence':
+      return createNumberSequence(database, ...args);
+    case 'NumberToReuse':
+      return createNumberToReuse(database, ...args);
+    case 'ItemBatch':
+      return createItemBatch(database, ...args);
     case 'Requisition':
       return createRequisition(database, ...args);
     case 'RequisitionItem':
@@ -22,6 +36,10 @@ export function createRecord(database, type, ...args) {
       return createStocktake(database, ...args);
     case 'StocktakeItem':
       return createStocktakeItem(database, ...args);
+    case 'StocktakeBatch':
+      return createStocktakeBatch(database, ...args);
+    case 'InventoryAdjustment':
+      return createInventoryAdjustment(database, ...args);
     case 'TransactionItem':
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
@@ -32,17 +50,18 @@ export function createRecord(database, type, ...args) {
 }
 
 // Creates a customer invoice (Transaction) and adds it to the customer (Name)
-function createCustomerInvoice(database, customer) {
+function createCustomerInvoice(database, customer, user) {
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: '1',
+    serialNumber: getSerialNumber(database, CUSTOMER_INVOICE),
     entryDate: currentDate,
     confirmDate: currentDate, // Customer invoices always confirmed in mobile
     type: 'customer_invoice',
     status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
     comment: '',
     otherParty: customer,
+    enteredBy: user,
   });
   if (customer.useMasterList) invoice.addItemsFromMasterList(database);
   database.save('Transaction', invoice);
@@ -51,15 +70,64 @@ function createCustomerInvoice(database, customer) {
   return invoice;
 }
 
+// Creates a new number sequence
+function createNumberSequence(database, sequenceKey) {
+  return database.create('NumberSequence', {
+    id: generateUUID(),
+    sequenceKey: sequenceKey,
+  });
+}
+
+// Creates a number attached to a sequence
+function createNumberToReuse(database, numberSequence, number) {
+  const numberToReuse = database.create('NumberToReuse', {
+    id: generateUUID(),
+    numberSequence: numberSequence,
+    number: number,
+  });
+  numberSequence.addNumberToReuse(numberToReuse);
+}
+
+// Creates a transaction representing an inventory adjustment, either up (isAddition = true)
+// or down (isAddition = false)
+function createInventoryAdjustment(database, user, date, isAddition) {
+  return database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: '1',
+    entryDate: date,
+    confirmDate: date,
+    type: isAddition ? 'supplier_invoice' : 'supplier_credit',
+    status: 'confirmed',
+    comment: '',
+    enteredBy: user,
+    otherParty: database.objects('Name').find((name) => name.type === 'inventory_adjustment'),
+  });
+}
+
+// Creates a new empty ItemBatch and adds it to the item
+function createItemBatch(database, item) {
+  const itemBatch = database.create('ItemBatch', {
+    id: generateUUID(),
+    item: item,
+    packSize: 1,
+    numberOfPacks: 0,
+    costPrice: item.defaultPrice ? item.defaultPrice : 0,
+    sellPrice: item.defaultPrice ? item.defaultPrice : 0,
+  });
+  item.addBatch(itemBatch);
+  database.save('Item', item);
+  return itemBatch;
+}
+
 // Creates a Requisition
 function createRequisition(database, user) {
   const requisition = database.create('Requisition', {
     id: generateUUID(),
+    serialNumber: getSerialNumber(database, REQUISITION),
     status: 'new',
     type: 'request',
     entryDate: new Date(),
     daysToSupply: 90, // 3 months
-    serialNumber: (Math.floor(Math.random() * 1000000)).toString(),
     enteredBy: user,
   });
   return requisition;
@@ -91,12 +159,13 @@ function createStocktake(database, user) {
   const date = new Date();
   const stocktake = database.create('Stocktake', {
     id: generateUUID(),
+    serialNumber: getSerialNumber(database, STOCKTAKE),
     name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
     createdDate: date,
-    status: 'new',
+    stocktakeDate: date,
+    status: 'suggested',
     comment: '',
     createdBy: user,
-    serialNumber: '1337',
   });
   return stocktake;
 }
@@ -111,6 +180,25 @@ function createStocktakeItem(database, stocktake, item) {
   stocktake.items.push(stocktakeItem);
   database.save('Stocktake', stocktake);
   return stocktakeItem;
+}
+
+// Creates a StocktakeBatch and adds it to the StocktakeItem
+function createStocktakeBatch(database, stocktakeItem, itemBatch) {
+  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const stocktakeBatch = database.create('StocktakeBatch', {
+    id: generateUUID(),
+    stocktake: stocktakeItem.stocktake,
+    itemBatch: itemBatch,
+    snapshotNumberOfPacks: numberOfPacks,
+    packSize: packSize,
+    expiryDate: expiryDate,
+    batch: batch,
+    costPrice: costPrice,
+    sellPrice: sellPrice,
+  });
+  stocktakeItem.addBatch(stocktakeBatch);
+  database.save('StocktakeItem', stocktakeItem);
+  return stocktakeBatch;
 }
 
 // Creates a TransactionBatch and adds it to the TransactionItem

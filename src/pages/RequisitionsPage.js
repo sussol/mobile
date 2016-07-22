@@ -42,13 +42,15 @@ export class RequisitionsPage extends GenericTablePage {
     const { selection, requisitions } = this.state;
     const { database } = this.props;
     database.write(() => {
+      const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const requisition = requisitions.find(currentRequisition =>
                                                 currentRequisition.id === selection[i]);
-        if (requisition.isValid()) {
-          database.delete('Transaction', requisition);
+        if (requisition.isValid() && !requisition.isFinalised) {
+          requisitionsToDelete.push(requisition);
         }
       }
+      database.delete('Requisition', requisitionsToDelete);
     });
     this.setState({ selection: [] });
     this.refreshData();
@@ -86,7 +88,7 @@ export class RequisitionsPage extends GenericTablePage {
    * sort and also realm does not allow sorting on the properties of an object property.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.requisitions.filtered(`serialNumber BEGINSWITH "${searchTerm}"`);
+    let data = this.state.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
     switch (sortBy) {
       case 'serialNumber': // Special case for correct number based sorting
         // Convert to javascript array obj then sort with standard array functions.
@@ -129,7 +131,9 @@ export class RequisitionsPage extends GenericTablePage {
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={globalStyles.pageTopSectionContainer}>
-            {this.renderSearchBar()}
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
             <PageButton
               text="New Requisition"
               onPress={this.onNewRequisition}

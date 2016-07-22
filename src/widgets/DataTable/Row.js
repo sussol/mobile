@@ -16,13 +16,15 @@ export class Row extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isExpanded: false,
+      isExpanded: props.isExpanded,
     };
     this.onPress = this.onPress.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ isExpanded: nextProps.isExpanded });
+    if (nextProps.isExpanded !== this.state.isExpanded) {
+      this.setState({ isExpanded: nextProps.isExpanded });
+    }
   }
 
   onPress() {

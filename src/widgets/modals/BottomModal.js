@@ -10,11 +10,13 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 import Modal from 'react-native-modalbox';
 import { DARK_GREY } from '../../globalStyles';
 
 
 export function BottomModal(props) {
+  if (props.isOpen) dismissKeyboard();
   const { children, style, ...modalProps } = props;
   return (
     <Modal

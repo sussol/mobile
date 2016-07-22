@@ -41,7 +41,7 @@ export class UserAuthenticator {
     const passwordHash = hashPassword(password);
 
     // Get the cached user from the database, if they exist
-    const user = this.database.objects('User').filtered('username == $0', username)[0];
+    let user = this.database.objects('User').filtered('username == $0', username)[0];
 
     // Get the HTTP endpoint to authenticate against
     const serverURL = this.settings.get(SYNC_URL);
@@ -55,7 +55,7 @@ export class UserAuthenticator {
       if (!userJson || !userJson.UserID) throw new Error('Unexpected response from server');
       else { // Success, save user to database
         this.database.write(() => {
-          this.database.update('User', {
+          user = this.database.update('User', {
             id: userJson.UserID,
             username: username,
             passwordHash: passwordHash,
@@ -63,20 +63,23 @@ export class UserAuthenticator {
         });
       }
     } catch (error) {
-      if (error === CONNECTION_FAILURE) { // Error with connection, check against local database
-        if (!user || user.username !== username || user.passwordHash !== passwordHash) {
-          error.setMessage(`${error.message} and username and password not cached`);
-          throw error; // User doesn't match cached credentials
+      // If there was an error with connection, check against locally cached credentials
+      if (error.message === CONNECTION_FAILURE) {
+        if (user && user.username === username && user.passwordHash === passwordHash) {
+          // Entered credentials match cached credentials, allow offline login
+          return user;
         }
-      } else if (error === INVALID_PASSWORD) { // Password not valid
-        if (user && user.passwordHash === passwordHash) {
-          // Clear invalid password from db, if saved
-          this.database.write(() => {
-            user.passwordHash = '';
-          });
-        }
-        throw error;
-      } else throw error; // Most likely an empty username or password
+      }
+
+      // If anything other than connection failure, and they used the currently
+      // cached password, wipe that password from the cache (may now be invalid)
+      if (user && user.passwordHash === passwordHash) {
+        this.database.write(() => {
+          user.passwordHash = '';
+          this.database.save('User', user);
+        });
+      }
+      throw error;
     }
     return user;
   }

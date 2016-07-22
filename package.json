@@ -49,6 +49,7 @@
     "react-native-uuid": "^1.4.8",
     "react-native-vector-icons": "^2.0.2",
     "realm": "^0.14.1",
+    "set-manipulator": "0.3.1",
     "sha256": "^0.2.0",
     "valid-url": "^1.0.9"
   },

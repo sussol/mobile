@@ -1,6 +1,5 @@
 import Realm from 'realm';
-
-import { createRecord } from '../createRecord';
+import { createRecord, getTotal } from '../utilities';
 
 export class Requisition extends Realm.Object {
   constructor() {
@@ -25,6 +24,10 @@ export class Requisition extends Realm.Object {
 
   get monthsToSupply() {
     return this.daysToSupply / 30;
+  }
+
+  get totalRequiredQuantity() {
+    return getTotal(this.items, 'requiredQuantity');
   }
 
   set monthsToSupply(months) {
@@ -69,3 +72,18 @@ export class Requisition extends Realm.Object {
     this.status = 'finalised';
   }
 }
+
+Requisition.schema = {
+  name: 'Requisition',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    status: 'string',
+    type: 'string', // imprest, forecast or request (request only used in mobile)
+    entryDate: 'date',
+    daysToSupply: 'double',
+    serialNumber: 'string',
+    enteredBy: { type: 'User', optional: true },
+    items: { type: 'list', objectType: 'RequisitionItem' },
+  },
+};

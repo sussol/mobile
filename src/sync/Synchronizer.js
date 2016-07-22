@@ -63,7 +63,7 @@ export class Synchronizer {
           },
         });
       await this.pull(setProgress);
-    } catch (error) { // Did not authenticate or internet failed, wipe db and pass error up
+    } catch (error) { // Did not authenticate, sync error, or no internet, wipe db and pass error up
       this.database.write(() => { this.database.deleteAll(); });
       throw error;
     }
@@ -102,7 +102,7 @@ export class Synchronizer {
   async push() {
     let recordsToSync;
     let translatedRecords;
-    while (this.syncQueue.length() > 0) {
+    while (this.syncQueue.length > 0) {
       recordsToSync = this.syncQueue.next(BATCH_SIZE);
       translatedRecords = recordsToSync.map((record) => generateSyncJson(this.database,
                                                                          this.settings,

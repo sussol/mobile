@@ -15,6 +15,8 @@ export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';
 export { Name } from './Name';
 export { NameStoreJoin } from './NameStoreJoin';
+export { NumberSequence } from './NumberSequence';
+export { NumberToReuse } from './NumberToReuse';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
 export class Setting extends Realm.Object {}
