@@ -295,6 +295,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       break;
     }
     case 'Transaction': {
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = getObject(database, 'Name', record.name_ID);
       const enteredBy = getObject(database, 'User', record.user_ID);
       internalRecord = {
@@ -427,7 +428,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
     Stocktake: ['Description', 'stock_take_created_date', 'status', 'serial_number'],
     StocktakeBatch: ['stock_take_ID', 'item_line_ID', 'snapshot_qty', 'snapshot_packsize',
                      'expiry', 'Batch', 'cost_price', 'sell_price'],
-    Transaction: ['invoice_num', 'name_ID', 'entry_date', 'type', 'status'],
+    Transaction: ['invoice_num', 'name_ID', 'entry_date', 'type', 'status', 'store_ID'],
     TransactionCategory: ['category', 'code', 'type'],
     TransactionBatch: ['item_ID', 'item_name', 'item_line_ID', 'batch', 'expiry_date',
                        'pack_size', 'quantity', 'transaction_ID', 'cost_price', 'sell_price'],
