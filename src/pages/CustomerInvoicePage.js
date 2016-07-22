@@ -69,14 +69,13 @@ export class CustomerInvoicePage extends GenericTablePage {
         if (!isAscending) data.reverse();
         break;
       case 'availableQuantity':
-        data = data.slice().sort((a, b) =>
-          a.availableQuantity.localeCompare(b.availableQuantity));
+        data = data.slice().sort((a, b) => Number(a.availableQuantity) - b.availableQuantity);
         if (!isAscending) data.reverse();
         break;
-      case 'totalQuantity':
-        data = data.slice().sort((a, b) =>
-          a.totalQuantity.localeCompare(b.totalQuantity));
-        if (!isAscending) data.reverse();
+      case 'totalQuantity': // Special case for correct number based sorting
+        // Convert to javascript array obj then sort with standard array functions.
+        data = data.slice().sort((a, b) => Number(a.totalQuantity) - b.totalQuantity); // 0,1,2,3...
+        if (!isAscending) data.reverse(); // ...3,2,1,0
         break;
       default:
         data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
