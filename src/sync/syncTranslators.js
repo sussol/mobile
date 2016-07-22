@@ -68,11 +68,6 @@ export const STATUSES = new SyncTranslator({
   'new': 'nw',
 });
 
-export const REQUISITION_STATUSES = new SyncTranslator({
-  'new': 'wp',
-  'finalised': 'wf',
-});
-
 export const TRANSACTION_TYPES = new SyncTranslator({
   'customer_invoice': 'ci',
   'customer_credit': 'cc',
@@ -95,6 +90,23 @@ export const NAME_TYPES = new SyncTranslator({
   'build': 'build',
   'store': 'store',
   'repack': 'repack',
+});
+
+/**
+ * Translates requisition statuses, which will be changed by the supplying store
+ * once finalised in the mobile store. Despite the supplying store's requisition
+ * going through sg, cn, and fn statuses, it should remain finalised in the mobile
+ * store
+ */
+class RequisitionStatusTransaltor extends SyncTranslator {
+  translate(status, direction) {
+    if (['sg', 'cn', 'fn'].includes(status)) return 'finalised';
+    return super.translate(status, direction);
+  }
+}
+export const REQUISITION_STATUSES = new RequisitionStatusTransaltor({
+  'new': 'wp',
+  'finalised': 'wf',
 });
 
 /**
