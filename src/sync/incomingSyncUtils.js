@@ -394,7 +394,7 @@ function deleteRecord(database, recordType, recordId) {
     case 'TransactionBatch':
     case 'TransactionCategory': {
       const recordToDelete = getObject(database, recordType, recordId);
-      database.delete(recordType, recordToDelete);
+      if (recordToDelete) database.delete(recordType, recordToDelete);
       break;
     }
     default:
