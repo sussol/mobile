@@ -369,10 +369,11 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
  * changes that are required to clean up that type of record.
  * @param  {Realm}  database   App wide local database
  * @param  {string} recordType Internal record type
- * @param  {string} recordId   The sync representation of the record to be deleted
+ * @param  {string} primaryKey       The primary key of the database object, usually its id
+ * @param  {string} primaryKeyField  The field used as the primary key, defaults to 'id'
  * @return {none}
  */
-function deleteRecord(database, recordType, recordId) {
+function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') {
   switch (recordType) {
     case 'Item':
     case 'ItemBatch':
@@ -384,6 +385,8 @@ function deleteRecord(database, recordType, recordId) {
     case 'MasterListNameJoin':
     case 'Name':
     case 'NameStoreJoin':
+    case 'NumberSequence':
+    case 'NumberToReuse':
     case 'Requisition':
     case 'RequisitionItem':
     case 'Stocktake':
@@ -391,13 +394,8 @@ function deleteRecord(database, recordType, recordId) {
     case 'Transaction':
     case 'TransactionBatch':
     case 'TransactionCategory': {
-      const deleteResults = database.objects(recordType).filtered('id == $0', recordId);
-      if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
-      break;
-    }
-    case 'NumberSequence':
-    case 'NumberToReuse': {
-      const deleteResults = database.objects(recordType).filtered('sequenceKey == $0', recordId);
+      const deleteResults = database.objects(recordType)
+                                    .filtered(`${primaryKeyField} == $0`, primaryKey);
       if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
       break;
     }
