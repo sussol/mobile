@@ -59,6 +59,10 @@ export class Transaction extends Realm.Object {
     return getTotal(this.items, 'totalQuantity');
   }
 
+  get numberOfBatches() {
+    return getTotal(this.items, 'numberOfBatches');
+  }
+
   /**
    * Add a TransactionItem to this transaction, based on the given item. If it already
    * exists, do nothing.
