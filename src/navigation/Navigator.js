@@ -174,7 +174,7 @@ function getNewNavState(currentState, action) {
       };
       break;
     case PUSH_ACTION:
-      // don't navigate if route already in navState (two pushes can happen if user quickly
+      // Don't push route if route already in navState (two pushes can happen if user quickly
       // double taps a navigation button)
       if (NavigationStateUtils.has(currentState, action.key)) {
         return currentState;
