@@ -92,7 +92,8 @@ export class RequisitionsPage extends GenericTablePage {
     switch (sortBy) {
       case 'serialNumber': // Special case for correct number based sorting
         // Convert to javascript array obj then sort with standard array functions.
-        data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
+        data = data.slice().sort((a, b) =>
+          Number(a.serialNumber) - Number(b.serialNumber)); // 0,1,2,3...
         if (!isAscending) data.reverse(); // ...3,2,1,0
         break;
       case 'numberOfItems': // Cannot use realm Result.sorted() with a property of a property

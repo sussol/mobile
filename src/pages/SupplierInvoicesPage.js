@@ -45,7 +45,8 @@ export class SupplierInvoicesPage extends GenericTablePage {
     let data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
     if (sortBy === 'serialNumber') { // Special case for correct number based sorting
       // Convert to javascript array obj then sort with standard array functions.
-      data = data.slice().sort((a, b) => Number(a.serialNumber) - b.serialNumber); // 0,1,2,3...
+      data = data.slice().sort((a, b) =>
+        Number(a.serialNumber) - Number(b.serialNumber)); // 0,1,2,3...
       if (!isAscending) data.reverse(); // ...3,2,1,0
     } else {
       data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
