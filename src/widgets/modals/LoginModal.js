@@ -27,6 +27,7 @@ export class LoginModal extends React.Component {
       username: '',
       password: '',
     };
+    this.passwordInputRef = null;
     this.errorTimeoutId = null;
   }
 
@@ -67,15 +68,15 @@ export class LoginModal extends React.Component {
     }
   }
 
-  getButtonDisabled() {
+  get canAttemptLogin() {
     return (
-      this.state.authStatus !== 'unauthenticated' ||
-      this.state.username.length === 0 ||
-      this.state.password.length === 0
+      this.state.authStatus === 'unauthenticated' &&
+      this.state.username.length > 0 &&
+      this.state.password.length > 0
     );
   }
 
-  getButtonText() {
+  get buttonText() {
     switch (this.state.authStatus) {
       case 'authenticating':
       case 'authenticated':
@@ -113,13 +114,19 @@ export class LoginModal extends React.Component {
                 underlineColorAndroid={SUSSOL_ORANGE}
                 value={this.state.username}
                 editable={this.state.authStatus !== 'authenticating'}
+                returnKeyType={'next'}
+                selectTextOnFocus
                 onChangeText={(text) => {
                   this.setState({ username: text, authStatus: 'unauthenticated' });
+                }}
+                onSubmitEditing={() => {
+                  if (this.passwordInputRef) this.passwordInputRef.focus();
                 }}
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
+                ref={(reference) => (this.passwordInputRef = reference)}
                 style={globalStyles.authFormTextInputStyle}
                 placeholder="Password"
                 placeholderTextColor={SUSSOL_ORANGE}
@@ -127,8 +134,14 @@ export class LoginModal extends React.Component {
                 value={this.state.password}
                 secureTextEntry
                 editable={this.state.authStatus !== 'authenticating'}
+                returnKeyType={'done'}
+                selectTextOnFocus
                 onChangeText={(text) => {
                   this.setState({ password: text, authStatus: 'unauthenticated' });
+                }}
+                onSubmitEditing={() => {
+                  if (this.passwordInputRef) this.passwordInputRef.blur();
+                  if (this.canAttemptLogin) this.onLogin();
                 }}
               />
             </View>
@@ -136,10 +149,10 @@ export class LoginModal extends React.Component {
               <Button
                 style={[globalStyles.authFormButton, globalStyles.loginButton]}
                 textStyle={globalStyles.authFormButtonText}
-                text={this.getButtonText()}
+                text={this.buttonText}
                 onPress={this.onLogin}
                 disabledColor={WARM_GREY}
-                isDisabled={this.getButtonDisabled()}
+                isDisabled={!this.canAttemptLogin}
               />
             </View>
           </View>

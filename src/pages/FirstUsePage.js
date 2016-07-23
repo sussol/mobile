@@ -21,6 +21,8 @@ export class FirstUsePage extends React.Component {
       syncSiteName: '',
       syncSitePassword: '',
     };
+    this.siteNameInputRef = null;
+    this.passwordInputRef = null;
     this.errorTimeoutId = null;
     this.onPressConnect = this.onPressConnect.bind(this);
     this.setProgress = this.setProgress.bind(this);
@@ -57,16 +59,16 @@ export class FirstUsePage extends React.Component {
     this.setState({ progressMessage: progressMessage });
   }
 
-  getButtonDisabled() {
+  get canAttemptLogin() {
     return (
-      this.state.progress !== 'uninitialised' ||
-      this.state.serverURL.length === 0 ||
-      this.state.syncSiteName.length === 0 ||
-      this.state.syncSitePassword.length === 0
+      this.state.progress === 'uninitialised' &&
+      this.state.serverURL.length > 0 &&
+      this.state.syncSiteName.length > 0 &&
+      this.state.syncSitePassword.length > 0
     );
   }
 
-  getButtonText() {
+  get buttonText() {
     switch (this.state.progress) {
       case 'initialising':
       case 'error':
@@ -95,26 +97,38 @@ export class FirstUsePage extends React.Component {
               placeholder="Primary Server URL"
               value={this.state.serverURL}
               editable={this.state.progress !== 'initialising'}
+              returnKeyType={'next'}
+              selectTextOnFocus
               onChangeText={(text) => {
                 this.setState({ serverURL: text, progress: 'uninitialised' });
+              }}
+              onSubmitEditing={() => {
+                if (this.siteNameInputRef) this.siteNameInputRef.focus();
               }}
             />
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
+              ref={(reference) => (this.siteNameInputRef = reference)}
               style={globalStyles.authFormTextInputStyle}
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Sync Site Name"
               value={this.state.syncSiteName}
               editable={this.state.progress !== 'initialising'}
+              returnKeyType={'next'}
+              selectTextOnFocus
               onChangeText={(text) => {
                 this.setState({ syncSiteName: text, progress: 'uninitialised' });
+              }}
+              onSubmitEditing={() => {
+                if (this.passwordInputRef) this.passwordInputRef.focus();
               }}
             />
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
+              ref={(reference) => (this.passwordInputRef = reference)}
               style={globalStyles.authFormTextInputStyle}
               placeholder="Sync Site Password"
               placeholderTextColor={SUSSOL_ORANGE}
@@ -122,8 +136,14 @@ export class FirstUsePage extends React.Component {
               value={this.state.syncSitePassword}
               secureTextEntry
               editable={this.state.progress !== 'initialising'}
+              returnKeyType={'done'}
+              selectTextOnFocus
               onChangeText={(text) => {
                 this.setState({ syncSitePassword: text, progress: 'uninitialised' });
+              }}
+              onSubmitEditing={() => {
+                if (this.passwordInputRef) this.passwordInputRef.blur();
+                if (this.canAttemptLogin) this.onLogin();
               }}
             />
           </View>
@@ -137,10 +157,10 @@ export class FirstUsePage extends React.Component {
             <Button
               style={globalStyles.authFormButton}
               textStyle={globalStyles.authFormButtonText}
-              text={this.getButtonText()}
+              text={this.buttonText}
               onPress={this.onPressConnect}
               disabledColor={WARM_GREY}
-              isDisabled={this.getButtonDisabled()}
+              isDisabled={!this.canAttemptLogin}
             />
           </View>
         </View>
