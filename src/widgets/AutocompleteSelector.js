@@ -49,8 +49,6 @@ export class AutocompleteSelector extends React.Component {
         autoCapitalize="none"
         autoCorrect={false}
         data={options.filtered(queryString, this.state.queryText).sorted(sortByString)}
-        keyboardShouldPersistTaps={false}
-        resultsShouldPersistAfterEditing
         onChangeText={text => this.setState({ queryText: text })}
         placeholder={placeholderText}
         renderItem={(item) => (
