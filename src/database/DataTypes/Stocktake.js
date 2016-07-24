@@ -47,6 +47,10 @@ export class Stocktake extends Realm.Object {
     });
   }
 
+  get isConfirmed() {
+    return this.status === 'confirmed';
+  }
+
   get isFinalised() {
     return this.status === 'finalised';
   }

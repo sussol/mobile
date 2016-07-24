@@ -2,8 +2,9 @@ import React from 'react';
 import { ConfirmModal } from './ConfirmModal';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 
-const text = 'Finalise will lock this record permanently and cause stock level changes '
-           + 'to take effect.';
+const confirmedText = 'Finalise will lock this record permanently.'
+const unconfirmedText = 'Finalise will lock this record permanently and cause '
+                      + 'stock level changes to take effect.';
 
 /**
  * Presents a modal allowing the user to confirm or cancel finalising a record.
@@ -33,7 +34,7 @@ export function FinaliseModal(props) {
       backdropOpacity={0.97}
       buttonTextStyle={globalStyles.finaliseModalButtonText}
       isOpen={props.isOpen}
-      questionText={errorText || text}
+      questionText={errorText || (props.record.isConfirmed ? confirmedText : unconfirmedText)}
       cancelText={errorText ? 'Got it' : 'Cancel'}
       onConfirm={
         !errorText ? () => {
