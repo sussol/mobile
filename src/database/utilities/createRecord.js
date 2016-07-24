@@ -148,6 +148,7 @@ function createRequisitionItem(database, requisition, item) {
     dailyUsage: dailyUsage,
     requiredQuantity: 0,
     comment: '',
+    sortIndex: requisition.items.length + 1,
   });
   requisition.addItem(requisitionItem);
   database.save('Requisition', requisition);
@@ -195,6 +196,7 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
     batch: batch,
     costPrice: costPrice,
     sellPrice: sellPrice,
+    sortIndex: stocktakeItem.stocktake ? stocktakeItem.stocktake.numberOfBatches : 0,
   });
   stocktakeItem.addBatch(stocktakeBatch);
   database.save('StocktakeItem', stocktakeItem);
@@ -216,6 +218,7 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
     costPrice: costPrice,
     sellPrice: sellPrice,
     transaction: transactionItem.transaction,
+    sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
   });
   transactionItem.addBatch(transactionBatch);
   database.save('TransactionItem', transactionItem);

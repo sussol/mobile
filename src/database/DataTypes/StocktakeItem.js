@@ -26,6 +26,10 @@ export class StocktakeItem extends Realm.Object {
     return this.item ? this.item.code : '';
   }
 
+  get numberOfBatches() {
+    return this.batches.length;
+  }
+
   /**
    * If the stock has increased or not been changed since the item quantity was
    * snapshot, the minimum is 0. If the stock has reduced since the item was

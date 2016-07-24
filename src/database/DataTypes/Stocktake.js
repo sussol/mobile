@@ -1,7 +1,7 @@
 import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
-import { addBatchToParent, createRecord } from '../utilities';
+import { addBatchToParent, createRecord, getTotal } from '../utilities';
 
 export class Stocktake extends Realm.Object {
   destructor(database) {
@@ -70,6 +70,10 @@ export class Stocktake extends Realm.Object {
       if (stocktakeItem.isReducedBelowMinimum) itemsBelowMinimum.push(stocktakeItem);
     });
     return itemsBelowMinimum;
+  }
+
+  get numberOfBatches() {
+    return getTotal(this.items, 'numberOfBatches');
   }
 
   /**

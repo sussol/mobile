@@ -36,6 +36,10 @@ export class TransactionItem extends Realm.Object {
     return getTotal(this.batches, 'totalPrice');
   }
 
+  get numberOfBatches() {
+    return this.batches.length;
+  }
+
   // For customer invoices, return how much can be issued in total, accounting
   // for the fact that any issued in a confirmed customer invoice has already
   // been taken off the total
