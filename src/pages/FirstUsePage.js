@@ -143,7 +143,7 @@ export class FirstUsePage extends React.Component {
               }}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
-                if (this.canAttemptLogin) this.onLogin();
+                if (this.canAttemptLogin) this.onPressConnect();
               }}
             />
           </View>
