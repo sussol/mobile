@@ -200,7 +200,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const thisStoreId = settings.get(THIS_STORE_ID);
       const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
       // Don't accept updates to number sequences
-      if (database.objects('NumberSequence').filtered('sequenceKey == $0', sequenceKey)) break;
+      if (database.objects('NumberSequence')
+                  .filtered('sequenceKey == $0', sequenceKey).length > 0) break;
       if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
       internalRecord = {
         id: record.ID,
