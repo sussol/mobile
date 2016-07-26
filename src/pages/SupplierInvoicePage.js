@@ -153,13 +153,13 @@ const COLUMNS = [
   {
     key: 'totalQuantitySent',
     width: 1,
-    title: 'NO. SENT',
+    title: 'NUM. SENT',
     sortable: true,
   },
   {
     key: 'numReceived',
     width: 1,
-    title: 'NO. RECEIVED',
+    title: 'NUM. RECEIVED',
     sortable: true,
   },
 ];
