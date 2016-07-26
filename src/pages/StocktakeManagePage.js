@@ -140,7 +140,7 @@ export class StocktakeManagePage extends GenericTablePage {
       default:
         data = data.sorted(sortBy, !isAscending);
     }
-    if (showItemsWithNoStock) {
+    if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
     // Populate visibleItemIds with the ids of the items in the filtered data
