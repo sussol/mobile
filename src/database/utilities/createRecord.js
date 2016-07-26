@@ -105,10 +105,11 @@ function createInventoryAdjustment(database, user, date, isAddition) {
 }
 
 // Creates a new empty ItemBatch and adds it to the item
-function createItemBatch(database, item) {
+function createItemBatch(database, item, batchString) {
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
     item: item,
+    batch: batchString,
     packSize: 1,
     numberOfPacks: 0,
     costPrice: item.defaultPrice ? item.defaultPrice : 0,

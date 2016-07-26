@@ -115,31 +115,31 @@ export class TransactionItem extends Realm.Object {
     }
 
     // If there is a positive remainder, i.e. more to allocate, add more batches
-    if (remainder > 0 && this.item.batches.length > this.batches.length) {
+    if (remainder > 0) {
       // Use only batches that have some stock on hand (only ones we can issue
       // from, and also most likely batches to have found more of in stocktake)
       // Sorted shortest to longest expiry date, so that customer invoices issue
       // following a FEFO policy.
       const batchesWithStock = this.item.batchesWithStock.sorted('expiryDate');
 
-      // Unless there are no batches with stock, in which case we use the batch
+      // Unless there are no batches with stock, in which case start with the batch
       // that was most likely to be recently in stock, i.e. the one with the longest
       // expiry date.
       const batchesToUse = batchesWithStock.length > 0 ?
-                           batchesWithStock :
-                           [this.item.batches.sorted('expiryDate', true)[0]];
+                     batchesWithStock :
+                     this.item.batches.sorted('expiryDate', true);
 
       // Use complement to only get batches not already in the transaction.
-      const itemBatches = complement(batchesToUse,
-                                     this.batches.map((transactionBatch) =>
-                                                        ({ id: transactionBatch.itemBatchId })),
-                                     (batch) => batch.id);
+      const itemBatchesToAdd = complement(batchesToUse,
+                                          this.batches.map((transactionBatch) =>
+                                            ({ id: transactionBatch.itemBatchId })),
+                                          (batch) => batch.id);
 
       // Go through item batches, adding transaction batches and allocating remainder
       // until no remainder left
-      for (let index = 0; index < itemBatches.length && remainder !== 0; index ++) {
+      for (let index = 0; index < itemBatchesToAdd.length && remainder !== 0; index ++) {
         // Create the new transaction batch and attach it to this transaction item
-        const newBatch = createRecord(database, 'TransactionBatch', this, itemBatches[index]);
+        const newBatch = createRecord(database, 'TransactionBatch', this, itemBatchesToAdd[index]);
 
         // Apply as much of the remainder to it as possible
         remainder = this.allocateDifferenceToBatch(database, remainder, newBatch);

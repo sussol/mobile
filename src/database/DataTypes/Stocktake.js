@@ -134,10 +134,12 @@ export class Stocktake extends Realm.Object {
       const item = stocktakeItem.item;
       const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
 
-      // If this item has not previously had stock, add a new empty batch
-      if (difference > 0 && item.batches.length === 0) {
-        const itemBatch = createRecord(database, 'ItemBatch', item);
+      // If this item has no batches with stock, add a new empty batch
+      if (difference > 0 && item.batchesWithStock.length === 0) {
+        const batchString = `stocktake_${this.serialNumber}`;
+        const itemBatch = createRecord(database, 'ItemBatch', item, batchString);
         createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch);
+        createRecord(database, 'TransactionBatch', transactionItem, itemBatch);
       }
 
       // Set the transaction item's quantity, causing it to handle batch logic
