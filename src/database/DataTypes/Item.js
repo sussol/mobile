@@ -39,9 +39,11 @@ export class Item extends Realm.Object {
   }
 
   addBatch(itemBatch) {
-    // If the batch is already in the item, we don't want to add it again
-    if (this.batches.find(currentItemBatch => currentItemBatch.id === itemBatch.id)) return;
     this.batches.push(itemBatch);
+  }
+
+  addBatchIfUnique(itemBatch) {
+    if (!this.batches.includes(itemBatch)) this.addBatch(itemBatch);
   }
 
   toString() {

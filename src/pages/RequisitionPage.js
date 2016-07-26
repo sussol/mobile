@@ -199,9 +199,12 @@ export class RequisitionPage extends GenericTablePage {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             sortByString={'name'}
             onSelect={(item) => {
-              this.props.database.write(() => {
-                createRecord(this.props.database, 'RequisitionItem', this.props.requisition, item);
-                this.props.database.save('Requisition', this.props.requisition);
+              const { database, requisition } = this.props;
+              database.write(() => {
+                if (!requisition.hasItemWithId(item.id)) {
+                  createRecord(database, 'RequisitionItem', requisition, item);
+                  database.save('Requisition', requisition);
+                }
               });
               this.closeModal();
             }}
