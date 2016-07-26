@@ -32,6 +32,7 @@ export function BottomConfirmModal(props) {
         style={[globalStyles.button, localStyles.deleteButton]}
         textStyle={[globalStyles.buttonText, localStyles.buttonText]}
         text={confirmText}
+        loadingText={'Confirming...'}
         onPress={onConfirm}
       />
     </BottomModal>

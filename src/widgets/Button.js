@@ -12,38 +12,42 @@ export class Button extends React.Component {
     this.state = {
       isLoading: false,
     };
+    this.loadOnPress = this.loadOnPress.bind(this);
   }
 
-  async onPress() {
-    // By definition, the second argument should be called after rerender (doesn't appear to)
-    await this.setState({ isLoading: true }, this.props.onPress);
-    this.setState({ isLoading: false });
+  /**
+   * Responds to a press by changing the button to its loading state, then calling
+   * the onPress function passed in through props
+   */
+  loadOnPress() {
+     // After isLoading is set, use a timeout to allow a render frame to process
+     // and display the button's loading state before calling the onPress function
+     // is called
+    this.setState({ isLoading: true }, () => setTimeout(() => {
+      this.props.onPress();
+      this.setState({ isLoading: false });
+    }, 1));
   }
 
   render() {
-    const props = this.props;
-    if (props.isDisabled) {
+    const { disabledColor, isDisabled, loadingText, onPress, text, textStyle, style } = this.props;
+    const { isLoading } = this.state;
+
+    if (isDisabled || isLoading) {
       return (
-        <View style={[props.style, { backgroundColor: props.disabledColor }]}>
-          <Text style={props.textStyle}>{props.text}</Text>
-        </View>
-      );
-    }
-    if (this.state.isLoading) {
-      return (
-        <View style={[props.style, { backgroundColor: props.disabledColor }]}>
-          <Text style={props.textStyle}>Working</Text>
+        <View style={[style, { backgroundColor: disabledColor }]}>
+          <Text style={textStyle}>{isLoading ? loadingText : text}</Text>
         </View>
       );
     }
 
     return (
       <TouchableHighlight
-        style={props.style}
+        style={style}
         underlayColor="#B5B5B5"
-        onPress={() => { this.onPress(); }}
+        onPress={loadingText ? this.loadOnPress : onPress}
       >
-        <Text style={props.textStyle}>{props.text}</Text>
+        <Text style={textStyle}>{text}</Text>
       </TouchableHighlight>
     );
   }
@@ -54,6 +58,7 @@ Button.propTypes = {
   textStyle: Text.propTypes.style,
   onPress: React.PropTypes.func,
   text: React.PropTypes.string,
+  loadingText: React.PropTypes.string,
   isDisabled: React.PropTypes.bool,
   disabledColor: React.PropTypes.string,
 };

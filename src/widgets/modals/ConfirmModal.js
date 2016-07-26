@@ -39,6 +39,7 @@ export function ConfirmModal(props) {
           style={[globalStyles.button, props.confirmButtonStyle]}
           textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
           text={props.confirmText}
+          loadingText={'Confirming...'}
           onPress={onConfirm}
         />}
       </View>

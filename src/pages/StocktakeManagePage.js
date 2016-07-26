@@ -214,6 +214,7 @@ export class StocktakeManagePage extends GenericTablePage {
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
               textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
               text={!stocktake ? 'Create' : 'Confirm'}
+              loadingText={!stocktake ? 'Creating...' : 'Confirming...'}
               onPress={this.onConfirmPress}
             />
           </BottomModal>
