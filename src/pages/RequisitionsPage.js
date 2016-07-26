@@ -164,7 +164,7 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 2,
-    title: 'REQUISITION NO.',
+    title: 'REQUISITION NUM.',
     sortable: true,
   },
   {
