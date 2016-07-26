@@ -7,6 +7,7 @@ import {
 import { SETTINGS_KEYS } from '../settings';
 const {
    SUPPLYING_STORE_ID,
+   SUPPLYING_STORE_NAME_ID,
    SYNC_URL,
    SYNC_SERVER_ID,
    SYNC_SITE_ID,
@@ -52,8 +53,9 @@ export class SyncAuthenticator {
       this.settings.set(SYNC_SERVER_ID, responseJson.ServerID);
       this.settings.set(SYNC_SITE_ID, responseJson.SiteID);
       this.settings.set(THIS_STORE_ID, responseJson.StoreID);
-      this.settings.set(SUPPLYING_STORE_ID, responseJson.SupplyingStoreID);
       this.settings.set(THIS_STORE_NAME_ID, responseJson.NameID);
+      this.settings.set(SUPPLYING_STORE_ID, responseJson.SupplyingStoreID);
+      this.settings.set(SUPPLYING_STORE_NAME_ID, responseJson.SupplyingStoreNameID);
     } catch (error) { // Pass error up
       throw error;
     }

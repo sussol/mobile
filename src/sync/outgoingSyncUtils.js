@@ -13,6 +13,7 @@ import {
 import { SETTINGS_KEYS } from '../settings';
 const {
   SUPPLYING_STORE_ID,
+  SUPPLYING_STORE_NAME_ID,
   THIS_STORE_ID,
   THIS_STORE_NAME_ID,
 } = SETTINGS_KEYS;
@@ -93,7 +94,7 @@ function generateSyncData(settings, recordType, record) {
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),
         total_cost: String(record.costPrice * record.numberOfPacks),
-        name_ID: settings.get(SUPPLYING_STORE_ID),
+        name_ID: settings.get(SUPPLYING_STORE_NAME_ID),
       };
     }
     case 'NumberSequence': {
