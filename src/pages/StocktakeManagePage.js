@@ -31,7 +31,7 @@ export class StocktakeManagePage extends GenericTablePage {
     this.state.items = props.database.objects('Item');
     this.state.visibleItemIds = [];
     this.state.stocktakeName = '';
-    this.state.showItemsWithNoStock = false;
+    this.state.showItemsWithNoStock = true;
     this.state.sortBy = 'name';
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
@@ -140,7 +140,7 @@ export class StocktakeManagePage extends GenericTablePage {
       default:
         data = data.sorted(sortBy, !isAscending);
     }
-    if (!showItemsWithNoStock) {
+    if (showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
     // Populate visibleItemIds with the ids of the items in the filtered data
@@ -184,9 +184,9 @@ export class StocktakeManagePage extends GenericTablePage {
                 toggleOnStyle={globalStyles.toggleOptionSelected}
                 toggles={[
                   {
-                    text: 'Show Stockouts',
+                    text: 'Hide Stockouts',
                     onPress: () => this.toggleShowItemsWithNoStock(),
-                    isOn: showItemsWithNoStock,
+                    isOn: !showItemsWithNoStock,
                   },
                   {
                     text: 'All Items Selected',
