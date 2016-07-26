@@ -276,6 +276,7 @@ export class CustomerInvoicePage extends GenericTablePage {
               />
               <PageButton
                 text="Add Master List Items"
+                loadingText="Adding..."
                 onPress={this.onAddMasterItems}
                 isDisabled={this.props.transaction.isFinalised}
               />

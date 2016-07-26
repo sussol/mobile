@@ -238,6 +238,7 @@ export class RequisitionPage extends GenericTablePage {
                 <PageButton
                   style={globalStyles.leftButton}
                   text="Use Suggested Quantities"
+                  loadingText="Copying Quantities..."
                   onPress={this.onUseSuggestedQuantities}
                   isDisabled={this.props.requisition.isFinalised}
                 />
@@ -251,6 +252,7 @@ export class RequisitionPage extends GenericTablePage {
                 />
                 <PageButton
                   text="Add Master List Items"
+                  loadingText="Adding..."
                   onPress={this.onAddMasterItems}
                   isDisabled={this.props.requisition.isFinalised}
                 />
