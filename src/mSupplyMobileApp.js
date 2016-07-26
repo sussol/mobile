@@ -10,6 +10,7 @@ import {
   Image,
   View,
 } from 'react-native';
+import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 
 import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
 
@@ -126,6 +127,7 @@ export default class mSupplyMobileApp extends React.Component {
 
   renderScene(props) {
     const navigateTo = (key, title, extraProps, navType) => {
+      dismissKeyboard();
       if (!navType) navType = 'push';
       const navigationProps = { key, title, ...extraProps };
       // If the page we're going to has a key value pair in FINALISABLE_PAGES, get recordToFinalise
