@@ -19,7 +19,8 @@ import globalStyles, { DARK_GREY } from '../../globalStyles';
  * @prop  {object}    user          The user who is finalising the record
  */
 export function FinaliseModal(props) {
-  const { record, recordType, checkForError, finaliseText } = this.props.finaliseItem;
+  if (!props.finaliseItem) return null;
+  const { record, recordType, checkForError, finaliseText } = props.finaliseItem;
   if (!record || !record.isValid()) return null; // Record may have been deleted
   const errorText = checkForError && checkForError(record);
   return (
@@ -54,7 +55,7 @@ FinaliseModal.propTypes = {
   database: React.PropTypes.object.isRequired,
   isOpen: React.PropTypes.bool,
   onClose: React.PropTypes.func,
-  finaliseItem: React.PropTypes.object.isRequired,
+  finaliseItem: React.PropTypes.object,
   user: React.PropTypes.object,
 };
 
