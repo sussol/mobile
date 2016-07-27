@@ -287,7 +287,7 @@ export class GenericTablePage extends React.Component {
               textStyle={globalStyles.dataTableText}
               width={column.width}
               returnKeyType={renderedCell.returnKeyType}
-              selectTextOnFocus
+              selectTextOnFocus={true}
               keyboardType={renderedCell.keyboardType}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
