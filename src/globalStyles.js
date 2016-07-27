@@ -25,6 +25,7 @@ export const FINALISED_RED = '#f63b30';
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_TOP = 10;
 export const PAGE_CONTENT_PADDING_BOTTOM = 20;
+export const COMPONENT_HEIGHT = 45;
 export const SEARCH_BAR_WIDTH = 600;
 const PAGE_TOP_LEFT_WIDTH = SEARCH_BAR_WIDTH;
 
@@ -166,7 +167,7 @@ export default StyleSheet.create({
   button: {
     alignItems: 'center',
     justifyContent: 'center',
-    height: 45,
+    height: COMPONENT_HEIGHT,
     width: 140,
     borderWidth: 1,
     borderRadius: 4,
@@ -249,7 +250,7 @@ export default StyleSheet.create({
     borderColor: BLUE_WHITE,
   },
   dataTableCell: {
-    height: 45,
+    height: COMPONENT_HEIGHT,
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
   },

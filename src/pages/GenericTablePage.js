@@ -7,7 +7,12 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import globalStyles, { SUSSOL_ORANGE, WARM_GREY, LIGHT_GREY } from '../globalStyles';
+import globalStyles, {
+  SUSSOL_ORANGE,
+  WARM_GREY,
+  LIGHT_GREY,
+  COMPONENT_HEIGHT,
+} from '../globalStyles';
 
 import {
   Cell,
@@ -144,8 +149,17 @@ export class GenericTablePage extends React.Component {
     this.setState({ expandedRows: newExpandedRows });
   }
 
+  scrollTableToRow(rowId) {
+    // Scrolls to row of rowId with a couple rows above it, unless the rowId is of the top 3 rows,
+    // where it just scrolls to the top.
+    const yValue = Math.max((rowId - 2) * COMPONENT_HEIGHT, 0);
+    console.log(`y: ${yValue}`);
+    if (this.dataTableRef) this.dataTableRef.scrollTo({ y: yValue });
+  }
+
   focusNextField(nextCellRefIndex) {
     if (this.cellRefsMap[nextCellRefIndex]) {
+      this.scrollTableToRow(nextCellRefIndex);
       this.cellRefsMap[nextCellRefIndex].focus();
     } else {
       // Protect against crash from null being in the Map.
