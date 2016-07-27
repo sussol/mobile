@@ -40,6 +40,8 @@ export class AutocompleteSelector extends React.Component {
       queryString,
       sortByString,
       placeholderText,
+      renderLeftText,
+      renderRightText,
     } = this.props;
 
     return (
@@ -52,9 +54,12 @@ export class AutocompleteSelector extends React.Component {
         onChangeText={text => this.setState({ queryText: text })}
         placeholder={placeholderText}
         renderItem={(item) => (
-          <TouchableOpacity onPress={() => onSelect(item)}>
+          <TouchableOpacity style={localStyles.resultContainer} onPress={() => onSelect(item)}>
             <Text style={[localStyles.text, localStyles.itemText]}>
-              {item.toString()}
+              {renderLeftText ? renderLeftText(item) : item.toString()}
+            </Text>
+            <Text style={[localStyles.text, localStyles.itemText]}>
+              {renderRightText ? renderRightText(item) : null}
             </Text>
           </TouchableOpacity>
         )}
@@ -69,6 +74,8 @@ AutocompleteSelector.propTypes = {
   sortByString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,
   onSelect: React.PropTypes.func.isRequired,
+  renderLeftText: React.PropTypes.func,
+  renderRightText: React.PropTypes.func,
 };
 AutocompleteSelector.defaultProps = {
   placeholderText: 'Start typing to search',
@@ -76,10 +83,14 @@ AutocompleteSelector.defaultProps = {
 
 const localStyles = StyleSheet.create({
   text: {
-    fontSize: 15,
+    fontSize: 20,
     fontFamily: APP_FONT_FAMILY,
   },
   itemText: {
     margin: 2,
+  },
+  resultContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
