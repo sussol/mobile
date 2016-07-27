@@ -223,6 +223,8 @@ export class CustomerInvoicePage extends GenericTablePage {
               });
               this.closeModal();
             }}
+            renderLeftText={(item) => `${item.name}`}
+            renderRightText={(item) => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:

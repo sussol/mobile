@@ -205,6 +205,8 @@ export class RequisitionPage extends GenericTablePage {
               });
               this.closeModal();
             }}
+            renderLeftText={(item) => `${item.name}`}
+            renderRightText={(item) => `${item.totalQuantity}`}
           />
         );
       case MONTHS_SELECT:
