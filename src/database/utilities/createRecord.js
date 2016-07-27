@@ -63,7 +63,6 @@ function createCustomerInvoice(database, customer, user) {
     otherParty: customer,
     enteredBy: user,
   });
-  if (customer.useMasterList) invoice.addItemsFromMasterList(database);
   database.save('Transaction', invoice);
   customer.addTransaction(invoice);
   database.save('Name', customer);

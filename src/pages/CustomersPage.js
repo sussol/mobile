@@ -35,18 +35,6 @@ export class CustomersPage extends GenericTablePage {
     );
   }
 
-  onCheckablePress(customer) {
-    super.onCheckablePress(customer);
-    this.props.database.write(() => {
-      if (!customer.useMasterList) {
-        customer.useMasterList = true;
-      } else {
-        customer.useMasterList = !customer.useMasterList;
-      }
-      this.props.database.save('Name', customer);
-    });
-  }
-
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
@@ -66,11 +54,6 @@ export class CustomersPage extends GenericTablePage {
         return customer.name;
       case 'transactions.length':
         return customer.transactions.length;
-      case 'selected':
-        return {
-          type: 'checkable',
-          isChecked: customer.useMasterList,
-        };
     }
   }
 }
@@ -97,10 +80,5 @@ const COLUMNS = [
     key: 'transactions.length',
     width: 1,
     title: 'INVOICES',
-  },
-  {
-    key: 'selected',
-    width: 1,
-    title: 'MASTER LIST',
   },
 ];
