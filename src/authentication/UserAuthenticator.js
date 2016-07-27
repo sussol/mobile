@@ -69,6 +69,7 @@ export class UserAuthenticator {
           // Entered credentials match cached credentials, allow offline login
           return user;
         }
+        throw new Error(INVALID_PASSWORD); // Didn't match cache, throw error
       }
 
       // If anything other than connection failure, and they used the currently
