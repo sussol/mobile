@@ -34,8 +34,8 @@ import { SearchBar } from '../widgets';
  *         											 don't override if row should not be pressable
  * @method onEndEditing(key, rowData, newValue) Handles user input to an editable cell
  *         											 don't override if row should not be pressable
- * @const  {array}  cellRefs     Stores references to TextInputs in editableCells so next button on
- *                               native keyboard focuses the next cell. Order is left to
+ * @const  {array}  cellRefsMap  Stores references to TextInputs in editableCells so next button
+ *                               on native keyboard focuses the next cell. Order is left to
  *                               right within a row, then next row.
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
@@ -63,7 +63,7 @@ export class GenericTablePage extends React.Component {
       selection: [],
       expandedRows: [],
     };
-    this.cellRefs = [];
+    this.cellRefsMap = {}; // { rowId: reference, rowId: reference, ...}
     this.columns = null;
     this.dataTableRef = null;
     this.dataTypesDisplayed = [];
@@ -145,14 +145,16 @@ export class GenericTablePage extends React.Component {
   }
 
   focusNextField(nextCellRefIndex) {
-    if (this.cellRefs[nextCellRefIndex]) {
-      this.cellRefs[nextCellRefIndex].focus();
+    if (this.cellRefsMap[nextCellRefIndex]) {
+      this.cellRefsMap[nextCellRefIndex].focus();
     } else {
-      this.cellRefs[nextCellRefIndex - 1].blur();
+      // Protect against crash from null being in the Map.
+      if (this.cellRefsMap[nextCellRefIndex - 1]) this.cellRefsMap[nextCellRefIndex - 1].blur();
     }
   }
 
   refreshData() {
+    this.cellRefsMap = {};
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
@@ -200,7 +202,6 @@ export class GenericTablePage extends React.Component {
 
   renderHeader() {
     const headerCells = [];
-
     this.columns.forEach((column, index, columns) => {
       const cellStyle = index !== columns.length - 1 ?
         globalStyles.dataTableHeaderCell :
@@ -282,7 +283,7 @@ export class GenericTablePage extends React.Component {
           cell = (
             <EditableCell
               key={column.key}
-              refCallback={(reference) => this.cellRefs.push(reference)}
+              refCallback={(reference) => { this.cellRefsMap[rowId] = reference; }}
               style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
