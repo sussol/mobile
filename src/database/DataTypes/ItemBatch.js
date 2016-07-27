@@ -64,6 +64,11 @@ export class ItemBatch extends Realm.Object {
     this.transactionBatches.splice(index, 1);
   }
 
+  addTransactionIfUnique(transactionBatch) {
+    if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) return;
+    this.addTransactionBatch(transactionBatch);
+  }
+
   toString() {
     return `${this.itemName} - Batch ${this.batch}`;
   }
