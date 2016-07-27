@@ -30,7 +30,6 @@ Name.schema = {
     isCustomer: 'bool',
     isSupplier: 'bool',
     isManufacturer: 'bool',
-    useMasterList: { type: 'bool', optional: true },
     masterList: { type: 'MasterList', optional: true },
     transactions: { type: 'list', objectType: 'Transaction' },
     isVisible: { type: 'bool', default: false },

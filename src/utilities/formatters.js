@@ -3,10 +3,14 @@ export function formatDate(date, format) {
   switch (format) {
     default:
     case 'slashes':
-      return `${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+      return `${date.getDate()}/${getMonth(date)}/${date.getFullYear()}`;
     case 'dots':
-      return `${date.getDate()}.${date.getMonth()}.${date.getFullYear()}`;
+      return `${date.getDate()}.${getMonth(date)}.${date.getFullYear()}`;
   }
+}
+
+function getMonth(date) {
+  return date.getMonth() + 1; // Date.getMonth is 0 indexed
 }
 
 export function formatDateAndTime(date, format) {

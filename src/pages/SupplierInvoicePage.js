@@ -109,6 +109,7 @@ export class SupplierInvoicePage extends GenericTablePage {
         const type = isEditable ? 'editable' : 'text';
         const renderedCell = {
           type: type,
+          keyboardType: 'numeric',
           cellContents: transactionItem.totalQuantity,
         };
         return renderedCell;
@@ -153,13 +154,13 @@ const COLUMNS = [
   {
     key: 'totalQuantitySent',
     width: 1,
-    title: 'NO. SENT',
+    title: 'NUM. SENT',
     sortable: true,
   },
   {
     key: 'numReceived',
     width: 1,
-    title: 'NO. RECEIVED',
+    title: 'NUM. RECEIVED',
     sortable: true,
   },
 ];
