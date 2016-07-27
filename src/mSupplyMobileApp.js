@@ -129,8 +129,8 @@ export default class mSupplyMobileApp extends React.Component {
       dismissKeyboard();
       if (!navType) navType = 'push';
       const navigationProps = { key, title, ...extraProps };
-      // If the page we're going to has a key value pair in FINALISABLE_PAGES, get recordToFinalise
-      // and recordType corresponding to that key. Set the new state and render the finalise Button
+      // If the page we're going to has a key value pair in FINALISABLE_PAGES, get the finaliseItem
+      // details corresponding to that key. Set the new state and render the finalise Button
       if (FINALISABLE_PAGES[key]) {
         const { recordToFinaliseKey, ...finaliseItem } = FINALISABLE_PAGES[key];
         finaliseItem.record = extraProps[recordToFinaliseKey];
