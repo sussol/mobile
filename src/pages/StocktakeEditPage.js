@@ -78,7 +78,6 @@ export class StocktakeEditPage extends GenericTablePage {
           keyboardType: 'numeric',
           selectTextOnFocus: true,
           returnKeyType: 'next',
-          shouldFocusNextField: true,
         };
     }
   }

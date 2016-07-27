@@ -177,7 +177,6 @@ export class GenericTablePage extends React.Component {
  *      keyboardType: numeric,
  *      selectTextOnFocus: true,
  *      returnKeyType: 'next',
- *      shouldFocusNextField: true,
  *    };
  * 6. {
  *      type: 'checkable',
@@ -292,8 +291,7 @@ export class GenericTablePage extends React.Component {
               keyboardType={renderedCell.keyboardType}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
-              onSubmitEditing={renderedCell.shouldFocusNextField &&
-                            (() => this.focusNextField(parseInt(rowId, 10) + 1))}
+              onSubmitEditing={() => this.focusNextField(parseInt(rowId, 10) + 1)}
               target={rowData}
               value={renderedCell.cellContents}
             />
