@@ -20,13 +20,10 @@ export class Button extends React.Component {
    * the onPress function passed in through props
    */
   loadOnPress() {
-     // After isLoading is set, use a timeout to allow a render frame to process
-     // and display the button's loading state before calling the onPress function
-     // is called
-    this.setState({ isLoading: true }, () => setTimeout(() => {
+    this.setState({ isLoading: true }, () => {
       this.props.onPress();
       this.setState({ isLoading: false });
-    }, 1));
+    });
   }
 
   render() {
