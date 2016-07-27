@@ -153,17 +153,17 @@ export class GenericTablePage extends React.Component {
     // Scrolls to row of rowId with a couple rows above it, unless the rowId is of the top 3 rows,
     // where it just scrolls to the top.
     const yValue = Math.max((rowId - 2) * COMPONENT_HEIGHT, 0);
-    console.log(`y: ${yValue}`);
     if (this.dataTableRef) this.dataTableRef.scrollTo({ y: yValue });
   }
 
-  focusNextField(nextCellRefIndex) {
-    if (this.cellRefsMap[nextCellRefIndex]) {
-      this.scrollTableToRow(nextCellRefIndex);
-      this.cellRefsMap[nextCellRefIndex].focus();
+  focusNextField(currentCellRef) {
+    const nextCellRef = currentCellRef + 1;
+    if (this.cellRefsMap[nextCellRef]) {
+      this.scrollTableToRow(nextCellRef);
+      this.cellRefsMap[nextCellRef].focus();
     } else {
       // Protect against crash from null being in the Map.
-      if (this.cellRefsMap[nextCellRefIndex - 1]) this.cellRefsMap[nextCellRefIndex - 1].blur();
+      if (this.cellRefsMap[currentCellRef]) this.cellRefsMap[currentCellRef].blur();
     }
   }
 
@@ -306,7 +306,7 @@ export class GenericTablePage extends React.Component {
               keyboardType={renderedCell.keyboardType}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
-              onSubmitEditing={() => this.focusNextField(parseInt(rowId, 10) + 1)}
+              onSubmitEditing={() => this.focusNextField(parseInt(rowId, 10))}
               target={rowData}
               value={renderedCell.cellContents}
             />
