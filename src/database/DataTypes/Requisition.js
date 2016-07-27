@@ -39,13 +39,18 @@ export class Requisition extends Realm.Object {
     this.daysToSupply = months * 30;
   }
 
+  hasItemWithId(itemId) {
+    return this.items.filtered('item.id == $0', itemId).length > 0;
+  }
+
   // Adds a RequisitionItem to this Requisition
   addItem(requisitionItem) {
     this.items.push(requisitionItem);
   }
 
   addItemIfUnique(requisitionItem) {
-    if (!this.items.includes(requisitionItem)) this.addItem(requisitionItem);
+    if (this.items.filtered('id == $0', requisitionItem.id).length > 0) return;
+    this.addItem(requisitionItem);
   }
 
   /**

@@ -69,6 +69,10 @@ export class Transaction extends Realm.Object {
     return getTotal(this.items, 'numberOfBatches');
   }
 
+  hasItemWithId(itemId) {
+    return this.items.filtered('item.id == $0', itemId).length > 0;
+  }
+
   /**
    * Add a TransactionItem to this transaction, based on the given item. If it already
    * exists, do nothing.
@@ -88,7 +92,7 @@ export class Transaction extends Realm.Object {
       const itemsToAdd = complement(this.otherParty.masterList.items,
                                     this.items,
                                     (item) => item.itemId);
-      itemsToAdd.items.forEach(masterListItem =>
+      itemsToAdd.forEach(masterListItem =>
         createRecord(database, 'TransactionItem', this, masterListItem.item));
     }
   }

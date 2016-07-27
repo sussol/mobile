@@ -126,8 +126,8 @@ export class TransactionItem extends Realm.Object {
       // that was most likely to be recently in stock, i.e. the one with the longest
       // expiry date.
       const batchesToUse = batchesWithStock.length > 0 ?
-                     batchesWithStock :
-                     this.item.batches.sorted('expiryDate', true);
+                           batchesWithStock :
+                           this.item.batches.sorted('expiryDate', true);
 
       // Use complement to only get batches not already in the transaction.
       const itemBatchesToAdd = complement(batchesToUse,

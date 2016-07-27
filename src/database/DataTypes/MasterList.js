@@ -6,7 +6,8 @@ export class MasterList extends Realm.Object {
   }
 
   addItemIfUnique(masterListItem) {
-    if (!this.items.includes(masterListItem)) this.addItem(masterListItem);
+    if (this.items.filtered('id == $0', masterListItem.id).length > 0) return;
+    this.addItem(masterListItem);
   }
 }
 

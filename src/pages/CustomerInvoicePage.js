@@ -219,7 +219,7 @@ export class CustomerInvoicePage extends GenericTablePage {
             sortByString={'name'}
             onSelect={(item) => {
               database.write(() => {
-                if (!transaction.hasItemId(item.id)) {
+                if (!transaction.hasItemWithId(item.id)) {
                   createRecord(database, 'TransactionItem', transaction, item);
                 }
               });

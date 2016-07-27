@@ -7,7 +7,8 @@ export class Name extends Realm.Object {
   }
 
   addTransactionIfUnique(transaction) {
-    if (!this.transactions.includes(transaction)) this.addTransaction(transaction);
+    if (this.transactions.filtered('id == $0', transaction.id).length > 0) return;
+    this.addTransaction(transaction);
   }
 
   toString() {

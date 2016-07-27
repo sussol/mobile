@@ -43,7 +43,8 @@ export class Item extends Realm.Object {
   }
 
   addBatchIfUnique(itemBatch) {
-    if (!this.batches.includes(itemBatch)) this.addBatch(itemBatch);
+    if (this.batches.filtered('id == $0', itemBatch.id).length > 0) return;
+    this.addBatch(itemBatch);
   }
 
   toString() {
