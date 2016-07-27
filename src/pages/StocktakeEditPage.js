@@ -77,7 +77,6 @@ export class StocktakeEditPage extends GenericTablePage {
           cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
           keyboardType: 'numeric',
           returnKeyType: 'next',
-          shouldFocusNextField: true,
         };
     }
   }

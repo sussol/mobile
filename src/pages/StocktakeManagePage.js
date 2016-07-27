@@ -17,7 +17,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
 
-const DATA_TYPES_DISPLAYED = ['Item', 'StocktakeItem'];
+const DATA_TYPES_DISPLAYED = ['Item'];
 
 /**
 * Renders the page for managing a stocktake.

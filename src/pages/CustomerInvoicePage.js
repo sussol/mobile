@@ -194,8 +194,9 @@ export class CustomerInvoicePage extends GenericTablePage {
         return transactionItem[key];
       case 'totalQuantity':
         return {
-          cellContents: transactionItem.totalQuantity,
           type: this.props.transaction.isFinalised ? 'text' : 'editable',
+          cellContents: transactionItem.totalQuantity,
+          keyboardType: 'numeric',
         };
       case 'remove':
         return {
