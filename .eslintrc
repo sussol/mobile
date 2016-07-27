@@ -12,4 +12,5 @@
         "strict": 0,
         "no-confusing-arrow": ["error", {"allowParens": true}],
         "global-require": "off",
+        "react/jsx-boolean-value": "off",
         }
