@@ -2,26 +2,27 @@ import React from 'react';
 import { ConfirmModal } from './ConfirmModal';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 
-const confirmedText = 'Finalise will lock this record permanently.'
-const unconfirmedText = 'Finalise will lock this record permanently and cause '
-                      + 'stock level changes to take effect.';
-
 /**
  * Presents a modal allowing the user to confirm or cancel finalising a record.
  * Will first check for an error that would prevent finalising, if an error checking
- * function is passed in through props.
+ * function is passed in within the finaliseItem.
  * @prop  {Realm}     database      App wide database
  * @prop  {boolean}   isOpen        Whether the modal is open
  * @prop  {function}  onClose       Function to call when finalise is cancelled
- * @prop  {object}    record        The record being finalised
- * @prop  {string}    recordType    The type of database object being finalised
- * @prop  {function}  checkForError A function returning an error message if the
- *        													record cannot yet be finalised, or null otherwise
+ * @prop  {object}    finaliseItem  An object carrying details of the item being
+ *        													finalised, with the following fields:
+ *                                  record        The record being finalised
+ *                                  recordType    The type of database object being finalised
+ *                                  checkForError A function returning an error message if the
+ *        																				record cannot yet be finalised, or null otherwise
+ *        													finaliseText  The text to display on the confirmation modal
  * @prop  {object}    user          The user who is finalising the record
  */
 export function FinaliseModal(props) {
-  if (!props.record || !props.record.isValid()) return null; // Record may have been deleted
-  const errorText = props.checkForError && props.checkForError(props.record);
+  if (!props.finaliseItem) return null;
+  const { record, recordType, checkForError, finaliseText } = props.finaliseItem;
+  if (!record || !record.isValid()) return null; // Record may have been deleted
+  const errorText = checkForError && checkForError(record);
   return (
     <ConfirmModal
       style={[globalStyles.finaliseModal]}
@@ -34,15 +35,14 @@ export function FinaliseModal(props) {
       backdropOpacity={0.97}
       buttonTextStyle={globalStyles.finaliseModalButtonText}
       isOpen={props.isOpen}
-      questionText={errorText || (props.record.isConfirmed ? confirmedText : unconfirmedText)}
+      questionText={errorText || finaliseText}
       cancelText={errorText ? 'Got it' : 'Cancel'}
       onConfirm={
         !errorText ? () => {
-          const record = props.record;
           if (record) {
             props.database.write(() => {
               record.finalise(props.database, props.user);
-              props.database.save(props.recordType, record);
+              props.database.save(recordType, record);
             });
           }
           if (props.onClose) props.onClose();
@@ -55,9 +55,7 @@ FinaliseModal.propTypes = {
   database: React.PropTypes.object.isRequired,
   isOpen: React.PropTypes.bool,
   onClose: React.PropTypes.func,
-  record: React.PropTypes.object,
-  recordType: React.PropTypes.string,
-  checkForError: React.PropTypes.func,
+  finaliseItem: React.PropTypes.object,
   user: React.PropTypes.object,
 };
 

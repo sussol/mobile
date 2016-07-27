@@ -53,8 +53,7 @@ export default class mSupplyMobileApp extends React.Component {
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
-      recordToFinalise: null,
-      recordTypeToFinalise: null,
+      finaliseItem: null,
     };
   }
 
@@ -111,7 +110,7 @@ export default class mSupplyMobileApp extends React.Component {
   renderFinaliseButton() {
     return (
       <FinaliseButton
-        isFinalised={this.state.recordToFinalise.status === 'finalised'}
+        isFinalised={this.state.finaliseItem.record.status === 'finalised'}
         onPress={() => this.setState({ confirmFinalise: true })}
       />);
   }
@@ -130,17 +129,12 @@ export default class mSupplyMobileApp extends React.Component {
       dismissKeyboard();
       if (!navType) navType = 'push';
       const navigationProps = { key, title, ...extraProps };
-      // If the page we're going to has a key value pair in FINALISABLE_PAGES, get recordToFinalise
-      // and recordType corresponding to that key. Set the new state and render the finalise Button
+      // If the page we're going to has a key value pair in FINALISABLE_PAGES, get the finaliseItem
+      // details corresponding to that key. Set the new state and render the finalise Button
       if (FINALISABLE_PAGES[key]) {
-        const recordToFinalise = extraProps[FINALISABLE_PAGES[key].recordToFinaliseKey];
-        const recordType = FINALISABLE_PAGES[key].recordType;
-        const checkForFinaliseError = FINALISABLE_PAGES[key].checkForFinaliseError;
-        this.setState({
-          checkForFinaliseError: checkForFinaliseError,
-          recordToFinalise: recordToFinalise,
-          recordTypeToFinalise: recordType,
-        });
+        const { recordToFinaliseKey, ...finaliseItem } = FINALISABLE_PAGES[key];
+        finaliseItem.record = extraProps[recordToFinaliseKey];
+        this.setState({ finaliseItem: finaliseItem });
         navigationProps.renderRightComponent = this.renderFinaliseButton;
       }
 
@@ -194,9 +188,7 @@ export default class mSupplyMobileApp extends React.Component {
           database={this.database}
           isOpen={this.state.confirmFinalise}
           onClose={() => this.setState({ confirmFinalise: false })}
-          record={this.state.recordToFinalise}
-          recordType={this.state.recordTypeToFinalise}
-          checkForError={this.state.checkForFinaliseError}
+          finaliseItem={this.state.finaliseItem}
           user={this.state.currentUser}
         />
         <LoginModal
