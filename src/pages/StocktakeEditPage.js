@@ -76,7 +76,6 @@ export class StocktakeEditPage extends GenericTablePage {
           type: this.props.stocktake.isFinalised ? 'text' : 'editable',
           cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
           keyboardType: 'numeric',
-          selectTextOnFocus: true,
           returnKeyType: 'next',
           shouldFocusNextField: true,
         };

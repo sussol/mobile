@@ -175,7 +175,6 @@ export class GenericTablePage extends React.Component {
  *      type: 'editable',
  *      cellContents: item.countedTotalQuantity,
  *      keyboardType: numeric,
- *      selectTextOnFocus: true,
  *      returnKeyType: 'next',
  *      shouldFocusNextField: true,
  *    };
@@ -288,7 +287,7 @@ export class GenericTablePage extends React.Component {
               textStyle={globalStyles.dataTableText}
               width={column.width}
               returnKeyType={renderedCell.returnKeyType}
-              selectTextOnFocus={renderedCell.selectTextOnFocus}
+              selectTextOnFocus
               keyboardType={renderedCell.keyboardType}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
