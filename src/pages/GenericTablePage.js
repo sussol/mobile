@@ -67,6 +67,8 @@ export class GenericTablePage extends React.Component {
       isAscending: true,
       selection: [],
       expandedRows: [],
+      modalKey: null,
+      pageContentModalIsOpen: false,
     };
     this.cellRefsMap = {}; // { rowId: reference, rowId: reference, ...}
     this.columns = null;
@@ -76,6 +78,8 @@ export class GenericTablePage extends React.Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
     this.focusNextField = this.focusNextField.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -147,6 +151,14 @@ export class GenericTablePage extends React.Component {
       newExpandedRows.push(rowData.id);
     }
     this.setState({ expandedRows: newExpandedRows });
+  }
+
+  openModal(key) {
+    this.setState({ modalKey: key, pageContentModalIsOpen: true });
+  }
+
+  closeModal() {
+    this.setState({ pageContentModalIsOpen: false });
   }
 
   scrollTableToRow(rowId) {

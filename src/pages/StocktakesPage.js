@@ -25,6 +25,7 @@ export class StocktakesPage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'createdDate';
+    this.state.isAscending = false;
     this.state.showCurrent = true;
     this.state.stocktakes = props.database.objects('Stocktake');
     this.columns = COLUMNS;

@@ -35,15 +35,12 @@ export class CustomerInvoicePage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
-    this.state.modalKey = null;
-    this.state.pageContentModalIsOpen = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
-    this.openModal = this.openModal.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
     this.openCommentEditor = this.openCommentEditor.bind(this);
     this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
@@ -122,14 +119,6 @@ export class CustomerInvoicePage extends GenericTablePage {
 
   openTheirRefEditor() {
     this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-  }
-
-  openModal(key) {
-    this.setState({ modalKey: key, pageContentModalIsOpen: true });
-  }
-
-  closeModal() {
-    this.setState({ pageContentModalIsOpen: false });
   }
 
   renderPageInfo() {

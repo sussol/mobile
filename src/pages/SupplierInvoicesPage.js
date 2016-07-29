@@ -20,7 +20,8 @@ const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem', 'TransactionBatc
 export class SupplierInvoicesPage extends GenericTablePage {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'serialNumber';
+    this.state.sortBy = 'entryDate';
+    this.state.isAscending = false;
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "supplier_invoice"')
                                             .filtered('otherParty.type != "inventory_adjustment"');

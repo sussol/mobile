@@ -22,7 +22,7 @@ export function FinaliseModal(props) {
   if (!props.finaliseItem) return null;
   const { record, recordType, checkForError, finaliseText } = props.finaliseItem;
   if (!record || !record.isValid()) return null; // Record may have been deleted
-  const errorText = checkForError && checkForError(record);
+  const errorText = !record.isFinalised && checkForError && checkForError(record);
   return (
     <ConfirmModal
       style={[globalStyles.finaliseModal]}
@@ -56,7 +56,7 @@ FinaliseModal.propTypes = {
   isOpen: React.PropTypes.bool,
   onClose: React.PropTypes.func,
   finaliseItem: React.PropTypes.object,
-  user: React.PropTypes.object,
+  user: React.PropTypes.any,
 };
 
 FinaliseModal.defaultProps = {

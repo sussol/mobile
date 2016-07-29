@@ -2,6 +2,7 @@ import React from 'react';
 import {
   StyleSheet,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native';
 
@@ -25,16 +26,26 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
-export function SearchBar(props) {
-  return (
-    <View style={defaultStyles.container}>
-      <Icon name="search" size={40} color={SUSSOL_ORANGE} />
-      <TextInput
-        {...props}
-        onChange={(event) => props.onChange(event)}
-      />
-    </View>
-  );
+export class SearchBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.inputReference = null;
+  }
+
+  render() {
+    return (
+      <TouchableOpacity
+        style={defaultStyles.container}
+        onPress={() => this.inputReference.focus()}
+      >
+        <Icon name="search" size={40} color={SUSSOL_ORANGE} />
+        <TextInput
+          {...this.props}
+          ref={(reference) => (this.inputReference = reference)}
+        />
+      </TouchableOpacity>
+    );
+  }
 }
 
 SearchBar.propTypes = {

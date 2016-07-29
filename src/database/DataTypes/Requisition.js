@@ -103,7 +103,9 @@ Requisition.schema = {
     type: 'string', // imprest, forecast or request (request only used in mobile)
     entryDate: 'date',
     daysToSupply: 'double',
-    serialNumber: 'string',
+    serialNumber: { type: 'string', default: '0' },
+    requesterReference: 'string',
+    comment: { type: 'string', optional: true },
     enteredBy: { type: 'User', optional: true },
     items: { type: 'list', objectType: 'RequisitionItem' },
   },

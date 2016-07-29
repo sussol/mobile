@@ -132,6 +132,8 @@ class SequenceKeyTranslator extends SyncTranslator {
 }
 export const SEQUENCE_KEYS = new SequenceKeyTranslator({
   customer_invoice_serial_number: 'customer_invoice_number_for_store_',
-  requisition_serial_number: 'name_stock_history_number_for_store_',
+  inventory_adjustment_serial_number: 'inventory_adjustment_serial_number_for_store_',
+  requisition_serial_number: 'requisition_serial_number_for_store_',
+  requisition_requester_reference: 'requisition_requester_reference_for_store_',
   stocktake_serial_number: 'stock_take_number_for_store_',
 });

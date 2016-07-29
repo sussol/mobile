@@ -19,12 +19,14 @@ import {
   PageButton,
   PageInfo,
   PageContentModal,
+  TextEditor,
   ToggleSelector,
 } from '../widgets';
 
 const DATA_TYPES_DISPLAYED =
         ['Requisition', 'RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
+  COMMENT_EDIT: 'commentEdit',
   ITEM_SELECT: 'itemSelect',
   MONTHS_SELECT: 'monthsSelect',
 };
@@ -34,7 +36,6 @@ export class RequisitionPage extends GenericTablePage {
     super(props);
     this.state.sortBy = 'itemName';
     this.state.modalKey = null;
-    this.state.pageContentModalIsOpen = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
@@ -44,8 +45,7 @@ export class RequisitionPage extends GenericTablePage {
     this.renderPageInfo = this.renderPageInfo.bind(this);
     this.openMonthsSelector = this.openMonthsSelector.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
-    this.openModal = this.openModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
+    this.openCommentEditor = this.openCommentEditor.bind(this);
   }
 
   /**
@@ -124,12 +124,8 @@ export class RequisitionPage extends GenericTablePage {
     this.openModal(MODAL_KEYS.MONTHS_SELECT);
   }
 
-  openModal(key) {
-    this.setState({ modalKey: key, pageContentModalIsOpen: true });
-  }
-
-  closeModal() {
-    this.setState({ pageContentModalIsOpen: false });
+  openCommentEditor() {
+    this.openModal(MODAL_KEYS.COMMENT_EDIT);
   }
 
   renderPageInfo() {
@@ -145,6 +141,12 @@ export class RequisitionPage extends GenericTablePage {
         },
       ],
       [
+        {
+          title: 'Comment:',
+          info: this.props.requisition.comment,
+          onPress: this.openCommentEditor,
+          editableType: 'text',
+        },
         {
           title: 'Months Stock Required:',
           info: Math.round(this.props.requisition.monthsToSupply),
@@ -184,7 +186,7 @@ export class RequisitionPage extends GenericTablePage {
   }
 
   renderModalContent() {
-    const { ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
+    const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
@@ -219,6 +221,21 @@ export class RequisitionPage extends GenericTablePage {
               this.closeModal();
             }}
             selected={this.props.requisition.monthsToSupply}
+          />
+          );
+      case COMMENT_EDIT:
+        return (
+          <TextEditor
+            text={this.props.requisition.comment}
+            onEndEditing={(newComment) => {
+              if (newComment !== this.props.requisition.comment) {
+                this.props.database.write(() => {
+                  this.props.requisition.comment = newComment;
+                  this.props.database.save('Requisition', this.props.requisition);
+                });
+              }
+              this.closeModal();
+            }}
           />
           );
     }

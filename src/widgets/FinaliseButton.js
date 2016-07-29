@@ -13,26 +13,32 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import globalStyles from '../globalStyles';
 
 export function FinaliseButton(props) {
+  if (props.isFinalised) {
+    return (
+      <View style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}>
+        <Text style={[globalStyles.navBarText, localStyles.text]}>
+          {'FINALISED. CANNOT BE EDITED'}
+        </Text>
+        <Icon
+          name="lock"
+          style={globalStyles.finalisedLock}
+        />
+      </View>
+    );
+  }
   return (
-    <View style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}>
+    <TouchableOpacity
+      style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}
+      onPress={props.onPress}
+    >
       <Text style={[globalStyles.navBarText, localStyles.text]}>
-        {props.isFinalised ? 'FINALISED. CANNOT BE EDITED' : 'FINALISE'}
+        {'FINALISE'}
       </Text>
-      {props.isFinalised ?
-        (
-          <Icon
-            name="lock"
-            style={globalStyles.finalisedLock}
-          />
-      ) : (
-        <TouchableOpacity onPress={props.onPress}>
-          <Icon
-            name="check-circle"
-            style={globalStyles.finaliseButton}
-          />
-        </TouchableOpacity>
-      )}
-    </View>
+      <Icon
+        name="check-circle"
+        style={globalStyles.finaliseButton}
+      />
+    </TouchableOpacity>
   );
 }
 
