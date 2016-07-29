@@ -27,7 +27,8 @@ export class CustomerInvoicesPage extends GenericTablePage {
     super(props);
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "customer_invoice"');
-    this.state.sortBy = 'otherPartyName';
+    this.state.sortBy = 'entryDate';
+    this.state.isAscending = false;
     this.state.isCreatingInvoice = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
