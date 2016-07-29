@@ -9,7 +9,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { PageInfo } from '../widgets';
-import { formatDate } from '../utilities';
+import { formatDate, sortDataBy } from '../utilities';
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 
@@ -30,32 +30,24 @@ export class SupplierInvoicePage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.transaction.items
-                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    const data = this.props.transaction.items.filtered(
+      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
+      searchTerm
+    );
+    let sortDataType;
     switch (sortBy) {
       case 'itemName':
-        data = data.slice().sort((a, b) =>
-          a.item.name.localeCompare(b.item.name));
-        if (!isAscending) data.reverse();
-        break;
       case 'itemCode':
-        data = data.slice().sort((a, b) =>
-          a.item.code.localeCompare(b.item.code));
-        if (!isAscending) data.reverse();
+        sortDataType = 'string';
         break;
       case 'totalQuantitySent':
-        data = data.slice().sort((a, b) => a.totalQuantitySent - b.totalQuantitySent);
-        if (!isAscending) data.reverse();
-        break;
       case 'numReceived':
-        data = data.slice().sort((a, b) => a.totalQuantity - b.totalQuantity);
-        if (!isAscending) data.reverse();
+        sortDataType = 'number';
         break;
       default:
-        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
-        break;
+        sortDataType = 'realm';
     }
-    return data;
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   /**
