@@ -123,6 +123,8 @@ function generateSyncData(settings, recordType, record) {
         daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(SUPPLYING_STORE_ID),
         serial_number: record.serialNumber,
+        requester_reference: record.requesterReference,
+        comment: record.comment,
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
       };
     }

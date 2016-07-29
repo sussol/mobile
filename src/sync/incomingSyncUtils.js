@@ -236,6 +236,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
         serialNumber: record.serial_number,
+        requesterReference: record.requester_reference,
+        comment: record.comment,
         enteredBy: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
@@ -428,7 +430,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
     NameStoreJoin: ['name_ID', 'store_ID'],
     NumberSequence: ['name', 'value'],
     NumberReuse: ['name', 'number_to_use'],
-    Requisition: ['status', 'date_entered', 'type', 'daysToSupply', 'serial_number'],
+    Requisition: ['status', 'date_entered', 'type', 'daysToSupply', 'serial_number',
+                  'requester_reference'],
     RequisitionItem: ['requisition_ID', 'item_ID', 'stock_on_hand', 'Cust_stock_order'],
     Stocktake: ['Description', 'stock_take_created_date', 'status', 'serial_number'],
     StocktakeBatch: ['stock_take_ID', 'item_line_ID', 'snapshot_qty', 'snapshot_packsize',

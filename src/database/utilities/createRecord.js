@@ -1,13 +1,21 @@
 import { generateUUID } from './utilities';
-import { getNextNumber as getSerialNumber } from './numberSequenceUtilities';
+import { getNextNumber } from './numberSequenceUtilities';
 import { formatDateAndTime } from '../../utilities';
 
-const SERIAL_NUMBER_SEQUENCES = {
-  CUSTOMER_INVOICE: 'customer_invoice_serial_number',
-  REQUISITION: 'requisition_serial_number',
-  STOCKTAKE: 'stocktake_serial_number',
+const NUMBER_SEQUENCE_KEYS = {
+  CUSTOMER_INVOICE_NUMBER: 'customer_invoice_serial_number',
+  INVENTORY_ADJUSTMENT_SERIAL_NUMBER: 'inventory_adjustment_serial_number',
+  REQUISITION_SERIAL_NUMBER: 'requisition_serial_number',
+  REQUISITION_REQUESTER_REFERENCE: 'requisition_requester_reference',
+  STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
 };
-const { CUSTOMER_INVOICE, REQUISITION, STOCKTAKE } = SERIAL_NUMBER_SEQUENCES;
+const {
+  CUSTOMER_INVOICE_NUMBER,
+  INVENTORY_ADJUSTMENT_SERIAL_NUMBER,
+  REQUISITION_SERIAL_NUMBER,
+  REQUISITION_REQUESTER_REFERENCE,
+  STOCKTAKE_SERIAL_NUMBER,
+} = NUMBER_SEQUENCE_KEYS;
 
 /**
  * Creates a record of the given type, taking care of linking
@@ -54,7 +62,7 @@ function createCustomerInvoice(database, customer, user) {
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: getSerialNumber(database, CUSTOMER_INVOICE),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
     entryDate: currentDate,
     confirmDate: currentDate, // Customer invoices always confirmed in mobile
     type: 'customer_invoice',
@@ -92,7 +100,7 @@ function createNumberToReuse(database, numberSequence, number) {
 function createInventoryAdjustment(database, user, date, isAddition) {
   return database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: '1',
+    serialNumber: getNextNumber(database, INVENTORY_ADJUSTMENT_SERIAL_NUMBER),
     entryDate: date,
     confirmDate: date,
     type: isAddition ? 'supplier_invoice' : 'supplier_credit',
@@ -123,7 +131,8 @@ function createItemBatch(database, item, batchString) {
 function createRequisition(database, user) {
   const requisition = database.create('Requisition', {
     id: generateUUID(),
-    serialNumber: getSerialNumber(database, REQUISITION),
+    serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
+    requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
     status: 'new',
     type: 'request',
     entryDate: new Date(),
@@ -160,7 +169,7 @@ function createStocktake(database, user) {
   const date = new Date();
   const stocktake = database.create('Stocktake', {
     id: generateUUID(),
-    serialNumber: getSerialNumber(database, STOCKTAKE),
+    serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
     name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
     createdDate: date,
     stocktakeDate: date,
