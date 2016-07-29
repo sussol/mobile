@@ -249,7 +249,7 @@ const COLUMNS = [
   {
     key: 'selected',
     width: 1,
-    title: 'SELECTED',
+    title: 'SELECTED  ',
     sortable: true,
     alignText: 'center',
   },
