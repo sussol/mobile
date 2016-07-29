@@ -93,7 +93,22 @@ export class Requisition extends Realm.Object {
     });
   }
 
-  finalise() {
+  /**
+   * Delete any items that aren't contributing to this requisition, in order to
+   * remove clutter
+   * @param  {Realm} database   App wide local database
+   * @return {none}
+   */
+  pruneRedundantItems(database) {
+    const itemsToPrune = [];
+    this.items.forEach((requisitionItem) => {
+      if (requisitionItem.requiredQuantity === 0) itemsToPrune.push(requisitionItem);
+    });
+    database.delete('RequisitionItem', itemsToPrune);
+  }
+
+  finalise(database) {
+    this.pruneRedundantItems(database);
     this.status = 'finalised';
   }
 }

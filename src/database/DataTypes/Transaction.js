@@ -133,6 +133,20 @@ export class Transaction extends Realm.Object {
   }
 
   /**
+   * Delete any items that aren't contributing to this transaction, in order to
+   * remove clutter
+   * @param  {Realm} database   App wide local database
+   * @return {none}
+   */
+  pruneRedundantItems(database) {
+    const itemsToPrune = [];
+    this.items.forEach((transactionItem) => {
+      if (transactionItem.totalQuantity === 0) itemsToPrune.push(transactionItem);
+    });
+    database.delete('TransactionItem', itemsToPrune);
+  }
+
+  /**
    * Confirm this transaction, generating the associated item batches, linking them
    * to their items, and setting the status to confirmed.
    * @param  {Realm}  database The app wide local database
@@ -171,6 +185,7 @@ export class Transaction extends Realm.Object {
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
     if (!this.isConfirmed) this.confirm(database); // Confirm first to adjust inventory
+    this.pruneRedundantItems(database);
     this.status = 'finalised';
   }
 }
