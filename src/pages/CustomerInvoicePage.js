@@ -343,6 +343,7 @@ const COLUMNS = [
     key: 'remove',
     width: 1,
     title: 'REMOVE',
+    alignText: 'center',
   },
 ];
 

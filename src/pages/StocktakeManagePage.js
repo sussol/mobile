@@ -251,6 +251,7 @@ const COLUMNS = [
     width: 1,
     title: 'SELECTED',
     sortable: true,
+    alignText: 'center',
   },
 ];
 
