@@ -179,6 +179,7 @@ const COLUMNS = [
     width: 1,
     title: 'ITEMS',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'status',
@@ -190,5 +191,6 @@ const COLUMNS = [
     key: 'delete',
     width: 1,
     title: 'DELETE',
+    alignText: 'center',
   },
 ];

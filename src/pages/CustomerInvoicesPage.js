@@ -210,5 +210,6 @@ const COLUMNS = [
     key: 'delete',
     width: 1,
     title: 'DELETE',
+    alignText: 'center',
   },
 ];

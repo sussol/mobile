@@ -1,7 +1,7 @@
 import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
-import { addBatchToParent, createRecord, getAllBatchesInItems, getTotal } from '../utilities';
+import { addBatchToParent, createRecord, getTotal } from '../utilities';
 
 export class Stocktake extends Realm.Object {
   destructor(database) {

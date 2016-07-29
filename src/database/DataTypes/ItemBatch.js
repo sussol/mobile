@@ -59,11 +59,6 @@ export class ItemBatch extends Realm.Object {
     this.transactionBatches.push(transactionBatch);
   }
 
-  removeTransactionBatch(transactionBatch) {
-    const index = this.transactionBatches.indexOf(transactionBatch);
-    this.transactionBatches.splice(index, 1);
-  }
-
   addTransactionIfUnique(transactionBatch) {
     if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) return;
     this.addTransactionBatch(transactionBatch);

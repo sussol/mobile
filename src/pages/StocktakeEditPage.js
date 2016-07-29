@@ -116,6 +116,7 @@ const COLUMNS = [
     width: 1,
     title: 'ITEM CODE',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'itemName',
@@ -127,11 +128,13 @@ const COLUMNS = [
     key: 'snapshotTotalQuantity',
     width: 1,
     title: 'SNAPSHOT QUANTITY',
+    alignText: 'right',
   },
   {
     key: 'countedTotalQuantity',
     width: 1,
     title: 'ACTUAL QUANTITY',
+    alignText: 'right',
   },
 ];
 

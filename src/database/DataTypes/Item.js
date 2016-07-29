@@ -2,6 +2,10 @@ import Realm from 'realm';
 import { getTotal } from '../utilities';
 
 export class Item extends Realm.Object {
+  destructor(database) {
+    database.delete('ItemBatch', this.batches);
+  }
+
   get totalQuantity() {
     return getTotal(this.batches, 'totalQuantity');
   }

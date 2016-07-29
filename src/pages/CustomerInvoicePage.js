@@ -330,17 +330,20 @@ const COLUMNS = [
     width: 2,
     title: 'AVAILABLE STOCK',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'totalQuantity',
     width: 2,
     title: 'QUANTITY',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
     title: 'REMOVE',
+    alignText: 'center',
   },
 ];
 

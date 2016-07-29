@@ -216,15 +216,32 @@ export class GenericTablePage extends React.Component {
   renderHeader() {
     const headerCells = [];
     this.columns.forEach((column, index, columns) => {
-      const cellStyle = index !== columns.length - 1 ?
+      let textStyle;
+      let cellStyle = index !== columns.length - 1 ?
         globalStyles.dataTableHeaderCell :
         [globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell];
+
+      switch (column.alignText) {
+        case 'left':
+        default:
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextLeft];
+          break;
+        case 'center':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextCenter];
+          cellStyle = [cellStyle, { justifyContent: 'center' }];
+          break;
+        case 'right':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextRight];
+          cellStyle = [cellStyle, { justifyContent: 'flex-end' }];
+          break;
+      }
+
       const sortFunction = column.sortable ? () => this.onColumnSort(column.key) : null;
       headerCells.push(
         <HeaderCell
           key={column.key}
           style={cellStyle}
-          textStyle={globalStyles.dataTableText}
+          textStyle={textStyle}
           width={column.width}
           onPress={sortFunction}
           isAscending={this.state.isAscending}
@@ -248,10 +265,25 @@ export class GenericTablePage extends React.Component {
       globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
 
     this.columns.forEach((column, index, columns) => {
+      let textStyle;
+      switch (column.alignText) {
+        case 'left':
+        default:
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextLeft];
+          break;
+        case 'center':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextCenter];
+          break;
+        case 'right':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextRight];
+          break;
+      }
+
       const cellStyle = index !== columns.length - 1 ?
         globalStyles.dataTableCell :
         [globalStyles.dataTableCell, globalStyles.dataTableRightMostCell];
       const renderedCell = this.renderCell(column.key, rowData);
+
       let cell;
       switch (renderedCell.type) {
         case 'custom':
@@ -298,7 +330,7 @@ export class GenericTablePage extends React.Component {
               key={column.key}
               refCallback={(reference) => { this.cellRefsMap[rowId] = reference; }}
               style={cellStyle}
-              textStyle={globalStyles.dataTableText}
+              textStyle={textStyle}
               width={column.width}
               returnKeyType={renderedCell.returnKeyType}
               selectTextOnFocus={true}
@@ -317,7 +349,7 @@ export class GenericTablePage extends React.Component {
             <Cell
               key={column.key}
               style={cellStyle}
-              textStyle={globalStyles.dataTableText}
+              textStyle={textStyle}
               width={column.width}
               numberOfLines={renderedCell.lines}
             >
@@ -387,10 +419,15 @@ const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
   },
-  rightMostCell: {
-    borderRightWidth: 0,
+  alignTextLeft: {
+    marginLeft: 20,
+    textAlign: 'left',
   },
-  dataTable: {
-    flex: 1,
+  alignTextCenter: {
+    textAlign: 'center',
+  },
+  alignTextRight: {
+    marginRight: 20,
+    textAlign: 'right',
   },
 });
