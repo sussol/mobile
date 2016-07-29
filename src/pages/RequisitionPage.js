@@ -309,21 +309,25 @@ const COLUMNS = [
     width: 2,
     title: 'CURRENT STOCK',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'monthlyUsage',
     width: 2,
     title: 'MONTHLY USE',
+    alignText: 'right',
   },
   {
     key: 'suggestedQuantity',
     width: 2,
     title: 'SUGGESTED QTY',
+    alignText: 'right',
   },
   {
     key: 'requiredQuantity',
     width: 2,
     title: 'REQUESTED QTY',
+    alignText: 'right',
   },
   {
     key: 'remove',

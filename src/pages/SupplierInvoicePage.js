@@ -156,11 +156,13 @@ const COLUMNS = [
     width: 1,
     title: 'NUM. SENT',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'numReceived',
     width: 1,
     title: 'NUM. RECEIVED',
     sortable: true,
+    alignText: 'right',
   },
 ];

@@ -178,6 +178,7 @@ const COLUMNS = [
     width: 1,
     title: 'ITEMS',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'status',

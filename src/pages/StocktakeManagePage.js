@@ -238,6 +238,7 @@ const COLUMNS = [
     width: 2,
     title: 'ITEM CODE',
     sortable: true,
+    alignText: 'right',
   },
   {
     key: 'name',
