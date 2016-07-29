@@ -3,11 +3,12 @@ import Realm from 'realm';
 export class Name extends Realm.Object {
 
   addTransaction(transaction) {
-    // If the transaction is already in this name, we don't want to add it again
-    if (this.transactions.find(currentTransaction => currentTransaction.id === transaction.id)) {
-      return;
-    }
     this.transactions.push(transaction);
+  }
+
+  addTransactionIfUnique(transaction) {
+    if (this.transactions.filtered('id == $0', transaction.id).length > 0) return;
+    this.addTransaction(transaction);
   }
 
   toString() {
@@ -29,7 +30,6 @@ Name.schema = {
     isCustomer: 'bool',
     isSupplier: 'bool',
     isManufacturer: 'bool',
-    useMasterList: { type: 'bool', optional: true },
     masterList: { type: 'MasterList', optional: true },
     transactions: { type: 'list', objectType: 'Transaction' },
     isVisible: { type: 'bool', default: false },

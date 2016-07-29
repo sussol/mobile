@@ -1,5 +1,6 @@
 import Realm from 'realm';
 import { createRecord, getTotal } from '../utilities';
+import { complement } from 'set-manipulator';
 
 export class Requisition extends Realm.Object {
   constructor() {
@@ -38,9 +39,18 @@ export class Requisition extends Realm.Object {
     this.daysToSupply = months * 30;
   }
 
+  hasItemWithId(itemId) {
+    return this.items.filtered('item.id == $0', itemId).length > 0;
+  }
+
   // Adds a RequisitionItem to this Requisition
   addItem(requisitionItem) {
     this.items.push(requisitionItem);
+  }
+
+  addItemIfUnique(requisitionItem) {
+    if (this.items.filtered('id == $0', requisitionItem.id).length > 0) return;
+    this.addItem(requisitionItem);
   }
 
   /**
@@ -49,7 +59,10 @@ export class Requisition extends Realm.Object {
   addItemsFromMasterList(database, thisStore) {
     if (this.isFinalised) throw new Error('Cannot add items to a finalised requisition');
     if (thisStore.masterList && thisStore.masterList.items) {
-      thisStore.masterList.items.forEach(masterListItem =>
+      const itemsToAdd = complement(thisStore.masterList.items,
+                                    this.items,
+                                    (item) => item.itemId);
+      itemsToAdd.forEach(masterListItem =>
         createRecord(database, 'RequisitionItem', this, masterListItem.item));
     }
   }

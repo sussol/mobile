@@ -43,20 +43,24 @@ export const FINALISABLE_PAGES = {
   supplierInvoice: {
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
+    finaliseText: 'Finalise will adjust inventory and lock this invoice permanently.',
   },
   customerInvoice: {
-    checkForFinaliseError: checkForCustomerInvoiceFinaliseError,
+    checkForError: checkForCustomerInvoiceFinaliseError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
+    finaliseText: 'Finalise will lock this invoice permanently.',
   },
   requisition: {
-    checkForFinaliseError: checkForRequisitionFinaliseError,
+    checkForError: checkForRequisitionFinaliseError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
+    finaliseText: 'Finalise will send this requisition and lock it permanently.',
   },
   stocktakeEditor: {
-    checkForFinaliseError: checkForStocktakeFinaliseError,
+    checkForError: checkForStocktakeFinaliseError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
+    finaliseText: 'Finalise will adjust inventory and lock this stocktake permanently.',
   },
 };

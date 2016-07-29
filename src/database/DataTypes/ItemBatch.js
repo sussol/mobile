@@ -28,7 +28,7 @@ export class ItemBatch extends Realm.Object {
     const sinceDate = new Date();
     sinceDate.setTime(sinceDate.getTime() - USAGE_PERIOD_MILLISECONDS);
     const transactionBatches = this.transactionBatches
-                                     .filtered('transaction.confirmDate >= $0', sinceDate);
+                                   .filtered('transaction.confirmDate >= $0', sinceDate);
 
     // Get the total usage over that period
     const totalUsage = getTotal(transactionBatches, 'usage');
@@ -57,6 +57,16 @@ export class ItemBatch extends Realm.Object {
 
   addTransactionBatch(transactionBatch) {
     this.transactionBatches.push(transactionBatch);
+  }
+
+  removeTransactionBatch(transactionBatch) {
+    const index = this.transactionBatches.indexOf(transactionBatch);
+    this.transactionBatches.splice(index, 1);
+  }
+
+  addTransactionIfUnique(transactionBatch) {
+    if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) return;
+    this.addTransactionBatch(transactionBatch);
   }
 
   toString() {

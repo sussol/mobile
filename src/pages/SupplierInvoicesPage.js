@@ -78,7 +78,7 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 1,
-    title: 'INVOICE NO.',
+    title: 'INVOICE NUM.',
     sortable: true,
   },
   {

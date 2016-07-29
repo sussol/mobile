@@ -106,7 +106,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         supplier: getObject(database, 'Name', record.name_ID),
       };
       const itemBatch = database.update(recordType, internalRecord);
-      item.addBatch(itemBatch);
+      item.addBatchIfUnique(itemBatch);
       database.save('Item', item);
       break;
     }
@@ -156,7 +156,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         masterList: masterList,
       };
       const masterListItem = database.update(recordType, internalRecord);
-      masterList.addItem(masterListItem);
+      masterList.addItemIfUnique(masterListItem);
       break;
     }
     case 'Name': {
@@ -255,7 +255,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         sortIndex: parseNumber(record.line_number),
       };
       const requisitionItem = database.update(recordType, internalRecord);
-      requisition.addItem(requisitionItem);
+      requisition.addItemIfUnique(requisitionItem);
       database.save('Requisition', requisition);
       break;
     }
@@ -293,7 +293,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         sortIndex: parseNumber(record.line_number),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
-      stocktake.addBatch(database, stocktakeBatch);
+      stocktake.addBatchIfUnique(database, stocktakeBatch);
       database.save('Stocktake', stocktake);
       break;
     }
@@ -316,7 +316,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
-      otherParty.addTransaction(transaction);
+      otherParty.addTransactionIfUnique(transaction);
       database.save('Name', otherParty);
       break;
     }
@@ -335,7 +335,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const itemBatch = getObject(database, 'ItemBatch', record.item_line_ID);
       const item = getObject(database, 'Item', record.item_ID);
       itemBatch.item = item;
-      item.addBatch(itemBatch);
+      item.addBatchIfUnique(itemBatch);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
         id: record.ID,
@@ -354,7 +354,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         batch: record.batch,
       };
       const transactionBatch = database.update(recordType, internalRecord);
-      transaction.addBatch(database, transactionBatch);
+      transaction.addBatchIfUnique(database, transactionBatch);
       database.save('Transaction', transaction);
       itemBatch.addTransactionBatch(transactionBatch);
       database.save('ItemBatch', itemBatch);

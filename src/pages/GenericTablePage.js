@@ -7,7 +7,12 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import globalStyles, { SUSSOL_ORANGE, WARM_GREY, LIGHT_GREY } from '../globalStyles';
+import globalStyles, {
+  SUSSOL_ORANGE,
+  WARM_GREY,
+  LIGHT_GREY,
+  COMPONENT_HEIGHT,
+} from '../globalStyles';
 
 import {
   Cell,
@@ -34,8 +39,8 @@ import { SearchBar } from '../widgets';
  *         											 don't override if row should not be pressable
  * @method onEndEditing(key, rowData, newValue) Handles user input to an editable cell
  *         											 don't override if row should not be pressable
- * @const  {array}  cellRefs     Stores references to TextInputs in editableCells so next button on
- *                               native keyboard focuses the next cell. Order is left to
+ * @const  {array}  cellRefsMap  Stores references to TextInputs in editableCells so next button
+ *                               on native keyboard focuses the next cell. Order is left to
  *                               right within a row, then next row.
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
@@ -63,7 +68,7 @@ export class GenericTablePage extends React.Component {
       selection: [],
       expandedRows: [],
     };
-    this.cellRefs = [];
+    this.cellRefsMap = {}; // { rowId: reference, rowId: reference, ...}
     this.columns = null;
     this.dataTableRef = null;
     this.dataTypesDisplayed = [];
@@ -144,15 +149,26 @@ export class GenericTablePage extends React.Component {
     this.setState({ expandedRows: newExpandedRows });
   }
 
-  focusNextField(nextCellRefIndex) {
-    if (this.cellRefs[nextCellRefIndex]) {
-      this.cellRefs[nextCellRefIndex].focus();
+  scrollTableToRow(rowId) {
+    // Scrolls to row of rowId with a couple rows above it, unless the rowId is of the top 3 rows,
+    // where it just scrolls to the top.
+    const yValue = Math.max((rowId - 2) * COMPONENT_HEIGHT, 0);
+    if (this.dataTableRef) this.dataTableRef.scrollTo({ y: yValue });
+  }
+
+  focusNextField(currentCellRef) {
+    const nextCellRef = currentCellRef + 1;
+    if (this.cellRefsMap[nextCellRef]) {
+      this.scrollTableToRow(nextCellRef);
+      this.cellRefsMap[nextCellRef].focus();
     } else {
-      this.cellRefs[nextCellRefIndex - 1].blur();
+      // Protect against crash from null being in the Map.
+      if (this.cellRefsMap[currentCellRef]) this.cellRefsMap[currentCellRef].blur();
     }
   }
 
   refreshData() {
+    this.cellRefsMap = {};
     const { dataSource, searchTerm, sortBy, isAscending } = this.state;
     const data = this.getUpdatedData(searchTerm, sortBy, isAscending);
     this.setState({ dataSource: dataSource.cloneWithRows(data) });
@@ -175,9 +191,7 @@ export class GenericTablePage extends React.Component {
  *      type: 'editable',
  *      cellContents: item.countedTotalQuantity,
  *      keyboardType: numeric,
- *      selectTextOnFocus: true,
  *      returnKeyType: 'next',
- *      shouldFocusNextField: true,
  *    };
  * 6. {
  *      type: 'checkable',
@@ -201,7 +215,6 @@ export class GenericTablePage extends React.Component {
 
   renderHeader() {
     const headerCells = [];
-
     this.columns.forEach((column, index, columns) => {
       const cellStyle = index !== columns.length - 1 ?
         globalStyles.dataTableHeaderCell :
@@ -283,17 +296,16 @@ export class GenericTablePage extends React.Component {
           cell = (
             <EditableCell
               key={column.key}
-              refCallback={(reference) => this.cellRefs.push(reference)}
+              refCallback={(reference) => { this.cellRefsMap[rowId] = reference; }}
               style={cellStyle}
               textStyle={globalStyles.dataTableText}
               width={column.width}
               returnKeyType={renderedCell.returnKeyType}
-              selectTextOnFocus={renderedCell.selectTextOnFocus}
+              selectTextOnFocus={true}
               keyboardType={renderedCell.keyboardType}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
-              onSubmitEditing={renderedCell.shouldFocusNextField &&
-                            (() => this.focusNextField(parseInt(rowId, 10) + 1))}
+              onSubmitEditing={() => this.focusNextField(parseInt(rowId, 10))}
               target={rowData}
               value={renderedCell.cellContents}
             />

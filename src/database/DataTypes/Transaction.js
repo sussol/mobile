@@ -2,10 +2,12 @@ import Realm from 'realm';
 import {
   addBatchToParent,
   createRecord,
+  getAllBatchesInItems,
   getTotal,
   reuseNumber as reuseSerialNumber,
 } from '../utilities';
 import { SERIAL_NUMBER_KEYS } from '../index';
+import { complement } from 'set-manipulator';
 
 export class Transaction extends Realm.Object {
   constructor() {
@@ -47,6 +49,10 @@ export class Transaction extends Realm.Object {
     return this.otherParty && this.otherParty.type === 'inventory_adjustment';
   }
 
+  get batches() {
+    return getAllBatchesInItems(this.items);
+  }
+
   get otherPartyName() {
     return this.otherParty ? this.otherParty.name : '';
   }
@@ -63,15 +69,16 @@ export class Transaction extends Realm.Object {
     return getTotal(this.items, 'numberOfBatches');
   }
 
+  hasItemWithId(itemId) {
+    return this.items.filtered('item.id == $0', itemId).length > 0;
+  }
+
   /**
    * Add a TransactionItem to this transaction, based on the given item. If it already
    * exists, do nothing.
    * @param {object} transactionItem  The TransactionItem to add
    */
   addItem(transactionItem) {
-    if (this.items.find(testItem => testItem.itemId === transactionItem.itemId)) {
-      throw new Error('Should never add two of the same item to a transaction');
-    }
     this.items.push(transactionItem);
   }
 
@@ -82,7 +89,10 @@ export class Transaction extends Realm.Object {
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
     if (this.otherParty && this.otherParty.masterList && this.otherParty.masterList.items) {
-      this.otherParty.masterList.items.forEach(masterListItem =>
+      const itemsToAdd = complement(this.otherParty.masterList.items,
+                                    this.items,
+                                    (item) => item.itemId);
+      itemsToAdd.forEach(masterListItem =>
         createRecord(database, 'TransactionItem', this, masterListItem.item));
     }
   }
@@ -111,7 +121,7 @@ export class Transaction extends Realm.Object {
    * @param {Realm}  database         The app wide local database
    * @param {object} transactionBatch The TransactionBatch to add to this Transaction
    */
-  addBatch(database, transactionBatch) {
+  addBatchIfUnique(database, transactionBatch) {
     addBatchToParent(transactionBatch, this, () =>
       createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item)
     );

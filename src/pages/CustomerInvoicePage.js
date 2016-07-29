@@ -194,8 +194,9 @@ export class CustomerInvoicePage extends GenericTablePage {
         return transactionItem[key];
       case 'totalQuantity':
         return {
-          cellContents: transactionItem.totalQuantity,
           type: this.props.transaction.isFinalised ? 'text' : 'editable',
+          cellContents: transactionItem.totalQuantity,
+          keyboardType: 'numeric',
         };
       case 'remove':
         return {
@@ -219,10 +220,14 @@ export class CustomerInvoicePage extends GenericTablePage {
             sortByString={'name'}
             onSelect={(item) => {
               database.write(() => {
-                createRecord(database, 'TransactionItem', transaction, item);
+                if (!transaction.hasItemWithId(item.id)) {
+                  createRecord(database, 'TransactionItem', transaction, item);
+                }
               });
               this.closeModal();
             }}
+            renderLeftText={(item) => `${item.name}`}
+            renderRightText={(item) => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:

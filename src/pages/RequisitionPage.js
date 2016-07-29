@@ -176,8 +176,9 @@ export class RequisitionPage extends GenericTablePage {
         return Math.round(requisitionItem[key]);
       case 'requiredQuantity':
         return {
-          cellContents: Math.round(requisitionItem.requiredQuantity),
           type: this.props.requisition.isFinalised ? 'text' : 'editable',
+          cellContents: Math.round(requisitionItem.requiredQuantity),
+          keyboardType: 'numeric',
         };
       case 'remove':
         return {
@@ -199,12 +200,17 @@ export class RequisitionPage extends GenericTablePage {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             sortByString={'name'}
             onSelect={(item) => {
-              this.props.database.write(() => {
-                createRecord(this.props.database, 'RequisitionItem', this.props.requisition, item);
-                this.props.database.save('Requisition', this.props.requisition);
+              const { database, requisition } = this.props;
+              database.write(() => {
+                if (!requisition.hasItemWithId(item.id)) {
+                  createRecord(database, 'RequisitionItem', requisition, item);
+                  database.save('Requisition', requisition);
+                }
               });
               this.closeModal();
             }}
+            renderLeftText={(item) => `${item.name}`}
+            renderRightText={(item) => `${item.totalQuantity}`}
           />
         );
       case MONTHS_SELECT:

@@ -1,7 +1,7 @@
 import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
-import { addBatchToParent, createRecord, getTotal } from '../utilities';
+import { addBatchToParent, createRecord, getAllBatchesInItems, getTotal } from '../utilities';
 
 export class Stocktake extends Realm.Object {
   destructor(database) {
@@ -10,7 +10,7 @@ export class Stocktake extends Realm.Object {
   }
 
   // Adds a StocktakeBatch, incorporating it into a matching StocktakeItem.
-  addBatch(database, stocktakeBatch) {
+  addBatchIfUnique(database, stocktakeBatch) {
     addBatchToParent(stocktakeBatch, this, () =>
       createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
     );
