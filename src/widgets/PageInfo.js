@@ -43,71 +43,97 @@ export function PageInfo(props) {
                    localStyles.columnContainer}
           >
             <View>
-              {columnData.map((rowData, rowIndex) => {
-                // If null or empty string, use single space to avoid squishing row
-                const titleString = rowData.title ? rowData.title : ' ';
-                return (
-                  <Text
-                    key={`Title ${columnIndex}-${rowIndex}`}
-                    style={[localStyles.text, localStyles.titleText]}
-                    numberOfLines={1}
-                  >
-                    {titleString}
-                  </Text>
-                );
-              })}
+              {columnData.map((...args) =>
+                renderTitleComponent(props.isEditingDisabled, columnIndex, ...args))}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((rowData, rowIndex) => {
-                let editTextStyle;
-                let containerStyle;
-                let iconName;
-                switch (rowData.editableType) {
-                  case 'selectable':
-                    containerStyle = localStyles.selectContainer;
-                    iconName = 'angle-down';
-                    break;
-                  case 'text':
-                  default:
-                    containerStyle = localStyles.editableTextContainer;
-                    iconName = 'pencil';
-                    editTextStyle = localStyles.infoText;
-                    break;
-                }
-                // If null or empty string, use single space to avoid squishing row
-                let infoString = rowData.info && String(rowData.info);
-                infoString = infoString && infoString.length > 0 ? infoString : ' ';
-                const textComponent = (
-                  <Text
-                    key={`Info ${columnIndex}-${rowIndex}`}
-                    style={[localStyles.text, editTextStyle]}
-                    numberOfLines={1}
-                  >
-                    {infoString}
-                  </Text>);
-                if (rowData.onPress && !props.isEditingDisabled) {
-                  return (
-                    <TouchableOpacity
-                      key={`Touchable ${columnIndex}-${rowIndex}`}
-                      onPress={rowData.onPress}
-                    >
-                      <View style={containerStyle}>
-                        {textComponent}
-                        <Icon
-                          name={iconName}
-                          size={14}
-                          style={localStyles.editIcon}
-                          color={SUSSOL_ORANGE}
-                        />
-                      </View>
-                    </TouchableOpacity>);
-                }
-                return textComponent;
-              })}
+              {columnData.map((...args) =>
+                renderInfoComponent(props.isEditingDisabled, columnIndex, ...args))}
             </View>
           </View>
         );
       })}
+    </View>
+  );
+}
+
+function renderTitleComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
+  // If null or empty string, use single space to avoid squishing row
+  const titleString = rowData.title ? rowData.title : ' ';
+  const titleComponent = (
+    <Text
+      key={`Title ${columnIndex}-${rowIndex}`}
+      style={[localStyles.text, localStyles.titleText]}
+      numberOfLines={1}
+    >
+      {titleString}
+    </Text>
+  );
+  if (rowData.onPress && !isEditingDisabled) {
+    return (
+      <TouchableOpacity
+        style={localStyles.rowContainer}
+        key={`Touchable ${columnIndex}-${rowIndex}`}
+        onPress={rowData.onPress}
+      >
+        {titleComponent}
+      </TouchableOpacity>);
+  }
+  return (
+    <View style={localStyles.rowContainer}>
+      {titleComponent}
+    </View>
+  );
+}
+
+function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
+  let editTextStyle;
+  let containerStyle;
+  let iconName;
+  switch (rowData.editableType) {
+    case 'selectable':
+      containerStyle = localStyles.selectContainer;
+      iconName = 'angle-down';
+      break;
+    case 'text':
+    default:
+      containerStyle = localStyles.editableTextContainer;
+      iconName = 'pencil';
+      editTextStyle = localStyles.infoText;
+      break;
+  }
+  // If null or empty string, use single space to avoid squishing row
+  let infoString = rowData.info && String(rowData.info);
+  infoString = infoString && infoString.length > 0 ? infoString : ' ';
+  const infoComponent = (
+    <Text
+      key={`Info ${columnIndex}-${rowIndex}`}
+      style={[localStyles.text, editTextStyle]}
+      numberOfLines={1}
+    >
+      {infoString}
+    </Text>);
+  if (rowData.onPress && !isEditingDisabled) {
+    return (
+      <TouchableOpacity
+        style={localStyles.rowContainer}
+        key={`Touchable ${columnIndex}-${rowIndex}`}
+        onPress={rowData.onPress}
+      >
+        <View style={containerStyle}>
+          {infoComponent}
+          <Icon
+            name={iconName}
+            size={14}
+            style={localStyles.editIcon}
+            color={SUSSOL_ORANGE}
+          />
+        </View>
+      </TouchableOpacity>);
+  }
+  return (
+    <View style={localStyles.rowContainer}>
+      {infoComponent}
     </View>
   );
 }
@@ -130,6 +156,9 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     marginRight: 25,
+  },
+  rowContainer: {
+    marginVertical: 1,
   },
   rightmostColumnContainer: {
     flex: 1,
@@ -156,7 +185,7 @@ const localStyles = StyleSheet.create({
     marginLeft: 4,
   },
   text: {
-    fontSize: 12,
+    fontSize: 16,
     fontFamily: APP_FONT_FAMILY,
     color: SUSSOL_ORANGE,
     marginTop: 4,
