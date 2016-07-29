@@ -28,7 +28,8 @@ export class RequisitionsPage extends GenericTablePage {
   constructor(props) {
     super(props);
     this.state.requisitions = props.database.objects('Requisition');
-    this.state.sortBy = 'serialNumber';
+    this.state.sortBy = 'entryDate';
+    this.state.isAscending = false;
     this.columns = COLUMNS;
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
