@@ -60,6 +60,11 @@ export class RequisitionPage extends GenericTablePage {
       case 'itemName':
         sortDataType = 'string';
         break;
+      case 'monthlyUsage':
+      case 'suggestedQuantity':
+      case 'requiredQuantity':
+        sortDataType = 'number';
+        break;
       default:
         sortDataType = 'realm';
     }
