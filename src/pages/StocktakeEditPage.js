@@ -11,7 +11,7 @@ import { View } from 'react-native';
 import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { parsePositiveInteger, truncateString } from '../utilities';
+import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Stocktake', 'StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -53,29 +53,23 @@ export class StocktakeEditPage extends GenericTablePage {
    * class calculated fields.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.items.filtered(
+    const data = this.state.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
-
+    let sortDataType;
     switch (sortBy) {
       case 'itemCode':
-        data = data.slice().sort((a, b) => a.itemCode.localeCompare(b.itemCode));
-        if (!isAscending) data.reverse();
-        break;
       case 'itemName':
-        data = data.slice().sort((a, b) => a.itemName.localeCompare(b.itemName));
-        if (!isAscending) data.reverse();
+        sortDataType = 'string';
         break;
       case 'snapshotTotalQuantity':
-        data = data.slice().sort((a, b) => a.snapshotTotalQuantity - b.snapshotTotalQuantity);
-        if (!isAscending) data.reverse();
+        sortDataType = 'number';
         break;
       default:
-        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
-        break;
+        sortDataType = 'realm';
     }
-    return data;
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   renderCell(key, item) {
