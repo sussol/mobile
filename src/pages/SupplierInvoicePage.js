@@ -109,7 +109,6 @@ export class SupplierInvoicePage extends GenericTablePage {
         const type = isEditable ? 'editable' : 'text';
         const renderedCell = {
           type: type,
-          keyboardType: 'numeric',
           cellContents: transactionItem.totalQuantity,
         };
         return renderedCell;
