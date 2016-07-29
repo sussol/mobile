@@ -180,7 +180,6 @@ export class RequisitionPage extends GenericTablePage {
         return {
           type: this.props.requisition.isFinalised ? 'text' : 'editable',
           cellContents: Math.round(requisitionItem.requiredQuantity),
-          keyboardType: 'numeric',
         };
       case 'remove':
         return {

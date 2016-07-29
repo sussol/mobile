@@ -344,9 +344,9 @@ export class GenericTablePage extends React.Component {
               style={cellStyle}
               textStyle={textStyle}
               width={column.width}
-              returnKeyType={renderedCell.returnKeyType}
+              returnKeyType={renderedCell.returnKeyType || 'next'}
               selectTextOnFocus={true}
-              keyboardType={renderedCell.keyboardType}
+              keyboardType={renderedCell.keyboardType || 'numeric'}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
               onSubmitEditing={() => this.focusNextField(parseInt(rowId, 10))}
