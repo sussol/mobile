@@ -12,7 +12,7 @@ import {
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger } from '../utilities';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import {
   AutocompleteSelector,
@@ -55,35 +55,22 @@ export class CustomerInvoicePage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.transaction.items
+    const data = this.props.transaction.items
                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    let sortDataType;
     switch (sortBy) {
       case 'itemCode':
-        data = data.slice().sort((a, b) =>
-          a.item.code.localeCompare(b.item.code));
-        if (!isAscending) data.reverse();
-        break;
       case 'itemName':
-        data = data.slice().sort((a, b) =>
-          a.item.name.localeCompare(b.item.name));
-        if (!isAscending) data.reverse();
+        sortDataType = 'string';
         break;
       case 'availableQuantity':
-        data = data.slice().sort((a, b) =>
-          a.availableQuantity - b.availableQuantity);
-        if (!isAscending) data.reverse();
-        break;
-      case 'totalQuantity': // Special case for correct number based sorting
-        // Convert to javascript array obj then sort with standard array functions.
-        data = data.slice().sort((a, b) =>
-          a.totalQuantity - b.totalQuantity); // 0,1,2,3...
-        if (!isAscending) data.reverse(); // ...3,2,1,0
+      case 'totalQuantity':
+        sortDataType = 'number';
         break;
       default:
-        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
-        break;
+        sortDataType = 'realm';
     }
-    return data;
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   onAddMasterItems() {
