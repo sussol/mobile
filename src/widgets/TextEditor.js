@@ -35,10 +35,12 @@ export class TextEditor extends React.Component {
     return (
       <View style={localStyles.container}>
         <TextInput
+          autoFocus={true}
           style={localStyles.textInput}
           textStyle={globalStyles.modalText}
           value={this.state.text}
           onChangeText={(text) => this.setState({ text: text })}
+          onSubmitEditing={() => this.props.onEndEditing(this.state.text)}
         />
         <Button
           style={[globalStyles.button, globalStyles.modalOrangeButton]}

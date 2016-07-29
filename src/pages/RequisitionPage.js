@@ -147,16 +147,16 @@ export class RequisitionPage extends GenericTablePage {
       ],
       [
         {
-          title: 'Comment:',
-          info: this.props.requisition.comment,
-          onPress: this.openCommentEditor,
-          editableType: 'text',
-        },
-        {
           title: 'Months Stock Required:',
           info: Math.round(this.props.requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
           editableType: 'selectable',
+        },
+        {
+          title: 'Comment:',
+          info: this.props.requisition.comment,
+          onPress: this.openCommentEditor,
+          editableType: 'text',
         },
       ],
     ];
