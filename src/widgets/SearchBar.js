@@ -34,15 +34,16 @@ export class SearchBar extends React.Component {
 
   render() {
     return (
-      <View style={defaultStyles.container}>
-        <TouchableOpacity onPress={() => this.inputReference.focus()}>
-          <Icon name="search" size={40} color={SUSSOL_ORANGE} />
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={defaultStyles.container}
+        onPress={() => this.inputReference.focus()}
+      >
+        <Icon name="search" size={40} color={SUSSOL_ORANGE} />
         <TextInput
           {...this.props}
           ref={(reference) => (this.inputReference = reference)}
         />
-      </View>
+      </TouchableOpacity>
     );
   }
 }
