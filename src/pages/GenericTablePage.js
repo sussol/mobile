@@ -217,6 +217,10 @@ export class GenericTablePage extends React.Component {
     const headerCells = [];
     this.columns.forEach((column, index, columns) => {
       let textStyle;
+      let cellStyle = index !== columns.length - 1 ?
+        globalStyles.dataTableHeaderCell :
+        [globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell];
+
       switch (column.alignText) {
         case 'left':
         default:
@@ -224,15 +228,14 @@ export class GenericTablePage extends React.Component {
           break;
         case 'center':
           textStyle = [globalStyles.dataTableText, localStyles.alignTextCenter];
+          cellStyle = [cellStyle, { justifyContent: 'center' }];
           break;
         case 'right':
           textStyle = [globalStyles.dataTableText, localStyles.alignTextRight];
+          cellStyle = [cellStyle, { justifyContent: 'flex-end' }];
           break;
       }
 
-      const cellStyle = index !== columns.length - 1 ?
-        globalStyles.dataTableHeaderCell :
-        [globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell];
       const sortFunction = column.sortable ? () => this.onColumnSort(column.key) : null;
       headerCells.push(
         <HeaderCell
