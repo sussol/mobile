@@ -4,7 +4,6 @@ export class TransactionBatch extends Realm.Object {
 
   destructor(database) {
     this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item batches
-    this.itemBatch.removeTransactionBatch(this);
   }
 
   get totalQuantity() {

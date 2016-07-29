@@ -11,6 +11,10 @@ export class Requisition extends Realm.Object {
     this.setRequestedToSuggested = this.setRequestedToSuggested.bind(this);
   }
 
+  destructor(database) {
+    database.delete('RequisitionItem', this.items);
+  }
+
   get isConfirmed() {
     return this.status === 'confirmed';
   }
