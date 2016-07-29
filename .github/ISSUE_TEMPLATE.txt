@@ -1,11 +1,9 @@
-Build Number
-Debug
+Build Number:
 
-Expected Behaviour
+Description:
 
+Reproducible:
 
-Actual Behaviour
+Reproduction Steps:
 
-
-Reproducible
-Every time
+Comments:
