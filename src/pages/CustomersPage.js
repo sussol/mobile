@@ -80,5 +80,6 @@ const COLUMNS = [
     key: 'transactions.length',
     width: 1,
     title: 'INVOICES',
+    alignText: 'right',
   },
 ];

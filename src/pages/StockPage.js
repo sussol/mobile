@@ -89,7 +89,6 @@ const COLUMNS = [
     width: 1,
     title: 'ITEM CODE',
     sortable: true,
-
   },
   {
     key: 'name',
@@ -101,5 +100,6 @@ const COLUMNS = [
     key: 'totalQuantity',
     width: 1,
     title: 'STOCK ON HAND',
+    alignText: 'right',
   },
 ];
