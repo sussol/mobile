@@ -248,10 +248,22 @@ export class GenericTablePage extends React.Component {
       globalStyles.dataTableRow : [globalStyles.dataTableRow, { backgroundColor: 'white' }];
 
     this.columns.forEach((column, index, columns) => {
+      let textStyle;
+      switch (column.alignText) {
+        case 'left':
+        default:
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextLeft];
+          break;
+        case 'right':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextRight];
+          break;
+      }
+
       const cellStyle = index !== columns.length - 1 ?
         globalStyles.dataTableCell :
         [globalStyles.dataTableCell, globalStyles.dataTableRightMostCell];
       const renderedCell = this.renderCell(column.key, rowData);
+
       let cell;
       switch (renderedCell.type) {
         case 'custom':
@@ -298,7 +310,7 @@ export class GenericTablePage extends React.Component {
               key={column.key}
               refCallback={(reference) => { this.cellRefsMap[rowId] = reference; }}
               style={cellStyle}
-              textStyle={globalStyles.dataTableText}
+              textStyle={textStyle}
               width={column.width}
               returnKeyType={renderedCell.returnKeyType}
               selectTextOnFocus={true}
@@ -317,7 +329,7 @@ export class GenericTablePage extends React.Component {
             <Cell
               key={column.key}
               style={cellStyle}
-              textStyle={globalStyles.dataTableText}
+              textStyle={textStyle}
               width={column.width}
               numberOfLines={renderedCell.lines}
             >
@@ -387,10 +399,12 @@ const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
   },
-  rightMostCell: {
-    borderRightWidth: 0,
+  alignTextLeft: {
+    marginLeft: 20,
+    textAlign: 'left',
   },
-  dataTable: {
-    flex: 1,
+  alignTextRight: {
+    marginRight: 20,
+    textAlign: 'right',
   },
 });
