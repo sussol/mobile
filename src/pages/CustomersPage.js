@@ -43,7 +43,7 @@ export class CustomersPage extends GenericTablePage {
                          .filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
 
     switch (sortBy) {
-      case 'transactions.length': // Special case for correct number based sorting
+      case 'transactions.length': // sorted() doesn't support property of a property.
         // Convert to javascript array obj then sort with standard array functions.
         data = data.slice().sort((a, b) =>
           a.transactions.length - b.transactions.length); // 0,1,2,3...

@@ -57,13 +57,24 @@ export class StocktakeEditPage extends GenericTablePage {
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
-    if (sortBy === 'itemName') {
-      // Convert to javascript array then sort with standard array functions.
-      data = data.slice().sort((a, b) => a.item.name.localeCompare(b.item.name));
-    } else {
-      data = data.slice().sort((a, b) => a.item.code.localeCompare(b.item.code));
+
+    switch (sortBy) {
+      case 'itemCode':
+        data = data.slice().sort((a, b) => a.itemCode.localeCompare(b.itemCode));
+        if (!isAscending) data.reverse();
+        break;
+      case 'itemName':
+        data = data.slice().sort((a, b) => a.itemName.localeCompare(b.itemName));
+        if (!isAscending) data.reverse();
+        break;
+      case 'snapshotTotalQuantity':
+        data = data.slice().sort((a, b) => a.snapshotTotalQuantity - b.snapshotTotalQuantity);
+        if (!isAscending) data.reverse();
+        break;
+      default:
+        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+        break;
     }
-    if (!isAscending) data.reverse();
     return data;
   }
 
@@ -128,12 +139,14 @@ const COLUMNS = [
     key: 'snapshotTotalQuantity',
     width: 1,
     title: 'SNAPSHOT QUANTITY',
+    sortable: true,
     alignText: 'right',
   },
   {
     key: 'countedTotalQuantity',
     width: 1,
     title: 'ACTUAL QUANTITY',
+    sortable: true,
     alignText: 'right',
   },
 ];
