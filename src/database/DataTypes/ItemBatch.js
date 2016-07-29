@@ -60,7 +60,8 @@ export class ItemBatch extends Realm.Object {
   }
 
   removeTransactionBatch(transactionBatch) {
-    const index = this.transactionBatches.indexOf(transactionBatch);
+    const index = this.transactionBatches.findIndex((testBatch) =>
+                                                      testBatch.id === transactionBatch.id);
     this.transactionBatches.splice(index, 1);
   }
 
