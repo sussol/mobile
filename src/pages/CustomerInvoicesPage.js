@@ -83,14 +83,13 @@ export class CustomerInvoicesPage extends GenericTablePage {
   }
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending. Special
-   * case for otherParty.name as realm does not allow sorting on object properties
-   * properties.
+   * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions.filtered(
-                 'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
-                 searchTerm);
+      'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
+      searchTerm
+    );
 
     let sortDataType;
     switch (sortBy) {

@@ -38,9 +38,7 @@ export class SupplierInvoicesPage extends GenericTablePage {
   }
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending. Special
-   * case for sorting by serialNumber due to needing number based sorting but the
-   * value is stored as a string.
+   * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);

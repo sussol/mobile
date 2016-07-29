@@ -49,8 +49,7 @@ export class StocktakeEditPage extends GenericTablePage {
   }
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending. Cannot search or sortby
-   * class calculated fields.
+   * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const data = this.state.items.filtered(
