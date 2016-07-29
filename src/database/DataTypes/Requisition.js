@@ -39,6 +39,10 @@ export class Requisition extends Realm.Object {
     return getTotal(this.items, 'requiredQuantity');
   }
 
+  get numberOfItems() {
+    return this.items.length;
+  }
+
   set monthsToSupply(months) {
     this.daysToSupply = months * 30;
   }

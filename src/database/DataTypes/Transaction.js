@@ -70,6 +70,10 @@ export class Transaction extends Realm.Object {
     return getTotal(this.items, 'numberOfBatches');
   }
 
+  get numberOfItems() {
+    return this.items.length;
+  }
+
   hasItemWithId(itemId) {
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }

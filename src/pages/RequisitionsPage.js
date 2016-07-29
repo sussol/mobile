@@ -110,7 +110,7 @@ export class RequisitionsPage extends GenericTablePage {
       case 'entryDate':
         return requisition.entryDate.toDateString();
       case 'numberOfItems':
-        return requisition.items.length;
+        return requisition.numberOfItems;
       case 'status':
         return formatStatus(requisition.status);
       case 'delete':

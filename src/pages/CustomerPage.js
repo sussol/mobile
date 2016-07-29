@@ -63,16 +63,14 @@ export class CustomerPage extends GenericTablePage {
   }
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending. Special case for
-   * 'serialNumber' to sort numbers correctly. Special case for items.length for correct number
-   * sort and also realm does not allow sorting on the properties of an object property.
+   * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions;
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
-      case 'items':
+      case 'numberOfItems':
         sortDataType = 'number';
         break;
       default:
@@ -118,8 +116,8 @@ export class CustomerPage extends GenericTablePage {
         return formatStatus(transaction.status);
       case 'entryDate':
         return transaction.entryDate.toDateString();
-      case 'items':
-        return transaction.items.length;
+      case 'numberOfItems':
+        return transaction.numberOfItems;
       case 'comment':
         return transaction.comment ? transaction.comment : '';
     }
@@ -173,7 +171,7 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'items',
+    key: 'numberOfItems',
     width: 1,
     title: 'ITEMS',
     sortable: true,
