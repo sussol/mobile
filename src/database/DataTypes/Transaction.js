@@ -19,6 +19,7 @@ export class Transaction extends Realm.Object {
     if (this.isCustomerInvoice) {
       reuseSerialNumber(database, SERIAL_NUMBER_KEYS.CUSTOMER_INVOICE, this.serialNumber);
     }
+    database.delete('TransactionItem', this.items);
   }
 
   get isFinalised() {

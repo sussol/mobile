@@ -8,6 +8,10 @@ import { createRecord } from '../utilities';
  */
 export class NumberSequence extends Realm.Object {
 
+  destructor(database) {
+    database.delete('NumberToReuse', this.numbersToReuse);
+  }
+
   /**
    * Returns the next number that can be used in this sequence, preferring reused numbers
    * @return {integer} Next number in sequence
