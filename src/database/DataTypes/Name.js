@@ -2,6 +2,10 @@ import Realm from 'realm';
 
 export class Name extends Realm.Object {
 
+  get numberOfTransactions() {
+    return this.transactions.length;
+  }
+
   addTransaction(transaction) {
     this.transactions.push(transaction);
   }
