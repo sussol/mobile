@@ -70,13 +70,13 @@ export class CustomerInvoicePage extends GenericTablePage {
         break;
       case 'availableQuantity':
         data = data.slice().sort((a, b) =>
-          Number(a.availableQuantity) - Number(b.availableQuantity));
+          a.availableQuantity - b.availableQuantity);
         if (!isAscending) data.reverse();
         break;
       case 'totalQuantity': // Special case for correct number based sorting
         // Convert to javascript array obj then sort with standard array functions.
         data = data.slice().sort((a, b) =>
-          Number(a.totalQuantity) - Number(b.totalQuantity)); // 0,1,2,3...
+          a.totalQuantity - b.totalQuantity); // 0,1,2,3...
         if (!isAscending) data.reverse(); // ...3,2,1,0
         break;
       default:
