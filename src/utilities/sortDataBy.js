@@ -18,7 +18,7 @@
  * @param  {boolean}        isAscending   If false, the sort order will be reversed.
  * @return {object}         sortedData    The final sorted data is returned.
  */
-export function sortDataBy(data, sortBy, sortDataType, isAscending) {
+export function sortDataBy(data, sortBy, sortDataType, isAscending = true) {
   let sortedData;
   switch (sortDataType) {
     case 'string':
