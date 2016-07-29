@@ -226,8 +226,6 @@ export default StyleSheet.create({
   dataTableText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 14,
-    marginLeft: 20,
-    textAlign: 'left',
     color: DARK_GREY,
   },
   dataTableHeader: {

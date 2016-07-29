@@ -216,6 +216,20 @@ export class GenericTablePage extends React.Component {
   renderHeader() {
     const headerCells = [];
     this.columns.forEach((column, index, columns) => {
+      let textStyle;
+      switch (column.alignText) {
+        case 'left':
+        default:
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextLeft];
+          break;
+        case 'center':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextCenter];
+          break;
+        case 'right':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextRight];
+          break;
+      }
+
       const cellStyle = index !== columns.length - 1 ?
         globalStyles.dataTableHeaderCell :
         [globalStyles.dataTableHeaderCell, globalStyles.dataTableRightMostCell];
@@ -224,7 +238,7 @@ export class GenericTablePage extends React.Component {
         <HeaderCell
           key={column.key}
           style={cellStyle}
-          textStyle={globalStyles.dataTableText}
+          textStyle={textStyle}
           width={column.width}
           onPress={sortFunction}
           isAscending={this.state.isAscending}
@@ -253,6 +267,9 @@ export class GenericTablePage extends React.Component {
         case 'left':
         default:
           textStyle = [globalStyles.dataTableText, localStyles.alignTextLeft];
+          break;
+        case 'center':
+          textStyle = [globalStyles.dataTableText, localStyles.alignTextCenter];
           break;
         case 'right':
           textStyle = [globalStyles.dataTableText, localStyles.alignTextRight];
@@ -402,6 +419,9 @@ const localStyles = StyleSheet.create({
   alignTextLeft: {
     marginLeft: 20,
     textAlign: 'left',
+  },
+  alignTextCenter: {
+    textAlign: 'center',
   },
   alignTextRight: {
     marginRight: 20,
