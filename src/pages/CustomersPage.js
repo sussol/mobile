@@ -41,7 +41,18 @@ export class CustomersPage extends GenericTablePage {
   getUpdatedData(searchTerm, sortBy, isAscending) {
     let data = this.state.customers
                          .filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
-    data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+
+    switch (sortBy) {
+      case 'transactions.length': // Special case for correct number based sorting
+        // Convert to javascript array obj then sort with standard array functions.
+        data = data.slice().sort((a, b) =>
+          a.transactions.length - b.transactions.length); // 0,1,2,3...
+        if (!isAscending) data.reverse(); // ...3,2,1,0
+        break;
+      default:
+        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+        break;
+    }
     return data;
   }
 
@@ -69,6 +80,7 @@ const COLUMNS = [
     key: 'code',
     width: 1,
     title: 'CODE',
+    sortable: true,
   },
   {
     key: 'name',
@@ -81,5 +93,6 @@ const COLUMNS = [
     width: 1,
     title: 'INVOICES',
     alignText: 'right',
+    sortable: true,
   },
 ];
