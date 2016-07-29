@@ -10,7 +10,7 @@ import { GenericTablePage } from './GenericTablePage';
 import { Expansion } from '../widgets/DataTable';
 import { PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
-import { formatDate } from '../utilities';
+import { formatDate, sortDataBy } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Item', 'ItemBatch', 'ItemLine', 'ItemCategory'];
 
@@ -34,12 +34,19 @@ export class StockPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.items.filtered(
+    const data = this.state.items.filtered(
       'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
       searchTerm
     );
-    data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
-    return data;
+    let sortDataType;
+    switch (sortBy) {
+      case 'totalQuantity':
+        sortDataType = 'number';
+        break;
+      default:
+        sortDataType = 'realm';
+    }
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   renderExpansion(item) {
@@ -100,6 +107,7 @@ const COLUMNS = [
     key: 'totalQuantity',
     width: 1,
     title: 'STOCK ON HAND',
+    sortable: true,
     alignText: 'right',
   },
 ];

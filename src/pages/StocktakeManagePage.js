@@ -128,6 +128,11 @@ export class StocktakeManagePage extends GenericTablePage {
       // alphabetical order. This requires the selection array to store the item ids in the
       // same alphabetical order as their respective items.
       case 'selected':
+        // This sort making so many queries is likely why sorting by selected with all selected
+        // takes so long. A potential refactor fix would be to have the realm objects themselves
+        // stored in the array. If I understand how realm/JS behave, I'd think it'd just be pointers
+        // to the objects in memory held by the results object, so shouldn't have any notable inpact
+        // on memory.
         selection.sort((a, b) => {
           const aName = items.find(item => item.id === a).name;
           const bName = items.find(item => item.id === b).name;

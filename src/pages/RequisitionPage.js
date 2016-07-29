@@ -10,7 +10,7 @@ import { View } from 'react-native';
 
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger } from '../utilities';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 import {
@@ -52,24 +52,23 @@ export class RequisitionPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.props.requisition.items
+    const data = this.props.requisition.items
                  .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    let sortDataType;
     switch (sortBy) {
       case 'itemCode':
-        data = data.slice().sort((a, b) =>
-          a.item.code.localeCompare(b.item.code));
-        if (!isAscending) data.reverse();
-        break;
       case 'itemName':
-        data = data.slice().sort((a, b) =>
-          a.item.name.localeCompare(b.item.name));
-        if (!isAscending) data.reverse();
+        sortDataType = 'string';
+        break;
+      case 'monthlyUsage':
+      case 'suggestedQuantity':
+      case 'requiredQuantity':
+        sortDataType = 'number';
         break;
       default:
-        data = data.sorted(sortBy, !isAscending);
-        break;
+        sortDataType = 'realm';
     }
-    return data;
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   onAddMasterItems() {
@@ -331,18 +330,21 @@ const COLUMNS = [
     key: 'monthlyUsage',
     width: 2,
     title: 'MONTHLY USE',
+    sortable: true,
     alignText: 'right',
   },
   {
     key: 'suggestedQuantity',
     width: 2,
     title: 'SUGGESTED QTY',
+    sortable: true,
     alignText: 'right',
   },
   {
     key: 'requiredQuantity',
     width: 2,
     title: 'REQUESTED QTY',
+    sortable: true,
     alignText: 'right',
   },
   {

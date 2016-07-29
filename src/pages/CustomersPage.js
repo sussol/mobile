@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
+import { sortDataBy } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Name'];
 
@@ -39,10 +40,20 @@ export class CustomersPage extends GenericTablePage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.customers
-                         .filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
-    data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
-    return data;
+    const data = this.state.customers.filtered(
+      'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
+      searchTerm
+    );
+
+    let sortDataType;
+    switch (sortBy) {
+      case 'numberOfTransactions':
+        sortDataType = 'number';
+        break;
+      default:
+        sortDataType = 'realm';
+    }
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   renderCell(key, customer) {
@@ -52,8 +63,8 @@ export class CustomersPage extends GenericTablePage {
         return customer.code;
       case 'name':
         return customer.name;
-      case 'transactions.length':
-        return customer.transactions.length;
+      case 'numberOfTransactions':
+        return customer.numberOfTransactions;
     }
   }
 }
@@ -69,6 +80,7 @@ const COLUMNS = [
     key: 'code',
     width: 1,
     title: 'CODE',
+    sortable: true,
   },
   {
     key: 'name',
@@ -77,9 +89,10 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'transactions.length',
+    key: 'numberOfTransactions',
     width: 1,
     title: 'INVOICES',
     alignText: 'right',
+    sortable: true,
   },
 ];

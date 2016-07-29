@@ -174,6 +174,7 @@ const COLUMNS = [
     key: 'status',
     width: 2,
     title: 'STATUS',
+    sortable: true,
   },
   {
     key: 'selected',

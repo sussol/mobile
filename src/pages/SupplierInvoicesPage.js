@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
-import { formatStatus } from '../utilities';
+import { formatStatus, sortDataBy } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem', 'TransactionBatch'];
 
@@ -38,21 +38,19 @@ export class SupplierInvoicesPage extends GenericTablePage {
   }
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending. Special
-   * case for sorting by serialNumber due to needing number based sorting but the
-   * value is stored as a string.
+   * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
-    if (sortBy === 'serialNumber') { // Special case for correct number based sorting
-      // Convert to javascript array obj then sort with standard array functions.
-      data = data.slice().sort((a, b) =>
-        Number(a.serialNumber) - Number(b.serialNumber)); // 0,1,2,3...
-      if (!isAscending) data.reverse(); // ...3,2,1,0
-    } else {
-      data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+    const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
+    let sortDataType;
+    switch (sortBy) {
+      case 'serialNumber':
+        sortDataType = 'number';
+        break;
+      default:
+        sortDataType = 'realm';
     }
-    return data;
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   renderCell(key, invoice) {

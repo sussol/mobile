@@ -13,7 +13,7 @@ import { createRecord } from '../database';
 import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
-import { formatStatus } from '../utilities';
+import { formatStatus, sortDataBy } from '../utilities';
 
 const DATA_TYPES_DISPLAYED = ['Transaction', 'TransactionItem'];
 
@@ -63,27 +63,20 @@ export class CustomerPage extends GenericTablePage {
   }
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending. Special case for
-   * 'serialNumber' to sort numbers correctly. Special case for items.length for correct number
-   * sort and also realm does not allow sorting on the properties of an object property.
+   * Returns updated data according to searchTerm, sortBy and isAscending.
    */
   getUpdatedData(searchTerm, sortBy, isAscending) {
-    let data = this.state.transactions;
+    const data = this.state.transactions;
+    let sortDataType;
     switch (sortBy) {
-      case 'serialNumber': // Special case for correct number based sorting
-        // Convert to javascript array obj then sort with standard array functions.
-        data = data.slice().sort((a, b) =>
-          Number(a.serialNumber) - Number(b.serialNumber)); // 0,1,2,3...
-        if (!isAscending) data.reverse(); // ...3,2,1,0
-        break;
-      case 'items': // Cannot use realm Result.sorted() with a property of a property
-        data = data.slice().sort((a, b) => a.items.length - b.items.length); // 0,1,2,3...
-        if (!isAscending) data.reverse(); // ...3,2,1,0
+      case 'serialNumber':
+      case 'numberOfItems':
+        sortDataType = 'number';
         break;
       default:
-        data = data.sorted(sortBy, !isAscending); // 2nd arg: reverse sort
+        sortDataType = 'realm';
     }
-    return data;
+    return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
   renderPageInfo() {
@@ -123,8 +116,8 @@ export class CustomerPage extends GenericTablePage {
         return formatStatus(transaction.status);
       case 'entryDate':
         return transaction.entryDate.toDateString();
-      case 'items':
-        return transaction.items.length;
+      case 'numberOfItems':
+        return transaction.numberOfItems;
       case 'comment':
         return transaction.comment ? transaction.comment : '';
     }
@@ -178,7 +171,7 @@ const COLUMNS = [
     sortable: true,
   },
   {
-    key: 'items',
+    key: 'numberOfItems',
     width: 1,
     title: 'ITEMS',
     sortable: true,
