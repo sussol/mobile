@@ -28,7 +28,7 @@ export function sortDataBy(data, sortBy, sortDataType, isAscending) {
     case 'number':
       // Casts to number to cover cases where the property is a string (serialNumber)
       sortedData = data.slice().sort((a, b) => Number(a[sortBy]) - Number(b[sortBy]));
-      if (!isAscending) data.reverse();
+      if (!isAscending) sortedData.reverse();
       break;
     case 'realm':
     default:
