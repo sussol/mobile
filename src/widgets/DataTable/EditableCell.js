@@ -46,7 +46,7 @@ export class EditableCell extends React.Component {
           ref={refCallback}
           style={textStyle}
           onChangeText={(text) => this.setState({ value: text })}
-          onEndEditing={() => this.onEndEditing()}
+          onEndEditing={this.onEndEditing}
           value={this.state.value}
         />
       </View>
