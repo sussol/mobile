@@ -99,6 +99,9 @@ export default StyleSheet.create({
     fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text - RN 0.27
   },
   authFormModal: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
     backgroundColor: BACKGROUND_COLOR,
     justifyContent: 'flex-start',
   },
