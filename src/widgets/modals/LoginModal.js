@@ -17,14 +17,16 @@ import globalStyles, {
   SUSSOL_ORANGE,
   WARM_GREY,
 } from '../../globalStyles';
+import { SETTINGS_KEYS } from '../../settings';
 
 export class LoginModal extends React.Component {
   constructor(props) {
     super(props);
+    const username = props.settings.get(SETTINGS_KEYS.MOST_RECENT_USERNAME);
     this.state = {
       authStatus: 'unauthenticated', // unauthenticated, authenticating, authenticated, error
       error: '',
-      username: '',
+      username: username || '',
       password: '',
     };
     this.passwordInputRef = null;
@@ -49,6 +51,7 @@ export class LoginModal extends React.Component {
   }
 
   async onLogin() {
+    this.props.settings.set(SETTINGS_KEYS.MOST_RECENT_USERNAME, this.state.username);
     this.setState({ authStatus: 'authenticating' });
     try {
       const user = await this.props.authenticator.authenticate(this.state.username,
@@ -166,6 +169,7 @@ LoginModal.propTypes = {
   authenticator: React.PropTypes.object.isRequired,
   isAuthenticated: React.PropTypes.bool.isRequired,
   onAuthentication: React.PropTypes.func.isRequired,
+  settings: React.PropTypes.object.isRequired,
 };
 LoginModal.defaultProps = {
   style: {},
