@@ -96,7 +96,7 @@ const localStyles = StyleSheet.create({
     position: 'absolute', // Otherwise it moves depending on size of autocomplete results
     top: 170,
     left: PAGE_CONTENT_PADDING_HORIZONTAL,
-    right: PAGE_CONTENT_PADDING_HORIZONTAL, // TODO get rid of -7
+    right: PAGE_CONTENT_PADDING_HORIZONTAL,
   },
   titleContainer: {
     position: 'absolute',
