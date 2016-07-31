@@ -46,6 +46,7 @@ export class RequisitionPage extends GenericTablePage {
     this.openMonthsSelector = this.openMonthsSelector.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
     this.openCommentEditor = this.openCommentEditor.bind(this);
+    this.getModalTitle = this.getModalTitle.bind(this);
   }
 
   /**
@@ -131,6 +132,19 @@ export class RequisitionPage extends GenericTablePage {
 
   openCommentEditor() {
     this.openModal(MODAL_KEYS.COMMENT_EDIT);
+  }
+
+  getModalTitle() {
+    const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
+    switch (this.state.modalKey) {
+      default:
+      case ITEM_SELECT:
+        return 'Search for an item to add';
+      case COMMENT_EDIT:
+        return 'Edit the requisition comment';
+      case MONTHS_SELECT:
+        return 'Select the number of months stock required';
+    }
   }
 
   renderPageInfo() {
@@ -291,6 +305,7 @@ export class RequisitionPage extends GenericTablePage {
           <PageContentModal
             isOpen={this.state.pageContentModalIsOpen && !this.props.requisition.isFinalised}
             onClose={this.closeModal}
+            title={this.getModalTitle()}
           >
             {this.renderModalContent()}
           </PageContentModal>

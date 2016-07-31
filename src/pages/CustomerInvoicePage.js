@@ -44,6 +44,7 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.openItemSelector = this.openItemSelector.bind(this);
     this.openCommentEditor = this.openCommentEditor.bind(this);
     this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
+    this.getModalTitle = this.getModalTitle.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
   }
@@ -119,6 +120,19 @@ export class CustomerInvoicePage extends GenericTablePage {
 
   openTheirRefEditor() {
     this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
+  }
+
+  getModalTitle() {
+    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+    switch (this.state.modalKey) {
+      default:
+      case ITEM_SELECT:
+        return 'Search for an item to add';
+      case COMMENT_EDIT:
+        return 'Edit the invoice comment';
+      case THEIR_REF_EDIT:
+        return 'Edit their reference';
+    }
   }
 
   renderPageInfo() {
@@ -273,6 +287,7 @@ export class CustomerInvoicePage extends GenericTablePage {
           <PageContentModal
             isOpen={this.state.pageContentModalIsOpen && !this.props.transaction.isFinalised}
             onClose={this.closeModal}
+            title={this.getModalTitle()}
           >
             {this.renderModalContent()}
           </PageContentModal>

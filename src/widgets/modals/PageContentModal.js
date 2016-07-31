@@ -9,6 +9,7 @@ import React from 'react';
 import {
   Dimensions,
   StyleSheet,
+  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -17,6 +18,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { BottomModal } from './BottomModal';
 import
 {
+  APP_FONT_FAMILY,
   DARK_GREY,
   PAGE_CONTENT_PADDING_HORIZONTAL,
 } from '../../globalStyles';
@@ -39,14 +41,22 @@ export class PageContentModal extends React.Component {
   render() {
     const {
       onClose,
+      title,
       ...modalProps,
     } = this.props;
+
+    const titleComponent = title && (
+      <View style={localStyles.titleContainer}>
+        <Text style={localStyles.title}>{title}</Text>
+      </View>
+    );
 
     return (
       <BottomModal
         {...modalProps}
         style={localStyles.modal}
       >
+        {titleComponent}
         <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
           <Icon name="md-close" style={localStyles.closeIcon} />
         </TouchableOpacity>
@@ -62,6 +72,7 @@ PageContentModal.propTypes = {
   children: React.PropTypes.element,
   isOpen: React.PropTypes.bool.isRequired,
   onClose: React.PropTypes.func,
+  title: React.PropTypes.string,
 };
 PageContentModal.defaultProps = {
   style: {},
@@ -85,7 +96,20 @@ const localStyles = StyleSheet.create({
     position: 'absolute', // Otherwise it moves depending on size of autocomplete results
     top: 170,
     left: PAGE_CONTENT_PADDING_HORIZONTAL,
-    right: PAGE_CONTENT_PADDING_HORIZONTAL - 7, // TODO get rid of -7
+    right: PAGE_CONTENT_PADDING_HORIZONTAL,
+  },
+  titleContainer: {
+    position: 'absolute',
+    flexDirection: 'row',
+    width: Dimensions.get('window').width - 2 * PAGE_CONTENT_PADDING_HORIZONTAL,
+    justifyContent: 'space-around',
+    top: 15,
+    right: 0,
+  },
+  title: {
+    fontFamily: APP_FONT_FAMILY,
+    color: 'white',
+    fontSize: 20,
   },
   closeButton: {
     position: 'absolute',
