@@ -161,6 +161,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
               this.setState({ isCreatingInvoice: false });
             }}
             onClose={() => this.setState({ isCreatingInvoice: false })}
+            title={'Search for the customer'}
           />
         </View>
       </View>
