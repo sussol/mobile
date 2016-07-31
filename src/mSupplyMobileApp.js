@@ -29,7 +29,7 @@ import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
-import { Settings, SETTINGS_KEYS } from './settings';
+import { Settings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -46,12 +46,9 @@ export default class mSupplyMobileApp extends React.Component {
     this.synchronizer = new Synchronizer(database, syncAuthenticator, this.settings);
     this.scheduler = new Scheduler();
     const initialised = this.synchronizer.isInitialised();
-    const currentUserId = this.settings.get(SETTINGS_KEYS.CURRENT_USER_ID);
-    const currentUserResults = this.database.objects('User').filtered('id == $0', currentUserId);
-    const currentUser = currentUserResults.length === 1 ? currentUserResults[0] : null;
     this.state = {
       confirmFinalise: false,
-      currentUser: currentUser,
+      currentUser: null,
       initialised: initialised,
       isSyncing: false,
       syncError: '',
@@ -82,7 +79,6 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   onAuthentication(user) {
-    if (user) this.settings.set(SETTINGS_KEYS.CURRENT_USER_ID, user.id);
     this.setState({ currentUser: user });
   }
 
@@ -197,6 +193,7 @@ export default class mSupplyMobileApp extends React.Component {
         />
         <LoginModal
           authenticator={this.userAuthenticator}
+          settings={this.settings}
           isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />

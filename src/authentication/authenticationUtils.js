@@ -5,6 +5,7 @@ import validUrl from 'valid-url';
 export const AUTH_ERROR_CODES = {
   CONNECTION_FAILURE: 'Unable to connect',
   INVALID_URL: 'Invalid URL',
+  INVALID_PASSWORD: 'Invalid username or password',
   MISSING_CREDENTIALS: 'Missing username and/or password',
 };
 
