@@ -40,6 +40,7 @@ export class RequisitionPage extends GenericTablePage {
     this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
+    this.onCreateAutomaticOrder = this.onCreateAutomaticOrder.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onUseSuggestedQuantities = this.onUseSuggestedQuantities.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
@@ -79,6 +80,17 @@ export class RequisitionPage extends GenericTablePage {
       if (!nameResults | nameResults.length <= 0) return;
       const thisStore = nameResults[0];
       this.props.requisition.addItemsFromMasterList(this.props.database, thisStore);
+      this.props.database.save('Requisition', this.props.requisition);
+    });
+  }
+
+  onCreateAutomaticOrder() {
+    this.props.database.write(() => {
+      const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+      const nameResults = this.props.database.objects('Name').filtered('id == $0', thisStoreNameId);
+      if (!nameResults | nameResults.length <= 0) return;
+      const thisStore = nameResults[0];
+      this.props.requisition.createAutomaticOrder(this.props.database, thisStore);
       this.props.database.save('Requisition', this.props.requisition);
     });
   }
@@ -270,6 +282,13 @@ export class RequisitionPage extends GenericTablePage {
             </View>
             <View style={globalStyles.pageTopRightSectionContainer}>
               <View style={globalStyles.verticalContainer}>
+                <PageButton
+                  style={globalStyles.topButton}
+                  text="Create Automatic Order"
+                  loadingText="Creating..."
+                  onPress={this.onCreateAutomaticOrder}
+                  isDisabled={this.props.requisition.isFinalised}
+                />
                 <PageButton
                   style={globalStyles.leftButton}
                   text="Use Suggested Quantities"

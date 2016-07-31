@@ -136,7 +136,7 @@ function createRequisition(database, user) {
     status: 'new',
     type: 'request',
     entryDate: new Date(),
-    daysToSupply: 90, // 3 months
+    daysToSupply: 30, // 1 month
     enteredBy: user,
   });
   return requisition;

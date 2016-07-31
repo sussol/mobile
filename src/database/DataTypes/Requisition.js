@@ -75,6 +75,16 @@ export class Requisition extends Realm.Object {
     }
   }
 
+  /**
+   * Add all items from the mobile store's master list that require more stock
+   */
+  createAutomaticOrder(database, thisStore) {
+    if (this.isFinalised) throw new Error('Cannot add items to a finalised requisition');
+    this.addItemsFromMasterList(database, thisStore);
+    this.setRequestedToSuggested(database);
+    this.pruneRedundantItems(database);
+  }
+
   removeItemsById(database, itemIds) {
     const itemsToDelete = [];
     for (let i = 0; i < itemIds.length; i++) {
