@@ -19,6 +19,7 @@ export class EditableCell extends React.Component {
       value: 'N/A',
     };
     this.componentWillMount = this.componentWillMount.bind(this);
+    this.onEndEditing = this.onEndEditing.bind(this);
   }
 
   componentWillMount() {
