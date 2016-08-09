@@ -35,7 +35,9 @@ export class EditableCell extends React.Component {
   }
 
   onEndEditing() {
-    this.props.onEndEditing(this.props.target, this.state.value);
+    // If the field is cleared, write null to property
+    const newValue = this.state.value === '' ? null : this.state.value;
+    this.props.onEndEditing(this.props.target, newValue);
   }
 
   render() {
