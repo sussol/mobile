@@ -19,6 +19,7 @@ export class EditableCell extends React.Component {
       value: 'N/A',
     };
     this.componentWillMount = this.componentWillMount.bind(this);
+    this.onChangeText = this.onChangeText.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
   }
 
@@ -34,8 +35,14 @@ export class EditableCell extends React.Component {
     });
   }
 
-  onEndEditing() {
-    this.props.onEndEditing(this.props.target, this.state.value);
+  onChangeText(newValue) {
+    this.setState({ value: newValue });
+    // If the field is cleared, write null to property
+    if (newValue === '') this.onEndEditing(this.props.target, null);
+  }
+
+  onEndEditing(target, value) {
+    this.props.onEndEditing(target, value);
   }
 
   render() {
@@ -46,8 +53,8 @@ export class EditableCell extends React.Component {
           {...textInputProps}
           ref={refCallback}
           style={textStyle}
-          onChangeText={(text) => this.setState({ value: text })}
-          onEndEditing={this.onEndEditing}
+          onChangeText={(text) => this.onChangeText(text)}
+          onEndEditing={() => this.onEndEditing(this.props.target, this.state.value)}
           value={this.state.value}
         />
       </View>
