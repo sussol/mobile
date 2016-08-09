@@ -204,6 +204,7 @@ export class GenericTablePage extends React.Component {
  *      cellContents: item.countedTotalQuantity,
  *      keyboardType: numeric,
  *      returnKeyType: 'next',
+ *      placeholder: 'No change',
  *    };
  * 6. {
  *      type: 'checkable',
@@ -346,6 +347,7 @@ export class GenericTablePage extends React.Component {
               width={column.width}
               returnKeyType={renderedCell.returnKeyType || 'next'}
               selectTextOnFocus={true}
+              placeholder={renderedCell.placeholder}
               keyboardType={renderedCell.keyboardType || 'numeric'}
               onEndEditing={this.onEndEditing &&
                             ((target, value) => this.onEndEditing(column.key, target, value))}
