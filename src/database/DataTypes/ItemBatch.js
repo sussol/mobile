@@ -59,7 +59,7 @@ export class ItemBatch extends Realm.Object {
     this.transactionBatches.push(transactionBatch);
   }
 
-  addTransactionIfUnique(transactionBatch) {
+  addTransactionBatchIfUnique(transactionBatch) {
     if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) return;
     this.addTransactionBatch(transactionBatch);
   }
