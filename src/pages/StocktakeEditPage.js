@@ -80,6 +80,7 @@ export class StocktakeEditPage extends GenericTablePage {
         return {
           type: this.props.stocktake.isFinalised ? 'text' : 'editable',
           cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
+          placeholder: 'No change',
         };
       case 'difference': {
         // Catch items with no change (null - 50 === -50)
