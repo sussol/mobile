@@ -3,6 +3,7 @@ export {
   BottomModal,
   ConfirmModal,
   FinaliseModal,
+  LoadingModal,
   LoginModal,
   PageContentModal,
   SelectModal,

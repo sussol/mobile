@@ -21,6 +21,7 @@ import { PAGES, FINALISABLE_PAGES } from './pages';
 import {
   FinaliseButton,
   FinaliseModal,
+  LoadingModal,
   LoginModal,
   SyncState,
 } from './widgets';
@@ -54,6 +55,7 @@ export default class mSupplyMobileApp extends React.Component {
       syncError: '',
       lastSync: null, // Date of the last successful sync
       finaliseItem: null,
+      isLoading: false,
     };
   }
 
@@ -61,6 +63,7 @@ export default class mSupplyMobileApp extends React.Component {
     this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
+    this.setIsLoading = this.setIsLoading.bind(this);
     this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
@@ -84,6 +87,14 @@ export default class mSupplyMobileApp extends React.Component {
 
   onInitialised() {
     this.setState({ initialised: true });
+  }
+
+/*
+ * @arg {boolean} newValue  If true will cause LoadingModal to render
+ */
+  setIsLoading(newValue) {
+    console.log('function was called');
+    this.setState({ isLoading: newValue });
   }
 
   async synchronize() {
@@ -151,6 +162,7 @@ export default class mSupplyMobileApp extends React.Component {
         settings={this.settings}
         logOut={this.logOut}
         currentUser={this.state.currentUser}
+        setIsLoading={this.setIsLoading}
         {...extraProps}
       />);
   }
@@ -190,6 +202,7 @@ export default class mSupplyMobileApp extends React.Component {
           onClose={() => this.setState({ confirmFinalise: false })}
           finaliseItem={this.state.finaliseItem}
           user={this.state.currentUser}
+          setIsLoading={this.setIsLoading}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
@@ -197,6 +210,7 @@ export default class mSupplyMobileApp extends React.Component {
           isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
+        <LoadingModal isOpen={this.state.isLoading} />
       </View>
     );
   }
