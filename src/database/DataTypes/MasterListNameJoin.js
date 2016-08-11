@@ -4,10 +4,14 @@ import Realm from 'realm';
 export class MasterListNameJoin extends Realm.Object {
   destructor(database) {
     if (!this.name || !this.masterList) return; // Not a full join record
+
+    const indexInMasterLists = this.name.masterLists.findIndex(
+      (masterList) => masterList.id === this.masterlist.id);
+
     // If the master list/name aren't actually joined, do nothing
-    if (!this.name.masterList || this.name.masterList.id !== this.masterList.id) return;
+    if (!indexInMasterLists >= 0) return;
     // Remove the master list from the name
-    this.name.masterList = null;
+    this.name.masterLists.splice(indexInMasterLists, 1);
     database.save('Name', this.name);
   }
 
