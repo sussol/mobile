@@ -128,7 +128,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
       const masterList = getObject(database, 'MasterList', record.list_master_ID);
-      name.masterList = masterList;
+      name.addMasterListIfUnique(masterList);
       database.save('Name', name);
       internalRecord = {
         id: record.ID,

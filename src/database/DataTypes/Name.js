@@ -6,6 +6,11 @@ export class Name extends Realm.Object {
     return this.transactions.length;
   }
 
+  addMasterListIfUnique(masterList) {
+    if (this.masterLists.filtered('id == $0', masterList.id).length > 0) return;
+    this.masterLists.push(masterList);
+  }
+
   addTransaction(transaction) {
     this.transactions.push(transaction);
   }
