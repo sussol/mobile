@@ -146,7 +146,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
       let masterList;
-      // mSupply local lists don't have a list_master_ID, as they don't have a MasterList
+      // mSupply list_local_line don't have a list_master_ID, as they don't have a MasterList
       if (!record.list_master_ID) {
         masterList = getObject(database, 'MasterList', generateUUID());
         // Any LocalListItem objects already synced need to be added

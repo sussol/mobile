@@ -12,8 +12,8 @@ MasterListItem.schema = {
   properties: {
     id: 'string',
     masterList: { type: 'MasterList', optional: true },
-    // masterListNameJoin Only used in list_local_line sync
-    masterListNameJoin: { type: 'MasterListNameJoin', optional: true },
+    // masterListNameJoinID only used in list_local_line sync
+    masterListNameJoinId: { type: 'string', optional: true },
     item: 'Item',
     imprestQuantity: { type: 'double', optional: true },
   },
