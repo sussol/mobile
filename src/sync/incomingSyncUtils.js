@@ -125,15 +125,39 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       }
       break;
     }
+    // LocalListLine not a class defined in our realm. The structure from mSupply
+    // will be replaced by storing equivalent infomation in a MasterList. LocalListLine
+    // objects will be mapped to MasterListItems in sync.
+    case 'LocalListLine': {
+      const item = getObject(database, 'Item', record.item_ID);
+      const masterListNameJoin = getObject(database, 'MasterListNameJoin',
+                                          record.list_master_name_join_ID);
+
+      internalRecord = {
+        id: record.ID,
+        item: item,
+        imprestQuantity: parseNumber(record.imprest_quantity),
+        masterList: masterListNameJoin.masterList, // May be null if placeholder
+      };
+      database.update('MasterListItem', internalRecord);
+      break;
+    }
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
-      const masterList = getObject(database, 'MasterList', record.list_master_ID);
+      let masterList;
+      // mSupply local lists don't have a list_master_ID, as they don't have a MasterList
+      if (!record.list_master_ID) {
+        masterList = getObject(database, 'MasterList', generateUUID());
+      } else {
+        masterList = getObject(database, 'MasterList', record.list_master_ID);
+      }
       name.addMasterListIfUnique(masterList);
       database.save('Name', name);
+
       internalRecord = {
         id: record.ID,
         name: name,
-        masterList: masterList,
+        masterList: masterList, // null until a related list_local_line is synced
       };
       database.update(recordType, internalRecord);
       break;
@@ -423,6 +447,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
     ItemBatch: ['item_ID', 'pack_size', 'quantity', 'batch', 'expiry_date',
                 'cost_price', 'sell_price'],
     ItemStoreJoin: ['item_ID', 'store_ID'],
+    LocalListLine: ['spare_name_id', 'item_ID', 'list_master_name_join_ID'],
     MasterListNameJoin: ['name_ID', 'list_master_ID'],
     MasterList: ['description'],
     MasterListItem: ['item_ID'],
@@ -519,6 +544,16 @@ function generatePlaceholder(type, primaryKey) {
       placeholder = {
         id: primaryKey,
         name: placeholderString,
+      };
+      return placeholder;
+    case 'MasterListItem':
+      placeholder = {
+        id: primaryKey,
+      };
+      return placeholder;
+    case 'MasterListNameJoin':
+      placeholder = {
+        id: primaryKey,
       };
       return placeholder;
     case 'Name':

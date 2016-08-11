@@ -11,7 +11,7 @@ MasterListItem.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    masterList: 'MasterList',
+    masterList: { type: 'MasterList', optional: true },
     item: 'Item',
     imprestQuantity: { type: 'double', optional: true },
   },
