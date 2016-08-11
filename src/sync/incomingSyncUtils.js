@@ -437,6 +437,10 @@ function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') 
       if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
       break;
     }
+    // LocalListItem is mimicked with MasterListItem
+    case 'LocalListItem':
+      deleteRecord(database, 'MasterListItem', primaryKey, primaryKeyField);
+      break;
     default:
       break; // Silently ignore record types we don't want to sync into mobile
   }
