@@ -125,10 +125,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       }
       break;
     }
-    // LocalListLine not a class defined in our realm. The structure from mSupply
-    // will be replaced by storing equivalent infomation in a MasterList. LocalListLine
+    // LocalListItem not a class defined in our realm. The structure from mSupply
+    // will be replaced by storing equivalent infomation in a MasterList. LocalListItem
     // objects will be mapped to MasterListItems in sync.
-    case 'LocalListLine': {
+    case 'LocalListItem': {
       const item = getObject(database, 'Item', record.item_ID);
       const masterListNameJoin = getObject(database, 'MasterListNameJoin',
                                           record.list_master_name_join_ID);
@@ -136,6 +136,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       internalRecord = {
         id: record.ID,
         item: item,
+        masterListNameJoinId: masterListNameJoin.id,
         imprestQuantity: parseNumber(record.imprest_quantity),
         masterList: masterListNameJoin.masterList, // May be null if placeholder
       };
@@ -148,6 +149,16 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       // mSupply local lists don't have a list_master_ID, as they don't have a MasterList
       if (!record.list_master_ID) {
         masterList = getObject(database, 'MasterList', generateUUID());
+        // Any LocalListItem objects already synced need to be added
+        const localListItems = database.objects('MasterListItem').filtered(
+          'masterListNameJoinId == $0', record.ID
+        );
+        localListItems.forEach((localListItem) => {
+          masterList.addItemIfUnique(localListItem);
+          localListItem.masterList = masterList;
+          database.save('MasterListItem', localListItem);
+        });
+        database.save('MasterList', masterList);
       } else {
         masterList = getObject(database, 'MasterList', record.list_master_ID);
       }
@@ -447,7 +458,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
     ItemBatch: ['item_ID', 'pack_size', 'quantity', 'batch', 'expiry_date',
                 'cost_price', 'sell_price'],
     ItemStoreJoin: ['item_ID', 'store_ID'],
-    LocalListLine: ['spare_name_id', 'item_ID', 'list_master_name_join_ID'],
+    LocalListItem: ['spare_name_id', 'item_ID', 'list_master_name_join_ID'],
     MasterListNameJoin: ['name_ID', 'list_master_ID'],
     MasterList: ['description'],
     MasterListItem: ['item_ID'],
