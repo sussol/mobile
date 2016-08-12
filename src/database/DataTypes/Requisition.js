@@ -66,13 +66,13 @@ export class Requisition extends Realm.Object {
    */
   addItemsFromMasterList(database, thisStore) {
     if (this.isFinalised) throw new Error('Cannot add items to a finalised requisition');
-    if (thisStore.masterList && thisStore.masterList.items) {
-      const itemsToAdd = complement(thisStore.masterList.items,
+    thisStore.masterLists.forEach((masterList) => {
+      const itemsToAdd = complement(masterList.items,
                                     this.items,
                                     (item) => item.itemId);
       itemsToAdd.forEach(masterListItem =>
         createRecord(database, 'RequisitionItem', this, masterListItem.item));
-    }
+    });
   }
 
   /**
