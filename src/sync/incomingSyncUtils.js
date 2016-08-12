@@ -470,7 +470,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
     ItemBatch: ['item_ID', 'pack_size', 'quantity', 'batch', 'expiry_date',
                 'cost_price', 'sell_price'],
     ItemStoreJoin: ['item_ID', 'store_ID'],
-    LocalListItem: ['spare_name_id', 'item_ID', 'list_master_name_join_ID'],
+    LocalListItem: ['item_ID', 'list_master_name_join_ID'],
     MasterListNameJoin: ['name_ID', 'list_master_ID'],
     MasterList: ['description'],
     MasterListItem: ['item_ID'],
