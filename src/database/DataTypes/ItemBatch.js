@@ -14,16 +14,18 @@ export class ItemBatch extends Realm.Object {
   // Return the date this batch was added, assuming that was in the earliest transaction batch
   // connected to this item batch
   get addedDate() {
-    return this.transactionBatches.reduce((oldestConfirmDate, transactionBatch) => {
-      const confirmDate = transactionBatch.transaction.confirmDate;
-      if (!confirmDate || oldestConfirmDate < confirmDate) return oldestConfirmDate;
-      return confirmDate;
-    }, new Date());
+    if (this.transactionBatches.length === 0) return new Date();
+    const transactionBatches = this.transactionBatches.slice();
+    const sortedTransactionBatches = transactionBatches.sort((a, b) =>
+      a.transaction.confirmDate < b.transaction.confirmDate);
+    return sortedTransactionBatches[0].transaction.confirmDate;
   }
 
   // Gets the usage per day for this batch since either the date it was added to stock, or
   // the usage calculation period of three months, whatever is shorter
   get dailyUsage() {
+    if (this.transactionBatches.length === 0) return 0;
+
     // Get all transaction batches confirmed in the last three months
     const sinceDate = new Date();
     sinceDate.setTime(sinceDate.getTime() - USAGE_PERIOD_MILLISECONDS);
@@ -33,11 +35,16 @@ export class ItemBatch extends Realm.Object {
     // Get the total usage over that period
     const totalUsage = getTotal(transactionBatches, 'usage');
 
+
     // Calculate and return the daily usage over either the usage period, or since this batch was
     // added if that is shorter
     const currentDate = new Date();
-    const timeSinceAdded = currentDate.getTime() - this.addedDate.getTime();
-    const usagePeriod = Math.min(toDays(USAGE_PERIOD_MILLISECONDS), toDays(timeSinceAdded));
+    let usagePeriod = millisecondsToDays(USAGE_PERIOD_MILLISECONDS);
+    if (transactionBatches.length === this.transactionBatches.length) {
+      // This item batch has no transaction batches older than the usage period constant,
+      // use the actual amount of time it has been around for as the usage period
+      usagePeriod = millisecondsToDays(currentDate.getTime() - this.addedDate.getTime());
+    }
     const dailyUsage = usagePeriod ? totalUsage / usagePeriod : 0;
     return dailyUsage;
   }
@@ -69,7 +76,7 @@ export class ItemBatch extends Realm.Object {
   }
 }
 
-function toDays(milliseconds) {
+function millisecondsToDays(milliseconds) {
   return Math.ceil(milliseconds / MILLISECONDS_PER_DAY); // Round up to the nearest day
 }
 

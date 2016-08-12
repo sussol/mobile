@@ -158,9 +158,8 @@ export class Transaction extends Realm.Object {
       transactionItem.batches.forEach((transactionBatch) => {
         const itemBatch = transactionBatch.itemBatch;
         const newNumberOfPacks = this.isIncoming ?
-          itemBatch.numberOfPacks + transactionBatch.numberOfPacks
-          : itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
-
+          itemBatch.numberOfPacks + transactionBatch.numberOfPacks :
+          itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
         itemBatch.packSize = transactionBatch.packSize;
         itemBatch.numberOfPacks = newNumberOfPacks;
         itemBatch.expiryDate = transactionBatch.expiryDate;
@@ -168,7 +167,6 @@ export class Transaction extends Realm.Object {
         itemBatch.costPrice = transactionBatch.costPrice;
         itemBatch.sellPrice = transactionBatch.sellPrice;
         database.save('ItemBatch', itemBatch);
-        database.save('TransactionBatch', transactionBatch);
       });
     });
     this.confirmDate = new Date();

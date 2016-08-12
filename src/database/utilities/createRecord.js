@@ -143,12 +143,7 @@ function createRequisition(database, user) {
 }
 
 // Creates a RequisitionItem and adds it to the requisition.
-function createRequisitionItem(database, requisition, item) {
-  const existingRequisitionItem = requisition.items.find(requisitionItem =>
-                                    requisitionItem.itemId === item.id);
-  if (existingRequisitionItem) return existingRequisitionItem;
-
-  const dailyUsage = item.dailyUsage;
+function createRequisitionItem(database, requisition, item, dailyUsage = item.dailyUsage) {
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: item,
@@ -239,7 +234,7 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
 // Creates a TransactionItem and adds it to the Transaction
 function createTransactionItem(database, transaction, item) {
   const existingTransactionItem = transaction.items.find(transactionItem =>
-                                    transactionItem.itemId === item.id);
+                                    transactionItem.itemId === item.id); // TODO remove if possible
   if (existingTransactionItem) return existingTransactionItem;
   const transactionItem = database.create('TransactionItem', {
     id: generateUUID(),
