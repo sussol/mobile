@@ -175,7 +175,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       internalRecord = {
         id: record.ID,
         name: name,
-        masterList: masterList, // null until a related list_local_line is synced
+        masterList: masterList,
       };
       database.update(recordType, internalRecord);
       break;
