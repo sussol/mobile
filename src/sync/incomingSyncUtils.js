@@ -146,7 +146,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       if (masterListNameJoin.masterList) {
         masterListNameJoin.masterList.addItemIfUnique(LocalListItem);
       }
-
       break;
     }
     case 'MasterListNameJoin': {
@@ -155,6 +154,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       // mSupply list_local_line don't have a list_master_ID, as they don't have a MasterList
       if (!record.list_master_ID) {
         masterList = getObject(database, 'MasterList', generateUUID());
+        masterList.isLocalList = true;
         if (record.description) masterList.name = record.description;
         // Any LocalListItem objects already synced need to be added
         const localListItems = database.objects('MasterListItem').filtered(
@@ -184,6 +184,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       internalRecord = {
         id: record.ID,
         name: record.description,
+        isLocalList: false,
         note: record.note,
       };
       database.update(recordType, internalRecord);

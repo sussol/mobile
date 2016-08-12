@@ -4,9 +4,14 @@ import Realm from 'realm';
 export class MasterListNameJoin extends Realm.Object {
   destructor(database) {
     if (!this.name || !this.masterList) return; // Not a full join record
+    // If masterList is a localList, simply delete it and return.
+    if (this.masterList.isLocalList) {
+      database.delete('MasterList', this.masterList);
+      return;
+    }
 
     const indexInMasterLists = this.name.masterLists.findIndex(
-      (masterList) => masterList.id === this.masterlist.id);
+      (masterList) => masterList.id === this.masterList.id);
 
     // If the master list/name aren't actually joined, do nothing
     if (!indexInMasterLists >= 0) return;
@@ -16,7 +21,7 @@ export class MasterListNameJoin extends Realm.Object {
   }
 
   toString() {
-    return `Joins master list ${this.masterListId} with name ${this.nameId}`;
+    return `Joins master list '${this.masterList.name}' with name '${this.name}'`;
   }
 }
 
