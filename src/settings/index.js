@@ -1,5 +1,6 @@
 export { Settings } from './Settings';
 export const SETTINGS_KEYS = {
+  CURRENT_LANGUAGE: 'currentLanguage',
   MOST_RECENT_USERNAME: 'MostRecentUsername',
   SUPPLYING_STORE_ID: 'SupplyingStoreId',
   SUPPLYING_STORE_NAME_ID: 'SupplyingStoreNameId',
