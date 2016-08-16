@@ -82,6 +82,7 @@ export class RequisitionPage extends GenericTablePage {
       this.props.requisition.addItemsFromMasterList(this.props.database, thisStore);
       this.props.database.save('Requisition', this.props.requisition);
     });
+    this.refreshData();
   }
 
   onCreateAutomaticOrder() {
@@ -93,6 +94,7 @@ export class RequisitionPage extends GenericTablePage {
       this.props.requisition.createAutomaticOrder(this.props.database, thisStore);
       this.props.database.save('Requisition', this.props.requisition);
     });
+    this.refreshData();
   }
 
   /**
@@ -132,6 +134,7 @@ export class RequisitionPage extends GenericTablePage {
       requisition.setRequestedToSuggested(database);
       database.save('Requisition', requisition);
     });
+    this.refreshData();
   }
 
   openItemSelector() {
@@ -233,6 +236,7 @@ export class RequisitionPage extends GenericTablePage {
                   database.save('Requisition', requisition);
                 }
               });
+              this.refreshData();
               this.closeModal();
             }}
             renderLeftText={(item) => `${item.name}`}
@@ -248,6 +252,7 @@ export class RequisitionPage extends GenericTablePage {
                 this.props.requisition.monthsToSupply = number;
                 this.props.database.save('Requisition', this.props.requisition);
               });
+              this.refreshData();
               this.closeModal();
             }}
             selected={this.props.requisition.monthsToSupply}
