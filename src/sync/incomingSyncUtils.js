@@ -140,11 +140,11 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         imprestQuantity: parseNumber(record.imprest_quantity),
         masterList: masterListNameJoin.masterList, // May be null if placeholder
       };
-      const LocalListItem = database.update('MasterListItem', internalRecord);
+      const localListItem = database.update('MasterListItem', internalRecord);
 
       // If masterListNameJoin already synced with a masterList, add this record to the masterList.
       if (masterListNameJoin.masterList) {
-        masterListNameJoin.masterList.addItemIfUnique(LocalListItem);
+        masterListNameJoin.masterList.addItemIfUnique(localListItem);
       }
       break;
     }
