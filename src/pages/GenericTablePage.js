@@ -98,6 +98,14 @@ export class GenericTablePage extends React.Component {
     this.refreshData();
   }
 
+  /**
+   * Refresh data every time the page receives props, so that changes will show
+   * when a user returns to the page using the back button.
+   */
+  componentWillReceiveProps() {
+    this.refreshData();
+  }
+
   componentWillUnmount() {
     this.props.database.removeListener(this.databaseListenerId);
   }
