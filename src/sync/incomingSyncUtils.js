@@ -130,45 +130,33 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     // objects will be mapped to MasterListItems in sync.
     case 'LocalListItem': {
       const item = getObject(database, 'Item', record.item_ID);
-      const masterListNameJoin = getObject(database, 'MasterListNameJoin',
+      const masterList = getObject(database, 'MasterList',
                                           record.list_master_name_join_ID);
 
       internalRecord = {
         id: record.ID,
         item: item,
-        masterListNameJoinId: masterListNameJoin.id,
         imprestQuantity: parseNumber(record.imprest_quantity),
-        masterList: masterListNameJoin.masterList, // May be null if placeholder
+        masterList: masterList,
       };
       const localListItem = database.update('MasterListItem', internalRecord);
-
-      // If masterListNameJoin already synced with a masterList, add this record to the masterList.
-      if (masterListNameJoin.masterList) {
-        masterListNameJoin.masterList.addItemIfUnique(localListItem);
-      }
+      masterList.addItemIfUnique(localListItem);
       break;
     }
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
       let masterList;
-      // mSupply list_local_line don't have a list_master_ID, as they don't have a MasterList
+      // mSupply list_local_line don't have a list_master_ID, map join to a MasterList
       if (!record.list_master_ID) {
-        masterList = getObject(database, 'MasterList', generateUUID());
-        masterList.isLocalList = true;
-        if (record.description) masterList.name = record.description;
-        // Any LocalListItem objects already synced need to be added
-        const localListItems = database.objects('MasterListItem').filtered(
-          'masterListNameJoinId == $0', record.ID
-        );
-        localListItems.forEach((localListItem) => {
-          masterList.addItemIfUnique(localListItem);
-          localListItem.masterList = masterList;
-          database.save('MasterListItem', localListItem);
-        });
+        masterList = getObject(database, 'MasterList', record.ID);
+        masterList.name = record.description;
         database.save('MasterList', masterList);
-      } else {
-        masterList = getObject(database, 'MasterList', record.list_master_ID);
+        name.addMasterListIfUnique(masterList);
+        database.save('Name', name);
+        break;
       }
+
+      masterList = getObject(database, 'MasterList', record.list_master_ID);
       name.addMasterListIfUnique(masterList);
       database.save('Name', name);
 
@@ -427,7 +415,6 @@ function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') 
     case 'ItemStoreJoin':
     case 'MasterList':
     case 'MasterListItem':
-    case 'MasterListNameJoin':
     case 'Name':
     case 'NameStoreJoin':
     case 'NumberSequence':
@@ -448,6 +435,18 @@ function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') 
     case 'LocalListItem':
       deleteRecord(database, 'MasterListItem', primaryKey, primaryKeyField);
       break;
+    case 'MasterListNameJoin': {
+      // Joins for local lists are mapped to and mimicked by a MasterList of the same id.
+      const masterList = database.objects('MasterList').filtered('id == $0', primaryKey)[0];
+      if (masterList) {
+        deleteRecord(database, 'MasterList', primaryKey, primaryKeyField);
+        break;
+      }
+      const deleteResults = database.objects('MasterListNameJoin')
+                                    .filtered(`${primaryKeyField} == $0`, primaryKey);
+      if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
+      break;
+    }
     default:
       break; // Silently ignore record types we don't want to sync into mobile
   }
@@ -470,7 +469,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
                 'cost_price', 'sell_price'],
     ItemStoreJoin: ['item_ID', 'store_ID'],
     LocalListItem: ['item_ID', 'list_master_name_join_ID'],
-    MasterListNameJoin: ['name_ID', 'list_master_ID'],
+    MasterListNameJoin: ['description', 'name_ID', 'list_master_ID'],
     MasterList: ['description'],
     MasterListItem: ['item_ID'],
     Name: ['name', 'code', 'type', 'customer', 'supplier', 'manufacturer'],

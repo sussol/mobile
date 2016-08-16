@@ -4,11 +4,6 @@ import Realm from 'realm';
 export class MasterListNameJoin extends Realm.Object {
   destructor(database) {
     if (!this.name || !this.masterList) return; // Not a full join record
-    // If masterList is a localList, simply delete it and return.
-    if (this.masterList.isLocalList) {
-      database.delete('MasterList', this.masterList);
-      return;
-    }
 
     const indexInMasterLists = this.name.masterLists.findIndex(
       (masterList) => masterList.id === this.masterList.id);
