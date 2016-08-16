@@ -39,12 +39,18 @@ import { SearchBar } from '../widgets';
  *         											 don't override if row should not be pressable
  * @method onEndEditing(key, rowData, newValue) Handles user input to an editable cell
  *         											 don't override if row should not be pressable
- * @const  {array}  cellRefsMap  Stores references to TextInputs in editableCells so next button
+ * @field  {array}  cellRefsMap  Stores references to TextInputs in editableCells so next button
  *                               on native keyboard focuses the next cell. Order is left to
  *                               right within a row, then next row.
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
  *         											 may optionally also contain a boolean 'sortable'.
+ * @field  {array}  dataTypesSynchronised      Data types visible in the table displayed
+ *         																		 on this page, that should therefore cause
+ *         																		 an update if changed by sync
+ * @field  {string} finalisableDataType        The data type that can be finalised on this
+ *         																		 page, that should therefore cause an update
+ *         																		 if changed by being finalised
  * @state  {ListView.DataSource} dataSource    DataTable input, used to update rows
  *         																		 being rendered
  * @state  {string}              searchTerm    Current term user has entered in search bar
@@ -73,7 +79,7 @@ export class GenericTablePage extends React.Component {
     this.cellRefsMap = {}; // { rowId: reference, rowId: reference, ...}
     this.columns = null;
     this.dataTableRef = null;
-    this.dataTypesDisplayed = [];
+    this.dataTypesSynchronised = [];
     this.databaseListenerId = null;
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
@@ -110,9 +116,13 @@ export class GenericTablePage extends React.Component {
     this.props.database.removeListener(this.databaseListenerId);
   }
 
-  // Refetch data and render the list any time sync changes data displayed on this page
+  // Refetch data and render the list any time sync changes data displayed, or the
+  // record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    if (causedBy === 'sync' && this.dataTypesDisplayed.indexOf(recordType) >= 0) this.refreshData();
+    // Ensure sync updates are immediately visible
+    if (causedBy === 'sync' && this.dataTypesSynchronised.indexOf(recordType) >= 0) this.refreshData();
+    // Ensure finalising updates data for the primary data type
+    else if (recordType === this.finalisableDataType && record.isFinalised) this.refreshData();
   }
 
   onSearchChange(event) {

@@ -13,7 +13,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
 
-const DATA_TYPES_DISPLAYED = ['Stocktake'];
+const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
 /**
 * Renders the page for displaying Stocktakes.
@@ -29,7 +29,7 @@ export class StocktakesPage extends GenericTablePage {
     this.state.showCurrent = true;
     this.state.stocktakes = props.database.objects('Stocktake');
     this.columns = COLUMNS;
-    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
+    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.onNewStockTake = this.onNewStockTake.bind(this);
