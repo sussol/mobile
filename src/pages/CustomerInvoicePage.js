@@ -76,6 +76,7 @@ export class CustomerInvoicePage extends GenericTablePage {
       this.props.transaction.addItemsFromMasterList(this.props.database);
       this.props.database.save('Transaction', this.props.transaction);
     });
+    this.refreshData();
   }
 
   /**
@@ -213,6 +214,7 @@ export class CustomerInvoicePage extends GenericTablePage {
                   createRecord(database, 'TransactionItem', transaction, item);
                 }
               });
+              this.refreshData();
               this.closeModal();
             }}
             renderLeftText={(item) => `${item.name}`}
