@@ -184,7 +184,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       internalRecord = {
         id: record.ID,
         name: record.description,
-        isLocalList: false,
         note: record.note,
       };
       database.update(recordType, internalRecord);

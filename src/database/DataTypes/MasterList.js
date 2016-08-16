@@ -20,7 +20,7 @@ MasterList.schema = {
   properties: {
     id: 'string',
     name: 'string',
-    isLocalList: { type: 'bool', optional: true },
+    isLocalList: { type: 'bool', default: false },
     note: { type: 'string', optional: true },
     items: { type: 'list', objectType: 'MasterListItem' },
   },
