@@ -148,26 +148,24 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'MasterListNameJoin': {
       const name = getObject(database, 'Name', record.name_ID);
       let masterList;
-      // mSupply list_local_line don't have a list_master_ID, map join to a MasterList
       if (!record.list_master_ID) {
+        // mSupply list_local_line don't have a list_master_ID, map the join to a MasterList
         masterList = getObject(database, 'MasterList', record.ID);
         masterList.name = record.description;
         database.save('MasterList', masterList);
-        name.addMasterListIfUnique(masterList);
-        database.save('Name', name);
-        break;
+      } else {
+        // Regular MasterListNameJoin
+        masterList = getObject(database, 'MasterList', record.list_master_ID);
+        internalRecord = {
+          id: record.ID,
+          name: name,
+          masterList: masterList,
+        };
+        database.update(recordType, internalRecord);
       }
 
-      masterList = getObject(database, 'MasterList', record.list_master_ID);
       name.addMasterListIfUnique(masterList);
       database.save('Name', name);
-
-      internalRecord = {
-        id: record.ID,
-        name: name,
-        masterList: masterList,
-      };
-      database.update(recordType, internalRecord);
       break;
     }
     case 'MasterList': {
