@@ -102,8 +102,9 @@ export class GenericTablePage extends React.Component {
     this.props.database.removeListener(this.databaseListenerId);
   }
 
-  onDatabaseEvent(changeType, recordType) {
-    if (this.dataTypesDisplayed.indexOf(recordType) >= 0) this.refreshData();
+  // Refetch data and render the list any time sync changes data displayed on this page
+  onDatabaseEvent(changeType, recordType, record, causedBy) {
+    if (causedBy === 'sync' && this.dataTypesDisplayed.indexOf(recordType) >= 0) this.refreshData();
   }
 
   onSearchChange(event) {
