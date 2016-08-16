@@ -130,6 +130,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     // objects will be mapped to MasterListItems in sync.
     case 'LocalListItem': {
       const item = getObject(database, 'Item', record.item_ID);
+      // Grabbing the masterList using list_master_name_join_ID as the join's id is used in mobile
+      // to mimic the local list join with a MasterList.
       const masterList = getObject(database, 'MasterList',
                                           record.list_master_name_join_ID);
 
