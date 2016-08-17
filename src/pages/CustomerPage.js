@@ -14,6 +14,7 @@ import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
+import { navStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -58,7 +59,7 @@ export class CustomerPage extends GenericTablePage {
   }
 
   navigateToInvoice(invoice) {
-    const pageTitle = `Invoice ${invoice.serialNumber}`;
+    const pageTitle = `${navStrings.invoice} ${invoice.serialNumber}`;
     this.props.navigateTo('customerInvoice', pageTitle, { transaction: invoice });
   }
 

@@ -12,6 +12,7 @@ import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
+import { navStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -106,9 +107,10 @@ export class StocktakeEditPage extends GenericTablePage {
             </View>
             <PageButton
               text="Manage Stocktake"
-              onPress={() => this.props.navigateTo('stocktakeManager', 'Manage Stocktake', {
-                stocktake: this.props.stocktake,
-              })}
+              onPress={() => this.props.navigateTo('stocktakeManager',
+                navStrings.manage_stocktake,
+                { stocktake: this.props.stocktake },
+                )}
               isDisabled={this.props.stocktake.isFinalised}
             />
           </View>

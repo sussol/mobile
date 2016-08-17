@@ -13,6 +13,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
+import { navStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -78,7 +79,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   navigateToInvoice(invoice) {
     this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
     this.props.navigateTo('customerInvoice',
-                          `Invoice ${invoice.serialNumber}`,
+                          `${navStrings.invoice} ${invoice.serialNumber}`,
                           { transaction: invoice });
   }
 

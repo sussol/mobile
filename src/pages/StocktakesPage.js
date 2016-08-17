@@ -12,6 +12,7 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
+import { navStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -47,7 +48,7 @@ export class StocktakesPage extends GenericTablePage {
   }
 
   onNewStockTake() {
-    this.props.navigateTo('stocktakeManager', 'New Stocktake');
+    this.props.navigateTo('stocktakeManager', navStrings.new_stocktake);
   }
 
   onDeleteConfirm() {

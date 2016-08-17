@@ -41,13 +41,13 @@ export function MenuPage(props) {
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
             text={navStrings.customer_invoices}
-            onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
+            onPress={() => props.navigateTo('customerInvoices', navStrings.customer_invoices)}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
             text={navStrings.customers}
-            onPress={() => props.navigateTo('customers', 'Customers')}
+            onPress={() => props.navigateTo('customers', navStrings.customers)}
           />
         </View>
 
@@ -61,13 +61,13 @@ export function MenuPage(props) {
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
             text={navStrings.supplier_invoices}
-            onPress={() => props.navigateTo('supplierInvoices', 'Supplier Invoices')}
+            onPress={() => props.navigateTo('supplierInvoices', navStrings.supplier_invoices)}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
             text={navStrings.requisitions}
-            onPress={() => props.navigateTo('requisitions', 'Requistions')}
+            onPress={() => props.navigateTo('requisitions', navStrings.requisitions)}
           />
         </View>
 
@@ -81,13 +81,13 @@ export function MenuPage(props) {
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
             text={navStrings.current_stock}
-            onPress={() => props.navigateTo('stock', 'Stock')}
+            onPress={() => props.navigateTo('stock', navStrings.current_stock)}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
             text={navStrings.stocktakes}
-            onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
+            onPress={() => props.navigateTo('stocktakes', navStrings.stocktakes)}
           />
           <Button
             style={globalStyles.menuButton}

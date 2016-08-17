@@ -14,6 +14,7 @@ import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
+import { navStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -78,7 +79,7 @@ export class RequisitionsPage extends GenericTablePage {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
       'requisition',
-      `Requisition ${requisition.serialNumber}`,
+      `${navStrings.requisition} ${requisition.serialNumber}`,
       { requisition: requisition },
     );
   }
