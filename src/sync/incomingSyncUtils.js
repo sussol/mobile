@@ -388,7 +388,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);
       database.save('Transaction', transaction);
-      itemBatch.addTransactionBatch(transactionBatch);
+      itemBatch.addTransactionBatchIfUnique(transactionBatch);
       database.save('ItemBatch', itemBatch);
       break;
     }
