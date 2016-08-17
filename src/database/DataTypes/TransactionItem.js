@@ -130,11 +130,12 @@ export class TransactionItem extends Realm.Object {
                            this.item.batches.sorted('expiryDate', true);
 
       // Use complement to only get batches not already in the transaction.
+      // TODO may actually slow things if most batches not already in transaction item
+      // or all batches already in
       const itemBatchesToAdd = complement(batchesToUse,
                                           this.batches.map((transactionBatch) =>
                                             ({ id: transactionBatch.itemBatchId })),
                                           (batch) => batch.id);
-
       // Go through item batches, adding transaction batches and allocating remainder
       // until no remainder left
       for (let index = 0; index < itemBatchesToAdd.length && remainder !== 0; index ++) {

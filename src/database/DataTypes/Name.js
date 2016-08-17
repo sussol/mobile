@@ -6,6 +6,11 @@ export class Name extends Realm.Object {
     return this.transactions.length;
   }
 
+  addMasterListIfUnique(masterList) {
+    if (this.masterLists.filtered('id == $0', masterList.id).length > 0) return;
+    this.masterLists.push(masterList);
+  }
+
   addTransaction(transaction) {
     this.transactions.push(transaction);
   }
@@ -34,7 +39,7 @@ Name.schema = {
     isCustomer: 'bool',
     isSupplier: 'bool',
     isManufacturer: 'bool',
-    masterList: { type: 'MasterList', optional: true },
+    masterLists: { type: 'list', objectType: 'MasterList' },
     transactions: { type: 'list', objectType: 'Transaction' },
     isVisible: { type: 'bool', default: false },
     supplyingStoreId: { type: 'string', optional: true },
