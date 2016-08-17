@@ -10,6 +10,10 @@ const CURRENT_LANGUAGE = 'en'; // settings not set up for this yet
 
 const strings = {
   en: {
+    sync_enabled: 'SYNC ENABLED (en)',
+    sync_in_progress: 'SYNC IN PROGRESS (en)',
+    sync_error: 'SYNC ERROR. (en)',
+    last_sync: 'LAST SYNC (en)',
   },
   tetum: {
   },
