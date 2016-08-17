@@ -93,12 +93,14 @@ export class Transaction extends Realm.Object {
   addItemsFromMasterList(database) {
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
-    if (this.otherParty && this.otherParty.masterList && this.otherParty.masterList.items) {
-      const itemsToAdd = complement(this.otherParty.masterList.items,
-                                    this.items,
-                                    (item) => item.itemId);
-      itemsToAdd.forEach(masterListItem =>
-        createRecord(database, 'TransactionItem', this, masterListItem.item));
+    if (this.otherParty) {
+      this.otherParty.masterLists.forEach((masterList) => {
+        const itemsToAdd = complement(masterList.items,
+                                      this.items,
+                                      (item) => item.itemId);
+        itemsToAdd.forEach(masterListItem =>
+          createRecord(database, 'TransactionItem', this, masterListItem.item));
+      });
     }
   }
 
