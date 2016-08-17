@@ -18,7 +18,6 @@ import globalStyles, {
   WARM_GREY,
 } from '../../globalStyles';
 import { SETTINGS_KEYS } from '../../settings';
-import { authStrings } from '../../localization';
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -84,11 +83,11 @@ export class LoginModal extends React.Component {
     switch (this.state.authStatus) {
       case 'authenticating':
       case 'authenticated':
-        return authStrings.logging_in;
+        return 'Logging in...';
       case 'error':
         return this.state.error;
       default:
-        return authStrings.login;
+        return 'Login';
     }
   }
 
@@ -113,7 +112,7 @@ export class LoginModal extends React.Component {
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
-                placeholder={authStrings.user_name}
+                placeholder="User Name"
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
                 value={this.state.username}
@@ -132,7 +131,7 @@ export class LoginModal extends React.Component {
               <TextInput
                 ref={(reference) => (this.passwordInputRef = reference)}
                 style={globalStyles.authFormTextInputStyle}
-                placeholder={authStrings.password}
+                placeholder="Password"
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
                 value={this.state.password}

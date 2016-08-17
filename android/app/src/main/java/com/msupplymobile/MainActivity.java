@@ -1,7 +1,6 @@
 package com.msupplymobile;
 
 import com.facebook.react.ReactActivity;
-import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 
