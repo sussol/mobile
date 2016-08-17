@@ -16,6 +16,7 @@ import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
+import { tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 
@@ -241,20 +242,20 @@ const COLUMNS = [
   {
     key: 'code',
     width: 2,
-    title: 'ITEM CODE',
+    title: tableStrings.item_code,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'name',
     width: 6,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'selected',
     width: 1,
-    title: 'SELECTED  ',
+    title: tableStrings.selected,
     sortable: true,
     alignText: 'center',
   },

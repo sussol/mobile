@@ -12,7 +12,7 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
-import { navStrings } from '../localization';
+import { navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -163,24 +163,24 @@ const COLUMNS = [
   {
     key: 'name',
     width: 6,
-    title: 'NAME',
+    title: tableStrings.name,
   },
   {
     key: 'createdDate',
     width: 2,
-    title: 'CREATED DATE',
+    title: tableStrings.created_date,
     sortable: true,
   },
   {
     key: 'status',
     width: 2,
-    title: 'STATUS',
+    title: tableStrings.status,
     sortable: true,
   },
   {
     key: 'selected',
     width: 1,
-    title: 'DELETE',
+    title: tableStrings.delete,
     alignText: 'center',
   },
 ];

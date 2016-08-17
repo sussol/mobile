@@ -11,6 +11,7 @@ import { Expansion } from '../widgets/DataTable';
 import { PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
+import { tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 
@@ -94,19 +95,19 @@ const COLUMNS = [
   {
     key: 'code',
     width: 1,
-    title: 'ITEM CODE',
+    title: tableStrings.item_code,
     sortable: true,
   },
   {
     key: 'name',
     width: 5,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'totalQuantity',
     width: 1,
-    title: 'STOCK ON HAND',
+    title: tableStrings.stock_on_hand,
     sortable: true,
     alignText: 'right',
   },

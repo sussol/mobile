@@ -12,7 +12,7 @@ import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
-import { navStrings } from '../localization';
+import { navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -131,34 +131,34 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 1,
-    title: 'ITEM CODE',
+    title: tableStrings.item_code,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'itemName',
     width: 3,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'snapshotTotalQuantity',
     width: 1,
-    title: 'SNAPSHOT\nQUANTITY',
+    title: tableStrings.snapshot_quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'countedTotalQuantity',
     width: 1,
-    title: 'ACTUAL\nQUANTITY',
+    title: tableStrings.actual_quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'difference',
     width: 1,
-    title: 'DIFFERENCE',
+    title: tableStrings.difference,
     sortable: true,
     alignText: 'right',
   },
