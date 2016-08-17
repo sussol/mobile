@@ -25,6 +25,8 @@ import globalStyles, {
   WARMER_GREY,
 } from '../globalStyles';
 
+import { buttonStrings } from '../localization';
+
 export function MenuPage(props) {
   return (
     <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
@@ -38,13 +40,13 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Customer Invoices"
+            text={buttonStrings.customer_invoices}
             onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Customers"
+            text={buttonStrings.customers}
             onPress={() => props.navigateTo('customers', 'Customers')}
           />
         </View>
@@ -58,13 +60,13 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Supplier Invoices"
+            text={buttonStrings.supplier_invoices}
             onPress={() => props.navigateTo('supplierInvoices', 'Supplier Invoices')}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Requistions"
+            text={buttonStrings.requisitions}
             onPress={() => props.navigateTo('requisitions', 'Requistions')}
           />
         </View>
@@ -78,13 +80,13 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Current Stock"
+            text={buttonStrings.current_stock}
             onPress={() => props.navigateTo('stock', 'Stock')}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Stocktakes"
+            text={buttonStrings.stocktakes}
             onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
           />
           <Button
@@ -104,7 +106,7 @@ export function MenuPage(props) {
           backgroundColor="rgba(255,255,255,0)"
           onPress={props.logOut}
         >
-          <Text style={localStyles.logOutText}>LOG OUT</Text>
+          <Text style={localStyles.logOutText}>{buttonStrings.log_out}</Text>
         </Icon.Button>
       </View>
     </View>
