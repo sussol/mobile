@@ -10,10 +10,10 @@ const CURRENT_LANGUAGE = 'tetum'; // settings not set up for this yet
 
 const strings = {
   en: {
-    login: 'Login',
-    logging_in: 'Logging in...',
-    user_name: 'User Name',
-    password: 'Password',
+    login: 'Login (en)',
+    logging_in: 'Logging in... (en)',
+    user_name: 'User Name (en)',
+    password: 'Password (en)',
   },
   tetum: {
     login: 'Login (t)',
