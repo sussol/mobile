@@ -14,6 +14,13 @@ const strings = {
     sync_in_progress: 'SYNC IN PROGRESS (en)',
     sync_error: 'SYNC ERROR. (en)',
     last_sync: 'LAST SYNC (en)',
+    customer_invoices: 'Customer Invoices (en)',
+    customers: 'Customers (en)',
+    supplier_invoices: 'Supplier Invoices (en)',
+    requisitions: 'Requsisitions (en)',
+    current_stock: 'Current Stock (en)',
+    stocktakes: 'stocktakes (en)',
+    log_out: 'LOG OUT (en)',
   },
   tetum: {
   },
