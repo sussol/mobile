@@ -54,21 +54,21 @@ export class StockPage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Category:',
+          title: `${tableStrings.category}:`,
           info: item.categoryName,
         },
         {
-          title: 'Department:',
+          title: `${tableStrings.department}:`,
           info: item.departmentName,
         },
       ],
       [
         {
-          title: 'Number of batches:',
+          title: `${tableStrings.number_of_batches}:`,
           info: item.batches && item.batches.length,
         },
         {
-          title: 'Earliest expiry:',
+          title: `${tableStrings.earliest_expiry}:`,
           info: item.earliestExpiringBatch
                 && formatDate(item.earliestExpiringBatch.expiryDate),
         },

@@ -13,6 +13,7 @@ import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
+import { tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -349,47 +350,47 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 1,
-    title: 'CODE',
+    title: tableStrings.code,
     sortable: true,
   },
   {
     key: 'itemName',
     width: 4,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'stockOnHand',
     width: 2,
-    title: 'CURRENT STOCK',
+    title: tableStrings.current_stock,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'monthlyUsage',
     width: 2,
-    title: 'MONTHLY USE',
+    title: tableStrings.monthly_usage,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'suggestedQuantity',
     width: 2,
-    title: 'SUGGESTED QTY',
+    title: tableStrings.suggested_quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'requiredQuantity',
     width: 2,
-    title: 'REQUESTED QTY',
+    title: tableStrings.required_quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
-    title: 'REMOVE',
+    title: tableStrings.remove,
     alignText: 'center',
   },
 ];

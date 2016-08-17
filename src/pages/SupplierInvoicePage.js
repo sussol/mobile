@@ -12,6 +12,7 @@ import { PageInfo } from '../widgets';
 import { formatDate, sortDataBy } from '../utilities';
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
+import { tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
@@ -134,26 +135,26 @@ const COLUMNS = [
   {
     key: 'itemName',
     width: 2,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'itemCode',
     width: 1,
-    title: 'CODE',
+    title: tableStrings.item_code,
     sortable: true,
   },
   {
     key: 'totalQuantitySent',
     width: 1,
-    title: 'NUM. SENT',
+    title: tableStrings.number_sent,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'numReceived',
     width: 1,
-    title: 'NUM. RECEIVED',
+    title: tableStrings.number_recieved,
     sortable: true,
     alignText: 'right',
   },

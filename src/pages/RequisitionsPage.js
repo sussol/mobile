@@ -14,7 +14,7 @@ import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings } from '../localization';
+import { navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -158,32 +158,32 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 2,
-    title: 'REQUISITION NUM.',
+    title: tableStrings.requisition_number,
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 1,
-    title: 'DATE ENTERED',
+    title: tableStrings.entered_date,
     sortable: true,
   },
   {
     key: 'numberOfItems',
     width: 1,
-    title: 'ITEMS',
+    title: tableStrings.items,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'status',
     width: 1,
-    title: 'STATUS',
+    title: tableStrings.status,
     sortable: true,
   },
   {
     key: 'delete',
     width: 1,
-    title: 'DELETE',
+    title: tableStrings.delete,
     alignText: 'center',
   },
 ];
