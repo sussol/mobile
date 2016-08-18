@@ -12,7 +12,7 @@ import { PageInfo } from '../widgets';
 import { formatDate, sortDataBy } from '../utilities';
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { tableStrings } from '../localization';
+import { pageInfoStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
@@ -72,21 +72,21 @@ export class SupplierInvoicePage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Entry Date:',
+          title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(transaction.entryDate),
         },
         {
-          title: 'Confirm Date:',
+          title: `${pageInfoStrings.confirm_date}:`,
           info: formatDate(transaction.confirmDate),
         },
       ],
       [
         {
-          title: 'Their Ref:',
+          title: `${pageInfoStrings.their_ref}:`,
           info: transaction.theirRef,
         },
         {
-          title: 'Comment:',
+          title: `${pageInfoStrings.comment}:`,
           info: transaction.comment,
         },
       ],

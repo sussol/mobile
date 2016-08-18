@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -141,31 +141,31 @@ export class CustomerInvoicePage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Entry Date:',
+          title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(this.props.transaction.entryDate),
         },
         {
-          title: 'Confirm Date:',
+          title: `${pageInfoStrings.confirm_date}:`,
           info: formatDate(this.props.transaction.confirmDate),
         },
         {
-          title: 'Entered By:',
+          title: `${pageInfoStrings.entered_by}:`,
           info: this.props.transaction.enteredBy && this.props.transaction.enteredBy.username,
         },
       ],
       [
         {
-          title: 'Customer:',
+          title: `${pageInfoStrings.customer}:`,
           info: this.props.transaction.otherParty && this.props.transaction.otherParty.name,
         },
         {
-          title: 'Their Ref:',
+          title: `${pageInfoStrings.their_ref}:`,
           info: this.props.transaction.theirRef,
           onPress: this.openTheirRefEditor,
           editableType: 'text',
         },
         {
-          title: 'Comment:',
+          title: `${pageInfoStrings.comment}:`,
           info: this.props.transaction.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',

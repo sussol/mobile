@@ -13,7 +13,7 @@ import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { buttonStrings, modalStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -167,23 +167,23 @@ export class RequisitionPage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Entry Date:',
+          title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(this.props.requisition.entryDate),
         },
         {
-          title: 'Entered By:',
+          title: `${pageInfoStrings.entered_by}:`,
           info: this.props.requisition.enteredByName,
         },
       ],
       [
         {
-          title: 'Months Stock Required:',
+          title: `${pageInfoStrings.months_stock_required}:`,
           info: Math.round(this.props.requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
           editableType: 'selectable',
         },
         {
-          title: 'Comment:',
+          title: `${pageInfoStrings.comment}:`,
           info: this.props.requisition.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',

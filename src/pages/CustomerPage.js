@@ -14,7 +14,7 @@ import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, navStrings, tableStrings } from '../localization';
+import { buttonStrings, navStrings, pageInfoStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -85,7 +85,7 @@ export class CustomerPage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Address:',
+          title: `${pageInfoStrings.address}:`,
           info: customer.billingAddress && customer.billingAddress.line1,
         },
         {
@@ -100,7 +100,7 @@ export class CustomerPage extends GenericTablePage {
       ],
       [
         {
-          title: 'Code:',
+          title: `${pageInfoStrings.code}:`,
           info: customer.code,
         },
       ],
