@@ -14,6 +14,7 @@ import {
 import { Button } from '../Button';
 import { BottomModal } from './BottomModal';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
+import { modalStrings } from '../../localization';
 
 export function BottomConfirmModal(props) {
   const { onCancel, onConfirm, questionText, confirmText, cancelText, ...modalProps } = props;
@@ -49,8 +50,8 @@ BottomConfirmModal.propTypes = {
 };
 BottomConfirmModal.defaultProps = {
   style: {},
-  cancelText: 'Cancel',
-  confirmText: 'Confirm',
+  cancelText: modalStrings.cancel,
+  confirmText: modalStrings.confirm,
 };
 
 const localStyles = StyleSheet.create({

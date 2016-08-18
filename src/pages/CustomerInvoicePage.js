@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
-import { buttonStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -282,10 +282,10 @@ export class CustomerInvoicePage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
-            questionText="Are you sure you want to remove these items?"
+            questionText={modalStrings.remove_these_items}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Remove"
+            confirmText={modalStrings.remove}
           />
           <PageContentModal
             isOpen={this.state.pageContentModalIsOpen && !this.props.transaction.isFinalised}
@@ -348,9 +348,9 @@ const COLUMNS = [
  */
 export function checkForFinaliseError(customerInvoice) {
   if (customerInvoice.items.length === 0) {
-    return 'You need to add at least one item before finalising';
+    return modalStrings.add_at_least_one_item_before_finalising;
   } else if (customerInvoice.totalQuantity === 0) {
-    return 'You need to record how much stock to issue before finalising';
+    return modalStrings.record_stock_to_issue_before_finalising;
   }
   return null;
 }

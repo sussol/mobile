@@ -13,7 +13,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, navStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -140,15 +140,15 @@ export class CustomerInvoicesPage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0}
-            questionText="Are you sure you want to delete these invoices?"
+            questionText={modalStrings.delete_these_invoices}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Delete"
+            confirmText={modalStrings.delete}
           />
           <SelectModal
             isOpen={this.state.isCreatingInvoice}
             options={this.props.database.objects('Customer')}
-            placeholderText="Start typing to select customer"
+            placeholderText={modalStrings.start_typing_to_select_customer}
             queryString={'name BEGINSWITH[c] $0'}
             sortByString={'name'}
             onSelect={name => {
@@ -156,7 +156,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
               this.setState({ isCreatingInvoice: false });
             }}
             onClose={() => this.setState({ isCreatingInvoice: false })}
-            title={'Search for the customer'}
+            title={modalStrings.search_for_the_customer}
           />
         </View>
       </View>

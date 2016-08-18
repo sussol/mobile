@@ -322,7 +322,7 @@ export class RequisitionPage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
-            questionText={modalStrings.are_you_sure_you_want_to_remove_these_items}
+            questionText={modalStrings.remove_these_items}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
             confirmText={modalStrings.remove}

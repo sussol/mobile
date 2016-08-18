@@ -12,7 +12,7 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
-import { navStrings, tableStrings } from '../localization';
+import { modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -143,10 +143,10 @@ export class StocktakesPage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={selection.length > 0 && showCurrent}
-            questionText="Are you sure you want to delete these stocktakes?"
+            questionText={modalStrings.delete_these_stocktakes}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Delete"
+            confirmText={modalStrings.delete}
           />
         </View>
       </View>
