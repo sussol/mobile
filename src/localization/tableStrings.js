@@ -41,6 +41,8 @@ const strings = {
     customer: 'CUSTOMER (en)',
     available_stock: 'AVAILABLE STOCK (en)',
     quantity: 'QUANTITY (en)',
+    invoices: 'INVOICES (en)',
+    id: 'ID (en)',
   },
   tetum: {
   },
