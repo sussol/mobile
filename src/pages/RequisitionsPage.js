@@ -14,7 +14,7 @@ import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings, tableStrings } from '../localization';
+import { buttonStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -130,7 +130,7 @@ export class RequisitionsPage extends GenericTablePage {
               {this.renderSearchBar()}
             </View>
             <PageButton
-              text="New Requisition"
+              text={buttonStrings.new_requisition}
               onPress={this.onNewRequisition}
             />
           </View>

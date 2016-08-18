@@ -13,7 +13,7 @@ import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { tableStrings } from '../localization';
+import { buttonStrings, modalStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -155,11 +155,11 @@ export class RequisitionPage extends GenericTablePage {
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
-        return 'Search for an item to add';
+        return modalStrings.search_for_an_item_to_add;
       case COMMENT_EDIT:
-        return 'Edit the requisition comment';
+        return modalStrings.edit_the_requisition_comment;
       case MONTHS_SELECT:
-        return 'Select the number of months stock required';
+        return modalStrings.select_the_number_of_months_stock_required;
     }
   }
 
@@ -290,14 +290,14 @@ export class RequisitionPage extends GenericTablePage {
               <View style={globalStyles.verticalContainer}>
                 <PageButton
                   style={globalStyles.topButton}
-                  text="Create Automatic Order"
+                  text={buttonStrings.create_automatic_order}
                   loadingText="Creating..."
                   onPress={this.onCreateAutomaticOrder}
                   isDisabled={this.props.requisition.isFinalised}
                 />
                 <PageButton
                   style={globalStyles.leftButton}
-                  text="Use Suggested Quantities"
+                  text={buttonStrings.use_suggested_quantities}
                   loadingText="Copying Quantities..."
                   onPress={this.onUseSuggestedQuantities}
                   isDisabled={this.props.requisition.isFinalised}
@@ -306,12 +306,12 @@ export class RequisitionPage extends GenericTablePage {
               <View style={globalStyles.verticalContainer}>
                 <PageButton
                   style={globalStyles.topButton}
-                  text="New Item"
+                  text={buttonStrings.new_item}
                   onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
                   isDisabled={this.props.requisition.isFinalised}
                 />
                 <PageButton
-                  text="Add Master List Items"
+                  text={buttonStrings.add_master_list_items}
                   loadingText="Adding..."
                   onPress={this.onAddMasterItems}
                   isDisabled={this.props.requisition.isFinalised}
@@ -322,10 +322,10 @@ export class RequisitionPage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
-            questionText="Are you sure you want to remove these items?"
+            questionText={modalStrings.are_you_sure_you_want_to_remove_these_items}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Remove"
+            confirmText={modalStrings.remove}
           />
           <PageContentModal
             isOpen={this.state.pageContentModalIsOpen && !this.props.requisition.isFinalised}
@@ -403,9 +403,9 @@ const COLUMNS = [
  */
 export function checkForFinaliseError(requisition) {
   if (requisition.items.length === 0) {
-    return 'You need to add at least one item before finalising';
+    return modalStrings.add_at_least_one_item_before_finalising;
   } else if (requisition.totalRequiredQuantity === 0) {
-    return 'You need to record how much stock is required before finalising';
+    return modalStrings.record_stock_required_before_finalising;
   }
   return null;
 }

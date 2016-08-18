@@ -14,7 +14,7 @@ import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings, tableStrings } from '../localization';
+import { buttonStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -133,7 +133,7 @@ export class CustomerPage extends GenericTablePage {
               {this.renderPageInfo()}
             </View>
             <PageButton
-              text="New Invoice"
+              text={buttonStrings.new_invoice}
               loadingText="Creating..."
               onPress={this.onNewInvoice}
             />

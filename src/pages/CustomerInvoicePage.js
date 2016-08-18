@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
-import { tableStrings } from '../localization';
+import { buttonStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -267,12 +267,12 @@ export class CustomerInvoicePage extends GenericTablePage {
             <View style={globalStyles.verticalContainer}>
               <PageButton
                 style={globalStyles.topButton}
-                text="New Item"
+                text={buttonStrings.new_item}
                 onPress={this.openItemSelector}
                 isDisabled={this.props.transaction.isFinalised}
               />
               <PageButton
-                text="Add Master List Items"
+                text={buttonStrings.add_master_list_items}
                 loadingText="Adding..."
                 onPress={this.onAddMasterItems}
                 isDisabled={this.props.transaction.isFinalised}
