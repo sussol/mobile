@@ -129,11 +129,11 @@ export class CustomerInvoicePage extends GenericTablePage {
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
-        return 'Search for an item to add';
+        return modalStrings.search_for_an_item_to_add;
       case COMMENT_EDIT:
-        return 'Edit the invoice comment';
+        return modalStrings.edit_the_invoice_comment;
       case THEIR_REF_EDIT:
-        return 'Edit their reference';
+        return modalStrings.edit_their_reference;
     }
   }
 

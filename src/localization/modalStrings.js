@@ -36,7 +36,9 @@ const strings = {
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items (en)",
     following_items_reduced_more_than_available_stock: 'The following items have been reduced by more than the available stock: (en)',
     and: 'and (en)',
-    more: 'more',
+    more: 'more (en)',
+    edit_the_invoice_comment: 'Edit the invoice comment (en)',
+    edit_their_reference: 'Edit their reference (en)',
   },
   tetum: {
   },
