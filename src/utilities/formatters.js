@@ -1,3 +1,5 @@
+import { tableStrings } from '../localization';
+
 export function formatDate(date, format) {
   if (!date || typeof date !== 'object') return null;
   switch (format) {
@@ -21,9 +23,9 @@ export function formatDateAndTime(date, format) {
 export function formatStatus(status) {
   switch (status) {
     case 'finalised':
-      return 'Finalised';
+      return tableStrings.finalised;
     default:
-      return 'In Progress';
+      return tableStrings.in_progress;
   }
 }
 
