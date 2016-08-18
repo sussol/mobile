@@ -25,6 +25,8 @@ import globalStyles, {
   WARMER_GREY,
 } from '../globalStyles';
 
+import { navStrings } from '../localization';
+
 export function MenuPage(props) {
   return (
     <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
@@ -38,14 +40,14 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Customer Invoices"
-            onPress={() => props.navigateTo('customerInvoices', 'Customer Invoices')}
+            text={navStrings.customer_invoices}
+            onPress={() => props.navigateTo('customerInvoices', navStrings.customer_invoices)}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Customers"
-            onPress={() => props.navigateTo('customers', 'Customers')}
+            text={navStrings.customers}
+            onPress={() => props.navigateTo('customers', navStrings.customers)}
           />
         </View>
 
@@ -58,14 +60,14 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Supplier Invoices"
-            onPress={() => props.navigateTo('supplierInvoices', 'Supplier Invoices')}
+            text={navStrings.supplier_invoices}
+            onPress={() => props.navigateTo('supplierInvoices', navStrings.supplier_invoices)}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Requistions"
-            onPress={() => props.navigateTo('requisitions', 'Requistions')}
+            text={navStrings.requisitions}
+            onPress={() => props.navigateTo('requisitions', navStrings.requisitions)}
           />
         </View>
 
@@ -78,14 +80,14 @@ export function MenuPage(props) {
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Current Stock"
-            onPress={() => props.navigateTo('stock', 'Stock')}
+            text={navStrings.current_stock}
+            onPress={() => props.navigateTo('stock', navStrings.current_stock)}
           />
           <Button
             style={globalStyles.menuButton}
             textStyle={globalStyles.menuButtonText}
-            text="Stocktakes"
-            onPress={() => props.navigateTo('stocktakes', 'Stocktakes')}
+            text={navStrings.stocktakes}
+            onPress={() => props.navigateTo('stocktakes', navStrings.stocktakes)}
           />
           <Button
             style={globalStyles.menuButton}
@@ -104,7 +106,7 @@ export function MenuPage(props) {
           backgroundColor="rgba(255,255,255,0)"
           onPress={props.logOut}
         >
-          <Text style={localStyles.logOutText}>LOG OUT</Text>
+          <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
         </Icon.Button>
       </View>
     </View>

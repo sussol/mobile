@@ -12,6 +12,7 @@ import { PageInfo } from '../widgets';
 import { formatDate, sortDataBy } from '../utilities';
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
+import { pageInfoStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
@@ -71,21 +72,21 @@ export class SupplierInvoicePage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Entry Date:',
+          title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(transaction.entryDate),
         },
         {
-          title: 'Confirm Date:',
+          title: `${pageInfoStrings.confirm_date}:`,
           info: formatDate(transaction.confirmDate),
         },
       ],
       [
         {
-          title: 'Their Ref:',
+          title: `${pageInfoStrings.their_ref}:`,
           info: transaction.theirRef,
         },
         {
-          title: 'Comment:',
+          title: `${pageInfoStrings.comment}:`,
           info: transaction.comment,
         },
       ],
@@ -132,28 +133,28 @@ SupplierInvoicePage.propTypes = {
 
 const COLUMNS = [
   {
-    key: 'itemName',
-    width: 2,
-    title: 'ITEM NAME',
+    key: 'itemCode',
+    width: 1,
+    title: tableStrings.item_code,
     sortable: true,
   },
   {
-    key: 'itemCode',
-    width: 1,
-    title: 'CODE',
+    key: 'itemName',
+    width: 2,
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'totalQuantitySent',
     width: 1,
-    title: 'NUM. SENT',
+    title: tableStrings.number_sent,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'numReceived',
     width: 1,
-    title: 'NUM. RECEIVED',
+    title: tableStrings.number_recieved,
     sortable: true,
     alignText: 'right',
   },

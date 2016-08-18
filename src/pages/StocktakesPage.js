@@ -12,6 +12,7 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -47,7 +48,7 @@ export class StocktakesPage extends GenericTablePage {
   }
 
   onNewStockTake() {
-    this.props.navigateTo('stocktakeManager', 'New Stocktake');
+    this.props.navigateTo('stocktakeManager', navStrings.new_stocktake);
   }
 
   onDeleteConfirm() {
@@ -120,12 +121,12 @@ export class StocktakesPage extends GenericTablePage {
               toggleOnStyle={globalStyles.toggleOptionSelected}
               toggles={[
                 {
-                  text: 'Current',
+                  text: buttonStrings.current,
                   onPress: () => this.onToggleStatusFilter(true),
                   isOn: showCurrent,
                 },
                 {
-                  text: 'Past',
+                  text: buttonStrings.past,
                   onPress: () => this.onToggleStatusFilter(false),
                   isOn: !showCurrent,
                 },
@@ -133,7 +134,7 @@ export class StocktakesPage extends GenericTablePage {
             />
             <View style={localStyles.buttonViewTop}>
               <PageButton
-                text="New StockTake"
+                text={buttonStrings.new_stocktake}
                 loadingText="Creating..."
                 onPress={this.onNewStockTake}
               />
@@ -142,10 +143,10 @@ export class StocktakesPage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={selection.length > 0 && showCurrent}
-            questionText="Are you sure you want to delete these stocktakes?"
+            questionText={modalStrings.delete_these_stocktakes}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Delete"
+            confirmText={modalStrings.delete}
           />
         </View>
       </View>
@@ -162,24 +163,24 @@ const COLUMNS = [
   {
     key: 'name',
     width: 6,
-    title: 'NAME',
+    title: tableStrings.name,
   },
   {
     key: 'createdDate',
     width: 2,
-    title: 'CREATED DATE',
+    title: tableStrings.created_date,
     sortable: true,
   },
   {
     key: 'status',
     width: 2,
-    title: 'STATUS',
+    title: tableStrings.status,
     sortable: true,
   },
   {
     key: 'selected',
     width: 1,
-    title: 'DELETE',
+    title: tableStrings.delete,
     alignText: 'center',
   },
 ];

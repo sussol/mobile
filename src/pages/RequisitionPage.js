@@ -13,6 +13,7 @@ import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -154,11 +155,11 @@ export class RequisitionPage extends GenericTablePage {
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
-        return 'Search for an item to add';
+        return modalStrings.search_for_an_item_to_add;
       case COMMENT_EDIT:
-        return 'Edit the requisition comment';
+        return modalStrings.edit_the_requisition_comment;
       case MONTHS_SELECT:
-        return 'Select the number of months stock required';
+        return modalStrings.select_the_number_of_months_stock_required;
     }
   }
 
@@ -166,23 +167,23 @@ export class RequisitionPage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Entry Date:',
+          title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(this.props.requisition.entryDate),
         },
         {
-          title: 'Entered By:',
+          title: `${pageInfoStrings.entered_by}:`,
           info: this.props.requisition.enteredByName,
         },
       ],
       [
         {
-          title: 'Months Stock Required:',
+          title: `${pageInfoStrings.months_stock_required}:`,
           info: Math.round(this.props.requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
           editableType: 'selectable',
         },
         {
-          title: 'Comment:',
+          title: `${pageInfoStrings.comment}:`,
           info: this.props.requisition.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
@@ -289,14 +290,14 @@ export class RequisitionPage extends GenericTablePage {
               <View style={globalStyles.verticalContainer}>
                 <PageButton
                   style={globalStyles.topButton}
-                  text="Create Automatic Order"
+                  text={buttonStrings.create_automatic_order}
                   loadingText="Creating..."
                   onPress={this.onCreateAutomaticOrder}
                   isDisabled={this.props.requisition.isFinalised}
                 />
                 <PageButton
                   style={globalStyles.leftButton}
-                  text="Use Suggested Quantities"
+                  text={buttonStrings.use_suggested_quantities}
                   loadingText="Copying Quantities..."
                   onPress={this.onUseSuggestedQuantities}
                   isDisabled={this.props.requisition.isFinalised}
@@ -305,12 +306,12 @@ export class RequisitionPage extends GenericTablePage {
               <View style={globalStyles.verticalContainer}>
                 <PageButton
                   style={globalStyles.topButton}
-                  text="New Item"
+                  text={buttonStrings.new_item}
                   onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
                   isDisabled={this.props.requisition.isFinalised}
                 />
                 <PageButton
-                  text="Add Master List Items"
+                  text={buttonStrings.add_master_list_items}
                   loadingText="Adding..."
                   onPress={this.onAddMasterItems}
                   isDisabled={this.props.requisition.isFinalised}
@@ -321,10 +322,10 @@ export class RequisitionPage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
-            questionText="Are you sure you want to remove these items?"
+            questionText={modalStrings.remove_these_items}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Remove"
+            confirmText={modalStrings.remove}
           />
           <PageContentModal
             isOpen={this.state.pageContentModalIsOpen && !this.props.requisition.isFinalised}
@@ -349,47 +350,47 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 1,
-    title: 'CODE',
+    title: tableStrings.code,
     sortable: true,
   },
   {
     key: 'itemName',
     width: 4,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'stockOnHand',
     width: 2,
-    title: 'CURRENT STOCK',
+    title: tableStrings.current_stock,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'monthlyUsage',
     width: 2,
-    title: 'MONTHLY USE',
+    title: tableStrings.monthly_usage,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'suggestedQuantity',
     width: 2,
-    title: 'SUGGESTED QTY',
+    title: tableStrings.suggested_quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'requiredQuantity',
     width: 2,
-    title: 'REQUESTED QTY',
+    title: tableStrings.required_quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
-    title: 'REMOVE',
+    title: tableStrings.remove,
     alignText: 'center',
   },
 ];
@@ -402,9 +403,9 @@ const COLUMNS = [
  */
 export function checkForFinaliseError(requisition) {
   if (requisition.items.length === 0) {
-    return 'You need to add at least one item before finalising';
+    return modalStrings.add_at_least_one_item_before_finalising;
   } else if (requisition.totalRequiredQuantity === 0) {
-    return 'You need to record how much stock is required before finalising';
+    return modalStrings.record_stock_required_before_finalising;
   }
   return null;
 }

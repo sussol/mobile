@@ -14,6 +14,7 @@ import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -78,7 +79,7 @@ export class RequisitionsPage extends GenericTablePage {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
       'requisition',
-      `Requisition ${requisition.serialNumber}`,
+      `${navStrings.requisition} ${requisition.serialNumber}`,
       { requisition: requisition },
     );
   }
@@ -129,17 +130,17 @@ export class RequisitionsPage extends GenericTablePage {
               {this.renderSearchBar()}
             </View>
             <PageButton
-              text="New Requisition"
+              text={buttonStrings.new_requisition}
               onPress={this.onNewRequisition}
             />
           </View>
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0}
-            questionText="Are you sure you want to delete these requsitions?"
+            questionText={modalStrings.delete_these_requisitions}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Delete"
+            confirmText={modalStrings.delete}
           />
         </View>
       </View>
@@ -157,32 +158,32 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 2,
-    title: 'REQUISITION NUM.',
+    title: tableStrings.requisition_number,
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 1,
-    title: 'DATE ENTERED',
+    title: tableStrings.entered_date,
     sortable: true,
   },
   {
     key: 'numberOfItems',
     width: 1,
-    title: 'ITEMS',
+    title: tableStrings.items,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'status',
     width: 1,
-    title: 'STATUS',
+    title: tableStrings.status,
     sortable: true,
   },
   {
     key: 'delete',
     width: 1,
-    title: 'DELETE',
+    title: tableStrings.delete,
     alignText: 'center',
   },
 ];

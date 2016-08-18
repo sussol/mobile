@@ -13,6 +13,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -78,7 +79,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   navigateToInvoice(invoice) {
     this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
     this.props.navigateTo('customerInvoice',
-                          `Invoice ${invoice.serialNumber}`,
+                          `${navStrings.invoice} ${invoice.serialNumber}`,
                           { transaction: invoice });
   }
 
@@ -131,7 +132,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
               {this.renderSearchBar()}
             </View>
             <PageButton
-              text="New Invoice"
+              text={buttonStrings.new_invoice}
               loadingText="Creating..."
               onPress={() => this.setState({ isCreatingInvoice: true })}
             />
@@ -139,15 +140,15 @@ export class CustomerInvoicesPage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0}
-            questionText="Are you sure you want to delete these invoices?"
+            questionText={modalStrings.delete_these_invoices}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Delete"
+            confirmText={modalStrings.delete}
           />
           <SelectModal
             isOpen={this.state.isCreatingInvoice}
             options={this.props.database.objects('Customer')}
-            placeholderText="Start typing to select customer"
+            placeholderText={modalStrings.start_typing_to_select_customer}
             queryString={'name BEGINSWITH[c] $0'}
             sortByString={'name'}
             onSelect={name => {
@@ -155,7 +156,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
               this.setState({ isCreatingInvoice: false });
             }}
             onClose={() => this.setState({ isCreatingInvoice: false })}
-            title={'Search for the customer'}
+            title={modalStrings.search_for_the_customer}
           />
         </View>
       </View>
@@ -174,37 +175,37 @@ const COLUMNS = [
   {
     key: 'otherPartyName',
     width: 3,
-    title: 'CUSTOMER',
+    title: tableStrings.customer,
     sortable: true,
   },
   {
     key: 'serialNumber',
     width: 1,
-    title: 'INVOICE\nNUMBER',
+    title: tableStrings.invoice_number,
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: 'STATUS',
+    title: tableStrings.status,
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 2,
-    title: 'ENTERED DATE',
+    title: tableStrings.entered_date,
     sortable: true,
   },
   {
     key: 'comment',
     width: 3,
-    title: 'COMMENT',
+    title: tableStrings.comment,
     lines: 2,
   },
   {
     key: 'delete',
     width: 1,
-    title: 'DELETE',
+    title: tableStrings.delete,
     alignText: 'center',
   },
 ];

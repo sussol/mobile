@@ -14,6 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -128,11 +129,11 @@ export class CustomerInvoicePage extends GenericTablePage {
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
-        return 'Search for an item to add';
+        return modalStrings.search_for_an_item_to_add;
       case COMMENT_EDIT:
-        return 'Edit the invoice comment';
+        return modalStrings.edit_the_invoice_comment;
       case THEIR_REF_EDIT:
-        return 'Edit their reference';
+        return modalStrings.edit_their_reference;
     }
   }
 
@@ -140,31 +141,31 @@ export class CustomerInvoicePage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Entry Date:',
+          title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(this.props.transaction.entryDate),
         },
         {
-          title: 'Confirm Date:',
+          title: `${pageInfoStrings.confirm_date}:`,
           info: formatDate(this.props.transaction.confirmDate),
         },
         {
-          title: 'Entered By:',
+          title: `${pageInfoStrings.entered_by}:`,
           info: this.props.transaction.enteredBy && this.props.transaction.enteredBy.username,
         },
       ],
       [
         {
-          title: 'Customer:',
+          title: `${pageInfoStrings.customer}:`,
           info: this.props.transaction.otherParty && this.props.transaction.otherParty.name,
         },
         {
-          title: 'Their Ref:',
+          title: `${pageInfoStrings.their_ref}:`,
           info: this.props.transaction.theirRef,
           onPress: this.openTheirRefEditor,
           editableType: 'text',
         },
         {
-          title: 'Comment:',
+          title: `${pageInfoStrings.comment}:`,
           info: this.props.transaction.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
@@ -266,12 +267,12 @@ export class CustomerInvoicePage extends GenericTablePage {
             <View style={globalStyles.verticalContainer}>
               <PageButton
                 style={globalStyles.topButton}
-                text="New Item"
+                text={buttonStrings.new_item}
                 onPress={this.openItemSelector}
                 isDisabled={this.props.transaction.isFinalised}
               />
               <PageButton
-                text="Add Master List Items"
+                text={buttonStrings.add_master_list_items}
                 loadingText="Adding..."
                 onPress={this.onAddMasterItems}
                 isDisabled={this.props.transaction.isFinalised}
@@ -281,10 +282,10 @@ export class CustomerInvoicePage extends GenericTablePage {
           {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
-            questionText="Are you sure you want to remove these items?"
+            questionText={modalStrings.remove_these_items}
             onCancel={() => this.onDeleteCancel()}
             onConfirm={() => this.onDeleteConfirm()}
-            confirmText="Remove"
+            confirmText={modalStrings.remove}
           />
           <PageContentModal
             isOpen={this.state.pageContentModalIsOpen && !this.props.transaction.isFinalised}
@@ -308,33 +309,33 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 2,
-    title: 'CODE',
+    title: tableStrings.item_code,
     sortable: true,
   },
   {
     key: 'itemName',
     width: 4,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'availableQuantity',
     width: 2,
-    title: 'AVAILABLE STOCK',
+    title: tableStrings.available_stock,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'totalQuantity',
     width: 2,
-    title: 'QUANTITY',
+    title: tableStrings.quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
-    title: 'REMOVE',
+    title: tableStrings.remove,
     alignText: 'center',
   },
 ];
@@ -347,9 +348,9 @@ const COLUMNS = [
  */
 export function checkForFinaliseError(customerInvoice) {
   if (customerInvoice.items.length === 0) {
-    return 'You need to add at least one item before finalising';
+    return modalStrings.add_at_least_one_item_before_finalising;
   } else if (customerInvoice.totalQuantity === 0) {
-    return 'You need to record how much stock to issue before finalising';
+    return modalStrings.record_stock_to_issue_before_finalising;
   }
   return null;
 }
