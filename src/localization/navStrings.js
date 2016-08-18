@@ -13,6 +13,8 @@ const strings = {
     current_stock: 'Current Stock (en)',
     customer_invoices: 'Customer Invoices (en)',
     customers: 'Customers (en)',
+    finalise: 'FINALISE (en)',
+    finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED (en)',
     invoice: 'Invoice (en)',
     last_sync: 'LAST SYNC (en)',
     log_out: 'LOG OUT (en)',
