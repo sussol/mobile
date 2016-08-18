@@ -25,7 +25,7 @@ const strings = {
     stocktakes: 'stocktakes (en)',
     supplier_invoices: 'Supplier Invoices (en)',
     sync_enabled: 'SYNC ENABLED (en)',
-    sync_error: 'SYNC ERROR. (en)',
+    sync_error: 'SYNC ERROR (en)',
     sync_in_progress: 'SYNC IN PROGRESS (en)',
   },
   tetum: {

@@ -43,6 +43,7 @@ const strings = {
     status: 'STATUS (en)',
     stock_on_hand: 'STOCK ON HAND (en)',
     suggested_quantity: 'SUGGESTED QTY (en)',
+    no_change: 'No change (en)',
   },
   tetum: {
   },

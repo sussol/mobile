@@ -31,7 +31,7 @@ export function SyncState(props) {
   } else if (props.syncError && props.syncError.length > 0) {
     const lastSync = props.settings ? props.settings.get(SETTINGS.SYNC_LAST_SUCCESS) : '';
     text = navStrings.sync_error;
-    if (lastSync) text = `${text} ${navStrings.last_sync} ${lastSync}`;
+    if (lastSync) text = `${text}. ${navStrings.last_sync} ${lastSync}`;
     cloudColor = INACTIVE_COLOR;
     arrowsColor = INACTIVE_COLOR;
     wifiColor = INACTIVE_COLOR;

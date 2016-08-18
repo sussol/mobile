@@ -12,6 +12,8 @@ const strings = {
   en: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising (en)',
     remove_these_items: 'Are you sure you want to remove these items? (en)',
+    create: 'Create (en)',
+    give_your_stocktake_a_name: 'Give your stocktake a name (en)',
     delete: 'Delete (en)',
     delete_these_invoices: 'Are you sure you want to delete these invoices? (en)',
     delete_these_requisitions: 'Are you sure you want to delete these requisitions? (en)',
@@ -31,6 +33,10 @@ const strings = {
     got_it: 'Got it (en)',
     start_typing_to_select_customer: 'Start typing to select customer (en)',
     search_for_the_customer: 'Search for the customer (en)',
+    stocktake_no_counted_items: "Can't finalise a stocktake with no counted items (en)",
+    following_items_reduced_more_than_available_stock: 'The following items have been reduced by more than the available stock: (en)',
+    and: 'and (en)',
+    more: 'more',
   },
   tetum: {
   },

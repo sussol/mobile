@@ -12,7 +12,7 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
-import { modalStrings, navStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -121,12 +121,12 @@ export class StocktakesPage extends GenericTablePage {
               toggleOnStyle={globalStyles.toggleOptionSelected}
               toggles={[
                 {
-                  text: 'Current',
+                  text: buttonStrings.current,
                   onPress: () => this.onToggleStatusFilter(true),
                   isOn: showCurrent,
                 },
                 {
-                  text: 'Past',
+                  text: buttonStrings.past,
                   onPress: () => this.onToggleStatusFilter(false),
                   isOn: !showCurrent,
                 },
@@ -134,7 +134,7 @@ export class StocktakesPage extends GenericTablePage {
             />
             <View style={localStyles.buttonViewTop}>
               <PageButton
-                text="New StockTake"
+                text={buttonStrings.new_stocktake}
                 loadingText="Creating..."
                 onPress={this.onNewStockTake}
               />
