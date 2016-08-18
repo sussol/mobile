@@ -133,15 +133,15 @@ SupplierInvoicePage.propTypes = {
 
 const COLUMNS = [
   {
-    key: 'itemName',
-    width: 2,
-    title: tableStrings.item_name,
-    sortable: true,
-  },
-  {
     key: 'itemCode',
     width: 1,
     title: tableStrings.item_code,
+    sortable: true,
+  },
+  {
+    key: 'itemName',
+    width: 2,
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
