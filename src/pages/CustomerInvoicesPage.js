@@ -13,7 +13,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings } from '../localization';
+import { navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -175,37 +175,37 @@ const COLUMNS = [
   {
     key: 'otherPartyName',
     width: 3,
-    title: 'CUSTOMER',
+    title: tableStrings.customer,
     sortable: true,
   },
   {
     key: 'serialNumber',
     width: 1,
-    title: 'INVOICE\nNUMBER',
+    title: tableStrings.invoice_number,
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: 'STATUS',
+    title: tableStrings.status,
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 2,
-    title: 'ENTERED DATE',
+    title: tableStrings.entered_date,
     sortable: true,
   },
   {
     key: 'comment',
     width: 3,
-    title: 'COMMENT',
+    title: tableStrings.comment,
     lines: 2,
   },
   {
     key: 'delete',
     width: 1,
-    title: 'DELETE',
+    title: tableStrings.delete,
     alignText: 'center',
   },
 ];

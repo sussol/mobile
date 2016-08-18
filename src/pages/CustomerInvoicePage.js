@@ -14,6 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
+import { tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -308,33 +309,33 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 2,
-    title: 'CODE',
+    title: tableStrings.item_code,
     sortable: true,
   },
   {
     key: 'itemName',
     width: 4,
-    title: 'ITEM NAME',
+    title: tableStrings.item_name,
     sortable: true,
   },
   {
     key: 'availableQuantity',
     width: 2,
-    title: 'AVAILABLE STOCK',
+    title: tableStrings.available_stock,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'totalQuantity',
     width: 2,
-    title: 'QUANTITY',
+    title: tableStrings.quantity,
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
-    title: 'REMOVE',
+    title: tableStrings.remove,
     alignText: 'center',
   },
 ];
