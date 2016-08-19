@@ -12,16 +12,15 @@ import {
 } from 'react-native';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 
-import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
+import globalStyles, { BACKGROUND_COLOR, DARK_GREY } from './globalStyles';
 
 import { Navigator } from './navigation';
-
+import { Spinner } from './widgets/Spinner';
 import { PAGES, FINALISABLE_PAGES } from './pages';
 
 import {
   FinaliseButton,
   FinaliseModal,
-  LoadingModal,
   LoginModal,
   SyncState,
 } from './widgets';
@@ -55,7 +54,7 @@ export default class mSupplyMobileApp extends React.Component {
       syncError: '',
       lastSync: null, // Date of the last successful sync
       finaliseItem: null,
-      isLoading: false,
+      progress: -1.0, // Progress bar shows when progress >= 0
     };
   }
 
@@ -63,7 +62,7 @@ export default class mSupplyMobileApp extends React.Component {
     this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
-    this.setIsLoading = this.setIsLoading.bind(this);
+    this.runWithLoadingIndicator = this.runWithLoadingIndicator.bind(this);
     this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
@@ -89,12 +88,16 @@ export default class mSupplyMobileApp extends React.Component {
     this.setState({ initialised: true });
   }
 
-/*
- * @arg {boolean} newValue  If true will cause LoadingModal to render
- */
-  setIsLoading(newValue) {
-    console.log('function was called');
-    this.setState({ isLoading: newValue });
+  setProgress(progress) {
+    this.setState({ progress: progress });
+  }
+
+  async runWithLoadingIndicator(functionToRun) {
+    await new Promise((resolve) => {
+      this.setState({ progress: 0.0 }, () => setTimeout(resolve, 100));
+    });
+    functionToRun(this.setProgress);
+    this.setState({ progress: -1.0 });
   }
 
   async synchronize() {
@@ -162,7 +165,7 @@ export default class mSupplyMobileApp extends React.Component {
         settings={this.settings}
         logOut={this.logOut}
         currentUser={this.state.currentUser}
-        setIsLoading={this.setIsLoading}
+        runWithLoadingIndicator={this.runWithLoadingIndicator}
         {...extraProps}
       />);
   }
@@ -175,6 +178,25 @@ export default class mSupplyMobileApp extends React.Component {
         settings={this.settings}
       />
     );
+  }
+
+  renderLoadingIndicator() {
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: DARK_GREY,
+          opacity: 0.88,
+        }}
+      >
+        <Spinner isSpinning={this.state.progress >= 0.0} />
+      </View>);
   }
 
   render() {
@@ -202,7 +224,7 @@ export default class mSupplyMobileApp extends React.Component {
           onClose={() => this.setState({ confirmFinalise: false })}
           finaliseItem={this.state.finaliseItem}
           user={this.state.currentUser}
-          setIsLoading={this.setIsLoading}
+          runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
@@ -210,7 +232,7 @@ export default class mSupplyMobileApp extends React.Component {
           isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
-        <LoadingModal isOpen={this.state.isLoading} />
+        {this.state.progress >= 0.0 && this.renderLoadingIndicator()}
       </View>
     );
   }

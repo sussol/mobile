@@ -41,11 +41,12 @@
   },
   "dependencies": {
     "base-64": "^0.1.0",
-    "react": "^15.2.1",
-    "react-dom": "^15.2.1",
-    "react-native": "^0.30.0",
+    "react": "^15.3.1-rc.2",
+    "react-dom": "^15.3.1-rc.2",
+    "react-native": "github:facebook/react-native#master",
     "react-native-autocomplete-input": "^1.1.0",
     "react-native-modalbox": "edmofro/react-native-modalbox",
+    "react-native-progress": "^3.0.1",
     "react-native-uuid": "^1.4.8",
     "react-native-vector-icons": "^2.0.2",
     "realm": "^0.14.1",
@@ -70,7 +71,7 @@
     "flow-bin": "^0.28.0",
     "jest-cli": "^13.2.3",
     "promise-sync-es6": "0.0.4",
-    "react-addons-test-utils": "^15.2.1",
+    "react-addons-test-utils": "^15.3.1-rc.2",
     "react-native-mock": "0.2.4",
     "sinon": "^1.17.3"
   }
