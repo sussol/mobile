@@ -15,7 +15,7 @@ import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
 import { Translator } from '../localization';
 
-const { buttonStrings, modalStrings, navStrings, tableStrings } = Translator;
+const { buttonStrings, modalStrings, navStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**
@@ -176,37 +176,37 @@ const COLUMNS = [
   {
     key: 'otherPartyName',
     width: 3,
-    title: tableStrings.customer,
+    title: 'customer',
     sortable: true,
   },
   {
     key: 'serialNumber',
     width: 1,
-    title: tableStrings.invoice_number,
+    title: 'invoice_number',
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: tableStrings.status,
+    title: 'status',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 2,
-    title: tableStrings.entered_date,
+    title: 'entered_date',
     sortable: true,
   },
   {
     key: 'comment',
     width: 3,
-    title: tableStrings.comment,
+    title: 'comment',
     lines: 2,
   },
   {
     key: 'delete',
     width: 1,
-    title: tableStrings.delete,
+    title: 'delete',
     alignText: 'center',
   },
 ];

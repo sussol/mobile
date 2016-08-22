@@ -5,7 +5,9 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-export const pageInfoStrings = {
+import LocalizedStrings from 'react-native-localization';
+
+export const pageInfoStrings = new LocalizedStrings({
   en: {
     address: 'Address',
     code: 'Code',
@@ -18,5 +20,14 @@ export const pageInfoStrings = {
     their_ref: 'Their Ref',
   },
   tetum: {
+    address: 'Address (t)',
+    code: 'Code (t)',
+    comment: 'Comment (t)',
+    confirm_date: 'Confirm Date (t)',
+    customer: 'Customer (t)',
+    entered_by: 'Entered By (t)',
+    entry_date: 'Entry Date (t)',
+    months_stock_required: 'Months Stock Required (t)',
+    their_ref: 'Their Ref (t)',
   },
-};
+});

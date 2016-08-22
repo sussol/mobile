@@ -42,6 +42,8 @@ export default class mSupplyMobileApp extends React.Component {
     const database = new Database(schema);
     this.database = new UIDatabase(database);
     this.settings = new Settings(this.database);
+    Translator.setCurrentLanguage(this.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE));
+    console.log(`app constructor: ${Translator.time}`);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
     this.synchronizer = new Synchronizer(database, syncAuthenticator, this.settings);
@@ -59,9 +61,6 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   componentWillMount() {
-    Translator.currentLanguage = this.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE);
-    console.log(`App start: ${Translator.currentLanguage}`);
-    console.log(Translator.time);
     this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
@@ -171,7 +170,6 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   render() {
-    console.log(`In the render ${Translator.currentLanguage}`);
     if (!this.state.initialised) {
       const FirstUsePage = PAGES.firstUse;
       return (

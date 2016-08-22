@@ -16,7 +16,7 @@ import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { Translator } from '../localization';
 
-const { buttonStrings, modalStrings, navStrings, tableStrings } = Translator;
+const { buttonStrings, modalStrings, navStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
 /**
@@ -159,32 +159,32 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 2,
-    title: tableStrings.requisition_number,
+    title: 'requisition_number',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 1,
-    title: tableStrings.entered_date,
+    title: 'entered_date',
     sortable: true,
   },
   {
     key: 'numberOfItems',
     width: 1,
-    title: tableStrings.items,
+    title: 'items',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'status',
     width: 1,
-    title: tableStrings.status,
+    title: 'status',
     sortable: true,
   },
   {
     key: 'delete',
     width: 1,
-    title: tableStrings.delete,
+    title: 'delete',
     alignText: 'center',
   },
 ];

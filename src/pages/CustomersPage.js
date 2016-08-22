@@ -8,9 +8,7 @@
 import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
 import { sortDataBy } from '../utilities';
-import { Translator } from '../localization';
 
-const { tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Name'];
 
 /**
@@ -81,19 +79,19 @@ const COLUMNS = [
   {
     key: 'code',
     width: 1,
-    title: tableStrings.code,
+    title: 'code',
     sortable: true,
   },
   {
     key: 'name',
     width: 5,
-    title: tableStrings.name,
+    title: 'name',
     sortable: true,
   },
   {
     key: 'numberOfTransactions',
     width: 1,
-    title: tableStrings.invoices,
+    title: 'invoices',
     alignText: 'right',
     sortable: true,
   },

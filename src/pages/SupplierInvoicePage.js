@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { Translator } from '../localization';
 
-const { pageInfoStrings, tableStrings } = Translator;
+const { pageInfoStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
 export class SupplierInvoicePage extends GenericTablePage {
@@ -136,26 +136,26 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 1,
-    title: tableStrings.item_code,
+    title: 'item_code',
     sortable: true,
   },
   {
     key: 'itemName',
     width: 2,
-    title: tableStrings.item_name,
+    title: 'item_name',
     sortable: true,
   },
   {
     key: 'totalQuantitySent',
     width: 1,
-    title: tableStrings.number_sent,
+    title: 'number_sent',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'numReceived',
     width: 1,
-    title: tableStrings.number_recieved,
+    title: 'number_recieved',
     sortable: true,
     alignText: 'right',
   },

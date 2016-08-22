@@ -10,7 +10,7 @@ import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { Translator } from '../localization';
 
-const { navStrings, tableStrings } = Translator;
+const { navStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**
@@ -79,24 +79,24 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 1,
-    title: tableStrings.invoice_number,
+    title: 'invoice_number',
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: tableStrings.status,
+    title: 'status',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 1,
-    title: tableStrings.entered_date,
+    title: 'entered_date',
     sortable: true,
   },
   {
     key: 'comment',
     width: 3,
-    title: tableStrings.comment,
+    title: 'comment',
   },
 ];

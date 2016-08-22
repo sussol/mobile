@@ -5,7 +5,9 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-export const tableStrings = {
+import LocalizedStrings from 'react-native-localization';
+
+export const tableStrings = new LocalizedStrings({
   en: {
     actual_quantity: 'ACTUAL\nQUANTITY',
     available_stock: 'AVAILABLE STOCK',
@@ -45,5 +47,41 @@ export const tableStrings = {
     suggested_quantity: 'SUGGESTED QTY',
   },
   tetum: {
+    actual_quantity: 'ACTUAL\nQUANTITY (t)',
+    available_stock: 'AVAILABLE STOCK (t)',
+    category: 'Category (t)',
+    code: 'CODE (t)',
+    comment: 'COMMENT (t)',
+    created_date: 'CREATED DATE (t)',
+    current_stock: 'CURRENT STOCK (t)',
+    customer: 'CUSTOMER (t)',
+    delete: 'DELETE (t)',
+    department: 'Department (t)',
+    difference: 'DIFFERENCE (t)',
+    earliest_expiry: 'Earliest expiry (t)',
+    entered_date: 'ENTERED DATE (t)',
+    finalised: 'Finalised (t)',
+    id: 'ID (t)',
+    in_progress: 'In Progress (t)',
+    invoice_number: 'INVOICE\nNUMBER (t)',
+    invoices: 'INVOICES (t)',
+    item_code: 'ITEM CODE (t)',
+    item_name: 'ITEM NAME (t)',
+    items: 'ITEMS (t)',
+    monthly_usage: 'MONTHLY USE (t)',
+    name: 'NAME (t)',
+    no_change: 'No change (t)',
+    number_of_batches: 'Number of batches (t)',
+    number_recieved: 'NUMBER RECIEVED (t)',
+    number_sent: 'NUMBER SENT (t)',
+    quantity: 'QUANTITY (t)',
+    remove: 'REMOVE (t)',
+    required_quantity: 'REQUESTED QTY (t)',
+    requisition_number: 'REQUISITION NUMBER (t)',
+    selected: 'SELECTED (t)',
+    snapshot_quantity: 'SNAPSHOT\nQUANTITY (t)',
+    status: 'STATUS (t)',
+    stock_on_hand: 'STOCK ON HAND (t)',
+    suggested_quantity: 'SUGGESTED QTY (t)',
   },
-};
+});

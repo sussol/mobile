@@ -5,7 +5,9 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-export const navStrings = {
+import LocalizedStrings from 'react-native-localization';
+
+export const navStrings = new LocalizedStrings({
   en: {
     current_stock: 'Current Stock',
     customer_invoices: 'Customer Invoices',
@@ -27,5 +29,23 @@ export const navStrings = {
     sync_in_progress: 'SYNC IN PROGRESS',
   },
   tetum: {
+    current_stock: 'Current Stock (t)',
+    customer_invoices: 'Customer Invoices (t)',
+    customers: 'Customers (t)',
+    finalise: 'FINALISE (t)',
+    finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED (t)',
+    invoice: 'Invoice (t)',
+    language: 'LANGUAGE (t)',
+    last_sync: 'LAST SYNC (t)',
+    log_out: 'LOG OUT (t)',
+    manage_stocktake: 'Manage Stockake (t)',
+    new_stocktake: 'New Stocktake (t)',
+    requisition: 'Requisition (t)',
+    requisitions: 'Requisitions (t)',
+    stocktakes: 'stocktakes (t)',
+    supplier_invoices: 'Supplier Invoices (t)',
+    sync_enabled: 'SYNC ENABLED (t)',
+    sync_error: 'SYNC ERROR (t)',
+    sync_in_progress: 'SYNC IN PROGRESS (t)',
   },
-};
+});

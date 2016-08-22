@@ -24,7 +24,7 @@ import {
   TextEditor,
 } from '../widgets';
 
-const { buttonStrings, modalStrings, pageInfoStrings, tableStrings } = Translator;
+const { buttonStrings, modalStrings, pageInfoStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -310,33 +310,33 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 2,
-    title: tableStrings.item_code,
+    title: 'item_code',
     sortable: true,
   },
   {
     key: 'itemName',
     width: 4,
-    title: tableStrings.item_name,
+    title: 'item_name',
     sortable: true,
   },
   {
     key: 'availableQuantity',
     width: 2,
-    title: tableStrings.available_stock,
+    title: 'available_stock',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'totalQuantity',
     width: 2,
-    title: tableStrings.quantity,
+    title: 'quantity',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
-    title: tableStrings.remove,
+    title: 'remove',
     alignText: 'center',
   },
 ];

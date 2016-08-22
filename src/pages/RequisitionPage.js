@@ -24,7 +24,7 @@ import {
   ToggleSelector,
 } from '../widgets';
 
-const { buttonStrings, modalStrings, pageInfoStrings, tableStrings } = Translator;
+const { buttonStrings, modalStrings, pageInfoStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -351,47 +351,47 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 1,
-    title: tableStrings.code,
+    title: 'code',
     sortable: true,
   },
   {
     key: 'itemName',
     width: 4,
-    title: tableStrings.item_name,
+    title: 'item_name',
     sortable: true,
   },
   {
     key: 'stockOnHand',
     width: 2,
-    title: tableStrings.current_stock,
+    title: 'current_stock',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'monthlyUsage',
     width: 2,
-    title: tableStrings.monthly_usage,
+    title: 'monthly_usage',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'suggestedQuantity',
     width: 2,
-    title: tableStrings.suggested_quantity,
+    title: 'suggested_quantity',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'requiredQuantity',
     width: 2,
-    title: tableStrings.required_quantity,
+    title: 'required_quantity',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
-    title: tableStrings.remove,
+    title: 'remove',
     alignText: 'center',
   },
 ];

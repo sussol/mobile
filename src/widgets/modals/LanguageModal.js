@@ -16,7 +16,7 @@ import {
 import { PageContentModal } from './PageContentModal';
 import { SETTINGS_KEYS } from '../../settings';
 import { Translator, LANGUAGE_KEYS } from '../../localization';
-// import globalStyles, { APP_FONT_FAMILY } from '../../globalStyles';
+const { authStrings, buttonStrings, modalStrings, navStrings, pageInfoStrings, tableStrings } = Translator;
 
 /**
  * A Modal that covers the page content using PageContentModal, and renders a ListView for selecting
@@ -38,7 +38,13 @@ export class LanguageModal extends React.Component {
 
   onSelectLanguage(rowKey) {
     this.props.settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, rowKey);
-    Translator.currentLanguage = rowKey;
+    // Translator.setCurrentLanguage(rowKey);
+    authStrings.setLanguage(rowKey);
+    buttonStrings.setLanguage(rowKey);
+    modalStrings.setLanguage(rowKey);
+    navStrings.setLanguage(rowKey);
+    pageInfoStrings.setLanguage(rowKey);
+    tableStrings.setLanguage(rowKey);
     this.props.onClose();
   }
 

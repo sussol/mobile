@@ -5,7 +5,9 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-export const authStrings = {
+import LocalizedStrings from 'react-native-localization';
+
+export const authStrings = new LocalizedStrings({
   en: {
     logging_in: 'Logging in...',
     login: 'Login',
@@ -18,4 +20,4 @@ export const authStrings = {
     password: 'Password (t)',
     user_name: 'User Name (t)',
   },
-};
+});

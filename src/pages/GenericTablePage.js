@@ -27,6 +27,9 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ListView } from 'realm/react-native';
 import { SearchBar } from '../widgets';
+import { Translator } from '../localization';
+
+const { tableStrings } = Translator;
 
 /**
  * Provides a generic implementation of a standard page in mSupply Mobile, which
@@ -278,7 +281,7 @@ export class GenericTablePage extends React.Component {
           onPress={sortFunction}
           isAscending={this.state.isAscending}
           isSelected={this.state.sortBy === column.key}
-          text={column.title}
+          text={tableStrings[column.title]}
         />
       );
     });

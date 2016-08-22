@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
 import { Translator } from '../localization';
 
-const { buttonStrings, modalStrings, navStrings, tableStrings } = Translator;
+const { buttonStrings, modalStrings, navStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
 /**
@@ -164,24 +164,24 @@ const COLUMNS = [
   {
     key: 'name',
     width: 6,
-    title: tableStrings.name,
+    title: 'name',
   },
   {
     key: 'createdDate',
     width: 2,
-    title: tableStrings.created_date,
+    title: 'created_date',
     sortable: true,
   },
   {
     key: 'status',
     width: 2,
-    title: tableStrings.status,
+    title: 'status',
     sortable: true,
   },
   {
     key: 'selected',
     width: 1,
-    title: tableStrings.delete,
+    title: 'delete',
     alignText: 'center',
   },
 ];
