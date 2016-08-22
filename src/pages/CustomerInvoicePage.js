@@ -23,8 +23,7 @@ import {
   TextEditor,
 } from '../widgets';
 
-const DATA_TYPES_DISPLAYED =
-        ['Transaction', 'TransactionBatch', 'TransactionItem', 'Item', 'ItemBatch'];
+const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
@@ -36,7 +35,8 @@ export class CustomerInvoicePage extends GenericTablePage {
     super(props);
     this.state.sortBy = 'itemName';
     this.columns = COLUMNS;
-    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
+    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.finalisableDataType = 'Transaction';
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
@@ -78,6 +78,7 @@ export class CustomerInvoicePage extends GenericTablePage {
         this.props.database.save('Transaction', this.props.transaction);
       });
     });
+    this.refreshData();
   }
 
   /**
@@ -215,6 +216,7 @@ export class CustomerInvoicePage extends GenericTablePage {
                   createRecord(database, 'TransactionItem', transaction, item);
                 }
               });
+              this.refreshData();
               this.closeModal();
             }}
             renderLeftText={(item) => `${item.name}`}

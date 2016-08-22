@@ -13,7 +13,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 
-const DATA_TYPES_DISPLAYED = ['Stocktake', 'StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
+const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
 /**
 * Renders the page for displaying StocktakeEditPage.
@@ -27,7 +27,8 @@ export class StocktakeEditPage extends GenericTablePage {
     this.state.items = props.stocktake.items;
     this.state.sortBy = 'itemName';
     this.columns = COLUMNS;
-    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
+    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.finalisableDataType = 'Stocktake';
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.renderCell = this.renderCell.bind(this);
   }

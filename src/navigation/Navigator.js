@@ -51,13 +51,18 @@ export class Navigator extends React.Component {
   onNavigate(action) {
     // If no action passed, stay in place.
     if (!action) return false;
-    const newState = getNewNavState(this.state.navigationState, action);
+    const oldState = this.state.navigationState;
+    delete oldState.routes[oldState.index].topRoute; // Old top route no longer top
+    const newState = getNewNavState(oldState, action);
     if (newState === this.state.navigationState) {
       return false;
     }
-    this.setState({
-      navigationState: newState,
-    });
+    // In order to get NavigationExperimental to re-render the new top route (so that
+    // it will, e.g., re-fetch data in case it has changed), we need to deep copy the
+    // old route and add a property so that the new route cannot be considered equal
+    newState.routes[newState.index] = { ...newState.routes[newState.index] }; // Change reference
+    newState.routes[newState.index].topRoute = true; // Change makeup of keys
+    this.setState({ navigationState: newState });
     return true;
   }
 

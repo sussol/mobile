@@ -23,8 +23,7 @@ import {
   ToggleSelector,
 } from '../widgets';
 
-const DATA_TYPES_DISPLAYED =
-        ['Requisition', 'RequisitionItem', 'Item', 'ItemBatch'];
+const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   ITEM_SELECT: 'itemSelect',
@@ -37,7 +36,8 @@ export class RequisitionPage extends GenericTablePage {
     this.state.sortBy = 'itemName';
     this.state.modalKey = null;
     this.columns = COLUMNS;
-    this.dataTypesDisplayed = DATA_TYPES_DISPLAYED;
+    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.finalisableDataType = 'Requisition';
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onCreateAutomaticOrder = this.onCreateAutomaticOrder.bind(this);
@@ -80,6 +80,7 @@ export class RequisitionPage extends GenericTablePage {
         this.props.database.save('Requisition', this.props.requisition);
       });
     });
+    this.refreshData();
   }
 
   onCreateAutomaticOrder() {
@@ -89,6 +90,7 @@ export class RequisitionPage extends GenericTablePage {
         this.props.database.save('Requisition', this.props.requisition);
       });
     });
+    this.refreshData();
   }
 
   getThisStore() {
@@ -138,6 +140,7 @@ export class RequisitionPage extends GenericTablePage {
         database.save('Requisition', requisition);
       });
     });
+    this.refreshData();
   }
 
   openItemSelector() {
@@ -239,6 +242,7 @@ export class RequisitionPage extends GenericTablePage {
                   database.save('Requisition', requisition);
                 }
               });
+              this.refreshData();
               this.closeModal();
             }}
             renderLeftText={(item) => `${item.name}`}
@@ -254,6 +258,7 @@ export class RequisitionPage extends GenericTablePage {
                 this.props.requisition.monthsToSupply = number;
                 this.props.database.save('Requisition', this.props.requisition);
               });
+              this.refreshData();
               this.closeModal();
             }}
             selected={this.props.requisition.monthsToSupply}

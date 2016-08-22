@@ -30,6 +30,7 @@ export const RECORD_TYPES = new SyncTranslator({
   'ItemBatch': 'item_line',
   'ItemDepartment': 'item_department',
   'ItemCategory': 'item_category',
+  'LocalListItem': 'list_local_line',
   'MasterList': 'list_master',
   'MasterListItem': 'list_master_line',
   'MasterListNameJoin': 'list_master_name_join',
