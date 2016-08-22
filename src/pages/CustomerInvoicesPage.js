@@ -132,7 +132,6 @@ export class CustomerInvoicesPage extends GenericTablePage {
             </View>
             <PageButton
               text="New Invoice"
-              loadingText="Creating..."
               onPress={() => this.setState({ isCreatingInvoice: true })}
             />
           </View>

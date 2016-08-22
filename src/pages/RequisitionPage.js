@@ -74,25 +74,29 @@ export class RequisitionPage extends GenericTablePage {
   }
 
   onAddMasterItems() {
-    this.props.database.write(() => {
-      const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
-      const nameResults = this.props.database.objects('Name').filtered('id == $0', thisStoreNameId);
-      if (!nameResults | nameResults.length <= 0) return;
-      const thisStore = nameResults[0];
-      this.props.requisition.addItemsFromMasterList(this.props.database, thisStore);
-      this.props.database.save('Requisition', this.props.requisition);
+    this.props.runWithLoadingIndicator(() => {
+      this.props.database.write(() => {
+        this.props.requisition.addItemsFromMasterList(this.props.database, this.getThisStore());
+        this.props.database.save('Requisition', this.props.requisition);
+      });
     });
   }
 
   onCreateAutomaticOrder() {
-    this.props.database.write(() => {
-      const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
-      const nameResults = this.props.database.objects('Name').filtered('id == $0', thisStoreNameId);
-      if (!nameResults | nameResults.length <= 0) return;
-      const thisStore = nameResults[0];
-      this.props.requisition.createAutomaticOrder(this.props.database, thisStore);
-      this.props.database.save('Requisition', this.props.requisition);
+    this.props.runWithLoadingIndicator(() => {
+      this.props.database.write(() => {
+        this.props.requisition.createAutomaticOrder(this.props.database, this.getThisStore());
+        this.props.database.save('Requisition', this.props.requisition);
+      });
     });
+  }
+
+  getThisStore() {
+    const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+    const nameResults = this.props.database.objects('Name')
+                                           .filtered('id == $0', thisStoreNameId);
+    if (!nameResults | nameResults.length <= 0) return null;
+    return nameResults[0];
   }
 
   /**
@@ -127,10 +131,12 @@ export class RequisitionPage extends GenericTablePage {
   }
 
   onUseSuggestedQuantities() {
-    const { database, requisition } = this.props;
-    database.write(() => {
-      requisition.setRequestedToSuggested(database);
-      database.save('Requisition', requisition);
+    this.props.runWithLoadingIndicator(() => {
+      const { database, requisition } = this.props;
+      database.write(() => {
+        requisition.setRequestedToSuggested(database);
+        database.save('Requisition', requisition);
+      });
     });
   }
 
@@ -285,14 +291,12 @@ export class RequisitionPage extends GenericTablePage {
                 <PageButton
                   style={globalStyles.topButton}
                   text="Create Automatic Order"
-                  loadingText="Creating..."
                   onPress={this.onCreateAutomaticOrder}
                   isDisabled={this.props.requisition.isFinalised}
                 />
                 <PageButton
                   style={globalStyles.leftButton}
                   text="Use Suggested Quantities"
-                  loadingText="Copying Quantities..."
                   onPress={this.onUseSuggestedQuantities}
                   isDisabled={this.props.requisition.isFinalised}
                 />
@@ -306,7 +310,6 @@ export class RequisitionPage extends GenericTablePage {
                 />
                 <PageButton
                   text="Add Master List Items"
-                  loadingText="Adding..."
                   onPress={this.onAddMasterItems}
                   isDisabled={this.props.requisition.isFinalised}
                 />

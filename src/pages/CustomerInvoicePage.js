@@ -72,9 +72,11 @@ export class CustomerInvoicePage extends GenericTablePage {
   }
 
   onAddMasterItems() {
-    this.props.database.write(() => {
-      this.props.transaction.addItemsFromMasterList(this.props.database);
-      this.props.database.save('Transaction', this.props.transaction);
+    this.props.runWithLoadingIndicator(() => {
+      this.props.database.write(() => {
+        this.props.transaction.addItemsFromMasterList(this.props.database);
+        this.props.database.save('Transaction', this.props.transaction);
+      });
     });
   }
 
@@ -270,7 +272,6 @@ export class CustomerInvoicePage extends GenericTablePage {
               />
               <PageButton
                 text="Add Master List Items"
-                loadingText="Adding..."
                 onPress={this.onAddMasterItems}
                 isDisabled={this.props.transaction.isFinalised}
               />
