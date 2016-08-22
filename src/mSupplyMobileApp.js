@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 
-import globalStyles, { BACKGROUND_COLOR, DARK_GREY } from './globalStyles';
+import globalStyles, { BACKGROUND_COLOR, DARK_GREY, SUSSOL_ORANGE } from './globalStyles';
 
 import { Navigator } from './navigation';
 import { Spinner } from './widgets/Spinner';
@@ -54,7 +54,7 @@ export default class mSupplyMobileApp extends React.Component {
       syncError: '',
       lastSync: null, // Date of the last successful sync
       finaliseItem: null,
-      progress: -1.0, // Progress bar shows when progress >= 0
+      isLoading: false,
     };
   }
 
@@ -64,6 +64,7 @@ export default class mSupplyMobileApp extends React.Component {
     this.onInitialised = this.onInitialised.bind(this);
     this.runWithLoadingIndicator = this.runWithLoadingIndicator.bind(this);
     this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
+    this.renderLoadingIndicator = this.renderLoadingIndicator.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronize = this.synchronize.bind(this);
@@ -88,16 +89,12 @@ export default class mSupplyMobileApp extends React.Component {
     this.setState({ initialised: true });
   }
 
-  setProgress(progress) {
-    this.setState({ progress: progress });
-  }
-
   async runWithLoadingIndicator(functionToRun) {
     await new Promise((resolve) => {
-      this.setState({ progress: 0.0 }, () => setTimeout(resolve, 100));
+      this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
-    functionToRun(this.setProgress);
-    this.setState({ progress: -1.0 });
+    functionToRun();
+    this.setState({ isLoading: false });
   }
 
   async synchronize() {
@@ -136,6 +133,13 @@ export default class mSupplyMobileApp extends React.Component {
         source={require('./images/logo.png')}
       />
     );
+  }
+
+  renderLoadingIndicator() {
+    return (
+      <View style={globalStyles.loadingIndicatorContainer}>
+        <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
+      </View>);
   }
 
   renderScene(props) {
@@ -180,25 +184,6 @@ export default class mSupplyMobileApp extends React.Component {
     );
   }
 
-  renderLoadingIndicator() {
-    return (
-      <View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: DARK_GREY,
-          opacity: 0.88,
-        }}
-      >
-        <Spinner isSpinning={this.state.progress >= 0.0} />
-      </View>);
-  }
-
   render() {
     if (!this.state.initialised) {
       const FirstUsePage = PAGES.firstUse;
@@ -232,7 +217,7 @@ export default class mSupplyMobileApp extends React.Component {
           isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
-        {this.state.progress >= 0.0 && this.renderLoadingIndicator()}
+        {this.state.isLoading && this.renderLoadingIndicator()}
       </View>
     );
   }
