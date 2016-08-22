@@ -36,7 +36,7 @@ export function FinaliseModal(props) {
       backdropOpacity={0.97}
       buttonTextStyle={globalStyles.finaliseModalButtonText}
       isOpen={props.isOpen}
-      questionText={errorText || finaliseText}
+      questionText={errorText || modalStrings[finaliseText]}
       confirmText={modalStrings.confirm}
       cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
       onConfirm={

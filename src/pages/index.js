@@ -20,8 +20,6 @@ import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { RealmExplorer } from './RealmExplorer';
 
-import { modalStrings } from '../localization';
-
 export const PAGES = {
   customer: CustomerPage,
   customerInvoice: CustomerInvoicePage,
@@ -45,24 +43,24 @@ export const FINALISABLE_PAGES = {
   supplierInvoice: {
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
-    finaliseText: modalStrings.finalise_supplier_invoice,
+    finaliseText: 'finalise_supplier_invoice',
   },
   customerInvoice: {
     checkForError: checkForCustomerInvoiceFinaliseError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
-    finaliseText: modalStrings.finalise_customer_invoice,
+    finaliseText: 'finalise_customer_invoice',
   },
   requisition: {
     checkForError: checkForRequisitionFinaliseError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
-    finaliseText: modalStrings.finalise_requisition,
+    finaliseText: 'finalise_requisition',
   },
   stocktakeEditor: {
     checkForError: checkForStocktakeFinaliseError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
-    finaliseText: modalStrings.finalise_stocktake,
+    finaliseText: 'finalise_stocktake',
   },
 };
