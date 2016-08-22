@@ -13,7 +13,7 @@ import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { Translator } from '../localization';
+import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -24,7 +24,6 @@ import {
   ToggleSelector,
 } from '../widgets';
 
-const { buttonStrings, modalStrings, pageInfoStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',

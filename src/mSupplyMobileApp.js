@@ -30,7 +30,14 @@ import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
 import { Settings, SETTINGS_KEYS } from './settings';
-import { Translator } from './localization';
+import {
+  authStrings,
+  buttonStrings,
+  modalStrings,
+  navStrings,
+  pageInfoStrings,
+  tableStrings,
+} from './localization';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -42,8 +49,7 @@ export default class mSupplyMobileApp extends React.Component {
     const database = new Database(schema);
     this.database = new UIDatabase(database);
     this.settings = new Settings(this.database);
-    Translator.setCurrentLanguage(this.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE));
-    console.log(`app constructor: ${Translator.time}`);
+    this.setCurrentLanguage(this.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE));
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
     this.synchronizer = new Synchronizer(database, syncAuthenticator, this.settings);
@@ -88,6 +94,15 @@ export default class mSupplyMobileApp extends React.Component {
   onInitialised() {
     this.settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, 'en');
     this.setState({ initialised: true });
+  }
+
+  setCurrentLanguage(language) {
+    authStrings.setLanguage(language);
+    buttonStrings.setLanguage(language);
+    modalStrings.setLanguage(language);
+    navStrings.setLanguage(language);
+    pageInfoStrings.setLanguage(language);
+    tableStrings.setLanguage(language);
   }
 
   async synchronize() {

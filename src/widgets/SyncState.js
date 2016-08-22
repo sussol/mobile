@@ -7,17 +7,14 @@ import {
 } from 'react-native';
 
 import { SyncIcon } from './SyncIcon';
-
 import { SETTINGS_KEYS as SETTINGS } from '../settings';
+import { navStrings } from '../localization';
 
 import globalStyles, {
   GREY,
   DARK_GREY,
 } from '../globalStyles';
 
-import { Translator } from '../localization';
-
-const { navStrings } = Translator;
 const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
 

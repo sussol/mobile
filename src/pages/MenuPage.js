@@ -26,9 +26,7 @@ import globalStyles, {
   WARMER_GREY,
 } from '../globalStyles';
 
-import { Translator } from '../localization';
-
-const { navStrings } = Translator;
+import { navStrings } from '../localization';
 
 export class MenuPage extends React.Component {
   constructor(props) {

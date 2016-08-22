@@ -14,9 +14,8 @@ import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { Translator } from '../localization';
+import { buttonStrings, modalStrings, navStrings } from '../localization';
 
-const { buttonStrings, modalStrings, navStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
 /**

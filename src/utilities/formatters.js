@@ -1,6 +1,4 @@
-import { Translator } from '../localization';
-
-const { tableStrings } = Translator;
+import { tableStrings } from '../localization';
 
 export function formatDate(date, format) {
   if (!date || typeof date !== 'object') return null;

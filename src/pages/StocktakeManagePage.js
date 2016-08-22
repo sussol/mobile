@@ -16,9 +16,8 @@ import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
-import { Translator } from '../localization';
+import { buttonStrings, modalStrings } from '../localization';
 
-const { buttonStrings, modalStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 
 /**

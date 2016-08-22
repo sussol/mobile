@@ -11,9 +11,8 @@ import { Expansion } from '../widgets/DataTable';
 import { PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
-import { Translator } from '../localization';
+import { tableStrings } from '../localization';
 
-const { tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 
 /**
@@ -25,7 +24,6 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 export class StockPage extends GenericTablePage {
   constructor(props) {
     super(props);
-    console.log(`StockPage constructor: ${Translator.time}`);
     this.state.sortBy = 'name';
     this.state.items = props.database.objects('Item');
     this.columns = COLUMNS;

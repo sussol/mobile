@@ -12,9 +12,8 @@ import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
-import { Translator } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
-const { buttonStrings, modalStrings, navStrings, tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
 /**

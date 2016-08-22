@@ -8,9 +8,8 @@
 import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { Translator } from '../localization';
+import { navStrings } from '../localization';
 
-const { navStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**
