@@ -30,6 +30,7 @@ import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
 import { Settings, SETTINGS_KEYS } from './settings';
+import { Translator } from './localization';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -58,6 +59,9 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   componentWillMount() {
+    Translator.currentLanguage = this.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE);
+    console.log(`App start: ${Translator.currentLanguage}`);
+    console.log(Translator.time);
     this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
@@ -83,6 +87,7 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   onInitialised() {
+    this.settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, 'en');
     this.setState({ initialised: true });
   }
 
@@ -166,6 +171,7 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   render() {
+    console.log(`In the render ${Translator.currentLanguage}`);
     if (!this.state.initialised) {
       const FirstUsePage = PAGES.firstUse;
       return (

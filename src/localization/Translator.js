@@ -15,9 +15,16 @@ import { tableStrings } from './tableStrings';
 export const Translator = new class {
   constructor() {
     this.currentLanguage = 'en';
+    this.time = new Date();
   }
 
+  // set currentLanguage(language) {
+  //   this.currentLanguage = language;
+  // }
+
   get authStrings() {
+    console.log(`authStrings: ${this.currentLanguage}`);
+    console.log(this.time);
     return authStrings[this.currentLanguage];
   }
 

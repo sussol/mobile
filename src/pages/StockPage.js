@@ -25,6 +25,8 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 export class StockPage extends GenericTablePage {
   constructor(props) {
     super(props);
+    console.log(`stock page : ${Translator.currentLanguage}`);
+    console.log(Translator.time);
     this.state.sortBy = 'name';
     this.state.items = props.database.objects('Item');
     this.columns = COLUMNS;
