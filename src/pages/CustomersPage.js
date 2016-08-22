@@ -8,8 +8,9 @@
 import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
 import { sortDataBy } from '../utilities';
-import { tableStrings } from '../localization';
+import { Translator } from '../localization';
 
+const { tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Name'];
 
 /**

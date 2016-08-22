@@ -11,8 +11,9 @@ import { Expansion } from '../widgets/DataTable';
 import { PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
-import { tableStrings } from '../localization';
+import { Translator } from '../localization';
 
+const { tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 
 /**

@@ -5,10 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-// import { CURRENT_LANGUAGE } from '../settings';
-const CURRENT_LANGUAGE = 'en'; // settings not set up for this yet
-
-const strings = {
+export const navStrings = {
   en: {
     current_stock: 'Current Stock',
     customer_invoices: 'Customer Invoices',
@@ -16,6 +13,7 @@ const strings = {
     finalise: 'FINALISE',
     finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED',
     invoice: 'Invoice',
+    language: 'LANGUAGE',
     last_sync: 'LAST SYNC',
     log_out: 'LOG OUT',
     manage_stocktake: 'Manage Stockake',
@@ -31,5 +29,3 @@ const strings = {
   tetum: {
   },
 };
-
-export const navStrings = strings[CURRENT_LANGUAGE];

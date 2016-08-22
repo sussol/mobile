@@ -12,8 +12,9 @@ import { PageInfo } from '../widgets';
 import { formatDate, sortDataBy } from '../utilities';
 import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
-import { pageInfoStrings, tableStrings } from '../localization';
+import { Translator } from '../localization';
 
+const { pageInfoStrings, tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
 export class SupplierInvoicePage extends GenericTablePage {

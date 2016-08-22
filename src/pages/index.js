@@ -20,7 +20,9 @@ import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { RealmExplorer } from './RealmExplorer';
 
-import { modalStrings } from '../localization';
+import { Translator } from '../localization';
+
+const { modalStrings } = Translator;
 
 export const PAGES = {
   customer: CustomerPage,

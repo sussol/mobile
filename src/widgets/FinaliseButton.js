@@ -11,7 +11,9 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import globalStyles from '../globalStyles';
-import { navStrings } from '../localization';
+import { Translator } from '../localization';
+
+const { navStrings } = Translator;
 
 export function FinaliseButton(props) {
   if (props.isFinalised) {

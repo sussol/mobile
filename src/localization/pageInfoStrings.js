@@ -5,10 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-// import { CURRENT_LANGUAGE } from '../settings';
-const CURRENT_LANGUAGE = 'en'; // settings not set up for this yet
-
-const strings = {
+export const pageInfoStrings = {
   en: {
     address: 'Address',
     code: 'Code',
@@ -23,5 +20,3 @@ const strings = {
   tetum: {
   },
 };
-
-export const pageInfoStrings = strings[CURRENT_LANGUAGE];

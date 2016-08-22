@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import { Translator } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -24,6 +24,7 @@ import {
   TextEditor,
 } from '../widgets';
 
+const { buttonStrings, modalStrings, pageInfoStrings, tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',

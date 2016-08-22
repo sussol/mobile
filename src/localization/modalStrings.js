@@ -5,10 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-// import { CURRENT_LANGUAGE } from '../settings';
-const CURRENT_LANGUAGE = 'en'; // settings not set up for this yet
-
-const strings = {
+export const modalStrings = {
   en: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',
     and: 'and',
@@ -43,5 +40,3 @@ const strings = {
   tetum: {
   },
 };
-
-export const modalStrings = strings[CURRENT_LANGUAGE];

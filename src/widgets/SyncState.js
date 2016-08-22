@@ -15,8 +15,9 @@ import globalStyles, {
   DARK_GREY,
 } from '../globalStyles';
 
-import { navStrings } from '../localization';
+import { Translator } from '../localization';
 
+const { navStrings } = Translator;
 const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
 

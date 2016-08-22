@@ -14,8 +14,9 @@ import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, navStrings, pageInfoStrings, tableStrings } from '../localization';
+import { Translator } from '../localization';
 
+const { buttonStrings, navStrings, pageInfoStrings, tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**

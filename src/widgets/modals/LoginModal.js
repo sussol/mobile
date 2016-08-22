@@ -18,7 +18,9 @@ import globalStyles, {
   WARM_GREY,
 } from '../../globalStyles';
 import { SETTINGS_KEYS } from '../../settings';
-import { authStrings } from '../../localization';
+import { Translator } from '../../localization';
+
+const { authStrings } = Translator;
 
 export class LoginModal extends React.Component {
   constructor(props) {

@@ -5,10 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-// import { CURRENT_LANGUAGE } from '../settings';
-const CURRENT_LANGUAGE = 'en'; // settings not set up for this yet
-
-const strings = {
+export const tableStrings = {
   en: {
     actual_quantity: 'ACTUAL\nQUANTITY',
     available_stock: 'AVAILABLE STOCK',
@@ -50,5 +47,3 @@ const strings = {
   tetum: {
   },
 };
-
-export const tableStrings = strings[CURRENT_LANGUAGE];

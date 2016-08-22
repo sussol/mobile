@@ -5,10 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-// import { CURRENT_LANGUAGE } from '../settings';
-const CURRENT_LANGUAGE = 'en'; // settings not set up for this yet
-
-const strings = {
+export const buttonStrings = {
   en: {
     add_master_list_items: 'Add Master List Items',
     all_items_selected: 'All Items Selected',
@@ -26,5 +23,3 @@ const strings = {
   tetum: {
   },
 };
-
-export const buttonStrings = strings[CURRENT_LANGUAGE];

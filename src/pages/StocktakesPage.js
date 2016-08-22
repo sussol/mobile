@@ -12,8 +12,9 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { Translator } from '../localization';
 
+const { buttonStrings, modalStrings, navStrings, tableStrings } = Translator;
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
 /**
