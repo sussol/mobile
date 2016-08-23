@@ -15,7 +15,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
 
-const DATA_TYPES_SYNCHRONISED = ['Requisition'];
+const DATA_TYPES_SYNCHRONIZED = ['Requisition'];
 
 /**
 * Renders the page for displaying Requisitions.
@@ -31,7 +31,7 @@ export class RequisitionsPage extends GenericTablePage {
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
     this.columns = COLUMNS;
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onNewRequisition = this.onNewRequisition.bind(this);
     this.onRowPress = this.onRowPress.bind(this);

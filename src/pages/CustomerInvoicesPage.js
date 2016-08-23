@@ -14,7 +14,7 @@ import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
 
-const DATA_TYPES_SYNCHRONISED = ['Transaction'];
+const DATA_TYPES_SYNCHRONIZED = ['Transaction'];
 
 /**
 * Renders the page for displaying CustomerInvoices.
@@ -31,7 +31,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
     this.state.isAscending = false;
     this.state.isCreatingInvoice = false;
     this.columns = COLUMNS;
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);

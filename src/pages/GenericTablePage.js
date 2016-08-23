@@ -7,6 +7,7 @@
 
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import shallowEqual from 'fbjs/lib/shallowEqual';
 import globalStyles, {
   SUSSOL_ORANGE,
   WARM_GREY,
@@ -45,7 +46,7 @@ import { SearchBar } from '../widgets';
  * @field  {array}  columns      An array of objects defining each of the columns.
  *         											 Each column must contain: key, width, title. Each
  *         											 may optionally also contain a boolean 'sortable'.
- * @field  {array}  dataTypesSynchronised      Data types visible in the table displayed
+ * @field  {array}  dataTypesSynchronized      Data types visible in the table displayed
  *         																		 on this page, that should therefore cause
  *         																		 an update if changed by sync
  * @field  {string} finalisableDataType        The data type that can be finalised on this
@@ -79,7 +80,7 @@ export class GenericTablePage extends React.Component {
     this.cellRefsMap = {}; // { rowId: reference, rowId: reference, ...}
     this.columns = null;
     this.dataTableRef = null;
-    this.dataTypesSynchronised = [];
+    this.dataTypesSynchronized = [];
     this.databaseListenerId = null;
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onColumnSort = this.onColumnSort.bind(this);
@@ -108,8 +109,16 @@ export class GenericTablePage extends React.Component {
    * Refresh data every time the page receives props, so that changes will show
    * when a user returns to the page using the back button.
    */
-  componentWillReceiveProps() {
-    this.refreshData();
+  componentWillReceiveProps(nextProps) {
+    if (!this.props.topRoute && nextProps.topRoute) {
+      console.log('Now top route');
+      this.refreshData();
+    }
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState !== this.state) return true;
+    return !shallowEqual(this.props, nextProps);
   }
 
   componentWillUnmount() {
@@ -449,6 +458,7 @@ export class GenericTablePage extends React.Component {
 
 GenericTablePage.propTypes = {
   database: React.PropTypes.object,
+  topRoute: React.PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({

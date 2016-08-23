@@ -23,7 +23,7 @@ import {
   ToggleSelector,
 } from '../widgets';
 
-const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
+const DATA_TYPES_SYNCHRONIZED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   ITEM_SELECT: 'itemSelect',
@@ -36,7 +36,7 @@ export class RequisitionPage extends GenericTablePage {
     this.state.sortBy = 'itemName';
     this.state.modalKey = null;
     this.columns = COLUMNS;
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
     this.finalisableDataType = 'Requisition';
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);

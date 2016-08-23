@@ -15,7 +15,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
 
-const DATA_TYPES_SYNCHRONISED = ['Transaction'];
+const DATA_TYPES_SYNCHRONIZED = ['Transaction'];
 
 /**
 * Renders the page for displaying Invoices for a Customer.
@@ -35,7 +35,7 @@ export class CustomerPage extends GenericTablePage {
                                             .filtered('otherParty.name == $0', props.customer.name);
     this.state.sortBy = 'entryDate';
     this.columns = COLUMNS;
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.navigateToInvoice = this.navigateToInvoice.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);

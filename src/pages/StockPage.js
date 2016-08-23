@@ -12,7 +12,7 @@ import { PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
 
-const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
+const DATA_TYPES_SYNCHRONIZED = ['Item', 'ItemBatch', 'ItemCategory'];
 
 /**
 * Renders the page for all Items and their stock, with expansion of further details.
@@ -26,7 +26,7 @@ export class StockPage extends GenericTablePage {
     this.state.sortBy = 'name';
     this.state.items = props.database.objects('Item');
     this.columns = COLUMNS;
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
+    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
   }
 
