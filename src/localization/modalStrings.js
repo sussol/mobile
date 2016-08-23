@@ -74,4 +74,6 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_customer: 'Start typing to select customer (t)',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items (t)",
   },
+  fr: {
+  },
 });

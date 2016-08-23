@@ -84,4 +84,6 @@ export const tableStrings = new LocalizedStrings({
     stock_on_hand: 'STOCK ON HAND (t)',
     suggested_quantity: 'SUGGESTED QTY (t)',
   },
+  fr: {
+  },
 });

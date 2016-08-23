@@ -20,4 +20,6 @@ export const authStrings = new LocalizedStrings({
     password: 'Password (t)',
     user_name: 'User Name (t)',
   },
+  fr: {
+  },
 });

@@ -36,4 +36,6 @@ export const buttonStrings = new LocalizedStrings({
     past: 'Past (t)',
     use_suggested_quantities: 'Use Suggested Quantities (t)',
   },
+  fr: {
+  },
 });

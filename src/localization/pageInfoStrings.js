@@ -30,4 +30,6 @@ export const pageInfoStrings = new LocalizedStrings({
     months_stock_required: 'Months Stock Required (t)',
     their_ref: 'Their Ref (t)',
   },
+  fr: {
+  },
 });

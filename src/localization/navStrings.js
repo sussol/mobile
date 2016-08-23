@@ -48,4 +48,6 @@ export const navStrings = new LocalizedStrings({
     sync_error: 'SYNC ERROR (t)',
     sync_in_progress: 'SYNC IN PROGRESS (t)',
   },
+  fr: {
+  },
 });
