@@ -8,4 +8,5 @@ export { tableStrings } from './tableStrings';
 export const LANGUAGE_KEYS = {
   en: 'English',
   tetum: 'Tetum',
+  fr: 'French',
 };

@@ -7,14 +7,20 @@
 
 import React from 'react';
 import {
-  View,
   ListView,
+  StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
 import { SETTINGS_KEYS } from '../../settings';
+import globalStyles, {
+  APP_FONT_FAMILY,
+  COMPONENT_HEIGHT,
+  BACKGROUND_COLOR,
+} from '../../globalStyles';
 import {
   LANGUAGE_KEYS,
   authStrings,
@@ -57,8 +63,11 @@ export class LanguageModal extends React.Component {
   renderRow(rowValue, sectionId, rowKey) {
     return (
       // TODO: styles for these components and ListView, globalStyles where sensible.
-      <TouchableOpacity onPress={() => this.onSelectLanguage(rowKey)}>
-        <Text>{rowValue}</Text>
+      <TouchableOpacity
+        onPress={() => this.onSelectLanguage(rowKey)}
+        style={localStyles.tableRow}
+      >
+        <Text style={[globalStyles.dataTableText, localStyles.dataTableText]}>{rowValue}</Text>
       </TouchableOpacity>
     );
   }
@@ -77,12 +86,15 @@ export class LanguageModal extends React.Component {
       <PageContentModal
         isOpen={isOpen}
         onClose={onClose}
-        title="Select a Language"
+        title={modalStrings.select_a_language}
         {...modalProps}
       >
         <View>
-          <Text>Current Language: {currentLanguage}</Text>
+          <Text style={localStyles.currentLanguageText}>
+            {modalStrings.current_language}: {currentLanguage}
+          </Text>
           <ListView
+            style={localStyles.ListView}
             dataSource={this.state.dataSource}
             renderRow={this.renderRow}
           />
@@ -97,3 +109,26 @@ LanguageModal.propTypes = {
   onClose: React.PropTypes.func,
   settings: React.PropTypes.object.isRequired,
 };
+
+const localStyles = StyleSheet.create({
+  currentLanguageText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: 'white',
+    fontSize: 20,
+    marginHorizontal: 200,
+  },
+  dataTableText: {
+    fontSize: 20,
+    marginLeft: 20,
+  },
+  tableRow: {
+    justifyContent: 'center',
+    height: COMPONENT_HEIGHT,
+    backgroundColor: BACKGROUND_COLOR,
+  },
+  ListView: {
+    height: 450,
+    marginTop: 10,
+    marginHorizontal: 200,
+  },
+});
