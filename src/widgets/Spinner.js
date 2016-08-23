@@ -1,10 +1,9 @@
-const React = require('react');
-const ReactNative = require('react-native');
-const {
+import React from 'react';
+import {
   Animated,
   StyleSheet,
   View,
-} = ReactNative;
+} from 'react-native';
 
 export class Spinner extends React.Component {
   constructor(props) {
@@ -42,7 +41,7 @@ export class Spinner extends React.Component {
     return (
       <Animated.View
         style={[
-          localStyles.box,
+          localStyles.square,
           {
             backgroundColor: this.props.color,
             transform: [{ rotate: interpolatedRotateAnimation }],
@@ -64,7 +63,7 @@ Spinner.defaultProps = {
 };
 
 const localStyles = StyleSheet.create({
-  box: {
+  square: {
     width: 40,
     height: 40,
   },
