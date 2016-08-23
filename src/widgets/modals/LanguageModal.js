@@ -36,6 +36,7 @@ import {
  * from a list of available languages. This is persisted in the settings/realm.
  * @prop {boolean}    isOpen    Whether the modal is open
  * @prop {function}   onClose   A function to call if the close x is pressed
+ * @prop {function}   settings  App settings object for storing the selected language
  */
 export class LanguageModal extends React.Component {
   constructor(props) {

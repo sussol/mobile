@@ -8,17 +8,25 @@
 import React from 'react';
 import {
   Image,
+  StyleSheet,
+  Text,
   TextInput,
   View,
 } from 'react-native';
 import { Button } from '../Button';
+import { LanguageModal } from './LanguageModal';
 import Modal from 'react-native-modalbox';
 import globalStyles, {
+  APP_FONT_FAMILY,
   SUSSOL_ORANGE,
+  GREY,
   WARM_GREY,
+  WARMER_GREY,
 } from '../../globalStyles';
 import { SETTINGS_KEYS } from '../../settings';
-import { authStrings } from '../../localization';
+import { authStrings, navStrings } from '../../localization';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -29,6 +37,7 @@ export class LoginModal extends React.Component {
       error: '',
       username: username || '',
       password: '',
+      isLanguageModalOpen: false,
     };
     this.passwordInputRef = null;
     this.errorTimeoutId = null;
@@ -161,6 +170,24 @@ export class LoginModal extends React.Component {
             </View>
           </View>
         </View>
+        <View style={localStyles.bottomContainer}>
+          <Icon.Button
+            name="language"
+            size={25}
+            underlayColor="#888888"
+            iconStyle={localStyles.bottomIcon}
+            borderRadius={4}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={() => this.setState({ isLanguageModalOpen: true })}
+          >
+            <Text style={localStyles.languageButtonText}>{navStrings.language}</Text>
+          </Icon.Button>
+        </View>
+        <LanguageModal
+          isOpen={this.state.isLanguageModalOpen}
+          onClose={() => this.setState({ isLanguageModalOpen: false })}
+          settings={this.props.settings}
+        />
       </Modal>
     );
   }
@@ -176,3 +203,21 @@ LoginModal.defaultProps = {
   style: {},
   textStyle: {},
 };
+
+const localStyles = StyleSheet.create({
+  languageButtonText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: WARMER_GREY,
+  },
+  bottomIcon: {
+    color: GREY,
+  },
+  bottomContainer: {
+    alignSelf: 'stretch',
+    flex: 1,
+    alignItems: 'flex-start',
+    justifyContent: 'flex-end',
+    paddingLeft: 42,
+    paddingBottom: 35,
+  },
+});

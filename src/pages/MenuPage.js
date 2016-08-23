@@ -13,10 +13,7 @@ import {
   View,
 } from 'react-native';
 
-import {
-  Button,
-  LanguageModal,
-} from '../widgets';
+import { Button } from '../widgets';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import globalStyles, {
@@ -31,9 +28,18 @@ import { navStrings } from '../localization';
 export class MenuPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLanguageModalOpen: false,
-    };
+    this.databaseListenerId = null;
+  }
+
+  componentWillMount() {
+    this.databaseListenerId = this.props.database.addListener(
+      // Ensure that language changes in login modal are re-rendered onto the MenuPage
+      (changeType, recordType) => recordType === 'Setting' && this.forceUpdate()
+    );
+  }
+
+  componentWillUnmount() {
+    this.props.database.removeListener(this.databaseListenerId);
   }
 
   render() {
@@ -119,23 +125,7 @@ export class MenuPage extends React.Component {
           >
             <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
           </Icon.Button>
-          <Icon.Button
-            name="language"
-            size={25}
-            underlayColor="#888888"
-            iconStyle={localStyles.bottomIcon}
-            borderRadius={4}
-            backgroundColor="rgba(255,255,255,0)"
-            onPress={() => this.setState({ isLanguageModalOpen: true })}
-          >
-            <Text style={localStyles.logOutText}>{navStrings.language}</Text>
-          </Icon.Button>
         </View>
-        <LanguageModal
-          isOpen={this.state.isLanguageModalOpen}
-          onClose={() => this.setState({ isLanguageModalOpen: false })}
-          settings={this.props.settings}
-        />
       </View>
     );
   }
@@ -143,6 +133,7 @@ export class MenuPage extends React.Component {
 
 MenuPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
+  database: React.PropTypes.object,
   logOut: React.PropTypes.func.isRequired,
   settings: React.PropTypes.object.isRequired,
 };
