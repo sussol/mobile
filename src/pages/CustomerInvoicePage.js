@@ -39,13 +39,10 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.finalisableDataType = 'Transaction';
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
-    this.onEndEditing = this.onEndEditing.bind(this);
-    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
     this.openCommentEditor = this.openCommentEditor.bind(this);
     this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
     this.getModalTitle = this.getModalTitle.bind(this);
-    this.closeModal = this.closeModal.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
   }
 
