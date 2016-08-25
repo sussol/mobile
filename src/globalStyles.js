@@ -147,9 +147,6 @@ export default StyleSheet.create({
     marginTop: 46,
     marginBottom: 24,
   },
-  navBarOffset: {
-    paddingTop: 68,
-  },
   navBarStyle: {
     backgroundColor: BACKGROUND_COLOR,
     borderBottomWidth: 0,
