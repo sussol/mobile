@@ -17,7 +17,7 @@ import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
 
-const DATA_TYPES_SYNCHRONIZED = ['Item', 'ItemBatch'];
+const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 
 /**
 * Renders the page for managing a stocktake.
@@ -34,7 +34,7 @@ export class StocktakeManagePage extends GenericTablePage {
     this.state.showItemsWithNoStock = true;
     this.state.sortBy = 'name';
     this.columns = COLUMNS;
-    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
+    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.onConfirmPress = this.onConfirmPress.bind(this);
   }
 

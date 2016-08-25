@@ -9,7 +9,7 @@ import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
 
-const DATA_TYPES_SYNCHRONIZED = ['Transaction'];
+const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**
 * Renders the page for displaying SupplierInvoices.
@@ -26,7 +26,7 @@ export class SupplierInvoicesPage extends GenericTablePage {
                                             .filtered('type == "supplier_invoice"')
                                             .filtered('otherParty.type != "inventory_adjustment"');
     this.columns = COLUMNS;
-    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
+    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
   }

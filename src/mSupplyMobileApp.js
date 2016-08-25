@@ -25,7 +25,7 @@ import {
   SyncState,
 } from './widgets';
 
-import { Synchronizer } from './sync';
+import { Synchroniser } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
@@ -43,9 +43,9 @@ export default class mSupplyMobileApp extends React.Component {
     this.settings = new Settings(this.database);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
-    this.synchronizer = new Synchronizer(database, syncAuthenticator, this.settings);
+    this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
     this.scheduler = new Scheduler();
-    const initialised = this.synchronizer.isInitialised();
+    const initialised = this.synchroniser.isInitialised();
     this.state = {
       confirmFinalise: false,
       currentUser: null,
@@ -67,8 +67,8 @@ export default class mSupplyMobileApp extends React.Component {
     this.renderLoadingIndicator = this.renderLoadingIndicator.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
-    this.synchronize = this.synchronize.bind(this);
-    this.scheduler.schedule(this.synchronize,
+    this.synchronise = this.synchronise.bind(this);
+    this.scheduler.schedule(this.synchronise,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => {
       if (this.state.currentUser !== null) { // Only reauthenticate if currently logged in
@@ -97,11 +97,11 @@ export default class mSupplyMobileApp extends React.Component {
     this.setState({ isLoading: false });
   }
 
-  async synchronize() {
+  async synchronise() {
     if (!this.state.initialised || this.state.isSyncing) return; // If already syncing, skip
     try {
       this.setState({ isSyncing: true });
-      await this.synchronizer.synchronize();
+      await this.synchroniser.synchronise();
       this.setState({
         isSyncing: false,
         syncError: '',
@@ -189,7 +189,7 @@ export default class mSupplyMobileApp extends React.Component {
       const FirstUsePage = PAGES.firstUse;
       return (
         <FirstUsePage
-          synchronizer={this.synchronizer}
+          synchroniser={this.synchroniser}
           onInitialised={this.onInitialised}
         />
       );

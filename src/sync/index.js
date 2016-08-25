@@ -1,1 +1,1 @@
-export { Synchronizer } from './Synchronizer';
+export { Synchroniser } from './Synchroniser';

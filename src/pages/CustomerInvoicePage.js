@@ -23,7 +23,7 @@ import {
   TextEditor,
 } from '../widgets';
 
-const DATA_TYPES_SYNCHRONIZED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
+const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
@@ -35,7 +35,7 @@ export class CustomerInvoicePage extends GenericTablePage {
     super(props);
     this.state.sortBy = 'itemName';
     this.columns = COLUMNS;
-    this.dataTypesSynchronized = DATA_TYPES_SYNCHRONIZED;
+    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Transaction';
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
