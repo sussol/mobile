@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 
-import globalStyles, { BACKGROUND_COLOR, DARK_GREY, SUSSOL_ORANGE } from './globalStyles';
+import globalStyles, { BACKGROUND_COLOR, SUSSOL_ORANGE } from './globalStyles';
 
 import { Navigator } from './navigation';
 import { Spinner } from './widgets/Spinner';
