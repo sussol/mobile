@@ -8,7 +8,7 @@
 import LocalizedStrings from 'react-native-localization';
 
 export const buttonStrings = new LocalizedStrings({
-  en: {
+  gb: {
     add_master_list_items: 'Add Master List Items',
     all_items_selected: 'All Items Selected',
     create_automatic_order: 'Create Automatic Order',
@@ -22,7 +22,7 @@ export const buttonStrings = new LocalizedStrings({
     past: 'Past',
     use_suggested_quantities: 'Use Suggested Quantities',
   },
-  tetum: {
+  tl: {
     add_master_list_items: 'Add Master List Items (t)',
     all_items_selected: 'All Items Selected (t)',
     create_automatic_order: 'Create Automatic Order (t)',
@@ -35,7 +35,5 @@ export const buttonStrings = new LocalizedStrings({
     new_stocktake: 'New Stocktake (t)',
     past: 'Past (t)',
     use_suggested_quantities: 'Use Suggested Quantities (t)',
-  },
-  fr: {
   },
 });

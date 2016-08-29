@@ -8,7 +8,7 @@
 import LocalizedStrings from 'react-native-localization';
 
 export const tableStrings = new LocalizedStrings({
-  en: {
+  gb: {
     actual_quantity: 'ACTUAL\nQUANTITY',
     available_stock: 'AVAILABLE STOCK',
     category: 'Category',
@@ -46,7 +46,7 @@ export const tableStrings = new LocalizedStrings({
     stock_on_hand: 'STOCK ON HAND',
     suggested_quantity: 'SUGGESTED QTY',
   },
-  tetum: {
+  tl: {
     actual_quantity: 'ACTUAL\nQUANTITY (t)',
     available_stock: 'AVAILABLE STOCK (t)',
     category: 'Category (t)',
@@ -83,7 +83,5 @@ export const tableStrings = new LocalizedStrings({
     status: 'STATUS (t)',
     stock_on_hand: 'STOCK ON HAND (t)',
     suggested_quantity: 'SUGGESTED QTY (t)',
-  },
-  fr: {
   },
 });

@@ -8,7 +8,7 @@
 import LocalizedStrings from 'react-native-localization';
 
 export const pageInfoStrings = new LocalizedStrings({
-  en: {
+  gb: {
     address: 'Address',
     code: 'Code',
     comment: 'Comment',
@@ -19,7 +19,7 @@ export const pageInfoStrings = new LocalizedStrings({
     months_stock_required: 'Months Stock Required',
     their_ref: 'Their Ref',
   },
-  tetum: {
+  tl: {
     address: 'Address (t)',
     code: 'Code (t)',
     comment: 'Comment (t)',
@@ -29,7 +29,5 @@ export const pageInfoStrings = new LocalizedStrings({
     entry_date: 'Entry Date (t)',
     months_stock_required: 'Months Stock Required (t)',
     their_ref: 'Their Ref (t)',
-  },
-  fr: {
   },
 });

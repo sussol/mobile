@@ -8,18 +8,16 @@
 import LocalizedStrings from 'react-native-localization';
 
 export const authStrings = new LocalizedStrings({
-  en: {
+  gb: {
     logging_in: 'Logging in...',
     login: 'Login',
     password: 'Password',
     user_name: 'User Name',
   },
-  tetum: {
+  tl: {
     logging_in: 'Logging in... (t)',
     login: 'Login (t)',
     password: 'Password (t)',
     user_name: 'User Name (t)',
-  },
-  fr: {
   },
 });

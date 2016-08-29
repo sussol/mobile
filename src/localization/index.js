@@ -5,8 +5,11 @@ export { navStrings } from './navStrings';
 export { pageInfoStrings } from './pageInfoStrings';
 export { tableStrings } from './tableStrings';
 
+// Order of pairs defines the order they show in the ListView of LanguageModal. Keep
+// it alphabetical.
 export const LANGUAGE_KEYS = {
-  en: 'English',
-  tetum: 'Tetum',
+  gb: 'English',
   fr: 'French',
+  tl: 'Tetum',
+};
 };

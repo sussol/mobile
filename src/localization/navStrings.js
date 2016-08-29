@@ -8,7 +8,7 @@
 import LocalizedStrings from 'react-native-localization';
 
 export const navStrings = new LocalizedStrings({
-  en: {
+  gb: {
     current_stock: 'Current Stock',
     customer_invoices: 'Customer Invoices',
     customers: 'Customers',
@@ -28,7 +28,7 @@ export const navStrings = new LocalizedStrings({
     sync_error: 'SYNC ERROR',
     sync_in_progress: 'SYNC IN PROGRESS',
   },
-  tetum: {
+  tl: {
     current_stock: 'Current Stock (t)',
     customer_invoices: 'Customer Invoices (t)',
     customers: 'Customers (t)',
@@ -47,7 +47,5 @@ export const navStrings = new LocalizedStrings({
     sync_enabled: 'SYNC ENABLED (t)',
     sync_error: 'SYNC ERROR (t)',
     sync_in_progress: 'SYNC IN PROGRESS (t)',
-  },
-  fr: {
   },
 });

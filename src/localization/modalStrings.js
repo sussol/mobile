@@ -8,13 +8,12 @@
 import LocalizedStrings from 'react-native-localization';
 
 export const modalStrings = new LocalizedStrings({
-  en: {
+  gb: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',
     and: 'and',
     cancel: 'Cancel',
     confirm: 'Confirm',
     create: 'Create',
-    current_language: 'Current language',
     delete_these_invoices: 'Are you sure you want to delete these invoices?',
     delete_these_requisitions: 'Are you sure you want to delete these requisitions?',
     delete_these_stocktakes: 'Are you sure you want to delete these stocktakes?',
@@ -41,13 +40,12 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_customer: 'Start typing to select customer',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
-  tetum: {
+  tl: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising (t)',
     and: 'and (t)',
     cancel: 'Cancel (t)',
     confirm: 'Confirm (t)',
     create: 'Create (t)',
-    current_language: 'Current language (t)',
     delete_these_invoices: 'Are you sure you want to delete these invoices? (t)',
     delete_these_requisitions: 'Are you sure you want to delete these requisitions? (t)',
     delete_these_stocktakes: 'Are you sure you want to delete these stocktakes? (t)',
@@ -73,7 +71,5 @@ export const modalStrings = new LocalizedStrings({
     select_the_number_of_months_stock_required: 'Select the number of months stock required (t)',
     start_typing_to_select_customer: 'Start typing to select customer (t)',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items (t)",
-  },
-  fr: {
   },
 });
