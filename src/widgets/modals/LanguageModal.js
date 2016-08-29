@@ -120,8 +120,8 @@ LanguageModal.propTypes = {
 
 const localStyles = StyleSheet.create({
   imageFlag: {
-    width: 50,
-    height: 30,
+    width: 55,
+    height: 33,
     // marginBottom: 30,
   },
   currentLanguageText: {
