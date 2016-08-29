@@ -7,6 +7,7 @@
 
 import React from 'react';
 import {
+  Image,
   ListView,
   StyleSheet,
   Text,
@@ -18,10 +19,11 @@ import { PageContentModal } from './PageContentModal';
 import { SETTINGS_KEYS } from '../../settings';
 import globalStyles, {
   APP_FONT_FAMILY,
-  COMPONENT_HEIGHT,
   BACKGROUND_COLOR,
+  COMPONENT_HEIGHT,
 } from '../../globalStyles';
 import {
+  COUNTRY_FLAGS,
   LANGUAGE_KEYS,
   authStrings,
   buttonStrings,
@@ -30,6 +32,7 @@ import {
   pageInfoStrings,
   tableStrings,
 } from '../../localization';
+
 
 /**
  * A Modal that covers the page content using PageContentModal, and renders a ListView for selecting
@@ -62,26 +65,33 @@ export class LanguageModal extends React.Component {
   }
 
   renderRow(rowValue, sectionId, rowKey) {
+    let rowStyle;
+    let textStyle;
+    if (this.props.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE) === rowKey) {
+      rowStyle = [localStyles.tableRow, { backgroundColor: '#e95c30' }];
+      textStyle = [globalStyles.dataTableText, localStyles.dataTableText, { color: 'white' }];
+    } else {
+      rowStyle = localStyles.tableRow;
+      textStyle = [globalStyles.dataTableText, localStyles.dataTableText];
+    }
+
     return (
-      // TODO: styles for these components and ListView, globalStyles where sensible.
       <TouchableOpacity
         onPress={() => this.onSelectLanguage(rowKey)}
-        style={localStyles.tableRow}
+        style={rowStyle}
       >
-        <Text style={[globalStyles.dataTableText, localStyles.dataTableText]}>{rowValue}</Text>
+        <Image style={localStyles.imageFlag} source={COUNTRY_FLAGS[rowKey]} resizeMode="stretch" />
+        <Text style={textStyle}>{rowValue}</Text>
       </TouchableOpacity>
     );
   }
 
   render() {
     const {
-      settings,
       isOpen,
       onClose,
       ...modalProps,
     } = this.props;
-
-    const currentLanguage = LANGUAGE_KEYS[settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE)];
 
     return (
       <PageContentModal
@@ -91,9 +101,6 @@ export class LanguageModal extends React.Component {
         {...modalProps}
       >
         <View>
-          <Text style={localStyles.currentLanguageText}>
-            {modalStrings.current_language}: {currentLanguage}
-          </Text>
           <ListView
             style={localStyles.ListView}
             dataSource={this.state.dataSource}
@@ -112,6 +119,11 @@ LanguageModal.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
+  imageFlag: {
+    width: 50,
+    height: 30,
+    // marginBottom: 30,
+  },
   currentLanguageText: {
     fontFamily: APP_FONT_FAMILY,
     color: 'white',
@@ -121,13 +133,18 @@ const localStyles = StyleSheet.create({
   dataTableText: {
     fontSize: 20,
     marginLeft: 20,
+
   },
   tableRow: {
-    justifyContent: 'center',
+    flexDirection: 'row',
+    paddingLeft: 30,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
     height: COMPONENT_HEIGHT,
     backgroundColor: BACKGROUND_COLOR,
   },
   ListView: {
+    backgroundColor: 'white',
     height: 450,
     marginTop: 10,
     marginHorizontal: 200,

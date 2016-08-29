@@ -12,4 +12,9 @@ export const LANGUAGE_KEYS = {
   fr: 'French',
   tl: 'Tetum',
 };
+
+export const COUNTRY_FLAGS = {
+  fr: require('../images/flags/fr.png'),
+  gb: require('../images/flags/gb.png'),
+  tl: require('../images/flags/tl.png'),
 };
