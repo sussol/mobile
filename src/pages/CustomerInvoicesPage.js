@@ -175,37 +175,37 @@ const COLUMNS = [
   {
     key: 'otherPartyName',
     width: 3,
-    title: 'customer',
+    titleKey: 'customer',
     sortable: true,
   },
   {
     key: 'serialNumber',
     width: 1,
-    title: 'invoice_number',
+    titleKey: 'invoice_number',
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: 'status',
+    titleKey: 'status',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 2,
-    title: 'entered_date',
+    titleKey: 'entered_date',
     sortable: true,
   },
   {
     key: 'comment',
     width: 3,
-    title: 'comment',
+    titleKey: 'comment',
     lines: 2,
   },
   {
     key: 'delete',
     width: 1,
-    title: 'delete',
+    titleKey: 'delete',
     alignText: 'center',
   },
 ];

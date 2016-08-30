@@ -156,31 +156,31 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 1,
-    title: 'id',
+    titleKey: 'id',
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: 'status',
+    titleKey: 'status',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 2,
-    title: 'entered_date',
+    titleKey: 'entered_date',
     sortable: true,
   },
   {
     key: 'numberOfItems',
     width: 1,
-    title: 'items',
+    titleKey: 'items',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'comment',
     width: 3,
-    title: 'comment',
+    titleKey: 'comment',
   },
 ];

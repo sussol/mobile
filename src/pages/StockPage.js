@@ -95,19 +95,19 @@ const COLUMNS = [
   {
     key: 'code',
     width: 1,
-    title: 'item_code',
+    titleKey: 'item_code',
     sortable: true,
   },
   {
     key: 'name',
     width: 5,
-    title: 'item_name',
+    titleKey: 'item_name',
     sortable: true,
   },
   {
     key: 'totalQuantity',
     width: 1,
-    title: 'stock_on_hand',
+    titleKey: 'stock_on_hand',
     sortable: true,
     alignText: 'right',
   },

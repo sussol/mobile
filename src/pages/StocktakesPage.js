@@ -163,24 +163,24 @@ const COLUMNS = [
   {
     key: 'name',
     width: 6,
-    title: 'name',
+    titleKey: 'name',
   },
   {
     key: 'createdDate',
     width: 2,
-    title: 'created_date',
+    titleKey: 'created_date',
     sortable: true,
   },
   {
     key: 'status',
     width: 2,
-    title: 'status',
+    titleKey: 'status',
     sortable: true,
   },
   {
     key: 'selected',
     width: 1,
-    title: 'delete',
+    titleKey: 'delete',
     alignText: 'center',
   },
 ];

@@ -242,20 +242,20 @@ const COLUMNS = [
   {
     key: 'code',
     width: 2,
-    title: 'item_code',
+    titleKey: 'item_code',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'name',
     width: 6,
-    title: 'item_name',
+    titleKey: 'item_name',
     sortable: true,
   },
   {
     key: 'selected',
     width: 1,
-    title: 'selected',
+    titleKey: 'selected',
     sortable: true,
     alignText: 'center',
   },

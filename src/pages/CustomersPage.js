@@ -79,19 +79,19 @@ const COLUMNS = [
   {
     key: 'code',
     width: 1,
-    title: 'code',
+    titleKey: 'code',
     sortable: true,
   },
   {
     key: 'name',
     width: 5,
-    title: 'name',
+    titleKey: 'name',
     sortable: true,
   },
   {
     key: 'numberOfTransactions',
     width: 1,
-    title: 'invoices',
+    titleKey: 'invoices',
     alignText: 'right',
     sortable: true,
   },

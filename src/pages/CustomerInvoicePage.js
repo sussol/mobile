@@ -309,33 +309,33 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 2,
-    title: 'item_code',
+    titleKey: 'item_code',
     sortable: true,
   },
   {
     key: 'itemName',
     width: 4,
-    title: 'item_name',
+    titleKey: 'item_name',
     sortable: true,
   },
   {
     key: 'availableQuantity',
     width: 2,
-    title: 'available_stock',
+    titleKey: 'available_stock',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'totalQuantity',
     width: 2,
-    title: 'quantity',
+    titleKey: 'quantity',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'remove',
     width: 1,
-    title: 'remove',
+    titleKey: 'remove',
     alignText: 'center',
   },
 ];

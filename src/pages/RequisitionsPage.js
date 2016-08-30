@@ -158,32 +158,32 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 2,
-    title: 'requisition_number',
+    titleKey: 'requisition_number',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 1,
-    title: 'entered_date',
+    titleKey: 'entered_date',
     sortable: true,
   },
   {
     key: 'numberOfItems',
     width: 1,
-    title: 'items',
+    titleKey: 'items',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'status',
     width: 1,
-    title: 'status',
+    titleKey: 'status',
     sortable: true,
   },
   {
     key: 'delete',
     width: 1,
-    title: 'delete',
+    titleKey: 'delete',
     alignText: 'center',
   },
 ];

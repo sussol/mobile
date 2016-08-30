@@ -44,7 +44,7 @@ import { tableStrings } from '../localization';
  *                               on native keyboard focuses the next cell. Order is left to
  *                               right within a row, then next row.
  * @field  {array}  columns      An array of objects defining each of the columns.
- *         											 Each column must contain: key, width, title. Each
+ *         											 Each column must contain: key, width, titleKey. Each
  *         											 may optionally also contain a boolean 'sortable'.
  * @field  {array}  dataTypesSynchronised      Data types visible in the table displayed
  *         																		 on this page, that should therefore cause
@@ -279,7 +279,7 @@ export class GenericTablePage extends React.Component {
           onPress={sortFunction}
           isAscending={this.state.isAscending}
           isSelected={this.state.sortBy === column.key}
-          text={tableStrings[column.title]}
+          text={tableStrings[column.titleKey]}
         />
       );
     });
