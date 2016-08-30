@@ -9,8 +9,8 @@ export { tableStrings } from './tableStrings';
 // it alphabetical.
 export const LANGUAGE_KEYS = {
   gb: 'English',
-  fr: 'French',
-  tl: 'Tetum',
+  // fr: 'French',
+  // tl: 'Tetum',
 };
 
 export const COUNTRY_FLAGS = {
