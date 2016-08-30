@@ -80,7 +80,7 @@ export class LanguageModal extends React.Component {
         onPress={() => this.onSelectLanguage(rowKey)}
         style={rowStyle}
       >
-        <Image style={localStyles.imageFlag} source={COUNTRY_FLAGS[rowKey]} resizeMode="stretch" />
+        <Image style={localStyles.flagImage} source={COUNTRY_FLAGS[rowKey]} resizeMode="stretch" />
         <Text style={textStyle}>{rowValue}</Text>
       </TouchableOpacity>
     );
@@ -102,7 +102,7 @@ export class LanguageModal extends React.Component {
       >
         <View>
           <ListView
-            style={localStyles.ListView}
+            style={localStyles.listView}
             dataSource={this.state.dataSource}
             renderRow={this.renderRow}
           />
@@ -119,10 +119,9 @@ LanguageModal.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  imageFlag: {
+  flagImage: {
     width: 55,
     height: 33,
-    // marginBottom: 30,
   },
   currentLanguageText: {
     fontFamily: APP_FONT_FAMILY,
@@ -143,7 +142,7 @@ const localStyles = StyleSheet.create({
     height: COMPONENT_HEIGHT,
     backgroundColor: BACKGROUND_COLOR,
   },
-  ListView: {
+  listView: {
     backgroundColor: 'white',
     height: 450,
     marginTop: 10,
