@@ -1,6 +1,6 @@
 import { Settings } from './Settings';
 import { SETTINGS_KEYS } from './index';
-import { setCurrentLanguage } from '../localization';
+import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 
 export class MobileAppSettings extends Settings {
   constructor(database) {
@@ -27,6 +27,6 @@ export class MobileAppSettings extends Settings {
   }
 
   setDefaults() {
-    this.set(SETTINGS_KEYS.CURRENT_LANGUAGE, 'gb');
+    this.set(SETTINGS_KEYS.CURRENT_LANGUAGE, DEFAULT_LANGUAGE);
   }
 }
