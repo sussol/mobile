@@ -82,6 +82,10 @@ export class LanguageModal extends React.Component {
       ...modalProps,
     } = this.props;
 
+    const numberOfRows = Math.min(Object.keys(LANGUAGE_KEYS).length, 10);
+    const listViewHeight = { height: numberOfRows * COMPONENT_HEIGHT };
+    const listViewStyle = [localStyles.listView, listViewHeight];
+
     return (
       <PageContentModal
         isOpen={isOpen}
@@ -91,7 +95,7 @@ export class LanguageModal extends React.Component {
       >
         <View>
           <ListView
-            style={localStyles.listView}
+            style={listViewStyle}
             dataSource={this.state.dataSource}
             renderRow={this.renderRow}
           />
@@ -129,12 +133,11 @@ const localStyles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     height: COMPONENT_HEIGHT,
-    backgroundColor: BACKGROUND_COLOR,
   },
   listView: {
-    backgroundColor: 'white',
-    height: 450,
+    backgroundColor: '#FFFFFF',
     marginTop: 10,
     marginHorizontal: 200,
+    opacity: 1,
   },
 });
