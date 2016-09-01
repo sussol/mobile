@@ -26,14 +26,14 @@ const BATCH_SIZE = 20; // Number of records to sync at one time
  * @param  {SyncAuthenticator} authenticator  Provides authentication with the sync server
  * @param  {Settings}          settings       Access to locally stored settings
  */
-export class Synchronizer {
+export class Synchroniser {
 
   constructor(database, authenticator, settings) {
     this.database = new SyncDatabase(database);
     this.authenticator = authenticator;
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
-    this.synchronize = this.synchronize.bind(this);
+    this.synchronise = this.synchronise.bind(this);
     if (this.isInitialised()) this.syncQueue.enable();
   }
 
@@ -71,9 +71,9 @@ export class Synchronizer {
   }
 
   /**
-   * Return whether or not the synchronizer has been initialised with a URL to sync
+   * Return whether or not the synchroniser has been initialised with a URL to sync
    * against.
-   * @return {Boolean} Whether the synchronizer is initialised
+   * @return {Boolean} Whether the synchroniser is initialised
    */
   isInitialised() {
     const syncURL = this.settings.get(SYNC_URL);
@@ -85,10 +85,10 @@ export class Synchronizer {
    * down remote changes and integrating them into the local database.
    * @return {[type]} [description]
    */
-  async synchronize() {
+  async synchronise() {
     if (!this.isInitialised()) throw new Error('Not yet initialised');
     // Using async/await here means that any errors thrown by push or pull
-    // will be passed up as a rejection of the promise returned by synchronize
+    // will be passed up as a rejection of the promise returned by synchronise
     await this.push();
     await this.pull();
     this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));

@@ -39,13 +39,15 @@ export function FinaliseModal(props) {
       cancelText={errorText ? 'Got it' : 'Cancel'}
       onConfirm={
         !errorText ? () => {
-          if (record) {
-            props.database.write(() => {
-              record.finalise(props.database, props.user);
-              props.database.save(recordType, record);
-            });
-          }
-          if (props.onClose) props.onClose();
+          props.runWithLoadingIndicator(() => {
+            if (record) {
+              props.database.write(() => {
+                record.finalise(props.database, props.user);
+                props.database.save(recordType, record);
+              });
+            }
+            if (props.onClose) props.onClose();
+          });
         } : null}
       onCancel={() => { if (props.onClose) props.onClose(); }}
     />);
@@ -57,6 +59,7 @@ FinaliseModal.propTypes = {
   onClose: React.PropTypes.func,
   finaliseItem: React.PropTypes.object,
   user: React.PropTypes.any,
+  runWithLoadingIndicator: React.PropTypes.func.isRequired,
 };
 
 FinaliseModal.defaultProps = {

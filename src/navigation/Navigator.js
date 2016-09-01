@@ -118,7 +118,7 @@ export class Navigator extends React.Component {
 
   renderScene(props) {
     return (
-      <View style={[localStyles.navBarOffset, localStyles.main, props.style]}>
+      <View style={[localStyles.main, props.style]}>
         {this.props.renderScene({ onNavigate: this.onNavigate, ...props })}
       </View>
     );
@@ -140,7 +140,7 @@ export class Navigator extends React.Component {
           direction={'horizontal'}
           navigationState={{ ...this.state.navigationState }} // Clone so CardStack detects change
           renderScene={this.renderScene}
-          renderOverlay={this.renderNavigationBar}
+          renderHeader={this.renderNavigationBar}
           cardStyle={{ backgroundColor: this.props.backgroundColor }}
         />
         <View style={localStyles.rightAndCentreOuterContainer}>
@@ -228,9 +228,6 @@ const localStyles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  navBarOffset: {
-    marginTop: NavigationHeader.HEIGHT,
   },
   rightAndCentreOuterContainer: {
     position: 'absolute',

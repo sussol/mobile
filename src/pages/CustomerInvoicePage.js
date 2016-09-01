@@ -39,13 +39,10 @@ export class CustomerInvoicePage extends GenericTablePage {
     this.finalisableDataType = 'Transaction';
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
-    this.onEndEditing = this.onEndEditing.bind(this);
-    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
     this.openCommentEditor = this.openCommentEditor.bind(this);
     this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
     this.getModalTitle = this.getModalTitle.bind(this);
-    this.closeModal = this.closeModal.bind(this);
     this.renderPageInfo = this.renderPageInfo.bind(this);
   }
 
@@ -72,9 +69,11 @@ export class CustomerInvoicePage extends GenericTablePage {
   }
 
   onAddMasterItems() {
-    this.props.database.write(() => {
-      this.props.transaction.addItemsFromMasterList(this.props.database);
-      this.props.database.save('Transaction', this.props.transaction);
+    this.props.runWithLoadingIndicator(() => {
+      this.props.database.write(() => {
+        this.props.transaction.addItemsFromMasterList(this.props.database);
+        this.props.database.save('Transaction', this.props.transaction);
+      });
     });
     this.refreshData();
   }
@@ -102,13 +101,11 @@ export class CustomerInvoicePage extends GenericTablePage {
       transaction.removeItemsById(database, selection);
       database.save('Transaction', transaction);
     });
-    this.setState({ selection: [] });
-    this.refreshData();
+    this.setState({ selection: [] }, this.refreshData);
   }
 
   onDeleteCancel() {
-    this.setState({ selection: [] });
-    this.refreshData();
+    this.setState({ selection: [] }, this.refreshData);
   }
 
   openItemSelector() {
@@ -272,7 +269,6 @@ export class CustomerInvoicePage extends GenericTablePage {
               />
               <PageButton
                 text="Add Master List Items"
-                loadingText="Adding..."
                 onPress={this.onAddMasterItems}
                 isDisabled={this.props.transaction.isFinalised}
               />

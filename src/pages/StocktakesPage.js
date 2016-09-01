@@ -134,7 +134,6 @@ export class StocktakesPage extends GenericTablePage {
             <View style={localStyles.buttonViewTop}>
               <PageButton
                 text="New StockTake"
-                loadingText="Creating..."
                 onPress={this.onNewStockTake}
               />
             </View>

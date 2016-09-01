@@ -56,30 +56,32 @@ export class StocktakeManagePage extends GenericTablePage {
   }
 
   onConfirmPress() {
-    const { selection } = this.state;
-    const { database, navigateTo, currentUser } = this.props;
-    let { stocktake } = this.props;
-    const { stocktakeName } = this.state;
+    this.props.runWithLoadingIndicator(() => {
+      const { selection } = this.state;
+      const { database, navigateTo, currentUser } = this.props;
+      let { stocktake } = this.props;
+      const { stocktakeName } = this.state;
 
-    database.write(() => {
-      // If no stocktake came in props, make a new one
-      if (!stocktake) stocktake = createRecord(database, 'Stocktake', currentUser);
+      database.write(() => {
+        // If no stocktake came in props, make a new one
+        if (!stocktake) stocktake = createRecord(database, 'Stocktake', currentUser);
 
-      stocktake.setItemsByID(database, selection);
+        stocktake.setItemsByID(database, selection);
 
-      if (stocktakeName !== '' && stocktakeName !== stocktake.name) {
-        stocktake.name = stocktakeName;
-      }
-      database.save('Stocktake', stocktake);
+        if (stocktakeName !== '' && stocktakeName !== stocktake.name) {
+          stocktake.name = stocktakeName;
+        }
+        database.save('Stocktake', stocktake);
+      });
+
+      navigateTo(
+        'stocktakeEditor',
+        stocktake.name,
+        { stocktake: stocktake },
+        // Coming from StocktakesPage : coming from StocktakeEditPage.
+        !this.props.stocktake ? 'replace' : 'replacePreviousAndPop',
+      );
     });
-
-    navigateTo(
-      'stocktakeEditor',
-      stocktake.name,
-      { stocktake: stocktake },
-      // Coming from StocktakesPage : coming from StocktakeEditPage.
-      !this.props.stocktake ? 'replace' : 'replacePreviousAndPop',
-    );
   }
 
   toggleSelectAllItems(isAllItemsSelected) {
@@ -220,7 +222,6 @@ export class StocktakeManagePage extends GenericTablePage {
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
               textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
               text={!stocktake ? 'Create' : 'Confirm'}
-              loadingText={!stocktake ? 'Creating...' : 'Confirming...'}
               onPress={this.onConfirmPress}
             />
           </BottomModal>

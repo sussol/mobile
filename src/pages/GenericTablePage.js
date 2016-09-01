@@ -105,11 +105,11 @@ export class GenericTablePage extends React.Component {
   }
 
   /**
-   * Refresh data every time the page receives props, so that changes will show
+   * Refresh data every time the page becomes the top route, so that changes will show
    * when a user returns to the page using the back button.
    */
-  componentWillReceiveProps() {
-    this.refreshData();
+  componentWillReceiveProps(props) {
+    if (!this.props.topRoute && props.topRoute) this.refreshData();
   }
 
   componentWillUnmount() {
@@ -120,7 +120,8 @@ export class GenericTablePage extends React.Component {
   // record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     // Ensure sync updates are immediately visible
-    if (causedBy === 'sync' && this.dataTypesSynchronised.indexOf(recordType) >= 0) this.refreshData();
+    if (causedBy === 'sync' &&
+        this.dataTypesSynchronised.indexOf(recordType) >= 0) this.refreshData();
     // Ensure finalising updates data for the primary data type
     else if (recordType === this.finalisableDataType && record.isFinalised) this.refreshData();
   }
@@ -368,11 +369,11 @@ export class GenericTablePage extends React.Component {
               selectTextOnFocus={true}
               placeholder={renderedCell.placeholder}
               keyboardType={renderedCell.keyboardType || 'numeric'}
-              onEndEditing={this.onEndEditing &&
-                            ((target, value) => {
-                              this.onEndEditing(column.key, target, value);
-                              this.refreshData();
-                            })}
+              onEndEditing={(target, value) => {
+                if (!this.onEndEditing) return;
+                this.onEndEditing(column.key, target, value);
+                this.refreshData();
+              }}
               onSubmitEditing={() => this.focusNextField(parseInt(rowId, 10))}
               target={rowData}
               value={renderedCell.cellContents}
@@ -449,6 +450,7 @@ export class GenericTablePage extends React.Component {
 
 GenericTablePage.propTypes = {
   database: React.PropTypes.object,
+  topRoute: React.PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({

@@ -12,10 +12,10 @@ import {
 } from 'react-native';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 
-import globalStyles, { BACKGROUND_COLOR } from './globalStyles';
+import globalStyles, { BACKGROUND_COLOR, SUSSOL_ORANGE } from './globalStyles';
 
 import { Navigator } from './navigation';
-
+import { Spinner } from './widgets/Spinner';
 import { PAGES, FINALISABLE_PAGES } from './pages';
 
 import {
@@ -25,7 +25,7 @@ import {
   SyncState,
 } from './widgets';
 
-import { Synchronizer } from './sync';
+import { Synchroniser } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
@@ -43,9 +43,9 @@ export default class mSupplyMobileApp extends React.Component {
     this.settings = new Settings(this.database);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
-    this.synchronizer = new Synchronizer(database, syncAuthenticator, this.settings);
+    this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
     this.scheduler = new Scheduler();
-    const initialised = this.synchronizer.isInitialised();
+    const initialised = this.synchroniser.isInitialised();
     this.state = {
       confirmFinalise: false,
       currentUser: null,
@@ -54,6 +54,7 @@ export default class mSupplyMobileApp extends React.Component {
       syncError: '',
       lastSync: null, // Date of the last successful sync
       finaliseItem: null,
+      isLoading: false,
     };
   }
 
@@ -61,11 +62,13 @@ export default class mSupplyMobileApp extends React.Component {
     this.logOut = this.logOut.bind(this);
     this.onAuthentication = this.onAuthentication.bind(this);
     this.onInitialised = this.onInitialised.bind(this);
+    this.runWithLoadingIndicator = this.runWithLoadingIndicator.bind(this);
     this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
+    this.renderLoadingIndicator = this.renderLoadingIndicator.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
-    this.synchronize = this.synchronize.bind(this);
-    this.scheduler.schedule(this.synchronize,
+    this.synchronise = this.synchronise.bind(this);
+    this.scheduler.schedule(this.synchronise,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => {
       if (this.state.currentUser !== null) { // Only reauthenticate if currently logged in
@@ -86,11 +89,24 @@ export default class mSupplyMobileApp extends React.Component {
     this.setState({ initialised: true });
   }
 
-  async synchronize() {
+  async runWithLoadingIndicator(functionToRun) {
+    // We here set up an asyncronous promise that will be resolved after a timeout
+    // of 1 millisecond. This allows a fraction of a delay during which the javascript
+    // thread unblocks and allows our spinner animation to start up. We cannot simply
+    // call the functionToRun inside a setTimeout as that relegates to a lower
+    // priority and results in very slow performance.
+    await new Promise((resolve) => {
+      this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
+    });
+    functionToRun();
+    this.setState({ isLoading: false });
+  }
+
+  async synchronise() {
     if (!this.state.initialised || this.state.isSyncing) return; // If already syncing, skip
     try {
       this.setState({ isSyncing: true });
-      await this.synchronizer.synchronize();
+      await this.synchroniser.synchronise();
       this.setState({
         isSyncing: false,
         syncError: '',
@@ -124,6 +140,13 @@ export default class mSupplyMobileApp extends React.Component {
     );
   }
 
+  renderLoadingIndicator() {
+    return (
+      <View style={globalStyles.loadingIndicatorContainer}>
+        <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
+      </View>);
+  }
+
   renderScene(props) {
     const navigateTo = (key, title, extraProps, navType) => {
       dismissKeyboard();
@@ -151,6 +174,7 @@ export default class mSupplyMobileApp extends React.Component {
         settings={this.settings}
         logOut={this.logOut}
         currentUser={this.state.currentUser}
+        runWithLoadingIndicator={this.runWithLoadingIndicator}
         {...extraProps}
       />);
   }
@@ -170,7 +194,7 @@ export default class mSupplyMobileApp extends React.Component {
       const FirstUsePage = PAGES.firstUse;
       return (
         <FirstUsePage
-          synchronizer={this.synchronizer}
+          synchroniser={this.synchroniser}
           onInitialised={this.onInitialised}
         />
       );
@@ -190,6 +214,7 @@ export default class mSupplyMobileApp extends React.Component {
           onClose={() => this.setState({ confirmFinalise: false })}
           finaliseItem={this.state.finaliseItem}
           user={this.state.currentUser}
+          runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
@@ -197,6 +222,7 @@ export default class mSupplyMobileApp extends React.Component {
           isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
+        {this.state.isLoading && this.renderLoadingIndicator()}
       </View>
     );
   }

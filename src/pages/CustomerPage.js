@@ -133,7 +133,6 @@ export class CustomerPage extends GenericTablePage {
             </View>
             <PageButton
               text="New Invoice"
-              loadingText="Creating..."
               onPress={this.onNewInvoice}
             />
           </View>
