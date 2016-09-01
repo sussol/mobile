@@ -132,6 +132,7 @@ const localStyles = StyleSheet.create({
     paddingLeft: 30,
     justifyContent: 'flex-start',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     height: COMPONENT_HEIGHT,
   },
   listView: {
