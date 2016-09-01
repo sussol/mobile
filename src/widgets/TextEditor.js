@@ -46,7 +46,6 @@ export class TextEditor extends React.Component {
           style={[globalStyles.button, globalStyles.modalOrangeButton]}
           textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
           text="Done"
-          loadingText="Updating..."
           onPress={() => this.props.onEndEditing(this.state.text)}
         />
       </View>

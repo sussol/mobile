@@ -147,9 +147,6 @@ export default StyleSheet.create({
     marginTop: 46,
     marginBottom: 24,
   },
-  navBarOffset: {
-    paddingTop: 68,
-  },
   navBarStyle: {
     backgroundColor: BACKGROUND_COLOR,
     borderBottomWidth: 0,
@@ -325,5 +322,16 @@ export default StyleSheet.create({
   },
   toggleOptionSelected: {
     backgroundColor: SUSSOL_ORANGE,
+  },
+  loadingIndicatorContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: DARK_GREY,
+    opacity: 0.88,
   },
 });

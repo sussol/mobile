@@ -11,8 +11,8 @@ export { setCurrentLanguage } from './utilities';
 // order, so if the default is ever reported wrong, that is a good place to look first.
 const languageKeys = {
   gb: 'English',
-  // fr: 'French',
-  // tl: 'Tetum',
+  fr: 'French',
+  tl: 'Tetum',
 };
 
 export const DEFAULT_LANGUAGE = Object.keys(languageKeys)[0]; // i.e. English is the default

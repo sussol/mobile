@@ -35,7 +35,7 @@ export class FirstUsePage extends React.Component {
   async onPressConnect() {
     try {
       this.setState({ progress: 'initialising' });
-      await this.props.synchronizer.initialise(
+      await this.props.synchroniser.initialise(
         this.state.serverURL,
         this.state.syncSiteName,
         this.state.syncSitePassword,
@@ -171,5 +171,5 @@ export class FirstUsePage extends React.Component {
 
 FirstUsePage.propTypes = {
   onInitialised: React.PropTypes.func.isRequired,
-  synchronizer: React.PropTypes.object.isRequired,
+  synchroniser: React.PropTypes.object.isRequired,
 };

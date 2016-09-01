@@ -40,11 +40,9 @@ export class LanguageModal extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-    // Set currentLanguage to the setting or default
-    const currentLanguage = props.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE) || DEFAULT_LANGUAGE;
     this.state = {
       dataSource: dataSource.cloneWithRows(LANGUAGE_KEYS),
-      currentLanguage: currentLanguage,
+      currentLanguage: props.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE),
     };
     this.onSelectLanguage = this.onSelectLanguage.bind(this);
     this.renderRow = this.renderRow.bind(this);
