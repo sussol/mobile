@@ -29,15 +29,7 @@ import { Synchronizer } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
-import { Settings, SETTINGS_KEYS } from './settings';
-import {
-  authStrings,
-  buttonStrings,
-  modalStrings,
-  navStrings,
-  pageInfoStrings,
-  tableStrings,
-} from './localization';
+import { MobileAppSettings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -48,8 +40,7 @@ export default class mSupplyMobileApp extends React.Component {
     super();
     const database = new Database(schema);
     this.database = new UIDatabase(database);
-    this.settings = new Settings(this.database);
-    this.setCurrentLanguage(this.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE));
+    this.settings = new MobileAppSettings(this.database);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
     this.synchronizer = new Synchronizer(database, syncAuthenticator, this.settings);
@@ -74,6 +65,7 @@ export default class mSupplyMobileApp extends React.Component {
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronize = this.synchronize.bind(this);
+    this.settings.load(this.database);
     this.scheduler.schedule(this.synchronize,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => {
@@ -92,17 +84,7 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   onInitialised() {
-    this.settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, 'en');
     this.setState({ initialised: true });
-  }
-
-  setCurrentLanguage(language) {
-    authStrings.setLanguage(language);
-    buttonStrings.setLanguage(language);
-    modalStrings.setLanguage(language);
-    navStrings.setLanguage(language);
-    pageInfoStrings.setLanguage(language);
-    tableStrings.setLanguage(language);
   }
 
   async synchronize() {

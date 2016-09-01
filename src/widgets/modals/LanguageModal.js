@@ -25,12 +25,7 @@ import globalStyles, {
 import {
   COUNTRY_FLAGS,
   LANGUAGE_KEYS,
-  authStrings,
-  buttonStrings,
   modalStrings,
-  navStrings,
-  pageInfoStrings,
-  tableStrings,
 } from '../../localization';
 
 
@@ -55,12 +50,6 @@ export class LanguageModal extends React.Component {
 
   onSelectLanguage(rowKey) {
     this.props.settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, rowKey);
-    authStrings.setLanguage(rowKey);
-    buttonStrings.setLanguage(rowKey);
-    modalStrings.setLanguage(rowKey);
-    navStrings.setLanguage(rowKey);
-    pageInfoStrings.setLanguage(rowKey);
-    tableStrings.setLanguage(rowKey);
     this.props.onClose();
   }
 

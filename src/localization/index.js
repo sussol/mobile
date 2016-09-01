@@ -4,6 +4,7 @@ export { modalStrings } from './modalStrings';
 export { navStrings } from './navStrings';
 export { pageInfoStrings } from './pageInfoStrings';
 export { tableStrings } from './tableStrings';
+export { setCurrentLanguage } from './utilities';
 
 // Order of pairs defines the order they show in the ListView of LanguageModal. Keep
 // it alphabetical.
