@@ -3,6 +3,11 @@ import { SETTINGS_KEYS } from './index';
 import { setCurrentLanguage } from '../localization';
 
 export class MobileAppSettings extends Settings {
+  constructor(database) {
+    super(database);
+    this.load();
+  }
+
   set(key, value) {
     super.set(key, value);
     switch (key) {
@@ -16,8 +21,8 @@ export class MobileAppSettings extends Settings {
 
   // Calls any functions that need to be called (each time the app is started). Checks database
   // to see if there are any settings, if not calls setDefaults.
-  load(database) {
-    if (database.objects('Setting').length <= 0) this.setDefaults(); // No settings, so initialise
+  load() {
+    if (this.database.objects('Setting').length <= 0) this.setDefaults();
     setCurrentLanguage(this.get(SETTINGS_KEYS.CURRENT_LANGUAGE));
   }
 

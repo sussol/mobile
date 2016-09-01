@@ -65,7 +65,6 @@ export default class mSupplyMobileApp extends React.Component {
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronize = this.synchronize.bind(this);
-    this.settings.load(this.database);
     this.scheduler.schedule(this.synchronize,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => {
