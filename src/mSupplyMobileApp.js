@@ -90,6 +90,11 @@ export default class mSupplyMobileApp extends React.Component {
   }
 
   async runWithLoadingIndicator(functionToRun) {
+    // We here set up an asyncronous promise that will be resolved after a timeout
+    // of 1 millisecond. This allows a fraction of a delay during which the javascript
+    // thread unblocks and allows our spinner animation to start up. We cannot simply
+    // call the functionToRun inside a setTimeout as that relegates to a lower
+    // priority and results in very slow performance.
     await new Promise((resolve) => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
