@@ -1,1 +1,0 @@
-export { setCurrentLanguage } from './utilities';
