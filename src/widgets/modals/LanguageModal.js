@@ -19,12 +19,12 @@ import { PageContentModal } from './PageContentModal';
 import { SETTINGS_KEYS } from '../../settings';
 import globalStyles, {
   APP_FONT_FAMILY,
-  BACKGROUND_COLOR,
   COMPONENT_HEIGHT,
 } from '../../globalStyles';
 import {
   COUNTRY_FLAGS,
   LANGUAGE_KEYS,
+  DEFAULT_LANGUAGE,
   modalStrings,
 } from '../../localization';
 
@@ -40,9 +40,11 @@ export class LanguageModal extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
-
+    // Set currentLanguage to the setting or default
+    const currentLanguage = props.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE) || DEFAULT_LANGUAGE;
     this.state = {
       dataSource: dataSource.cloneWithRows(LANGUAGE_KEYS),
+      currentLanguage: currentLanguage,
     };
     this.onSelectLanguage = this.onSelectLanguage.bind(this);
     this.renderRow = this.renderRow.bind(this);
@@ -50,13 +52,13 @@ export class LanguageModal extends React.Component {
 
   onSelectLanguage(rowKey) {
     this.props.settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, rowKey);
-    this.props.onClose();
+    this.setState({ currentLanguage: rowKey }, this.props.onClose);
   }
 
   renderRow(rowValue, sectionId, rowKey) {
     let rowStyle;
     let textStyle;
-    if (this.props.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE) === rowKey) {
+    if (this.state.currentLanguage === rowKey) {
       rowStyle = [localStyles.tableRow, { backgroundColor: '#e95c30' }];
       textStyle = [globalStyles.dataTableText, localStyles.dataTableText, { color: 'white' }];
     } else {
