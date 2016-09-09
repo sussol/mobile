@@ -61,9 +61,9 @@ Item.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    code: 'string',
-    name: 'string',
-    defaultPackSize: 'double',
+    code: { type: 'string', default: 'placeholderCode' },
+    name: { type: 'string', default: 'placeholderName' },
+    defaultPackSize: { type: 'double', default: 1 },
     batches: { type: 'list', objectType: 'ItemBatch' },
     department: { type: 'ItemDepartment', optional: true },
     description: { type: 'string', optional: true },

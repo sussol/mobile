@@ -65,7 +65,7 @@ NumberSequence.schema = {
   name: 'NumberSequence',
   primaryKey: 'sequenceKey',
   properties: {
-    id: 'string',
+    id: { type: 'string', default: 'placeholderId' },
     sequenceKey: 'string',
     highestNumberUsed: { type: 'int', default: 0 },
     numbersToReuse: { type: 'list', objectType: 'NumberToReuse' },

@@ -12,7 +12,7 @@ MasterListItem.schema = {
   properties: {
     id: 'string',
     masterList: { type: 'MasterList', optional: true },
-    item: 'Item',
+    item: { type: 'Item', optional: true },
     imprestQuantity: { type: 'double', optional: true },
   },
 };

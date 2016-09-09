@@ -19,7 +19,7 @@ MasterList.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    name: 'string',
+    name: { type: 'string', default: 'placeholderName' },
     note: { type: 'string', optional: true },
     items: { type: 'list', objectType: 'MasterListItem' },
   },

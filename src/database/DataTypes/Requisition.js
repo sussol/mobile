@@ -128,12 +128,12 @@ Requisition.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    status: 'string',
-    type: 'string', // imprest, forecast or request (request only used in mobile)
-    entryDate: 'date',
-    daysToSupply: 'double',
+    status: { type: 'string', default: 'new' },
+    type: { type: 'string', default: 'request' }, // imprest, forecast or request
+    entryDate: { type: 'date', default: new Date() },
+    daysToSupply: { type: 'double', default: 30 },
     serialNumber: { type: 'string', default: '0' },
-    requesterReference: 'string',
+    requesterReference: { type: 'string', default: '' },
     comment: { type: 'string', optional: true },
     enteredBy: { type: 'User', optional: true },
     items: { type: 'list', objectType: 'RequisitionItem' },
