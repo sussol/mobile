@@ -165,14 +165,14 @@ Stocktake.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    name: 'string',
-    createdDate: 'date', // Includes time
+    name: { type: 'string', default: 'placeholderName' },
+    createdDate: { type: 'date', default: new Date() }, // Includes time
     stocktakeDate: { type: 'date', optional: true },
-    status: 'string',
+    status: { type: 'string', default: 'new' },
     createdBy: { type: 'User', optional: true },
     finalisedBy: { type: 'User', optional: true },
     comment: { type: 'string', optional: true },
-    serialNumber: 'string',
+    serialNumber: { type: 'string', default: 'placeholderSerialNumber' },
     items: { type: 'list', objectType: 'StocktakeItem' },
     additions: { type: 'Transaction', optional: true },
     reductions: { type: 'Transaction', optional: true },

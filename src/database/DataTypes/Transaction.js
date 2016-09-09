@@ -195,12 +195,12 @@ Transaction.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    serialNumber: 'string',
+    serialNumber: { type: 'string', default: 'placeholderSerialNumber' },
     otherParty: { type: 'Name', optional: true },
     comment: { type: 'string', optional: true },
-    entryDate: 'date',
-    type: 'string',
-    status: 'string',
+    entryDate: { type: 'date', default: new Date() },
+    type: { type: 'string', default: 'placeholderType' },
+    status: { type: 'string', default: 'new' },
     confirmDate: { type: 'date', optional: true },
     enteredBy: { type: 'User', optional: true },
     theirRef: { type: 'string', optional: true }, // An external reference code

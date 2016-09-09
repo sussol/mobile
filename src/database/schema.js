@@ -44,7 +44,7 @@ ItemCategory.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    name: 'string',
+    name: { type: 'string', default: 'placeholderName' },
     parentCategory: { type: 'ItemCategory', optional: true },
   },
 };
@@ -54,7 +54,7 @@ ItemDepartment.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    name: 'string',
+    name: { type: 'string', default: 'placeholderName' },
     parentDepartment: { type: 'ItemDepartment', optional: true },
   },
 };
@@ -87,9 +87,9 @@ TransactionCategory.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    name: 'string',
-    code: 'string',
-    type: 'string',
+    name: { type: 'string', default: 'placeholderName' },
+    code: { type: 'string', default: 'placeholderCode' },
+    type: { type: 'string', default: 'placeholderType' },
     parentCategory: { type: 'TransactionCategory', optional: true },
   },
 };
@@ -99,12 +99,15 @@ User.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    username: 'string',
+    username: { type: 'string', default: 'placeholderUsername' },
     lastLogin: { type: 'date', optional: true },
     firstName: { type: 'string', optional: true },
     lastName: { type: 'string', optional: true },
     email: { type: 'string', optional: true },
-    passwordHash: 'string',
+    passwordHash: {
+      type: 'string',
+      default: '4ada0b60df8fe299b8a412bbc8c97d0cb204b80e5693608ab2fb09ecde6d252d',
+    },
     salt: { type: 'string', optional: true },
   },
 };
