@@ -8,6 +8,7 @@
 import React from 'react';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
+import { navStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -33,7 +34,7 @@ export class SupplierInvoicesPage extends GenericTablePage {
 
   onRowPress(invoice) {
     this.props.navigateTo('supplierInvoice',
-                          `Invoice ${invoice.serialNumber}`,
+                          `${navStrings.invoice} ${invoice.serialNumber}`,
                           { transaction: invoice });
   }
 
@@ -77,24 +78,24 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 1,
-    title: 'INVOICE NUM.',
+    titleKey: 'invoice_number',
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: 'STATUS',
+    titleKey: 'status',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 1,
-    title: 'ENTERED DATE',
+    titleKey: 'entered_date',
     sortable: true,
   },
   {
     key: 'comment',
     width: 3,
-    title: 'COMMENT',
+    titleKey: 'comment',
   },
 ];

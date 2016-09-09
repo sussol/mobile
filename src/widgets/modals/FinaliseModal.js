@@ -1,6 +1,7 @@
 import React from 'react';
 import { ConfirmModal } from './ConfirmModal';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
+import { modalStrings } from '../../localization';
 
 /**
  * Presents a modal allowing the user to confirm or cancel finalising a record.
@@ -35,8 +36,9 @@ export function FinaliseModal(props) {
       backdropOpacity={0.97}
       buttonTextStyle={globalStyles.finaliseModalButtonText}
       isOpen={props.isOpen}
-      questionText={errorText || finaliseText}
-      cancelText={errorText ? 'Got it' : 'Cancel'}
+      questionText={errorText || modalStrings[finaliseText]}
+      confirmText={modalStrings.confirm}
+      cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
       onConfirm={
         !errorText ? () => {
           props.runWithLoadingIndicator(() => {

@@ -1,5 +1,7 @@
 export { Settings } from './Settings';
+export { MobileAppSettings } from './MobileAppSettings';
 export const SETTINGS_KEYS = {
+  CURRENT_LANGUAGE: 'CurrentLanguage',
   MOST_RECENT_USERNAME: 'MostRecentUsername',
   SUPPLYING_STORE_ID: 'SupplyingStoreId',
   SUPPLYING_STORE_NAME_ID: 'SupplyingStoreNameId',

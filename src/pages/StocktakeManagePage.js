@@ -16,6 +16,7 @@ import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
+import { buttonStrings, modalStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 
@@ -192,12 +193,12 @@ export class StocktakeManagePage extends GenericTablePage {
                 toggleOnStyle={globalStyles.toggleOptionSelected}
                 toggles={[
                   {
-                    text: 'Hide Stockouts',
+                    text: buttonStrings.hide_stockouts,
                     onPress: () => this.toggleShowItemsWithNoStock(),
                     isOn: !showItemsWithNoStock,
                   },
                   {
-                    text: 'All Items Selected',
+                    text: buttonStrings.all_items_selected,
                     onPress: () => this.toggleSelectAllItems(isAllItemsSelected),
                     isOn: isAllItemsSelected,
                   },
@@ -214,14 +215,14 @@ export class StocktakeManagePage extends GenericTablePage {
               style={globalStyles.modalTextInput}
               textStyle={globalStyles.modalText}
               placeholderTextColor="white"
-              placeholder="Give your stocktake a name"
+              placeholder={modalStrings.give_your_stocktake_a_name}
               value={this.state.stocktakeName}
               onChangeText={(text) => this.setState({ stocktakeName: text })}
             />
             <Button
               style={[globalStyles.button, globalStyles.modalOrangeButton]}
               textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-              text={!stocktake ? 'Create' : 'Confirm'}
+              text={!stocktake ? modalStrings.create : modalStrings.confirm}
               onPress={this.onConfirmPress}
             />
           </BottomModal>
@@ -242,20 +243,20 @@ const COLUMNS = [
   {
     key: 'code',
     width: 2,
-    title: 'ITEM CODE',
+    titleKey: 'item_code',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'name',
     width: 6,
-    title: 'ITEM NAME',
+    titleKey: 'item_name',
     sortable: true,
   },
   {
     key: 'selected',
     width: 1,
-    title: 'SELECTED  ',
+    titleKey: 'selected',
     sortable: true,
     alignText: 'center',
   },

@@ -42,6 +42,7 @@ export class PageContentModal extends React.Component {
     const {
       onClose,
       title,
+      style,
       ...modalProps,
     } = this.props;
 
@@ -54,7 +55,7 @@ export class PageContentModal extends React.Component {
     return (
       <BottomModal
         {...modalProps}
-        style={localStyles.modal}
+        style={[localStyles.modal, style]}
       >
         {titleComponent}
         <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
@@ -72,6 +73,7 @@ PageContentModal.propTypes = {
   children: React.PropTypes.element,
   isOpen: React.PropTypes.bool.isRequired,
   onClose: React.PropTypes.func,
+  style: View.propTypes.style,
   title: React.PropTypes.string,
 };
 PageContentModal.defaultProps = {

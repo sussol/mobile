@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 
 import { SyncIcon } from './SyncIcon';
-
 import { SETTINGS_KEYS as SETTINGS } from '../settings';
+import { navStrings } from '../localization';
 
 import globalStyles, {
   GREY,
@@ -19,17 +19,17 @@ const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
 
 export function SyncState(props) {
-  let text = 'SYNC ENABLED';
+  let text = navStrings.sync_enabled;
   let cloudColor = ACTIVE_COLOR;
   let arrowsColor = ACTIVE_COLOR;
   let wifiColor = ACTIVE_COLOR;
 
   if (props.isSyncing) {
-    text = 'SYNC IN PROGRESS';
+    text = navStrings.sync_in_progress;
   } else if (props.syncError && props.syncError.length > 0) {
     const lastSync = props.settings ? props.settings.get(SETTINGS.SYNC_LAST_SUCCESS) : '';
-    text = 'SYNC ERROR.';
-    if (lastSync) text = `${text} LAST SYNC ${lastSync}`;
+    text = navStrings.sync_error;
+    if (lastSync) text = `${text}. ${navStrings.last_sync} ${lastSync}`;
     cloudColor = INACTIVE_COLOR;
     arrowsColor = INACTIVE_COLOR;
     wifiColor = INACTIVE_COLOR;

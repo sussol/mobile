@@ -29,7 +29,7 @@ import { Synchroniser } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from './Scheduler';
-import { Settings } from './settings';
+import { MobileAppSettings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -40,7 +40,7 @@ export default class mSupplyMobileApp extends React.Component {
     super();
     const database = new Database(schema);
     this.database = new UIDatabase(database);
-    this.settings = new Settings(this.database);
+    this.settings = new MobileAppSettings(this.database);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
     this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);

@@ -80,7 +80,7 @@ function renderTitleComponent(isEditingDisabled, columnIndex, rowData, rowIndex)
       </TouchableOpacity>);
   }
   return (
-    <View style={localStyles.rowContainer}>
+    <View style={localStyles.rowContainer} key={`ViewTitle ${columnIndex}-${rowIndex}`}>
       {titleComponent}
     </View>
   );
@@ -132,7 +132,7 @@ function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) 
       </TouchableOpacity>);
   }
   return (
-    <View style={localStyles.rowContainer}>
+    <View style={localStyles.rowContainer} key={`ViewInfo ${columnIndex}-${rowIndex}`}>
       {infoComponent}
     </View>
   );

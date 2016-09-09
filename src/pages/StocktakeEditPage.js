@@ -12,6 +12,7 @@ import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -81,7 +82,7 @@ export class StocktakeEditPage extends GenericTablePage {
         return {
           type: this.props.stocktake.isFinalised ? 'text' : 'editable',
           cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
-          placeholder: 'No change',
+          placeholder: tableStrings.no_change,
         };
       case 'difference': {
         // Catch items with no change (null - 50 === -50)
@@ -105,10 +106,11 @@ export class StocktakeEditPage extends GenericTablePage {
               {this.renderSearchBar()}
             </View>
             <PageButton
-              text="Manage Stocktake"
-              onPress={() => this.props.navigateTo('stocktakeManager', 'Manage Stocktake', {
-                stocktake: this.props.stocktake,
-              })}
+              text={buttonStrings.manage_stocktake}
+              onPress={() => this.props.navigateTo('stocktakeManager',
+                navStrings.manage_stocktake,
+                { stocktake: this.props.stocktake },
+                )}
               isDisabled={this.props.stocktake.isFinalised}
             />
           </View>
@@ -129,34 +131,34 @@ const COLUMNS = [
   {
     key: 'itemCode',
     width: 1,
-    title: 'ITEM CODE',
+    titleKey: 'item_code',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'itemName',
     width: 3,
-    title: 'ITEM NAME',
+    titleKey: 'item_name',
     sortable: true,
   },
   {
     key: 'snapshotTotalQuantity',
     width: 1,
-    title: 'SNAPSHOT\nQUANTITY',
+    titleKey: 'snapshot_quantity',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'countedTotalQuantity',
     width: 1,
-    title: 'ACTUAL\nQUANTITY',
+    titleKey: 'actual_quantity',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'difference',
     width: 1,
-    title: 'DIFFERENCE',
+    titleKey: 'difference',
     sortable: true,
     alignText: 'right',
   },
@@ -172,17 +174,19 @@ const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in erro
  * @return {string}  An error message if not able to be finalised
  */
 export function checkForFinaliseError(stocktake) {
-  if (stocktake.hasSomeCountedItems) return "Can't finalise a stocktake with no counted items";
+  if (stocktake.hasSomeCountedItems) return modalStrings.stocktake_no_counted_items;
   const itemsBelowMinimum = stocktake.itemsBelowMinimum;
   if (itemsBelowMinimum.length > 0) {
-    let errorString = 'The following items have been reduced by more than the available stock:';
+    let errorString = modalStrings.following_items_reduced_more_than_available_stock;
     itemsBelowMinimum.forEach((stocktakeItem, index) => {
       if (index > MAX_ITEMS_IN_ERROR_MESSAGE) return;
       errorString += truncateString(`\n${stocktakeItem.itemCode} - ${stocktakeItem.itemName}`,
                                     MAX_ITEM_STRING_LENGTH);
     });
     if (itemsBelowMinimum.length > MAX_ITEMS_IN_ERROR_MESSAGE) {
-      errorString += `\nand ${itemsBelowMinimum.length - MAX_ITEMS_IN_ERROR_MESSAGE} more.`;
+      errorString += `\n${modalStrings.and}` +
+                      `${itemsBelowMinimum.length - MAX_ITEMS_IN_ERROR_MESSAGE}` +
+                      `${modalStrings.more}.`;
     }
     return errorString;
   }

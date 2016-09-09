@@ -136,6 +136,9 @@ android {
 
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
+    compile(project(':react-native-localization')) {
+        exclude group: 'com.facebook.react', module: 'react-native'
+    }
     compile(project(':realm')) {
         exclude group: 'com.facebook.react', module: 'react-native'
     }

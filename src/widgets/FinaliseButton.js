@@ -11,13 +11,14 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import globalStyles from '../globalStyles';
+import { navStrings } from '../localization';
 
 export function FinaliseButton(props) {
   if (props.isFinalised) {
     return (
       <View style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}>
         <Text style={[globalStyles.navBarText, localStyles.text]}>
-          {'FINALISED. CANNOT BE EDITED'}
+          {navStrings.finalised_cannot_be_edited}
         </Text>
         <Icon
           name="lock"
@@ -32,7 +33,7 @@ export function FinaliseButton(props) {
       onPress={props.onPress}
     >
       <Text style={[globalStyles.navBarText, localStyles.text]}>
-        {'FINALISE'}
+        {navStrings.finalise}
       </Text>
       <Icon
         name="check-circle"

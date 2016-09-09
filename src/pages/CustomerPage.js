@@ -14,6 +14,7 @@ import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { formatStatus, sortDataBy } from '../utilities';
+import { buttonStrings, navStrings, pageInfoStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -58,7 +59,7 @@ export class CustomerPage extends GenericTablePage {
   }
 
   navigateToInvoice(invoice) {
-    const pageTitle = `Invoice ${invoice.serialNumber}`;
+    const pageTitle = `${navStrings.invoice} ${invoice.serialNumber}`;
     this.props.navigateTo('customerInvoice', pageTitle, { transaction: invoice });
   }
 
@@ -84,7 +85,7 @@ export class CustomerPage extends GenericTablePage {
     const infoColumns = [
       [
         {
-          title: 'Address:',
+          title: `${pageInfoStrings.address}:`,
           info: customer.billingAddress && customer.billingAddress.line1,
         },
         {
@@ -99,7 +100,7 @@ export class CustomerPage extends GenericTablePage {
       ],
       [
         {
-          title: 'Code:',
+          title: `${pageInfoStrings.code}:`,
           info: customer.code,
         },
       ],
@@ -132,7 +133,7 @@ export class CustomerPage extends GenericTablePage {
               {this.renderPageInfo()}
             </View>
             <PageButton
-              text="New Invoice"
+              text={buttonStrings.new_invoice}
               onPress={this.onNewInvoice}
             />
           </View>
@@ -154,31 +155,31 @@ const COLUMNS = [
   {
     key: 'serialNumber',
     width: 1,
-    title: 'ID',
+    titleKey: 'id',
     sortable: true,
   },
   {
     key: 'status',
     width: 1,
-    title: 'STATUS',
+    titleKey: 'status',
     sortable: true,
   },
   {
     key: 'entryDate',
     width: 2,
-    title: 'ENTERED DATE',
+    titleKey: 'entered_date',
     sortable: true,
   },
   {
     key: 'numberOfItems',
     width: 1,
-    title: 'ITEMS',
+    titleKey: 'items',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'comment',
     width: 3,
-    title: 'COMMENT',
+    titleKey: 'comment',
   },
 ];
