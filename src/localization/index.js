@@ -12,7 +12,7 @@ export { setCurrentLanguage } from './utilities';
 const languageKeys = {
   gb: 'English',
   // fr: 'French',
-  // tl: 'Tetum',
+  tl: 'Tetum',
 };
 
 export const DEFAULT_LANGUAGE = Object.keys(languageKeys)[0]; // i.e. English is the default
