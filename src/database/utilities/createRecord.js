@@ -165,7 +165,7 @@ function createStocktake(database, user) {
   const stocktake = database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: `Stocktake ${formatDateAndTime(date, 'slashes')}`,
+    name: '',
     createdDate: date,
     stocktakeDate: date,
     status: 'suggested',

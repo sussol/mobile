@@ -1,10 +1,11 @@
 export { authStrings } from './authStrings';
 export { buttonStrings } from './buttonStrings';
+export { generalStrings } from './generalStrings';
 export { modalStrings } from './modalStrings';
 export { navStrings } from './navStrings';
 export { pageInfoStrings } from './pageInfoStrings';
-export { tableStrings } from './tableStrings';
 export { setCurrentLanguage } from './utilities';
+export { tableStrings } from './tableStrings';
 
 // Order of pairs defines the order they show in the ListView of LanguageModal. Keep
 // it alphabetical except for English, keep it at the top. JS objects don't guarentee insertion

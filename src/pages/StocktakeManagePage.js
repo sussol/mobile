@@ -16,7 +16,8 @@ import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericTablePage } from './GenericTablePage';
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings } from '../localization';
+import { formatDateAndTime } from '../utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 
@@ -69,9 +70,10 @@ export class StocktakeManagePage extends GenericTablePage {
 
         stocktake.setItemsByID(database, selection);
 
-        if (stocktakeName !== '' && stocktakeName !== stocktake.name) {
-          stocktake.name = stocktakeName;
-        }
+        stocktake.name = stocktakeName !== '' ?
+          stocktakeName :
+          `${generalStrings.stocktake} ${formatDateAndTime(new Date(), 'slashes')}`;
+
         database.save('Stocktake', stocktake);
       });
 
