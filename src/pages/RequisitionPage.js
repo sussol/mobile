@@ -352,7 +352,7 @@ RequisitionPage.propTypes = {
 const COLUMNS = [
   {
     key: 'itemCode',
-    width: 1,
+    width: 1.5,
     titleKey: 'code',
     sortable: true,
   },

@@ -15,9 +15,9 @@ export const authStrings = new LocalizedStrings({
     user_name: 'User Name',
   },
   tl: {
-    logging_in: 'Logging in... (t)',
-    login: 'Login (t)',
-    password: 'Password (t)',
-    user_name: 'User Name (t)',
+    logging_in: 'Rejistu hela...',
+    login: 'Rejistu',
+    password: 'Liafuan-pase',
+    user_name: 'Naran',
   },
 });

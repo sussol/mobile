@@ -137,20 +137,20 @@ const COLUMNS = [
   },
   {
     key: 'itemName',
-    width: 3,
+    width: 3.2,
     titleKey: 'item_name',
     sortable: true,
   },
   {
     key: 'snapshotTotalQuantity',
-    width: 1,
+    width: 1.2,
     titleKey: 'snapshot_quantity',
     sortable: true,
     alignText: 'right',
   },
   {
     key: 'countedTotalQuantity',
-    width: 1,
+    width: 1.2,
     titleKey: 'actual_quantity',
     sortable: true,
     alignText: 'right',
