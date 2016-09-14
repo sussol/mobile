@@ -136,6 +136,9 @@ android {
 
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
+    // While we are using the edmofro fork of React Native, need to have the
+    // exclusion rules in all of the other external library compilation instructions
+    // If we switch back to the official React Native, the {} sections can be removed.
     compile(project(':react-native-localization')) {
         exclude group: 'com.facebook.react', module: 'react-native'
     }
@@ -146,6 +149,9 @@ dependencies {
         exclude group: 'com.facebook.react', module: 'react-native'
     }
     compile "com.android.support:appcompat-v7:23.0.1"
+    // While we are using the edmofro fork of React Native, need to compile
+    // manually using the following line. If we switch back, revert it to
+    // compile "com.facebook.react:react-native:+"
     compile project(':ReactAndroid')
 }
 

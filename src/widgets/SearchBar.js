@@ -42,6 +42,7 @@ export class SearchBar extends React.Component {
         <TextInput
           {...this.props}
           ref={(reference) => (this.inputReference = reference)}
+          underlineColorAndroid="transparent"
         />
       </TouchableOpacity>
     );

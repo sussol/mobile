@@ -16,7 +16,7 @@ export const pageInfoStrings = new LocalizedStrings({
     customer: 'Customer',
     entered_by: 'Entered By',
     entry_date: 'Entry Date',
-    months_stock_required: 'Months Stock Required',
+    months_stock_required: 'Months Stock',
     their_ref: 'Their Ref',
   },
   tl: {
@@ -27,7 +27,7 @@ export const pageInfoStrings = new LocalizedStrings({
     customer: 'Kliente',
     entered_by: 'Sé mak hatama',
     entry_date: 'Dadus Hatama',
-    months_stock_required: "Sasán Fulan nian ne'ebé Presiza",
+    months_stock_required: 'Pedido ba fulan',
     their_ref: 'Sira-nia referensia',
   },
 });
