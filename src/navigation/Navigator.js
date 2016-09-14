@@ -138,7 +138,7 @@ export class Navigator extends React.Component {
       <View style={localStyles.main}>
         <NavigationCardStack
           direction={'horizontal'}
-          navigationState={{ ...this.state.navigationState }} // Clone so CardStack detects change
+          navigationState={this.state.navigationState}
           renderScene={this.renderScene}
           renderHeader={this.renderNavigationBar}
           cardStyle={{ backgroundColor: this.props.backgroundColor }}

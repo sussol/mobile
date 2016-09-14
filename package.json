@@ -43,7 +43,7 @@
     "base-64": "^0.1.0",
     "react": "15.3.1-rc.2",
     "react-dom": "15.3.1-rc.2",
-    "react-native": "edmofro/react-native#natively-loopable-animations",
+    "react-native": "edmofro/react-native#natively-loopable-animations-0.34-stable",
     "react-native-autocomplete-input": "^1.1.0",
     "react-native-localization": "^0.1.17",
     "react-native-modalbox": "edmofro/react-native-modalbox",

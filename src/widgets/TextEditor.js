@@ -38,6 +38,7 @@ export class TextEditor extends React.Component {
           autoFocus={true}
           style={localStyles.textInput}
           textStyle={globalStyles.modalText}
+          underlineColorAndroid="transparent"
           value={this.state.text}
           onChangeText={(text) => this.setState({ text: text })}
           onSubmitEditing={() => this.props.onEndEditing(this.state.text)}

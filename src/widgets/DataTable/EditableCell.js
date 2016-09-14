@@ -29,9 +29,11 @@ export class EditableCell extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      value: String(nextProps.value),
-    });
+    if (nextProps.value !== this.state.value) {
+      this.setState({
+        value: String(nextProps.value),
+      });
+    }
   }
 
   onEndEditing() {
@@ -48,6 +50,7 @@ export class EditableCell extends React.Component {
           {...textInputProps}
           ref={refCallback}
           style={textStyle}
+          underlineColorAndroid="transparent"
           onChangeText={(text) => this.setState({ value: text })}
           onEndEditing={this.onEndEditing}
           value={this.state.value}

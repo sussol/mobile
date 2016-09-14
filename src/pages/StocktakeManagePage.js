@@ -216,6 +216,7 @@ export class StocktakeManagePage extends GenericTablePage {
             <TextInput
               style={globalStyles.modalTextInput}
               textStyle={globalStyles.modalText}
+              underlineColorAndroid="transparent"
               placeholderTextColor="white"
               placeholder={modalStrings.give_your_stocktake_a_name}
               value={this.state.stocktakeName}
