@@ -292,6 +292,7 @@ export class GenericTablePage extends React.Component {
   }
 
   renderRow(rowData, sectionId, rowId) {
+    if (!rowData.isValid()) return null; // Don't render if the row's data has been deleted
     const cells = [];
     const isExpanded = this.state.expandedRows.includes(rowData.id);
     // Make rows alternate background colour
