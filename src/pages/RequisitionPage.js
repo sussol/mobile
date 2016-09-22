@@ -80,8 +80,8 @@ export class RequisitionPage extends GenericTablePage {
         this.props.requisition.addItemsFromMasterList(this.props.database, this.getThisStore());
         this.props.database.save('Requisition', this.props.requisition);
       });
+      this.refreshData();
     });
-    this.refreshData();
   }
 
   onCreateAutomaticOrder() {
@@ -90,8 +90,8 @@ export class RequisitionPage extends GenericTablePage {
         this.props.requisition.createAutomaticOrder(this.props.database, this.getThisStore());
         this.props.database.save('Requisition', this.props.requisition);
       });
+      this.refreshData();
     });
-    this.refreshData();
   }
 
   getThisStore() {
@@ -140,8 +140,8 @@ export class RequisitionPage extends GenericTablePage {
         requisition.setRequestedToSuggested(database);
         database.save('Requisition', requisition);
       });
+      this.refreshData();
     });
-    this.refreshData();
   }
 
   openItemSelector() {
