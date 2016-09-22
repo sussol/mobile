@@ -164,7 +164,7 @@ const COLUMNS = [
   },
 ];
 
-const MAX_ITEMS_IN_ERROR_MESSAGE = 6; // Number of items to display in finalise error modal
+const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal
 const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in error modal
 
 /**
@@ -179,13 +179,13 @@ export function checkForFinaliseError(stocktake) {
   if (itemsBelowMinimum.length > 0) {
     let errorString = modalStrings.following_items_reduced_more_than_available_stock;
     itemsBelowMinimum.forEach((stocktakeItem, index) => {
-      if (index > MAX_ITEMS_IN_ERROR_MESSAGE) return;
+      if (index >= MAX_ITEMS_IN_ERROR_MESSAGE) return;
       errorString += truncateString(`\n${stocktakeItem.itemCode} - ${stocktakeItem.itemName}`,
                                     MAX_ITEM_STRING_LENGTH);
     });
     if (itemsBelowMinimum.length > MAX_ITEMS_IN_ERROR_MESSAGE) {
-      errorString += `\n${modalStrings.and}` +
-                      `${itemsBelowMinimum.length - MAX_ITEMS_IN_ERROR_MESSAGE}` +
+      errorString += `\n${modalStrings.and} ` +
+                      `${itemsBelowMinimum.length - MAX_ITEMS_IN_ERROR_MESSAGE} ` +
                       `${modalStrings.more}.`;
     }
     return errorString;
