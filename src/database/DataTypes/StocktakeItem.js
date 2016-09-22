@@ -55,7 +55,9 @@ export class StocktakeItem extends Realm.Object {
    * @return {Boolean} Whether the counted quantity is below the minimum for this item
    */
   get isReducedBelowMinimum() {
-    return this.countedTotalQuantity < this.minimumTotalQuantity;
+    return this.countedTotalQuantity !== undefined &&
+           this.countedTotalQuantity !== null &&
+           this.countedTotalQuantity < this.minimumTotalQuantity;
   }
 
   addBatch(stocktakeBatch) {
