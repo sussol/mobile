@@ -7,17 +7,21 @@
 
 import React from 'react';
 import {
-  Text,
-  StyleSheet,
-  View,
   Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 import { Button } from '../Button';
 import Modal from 'react-native-modalbox';
 import globalStyles from '../../globalStyles';
 
 export function ConfirmModal(props) {
+  // On opening, dismiss the keyboard to ensure editable cells lose their focus
+  // and their values become fixed (so that they save correctly)
   if (props.isOpen) dismissKeyboard();
   const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
@@ -25,22 +29,27 @@ export function ConfirmModal(props) {
       {...modalProps}
       style={[defaultStyles.modal, style]}
     >
-      <Text style={textStyle}>
-        {questionText}
-      </Text>
-      <View style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}>
-        {onCancel && <Button
-          style={[globalStyles.button, props.cancelButtonStyle]}
-          textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
-          text={props.cancelText}
-          onPress={onCancel}
-        />}
-        {onConfirm && <Button
-          style={[globalStyles.button, props.confirmButtonStyle]}
-          textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
-          text={props.confirmText}
-          onPress={onConfirm}
-        />}
+      {onCancel && <TouchableOpacity onPress={onCancel} style={defaultStyles.closeButton}>
+        <Icon name="md-close" style={defaultStyles.closeIcon} />
+      </TouchableOpacity>}
+      <View style={defaultStyles.contentContainer}>
+        <Text style={textStyle}>
+          {questionText}
+        </Text>
+        <View style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}>
+          {onCancel && <Button
+            style={[globalStyles.button, props.cancelButtonStyle]}
+            textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
+            text={props.cancelText}
+            onPress={onCancel}
+          />}
+          {onConfirm && <Button
+            style={[globalStyles.button, props.confirmButtonStyle]}
+            textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
+            text={props.confirmText}
+            onPress={onConfirm}
+          />}
+        </View>
       </View>
     </Modal>
    );
@@ -75,7 +84,16 @@ const defaultStyles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 50,
   },
-  modal: {
-    height: (Dimensions.get('window').height) / 3,
+  contentContainer: {
+    paddingTop: (Dimensions.get('window').height) / 3, // Start the content 33% down the page
+  },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 20,
+  },
+  closeIcon: {
+    fontSize: 36,
+    color: 'white',
   },
 });
