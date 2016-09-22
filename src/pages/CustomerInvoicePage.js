@@ -75,8 +75,8 @@ export class CustomerInvoicePage extends GenericTablePage {
         this.props.transaction.addItemsFromMasterList(this.props.database);
         this.props.database.save('Transaction', this.props.transaction);
       });
+      this.refreshData();
     });
-    this.refreshData();
   }
 
   /**
