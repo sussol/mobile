@@ -234,6 +234,7 @@ export class RequisitionPage extends GenericTablePage {
           <AutocompleteSelector
             options={this.props.database.objects('Item')}
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
+            queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
             onSelect={(item) => {
               const { database, requisition } = this.props;

@@ -38,11 +38,26 @@ export class AutocompleteSelector extends React.Component {
       options,
       onSelect,
       queryString,
+      queryStringSecondary,
       sortByString,
       placeholderText,
       renderLeftText,
       renderRightText,
     } = this.props;
+
+    let data = options.filtered(queryString, this.state.queryText).sorted(sortByString);
+    if (queryStringSecondary) {
+      const secondQueryResult = options.filtered(queryStringSecondary, this.state.queryText)
+                                        .sorted(sortByString);
+      const secondaryData = [];
+      // Remove duplicates from secondQueryResult
+      secondQueryResult.forEach((secondaryRecord) => {
+        if (data.some((dataRecord) => secondaryRecord.id === dataRecord.id)) return;
+        secondaryData.push(secondaryRecord);
+      });
+      // Append secondary results to the first query results
+      data = data.slice().concat(secondaryData);
+    }
 
     return (
       <Autocomplete
@@ -50,7 +65,7 @@ export class AutocompleteSelector extends React.Component {
         autoFocus
         autoCapitalize="none"
         autoCorrect={false}
-        data={options.filtered(queryString, this.state.queryText).sorted(sortByString)}
+        data={data}
         onChangeText={text => this.setState({ queryText: text })}
         placeholder={placeholderText}
         renderItem={(item) => (
@@ -71,6 +86,7 @@ export class AutocompleteSelector extends React.Component {
 AutocompleteSelector.propTypes = {
   options: React.PropTypes.object.isRequired,
   queryString: React.PropTypes.string.isRequired,
+  queryStringSecondary: React.PropTypes.string,
   sortByString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,
   onSelect: React.PropTypes.func.isRequired,
