@@ -123,33 +123,11 @@ export class StocktakeManagePage extends GenericTablePage {
   getUpdatedData(searchTerm, sortBy, isAscending) {
     const {
       items,
-      selection,
       showItemsWithNoStock,
     } = this.state;
     let data;
     data = items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
-    switch (sortBy) {
-      // 'selected' case lists the selected items in alphabetical order, followed by unselected in
-      // alphabetical order. This requires the selection array to store the item ids in the
-      // same alphabetical order as their respective items.
-      case 'selected':
-        // This sort making so many queries is likely why sorting by selected with all selected
-        // takes so long. A potential refactor fix would be to have the realm objects themselves
-        // stored in the array. If I understand how realm/JS behave, I'd think it'd just be pointers
-        // to the objects in memory held by the results object, so shouldn't have any notable inpact
-        // on memory.
-        selection.sort((a, b) => {
-          const aName = items.find(item => item.id === a).name;
-          const bName = items.find(item => item.id === b).name;
-          return bName.localeCompare(aName);
-        });
-        data = data.sorted('name', !isAscending).slice()
-                  .sort((a, b) => selection.indexOf(b.id) - selection.indexOf(a.id));
-        if (!isAscending) data.reverse();
-        break;
-      default:
-        data = data.sorted(sortBy, !isAscending);
-    }
+    data = data.sorted(sortBy, !isAscending);
     if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
@@ -260,7 +238,6 @@ const COLUMNS = [
     key: 'selected',
     width: 1,
     titleKey: 'selected',
-    sortable: true,
     alignText: 'center',
   },
 ];
