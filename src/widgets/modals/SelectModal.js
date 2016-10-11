@@ -18,6 +18,7 @@ export function SelectModal(props) {
     options,
     placeholderText,
     queryString,
+    queryStringSecondary,
     sortByString,
     ...modalProps,
   } = props;
@@ -32,6 +33,7 @@ export function SelectModal(props) {
         options={options}
         placeholderText={placeholderText}
         queryString={queryString}
+        queryStringSecondary={queryStringSecondary}
         sortByString={sortByString}
         onSelect={onSelect}
       />
@@ -43,6 +45,7 @@ SelectModal.propTypes = {
   isOpen: React.PropTypes.bool.isRequired,
   options: React.PropTypes.object.isRequired,
   queryString: React.PropTypes.string.isRequired,
+  queryStringSecondary: React.PropTypes.string,
   sortByString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,
   onClose: React.PropTypes.func,

@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
+import { complement } from 'set-manipulator';
 
 import { APP_FONT_FAMILY } from '../globalStyles';
 
@@ -38,11 +39,23 @@ export class AutocompleteSelector extends React.Component {
       options,
       onSelect,
       queryString,
+      queryStringSecondary,
       sortByString,
       placeholderText,
       renderLeftText,
       renderRightText,
     } = this.props;
+
+    let data = options.filtered(queryString, this.state.queryText).sorted(sortByString);
+    if (queryStringSecondary) {
+      const secondQueryResult = options.filtered(queryStringSecondary, this.state.queryText)
+                                        .sorted(sortByString);
+      // Remove duplicates from secondQueryResult
+      const secondaryData = complement(secondQueryResult, data);
+
+      // Append secondary results to the first query results
+      data = data.slice().concat(secondaryData);
+    }
 
     return (
       <Autocomplete
@@ -50,7 +63,7 @@ export class AutocompleteSelector extends React.Component {
         autoFocus
         autoCapitalize="none"
         autoCorrect={false}
-        data={options.filtered(queryString, this.state.queryText).sorted(sortByString)}
+        data={data}
         onChangeText={text => this.setState({ queryText: text })}
         placeholder={placeholderText}
         renderItem={(item) => (
@@ -71,6 +84,7 @@ export class AutocompleteSelector extends React.Component {
 AutocompleteSelector.propTypes = {
   options: React.PropTypes.object.isRequired,
   queryString: React.PropTypes.string.isRequired,
+  queryStringSecondary: React.PropTypes.string,
   sortByString: React.PropTypes.string.isRequired,
   placeholderText: React.PropTypes.string,
   onSelect: React.PropTypes.func.isRequired,
