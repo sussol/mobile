@@ -88,6 +88,7 @@ export class GenericTablePage extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
     this.focusNextField = this.focusNextField.bind(this);
+    this.renderFooter = this.renderFooter.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
     this.renderCell = this.renderCell.bind(this);
@@ -124,7 +125,10 @@ export class GenericTablePage extends React.Component {
     if (causedBy === 'sync' &&
         this.dataTypesSynchronised.indexOf(recordType) >= 0) this.refreshData();
     // Ensure finalising updates data for the primary data type
-    else if (recordType === this.finalisableDataType && record.isFinalised) this.refreshData();
+    else if (recordType === this.finalisableDataType && record.isFinalised) {
+      this.refreshData();
+      if (this.dataTableRef) this.dataTableRef.scrollTo({ y: 0 });
+    }
   }
 
   onSearchChange(event) {
@@ -422,12 +426,22 @@ export class GenericTablePage extends React.Component {
       />);
   }
 
+  // Footer is just a spacer at the bottom of tables allowing the user to scroll beyond
+  // the last row rendered. Alleviates the problem of the keyboard covering the last rows
+  // of the table.
+  renderFooter() {
+    return (
+      <View style={localStyles.tableFooter} />
+    );
+  }
+
   renderDataTable() {
     return (
       <DataTable
         refCallback={(reference) => (this.dataTableRef = reference)}
         style={globalStyles.dataTable}
         listViewStyle={localStyles.listView}
+        renderFooter={this.renderFooter}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         renderHeader={this.renderHeader}
@@ -458,6 +472,9 @@ GenericTablePage.propTypes = {
 const localStyles = StyleSheet.create({
   listView: {
     flex: 1,
+  },
+  tableFooter: {
+    height: 8 * COMPONENT_HEIGHT,
   },
   alignTextLeft: {
     marginLeft: 20,
