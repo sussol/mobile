@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Autocomplete from 'react-native-autocomplete-input';
+import { complement } from 'set-manipulator';
 
 import { APP_FONT_FAMILY } from '../globalStyles';
 
@@ -49,12 +50,9 @@ export class AutocompleteSelector extends React.Component {
     if (queryStringSecondary) {
       const secondQueryResult = options.filtered(queryStringSecondary, this.state.queryText)
                                         .sorted(sortByString);
-      const secondaryData = [];
       // Remove duplicates from secondQueryResult
-      secondQueryResult.forEach((secondaryRecord) => {
-        if (data.some((dataRecord) => secondaryRecord.id === dataRecord.id)) return;
-        secondaryData.push(secondaryRecord);
-      });
+      const secondaryData = complement(secondQueryResult, data);
+
       // Append secondary results to the first query results
       data = data.slice().concat(secondaryData);
     }
