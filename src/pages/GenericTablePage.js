@@ -383,6 +383,7 @@ export class GenericTablePage extends React.Component {
               onSubmitEditing={() => this.focusNextField(parseInt(rowId, 10))}
               target={rowData}
               value={renderedCell.cellContents}
+              underlineColorAndroid={WARM_GREY}
             />
           );
           break;

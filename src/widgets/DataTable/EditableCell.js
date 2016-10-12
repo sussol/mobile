@@ -49,8 +49,7 @@ export class EditableCell extends React.Component {
         <TextInput
           {...textInputProps}
           ref={refCallback}
-          style={textStyle}
-          underlineColorAndroid="transparent"
+          style={[defaultStyles.text, textStyle]}
           onChangeText={(text) => this.setState({ value: text })}
           onEndEditing={this.onEndEditing}
           value={this.state.value}
@@ -82,5 +81,8 @@ const defaultStyles = StyleSheet.create({
   cell: {
     flex: 1,
     justifyContent: 'center',
+  },
+  text: {
+    right: -9, // This is to account for RN issue 1287, see https://github.com/facebook/react-native/issues/1287
   },
 });
