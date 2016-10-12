@@ -74,6 +74,7 @@ export class Navigator extends React.Component {
         renderTitleComponent={this.renderTitleComponent}
         style={this.props.navBarStyle}
         onNavigateBack={() => this.onNavigate({ type: BACK_ACTION })}
+        viewProps={this.props.headerViewProps}
       />
     );
   }
@@ -143,7 +144,7 @@ export class Navigator extends React.Component {
           renderHeader={this.renderNavigationBar}
           cardStyle={{ backgroundColor: this.props.backgroundColor }}
         />
-        <View style={localStyles.rightAndCentreOuterContainer}>
+        <View style={localStyles.rightAndCentreOuterContainer} {...this.props.headerViewProps}>
           {this.renderRightAndCentre()}
         </View>
       </View>
@@ -157,6 +158,7 @@ Navigator.propTypes = {
   renderCentreComponent: React.PropTypes.func,
   navBarStyle: View.propTypes.style,
   backgroundColor: React.PropTypes.string,
+  headerViewProps: React.PropTypes.object,
 };
 
 /**

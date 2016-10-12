@@ -8,6 +8,7 @@
 import React from 'react';
 import {
   Image,
+  TextInput,
   View,
 } from 'react-native';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
@@ -207,6 +208,10 @@ export default class mSupplyMobileApp extends React.Component {
           renderRightComponent={this.renderSyncState}
           navBarStyle={globalStyles.navBarStyle}
           backgroundColor={BACKGROUND_COLOR}
+          headerViewProps={{
+            onStartShouldSetResponderCapture: () => TextInput.State.currentlyFocusedField() != null,
+            onResponderRelease: dismissKeyboard,
+          }}
         />
         <FinaliseModal
           database={this.database}
