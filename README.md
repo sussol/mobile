@@ -9,11 +9,24 @@ Sustainable Solutions' Mobile app for use with the mSupply medical inventory con
 * Open the .apk on the tablet and follow the install instructions (need to allow apps from unknown sources)
 
 ### Working on mSupply Mobile
+#### Setting up React Native Tools and Environment
+Follow the instructions [here](https://facebook.github.io/react-native/docs/getting-started.html) to get the tools needed for creating and running a react native project. Choose *Android* and your operating system - Currently all development has been done on Mac. **You can skip installing watchman and no need to set up the android virtual device, as we will be using Genymotion to manage emulation for us.**
+
+**TODO: STEP BY STEP THIS**
+
+The essential things you need to have installed and done are:
+* node/npm
+* react-native-cli
+* Android studio
+* Set up paths
 #### Genymotion
-First get and install genymotion using [these instructions](https://docs.genymotion.com/Content/01_Get_Started/Installation.htm). We use geny motion to manage emulation of devices for quick testing of changes without needed a tablet on hand. You may need to use login to the genymotion website with an account to get the download.
+You will need a genymotion account to use the software, so make an account on their [website](https://www.genymotion.com/account/create/) if you have not got one. Use a personal email address.
+First get and install genymotion using [these instructions](https://docs.genymotion.com/Content/01_Get_Started/Installation.htm). You will need to install virtual box.
+We'll now need to set up a device to emulate. Open Genymotion and login. There should be a modal asking if you'd like to add your first device, click this or click "Add" near the top. Search the list of available devices to find "Custom Tablet - 4.4.4 - API 19 - 2560x1600. This will take some time to install, but once it's done Genymotion is ready to go.
 #### Git
 Install GitHub Desktop and signin with your GitHub account. Clone the mobile repository by clicking the plus icon at the top left and selecting clone. This should show a list of all repositories you can see on GitHub. Find "sussol/mobile" and click the "Clone Repository" button. If you cannot see it, make sure you have been added as developer in the sussol repository on GitHub.
-####  Code/Text Editor
+At this stage, you can right click on the repository in GitHub desktop and click "open in terminal". Run the command `npm install`. This will install all the packages defined in the `packages.json` file in the mobile project. Packages include open source components such as react and react-native as well as development packages, such as linter rules (which helps enforce all of us developers have consistent rules when using Atom/Nuclide which we'll have in the next step of setup!).
+#### Atom + Nuclide
 To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not currently supported on Windows.
 * Install [atom](https://atom.io/). This is editor will be the base that Nuclide is installed on. Atom is an open source project managed by GitHub themselves.
 * Install [Nuclide](https://nuclide.io/docs/editor/setup/). This is a development environment created by facebook specifically geared toward React Native. **Do this through the atom package manager**, as the next step we'll want to be in there.
@@ -33,18 +46,9 @@ To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not 
   - react (This may conflict with language-babel. Ignore the warning or disable/enable according to preference)
   - atom-react-native-autocomplete
   - badass-react-snippets
-  - Unnecessary packages that can be great: pigments, color-picker, minimap, minimap-linter, minimap-find-and-replace
+  - Unnecessary packages that can be great: pigments, color-picker, minimap, minimap-linter, minimap-find-and-replace, minimap-highlight-selected
 
 On the left in Atom you should see a file tree section and the button "Add Project Folder". Click this and find add the folder where you cloned the sussol/mobile repository earlier. Now you should be able to easily look through the mobile code with all the bells and whistles!
-#### Setting up React Native Tools and Environment
-Follow the instructions [here](https://facebook.github.io/react-native/docs/getting-started.html) to get the tools needed for creating and running a react native project. Choose *Android* and your operating system - Currently all development has been done on Mac. **You can skip installing watchman and no need to set up the android virtual device, as we will be using Genymotion to manage emulation for us.**
-
-The essential things you need to have installed and done are:
-* node/npm
-* react-native-cli
-* Android studio
-* Set up paths
-
 #### Running Debug in Emulator
 TODO: instructions for doing this
 
