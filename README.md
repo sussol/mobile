@@ -37,7 +37,7 @@ To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not 
 
 On the left in Atom you should see a file tree section and the button "Add Project Folder". Click this and find add the folder where you cloned the sussol/mobile repository earlier. Now you should be able to easily look through the mobile code with all the bells and whistles!
 #### Setting up React Native Tools and Environment
-Follow the instructions [here](https://facebook.github.io/react-native/docs/getting-started.html) to get the tools needed for creating and running a react native project. Choose *Android* and your operating system - Currently all development has been done on Mac. **You can skip installing** watchman and no need to set up the android virtual device, as we will be using Genymotion to manage emulation for us.
+Follow the instructions [here](https://facebook.github.io/react-native/docs/getting-started.html) to get the tools needed for creating and running a react native project. Choose *Android* and your operating system - Currently all development has been done on Mac. **You can skip installing watchman and no need to set up the android virtual device, as we will be using Genymotion to manage emulation for us.**
 
 The essential things you need to have installed and done are:
 * node/npm
