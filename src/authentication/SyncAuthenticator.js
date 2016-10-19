@@ -2,7 +2,7 @@ import {
   authenticateAsync,
   getAuthHeader,
   hashPassword,
- } from './authenticationUtils';
+} from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
 const {
@@ -20,14 +20,13 @@ const {
 const AUTH_ENDPOINT = '/sync/v2/site';
 
 export class SyncAuthenticator {
-  constructor(database, settings) {
-    this.database = database;
+  constructor(settings) {
     this.settings = settings;
   }
 
 /**
  * Check whether the username and password are valid, against the server. On
- * successful authentication, save the details in the database.
+ * successful authentication, save the details in settings.
  * @param  {string}   username         The sync site username to test
  * @param  {string}   password         The password to test
  * @param  {function} onAuthentication The function to call on authentication, with

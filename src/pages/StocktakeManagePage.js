@@ -14,9 +14,9 @@ import {
 
 import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, generalStrings } from '../localization';
+import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
 import { formatDateAndTime } from '../utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
@@ -27,7 +27,7 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 * @prop   {func}                navigateTo  CallBack for navigation stack.
 * @state  {Realm.Results}       items       Realm.Result object containing all Items.
 */
-export class StocktakeManagePage extends GenericTablePage {
+export class StocktakeManagePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.items = props.database.objects('Item');
@@ -35,7 +35,27 @@ export class StocktakeManagePage extends GenericTablePage {
     this.state.stocktakeName = '';
     this.state.showItemsWithNoStock = true;
     this.state.sortBy = 'name';
-    this.columns = COLUMNS;
+    this.columns = [
+      {
+        key: 'code',
+        width: 2,
+        title: tableStrings.item_code,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'name',
+        width: 6,
+        title: tableStrings.item_name,
+        sortable: true,
+      },
+      {
+        key: 'selected',
+        width: 1,
+        title: tableStrings.selected,
+        alignText: 'center',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.onConfirmPress = this.onConfirmPress.bind(this);
   }
@@ -219,28 +239,6 @@ StocktakeManagePage.propTypes = {
   database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'code',
-    width: 2,
-    titleKey: 'item_code',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'name',
-    width: 6,
-    titleKey: 'item_name',
-    sortable: true,
-  },
-  {
-    key: 'selected',
-    width: 1,
-    titleKey: 'selected',
-    alignText: 'center',
-  },
-];
 
 const localStyles = StyleSheet.create({
   bottomModal: {

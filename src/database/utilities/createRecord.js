@@ -1,6 +1,5 @@
-import { generateUUID } from './utilities';
+import { generateUUID } from 'react-native-database';
 import { getNextNumber } from './numberSequenceUtilities';
-import { formatDateAndTime } from '../../utilities';
 
 const NUMBER_SEQUENCE_KEYS = {
   CUSTOMER_INVOICE_NUMBER: 'customer_invoice_serial_number',

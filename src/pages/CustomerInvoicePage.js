@@ -10,11 +10,11 @@ import {
   View,
 } from 'react-native';
 
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -31,11 +31,44 @@ const MODAL_KEYS = {
   ITEM_SELECT: 'itemSelect',
 };
 
-export class CustomerInvoicePage extends GenericTablePage {
+export class CustomerInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
-    this.columns = COLUMNS;
+    this.columns = [
+      {
+        key: 'itemCode',
+        width: 2,
+        title: tableStrings.item_code,
+        sortable: true,
+      },
+      {
+        key: 'itemName',
+        width: 4,
+        title: 'item_name',
+        sortable: true,
+      },
+      {
+        key: 'availableQuantity',
+        width: 2,
+        title: tableStrings.available_stock,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'totalQuantity',
+        width: 2,
+        title: tableStrings.quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'remove',
+        width: 1,
+        title: tableStrings.remove,
+        alignText: 'center',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Transaction';
     this.getUpdatedData = this.getUpdatedData.bind(this);
@@ -301,41 +334,6 @@ CustomerInvoicePage.propTypes = {
   database: React.PropTypes.object,
   transaction: React.PropTypes.object,
 };
-
-const COLUMNS = [
-  {
-    key: 'itemCode',
-    width: 2,
-    titleKey: 'item_code',
-    sortable: true,
-  },
-  {
-    key: 'itemName',
-    width: 4,
-    titleKey: 'item_name',
-    sortable: true,
-  },
-  {
-    key: 'availableQuantity',
-    width: 2,
-    titleKey: 'available_stock',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'totalQuantity',
-    width: 2,
-    titleKey: 'quantity',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'remove',
-    width: 1,
-    titleKey: 'remove',
-    alignText: 'center',
-  },
-];
 
 /**
  * Check whether a given customer invoice is safe to be finalised. Return null if it is,

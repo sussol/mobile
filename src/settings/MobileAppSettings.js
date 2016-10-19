@@ -1,4 +1,4 @@
-import { Settings } from './Settings';
+import { Settings } from 'react-native-database';
 import { SETTINGS_KEYS } from './index';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 

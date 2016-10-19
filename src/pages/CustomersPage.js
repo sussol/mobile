@@ -6,8 +6,9 @@
  */
 
 import React from 'react';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { sortDataBy } from '../utilities';
+import { tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Name'];
 
@@ -17,12 +18,32 @@ const DATA_TYPES_SYNCHRONISED = ['Name'];
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
 */
-export class CustomersPage extends GenericTablePage {
+export class CustomersPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'name';
     this.state.customers = props.database.objects('Customer');
-    this.columns = COLUMNS;
+    this.columns = [
+      {
+        key: 'code',
+        width: 1,
+        title: tableStrings.code,
+        sortable: true,
+      },
+      {
+        key: 'name',
+        width: 5,
+        title: tableStrings.name,
+        sortable: true,
+      },
+      {
+        key: 'numberOfTransactions',
+        width: 1,
+        title: tableStrings.invoices,
+        alignText: 'right',
+        sortable: true,
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
@@ -74,25 +95,3 @@ CustomersPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
   settings: React.PropTypes.object.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'code',
-    width: 1,
-    titleKey: 'code',
-    sortable: true,
-  },
-  {
-    key: 'name',
-    width: 5,
-    titleKey: 'name',
-    sortable: true,
-  },
-  {
-    key: 'numberOfTransactions',
-    width: 1,
-    titleKey: 'invoices',
-    alignText: 'right',
-    sortable: true,
-  },
-];

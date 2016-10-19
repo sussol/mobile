@@ -1,4 +1,3 @@
-export { Settings } from './Settings';
 export { MobileAppSettings } from './MobileAppSettings';
 export const SETTINGS_KEYS = {
   CURRENT_LANGUAGE: 'CurrentLanguage',

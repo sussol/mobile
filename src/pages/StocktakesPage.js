@@ -10,9 +10,9 @@ import { View, StyleSheet } from 'react-native';
 
 import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { formatStatus } from '../utilities';
-import { buttonStrings, modalStrings, navStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -22,14 +22,38 @@ const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 * @prop   {func}                navigateTo  CallBack for navigation stack.
 * @state  {Realm.Results}       stocktakes  Realm.Result object containing all Items.
 */
-export class StocktakesPage extends GenericTablePage {
+export class StocktakesPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'createdDate';
     this.state.isAscending = false;
     this.state.showCurrent = true;
     this.state.stocktakes = props.database.objects('Stocktake');
-    this.columns = COLUMNS;
+    this.columns = [
+      {
+        key: 'name',
+        width: 6,
+        title: tableStrings.name,
+      },
+      {
+        key: 'createdDate',
+        width: 2,
+        title: tableStrings.created_date,
+        sortable: true,
+      },
+      {
+        key: 'status',
+        width: 2,
+        title: tableStrings.status,
+        sortable: true,
+      },
+      {
+        key: 'selected',
+        width: 1,
+        title: tableStrings.delete,
+        alignText: 'center',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
@@ -157,32 +181,6 @@ StocktakesPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'name',
-    width: 6,
-    titleKey: 'name',
-  },
-  {
-    key: 'createdDate',
-    width: 2,
-    titleKey: 'created_date',
-    sortable: true,
-  },
-  {
-    key: 'status',
-    width: 2,
-    titleKey: 'status',
-    sortable: true,
-  },
-  {
-    key: 'selected',
-    width: 1,
-    titleKey: 'delete',
-    alignText: 'center',
-  },
-];
 
 const localStyles = StyleSheet.create({
   buttonViewTop: {

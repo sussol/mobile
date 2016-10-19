@@ -12,9 +12,9 @@ import { View } from 'react-native';
 import { createRecord } from '../database';
 import { BottomConfirmModal, PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -25,13 +25,45 @@ const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 * @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
 * @state  {Realm.Results}       requisitions  Results object containing all Requisition records.
 */
-export class RequisitionsPage extends GenericTablePage {
+export class RequisitionsPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.requisitions = props.database.objects('Requisition');
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
-    this.columns = COLUMNS;
+    this.columns = [
+      {
+        key: 'serialNumber',
+        width: 2,
+        title: tableStrings.requisition_number,
+        sortable: true,
+      },
+      {
+        key: 'entryDate',
+        width: 1,
+        title: tableStrings.entered_date,
+        sortable: true,
+      },
+      {
+        key: 'numberOfItems',
+        width: 1,
+        title: tableStrings.items,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'status',
+        width: 1,
+        title: tableStrings.status,
+        sortable: true,
+      },
+      {
+        key: 'delete',
+        width: 1,
+        title: tableStrings.delete,
+        alignText: 'center',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getUpdatedData = this.getUpdatedData.bind(this);
     this.onNewRequisition = this.onNewRequisition.bind(this);
@@ -153,37 +185,3 @@ RequisitionsPage.propTypes = {
   currentUser: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'serialNumber',
-    width: 2,
-    titleKey: 'requisition_number',
-    sortable: true,
-  },
-  {
-    key: 'entryDate',
-    width: 1,
-    titleKey: 'entered_date',
-    sortable: true,
-  },
-  {
-    key: 'numberOfItems',
-    width: 1,
-    titleKey: 'items',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'status',
-    width: 1,
-    titleKey: 'status',
-    sortable: true,
-  },
-  {
-    key: 'delete',
-    width: 1,
-    titleKey: 'delete',
-    alignText: 'center',
-  },
-];

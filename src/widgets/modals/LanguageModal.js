@@ -17,14 +17,14 @@ import {
 
 import { PageContentModal } from './PageContentModal';
 import { SETTINGS_KEYS } from '../../settings';
-import globalStyles, {
+import {
+  dataTableStyles,
   APP_FONT_FAMILY,
   COMPONENT_HEIGHT,
 } from '../../globalStyles';
 import {
   COUNTRY_FLAGS,
   LANGUAGE_KEYS,
-  DEFAULT_LANGUAGE,
   modalStrings,
 } from '../../localization';
 
@@ -58,10 +58,10 @@ export class LanguageModal extends React.Component {
     let textStyle;
     if (this.state.currentLanguage === rowKey) {
       rowStyle = [localStyles.tableRow, { backgroundColor: '#e95c30' }];
-      textStyle = [globalStyles.dataTableText, localStyles.dataTableText, { color: 'white' }];
+      textStyle = [dataTableStyles.text, localStyles.dataTableText, { color: 'white' }];
     } else {
       rowStyle = localStyles.tableRow;
-      textStyle = [globalStyles.dataTableText, localStyles.dataTableText];
+      textStyle = [dataTableStyles.text, localStyles.dataTableText];
     }
 
     return (

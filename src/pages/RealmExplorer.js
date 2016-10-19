@@ -10,14 +10,14 @@ import {
   View,
 } from 'react-native';
 
-import { SearchBar } from '../widgets';
+import { SearchBar } from 'react-native-ui-components';
 import {
   Cell,
   DataTable,
   Header,
   HeaderCell,
   Row,
-} from '../widgets/DataTable';
+} from 'react-native-data-table';
 
 import { ListView } from 'realm/react-native';
 
