@@ -48,7 +48,7 @@
     "react-native-autocomplete-input": "^1.1.0",
     "react-native-data-table": "^0.1.0",
     "react-native-database": "^0.1.0",
-    "react-native-generic-table-page": "^0.1.2",
+    "react-native-generic-table-page": "^0.1.4",
     "react-native-localization": "^0.1.17",
     "react-native-modalbox": "edmofro/react-native-modalbox",
     "react-native-ui-components": "^0.1.1",

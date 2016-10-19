@@ -55,7 +55,7 @@ export class StocktakesPage extends GenericPage {
       },
     ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.onNewStockTake = this.onNewStockTake.bind(this);
     this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
@@ -104,7 +104,7 @@ export class StocktakesPage extends GenericPage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { stocktakes, showCurrent } = this.state;
     const toggleFilter = showCurrent ? 'status != "finalised"' : 'status == "finalised"';
     const data = stocktakes

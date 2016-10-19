@@ -140,7 +140,7 @@ export class StocktakeManagePage extends GenericPage {
    * Updates data within dataSource in state according to sortBy and
    * isAscending. Also filters data according to showItemsWithNoStock.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const {
       items,
       showItemsWithNoStock,

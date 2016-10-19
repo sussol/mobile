@@ -86,7 +86,7 @@ export class RequisitionPage extends GenericPage {
     ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Requisition';
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onCreateAutomaticOrder = this.onCreateAutomaticOrder.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
@@ -101,7 +101,7 @@ export class RequisitionPage extends GenericPage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.props.requisition.items
                  .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     let sortDataType;

@@ -65,7 +65,7 @@ export class RequisitionsPage extends GenericPage {
       },
     ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onNewRequisition = this.onNewRequisition.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.renderCell = this.renderCell.bind(this);
@@ -119,7 +119,7 @@ export class RequisitionsPage extends GenericPage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.state.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
