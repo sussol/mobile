@@ -19,6 +19,7 @@ The essential things you need to have installed and done are:
 * react-native-cli
 * Android studio
 * Set up paths
+
 #### Genymotion
 You will need a genymotion account to use the software, so make an account on their [website](https://www.genymotion.com/account/create/) if you have not got one. Use a personal email address.
 First get and install genymotion using [these instructions](https://docs.genymotion.com/Content/01_Get_Started/Installation.htm). You will need to install virtual box.
@@ -49,6 +50,7 @@ To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not 
   - Unnecessary packages that can be great: pigments, color-picker, minimap, minimap-linter, minimap-find-and-replace, minimap-highlight-selected
 
 On the left in Atom you should see a file tree section and the button "Add Project Folder". Click this and find add the folder where you cloned the sussol/mobile repository earlier. Now you should be able to easily look through the mobile code with all the bells and whistles!
+
 #### Running Debug in Emulator
 TODO: instructions for doing this
 
