@@ -35,7 +35,7 @@ Now every time Terminal is opened, these directories will be added to the PATH v
 8. Next we have to set up the Android NDK. You may have noticed we added to PATH the directory where we will be putting it in the previous step.
     * First download the NDK here: android-ndk-r10e-darwin-x86_64.zip](http://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip). It is important that the version is r10e, newer versions will break the compiling process later.
     * Open Finder and Navigate to your home directory `/user/[your user name]/`. Open the folder "Library". If you cannot see it, you need to run in Terminal `defaults write com.apple.Finder AppleShowAllFiles TRUE` then `option + right-click` Finder in the dock at the bottom of the screen and click "Relaunch". Get back to the home directory an find the folder "Library"
-    * Open "Library", Open the folder Android, and make a new folder here called "ndk".
+    * Open "Library", open the folder "Android", and make a new folder here called "ndk".
     * Copy the file "android-ndk-r10e-darwin-x86_64.zip" that you downloaded from the first step into this folder you created.
     * Double click "android-ndk-r10e-darwin-x86_64.zip" to extract it. There should now be a folder called android-ndk-r10e and we are done setting up the ndk.
 9. We need to get the android SDK through Android Studio. 
@@ -44,7 +44,11 @@ Now every time Terminal is opened, these directories will be added to the PATH v
     * Check the box for "Android 6.0 (Marshmallow)". If you like, deselect the other options (7.1.1 likely checked by default)
     * Click Next and accept the liscenses and click next
     * Click Finish when it is done and close Android Studio
-10. set up android 23.0.1 through android SDK manager TODO: finish this.
+10. We need to make sure you have Android SDK Build-tools 23.0.1
+   * Open Terminal and enter `android`. A window called "Android SDK Manager" should be opened.
+   * In the "Tools" folder in this window, check the box on the row for "Android Build-tools 23.0.1
+   * Click "Install [number] Packages", select each liscense and check "Accept License" on the right of the window.
+   * Click "Install". Likely several 100MB download. Once this is done, your React Native environment for Android should be good to go.
 
 #### Genymotion
 * You will need a genymotion account to use the software, so make an account on their [website](https://www.genymotion.com/account/create/) if you have not got one. Use a personal email address.
@@ -54,12 +58,12 @@ Now every time Terminal is opened, these directories will be added to the PATH v
 #### Git
 * Install GitHub Desktop and signin with your GitHub account. 
 * Clone the mobile repository by clicking the plus icon at the top left and selecting clone. This should show a list of all repositories you can see on GitHub. Find "sussol/mobile" and click the "Clone Repository" button. If you cannot see it, make sure you have been added as developer in the sussol repository on GitHub.
-* At this stage, you can right click on the repository in GitHub desktop and click "open in terminal". Run the command `npm install`. This will install all the packages defined in the `packages.json` file in the mobile project. Packages include open source components such as react and react-native as well as development packages, such as linter rules (which helps enforce all of us developers have consistent rules when using Atom/Nuclide which we'll have in the next step of setup!).
+* At this stage, you can right click on the repository in GitHub desktop and click "Open in Terminal". Run the command `npm install`. This will install all the packages defined in the `packages.json` file in the mobile project. Packages include open source components such as react and react-native as well as development packages, such as linter rules (which helps enforce all of us developers have consistent style rules when using Atom/Nuclide, which we'll have in the next step of setup!).
 
 #### Atom + Nuclide
 To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not currently supported on Windows.
-* Install [atom](https://atom.io/). This is editor will be the base that Nuclide is installed on. Atom is an open source project managed by GitHub themselves.
-* Install [Nuclide](https://nuclide.io/docs/editor/setup/). This is a development environment created by facebook specifically geared toward React Native. **Do this through the atom package manager**, as the next step we'll want to be in there.
+* Install [Atom](https://atom.io/). This is editor will be the base that Nuclide is installed on. Atom is an open source project managed by GitHub themselves.
+* Install [Nuclide](https://nuclide.io/docs/editor/setup/). This is a development environment created by facebook specifically geared toward React and React Native. **Do this through the atom package manager**, as the next step we'll want to be in there.
 * Open Atom.
 * Choose Atom | Preferences to bring up the Settings tab.
 * In the Settings tab, and select Install from the list at the left.
@@ -73,7 +77,7 @@ To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not 
  * In atom navigate back to settings (cmd+,), install tab. Search for and install:
   - linter
   - linter-eslint
-  - react (This may conflict with language-babel. Ignore the warning or disable/enable according to preference)
+  - react (This may conflict with language-babel. Ignore the warning or disable/enable according to your preference)
   - atom-react-native-autocomplete
   - badass-react-snippets
   - Unnecessary packages that can be great: pigments, color-picker
@@ -82,8 +86,13 @@ On the left in Atom you should see a file tree section and the button "Add Proje
 
 #### Running Debug in Emulator
 * Open genymotion and start the deviced added earlier: "Custom Tablet - 4.4.4 - API 19 - 2560x1600"
-* With terminal open in the project root folder, run the command `react-native run-android`
-* Provided everything went okay in set up, it should run!
+* With terminal open in the project root folder (In GitHub Desktop, right click the project and choose "Open in Terminal"), run the command `react-native run-android`
+
+This will open a new Terminal window running the React Packager, running on a node server. The packager crawls through the files in our repository and will find all the Javascript files we write and transpile them from ES6 syntax into another that is supported by React Native.
+
+Your original Terminal window will show many dependancies being checked. The first time you run this on a fresh copy of the repository (such as when setting all the above up for the first time), this process will take a long time. 20 minutes is a plausible amount of time. This will include some downloading and due to us actually running a customer fork of the React Native repository, we need to compile a lot of files on the first run.
+
+Once all that is done, it'll use the Android Debug Bridge to connect to the Genymotion emulated device. You can check what devices are connected by typing `adb devices` in Terminal.
 
 ### Building from Source
 * Assumes you have [npm](https://nodejs.org/en/download/) and the [react-native](https://facebook.github.io/react-native/docs/getting-started.html#dependencies-for-mac-ios) dev tools installed
