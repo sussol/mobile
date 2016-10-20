@@ -9,32 +9,42 @@ Sustainable Solutions' Mobile app for use with the mSupply medical inventory con
 * Open the .apk on the tablet and follow the install instructions (need to allow apps from unknown sources)
 
 ### Working on mSupply Mobile
+These instructions are only for Mac OSX.
 #### Setting up React Native Tools and Environment
 We to get the tools needed for creating and running a react native project. 
 
-1. install homebrew
-2. `brew install node`
-3. `npm install -g react-native-cli`
-4. install android studio
-5. set up paths
-6. set up .bashrc file
-7. put this 
-```if [ -n "$BASH_VERSION" ]; then
-    # include .bashrc if it exists
-    if [ -f "$HOME/.bashrc" ]; then
-        . "$HOME/.bashrc"
-    fi
-fi``` 
-in .bash_profile
-8. Set up ndk
-9. set up android 23 api
-
-
-The essential things you need to have installed and done are:
-* node/npm
-* react-native-cli
-* Android studio
-* Set up paths
+1. Install homebrew. Simply open Terminal, copy and paste the following press enter:
+`/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`. Homebrew is a MacOS development tool manager.
+2. Install Node using homebrew: `brew install node`. Node provides a javascript runtime, and importantly brings with it npm, Node Package Manager. We use npm to manage all the packages that we use the mSupply Mobile project.
+3. Install the React Native Command Line Interface: `npm install -g react-native-cli`. This gives us some tools for managing React Native projects via Terminal, such as starting the app. 
+4. Install Android Studio. We actually are only using this to manage some Android SDKs (Software Development Kit). Android Studio is a popular integrated development environment (IDE) for coding Native Android apps in Java. 
+    * [Download it here](https://developer.android.com/studio/install.html) and follow the instructions to install. 
+    * Once installed start Android Studio and choose the standard setup option. Click next, next and finish. There should download between 700MB and 800MB. Do not change the SDK directory, or you will have to adjust the path in later steps appropriately.
+5. Your PATH variable needs to updated so that Terminal can find the tools that we are installing.
+    * Open Terminal and enter `cd`. This will change the directory to your home directory, also referred to as `~` (tilda). 
+    * Enter `ls -a`. This will list all files in the directory, including hidden ones prefixed with a `.`. There should be a file .bash_profile. If there isn't don't worry. Type `touch .bash_profile` to create it.
+    * Enter `open .bash_profile`. This should open the file in a text editor. (Alternatively you could have found this file through Finder and double clicked it.)
+    * Paste the following bash commands into this file
+    ```
+    export ANDROID_HOME=~/Library/Android/sdk
+    export ANDROID_NDK=~Library/Android/ndk/android-ndk-r10e
+export PATH=${PATH}:${ANDROID_HOME}/tools
+export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+```
+Now every time Terminal is opened, these directories will be added to the PATH variable. Close and reopen the Terminal so that it has the updated PATH.
+8. Next we have to set up the Android NDK. You may have noticed we added to PATH the directory where we will be putting it in the previous step.
+    * First download the NDK here: android-ndk-r10e-darwin-x86_64.zip](http://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip). It is important that the version is r10e, newer versions will break the compiling process later.
+    * Open Finder and Navigate to your home directory `/user/[your user name]/`. Open the folder "Library". If you cannot see it, you need to run in Terminal `defaults write com.apple.Finder AppleShowAllFiles TRUE` then `option + right-click` Finder in the dock at the bottom of the screen and click "Relaunch". Get back to the home directory an find the folder "Library"
+    * Open "Library", Open the folder Android, and make a new folder here called "ndk".
+    * Copy the file "android-ndk-r10e-darwin-x86_64.zip" that you downloaded from the first step into this folder you created.
+    * Double click "android-ndk-r10e-darwin-x86_64.zip" to extract it. There should now be a folder called android-ndk-r10e and we are done setting up the ndk.
+9. We need to get the android SDK through Android Studio. 
+    * Open Android Studio. If it wants setup, follow the later part of android 4 that covers that.
+    * Click the "Configure" menu down the bottom right, and click "SDK Manager"
+    * Check the box for "Android 6.0 (Marshmallow)". If you like, deselect the other options (7.1.1 likely checked by default)
+    * Click Next and accept the liscenses and click next
+    * Click Finish when it is done and close Android Studio
+10. set up android 23.0.1 through android SDK manager TODO: finish this.
 
 #### Genymotion
 * You will need a genymotion account to use the software, so make an account on their [website](https://www.genymotion.com/account/create/) if you have not got one. Use a personal email address.
