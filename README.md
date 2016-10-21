@@ -18,7 +18,7 @@ We to get the tools needed for creating and running a react native project.
 2. Install Node using homebrew: `brew install node`. Node provides a javascript runtime, and importantly brings with it npm, Node Package Manager. We use npm to manage all the packages that we use the mSupply Mobile project.
 3. Install the React Native Command Line Interface: `npm install -g react-native-cli`. This gives us some tools for managing React Native projects via Terminal, such as starting the app. 
 4. Install Android Studio. We actually are only using this to manage some Android SDKs (Software Development Kit). Android Studio is a popular integrated development environment (IDE) for coding Native Android apps in Java. 
-    * [Download it here](https://developer.android.com/studio/install.html) and follow the instructions to install. 
+    * [Download it here](https://developer.android.com/studio/index.html) and follow [these instructions](https://developer.android.com/studio/install.html) to install. 
     * Once installed start Android Studio and choose the standard setup option. Click next, next and finish. There should download between 700MB and 800MB. Do not change the SDK directory, or you will have to adjust the path in later steps appropriately.
 5. Your PATH variable needs to updated so that Terminal can find the tools that we are installing.
     * Open Terminal and enter `cd`. This will change the directory to your home directory, also referred to as `~` (tilda). 
@@ -33,7 +33,7 @@ export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 ```
 Now every time Terminal is opened, these directories will be added to the PATH variable. Close and reopen the Terminal so that it has the updated PATH.
 8. Next we have to set up the Android NDK. You may have noticed we added to PATH the directory where we will be putting it in the previous step.
-    * First download the NDK here: android-ndk-r10e-darwin-x86_64.zip](http://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip). It is important that the version is r10e, newer versions will break the compiling process later.
+    * First download the NDK here: [android-ndk-r10e-darwin-x86_64.zip](http://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip). It is important that the version is r10e, newer versions will break the compiling process later.
     * Open Finder and Navigate to your home directory `/user/[your user name]/`. Open the folder "Library". If you cannot see it, you need to run in Terminal `defaults write com.apple.Finder AppleShowAllFiles TRUE` then `option + right-click` Finder in the dock at the bottom of the screen and click "Relaunch". Get back to the home directory an find the folder "Library"
     * Open "Library", open the folder "Android", and make a new folder here called "ndk".
     * Copy the file "android-ndk-r10e-darwin-x86_64.zip" that you downloaded from the first step into this folder you created.
