@@ -63,12 +63,12 @@ Now every time Terminal is opened, these directories will be added to the PATH v
 #### Atom + Nuclide
 To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not currently supported on Windows.
 * Install [Atom](https://atom.io/). This is editor will be the base that Nuclide is installed on. Atom is an open source project managed by GitHub themselves.
-* Install [Nuclide](https://nuclide.io/docs/editor/setup/). This is a development environment created by facebook specifically geared toward React and React Native. **Do this through the atom package manager**, as the next step we'll want to be in there.
+* Install [Nuclide](https://nuclide.io/). This is a development environment created by facebook specifically geared toward React and React Native. **Do this through the atom package manager as follows**, as the next step we'll want to be in there as well.
 * Open Atom.
-* Choose Atom | Preferences to bring up the Settings tab.
-* In the Settings tab, and select Install from the list at the left.
+* Choose Atom | Preferences (cmd+,) to bring up the Settings tab.
+* In the Settings tab select "Install" from the list on the left.
 * In the search box, type “Nuclide” and press the Enter key.
-* Click the Install button for the nuclide package
+* Click the install button for the Nuclide package
 * Install additional packages
  * Still in the settings tab in Atom, click on "Packages"
  * Click the "Settings" button for Nuclide
