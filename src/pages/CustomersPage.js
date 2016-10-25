@@ -23,7 +23,7 @@ export class CustomersPage extends GenericPage {
     super(props);
     this.state.sortBy = 'name';
     this.state.customers = props.database.objects('Customer');
-    this.columns = [
+    this.state.columns = [
       {
         key: 'code',
         width: 1,

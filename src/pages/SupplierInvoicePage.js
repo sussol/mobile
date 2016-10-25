@@ -20,7 +20,7 @@ export class SupplierInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
-    this.columns = [
+    this.state.columns = [
       {
         key: 'itemCode',
         width: 1,

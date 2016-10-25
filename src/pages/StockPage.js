@@ -26,7 +26,7 @@ export class StockPage extends GenericPage {
     super(props);
     this.state.sortBy = 'name';
     this.state.items = props.database.objects('Item');
-    this.columns = [
+    this.state.columns = [
       {
         key: 'code',
         width: 1,

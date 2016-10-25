@@ -31,7 +31,7 @@ export class RequisitionsPage extends GenericPage {
     this.state.requisitions = props.database.objects('Requisition');
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
-    this.columns = [
+    this.state.columns = [
       {
         key: 'serialNumber',
         width: 2,

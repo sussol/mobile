@@ -29,7 +29,7 @@ export class StocktakesPage extends GenericPage {
     this.state.isAscending = false;
     this.state.showCurrent = true;
     this.state.stocktakes = props.database.objects('Stocktake');
-    this.columns = [
+    this.state.columns = [
       {
         key: 'name',
         width: 6,

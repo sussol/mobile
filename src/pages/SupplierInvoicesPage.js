@@ -26,7 +26,7 @@ export class SupplierInvoicesPage extends GenericPage {
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "supplier_invoice"')
                                             .filtered('otherParty.type != "inventory_adjustment"');
-    this.columns = [
+    this.state.columns = [
       {
         key: 'serialNumber',
         width: 1,

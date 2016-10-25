@@ -31,7 +31,7 @@ export class CustomerInvoicesPage extends GenericPage {
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
     this.state.isCreatingInvoice = false;
-    this.columns = [
+    this.state.columns = [
       {
         key: 'otherPartyName',
         width: 3,

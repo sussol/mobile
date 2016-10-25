@@ -35,7 +35,7 @@ export class CustomerPage extends GenericPage {
                                             .filtered('type == "customer_invoice"')
                                             .filtered('otherParty.name == $0', props.customer.name);
     this.state.sortBy = 'entryDate';
-    this.columns = [
+    this.state.columns = [
       {
         key: 'serialNumber',
         width: 1,

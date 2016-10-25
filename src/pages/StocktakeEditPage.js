@@ -27,7 +27,7 @@ export class StocktakeEditPage extends GenericPage {
     super(props);
     this.state.items = props.stocktake.items;
     this.state.sortBy = 'itemName';
-    this.columns = [
+    this.state.columns = [
       {
         key: 'itemCode',
         width: 1,

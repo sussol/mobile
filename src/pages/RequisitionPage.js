@@ -36,7 +36,7 @@ export class RequisitionPage extends GenericPage {
     super(props);
     this.state.sortBy = 'itemName';
     this.state.modalKey = null;
-    this.columns = [
+    this.state.columns = [
       {
         key: 'itemCode',
         width: 1.5,

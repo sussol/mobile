@@ -29,7 +29,6 @@ export const authStyles = {
     alignItems: 'center',
     justifyContent: 'flex-start',
     backgroundColor: 'white',
-    elevation: 3,
     borderColor: WARMER_GREY,
     borderWidth: 1,
     borderRadius: 1,

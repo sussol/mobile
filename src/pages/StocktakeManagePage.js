@@ -35,7 +35,7 @@ export class StocktakeManagePage extends GenericPage {
     this.state.stocktakeName = '';
     this.state.showItemsWithNoStock = true;
     this.state.sortBy = 'name';
-    this.columns = [
+    this.state.columns = [
       {
         key: 'code',
         width: 2,
