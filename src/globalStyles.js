@@ -55,13 +55,13 @@ export default StyleSheet.create({
   },
   pageTopLeftSectionContainer: {
     flex: 2,
+    marginRight: 10,
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   pageTopRightSectionContainer: {
     flexDirection: 'row',
-    flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
@@ -91,7 +91,7 @@ export default StyleSheet.create({
   },
   modalTextInput: {
     flex: 2,
-    paddingRight: 5,
+    marginRight: 10,
     borderColor: BACKGROUND_COLOR,
   },
   modalText: {
