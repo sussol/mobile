@@ -498,7 +498,9 @@ export function sanityCheckIncomingRecord(recordType, record) {
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   return requiredFields[recordType].reduce((containsAllFieldsSoFar, fieldName) =>
-                                              containsAllFieldsSoFar && record[fieldName] !== null,
+                                            containsAllFieldsSoFar &&
+                                            record[fieldName] !== null &&
+                                            record[fieldName].length > 0,
                                             true);
 }
 
