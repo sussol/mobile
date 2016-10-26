@@ -52,7 +52,11 @@ export class Synchroniser {
   async initialise(serverURL, syncSiteName, syncSitePassword, setProgress) {
     if (setProgress) setProgress('Initialising...');
     this.syncQueue.disable(); // Stop sync queue listening to database changes
-    const isFresh = serverURL !== this.serverURL; // Else continuing a partial initialisation
+    // Check if the serverURL passed in is the same as one we have already been using during
+    // initialisation, in which case we are continuing a failed partial initialisation. If the
+    // serverURL is different, it is either completely fresh, or the URL has been changed so we
+    // should start afresh
+    const isFresh = serverURL !== this.serverURL;
     if (isFresh) this.database.write(() => { this.database.deleteAll(); });
     this.serverURL = serverURL;
     try {

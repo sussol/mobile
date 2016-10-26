@@ -311,10 +311,14 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'StocktakeBatch': {
       const stocktake = getObject(database, 'Stocktake', record.stock_take_ID);
       const packSize = parseNumber(record.snapshot_packsize);
+      const itemBatch = getObject(database, 'ItemBatch', record.item_line_ID);
+      const item = getObject(database, 'Item', record.item_ID);
+      itemBatch.item = item;
+      item.addBatchIfUnique(itemBatch);
       internalRecord = {
         id: record.ID,
         stocktake: stocktake,
-        itemBatch: getObject(database, 'ItemBatch', record.item_line_ID),
+        itemBatch: itemBatch,
         snapshotNumberOfPacks: parseNumber(record.snapshot_qty) * packSize,
         packSize: 1, // Pack to one all mobile data
         expiry: parseDate(record.expiry),
@@ -485,8 +489,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
                   'requester_reference'],
     RequisitionItem: ['requisition_ID', 'item_ID', 'stock_on_hand', 'Cust_stock_order'],
     Stocktake: ['Description', 'stock_take_created_date', 'status', 'serial_number'],
-    StocktakeBatch: ['stock_take_ID', 'item_line_ID', 'snapshot_qty', 'snapshot_packsize',
-                     'expiry', 'Batch', 'cost_price', 'sell_price'],
+    StocktakeBatch: ['stock_take_ID', 'item_line_ID', 'item_ID', 'snapshot_qty',
+                     'snapshot_packsize', 'expiry', 'Batch', 'cost_price', 'sell_price'],
     Transaction: ['invoice_num', 'name_ID', 'entry_date', 'type', 'status', 'store_ID'],
     TransactionCategory: ['category', 'code', 'type'],
     TransactionBatch: ['item_ID', 'item_name', 'item_line_ID', 'batch', 'expiry_date',
