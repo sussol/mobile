@@ -5,6 +5,7 @@ export const SETTINGS_KEYS = {
   MOST_RECENT_USERNAME: 'MostRecentUsername',
   SUPPLYING_STORE_ID: 'SupplyingStoreId',
   SUPPLYING_STORE_NAME_ID: 'SupplyingStoreNameId',
+  SYNC_IS_INITIALISED: 'SyncIsInitialised',
   SYNC_LAST_SUCCESS: 'SyncLastSuccess',
   SYNC_URL: 'SyncURL',
   SYNC_SITE_ID: 'SyncSiteId',
