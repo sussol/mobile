@@ -76,7 +76,7 @@ export class Synchroniser {
     } catch (error) { // Did not authenticate, sync error, or no internet, pass error up
       throw error;
     }
-    this.settings.set(SYNC_IS_INITIALISED);
+    this.settings.set(SYNC_IS_INITIALISED, 'true');
     this.syncQueue.enable(); // Begin the sync queue listening to database changes
   }
 
@@ -85,7 +85,8 @@ export class Synchroniser {
    * @return {string} Either 'complete', 'partial', 'uninitialised'
    */
   isInitialised() {
-    return this.settings.get(SYNC_IS_INITIALISED);
+    const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
+    return syncIsInitialised && syncIsInitialised === 'true';
   }
 
   /**
