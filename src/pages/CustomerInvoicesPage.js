@@ -131,10 +131,12 @@ export class CustomerInvoicesPage extends GenericTablePage {
             <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderSearchBar()}
             </View>
-            <PageButton
-              text={buttonStrings.new_invoice}
-              onPress={() => this.setState({ isCreatingInvoice: true })}
-            />
+            <View style={globalStyles.pageTopRightSectionContainer}>
+              <PageButton
+                text={buttonStrings.new_invoice}
+                onPress={() => this.setState({ isCreatingInvoice: true })}
+              />
+            </View>
           </View>
           {this.renderDataTable()}
           <BottomConfirmModal
