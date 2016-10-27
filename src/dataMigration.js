@@ -13,7 +13,10 @@ export function migrateDataToVersion(database, settings) {
   if (fromVersion === toVersion) return;
   // Do any required version update data migrations
   for (const migration of dataMigrations) {
-    if (compareVersions(fromVersion, migration.version) < 0) migration.migrate(database, settings);
+    if (compareVersions(fromVersion, migration.version) < 0 &&
+        compareVersions(toVersion, migration.version) > 0) {
+      migration.migrate(database, settings);
+    }
   }
   // Record the new app version
   settings.set(SETTINGS_KEYS.APP_VERSION, toVersion);
