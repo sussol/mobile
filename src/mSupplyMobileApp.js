@@ -26,6 +26,7 @@ import {
   SyncState,
 } from './widgets';
 
+import { migrateDataToVersion } from './dataMigration';
 import { Synchroniser } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
@@ -42,6 +43,7 @@ export default class mSupplyMobileApp extends React.Component {
     const database = new Database(schema);
     this.database = new UIDatabase(database);
     this.settings = new MobileAppSettings(this.database);
+    migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
     this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
