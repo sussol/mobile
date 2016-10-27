@@ -9,6 +9,7 @@ import React from 'react';
 import {
   Image,
   TextInput,
+  TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
@@ -68,6 +69,7 @@ export default class mSupplyMobileApp extends React.Component {
     this.runWithLoadingIndicator = this.runWithLoadingIndicator.bind(this);
     this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
     this.renderLoadingIndicator = this.renderLoadingIndicator.bind(this);
+    this.renderLogo = this.renderLogo.bind(this);
     this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronise = this.synchronise.bind(this);
@@ -136,10 +138,15 @@ export default class mSupplyMobileApp extends React.Component {
 
   renderLogo() {
     return (
-      <Image
-        resizeMode="contain"
-        source={require('./images/logo.png')}
-      />
+      <TouchableWithoutFeedback
+        delayLongPress={3000}
+        onLongPress={() => this.setState({ isInAdminMode: !this.state.isInAdminMode })}
+      >
+        <Image
+          resizeMode="contain"
+          source={require('./images/logo.png')}
+        />
+      </TouchableWithoutFeedback>
     );
   }
 
@@ -178,6 +185,7 @@ export default class mSupplyMobileApp extends React.Component {
         logOut={this.logOut}
         currentUser={this.state.currentUser}
         runWithLoadingIndicator={this.runWithLoadingIndicator}
+        adminMode={this.state.isInAdminMode}
         {...extraProps}
       />);
   }

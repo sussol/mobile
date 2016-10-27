@@ -106,12 +106,14 @@ export class MenuPage extends React.Component {
               text={navStrings.stocktakes}
               onPress={() => this.props.navigateTo('stocktakes', navStrings.stocktakes)}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text="Realm Explorer"
-              onPress={() => this.props.navigateTo('realmExplorer', 'Database Contents')}
-            />
+            {this.props.adminMode &&
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text="Realm Explorer"
+                onPress={() => this.props.navigateTo('realmExplorer', 'Database Contents')}
+              />
+            }
           </View>
         </View>
         <View style={[globalStyles.horizontalContainer, { flex: 1, marginHorizontal: 20 }]}>
@@ -136,6 +138,7 @@ MenuPage.propTypes = {
   database: React.PropTypes.object,
   logOut: React.PropTypes.func.isRequired,
   settings: React.PropTypes.object.isRequired,
+  adminMode: React.PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({
