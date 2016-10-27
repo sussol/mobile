@@ -4,7 +4,7 @@
     "email": "info@sussol.net"
   },
   "name": "mSupplyMobile",
-  "version": "0.0.1",
+  "version": "1.0.30",
   "private": true,
   "license": "proprietary",
   "description": "Mobile app for use with the mSupply medical inventory control software",
@@ -50,6 +50,7 @@
     "react-native-uuid": "^1.4.8",
     "react-native-vector-icons": "^2.0.2",
     "realm": "^0.14.1",
+    "semver-compare": "^1.0.0",
     "set-manipulator": "0.3.1",
     "sha256": "^0.2.0",
     "valid-url": "^1.0.9"

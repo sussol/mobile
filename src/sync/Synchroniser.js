@@ -58,7 +58,6 @@ export class Synchroniser {
     // should start afresh
     const isFresh = serverURL !== this.serverURL;
     if (isFresh) this.database.write(() => { this.database.deleteAll(); });
-    this.serverURL = serverURL;
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
       const thisSiteId = this.settings.get(SYNC_SITE_ID);
@@ -71,6 +70,9 @@ export class Synchroniser {
               Authorization: this.authenticator.getAuthHeader(),
             },
           });
+        // If the initial_dump has been successful, serverURL is valid, and should now have all sync
+        // records queued and ready to send. Safe to store as this.serverURL
+        this.serverURL = serverURL;
       }
       await this.pull(setProgress);
     } catch (error) { // Did not authenticate, sync error, or no internet, pass error up
