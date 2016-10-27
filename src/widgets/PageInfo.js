@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -185,7 +186,7 @@ const localStyles = StyleSheet.create({
     marginLeft: 4,
   },
   text: {
-    fontSize: 16,
+    fontSize: Dimensions.get('window').width / 80,
     fontFamily: APP_FONT_FAMILY,
     color: SUSSOL_ORANGE,
     marginTop: 4,

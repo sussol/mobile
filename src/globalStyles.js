@@ -55,12 +55,12 @@ export default StyleSheet.create({
   },
   pageTopLeftSectionContainer: {
     flex: 2,
-    marginRight: 10,
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
   },
   pageTopRightSectionContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'flex-end',

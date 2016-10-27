@@ -105,14 +105,16 @@ export class StocktakeEditPage extends GenericTablePage {
             <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderSearchBar()}
             </View>
-            <PageButton
-              text={buttonStrings.manage_stocktake}
-              onPress={() => this.props.navigateTo('stocktakeManager',
-                navStrings.manage_stocktake,
-                { stocktake: this.props.stocktake },
-                )}
-              isDisabled={this.props.stocktake.isFinalised}
-            />
+            <View style={globalStyles.pageTopRightSectionContainer}>
+              <PageButton
+                text={buttonStrings.manage_stocktake}
+                onPress={() => this.props.navigateTo('stocktakeManager',
+                  navStrings.manage_stocktake,
+                  { stocktake: this.props.stocktake },
+                  )}
+                isDisabled={this.props.stocktake.isFinalised}
+              />
+            </View>
           </View>
           {this.renderDataTable()}
         </View>

@@ -164,7 +164,7 @@ export class StocktakeManagePage extends GenericTablePage {
             <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderSearchBar()}
             </View>
-            <View style={localStyles.toggleBarView}>
+            <View style={globalStyles.pageTopRightSectionContainer}>
               <ToggleBar
                 style={globalStyles.toggleBar}
                 textOffStyle={globalStyles.toggleText}
@@ -246,9 +246,5 @@ const localStyles = StyleSheet.create({
   bottomModal: {
     justifyContent: 'space-between',
     paddingLeft: 20,
-  },
-  toggleBarView: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
   },
 });
