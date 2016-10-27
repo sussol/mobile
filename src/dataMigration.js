@@ -14,7 +14,7 @@ export function migrateDataToVersion(database, settings) {
   // Do any required version update data migrations
   for (const migration of dataMigrations) {
     if (compareVersions(fromVersion, migration.version) < 0 &&
-        compareVersions(toVersion, migration.version) > 0) {
+        compareVersions(toVersion, migration.version) >= 0) {
       migration.migrate(database, settings);
     }
   }
