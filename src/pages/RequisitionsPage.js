@@ -129,10 +129,12 @@ export class RequisitionsPage extends GenericTablePage {
             <View style={globalStyles.pageTopLeftSectionContainer}>
               {this.renderSearchBar()}
             </View>
-            <PageButton
-              text={buttonStrings.new_requisition}
-              onPress={this.onNewRequisition}
-            />
+            <View style={globalStyles.pageTopRightSectionContainer}>
+              <PageButton
+                text={buttonStrings.new_requisition}
+                onPress={this.onNewRequisition}
+              />
+            </View>
           </View>
           {this.renderDataTable()}
           <BottomConfirmModal
