@@ -141,3 +141,10 @@ Once all that is done, it'll use the Android Debug Bridge to connect to the Geny
 * Enter the sync site's password in the third
 * Pressing connect will begin the one-time-only initialisation process, retrieving all relevant data from the mSupply server
 * When this has completed (could take several minutes), you will see the normal user login screen, which you will see immediately from now on
+
+### Setting up a Tablet for Deployment
+* Turn off auto-complete and auto spacing in tablet keyboard settings. Stops user errors that this causes (i.e. sneaky space in user name)
+* If there is playstore, turn off auto-update when on wifi. This will stop you pulling your hair out when it queues up 30 updates.
+* If you have been testing, clear app data from mSupply Mobile
+* Make sure SureLock is active when ever not using the tablet
+* If using a sim card for data, set up an APN appropriately for the mobile service
