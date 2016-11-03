@@ -148,3 +148,4 @@ Once all that is done, it'll use the Android Debug Bridge to connect to the Geny
 * If you have been testing, clear app data from mSupply Mobile
 * Make sure SureLock is active when ever not using the tablet
 * If using a sim card for data, set up an APN appropriately for the mobile service
+* If upgrading an old site from the old mobile app, make sure that all invoices (customer and supplier) that not finalised ARE finalised. In new mobile "In Progress" customer invoices automatically adjust stock, so if they were to be deleted it would add stock. Supplier invoices would add stock if someone using the app finalised them. Allowing this possibility just opens doors for stock count inaccuracies 
