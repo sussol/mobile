@@ -146,6 +146,7 @@ Once all that is done, it'll use the Android Debug Bridge to connect to the Geny
 * Turn off auto-complete and auto spacing in tablet keyboard settings. Stops user errors that this causes (i.e. sneaky space in user name)
 * If there is playstore, turn off auto-update when on wifi. This will stop you pulling your hair out when it queues up 30 updates.
 * If you have been testing, clear app data from mSupply Mobile
+* Make sure that the correct app version on the tablet. You CAN check this remotely via sureMDM, it will show the version of the app installed under "Apps" on the right for any selected tablet
 * Make sure SureLock is active when ever not using the tablet
 * If using a sim card for data, set up an APN appropriately for the mobile service
 * If upgrading an old site from the old mobile app, make sure that all invoices (customer and supplier) that not finalised ARE finalised. In new mobile "In Progress" customer invoices automatically adjust stock, so if they were to be deleted it would add stock. Supplier invoices would add stock if someone using the app finalised them. Allowing this possibility just opens doors for stock count inaccuracies 
