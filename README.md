@@ -9,19 +9,66 @@ Sustainable Solutions' Mobile app for use with the mSupply medical inventory con
 * Open the .apk on the tablet and follow the install instructions (need to allow apps from unknown sources)
 
 ### Working on mSupply Mobile
+These instructions are only for Mac OSX.
+#### Setting up React Native Tools and Environment
+We to get the tools needed for creating and running a react native project. 
+
+1. Install homebrew. Simply open Terminal, copy and paste the following press enter:
+`/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`. Homebrew is a MacOS development tool manager.
+2. Install Node using homebrew: `brew install node`. Node provides a javascript runtime, and importantly brings with it npm, Node Package Manager. We use npm to manage all the packages that we use the mSupply Mobile project.
+3. Install the React Native Command Line Interface: `npm install -g react-native-cli`. This gives us some tools for managing React Native projects via Terminal, such as starting the app. 
+4. Install Android Studio. We actually are only using this to manage some Android SDKs (Software Development Kit). Android Studio is a popular integrated development environment (IDE) for coding Native Android apps in Java. 
+    * [Download it here](https://developer.android.com/studio/index.html) and follow [these instructions](https://developer.android.com/studio/install.html) to install. 
+    * Once installed start Android Studio and choose the standard setup option. Click next, next and finish. There should download between 700MB and 800MB. Do not change the SDK directory, or you will have to adjust the path in later steps appropriately.
+5. Your PATH variable needs to updated so that Terminal can find the tools that we are installing.
+    * Open Terminal and enter `cd`. This will change the directory to your home directory, also referred to as `~` (tilda). 
+    * Enter `ls -a`. This will list all files in the directory, including hidden ones prefixed with a `.`. There should be a file .bash_profile. If there isn't don't worry. Type `touch .bash_profile` to create it.
+    * Enter `open .bash_profile`. This should open the file in a text editor. (Alternatively you could have found this file through Finder and double clicked it.)
+    * Paste the following bash commands into this file
+    ```
+    export ANDROID_HOME=~/Library/Android/sdk
+    export ANDROID_NDK=~Library/Android/ndk/android-ndk-r10e
+export PATH=${PATH}:${ANDROID_HOME}/tools
+export PATH=${PATH}:${ANDROID_HOME}/platform-tools
+```
+Now every time Terminal is opened, these directories will be added to the PATH variable. Close and reopen the Terminal so that it has the updated PATH.
+8. Next we have to set up the Android NDK. You may have noticed we added to PATH the directory where we will be putting it in the previous step.
+    * First download the NDK here: [android-ndk-r10e-darwin-x86_64.zip](http://dl.google.com/android/repository/android-ndk-r10e-darwin-x86_64.zip). It is important that the version is r10e, newer versions will break the compiling process later.
+    * Open Finder and Navigate to your home directory `/user/[your user name]/`. Open the folder "Library". If you cannot see it, you need to run in Terminal `defaults write com.apple.Finder AppleShowAllFiles TRUE` then `option + right-click` Finder in the dock at the bottom of the screen and click "Relaunch". Get back to the home directory an find the folder "Library"
+    * Open "Library", open the folder "Android", and make a new folder here called "ndk".
+    * Copy the file "android-ndk-r10e-darwin-x86_64.zip" that you downloaded from the first step into this folder you created.
+    * Double click "android-ndk-r10e-darwin-x86_64.zip" to extract it. There should now be a folder called android-ndk-r10e and we are done setting up the ndk.
+9. We need to get the android SDK through Android Studio. 
+    * Open Android Studio. If it wants setup, follow the later part of android 4 that covers that.
+    * Click the "Configure" menu down the bottom right, and click "SDK Manager"
+    * Check the box for "Android 6.0 (Marshmallow)". If you like, deselect the other options (7.1.1 likely checked by default)
+    * Click Next and accept the liscenses and click next
+    * Click Finish when it is done and close Android Studio
+10. We need to make sure you have Android SDK Build-tools 23.0.1
+   * Open Terminal and enter `android`. A window called "Android SDK Manager" should be opened.
+   * In the "Tools" folder in this window, check the box on the row for "Android Build-tools 23.0.1
+   * Click "Install [number] Packages", select each liscense and check "Accept License" on the right of the window.
+   * Click "Install". Likely several 100MB download. Once this is done, your React Native environment for Android should be good to go.
+
 #### Genymotion
-First get and install genymotion using [these instructions](https://docs.genymotion.com/Content/01_Get_Started/Installation.htm). We use geny motion to manage emulation of devices for quick testing of changes without needed a tablet on hand. You may need to use login to the genymotion website with an account to get the download.
+* You will need a genymotion account to use the software, so make an account on their [website](https://www.genymotion.com/account/create/) if you have not got one. Use a personal email address.
+* Install genymotion using [these instructions](https://docs.genymotion.com/Content/01_Get_Started/Installation.htm). You will need to install virtual box.
+* We'll now need to set up a device to emulate. Open Genymotion and login. There should be a modal asking if you'd like to add your first device, click this or click "Add" near the top. Search the list of available devices to find "Custom Tablet - 4.4.4 - API 19 - 2560x1600". This will take some time to install, but once it's done Genymotion is ready to go.
+* Click Settings and go to the ADB tab. Check te 
 #### Git
-Install GitHub Desktop and signin with your GitHub account. Clone the mobile repository by clicking the plus icon at the top left and selecting clone. This should show a list of all repositories you can see on GitHub. Find "sussol/mobile" and click the "Clone Repository" button. If you cannot see it, make sure you have been added as developer in the sussol repository on GitHub.
-####  Code/Text Editor
+* Install GitHub Desktop and signin with your GitHub account. 
+* Clone the mobile repository by clicking the plus icon at the top left and selecting clone. This should show a list of all repositories you can see on GitHub. Find "sussol/mobile" and click the "Clone Repository" button. If you cannot see it, make sure you have been added as developer in the sussol repository on GitHub.
+* At this stage, you can right click on the repository in GitHub desktop and click "Open in Terminal". Run the command `npm install`. This will install all the packages defined in the `packages.json` file in the mobile project. Packages include open source components such as react and react-native as well as development packages, such as linter rules (which helps enforce all of us developers have consistent style rules when using Atom/Nuclide, which we'll have in the next step of setup!).
+
+#### Atom + Nuclide
 To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not currently supported on Windows.
-* Install [atom](https://atom.io/). This is editor will be the base that Nuclide is installed on. Atom is an open source project managed by GitHub themselves.
-* Install [Nuclide](https://nuclide.io/docs/editor/setup/). This is a development environment created by facebook specifically geared toward React Native. **Do this through the atom package manager**, as the next step we'll want to be in there.
+* Install [Atom](https://atom.io/). This is editor will be the base that Nuclide is installed on. Atom is an open source project managed by GitHub themselves.
+* Install [Nuclide](https://nuclide.io/). This is a development environment created by facebook specifically geared toward React and React Native. **Do this through the atom package manager as follows**, as the next step we'll want to be in there as well.
 * Open Atom.
-* Choose Atom | Preferences to bring up the Settings tab.
-* In the Settings tab, and select Install from the list at the left.
+* Choose Atom | Preferences (cmd+,) to bring up the Settings tab.
+* In the Settings tab select "Install" from the list on the left.
 * In the search box, type “Nuclide” and press the Enter key.
-* Click the Install button for the nuclide package
+* Click the install button for the Nuclide package
 * Install additional packages
  * Still in the settings tab in Atom, click on "Packages"
  * Click the "Settings" button for Nuclide
@@ -30,23 +77,22 @@ To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not 
  * In atom navigate back to settings (cmd+,), install tab. Search for and install:
   - linter
   - linter-eslint
-  - react (This may conflict with language-babel. Ignore the warning or disable/enable according to preference)
+  - react (This may conflict with language-babel. Ignore the warning or disable/enable according to your preference)
   - atom-react-native-autocomplete
   - badass-react-snippets
-  - Unnecessary packages that can be great: pigments, color-picker, minimap, minimap-linter, minimap-find-and-replace
+  - Unnecessary packages that can be great: pigments, color-picker
 
 On the left in Atom you should see a file tree section and the button "Add Project Folder". Click this and find add the folder where you cloned the sussol/mobile repository earlier. Now you should be able to easily look through the mobile code with all the bells and whistles!
-#### Setting up React Native Tools and Environment
-Follow the instructions [here](https://facebook.github.io/react-native/docs/getting-started.html) to get the tools needed for creating and running a react native project. Choose *Android* and your operating system - Currently all development has been done on Mac. **You can skip installing watchman and no need to set up the android virtual device, as we will be using Genymotion to manage emulation for us.**
-
-The essential things you need to have installed and done are:
-* node/npm
-* react-native-cli
-* Android studio
-* Set up paths
 
 #### Running Debug in Emulator
-TODO: instructions for doing this
+* Open genymotion and start the deviced added earlier: "Custom Tablet - 4.4.4 - API 19 - 2560x1600"
+* With terminal open in the project root folder (In GitHub Desktop, right click the project and choose "Open in Terminal"), run the command `react-native run-android`
+
+This will open a new Terminal window running the React Packager, running on a node server. The packager crawls through the files in our repository and will find all the Javascript files we write and transpile them from ES6 syntax into another that is supported by React Native.
+
+Your original Terminal window will show many dependancies being checked. The first time you run this on a fresh copy of the repository (such as when setting all the above up for the first time), this process will take a long time. 20 minutes is a plausible amount of time. This will include some downloading and due to us actually running a customer fork of the React Native repository, we need to compile a lot of files on the first run.
+
+Once all that is done, it'll use the Android Debug Bridge to connect to the Genymotion emulated device. You can check what devices are connected by typing `adb devices` in Terminal.
 
 ### Building from Source
 * Assumes you have [npm](https://nodejs.org/en/download/) and the [react-native](https://facebook.github.io/react-native/docs/getting-started.html#dependencies-for-mac-ios) dev tools installed
@@ -95,3 +141,12 @@ TODO: instructions for doing this
 * Enter the sync site's password in the third
 * Pressing connect will begin the one-time-only initialisation process, retrieving all relevant data from the mSupply server
 * When this has completed (could take several minutes), you will see the normal user login screen, which you will see immediately from now on
+
+### Setting up a Tablet for Deployment
+* Turn off auto-complete and auto spacing in tablet keyboard settings. Stops user errors that this causes (i.e. sneaky space in user name)
+* If there is playstore, turn off auto-update when on wifi. This will stop you pulling your hair out when it queues up 30 updates.
+* If you have been testing, clear app data from mSupply Mobile
+* Make sure that the correct app version on the tablet. You CAN check this remotely via sureMDM, it will show the version of the app installed under "Apps" on the right for any selected tablet
+* Make sure SureLock is active when ever not using the tablet
+* If using a sim card for data, set up an APN appropriately for the mobile service
+* If upgrading an old site from the old mobile app, make sure that all invoices (customer and supplier) that not finalised ARE finalised. In new mobile "In Progress" customer invoices automatically adjust stock, so if they were to be deleted it would add stock. Supplier invoices would add stock if someone using the app finalised them. Allowing this possibility just opens doors for stock count inaccuracies 

@@ -10,6 +10,7 @@ import { integrateRecord } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
 import { formatDate } from '../utilities';
 const {
+  SYNC_IS_INITIALISED,
   SYNC_LAST_SUCCESS,
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
@@ -34,6 +35,7 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.synchronise = this.synchronise.bind(this);
+    this.initialise = this.initialise.bind(this);
     if (this.isInitialised()) this.syncQueue.enable();
   }
 
@@ -50,34 +52,43 @@ export class Synchroniser {
   async initialise(serverURL, syncSiteName, syncSitePassword, setProgress) {
     if (setProgress) setProgress('Initialising...');
     this.syncQueue.disable(); // Stop sync queue listening to database changes
-    this.database.write(() => { this.database.deleteAll(); });
+    // Check if the serverURL passed in is the same as one we have already been using during
+    // initialisation, in which case we are continuing a failed partial initialisation. If the
+    // serverURL is different, it is either completely fresh, or the URL has been changed so we
+    // should start afresh
+    const isFresh = serverURL !== this.serverURL;
+    if (isFresh) this.database.write(() => { this.database.deleteAll(); });
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
       const thisSiteId = this.settings.get(SYNC_SITE_ID);
       const serverId = this.settings.get(SYNC_SERVER_ID);
-      await fetch(
-        `${serverURL}/sync/v2/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
-        {
-          headers: {
-            Authorization: this.authenticator.getAuthHeader(),
-          },
-        });
+      if (isFresh) { // If a fresh initialisation, tell the server to prepare required sync records
+        await fetch(
+          `${serverURL}/sync/v2/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
+          {
+            headers: {
+              Authorization: this.authenticator.getAuthHeader(),
+            },
+          });
+        // If the initial_dump has been successful, serverURL is valid, and should now have all sync
+        // records queued and ready to send. Safe to store as this.serverURL
+        this.serverURL = serverURL;
+      }
       await this.pull(setProgress);
-    } catch (error) { // Did not authenticate, sync error, or no internet, wipe db and pass error up
-      this.database.write(() => { this.database.deleteAll(); });
+    } catch (error) { // Did not authenticate, sync error, or no internet, pass error up
       throw error;
     }
+    this.settings.set(SYNC_IS_INITIALISED, 'true');
     this.syncQueue.enable(); // Begin the sync queue listening to database changes
   }
 
   /**
-   * Return whether or not the synchroniser has been initialised with a URL to sync
-   * against.
-   * @return {Boolean} Whether the synchroniser is initialised
+   * Return whether the synchroniser has been completely or partially initialised.
+   * @return {string} Either 'complete', 'partial', 'uninitialised'
    */
   isInitialised() {
-    const syncURL = this.settings.get(SYNC_URL);
-    return syncURL && syncURL.length > 0;
+    const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
+    return syncIsInitialised && syncIsInitialised === 'true';
   }
 
   /**

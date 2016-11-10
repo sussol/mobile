@@ -24,13 +24,8 @@ export class FirstUsePage extends React.Component {
     };
     this.siteNameInputRef = null;
     this.passwordInputRef = null;
-    this.errorTimeoutId = null;
     this.onPressConnect = this.onPressConnect.bind(this);
     this.setProgress = this.setProgress.bind(this);
-  }
-
-  componentWillUpdate() {
-    if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 
   async onPressConnect() {
@@ -46,13 +41,6 @@ export class FirstUsePage extends React.Component {
     } catch (error) {
       this.setState({ progress: 'error' });
       this.setProgress(error.message);
-      if (!error.message.startsWith('Invalid username or password')) {
-        // After ten seconds of displaying the error, re-enable the button
-        this.errorTimeoutId = setTimeout(() => {
-          this.setState({ progress: 'uninitialised' });
-          this.errorTimeoutId = null;
-        }, 10 * 1000);
-      }
     }
   }
 
@@ -62,7 +50,7 @@ export class FirstUsePage extends React.Component {
 
   get canAttemptLogin() {
     return (
-      this.state.progress === 'uninitialised' &&
+      (this.state.progress === 'uninitialised' || this.state.progress === 'error') &&
       this.state.serverURL.length > 0 &&
       this.state.syncSiteName.length > 0 &&
       this.state.syncSitePassword.length > 0
@@ -72,8 +60,9 @@ export class FirstUsePage extends React.Component {
   get buttonText() {
     switch (this.state.progress) {
       case 'initialising':
-      case 'error':
         return this.state.progressMessage;
+      case 'error':
+        return `${this.state.progressMessage}\nTap to retry.`;
       case 'initialised':
         return 'Success!';
       default:

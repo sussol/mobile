@@ -6,6 +6,10 @@
  */
 
 import {
+  Dimensions,
+} from 'react-native';
+
+import {
   BACKGROUND_COLOR,
   BLUE_WHITE,
   LIGHT_GREY,
@@ -25,7 +29,7 @@ export const dataTableColors = {
 export const dataTableStyles = {
   text: {
     fontFamily: APP_FONT_FAMILY,
-    fontSize: 14,
+    fontSize: Dimensions.get('window').width / 100,
     color: DARK_GREY,
   },
   header: {

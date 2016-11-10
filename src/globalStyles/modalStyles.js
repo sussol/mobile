@@ -25,8 +25,10 @@ export const modalStyles = {
     backgroundColor: SUSSOL_ORANGE,
   },
   modalTextInput: {
-    width: MODAL_TEXT_WIDTH,
+    flex: 2,
+    paddingRight: 5,
     borderColor: BACKGROUND_COLOR,
+    marginRight: 10,
   },
   modalText: {
     color: 'white',

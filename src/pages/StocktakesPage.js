@@ -6,7 +6,7 @@
  */
 
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
 import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
@@ -156,7 +156,7 @@ export class StocktakesPage extends GenericPage {
                 },
               ]}
             />
-            <View style={localStyles.buttonViewTop}>
+            <View style={globalStyles.pageTopRightSectionContainer}>
               <PageButton
                 text={buttonStrings.new_stocktake}
                 onPress={this.onNewStockTake}
@@ -182,9 +182,3 @@ StocktakesPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
 };
 
-const localStyles = StyleSheet.create({
-  buttonViewTop: {
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-});

@@ -146,6 +146,7 @@ export class SupplierInvoicePage extends GenericPage {
               {this.renderPageInfo()}
               {this.renderSearchBar()}
             </View>
+            <View style={globalStyles.pageTopRightSectionContainer} />
           </View>
           {this.renderDataTable()}
         </View>
