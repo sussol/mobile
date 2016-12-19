@@ -21,11 +21,12 @@ import { GenericTablePage } from 'react-native-generic-table-page';
 export class GenericPage extends GenericTablePage {
 
   /**
-   * If overridden, first line of this method should be duplicated. May need to be overridden to
-   * populate selection in state if CheckableCells are used and need to
-   * remember their selected state.
+   * If overridden, first two lines of this method should be duplicated. May need to be overridden
+   * to populate selection in state if CheckableCells are used and need to remember their selected
+   * state.
    */
   componentWillMount() {
+    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     this.refreshData();
   }

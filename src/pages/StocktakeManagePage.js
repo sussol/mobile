@@ -61,6 +61,7 @@ export class StocktakeManagePage extends GenericPage {
   }
 
   componentWillMount() {
+    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     if (this.props.stocktake) {
       const selected = [];
