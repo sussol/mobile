@@ -61,14 +61,6 @@ export const SYNC_TYPES = new SyncTranslator({
   'delete': 'D',
 });
 
-// Map of internal statuses to external statuses (of transactions, stocktakes, etc.)
-export const STATUSES = new SyncTranslator({
-  'confirmed': 'cn',
-  'finalised': 'fn',
-  'suggested': 'sg',
-  'new': 'nw',
-});
-
 export const TRANSACTION_TYPES = new SyncTranslator({
   'customer_invoice': 'ci',
   'customer_credit': 'cc',
@@ -99,15 +91,39 @@ export const NAME_TYPES = new SyncTranslator({
  * going through sg, cn, and fn statuses, it should remain finalised in the mobile
  * store
  */
-class RequisitionStatusTransaltor extends SyncTranslator {
+class RequisitionStatusTranslator extends SyncTranslator {
   translate(status, direction) {
     if (['sg', 'cn', 'fn'].includes(status)) return 'finalised';
     return super.translate(status, direction);
   }
 }
-export const REQUISITION_STATUSES = new RequisitionStatusTransaltor({
+export const REQUISITION_STATUSES = new RequisitionStatusTranslator({
   'new': 'wp',
   'finalised': 'wf',
+});
+
+/**
+ * Translates statuses of transactions, stocktakes, etc., which include 'wp' and 'wf'
+ * on legacy systems.
+ */
+class StatusTranslator extends SyncTranslator {
+  translate(status, direction) {
+    switch (status) {
+      case 'wp':
+        return 'new';
+      case 'wf':
+        return 'finalised';
+      default:
+        return super.translate(status, direction);
+    }
+  }
+}
+// Map of internal statuses to external statuses (of transactions, stocktakes, etc.)
+export const STATUSES = new StatusTranslator({
+  'confirmed': 'cn',
+  'finalised': 'fn',
+  'suggested': 'sg',
+  'new': 'nw',
 });
 
 /**
