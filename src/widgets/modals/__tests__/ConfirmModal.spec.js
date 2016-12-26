@@ -6,7 +6,7 @@ import { ConfirmModal } from '../ConfirmModal';
 import React from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import { Button } from '../../Button';
+import { Button } from 'react-native-ui-components';
 
 describe('ConfirmModal', () => {
   let cancelCallBack;

@@ -51,7 +51,7 @@
     "react-native-generic-table-page": "^0.1.8",
     "react-native-localization": "^0.1.17",
     "react-native-modalbox": "edmofro/react-native-modalbox",
-    "react-native-ui-components": "^0.1.2",
+    "react-native-ui-components": "^0.2.0",
     "react-native-uuid": "^1.4.8",
     "react-native-vector-icons": "^2.0.2",
     "realm": "^0.14.1",
