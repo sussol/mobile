@@ -27,7 +27,7 @@ We to get the tools needed for creating and running a react native project.
     * Paste the following bash commands into this file
     ```
     export ANDROID_HOME=/Users/**your user name**/Library/Android/sdk
-    export ANDROID_NDK=/Users/**your user name**/Library/ndk/android-ndk-r10e
+    export ANDROID_NDK=/Users/**your user name**/Library/Android/ndk/android-ndk-r10e
 export PATH=${PATH}:${ANDROID_HOME}/tools
 export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 ```
