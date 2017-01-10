@@ -11,10 +11,8 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import {
-  Button,
-  TextInput,
-} from './index';
+import { Button } from 'react-native-ui-components';
+import { TextInput } from './index';
 import globalStyles from '../globalStyles';
 
 /**

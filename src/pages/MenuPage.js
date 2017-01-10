@@ -13,7 +13,7 @@ import {
   View,
 } from 'react-native';
 
-import { Button } from '../widgets';
+import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import globalStyles, {

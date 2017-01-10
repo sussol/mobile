@@ -8,6 +8,7 @@
 import { BACKGROUND_COLOR } from './colors';
 import { APP_FONT_FAMILY } from './fonts';
 
+export const COMPONENT_HEIGHT = 45;
 export const appStyles = {
   appBackground: {
     flex: 1,

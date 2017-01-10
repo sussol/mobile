@@ -8,7 +8,7 @@
 import {
   StyleSheet,
 } from 'react-native';
-import { appStyles } from './appStyles';
+import { appStyles, COMPONENT_HEIGHT } from './appStyles';
 import { authStyles } from './authStyles';
 import { buttonStyles } from './buttonStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
@@ -25,7 +25,6 @@ import {
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
 
-export const COMPONENT_HEIGHT = 45;
 export { APP_FONT_FAMILY } from './fonts';
 export {
   SUSSOL_ORANGE,
@@ -43,6 +42,7 @@ export {
   FINALISED_RED,
 } from './colors';
 export {
+  COMPONENT_HEIGHT,
   dataTableStyles,
   dataTableColors,
   pageStyles,

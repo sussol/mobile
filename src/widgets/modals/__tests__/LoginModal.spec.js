@@ -9,7 +9,7 @@ import React from 'react';
 import { TextInput } from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import { Button } from '../../Button';
+import { Button } from 'react-native-ui-components';
 
 const VALID_USERNAME = 'valid';
 const VALID_PASSWORD = 'valid';

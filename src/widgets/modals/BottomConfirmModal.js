@@ -11,7 +11,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { Button } from '../Button';
+import { Button } from 'react-native-ui-components';
 import { BottomModal } from './BottomModal';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { modalStrings } from '../../localization';

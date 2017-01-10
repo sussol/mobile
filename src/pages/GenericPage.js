@@ -31,6 +31,10 @@ export class GenericPage extends GenericTablePage {
     this.refreshData();
   }
 
+  componentWillUnmount() {
+    this.props.database.removeListener(this.databaseListenerId);
+  }
+
   // Refetch data and render the list any time sync changes data displayed, or the
   // record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {

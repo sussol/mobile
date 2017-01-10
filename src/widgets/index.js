@@ -9,7 +9,6 @@ export {
   SelectModal,
 } from './modals';
 export { AutocompleteSelector } from './AutocompleteSelector';
-export { Button } from './Button';
 export { FinaliseButton } from './FinaliseButton';
 export { ToggleSelector } from './ToggleSelector';
 export { PageButton } from './PageButton';
