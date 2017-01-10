@@ -343,13 +343,13 @@ export class RequisitionPage extends GenericPage {
             <View style={globalStyles.pageTopRightSectionContainer}>
               <View style={globalStyles.verticalContainer}>
                 <PageButton
-                  style={globalStyles.topButton}
+                  style={[globalStyles.topButton, { flex: 1 }]}
                   text={buttonStrings.create_automatic_order}
                   onPress={this.onCreateAutomaticOrder}
                   isDisabled={this.props.requisition.isFinalised}
                 />
                 <PageButton
-                  style={globalStyles.leftButton}
+                  style={[globalStyles.leftButton, { flex: 1 }]}
                   text={buttonStrings.use_suggested_quantities}
                   onPress={this.onUseSuggestedQuantities}
                   isDisabled={this.props.requisition.isFinalised}
@@ -357,12 +357,13 @@ export class RequisitionPage extends GenericPage {
               </View>
               <View style={globalStyles.verticalContainer}>
                 <PageButton
-                  style={globalStyles.topButton}
+                  style={[globalStyles.topButton, { flex: 1 }]}
                   text={buttonStrings.new_item}
                   onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
                   isDisabled={this.props.requisition.isFinalised}
                 />
                 <PageButton
+                  style={{ flex: 1 }}
                   text={buttonStrings.add_master_list_items}
                   onPress={this.onAddMasterItems}
                   isDisabled={this.props.requisition.isFinalised}
