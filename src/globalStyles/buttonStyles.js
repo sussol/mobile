@@ -7,7 +7,7 @@
 
 import { SUSSOL_ORANGE, WARM_GREY, WARMER_GREY, DARKER_GREY, DARK_GREY } from './colors';
 import { APP_FONT_FAMILY } from './fonts';
-import { COMPONENT_HEIGHT } from './index';
+import { COMPONENT_HEIGHT } from './appStyles';
 
 export const buttonStyles = {
 
