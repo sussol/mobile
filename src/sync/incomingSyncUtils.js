@@ -463,7 +463,9 @@ function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') 
 
 /**
  * Ensure the given record has the right data to create an internal record of the
- * given recordType
+ * given recordType. We check only that it is a recognised record type, and that it contains values
+ * for all expected keys, but not what those values are (so the content of the record itself could
+ * be unexpected or invalid, and we wouldn't detect it)
  * @param  {string} recordType The internal record type this sync record should be used for
  * @param  {object} record     The data from the sync record
  * @return {boolean}           Whether the data is sufficient to create an internal record from

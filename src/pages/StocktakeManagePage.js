@@ -12,7 +12,8 @@ import {
   View,
 } from 'react-native';
 
-import { Button, BottomModal, TextInput, ToggleBar } from '../widgets';
+import { Button } from 'react-native-ui-components';
+import { BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';

@@ -6,7 +6,8 @@ import {
   View,
 } from 'react-native';
 
-import { Button, SyncState } from '../widgets';
+import { Button } from 'react-native-ui-components';
+import { SyncState } from '../widgets';
 import globalStyles, {
   SUSSOL_ORANGE,
   WARM_GREY,

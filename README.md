@@ -26,8 +26,8 @@ We to get the tools needed for creating and running a react native project.
     * Enter `open .bash_profile`. This should open the file in a text editor. (Alternatively you could have found this file through Finder and double clicked it.)
     * Paste the following bash commands into this file
     ```
-    export ANDROID_HOME=~/Library/Android/sdk
-    export ANDROID_NDK=~Library/Android/ndk/android-ndk-r10e
+    export ANDROID_HOME=/Users/**your user name**/Library/Android/sdk
+    export ANDROID_NDK=/Users/**your user name**/Library/Android/ndk/android-ndk-r10e
 export PATH=${PATH}:${ANDROID_HOME}/tools
 export PATH=${PATH}:${ANDROID_HOME}/platform-tools
 ```
@@ -54,11 +54,17 @@ Now every time Terminal is opened, these directories will be added to the PATH v
 * You will need a genymotion account to use the software, so make an account on their [website](https://www.genymotion.com/account/create/) if you have not got one. Use a personal email address.
 * Install genymotion using [these instructions](https://docs.genymotion.com/Content/01_Get_Started/Installation.htm). You will need to install virtual box.
 * We'll now need to set up a device to emulate. Open Genymotion and login. There should be a modal asking if you'd like to add your first device, click this or click "Add" near the top. Search the list of available devices to find "Custom Tablet - 4.4.4 - API 19 - 2560x1600". This will take some time to install, but once it's done Genymotion is ready to go.
-* Click Settings and go to the ADB tab. Check te 
+* Click Settings and go to the ADB tab. Check the button for "Use custom Android SDK tools" and add the path to your SDK tools.
+
 #### Git
 * Install GitHub Desktop and signin with your GitHub account. 
 * Clone the mobile repository by clicking the plus icon at the top left and selecting clone. This should show a list of all repositories you can see on GitHub. Find "sussol/mobile" and click the "Clone Repository" button. If you cannot see it, make sure you have been added as developer in the sussol repository on GitHub.
 * At this stage, you can right click on the repository in GitHub desktop and click "Open in Terminal". Run the command `npm install`. This will install all the packages defined in the `packages.json` file in the mobile project. Packages include open source components such as react and react-native as well as development packages, such as linter rules (which helps enforce all of us developers have consistent style rules when using Atom/Nuclide, which we'll have in the next step of setup!).
+* In your your local clone of the repository, create a new file in the "Android" folder called "local.properties". Open it with a text editor and add the lines (use your user name): 
+```
+ndk.dir=/Users/**your user name**/Library/Android/ndk/android-ndk-r10e
+sdk.dir=/Users/**your user name**/Library/Android/sdk
+```
 
 #### Atom + Nuclide
 To use Nuclide, you will have to be on a Mac or Linux system. Unfortunately not currently supported on Windows.

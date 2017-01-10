@@ -5,7 +5,7 @@ import {
   View,
 } from 'react-native';
 
-import { Button } from './Button';
+import { Button } from 'react-native-ui-components';
 import globalStyles from '../globalStyles';
 
 // A generic button for use on pages

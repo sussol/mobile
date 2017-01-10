@@ -20,7 +20,6 @@ import globalStyles, {
   dataTableStyles,
   pageStyles,
   BACKGROUND_COLOR,
-  COMPONENT_HEIGHT,
   SUSSOL_ORANGE,
 } from './globalStyles';
 
@@ -197,7 +196,6 @@ export default class mSupplyMobileApp extends React.Component {
         searchBarColor={SUSSOL_ORANGE}
         dataTableStyles={dataTableStyles}
         pageStyles={pageStyles}
-        rowHeight={COMPONENT_HEIGHT}
         colors={dataTableColors}
         {...extraProps}
       />);
