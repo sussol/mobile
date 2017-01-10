@@ -9,6 +9,7 @@ import React from 'react';
 import {
   Image,
   TextInput,
+  TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
@@ -202,11 +203,17 @@ export default class mSupplyMobileApp extends React.Component {
 
   renderSyncState() {
     return (
-      <SyncState
-        isSyncing={this.state.isSyncing}
-        syncError={this.state.syncError}
-        settings={this.settings}
-      />
+      <TouchableOpacity
+        style={{ flexDirection: 'row' }}
+        disabled={!this.state.isInAdminMode}
+        onPress={this.synchronise}
+      >
+        <SyncState
+          isSyncing={this.state.isSyncing}
+          syncError={this.state.syncError}
+          settings={this.settings}
+        />
+      </TouchableOpacity>
     );
   }
 
