@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
-import { Button } from '../Button';
+import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import globalStyles from '../../globalStyles';
 

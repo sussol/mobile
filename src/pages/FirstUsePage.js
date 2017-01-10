@@ -1,11 +1,13 @@
 import React from 'react';
 import {
   Image,
+  StyleSheet,
   TextInput,
   View,
 } from 'react-native';
 
-import { Button, SyncState } from '../widgets';
+import { Button } from 'react-native-ui-components';
+import { SyncState } from '../widgets';
 import globalStyles, {
   SUSSOL_ORANGE,
   WARM_GREY,
@@ -137,7 +139,7 @@ export class FirstUsePage extends React.Component {
             />
           </View>
           <SyncState
-            style={globalStyles.initialisationStateIcon}
+            style={localStyles.initialisationStateIcon}
             isSyncing={this.state.progress === 'initialising'}
             syncError={this.state.progress === 'error' ? 'error' : ''}
             showText={false}
@@ -162,3 +164,10 @@ FirstUsePage.propTypes = {
   onInitialised: React.PropTypes.func.isRequired,
   synchroniser: React.PropTypes.object.isRequired,
 };
+
+const localStyles = StyleSheet.create({
+  initialisationStateIcon: {
+    marginTop: 46,
+    marginBottom: 24,
+  },
+});

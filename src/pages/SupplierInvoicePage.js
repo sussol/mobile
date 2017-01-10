@@ -10,20 +10,47 @@ import { View } from 'react-native';
 
 import { PageInfo } from '../widgets';
 import { formatDate, sortDataBy } from '../utilities';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
-import { pageInfoStrings } from '../localization';
+import { pageInfoStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
-export class SupplierInvoicePage extends GenericTablePage {
+export class SupplierInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
-    this.columns = COLUMNS;
+    this.state.columns = [
+      {
+        key: 'itemCode',
+        width: 1,
+        title: tableStrings.item_code,
+        sortable: true,
+      },
+      {
+        key: 'itemName',
+        width: 2,
+        title: tableStrings.item_name,
+        sortable: true,
+      },
+      {
+        key: 'totalQuantitySent',
+        width: 1,
+        title: tableStrings.number_sent,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'numReceived',
+        width: 1,
+        title: tableStrings.number_recieved,
+        sortable: true,
+        alignText: 'right',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Transaction';
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
   }
@@ -31,7 +58,7 @@ export class SupplierInvoicePage extends GenericTablePage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.props.transaction.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
@@ -131,32 +158,3 @@ export class SupplierInvoicePage extends GenericTablePage {
 SupplierInvoicePage.propTypes = {
   database: React.PropTypes.object,
 };
-
-const COLUMNS = [
-  {
-    key: 'itemCode',
-    width: 1,
-    titleKey: 'item_code',
-    sortable: true,
-  },
-  {
-    key: 'itemName',
-    width: 2,
-    titleKey: 'item_name',
-    sortable: true,
-  },
-  {
-    key: 'totalQuantitySent',
-    width: 1,
-    titleKey: 'number_sent',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'numReceived',
-    width: 1,
-    titleKey: 'number_recieved',
-    sortable: true,
-    alignText: 'right',
-  },
-];

@@ -12,9 +12,9 @@ import { View } from 'react-native';
 import { createRecord } from '../database';
 import { PageButton, PageInfo } from '../widgets';
 import globalStyles from '../globalStyles';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, navStrings, pageInfoStrings } from '../localization';
+import { buttonStrings, navStrings, pageInfoStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -28,16 +28,47 @@ const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 *                                             filtered to be only be those belonging to the Customer
 *                                             being viewed.
 */
-export class CustomerPage extends GenericTablePage {
+export class CustomerPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "customer_invoice"')
                                             .filtered('otherParty.name == $0', props.customer.name);
     this.state.sortBy = 'entryDate';
-    this.columns = COLUMNS;
+    this.state.columns = [
+      {
+        key: 'serialNumber',
+        width: 1,
+        title: tableStrings.id,
+        sortable: true,
+      },
+      {
+        key: 'status',
+        width: 1,
+        title: tableStrings.status,
+        sortable: true,
+      },
+      {
+        key: 'entryDate',
+        width: 2,
+        title: tableStrings.entered_date,
+        sortable: true,
+      },
+      {
+        key: 'numberOfItems',
+        width: 1,
+        title: tableStrings.items,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'comment',
+        width: 3,
+        title: tableStrings.comment,
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.navigateToInvoice = this.navigateToInvoice.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
@@ -66,7 +97,7 @@ export class CustomerPage extends GenericTablePage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions;
     let sortDataType;
     switch (sortBy) {
@@ -152,36 +183,3 @@ CustomerPage.propTypes = {
   database: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'serialNumber',
-    width: 1,
-    titleKey: 'id',
-    sortable: true,
-  },
-  {
-    key: 'status',
-    width: 1,
-    titleKey: 'status',
-    sortable: true,
-  },
-  {
-    key: 'entryDate',
-    width: 2,
-    titleKey: 'entered_date',
-    sortable: true,
-  },
-  {
-    key: 'numberOfItems',
-    width: 1,
-    titleKey: 'items',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'comment',
-    width: 3,
-    titleKey: 'comment',
-  },
-];

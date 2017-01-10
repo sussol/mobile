@@ -6,9 +6,9 @@
  */
 
 import React from 'react';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings } from '../localization';
+import { navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -18,7 +18,7 @@ const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
 */
-export class SupplierInvoicesPage extends GenericTablePage {
+export class SupplierInvoicesPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'entryDate';
@@ -26,9 +26,33 @@ export class SupplierInvoicesPage extends GenericTablePage {
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "supplier_invoice"')
                                             .filtered('otherParty.type != "inventory_adjustment"');
-    this.columns = COLUMNS;
+    this.state.columns = [
+      {
+        key: 'serialNumber',
+        width: 1,
+        title: tableStrings.invoice_number,
+        sortable: true,
+      },
+      {
+        key: 'status',
+        width: 1,
+        title: tableStrings.status,
+        sortable: true,
+      },
+      {
+        key: 'entryDate',
+        width: 1,
+        title: tableStrings.entered_date,
+        sortable: true,
+      },
+      {
+        key: 'comment',
+        width: 3,
+        title: tableStrings.comment,
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
   }
 
@@ -41,7 +65,7 @@ export class SupplierInvoicesPage extends GenericTablePage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
@@ -73,29 +97,3 @@ SupplierInvoicesPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'serialNumber',
-    width: 1,
-    titleKey: 'invoice_number',
-    sortable: true,
-  },
-  {
-    key: 'status',
-    width: 1,
-    titleKey: 'status',
-    sortable: true,
-  },
-  {
-    key: 'entryDate',
-    width: 1,
-    titleKey: 'entered_date',
-    sortable: true,
-  },
-  {
-    key: 'comment',
-    width: 3,
-    titleKey: 'comment',
-  },
-];

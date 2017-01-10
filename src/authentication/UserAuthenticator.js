@@ -2,7 +2,7 @@ import {
   authenticateAsync,
   AUTH_ERROR_CODES,
   hashPassword,
- } from './authenticationUtils';
+} from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
 const { SYNC_URL, THIS_STORE_ID } = SETTINGS_KEYS;

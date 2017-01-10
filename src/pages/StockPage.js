@@ -6,10 +6,10 @@
  */
 
 import React from 'react';
-import { GenericTablePage } from './GenericTablePage';
-import { Expansion } from '../widgets/DataTable';
+import { Expansion } from 'react-native-data-table';
+import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
-import globalStyles from '../globalStyles';
+import { dataTableStyles } from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
 import { tableStrings } from '../localization';
 
@@ -21,20 +21,40 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 * @prop   {func}                navigateTo  CallBack for navigation stack.
 * @state  {Realm.Results}       items       Contains all Items stored on the local database.
 */
-export class StockPage extends GenericTablePage {
+export class StockPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'name';
     this.state.items = props.database.objects('Item');
-    this.columns = COLUMNS;
+    this.state.columns = [
+      {
+        key: 'code',
+        width: 1,
+        title: tableStrings.item_code,
+        sortable: true,
+      },
+      {
+        key: 'name',
+        width: 5,
+        title: tableStrings.item_name,
+        sortable: true,
+      },
+      {
+        key: 'totalQuantity',
+        width: 1,
+        title: tableStrings.stock_on_hand,
+        sortable: true,
+        alignText: 'right',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
   }
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.state.items.filtered(
       'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
       searchTerm
@@ -75,7 +95,7 @@ export class StockPage extends GenericTablePage {
       ],
     ];
     return (
-      <Expansion style={globalStyles.dataTableExpansion}>
+      <Expansion style={dataTableStyles.expansion}>
         <PageInfo columns={infoColumns} />
       </Expansion>
     );
@@ -90,25 +110,3 @@ StockPage.propTypes = {
   database: React.PropTypes.object,
   navigateTo: React.PropTypes.func.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'code',
-    width: 1,
-    titleKey: 'item_code',
-    sortable: true,
-  },
-  {
-    key: 'name',
-    width: 5,
-    titleKey: 'item_name',
-    sortable: true,
-  },
-  {
-    key: 'totalQuantity',
-    width: 1,
-    titleKey: 'stock_on_hand',
-    sortable: true,
-    alignText: 'right',
-  },
-];

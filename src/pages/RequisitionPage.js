@@ -8,12 +8,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -31,15 +31,62 @@ const MODAL_KEYS = {
   MONTHS_SELECT: 'monthsSelect',
 };
 
-export class RequisitionPage extends GenericTablePage {
+export class RequisitionPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
     this.state.modalKey = null;
-    this.columns = COLUMNS;
+    this.state.columns = [
+      {
+        key: 'itemCode',
+        width: 1.5,
+        title: tableStrings.code,
+        sortable: true,
+      },
+      {
+        key: 'itemName',
+        width: 4,
+        title: tableStrings.item_name,
+        sortable: true,
+      },
+      {
+        key: 'stockOnHand',
+        width: 2,
+        title: tableStrings.current_stock,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'monthlyUsage',
+        width: 2,
+        title: tableStrings.monthly_usage,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'suggestedQuantity',
+        width: 2,
+        title: tableStrings.suggested_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'requiredQuantity',
+        width: 2,
+        title: tableStrings.required_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'remove',
+        width: 1,
+        title: tableStrings.remove,
+        alignText: 'center',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Requisition';
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onAddMasterItems = this.onAddMasterItems.bind(this);
     this.onCreateAutomaticOrder = this.onCreateAutomaticOrder.bind(this);
     this.onEndEditing = this.onEndEditing.bind(this);
@@ -54,7 +101,7 @@ export class RequisitionPage extends GenericTablePage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.props.requisition.items
                  .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
@@ -349,55 +396,6 @@ RequisitionPage.propTypes = {
   requisition: React.PropTypes.object,
   settings: React.PropTypes.object,
 };
-
-const COLUMNS = [
-  {
-    key: 'itemCode',
-    width: 1.5,
-    titleKey: 'code',
-    sortable: true,
-  },
-  {
-    key: 'itemName',
-    width: 4,
-    titleKey: 'item_name',
-    sortable: true,
-  },
-  {
-    key: 'stockOnHand',
-    width: 2,
-    titleKey: 'current_stock',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'monthlyUsage',
-    width: 2,
-    titleKey: 'monthly_usage',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'suggestedQuantity',
-    width: 2,
-    titleKey: 'suggested_quantity',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'requiredQuantity',
-    width: 2,
-    titleKey: 'required_quantity',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'remove',
-    width: 1,
-    titleKey: 'remove',
-    alignText: 'center',
-  },
-];
 
 /**
  * Check whether a given requisition is safe to be finalised. Return null if it is,

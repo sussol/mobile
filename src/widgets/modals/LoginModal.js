@@ -13,7 +13,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { Button } from '../Button';
+import { Button } from 'react-native-ui-components';
 import { LanguageModal } from './LanguageModal';
 import Modal from 'react-native-modalbox';
 import globalStyles, {

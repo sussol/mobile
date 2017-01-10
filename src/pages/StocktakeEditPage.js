@@ -10,7 +10,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
@@ -22,15 +22,50 @@ const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch',
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       items         the stocktakeItems of props.stocktake.
 */
-export class StocktakeEditPage extends GenericTablePage {
+export class StocktakeEditPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.items = props.stocktake.items;
     this.state.sortBy = 'itemName';
-    this.columns = COLUMNS;
+    this.state.columns = [
+      {
+        key: 'itemCode',
+        width: 1,
+        title: tableStrings.item_code,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'itemName',
+        width: 3.2,
+        title: tableStrings.item_name,
+        sortable: true,
+      },
+      {
+        key: 'snapshotTotalQuantity',
+        width: 1.2,
+        title: tableStrings.snapshot_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'countedTotalQuantity',
+        width: 1.2,
+        title: tableStrings.actual_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'difference',
+        width: 1,
+        title: tableStrings.difference,
+        sortable: true,
+        alignText: 'right',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Stocktake';
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.renderCell = this.renderCell.bind(this);
   }
 
@@ -53,7 +88,7 @@ export class StocktakeEditPage extends GenericTablePage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.state.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
@@ -128,43 +163,6 @@ StocktakeEditPage.propTypes = {
   stocktake: React.PropTypes.object.isRequired,
   navigateTo: React.PropTypes.func.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'itemCode',
-    width: 1,
-    titleKey: 'item_code',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'itemName',
-    width: 3.2,
-    titleKey: 'item_name',
-    sortable: true,
-  },
-  {
-    key: 'snapshotTotalQuantity',
-    width: 1.2,
-    titleKey: 'snapshot_quantity',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'countedTotalQuantity',
-    width: 1.2,
-    titleKey: 'actual_quantity',
-    sortable: true,
-    alignText: 'right',
-  },
-  {
-    key: 'difference',
-    width: 1,
-    titleKey: 'difference',
-    sortable: true,
-    alignText: 'right',
-  },
-];
 
 const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal
 const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in error modal

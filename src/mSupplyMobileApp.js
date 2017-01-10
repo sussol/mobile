@@ -14,9 +14,15 @@ import {
 } from 'react-native';
 import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 
-import globalStyles, { BACKGROUND_COLOR, SUSSOL_ORANGE } from './globalStyles';
+import globalStyles, {
+  dataTableColors,
+  dataTableStyles,
+  pageStyles,
+  BACKGROUND_COLOR,
+  SUSSOL_ORANGE,
+} from './globalStyles';
 
-import { Navigator } from './navigation';
+import Navigator from 'react-native-app-navigator';
 import { Spinner } from './widgets/Spinner';
 import { PAGES, FINALISABLE_PAGES } from './pages';
 
@@ -31,7 +37,7 @@ import { migrateDataToVersion } from './dataMigration';
 import { Synchroniser } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
-import { Scheduler } from './Scheduler';
+import { Scheduler } from 'sussol-utilities';
 import { MobileAppSettings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -46,7 +52,7 @@ export default class mSupplyMobileApp extends React.Component {
     this.settings = new MobileAppSettings(this.database);
     migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
-    const syncAuthenticator = new SyncAuthenticator(this.database, this.settings);
+    const syncAuthenticator = new SyncAuthenticator(this.settings);
     this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
     this.scheduler = new Scheduler();
     const initialised = this.synchroniser.isInitialised();
@@ -186,6 +192,10 @@ export default class mSupplyMobileApp extends React.Component {
         currentUser={this.state.currentUser}
         runWithLoadingIndicator={this.runWithLoadingIndicator}
         adminMode={this.state.isInAdminMode}
+        searchBarColor={SUSSOL_ORANGE}
+        dataTableStyles={dataTableStyles}
+        pageStyles={pageStyles}
+        colors={dataTableColors}
         {...extraProps}
       />);
   }

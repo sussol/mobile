@@ -10,10 +10,10 @@ import React from 'react';
 import { View } from 'react-native';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
-import { GenericTablePage } from './GenericTablePage';
+import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -23,7 +23,7 @@ const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
 */
-export class CustomerInvoicesPage extends GenericTablePage {
+export class CustomerInvoicesPage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.transactions = props.database.objects('Transaction')
@@ -31,9 +31,46 @@ export class CustomerInvoicesPage extends GenericTablePage {
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
     this.state.isCreatingInvoice = false;
-    this.columns = COLUMNS;
+    this.state.columns = [
+      {
+        key: 'otherPartyName',
+        width: 3,
+        title: tableStrings.customer,
+        sortable: true,
+      },
+      {
+        key: 'serialNumber',
+        width: 1,
+        title: tableStrings.invoice_number,
+        sortable: true,
+      },
+      {
+        key: 'status',
+        width: 1,
+        title: tableStrings.status,
+        sortable: true,
+      },
+      {
+        key: 'entryDate',
+        width: 2,
+        title: tableStrings.entered_date,
+        sortable: true,
+      },
+      {
+        key: 'comment',
+        width: 3,
+        title: tableStrings.comment,
+        lines: 2,
+      },
+      {
+        key: 'delete',
+        width: 1,
+        title: tableStrings.delete,
+        alignText: 'center',
+      },
+    ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getUpdatedData = this.getUpdatedData.bind(this);
+    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
     this.navigateToInvoice = this.navigateToInvoice.bind(this);
@@ -86,7 +123,7 @@ export class CustomerInvoicesPage extends GenericTablePage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getUpdatedData(searchTerm, sortBy, isAscending) {
+  getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions.filtered(
       'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
       searchTerm
@@ -171,42 +208,3 @@ CustomerInvoicesPage.propTypes = {
   navigateTo: React.PropTypes.func.isRequired,
   settings: React.PropTypes.object.isRequired,
 };
-
-const COLUMNS = [
-  {
-    key: 'otherPartyName',
-    width: 3,
-    titleKey: 'customer',
-    sortable: true,
-  },
-  {
-    key: 'serialNumber',
-    width: 1,
-    titleKey: 'invoice_number',
-    sortable: true,
-  },
-  {
-    key: 'status',
-    width: 1,
-    titleKey: 'status',
-    sortable: true,
-  },
-  {
-    key: 'entryDate',
-    width: 2,
-    titleKey: 'entered_date',
-    sortable: true,
-  },
-  {
-    key: 'comment',
-    width: 3,
-    titleKey: 'comment',
-    lines: 2,
-  },
-  {
-    key: 'delete',
-    width: 1,
-    titleKey: 'delete',
-    alignText: 'center',
-  },
-];
