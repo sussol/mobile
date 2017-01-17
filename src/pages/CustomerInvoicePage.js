@@ -34,6 +34,16 @@ const MODAL_KEYS = {
 export class CustomerInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
+    // For an customer invoice to be opened for editing in this customer invoice page, we need it to
+    // be confirmed, otherwise we could end up in with more of a paticular item being issued across
+    // multiple invoices than is available. We generally create customer invoices with the status
+    // confirmed, so this is in case a 'nw' or 'sg' invoice came in through sync (i.e. an anomaly)
+    if (!props.transaction.isConfirmed && !props.transaction.isFinalised) {
+      props.database.write(() => {
+        props.transaction.confirm(props.database);
+        props.database.save('Transaction', props.transaction);
+      });
+    }
     this.state.sortBy = 'itemName';
     this.state.columns = [
       {

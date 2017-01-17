@@ -156,6 +156,7 @@ export class Transaction extends Realm.Object {
    */
   confirm(database) {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
+    if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
     this.items.forEach((transactionItem) => {
       transactionItem.batches.forEach((transactionBatch) => {
         const itemBatch = transactionBatch.itemBatch;
