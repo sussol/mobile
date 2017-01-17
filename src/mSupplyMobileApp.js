@@ -138,7 +138,7 @@ export default class mSupplyMobileApp extends React.Component {
   renderFinaliseButton() {
     return (
       <FinaliseButton
-        isFinalised={this.state.finaliseItem.record.status === 'finalised'}
+        isFinalised={this.state.finaliseItem.record.isFinalised}
         onPress={() => this.setState({ confirmFinalise: true })}
       />);
   }

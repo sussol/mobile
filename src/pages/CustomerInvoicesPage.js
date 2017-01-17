@@ -114,6 +114,16 @@ export class CustomerInvoicesPage extends GenericPage {
   }
 
   navigateToInvoice(invoice) {
+    // For a customer invoice to be opened for editing in the customer invoice page, we need it to
+    // be confirmed, otherwise we could end up in with more of a paticular item being issued across
+    // multiple invoices than is available. We generally create customer invoices with the status
+    // confirmed, so this is in case a 'nw' or 'sg' invoice came in through sync (i.e. an anomaly)
+    if (!invoice.isConfirmed && !invoice.isFinalised) {
+      this.props.database.write(() => {
+        invoice.confirm(this.props.database);
+        this.props.database.save('Transaction', invoice);
+      });
+    }
     this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
     this.props.navigateTo('customerInvoice',
                           `${navStrings.invoice} ${invoice.serialNumber}`,
