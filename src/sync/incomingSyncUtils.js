@@ -501,8 +501,8 @@ export function sanityCheckIncomingRecord(recordType, record) {
   if (!requiredFields[recordType]) return false; // Unsupported record type
   return requiredFields[recordType].reduce((containsAllFieldsSoFar, fieldName) =>
                                             containsAllFieldsSoFar &&
-                                            record[fieldName] !== null &&
-                                            record[fieldName].length > 0,
+                                            record[fieldName] !== null &&    // Key must exist, even
+                                            record[fieldName] !== undefined, // if it is just ''
                                             true);
 }
 
