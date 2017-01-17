@@ -57,6 +57,17 @@ export class SupplierInvoicesPage extends GenericPage {
   }
 
   onRowPress(invoice) {
+    // For a supplier invoice to be opened for in the supplier invoice page, we need it to be
+    // either new or finalised, but not confirmed - if someone were to reduce the amount of stock on
+    // a confirmed supplier invoice, but it had already been issued in a customer invoice, we would
+    // have to deal with a tricky situation. We create supplier invoices with the status 'new', and
+    // then jump to 'finalised', so this is in case a 'cn' invoice came in through sync (an anomaly)
+    if (invoice.isConfirmed) {
+      this.props.database.write(() => {
+        invoice.finalise(this.props.database);
+        this.props.database.save('Transaction', invoice);
+      });
+    }
     this.props.navigateTo('supplierInvoice',
                           `${navStrings.invoice} ${invoice.serialNumber}`,
                           { transaction: invoice });

@@ -157,4 +157,5 @@ export class SupplierInvoicePage extends GenericPage {
 
 SupplierInvoicePage.propTypes = {
   database: React.PropTypes.object,
+  transaction: React.PropTypes.object,
 };
