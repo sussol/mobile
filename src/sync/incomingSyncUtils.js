@@ -563,6 +563,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       record[fieldName] !== null &&  // Key must exist
       record[fieldName].length > 0,  // And must not be blank
       true);
+  if (!hasAllNonBlankFields) return false; // Return early if record already not valid
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
