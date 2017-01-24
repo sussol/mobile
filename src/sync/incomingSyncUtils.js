@@ -118,7 +118,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         joinsThisStore: joinsThisStore,
       };
       database.update(recordType, internalRecord);
-      if (joinsThisStore) { // If it joins this store, set the name's visibility
+      if (joinsThisStore) { // If it joins this store, set the item's visibility
         const item = getObject(database, 'Item', record.item_ID);
         item.isVisible = !parseBoolean(record.inactive);
         database.save('Item', item);
@@ -473,37 +473,104 @@ function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') 
 export function sanityCheckIncomingRecord(recordType, record) {
   if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
   const requiredFields = {
-    Item: ['code', 'item_name', 'default_pack_size'],
-    ItemCategory: ['Description'],
-    ItemDepartment: ['department'],
-    ItemBatch: ['item_ID', 'pack_size', 'quantity', 'batch', 'expiry_date',
-                'cost_price', 'sell_price'],
-    ItemStoreJoin: ['item_ID', 'store_ID'],
-    LocalListItem: ['item_ID', 'list_master_name_join_ID'],
-    MasterListNameJoin: ['description', 'name_ID', 'list_master_ID'],
-    MasterList: ['description'],
-    MasterListItem: ['item_ID'],
-    Name: ['name', 'code', 'type', 'customer', 'supplier', 'manufacturer'],
-    NameStoreJoin: ['name_ID', 'store_ID'],
-    NumberSequence: ['name', 'value'],
-    NumberReuse: ['name', 'number_to_use'],
-    Requisition: ['status', 'date_entered', 'type', 'daysToSupply', 'serial_number',
-                  'requester_reference'],
-    RequisitionItem: ['requisition_ID', 'item_ID', 'stock_on_hand', 'Cust_stock_order'],
-    Stocktake: ['Description', 'stock_take_created_date', 'status', 'serial_number'],
-    StocktakeBatch: ['stock_take_ID', 'item_line_ID', 'item_ID', 'snapshot_qty',
-                     'snapshot_packsize', 'expiry', 'Batch', 'cost_price', 'sell_price'],
-    Transaction: ['invoice_num', 'name_ID', 'entry_date', 'type', 'status', 'store_ID'],
-    TransactionCategory: ['category', 'code', 'type'],
-    TransactionBatch: ['item_ID', 'item_name', 'item_line_ID', 'batch', 'expiry_date',
-                       'pack_size', 'quantity', 'transaction_ID', 'cost_price', 'sell_price'],
+    Item: {
+      cannotBeBlank: ['code', 'item_name'],
+      canBeBlank: ['default_pack_size'],
+    },
+    ItemCategory: {
+      cannotBeBlank: [],
+      canBeBlank: ['Description'],
+    },
+    ItemDepartment: {
+      cannotBeBlank: [],
+      canBeBlank: ['department'],
+    },
+    ItemBatch: {
+      cannotBeBlank: ['item_ID', 'quantity'],
+      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price'],
+    },
+    ItemStoreJoin: {
+      cannotBeBlank: ['item_ID', 'store_ID'],
+      canBeBlank: [],
+    },
+    LocalListItem: {
+      cannotBeBlank: ['item_ID', 'list_master_name_join_ID'],
+      canBeBlank: [],
+    },
+    MasterListNameJoin: {
+      cannotBeBlank: ['name_ID', 'list_master_ID'],
+      canBeBlank: ['description'],
+    },
+    MasterList: {
+      cannotBeBlank: [],
+      canBeBlank: ['description'],
+    },
+    MasterListItem: {
+      cannotBeBlank: ['item_ID'],
+      canBeBlank: [],
+    },
+    Name: {
+      cannotBeBlank: ['type', 'customer', 'supplier', 'manufacturer'],
+      canBeBlank: ['name', 'code'],
+    },
+    NameStoreJoin: {
+      cannotBeBlank: ['name_ID', 'store_ID'],
+      canBeBlank: ['name_ID', 'store_ID'],
+    },
+    NumberSequence: {
+      cannotBeBlank: ['name', 'value'],
+      canBeBlank: [],
+    },
+    NumberReuse: {
+      cannotBeBlank: ['name', 'number_to_use'],
+      canBeBlank: [],
+    },
+    Requisition: {
+      cannotBeBlank: ['status', 'type', 'daysToSupply'],
+      canBeBlank: ['date_entered', 'serial_number', 'requester_reference'],
+    },
+    RequisitionItem: {
+      cannotBeBlank: ['requisition_ID', 'item_ID'],
+      canBeBlank: ['stock_on_hand', 'Cust_stock_order'],
+    },
+    Stocktake: {
+      cannotBeBlank: ['status'],
+      canBeBlank: ['Description', 'stock_take_created_date', 'serial_number'],
+    },
+    StocktakeBatch: {
+      cannotBeBlank: ['stock_take_ID', 'item_line_ID', 'item_ID', 'snapshot_qty',
+                      'snapshot_packsize'],
+      canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price'],
+    },
+    Transaction: {
+      cannotBeBlank: ['name_ID', 'type', 'status', 'store_ID'],
+      canBeBlank: ['invoice_num', 'entry_date'],
+    },
+    TransactionCategory: {
+      cannotBeBlank: [],
+      canBeBlank: ['category', 'code', 'type'],
+    },
+    TransactionBatch: {
+      cannotBeBlank: ['item_ID', 'item_line_ID', 'expiry_date', 'quantity', 'cost_price',
+                      'sell_price'],
+      canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
-  return requiredFields[recordType].reduce((containsAllFieldsSoFar, fieldName) =>
-                                            containsAllFieldsSoFar &&
-                                            record[fieldName] !== null &&    // Key must exist, even
-                                            record[fieldName] !== undefined, // if it is just ''
-                                            true);
+  const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
+    (containsAllFieldsSoFar, fieldName) =>
+      containsAllFieldsSoFar &&
+      record[fieldName] !== null &&  // Key must exist
+      record[fieldName].length > 0,  // And must not be blank
+      true);
+  if (!hasAllNonBlankFields) return false; // Return early if record already not valid
+  const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
+    (containsAllFieldsSoFar, fieldName) =>
+      containsAllFieldsSoFar &&
+      record[fieldName] !== null &&    // Key must exist
+      record[fieldName] !== undefined, // May be blank, i.e. just ''
+      hasAllNonBlankFields); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
+  return hasRequiredFields;
 }
 
 /**
