@@ -654,6 +654,5 @@ function parseNumber(numberString) {
  */
 function parseBoolean(booleanString) {
   const trueStrings = ['true', 'True', 'TRUE'];
-  const result = booleanString && trueStrings.indexOf(booleanString) >= 0;
-  return result;
+  return booleanString && trueStrings.indexOf(booleanString) >= 0;
 }
