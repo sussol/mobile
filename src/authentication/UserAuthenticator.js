@@ -64,8 +64,8 @@ export class UserAuthenticator {
       }
     } catch (error) {
       // If there was an error with connection, check against locally cached credentials
-      if (error.message === CONNECTION_FAILURE) {
-        if (user && user.username === username && user.passwordHash === passwordHash) {
+      if (error.message === CONNECTION_FAILURE && user) {
+        if (user.username === username && user.passwordHash === passwordHash) {
           // Entered credentials match cached credentials, allow offline login
           return user;
         }
