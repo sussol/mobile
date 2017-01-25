@@ -71,7 +71,9 @@ export class SyncQueue {
                                 recordType,
                                 record.id)
                               .length > 0;
-          if (!duplicate) {
+          if (duplicate) {
+            duplicate.changeTime = new Date().getTime();
+          } else {
             this.database.create(
               'SyncOut',
               {
