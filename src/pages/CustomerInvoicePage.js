@@ -45,7 +45,7 @@ export class CustomerInvoicePage extends GenericPage {
       {
         key: 'itemName',
         width: 4,
-        title: 'item_name',
+        title: tableStrings.item_name,
         sortable: true,
       },
       {
