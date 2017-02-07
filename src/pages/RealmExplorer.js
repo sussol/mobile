@@ -81,10 +81,9 @@ export class RealmExplorer extends React.Component {
     });
   }
 
-  onSearchChange(event) {
-    const term = event.nativeEvent.text;
-    if (OBJECT_TYPES.indexOf(term) < 0) return;
-    const data = this.props.database.objects(term);
+  onSearchChange(searchTerm) {
+    if (OBJECT_TYPES.indexOf(searchTerm) < 0) return;
+    const data = this.props.database.objects(searchTerm);
     this.setState({
       data: data,
       dataSource: this.state.dataSource.cloneWithRows(data),
@@ -149,7 +148,7 @@ export class RealmExplorer extends React.Component {
   render() {
     return (
       <View style={[globalStyles.container]}>
-        <SearchBar onChange={(event) => this.onSearchChange(event)} />
+        <SearchBar onChange={this.onSearchChange} />
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}
