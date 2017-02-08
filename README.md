@@ -1,6 +1,6 @@
 # mSupply Mobile
 
-Sustainable Solutions' Mobile app for use with the mSupply medical inventory control software. See http://msupply.org.nz
+Sustainable Solutions' Mobile app for use with the mSupply medical inventory control software. See http://msupply.org.nz/mobile and [the wiki attached to this repository](https://github.com/sussol/mobile/wiki) for design documentation
 
 ### Get the Latest Release
 * Available at Jottacloud/mSupply Mobile Builds/mSupplyMobile.apk.zip
