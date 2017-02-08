@@ -42,7 +42,7 @@
   "dependencies": {
     "react": "~15.3.1",
     "react-native": "edmofro/react-native#natively-loopable-animations-0.35",
-    "react-native-app-navigator": "^0.1.6",
+    "react-native-app-navigator": "^0.2.1",
     "react-native-autocomplete-input": "^1.1.0",
     "react-native-data-table": "^0.1.1",
     "react-native-database": "^0.1.6",

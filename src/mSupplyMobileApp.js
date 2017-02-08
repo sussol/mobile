@@ -164,7 +164,7 @@ export default class mSupplyMobileApp extends React.Component {
       </View>);
   }
 
-  renderScene(props) {
+  renderScene(route, onNavigate) {
     const navigateTo = (key, title, extraProps, navType) => {
       dismissKeyboard();
       if (!navType) navType = 'push';
@@ -179,9 +179,9 @@ export default class mSupplyMobileApp extends React.Component {
       }
 
       // Now navigate to the page, passing on any extra props and the finalise button if required
-      props.onNavigate({ type: navType, ...navigationProps });
+      onNavigate({ type: navType, ...navigationProps });
     };
-    const { key, ...extraProps } = props.scene.route;
+    const { key, ...extraProps } = route;
     const Page = PAGES[key]; // Get the page the navigation key relates to
     // Return the requested page with any extra props passed to navigateTo in pageProps
     return (
