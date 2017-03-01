@@ -19,7 +19,7 @@ See http://msupply.org.nz/mobile for a detailed description of these and other f
 * Open the .apk on the tablet and follow the install instructions (need to allow apps from unknown sources)
 
 ### Use with an mSupply Server
-Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup)
+Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#setting-up-msupply-server)
 
 ### Set Up for Development
 Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup)
