@@ -20,6 +20,7 @@ See http://msupply.org.nz/mobile for a detailed description of these and other f
 
 ### Contribute
 As an open source software project, we welcome contributions from external developers. Here's the process:
+
 1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own (expect some curation though!)
 2. Comment on the issue to indicate you're going to work on it, and use the issue to check in (update your progress or ask a question)
 3. Read the code design documentation - it's a big document but read at least the coding conventions as well as any areas you are working around
