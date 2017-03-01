@@ -1,6 +1,6 @@
 # mSupply Mobile
 
-A user friendly, offline-first mobile app for use with [mSupply](http://msupply.org.nz). Provides electronic inventory control for medical stock. Designed and built by [Sustainable Solutions](http://sussol.net) for use in developing countries, the app is now open source and free to use.
+A user friendly, offline-first mobile app for use with [mSupply](http://msupply.org.nz). Provides electronic inventory control for medical stock. Designed and built by [Sustainable Solutions](http://sussol.net) for use in developing countries, the app is now open source and free to use. Hello
 
 ### Features
 * Receiving and issuing goods with automatic inventory adjustments
