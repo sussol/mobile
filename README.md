@@ -18,15 +18,24 @@ See http://msupply.org.nz/mobile for a detailed description of these and other f
 * Copy the .apk onto an android tablet
 * Open the .apk on the tablet and follow the install instructions (need to allow apps from unknown sources)
 
+### Use with an mSupply Server
+Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup)
+
+### Set Up for Development
+Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup)
+
 ### Contribute
-As an open source software project, we welcome contributions from external developers. Here's the process:
+As an open source software project, we welcome contributions from external developers. There's a nine step process (step nine is optional):
 
 1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own (expect some curation though!)
 2. Comment on the issue to indicate you're going to work on it, and use the issue to check in (update your progress or ask a question)
-3. Read the code design documentation - it's a big document but read at least the coding conventions as well as any areas you are working around
-4. Fork the repository, work away, send a pull request ensuring you have
+3. Read the [documentation](https://github.com/sussol/mobile/wiki/Code-Design) - at least the coding conventions as well as any areas you are working around
+4. Fork the repository
+5. Set up your development environment using [our instructions](https://github.com/sussol/mobile/wiki/Setup)
+6. Code
+7. Make a pull request ensuring you have
   * Adhered to our conventions/style
   * Respected module boundaries
   * Tested that your additions work and haven't caused regressions
-5. We'll review the PR and merge it if it adds value for a general use case (not just customisation to suit one customer)
-6. Sit back and enjoy the warm glow :-)
+8. We'll review the PR and merge it if it adds value for a general use case (not just customisation to suit one customer)
+9. Sit back and enjoy the warm glow :-)
