@@ -2,7 +2,12 @@
     package="com.msupplymobile">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <supports-screens 
+        android:smallScreens="false"
+        android:normalScreens="false"
+        android:largeScreens="false"
+        android:requiresSmallestWidthDp="720"
+    />
     <application
       android:name=".MainApplication"
       android:allowBackup="true"
