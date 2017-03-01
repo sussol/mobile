@@ -25,10 +25,10 @@ Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup)
 Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup)
 
 ### Contribute
-As an open source software project, we welcome contributions from external developers. There's a nine step process (step nine is optional):
+As an open source software project, we welcome contributions from external developers.
 
-1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own (expect some curation though!)
-2. Comment on the issue to indicate you're going to work on it, and use the issue to check in (update your progress or ask a question)
+1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own
+2. Comment on the issue to indicate you're going to work on it, and follow up with progress and/or questions
 3. Read the [documentation](https://github.com/sussol/mobile/wiki/Code-Design) - at least the coding conventions as well as any areas you are working around
 4. Fork the repository
 5. Set up your development environment using [our instructions](https://github.com/sussol/mobile/wiki/Setup)
@@ -37,5 +37,5 @@ As an open source software project, we welcome contributions from external devel
   * Adhered to our conventions/style
   * Respected module boundaries
   * Tested that your additions work and haven't caused regressions
-8. We'll review the PR and merge it if it adds value for a general use case (not just customisation to suit one customer)
+8. We'll review the PR and merge it if it adds value for a general use case (not just one user)
 9. Sit back and enjoy the warm glow :-)
