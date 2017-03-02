@@ -12,11 +12,8 @@ A user friendly, offline-first mobile app for use with [mSupply](http://msupply.
 
 See http://msupply.org.nz/mobile for a detailed description of these and other features
 
-### Get the Latest Release
-* Available at Jottacloud/mSupply Mobile Builds/mSupplyMobile.apk.zip
-* Copy the .zip somewhere on your own computer before extracting it
-* Copy the .apk onto an android tablet
-* Open the .apk on the tablet and follow the install instructions (need to allow apps from unknown sources)
+### Building from Source
+See the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#building-from-source)
 
 ### Use with an mSupply Server
 Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#setting-up-msupply-server)
