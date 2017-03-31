@@ -10,6 +10,9 @@ export class UIDatabase {
       case 'Customer':
         results = results.filtered('isVisible == true AND isCustomer == true');
         break;
+      case 'Supplier':
+        results = results.filtered('isSupplier == true');
+        break;
       case 'Item':
         results = results.filtered('isVisible == true');
         break;
@@ -34,6 +37,8 @@ export class UIDatabase {
 function translateToCoreDatabaseType(type) {
   switch (type) {
     case 'Customer':
+      return 'Name';
+    case 'Supplier':
       return 'Name';
     default:
       return type;

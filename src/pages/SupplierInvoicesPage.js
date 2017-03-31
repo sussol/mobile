@@ -6,9 +6,13 @@
  */
 
 import React from 'react';
+import { View } from 'react-native';
+import { SelectModal, PageButton } from '../widgets';
+import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
+import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -23,6 +27,7 @@ export class SupplierInvoicesPage extends GenericPage {
     super(props);
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
+    this.state.isCreatingInvoice = false;
     this.state.transactions = props.database.objects('Transaction')
                                             .filtered('type == "supplier_invoice"')
                                             .filtered('otherParty.type != "inventory_adjustment"');
@@ -53,8 +58,21 @@ export class SupplierInvoicesPage extends GenericPage {
     ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
+    this.onNewSupplierInvoice = this.onNewSupplierInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
+    this.navigateToInvoice = this.navigateToInvoice.bind(this);
   }
+
+  onNewSupplierInvoice(otherParty) {
+    const { database, currentUser } = this.props;
+    let invoice;
+    database.write(() => {
+      invoice = createRecord(database, 'SupplierInvoice', otherParty, currentUser);
+    });
+    this.navigateToInvoice(invoice);
+  }
+
+  //--------------------
 
   onRowPress(invoice) {
     // For a supplier invoice to be opened for in the supplier invoice page, we need it to be
@@ -72,6 +90,24 @@ export class SupplierInvoicesPage extends GenericPage {
                           `${navStrings.invoice} ${invoice.serialNumber}`,
                           { transaction: invoice });
   }
+
+  /**
+   * Create new Supplier Invoice from outside the system
+   */
+  navigateToInvoice(invoice) {
+    if (!invoice.isConfirmed && !invoice.isFinalised) {
+      this.props.database.write(() => {
+        invoice.confirm(this.props.database);
+        this.props.database.save('Transaction', invoice);
+      });
+    }
+    this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
+    this.props.navigateTo('supplierInvoice',
+                          `${navStrings.invoice} ${invoice.serialNumber}`,
+                          { transaction: invoice });
+  }
+
+  //-------------------
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -101,6 +137,40 @@ export class SupplierInvoicesPage extends GenericPage {
       case 'comment':
         return invoice.comment;
     }
+  }
+
+  render() {
+    return (
+      <View style={globalStyles.pageContentContainer}>
+        <View style={globalStyles.container}>
+          <View style={globalStyles.pageTopSectionContainer}>
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
+            <View style={globalStyles.pageTopRightSectionContainer}>
+              <PageButton
+                text={buttonStrings.new_invoice}
+                onPress={() => this.setState({ isCreatingInvoice: true })}
+              />
+            </View>
+          </View>
+            {this.renderDataTable()}
+          <SelectModal
+            isOpen={this.state.isCreatingInvoice}
+            options={this.props.database.objects('Supplier')}
+            placeholderText={modalStrings.start_typing_to_select_customer}
+            queryString={'name BEGINSWITH[c] $0'}
+            sortByString={'name'}
+            onSelect={name => {
+              this.onNewSupplierInvoice(name);
+              this.setState({ isCreatingInvoice: false });
+            }}
+            onClose={() => this.setState({ isCreatingInvoice: false })}
+            title={modalStrings.search_for_the_customer}
+          />
+        </View>
+      </View>
+    );
   }
 }
 

@@ -45,6 +45,9 @@ export function createRecord(database, type, ...args) {
       return createStocktakeItem(database, ...args);
     case 'StocktakeBatch':
       return createStocktakeBatch(database, ...args);
+    case 'SupplierInvoice':
+    // Change!!
+      return createCustomerInvoice(database, ...args);
     case 'InventoryAdjustment':
       return createInventoryAdjustment(database, ...args);
     case 'TransactionItem':
