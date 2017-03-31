@@ -7,6 +7,7 @@ const NUMBER_SEQUENCE_KEYS = {
   REQUISITION_SERIAL_NUMBER: 'requisition_serial_number',
   REQUISITION_REQUESTER_REFERENCE: 'requisition_requester_reference',
   STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
+  SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
 };
 const {
   CUSTOMER_INVOICE_NUMBER,
@@ -14,6 +15,7 @@ const {
   REQUISITION_SERIAL_NUMBER,
   REQUISITION_REQUESTER_REFERENCE,
   STOCKTAKE_SERIAL_NUMBER,
+  SUPPLIER_INVOICE_NUMBER,
 } = NUMBER_SEQUENCE_KEYS;
 
 /**
@@ -46,8 +48,7 @@ export function createRecord(database, type, ...args) {
     case 'StocktakeBatch':
       return createStocktakeBatch(database, ...args);
     case 'SupplierInvoice':
-    // Change!!
-      return createCustomerInvoice(database, ...args);
+      return createSupplierInvoice(database, ...args);
     case 'InventoryAdjustment':
       return createInventoryAdjustment(database, ...args);
     case 'TransactionItem':
@@ -207,6 +208,25 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
   stocktakeItem.addBatch(stocktakeBatch);
   database.save('StocktakeItem', stocktakeItem);
   return stocktakeBatch;
+}
+
+// Creates a supplier invoice (Transaction) and adds it to the customer (Name)
+function createSupplierInvoice(database, supplier, user) {
+  const currentDate = new Date();
+  const invoice = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER), //  **
+    entryDate: currentDate,
+    confirmDate: currentDate, // Customer invoices always confirmed in mobile
+    type: 'supplier_invoice',
+    status: 'suggested', // Customer invoices always confirmed in mobile for easy stock tracking
+    comment: '',
+    otherParty: supplier,
+    enteredBy: user,
+  });
+  database.save('Transaction', invoice);
+  supplier.addTransaction(invoice);
+  return invoice;
 }
 
 // Creates a TransactionBatch and adds it to the TransactionItem

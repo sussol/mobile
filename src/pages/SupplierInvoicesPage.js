@@ -60,19 +60,19 @@ export class SupplierInvoicesPage extends GenericPage {
     this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
     this.onNewSupplierInvoice = this.onNewSupplierInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
-    this.navigateToInvoice = this.navigateToInvoice.bind(this);
   }
 
+  /**
+   * Create new Supplier Invoice and takes user to the editing SI page
+   */
   onNewSupplierInvoice(otherParty) {
     const { database, currentUser } = this.props;
     let invoice;
     database.write(() => {
       invoice = createRecord(database, 'SupplierInvoice', otherParty, currentUser);
     });
-    this.navigateToInvoice(invoice);
+    this.onRowPress(invoice);
   }
-
-  //--------------------
 
   onRowPress(invoice) {
     // For a supplier invoice to be opened for in the supplier invoice page, we need it to be
@@ -90,24 +90,6 @@ export class SupplierInvoicesPage extends GenericPage {
                           `${navStrings.invoice} ${invoice.serialNumber}`,
                           { transaction: invoice });
   }
-
-  /**
-   * Create new Supplier Invoice from outside the system
-   */
-  navigateToInvoice(invoice) {
-    if (!invoice.isConfirmed && !invoice.isFinalised) {
-      this.props.database.write(() => {
-        invoice.confirm(this.props.database);
-        this.props.database.save('Transaction', invoice);
-      });
-    }
-    this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
-    this.props.navigateTo('supplierInvoice',
-                          `${navStrings.invoice} ${invoice.serialNumber}`,
-                          { transaction: invoice });
-  }
-
-  //-------------------
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
