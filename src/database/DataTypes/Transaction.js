@@ -21,6 +21,10 @@ export class Transaction extends Realm.Object {
     }
     database.delete('TransactionItem', this.items);
   }
+  // is not external supplier invoice
+  get isNotExternalSI() {
+    return this.otherParty.type !== 'facility';
+  }
 
   get isFinalised() {
     return this.status === 'finalised';
