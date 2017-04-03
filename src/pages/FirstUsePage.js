@@ -19,12 +19,12 @@ export class FirstUsePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      appVersion: '',
       progress: 'uninitialised', // uninitialised, initialising, initialised, error
       progressMessage: '',
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
-      appVersion: '',
     };
     this.setAppVersion();
     this.siteNameInputRef = null;
@@ -83,7 +83,7 @@ export class FirstUsePage extends React.Component {
   render() {
     return (
       <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
-        <View style={[globalStyles.authFormContainer, { flex: 0 }]}>
+        <View style={globalStyles.authFormContainer}>
           <Image
             resizeMode="contain"
             style={globalStyles.authFormLogo}
@@ -164,7 +164,7 @@ export class FirstUsePage extends React.Component {
             />
           </View>
         </View>
-        <Text style={globalStyles.text}> v{this.state.appVersion}</Text>
+        <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
       </View>
     );
   }

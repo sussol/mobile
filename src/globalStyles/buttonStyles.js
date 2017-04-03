@@ -10,7 +10,6 @@ import { APP_FONT_FAMILY } from './fonts';
 import { COMPONENT_HEIGHT } from './appStyles';
 
 export const buttonStyles = {
-
   buttonText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 10,

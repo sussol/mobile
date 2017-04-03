@@ -23,7 +23,6 @@ export const authStyles = {
     fontFamily: APP_FONT_FAMILY,
   },
   authFormContainer: {
-    flex: 1,
     marginTop: 80,
     marginHorizontal: 300,
     alignItems: 'center',
@@ -49,6 +48,10 @@ export const authStyles = {
   authFormLogo: {
     marginTop: 30,
     marginBottom: 60,
+  },
+  authWindowButtonText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: WARMER_GREY,
   },
   loginButton: {
     marginTop: 60,
