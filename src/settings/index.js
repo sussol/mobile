@@ -1,3 +1,5 @@
+import { AsyncStorage } from 'react-native';
+
 export { MobileAppSettings } from './MobileAppSettings';
 export const SETTINGS_KEYS = {
   APP_VERSION: 'AppVersion',
@@ -15,3 +17,7 @@ export const SETTINGS_KEYS = {
   THIS_STORE_ID: 'ThisStoreId',
   THIS_STORE_NAME_ID: 'ThisStoreNameId',
 };
+export async function getAppVersion() {
+  const appVersion = await AsyncStorage.getItem(SETTINGS_KEYS.APP_VERSION);
+  return appVersion;
+}
