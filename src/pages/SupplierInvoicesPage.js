@@ -131,7 +131,7 @@ export class SupplierInvoicesPage extends GenericPage {
             </View>
             <View style={globalStyles.pageTopRightSectionContainer}>
               <PageButton
-                text={buttonStrings.new_invoice}
+                text={buttonStrings.new_supplier_invoice}
                 onPress={() => this.setState({ isCreatingInvoice: true })}
               />
             </View>

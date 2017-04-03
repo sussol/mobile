@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import { formatDate, sortDataBy } from '../utilities';
+import { formatDate, parsePositiveInteger, parsePositiveDouble, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
@@ -32,6 +32,7 @@ export class SupplierInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
+    const isNotExternalSI = this.props.transaction.isNotExternalSI;
     this.state.columns = [
       {
         key: 'itemCode',
@@ -45,21 +46,56 @@ export class SupplierInvoicePage extends GenericPage {
         title: tableStrings.item_name,
         sortable: true,
       },
-      {
-        key: 'totalQuantitySent',
-        width: 1,
-        title: tableStrings.number_sent,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'numReceived',
-        width: 1,
-        title: tableStrings.number_recieved,
-        sortable: true,
-        alignText: 'right',
-      },
-    ];
+    ]; // for supplier invoice
+    if (isNotExternalSI) {
+      this.state.columns.push(
+        {
+          key: 'totalQuantitySent',
+          width: 1,
+          title: tableStrings.number_sent,
+          sortable: true,
+          alignText: 'right',
+        },
+        {
+          key: 'numReceived',
+          width: 1,
+          title: tableStrings.number_recieved,
+          sortable: true,
+          alignText: 'right',
+        });
+    } // for supplier invoice
+    else {
+      this.state.columns.push(
+        {
+          key: 'quantity',
+          width: 1,
+          title: tableStrings.number_recieved,
+          sortable: true,
+          alignText: 'right',
+        },
+        {
+          key: 'batchName',
+          width: 1,
+          title: tableStrings.batch_name,
+          sortable: false,
+          alignText: 'right',
+        },
+        {
+          key: 'batchExpiry',
+          width: 1,
+          title: tableStrings.batch_expiry,
+          sortable: false,
+          alignText: 'right',
+        },
+        {
+          key: 'batchCostPrice',
+          width: 1,
+          title: tableStrings.batch_cost_price,
+          sortable: false,
+          alignText: 'right',
+        },
+      );
+    }
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Transaction';
     this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
@@ -70,6 +106,7 @@ export class SupplierInvoicePage extends GenericPage {
     this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
     this.getModalTitle = this.getModalTitle.bind(this);
     this.renderConditionalInfo = this.renderConditionaInfo.bind(this);
+    this.addNewSIitem = this.addNewSIitem.bind(this);
   }
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -96,17 +133,38 @@ export class SupplierInvoicePage extends GenericPage {
   }
 
   /**
-   * Respond to the user editing the number in the number received column
-   * @param  {string} key             Should always be 'numReceived'
+   * Respond to the user editing fields
+   * @param  {string} key             key of edited field
    * @param  {object} transactionItem The transaction item from the row being edited
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
    */
   onEndEditing(key, transactionItem, newValue) {
-    if (key !== 'numReceived') return;
-    this.props.database.write(() => {
-      transactionItem.setTotalQuantity(this.props.database, parseFloat(newValue));
-      this.props.database.save('TransactionItem', transactionItem);
+    console.log(key + ' ' + newValue);
+    const { database, transaction } = this.props;
+    database.write(() => {
+      if (transaction.isNotExternalSI) {
+        transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
+      }
+      else {
+        switch (key) {
+          case 'quantity':
+            transactionItem.setActualBatchQuantity(database, parsePositiveInteger(newValue));
+            break;
+          case 'batchCostPrice':
+            transactionItem.setBatchCostPrice(database, parsePositiveDouble(newValue));
+            break;
+          case 'batchName':
+            transactionItem.setBatchName(database, newValue);
+            break;
+          case 'batchExpiry':
+            transactionItem.setBatchExpiry(database, newValue);
+            break;
+          default:
+            break;
+        }
+      }
+      database.save('TransactionItem', transactionItem);
     });
   }
   openItemSelector() {
@@ -180,22 +238,52 @@ export class SupplierInvoicePage extends GenericPage {
       info: transaction.comment,
     }];
   }
-
   renderCell(key, transactionItem) {
+    const isEditable = !this.props.transaction.isFinalised;
+    const type = isEditable ? 'editable' : 'text';
     switch (key) {
       default:
         return transactionItem[key];
       case 'numReceived': {
-        const isEditable = !this.props.transaction.isFinalised;
-        const type = isEditable ? 'editable' : 'text';
         const renderedCell = {
           type: type,
           cellContents: transactionItem.totalQuantity,
         };
         return renderedCell;
       }
+      case 'quantity': {
+        const renderedCell = {
+          type: type,
+          cellContents: transactionItem.getBatchQuantity,
+        };
+        return renderedCell;
+      }
+      case 'batchName': {
+        const renderedCell = {
+          type: type,
+          cellContents: transactionItem.batchName,
+        };
+        return renderedCell;
+      }
+      case 'batchCostPrice': {
+        const renderedCell = {
+          type: type,
+          cellContents: transactionItem.batchCostPrice,
+        };
+        return renderedCell;
+      }
     }
   }
+
+  addNewSIitem(item) {
+    const { database, transaction } = this.props;
+    database.write(() => {
+      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
+      createRecord(database, 'TransactionBatch', transactionItem,
+        createRecord(database, 'ItemBatch', item, 'testStr'));
+    });
+  }
+
   renderModalContent() {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
     const { database, transaction } = this.props;
@@ -209,11 +297,7 @@ export class SupplierInvoicePage extends GenericPage {
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
             onSelect={(item) => {
-              database.write(() => {
-                if (!transaction.hasItemWithId(item.id)) {
-                  createRecord(database, 'TransactionItem', transaction, item);
-                }
-              });
+              this.addNewSIitem(item);
               this.refreshData();
               this.closeModal();
             }}

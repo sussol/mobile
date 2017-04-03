@@ -32,6 +32,22 @@ export class TransactionItem extends Realm.Object {
     return getTotal(this.batches, 'totalQuantitySent');
   }
 
+  get getBatchQuantity() { // for external Supplier Invoice
+    return this.batches[0].packSize;
+  }
+
+  get batchName() { // for external Supplier Invoice
+    return this.batches[0].batch;
+  }
+
+  get batchExpiry() { // for external Supplier Invoice
+    return !this.batches[0].expiryDate ? 'no date' : this.batches[0].toString();
+  }
+
+  get batchCostPrice() { // for external Supplier Invoice
+    return this.batches[0].costPrice.toString();
+  }
+
   get totalPrice() {
     return getTotal(this.batches, 'totalPrice');
   }
@@ -86,6 +102,47 @@ export class TransactionItem extends Realm.Object {
 
     // See if any batches can be pruned, i.e. have 0 quantity for this invoice
     this.pruneEmptyBatches(database);
+  }
+  /**
+   * Sets Quantity for external supplier invoice, having one Batch per
+   * TransactionLine
+   * @param {int}quantity
+   */
+  setActualBatchQuantity(database, quantity) {
+    const transBatch = this.batches[0];
+    transBatch.packSize = quantity;
+    database.save('TransactionBatch', transBatch);
+  }
+  /**
+   * Sets batch price for external supplier invoice, having one Batch per
+   * TransactionLine
+   * @param {double}price
+   */
+  setBatchCostPrice(database, price) {
+    const transBatch = this.batches[0];
+    transBatch.costPrice = price;
+    database.save('TransactionBatch', transBatch);
+  }
+  /**
+   * Sets Batch name for external supplier invoice, having one Batch per
+   * TransactionLine
+   * @param {string}quantity
+   */
+  setBatchName(database, name) {
+    const transBatch = this.batches[0];
+    transBatch.batch = name;
+    database.save('TransactionBatch', transBatch);
+  }
+
+  /**
+   * Sets Batch expiry for external supplier invoice, having one Batch per
+   * TransactionLine
+   * @param {date}date
+   */
+  setBatchExpiry(database, date) {
+    const transBatch = this.batches[0];
+    transBatch.expiryDate = date;
+    database.save('TransactionBatch', transBatch);
   }
 
   /**
