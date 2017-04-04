@@ -10,6 +10,10 @@ export class TransactionBatch extends Realm.Object {
     return this.numberOfPacks * this.packSize;
   }
 
+  get itemCode() {
+    return this.itemBatch.item.code;
+  }
+
   get usage() {
     if (!this.transaction.isConfirmed && !this.transaction.isFinalised) return 0;
     switch (this.transaction.type) {
@@ -55,7 +59,17 @@ export class TransactionBatch extends Realm.Object {
     if (!this.costPrice) return 0;
     return this.costPrice * this.numberOfPacks;
   }
-
+    // supplier_invoice
+  get expiryDateGetter() {
+    return (!this.expiryDate) ? '' : this.expiryDate.toString();
+  }
+  /**
+   * removes associated item batch
+   * @param  {Realm} database   App wide database
+   */
+  removeItemBatch(database) {
+    database.delete('ItemBatch', this.itemBatch);
+  }
   /**
    * Returns the maximum amount of the given quantity that can be allocated to this batch.
    * N.B. quantity may be positive or negative.
