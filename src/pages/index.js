@@ -19,6 +19,7 @@ import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { RealmExplorer } from './RealmExplorer';
+import { ExternalSupplierInvoicePage } from './ExternalSupplierInvoicePage';
 
 export const PAGES = {
   customer: CustomerPage,
@@ -36,11 +37,17 @@ export const PAGES = {
   stocktakeManager: StocktakeManagePage,
   stocktakes: StocktakesPage,
   supplierInvoice: SupplierInvoicePage,
+  externalSupplierInvoice: ExternalSupplierInvoicePage,
   supplierInvoices: SupplierInvoicesPage,
 };
 
 export const FINALISABLE_PAGES = {
   supplierInvoice: {
+    recordType: 'Transaction',
+    recordToFinaliseKey: 'transaction',
+    finaliseText: 'finalise_supplier_invoice',
+  },
+  externalSupplierInvoice: {
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_supplier_invoice',
