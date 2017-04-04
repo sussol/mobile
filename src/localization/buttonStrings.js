@@ -17,13 +17,14 @@ export const buttonStrings = new LocalizedStrings({
     manage_stocktake: 'Manage Stocktake',
     new_invoice: 'New Invoice',
     new_item: 'New Item',
+    new__batch_item: 'New Batch Item',
     new_requisition: 'New Requisition',
     new_stocktake: 'New Stocktake',
     new_supplier_invoice: 'New Supplier Invoice',
     past: 'Past',
     use_suggested_quantities: 'Use Suggested Quantities',
   },
-  tl: { // add new_supplier_invoice
+  tl: { // add new_supplier_invoice, .new__batch_item
     add_master_list_items: 'Aumenta Sasán ba Lista Master',
     all_items_selected: 'Hili Sasán Hotu',
     create_automatic_order: 'Kria Orden Automátiku',
