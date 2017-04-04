@@ -7,12 +7,13 @@
 
 import React from 'react';
 import { View } from 'react-native';
-import { SelectModal, PageButton } from '../widgets';
+import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { removeTransactionBatchUtil } from '../database/utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -55,6 +56,12 @@ export class SupplierInvoicesPage extends GenericPage {
         width: 3,
         title: tableStrings.comment,
       },
+      {
+        key: 'remove',
+        width: 1,
+        title: tableStrings.remove,
+        alignText: 'center',
+      },
     ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
@@ -86,7 +93,8 @@ export class SupplierInvoicesPage extends GenericPage {
         this.props.database.save('Transaction', invoice);
       });
     }
-    this.props.navigateTo('supplierInvoice',
+    const navigationPage = invoice.isNotExternalSI ? 'supplierInvoice' : 'externalSupplierInvoice';
+    this.props.navigateTo(navigationPage,
                           `${navStrings.invoice} ${invoice.serialNumber}`,
                           { transaction: invoice });
   }
@@ -106,6 +114,29 @@ export class SupplierInvoicesPage extends GenericPage {
     }
     return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
+  // delete transaction invoice then delete transactionItem if no more t batches
+  onDeleteConfirm() {
+    const { selection, transactions } = this.state;
+    const { database } = this.props;
+    database.write(() => {
+      selection.forEach((transactionID) => {
+        const transaction = transactions.find(currentTransaction =>
+                                              currentTransaction.id === transactionID);
+        transaction.transactionBatches.forEach((tB) =>
+        removeTransactionBatchUtil(database, transaction, tB));
+
+        // at this stage should have no more TransactionItems left .. but to be sure..
+        database.delete('TransactionItem', transaction.items);
+        database.delete('Transaction', transaction);
+      });
+    });
+    this.setState({ selection: [] }, this.refreshData);
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] }, this.refreshData);
+  }
+
 
   renderCell(key, invoice) {
     switch (key) {
@@ -118,6 +149,12 @@ export class SupplierInvoicesPage extends GenericPage {
         return invoice.entryDate.toDateString();
       case 'comment':
         return invoice.comment;
+      case 'remove':
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+          isDisabled: invoice.isFinalised || invoice.isNotExternalSI,
+        };
     }
   }
 
@@ -137,6 +174,13 @@ export class SupplierInvoicesPage extends GenericPage {
             </View>
           </View>
             {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0}
+            questionText={modalStrings.remove_these_items}
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.remove}
+          />
           <SelectModal
             isOpen={this.state.isCreatingInvoice}
             options={this.props.database.objects('Supplier')}
