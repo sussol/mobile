@@ -3,6 +3,7 @@ import {
   addBatchToParent,
   createRecord,
   getAllBatchesInItems,
+  getAllTransactionBatches,
   getTotal,
   reuseNumber as reuseSerialNumber,
 } from '../utilities';
@@ -55,7 +56,11 @@ export class Transaction extends Realm.Object {
   }
 
   get batches() {
-    return getAllBatchesInItems(this.items);
+    return getAllBatchesInItems(this.items); // unimplemented ??
+  }
+
+  get transactionBatches() {
+    return getAllTransactionBatches(this.items);
   }
 
   get otherPartyName() {
@@ -126,6 +131,15 @@ export class Transaction extends Realm.Object {
     database.delete('transactionItem', itemsToDelete);
   }
 
+  /**
+   * Remove the transaction item passed as param
+   * @param  {Realm}  database        App wide local database
+   * @param  {TransactionItem}  TransactionItem to remove
+   * @return {none}
+   */
+  removeTransactionItem(database, transactionItem) {
+    database.delete('TransactionItem', transactionItem);
+  }
   /**
    * Adds a TransactionBatch, incorporating it into a matching TransactionItem. Will
    * create a new TransactionItem if none exists already.
