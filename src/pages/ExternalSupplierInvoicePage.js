@@ -9,8 +9,9 @@ import React from 'react';
 import { View } from 'react-native';
 import {
   formatDate,
-  parsePositiveInteger,
-  parsePositiveDouble,
+  parsePositiveFloat,
+  formatExpiryDate,
+  parseExpiryDate,
   sortDataBy,
   } from '../utilities';
 import {
@@ -42,6 +43,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
+    this.state.expiryModelIsOpen = false;
     this.state.columns = [
       {
         key: 'itemCode',
@@ -70,7 +72,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         alignText: 'right',
       },
       {
-        key: 'expiryDateGetter', // since expiryDate is optional calling getter
+        key: 'expiryDate',
         width: 1,
         title: tableStrings.batch_expiry,
         sortable: false,
@@ -105,7 +107,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    * Dealing with TransactionBatch as oppose to TransactionItems
-   * for to be able to add miltiple batches for item
+   * to be able to add miltiple batches for item
    */
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { database, transaction } = this.props;
@@ -129,7 +131,6 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       case 'numberOfPacks':
         sortDataType = 'number';
         break;
-      // expiry date sorting
       default:
         sortDataType = 'realm';
     }
@@ -148,16 +149,20 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     database.write(() => {
       switch (key) {
         case 'numberOfPacks':
-          transactionBatch.numberOfPacks = parsePositiveInteger(newValue);
+          transactionBatch.numberOfPacks = parsePositiveFloat(newValue);
           break;
         case 'costPrice':
-          transactionBatch.costPrice = parsePositiveDouble(newValue);
+          transactionBatch.costPrice = parsePositiveFloat(newValue);
           break;
         case 'batch':
           transactionBatch.batch = newValue;
           break;
-        case 'expiryDate':
-        //  transactionBatch.setBatchExpiry(database, newValue);
+        case 'expiryDate': {
+          const expiryDate = parseExpiryDate(newValue);
+          if (expiryDate) {
+            transactionBatch.expiryDate = expiryDate;
+          }
+        }
           break;
         default:
           break;
@@ -239,7 +244,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       case 'numberOfPacks': {
         const renderedCell = {
           type: type,
-          cellContents: transactionBatch.numberOfPacks,
+          cellContents: transactionBatch.numberOfPacks.toString(),
         };
         return renderedCell;
       }
@@ -247,13 +252,22 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         const renderedCell = {
           type: type,
           cellContents: transactionBatch.batch,
+          keyboardType: 'default',
         };
         return renderedCell;
       }
       case 'costPrice': {
         const renderedCell = {
           type: type,
-          cellContents: transactionBatch.costPrice,
+          cellContents: transactionBatch.costPrice.toString(),
+        };
+        return renderedCell;
+      }
+      case 'expiryDate': {
+        const expiryDate = formatExpiryDate(transactionBatch.expiryDate);
+        const renderedCell = {
+          type: type,
+          cellContents: expiryDate ? expiryDate : 'month/year',
         };
         return renderedCell;
       }

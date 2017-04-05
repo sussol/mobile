@@ -59,10 +59,6 @@ export class TransactionBatch extends Realm.Object {
     if (!this.costPrice) return 0;
     return this.costPrice * this.numberOfPacks;
   }
-    // supplier_invoice
-  get expiryDateGetter() {
-    return (!this.expiryDate) ? '' : this.expiryDate.toString();
-  }
   /**
    * removes associated item batch
    * @param  {Realm} database   App wide database
