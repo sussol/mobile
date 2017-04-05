@@ -17,9 +17,10 @@ export const pageInfoStrings = new LocalizedStrings({
     entered_by: 'Entered By',
     entry_date: 'Entry Date',
     months_stock_required: 'Months Stock',
+    total_price: 'Total Price',
     their_ref: 'Their Ref',
   },
-  tl: {
+  tl: { // to be added: total_price
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',

@@ -43,6 +43,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
+    this.state.totalPrice = 0;
     this.state.expiryModelIsOpen = false;
     this.state.columns = [
       {
@@ -108,6 +109,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
    * Returns updated data according to searchTerm, sortBy and isAscending.
    * Dealing with TransactionBatch as oppose to TransactionItems
    * to be able to add miltiple batches for item
+   * also total price is calculated here
    */
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { database, transaction } = this.props;
@@ -115,7 +117,10 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     // no itemCode in schema so can't search by item code
     const transactionBatches = transaction.transactionBatches;
     // check to see if transactionBatches exist
-    if (transactionBatches.length === 0) return [];
+    if (transactionBatches.length === 0) {
+      this.setState({ totalPrice: 0 });
+      return [];
+    }
     const filterString = buildFilterIDString(transactionBatches);
     let data = database.objects('TransactionBatch').filtered(filterString);
     data = data.filtered(
@@ -134,6 +139,10 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
+    // calculate and set total price
+    const tPrice = transactionBatches.reduce((sum, tBatch) =>
+        sum + (tBatch.costPrice * tBatch.numberOfPacks), 0);
+    this.setState({ totalPrice: tPrice });
     return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
 
@@ -206,6 +215,10 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         {
           title: `${pageInfoStrings.confirm_date}:`,
           info: formatDate(transaction.confirmDate),
+        },
+        {
+          title: `${pageInfoStrings.total_price}:`,
+          info: this.state.totalPrice,
         },
       ],
       [
