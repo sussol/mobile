@@ -3,8 +3,11 @@ export {
   formatDateAndTime,
   parsePositiveInteger,
   truncateString,
+  parsePositiveFloat,
+  formatExpiryDate,
+  parseExpiryDate,
 } from 'sussol-utilities';
 export {
-  parsePositiveFloat, formatExpiryDate, parseExpiryDate } from './append-to-sussol-utilities';
+  } from './append-to-sussol-utilities';
 export { formatStatus } from './formatStatus';
 export { sortDataBy } from './sortDataBy';

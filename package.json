@@ -54,7 +54,7 @@
     "realm": "^0.14.1",
     "semver-compare": "^1.0.0",
     "set-manipulator": "0.3.1",
-    "sussol-utilities": "^0.4.0"
+    "sussol-utilities": "^0.4.2"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",
