@@ -30,6 +30,14 @@ export class TransactionBatch extends Realm.Object {
     return this.itemBatch ? this.itemBatch.id : '';
   }
 
+  convertToSinglePack() {
+    if (this.packSize === 1) return;
+    this.costPrice = this.costPrice / this.packSize;
+    this.sellPrice = this.sellPrice / this.packSize;
+    this.numberOfPacks = this.numberOfPacks * this.packSize;
+    this.packSize = 1;
+  }
+
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot change quantity of batches in a finalised transaction');
