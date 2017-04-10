@@ -160,9 +160,14 @@ export class Transaction extends Realm.Object {
    */
   pruneRedundantItems(database) {
     const itemsToPrune = [];
+    const transactionBatchesToPrune = [];
     this.items.forEach((transactionItem) => {
-      if (transactionItem.totalQuantity === 0) itemsToPrune.push(transactionItem);
+      if (transactionItem.totalQuantity === 0) {
+        itemsToPrune.push(transactionItem);
+        transactionBatchesToPrune.concat(transactionItem.batches);
+      }
     });
+    database.delete('TransactionBatch', transactionBatchesToPrune);
     database.delete('TransactionItem', itemsToPrune);
   }
 
@@ -175,8 +180,10 @@ export class Transaction extends Realm.Object {
   confirm(database) {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
+    const externalInvoice = this.isNotExternalSI;
     this.items.forEach((transactionItem) => {
       transactionItem.batches.forEach((transactionBatch) => {
+        if (externalInvoice) transactionBatch.convertToSinglePack();
         const itemBatch = transactionBatch.itemBatch;
         const newNumberOfPacks = this.isIncoming ?
           itemBatch.numberOfPacks + transactionBatch.numberOfPacks :
