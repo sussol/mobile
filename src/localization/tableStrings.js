@@ -39,6 +39,8 @@ export const tableStrings = new LocalizedStrings({
     number_of_batches: 'Number of batches',
     number_recieved: 'NUMBER RECIEVED',
     number_sent: 'NUMBER SENT',
+    pack_quantity: 'PACK QUANTITY',
+    pack_size: 'PACK SIZE',
     quantity: 'QUANTITY',
     remove: 'REMOVE',
     required_quantity: 'REQUESTED QTY',
@@ -49,7 +51,7 @@ export const tableStrings = new LocalizedStrings({
     stock_on_hand: 'STOCK ON HAND',
     suggested_quantity: 'SUGGESTED QTY',
   },
-  tl: { // add batch_expiry, batch_cost_price, batch_name
+  tl: { // add batch_expiry, batch_cost_price, batch_name, pack_quantity, pack_size
     actual_quantity: 'ATUÁL\nKUANTIDADE',
     available_stock: 'SASÁN DISPONIVEL',
     category: 'Kategoria',

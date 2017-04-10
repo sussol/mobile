@@ -10,6 +10,7 @@ import { View } from 'react-native';
 import {
   formatDate,
   parsePositiveFloat,
+  parsePositiveInteger,
   formatExpiryDate,
   parseExpiryDate,
   sortDataBy,
@@ -48,40 +49,47 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     this.state.columns = [
       {
         key: 'itemCode',
-        width: 1,
+        width: 2,
         title: tableStrings.item_code,
         sortable: true,
       },
       {
         key: 'itemName',
-        width: 2,
+        width: 3,
         title: tableStrings.item_name,
         sortable: true,
       },
       {
+        key: 'packSize',
+        width: 2,
+        title: tableStrings.pack_size,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
         key: 'numberOfPacks',
-        width: 1,
-        title: tableStrings.quantity,
+        width: 3,
+        title: tableStrings.pack_quantity,
         sortable: true,
         alignText: 'right',
       },
       {
         key: 'batch',
-        width: 1,
+        width: 2,
         title: tableStrings.batch_name,
         sortable: true,
         alignText: 'right',
       },
       {
         key: 'expiryDate',
-        width: 1,
+        width: 2,
         title: tableStrings.batch_expiry,
         sortable: false,
         alignText: 'right',
       },
       {
         key: 'costPrice',
-        width: 1,
+        width: 2,
         type: 'editable',
         title: tableStrings.batch_cost_price,
         sortable: true,
@@ -134,6 +142,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         sortDataType = 'string';
         break;
       case 'numberOfPacks':
+      case 'packSize':
         sortDataType = 'number';
         break;
       default:
@@ -163,8 +172,13 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         case 'costPrice':
           transactionBatch.costPrice = parsePositiveFloat(newValue);
           break;
+        case 'packSize': {
+          const tempPackSize = parsePositiveInteger(newValue);
+          transactionBatch.packSize = tempPackSize !== 0 ? tempPackSize : 1;
+          break;
+        }
         case 'batch':
-          transactionBatch.batch = newValue;
+          if (newValue) transactionBatch.batch = newValue;
           break;
         case 'expiryDate': {
           const expiryDate = parseExpiryDate(newValue);
@@ -258,6 +272,13 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         const renderedCell = {
           type: type,
           cellContents: transactionBatch.numberOfPacks.toString(),
+        };
+        return renderedCell;
+      }
+      case 'packSize': {
+        const renderedCell = {
+          type: type,
+          cellContents: transactionBatch.packSize.toString(),
         };
         return renderedCell;
       }
