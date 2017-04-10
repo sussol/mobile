@@ -7,7 +7,5 @@ export {
   formatExpiryDate,
   parseExpiryDate,
 } from 'sussol-utilities';
-export {
-  } from './append-to-sussol-utilities';
 export { formatStatus } from './formatStatus';
 export { sortDataBy } from './sortDataBy';
