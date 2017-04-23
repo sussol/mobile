@@ -28,4 +28,14 @@ export const appStyles = {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 16,
   },
+  bottomContainer: {
+    flex: 1,
+    maxHeight: 100,
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    paddingHorizontal: 40,
+  },
 };

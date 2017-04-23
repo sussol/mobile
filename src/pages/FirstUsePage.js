@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Image,
   StyleSheet,
+  Text,
   TextInput,
   View,
 } from 'react-native';
@@ -12,17 +13,20 @@ import globalStyles, {
   SUSSOL_ORANGE,
   WARM_GREY,
 } from '../globalStyles';
+import { getAppVersion } from '../settings';
 
 export class FirstUsePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      appVersion: '',
       progress: 'uninitialised', // uninitialised, initialising, initialised, error
       progressMessage: '',
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
     };
+    this.setAppVersion();
     this.siteNameInputRef = null;
     this.passwordInputRef = null;
     this.onPressConnect = this.onPressConnect.bind(this);
@@ -43,6 +47,11 @@ export class FirstUsePage extends React.Component {
       this.setState({ progress: 'error' });
       this.setProgress(error.message);
     }
+  }
+
+  async setAppVersion() {
+    const appVersion = await getAppVersion();
+    this.setState({ appVersion: appVersion });
   }
 
   setProgress(progressMessage) {
@@ -73,8 +82,8 @@ export class FirstUsePage extends React.Component {
 
   render() {
     return (
-      <View style={globalStyles.horizontalContainer}>
-        <View style={[globalStyles.authFormContainer]}>
+      <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
+        <View style={globalStyles.authFormContainer}>
           <Image
             resizeMode="contain"
             style={globalStyles.authFormLogo}
@@ -155,6 +164,7 @@ export class FirstUsePage extends React.Component {
             />
           </View>
         </View>
+        <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
       </View>
     );
   }
@@ -169,5 +179,9 @@ const localStyles = StyleSheet.create({
   initialisationStateIcon: {
     marginTop: 46,
     marginBottom: 24,
+  },
+  verticalContainer: {
+    alignItems: 'center',
+    flex: 1,
   },
 });
