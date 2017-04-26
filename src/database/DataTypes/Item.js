@@ -13,9 +13,21 @@ export class Item extends Realm.Object {
   }
 
   get dailyUsage() {
-    const startDate = new Date(Date.now() - USAGE_PERIOD_MILLISECONDS);
+    const startDate = new Date(Date.now() - USAGE_PERIOD_MILLISECONDS); // 90 Days ago
     const endDate = new Date();
     return this.dailyUsageForPeriod(startDate, endDate);
+  }
+
+  // Based on the earliest added ItemBatch associated with this Item
+  // Will return undefined if there are no batches.
+  get addedDate() {
+    if (this.batches.length === 0) return undefined;
+    let itemAddedDate = Date.now();
+    this.batches.forEach(batch => {
+      const batchAddedDate = batch.addedDate;
+      itemAddedDate = batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
+    });
+    return itemAddedDate;
   }
 
   get earliestExpiringBatch() {
@@ -71,9 +83,11 @@ export class Item extends Realm.Object {
    * @return  {number}          The average daily usage over period for this item
    */
   dailyUsageForPeriod(startDate, endDate) {
-    const periodInDays = millisecondsToDays(endDate - startDate);
-    const usage = this.totalUsageForPeriod(startDate, endDate);
-
+    const addedDate = this.addedDate;
+    if (!addedDate) return 0; // No batches, no usage. See Item.addedDate
+    const fromDate = addedDate > startDate ? addedDate : startDate;
+    const periodInDays = millisecondsToDays(endDate - fromDate);
+    const usage = this.totalUsageForPeriod(fromDate, endDate);
     return usage / periodInDays;
   }
 
