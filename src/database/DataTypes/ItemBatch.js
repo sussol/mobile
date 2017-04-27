@@ -18,14 +18,6 @@ export class ItemBatch extends Realm.Object {
     return sortedTransactionBatches[0].transaction.confirmDate;
   }
 
-  // **DEPRECATED**
-  // TODO: Delete after testing 1.1.0
-  // Gets the usage per day for this batch since either the date it was added to stock, or
-  // the usage calculation period of three months, whatever is shorter
-  get dailyUsage() {
-    throw new Error('ItemBatch.dailyUsage() is a deprecated function');
-  }
-
   get itemId() {
     return this.item ? this.item.id : '';
   }
