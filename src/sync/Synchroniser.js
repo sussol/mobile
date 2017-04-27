@@ -7,7 +7,7 @@ import { SyncQueue } from './SyncQueue';
 import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { integrateRecord } from './incomingSyncUtils';
-import { SETTINGS_KEYS } from '../settings';
+import { SETTINGS_KEYS, getAppVersion } from '../settings';
 import { formatDate } from '../utilities';
 const {
   SYNC_IS_INITIALISED,
@@ -63,6 +63,7 @@ export class Synchroniser {
     }
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
+      await this.checkServerCompatibility();
       const thisSiteId = this.settings.get(SYNC_SITE_ID);
       const serverId = this.settings.get(SYNC_SERVER_ID);
       if (isFresh) {
@@ -106,9 +107,46 @@ export class Synchroniser {
     if (!this.isInitialised()) throw new Error('Not yet initialised');
     // Using async/await here means that any errors thrown by push or pull
     // will be passed up as a rejection of the promise returned by synchronise
+    await this.checkServerCompatibility();
     await this.push();
     await this.pull();
     this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));
+  }
+
+  /**
+   * Send server app version and process response appropriately:
+   * - reponse.compatible === true should complete the promise happy :)
+   * - reponse.compatible === false should reject the promise sad :(
+   * -- In the above case, response.error should specify the highest compatible version number of
+   *    mobile
+   * - else reject the promise, server isn't handling this check at all and needs updating
+   */
+  async checkServerCompatibility() {
+    const appVersion = await getAppVersion();
+    const serverURL = this.settings.get(SYNC_URL);
+    const response = await fetch(
+      `${serverURL}/sync/v2/msupply_mobile_compatibility/?app_version=${appVersion}`,
+      {
+        headers: {
+          Authorization: this.authenticator.getAuthHeader(),
+        },
+      }
+    );
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error('Connection failure while attempting to verify version compatibility.');
+    }
+    const responseJson = await response.json();
+    if (typeof responseJson.compatible !== 'boolean') {
+      // Likely server hasn't extended it's API to handle this method and needs updating
+      throw new Error('Unexpected version verification response from server');
+    }
+    if (!responseJson.compatible && responseJson.error && responseJson.error.length > 0) {
+      // Server should provide compatible version number in this error
+      throw new Error(responseJson.error);
+    } else if (!responseJson.compatible) {
+      // If error wasn't sent but compatible was false
+      throw new Error('App version not compatible with this server');
+    }
   }
 
   /**
