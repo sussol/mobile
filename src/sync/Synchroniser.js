@@ -125,7 +125,7 @@ export class Synchroniser {
     const appVersion = await getAppVersion();
     const serverURL = this.settings.get(SYNC_URL);
     const response = await fetch(
-      `${serverURL}/sync/v2/msupply_mobile_compatibility/?app_version=${appVersion}`,
+      `${serverURL}/sync/v2/compatibility?app=msupply_mobile&app_version=${appVersion}`,
       {
         headers: {
           Authorization: this.authenticator.getAuthHeader(),
