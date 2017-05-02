@@ -12,6 +12,7 @@ export { tableStrings } from './tableStrings';
 // order, so if the default is ever reported wrong, that is a good place to look first.
 const languageKeys = {
   gb: 'English',
+  gil: 'te taetae ni Kiribati',
   // fr: 'French',
   tl: 'Tetum',
 };
@@ -22,5 +23,6 @@ export const LANGUAGE_KEYS = languageKeys;
 export const COUNTRY_FLAGS = {
   fr: require('../images/flags/fr.png'),
   gb: require('../images/flags/gb.png'),
+  gil: require('../images/flags/gil.png'),
   tl: require('../images/flags/tl.png'),
 };
