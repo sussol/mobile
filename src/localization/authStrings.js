@@ -14,6 +14,12 @@ export const authStrings = new LocalizedStrings({
     password: 'Password',
     user_name: 'User Name',
   },
+  gil: {
+    logging_in: 'Taninga bwa e na uki',
+    login: 'Kaukia',
+    password: 'Am ka-ukuki',
+    user_name: 'Aram ae kinaaki ikai',
+  },
   tl: {
     logging_in: 'Rejistu hela...',
     login: 'Rejistu',

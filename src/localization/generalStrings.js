@@ -11,6 +11,9 @@ export const generalStrings = new LocalizedStrings({
   gb: {
     stocktake: 'Stocktake',
   },
+  gil: {
+    stocktake: 'Warebwai',
+  },
   tl: {
     stocktake: 'Ajustamentu',
   },
