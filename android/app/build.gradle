@@ -89,7 +89,8 @@ def getAppVersion() {
     return packageJson["version"]
 }
 
-def (major, minor, patch) = getAppVersion().tokenize('.')
+def (appVersion, provisional) = getAppVersion().tokenize('-')
+def (major, minor, patch) = appVersion.tokenize('.')
 def appVersionCode = ((major.toInteger() * 1000000) + (minor.toInteger() * 1000) + patch.toInteger())
 
 android {
