@@ -80,7 +80,8 @@ export class Item extends Realm.Object {
    * TransactionBatch is later than the startDate, then that will be used instead
    * @param   {Date} startDate  Starting Date (e.g. From 25/4/2017)
    * @param   {Date} endDate    Starting Date (e.g. to 25/7/2017)
-   * @return  {number}          The average daily usage over period for this item
+   * @return  {number}          The average daily usage over period for this item. Note: LIKELY A
+   *                            DECIMAL. Avoid use in quantities without rounding (or ceiling).
    */
   dailyUsageForPeriod(startDate, endDate) {
     if (this.batches.length === 0) return 0;

@@ -23,7 +23,7 @@ export class RequisitionItem extends Realm.Object {
 
   get suggestedQuantity() {
     const daysToSupply = this.requisition ? this.requisition.daysToSupply : 0;
-    return Math.max((this.dailyUsage * daysToSupply) - this.stockOnHand, 0);
+    return Math.ceil(Math.max((this.dailyUsage * daysToSupply) - this.stockOnHand, 0));
   }
 }
 
