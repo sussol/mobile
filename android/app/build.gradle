@@ -90,6 +90,7 @@ def getAppVersion() {
 }
 
 def (major, minor, patch) = getAppVersion().tokenize('.')
+def appVersionCode = ((major.toInteger() * 1000000) + (minor.toInteger() * 1000) + patch.toInteger())
 
 android {
     compileSdkVersion 23
@@ -99,7 +100,7 @@ android {
         applicationId "com.msupplymobile"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode patch.toInteger()
+        versionCode appVersionCode
         versionName getAppVersion()
         ndk {
             abiFilters "armeabi-v7a", "x86"
