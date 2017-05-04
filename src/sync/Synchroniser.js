@@ -51,7 +51,7 @@ export class Synchroniser {
    */
   async initialise(serverURL, syncSiteName, syncSitePassword, setProgress) {
     if (setProgress) setProgress('Initialising...');
-    this.syncQueue.disable(); // Stop sync queue listening to database changes
+    this.syncQueue.disable(); // Stop sync queue listening to changes so initial sync is fast
     // Check if the serverURL passed in is the same as one we have already been using during
     // initialisation, in which case we are continuing a failed partial initialisation. If the
     // serverURL is different, it is either completely fresh, or the URL has been changed so we
