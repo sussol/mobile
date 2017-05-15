@@ -14,11 +14,8 @@ import {
   formatExpiryDate,
   parseExpiryDate,
   sortDataBy,
-  } from '../utilities';
-import {
-  buildFilterIDString,
-  removeTransactionBatchUtil,
-} from '../database/utilities';
+} from '../utilities';
+import { removeTransactionBatchUtil } from '../database/utilities';
 import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
@@ -55,45 +52,39 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       },
       {
         key: 'itemName',
-        width: 3,
+        width: 4,
         title: tableStrings.item_name,
         sortable: true,
       },
       {
         key: 'packSize',
-        width: 2,
+        width: 1.3,
         title: tableStrings.pack_size,
-        sortable: true,
-        alignText: 'right',
+        alignText: 'center',
       },
       {
         key: 'numberOfPacks',
-        width: 3,
-        title: tableStrings.pack_quantity,
-        sortable: true,
-        alignText: 'right',
+        width: 1.3,
+        title: tableStrings.quantity,
+        alignText: 'center',
       },
       {
         key: 'batch',
-        width: 2,
+        width: 1.8,
         title: tableStrings.batch_name,
-        sortable: true,
-        alignText: 'right',
+        alignText: 'center',
       },
       {
         key: 'expiryDate',
         width: 2,
         title: tableStrings.batch_expiry,
-        sortable: false,
-        alignText: 'right',
+        alignText: 'center',
       },
       {
         key: 'costPrice',
-        width: 2,
-        type: 'editable',
+        width: 1.4,
         title: tableStrings.batch_cost_price,
-        sortable: true,
-        alignText: 'right',
+        alignText: 'center',
       },
       {
         key: 'remove',
@@ -121,18 +112,15 @@ export class ExternalSupplierInvoicePage extends GenericPage {
    */
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { database, transaction } = this.props;
-    // had to use filter string to make realm collection for filtered() to work
-    // no itemCode in schema so can't search by item code
-    const transactionBatches = transaction.transactionBatches;
+
+    const transactionBatches = transaction.transactionBatches(database)
+      .filtered('itemName BEGINSWITH[c] $0', searchTerm);
+
     // check to see if transactionBatches exist
     if (transactionBatches.length === 0) {
       this.setState({ totalPrice: 0 });
       return [];
     }
-    const filterString = buildFilterIDString(transactionBatches);
-    let data = database.objects('TransactionBatch').filtered(filterString);
-    data = data.filtered(
-      'itemName BEGINSWITH[c] $0', searchTerm);
 
     let sortDataType;
     switch (sortBy) {
@@ -149,10 +137,12 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         sortDataType = 'realm';
     }
     // calculate and set total price
-    const tPrice = transactionBatches.reduce((sum, tBatch) =>
-        sum + (tBatch.costPrice * tBatch.numberOfPacks), 0);
+    const tPrice = transactionBatches.reduce(
+      (sum, tBatch) => sum + tBatch.costPrice * tBatch.numberOfPacks,
+      0
+    );
     this.setState({ totalPrice: tPrice });
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    return sortDataBy(transactionBatches, sortBy, sortDataType, isAscending);
   }
 
   /**
@@ -180,12 +170,13 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         case 'batch':
           if (newValue) transactionBatch.batch = newValue;
           break;
-        case 'expiryDate': {
-          const expiryDate = parseExpiryDate(newValue);
-          if (expiryDate) {
-            transactionBatch.expiryDate = expiryDate;
+        case 'expiryDate':
+          {
+            const expiryDate = parseExpiryDate(newValue);
+            if (expiryDate) {
+              transactionBatch.expiryDate = expiryDate;
+            }
           }
-        }
           break;
         default:
           break;
@@ -237,7 +228,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       ],
       [
         {
-          title: `${pageInfoStrings.customer}:`,
+          title: `${pageInfoStrings.supplier}:`,
           info: this.props.transaction.otherParty && this.props.transaction.otherParty.name,
         },
         {
@@ -255,10 +246,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       ],
     ];
     return (
-      <PageInfo
-        columns={infoColumns}
-        isEditingDisabled={this.props.transaction.isFinalised}
-      />
+      <PageInfo columns={infoColumns} isEditingDisabled={this.props.transaction.isFinalised} />
     );
   }
 
@@ -268,17 +256,17 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     switch (key) {
       default:
         return transactionBatch[key];
-      case 'numberOfPacks': {
-        const renderedCell = {
-          type: type,
-          cellContents: transactionBatch.numberOfPacks.toString(),
-        };
-        return renderedCell;
-      }
       case 'packSize': {
         const renderedCell = {
           type: type,
-          cellContents: transactionBatch.packSize.toString(),
+          cellContents: String(transactionBatch.packSize),
+        };
+        return renderedCell;
+      }
+      case 'numberOfPacks': {
+        const renderedCell = {
+          type: type,
+          cellContents: String(transactionBatch.numberOfPacks),
         };
         return renderedCell;
       }
@@ -293,7 +281,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       case 'costPrice': {
         const renderedCell = {
           type: type,
-          cellContents: transactionBatch.costPrice.toString(),
+          cellContents: String(transactionBatch.costPrice),
         };
         return renderedCell;
       }
@@ -301,7 +289,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         const expiryDate = formatExpiryDate(transactionBatch.expiryDate);
         const renderedCell = {
           type: type,
-          cellContents: expiryDate ? expiryDate : 'month/year',
+          cellContents: expiryDate || 'month/year',
         };
         return renderedCell;
       }
@@ -319,18 +307,25 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     const { database, transaction } = this.props;
     database.write(() => {
       const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
-      createRecord(database, 'TransactionBatch', transactionItem,
-        createRecord(database, 'ItemBatch', item, ''));
+      createRecord(
+        database,
+        'TransactionBatch',
+        transactionItem,
+        createRecord(database, 'ItemBatch', item, '')
+      );
     });
   }
   // delete transaction batch then delete transactionItem if no more t batches
   onDeleteConfirm() {
     const { selection } = this.state;
     const { transaction, database } = this.props;
-    database.write(() => {  // for each selected transactionBath do util funct
-      selection.forEach((tBatchID) => {
-        const transactionBatch =
-          transaction.transactionBatches.find(testI => testI.id === tBatchID);
+    const transactionBatches = transaction.transactionBatches(database);
+    database.write(() => {
+      // for each selected transactionBath do util funct
+      selection.forEach(tBatchID => {
+        const transactionBatch = transactionBatches.find(testI => testI.id === tBatchID);
+        // will remove itemBatch, transactionBatch (and TransactionItem if last
+        // transactionBatch for the item is being removed
         removeTransactionBatchUtil(database, transaction, transactionBatch);
       });
     });
@@ -340,7 +335,6 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   onDeleteCancel() {
     this.setState({ selection: [] }, this.refreshData);
   }
-
 
   renderModalContent() {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -354,20 +348,20 @@ export class ExternalSupplierInvoicePage extends GenericPage {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
-            onSelect={(item) => {
+            onSelect={item => {
               this.addNewSIitem(item);
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:
         return (
           <TextEditor
             text={transaction.comment}
-            onEndEditing={(newComment) => {
+            onEndEditing={newComment => {
               if (newComment !== transaction.comment) {
                 database.write(() => {
                   transaction.comment = newComment;
@@ -382,7 +376,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         return (
           <TextEditor
             text={transaction.theirRef}
-            onEndEditing={(newTheirRef) => {
+            onEndEditing={newTheirRef => {
               if (newTheirRef !== transaction.theirRef) {
                 database.write(() => {
                   transaction.theirRef = newTheirRef;
@@ -407,7 +401,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
             <View style={globalStyles.pageTopRightSectionContainer}>
               <PageButton
                 style={globalStyles.topButton}
-                text={buttonStrings.new__batch_item}
+                text={buttonStrings.add_batch}
                 onPress={this.openItemSelector}
                 isDisabled={this.props.transaction.isFinalised}
               />
@@ -433,7 +427,14 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     );
   }
 }
-
+export function checkForFinaliseError(transaction) {
+  if (transaction.items.length === 0) {
+    return modalStrings.add_at_least_one_item_before_finalising;
+  } else if (transaction.totalQuantity === 0) {
+    return modalStrings.record_stock_to_issue_before_finalising;
+  }
+  return null;
+}
 ExternalSupplierInvoicePage.propTypes = {
   database: React.PropTypes.object,
   transaction: React.PropTypes.object,
