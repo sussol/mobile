@@ -29,9 +29,10 @@ export class SupplierInvoicesPage extends GenericPage {
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
     this.state.isCreatingInvoice = false;
-    this.state.transactions = props.database.objects('Transaction')
-                                            .filtered('type == "supplier_invoice"')
-                                            .filtered('otherParty.type != "inventory_adjustment"');
+    this.state.transactions = props.database
+      .objects('Transaction')
+      .filtered('type == "supplier_invoice"')
+      .filtered('otherParty.type != "inventory_adjustment"');
     this.state.columns = [
       {
         key: 'serialNumber',
@@ -93,10 +94,10 @@ export class SupplierInvoicesPage extends GenericPage {
         this.props.database.save('Transaction', invoice);
       });
     }
-    const navigationPage = invoice.isNotExternalSI ? 'supplierInvoice' : 'externalSupplierInvoice';
-    this.props.navigateTo(navigationPage,
-                          `${navStrings.invoice} ${invoice.serialNumber}`,
-                          { transaction: invoice });
+    const navigationPage = invoice.isExternalSI ? 'externalSupplierInvoice' : 'supplierInvoice';
+    this.props.navigateTo(navigationPage, `${navStrings.invoice} ${invoice.serialNumber}`, {
+      transaction: invoice,
+    });
   }
 
   /**
@@ -119,11 +120,13 @@ export class SupplierInvoicesPage extends GenericPage {
     const { selection, transactions } = this.state;
     const { database } = this.props;
     database.write(() => {
-      selection.forEach((transactionID) => {
-        const transaction = transactions.find(currentTransaction =>
-                                              currentTransaction.id === transactionID);
-        transaction.transactionBatches.forEach((tB) =>
-        removeTransactionBatchUtil(database, transaction, tB));
+      selection.forEach(transactionID => {
+        const transaction = transactions.find(
+          currentTransaction => currentTransaction.id === transactionID
+        );
+        transaction
+          .transactionBatches(database)
+          .forEach(tB => removeTransactionBatchUtil(database, transaction, tB));
 
         // at this stage should have no more TransactionItems left .. but to be sure..
         database.delete('TransactionItem', transaction.items);
@@ -136,7 +139,6 @@ export class SupplierInvoicesPage extends GenericPage {
   onDeleteCancel() {
     this.setState({ selection: [] }, this.refreshData);
   }
-
 
   renderCell(key, invoice) {
     switch (key) {
@@ -153,7 +155,7 @@ export class SupplierInvoicesPage extends GenericPage {
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
-          isDisabled: invoice.isFinalised || invoice.isNotExternalSI,
+          isDisabled: invoice.isFinalised || !invoice.isExternalSI,
         };
     }
   }
@@ -173,7 +175,7 @@ export class SupplierInvoicesPage extends GenericPage {
               />
             </View>
           </View>
-            {this.renderDataTable()}
+          {this.renderDataTable()}
           <BottomConfirmModal
             isOpen={this.state.selection.length > 0}
             questionText={modalStrings.remove_these_items}
