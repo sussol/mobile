@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import { classAsJson } from '../utilities';
 
 export class TransactionBatch extends Realm.Object {
 
@@ -29,13 +30,17 @@ export class TransactionBatch extends Realm.Object {
   get itemBatchId() {
     return this.itemBatch ? this.itemBatch.id : '';
   }
-
-  convertToSinglePack() {
-    if (this.packSize === 1) return;
-    this.costPrice = this.costPrice / this.packSize;
-    this.sellPrice = this.sellPrice / this.packSize;
-    this.numberOfPacks = this.numberOfPacks * this.packSize;
-    this.packSize = 1;
+  /**
+   * if packSize is not 1 will return new json object adjusted to packSize 1
+   * @return {TransactioBatch|JSON Object}
+   */
+  batchAsSinglePackJson() {
+    if (this.packSize === 1) return this;
+    const returnBatch = classAsJson(this);
+    returnBatch.costPrice = this.costPrice / this.packSize;
+    returnBatch.numberOfPacks = this.numberOfPacks * this.packSize;
+    returnBatch.packSize = 1;
+    return returnBatch;
   }
 
   setTotalQuantity(database, quantity) {
