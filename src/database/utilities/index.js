@@ -3,8 +3,6 @@ export { getNextNumber, reuseNumber } from './numberSequenceUtilities';
 export {
   getTotal,
   addBatchToParent,
-  getAllTransactionBatches,
-  buildFilterIDString,
   removeTransactionBatchUtil,
-  getClassType,
+  classAsJson
  } from './utilities';

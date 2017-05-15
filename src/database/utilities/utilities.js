@@ -1,3 +1,4 @@
+import util from 'util';
 // Return the sum of the given key across the given records
 export function getTotal(records, key) {
   return records.reduce((sum, record) => sum + record[key], 0);
@@ -19,33 +20,6 @@ export function addBatchToParent(batch, parent, createItem) {
   // If the batch is already in the item, we don't want to add it again
   if (item.batches && item.batches.find(currentBatch => currentBatch.id === batch.id)) return;
   item.addBatch(batch);
-}
-
-/**
- * function to return all transactionbatches for transaction
- * used in ExternalSupplierInvoicePage.getFilteredSortedData
- * @param {Array<TransactionItem>} items  item from which to extraxt transaction batches
- * @return {Array<TransactionBatch}
- */
-export function getAllTransactionBatches(items) {
-  const rTransactionBatches = [];
-  items.forEach((item) => {
-    item.batches.forEach((tBatch) => rTransactionBatches.push(tBatch));
-  });
-  return rTransactionBatches;
-}
-/**
- * build query string for Realm.objects.filtered(@return)
- * @param {Array<RealmElement>} idCollection from which to extract ids
- * @return {String} format : id = "id1" OR id = "id2" etc...
- */
-export function buildFilterIDString(idCollection) {
-  let retString = '';
-  idCollection.forEach((item) => {
-    retString = `${retString} OR id = "${item.id}"`;
-  });
-
-  return retString.slice(4);
 }
 /**
  * Removes TransactionBatch...
@@ -72,13 +46,19 @@ export function removeTransactionBatchUtil(database, transaction, transactionBat
   }
 }
 /**
- * function is a hack to check class type, use for debugin only
- * @param {Object} classInstance to check
- * @return {String} class name
+ * Returns class as JSON, warning: since the schema has child <-> parent (circular))
+ * printing via console.log or json Stringify will be infinite..
+ * use util.format('[Circular]', returnJson) to log
+ * @param {Realm}   database   App wide database
+ * @param {Transaction}   transaction  context transaction
+ * @param {TransactionBatch} transactionBatch transaction batch to remove
  */
-export function getClassType(classInstance) {
-  if (classInstance === undefined) return 'cannot get class of undefined';
-  let retStr = classInstance.constructor.toString(); // returns function className() {blah; blah;}
-  retStr = retStr.substring(9);    // strip 'function' and '(){blah;...' a bit of a hack
-  return retStr.substring(0, retStr.indexOf('('));
+export function classAsJson(classInstance) {
+  const returnJson = {};
+  Object.keys(classInstance).forEach(key => {
+    if (typeof classInstance[key] !== 'function') {
+      returnJson[key] = classInstance[key];
+    }
+  });
+  return returnJson;
 }
