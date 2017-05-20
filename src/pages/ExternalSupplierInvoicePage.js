@@ -431,7 +431,7 @@ export function checkForFinaliseError(transaction) {
   if (transaction.items.length === 0) {
     return modalStrings.add_at_least_one_item_before_finalising;
   } else if (transaction.totalQuantity === 0) {
-    return modalStrings.record_stock_to_issue_before_finalising;
+    return modalStrings.stock_quantity_greater_then_zero;
   }
   return null;
 }

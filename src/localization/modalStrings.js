@@ -38,9 +38,11 @@ export const modalStrings = new LocalizedStrings({
     select_a_language: 'Select a language',
     select_the_number_of_months_stock_required: 'Select the number of months stock required',
     start_typing_to_select_customer: 'Start typing to select customer',
+    start_typing_to_select_supplier: 'Start typing to select supplier',
+    stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
-  tl: {
+  tl: { // add: stock_quantity_greater_then_zero, start_typing_to_select_supplier
     add_at_least_one_item_before_finalising: 'Tenke hatama sasán ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',

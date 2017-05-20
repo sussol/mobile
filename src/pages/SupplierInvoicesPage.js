@@ -186,7 +186,7 @@ export class SupplierInvoicesPage extends GenericPage {
           <SelectModal
             isOpen={this.state.isCreatingInvoice}
             options={this.props.database.objects('Supplier')}
-            placeholderText={modalStrings.start_typing_to_select_customer}
+            placeholderText={modalStrings.start_typing_to_select_supplier}
             queryString={'name BEGINSWITH[c] $0'}
             sortByString={'name'}
             onSelect={name => {
