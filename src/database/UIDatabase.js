@@ -10,8 +10,8 @@ export class UIDatabase {
       case 'Customer':
         results = results.filtered('isVisible == true AND isCustomer == true');
         break;
-      case 'Supplier': // AND IS VISIBLE AND otherParty.type == facility
-        results = results.filtered('isSupplier == true');
+      case 'Supplier':
+        results = results.filtered('isVisible == true AND isSupplier == true');
         break;
       case 'Item':
         results = results.filtered('isVisible == true');
