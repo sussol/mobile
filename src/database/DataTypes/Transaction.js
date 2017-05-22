@@ -199,9 +199,11 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
     const isExternalInvoice = this.isExternalSI;
     const isIncomingInvoice = this.isIncoming;
-    this.transactionBatches(database).forEach(tBatch => {
-      const itemBatch = tBatch.itemBatch;
-      const transactionBatch = isExternalInvoice ? tBatch.batchAsSinglePackJson() : tBatch;
+    this.transactionBatches(database).forEach(tempTransactionBatch => {
+      const itemBatch = tempTransactionBatch.itemBatch;
+      const transactionBatch = isExternalInvoice
+          ? tempTransactionBatch.batchAsSinglePackJson()
+          : tempTransactionBatch;
       const newNumberOfPacks = isIncomingInvoice
           ? itemBatch.numberOfPacks + transactionBatch.numberOfPacks
           : itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
