@@ -21,7 +21,7 @@ export class Transaction extends Realm.Object {
     }
     database.delete('TransactionItem', this.items);
   }
-  // is not external supplier invoice
+  // Is external supplier invoice
   get isExternalSI() {
     return this.otherParty.type === 'facility';
   }
@@ -52,10 +52,6 @@ export class Transaction extends Realm.Object {
 
   get isInventoryAdjustment() {
     return this.otherParty && this.otherParty.type === 'inventory_adjustment';
-  }
-
-  get batches() {
-    return getAllBatchesInItems(this.items); // unimplemented ??
   }
 
   get otherPartyName() {
@@ -134,6 +130,7 @@ export class Transaction extends Realm.Object {
   removeTransactionItem(database, transactionItem) {
     database.delete('TransactionItem', transactionItem);
   }
+
   /**
    * Adds a TransactionBatch, incorporating it into a matching TransactionItem. Will
    * create a new TransactionItem if none exists already.
@@ -164,21 +161,23 @@ export class Transaction extends Realm.Object {
     database.delete('TransactionBatch', transactionBatchesToPrune);
     database.delete('TransactionItem', itemsToPrune);
   }
+
   /**
-   * Delete any empty transacionBatches and items
+   * Delete any empty transactionBatches and items
    * @param  {Realm} database   App wide local database
    * @return {none}
    */
   pruneRedundantBatches(database) {
     this.transactionBatches(database)
-        .forEach(tB => {
-          if (tB.numberOfPacks === 0) {
-            removeTransactionBatchUtil(database, this, tB);
+        .forEach(transactionBatch => {
+          if (transactionBatch.numberOfPacks === 0) {
+            removeTransactionBatchUtil(database, this, transactionBatch);
           }
         });
   }
+
   /**
-   * returns all transaction batches for this transaction, return collection
+   * Returns all transaction batches for this transaction, return collection
    * is a realm collection so can be filtered
    * @param  {Realm} database   App wide local database
    * @return {RealmCollection} all transaction batches
@@ -188,6 +187,7 @@ export class Transaction extends Realm.Object {
       .objects('TransactionBatch')
       .filtered('transaction.id = $0', this.id);
   }
+
   /**
    * Confirm this transaction, generating the associated item batches, linking them
    * to their items, and setting the status to confirmed.
@@ -197,12 +197,12 @@ export class Transaction extends Realm.Object {
   confirm(database) {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
-    const externalInvoice = this.isExternalSI;
-    const incomingInvoice = this.isIncoming;
+    const isExternalInvoice = this.isExternalSI;
+    const isIncomingInvoice = this.isIncoming;
     this.transactionBatches(database).forEach(tBatch => {
       const itemBatch = tBatch.itemBatch;
-      const transactionBatch = externalInvoice ? tBatch.batchAsSinglePackJson() : tBatch;
-      const newNumberOfPacks = incomingInvoice
+      const transactionBatch = isExternalInvoice ? tBatch.batchAsSinglePackJson() : tBatch;
+      const newNumberOfPacks = isIncomingInvoice
           ? itemBatch.numberOfPacks + transactionBatch.numberOfPacks
           : itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
       itemBatch.packSize = transactionBatch.packSize;
@@ -217,6 +217,7 @@ export class Transaction extends Realm.Object {
     this.confirmDate = new Date();
     this.status = 'confirmed';
   }
+
   /**
    * Finalise this transaction, setting the status so that this transaction is
    * locked down. If it has not already been confirmed (i.e. adjustments to inventory
