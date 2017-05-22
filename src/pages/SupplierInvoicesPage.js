@@ -126,7 +126,8 @@ export class SupplierInvoicesPage extends GenericPage {
         );
         transaction
           .transactionBatches(database)
-          .forEach(tB => removeTransactionBatchUtil(database, transaction, tB));
+          .forEach(transactionBatch =>
+            removeTransactionBatchUtil(database, transaction, transactionBatch));
 
         // at this stage should have no more TransactionItems left .. but to be sure..
         database.delete('TransactionItem', transaction.items);
