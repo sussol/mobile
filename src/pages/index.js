@@ -20,8 +20,8 @@ import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { RealmExplorer } from './RealmExplorer';
 import { ExternalSupplierInvoicePage,
-         checkForFinaliseError as checkForExternalSupplierInvoiceError
-} from './ExternalSupplierInvoicePage';
+         checkForFinaliseError as checkForExternalSupplierInvoiceError,
+       } from './ExternalSupplierInvoicePage';
 
 export const PAGES = {
   customer: CustomerPage,

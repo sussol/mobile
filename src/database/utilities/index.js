@@ -4,5 +4,5 @@ export {
   getTotal,
   addBatchToParent,
   removeTransactionBatchUtil,
-  classAsJson
+  classAsJson,
  } from './utilities';
