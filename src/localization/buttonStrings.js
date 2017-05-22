@@ -9,7 +9,7 @@ import LocalizedStrings from 'react-native-localization';
 
 export const buttonStrings = new LocalizedStrings({
   gb: {
-    add_batch: 'Add Batch',
+    add_batch: 'New Line',
     add_master_list_items: 'Add Master List Items',
     all_items_selected: 'All Items Selected',
     create_automatic_order: 'Create Automatic Order',
