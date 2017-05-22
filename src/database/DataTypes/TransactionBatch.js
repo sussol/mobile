@@ -30,9 +30,10 @@ export class TransactionBatch extends Realm.Object {
   get itemBatchId() {
     return this.itemBatch ? this.itemBatch.id : '';
   }
+
   /**
-   * if packSize is not 1 will return new json object adjusted to packSize 1
-   * @return {TransactioBatch|JSON Object}
+   * If packSize is not 1 will return new json object adjusted to packSize 1
+   * @return {TransactionBatch|JSON Object}
    */
   batchAsSinglePackJson() {
     if (this.packSize === 1) return this;
@@ -72,13 +73,15 @@ export class TransactionBatch extends Realm.Object {
     if (!this.costPrice) return 0;
     return this.costPrice * this.numberOfPacks;
   }
+
   /**
-   * removes associated item batch
+   * Removes associated item batch
    * @param  {Realm} database   App wide database
    */
   removeItemBatch(database) {
     database.delete('ItemBatch', this.itemBatch);
   }
+
   /**
    * Returns the maximum amount of the given quantity that can be allocated to this batch.
    * N.B. quantity may be positive or negative.

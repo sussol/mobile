@@ -1,4 +1,3 @@
-import util from 'util';
 // Return the sum of the given key across the given records
 export function getTotal(records, key) {
   return records.reduce((sum, record) => sum + record[key], 0);
@@ -25,19 +24,19 @@ export function addBatchToParent(batch, parent, createItem) {
  * Removes TransactionBatch...
  * 1 - Remove ItemBatch from TransactionBatch
  * 2 - Remove TransactionBatch from TransactionItem
- * 3 - if TransactionItem has no batches, remoe TransactionItem from Transaction
+ * 3 - if TransactionItem has no batches, remove TransactionItem from Transaction
  * @param {Realm}   database   App wide database
  * @param {Transaction}   transaction  context transaction
  * @param {TransactionBatch} transactionBatch transaction batch to remove
  */
 export function removeTransactionBatchUtil(database, transaction, transactionBatch) {
-  // find transaction item
+  // Find transaction item
   const transactionItem =
-            transaction.items.find(testI => testI.checkTransactionBatch(transactionBatch));
-    // remove transactionBatch and it's ItemBatch
+            transaction.items.find(item => item.checkTransactionBatch(transactionBatch));
+    // Remove transactionBatch and it's ItemBatch
   transactionBatch.removeItemBatch(database);
-    // removeTransactionBatch return true if transactionItem still has
-    // transactionBatches
+    // RemoveTransactionBatch return true if transactionItem still has
+    // TransactionBatches
   if (transactionItem.removeTransactionBatch(database, transactionBatch)) {
     database.save('TransactionItem', transactionItem);
   } else {
@@ -49,10 +48,9 @@ export function removeTransactionBatchUtil(database, transaction, transactionBat
  * Returns class as JSON, warning: since the schema has child <-> parent (circular))
  * printing via console.log or json Stringify will be infinite..
  * use util.format('[Circular]', returnJson) to log
- * @param {Realm}   database   App wide database
- * @param {Transaction}   transaction  context transaction
- * @param {TransactionBatch} transactionBatch transaction batch to remove
- */
+ * @param {class}   class instance
+ * @return {json}   class instance fields key value pairs in json
+  */
 export function classAsJson(classInstance) {
   const returnJson = {};
   Object.keys(classInstance).forEach(key => {

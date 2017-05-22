@@ -215,7 +215,7 @@ function createSupplierInvoice(database, supplier, user) {
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
-    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER), //  **
+    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
     entryDate: currentDate,
     confirmDate: currentDate,
     type: 'supplier_invoice',
