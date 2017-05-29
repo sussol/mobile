@@ -372,13 +372,18 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const item = getObject(database, 'Item', record.item_ID);
       itemBatch.item = item;
       item.addBatchIfUnique(itemBatch);
-      const packSize = parseNumber(record.pack_size);
+      let incomingPackSize = parseNumber(record.pack_size);
+      let packSize = 1;
+      if (transaction.isExternalSI) {
+        packSize = incomingPackSize;
+        incomingPackSize = 1;
+      }
       internalRecord = {
         id: record.ID,
         itemId: record.item_ID,
         itemName: record.item_name,
         itemBatch: itemBatch,
-        packSize: 1, // Pack to one all mobile data
+        packSize: packSize, // Pack to one all mobile data
         numberOfPacks: parseNumber(record.quantity) * packSize,
         numberOfPacksSent: parseNumber(record.quantity) * packSize,
         transaction: transaction,
