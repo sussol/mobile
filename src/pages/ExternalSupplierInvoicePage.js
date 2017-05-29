@@ -15,7 +15,6 @@ import {
   parseExpiryDate,
   sortDataBy,
 } from '../utilities';
-import { removeTransactionBatchUtil } from '../database/utilities';
 import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
@@ -102,7 +101,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     this.openCommentEditor = this.openCommentEditor.bind(this);
     this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
     this.getModalTitle = this.getModalTitle.bind(this);
-    this.addNewSIitem = this.addNewSIitem.bind(this);
+    this.addNewLine = this.addNewLine.bind(this);
   }
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -112,7 +111,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
    */
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { database, transaction } = this.props;
-
+    console.log(transaction.items);
     const transactionBatches = transaction.transactionBatches(database)
       .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
@@ -299,11 +298,10 @@ export class ExternalSupplierInvoicePage extends GenericPage {
           icon: 'md-remove-circle',
           isDisabled: this.props.transaction.isFinalised,
         };
-      // expiryDate
     }
   }
 
-  addNewSIitem(item) {
+  addNewLine(item) {
     const { database, transaction } = this.props;
     database.write(() => {
       const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
@@ -315,19 +313,24 @@ export class ExternalSupplierInvoicePage extends GenericPage {
       );
     });
   }
-  // delete transaction batch then delete transactionItem if no more t batches
+
+  // Delete transaction batch then delete transactionItem if no more
+  // transaction batches
   onDeleteConfirm() {
     const { selection } = this.state;
     const { transaction, database } = this.props;
     const transactionBatches = transaction.transactionBatches(database);
     database.write(() => {
-      // for each selected transactionBath do util funct
-      selection.forEach(tBatchID => {
-        const transactionBatch = transactionBatches.find(testI => testI.id === tBatchID);
-        // will remove itemBatch, transactionBatch (and TransactionItem if last
-        // transactionBatch for the item is being removed
-        removeTransactionBatchUtil(database, transaction, transactionBatch);
+      // Find each selected trasnaction batch by id
+      selection.forEach(transactionBatchID => {
+        const transactionBatch = transactionBatches.find(tBatch =>
+                                    tBatch.id === transactionBatchID);
+
+        database.delete('ItemBatch', transactionBatch.itemBatch);
+        database.delete('TransactionBatch', transactionBatch);
       });
+
+      transaction.pruneBatchlessItems(database);
     });
     this.setState({ selection: [] }, this.refreshData);
   }
@@ -349,7 +352,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
             onSelect={item => {
-              this.addNewSIitem(item);
+              this.addNewLine(item);
               this.refreshData();
               this.closeModal();
             }}
