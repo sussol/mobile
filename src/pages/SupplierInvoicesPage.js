@@ -13,7 +13,6 @@ import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import { removeTransactionBatchUtil } from '../database/utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -115,7 +114,7 @@ export class SupplierInvoicesPage extends GenericPage {
     }
     return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
-  // delete transaction invoice then delete transactionItem if no more t batches
+  // Delete transaction invoice
   onDeleteConfirm() {
     const { selection, transactions } = this.state;
     const { database } = this.props;
@@ -124,12 +123,14 @@ export class SupplierInvoicesPage extends GenericPage {
         const transaction = transactions.find(
           currentTransaction => currentTransaction.id === transactionID
         );
-        transaction
-          .transactionBatches(database)
-          .forEach(transactionBatch =>
-            removeTransactionBatchUtil(database, transaction, transactionBatch));
 
-        // at this stage should have no more TransactionItems left .. but to be sure..
+        const transactionBatches = transaction.transactionBatches(database);
+        const itemBatches = [];
+        transactionBatches.forEach(transactionBatch =>
+                    itemBatches.push(transactionBatch.itemBatch));
+        // Remove all batches, items and then transaction
+        database.delete('ItemBatch', itemBatches);
+        database.delete('TransactionBatches', transactionBatches);
         database.delete('TransactionItem', transaction.items);
         database.delete('Transaction', transaction);
       });
