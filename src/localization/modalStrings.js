@@ -6,7 +6,7 @@
  */
 
 import LocalizedStrings from 'react-native-localization';
-
+/* eslint-disable max-len */
 export const modalStrings = new LocalizedStrings({
   gb: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',
@@ -75,3 +75,4 @@ export const modalStrings = new LocalizedStrings({
     stocktake_no_counted_items: "La bele finalize ajustamentu se la iha sasán ne'ebé sura tiha",
   },
 });
+/* eslint-enable max-len */
