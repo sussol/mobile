@@ -1,5 +1,4 @@
 import Realm from 'realm';
-import { classAsJson } from '../utilities';
 
 export class TransactionBatch extends Realm.Object {
 
@@ -31,19 +30,6 @@ export class TransactionBatch extends Realm.Object {
     return this.itemBatch ? this.itemBatch.id : '';
   }
 
-  /**
-   * If packSize is not 1 will return new json object adjusted to packSize 1
-   * @return {TransactionBatch|JSON Object}
-   */
-  batchAsSinglePackJson() {
-    if (this.packSize === 1) return this;
-    const returnBatch = classAsJson(this);
-    returnBatch.costPrice = this.costPrice / this.packSize;
-    returnBatch.numberOfPacks = this.numberOfPacks * this.packSize;
-    returnBatch.packSize = 1;
-    return returnBatch;
-  }
-
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot change quantity of batches in a finalised transaction');
@@ -72,14 +58,6 @@ export class TransactionBatch extends Realm.Object {
     // Must be a supplier invoice
     if (!this.costPrice) return 0;
     return this.costPrice * this.numberOfPacks;
-  }
-
-  /**
-   * Removes associated item batch
-   * @param  {Realm} database   App wide database
-   */
-  removeItemBatch(database) {
-    database.delete('ItemBatch', this.itemBatch);
   }
 
   /**

@@ -220,25 +220,6 @@ export class TransactionItem extends Realm.Object {
     });
     database.delete('TransactionBatch', batchesToDelete);
   }
-  /**
-   * check if this item has a batch
-   * @param  {TransactionBatch} transactionBatch to validate
-   * @return {boolean} true if found, otherwise false
-   */
-  checkTransactionBatch(transactionBatch) {
-    return this.batches.find(batch => batch.id === transactionBatch.id);
-  }
-  /**
-   * Removes transaction batch passed as param and return true if any
-   * transaction batches are left
-   * @param  {Realm} database   App wide database
-   * @param  {TransactionBatch} transactionBatch tB to remove
-   * @return {bool} true if any tB still left
-   */
-  removeTransactionBatch(database, transactionBatch) {
-    database.delete('TransactionBatch', transactionBatch);
-    return this.batches.length > 0;
-  }
 }
 
 TransactionItem.schema = {
