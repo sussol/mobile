@@ -217,7 +217,6 @@ function createSupplierInvoice(database, supplier, user) {
     id: generateUUID(),
     serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
     entryDate: currentDate,
-    confirmDate: currentDate,
     type: 'supplier_invoice',
     status: 'suggested',
     comment: '',
