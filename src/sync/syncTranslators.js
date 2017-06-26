@@ -67,6 +67,7 @@ export const TRANSACTION_TYPES = new SyncTranslator({
   'supplier_invoice': 'si',
   'supplier_credit': 'sc',
   'inventory_adjustment': 'in',
+  'prescription': 'pi',
 });
 
 export const TRANSACTION_BATCH_TYPES = new SyncTranslator({
