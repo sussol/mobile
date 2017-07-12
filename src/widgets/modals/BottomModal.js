@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
@@ -40,8 +41,8 @@ export class BottomModal extends React.Component {
 
 BottomModal.propTypes = {
   style: View.propTypes.style,
-  isOpen: React.PropTypes.bool.isRequired,
-  children: React.PropTypes.any,
+  isOpen: PropTypes.bool.isRequired,
+  children: PropTypes.any,
 };
 BottomModal.defaultProps = {
   style: {},

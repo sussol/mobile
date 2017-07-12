@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   StyleSheet,
@@ -53,8 +54,8 @@ export class TextEditor extends React.Component {
 }
 
 TextEditor.propTypes = {
-  text: React.PropTypes.string,
-  onEndEditing: React.PropTypes.func,
+  text: PropTypes.string,
+  onEndEditing: PropTypes.func,
 };
 
 const localStyles = StyleSheet.create({

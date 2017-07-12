@@ -1,4 +1,10 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
@@ -28,9 +34,9 @@ export function PageButton(props) {
 PageButton.propTypes = {
   style: View.propTypes.style,
   textStyle: Text.propTypes.style,
-  onPress: React.PropTypes.func,
-  text: React.PropTypes.string,
-  isDisabled: React.PropTypes.bool,
+  onPress: PropTypes.func,
+  text: PropTypes.string,
+  isDisabled: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({

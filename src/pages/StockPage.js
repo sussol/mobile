@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
@@ -107,6 +108,6 @@ export class StockPage extends GenericPage {
 }
 
 StockPage.propTypes = {
-  database: React.PropTypes.object,
-  navigateTo: React.PropTypes.func.isRequired,
+  database: PropTypes.object,
+  navigateTo: PropTypes.func.isRequired,
 };

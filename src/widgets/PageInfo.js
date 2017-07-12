@@ -1,4 +1,10 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Dimensions,
   StyleSheet,
@@ -140,8 +146,8 @@ function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) 
 }
 
 PageInfo.propTypes = {
-  columns: React.PropTypes.array,
-  isEditingDisabled: React.PropTypes.bool,
+  columns: PropTypes.array,
+  isEditingDisabled: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({

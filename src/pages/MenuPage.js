@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Image,
   StyleSheet,
@@ -43,6 +44,7 @@ export class MenuPage extends React.Component {
   }
 
   render() {
+    const { isInAdminMode, logOut, navigateTo } = this.props;
     return (
       <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
         <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
@@ -56,14 +58,14 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_invoices}
-              onPress={() => this.props.navigateTo(
+              onPress={() => navigateTo(
                 'customerInvoices', navStrings.customer_invoices)}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customers}
-              onPress={() => this.props.navigateTo('customers', navStrings.customers)}
+              onPress={() => navigateTo('customers', navStrings.customers)}
             />
           </View>
 
@@ -77,14 +79,14 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_invoices}
-              onPress={() => this.props.navigateTo(
+              onPress={() => navigateTo(
                 'supplierInvoices', navStrings.supplier_invoices)}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.requisitions}
-              onPress={() => this.props.navigateTo('requisitions', navStrings.requisitions)}
+              onPress={() => navigateTo('requisitions', navStrings.requisitions)}
             />
           </View>
 
@@ -98,20 +100,20 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.current_stock}
-              onPress={() => this.props.navigateTo('stock', navStrings.current_stock)}
+              onPress={() => navigateTo('stock', navStrings.current_stock)}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.stocktakes}
-              onPress={() => this.props.navigateTo('stocktakes', navStrings.stocktakes)}
+              onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
             />
-            {this.props.adminMode &&
+            {isInAdminMode &&
               <Button
                 style={globalStyles.menuButton}
                 textStyle={globalStyles.menuButtonText}
                 text="Realm Explorer"
-                onPress={() => this.props.navigateTo('realmExplorer', 'Database Contents')}
+                onPress={() => navigateTo('realmExplorer', 'Database Contents')}
               />
             }
           </View>
@@ -123,7 +125,7 @@ export class MenuPage extends React.Component {
             iconStyle={localStyles.bottomIcon}
             borderRadius={4}
             backgroundColor="rgba(255,255,255,0)"
-            onPress={this.props.logOut}
+            onPress={logOut}
           >
             <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
           </Icon.Button>
@@ -134,11 +136,10 @@ export class MenuPage extends React.Component {
 }
 
 MenuPage.propTypes = {
-  navigateTo: React.PropTypes.func.isRequired,
-  database: React.PropTypes.object,
-  logOut: React.PropTypes.func.isRequired,
-  settings: React.PropTypes.object.isRequired,
-  adminMode: React.PropTypes.bool,
+  database: PropTypes.object.isRequired,
+  isInAdminMode: PropTypes.bool,
+  logOut: PropTypes.func.isRequired,
+  navigateTo: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({

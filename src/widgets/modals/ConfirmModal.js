@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Dimensions,
   StyleSheet,
@@ -60,14 +61,14 @@ ConfirmModal.propTypes = {
   buttonContainerStyle: View.propTypes.style,
   buttonTextStyle: Text.propTypes.style,
   cancelButtonStyle: View.propTypes.style,
-  cancelText: React.PropTypes.string,
+  cancelText: PropTypes.string,
   confirmButtonStyle: View.propTypes.style,
-  confirmText: React.PropTypes.string,
+  confirmText: PropTypes.string,
   textStyle: Text.propTypes.style,
-  isOpen: React.PropTypes.bool.isRequired,
-  questionText: React.PropTypes.string.isRequired,
-  onCancel: React.PropTypes.func,
-  onConfirm: React.PropTypes.func,
+  isOpen: PropTypes.bool.isRequired,
+  questionText: PropTypes.string.isRequired,
+  onCancel: PropTypes.func,
+  onConfirm: PropTypes.func,
 };
 ConfirmModal.defaultProps = {
   cancelText: 'Cancel',

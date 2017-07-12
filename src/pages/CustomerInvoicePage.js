@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
 } from 'react-native';
@@ -333,8 +334,8 @@ export class CustomerInvoicePage extends GenericPage {
 }
 
 CustomerInvoicePage.propTypes = {
-  database: React.PropTypes.object,
-  transaction: React.PropTypes.object,
+  database: PropTypes.object,
+  transaction: PropTypes.object,
 };
 
 /**

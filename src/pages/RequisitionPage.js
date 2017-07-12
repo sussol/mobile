@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
@@ -392,9 +393,9 @@ export class RequisitionPage extends GenericPage {
 }
 
 RequisitionPage.propTypes = {
-  database: React.PropTypes.object,
-  requisition: React.PropTypes.object,
-  settings: React.PropTypes.object,
+  database: PropTypes.object,
+  requisition: PropTypes.object,
+  settings: PropTypes.object,
 };
 
 /**

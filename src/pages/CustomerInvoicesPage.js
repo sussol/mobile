@@ -7,6 +7,7 @@
 
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import globalStyles from '../globalStyles';
@@ -213,8 +214,8 @@ export class CustomerInvoicesPage extends GenericPage {
 }
 
 CustomerInvoicesPage.propTypes = {
-  currentUser: React.PropTypes.object.isRequired,
-  database: React.PropTypes.object,
-  navigateTo: React.PropTypes.func.isRequired,
-  settings: React.PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  database: PropTypes.object,
+  navigateTo: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
 };

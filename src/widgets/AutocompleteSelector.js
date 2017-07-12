@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
@@ -82,14 +83,14 @@ export class AutocompleteSelector extends React.Component {
 }
 
 AutocompleteSelector.propTypes = {
-  options: React.PropTypes.object.isRequired,
-  queryString: React.PropTypes.string.isRequired,
-  queryStringSecondary: React.PropTypes.string,
-  sortByString: React.PropTypes.string.isRequired,
-  placeholderText: React.PropTypes.string,
-  onSelect: React.PropTypes.func.isRequired,
-  renderLeftText: React.PropTypes.func,
-  renderRightText: React.PropTypes.func,
+  options: PropTypes.object.isRequired,
+  queryString: PropTypes.string.isRequired,
+  queryStringSecondary: PropTypes.string,
+  sortByString: PropTypes.string.isRequired,
+  placeholderText: PropTypes.string,
+  onSelect: PropTypes.func.isRequired,
+  renderLeftText: PropTypes.func,
+  renderRightText: PropTypes.func,
 };
 AutocompleteSelector.defaultProps = {
   placeholderText: 'Start typing to search',

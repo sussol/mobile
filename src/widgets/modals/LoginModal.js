@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Image,
   StyleSheet,
@@ -203,10 +204,10 @@ export class LoginModal extends React.Component {
 }
 
 LoginModal.propTypes = {
-  authenticator: React.PropTypes.object.isRequired,
-  isAuthenticated: React.PropTypes.bool.isRequired,
-  onAuthentication: React.PropTypes.func.isRequired,
-  settings: React.PropTypes.object.isRequired,
+  authenticator: PropTypes.object.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+  onAuthentication: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
 };
 LoginModal.defaultProps = {
   style: {},

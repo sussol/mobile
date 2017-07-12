@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Text,
   StyleSheet,
@@ -41,12 +42,12 @@ export function BottomConfirmModal(props) {
 
 BottomConfirmModal.propTypes = {
   style: View.propTypes.style,
-  isOpen: React.PropTypes.bool.isRequired,
-  questionText: React.PropTypes.string.isRequired,
-  onCancel: React.PropTypes.func.isRequired,
-  onConfirm: React.PropTypes.func.isRequired,
-  cancelText: React.PropTypes.string,
-  confirmText: React.PropTypes.string,
+  isOpen: PropTypes.bool.isRequired,
+  questionText: PropTypes.string.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onConfirm: PropTypes.func.isRequired,
+  cancelText: PropTypes.string,
+  confirmText: PropTypes.string,
 };
 BottomConfirmModal.defaultProps = {
   style: {},

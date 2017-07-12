@@ -8,7 +8,6 @@
 import React from 'react';
 import {
   Image,
-  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -19,11 +18,10 @@ import globalStyles, {
   dataTableColors,
   dataTableStyles,
   pageStyles,
-  BACKGROUND_COLOR,
   SUSSOL_ORANGE,
 } from './globalStyles';
 
-import Navigator from 'react-native-app-navigator';
+import { Navigator } from './navigation';
 import { Spinner } from './widgets/Spinner';
 import { PAGES, FINALISABLE_PAGES } from './pages';
 
@@ -230,14 +228,17 @@ export default class mSupplyMobileApp extends React.Component {
     return (
       <View style={globalStyles.appBackground}>
         <Navigator
-          renderScene={this.renderScene}
-          renderCentreComponent={this.renderLogo}
-          renderRightComponent={this.renderSyncState}
-          navBarStyle={globalStyles.navBarStyle}
-          backgroundColor={BACKGROUND_COLOR}
-          headerViewProps={{
-            onStartShouldSetResponderCapture: () => TextInput.State.currentlyFocusedField() != null,
-            onResponderRelease: dismissKeyboard,
+          screenProps={{
+            database: this.database,
+            settings: this.settings,
+            logOut: this.logOut,
+            currentUser: this.state.currentUser,
+            runWithLoadingIndicator: this.runWithLoadingIndicator,
+            isInAdminMode: this.state.isInAdminMode,
+            searchBarColor: SUSSOL_ORANGE,
+            dataTableStyles: dataTableStyles,
+            pageStyles: pageStyles,
+            colors: dataTableColors,
           }}
         />
         <FinaliseModal
