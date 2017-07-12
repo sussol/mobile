@@ -11,6 +11,8 @@ export function wrapInPageContainer(Page, props) {
 
 function extractPropsForPage(props) {
   const { screenProps, navigation, ...restOfProps } = props;
-  const navigateTo = (routeName, title) => navigation.navigate(routeName, { title });
-  return { ...screenProps, ...navigation.state, navigateTo, ...restOfProps };
+  const { params, ...restOfNavigationState } = navigation.state;
+  const navigateTo = (routeName, title, otherParams) =>
+    navigation.navigate(routeName, { title, ...otherParams });
+  return { ...screenProps, ...params, ...restOfNavigationState, navigateTo, ...restOfProps };
 }
