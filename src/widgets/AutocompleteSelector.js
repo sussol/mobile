@@ -16,7 +16,7 @@ import {
 import Autocomplete from 'react-native-autocomplete-input';
 import { complement } from 'set-manipulator';
 
-import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
+import { APP_FONT_FAMILY } from '../globalStyles';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
