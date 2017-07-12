@@ -7,6 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { SearchBar } from 'react-native-ui-components';
 import {
   StyleSheet,
   Text,
@@ -15,7 +16,7 @@ import {
 import Autocomplete from 'react-native-autocomplete-input';
 import { complement } from 'set-manipulator';
 
-import { APP_FONT_FAMILY } from '../globalStyles';
+import { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
@@ -47,7 +48,7 @@ export class AutocompleteSelector extends React.Component {
       renderRightText,
     } = this.props;
 
-    let data = options.filtered(queryString, this.state.queryText).sorted(sortByString);
+    let data = options.filtered(queryString, this.state.queryText).sorted(sortByString).slice();
     if (queryStringSecondary) {
       const secondQueryResult = options.filtered(queryStringSecondary, this.state.queryText)
                                         .sorted(sortByString);
@@ -55,18 +56,30 @@ export class AutocompleteSelector extends React.Component {
       const secondaryData = complement(secondQueryResult, data);
 
       // Append secondary results to the first query results
-      data = data.slice().concat(secondaryData);
+      data = data.concat(secondaryData);
     }
 
     return (
       <Autocomplete
         style={localStyles.text}
+        inputContainerStyle={localStyles.inputContainer}
         autoFocus
         autoCapitalize="none"
         autoCorrect={false}
         data={data}
         onChangeText={text => this.setState({ queryText: text })}
         placeholder={placeholderText}
+        renderTextInput={(textInputProps) => {
+          const { onEndEditing, ...restOfProps } = textInputProps;
+          return (
+            <SearchBar
+              {...restOfProps}
+              color={'white'}
+              onChange={onEndEditing}
+              placeholderTextColor={'white'}
+              style={[localStyles.text, localStyles.searchBar]}
+            />);
+        }}
         renderItem={(item) => (
           <TouchableOpacity style={localStyles.resultContainer} onPress={() => onSelect(item)}>
             <Text style={[localStyles.text, localStyles.itemText]}>
@@ -101,8 +114,16 @@ const localStyles = StyleSheet.create({
     fontSize: 20,
     fontFamily: APP_FONT_FAMILY,
   },
+  searchBar: {
+    color: 'white',
+    flex: 1,
+  },
+  inputContainer: {
+    borderWidth: 0,
+  },
   itemText: {
-    margin: 2,
+    marginHorizontal: 2,
+    marginVertical: 8,
   },
   resultContainer: {
     flexDirection: 'row',
