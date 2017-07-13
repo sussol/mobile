@@ -105,7 +105,7 @@ export class StocktakeManagePage extends GenericPage {
         stocktake.name,
         { stocktake: stocktake },
         // Coming from StocktakesPage : coming from StocktakeEditPage.
-        !this.props.stocktake ? 'replace' : 'replacePreviousAndPop',
+        !this.props.stocktake ? 'replace' : 'goBack',
       );
     });
   }
