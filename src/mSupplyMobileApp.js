@@ -228,6 +228,7 @@ export default class mSupplyMobileApp extends React.Component {
     return (
       <View style={globalStyles.appBackground}>
         <Navigator
+          onNavigationStateChange={null}
           screenProps={{
             database: this.database,
             settings: this.settings,
