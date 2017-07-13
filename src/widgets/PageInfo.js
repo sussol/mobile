@@ -202,7 +202,6 @@ const localStyles = StyleSheet.create({
     marginRight: 25,
   },
   infoText: {
-    flex: 1,
     alignSelf: 'stretch',
   },
 });
