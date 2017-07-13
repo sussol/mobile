@@ -100,18 +100,12 @@ const localStyles = StyleSheet.create({
     height: 45,
     borderWidth: 1,
   },
-  textOffStyle: {
-  },
-  textOnStyle: {
-  },
   toggleOffStyle: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,
   },
   toggleOnStyle: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,
