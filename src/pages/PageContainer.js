@@ -4,10 +4,28 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { getCurrentRouteName } from '../navigation';
 
-export function wrapInPageContainer(Page, props) {
-  return <Page {...extractPropsForPage(props)} />;
+function mapStateToProps({ navigation }) {
+  return {
+    currentRouteName: getCurrentRouteName(navigation),
+  };
 }
+
+export const PageContainer = connect(
+  mapStateToProps,
+)(Page);
+
+function Page(props) {
+  const SpecificPage = props.page;
+  return <SpecificPage {...extractPropsForPage(props)} />;
+}
+
+Page.propTypes = {
+  page: PropTypes.any,
+};
 
 // TODO If the page we're going to has a key value pair in FINALISABLE_PAGES, get the finaliseItem
 // details corresponding to that key. Set the new state and render the finalise Button
@@ -19,9 +37,10 @@ export function wrapInPageContainer(Page, props) {
 // }
 
 function extractPropsForPage(props) {
-  const { screenProps, navigation, ...restOfProps } = props;
+  const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
   const { navigate, goBack, state } = navigation;
-  const { params, ...restOfNavigationState } = state;
+  const { params, routeName: thisPageRouteName, ...restOfNavigationState } = state;
+  const isCurrentRoute = thisPageRouteName === currentRouteName;
   const navigateTo = (routeName, title, otherParams, type = 'push') => {
     const push = () => navigate(routeName, { title, ...otherParams });
     // TODO dismissKeyboard
@@ -36,5 +55,12 @@ function extractPropsForPage(props) {
     const navigationFunction = navigationFunctions[type] || push;
     navigationFunction();
   };
-  return { ...screenProps, ...params, ...restOfNavigationState, navigateTo, ...restOfProps };
+  return {
+    topRoute: isCurrentRoute,
+    ...screenProps,
+    ...params,
+    ...restOfNavigationState,
+    navigateTo,
+    ...restOfProps,
+  };
 }
