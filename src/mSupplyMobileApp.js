@@ -6,12 +6,16 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
+  BackHandler,
   Image,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import { connect } from 'react-redux';
+import { addNavigationHelpers } from 'react-navigation';
 
 import globalStyles, {
   dataTableColors,
@@ -41,7 +45,7 @@ import { MobileAppSettings } from './settings';
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
-export default class mSupplyMobileApp extends React.Component {
+class MSupplyMobileAppContainer extends React.Component {
 
   constructor() {
     super();
@@ -76,6 +80,8 @@ export default class mSupplyMobileApp extends React.Component {
     this.renderLogo = this.renderLogo.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronise = this.synchronise.bind(this);
+    this.handleBackEvent = this.handleBackEvent.bind(this);
+    this.getCanNavigateBack = this.getCanNavigateBack.bind(this);
     this.scheduler.schedule(this.synchronise,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => {
@@ -85,7 +91,12 @@ export default class mSupplyMobileApp extends React.Component {
     }, AUTHENTICATION_INTERVAL);
   }
 
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  }
+
   componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
     this.scheduler.clearAll();
   }
 
@@ -95,6 +106,19 @@ export default class mSupplyMobileApp extends React.Component {
 
   onInitialised() {
     this.setState({ initialised: true });
+  }
+
+  getCanNavigateBack() {
+    const { navigationState } = this.props;
+    return navigationState.index !== 0;
+  }
+
+  handleBackEvent() {
+    const { navigation } = this.navigator.props;
+    // If we are on base screen (e.g. home), back button should close app as we can't go back
+    if (!this.getCanNavigateBack()) BackHandler.exitApp();
+    else navigation.goBack();
+    return true;
   }
 
   async runWithLoadingIndicator(functionToRun) {
@@ -189,7 +213,11 @@ export default class mSupplyMobileApp extends React.Component {
     return (
       <View style={globalStyles.appBackground}>
         <Navigator
-          onNavigationStateChange={null}
+          ref={(navigator) => { this.navigator = navigator; }}
+          navigation={addNavigationHelpers({
+            dispatch: this.props.dispatch,
+            state: this.props.navigationState,
+          })}
           screenProps={{
             database: this.database,
             settings: this.settings,
@@ -222,3 +250,16 @@ export default class mSupplyMobileApp extends React.Component {
     );
   }
 }
+
+MSupplyMobileAppContainer.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  navigationState: PropTypes.object.isRequired,
+};
+
+function mapStateToProps({ navigation: navigationState }) {
+  return { navigationState };
+}
+
+export const MSupplyMobileApp = connect(
+  mapStateToProps,
+)(MSupplyMobileAppContainer);

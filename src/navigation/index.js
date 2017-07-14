@@ -4,3 +4,4 @@
  */
 
  export { Navigator } from './Navigator';
+ export { reducer } from './reducer';
