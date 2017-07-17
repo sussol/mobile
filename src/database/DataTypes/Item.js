@@ -89,7 +89,7 @@ export class Item extends Realm.Object {
     const fromDate = addedDate > startDate ? addedDate : startDate;
     const periodInDays = millisecondsToDays(endDate - fromDate);
     const usage = this.totalUsageForPeriod(fromDate, endDate);
-    return usage / (periodInDays === 0 ? 1 : periodInDays); // Avoid divide by zero
+    return usage / (periodInDays || 1); // Avoid divide by zero
   }
 
   addBatch(itemBatch) {
