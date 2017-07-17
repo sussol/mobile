@@ -22,7 +22,7 @@ export class Item extends Realm.Object {
   // Will return undefined if there are no batches.
   get addedDate() {
     if (this.batches.length === 0) return undefined;
-    let itemAddedDate = Date.now();
+    let itemAddedDate = new Date();
     this.batches.forEach(batch => {
       const batchAddedDate = batch.addedDate;
       itemAddedDate = batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
@@ -89,7 +89,7 @@ export class Item extends Realm.Object {
     const fromDate = addedDate > startDate ? addedDate : startDate;
     const periodInDays = millisecondsToDays(endDate - fromDate);
     const usage = this.totalUsageForPeriod(fromDate, endDate);
-    return usage / periodInDays;
+    return usage / (periodInDays === 0 ? 1 : periodInDays); // Avoid divide by zero
   }
 
   addBatch(itemBatch) {
