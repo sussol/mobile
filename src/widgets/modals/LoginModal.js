@@ -125,9 +125,11 @@ export class LoginModal extends React.Component {
               style={globalStyles.authFormLogo}
               source={require('../../images/logo_large.png')}
             />
-            <Text style={globalStyles.authFormTextInputStyle}>
-              {this.props.settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
-            </Text>
+            <View style={globalStyles.horizontalContainer}>
+              <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
+                {this.props.settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
+              </Text>
+            </View>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
@@ -217,5 +219,8 @@ LoginModal.defaultProps = {
 const localStyles = StyleSheet.create({
   bottomIcon: {
     color: GREY,
+  },
+  syncSiteName: {
+    textAlign: 'center',
   },
 });

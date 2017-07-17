@@ -17,7 +17,6 @@ export const navigationStyles = {
     marginRight: 15,
   },
   navBarRightContainer: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
