@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -10,6 +8,7 @@ import PropTypes from 'prop-types';
 import {
   BackHandler,
   Image,
+  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -21,18 +20,20 @@ import globalStyles, {
   dataTableColors,
   dataTableStyles,
   pageStyles,
+  textStyles,
   SUSSOL_ORANGE,
 } from './globalStyles';
 
-import { Navigator } from './navigation';
-import { Spinner } from './widgets/Spinner';
-import { PAGES } from './pages';
+import { Navigator, getCurrentTitle } from './navigation';
+import { FirstUsePage } from './pages';
 
 import {
   FinaliseButton,
   FinaliseModal,
   LoginModal,
+  NavigationBar,
   SyncState,
+  Spinner,
 } from './widgets';
 
 import { migrateDataToVersion } from './dataMigration';
@@ -82,6 +83,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.synchronise = this.synchronise.bind(this);
     this.handleBackEvent = this.handleBackEvent.bind(this);
     this.getCanNavigateBack = this.getCanNavigateBack.bind(this);
+    this.renderPageTitle = this.renderPageTitle.bind(this);
     this.scheduler.schedule(this.synchronise,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => {
@@ -184,6 +186,11 @@ class MSupplyMobileAppContainer extends React.Component {
       </View>);
   }
 
+  renderPageTitle() {
+    const { navigationState } = this.props;
+    return <Text style={textStyles}>{getCurrentTitle(navigationState)}</Text>;
+  }
+
   renderSyncState() {
     return (
       <TouchableOpacity
@@ -202,7 +209,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     if (!this.state.initialised) {
-      const FirstUsePage = PAGES.firstUse;
       return (
         <FirstUsePage
           synchroniser={this.synchroniser}
@@ -212,6 +218,12 @@ class MSupplyMobileAppContainer extends React.Component {
     }
     return (
       <View style={globalStyles.appBackground}>
+        <NavigationBar
+          onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
+          LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
+          CentreComponent={this.renderLogo}
+          RightComponent={this.renderSyncState}
+        />
         <Navigator
           ref={(navigator) => { this.navigator = navigator; }}
           navigation={addNavigationHelpers({

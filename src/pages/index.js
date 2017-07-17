@@ -11,7 +11,7 @@ import { CustomerInvoicePage,
          checkForFinaliseError as checkForCustomerInvoiceFinaliseError,
        } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
-import { FirstUsePage } from './FirstUsePage';
+export { FirstUsePage } from './FirstUsePage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
 import { RequisitionsPage } from './RequisitionsPage';
@@ -33,7 +33,6 @@ export const PAGES = {
   customerInvoice: (props) => <PageContainer page={CustomerInvoicePage} {...props} />,
   customerInvoices: (props) => <PageContainer page={CustomerInvoicesPage} {...props} />,
   customers: (props) => <PageContainer page={CustomersPage} {...props} />,
-  firstUse: (props) => <PageContainer page={FirstUsePage} {...props} />,
   menu: (props) => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: (props) => <PageContainer page={RealmExplorer} {...props} />,
   root: (props) => <PageContainer page={MenuPage} {...props} />,

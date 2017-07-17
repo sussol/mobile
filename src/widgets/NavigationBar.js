@@ -1,0 +1,77 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Platform, TouchableOpacity, View, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { textStyles } from '../globalStyles';
+
+export function NavigationBar({ onPressBack, LeftComponent, CentreComponent, RightComponent }) {
+  return (
+    <View style={localStyles.container} >
+      <View style={localStyles.leftSection}>
+        <TouchableOpacity onPress={onPressBack} >
+          {onPressBack && <Icon name={'chevron-left'} style={localStyles.backIcon} />}
+        </TouchableOpacity>
+        {LeftComponent && <LeftComponent />}
+      </View>
+      <View style={localStyles.centreSection} >
+        {CentreComponent && <CentreComponent />}
+      </View>
+      <View style={localStyles.rightSection}>
+        {RightComponent && <RightComponent />}
+      </View>
+    </View>
+  );
+}
+
+NavigationBar.propTypes = {
+  onPressBack: PropTypes.func,
+  LeftComponent: PropTypes.any,
+  CentreComponent: PropTypes.any,
+  RightComponent: PropTypes.any,
+};
+
+NavigationBar.defaultProps = {
+  onPressBack: null,
+  LeftComponent: null,
+  CentreComponent: null,
+  RightComponent: null,
+};
+
+const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : 0;
+const HEADER_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
+const sectionStyle = {
+  flex: 1,
+  flexDirection: 'row',
+  marginHorizontal: 20,
+};
+
+const localStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    marginTop: STATUSBAR_HEIGHT,
+    height: HEADER_HEIGHT,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  backIcon: {
+    marginRight: 30,
+    ...textStyles,
+  },
+  leftSection: {
+    ...sectionStyle,
+  },
+  centreSection: {
+    ...sectionStyle,
+    justifyContent: 'center',
+  },
+  rightSection: {
+    ...sectionStyle,
+    justifyContent: 'flex-end',
+  },
+});
