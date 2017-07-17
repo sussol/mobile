@@ -49,7 +49,7 @@
     "react-native-database": "^0.2.0",
     "react-native-generic-table-page": "^0.1.15",
     "react-native-localization": "^0.1.30",
-    "react-native-modalbox": "edmofro/react-native-modalbox",
+    "react-native-modalbox": "^1.4.1",
     "react-native-ui-components": "^0.3.2",
     "react-native-vector-icons": "^4.2.0",
     "react-navigation": "^1.0.0-beta.11",
