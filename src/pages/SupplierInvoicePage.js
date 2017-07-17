@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { PageInfo } from '../widgets';
-import { formatDate, sortDataBy } from '../utilities';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { pageInfoStrings, tableStrings } from '../localization';
@@ -90,7 +90,7 @@ export class SupplierInvoicePage extends GenericPage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'numReceived') return;
     this.props.database.write(() => {
-      transactionItem.setTotalQuantity(this.props.database, parseFloat(newValue));
+      transactionItem.setTotalQuantity(this.props.database, parsePositiveInteger(newValue));
       this.props.database.save('TransactionItem', transactionItem);
     });
   }

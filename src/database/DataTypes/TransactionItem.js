@@ -176,7 +176,7 @@ export class TransactionItem extends Realm.Object {
   pruneEmptyBatches(database) {
     const batchesToDelete = [];
     this.batches.forEach(batch => {
-      if (batch.totalQuantity === 0) batchesToDelete.push(batch);
+      if (batch.totalQuantity === 0 && batch.totalQuantitySent === 0) batchesToDelete.push(batch);
     });
     database.delete('TransactionBatch', batchesToDelete);
   }
