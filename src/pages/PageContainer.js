@@ -5,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { getCurrentRouteName } from '../navigation';
 
@@ -33,8 +34,8 @@ function extractPropsForPage(props) {
   const { params, routeName: thisPageRouteName, ...restOfNavigationState } = state;
   const isCurrentRoute = thisPageRouteName === currentRouteName;
   const navigateTo = (routeName, title, otherParams, type = 'push') => {
+    Keyboard.dismiss(); // Dismiss keyboard before navigating to a different scene
     const push = () => navigate(routeName, { title, ...otherParams });
-    // TODO dismissKeyboard
     const navigationFunctions = {
       push,
       replace: () => {

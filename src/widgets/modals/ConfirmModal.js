@@ -9,13 +9,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Dimensions,
+  Keyboard,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import globalStyles from '../../globalStyles';
@@ -23,7 +23,7 @@ import globalStyles from '../../globalStyles';
 export function ConfirmModal(props) {
   // On opening, dismiss the keyboard to ensure editable cells lose their focus
   // and their values become fixed (so that they save correctly)
-  if (props.isOpen) dismissKeyboard();
+  if (props.isOpen) Keyboard.dismiss();
   const { style, textStyle, onCancel, onConfirm, questionText, ...modalProps } = props;
   return (
     <Modal

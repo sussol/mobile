@@ -8,10 +8,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  Keyboard,
   StyleSheet,
   View,
 } from 'react-native';
-import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 import Modal from 'react-native-modalbox';
 import { DARK_GREY } from '../../globalStyles';
 
@@ -20,7 +20,7 @@ export class BottomModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.isOpen && nextProps.isOpen) { // Opening modal, dismiss the keyboard
-      dismissKeyboard();
+      Keyboard.dismiss();
     }
   }
 
