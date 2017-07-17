@@ -5,4 +5,4 @@
 
  export { Navigator } from './Navigator';
  export { reducer } from './reducer';
- export { getCurrentRouteName, getCurrentTitle } from './selectors';
+ export { getCurrentRouteName, getCurrentParams } from './selectors';

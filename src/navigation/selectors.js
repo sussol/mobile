@@ -3,6 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-export const getCurrentRouteName = (state) => state.routes[state.index].routeName;
+export const getCurrentRouteName = (state) => (state.routes[state.index] ?
+                                              state.routes[state.index].routeName :
+                                              undefined);
 
-export const getCurrentTitle = (state) => state.routes[state.index].params.title;
+export const getCurrentParams = (state) => (state.routes[state.index] ?
+                                            state.routes[state.index].params :
+                                            undefined);

@@ -27,15 +27,6 @@ Page.propTypes = {
   page: PropTypes.any,
 };
 
-// TODO If the page we're going to has a key value pair in FINALISABLE_PAGES, get the finaliseItem
-// details corresponding to that key. Set the new state and render the finalise Button
-// if (FINALISABLE_PAGES[key]) {
-//   const { recordToFinaliseKey, ...finaliseItem } = FINALISABLE_PAGES[key];
-//   finaliseItem.record = extraProps[recordToFinaliseKey];
-//   this.setState({ finaliseItem: finaliseItem });
-//   navigationProps.renderRightComponent = this.renderFinaliseButton;
-// }
-
 function extractPropsForPage(props) {
   const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
   const { navigate, goBack, state } = navigation;

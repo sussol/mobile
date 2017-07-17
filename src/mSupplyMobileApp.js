@@ -24,8 +24,8 @@ import globalStyles, {
   SUSSOL_ORANGE,
 } from './globalStyles';
 
-import { Navigator, getCurrentTitle } from './navigation';
-import { FirstUsePage } from './pages';
+import { Navigator, getCurrentParams, getCurrentRouteName } from './navigation';
+import { FirstUsePage, FINALISABLE_PAGES } from './pages';
 
 import {
   FinaliseButton,
@@ -66,7 +66,6 @@ class MSupplyMobileAppContainer extends React.Component {
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
-      finaliseItem: null,
       isLoading: false,
     };
   }
@@ -160,7 +159,7 @@ class MSupplyMobileAppContainer extends React.Component {
   renderFinaliseButton() {
     return (
       <FinaliseButton
-        isFinalised={this.state.finaliseItem.record.isFinalised}
+        isFinalised={this.props.finaliseItem.record.isFinalised}
         onPress={() => this.setState({ confirmFinalise: true })}
       />);
   }
@@ -187,8 +186,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   renderPageTitle() {
-    const { navigationState } = this.props;
-    return <Text style={textStyles}>{getCurrentTitle(navigationState)}</Text>;
+    return <Text style={textStyles}>{this.props.currentTitle}</Text>;
   }
 
   renderSyncState() {
@@ -216,19 +214,20 @@ class MSupplyMobileAppContainer extends React.Component {
         />
       );
     }
+    const { finaliseItem, dispatch, navigationState } = this.props;
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
           onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
           LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
           CentreComponent={this.renderLogo}
-          RightComponent={this.renderSyncState}
+          RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
         <Navigator
           ref={(navigator) => { this.navigator = navigator; }}
           navigation={addNavigationHelpers({
-            dispatch: this.props.dispatch,
-            state: this.props.navigationState,
+            dispatch,
+            state: navigationState,
           })}
           screenProps={{
             database: this.database,
@@ -247,7 +246,7 @@ class MSupplyMobileAppContainer extends React.Component {
           database={this.database}
           isOpen={this.state.confirmFinalise}
           onClose={() => this.setState({ confirmFinalise: false })}
-          finaliseItem={this.state.finaliseItem}
+          finaliseItem={finaliseItem}
           user={this.state.currentUser}
           runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
@@ -264,12 +263,20 @@ class MSupplyMobileAppContainer extends React.Component {
 }
 
 MSupplyMobileAppContainer.propTypes = {
+  currentTitle: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
+  finaliseItem: PropTypes.object,
   navigationState: PropTypes.object.isRequired,
 };
 
 function mapStateToProps({ navigation: navigationState }) {
-  return { navigationState };
+  const currentParams = getCurrentParams(navigationState);
+  const currentTitle = currentParams && currentParams.title;
+  const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
+  if (finaliseItem && currentParams) {
+    finaliseItem.record = currentParams[finaliseItem.recordToFinaliseKey];
+  }
+  return { currentTitle, finaliseItem, navigationState };
 }
 
 export const MSupplyMobileApp = connect(
