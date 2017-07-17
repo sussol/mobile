@@ -60,6 +60,10 @@ export class Item extends Realm.Object {
     return this.batches.filtered('numberOfPacks > 0');
   }
 
+  get totalBatchesInStock() {
+    return this.batchesWithStock.length;
+  }
+
   /**
    * Returns the sum of all usage in TransactionBatches related to ItemBatches for
    * this Item within period defined by a starting and ending date.

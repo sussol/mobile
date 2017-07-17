@@ -110,7 +110,7 @@ function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) 
       break;
   }
   // If null or empty string, use single space to avoid squishing row
-  let infoString = rowData.info && String(rowData.info);
+  let infoString = (rowData.info || rowData.info === 0) && String(rowData.info);
   infoString = infoString && infoString.length > 0 ? infoString : ' ';
   const infoComponent = (
     <Text
