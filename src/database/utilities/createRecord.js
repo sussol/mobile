@@ -232,9 +232,6 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
 
 // Creates a TransactionItem and adds it to the Transaction
 function createTransactionItem(database, transaction, item) {
-  const existingTransactionItem = transaction.items.find(transactionItem =>
-                                    transactionItem.itemId === item.id); // TODO remove if possible
-  if (existingTransactionItem) return existingTransactionItem;
   const transactionItem = database.create('TransactionItem', {
     id: generateUUID(),
     item: item,
