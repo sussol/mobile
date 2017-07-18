@@ -44,7 +44,7 @@ export class SupplierInvoicePage extends GenericPage {
       {
         key: 'numReceived',
         width: 1,
-        title: tableStrings.number_recieved,
+        title: tableStrings.number_received,
         sortable: true,
         alignText: 'right',
       },
