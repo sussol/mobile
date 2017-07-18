@@ -13,7 +13,7 @@ export function NavigationBar({ onPressBack, LeftComponent, CentreComponent, Rig
   return (
     <View style={localStyles.container} >
       <View style={localStyles.leftSection}>
-        <TouchableOpacity onPress={onPressBack} >
+        <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
           {onPressBack && <Icon name={'chevron-left'} style={localStyles.backIcon} />}
         </TouchableOpacity>
         {LeftComponent && <LeftComponent />}
@@ -47,6 +47,7 @@ const HEADER_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
 const sectionStyle = {
   flex: 1,
   flexDirection: 'row',
+  alignItems: 'center',
   marginHorizontal: 20,
 };
 
@@ -58,6 +59,11 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     width: '100%',
+  },
+  backButton: {
+    height: HEADER_HEIGHT,
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   backIcon: {
     marginRight: 30,
