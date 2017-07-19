@@ -146,6 +146,10 @@ android {
 }
 
 dependencies {
+    compile project(':realm')
+    compile project(':react-native-vector-icons')
+    compile project(':react-native-localization')
+    compile project(':bugsnag-react-native')
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile(project(':react-native-localization'))
     compile(project(':realm'))

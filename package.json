@@ -41,6 +41,7 @@
   },
   "dependencies": {
     "buffer": "^5.0.6",
+    "bugsnag-react-native": "^2.2.4",
     "prop-types": "^15.5.10",
     "react": "16.0.0-alpha.12",
     "react-native": "^0.46.1",
