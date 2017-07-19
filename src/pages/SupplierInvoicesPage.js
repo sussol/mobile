@@ -124,7 +124,7 @@ export class SupplierInvoicesPage extends GenericPage {
           currentTransaction => currentTransaction.id === transactionID
         );
 
-        const transactionBatches = transaction.transactionBatches(database);
+        const transactionBatches = transaction.getTransactionBatches(database);
         const itemBatches = [];
         transactionBatches.forEach(transactionBatch =>
                     itemBatches.push(transactionBatch.itemBatch));

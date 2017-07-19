@@ -182,7 +182,7 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   pruneRedundantBatches(database) {
-    const batchesToRemove = this.transactionBatches(database)
+    const batchesToRemove = this.getTransactionBatches(database)
                               .filtered('numberOfPacks = 0');
 
     database.delete('TransactionBatch', batchesToRemove);
@@ -195,7 +195,7 @@ export class Transaction extends Realm.Object {
    * @param  {Realm} database   App wide local database
    * @return {RealmCollection} all transaction batches
    */
-  transactionBatches(database) {
+  getTransactionBatches(database) {
     return database
       .objects('TransactionBatch')
       .filtered('transaction.id = $0', this.id);
@@ -213,7 +213,7 @@ export class Transaction extends Realm.Object {
 
     this.pruneRedundantItems(database);
     const isIncomingInvoice = this.isIncoming;
-    this.transactionBatches(database).forEach(transactionBatch => {
+    this.getTransactionBatches(database).forEach(transactionBatch => {
       const { itemBatch,
               batch,
               packSize,
@@ -250,7 +250,7 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
 
     this.pruneRedundantBatches(database);
-    this.transactionBatches(database).forEach(transactionBatch => {
+    this.getTransactionBatches(database).forEach(transactionBatch => {
       const { itemBatch,
               batch,
               packSize,

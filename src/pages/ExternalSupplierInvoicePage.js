@@ -112,7 +112,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { database, transaction } = this.props;
     console.log(transaction.items);
-    const transactionBatches = transaction.transactionBatches(database)
+    const transactionBatches = transaction.getTransactionBatches(database)
       .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
     // check to see if transactionBatches exist
@@ -319,7 +319,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   onDeleteConfirm() {
     const { selection } = this.state;
     const { transaction, database } = this.props;
-    const transactionBatches = transaction.transactionBatches(database);
+    const transactionBatches = transaction.getTransactionBatches(database);
     database.write(() => {
       // Find each selected trasnaction batch by id
       selection.forEach(transactionBatchID => {
