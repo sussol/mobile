@@ -87,16 +87,6 @@ export class TransactionItem extends Realm.Object {
     this.pruneEmptyBatches(database);
   }
   /**
-   * Sets Quantity for external supplier invoice, having one Batch per
-   * TransactionLine
-   * @param {int}quantity
-   */
-  setActualBatchQuantity(database, quantity) {
-    const transBatch = this.batches[0];
-    transBatch.packSize = quantity;
-    database.save('TransactionBatch', transBatch);
-  }
-  /**
    * Sets batch price for external supplier invoice, having one Batch per
    * TransactionLine
    * @param {double}price
