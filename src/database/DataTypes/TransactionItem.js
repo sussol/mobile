@@ -92,9 +92,9 @@ export class TransactionItem extends Realm.Object {
    * @param {double}price
    */
   setBatchCostPrice(database, price) {
-    const transBatch = this.batches[0];
-    transBatch.costPrice = price;
-    database.save('TransactionBatch', transBatch);
+    const transactionBatch = this.batches[0];
+    transactionBatch.costPrice = price;
+    database.save('TransactionBatch', transactionBatch);
   }
   /**
    * Sets Batch name for external supplier invoice, having one Batch per
@@ -102,9 +102,9 @@ export class TransactionItem extends Realm.Object {
    * @param {string}quantity
    */
   setBatchName(database, name) {
-    const transBatch = this.batches[0];
-    transBatch.batch = name;
-    database.save('TransactionBatch', transBatch);
+    const transactionBatch = this.batches[0];
+    transactionBatch.batch = name;
+    database.save('TransactionBatch', transactionBatch);
   }
 
   /**
@@ -113,9 +113,9 @@ export class TransactionItem extends Realm.Object {
    * @param {date}date
    */
   setBatchExpiry(database, date) {
-    const transBatch = this.batches[0];
-    transBatch.expiryDate = date;
-    database.save('TransactionBatch', transBatch);
+    const transactionBatch = this.batches[0];
+    transactionBatch.expiryDate = date;
+    database.save('TransactionBatch', transactionBatch);
   }
 
   /**
