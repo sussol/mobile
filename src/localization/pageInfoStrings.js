@@ -22,7 +22,7 @@ export const pageInfoStrings = new LocalizedStrings({
     their_ref: 'Their Ref',
   },
   tl: {
-    // to be added: total_price, supplier
+    // TODO add: total_price, supplier
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',

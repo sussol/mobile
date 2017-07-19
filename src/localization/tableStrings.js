@@ -50,7 +50,7 @@ export const tableStrings = new LocalizedStrings({
     stock_on_hand: 'STOCK ON HAND',
     suggested_quantity: 'SUGGESTED QTY',
   },
-  tl: { // add batch_expiry, batch_cost_price, batch_name, pack_size
+  tl: { // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size
     actual_quantity: 'ATUÁL\nKUANTIDADE',
     available_stock: 'SASÁN DISPONIVEL',
     category: 'Kategoria',

@@ -210,7 +210,7 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
   return stocktakeBatch;
 }
 
-// Creates a supplier invoice (Transaction) and adds it to the customer (Name)
+// Creates a supplier invoice (Transaction) and adds it to the supplier (Name)
 function createSupplierInvoice(database, supplier, user) {
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
