@@ -111,7 +111,6 @@ export class ExternalSupplierInvoicePage extends GenericPage {
    */
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { database, transaction } = this.props;
-    console.log(transaction.items);
     const transactionBatches = transaction.getTransactionBatches(database)
       .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
@@ -136,11 +135,11 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         sortDataType = 'realm';
     }
     // calculate and set total price
-    const tPrice = transactionBatches.reduce(
-      (sum, tBatch) => sum + tBatch.costPrice * tBatch.numberOfPacks,
-      0
-    );
-    this.setState({ totalPrice: tPrice });
+    const transactionPrice = transactionBatches.reduce(
+      (sum, transactionBatch) =>
+        sum + transactionBatch.costPrice * transactionBatch.numberOfPacks
+      , 0);
+    this.setState({ totalPrice: transactionPrice });
     return sortDataBy(transactionBatches, sortBy, sortDataType, isAscending);
   }
 
