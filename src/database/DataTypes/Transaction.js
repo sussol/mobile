@@ -245,7 +245,7 @@ export class Transaction extends Realm.Object {
    * @param  {Realm}  database The app wide local database
    * @return {none}
    */
-  confirmExternalSI(database) {
+  confirmExternalSupplierInvoice(database) {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
 
@@ -281,7 +281,7 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
     if (!this.isConfirmed) {
       if (this.isExternalSupplierInvoice) {
-        this.confirmExternalSI(database);
+        this.confirmExternalSupplierInvoice(database);
       } else this.confirm(database);
     }
     this.status = 'finalised';
