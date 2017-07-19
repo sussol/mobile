@@ -210,9 +210,11 @@ export class Transaction extends Realm.Object {
   confirm(database) {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
-
-    this.pruneRedundantItems(database);
     const isIncomingInvoice = this.isIncoming;
+    const isExternalSupplierInvoice = this.isExternalSupplierInvoice;
+
+    (isExternalSupplierInvoice ? this.pruneRedundantBatches : this.pruneRedundantItems)(database);
+
     this.getTransactionBatches(database).forEach(transactionBatch => {
       const { itemBatch,
               batch,
@@ -222,47 +224,24 @@ export class Transaction extends Realm.Object {
               costPrice,
               sellPrice,
              } = transactionBatch;
+      // Adjusted in this case means with pack size of 1
+      let adjustedNumberOfPacks = numberOfPacks;
+      let adjustedCostPrice = costPrice;
+
+      if (isExternalSupplierInvoice) {
+        adjustedNumberOfPacks = numberOfPacks * packSize;
+        adjustedCostPrice = costPrice / packSize;
+      }
 
       const newNumberOfPacks = isIncomingInvoice
-          ? itemBatch.numberOfPacks + numberOfPacks
-          : itemBatch.numberOfPacks - numberOfPacks;
-      itemBatch.packSize = packSize;
+          ? itemBatch.numberOfPacks + adjustedNumberOfPacks
+          : itemBatch.numberOfPacks - adjustedNumberOfPacks;
+      itemBatch.packSize = 1;
       itemBatch.numberOfPacks = newNumberOfPacks;
       itemBatch.expiryDate = expiryDate;
       itemBatch.batch = batch;
-      itemBatch.costPrice = costPrice;
+      itemBatch.costPrice = adjustedCostPrice;
       itemBatch.sellPrice = sellPrice;
-      database.save('ItemBatch', itemBatch);
-    });
-
-    this.confirmDate = new Date();
-    this.status = 'confirmed';
-  }
-
-  /**
-   * Confirm this transaction, generating the associated item batches, linking them
-   * to their items, and setting the status to confirmed.
-   * @param  {Realm}  database The app wide local database
-   * @return {none}
-   */
-  confirmExternalSupplierInvoice(database) {
-    if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
-    if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
-
-    this.pruneRedundantBatches(database);
-    this.getTransactionBatches(database).forEach(transactionBatch => {
-      const { itemBatch,
-              batch,
-              packSize,
-              numberOfPacks,
-              expiryDate,
-              costPrice,
-             } = transactionBatch;
-      // Assuming createRecords will set packSize to 1
-      itemBatch.batch = batch;
-      itemBatch.numberOfPacks = numberOfPacks * packSize;
-      itemBatch.expiryDate = expiryDate;
-      itemBatch.costPrice = costPrice / packSize;
       database.save('ItemBatch', itemBatch);
     });
 
@@ -279,11 +258,7 @@ export class Transaction extends Realm.Object {
    */
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
-    if (!this.isConfirmed) {
-      if (this.isExternalSupplierInvoice) {
-        this.confirmExternalSupplierInvoice(database);
-      } else this.confirm(database);
-    }
+    if (!this.isConfirmed) this.confirm(database);
     this.status = 'finalised';
   }
 }
