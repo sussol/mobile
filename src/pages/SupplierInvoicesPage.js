@@ -93,7 +93,8 @@ export class SupplierInvoicesPage extends GenericPage {
         this.props.database.save('Transaction', invoice);
       });
     }
-    const navigationPage = invoice.isExternalSupplierInvoice ? 'externalSupplierInvoice' : 'supplierInvoice';
+    const navigationPage = invoice.isExternalSupplierInvoice ?
+                          'externalSupplierInvoice' : 'supplierInvoice';
     this.props.navigateTo(navigationPage, `${navStrings.invoice} ${invoice.serialNumber}`, {
       transaction: invoice,
     });
@@ -123,16 +124,7 @@ export class SupplierInvoicesPage extends GenericPage {
         const transaction = transactions.find(
           currentTransaction => currentTransaction.id === transactionID
         );
-
-        const transactionBatches = transaction.getTransactionBatches(database);
-        const itemBatches = [];
-        transactionBatches.forEach(transactionBatch =>
-                    itemBatches.push(transactionBatch.itemBatch));
-        // Remove all batches, items and then transaction
-        database.delete('ItemBatch', itemBatches);
-        database.delete('TransactionBatches', transactionBatches);
-        database.delete('TransactionItem', transaction.items);
-        database.delete('Transaction', transaction);
+        transaction.removeSelf(database);
       });
     });
     this.setState({ selection: [] }, this.refreshData);

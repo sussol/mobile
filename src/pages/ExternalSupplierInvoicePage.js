@@ -319,18 +319,8 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   onDeleteConfirm() {
     const { selection } = this.state;
     const { transaction, database } = this.props;
-    const transactionBatches = transaction.getTransactionBatches(database);
     database.write(() => {
-      // Find each selected trasnaction batch by id
-      selection.forEach(transactionBatchID => {
-        const transactionBatch = transactionBatches.find(tBatch =>
-                                    tBatch.id === transactionBatchID);
-
-        database.delete('ItemBatch', transactionBatch.itemBatch);
-        database.delete('TransactionBatch', transactionBatch);
-      });
-
-      transaction.pruneBatchlessItems(database);
+      transaction.removeTransactionBatchesById(database, selection);
     });
     this.setState({ selection: [] }, this.refreshData);
   }
