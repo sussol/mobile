@@ -8,9 +8,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
-import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
@@ -24,58 +22,22 @@ const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
 */
-export class CustomerInvoicesPage extends GenericPage {
+export class CustomerInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.transactions = props.database.objects('Transaction')
-                                            .filtered('type == "customer_invoice"');
-    this.state.sortBy = 'entryDate';
-    this.state.isAscending = false;
-    this.state.isCreatingInvoice = false;
-    this.state.columns = [
-      {
-        key: 'otherPartyName',
-        width: 3,
-        title: tableStrings.customer,
-        sortable: true,
-      },
-      {
-        key: 'serialNumber',
-        width: 1,
-        title: tableStrings.invoice_number,
-        sortable: true,
-      },
-      {
-        key: 'status',
-        width: 1,
-        title: tableStrings.status,
-        sortable: true,
-      },
-      {
-        key: 'entryDate',
-        width: 2,
-        title: tableStrings.entered_date,
-        sortable: true,
-      },
-      {
-        key: 'comment',
-        width: 3,
-        title: tableStrings.comment,
-        lines: 2,
-      },
-      {
-        key: 'delete',
-        width: 1,
-        title: tableStrings.delete,
-        alignText: 'center',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
+    this.state = {
+      transactions: props.database.objects('Transaction')
+                                  .filtered('type == "customer_invoice"'),
+      selection: [],
+      isCreatingInvoice: false,
+    };
+    this.refreshData = this.refreshData.bind(this);
     this.onNewInvoice = this.onNewInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
+    this.onSelectionChange = this.onSelectionChange.bind(this);
     this.navigateToInvoice = this.navigateToInvoice.bind(this);
     this.renderCell = this.renderCell.bind(this);
+    this.renderNewInvoiceButton = this.renderNewInvoiceButton.bind(this);
   }
 
   onNewInvoice(otherParty) {
@@ -114,6 +76,12 @@ export class CustomerInvoicesPage extends GenericPage {
     this.navigateToInvoice(invoice);
   }
 
+  onSelectionChange(newSelection) {
+    this.setState({
+      selection: newSelection,
+    });
+  }
+
   navigateToInvoice(invoice) {
     // For a customer invoice to be opened for editing in the customer invoice page, we need it to
     // be confirmed, otherwise we could end up in with more of a paticular item being issued across
@@ -134,7 +102,7 @@ export class CustomerInvoicesPage extends GenericPage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
+  refreshData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions.filtered(
       'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
       searchTerm
@@ -151,7 +119,9 @@ export class CustomerInvoicesPage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
   }
 
   renderCell(key, invoice) {
@@ -171,44 +141,89 @@ export class CustomerInvoicesPage extends GenericPage {
     }
   }
 
+  renderNewInvoiceButton() {
+    return (
+      <PageButton
+        text={buttonStrings.new_invoice}
+        onPress={() => this.setState({ isCreatingInvoice: true })}
+      />
+    );
+  }
+
   render() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderSearchBar()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <PageButton
-                text={buttonStrings.new_invoice}
-                onPress={() => this.setState({ isCreatingInvoice: true })}
-              />
-            </View>
-          </View>
-          {this.renderDataTable()}
-          <BottomConfirmModal
-            isOpen={this.state.selection.length > 0}
-            questionText={modalStrings.delete_these_invoices}
-            onCancel={() => this.onDeleteCancel()}
-            onConfirm={() => this.onDeleteConfirm()}
-            confirmText={modalStrings.delete}
-          />
-          <SelectModal
-            isOpen={this.state.isCreatingInvoice}
-            options={this.props.database.objects('Customer')}
-            placeholderText={modalStrings.start_typing_to_select_customer}
-            queryString={'name BEGINSWITH[c] $0'}
-            sortByString={'name'}
-            onSelect={name => {
-              this.onNewInvoice(name);
-              this.setState({ isCreatingInvoice: false });
-            }}
-            onClose={() => this.setState({ isCreatingInvoice: false })}
-            title={modalStrings.search_for_the_customer}
-          />
-        </View>
-      </View>
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopRightComponent={this.renderNewInvoiceButton}
+        onRowPress={this.onRowPress}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={'entryDate'}
+        defaultSortDirection={'descending'}
+        columns={[
+          {
+            key: 'otherPartyName',
+            width: 3,
+            title: tableStrings.customer,
+            sortable: true,
+          },
+          {
+            key: 'serialNumber',
+            width: 1,
+            title: tableStrings.invoice_number,
+            sortable: true,
+          },
+          {
+            key: 'status',
+            width: 1,
+            title: tableStrings.status,
+            sortable: true,
+          },
+          {
+            key: 'entryDate',
+            width: 2,
+            title: tableStrings.entered_date,
+            sortable: true,
+          },
+          {
+            key: 'comment',
+            width: 3,
+            title: tableStrings.comment,
+            lines: 2,
+          },
+          {
+            key: 'delete',
+            width: 1,
+            title: tableStrings.delete,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      >
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0}
+          questionText={modalStrings.delete_these_invoices}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
+          confirmText={modalStrings.delete}
+        />
+        <SelectModal
+          isOpen={this.state.isCreatingInvoice}
+          options={this.props.database.objects('Customer')}
+          placeholderText={modalStrings.start_typing_to_select_customer}
+          queryString={'name BEGINSWITH[c] $0'}
+          sortByString={'name'}
+          onSelect={name => {
+            this.onNewInvoice(name);
+            this.setState({ isCreatingInvoice: false });
+          }}
+          onClose={() => this.setState({ isCreatingInvoice: false })}
+          title={modalStrings.search_for_the_customer}
+        />
+      </GenericPage>
     );
   }
 }
@@ -218,4 +233,5 @@ CustomerInvoicesPage.propTypes = {
   database: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object,
 };

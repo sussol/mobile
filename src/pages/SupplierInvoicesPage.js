@@ -19,41 +19,15 @@ const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
 */
-export class SupplierInvoicesPage extends GenericPage {
+export class SupplierInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'entryDate';
-    this.state.isAscending = false;
-    this.state.transactions = props.database.objects('Transaction')
-                                            .filtered('type == "supplier_invoice"')
-                                            .filtered('otherParty.type != "inventory_adjustment"');
-    this.state.columns = [
-      {
-        key: 'serialNumber',
-        width: 1,
-        title: tableStrings.invoice_number,
-        sortable: true,
-      },
-      {
-        key: 'status',
-        width: 1,
-        title: tableStrings.status,
-        sortable: true,
-      },
-      {
-        key: 'entryDate',
-        width: 1,
-        title: tableStrings.entered_date,
-        sortable: true,
-      },
-      {
-        key: 'comment',
-        width: 3,
-        title: tableStrings.comment,
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
+    this.state = {
+      transactions: props.database.objects('Transaction')
+                                  .filtered('type == "supplier_invoice"')
+                                  .filtered('otherParty.type != "inventory_adjustment"'),
+    };
+    this.refreshData = this.refreshData.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
   }
 
@@ -77,7 +51,7 @@ export class SupplierInvoicesPage extends GenericPage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
+  refreshData(searchTerm, sortBy, isAscending) {
     const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
@@ -87,7 +61,9 @@ export class SupplierInvoicesPage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
   }
 
   renderCell(key, invoice) {
@@ -103,9 +79,51 @@ export class SupplierInvoicesPage extends GenericPage {
         return invoice.comment;
     }
   }
+
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        onRowPress={this.onRowPress}
+        defaultSortKey={'entryDate'}
+        defaultSortDirection={'descending'}
+        columns={[
+          {
+            key: 'serialNumber',
+            width: 1,
+            title: tableStrings.invoice_number,
+            sortable: true,
+          },
+          {
+            key: 'status',
+            width: 1,
+            title: tableStrings.status,
+            sortable: true,
+          },
+          {
+            key: 'entryDate',
+            width: 1,
+            title: tableStrings.entered_date,
+            sortable: true,
+          },
+          {
+            key: 'comment',
+            width: 3,
+            title: tableStrings.comment,
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      />
+    );
+  }
 }
 
 SupplierInvoicesPage.propTypes = {
   database: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
+  genericTablePageStyles: PropTypes.object,
 };

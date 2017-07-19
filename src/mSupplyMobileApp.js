@@ -236,10 +236,12 @@ class MSupplyMobileAppContainer extends React.Component {
             currentUser: this.state.currentUser,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
             isInAdminMode: this.state.isInAdminMode,
-            searchBarColor: SUSSOL_ORANGE,
-            dataTableStyles: dataTableStyles,
-            pageStyles: pageStyles,
-            colors: dataTableColors,
+            genericTablePageStyles: {
+              searchBarColor: SUSSOL_ORANGE,
+              dataTableStyles,
+              pageStyles,
+              colors: dataTableColors,
+            },
           }}
         />
         <FinaliseModal

@@ -22,40 +22,19 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 * @prop   {func}                navigateTo  CallBack for navigation stack.
 * @state  {Realm.Results}       items       Contains all Items stored on the local database.
 */
-export class StockPage extends GenericPage {
+export class StockPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'name';
-    this.state.items = props.database.objects('Item');
-    this.state.columns = [
-      {
-        key: 'code',
-        width: 1,
-        title: tableStrings.item_code,
-        sortable: true,
-      },
-      {
-        key: 'name',
-        width: 5,
-        title: tableStrings.item_name,
-        sortable: true,
-      },
-      {
-        key: 'totalQuantity',
-        width: 1,
-        title: tableStrings.stock_on_hand,
-        sortable: true,
-        alignText: 'right',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
+    this.state = {
+      items: props.database.objects('Item'),
+    };
+    this.refreshData = this.refreshData.bind(this);
   }
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
+  refreshData(searchTerm, sortBy, isAscending) {
     const data = this.state.items.filtered(
       'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
       searchTerm
@@ -68,7 +47,9 @@ export class StockPage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
   }
 
   renderExpansion(item) {
@@ -104,12 +85,44 @@ export class StockPage extends GenericPage {
     );
   }
 
-  renderCell(key, item) {
-    return item[key];
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderExpansion={this.renderExpansion}
+        defaultSortKey={'name'}
+        columns={[
+          {
+            key: 'code',
+            width: 1,
+            title: tableStrings.item_code,
+            sortable: true,
+          },
+          {
+            key: 'name',
+            width: 5,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'totalQuantity',
+            width: 1,
+            title: tableStrings.stock_on_hand,
+            sortable: true,
+            alignText: 'right',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      />
+    );
   }
 }
 
 StockPage.propTypes = {
   database: PropTypes.object,
+  genericTablePageStyles: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
 };
