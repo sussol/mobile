@@ -124,12 +124,13 @@ export class Transaction extends Realm.Object {
    * Also, remove ItemBatch associated  with TransactionBatch if this transaction
    * is external supplier invoice, and remove all TransactionItems from transaction
    * that don't have TransactionBatch
-   * @param  {Realm}  database        App wide local database
+   * @param  {Realm}  database  App wide local database
    * @param  {array}  transactionBatchIds The ids of transactionBatches to remove
    * @return {none}
    */
   removeTransactionBatchesById(database, transactionBatchIds) {
     if (this.isFinalised) throw new Error('Cannot modify finalised transaction');
+    if (!this.isValid()) return;
     const transactionBatches = this.getTransactionBatches(database);
     transactionBatchIds.forEach(transactionBatchId => {
       const transactionBatch = transactionBatches.find(matchTransactionBatch =>
@@ -146,12 +147,12 @@ export class Transaction extends Realm.Object {
    * Removes this transaction and associated TransactionBatches and TransactionItems
    * Also, removes ItemBatches associated  with transaction if transaction
    * is external supplier invoice
-   * @param  {Realm}  database        App wide local database
-   * @param  {array}  transactionBatchIds The ids of transactionBatches to remove
+   * @param  {Realm}  database  App wide local database
    * @return {none}
    */
   removeSelf(database) {
     if (this.isFinalised) throw new Error('Cannot delete finalised transaction');
+    if (!this.isValid()) return;
     const transactionBatchesIds =
       this.getTransactionBatches(database).map(transactionBatch => transactionBatch.id);
 
