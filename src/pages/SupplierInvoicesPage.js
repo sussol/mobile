@@ -93,7 +93,7 @@ export class SupplierInvoicesPage extends GenericPage {
         this.props.database.save('Transaction', invoice);
       });
     }
-    const navigationPage = invoice.isExternalSI ? 'externalSupplierInvoice' : 'supplierInvoice';
+    const navigationPage = invoice.isExternalSupplierInvoice ? 'externalSupplierInvoice' : 'supplierInvoice';
     this.props.navigateTo(navigationPage, `${navStrings.invoice} ${invoice.serialNumber}`, {
       transaction: invoice,
     });
@@ -157,7 +157,7 @@ export class SupplierInvoicesPage extends GenericPage {
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
-          isDisabled: invoice.isFinalised || !invoice.isExternalSI,
+          isDisabled: invoice.isFinalised || !invoice.isExternalSupplierInvoice,
         };
     }
   }

@@ -21,7 +21,7 @@ export class Transaction extends Realm.Object {
     database.delete('TransactionItem', this.items);
   }
   // Is external supplier invoice
-  get isExternalSI() {
+  get isExternalSupplierInvoice() {
     return this.otherParty.type === 'facility';
   }
 
@@ -280,7 +280,7 @@ export class Transaction extends Realm.Object {
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
     if (!this.isConfirmed) {
-      if (this.isExternalSI) {
+      if (this.isExternalSupplierInvoice) {
         this.confirmExternalSI(database);
       } else this.confirm(database);
     }

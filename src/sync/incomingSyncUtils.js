@@ -374,7 +374,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       item.addBatchIfUnique(itemBatch);
       let incomingPackSize = parseNumber(record.pack_size);
       let packSize = 1;
-      if (transaction.isExternalSI) {
+      if (transaction.isExternalSupplierInvoice) {
         packSize = incomingPackSize;
         incomingPackSize = 1;
       }
