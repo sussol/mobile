@@ -17,13 +17,11 @@ import { Button } from 'react-native-ui-components';
 import { LanguageModal } from './LanguageModal';
 import Modal from 'react-native-modalbox';
 import globalStyles, {
-  APP_FONT_FAMILY,
   SUSSOL_ORANGE,
   GREY,
   WARM_GREY,
-  WARMER_GREY,
 } from '../../globalStyles';
-import { SETTINGS_KEYS } from '../../settings';
+import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 import { authStrings, navStrings } from '../../localization';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -38,7 +36,9 @@ export class LoginModal extends React.Component {
       username: username || '',
       password: '',
       isLanguageModalOpen: false,
+      appVersion: '',
     };
+    this.setAppVersion();
     this.passwordInputRef = null;
     this.errorTimeoutId = null;
   }
@@ -81,6 +81,11 @@ export class LoginModal extends React.Component {
     }
   }
 
+  async setAppVersion() {
+    const appVersion = await getAppVersion();
+    this.setState({ appVersion: appVersion });
+  }
+
   get canAttemptLogin() {
     return (
       this.state.authStatus === 'unauthenticated' &&
@@ -112,13 +117,16 @@ export class LoginModal extends React.Component {
         position="top"
         startOpen
       >
-        <View style={globalStyles.horizontalContainer}>
+        <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
           <View style={[globalStyles.authFormContainer]}>
             <Image
               resizeMode="contain"
               style={globalStyles.authFormLogo}
               source={require('../../images/logo_large.png')}
             />
+            <Text style={globalStyles.authFormTextInputStyle}>
+              {this.props.settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
+            </Text>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
@@ -170,7 +178,7 @@ export class LoginModal extends React.Component {
             </View>
           </View>
         </View>
-        <View style={localStyles.bottomContainer}>
+        <View style={globalStyles.bottomContainer}>
           <Icon.Button
             name="language"
             size={25}
@@ -180,8 +188,9 @@ export class LoginModal extends React.Component {
             backgroundColor="rgba(255,255,255,0)"
             onPress={() => this.setState({ isLanguageModalOpen: true })}
           >
-            <Text style={localStyles.languageButtonText}>{navStrings.language}</Text>
+            <Text style={globalStyles.authWindowButtonText}>{navStrings.language}</Text>
           </Icon.Button>
+          <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
         </View>
         <LanguageModal
           isOpen={this.state.isLanguageModalOpen}
@@ -205,19 +214,7 @@ LoginModal.defaultProps = {
 };
 
 const localStyles = StyleSheet.create({
-  languageButtonText: {
-    fontFamily: APP_FONT_FAMILY,
-    color: WARMER_GREY,
-  },
   bottomIcon: {
     color: GREY,
-  },
-  bottomContainer: {
-    alignSelf: 'stretch',
-    flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-end',
-    paddingLeft: 42,
-    paddingBottom: 35,
   },
 });

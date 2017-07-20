@@ -21,6 +21,17 @@ export const pageInfoStrings = new LocalizedStrings({
     total_price: 'Total Price',
     their_ref: 'Their Ref',
   },
+  gil: {
+    address: 'Am tabo',
+    code: 'Code',
+    comment: 'Comment',
+    confirm_date: 'Confirm Date',
+    customer: 'Kiriniki ke aoraki',
+    entered_by: 'Entered By',
+    entry_date: 'Entry Date',
+    months_stock_required: 'Iraua te Namakaina?',
+    their_ref: 'Ana Ref',
+  },
   tl: {
     // TODO add: total_price, supplier
     address: 'Enderesu',

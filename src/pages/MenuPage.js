@@ -116,7 +116,7 @@ export class MenuPage extends React.Component {
             }
           </View>
         </View>
-        <View style={[globalStyles.horizontalContainer, { flex: 1, marginHorizontal: 20 }]}>
+        <View style={globalStyles.bottomContainer}>
           <Icon.Button
             name="power-off"
             underlayColor="#888888"
