@@ -36,6 +36,30 @@ const MODAL_KEYS = {
   ITEM_SELECT: 'itemSelect',
 };
 
+const stringRenderCellWrapper = (value) => ({ cellContents: String(value) });
+const defaultRenderCellWrapper = (value) => ({ cellContents: String(value) });
+
+const renderCellMapping = {
+  packSize: stringRenderCellWrapper,
+  numberOfPacks: stringRenderCellWrapper,
+  costPrice: stringRenderCellWrapper,
+  batch: (value) => ({
+    cellContents: value,
+    keyboardType: 'default',
+  }),
+  expiryDate: (value) => ({
+    cellContents: formatExpiryDate(value) || 'month/year',
+  }),
+};
+
+const sortByDataTypeMapping = {
+  itemName: 'string',
+  itemCode: 'string',
+  batch: 'string',
+  numberOfPacks: 'number',
+  packSize: 'number',
+};
+
 export class ExternalSupplierInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
@@ -114,26 +138,14 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     const transactionBatches = transaction.getTransactionBatches(database)
       .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
-    // check to see if transactionBatches exist
+    // Check to see if there are TransactionBatches in this transaction
     if (transactionBatches.length === 0) {
       this.setState({ totalPrice: 0 });
       return [];
     }
 
-    let sortDataType;
-    switch (sortBy) {
-      case 'itemName':
-      case 'itemCode':
-      case 'batch':
-        sortDataType = 'string';
-        break;
-      case 'numberOfPacks':
-      case 'packSize':
-        sortDataType = 'number';
-        break;
-      default:
-        sortDataType = 'realm';
-    }
+    const sortDataType = sortByDataTypeMapping[sortBy] || 'realm';
+
     // calculate and set total price
     const transactionPrice = transactionBatches.reduce(
       (sum, transactionBatch) =>
@@ -251,53 +263,14 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   renderCell(key, transactionBatch) {
     const isEditable = !this.props.transaction.isFinalised;
     const type = isEditable ? 'editable' : 'text';
-    switch (key) {
-      default:
-        return transactionBatch[key];
-      case 'packSize': {
-        const renderedCell = {
-          type: type,
-          cellContents: String(transactionBatch.packSize),
-        };
-        return renderedCell;
-      }
-      case 'numberOfPacks': {
-        const renderedCell = {
-          type: type,
-          cellContents: String(transactionBatch.numberOfPacks),
-        };
-        return renderedCell;
-      }
-      case 'batch': {
-        const renderedCell = {
-          type: type,
-          cellContents: transactionBatch.batch,
-          keyboardType: 'default',
-        };
-        return renderedCell;
-      }
-      case 'costPrice': {
-        const renderedCell = {
-          type: type,
-          cellContents: String(transactionBatch.costPrice),
-        };
-        return renderedCell;
-      }
-      case 'expiryDate': {
-        const expiryDate = formatExpiryDate(transactionBatch.expiryDate);
-        const renderedCell = {
-          type: type,
-          cellContents: expiryDate || 'month/year',
-        };
-        return renderedCell;
-      }
-      case 'remove':
-        return {
-          type: 'checkable',
-          icon: 'md-remove-circle',
-          isDisabled: this.props.transaction.isFinalised,
-        };
-    }
+
+    const renderCellGenerator =
+      renderCellMapping[key] || defaultRenderCellWrapper;
+
+    return {
+      type,
+      ...renderCellGenerator(transactionBatch[key]),
+    };
   }
 
   addNewLine(item) {
