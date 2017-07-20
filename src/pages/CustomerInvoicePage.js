@@ -39,6 +39,7 @@ export class CustomerInvoicePage extends GenericPage {
     this.state = {
       selection: [],
       modalKey: null,
+      modalIsOpen: false,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -124,11 +125,11 @@ export class CustomerInvoicePage extends GenericPage {
   }
 
   openModal(key) {
-    this.setState({ modalKey: key });
+    this.setState({ modalKey: key, modalIsOpen: true });
   }
 
   closeModal() {
-    this.setState({ modalKey: null });
+    this.setState({ modalIsOpen: false });
   }
 
   openItemSelector() {
@@ -353,7 +354,7 @@ export class CustomerInvoicePage extends GenericPage {
           confirmText={modalStrings.remove}
         />
         <PageContentModal
-          isOpen={!!this.state.modalKey && !this.props.transaction.isFinalised}
+          isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
           onClose={this.closeModal}
           title={this.getModalTitle()}
         >

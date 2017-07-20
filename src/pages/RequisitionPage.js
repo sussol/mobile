@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -7,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
@@ -32,94 +31,20 @@ const MODAL_KEYS = {
   MONTHS_SELECT: 'monthsSelect',
 };
 
-export class RequisitionPage extends GenericPage {
+export class RequisitionPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'itemName';
-    this.state.modalKey = null;
-    this.state.columns = [
-      {
-        key: 'itemCode',
-        width: 1.5,
-        title: tableStrings.code,
-        sortable: true,
-      },
-      {
-        key: 'itemName',
-        width: 4,
-        title: tableStrings.item_name,
-        sortable: true,
-      },
-      {
-        key: 'stockOnHand',
-        width: 2,
-        title: tableStrings.current_stock,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'monthlyUsage',
-        width: 2,
-        title: tableStrings.monthly_usage,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'suggestedQuantity',
-        width: 2,
-        title: tableStrings.suggested_quantity,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'requiredQuantity',
-        width: 2,
-        title: tableStrings.required_quantity,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'remove',
-        width: 1,
-        title: tableStrings.remove,
-        alignText: 'center',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.finalisableDataType = 'Requisition';
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.onAddMasterItems = this.onAddMasterItems.bind(this);
-    this.onCreateAutomaticOrder = this.onCreateAutomaticOrder.bind(this);
-    this.onEndEditing = this.onEndEditing.bind(this);
-    this.onUseSuggestedQuantities = this.onUseSuggestedQuantities.bind(this);
-    this.renderPageInfo = this.renderPageInfo.bind(this);
-    this.openMonthsSelector = this.openMonthsSelector.bind(this);
-    this.openItemSelector = this.openItemSelector.bind(this);
-    this.openCommentEditor = this.openCommentEditor.bind(this);
-    this.getModalTitle = this.getModalTitle.bind(this);
-  }
-
-  /**
-   * Returns updated data according to searchTerm, sortBy and isAscending.
-   */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
-    const data = this.props.requisition.items
-                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
-    let sortDataType;
-    switch (sortBy) {
-      case 'itemCode':
-      case 'itemName':
-        sortDataType = 'string';
-        break;
-      case 'monthlyUsage':
-      case 'suggestedQuantity':
-      case 'requiredQuantity':
-        sortDataType = 'number';
-        break;
-      default:
-        sortDataType = 'realm';
-    }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.state = {
+      modalKey: null,
+      modalIsOpen: false,
+      selection: [],
+    };
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'itemName',
+      isAscending: true,
+    };
+    autobind(this);
   }
 
   onAddMasterItems() {
@@ -140,14 +65,6 @@ export class RequisitionPage extends GenericPage {
       });
       this.refreshData();
     });
-  }
-
-  getThisStore() {
-    const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
-    const nameResults = this.props.database.objects('Name')
-                                           .filtered('id == $0', thisStoreNameId);
-    if (!nameResults | nameResults.length <= 0) return null;
-    return nameResults[0];
   }
 
   /**
@@ -192,16 +109,16 @@ export class RequisitionPage extends GenericPage {
     });
   }
 
-  openItemSelector() {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
+  onSelectionChange(newSelection) {
+    this.setState({ selection: newSelection });
   }
 
-  openMonthsSelector() {
-    this.openModal(MODAL_KEYS.MONTHS_SELECT);
-  }
-
-  openCommentEditor() {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
+  getThisStore() {
+    const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+    const nameResults = this.props.database.objects('Name')
+                                           .filtered('id == $0', thisStoreNameId);
+    if (!nameResults | nameResults.length <= 0) return null;
+    return nameResults[0];
   }
 
   getModalTitle() {
@@ -215,6 +132,58 @@ export class RequisitionPage extends GenericPage {
       case MONTHS_SELECT:
         return modalStrings.select_the_number_of_months_stock_required;
     }
+  }
+
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
+  /**
+   * Returns updated data according to searchTerm, sortBy and isAscending.
+   */
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const data = this.props.requisition.items
+                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    let sortDataType;
+    switch (sortBy) {
+      case 'itemCode':
+      case 'itemName':
+        sortDataType = 'string';
+        break;
+      case 'monthlyUsage':
+      case 'suggestedQuantity':
+      case 'requiredQuantity':
+        sortDataType = 'number';
+        break;
+      default:
+        sortDataType = 'realm';
+    }
+    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
+  }
+
+  openModal(key) {
+    this.setState({ modalKey: key, modalIsOpen: true });
+  }
+
+  closeModal() {
+    this.setState({ modalIsOpen: false });
+  }
+
+  openItemSelector() {
+    this.openModal(MODAL_KEYS.ITEM_SELECT);
+  }
+
+  openMonthsSelector() {
+    this.openModal(MODAL_KEYS.MONTHS_SELECT);
+  }
+
+  openCommentEditor() {
+    this.openModal(MODAL_KEYS.COMMENT_EDIT);
   }
 
   renderPageInfo() {
@@ -332,70 +301,130 @@ export class RequisitionPage extends GenericPage {
     }
   }
 
-  render() {
+  renderButtons() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderPageInfo()}
-              {this.renderSearchBar()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <View style={globalStyles.verticalContainer}>
-                <PageButton
-                  style={globalStyles.topButton}
-                  text={buttonStrings.create_automatic_order}
-                  onPress={this.onCreateAutomaticOrder}
-                  isDisabled={this.props.requisition.isFinalised}
-                />
-                <PageButton
-                  style={globalStyles.leftButton}
-                  text={buttonStrings.use_suggested_quantities}
-                  onPress={this.onUseSuggestedQuantities}
-                  isDisabled={this.props.requisition.isFinalised}
-                />
-              </View>
-              <View style={globalStyles.verticalContainer}>
-                <PageButton
-                  style={globalStyles.topButton}
-                  text={buttonStrings.new_item}
-                  onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
-                  isDisabled={this.props.requisition.isFinalised}
-                />
-                <PageButton
-                  text={buttonStrings.add_master_list_items}
-                  onPress={this.onAddMasterItems}
-                  isDisabled={this.props.requisition.isFinalised}
-                />
-              </View>
-            </View>
-          </View>
-          {this.renderDataTable()}
-          <BottomConfirmModal
-            isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
-            questionText={modalStrings.remove_these_items}
-            onCancel={() => this.onDeleteCancel()}
-            onConfirm={() => this.onDeleteConfirm()}
-            confirmText={modalStrings.remove}
+      <View style={globalStyles.pageTopRightSectionContainer}>
+        <View style={globalStyles.verticalContainer}>
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.create_automatic_order}
+            onPress={this.onCreateAutomaticOrder}
+            isDisabled={this.props.requisition.isFinalised}
           />
-          <PageContentModal
-            isOpen={this.state.pageContentModalIsOpen && !this.props.requisition.isFinalised}
-            onClose={this.closeModal}
-            title={this.getModalTitle()}
-          >
-            {this.renderModalContent()}
-          </PageContentModal>
+          <PageButton
+            style={globalStyles.leftButton}
+            text={buttonStrings.use_suggested_quantities}
+            onPress={this.onUseSuggestedQuantities}
+            isDisabled={this.props.requisition.isFinalised}
+          />
+        </View>
+        <View style={globalStyles.verticalContainer}>
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.new_item}
+            onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
+            isDisabled={this.props.requisition.isFinalised}
+          />
+          <PageButton
+            text={buttonStrings.add_master_list_items}
+            onPress={this.onAddMasterItems}
+            isDisabled={this.props.requisition.isFinalised}
+          />
         </View>
       </View>
+    );
+  }
+
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderPageInfo}
+        renderTopRightComponent={this.renderButtons}
+        onEndEditing={this.onEndEditing}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 1.5,
+            title: tableStrings.code,
+            sortable: true,
+          },
+          {
+            key: 'itemName',
+            width: 4,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'stockOnHand',
+            width: 2,
+            title: tableStrings.current_stock,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'monthlyUsage',
+            width: 2,
+            title: tableStrings.monthly_usage,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'suggestedQuantity',
+            width: 2,
+            title: tableStrings.suggested_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'requiredQuantity',
+            width: 2,
+            title: tableStrings.required_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'remove',
+            width: 1,
+            title: tableStrings.remove,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        finalisableDataType={'Requisition'}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      >
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
+          questionText={modalStrings.remove_these_items}
+          onCancel={this.onDeleteCancel}
+          onConfirm={this.onDeleteConfirm}
+          confirmText={modalStrings.remove}
+        />
+        <PageContentModal
+          isOpen={this.state.modalIsOpen && !this.props.requisition.isFinalised}
+          onClose={this.closeModal}
+          title={this.getModalTitle()}
+        >
+          {this.renderModalContent()}
+        </PageContentModal>
+      </GenericPage>
     );
   }
 }
 
 RequisitionPage.propTypes = {
-  database: PropTypes.object,
-  requisition: PropTypes.object,
-  settings: PropTypes.object,
+  database: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
+  requisition: PropTypes.object.isRequired,
+  settings: PropTypes.object.isRequired,
 };
 
 /**

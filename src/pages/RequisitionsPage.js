@@ -8,11 +8,10 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import autobind from 'react-autobind';
 
 import { createRecord } from '../database';
 import { BottomConfirmModal, PageButton } from '../widgets';
-import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
@@ -26,60 +25,28 @@ const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 * @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
 * @state  {Realm.Results}       requisitions  Results object containing all Requisition records.
 */
-export class RequisitionsPage extends GenericPage {
+export class RequisitionsPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.requisitions = props.database.objects('Requisition');
-    this.state.sortBy = 'entryDate';
-    this.state.isAscending = false;
-    this.state.columns = [
-      {
-        key: 'serialNumber',
-        width: 2,
-        title: tableStrings.requisition_number,
-        sortable: true,
-      },
-      {
-        key: 'entryDate',
-        width: 1,
-        title: tableStrings.entered_date,
-        sortable: true,
-      },
-      {
-        key: 'numberOfItems',
-        width: 1,
-        title: tableStrings.items,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'status',
-        width: 1,
-        title: tableStrings.status,
-        sortable: true,
-      },
-      {
-        key: 'delete',
-        width: 1,
-        title: tableStrings.delete,
-        alignText: 'center',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.onNewRequisition = this.onNewRequisition.bind(this);
-    this.onRowPress = this.onRowPress.bind(this);
-    this.renderCell = this.renderCell.bind(this);
-    this.navigateToRequisition = this.navigateToRequisition.bind(this);
+    this.state = {
+      selection: [],
+    };
+    this.requisitions = props.database.objects('Requisition');
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'entryDate',
+      isAscending: false,
+    };
+    autobind(this);
   }
 
   onDeleteConfirm() {
-    const { selection, requisitions } = this.state;
+    const { selection } = this.state;
     const { database } = this.props;
     database.write(() => {
       const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const requisition = requisitions.find(currentRequisition =>
+        const requisition = this.requisitions.find(currentRequisition =>
                                                 currentRequisition.id === selection[i]);
         if (requisition.isValid() && !requisition.isFinalised) {
           requisitionsToDelete.push(requisition);
@@ -108,6 +75,10 @@ export class RequisitionsPage extends GenericPage {
     this.navigateToRequisition(requisition);
   }
 
+  onSelectionChange(newSelection) {
+    this.setState({ selection: newSelection });
+  }
+
   navigateToRequisition(requisition) {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
@@ -117,11 +88,20 @@ export class RequisitionsPage extends GenericPage {
     );
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
-    const data = this.state.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const data = this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
@@ -131,7 +111,7 @@ export class RequisitionsPage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
   renderCell(key, requisition) {
@@ -154,31 +134,71 @@ export class RequisitionsPage extends GenericPage {
     }
   }
 
+  renderNewRequisitionButton() {
+    return (
+      <PageButton
+        text={buttonStrings.new_requisition}
+        onPress={this.onNewRequisition}
+      />
+    );
+  }
+
   render() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderSearchBar()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <PageButton
-                text={buttonStrings.new_requisition}
-                onPress={this.onNewRequisition}
-              />
-            </View>
-          </View>
-          {this.renderDataTable()}
-          <BottomConfirmModal
-            isOpen={this.state.selection.length > 0}
-            questionText={modalStrings.delete_these_requisitions}
-            onCancel={() => this.onDeleteCancel()}
-            onConfirm={() => this.onDeleteConfirm()}
-            confirmText={modalStrings.delete}
-          />
-        </View>
-      </View>
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopRightComponent={this.renderNewRequisitionButton}
+        onRowPress={this.onRowPress}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'serialNumber',
+            width: 2,
+            title: tableStrings.requisition_number,
+            sortable: true,
+          },
+          {
+            key: 'entryDate',
+            width: 1,
+            title: tableStrings.entered_date,
+            sortable: true,
+          },
+          {
+            key: 'numberOfItems',
+            width: 1,
+            title: tableStrings.items,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'status',
+            width: 1,
+            title: tableStrings.status,
+            sortable: true,
+          },
+          {
+            key: 'delete',
+            width: 1,
+            title: tableStrings.delete,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      >
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0}
+          questionText={modalStrings.delete_these_invoices}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
+          confirmText={modalStrings.delete}
+        />
+      </GenericPage>
     );
   }
 }
@@ -186,5 +206,6 @@ export class RequisitionsPage extends GenericPage {
 RequisitionsPage.propTypes = {
   database: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
 };

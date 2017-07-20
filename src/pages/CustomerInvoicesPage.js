@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -216,8 +214,8 @@ export class CustomerInvoicesPage extends React.Component {
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0}
           questionText={modalStrings.delete_these_invoices}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
+          onCancel={this.onDeleteCancel}
+          onConfirm={this.onDeleteConfirm}
           confirmText={modalStrings.delete}
         />
         <SelectModal
