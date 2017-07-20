@@ -121,7 +121,7 @@ export class CustomerInvoicePage extends GenericPage {
   }
 
   onSelectionChange(newSelection) {
-    this.setStaet({ selection: newSelection });
+    this.setState({ selection: newSelection });
   }
 
   openModal(key) {
@@ -344,6 +344,7 @@ export class CustomerInvoicePage extends GenericPage {
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         finalisableDataType={'Transaction'}
         database={this.props.database}
+        selection={this.state.selection}
         {...this.props.genericTablePageStyles}
       >
         <BottomConfirmModal

@@ -189,6 +189,7 @@ export class RequisitionsPage extends React.Component {
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         database={this.props.database}
+        selection={this.state.selection}
         {...this.props.genericTablePageStyles}
       >
         <BottomConfirmModal

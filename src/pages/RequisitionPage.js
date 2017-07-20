@@ -398,6 +398,7 @@ export class RequisitionPage extends React.Component {
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         finalisableDataType={'Requisition'}
         database={this.props.database}
+        selection={this.state.selection}
         {...this.props.genericTablePageStyles}
       >
         <BottomConfirmModal

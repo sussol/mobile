@@ -7,7 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import autobind from 'react-autobind';
 
 import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
@@ -23,45 +23,20 @@ const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 * @prop   {func}                navigateTo  CallBack for navigation stack.
 * @state  {Realm.Results}       stocktakes  Realm.Result object containing all Items.
 */
-export class StocktakesPage extends GenericPage {
+export class StocktakesPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'createdDate';
-    this.state.isAscending = false;
-    this.state.showCurrent = true;
-    this.state.stocktakes = props.database.objects('Stocktake');
-    this.state.columns = [
-      {
-        key: 'name',
-        width: 6,
-        title: tableStrings.name,
-      },
-      {
-        key: 'createdDate',
-        width: 2,
-        title: tableStrings.created_date,
-        sortable: true,
-      },
-      {
-        key: 'status',
-        width: 2,
-        title: tableStrings.status,
-        sortable: true,
-      },
-      {
-        key: 'selected',
-        width: 1,
-        title: tableStrings.delete,
-        alignText: 'center',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.onRowPress = this.onRowPress.bind(this);
-    this.onNewStockTake = this.onNewStockTake.bind(this);
-    this.onDeleteConfirm = this.onDeleteConfirm.bind(this);
-    this.onDeleteCancel = this.onDeleteCancel.bind(this);
-    this.onToggleStatusFilter = this.onToggleStatusFilter.bind(this);
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'createdDate',
+      isAscending: false,
+    };
+    this.state = {
+      showCurrent: true,
+      selection: [],
+    };
+    this.stocktakes = props.database.objects('Stocktake');
+    autobind(this);
   }
 
   onRowPress(stocktake) {
@@ -77,12 +52,12 @@ export class StocktakesPage extends GenericPage {
   }
 
   onDeleteConfirm() {
-    const { stocktakes, selection } = this.state;
+    const { selection } = this.state;
     const { database } = this.props;
     database.write(() => {
       let stocktakesToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const stocktake = stocktakes.find(s => s.id === selection[i]);
+        const stocktake = this.stocktakes.find(s => s.id === selection[i]);
         if (stocktake.isValid() && !stocktake.isFinalised) stocktakesToDelete = stocktake;
       }
       database.delete('Stocktake', stocktakesToDelete);
@@ -102,16 +77,29 @@ export class StocktakesPage extends GenericPage {
     }, this.refreshData);
   }
 
+  onSelectionChange(newSelection) {
+    this.setState({ selection: newSelection });
+  }
+
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
-    const { stocktakes, showCurrent } = this.state;
-    const toggleFilter = showCurrent ? 'status != "finalised"' : 'status == "finalised"';
-    const data = stocktakes
-                  .filtered(toggleFilter)
-                  .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
-    return data;
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const toggleFilter = this.state.showCurrent ? 'status != "finalised"' : 'status == "finalised"';
+    const data = this.stocktakes
+                     .filtered(toggleFilter)
+                     .filtered('name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0', searchTerm)
+                     .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
+    this.setState({ data: data });
   }
 
   renderCell(key, stocktake) {
@@ -132,53 +120,95 @@ export class StocktakesPage extends GenericPage {
     }
   }
 
-  render() {
-    const { showCurrent, selection } = this.state;
+  renderToggleBar() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <ToggleBar
-              style={globalStyles.toggleBar}
-              textOffStyle={globalStyles.toggleText}
-              textOnStyle={globalStyles.toggleTextSelected}
-              toggleOffStyle={globalStyles.toggleOption}
-              toggleOnStyle={globalStyles.toggleOptionSelected}
-              toggles={[
-                {
-                  text: buttonStrings.current,
-                  onPress: () => this.onToggleStatusFilter(true),
-                  isOn: showCurrent,
-                },
-                {
-                  text: buttonStrings.past,
-                  onPress: () => this.onToggleStatusFilter(false),
-                  isOn: !showCurrent,
-                },
-              ]}
-            />
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <PageButton
-                text={buttonStrings.new_stocktake}
-                onPress={this.onNewStockTake}
-              />
-            </View>
-          </View>
-          {this.renderDataTable()}
-          <BottomConfirmModal
-            isOpen={selection.length > 0 && showCurrent}
-            questionText={modalStrings.delete_these_stocktakes}
-            onCancel={() => this.onDeleteCancel()}
-            onConfirm={() => this.onDeleteConfirm()}
-            confirmText={modalStrings.delete}
-          />
-        </View>
-      </View>
+      <ToggleBar
+        style={globalStyles.toggleBar}
+        textOffStyle={globalStyles.toggleText}
+        textOnStyle={globalStyles.toggleTextSelected}
+        toggleOffStyle={globalStyles.toggleOption}
+        toggleOnStyle={globalStyles.toggleOptionSelected}
+        toggles={[
+          {
+            text: buttonStrings.current,
+            onPress: () => this.onToggleStatusFilter(true),
+            isOn: this.state.showCurrent,
+          },
+          {
+            text: buttonStrings.past,
+            onPress: () => this.onToggleStatusFilter(false),
+            isOn: !this.state.showCurrent,
+          },
+        ]}
+      />
+    );
+  }
+
+  renderNewStocktakeButton() {
+    return (
+      <PageButton
+        text={buttonStrings.new_stocktake}
+        onPress={this.onNewStockTake}
+      />
+    );
+  }
+
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderToggleBar}
+        renderTopRightComponent={this.renderNewStocktakeButton}
+        onRowPress={this.onRowPress}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'name',
+            width: 6,
+            title: tableStrings.name,
+          },
+          {
+            key: 'createdDate',
+            width: 2,
+            title: tableStrings.created_date,
+            sortable: true,
+          },
+          {
+            key: 'status',
+            width: 2,
+            title: tableStrings.status,
+            sortable: true,
+          },
+          {
+            key: 'selected',
+            width: 1,
+            title: tableStrings.delete,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        selection={this.state.selection}
+        {...this.props.genericTablePageStyles}
+      >
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0 && this.state.showCurrent}
+          questionText={modalStrings.delete_these_stocktakes}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
+          confirmText={modalStrings.delete}
+        />
+      </GenericPage>
     );
   }
 }
 
 StocktakesPage.propTypes = {
   database: PropTypes.object,
+  genericTablePageStyles: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
 };
