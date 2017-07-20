@@ -80,10 +80,10 @@ export class StocktakesPage extends GenericPage {
     const { stocktakes, selection } = this.state;
     const { database } = this.props;
     database.write(() => {
-      let stocktakesToDelete = [];
+      const stocktakesToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const stocktake = stocktakes.find(s => s.id === selection[i]);
-        if (stocktake.isValid() && !stocktake.isFinalised) stocktakesToDelete = stocktake;
+        if (stocktake.isValid() && !stocktake.isFinalised) stocktakesToDelete.push(stocktake);
       }
       database.delete('Stocktake', stocktakesToDelete);
     });
