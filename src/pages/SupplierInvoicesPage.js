@@ -6,11 +6,13 @@
  */
 
 import React from 'react';
+import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 import { GenericPage } from './GenericPage';
+import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -27,11 +29,51 @@ export class SupplierInvoicesPage extends React.Component {
       transactions: props.database.objects('Transaction')
                                   .filtered('type == "supplier_invoice"')
                                   .filtered('otherParty.type != "inventory_adjustment"'),
+      isCreatingInvoice: false,
+      selection: [],
     };
     autobind(this);
   }
 
+  onDeleteConfirm() {
+    const { selection, transactions } = this.state;
+    const { database } = this.props;
+    database.write(() => {
+      selection.forEach(transactionID => {
+        const transaction = transactions.find(
+          currentTransaction => currentTransaction.id === transactionID
+        );
+        transaction.removeSelf(database);
+      });
+    });
+    this.setState({ selection: [] }, this.refreshData);
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] }, this.refreshData);
+  }
+
+  onSelectionChange(newSelection) {
+    this.setState({ selection: newSelection });
+  }
+
   onRowPress(invoice) {
+    this.navigateToInvoice(invoice);
+  }
+
+  /**
+   * Create new Supplier Invoice and takes user to the editing SI page
+   */
+  onNewSupplierInvoice(otherParty) {
+    const { database, currentUser } = this.props;
+    let invoice;
+    database.write(() => {
+      invoice = createRecord(database, 'SupplierInvoice', otherParty, currentUser);
+    });
+    this.navigateToInvoice(invoice);
+  }
+
+  navigateToInvoice(invoice) {
     // For a supplier invoice to be opened for in the supplier invoice page, we need it to be
     // either new or finalised, but not confirmed - if someone were to reduce the amount of stock on
     // a confirmed supplier invoice, but it had already been issued in a customer invoice, we would
@@ -43,9 +85,12 @@ export class SupplierInvoicesPage extends React.Component {
         this.props.database.save('Transaction', invoice);
       });
     }
-    this.props.navigateTo('supplierInvoice',
-                          `${navStrings.invoice} ${invoice.serialNumber}`,
-                          { transaction: invoice });
+    const navigationKey = invoice.isExternalSupplierInvoice ?
+                          'externalSupplierInvoice' :
+                          'supplierInvoice';
+    this.props.navigateTo(navigationKey, `${navStrings.invoice} ${invoice.serialNumber}`, {
+      transaction: invoice,
+    });
   }
 
   /**
@@ -80,7 +125,22 @@ export class SupplierInvoicesPage extends React.Component {
         return invoice.entryDate.toDateString();
       case 'comment':
         return invoice.comment;
+      case 'remove':
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+          isDisabled: invoice.isFinalised || !invoice.isExternalSupplierInvoice,
+        };
     }
+  }
+
+  renderNewInvoiceButton() {
+    return (
+      <PageButton
+        text={buttonStrings.new_supplier_invoice}
+        onPress={() => this.setState({ isCreatingInvoice: true })}
+      />
+    );
   }
 
   render() {
@@ -89,7 +149,9 @@ export class SupplierInvoicesPage extends React.Component {
         data={this.state.data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
+        renderTopRightComponent={this.renderNewInvoiceButton}
         onRowPress={this.onRowPress}
+        onSelectionChange={this.onSelectionChange}
         defaultSortKey={'entryDate'}
         defaultSortDirection={'descending'}
         columns={[
@@ -116,16 +178,45 @@ export class SupplierInvoicesPage extends React.Component {
             width: 3,
             title: tableStrings.comment,
           },
+          {
+            key: 'remove',
+            width: 1,
+            title: tableStrings.remove,
+            alignText: 'center',
+          },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         database={this.props.database}
+        selection={this.state.selection}
         {...this.props.genericTablePageStyles}
-      />
+      >
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0}
+          questionText={modalStrings.remove_these_items}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
+          confirmText={modalStrings.remove}
+        />
+        <SelectModal
+          isOpen={this.state.isCreatingInvoice}
+          options={this.props.database.objects('Supplier')}
+          placeholderText={modalStrings.start_typing_to_select_supplier}
+          queryString={'name BEGINSWITH[c] $0'}
+          sortByString={'name'}
+          onSelect={name => {
+            this.onNewSupplierInvoice(name);
+            this.setState({ isCreatingInvoice: false });
+          }}
+          onClose={() => this.setState({ isCreatingInvoice: false })}
+          title={modalStrings.search_for_the_customer}
+        />
+      </GenericPage>
     );
   }
 }
 
 SupplierInvoicesPage.propTypes = {
+  currentUser: PropTypes.object.isRequired,
   database: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
   genericTablePageStyles: PropTypes.object,

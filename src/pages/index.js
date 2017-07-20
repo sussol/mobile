@@ -27,6 +27,9 @@ import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { RealmExplorer } from './RealmExplorer';
+import { ExternalSupplierInvoicePage,
+         checkForFinaliseError as checkForExternalSupplierInvoiceError,
+       } from './ExternalSupplierInvoicePage';
 
 export const PAGES = {
   customer: (props) => <PageContainer page={CustomerPage} {...props} />,
@@ -44,10 +47,17 @@ export const PAGES = {
   stocktakes: (props) => <PageContainer page={StocktakesPage} {...props} />,
   supplierInvoice: (props) => <PageContainer page={SupplierInvoicePage} {...props} />,
   supplierInvoices: (props) => <PageContainer page={SupplierInvoicesPage} {...props} />,
+  externalSupplierInvoice: (props) => <PageContainer page={ExternalSupplierInvoicePage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
   supplierInvoice: {
+    recordType: 'Transaction',
+    recordToFinaliseKey: 'transaction',
+    finaliseText: 'finalise_supplier_invoice',
+  },
+  externalSupplierInvoice: {
+    checkForError: checkForExternalSupplierInvoiceError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_supplier_invoice',

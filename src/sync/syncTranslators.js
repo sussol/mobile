@@ -154,4 +154,5 @@ export const SEQUENCE_KEYS = new SequenceKeyTranslator({
   requisition_serial_number: 'requisition_serial_number_for_store_',
   requisition_requester_reference: 'requisition_requester_reference_for_store_',
   stocktake_serial_number: 'stock_take_number_for_store_',
+  supplier_invoice_serial_number: 'supplier_invoice_number_for_store_'
 });
