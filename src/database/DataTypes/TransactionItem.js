@@ -31,7 +31,6 @@ export class TransactionItem extends Realm.Object {
   get totalQuantitySent() {
     return getTotal(this.batches, 'totalQuantitySent');
   }
-
   get totalPrice() {
     return getTotal(this.batches, 'totalPrice');
   }
