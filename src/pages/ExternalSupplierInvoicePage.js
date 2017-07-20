@@ -261,6 +261,14 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   }
 
   renderCell(key, transactionBatch) {
+    if (key === 'remove') {
+      return {
+        type: 'checkable',
+        icon: 'md-remove-circle',
+        isDisabled: this.props.transaction.isFinalised,
+      };
+    }
+
     const isEditable = !this.props.transaction.isFinalised;
     const type = isEditable ? 'editable' : 'text';
 
