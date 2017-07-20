@@ -300,7 +300,6 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   finalise(database) {
-    console.log('do we get here1 ?', this);
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
     if (!this.isConfirmed) this.confirm(database);
     this.status = 'finalised';

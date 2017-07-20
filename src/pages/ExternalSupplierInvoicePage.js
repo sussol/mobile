@@ -37,12 +37,15 @@ const MODAL_KEYS = {
 };
 
 const stringRenderCellWrapper = (value) => ({ cellContents: String(value) });
+const floatRenderCellWrapper = (value) => ({
+  cellContents: String(value ? parsePositiveFloat(value).toFixed(2) : '0.00'),
+});
 const defaultRenderCellWrapper = (value) => ({ cellContents: String(value) });
 
 const renderCellMapping = {
   packSize: stringRenderCellWrapper,
   numberOfPacks: stringRenderCellWrapper,
-  costPrice: stringRenderCellWrapper,
+  costPrice: floatRenderCellWrapper,
   batch: (value) => ({
     cellContents: value,
     keyboardType: 'default',
@@ -149,7 +152,9 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     // calculate and set total price
     const transactionPrice = transactionBatches.reduce(
       (sum, transactionBatch) =>
-        sum + transactionBatch.costPrice * transactionBatch.numberOfPacks
+        sum + transactionBatch.costPrice
+            * transactionBatch.numberOfPacks
+            * transactionBatch.packSize
       , 0);
     this.setState({ totalPrice: transactionPrice });
     return sortDataBy(transactionBatches, sortBy, sortDataType, isAscending);
