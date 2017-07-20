@@ -181,7 +181,7 @@ const localStyles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: SUSSOL_ORANGE,
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   selectContainer: {
     flexDirection: 'row',
