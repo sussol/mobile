@@ -8,6 +8,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
@@ -31,13 +32,12 @@ export class CustomerInvoicesPage extends React.Component {
       selection: [],
       isCreatingInvoice: false,
     };
-    this.refreshData = this.refreshData.bind(this);
-    this.onNewInvoice = this.onNewInvoice.bind(this);
-    this.onRowPress = this.onRowPress.bind(this);
-    this.onSelectionChange = this.onSelectionChange.bind(this);
-    this.navigateToInvoice = this.navigateToInvoice.bind(this);
-    this.renderCell = this.renderCell.bind(this);
-    this.renderNewInvoiceButton = this.renderNewInvoiceButton.bind(this);
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'entryDate',
+      isAscending: false,
+    };
+    autobind(this);
   }
 
   onNewInvoice(otherParty) {
@@ -99,10 +99,20 @@ export class CustomerInvoicesPage extends React.Component {
                           { transaction: invoice });
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(searchTerm, sortBy, isAscending) {
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+
     const data = this.state.transactions.filtered(
       'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
       searchTerm
@@ -159,8 +169,8 @@ export class CustomerInvoicesPage extends React.Component {
         renderTopRightComponent={this.renderNewInvoiceButton}
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
-        defaultSortKey={'entryDate'}
-        defaultSortDirection={'descending'}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
         columns={[
           {
             key: 'otherPartyName',

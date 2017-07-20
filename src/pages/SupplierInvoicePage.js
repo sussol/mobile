@@ -7,59 +7,53 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import autobind from 'react-autobind';
 
 import { PageInfo } from '../widgets';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { GenericPage } from './GenericPage';
-import globalStyles from '../globalStyles';
 import { pageInfoStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
-export class SupplierInvoicePage extends GenericPage {
+export class SupplierInvoicePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'itemName';
-    this.state.columns = [
-      {
-        key: 'itemCode',
-        width: 1,
-        title: tableStrings.item_code,
-        sortable: true,
-      },
-      {
-        key: 'itemName',
-        width: 2,
-        title: tableStrings.item_name,
-        sortable: true,
-      },
-      {
-        key: 'totalQuantitySent',
-        width: 1,
-        title: tableStrings.number_sent,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'numReceived',
-        width: 1,
-        title: tableStrings.number_received,
-        sortable: true,
-        alignText: 'right',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.finalisableDataType = 'Transaction';
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.onEndEditing = this.onEndEditing.bind(this);
-    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
+    this.dataFilters = {
+      sortBy: 'itemName',
+    };
+    this.state = {};
+    autobind(this);
+  }
+
+  /**
+   * Respond to the user editing the number in the number received column
+   * @param  {string} key             Should always be 'numReceived'
+   * @param  {object} transactionItem The transaction item from the row being edited
+   * @param  {string} newValue        The value the user entered in the cell
+   * @return {none}
+   */
+  onEndEditing(key, transactionItem, newValue) {
+    if (key !== 'numReceived') return;
+    this.props.database.write(() => {
+      transactionItem.setTotalQuantity(this.props.database, parsePositiveInteger(newValue));
+      this.props.database.save('TransactionItem', transactionItem);
+    });
+  }
+
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
   }
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.transaction.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
@@ -77,22 +71,7 @@ export class SupplierInvoicePage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
-  }
-
-  /**
-   * Respond to the user editing the number in the number received column
-   * @param  {string} key             Should always be 'numReceived'
-   * @param  {object} transactionItem The transaction item from the row being edited
-   * @param  {string} newValue        The value the user entered in the cell
-   * @return {none}
-   */
-  onEndEditing(key, transactionItem, newValue) {
-    if (key !== 'numReceived') return;
-    this.props.database.write(() => {
-      transactionItem.setTotalQuantity(this.props.database, parsePositiveInteger(newValue));
-      this.props.database.save('TransactionItem', transactionItem);
-    });
+    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
   renderPageInfo() {
@@ -140,23 +119,53 @@ export class SupplierInvoicePage extends GenericPage {
 
   render() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderPageInfo()}
-              {this.renderSearchBar()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer} />
-          </View>
-          {this.renderDataTable()}
-        </View>
-      </View>
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderPageInfo}
+        onEndEditing={this.onEndEditing}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 1,
+            title: tableStrings.item_code,
+            sortable: true,
+          },
+          {
+            key: 'itemName',
+            width: 2,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'totalQuantitySent',
+            width: 1,
+            title: tableStrings.number_sent,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'numReceived',
+            width: 1,
+            title: tableStrings.number_received,
+            sortable: true,
+            alignText: 'right',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        finalisableDataType={'Transaction'}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      />
     );
   }
 }
 
 SupplierInvoicePage.propTypes = {
   database: PropTypes.object,
+  genericTablePageStyles: PropTypes.object,
   transaction: PropTypes.object,
 };

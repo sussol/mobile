@@ -7,6 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import {
   View,
 } from 'react-native';
@@ -35,56 +36,31 @@ const MODAL_KEYS = {
 export class CustomerInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'itemName';
-    this.state.columns = [
-      {
-        key: 'itemCode',
-        width: 2,
-        title: tableStrings.item_code,
-        sortable: true,
-      },
-      {
-        key: 'itemName',
-        width: 4,
-        title: tableStrings.item_name,
-        sortable: true,
-      },
-      {
-        key: 'availableQuantity',
-        width: 2,
-        title: tableStrings.available_stock,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'totalQuantity',
-        width: 2,
-        title: tableStrings.quantity,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'remove',
-        width: 1,
-        title: tableStrings.remove,
-        alignText: 'center',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.finalisableDataType = 'Transaction';
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.onAddMasterItems = this.onAddMasterItems.bind(this);
-    this.openItemSelector = this.openItemSelector.bind(this);
-    this.openCommentEditor = this.openCommentEditor.bind(this);
-    this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
-    this.getModalTitle = this.getModalTitle.bind(this);
-    this.renderPageInfo = this.renderPageInfo.bind(this);
+    this.state = {
+      selection: [],
+      modalKey: null,
+    };
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'itemName',
+      isAscending: true,
+    };
+    autobind(this);
+  }
+
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
   }
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.transaction.items
                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
@@ -100,7 +76,7 @@ export class CustomerInvoicePage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
   onAddMasterItems() {
@@ -141,6 +117,18 @@ export class CustomerInvoicePage extends GenericPage {
 
   onDeleteCancel() {
     this.setState({ selection: [] }, this.refreshData);
+  }
+
+  onSelectionChange(newSelection) {
+    this.setStaet({ selection: newSelection });
+  }
+
+  openModal(key) {
+    this.setState({ modalKey: key });
+  }
+
+  closeModal() {
+    this.setState({ modalKey: null });
   }
 
   openItemSelector() {
@@ -287,55 +275,99 @@ export class CustomerInvoicePage extends GenericPage {
     }
   }
 
+  renderButtons() {
+    return (
+      <View style={globalStyles.verticalContainer}>
+        <PageButton
+          style={globalStyles.topButton}
+          text={buttonStrings.new_item}
+          onPress={this.openItemSelector}
+          isDisabled={this.props.transaction.isFinalised}
+        />
+        <PageButton
+          text={buttonStrings.add_master_list_items}
+          onPress={this.onAddMasterItems}
+          isDisabled={this.props.transaction.isFinalised}
+        />
+      </View>
+    );
+  }
+
   render() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderPageInfo()}
-              {this.renderSearchBar()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <View style={globalStyles.verticalContainer}>
-                <PageButton
-                  style={globalStyles.topButton}
-                  text={buttonStrings.new_item}
-                  onPress={this.openItemSelector}
-                  isDisabled={this.props.transaction.isFinalised}
-                />
-                <PageButton
-                  text={buttonStrings.add_master_list_items}
-                  onPress={this.onAddMasterItems}
-                  isDisabled={this.props.transaction.isFinalised}
-                />
-              </View>
-            </View>
-          </View>
-          {this.renderDataTable()}
-          <BottomConfirmModal
-            isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
-            questionText={modalStrings.remove_these_items}
-            onCancel={() => this.onDeleteCancel()}
-            onConfirm={() => this.onDeleteConfirm()}
-            confirmText={modalStrings.remove}
-          />
-          <PageContentModal
-            isOpen={this.state.pageContentModalIsOpen && !this.props.transaction.isFinalised}
-            onClose={this.closeModal}
-            title={this.getModalTitle()}
-          >
-            {this.renderModalContent()}
-          </PageContentModal>
-        </View>
-      </View>
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderPageInfo}
+        renderTopRightComponent={this.renderButtons}
+        onRowPress={this.onRowPress}
+        onSelectionChange={this.onSelectionChange}
+        onEndEditing={this.onEndEditing}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 2,
+            title: tableStrings.item_code,
+            sortable: true,
+          },
+          {
+            key: 'itemName',
+            width: 4,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'availableQuantity',
+            width: 2,
+            title: tableStrings.available_stock,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'totalQuantity',
+            width: 2,
+            title: tableStrings.quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'remove',
+            width: 1,
+            title: tableStrings.remove,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        finalisableDataType={'Transaction'}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      >
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
+          questionText={modalStrings.remove_these_items}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
+          confirmText={modalStrings.remove}
+        />
+        <PageContentModal
+          isOpen={!!this.state.modalKey && !this.props.transaction.isFinalised}
+          onClose={this.closeModal}
+          title={this.getModalTitle()}
+        >
+          {this.renderModalContent()}
+        </PageContentModal>
+      </GenericPage>
     );
   }
 }
 
 CustomerInvoicePage.propTypes = {
-  database: PropTypes.object,
-  transaction: PropTypes.object,
+  database: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object,
+  transaction: PropTypes.object.isRequired,
 };
 
 /**

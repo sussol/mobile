@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -8,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import { View } from 'react-native';
 
 import { createRecord } from '../database';
@@ -29,52 +28,20 @@ const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 *                                             filtered to be only be those belonging to the Customer
 *                                             being viewed.
 */
-export class CustomerPage extends GenericPage {
+export class CustomerPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.transactions = props.database.objects('Transaction')
-                                            .filtered('type == "customer_invoice"')
-                                            .filtered('otherParty.name == $0', props.customer.name);
-    this.state.sortBy = 'entryDate';
-    this.state.columns = [
-      {
-        key: 'serialNumber',
-        width: 1,
-        title: tableStrings.id,
-        sortable: true,
-      },
-      {
-        key: 'status',
-        width: 1,
-        title: tableStrings.status,
-        sortable: true,
-      },
-      {
-        key: 'entryDate',
-        width: 2,
-        title: tableStrings.entered_date,
-        sortable: true,
-      },
-      {
-        key: 'numberOfItems',
-        width: 1,
-        title: tableStrings.items,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'comment',
-        width: 3,
-        title: tableStrings.comment,
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.navigateToInvoice = this.navigateToInvoice.bind(this);
-    this.onNewInvoice = this.onNewInvoice.bind(this);
-    this.onRowPress = this.onRowPress.bind(this);
-    this.renderPageInfo = this.renderPageInfo.bind(this);
-    this.renderCell = this.renderCell.bind(this);
+    this.state = {
+      transactions: props.database.objects('Transaction')
+                                  .filtered('type == "customer_invoice"')
+                                  .filtered('otherParty.name == $0', props.customer.name),
+    };
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'entryDate',
+      isAscending: true,
+    };
+    autobind(this);
   }
 
   onNewInvoice() {
@@ -95,11 +62,23 @@ export class CustomerPage extends GenericPage {
     this.props.navigateTo('customerInvoice', pageTitle, { transaction: invoice });
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
-    const data = this.state.transactions;
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const data = this.state.transactions.filtered(
+      'serialNumber BEGINSWITH[c] $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
@@ -109,7 +88,7 @@ export class CustomerPage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
   renderPageInfo() {
@@ -156,24 +135,64 @@ export class CustomerPage extends GenericPage {
     }
   }
 
+  renderNewInvoiceButton() {
+    return (
+      <View style={globalStyles.pageTopRightSectionContainer}>
+        <PageButton
+          text={buttonStrings.new_invoice}
+          onPress={this.onNewInvoice}
+        />
+      </View>
+    );
+  }
+
   render() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderPageInfo()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <PageButton
-                text={buttonStrings.new_invoice}
-                onPress={this.onNewInvoice}
-              />
-            </View>
-          </View>
-          {this.renderDataTable()}
-        </View>
-      </View>
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderPageInfo}
+        renderTopRightComponent={this.renderNewInvoiceButton}
+        onRowPress={this.onRowPress}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'serialNumber',
+            width: 1,
+            title: tableStrings.id,
+            sortable: true,
+          },
+          {
+            key: 'status',
+            width: 1,
+            title: tableStrings.status,
+            sortable: true,
+          },
+          {
+            key: 'entryDate',
+            width: 2,
+            title: tableStrings.entered_date,
+            sortable: true,
+          },
+          {
+            key: 'numberOfItems',
+            width: 1,
+            title: tableStrings.items,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'comment',
+            width: 3,
+            title: tableStrings.comment,
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      />
     );
   }
 }
@@ -182,5 +201,6 @@ CustomerPage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   customer: PropTypes.object.isRequired,
   database: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
 };

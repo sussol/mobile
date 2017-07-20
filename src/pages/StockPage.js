@@ -7,6 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
@@ -28,13 +29,16 @@ export class StockPage extends React.Component {
     this.state = {
       items: props.database.objects('Item'),
     };
-    this.refreshData = this.refreshData.bind(this);
+    autobind(this);
   }
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(searchTerm, sortBy, isAscending) {
+  refreshData(searchTerm = this.searchTerm, sortBy = this.sortBy, isAscending = this.isAscending) {
+    this.searchTerm = searchTerm;
+    this.sortBy = sortBy;
+    this.isAscending = isAscending;
     const data = this.state.items.filtered(
       'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
       searchTerm

@@ -16,7 +16,8 @@
   "homepage": "http://msupply.org.nz",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "postinstall": "find node_modules -type f -name '.babelrc' -delete # as per https://github.com/cassiozen/React-autobind/issues/4#issuecomment-316561400"
   },
   "jest": {
     "preprocessorIgnorePatterns": [
@@ -44,6 +45,7 @@
     "bugsnag-react-native": "^2.2.4",
     "prop-types": "^15.5.10",
     "react": "16.0.0-alpha.12",
+    "react-autobind": "^1.0.6",
     "react-native": "^0.46.1",
     "react-native-autocomplete-input": "^3.3.1",
     "react-native-data-table": "^0.1.3",

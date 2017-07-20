@@ -7,6 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { navStrings, tableStrings } from '../localization';
@@ -27,8 +28,7 @@ export class SupplierInvoicesPage extends React.Component {
                                   .filtered('type == "supplier_invoice"')
                                   .filtered('otherParty.type != "inventory_adjustment"'),
     };
-    this.refreshData = this.refreshData.bind(this);
-    this.onRowPress = this.onRowPress.bind(this);
+    autobind(this);
   }
 
   onRowPress(invoice) {
@@ -51,7 +51,10 @@ export class SupplierInvoicesPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(searchTerm, sortBy, isAscending) {
+  refreshData(searchTerm = this.searchTerm, sortBy = this.sortBy, isAscending = this.isAscending) {
+    this.searchTerm = searchTerm;
+    this.sortBy = sortBy;
+    this.isAscending = isAscending;
     const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
     switch (sortBy) {

@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -7,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import { GenericPage } from './GenericPage';
 import { sortDataBy } from '../utilities';
 import { tableStrings } from '../localization';
@@ -19,35 +18,18 @@ const DATA_TYPES_SYNCHRONISED = ['Name'];
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
 */
-export class CustomersPage extends GenericPage {
+export class CustomersPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.sortBy = 'name';
-    this.state.customers = props.database.objects('Customer');
-    this.state.columns = [
-      {
-        key: 'code',
-        width: 1,
-        title: tableStrings.code,
-        sortable: true,
-      },
-      {
-        key: 'name',
-        width: 5,
-        title: tableStrings.name,
-        sortable: true,
-      },
-      {
-        key: 'numberOfTransactions',
-        width: 1,
-        title: tableStrings.invoices,
-        alignText: 'right',
-        sortable: true,
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.onRowPress = this.onRowPress.bind(this);
+    this.state = {
+      customers: props.database.objects('Customer'),
+    };
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'name',
+      isAscending: true,
+    };
+    autobind(this);
   }
 
   onRowPress(customer) {
@@ -58,10 +40,19 @@ export class CustomersPage extends GenericPage {
     );
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.state.customers.filtered(
       'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
       searchTerm
@@ -75,7 +66,7 @@ export class CustomersPage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
   renderCell(key, customer) {
@@ -89,10 +80,48 @@ export class CustomersPage extends GenericPage {
         return customer.numberOfTransactions;
     }
   }
+
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        onRowPress={this.onRowPress}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'code',
+            width: 1,
+            title: tableStrings.code,
+            sortable: true,
+          },
+          {
+            key: 'name',
+            width: 5,
+            title: tableStrings.name,
+            sortable: true,
+          },
+          {
+            key: 'numberOfTransactions',
+            width: 1,
+            title: tableStrings.invoices,
+            alignText: 'right',
+            sortable: true,
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+      />
+    );
+  }
 }
 
 CustomersPage.propTypes = {
   database: PropTypes.object,
+  genericTablePageStyles: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
 };
