@@ -131,6 +131,7 @@ export class Transaction extends Realm.Object {
   removeTransactionBatchesById(database, transactionBatchIds) {
     if (this.isFinalised) throw new Error('Cannot modify finalised transaction');
     if (!this.isValid()) return;
+
     const transactionBatches = this.getTransactionBatches(database);
     transactionBatchIds.forEach(transactionBatchId => {
       const transactionBatch = transactionBatches.find(matchTransactionBatch =>
@@ -156,9 +157,9 @@ export class Transaction extends Realm.Object {
     const transactionBatchesIds =
       this.getTransactionBatches(database).map(transactionBatch => transactionBatch.id);
 
-    this.removeTransactionBatchesById(transactionBatchesIds);
+    this.removeTransactionBatchesById(database, transactionBatchesIds);
 
-    database.delete(this);
+    database.delete('Transaction', this);
   }
 
   /**
@@ -254,7 +255,8 @@ export class Transaction extends Realm.Object {
     const isIncomingInvoice = this.isIncoming;
     const isExternalSupplierInvoice = this.isExternalSupplierInvoice;
 
-    (isExternalSupplierInvoice ? this.pruneRedundantBatches : this.pruneRedundantItems)(database);
+    if (isExternalSupplierInvoice) this.pruneRedundantBatches(database);
+    else this.pruneRedundantItems(database);
 
     this.getTransactionBatches(database).forEach(transactionBatch => {
       const { itemBatch,
@@ -298,6 +300,7 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   finalise(database) {
+    console.log('do we get here1 ?', this);
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
     if (!this.isConfirmed) this.confirm(database);
     this.status = 'finalised';
