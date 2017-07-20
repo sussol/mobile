@@ -36,26 +36,7 @@ const MODAL_KEYS = {
   ITEM_SELECT: 'itemSelect',
 };
 
-const stringRenderCellWrapper = (value) => ({ cellContents: String(value) });
-const floatRenderCellWrapper = (value) => ({
-  cellContents: String(value ? parsePositiveFloat(value).toFixed(2) : '0.00'),
-});
-const defaultRenderCellWrapper = (value) => ({ cellContents: String(value) });
-
-const renderCellMapping = {
-  packSize: stringRenderCellWrapper,
-  numberOfPacks: stringRenderCellWrapper,
-  costPrice: floatRenderCellWrapper,
-  batch: (value) => ({
-    cellContents: value,
-    keyboardType: 'default',
-  }),
-  expiryDate: (value) => ({
-    cellContents: formatExpiryDate(value) || 'month/year',
-  }),
-};
-
-const sortByDataTypeMapping = {
+const SORT_DATA_TYPES = {
   itemName: 'string',
   itemCode: 'string',
   batch: 'string',
@@ -139,17 +120,11 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
     const { database, transaction } = this.props;
     const transactionBatches = transaction.getTransactionBatches(database)
-      .filtered('itemName BEGINSWITH[c] $0', searchTerm);
+                                          .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
-    // Check to see if there are TransactionBatches in this transaction
-    if (transactionBatches.length === 0) {
-      this.setState({ totalPrice: 0 });
-      return [];
-    }
+    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
 
-    const sortDataType = sortByDataTypeMapping[sortBy] || 'realm';
-
-    // calculate and set total price
+    // Calculate and set total price
     const transactionPrice = transactionBatches.reduce(
       (sum, transactionBatch) =>
         sum + transactionBatch.costPrice
@@ -178,8 +153,8 @@ export class ExternalSupplierInvoicePage extends GenericPage {
           transactionBatch.costPrice = parsePositiveFloat(newValue);
           break;
         case 'packSize': {
-          const tempPackSize = parsePositiveInteger(newValue);
-          transactionBatch.packSize = tempPackSize !== 0 ? tempPackSize : 1;
+          const packSize = parsePositiveInteger(newValue);
+          transactionBatch.packSize = packSize || 1; // Don't allow pack size of 0
           break;
         }
         case 'batch':
@@ -266,24 +241,34 @@ export class ExternalSupplierInvoicePage extends GenericPage {
   }
 
   renderCell(key, transactionBatch) {
-    if (key === 'remove') {
-      return {
-        type: 'checkable',
-        icon: 'md-remove-circle',
-        isDisabled: this.props.transaction.isFinalised,
-      };
-    }
-
     const isEditable = !this.props.transaction.isFinalised;
     const type = isEditable ? 'editable' : 'text';
-
-    const renderCellGenerator =
-      renderCellMapping[key] || defaultRenderCellWrapper;
-
-    return {
-      type,
-      ...renderCellGenerator(transactionBatch[key]),
+    const renderedCell = {
+      type: type,
+      cellContents: String(transactionBatch[key]),
     };
+    switch (key) {
+      default:
+        return renderedCell;
+      case 'batch': {
+        return {
+          ...renderedCell,
+          keyboardType: 'default',
+        };
+      }
+      case 'expiryDate': {
+        return {
+          type: type,
+          cellContents: formatExpiryDate(transactionBatch.expiryDate) || 'month/year',
+        };
+      }
+      case 'remove':
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+          isDisabled: this.props.transaction.isFinalised,
+        };
+    }
   }
 
   addNewLine(item) {
@@ -367,6 +352,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
         );
     }
   }
+
   render() {
     return (
       <View style={globalStyles.pageContentContainer}>
@@ -405,6 +391,7 @@ export class ExternalSupplierInvoicePage extends GenericPage {
     );
   }
 }
+
 export function checkForFinaliseError(transaction) {
   if (transaction.items.length === 0) {
     return modalStrings.add_at_least_one_item_before_finalising;

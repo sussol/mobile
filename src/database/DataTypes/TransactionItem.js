@@ -86,37 +86,6 @@ export class TransactionItem extends Realm.Object {
     // See if any batches can be pruned, i.e. have 0 quantity for this invoice
     this.pruneEmptyBatches(database);
   }
-  /**
-   * Sets batch price for external supplier invoice, having one Batch per
-   * TransactionLine
-   * @param {double}price
-   */
-  setBatchCostPrice(database, price) {
-    const transactionBatch = this.batches[0];
-    transactionBatch.costPrice = price;
-    database.save('TransactionBatch', transactionBatch);
-  }
-  /**
-   * Sets Batch name for external supplier invoice, having one Batch per
-   * TransactionLine
-   * @param {string}quantity
-   */
-  setBatchName(database, name) {
-    const transactionBatch = this.batches[0];
-    transactionBatch.batch = name;
-    database.save('TransactionBatch', transactionBatch);
-  }
-
-  /**
-   * Sets Batch expiry for external supplier invoice, having one Batch per
-   * TransactionLine
-   * @param {date}date
-   */
-  setBatchExpiry(database, date) {
-    const transactionBatch = this.batches[0];
-    transactionBatch.expiryDate = date;
-    database.save('TransactionBatch', transactionBatch);
-  }
 
   /**
    * Applies the given difference in quantity to the appropriate batches. If the difference

@@ -15,6 +15,7 @@ export class Transaction extends Realm.Object {
   }
 
   destructor(database) {
+    if (this.isFinalised) throw new Error('Cannot delete finalised transaction');
     if (this.isCustomerInvoice) {
       reuseSerialNumber(database, SERIAL_NUMBER_KEYS.CUSTOMER_INVOICE, this.serialNumber);
     }
@@ -22,7 +23,7 @@ export class Transaction extends Realm.Object {
   }
   // Is external supplier invoice
   get isExternalSupplierInvoice() {
-    return this.otherParty.type === 'facility';
+    return this.otherParty.type === 'facility'; // TODO check if this is right
   }
 
   get isFinalised() {
@@ -120,46 +121,23 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Remove transaction batches with given ids from this transaction
-   * Also, remove ItemBatch associated  with TransactionBatch if this transaction
-   * is external supplier invoice, and remove all TransactionItems from transaction
-   * that don't have TransactionBatch
+   * Remove transaction batches with given ids from this transaction, then prune any
+   * TransactionItems that are emptied entirely of batches
    * @param  {Realm}  database  App wide local database
    * @param  {array}  transactionBatchIds The ids of transactionBatches to remove
    * @return {none}
    */
   removeTransactionBatchesById(database, transactionBatchIds) {
     if (this.isFinalised) throw new Error('Cannot modify finalised transaction');
-    if (!this.isValid()) return;
-
     const transactionBatches = this.getTransactionBatches(database);
+    const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
       const transactionBatch = transactionBatches.find(matchTransactionBatch =>
                                   matchTransactionBatch.id === transactionBatchId);
-      // Can only safe remove ItemBatch if it's been created by ExternalSupplierInvoice
-      if (this.isExternalSupplierInvoice) database.delete('ItemBatch', transactionBatch.itemBatch);
-      database.delete('TransactionBatch', transactionBatch);
+      transactionBatchesToDelete.push(transactionBatch);
     });
-
+    database.delete('TransactionBatch', transactionBatchesToDelete);
     this.pruneBatchlessTransactionItems(database);
-  }
-
-  /**
-   * Removes this transaction and associated TransactionBatches and TransactionItems
-   * Also, removes ItemBatches associated  with transaction if transaction
-   * is external supplier invoice
-   * @param  {Realm}  database  App wide local database
-   * @return {none}
-   */
-  removeSelf(database) {
-    if (this.isFinalised) throw new Error('Cannot delete finalised transaction');
-    if (!this.isValid()) return;
-    const transactionBatchesIds =
-      this.getTransactionBatches(database).map(transactionBatch => transactionBatch.id);
-
-    this.removeTransactionBatchesById(database, transactionBatchesIds);
-
-    database.delete('Transaction', this);
   }
 
   /**
@@ -192,14 +170,11 @@ export class Transaction extends Realm.Object {
    */
   pruneRedundantItems(database) {
     const itemsToPrune = [];
-    const transactionBatchesToPrune = [];
     this.items.forEach(transactionItem => {
       if (transactionItem.totalQuantity === 0) {
         itemsToPrune.push(transactionItem);
-        transactionBatchesToPrune.concat(transactionItem.batches);
       }
     });
-    database.delete('TransactionBatch', transactionBatchesToPrune);
     database.delete('TransactionItem', itemsToPrune);
   }
 
@@ -267,24 +242,21 @@ export class Transaction extends Realm.Object {
               costPrice,
               sellPrice,
              } = transactionBatch;
-      // Adjusted in this case means with pack size of 1
-      let adjustedNumberOfPacks = numberOfPacks;
-      let adjustedCostPrice = costPrice;
 
-      if (isExternalSupplierInvoice) {
-        adjustedNumberOfPacks = numberOfPacks * packSize;
-        adjustedCostPrice = costPrice / packSize;
-      }
+      // Pack to one all transactions in mobile, so multiply by packSize to get quantity and price
+      const packedToOneQuantity = numberOfPacks * packSize;
+      const packedToOneCostPrice = costPrice / packSize;
+      const packedToOneSellPrice = sellPrice / packSize;
 
       const newNumberOfPacks = isIncomingInvoice
-          ? itemBatch.numberOfPacks + adjustedNumberOfPacks
-          : itemBatch.numberOfPacks - adjustedNumberOfPacks;
+          ? itemBatch.numberOfPacks + packedToOneQuantity
+          : itemBatch.numberOfPacks - packedToOneQuantity;
       itemBatch.packSize = 1;
       itemBatch.numberOfPacks = newNumberOfPacks;
       itemBatch.expiryDate = expiryDate;
       itemBatch.batch = batch;
-      itemBatch.costPrice = adjustedCostPrice;
-      itemBatch.sellPrice = sellPrice;
+      itemBatch.costPrice = packedToOneCostPrice;
+      itemBatch.sellPrice = packedToOneSellPrice;
       database.save('ItemBatch', itemBatch);
     });
 
