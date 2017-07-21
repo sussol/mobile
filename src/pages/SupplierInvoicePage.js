@@ -157,6 +157,7 @@ export class SupplierInvoicePage extends React.Component {
         finalisableDataType={'Transaction'}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       />
     );
   }
@@ -165,5 +166,6 @@ export class SupplierInvoicePage extends React.Component {
 SupplierInvoicePage.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   transaction: PropTypes.object,
 };

@@ -405,6 +405,7 @@ export class ExternalSupplierInvoicePage extends React.Component {
         finalisableDataType={'Transaction'}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
@@ -437,5 +438,6 @@ export function checkForFinaliseError(transaction) {
 ExternalSupplierInvoicePage.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   transaction: PropTypes.object,
 };

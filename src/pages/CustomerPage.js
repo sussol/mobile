@@ -192,6 +192,7 @@ export class CustomerPage extends React.Component {
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       />
     );
   }
@@ -202,5 +203,6 @@ CustomerPage.propTypes = {
   customer: PropTypes.object.isRequired,
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
 };
