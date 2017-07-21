@@ -85,10 +85,7 @@ export class SupplierInvoicesPage extends React.Component {
         this.props.database.save('Transaction', invoice);
       });
     }
-    const navigationKey = invoice.isExternalSupplierInvoice ?
-                          'externalSupplierInvoice' :
-                          'supplierInvoice';
-    this.props.navigateTo(navigationKey, `${navStrings.invoice} ${invoice.serialNumber}`, {
+    this.props.navigateTo('supplierInvoice', `${navStrings.invoice} ${invoice.serialNumber}`, {
       transaction: invoice,
     });
   }
@@ -199,7 +196,7 @@ export class SupplierInvoicesPage extends React.Component {
         />
         <SelectModal
           isOpen={this.state.isCreatingInvoice}
-          options={this.props.database.objects('Supplier')}
+          options={this.props.database.objects('ExternalSupplier')}
           placeholderText={modalStrings.start_typing_to_select_supplier}
           queryString={'name BEGINSWITH[c] $0'}
           sortByString={'name'}
