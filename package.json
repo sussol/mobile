@@ -50,7 +50,7 @@
     "react-native-autocomplete-input": "^3.3.1",
     "react-native-data-table": "^0.1.3",
     "react-native-database": "^0.2.0",
-    "react-native-generic-table-page": "edmofro/react-native-generic-table-page",
+    "react-native-generic-table-page": "^0.2.0",
     "react-native-localization": "^0.1.30",
     "react-native-modalbox": "^1.4.1",
     "react-native-ui-components": "^0.3.2",
