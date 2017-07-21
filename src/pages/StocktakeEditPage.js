@@ -168,6 +168,7 @@ export class StocktakeEditPage extends React.Component {
         finalisableDataType={'Stocktake'}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       />
     );
   }
@@ -176,6 +177,7 @@ export class StocktakeEditPage extends React.Component {
 StocktakeEditPage.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   stocktake: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
 };

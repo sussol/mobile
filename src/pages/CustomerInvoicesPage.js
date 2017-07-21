@@ -211,6 +211,7 @@ export class CustomerInvoicesPage extends React.Component {
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0}
@@ -243,4 +244,5 @@ CustomerInvoicesPage.propTypes = {
   navigateTo: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
 };

@@ -192,6 +192,7 @@ export class StocktakesPage extends React.Component {
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0 && this.state.showCurrent}
@@ -208,5 +209,6 @@ export class StocktakesPage extends React.Component {
 StocktakesPage.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
 };

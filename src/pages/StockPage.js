@@ -118,6 +118,7 @@ export class StockPage extends React.Component {
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       />
     );
   }
@@ -126,5 +127,6 @@ export class StockPage extends React.Component {
 StockPage.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
 };

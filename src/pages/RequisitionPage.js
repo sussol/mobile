@@ -400,6 +400,7 @@ export class RequisitionPage extends React.Component {
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
@@ -423,6 +424,7 @@ export class RequisitionPage extends React.Component {
 RequisitionPage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,
   settings: PropTypes.object.isRequired,

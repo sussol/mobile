@@ -344,6 +344,7 @@ export class CustomerInvoicePage extends GenericPage {
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
@@ -367,6 +368,7 @@ export class CustomerInvoicePage extends GenericPage {
 CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   transaction: PropTypes.object.isRequired,
 };
 
