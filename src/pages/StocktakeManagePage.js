@@ -229,6 +229,7 @@ export class StocktakeManagePage extends React.Component {
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
         <BottomModal
           isOpen={!(stocktake && stocktake.isFinalised) && (this.state.selection.length > 0)}
@@ -258,6 +259,7 @@ export class StocktakeManagePage extends React.Component {
 StocktakeManagePage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   stocktake: PropTypes.object,
   database: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
