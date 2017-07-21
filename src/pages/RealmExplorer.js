@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
 } from 'react-native';
@@ -162,5 +163,5 @@ export class RealmExplorer extends React.Component {
 }
 
 RealmExplorer.propTypes = {
-  database: React.PropTypes.object.isRequired,
+  database: PropTypes.object.isRequired,
 };

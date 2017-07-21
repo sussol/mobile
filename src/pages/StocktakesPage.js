@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
@@ -178,7 +179,6 @@ export class StocktakesPage extends GenericPage {
 }
 
 StocktakesPage.propTypes = {
-  database: React.PropTypes.object,
-  navigateTo: React.PropTypes.func.isRequired,
+  database: PropTypes.object,
+  navigateTo: PropTypes.func.isRequired,
 };
-

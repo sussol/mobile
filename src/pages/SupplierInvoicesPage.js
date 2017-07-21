@@ -9,6 +9,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
 import globalStyles from '../globalStyles';
+import PropTypes from 'prop-types';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
@@ -197,6 +198,6 @@ export class SupplierInvoicesPage extends GenericPage {
 }
 
 SupplierInvoicesPage.propTypes = {
-  database: React.PropTypes.object,
-  navigateTo: React.PropTypes.func.isRequired,
+  database: PropTypes.object,
+  navigateTo: PropTypes.func.isRequired,
 };

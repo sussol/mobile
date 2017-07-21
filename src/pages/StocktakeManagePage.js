@@ -7,6 +7,7 @@
 
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   StyleSheet,
   View,
@@ -104,7 +105,7 @@ export class StocktakeManagePage extends GenericPage {
         stocktake.name,
         { stocktake: stocktake },
         // Coming from StocktakesPage : coming from StocktakeEditPage.
-        !this.props.stocktake ? 'replace' : 'replacePreviousAndPop',
+        !this.props.stocktake ? 'replace' : 'goBack',
       );
     });
   }
@@ -236,10 +237,10 @@ export class StocktakeManagePage extends GenericPage {
 }
 
 StocktakeManagePage.propTypes = {
-  currentUser: React.PropTypes.object.isRequired,
-  stocktake: React.PropTypes.object,
-  database: React.PropTypes.object.isRequired,
-  navigateTo: React.PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  stocktake: PropTypes.object,
+  database: PropTypes.object.isRequired,
+  navigateTo: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({

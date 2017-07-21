@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Image,
   StyleSheet,
@@ -124,9 +125,11 @@ export class LoginModal extends React.Component {
               style={globalStyles.authFormLogo}
               source={require('../../images/logo_large.png')}
             />
-            <Text style={globalStyles.authFormTextInputStyle}>
-              {this.props.settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
-            </Text>
+            <View style={globalStyles.horizontalContainer}>
+              <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
+                {this.props.settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
+              </Text>
+            </View>
             <View style={globalStyles.horizontalContainer}>
               <TextInput
                 style={globalStyles.authFormTextInputStyle}
@@ -203,10 +206,10 @@ export class LoginModal extends React.Component {
 }
 
 LoginModal.propTypes = {
-  authenticator: React.PropTypes.object.isRequired,
-  isAuthenticated: React.PropTypes.bool.isRequired,
-  onAuthentication: React.PropTypes.func.isRequired,
-  settings: React.PropTypes.object.isRequired,
+  authenticator: PropTypes.object.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+  onAuthentication: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
 };
 LoginModal.defaultProps = {
   style: {},
@@ -216,5 +219,8 @@ LoginModal.defaultProps = {
 const localStyles = StyleSheet.create({
   bottomIcon: {
     color: GREY,
+  },
+  syncSiteName: {
+    textAlign: 'center',
   },
 });

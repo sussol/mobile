@@ -6,6 +6,8 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
+import { SearchBar } from 'react-native-ui-components';
 import {
   StyleSheet,
   Text,
@@ -46,7 +48,7 @@ export class AutocompleteSelector extends React.Component {
       renderRightText,
     } = this.props;
 
-    let data = options.filtered(queryString, this.state.queryText).sorted(sortByString);
+    let data = options.filtered(queryString, this.state.queryText).sorted(sortByString).slice();
     if (queryStringSecondary) {
       const secondQueryResult = options.filtered(queryStringSecondary, this.state.queryText)
                                         .sorted(sortByString);
@@ -54,18 +56,30 @@ export class AutocompleteSelector extends React.Component {
       const secondaryData = complement(secondQueryResult, data);
 
       // Append secondary results to the first query results
-      data = data.slice().concat(secondaryData);
+      data = data.concat(secondaryData);
     }
 
     return (
       <Autocomplete
         style={localStyles.text}
+        inputContainerStyle={localStyles.inputContainer}
         autoFocus
         autoCapitalize="none"
         autoCorrect={false}
         data={data}
         onChangeText={text => this.setState({ queryText: text })}
         placeholder={placeholderText}
+        renderTextInput={(textInputProps) => {
+          const { onEndEditing, ...restOfProps } = textInputProps;
+          return (
+            <SearchBar
+              {...restOfProps}
+              color={'white'}
+              onChange={onEndEditing}
+              placeholderTextColor={'white'}
+              style={[localStyles.text, localStyles.searchBar]}
+            />);
+        }}
         renderItem={(item) => (
           <TouchableOpacity style={localStyles.resultContainer} onPress={() => onSelect(item)}>
             <Text style={[localStyles.text, localStyles.itemText]}>
@@ -82,14 +96,14 @@ export class AutocompleteSelector extends React.Component {
 }
 
 AutocompleteSelector.propTypes = {
-  options: React.PropTypes.object.isRequired,
-  queryString: React.PropTypes.string.isRequired,
-  queryStringSecondary: React.PropTypes.string,
-  sortByString: React.PropTypes.string.isRequired,
-  placeholderText: React.PropTypes.string,
-  onSelect: React.PropTypes.func.isRequired,
-  renderLeftText: React.PropTypes.func,
-  renderRightText: React.PropTypes.func,
+  options: PropTypes.object.isRequired,
+  queryString: PropTypes.string.isRequired,
+  queryStringSecondary: PropTypes.string,
+  sortByString: PropTypes.string.isRequired,
+  placeholderText: PropTypes.string,
+  onSelect: PropTypes.func.isRequired,
+  renderLeftText: PropTypes.func,
+  renderRightText: PropTypes.func,
 };
 AutocompleteSelector.defaultProps = {
   placeholderText: 'Start typing to search',
@@ -100,8 +114,16 @@ const localStyles = StyleSheet.create({
     fontSize: 20,
     fontFamily: APP_FONT_FAMILY,
   },
+  searchBar: {
+    color: 'white',
+    flex: 1,
+  },
+  inputContainer: {
+    borderWidth: 0,
+  },
   itemText: {
-    margin: 2,
+    marginHorizontal: 2,
+    marginVertical: 8,
   },
   resultContainer: {
     flexDirection: 'row',

@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Dimensions,
   StyleSheet,
@@ -70,11 +71,11 @@ export class PageContentModal extends React.Component {
 }
 
 PageContentModal.propTypes = {
-  children: React.PropTypes.element,
-  isOpen: React.PropTypes.bool.isRequired,
-  onClose: React.PropTypes.func,
+  children: PropTypes.element,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func,
   style: View.propTypes.style,
-  title: React.PropTypes.string,
+  title: PropTypes.string,
 };
 PageContentModal.defaultProps = {
   style: {},

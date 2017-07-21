@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { GenericPage } from './GenericPage';
 import { sortDataBy } from '../utilities';
 import { tableStrings } from '../localization';
@@ -91,7 +92,7 @@ export class CustomersPage extends GenericPage {
 }
 
 CustomersPage.propTypes = {
-  database: React.PropTypes.object,
-  navigateTo: React.PropTypes.func.isRequired,
-  settings: React.PropTypes.object.isRequired,
+  database: PropTypes.object,
+  navigateTo: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
 };

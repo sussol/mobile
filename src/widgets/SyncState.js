@@ -1,4 +1,10 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
   StyleSheet,
@@ -44,10 +50,10 @@ export function SyncState(props) {
 }
 
 SyncState.propTypes = {
-  isSyncing: React.PropTypes.bool.isRequired,
-  syncError: React.PropTypes.string,
-  settings: React.PropTypes.object,
-  showText: React.PropTypes.bool,
+  isSyncing: PropTypes.bool.isRequired,
+  syncError: PropTypes.string,
+  settings: PropTypes.object,
+  showText: PropTypes.bool,
   style: View.propTypes.style,
 };
 SyncState.defaultProps = {

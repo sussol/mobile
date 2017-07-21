@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ToggleBar } from './ToggleBar';
 import globalStyles from '../globalStyles';
 
@@ -37,7 +38,7 @@ export function ToggleSelector(props) {
 }
 
 ToggleSelector.propTypes = {
-  selected: React.PropTypes.number.isRequired,
-  onSelect: React.PropTypes.func,
-  options: React.PropTypes.array.isRequired,
+  selected: PropTypes.number.isRequired,
+  onSelect: PropTypes.func,
+  options: PropTypes.array.isRequired,
 };

@@ -1,37 +1,39 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
+  BackHandler,
   Image,
-  TextInput,
+  Text,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
+import { connect } from 'react-redux';
+import { addNavigationHelpers } from 'react-navigation';
 
 import globalStyles, {
   dataTableColors,
   dataTableStyles,
   pageStyles,
-  BACKGROUND_COLOR,
+  textStyles,
   SUSSOL_ORANGE,
 } from './globalStyles';
 
-import Navigator from 'react-native-app-navigator';
-import { Spinner } from './widgets/Spinner';
-import { PAGES, FINALISABLE_PAGES } from './pages';
+import { Navigator, getCurrentParams, getCurrentRouteName } from './navigation';
+import { FirstUsePage, FINALISABLE_PAGES } from './pages';
 
 import {
   FinaliseButton,
   FinaliseModal,
   LoginModal,
+  NavigationBar,
   SyncState,
+  Spinner,
 } from './widgets';
 
 import { migrateDataToVersion } from './dataMigration';
@@ -44,7 +46,7 @@ import { MobileAppSettings } from './settings';
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
-export default class mSupplyMobileApp extends React.Component {
+class MSupplyMobileAppContainer extends React.Component {
 
   constructor() {
     super();
@@ -64,7 +66,6 @@ export default class mSupplyMobileApp extends React.Component {
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
-      finaliseItem: null,
       isLoading: false,
     };
   }
@@ -77,9 +78,11 @@ export default class mSupplyMobileApp extends React.Component {
     this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
     this.renderLoadingIndicator = this.renderLoadingIndicator.bind(this);
     this.renderLogo = this.renderLogo.bind(this);
-    this.renderScene = this.renderScene.bind(this);
     this.renderSyncState = this.renderSyncState.bind(this);
     this.synchronise = this.synchronise.bind(this);
+    this.handleBackEvent = this.handleBackEvent.bind(this);
+    this.getCanNavigateBack = this.getCanNavigateBack.bind(this);
+    this.renderPageTitle = this.renderPageTitle.bind(this);
     this.scheduler.schedule(this.synchronise,
                             SYNC_INTERVAL);
     this.scheduler.schedule(() => {
@@ -89,7 +92,12 @@ export default class mSupplyMobileApp extends React.Component {
     }, AUTHENTICATION_INTERVAL);
   }
 
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  }
+
   componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
     this.scheduler.clearAll();
   }
 
@@ -99,6 +107,19 @@ export default class mSupplyMobileApp extends React.Component {
 
   onInitialised() {
     this.setState({ initialised: true });
+  }
+
+  getCanNavigateBack() {
+    const { navigationState } = this.props;
+    return navigationState.index !== 0;
+  }
+
+  handleBackEvent() {
+    const { navigation } = this.navigator.props;
+    // If we are on base screen (e.g. home), back button should close app as we can't go back
+    if (!this.getCanNavigateBack()) BackHandler.exitApp();
+    else navigation.goBack();
+    return true;
   }
 
   async runWithLoadingIndicator(functionToRun) {
@@ -138,7 +159,7 @@ export default class mSupplyMobileApp extends React.Component {
   renderFinaliseButton() {
     return (
       <FinaliseButton
-        isFinalised={this.state.finaliseItem.record.isFinalised}
+        isFinalised={this.props.finaliseItem.record.isFinalised}
         onPress={() => this.setState({ confirmFinalise: true })}
       />);
   }
@@ -164,41 +185,8 @@ export default class mSupplyMobileApp extends React.Component {
       </View>);
   }
 
-  renderScene(route, onNavigate) {
-    const navigateTo = (key, title, extraProps, navType) => {
-      dismissKeyboard();
-      if (!navType) navType = 'push';
-      const navigationProps = { key, title, ...extraProps };
-      // If the page we're going to has a key value pair in FINALISABLE_PAGES, get the finaliseItem
-      // details corresponding to that key. Set the new state and render the finalise Button
-      if (FINALISABLE_PAGES[key]) {
-        const { recordToFinaliseKey, ...finaliseItem } = FINALISABLE_PAGES[key];
-        finaliseItem.record = extraProps[recordToFinaliseKey];
-        this.setState({ finaliseItem: finaliseItem });
-        navigationProps.renderRightComponent = this.renderFinaliseButton;
-      }
-
-      // Now navigate to the page, passing on any extra props and the finalise button if required
-      onNavigate({ type: navType, ...navigationProps });
-    };
-    const { key, ...extraProps } = route;
-    const Page = PAGES[key]; // Get the page the navigation key relates to
-    // Return the requested page with any extra props passed to navigateTo in pageProps
-    return (
-      <Page
-        navigateTo={navigateTo}
-        database={this.database}
-        settings={this.settings}
-        logOut={this.logOut}
-        currentUser={this.state.currentUser}
-        runWithLoadingIndicator={this.runWithLoadingIndicator}
-        adminMode={this.state.isInAdminMode}
-        searchBarColor={SUSSOL_ORANGE}
-        dataTableStyles={dataTableStyles}
-        pageStyles={pageStyles}
-        colors={dataTableColors}
-        {...extraProps}
-      />);
+  renderPageTitle() {
+    return <Text style={textStyles}>{this.props.currentTitle}</Text>;
   }
 
   renderSyncState() {
@@ -219,7 +207,6 @@ export default class mSupplyMobileApp extends React.Component {
 
   render() {
     if (!this.state.initialised) {
-      const FirstUsePage = PAGES.firstUse;
       return (
         <FirstUsePage
           synchroniser={this.synchroniser}
@@ -227,24 +214,39 @@ export default class mSupplyMobileApp extends React.Component {
         />
       );
     }
+    const { finaliseItem, dispatch, navigationState } = this.props;
     return (
       <View style={globalStyles.appBackground}>
+        <NavigationBar
+          onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
+          LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
+          CentreComponent={this.renderLogo}
+          RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
+        />
         <Navigator
-          renderScene={this.renderScene}
-          renderCentreComponent={this.renderLogo}
-          renderRightComponent={this.renderSyncState}
-          navBarStyle={globalStyles.navBarStyle}
-          backgroundColor={BACKGROUND_COLOR}
-          headerViewProps={{
-            onStartShouldSetResponderCapture: () => TextInput.State.currentlyFocusedField() != null,
-            onResponderRelease: dismissKeyboard,
+          ref={(navigator) => { this.navigator = navigator; }}
+          navigation={addNavigationHelpers({
+            dispatch,
+            state: navigationState,
+          })}
+          screenProps={{
+            database: this.database,
+            settings: this.settings,
+            logOut: this.logOut,
+            currentUser: this.state.currentUser,
+            runWithLoadingIndicator: this.runWithLoadingIndicator,
+            isInAdminMode: this.state.isInAdminMode,
+            searchBarColor: SUSSOL_ORANGE,
+            dataTableStyles: dataTableStyles,
+            pageStyles: pageStyles,
+            colors: dataTableColors,
           }}
         />
         <FinaliseModal
           database={this.database}
           isOpen={this.state.confirmFinalise}
           onClose={() => this.setState({ confirmFinalise: false })}
-          finaliseItem={this.state.finaliseItem}
+          finaliseItem={finaliseItem}
           user={this.state.currentUser}
           runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
@@ -259,3 +261,24 @@ export default class mSupplyMobileApp extends React.Component {
     );
   }
 }
+
+MSupplyMobileAppContainer.propTypes = {
+  currentTitle: PropTypes.string,
+  dispatch: PropTypes.func.isRequired,
+  finaliseItem: PropTypes.object,
+  navigationState: PropTypes.object.isRequired,
+};
+
+function mapStateToProps({ navigation: navigationState }) {
+  const currentParams = getCurrentParams(navigationState);
+  const currentTitle = currentParams && currentParams.title;
+  const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
+  if (finaliseItem && currentParams) {
+    finaliseItem.record = currentParams[finaliseItem.recordToFinaliseKey];
+  }
+  return { currentTitle, finaliseItem, navigationState };
+}
+
+export const MSupplyMobileApp = connect(
+  mapStateToProps,
+)(MSupplyMobileAppContainer);
