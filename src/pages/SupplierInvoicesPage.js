@@ -90,13 +90,19 @@ export class SupplierInvoicesPage extends React.Component {
     });
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(searchTerm = this.searchTerm, sortBy = this.sortBy, isAscending = this.isAscending) {
-    this.searchTerm = searchTerm;
-    this.sortBy = sortBy;
-    this.isAscending = isAscending;
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
