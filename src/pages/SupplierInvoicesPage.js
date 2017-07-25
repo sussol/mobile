@@ -32,6 +32,11 @@ export class SupplierInvoicesPage extends React.Component {
       isCreatingInvoice: false,
       selection: [],
     };
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'entryDate',
+      isAscending: false,
+    };
     autobind(this);
   }
 
@@ -155,8 +160,8 @@ export class SupplierInvoicesPage extends React.Component {
         renderTopRightComponent={this.renderNewInvoiceButton}
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
-        defaultSortKey={'entryDate'}
-        defaultSortDirection={'descending'}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
         columns={[
           {
             key: 'serialNumber',
