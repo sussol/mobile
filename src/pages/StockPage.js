@@ -27,6 +27,11 @@ export class StockPage extends React.Component {
     this.state = {
       items: props.database.objects('Item'),
     };
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'name',
+      isAscending: true,
+    };
     autobind(this);
   }
 
@@ -99,7 +104,8 @@ export class StockPage extends React.Component {
         data={this.state.data}
         refreshData={this.refreshData}
         renderExpansion={this.renderExpansion}
-        defaultSortKey={'name'}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
         columns={[
           {
             key: 'code',
