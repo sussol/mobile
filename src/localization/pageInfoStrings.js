@@ -20,6 +20,7 @@ export const pageInfoStrings = new LocalizedStrings({
     their_ref: 'Their Ref',
   },
   gil: {
+    // TODO add: total_price, supplier
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -35,11 +36,11 @@ export const pageInfoStrings = new LocalizedStrings({
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
-    confirm_date: 'Konfirma Dadus',
+    confirm_date: 'Data Konfirmadu',
     customer: 'Kliente',
-    entered_by: 'Sé mak hatama',
-    entry_date: 'Dadus Hatama',
+    entered_by: 'Naran Hatama Dadus',
+    entry_date: 'Data Hatama',
     months_stock_required: 'Pedido ba fulan',
-    their_ref: 'Sira-nia referensia',
+    their_ref: 'Referensia',
   },
 });
