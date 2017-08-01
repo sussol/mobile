@@ -37,7 +37,7 @@ export const pageInfoStrings = new LocalizedStrings({
     comment: 'komentáriu',
     confirm_date: 'Data Konfirmadu',
     customer: 'Kliente',
-    entered_by: 'Naran Hatama Dadus',
+    entered_by: 'Naran Hatama\nDadus',
     entry_date: 'Data Hatama',
     months_stock_required: 'Pedido ba fulan',
     supplier: 'Distribuidor',
