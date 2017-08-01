@@ -81,7 +81,6 @@ export const modalStrings = new LocalizedStrings({
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
   tl: {
-    // add: stock_quantity_greater_then_zero, start_typing_to_select_supplier
     add_at_least_one_item_before_finalising: 'Tenke hatama item ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',
@@ -97,7 +96,8 @@ export const modalStrings = new LocalizedStrings({
     finalise_customer_invoice: "Finaliza sei xave permanente Invoice ne'e.",
     finalise_requisition: "Finaliza sei labele edit rekuizasaun ne'eno xave permanente.",
     finalise_stocktake: "Finaliza sei ajusta inventariu no xave permanente Invoice ne'e.",
-    finalise_supplier_invoice: "Finaliza sei ajusta inventariu no xave permanente Invoice ne'e.",
+    finalise_supplier_invoice:
+      "Finaliza sei ajusta inventariu no xave permanente ajustamentu ne'e.",
     following_items_reduced_more_than_available_stock:
       "Item tuir mai ne'e la bele hamenus nia kuantidade menus liu duke kuantidade Item atuál:",
     give_your_stocktake_a_name: 'Justifika naran ajustamentu',
@@ -111,6 +111,8 @@ export const modalStrings = new LocalizedStrings({
     remove: 'Hasai',
     search_for_an_item_to_add: 'Buka-hetan sasán atu hatama',
     search_for_the_customer: 'Buka-hetan kliente',
+    start_typing_to_select_supplier: "Hakerek iha ne'e atu selekta distribuidor",
+    stock_quantity_greater_then_zero: 'Kuantidade Disponivel tenki bot liu Zero antes finaliza',
     select_a_language: 'Hili lingua',
     select_the_number_of_months_stock_required: 'Hili numeru sira tuir pedidu',
     start_typing_to_select_customer: "Hakerek kliente nia naran iha ne'e",

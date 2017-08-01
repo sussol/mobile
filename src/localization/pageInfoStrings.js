@@ -32,7 +32,6 @@ export const pageInfoStrings = new LocalizedStrings({
     their_ref: 'Ana Ref',
   },
   tl: {
-    // TODO add: total_price, supplier
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
@@ -41,6 +40,8 @@ export const pageInfoStrings = new LocalizedStrings({
     entered_by: 'Naran Hatama Dadus',
     entry_date: 'Data Hatama',
     months_stock_required: 'Pedido ba fulan',
+    supplier: 'Distribuidor',
+    total_price: 'Presu Montante',
     their_ref: 'Referensia',
   },
 });
