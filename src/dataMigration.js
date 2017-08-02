@@ -37,7 +37,7 @@ export async function migrateDataToVersion(database, settings) {
     }
   }
   // Record the new app version
-//  AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
+  AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
 }
 
 // All data migration functions should be kept in this array, in sequential order. Each migration
@@ -53,7 +53,7 @@ const dataMigrations = [
     },
   },
   {
-    version: '1.2.1',
+    version: '1.2.0',
     migrate: (database, settings) => {
       const nameResults = database.objects('Name').filtered('id = $0',
                                 settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
