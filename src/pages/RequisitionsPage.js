@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 
 import { createRecord } from '../database';
-import { BottomConfirmModal, PageButton } from '../widgets';
+import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
@@ -31,6 +31,7 @@ export class RequisitionsPage extends React.Component {
     this.state = {
       selection: [],
       isRequestView: true,
+      isCreatingRequisition: false,
     };
     this.requisitions = props.database.objects('Requisition');
     this.dataFilters = {
@@ -64,10 +65,11 @@ export class RequisitionsPage extends React.Component {
     this.refreshData();
   }
 
-  onNewRequisition() {
+  onNewRequisition(supplyingStoreName) {
     let requisition;
     this.props.database.write(() => {
-      requisition = createRecord(this.props.database, 'Requisition', this.props.currentUser);
+      requisition = createRecord(this.props.database,
+                                'Requisition', this.props.currentUser, supplyingStoreName);
     });
     this.navigateToRequisition(requisition);
   }
@@ -81,7 +83,7 @@ export class RequisitionsPage extends React.Component {
   }
 
   toggleRequisitionViewType() {
-    this.setState({ isRequestView: !this.state.isRequestView });
+    this.setState({ isRequestView: !this.state.isRequestView }, this.refreshData);
   }
 
   navigateToRequisition(requisition) {
@@ -106,7 +108,10 @@ export class RequisitionsPage extends React.Component {
   refreshData(newSearchTerm, newSortBy, newIsAscending) {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
+    const type = this.state.isRequestView ? 'request' : 'response';
+    const data =
+        this.requisitions.filtered('serialNumber BEGINSWITH $0 AND type = $1',
+        searchTerm, type);
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
@@ -162,7 +167,9 @@ export class RequisitionsPage extends React.Component {
     return (
       <PageButton
         text={buttonStrings.new_requisition}
-        onPress={this.onNewRequisition}
+        onPress={() => {
+          this.setState({ isCreatingRequisition: true });
+        }}
       />
     );
   }
@@ -174,7 +181,7 @@ export class RequisitionsPage extends React.Component {
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderTopLeftComponent={this.renderRequisitionTypeToggle}
-        renderTopRightComponent={this.renderNewRequisitionButton}
+        renderTopRightComponent={this.state.isRequestView ? this.renderNewRequisitionButton : null}
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
@@ -224,6 +231,20 @@ export class RequisitionsPage extends React.Component {
           onCancel={() => this.onDeleteCancel()}
           onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.delete}
+        />
+        <SelectModal
+          isOpen={this.state.isCreatingRequisition}
+          options={this.props.database.objects('mSupplyStore')}
+          placeholderText={modalStrings.start_typing_to_select_supplier}
+          queryString={'name BEGINSWITH[c] $0'}
+          sortByString={'name'}
+          onSelect={name => {
+            this.setState({ isCreatingRequisition: false }, () => {
+              this.onNewRequisition(name);
+            });
+          }}
+          onClose={() => this.setState({ isCreatingRequisition: false })}
+          title={modalStrings.search_for_the_supplier}
         />
       </GenericPage>
     );
