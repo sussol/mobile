@@ -7,7 +7,7 @@ import { SyncQueue } from './SyncQueue';
 import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { integrateRecord } from './incomingSyncUtils';
-import { SETTINGS_KEYS, getAppVersion } from '../settings';
+import { SETTINGS_KEYS } from '../settings';
 import { formatDate } from '../utilities';
 const {
   SYNC_IS_INITIALISED,
@@ -17,6 +17,8 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
+const MIN_SERVER_VERSION = 380;
+const MAX_SERVER_VERSION = 382;
 const BATCH_SIZE = 20; // Number of records to sync at one time
 
 /**
@@ -122,30 +124,24 @@ export class Synchroniser {
    * - else reject the promise, server isn't handling this check at all and needs updating
    */
   async checkServerCompatibility() {
-    const appVersion = await getAppVersion();
     const serverURL = this.settings.get(SYNC_URL);
-    const response = await fetch(
-      `${serverURL}/sync/v2/compatibility?app=msupply_mobile&app_version=${appVersion}`,
-      {
-        headers: {
-          Authorization: this.authenticator.getAuthHeader(),
-        },
-      }
-    );
+    const response = await fetch(`${serverURL}/mobile/version`, {
+      headers: {
+        Authorization: this.authenticator.getAuthHeader(),
+      },
+    });
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to verify version compatibility.');
     }
-    const responseJson = await response.json();
-    if (typeof responseJson.compatible !== 'boolean') {
+    const responseJson = response.json();
+    try {
+      const version = parseInt(responseJson.version, 10);
+      if (version < MIN_SERVER_VERSION && version > MAX_SERVER_VERSION) {
+        throw new Error('App version not compatible with this server');
+      }
+    } catch (e) {
       // Likely server hasn't extended it's API to handle this method and needs updating
       throw new Error('Unexpected version verification response from server');
-    }
-    if (!responseJson.compatible && responseJson.error && responseJson.error.length > 0) {
-      // Server should provide compatible version number in this error
-      throw new Error(responseJson.error);
-    } else if (!responseJson.compatible) {
-      // If error wasn't sent but compatible was false
-      throw new Error('App version not compatible with this server');
     }
   }
 
