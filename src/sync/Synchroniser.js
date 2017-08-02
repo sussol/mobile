@@ -18,7 +18,6 @@ const {
 } = SETTINGS_KEYS;
 
 const MIN_SERVER_VERSION = 380;
-const MAX_SERVER_VERSION = 382;
 const BATCH_SIZE = 20; // Number of records to sync at one time
 
 /**
@@ -136,7 +135,7 @@ export class Synchroniser {
     const responseJson = response.json();
     try {
       const version = parseInt(responseJson.version, 10);
-      if (version < MIN_SERVER_VERSION && version > MAX_SERVER_VERSION) {
+      if (version < MIN_SERVER_VERSION) {
         throw new Error('App version not compatible with this server');
       }
     } catch (e) {
