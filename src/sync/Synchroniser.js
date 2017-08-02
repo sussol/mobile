@@ -17,6 +17,7 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
+const MIN_SERVER_VERSION = 380;
 const BATCH_SIZE = 20; // Number of records to sync at one time
 
 /**
@@ -28,7 +29,6 @@ const BATCH_SIZE = 20; // Number of records to sync at one time
  * @param  {Settings}          settings       Access to locally stored settings
  */
 export class Synchroniser {
-
   constructor(database, authenticator, settings) {
     this.database = new SyncDatabase(database);
     this.authenticator = authenticator;
@@ -57,25 +57,33 @@ export class Synchroniser {
     // serverURL is different, it is either completely fresh, or the URL has been changed so we
     // should start afresh
     const isFresh = serverURL !== this.serverURL;
-    if (isFresh) this.database.write(() => { this.database.deleteAll(); });
+    if (isFresh) {
+      this.database.write(() => {
+        this.database.deleteAll();
+      });
+    }
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
+      await this.checkServerCompatibility();
       const thisSiteId = this.settings.get(SYNC_SITE_ID);
       const serverId = this.settings.get(SYNC_SERVER_ID);
-      if (isFresh) { // If a fresh initialisation, tell the server to prepare required sync records
+      if (isFresh) {
+        // If a fresh initialisation, tell the server to prepare required sync records
         await fetch(
-          `${serverURL}/sync/v2/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
+          `${serverURL}/sync/v2/initial_dump?from_site=${thisSiteId}&to_site=${serverId}`,
           {
             headers: {
               Authorization: this.authenticator.getAuthHeader(),
             },
-          });
+          }
+        );
         // If the initial_dump has been successful, serverURL is valid, and should now have all sync
         // records queued and ready to send. Safe to store as this.serverURL
         this.serverURL = serverURL;
       }
       await this.pull(setProgress);
-    } catch (error) { // Did not authenticate, sync error, or no internet, pass error up
+    } catch (error) {
+      // Did not authenticate, sync error, or no internet, pass error up
       throw error;
     }
     this.settings.set(SYNC_IS_INITIALISED, 'true');
@@ -100,9 +108,40 @@ export class Synchroniser {
     if (!this.isInitialised()) throw new Error('Not yet initialised');
     // Using async/await here means that any errors thrown by push or pull
     // will be passed up as a rejection of the promise returned by synchronise
+    await this.checkServerCompatibility();
     await this.push();
     await this.pull();
     this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));
+  }
+
+  /**
+   * Send server app version and process response appropriately:
+   * - reponse.compatible === true should complete the promise happy :)
+   * - reponse.compatible === false should reject the promise sad :(
+   * -- In the above case, response.error should specify the highest compatible version number of
+   *    mobile
+   * - else reject the promise, server isn't handling this check at all and needs updating
+   */
+  async checkServerCompatibility() {
+    const serverURL = this.settings.get(SYNC_URL);
+    const response = await fetch(`${serverURL}/mobile/version`, {
+      headers: {
+        Authorization: this.authenticator.getAuthHeader(),
+      },
+    });
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error('Connection failure while attempting to verify version compatibility.');
+    }
+    const responseJson = response.json();
+    try {
+      const version = parseInt(responseJson.version, 10);
+      if (version < MIN_SERVER_VERSION) {
+        throw new Error('App version not compatible with this server');
+      }
+    } catch (e) {
+      // Likely server hasn't extended it's API to handle this method and needs updating
+      throw new Error('Unexpected version verification response from server');
+    }
   }
 
   /**
@@ -115,9 +154,9 @@ export class Synchroniser {
     let translatedRecords;
     while (this.syncQueue.length > 0) {
       recordsToSync = this.syncQueue.next(BATCH_SIZE);
-      translatedRecords = recordsToSync.map((record) => generateSyncJson(this.database,
-                                                                         this.settings,
-                                                                         record));
+      translatedRecords = recordsToSync.map(record =>
+        generateSyncJson(this.database, this.settings, record)
+      );
       await this.pushRecords(translatedRecords);
       this.syncQueue.use(recordsToSync);
     }
@@ -133,14 +172,15 @@ export class Synchroniser {
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${serverURL}/sync/v2/queued_records?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         method: 'POST',
         headers: {
           Authorization: this.authenticator.getAuthHeader(),
         },
         body: JSON.stringify(records),
-      });
+      }
+    );
     let responseJson;
     try {
       responseJson = await response.json();
@@ -173,19 +213,23 @@ export class Synchroniser {
    */
   async recursivePull(serverURL, thisSiteId, serverId, setProgress) {
     const authHeader = this.authenticator.getAuthHeader();
-    const waitingRecordCount = await this.getWaitingRecordCount(serverURL,
-                                                           thisSiteId,
-                                                           serverId,
-                                                           authHeader);
+    const waitingRecordCount = await this.getWaitingRecordCount(
+      serverURL,
+      thisSiteId,
+      serverId,
+      authHeader
+    );
     if (setProgress) setProgress(`${waitingRecordCount} records to go`);
     if (waitingRecordCount === 0) return; // Done recursing through records
 
     // Get a batch of records and integrate them
-    const incomingRecords = await this.getIncomingRecords(serverURL,
-                                                     thisSiteId,
-                                                     serverId,
-                                                     authHeader,
-                                                     BATCH_SIZE);
+    const incomingRecords = await this.getIncomingRecords(
+      serverURL,
+      thisSiteId,
+      serverId,
+      authHeader,
+      BATCH_SIZE
+    );
     this.integrateRecords(incomingRecords);
     await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
 
@@ -207,7 +251,8 @@ export class Synchroniser {
         headers: {
           Authorization: authHeader,
         },
-      });
+      }
+    );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to sync.');
     }
@@ -221,7 +266,7 @@ export class Synchroniser {
     return responseJson.NumRecords;
   }
 
-    /**
+  /**
    * Returns the next batch of incoming sync records
    * @param  {string}  serverURL  The URL of the sync server
    * @param  {string}  thisSiteId The sync ID of this sync site
@@ -231,13 +276,14 @@ export class Synchroniser {
    */
   async getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records`
-      + `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
+      `${serverURL}/sync/v2/queued_records` +
+        `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
       {
         headers: {
           Authorization: authHeader,
         },
-      });
+      }
+    );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while pulling sync records.');
     }
@@ -248,7 +294,6 @@ export class Synchroniser {
     return responseJson;
   }
 
-
   /**
    * Parse the batch of incoming records, and integrate them into the local database
    * @param  {Realm}  database The local database
@@ -257,7 +302,7 @@ export class Synchroniser {
    */
   integrateRecords(syncJson) {
     this.database.write(() => {
-      syncJson.forEach((syncRecord) => {
+      syncJson.forEach(syncRecord => {
         integrateRecord(this.database, this.settings, syncRecord);
       });
     });
@@ -273,7 +318,7 @@ export class Synchroniser {
    * @return {none}
    */
   async acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, records) {
-    const syncIds = records.map((record) => record.SyncID);
+    const syncIds = records.map(record => record.SyncID);
     const requestBody = {
       SyncRecordIDs: syncIds,
     };
@@ -285,7 +330,7 @@ export class Synchroniser {
           Authorization: authHeader,
         },
         body: JSON.stringify(requestBody),
-      });
+      }
+    );
   }
-
 }
