@@ -4,10 +4,16 @@ export class TransactionBatch extends Realm.Object {
 
   destructor(database) {
     this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item batches
+    // Can safely remove ItemBatch if transaction batch was created by an ExternalSupplierInvoice
+    if (this.transaction.isExternalSupplierInvoice) database.delete('ItemBatch', this.itemBatch);
   }
 
   get totalQuantity() {
     return this.numberOfPacks * this.packSize;
+  }
+
+  get itemCode() {
+    return this.itemBatch.item.code;
   }
 
   get usage() {

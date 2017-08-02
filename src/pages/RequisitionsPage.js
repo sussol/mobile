@@ -7,6 +7,7 @@
 
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { createRecord } from '../database';
@@ -183,7 +184,7 @@ export class RequisitionsPage extends GenericPage {
 }
 
 RequisitionsPage.propTypes = {
-  database: React.PropTypes.object.isRequired,
-  currentUser: React.PropTypes.object.isRequired,
-  navigateTo: React.PropTypes.func.isRequired,
+  database: PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  navigateTo: PropTypes.func.isRequired,
 };

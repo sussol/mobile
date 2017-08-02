@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Image,
   ListView,
@@ -106,9 +107,9 @@ export class LanguageModal extends React.Component {
 }
 
 LanguageModal.propTypes = {
-  isOpen: React.PropTypes.bool.isRequired,
-  onClose: React.PropTypes.func,
-  settings: React.PropTypes.object.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func,
+  settings: PropTypes.object.isRequired,
 };
 
 const localStyles = StyleSheet.create({

@@ -2,7 +2,6 @@ import Realm from 'realm';
 import {
   addBatchToParent,
   createRecord,
-  getAllBatchesInItems,
   getTotal,
   reuseNumber as reuseSerialNumber,
 } from '../utilities';
@@ -16,10 +15,15 @@ export class Transaction extends Realm.Object {
   }
 
   destructor(database) {
+    if (this.isFinalised) throw new Error('Cannot delete finalised transaction');
     if (this.isCustomerInvoice) {
       reuseSerialNumber(database, SERIAL_NUMBER_KEYS.CUSTOMER_INVOICE, this.serialNumber);
     }
     database.delete('TransactionItem', this.items);
+  }
+  // Is external supplier invoice
+  get isExternalSupplierInvoice() {
+    return this.otherParty.type === 'facility'; // TODO check if this is right
   }
 
   get isFinalised() {
@@ -48,10 +52,6 @@ export class Transaction extends Realm.Object {
 
   get isInventoryAdjustment() {
     return this.otherParty && this.otherParty.type === 'inventory_adjustment';
-  }
-
-  get batches() {
-    return getAllBatchesInItems(this.items);
   }
 
   get otherPartyName() {
@@ -94,19 +94,17 @@ export class Transaction extends Realm.Object {
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
     if (this.otherParty) {
-      this.otherParty.masterLists.forEach((masterList) => {
-        const itemsToAdd = complement(masterList.items,
-                                      this.items,
-                                      (item) => item.itemId);
+      this.otherParty.masterLists.forEach(masterList => {
+        const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
         itemsToAdd.forEach(masterListItem =>
-          createRecord(database, 'TransactionItem', this, masterListItem.item));
+          createRecord(database, 'TransactionItem', this, masterListItem.item)
+        );
       });
     }
   }
 
   /**
-   * Remove the transaction items with the given ids from this transaction, along with all the
-   * associated batches.
+   * Remove the transaction items with the given ids from this transaction
    * @param  {Realm}  database        App wide local database
    * @param  {array}  itemIds         The ids of transactionItems to remove
    * @return {none}
@@ -120,6 +118,36 @@ export class Transaction extends Realm.Object {
       }
     }
     database.delete('transactionItem', itemsToDelete);
+  }
+
+  /**
+   * Remove transaction batches with given ids from this transaction, then prune any
+   * TransactionItems that are emptied entirely of batches
+   * @param  {Realm}  database  App wide local database
+   * @param  {array}  transactionBatchIds The ids of transactionBatches to remove
+   * @return {none}
+   */
+  removeTransactionBatchesById(database, transactionBatchIds) {
+    if (this.isFinalised) throw new Error('Cannot modify finalised transaction');
+    const transactionBatches = this.getTransactionBatches(database);
+    const transactionBatchesToDelete = [];
+    transactionBatchIds.forEach(transactionBatchId => {
+      const transactionBatch = transactionBatches.find(matchTransactionBatch =>
+                                  matchTransactionBatch.id === transactionBatchId);
+      transactionBatchesToDelete.push(transactionBatch);
+    });
+    database.delete('TransactionBatch', transactionBatchesToDelete);
+    this.pruneBatchlessTransactionItems(database);
+  }
+
+  /**
+   * Remove the transaction item passed as param
+   * @param  {Realm}  database        App wide local database
+   * @param  {TransactionItem}  TransactionItem to remove
+   * @return {none}
+   */
+  removeTransactionItem(database, transactionItem) {
+    database.delete('TransactionItem', transactionItem);
   }
 
   /**
@@ -142,10 +170,52 @@ export class Transaction extends Realm.Object {
    */
   pruneRedundantItems(database) {
     const itemsToPrune = [];
-    this.items.forEach((transactionItem) => {
-      if (transactionItem.totalQuantity === 0) itemsToPrune.push(transactionItem);
+    this.items.forEach(transactionItem => {
+      if (transactionItem.totalQuantity === 0) {
+        itemsToPrune.push(transactionItem);
+      }
     });
     database.delete('TransactionItem', itemsToPrune);
+  }
+
+  /**
+   * Delete any items with no transactionBatches
+   * @param  {Realm} database   App wide local database
+   * @return {none}
+   */
+  pruneBatchlessTransactionItems(database) {
+    const itemsToRemove = [];
+    this.items.forEach(transactionItem => {
+      if (transactionItem.batches.length === 0) {
+        itemsToRemove.push(transactionItem);
+      }
+    });
+    database.delete('TransactionItem', itemsToRemove);
+  }
+
+  /**
+   * Delete any empty transactionBatches and transactionItems
+   * @param  {Realm} database   App wide local database
+   * @return {none}
+   */
+  pruneRedundantBatches(database) {
+    const batchesToRemove = this.getTransactionBatches(database)
+                              .filtered('numberOfPacks = 0');
+
+    database.delete('TransactionBatch', batchesToRemove);
+    this.pruneBatchlessTransactionItems(database);
+  }
+
+  /**
+   * Returns all transaction batches for this transaction, return collection
+   * is a realm collection so can be filtered
+   * @param  {Realm} database   App wide local database
+   * @return {RealmCollection} all transaction batches
+   */
+  getTransactionBatches(database) {
+    return database
+      .objects('TransactionBatch')
+      .filtered('transaction.id = $0', this.id);
   }
 
   /**
@@ -157,21 +227,39 @@ export class Transaction extends Realm.Object {
   confirm(database) {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
-    this.items.forEach((transactionItem) => {
-      transactionItem.batches.forEach((transactionBatch) => {
-        const itemBatch = transactionBatch.itemBatch;
-        const newNumberOfPacks = this.isIncoming ?
-          itemBatch.numberOfPacks + transactionBatch.numberOfPacks :
-          itemBatch.numberOfPacks - transactionBatch.numberOfPacks;
-        itemBatch.packSize = transactionBatch.packSize;
-        itemBatch.numberOfPacks = newNumberOfPacks;
-        itemBatch.expiryDate = transactionBatch.expiryDate;
-        itemBatch.batch = transactionBatch.batch;
-        itemBatch.costPrice = transactionBatch.costPrice;
-        itemBatch.sellPrice = transactionBatch.sellPrice;
-        database.save('ItemBatch', itemBatch);
-      });
+    const isIncomingInvoice = this.isIncoming;
+    const isExternalSupplierInvoice = this.isExternalSupplierInvoice;
+
+    if (isExternalSupplierInvoice) this.pruneRedundantBatches(database);
+    else this.pruneRedundantItems(database);
+
+    this.getTransactionBatches(database).forEach(transactionBatch => {
+      const { itemBatch,
+              batch,
+              packSize,
+              numberOfPacks,
+              expiryDate,
+              costPrice,
+              sellPrice,
+             } = transactionBatch;
+
+      // Pack to one all transactions in mobile, so multiply by packSize to get quantity and price
+      const packedToOneQuantity = numberOfPacks * packSize;
+      const packedToOneCostPrice = costPrice / packSize;
+      const packedToOneSellPrice = sellPrice / packSize;
+
+      const newNumberOfPacks = isIncomingInvoice
+          ? itemBatch.numberOfPacks + packedToOneQuantity
+          : itemBatch.numberOfPacks - packedToOneQuantity;
+      itemBatch.packSize = 1;
+      itemBatch.numberOfPacks = newNumberOfPacks;
+      itemBatch.expiryDate = expiryDate;
+      itemBatch.batch = batch;
+      itemBatch.costPrice = packedToOneCostPrice;
+      itemBatch.sellPrice = packedToOneSellPrice;
+      database.save('ItemBatch', itemBatch);
     });
+
     this.confirmDate = new Date();
     this.status = 'confirmed';
   }
@@ -185,8 +273,7 @@ export class Transaction extends Realm.Object {
    */
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
-    if (!this.isConfirmed) this.confirm(database); // Confirm first to adjust inventory
-    this.pruneRedundantItems(database);
+    if (!this.isConfirmed) this.confirm(database);
     this.status = 'finalised';
   }
 }

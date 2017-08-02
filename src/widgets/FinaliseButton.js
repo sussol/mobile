@@ -1,4 +1,10 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
   Platform,
@@ -44,8 +50,8 @@ export function FinaliseButton(props) {
 }
 
 FinaliseButton.propTypes = {
-  isFinalised: React.PropTypes.bool.isRequired,
-  onPress: React.PropTypes.func,
+  isFinalised: PropTypes.bool.isRequired,
+  onPress: PropTypes.func,
 };
 FinaliseButton.defaultProps = {
   isFinalised: false,

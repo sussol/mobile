@@ -7,6 +7,7 @@
 
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { PageButton } from '../widgets';
 import globalStyles from '../globalStyles';
@@ -159,9 +160,9 @@ export class StocktakeEditPage extends GenericPage {
 }
 
 StocktakeEditPage.propTypes = {
-  database: React.PropTypes.object,
-  stocktake: React.PropTypes.object.isRequired,
-  navigateTo: React.PropTypes.func.isRequired,
+  database: PropTypes.object,
+  stocktake: PropTypes.object.isRequired,
+  navigateTo: PropTypes.func.isRequired,
 };
 
 const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal

@@ -1,4 +1,10 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Image,
   StyleSheet,
@@ -171,8 +177,8 @@ export class FirstUsePage extends React.Component {
 }
 
 FirstUsePage.propTypes = {
-  onInitialised: React.PropTypes.func.isRequired,
-  synchroniser: React.PropTypes.object.isRequired,
+  onInitialised: PropTypes.func.isRequired,
+  synchroniser: PropTypes.object.isRequired,
 };
 
 const localStyles = StyleSheet.create({

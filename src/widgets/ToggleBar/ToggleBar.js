@@ -1,6 +1,10 @@
-import React, {
-  PropTypes,
-} from 'react';
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
+import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
   StyleSheet,
@@ -96,18 +100,12 @@ const localStyles = StyleSheet.create({
     height: 45,
     borderWidth: 1,
   },
-  textOffStyle: {
-  },
-  textOnStyle: {
-  },
   toggleOffStyle: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,
   },
   toggleOnStyle: {
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     width: 140,

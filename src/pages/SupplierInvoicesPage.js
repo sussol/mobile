@@ -6,9 +6,14 @@
  */
 
 import React from 'react';
+import { View } from 'react-native';
+import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
+import globalStyles from '../globalStyles';
+import PropTypes from 'prop-types';
 import { GenericPage } from './GenericPage';
+import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -23,9 +28,11 @@ export class SupplierInvoicesPage extends GenericPage {
     super(props);
     this.state.sortBy = 'entryDate';
     this.state.isAscending = false;
-    this.state.transactions = props.database.objects('Transaction')
-                                            .filtered('type == "supplier_invoice"')
-                                            .filtered('otherParty.type != "inventory_adjustment"');
+    this.state.isCreatingInvoice = false;
+    this.state.transactions = props.database
+      .objects('Transaction')
+      .filtered('type == "supplier_invoice"')
+      .filtered('otherParty.type != "inventory_adjustment"');
     this.state.columns = [
       {
         key: 'serialNumber',
@@ -50,10 +57,29 @@ export class SupplierInvoicesPage extends GenericPage {
         width: 3,
         title: tableStrings.comment,
       },
+      {
+        key: 'remove',
+        width: 1,
+        title: tableStrings.remove,
+        alignText: 'center',
+      },
     ];
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
+    this.onNewSupplierInvoice = this.onNewSupplierInvoice.bind(this);
     this.onRowPress = this.onRowPress.bind(this);
+  }
+
+  /**
+   * Create new Supplier Invoice and takes user to the editing SI page
+   */
+  onNewSupplierInvoice(otherParty) {
+    const { database, currentUser } = this.props;
+    let invoice;
+    database.write(() => {
+      invoice = createRecord(database, 'SupplierInvoice', otherParty, currentUser);
+    });
+    this.onRowPress(invoice);
   }
 
   onRowPress(invoice) {
@@ -68,9 +94,11 @@ export class SupplierInvoicesPage extends GenericPage {
         this.props.database.save('Transaction', invoice);
       });
     }
-    this.props.navigateTo('supplierInvoice',
-                          `${navStrings.invoice} ${invoice.serialNumber}`,
-                          { transaction: invoice });
+    const navigationPage = invoice.isExternalSupplierInvoice ?
+                          'externalSupplierInvoice' : 'supplierInvoice';
+    this.props.navigateTo(navigationPage, `${navStrings.invoice} ${invoice.serialNumber}`, {
+      transaction: invoice,
+    });
   }
 
   /**
@@ -88,6 +116,24 @@ export class SupplierInvoicesPage extends GenericPage {
     }
     return sortDataBy(data, sortBy, sortDataType, isAscending);
   }
+  // Delete transaction invoice
+  onDeleteConfirm() {
+    const { selection, transactions } = this.state;
+    const { database } = this.props;
+    database.write(() => {
+      selection.forEach(transactionID => {
+        const transaction = transactions.find(
+          currentTransaction => currentTransaction.id === transactionID
+        );
+        transaction.removeSelf(database);
+      });
+    });
+    this.setState({ selection: [] }, this.refreshData);
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] }, this.refreshData);
+  }
 
   renderCell(key, invoice) {
     switch (key) {
@@ -100,11 +146,58 @@ export class SupplierInvoicesPage extends GenericPage {
         return invoice.entryDate.toDateString();
       case 'comment':
         return invoice.comment;
+      case 'remove':
+        return {
+          type: 'checkable',
+          icon: 'md-remove-circle',
+          isDisabled: invoice.isFinalised || !invoice.isExternalSupplierInvoice,
+        };
     }
+  }
+
+  render() {
+    return (
+      <View style={globalStyles.pageContentContainer}>
+        <View style={globalStyles.container}>
+          <View style={globalStyles.pageTopSectionContainer}>
+            <View style={globalStyles.pageTopLeftSectionContainer}>
+              {this.renderSearchBar()}
+            </View>
+            <View style={globalStyles.pageTopRightSectionContainer}>
+              <PageButton
+                text={buttonStrings.new_supplier_invoice}
+                onPress={() => this.setState({ isCreatingInvoice: true })}
+              />
+            </View>
+          </View>
+          {this.renderDataTable()}
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0}
+            questionText={modalStrings.remove_these_items}
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.remove}
+          />
+          <SelectModal
+            isOpen={this.state.isCreatingInvoice}
+            options={this.props.database.objects('Supplier')}
+            placeholderText={modalStrings.start_typing_to_select_supplier}
+            queryString={'name BEGINSWITH[c] $0'}
+            sortByString={'name'}
+            onSelect={name => {
+              this.onNewSupplierInvoice(name);
+              this.setState({ isCreatingInvoice: false });
+            }}
+            onClose={() => this.setState({ isCreatingInvoice: false })}
+            title={modalStrings.search_for_the_customer}
+          />
+        </View>
+      </View>
+    );
   }
 }
 
 SupplierInvoicesPage.propTypes = {
-  database: React.PropTypes.object,
-  navigateTo: React.PropTypes.func.isRequired,
+  database: PropTypes.object,
+  navigateTo: PropTypes.func.isRequired,
 };

@@ -6,11 +6,12 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
+  Keyboard,
   StyleSheet,
   View,
 } from 'react-native';
-import dismissKeyboard from 'dismissKeyboard'; // eslint-disable-line import/no-unresolved
 import Modal from 'react-native-modalbox';
 import { DARK_GREY } from '../../globalStyles';
 
@@ -19,7 +20,7 @@ export class BottomModal extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (!this.props.isOpen && nextProps.isOpen) { // Opening modal, dismiss the keyboard
-      dismissKeyboard();
+      Keyboard.dismiss();
     }
   }
 
@@ -40,8 +41,8 @@ export class BottomModal extends React.Component {
 
 BottomModal.propTypes = {
   style: View.propTypes.style,
-  isOpen: React.PropTypes.bool.isRequired,
-  children: React.PropTypes.any,
+  isOpen: PropTypes.bool.isRequired,
+  children: PropTypes.any,
 };
 BottomModal.defaultProps = {
   style: {},
@@ -53,7 +54,6 @@ BottomModal.defaultProps = {
 
 const localStyles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'flex-end',

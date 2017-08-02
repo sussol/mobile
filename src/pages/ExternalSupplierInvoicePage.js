@@ -6,15 +6,18 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import {
-  View,
-} from 'react-native';
-
+  formatDate,
+  parsePositiveFloat,
+  parsePositiveInteger,
+  formatExpiryDate,
+  parseExpiryDate,
+  sortDataBy,
+} from '../utilities';
+import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { createRecord } from '../database';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
@@ -26,16 +29,27 @@ import {
 } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
+
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
   ITEM_SELECT: 'itemSelect',
 };
 
-export class CustomerInvoicePage extends GenericPage {
+const SORT_DATA_TYPES = {
+  itemName: 'string',
+  itemCode: 'string',
+  batch: 'string',
+  numberOfPacks: 'number',
+  packSize: 'number',
+};
+
+export class ExternalSupplierInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
     this.state.sortBy = 'itemName';
+    this.state.totalPrice = 0;
+    this.state.expiryModelIsOpen = false;
     this.state.columns = [
       {
         key: 'itemCode',
@@ -50,18 +64,34 @@ export class CustomerInvoicePage extends GenericPage {
         sortable: true,
       },
       {
-        key: 'availableQuantity',
-        width: 2,
-        title: tableStrings.available_stock,
-        sortable: true,
-        alignText: 'right',
+        key: 'packSize',
+        width: 1.3,
+        title: tableStrings.pack_size,
+        alignText: 'center',
       },
       {
-        key: 'totalQuantity',
-        width: 2,
+        key: 'numberOfPacks',
+        width: 1.3,
         title: tableStrings.quantity,
-        sortable: true,
-        alignText: 'right',
+        alignText: 'center',
+      },
+      {
+        key: 'batch',
+        width: 1.8,
+        title: tableStrings.batch_name,
+        alignText: 'center',
+      },
+      {
+        key: 'expiryDate',
+        width: 2,
+        title: tableStrings.batch_expiry,
+        alignText: 'center',
+      },
+      {
+        key: 'costPrice',
+        width: 1.4,
+        title: tableStrings.batch_cost_price,
+        alignText: 'center',
       },
       {
         key: 'remove',
@@ -73,76 +103,77 @@ export class CustomerInvoicePage extends GenericPage {
     this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
     this.finalisableDataType = 'Transaction';
     this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.onAddMasterItems = this.onAddMasterItems.bind(this);
+    this.onEndEditing = this.onEndEditing.bind(this);
+    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.openItemSelector = this.openItemSelector.bind(this);
     this.openCommentEditor = this.openCommentEditor.bind(this);
     this.openTheirRefEditor = this.openTheirRefEditor.bind(this);
     this.getModalTitle = this.getModalTitle.bind(this);
-    this.renderPageInfo = this.renderPageInfo.bind(this);
+    this.addNewLine = this.addNewLine.bind(this);
   }
-
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
+   * Dealing with TransactionBatch as oppose to TransactionItems
+   * to be able to add miltiple batches for item
+   * also total price is calculated here
    */
   getFilteredSortedData(searchTerm, sortBy, isAscending) {
-    const data = this.props.transaction.items
-                .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
-    let sortDataType;
-    switch (sortBy) {
-      case 'itemCode':
-      case 'itemName':
-        sortDataType = 'string';
-        break;
-      case 'availableQuantity':
-      case 'totalQuantity':
-        sortDataType = 'number';
-        break;
-      default:
-        sortDataType = 'realm';
-    }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
-  }
+    const { database, transaction } = this.props;
+    const transactionBatches = transaction.getTransactionBatches(database)
+                                          .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
-  onAddMasterItems() {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.transaction.addItemsFromMasterList(this.props.database);
-        this.props.database.save('Transaction', this.props.transaction);
-      });
-      this.refreshData();
-    });
+    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
+
+    // Calculate and set total price
+    const transactionPrice = transactionBatches.reduce(
+      (sum, transactionBatch) =>
+        sum + transactionBatch.costPrice
+            * transactionBatch.numberOfPacks
+            * transactionBatch.packSize
+      , 0);
+    this.setState({ totalPrice: transactionPrice });
+    return sortDataBy(transactionBatches, sortBy, sortDataType, isAscending);
   }
 
   /**
-   * Respond to the user editing the number in the number received column
-   * @param  {string} key             Should always be 'totalQuantity'
-   * @param  {object} transactionItem The transaction item from the row being edited
+   * Respond to the user editing fields
+   * @param  {string} key             key of edited field
+   * @param  {object} transactionBatch The transaction batch from the row being edited
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
    */
-  onEndEditing(key, transactionItem, newValue) {
-    if (key !== 'totalQuantity') return;
-    this.props.database.write(() => {
-      const quantity = Math.min(parsePositiveInteger(newValue), transactionItem.availableQuantity);
-      transactionItem.setTotalQuantity(this.props.database, quantity);
-      this.props.database.save('TransactionItem', transactionItem);
-    });
-  }
-
-  onDeleteConfirm() {
-    const { selection } = this.state;
-    const { transaction, database } = this.props;
+  onEndEditing(key, transactionBatch, newValue) {
+    const { database } = this.props;
     database.write(() => {
-      transaction.removeItemsById(database, selection);
-      database.save('Transaction', transaction);
+      switch (key) {
+        case 'numberOfPacks':
+          transactionBatch.numberOfPacks = parsePositiveFloat(newValue);
+          break;
+        case 'costPrice':
+          transactionBatch.costPrice = parsePositiveFloat(newValue);
+          break;
+        case 'packSize': {
+          const packSize = parsePositiveInteger(newValue);
+          transactionBatch.packSize = packSize || 1; // Don't allow pack size of 0
+          break;
+        }
+        case 'batch':
+          if (newValue) transactionBatch.batch = newValue;
+          break;
+        case 'expiryDate':
+          {
+            const expiryDate = parseExpiryDate(newValue);
+            if (expiryDate) {
+              transactionBatch.expiryDate = expiryDate;
+            }
+          }
+          break;
+        default:
+          break;
+      }
+      database.save('TransactionBatch', transactionBatch);
     });
-    this.setState({ selection: [] }, this.refreshData);
   }
-
-  onDeleteCancel() {
-    this.setState({ selection: [] }, this.refreshData);
-  }
-
   openItemSelector() {
     this.openModal(MODAL_KEYS.ITEM_SELECT);
   }
@@ -169,57 +200,68 @@ export class CustomerInvoicePage extends GenericPage {
   }
 
   renderPageInfo() {
+    const { transaction } = this.props;
     const infoColumns = [
       [
         {
           title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(this.props.transaction.entryDate),
+          info: formatDate(transaction.entryDate),
         },
         {
           title: `${pageInfoStrings.confirm_date}:`,
-          info: formatDate(this.props.transaction.confirmDate),
+          info: formatDate(transaction.confirmDate),
         },
         {
-          title: `${pageInfoStrings.entered_by}:`,
-          info: this.props.transaction.enteredBy && this.props.transaction.enteredBy.username,
+          title: `${pageInfoStrings.total_price}:`,
+          info: this.state.totalPrice,
         },
       ],
       [
         {
-          title: `${pageInfoStrings.customer}:`,
+          title: `${pageInfoStrings.supplier}:`,
           info: this.props.transaction.otherParty && this.props.transaction.otherParty.name,
         },
         {
           title: `${pageInfoStrings.their_ref}:`,
-          info: this.props.transaction.theirRef,
+          info: transaction.theirRef,
           onPress: this.openTheirRefEditor,
           editableType: 'text',
         },
         {
           title: `${pageInfoStrings.comment}:`,
-          info: this.props.transaction.comment,
+          info: transaction.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
         },
       ],
     ];
     return (
-      <PageInfo
-        columns={infoColumns}
-        isEditingDisabled={this.props.transaction.isFinalised}
-      />
+      <PageInfo columns={infoColumns} isEditingDisabled={this.props.transaction.isFinalised} />
     );
   }
 
-  renderCell(key, transactionItem) {
+  renderCell(key, transactionBatch) {
+    const isEditable = !this.props.transaction.isFinalised;
+    const type = isEditable ? 'editable' : 'text';
+    const renderedCell = {
+      type: type,
+      cellContents: String(transactionBatch[key]),
+    };
     switch (key) {
       default:
-        return transactionItem[key];
-      case 'totalQuantity':
+        return renderedCell;
+      case 'batch': {
         return {
-          type: this.props.transaction.isFinalised ? 'text' : 'editable',
-          cellContents: transactionItem.totalQuantity,
+          ...renderedCell,
+          keyboardType: 'default',
         };
+      }
+      case 'expiryDate': {
+        return {
+          type: type,
+          cellContents: formatExpiryDate(transactionBatch.expiryDate) || 'month/year',
+        };
+      }
       case 'remove':
         return {
           type: 'checkable',
@@ -227,6 +269,34 @@ export class CustomerInvoicePage extends GenericPage {
           isDisabled: this.props.transaction.isFinalised,
         };
     }
+  }
+
+  addNewLine(item) {
+    const { database, transaction } = this.props;
+    database.write(() => {
+      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
+      createRecord(
+        database,
+        'TransactionBatch',
+        transactionItem,
+        createRecord(database, 'ItemBatch', item, '')
+      );
+    });
+  }
+
+  // Delete transaction batch then delete transactionItem if no more
+  // transaction batches
+  onDeleteConfirm() {
+    const { selection } = this.state;
+    const { transaction, database } = this.props;
+    database.write(() => {
+      transaction.removeTransactionBatchesById(database, selection);
+    });
+    this.setState({ selection: [] }, this.refreshData);
+  }
+
+  onDeleteCancel() {
+    this.setState({ selection: [] }, this.refreshData);
   }
 
   renderModalContent() {
@@ -241,24 +311,20 @@ export class CustomerInvoicePage extends GenericPage {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
-            onSelect={(item) => {
-              database.write(() => {
-                if (!transaction.hasItemWithId(item.id)) {
-                  createRecord(database, 'TransactionItem', transaction, item);
-                }
-              });
+            onSelect={item => {
+              this.addNewLine(item);
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:
         return (
           <TextEditor
             text={transaction.comment}
-            onEndEditing={(newComment) => {
+            onEndEditing={newComment => {
               if (newComment !== transaction.comment) {
                 database.write(() => {
                   transaction.comment = newComment;
@@ -273,7 +339,7 @@ export class CustomerInvoicePage extends GenericPage {
         return (
           <TextEditor
             text={transaction.theirRef}
-            onEndEditing={(newTheirRef) => {
+            onEndEditing={newTheirRef => {
               if (newTheirRef !== transaction.theirRef) {
                 database.write(() => {
                   transaction.theirRef = newTheirRef;
@@ -297,19 +363,12 @@ export class CustomerInvoicePage extends GenericPage {
               {this.renderSearchBar()}
             </View>
             <View style={globalStyles.pageTopRightSectionContainer}>
-              <View style={globalStyles.verticalContainer}>
-                <PageButton
-                  style={globalStyles.topButton}
-                  text={buttonStrings.new_item}
-                  onPress={this.openItemSelector}
-                  isDisabled={this.props.transaction.isFinalised}
-                />
-                <PageButton
-                  text={buttonStrings.add_master_list_items}
-                  onPress={this.onAddMasterItems}
-                  isDisabled={this.props.transaction.isFinalised}
-                />
-              </View>
+              <PageButton
+                style={globalStyles.topButton}
+                text={buttonStrings.add_batch}
+                onPress={this.openItemSelector}
+                isDisabled={this.props.transaction.isFinalised}
+              />
             </View>
           </View>
           {this.renderDataTable()}
@@ -333,22 +392,15 @@ export class CustomerInvoicePage extends GenericPage {
   }
 }
 
-CustomerInvoicePage.propTypes = {
-  database: PropTypes.object,
-  transaction: PropTypes.object,
-};
-
-/**
- * Check whether a given customer invoice is safe to be finalised. Return null if it is,
- * otherwise return an appropriate error message if not.
- * @param  {object}  customerInvoice  The customer invoice to check
- * @return {string}  An error message if not able to be finalised
- */
-export function checkForFinaliseError(customerInvoice) {
-  if (customerInvoice.items.length === 0) {
+export function checkForFinaliseError(transaction) {
+  if (transaction.items.length === 0) {
     return modalStrings.add_at_least_one_item_before_finalising;
-  } else if (customerInvoice.totalQuantity === 0) {
-    return modalStrings.record_stock_to_issue_before_finalising;
+  } else if (transaction.totalQuantity === 0) {
+    return modalStrings.stock_quantity_greater_then_zero;
   }
   return null;
 }
+ExternalSupplierInvoicePage.propTypes = {
+  database: React.PropTypes.object,
+  transaction: React.PropTypes.object,
+};

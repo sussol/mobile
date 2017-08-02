@@ -22,7 +22,7 @@ export class Item extends Realm.Object {
   // Will return undefined if there are no batches.
   get addedDate() {
     if (this.batches.length === 0) return undefined;
-    let itemAddedDate = Date.now();
+    let itemAddedDate = new Date();
     this.batches.forEach(batch => {
       const batchAddedDate = batch.addedDate;
       itemAddedDate = batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
@@ -60,6 +60,10 @@ export class Item extends Realm.Object {
     return this.batches.filtered('numberOfPacks > 0');
   }
 
+  get totalBatchesInStock() {
+    return this.batchesWithStock.length;
+  }
+
   /**
    * Returns the sum of all usage in TransactionBatches related to ItemBatches for
    * this Item within period defined by a starting and ending date.
@@ -80,7 +84,8 @@ export class Item extends Realm.Object {
    * TransactionBatch is later than the startDate, then that will be used instead
    * @param   {Date} startDate  Starting Date (e.g. From 25/4/2017)
    * @param   {Date} endDate    Starting Date (e.g. to 25/7/2017)
-   * @return  {number}          The average daily usage over period for this item
+   * @return  {number}          The average daily usage over period for this item. Note: LIKELY A
+   *                            DECIMAL. Avoid use in quantities without rounding (or ceiling).
    */
   dailyUsageForPeriod(startDate, endDate) {
     if (this.batches.length === 0) return 0;
@@ -88,7 +93,7 @@ export class Item extends Realm.Object {
     const fromDate = addedDate > startDate ? addedDate : startDate;
     const periodInDays = millisecondsToDays(endDate - fromDate);
     const usage = this.totalUsageForPeriod(fromDate, endDate);
-    return usage / periodInDays;
+    return usage / (periodInDays || 1); // Avoid divide by zero
   }
 
   addBatch(itemBatch) {

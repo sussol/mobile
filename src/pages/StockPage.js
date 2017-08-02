@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
@@ -71,6 +72,8 @@ export class StockPage extends GenericPage {
   }
 
   renderExpansion(item) {
+    const earliestExpiringBatch = item.earliestExpiringBatch;
+    const numberOfBatchesInStock = item.totalBatchesInStock;
     const infoColumns = [
       [
         {
@@ -85,12 +88,12 @@ export class StockPage extends GenericPage {
       [
         {
           title: `${tableStrings.number_of_batches}:`,
-          info: item.batches && item.batches.length,
+          info: numberOfBatchesInStock || 0,
         },
         {
           title: `${tableStrings.earliest_expiry}:`,
-          info: item.earliestExpiringBatch
-                && formatDate(item.earliestExpiringBatch.expiryDate),
+          info: earliestExpiringBatch
+                && formatDate(earliestExpiringBatch.expiryDate),
         },
       ],
     ];
@@ -107,6 +110,6 @@ export class StockPage extends GenericPage {
 }
 
 StockPage.propTypes = {
-  database: React.PropTypes.object,
-  navigateTo: React.PropTypes.func.isRequired,
+  database: PropTypes.object,
+  navigateTo: PropTypes.func.isRequired,
 };

@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import { PageContentModal } from './PageContentModal';
 import { AutocompleteSelector } from '../AutocompleteSelector';
@@ -42,12 +43,12 @@ export function SelectModal(props) {
 }
 
 SelectModal.propTypes = {
-  isOpen: React.PropTypes.bool.isRequired,
-  options: React.PropTypes.object.isRequired,
-  queryString: React.PropTypes.string.isRequired,
-  queryStringSecondary: React.PropTypes.string,
-  sortByString: React.PropTypes.string.isRequired,
-  placeholderText: React.PropTypes.string,
-  onClose: React.PropTypes.func,
-  onSelect: React.PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  options: PropTypes.object.isRequired,
+  queryString: PropTypes.string.isRequired,
+  queryStringSecondary: PropTypes.string,
+  sortByString: PropTypes.string.isRequired,
+  placeholderText: PropTypes.string,
+  onClose: PropTypes.func,
+  onSelect: PropTypes.func.isRequired,
 };

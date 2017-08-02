@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {
   StyleSheet,
@@ -34,10 +35,10 @@ export function SyncIcon(props) {
 }
 
 SyncIcon.propTypes = {
-  cloudColor: React.PropTypes.string,
-  arrowsColor: React.PropTypes.string,
-  wifiColor: React.PropTypes.string,
-  size: React.PropTypes.number,
+  cloudColor: PropTypes.string,
+  arrowsColor: PropTypes.string,
+  wifiColor: PropTypes.string,
+  size: PropTypes.number,
 };
 
 SyncIcon.defaultProps = {

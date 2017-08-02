@@ -10,10 +10,12 @@ export {
 } from './modals';
 export { AutocompleteSelector } from './AutocompleteSelector';
 export { FinaliseButton } from './FinaliseButton';
-export { ToggleSelector } from './ToggleSelector';
+export { NavigationBar } from './NavigationBar';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
+export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
 export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar, ToggleButton } from './ToggleBar';
+export { ToggleSelector } from './ToggleSelector';

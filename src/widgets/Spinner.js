@@ -1,4 +1,10 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Animated,
   StyleSheet,
@@ -53,8 +59,8 @@ export class Spinner extends React.Component {
 }
 
 Spinner.propTypes = {
-  isSpinning: React.PropTypes.bool,
-  color: React.PropTypes.string,
+  isSpinning: PropTypes.bool,
+  color: PropTypes.string,
 };
 
 Spinner.defaultProps = {

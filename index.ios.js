@@ -1,8 +1,6 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
  */
- 
- 'use strict';
 
- import './main';
+ import './src/main';

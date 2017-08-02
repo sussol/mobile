@@ -1,4 +1,10 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
+
 import React from 'react';
+import PropTypes from 'prop-types';
 import { ConfirmModal } from './ConfirmModal';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { modalStrings } from '../../localization';
@@ -56,12 +62,12 @@ export function FinaliseModal(props) {
 }
 
 FinaliseModal.propTypes = {
-  database: React.PropTypes.object.isRequired,
-  isOpen: React.PropTypes.bool,
-  onClose: React.PropTypes.func,
-  finaliseItem: React.PropTypes.object,
-  user: React.PropTypes.any,
-  runWithLoadingIndicator: React.PropTypes.func.isRequired,
+  database: PropTypes.object.isRequired,
+  isOpen: PropTypes.bool,
+  onClose: PropTypes.func,
+  finaliseItem: PropTypes.object,
+  user: PropTypes.any,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
 };
 
 FinaliseModal.defaultProps = {
