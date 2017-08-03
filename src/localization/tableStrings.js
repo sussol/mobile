@@ -48,6 +48,7 @@ export const tableStrings = new LocalizedStrings({
     snapshot_quantity: 'SNAPSHOT\nQUANTITY',
     status: 'STATUS',
     stock_on_hand: 'STOCK ON HAND',
+    store_name: 'STORE NAME',
     suggested_quantity: 'SUGGESTED QTY',
   },
   gil: {
@@ -88,7 +89,7 @@ export const tableStrings = new LocalizedStrings({
     stock_on_hand: 'Mwaitin ae\niai ngkai',
     suggested_quantity: 'Mwaiti ae\nkaantaningaki',
   },
-  tl: { // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size
+  tl: { // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size, store_name
     actual_quantity: 'ATUÁL\nKUANTIDADE',
     available_stock: 'SASÁN DISPONIVEL',
     category: 'Kategoria',

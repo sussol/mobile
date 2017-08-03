@@ -23,8 +23,10 @@ export const buttonStrings = new LocalizedStrings({
     new_supplier_invoice: 'New Supplier Invoice',
     past: 'Past',
     use_suggested_quantities: 'Use Suggested Quantities',
+    request_requisition: 'REQUEST STOCK',
+    response_requisition: 'SUPPLY STOCK',
   },
-  gil: {
+  gil: {  // TODO: request_requisition, response_requisition
     add_master_list_items: 'Rinea am list',
     all_items_selected: 'Aikai nikabane',
     create_automatic_order: 'Create Automatic Order',
