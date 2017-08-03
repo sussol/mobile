@@ -118,7 +118,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         joinsThisStore: joinsThisStore,
       };
       database.update(recordType, internalRecord);
-      if (joinsThisStore) { // If it joins this store, set the item's visibility
+      if (joinsThisStore) {
+        // If it joins this store, set the item's visibility
         const item = getObject(database, 'Item', record.item_ID);
         item.isVisible = !parseBoolean(record.inactive);
         database.save('Item', item);
@@ -132,8 +133,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const item = getObject(database, 'Item', record.item_ID);
       // Grabbing the masterList using list_master_name_join_ID as the join's id is used in mobile
       // to mimic the local list join with a MasterList.
-      const masterList = getObject(database, 'MasterList',
-                                          record.list_master_name_join_ID);
+      const masterList = getObject(database, 'MasterList', record.list_master_name_join_ID);
 
       internalRecord = {
         id: record.ID,
@@ -195,12 +195,14 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         name: record.name,
         code: record.code,
         phoneNumber: record.phone,
-        billingAddress: getOrCreateAddress(database,
-                                           record.bill_address1,
-                                           record.bill_address2,
-                                           record.bill_address3,
-                                           record.bill_address4,
-                                           record.bill_postal_zip_code),
+        billingAddress: getOrCreateAddress(
+          database,
+          record.bill_address1,
+          record.bill_address2,
+          record.bill_address3,
+          record.bill_address4,
+          record.bill_postal_zip_code
+        ),
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         isCustomer: parseBoolean(record.customer),
@@ -219,7 +221,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         joinsThisStore: joinsThisStore,
       };
       database.update(recordType, internalRecord);
-      if (joinsThisStore) { // If it joins this store, set the name's visibility
+      if (joinsThisStore) {
+        // If it joins this store, set the name's visibility
         const name = getObject(database, 'Name', record.name_ID);
         name.isVisible = !parseBoolean(record.inactive);
         database.save('Name', name);
@@ -230,8 +233,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const thisStoreId = settings.get(THIS_STORE_ID);
       const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
       // Don't accept updates to number sequences
-      if (database.objects('NumberSequence')
-                  .filtered('sequenceKey == $0', sequenceKey).length > 0) break;
+      if (database.objects('NumberSequence').filtered('sequenceKey == $0', sequenceKey).length > 0)
+        break;
       if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
       internalRecord = {
         id: record.ID,
@@ -413,8 +416,9 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
 function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') {
   // 'delete' is a reserved word, deleteRecord is in the upper scope, so here we have:
   const obliterate = () => {
-    const deleteResults = database.objects(recordType)
-                                  .filtered(`${primaryKeyField} == $0`, primaryKey);
+    const deleteResults = database
+      .objects(recordType)
+      .filtered(`${primaryKeyField} == $0`, primaryKey);
     if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
   };
 
@@ -538,8 +542,13 @@ export function sanityCheckIncomingRecord(recordType, record) {
       canBeBlank: ['Description', 'stock_take_created_date', 'serial_number'],
     },
     StocktakeBatch: {
-      cannotBeBlank: ['stock_take_ID', 'item_line_ID', 'item_ID', 'snapshot_qty',
-                      'snapshot_packsize'],
+      cannotBeBlank: [
+        'stock_take_ID',
+        'item_line_ID',
+        'item_ID',
+        'snapshot_qty',
+        'snapshot_packsize',
+      ],
       canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price'],
     },
     Transaction: {
@@ -551,8 +560,14 @@ export function sanityCheckIncomingRecord(recordType, record) {
       canBeBlank: ['category', 'code', 'type'],
     },
     TransactionBatch: {
-      cannotBeBlank: ['item_ID', 'item_line_ID', 'expiry_date', 'quantity', 'cost_price',
-                      'sell_price'],
+      cannotBeBlank: [
+        'item_ID',
+        'item_line_ID',
+        'expiry_date',
+        'quantity',
+        'cost_price',
+        'sell_price',
+      ],
       canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
     },
   };
@@ -560,16 +575,18 @@ export function sanityCheckIncomingRecord(recordType, record) {
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
-      record[fieldName] !== null &&  // Key must exist
-      record[fieldName].length > 0,  // And must not be blank
-      true);
+      record[fieldName] !== null && // Key must exist
+      record[fieldName].length > 0, // And must not be blank
+    true
+  );
   if (!hasAllNonBlankFields) return false; // Return early if record already not valid
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
-      record[fieldName] !== null &&    // Key must exist
+      record[fieldName] !== null && // Key must exist
       record[fieldName] !== undefined, // May be blank, i.e. just ''
-      hasAllNonBlankFields); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
+    hasAllNonBlankFields
+  ); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
   return hasRequiredFields;
 }
 
