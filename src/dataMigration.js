@@ -60,12 +60,12 @@ const dataMigrations = [
       if (nameResults.length < 1) return;
       const mainSupplyingStoreName = nameResults[0];
 
-      let requisitions = database.objects('Requisition').filtered('supplyingStoreName = Null');
+      const requisitions = database.objects('Requisition').filtered('supplyingStoreName = Null');
 
-      requisitions = requisitions.filter(requisition => !requisition.isFinalised);
+      const unfinalisedRequisitions = requisitions.filter(requisition => !requisition.isFinalised);
 
       database.write(() => {
-        requisitions.forEach(requisition => {
+        unfinalisedRequisitions.forEach(requisition => {
           requisition.supplyingStoreName = mainSupplyingStoreName;
         });
       });
