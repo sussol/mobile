@@ -129,6 +129,8 @@ export class RequisitionsPage extends React.Component {
       default:
       case 'serialNumber':
         return requisition.serialNumber;
+      case 'otherStoreName':
+        return requisition.getOtherStoreName(this.props.database, this.props.settings);
       case 'entryDate':
         return requisition.entryDate.toDateString();
       case 'numberOfItems':
@@ -189,8 +191,14 @@ export class RequisitionsPage extends React.Component {
         columns={[
           {
             key: 'serialNumber',
-            width: 2,
+            width: 1.5,
             title: tableStrings.requisition_number,
+            sortable: true,
+          },
+          {
+            key: 'otherStoreName',
+            width: 2,
+            title: tableStrings.store_name,
             sortable: true,
           },
           {
@@ -257,6 +265,7 @@ RequisitionsPage.propTypes = {
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
 };
 
 const localStyle = {

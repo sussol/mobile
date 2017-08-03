@@ -121,18 +121,6 @@ export class RequisitionPage extends React.Component {
     return nameResults[0];
   }
 
-  getOtherStoreName() {
-    const { supplyingStoreName } = this.props.requisition;
-    console.log(require('util').format('[Circular]', supplyingStoreName));
-    if (supplyingStoreName) return supplyingStoreName.name;
-
-    const { database, settings } = this.props;
-    const nameResults = database.objects('Name').filtered('id == $0',
-                        settings.get(SETTINGS_KEYS.SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-    if (nameResults.length < 1) return '';
-    return nameResults[0];
-  }
-
   getModalTitle() {
     const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
     switch (this.state.modalKey) {
@@ -199,32 +187,33 @@ export class RequisitionPage extends React.Component {
   }
 
   renderPageInfo() {
+    const { requisition, database, settings } = this.props;
     const infoColumns = [
       [
         {},
         {
           title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(this.props.requisition.entryDate),
+          info: formatDate(requisition.entryDate),
         },
         {
           title: `${pageInfoStrings.entered_by}:`,
-          info: this.props.requisition.enteredByName,
+          info: requisition.enteredByName,
         },
       ],
       [
         {
           title: `${pageInfoStrings.supplying_store_name}`,
-          info: this.getOtherStoreName(),
+          info: requisition.getOtherStoreName(database, settings),
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
-          info: Math.round(this.props.requisition.monthsToSupply),
+          info: Math.round(requisition.monthsToSupply),
           onPress: this.openMonthsSelector,
           editableType: 'selectable',
         },
         {
           title: `${pageInfoStrings.comment}:`,
-          info: this.props.requisition.comment,
+          info: requisition.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
         },
@@ -233,7 +222,7 @@ export class RequisitionPage extends React.Component {
     return (
       <PageInfo
         columns={infoColumns}
-        isEditingDisabled={this.props.requisition.isFinalised}
+        isEditingDisabled={requisition.isFinalised}
       />
     );
   }
