@@ -343,9 +343,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = getObject(database, 'Name', record.name_ID);
       const enteredBy = getObject(database, 'User', record.user_ID);
+      const serialNumber = record.invoice_num >= 0 ? record.invoice_num : getSerialNumber(record);
       internalRecord = {
         id: record.ID,
-        serialNumber: record.invoice_num,
+        serialNumber: serialNumber,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
         enteredBy: enteredBy,
