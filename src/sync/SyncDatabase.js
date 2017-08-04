@@ -23,7 +23,8 @@ export class SyncDatabase {
   update(...args) { return this.database.update(...args, 'sync'); }
 
   /**
-   * Other methods, just call directly; They won't trigger listeners by themselves.
+   * Other methods, just call directly. They won't trigger listeners by
+   * themselves (except alertListeners).
    */
   addListener(...args) { return this.database.addListener(...args); }
   objects(...args) { return this.database.objects(...args); }
