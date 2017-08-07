@@ -261,7 +261,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       let supplyingStoreName;
       const nameResults = database.objects('Name').filtered('id = $0', record.name_ID);
       if (nameResults && nameResults.length > 0) supplyingStoreName = nameResults[0];
-
       // If not a special wp or wf status, use the normal status translation
       if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       internalRecord = {
@@ -288,6 +287,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         stockOnHand: parseNumber(record.stock_on_hand),
         dailyUsage: parseNumber(record.daily_usage),
         requiredQuantity: parseNumber(record.Cust_stock_order),
+        suppliedQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };

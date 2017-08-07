@@ -5,6 +5,10 @@ export class RequisitionItem extends Realm.Object {
     return this.item ? this.item.id : '';
   }
 
+  get ourStockOnHand() {
+    return this.item ? this.item.totalQuantity : 0;
+  }
+
   get itemCode() {
     return this.item ? this.item.code : '';
   }
@@ -38,6 +42,7 @@ RequisitionItem.schema = {
     dailyUsage: { type: 'double', optional: true },
     imprestQuantity: { type: 'double', optional: true },
     requiredQuantity: { type: 'double', optional: true },
+    suppliedQuantity: { type: 'double', optional: true },
     comment: { type: 'string', optional: true },
     sortIndex: { type: 'int', optional: true },
   },

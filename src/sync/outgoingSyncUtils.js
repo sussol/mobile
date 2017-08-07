@@ -135,6 +135,7 @@ function generateSyncData(settings, recordType, record) {
         stock_on_hand: String(record.stockOnHand),
         daily_usage: String(record.dailyUsage),
         suggested_quantity: String(record.suggestedQuantity),
+        actualQuan: String(record.suppliedQuantity),
         line_number: String(record.sortIndex),
         Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
