@@ -17,6 +17,7 @@ import { RequisitionsPage } from './RequisitionsPage';
 import { RequisitionPage,
          checkForFinaliseError as checkForRequisitionFinaliseError,
        } from './RequisitionPage';
+import { SupplyRequisitionPage } from './SupplyRequisitionPage'; // TODO finalise checking
 import { StockPage } from './StockPage';
 import { StocktakeEditPage,
          checkForFinaliseError as checkForStocktakeFinaliseError,
@@ -42,6 +43,7 @@ export const PAGES = {
   stock: (props) => <PageContainer page={StockPage} {...props} />,
   requisitions: (props) => <PageContainer page={RequisitionsPage} {...props} />,
   requisition: (props) => <PageContainer page={RequisitionPage} {...props} />,
+  supplyRequisition: (props) => <PageContainer page={SupplyRequisitionPage} {...props} />,
   stocktakeEditor: (props) => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: (props) => <PageContainer page={StocktakeManagePage} {...props} />,
   stocktakes: (props) => <PageContainer page={StocktakesPage} {...props} />,

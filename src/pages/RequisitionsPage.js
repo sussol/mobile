@@ -89,7 +89,7 @@ export class RequisitionsPage extends React.Component {
   navigateToRequisition(requisition) {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
-      'requisition',
+      requisition.isRequest ? 'requisition' : 'supplyRequisition',
       `${navStrings.requisition} ${requisition.serialNumber}`,
       { requisition: requisition },
     );
@@ -199,7 +199,7 @@ export class RequisitionsPage extends React.Component {
             key: 'otherStoreName',
             width: 2,
             title: tableStrings.store_name,
-            sortable: true,
+            sortable: false,
           },
           {
             key: 'entryDate',
