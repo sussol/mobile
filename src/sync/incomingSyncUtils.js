@@ -258,10 +258,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
-      let supplyingStoreName;
-      const nameResults = database.object('Name').filtered('id = $0', record.name_ID);
-      if (nameResults && nameResults.length > 0) supplyingStoreName = nameResults[0];
-
       // If not a special wp or wf status, use the normal status translation
       if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       internalRecord = {
@@ -272,9 +268,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         serialNumber: record.serial_number,
         requesterReference: record.requester_reference,
         comment: record.comment,
-        enteredBy: getObject(database, 'User', record.user_ID), // TODO: should be..
+        enteredBy: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
-        supplyingStoreName,
       };
       database.update(recordType, internalRecord);
       break;

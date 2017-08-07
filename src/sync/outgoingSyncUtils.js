@@ -12,6 +12,7 @@ import {
 
 import { SETTINGS_KEYS } from '../settings';
 const {
+  SUPPLYING_STORE_ID,
   SUPPLYING_STORE_NAME_ID,
   THIS_STORE_ID,
   THIS_STORE_NAME_ID,
@@ -117,10 +118,10 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
-        name_ID: record.supplyingStoreName.id,  // TODO: check if there is a case when outgoing req might not have supplyingStoreName
+        name_ID: settings.get(THIS_STORE_NAME_ID),
         status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         daysToSupply: String(record.daysToSupply),
-        store_ID: settings.get(THIS_STORE_ID),
+        store_ID: settings.get(SUPPLYING_STORE_ID),
         serial_number: record.serialNumber,
         requester_reference: record.requesterReference,
         comment: record.comment,

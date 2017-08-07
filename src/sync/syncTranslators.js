@@ -52,7 +52,6 @@ export const REQUISITION_TYPES = new SyncTranslator({
   'imprest': 'im',
   'forecast': 'sh',
   'request': 'request',
-  'response': 'response',
 });
 
 // Map of internal database change types to external sync types
