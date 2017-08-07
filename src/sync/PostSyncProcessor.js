@@ -28,7 +28,7 @@ export class PostSyncProcessor {
   }
 
   /**
-   * Runs post processes checks across tables, ensuring data is correct.
+   * Runs post checks across tables, ensuring data is correct.
    * Useful to run after crashes.
    * Tables manually added as to not iterate over tables that don't have any post processing.
    */
