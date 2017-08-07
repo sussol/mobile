@@ -29,7 +29,8 @@ export class RequisitionsPage extends React.Component {
     this.state = {
       selection: [],
     };
-    this.requisitions = props.database.objects('Requisition');
+    // Hide Requisitions that have not been updated with a serialNumber in postSync
+    this.requisitions = props.database.objects('Requisition').filtered('serialNumber != "-1"');
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'entryDate',
