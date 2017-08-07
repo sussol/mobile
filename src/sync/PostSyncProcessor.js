@@ -23,6 +23,7 @@ export class PostSyncProcessor {
    * this.onDatabaseEvent
    */
   runPostSyncQueue() {
+    console.log('Running post queue: ', this.queue.length);
     this.database.write(() => this.queue.forEach(func => func()));
   }
 
@@ -53,7 +54,7 @@ export class PostSyncProcessor {
    * @return {none}
    */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    console.log('event?: ', recordType, causedBy);
+    console.log('event: ', causedBy);
     if (causedBy !== 'sync') return; // Exit if not a change caused by sync
     this.delegateByRecordType(recordType, record);
   }
@@ -65,12 +66,13 @@ export class PostSyncProcessor {
    * @return {none}
    */
   delegateByRecordType(recordType, record) {
+    console.log('Delegate', recordType);
     switch (recordType) {
       case 'Requisition':
-        this.queue.concat(this.postProcessRequisition(record));
+        this.queue = this.queue.concat(this.postProcessRequisition(record));
         break;
       case 'Transaction':
-        this.queue.concat(this.postProcessTransaction(record));
+        this.queue = this.queue.concat(this.postProcessTransaction(record));
         break;
       default:
         break;
@@ -87,6 +89,7 @@ export class PostSyncProcessor {
     const processes = [];
     // Allocate serial number to requisitions with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
+    console.log('in func, serial: ', record.serialNumber);
     if (record.serialNumber === '-1') {
       processes.push(() => {
         console.log('reqbefore', record.serialNumber);
@@ -98,6 +101,7 @@ export class PostSyncProcessor {
     if (processes.length > 0) {
       processes.push(() => this.database.update('Requisition', record));
     }
+    console.log('processes: ', processes);
     return processes;
   }
 

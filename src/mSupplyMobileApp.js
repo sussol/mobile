@@ -56,7 +56,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
     this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
-    this.postSyncProcessor = new PostSyncProcessor(this.database)
+    this.postSyncProcessor = new PostSyncProcessor(this.database);
     this.scheduler = new Scheduler();
     const initialised = this.synchroniser.isInitialised();
     this.state = {
