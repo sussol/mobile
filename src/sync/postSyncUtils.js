@@ -7,7 +7,6 @@ import { getNextNumber, NUMBER_SEQUENCE_KEYS } from '../database/utilities';
 
 const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
 
-
 /**
  * Respond to a database change event. Must be called from within a database
  * write transaction.
@@ -19,7 +18,6 @@ const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_K
  * @return {none}
  */
 export function postSyncProcessor(changeType, recordType, record, causedBy, database) {
-  console.log('event?: ', recordType, causedBy);
   if (causedBy !== 'sync') return; // Exit if not a change caused by sync
   // Delegates incoming sync records to the correct post processing utility function
   switch (recordType) {
@@ -47,9 +45,7 @@ function postProcessRequisition(database, record) {
   // by the server, coming from another store as supplier.
   if (record.serialNumber === '-1') {
     processes.push(() => {
-      console.log('reqbefore', record.serialNumber);
       record.serialNumber = getNextNumber(database, REQUISITION_SERIAL_NUMBER);
-      console.log('reqafter', record.serialNumber);
     });
   }
 
@@ -72,9 +68,7 @@ function postProcessTransaction(database, record) {
   // by the server, coming from another store as supplier.
   if (record.serialNumber === '-1' && record.type === 'supplier_invoice') {
     processes.push(() => {
-      console.log('supbefore', record.serialNumber);
       record.serialNumber = getNextNumber(database, SUPPLIER_INVOICE_NUMBER);
-      console.log('reqafter', record.serialNumber);
     });
   }
 
@@ -82,5 +76,4 @@ function postProcessTransaction(database, record) {
     processes.forEach(func => func());
     database.update('Transaction', record);
   }
-  console.log('end');
 }
