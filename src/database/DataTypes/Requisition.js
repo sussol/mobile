@@ -1,7 +1,6 @@
 import Realm from 'realm';
 import { createRecord, getTotal } from '../utilities';
 import { complement } from 'set-manipulator';
-import { SETTINGS_KEYS } from '../../settings';
 
 export class Requisition extends Realm.Object {
   constructor() {
@@ -84,18 +83,6 @@ export class Requisition extends Realm.Object {
     this.addItemsFromMasterList(database, thisStore);
     this.setRequestedToSuggested(database);
     this.pruneRedundantItems(database);
-  }
-
-  /**
-   * Get supplyingStoreName or default supplying store name
-   */
-  getOtherStoreName(database, settings) {
-    if (this.supplyingStoreName) return this.supplyingStoreName.name;
-
-    const nameResults = database.objects('Name').filtered('id == $0',
-                        settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-    if (nameResults.length < 1) return '';
-    return nameResults[0].name;
   }
 
   removeItemsById(database, itemIds) {
