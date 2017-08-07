@@ -55,53 +55,36 @@ export class SyncQueue {
       // If a delete, first remove any sync out records that already have the id,
       // so that sync doesn't try to refer to them next time it does a push
       if (changeType === DELETE) {
-        const recordsToDelete = this.database
-          .objects('SyncOut')
-          .filtered('recordId == $0', record.id);
+        const recordsToDelete = this.database.objects('SyncOut')
+                                             .filtered('recordId == $0', record.id);
         this.database.delete('SyncOut', recordsToDelete);
       }
       switch (changeType) {
         case CREATE:
         case UPDATE:
         case DELETE: {
-          let duplicate = false;
           if (!record.id) return;
-
-          if ((recordType === 'Transaction' || recordType === 'Requisition')
-                                            && record.isFinalised) {
-            // Remove old snapshots from the same transaction to be sync with lines
-            const result = this.database
-              .objects('SyncOut')
-              .filtered('recordType == $0 && recordId == $1', recordType, record.id);
-
-            Object.entries(result).forEach(([key, value]) => {
-              this.database.delete('SyncOut', value);
-            });
-          } else {
-            duplicate =
-              this.database
-                .objects('SyncOut')
-                .filtered(
-                  'changeType == $0 && recordType == $1 && recordId == $2',
-                  changeType,
-                  recordType,
-                  record.id
-                ).length > 0;
-          }
-
+          const duplicate = this.database.objects('SyncOut')
+                              .filtered(
+                                'changeType == $0 && recordType == $1 && recordId == $2',
+                                changeType,
+                                recordType,
+                                record.id)
+                              .length > 0;
           if (!duplicate) {
-            this.database.create('SyncOut', {
-              id: generateUUID(),
-              changeTime: new Date().getTime(),
-              changeType: changeType,
-              recordType: recordType,
-              recordId: record.id,
-            });
+            this.database.create(
+              'SyncOut',
+              {
+                id: generateUUID(),
+                changeTime: new Date().getTime(),
+                changeType: changeType,
+                recordType: recordType,
+                recordId: record.id,
+              });
           }
           break;
         }
-        default:
-          // Not a supported database event, do nothing. E.g. WIPE (takes care of itself)
+        default: // Not a supported database event, do nothing. E.g. WIPE (takes care of itself)
           break;
       }
     }
