@@ -24,6 +24,10 @@ export class Requisition extends Realm.Object {
     return this.status === 'finalised';
   }
 
+  get isRequest() {
+    return this.type === 'request';
+  }
+
   get enteredByName() {
     return this.enteredBy ? this.enteredBy.username : '';
   }
