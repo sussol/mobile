@@ -95,15 +95,13 @@ export const NAME_TYPES = new SyncTranslator({
  */
 class RequisitionStatusTranslator extends SyncTranslator {
   translate(status, direction) {
-    if (['cn', 'fn', 'wf'].includes(status)) return 'finalised';
-    if (['wp'].includes(status)) return 'new';
+    if (['sg', 'cn', 'fn'].includes(status)) return 'finalised';
     return super.translate(status, direction);
   }
 }
 export const REQUISITION_STATUSES = new RequisitionStatusTranslator({
-  new: 'nw',
-  suggested: 'sg',
-  finalised: 'fn',
+  'new': 'wp',
+  'finalised': 'wf',
 });
 
 /**
