@@ -37,7 +37,7 @@ export async function migrateDataToVersion(database, settings) {
     }
   }
   // Record the new app version
-//  AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
+  AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
 }
 
 // All data migration functions should be kept in this array, in sequential order. Each migration
@@ -50,25 +50,6 @@ const dataMigrations = [
       // 1.0.30 added the setting 'SYNC_IS_INITIALISED', where it previously relied on 'SYNC_URL'
       const syncURL = settings.get(SETTINGS_KEYS.SYNC_URL);
       if (syncURL && syncURL.length > 0) settings.set(SETTINGS_KEYS.SYNC_IS_INITIALISED, 'true');
-    },
-  },
-  {
-    version: '1.2.1',
-    migrate: (database, settings) => {
-      const nameResults = database.objects('Name').filtered('id = $0',
-                                settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-      if (nameResults.length < 1) return;
-      const mainSupplyingStoreName = nameResults[0];
-
-      let requisitions = database.objects('Requisition').filtered('supplyingStoreName = Null');
-
-      requisitions = requisitions.filter(requisition => !requisition.isFinalised);
-
-      database.write(() => {
-        requisitions.forEach(requisition => {
-          requisition.supplyingStoreName = mainSupplyingStoreName;
-        });
-      });
     },
   },
 ];
