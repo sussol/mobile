@@ -1,3 +1,5 @@
+/* @flow weak */
+
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -5,7 +7,6 @@
 
 
 import React from 'react';
-import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 
@@ -14,7 +15,6 @@ import { BottomConfirmModal, PageButton } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import globalStyles, { LIGHT_GREY } from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -30,7 +30,6 @@ export class RequisitionsPage extends React.Component {
     super(props);
     this.state = {
       selection: [],
-      isRequestView: true,
     };
     this.requisitions = props.database.objects('Requisition');
     this.dataFilters = {
@@ -78,10 +77,6 @@ export class RequisitionsPage extends React.Component {
 
   onSelectionChange(newSelection) {
     this.setState({ selection: newSelection });
-  }
-
-  toggleRequisitionViewType() {
-    this.setState({ isRequestView: !this.state.isRequestView });
   }
 
   navigateToRequisition(requisition) {
@@ -139,25 +134,6 @@ export class RequisitionsPage extends React.Component {
     }
   }
 
-  renderRequisitionTypeToggle() {
-    return (
-      <View style={globalStyles.horizontalContainer}>
-        <PageButton
-          style={[localStyle.toggleButton, this.state.isRequestView ?
-                            localStyle.selectedButton : {}]}
-          text={buttonStrings.request_requisition} /* TODO: change to agreed name  */
-          onPress={this.toggleRequisitionViewType}
-        />
-        <PageButton
-          style={[localStyle.toggleButton, !this.state.isRequestView ?
-                            localStyle.selectedButton : {}]}
-          text={buttonStrings.response_requisition}
-          onPress={this.toggleRequisitionViewType}
-        />
-      </View>
-    );
-  }
-
   renderNewRequisitionButton() {
     return (
       <PageButton
@@ -173,7 +149,6 @@ export class RequisitionsPage extends React.Component {
         data={this.state.data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderRequisitionTypeToggle}
         renderTopRightComponent={this.renderNewRequisitionButton}
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
@@ -236,15 +211,4 @@ RequisitionsPage.propTypes = {
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
-};
-
-const localStyle = {
-  selectedButton: {
-    backgroundColor: LIGHT_GREY,
-  },
-  toggleButton: {
-    margin: 5,
-    borderRadius: 2,
-  },
-
 };
