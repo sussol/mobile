@@ -1,2 +1,2 @@
 export { Synchroniser } from './Synchroniser';
-export { postSyncProcessor } from './postSyncUtils';
+export { PostSyncProcessor } from './PostSyncProcessor';

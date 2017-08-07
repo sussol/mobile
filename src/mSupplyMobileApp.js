@@ -37,7 +37,7 @@ import {
 } from './widgets';
 
 import { migrateDataToVersion } from './dataMigration';
-import { Synchroniser, postSyncProcessor } from './sync';
+import { Synchroniser, PostSyncProcessor } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from 'sussol-utilities';
@@ -56,6 +56,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
     this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
+    this.postSyncProcessor = new PostSyncProcessor(this.database)
     this.scheduler = new Scheduler();
     const initialised = this.synchroniser.isInitialised();
     this.state = {
@@ -93,9 +94,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-    this.database.addListener((changeType, recordType, record, causedBy) =>
-      postSyncProcessor(changeType, recordType, record, causedBy, this.database)
-    );
   }
 
   componentWillUnmount() {
@@ -110,6 +108,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   onInitialised() {
     this.setState({ initialised: true });
+    this.postSyncProcessor.runPostSyncQueue();
   }
 
   getCanNavigateBack() {
@@ -153,6 +152,7 @@ class MSupplyMobileAppContainer extends React.Component {
         syncError: error.message,
       });
     }
+    this.postSyncProcessor.runPostSyncQueue();
   }
 
   logOut() {
