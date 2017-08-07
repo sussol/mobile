@@ -131,7 +131,7 @@ function createItemBatch(database, item, batchString) {
 }
 
 // Creates a Requisition
-function createRequisition(database, user, supplyingStoreName) {
+function createRequisition(database, user) {
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -141,7 +141,6 @@ function createRequisition(database, user, supplyingStoreName) {
     entryDate: new Date(),
     daysToSupply: 30, // 1 month
     enteredBy: user,
-    supplyingStoreName,
   });
   return requisition;
 }

@@ -129,8 +129,7 @@ Requisition.schema = {
   properties: {
     id: 'string',
     status: { type: 'string', default: 'new' },
-    supplyingStoreName: { type: 'Name', optional: true }, // optional, for ease of migration
-    type: { type: 'string', default: 'request' }, // imprest, forecast, request or response
+    type: { type: 'string', default: 'request' }, // imprest, forecast or request
     entryDate: { type: 'date', default: new Date() },
     daysToSupply: { type: 'double', default: 30 },
     serialNumber: { type: 'string', default: '0' },

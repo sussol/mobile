@@ -121,18 +121,6 @@ export class RequisitionPage extends React.Component {
     return nameResults[0];
   }
 
-  getOtherStoreName() {
-    const { supplyingStoreName } = this.props.requisition;
-    console.log(require('util').format('[Circular]', supplyingStoreName));
-    if (supplyingStoreName) return supplyingStoreName.name;
-
-    const { database, settings } = this.props;
-    const nameResults = database.objects('Name').filtered('id == $0',
-                        settings.get(SETTINGS_KEYS.SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-    if (nameResults.length < 1) return '';
-    return nameResults[0];
-  }
-
   getModalTitle() {
     const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
     switch (this.state.modalKey) {
@@ -201,7 +189,6 @@ export class RequisitionPage extends React.Component {
   renderPageInfo() {
     const infoColumns = [
       [
-        {},
         {
           title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(this.props.requisition.entryDate),
@@ -212,10 +199,6 @@ export class RequisitionPage extends React.Component {
         },
       ],
       [
-        {
-          title: `${pageInfoStrings.supplying_store_name}`,
-          info: this.getOtherStoreName(),
-        },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: Math.round(this.props.requisition.monthsToSupply),
