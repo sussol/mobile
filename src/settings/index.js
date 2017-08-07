@@ -8,6 +8,7 @@ export const SETTINGS_KEYS = {
   SUPPLYING_STORE_ID: 'SupplyingStoreId',
   SUPPLYING_STORE_NAME_ID: 'SupplyingStoreNameId',
   SYNC_IS_INITIALISED: 'SyncIsInitialised',
+  SYNC_IS_SYNCING: 'SyncIsSyncing',
   SYNC_LAST_SUCCESS: 'SyncLastSuccess',
   SYNC_URL: 'SyncURL',
   SYNC_SITE_ID: 'SyncSiteId',

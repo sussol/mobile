@@ -94,6 +94,10 @@ class MSupplyMobileAppContainer extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+    if (this.state.initialised && this.synchroniser.isSyncing()) {
+      // Sync was interrupted
+      this.postSyncProcessor.checkTables();
+    }
   }
 
   componentWillUnmount() {
@@ -108,7 +112,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   onInitialised() {
     this.setState({ initialised: true });
-    this.postSyncProcessor.runPostSyncQueue();
+    this.postSyncProcessor.checkTables();
   }
 
   getCanNavigateBack() {
@@ -152,7 +156,7 @@ class MSupplyMobileAppContainer extends React.Component {
         syncError: error.message,
       });
     }
-    this.postSyncProcessor.runPostSyncQueue();
+    this.postSyncProcessor.checkTables();
   }
 
   logOut() {

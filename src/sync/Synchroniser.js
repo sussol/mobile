@@ -12,6 +12,7 @@ import { formatDate } from '../utilities';
 
 const {
   SYNC_IS_INITIALISED,
+  SYNC_IS_SYNCING,
   SYNC_LAST_SUCCESS,
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
@@ -36,7 +37,7 @@ export class Synchroniser {
     this.syncQueue = new SyncQueue(this.database);
     this.synchronise = this.synchronise.bind(this);
     this.initialise = this.initialise.bind(this);
-    this.syncQueue.enable();
+    if (this.isInitialised()) this.syncQueue.enable();
   }
 
   /**
@@ -51,6 +52,7 @@ export class Synchroniser {
    */
   async initialise(serverURL, syncSiteName, syncSitePassword, setProgress) {
     if (setProgress) setProgress('Initialising...');
+    this.syncQueue.disable(); // Stop sync queue listening to database changes
     // Check if the serverURL passed in is the same as one we have already been using during
     // initialisation, in which case we are continuing a failed partial initialisation. If the
     // serverURL is different, it is either completely fresh, or the URL has been changed so we
@@ -85,15 +87,26 @@ export class Synchroniser {
       throw error;
     }
     this.settings.set(SYNC_IS_INITIALISED, 'true');
+    this.syncQueue.enable(); // Begin the sync queue listening to database changes
   }
 
   /**
    * Return whether the synchroniser has been completely or partially initialised.
-   * @return {string} Either 'complete', 'partial', 'uninitialised'
+   * @return {string} Either 'complete', 'partial', 'uninitialised' TODO: make sure this is corrected
    */
   isInitialised() {
     const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
     return syncIsInitialised && syncIsInitialised === 'true';
+  }
+
+  /**
+   * Return whether the whether or not the app is syncing. Useful for checking if sync was
+   * interrupted on app close or crash
+   * @return {boolean} True if it was syncing
+   */
+  isSyncing() {
+    const isSyncing = this.settings.get(SYNC_IS_SYNCING);
+    return isSyncing && isSyncing === 'true';
   }
 
   /**
@@ -103,10 +116,12 @@ export class Synchroniser {
    */
   async synchronise() {
     if (!this.isInitialised()) throw new Error('Not yet initialised');
+    this.settings.set(SYNC_IS_SYNCING, 'true');
     // Using async/await here means that any errors thrown by push or pull
     // will be passed up as a rejection of the promise returned by synchronise
     await this.push();
     await this.pull();
+    this.settings.set(SYNC_IS_SYNCING, 'false');
     this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));
   }
 

@@ -25,6 +25,7 @@ export class PostSyncProcessor {
   runPostSyncQueue() {
     console.log('Running post queue: ', this.queue.length);
     this.database.write(() => this.queue.forEach(func => func()));
+    this.queue = [];
   }
 
   /**
@@ -33,6 +34,8 @@ export class PostSyncProcessor {
    * Tables manually added as to not iterate over tables that don't have any post processing.
    */
   checkTables() {
+    this.queue = [];
+
     this.database
       .objects('Requisition')
       .forEach(record => this.delegateByRecordType('Requisition', record));
