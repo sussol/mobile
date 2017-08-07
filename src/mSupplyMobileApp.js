@@ -37,7 +37,7 @@ import {
 } from './widgets';
 
 import { migrateDataToVersion } from './dataMigration';
-import { Synchroniser } from './sync';
+import { Synchroniser, postSyncProcessor } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from 'sussol-utilities';
@@ -47,7 +47,6 @@ const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 class MSupplyMobileAppContainer extends React.Component {
-
   constructor() {
     super();
     const database = new Database(schema);
@@ -83,10 +82,10 @@ class MSupplyMobileAppContainer extends React.Component {
     this.handleBackEvent = this.handleBackEvent.bind(this);
     this.getCanNavigateBack = this.getCanNavigateBack.bind(this);
     this.renderPageTitle = this.renderPageTitle.bind(this);
-    this.scheduler.schedule(this.synchronise,
-                            SYNC_INTERVAL);
+    this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
-      if (this.state.currentUser !== null) { // Only reauthenticate if currently logged in
+      if (this.state.currentUser !== null) {
+        // Only reauthenticate if currently logged in
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
@@ -94,10 +93,14 @@ class MSupplyMobileAppContainer extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+    this.database.addListener((changeType, recordType, record, causedBy) =>
+      postSyncProcessor(changeType, recordType, record, causedBy, this.database)
+    );
   }
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
+    this.database.removeAllListeners();
     this.scheduler.clearAll();
   }
 
@@ -128,7 +131,7 @@ class MSupplyMobileAppContainer extends React.Component {
     // thread unblocks and allows our spinner animation to start up. We cannot simply
     // call the functionToRun inside a setTimeout as that relegates to a lower
     // priority and results in very slow performance.
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
     functionToRun();
@@ -161,7 +164,8 @@ class MSupplyMobileAppContainer extends React.Component {
       <FinaliseButton
         isFinalised={this.props.finaliseItem.record.isFinalised}
         onPress={() => this.setState({ confirmFinalise: true })}
-      />);
+      />
+    );
   }
 
   renderLogo() {
@@ -170,10 +174,7 @@ class MSupplyMobileAppContainer extends React.Component {
         delayLongPress={3000}
         onLongPress={() => this.setState({ isInAdminMode: !this.state.isInAdminMode })}
       >
-        <Image
-          resizeMode="contain"
-          source={require('./images/logo.png')}
-        />
+        <Image resizeMode="contain" source={require('./images/logo.png')} />
       </TouchableWithoutFeedback>
     );
   }
@@ -182,11 +183,16 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <View style={globalStyles.loadingIndicatorContainer}>
         <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
-      </View>);
+      </View>
+    );
   }
 
   renderPageTitle() {
-    return <Text style={textStyles}>{this.props.currentTitle}</Text>;
+    return (
+      <Text style={textStyles}>
+        {this.props.currentTitle}
+      </Text>
+    );
   }
 
   renderSyncState() {
@@ -207,12 +213,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     if (!this.state.initialised) {
-      return (
-        <FirstUsePage
-          synchroniser={this.synchroniser}
-          onInitialised={this.onInitialised}
-        />
-      );
+      return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
     }
     const { finaliseItem, dispatch, navigationState } = this.props;
     return (
@@ -224,7 +225,9 @@ class MSupplyMobileAppContainer extends React.Component {
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
         <Navigator
-          ref={(navigator) => { this.navigator = navigator; }}
+          ref={navigator => {
+            this.navigator = navigator;
+          }}
           navigation={addNavigationHelpers({
             dispatch,
             state: navigationState,
@@ -281,6 +284,4 @@ function mapStateToProps({ navigation: navigationState }) {
   return { currentTitle, finaliseItem, navigationState };
 }
 
-export const MSupplyMobileApp = connect(
-  mapStateToProps,
-)(MSupplyMobileAppContainer);
+export const MSupplyMobileApp = connect(mapStateToProps)(MSupplyMobileAppContainer);
