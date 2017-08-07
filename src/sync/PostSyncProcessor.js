@@ -12,25 +12,11 @@ export class PostSyncProcessor {
     this.database = database;
     this.queue = [];
     this.runPostSyncQueue = this.runPostSyncQueue.bind(this);
-    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.checkTables = this.checkTables.bind(this);
-
-    this.database.addListener(this.onDatabaseEvent);
-  }
-
-  /**
-   * Runs all the post sync functions triggered by sync events on database through
-   * this.onDatabaseEvent
-   */
-  runPostSyncQueue() {
-    console.log('Running post queue: ', this.queue.length);
-    this.database.write(() => this.queue.forEach(func => func()));
-    this.queue = [];
   }
 
   /**
    * Runs post checks across tables, ensuring data is correct.
-   * Useful to run after crashes.
    * Tables manually added as to not iterate over tables that don't have any post processing.
    */
   checkTables() {
@@ -48,18 +34,13 @@ export class PostSyncProcessor {
   }
 
   /**
-   * Respond to a database change event. Must be called from within a database
-   * write transaction.
-   * @param  {string} changeType  The type of database change, e.g. CREATE, UPDATE, DELETE
-   * @param  {string} recordType  The type of record changed (from database schema)
-   * @param  {object} record      The record changed
-   * @param  {string} causedBy    The cause of this database event, either 'sync' or undefined
-   * @return {none}
+   * Runs all the post sync functions triggered by sync events on database through
+   * this.onDatabaseEvent
    */
-  onDatabaseEvent(changeType, recordType, record, causedBy) {
-    console.log('event: ', causedBy);
-    if (causedBy !== 'sync') return; // Exit if not a change caused by sync
-    this.delegateByRecordType(recordType, record);
+  runPostSyncQueue() {
+    console.log('Running post queue: ', this.queue.length);
+    this.database.write(() => this.queue.forEach(func => func()));
+    this.queue = [];
   }
 
   /**
