@@ -36,7 +36,15 @@ export class PostSyncProcessor {
  */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     console.log('event: ', causedBy, recordType);
-    if (causedBy !== 'sync') return; // Exit if not a change caused by sync
+    // Exit if not a change caused by incoming sync
+    if (causedBy !== 'sync' || recordType === 'SyncOut') return;
+    // Check if already in queue, remove old and add to end of queue
+    const existingIndex = this.recordQueue.findIndex(
+      existingRecord => existingRecord.recordId === record.id
+    );
+    console.log('existingIndex: ', existingIndex);
+    if (existingIndex >= 0) this.recordQueue.splice(existingIndex, 1);
+
     this.recordQueue.push({ recordType, recordId: record.id });
   }
 
@@ -74,6 +82,7 @@ export class PostSyncProcessor {
       this.delegateByRecordType(recordType, internalRecord);
     });
     this.runActionQueue();
+    this.recordQueue = []; // Reset the recordQueue to avoid unnessary reruns
   }
 
   /**
@@ -154,7 +163,7 @@ export class PostSyncProcessor {
     if (processes.length > 0) {
       processes.push(() => this.database.update('Transaction', record));
     }
-    console.log('end');
+    console.log('processes: ', processes);
     return processes;
   }
 }
