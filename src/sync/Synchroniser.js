@@ -57,7 +57,9 @@ export class Synchroniser {
     // initialisation, in which case we are continuing a failed partial initialisation. If the
     // serverURL is different, it is either completely fresh, or the URL has been changed so we
     // should start afresh
-    const isFresh = serverURL !== this.serverURL;
+    const oldUrl = this.settings.get(SYNC_URL);
+    const isFresh = !oldUrl || serverURL !== oldUrl;
+    console.log(oldUrl, isFresh);
     if (isFresh) {
       this.database.write(() => {
         this.database.deleteAll();
