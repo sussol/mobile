@@ -23,7 +23,7 @@ export class PostSyncProcessor {
     this.database.addListener(this.onDatabaseEvent);
   }
 
-/**
+  /**
  * Respond to a database change event. Must be called from within a database
  * write transaction.
  * @param  {string} changeType  The type of database change, e.g. CREATE, UPDATE, DELETE
@@ -70,7 +70,7 @@ export class PostSyncProcessor {
       // Example: Record might have serialNumber -1, if it went through incoming sync twice
       // it'd first assign a serial number, then assign it again with the next number.
       // Using local database record means that'll changes will only happen on first pass.
-      const internalRecord = this.database.objectForPrimaryKey(recordType, recordId);
+      const internalRecord = this.database.objects(recordType).filtered('id == $0', recordId)[0];
       this.delegateByRecordType(recordType, internalRecord);
     });
     this.runActionQueue();
