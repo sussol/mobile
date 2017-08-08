@@ -75,6 +75,10 @@ export class SupplierInvoicePage extends React.Component {
     this.setState({ selection: [] }, this.refreshData);
   }
 
+  onSelectionChange(newSelection) {
+    this.setState({ selection: newSelection });
+  }
+
   /**
    * Respond to the user editing fields
    * @param  {string} key             key of edited field
@@ -347,6 +351,7 @@ export class SupplierInvoicePage extends React.Component {
         renderTopLeftComponent={this.renderPageInfo}
         renderTopRightComponent={this.renderAddBatchButton}
         onEndEditing={this.onEndEditing}
+        onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
         columns={[
@@ -402,6 +407,7 @@ export class SupplierInvoicePage extends React.Component {
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         finalisableDataType={'Transaction'}
         database={this.props.database}
+        selection={this.state.selection}
         {...this.props.genericTablePageStyles}
         topRoute={this.props.topRoute}
       >
