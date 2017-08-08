@@ -14,7 +14,11 @@ export class PostSyncProcessor {
     this.actionQueue = [];
     this.checkTables = this.checkTables.bind(this);
     this.processRecordQueue = this.processRecordQueue.bind(this);
+    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.runActionQueue = this.runActionQueue.bind(this);
+    this.delegateByRecordType = this.delegateByRecordType.bind(this);
+    this.postProcessRequisition = this.postProcessRequisition.bind(this);
+    this.postProcessTransaction = this.postProcessTransaction.bind(this);
 
     this.database.addListener(this.onDatabaseEvent);
   }
@@ -31,7 +35,7 @@ export class PostSyncProcessor {
  * this.onDatabaseEvent
  */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    console.log('event: ', causedBy);
+    console.log('event: ', causedBy, recordType);
     if (causedBy !== 'sync') return; // Exit if not a change caused by sync
     this.recordQueue.push({ recordType, recordId: record.id });
   }
