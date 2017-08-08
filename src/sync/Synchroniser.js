@@ -116,12 +116,17 @@ export class Synchroniser {
    */
   async synchronise() {
     if (!this.isInitialised()) throw new Error('Not yet initialised');
-    this.settings.set(SYNC_IS_SYNCING, 'true');
-    // Using async/await here means that any errors thrown by push or pull
-    // will be passed up as a rejection of the promise returned by synchronise
-    await this.push();
-    await this.pull();
-    this.settings.set(SYNC_IS_SYNCING, 'false');
+    // Use try/finally so that SYNC_IS_SYNCING is correctly set on success or error
+    try {
+      this.settings.set(SYNC_IS_SYNCING, 'true');
+      // Using async/await here means that any errors thrown by push or pull
+      // will be passed up as a rejection of the promise returned by synchronise
+      await this.push();
+      await this.pull();
+    } finally {
+      this.settings.set(SYNC_IS_SYNCING, 'false');
+    }
+
     this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));
   }
 
