@@ -10,7 +10,7 @@ const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_K
 export class PostSyncProcessor {
   constructor(database) {
     this.database = database;
-    this.recordQueue = [];
+    this.recordQueue = new Map(); // Map of [recordId, recordType]
     this.actionQueue = [];
     this.checkTables = this.checkTables.bind(this);
     this.processRecordQueue = this.processRecordQueue.bind(this);
@@ -38,14 +38,12 @@ export class PostSyncProcessor {
     console.log('event: ', causedBy, recordType);
     // Exit if not a change caused by incoming sync
     if (causedBy !== 'sync' || recordType === 'SyncOut') return;
-    // Check if already in queue, remove old and add to end of queue
-    const existingIndex = this.recordQueue.findIndex(
-      existingRecord => existingRecord.recordId === record.id
-    );
-    console.log('existingIndex: ', existingIndex);
-    if (existingIndex >= 0) this.recordQueue.splice(existingIndex, 1);
-
-    this.recordQueue.push({ recordType, recordId: record.id });
+    if (this.recordQueue.has(record.id)) {
+      // Check if already in queue, remove old
+      this.recordQueue.delete(record.id);
+    }
+    // Add new entry at end of Map
+    this.recordQueue.set(record.id, recordType);
   }
 
   /**
@@ -69,15 +67,12 @@ export class PostSyncProcessor {
 
   /**
    * Iterates through records added through listening to sync, adding needed actions
-   * to actionQueue. Runs the action actionQueue, making the changes.
+   * to actionQueue. Runs the actionQueue, making the changes.
    */
   processRecordQueue() {
-    this.recordQueue.forEach(({ recordType, recordId }) => {
-      // Use local database record, not what comes in sync. Ensures that records aren't
-      // processed twice.
-      // Example: Record might have serialNumber -1, if it went through incoming sync twice
-      // it'd first assign a serial number, then assign it again with the next number.
-      // Using local database record means that'll changes will only happen on first pass.
+    this.recordQueue.forEach((recordType, recordId) => {
+      // Use local database record, not what comes in sync. Ensures that records are
+      // integrated information (definitely after sync is done)
       const internalRecord = this.database.objects(recordType).filtered('id == $0', recordId)[0];
       this.delegateByRecordType(recordType, internalRecord);
     });
