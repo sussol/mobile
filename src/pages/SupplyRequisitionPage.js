@@ -342,14 +342,14 @@ export class SupplyRequisitionPage extends React.Component {
           },
           {
             key: 'ourStockOnHand',
-            width: 2,
+            width: 1.5,
             title: tableStrings.our_stock,
             sortable: true,
             alignText: 'right',
           },
           {
             key: 'stockOnHand',
-            width: 2,
+            width: 1.5,
             title: tableStrings.their_stock,
             sortable: true,
             alignText: 'right',
@@ -358,6 +358,13 @@ export class SupplyRequisitionPage extends React.Component {
             key: 'monthlyUsage',
             width: 2,
             title: tableStrings.monthly_usage,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'suggestedQuantity',
+            width: 2,
+            title: tableStrings.suggested_quantity,
             sortable: true,
             alignText: 'right',
           },
@@ -374,12 +381,6 @@ export class SupplyRequisitionPage extends React.Component {
             title: tableStrings.supply_quantity,
             sortable: true,
             alignText: 'right',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
