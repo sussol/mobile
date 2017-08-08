@@ -60,38 +60,6 @@ export class SupplierInvoicePage extends React.Component {
     autobind(this);
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
-    // We use != null, which checks for both null or undefined (undefined coerces to null)
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
-
-  /**
-   * Returns updated data according to searchTerm, sortBy and isAscending.
-   */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const { database, transaction } = this.props;
-    const transactionBatches = transaction.getTransactionBatches(database)
-                                          .filtered('itemName BEGINSWITH[c] $0', searchTerm);
-
-    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
-
-    // Calculate and set total price
-    const transactionPrice = transactionBatches.reduce(
-      (sum, transactionBatch) =>
-        sum + transactionBatch.costPrice
-            * transactionBatch.numberOfPacks
-            * transactionBatch.packSize
-      , 0);
-    this.setState({
-      totalPrice: transactionPrice,
-      data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
-    });
-  }
-
   // Delete transaction batch then delete transactionItem if no more
   // transaction batches
   onDeleteConfirm() {
@@ -147,19 +115,6 @@ export class SupplierInvoicePage extends React.Component {
     });
   }
 
-  addNewLine(item) {
-    const { database, transaction } = this.props;
-    database.write(() => {
-      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
-      createRecord(
-        database,
-        'TransactionBatch',
-        transactionItem,
-        createRecord(database, 'ItemBatch', item, '')
-      );
-    });
-  }
-
   getModalTitle() {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
@@ -171,6 +126,51 @@ export class SupplierInvoicePage extends React.Component {
       case THEIR_REF_EDIT:
         return modalStrings.edit_their_reference;
     }
+  }
+
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
+  /**
+   * Returns updated data according to searchTerm, sortBy and isAscending.
+   */
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const { database, transaction } = this.props;
+    const transactionBatches = transaction.getTransactionBatches(database)
+      .filtered('itemName BEGINSWITH[c] $0', searchTerm);
+
+    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
+
+    // Calculate and set total price
+    const transactionPrice = transactionBatches.reduce(
+      (sum, transactionBatch) =>
+        sum + transactionBatch.costPrice
+        * transactionBatch.numberOfPacks
+        * transactionBatch.packSize
+      , 0);
+    this.setState({
+      totalPrice: transactionPrice,
+      data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
+    });
+  }
+
+  addNewLine(item) {
+    const { database, transaction } = this.props;
+    database.write(() => {
+      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
+      createRecord(
+        database,
+        'TransactionBatch',
+        transactionItem,
+        createRecord(database, 'ItemBatch', item, '')
+      );
+    });
   }
 
   openModal(key) {
