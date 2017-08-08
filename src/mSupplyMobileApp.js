@@ -58,11 +58,11 @@ class MSupplyMobileAppContainer extends React.Component {
     this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
     this.postSyncProcessor = new PostSyncProcessor(this.database);
     this.scheduler = new Scheduler();
-    const initialised = this.synchroniser.isInitialised();
+    const isInitialised = this.synchroniser.isInitialised();
     this.state = {
       confirmFinalise: false,
       currentUser: null,
-      initialised: initialised,
+      isInitialised: isInitialised,
       isSyncing: false,
       syncError: '',
       lastSync: null, // Date of the last successful sync
@@ -94,7 +94,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-    if (this.state.initialised && this.synchroniser.isSyncing()) {
+    if (this.state.isInitialised && this.synchroniser.isSyncing()) {
       // Sync was interrupted
       this.postSyncProcessor.checkTables();
     }
@@ -111,7 +111,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   onInitialised() {
-    this.setState({ initialised: true });
+    this.setState({ isInitialised: true });
     this.postSyncProcessor.checkTables();
   }
 
@@ -142,7 +142,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   async synchronise() {
-    if (!this.state.initialised || this.state.isSyncing) return; // If already syncing, skip
+    if (!this.state.isInitialised || this.state.isSyncing) return; // If already syncing, skip
     try {
       this.setState({ isSyncing: true });
       await this.synchroniser.synchronise();
@@ -216,7 +216,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   render() {
-    if (!this.state.initialised) {
+    if (!this.state.isInitialised) {
       return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
     }
     const { finaliseItem, dispatch, navigationState } = this.props;
