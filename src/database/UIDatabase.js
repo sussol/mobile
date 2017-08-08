@@ -21,6 +21,10 @@ export class UIDatabase {
       case 'Item':
         results = results.filtered('isVisible == true');
         break;
+      case 'Requisition':
+      // Hide Requisitions that have not been updated with a serialNumber in postSync
+        results = results.filtered('serialNumber != "-1"');
+        break;
       default:
         break;
     }

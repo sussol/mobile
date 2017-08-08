@@ -3,7 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
@@ -29,8 +28,7 @@ export class RequisitionsPage extends React.Component {
     this.state = {
       selection: [],
     };
-    // Hide Requisitions that have not been updated with a serialNumber in postSync
-    this.requisitions = props.database.objects('Requisition').filtered('serialNumber != "-1"');
+    this.requisitions = props.database.objects('Requisition');
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'entryDate',
@@ -45,8 +43,9 @@ export class RequisitionsPage extends React.Component {
     database.write(() => {
       const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const requisition = this.requisitions.find(currentRequisition =>
-                                                currentRequisition.id === selection[i]);
+        const requisition = this.requisitions.find(
+          currentRequisition => currentRequisition.id === selection[i]
+        );
         if (requisition.isValid() && !requisition.isFinalised) {
           requisitionsToDelete.push(requisition);
         }
@@ -80,11 +79,9 @@ export class RequisitionsPage extends React.Component {
 
   navigateToRequisition(requisition) {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
-    this.props.navigateTo(
-      'requisition',
-      `${navStrings.requisition} ${requisition.serialNumber}`,
-      { requisition: requisition },
-    );
+    this.props.navigateTo('requisition', `${navStrings.requisition} ${requisition.serialNumber}`, {
+      requisition: requisition,
+    });
   }
 
   updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
@@ -134,12 +131,7 @@ export class RequisitionsPage extends React.Component {
   }
 
   renderNewRequisitionButton() {
-    return (
-      <PageButton
-        text={buttonStrings.new_requisition}
-        onPress={this.onNewRequisition}
-      />
-    );
+    return <PageButton text={buttonStrings.new_requisition} onPress={this.onNewRequisition} />;
   }
 
   render() {
