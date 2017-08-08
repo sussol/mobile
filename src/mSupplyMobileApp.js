@@ -95,7 +95,8 @@ class MSupplyMobileAppContainer extends React.Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
     if (this.state.isInitialised && this.synchroniser.isSyncing()) {
-      // Sync was interrupted
+      // Sync was interrupted, so ensure any recently synced records have been
+      // properly post sync processed
       this.postSyncProcessor.checkTables();
     }
   }
