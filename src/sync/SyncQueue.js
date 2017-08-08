@@ -64,7 +64,7 @@ export class SyncQueue {
         case CREATE:
         case UPDATE:
         case DELETE: {
-          let duplicate = false;
+          let isDuplicate = false;
           if (!record.id) return;
 
           if (recordType === 'Transaction' && record.isFinalised) {
@@ -77,7 +77,7 @@ export class SyncQueue {
               this.database.delete('SyncOut', value);
             });
           } else {
-            duplicate =
+            isDuplicate =
               this.database
                 .objects('SyncOut')
                 .filtered(
@@ -88,7 +88,7 @@ export class SyncQueue {
                 ).length > 0;
           }
 
-          if (!duplicate) {
+          if (!isDuplicate) {
             this.database.create('SyncOut', {
               id: generateUUID(),
               changeTime: new Date().getTime(),
