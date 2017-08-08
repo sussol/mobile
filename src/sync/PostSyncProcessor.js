@@ -35,7 +35,6 @@ export class PostSyncProcessor {
  * this.onDatabaseEvent
  */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    console.log('event: ', causedBy, recordType);
     // Exit if not a change caused by incoming sync
     if (causedBy !== 'sync' || recordType === 'SyncOut') return;
     if (this.recordQueue.has(record.id)) {
@@ -85,7 +84,6 @@ export class PostSyncProcessor {
    * this.onDatabaseEvent
    */
   runActionQueue() {
-    console.log('Running actionQueue: ', this.actionQueue.length);
     this.database.write(() => this.actionQueue.forEach(func => func()));
     this.actionQueue = [];
   }
@@ -97,7 +95,6 @@ export class PostSyncProcessor {
    * @return {none}
    */
   delegateByRecordType(recordType, record) {
-    console.log('Delegate', recordType);
     switch (recordType) {
       case 'Requisition':
         this.actionQueue = this.actionQueue.concat(this.postProcessRequisition(record));
@@ -120,19 +117,17 @@ export class PostSyncProcessor {
     const processes = [];
     // Allocate serial number to requisitions with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
-    console.log('in func, serial: ', record.serialNumber);
+
     if (record.serialNumber === '-1') {
       processes.push(() => {
-        console.log('reqbefore', record.serialNumber);
         record.serialNumber = getNextNumber(this.database, REQUISITION_SERIAL_NUMBER);
-        console.log('reqafter', record.serialNumber);
       });
     }
 
     if (processes.length > 0) {
       processes.push(() => this.database.update('Requisition', record));
     }
-    console.log('processes: ', processes);
+
     return processes;
   }
 
@@ -148,9 +143,7 @@ export class PostSyncProcessor {
     // by the server, coming from another store as supplier.
     if (record.serialNumber === '-1' && record.type === 'supplier_invoice') {
       processes.push(() => {
-        console.log('supbefore', record.serialNumber);
         record.serialNumber = getNextNumber(this.database, SUPPLIER_INVOICE_NUMBER);
-        console.log('reqafter', record.serialNumber);
       });
     }
 
@@ -158,7 +151,7 @@ export class PostSyncProcessor {
     if (processes.length > 0) {
       processes.push(() => this.database.update('Transaction', record));
     }
-    console.log('processes: ', processes);
+
     return processes;
   }
 }

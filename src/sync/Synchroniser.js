@@ -59,7 +59,6 @@ export class Synchroniser {
     // should start afresh
     const oldUrl = this.settings.get(SYNC_URL);
     const isFresh = !oldUrl || serverURL !== oldUrl;
-    console.log(oldUrl, isFresh);
     if (isFresh) {
       this.database.write(() => {
         this.database.deleteAll();
