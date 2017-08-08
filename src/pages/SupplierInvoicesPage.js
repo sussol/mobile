@@ -42,12 +42,14 @@ export class SupplierInvoicesPage extends React.Component {
     const { selection, transactions } = this.state;
     const { database } = this.props;
     database.write(() => {
+      const transactionsToDelete = [];
       selection.forEach(transactionID => {
         const transaction = transactions.find(
           currentTransaction => currentTransaction.id === transactionID
         );
-        transaction.removeSelf(database);
+        transactionsToDelete.push(transaction);
       });
+      database.delete(transactionsToDelete);
     });
     this.setState({ selection: [] }, this.refreshData);
   }
