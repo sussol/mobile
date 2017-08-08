@@ -23,7 +23,7 @@ export class Transaction extends Realm.Object {
   }
   // Is external supplier invoice
   get isExternalSupplierInvoice() {
-    return this.otherParty.type === 'facility'; // TODO check if this is right
+    return this.isSupplierInvoice && this.otherParty.isExternalSupplier;
   }
 
   get isFinalised() {
@@ -163,19 +163,17 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Delete any items that aren't contributing to this transaction, in order to
+   * Delete any batches and items that aren't contributing to this transaction, in order to
    * remove clutter
    * @param  {Realm} database   App wide local database
    * @return {none}
    */
-  pruneRedundantItems(database) {
-    const itemsToPrune = [];
-    this.items.forEach(transactionItem => {
-      if (transactionItem.totalQuantity === 0) {
-        itemsToPrune.push(transactionItem);
-      }
-    });
-    database.delete('TransactionItem', itemsToPrune);
+  pruneRedundantBatches(database) {
+    const batchesToRemove = this.getTransactionBatches(database)
+                              .filtered('numberOfPacks = 0');
+
+    database.delete('TransactionBatch', batchesToRemove);
+    this.pruneBatchlessTransactionItems(database);
   }
 
   /**
@@ -191,19 +189,6 @@ export class Transaction extends Realm.Object {
       }
     });
     database.delete('TransactionItem', itemsToRemove);
-  }
-
-  /**
-   * Delete any empty transactionBatches and transactionItems
-   * @param  {Realm} database   App wide local database
-   * @return {none}
-   */
-  pruneRedundantBatches(database) {
-    const batchesToRemove = this.getTransactionBatches(database)
-                              .filtered('numberOfPacks = 0');
-
-    database.delete('TransactionBatch', batchesToRemove);
-    this.pruneBatchlessTransactionItems(database);
   }
 
   /**
@@ -228,10 +213,8 @@ export class Transaction extends Realm.Object {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
     const isIncomingInvoice = this.isIncoming;
-    const isExternalSupplierInvoice = this.isExternalSupplierInvoice;
 
-    if (isExternalSupplierInvoice) this.pruneRedundantBatches(database);
-    else this.pruneRedundantItems(database);
+    this.pruneRedundantBatches(database); // Remove any batches/items with 0 quantity
 
     this.getTransactionBatches(database).forEach(transactionBatch => {
       const { itemBatch,

@@ -16,6 +16,12 @@ export class UIDatabase {
       case 'mSupplyStore':
         results = results.filtered('isVisible == true AND isSupplier == true AND type == "store"');
         break;
+      case 'ExternalSupplier':
+        results = results.filtered(
+          "isVisible == true AND isSupplier == true AND type == 'facility'"
+        );
+
+        break;
       case 'Item':
         results = results.filtered('isVisible == true');
         break;
@@ -42,6 +48,7 @@ function translateToCoreDatabaseType(type) {
     case 'Customer':
     case 'Supplier':
     case 'mSupplyStore':
+    case 'ExternalSupplier':
       return 'Name';
     default:
       return type;

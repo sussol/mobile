@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -44,12 +42,15 @@ export class SupplierInvoicesPage extends React.Component {
     const { selection, transactions } = this.state;
     const { database } = this.props;
     database.write(() => {
-      selection.forEach(transactionID => {
-        const transaction = transactions.find(
-          currentTransaction => currentTransaction.id === transactionID
-        );
-        transaction.removeSelf(database);
-      });
+      const transactionsToDelete = [];
+      for (let i = 0; i < selection.length; i++) {
+        const transaction = transactions.find(currentTransaction =>
+          currentTransaction.id === selection[i]);
+        if (transaction.isValid() && !transaction.isFinalised) {
+          transactionsToDelete.push(transaction);
+        }
+      }
+      database.delete('Transaction', transactionsToDelete);
     });
     this.setState({ selection: [] }, this.refreshData);
   }
@@ -90,10 +91,7 @@ export class SupplierInvoicesPage extends React.Component {
         this.props.database.save('Transaction', invoice);
       });
     }
-    const navigationKey = invoice.isExternalSupplierInvoice ?
-                          'externalSupplierInvoice' :
-                          'supplierInvoice';
-    this.props.navigateTo(navigationKey, `${navStrings.invoice} ${invoice.serialNumber}`, {
+    this.props.navigateTo('supplierInvoice', `${navStrings.invoice} ${invoice.serialNumber}`, {
       transaction: invoice,
     });
   }
@@ -211,7 +209,7 @@ export class SupplierInvoicesPage extends React.Component {
         />
         <SelectModal
           isOpen={this.state.isCreatingInvoice}
-          options={this.props.database.objects('Supplier')}
+          options={this.props.database.objects('ExternalSupplier')}
           placeholderText={modalStrings.start_typing_to_select_supplier}
           queryString={'name BEGINSWITH[c] $0'}
           sortByString={'name'}
@@ -220,7 +218,7 @@ export class SupplierInvoicesPage extends React.Component {
             this.setState({ isCreatingInvoice: false });
           }}
           onClose={() => this.setState({ isCreatingInvoice: false })}
-          title={modalStrings.search_for_the_customer}
+          title={modalStrings.search_for_the_supplier}
         />
       </GenericPage>
     );
