@@ -215,7 +215,7 @@ export class SupplierInvoicesPage extends React.Component {
             this.setState({ isCreatingInvoice: false });
           }}
           onClose={() => this.setState({ isCreatingInvoice: false })}
-          title={modalStrings.search_for_the_customer}
+          title={modalStrings.search_for_the_supplier}
         />
       </GenericPage>
     );
