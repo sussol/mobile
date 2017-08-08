@@ -43,13 +43,14 @@ export class SupplierInvoicesPage extends React.Component {
     const { database } = this.props;
     database.write(() => {
       const transactionsToDelete = [];
-      selection.forEach(transactionID => {
-        const transaction = transactions.find(
-          currentTransaction => currentTransaction.id === transactionID
-        );
-        transactionsToDelete.push(transaction);
-      });
-      database.delete(transactionsToDelete);
+      for (let i = 0; i < selection.length; i++) {
+        const transaction = transactions.find(currentTransaction =>
+          currentTransaction.id === selection[i]);
+        if (transaction.isValid() && !transaction.isFinalised) {
+          transactionsToDelete.push(transaction);
+        }
+      }
+      database.delete('Transaction', transactionsToDelete);
     });
     this.setState({ selection: [] }, this.refreshData);
   }
