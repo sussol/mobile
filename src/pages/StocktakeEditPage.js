@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -8,9 +6,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import autobind from 'react-autobind';
 import { PageButton } from '../widgets';
-import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
@@ -23,51 +20,17 @@ const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch',
 * @prop   {func}                navigateTo    CallBack for navigation stack.
 * @state  {Realm.Results}       items         the stocktakeItems of props.stocktake.
 */
-export class StocktakeEditPage extends GenericPage {
+export class StocktakeEditPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.items = props.stocktake.items;
-    this.state.sortBy = 'itemName';
-    this.state.columns = [
-      {
-        key: 'itemCode',
-        width: 1,
-        title: tableStrings.item_code,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'itemName',
-        width: 3.2,
-        title: tableStrings.item_name,
-        sortable: true,
-      },
-      {
-        key: 'snapshotTotalQuantity',
-        width: 1.2,
-        title: tableStrings.snapshot_quantity,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'countedTotalQuantity',
-        width: 1.2,
-        title: tableStrings.actual_quantity,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'difference',
-        width: 1,
-        title: tableStrings.difference,
-        sortable: true,
-        alignText: 'right',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.finalisableDataType = 'Stocktake';
-    this.getFilteredSortedData = this.getFilteredSortedData.bind(this);
-    this.renderCell = this.renderCell.bind(this);
+    this.items = props.stocktake.items;
+    this.state = {};
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'itemName',
+      isAscending: true,
+    };
+    autobind(this);
   }
 
   /**
@@ -86,11 +49,20 @@ export class StocktakeEditPage extends GenericPage {
     });
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
-    const data = this.state.items.filtered(
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const data = this.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
@@ -107,7 +79,7 @@ export class StocktakeEditPage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    return sortDataBy(data, sortBy, sortDataType, isAscending);
+    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
   renderCell(key, item) {
@@ -133,34 +105,79 @@ export class StocktakeEditPage extends GenericPage {
     }
   }
 
+  renderManageStocktakeButton() {
+    return (
+      <PageButton
+        text={buttonStrings.manage_stocktake}
+        onPress={() => this.props.navigateTo('stocktakeManager',
+          navStrings.manage_stocktake,
+          { stocktake: this.props.stocktake },
+          )}
+        isDisabled={this.props.stocktake.isFinalised}
+      />
+    );
+  }
+
   render() {
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderSearchBar()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <PageButton
-                text={buttonStrings.manage_stocktake}
-                onPress={() => this.props.navigateTo('stocktakeManager',
-                  navStrings.manage_stocktake,
-                  { stocktake: this.props.stocktake },
-                  )}
-                isDisabled={this.props.stocktake.isFinalised}
-              />
-            </View>
-          </View>
-          {this.renderDataTable()}
-        </View>
-      </View>
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopRightComponent={this.renderManageStocktakeButton}
+        onEndEditing={this.onEndEditing}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 1,
+            title: tableStrings.item_code,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'itemName',
+            width: 3.2,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'snapshotTotalQuantity',
+            width: 1.2,
+            title: tableStrings.snapshot_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'countedTotalQuantity',
+            width: 1.2,
+            title: tableStrings.actual_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'difference',
+            width: 1,
+            title: tableStrings.difference,
+            sortable: true,
+            alignText: 'right',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        finalisableDataType={'Stocktake'}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
+      />
     );
   }
 }
 
 StocktakeEditPage.propTypes = {
   database: PropTypes.object,
+  genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   stocktake: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
 };

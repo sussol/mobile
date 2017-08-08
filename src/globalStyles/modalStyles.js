@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -7,7 +5,6 @@
 
 import { SUSSOL_ORANGE, BACKGROUND_COLOR } from './colors';
 import { APP_FONT_FAMILY } from './fonts';
-const MODAL_TEXT_WIDTH = 600;
 
 export const modalStyles = {
   modal: {

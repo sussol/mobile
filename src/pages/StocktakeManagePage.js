@@ -1,5 +1,3 @@
-/* @flow weak */
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -8,9 +6,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import autobind from 'react-autobind';
 import {
   StyleSheet,
-  View,
 } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
@@ -29,42 +27,25 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 * @prop   {func}                navigateTo  CallBack for navigation stack.
 * @state  {Realm.Results}       items       Realm.Result object containing all Items.
 */
-export class StocktakeManagePage extends GenericPage {
+export class StocktakeManagePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state.items = props.database.objects('Item');
-    this.state.visibleItemIds = [];
-    this.state.stocktakeName = '';
-    this.state.showItemsWithNoStock = true;
-    this.state.sortBy = 'name';
-    this.state.columns = [
-      {
-        key: 'code',
-        width: 2,
-        title: tableStrings.item_code,
-        sortable: true,
-        alignText: 'right',
-      },
-      {
-        key: 'name',
-        width: 6,
-        title: tableStrings.item_name,
-        sortable: true,
-      },
-      {
-        key: 'selected',
-        width: 1,
-        title: tableStrings.selected,
-        alignText: 'center',
-      },
-    ];
-    this.dataTypesSynchronised = DATA_TYPES_SYNCHRONISED;
-    this.onConfirmPress = this.onConfirmPress.bind(this);
+    this.items = props.database.objects('Item');
+    this.state = {
+      showItemsWithNoStock: true,
+      stocktakeName: '',
+      visibleItemIds: [],
+      selection: [],
+    };
+    this.dataFilters = {
+      searchTerm: '',
+      sortBy: 'name',
+      isAscending: true,
+    };
+    autobind(this);
   }
 
   componentWillMount() {
-    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
-    this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
     if (this.props.stocktake) {
       const selected = [];
       this.props.stocktake.items.forEach((stocktakeItem) => {
@@ -75,9 +56,11 @@ export class StocktakeManagePage extends GenericPage {
         selection: selected,
         stocktakeName: this.props.stocktake.name,
       }, this.refreshData);
-    } else {
-      this.refreshData();
     }
+  }
+
+  onSelectionChange(newSelection) {
+    this.setState({ selection: newSelection });
   }
 
   onConfirmPress() {
@@ -139,24 +122,31 @@ export class StocktakeManagePage extends GenericPage {
     }, this.refreshData);
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
   /**
-   * Updates data within dataSource in state according to sortBy and
-   * isAscending. Also filters data according to showItemsWithNoStock.
+   * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  getFilteredSortedData(searchTerm, sortBy, isAscending) {
-    const {
-      items,
-      showItemsWithNoStock,
-    } = this.state;
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const { showItemsWithNoStock } = this.state;
     let data;
-    data = items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
+    data = this.items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
     data = data.sorted(sortBy, !isAscending);
     if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
     }
     // Populate visibleItemIds with the ids of the items in the filtered data
-    this.setState({ visibleItemIds: data.map((item) => item.id) });
-    return data;
+    this.setState({
+      visibleItemIds: data.map((item) => item.id),
+      data: data,
+    });
   }
 
   renderCell(key, item) {
@@ -170,77 +160,108 @@ export class StocktakeManagePage extends GenericPage {
     }
   }
 
-  render() {
+  renderToggleBar() {
     const {
       visibleItemIds,
       showItemsWithNoStock,
       selection,
     } = this.state;
-    const { stocktake } = this.props;
-    const isAllItemsSelected = visibleItemIds.length > 0 && visibleItemIds.every((id) =>
-                                                                selection.includes(id));
-
+    const areAllItemsSelected = visibleItemIds.length > 0 &&
+                                visibleItemIds.every((id) => selection.includes(id));
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={globalStyles.pageTopLeftSectionContainer}>
-              {this.renderSearchBar()}
-            </View>
-            <View style={globalStyles.pageTopRightSectionContainer}>
-              <ToggleBar
-                style={globalStyles.toggleBar}
-                textOffStyle={globalStyles.toggleText}
-                textOnStyle={globalStyles.toggleTextSelected}
-                toggleOffStyle={globalStyles.toggleOption}
-                toggleOnStyle={globalStyles.toggleOptionSelected}
-                toggles={[
-                  {
-                    text: buttonStrings.hide_stockouts,
-                    onPress: () => this.toggleShowItemsWithNoStock(),
-                    isOn: !showItemsWithNoStock,
-                  },
-                  {
-                    text: buttonStrings.all_items_selected,
-                    onPress: () => this.toggleSelectAllItems(isAllItemsSelected),
-                    isOn: isAllItemsSelected,
-                  },
-                ]}
-              />
-            </View>
-          </View>
-          {this.renderDataTable()}
-          <BottomModal
-            isOpen={!(stocktake && stocktake.isFinalised) && (selection.length > 0)}
-            style={localStyles.bottomModal}
-          >
-            <TextInput
-              style={globalStyles.modalTextInput}
-              textStyle={globalStyles.modalText}
-              underlineColorAndroid="transparent"
-              placeholderTextColor="white"
-              placeholder={modalStrings.give_your_stocktake_a_name}
-              value={this.state.stocktakeName}
-              onChangeText={(text) => this.setState({ stocktakeName: text })}
-            />
-            <Button
-              style={[globalStyles.button, globalStyles.modalOrangeButton]}
-              textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-              text={!stocktake ? modalStrings.create : modalStrings.confirm}
-              onPress={this.onConfirmPress}
-            />
-          </BottomModal>
-        </View>
-      </View>
+      <ToggleBar
+        style={globalStyles.toggleBar}
+        textOffStyle={globalStyles.toggleText}
+        textOnStyle={globalStyles.toggleTextSelected}
+        toggleOffStyle={globalStyles.toggleOption}
+        toggleOnStyle={globalStyles.toggleOptionSelected}
+        toggles={[
+          {
+            text: buttonStrings.hide_stockouts,
+            onPress: () => this.toggleShowItemsWithNoStock(),
+            isOn: !showItemsWithNoStock,
+          },
+          {
+            text: buttonStrings.all_items_selected,
+            onPress: () => this.toggleSelectAllItems(areAllItemsSelected),
+            isOn: areAllItemsSelected,
+          },
+        ]}
+      />
+    );
+  }
+
+  render() {
+    const { stocktake } = this.props;
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopRightComponent={this.renderToggleBar}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'code',
+            width: 2,
+            title: tableStrings.item_code,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'name',
+            width: 6,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'selected',
+            width: 1,
+            title: tableStrings.selected,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        selection={this.state.selection}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
+      >
+        <BottomModal
+          isOpen={!(stocktake && stocktake.isFinalised) && (this.state.selection.length > 0)}
+          style={localStyles.bottomModal}
+        >
+          <TextInput
+            style={globalStyles.modalTextInput}
+            textStyle={globalStyles.modalText}
+            underlineColorAndroid="transparent"
+            placeholderTextColor="white"
+            placeholder={modalStrings.give_your_stocktake_a_name}
+            value={this.state.stocktakeName}
+            onChangeText={(text) => this.setState({ stocktakeName: text })}
+          />
+          <Button
+            style={[globalStyles.button, globalStyles.modalOrangeButton]}
+            textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
+            text={!stocktake ? modalStrings.create : modalStrings.confirm}
+            onPress={this.onConfirmPress}
+          />
+        </BottomModal>
+      </GenericPage>
     );
   }
 }
 
 StocktakeManagePage.propTypes = {
   currentUser: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object,
+  topRoute: PropTypes.bool,
   stocktake: PropTypes.object,
   database: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({
