@@ -10,9 +10,30 @@ const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_K
 export class PostSyncProcessor {
   constructor(database) {
     this.database = database;
-    this.queue = [];
-    this.runPostSyncQueue = this.runPostSyncQueue.bind(this);
+    this.recordQueue = [];
+    this.actionQueue = [];
     this.checkTables = this.checkTables.bind(this);
+    this.processRecordQueue = this.processRecordQueue.bind(this);
+    this.runActionQueue = this.runActionQueue.bind(this);
+
+    this.database.addListener(this.onDatabaseEvent);
+  }
+
+/**
+ * Respond to a database change event. Must be called from within a database
+ * write transaction.
+ * @param  {string} changeType  The type of database change, e.g. CREATE, UPDATE, DELETE
+ * @param  {string} recordType  The type of record changed (from database schema)
+ * @param  {object} record      The record changed
+ * @param  {string} causedBy    The cause of this database event, either 'sync' or undefined
+ * @return {none}
+ * Runs all the post sync functions triggered by sync events on database through
+ * this.onDatabaseEvent
+ */
+  onDatabaseEvent(changeType, recordType, record, causedBy) {
+    console.log('event: ', causedBy);
+    if (causedBy !== 'sync') return; // Exit if not a change caused by sync
+    this.recordQueue.push({ recordType, recordId: record.id });
   }
 
   /**
@@ -20,7 +41,8 @@ export class PostSyncProcessor {
    * Tables manually added as to not iterate over tables that don't have any post processing.
    */
   checkTables() {
-    this.queue = [];
+    this.actionQueue = [];
+    this.recordQueue = []; // Reset the recordQueue to avoid unnessary runs
 
     this.database
       .objects('Requisition')
@@ -30,17 +52,34 @@ export class PostSyncProcessor {
       .objects('Transaction')
       .forEach(record => this.delegateByRecordType('Transaction', record));
 
-    this.runPostSyncQueue();
+    this.runActionQueue();
+  }
+
+  /**
+   * Iterates through records added through listening to sync, adding needed actions
+   * to actionQueue. Runs the action actionQueue, making the changes.
+   */
+  processRecordQueue() {
+    this.recordQueue.forEach(({ recordType, recordId }) => {
+      // Use local database record, not what comes in sync. Ensures that records aren't
+      // processed twice.
+      // Example: Record might have serialNumber -1, if it went through incoming sync twice
+      // it'd first assign a serial number, then assign it again with the next number.
+      // Using local database record means that'll changes will only happen on first pass.
+      const internalRecord = this.database.objectForPrimaryKey(recordType, recordId);
+      this.delegateByRecordType(recordType, internalRecord);
+    });
+    this.runActionQueue();
   }
 
   /**
    * Runs all the post sync functions triggered by sync events on database through
    * this.onDatabaseEvent
    */
-  runPostSyncQueue() {
-    console.log('Running post queue: ', this.queue.length);
-    this.database.write(() => this.queue.forEach(func => func()));
-    this.queue = [];
+  runActionQueue() {
+    console.log('Running actionQueue: ', this.actionQueue.length);
+    this.database.write(() => this.actionQueue.forEach(func => func()));
+    this.actionQueue = [];
   }
 
   /**
@@ -53,10 +92,10 @@ export class PostSyncProcessor {
     console.log('Delegate', recordType);
     switch (recordType) {
       case 'Requisition':
-        this.queue = this.queue.concat(this.postProcessRequisition(record));
+        this.actionQueue = this.actionQueue.concat(this.postProcessRequisition(record));
         break;
       case 'Transaction':
-        this.queue = this.queue.concat(this.postProcessTransaction(record));
+        this.actionQueue = this.actionQueue.concat(this.postProcessTransaction(record));
         break;
       default:
         break;

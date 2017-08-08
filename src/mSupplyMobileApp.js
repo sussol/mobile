@@ -156,7 +156,7 @@ class MSupplyMobileAppContainer extends React.Component {
         syncError: error.message,
       });
     }
-    this.postSyncProcessor.checkTables();
+    this.postSyncProcessor.processRecordQueue();
   }
 
   logOut() {
