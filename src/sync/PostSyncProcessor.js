@@ -92,10 +92,10 @@ export class PostSyncProcessor {
   enqueuePostProcessesForRecordType(recordType, record) {
     switch (recordType) {
       case 'Requisition':
-        this.actionQueue = this.actionQueue.concat(this.postProcessRequisition(record));
+        this.actionQueue = this.actionQueue.concat(this.generateFunctionsForRequisition(record));
         break;
       case 'Transaction':
-        this.actionQueue = this.actionQueue.concat(this.postProcessTransaction(record));
+        this.actionQueue = this.actionQueue.concat(this.generateFunctionsForTransaction(record));
         break;
       default:
         break;
@@ -108,22 +108,22 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  generatePostProcessesForRequisition(record) {
-    const processes = [];
+  generateFunctionsForRequisition(record) {
+    const funcs = [];
     // Allocate serial number to requisitions with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
 
     if (record.serialNumber === '-1') {
-      processes.push(() => {
+      funcs.push(() => {
         record.serialNumber = getNextNumber(this.database, REQUISITION_SERIAL_NUMBER);
       });
     }
 
-    if (processes.length > 0) {
-      processes.push(() => this.database.update('Requisition', record));
+    if (funcs.length > 0) {
+      funcs.push(() => this.database.update('Requisition', record));
     }
 
-    return processes;
+    return funcs;
   }
 
   /**
@@ -132,21 +132,21 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  generatePostProcessesForTransaction(record) {
-    const processes = [];
+  generateFunctionsForTransaction(record) {
+    const funcs = [];
     // Allocate serial number to supplier invoices with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
     if (record.serialNumber === '-1' && record.type === 'supplier_invoice') {
-      processes.push(() => {
+      funcs.push(() => {
         record.serialNumber = getNextNumber(this.database, SUPPLIER_INVOICE_NUMBER);
       });
     }
 
     // If any changes, add database update for record
-    if (processes.length > 0) {
-      processes.push(() => this.database.update('Transaction', record));
+    if (funcs.length > 0) {
+      funcs.push(() => this.database.update('Transaction', record));
     }
 
-    return processes;
+    return funcs;
   }
 }
