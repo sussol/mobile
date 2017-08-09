@@ -55,7 +55,7 @@ export class PostSyncProcessor {
       .objects('Transaction')
       .forEach(record => this.enqueueFunctionsForRecordType('Transaction', record));
 
-    this.runFunctionQueue();
+    this.processFunctionQueue();
   }
 
   /**
@@ -69,15 +69,13 @@ export class PostSyncProcessor {
       const internalRecord = this.database.objects(recordType).filtered('id == $0', recordId)[0];
       this.enqueueFunctionsForRecordType(recordType, internalRecord);
     });
-    this.runFunctionQueue();
-    this.recordQueue = []; // Reset the recordQueue to avoid unnessary reruns
+    this.processFunctionQueue();
   }
 
   /**
-   * Runs all the post sync functions triggered by sync events on database through
-   * this.onDatabaseEvent
+   * Runs all the post sync functions in this.functionQueue and clears queue.
    */
-  runFunctionQueue() {
+  processFunctionQueue() {
     this.database.write(() => this.functionQueue.forEach(func => func()));
     this.functionQueue = [];
   }
