@@ -23,10 +23,10 @@ import { StocktakeEditPage,
        } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
-import { SupplierInvoicePage,
+import { SupplierInvoicePage } from './SupplierInvoicePage';
+import { SupplierInvoicesPage,
          checkForFinaliseError as checkForSupplierInvoiceError,
-        } from './SupplierInvoicePage';
-import { SupplierInvoicesPage } from './SupplierInvoicesPage';
+       } from './SupplierInvoicesPage';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
@@ -50,6 +50,11 @@ export const PAGES = {
 
 export const FINALISABLE_PAGES = {
   supplierInvoice: {
+    recordType: 'Transaction',
+    recordToFinaliseKey: 'transaction',
+    finaliseText: 'finalise_supplier_invoice',
+  },
+  externalSupplierInvoice: {
     checkForError: checkForSupplierInvoiceError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',

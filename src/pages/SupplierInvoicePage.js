@@ -60,6 +60,38 @@ export class SupplierInvoicePage extends React.Component {
     autobind(this);
   }
 
+  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
+    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
+    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  }
+
+  /**
+   * Returns updated data according to searchTerm, sortBy and isAscending.
+   */
+  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    const { database, transaction } = this.props;
+    const transactionBatches = transaction.getTransactionBatches(database)
+                                          .filtered('itemName BEGINSWITH[c] $0', searchTerm);
+
+    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
+
+    // Calculate and set total price
+    const transactionPrice = transactionBatches.reduce(
+      (sum, transactionBatch) =>
+        sum + transactionBatch.costPrice
+            * transactionBatch.numberOfPacks
+            * transactionBatch.packSize
+      , 0);
+    this.setState({
+      totalPrice: transactionPrice,
+      data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
+    });
+  }
+
   // Delete transaction batch then delete transactionItem if no more
   // transaction batches
   onDeleteConfirm() {
@@ -73,10 +105,6 @@ export class SupplierInvoicePage extends React.Component {
 
   onDeleteCancel() {
     this.setState({ selection: [] }, this.refreshData);
-  }
-
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
   }
 
   /**
@@ -119,51 +147,6 @@ export class SupplierInvoicePage extends React.Component {
     });
   }
 
-  getModalTitle() {
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-    switch (this.state.modalKey) {
-      default:
-      case ITEM_SELECT:
-        return modalStrings.search_for_an_item_to_add;
-      case COMMENT_EDIT:
-        return modalStrings.edit_the_invoice_comment;
-      case THEIR_REF_EDIT:
-        return modalStrings.edit_their_reference;
-    }
-  }
-
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
-    // We use != null, which checks for both null or undefined (undefined coerces to null)
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
-
-  /**
-   * Returns updated data according to searchTerm, sortBy and isAscending.
-   */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const { database, transaction } = this.props;
-    const transactionBatches = transaction.getTransactionBatches(database)
-      .filtered('itemName BEGINSWITH[c] $0', searchTerm);
-
-    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
-
-    // Calculate and set total price
-    const transactionPrice = transactionBatches.reduce(
-      (sum, transactionBatch) =>
-        sum + transactionBatch.costPrice
-        * transactionBatch.numberOfPacks
-        * transactionBatch.packSize
-      , 0);
-    this.setState({
-      totalPrice: transactionPrice,
-      data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
-    });
-  }
-
   addNewLine(item) {
     const { database, transaction } = this.props;
     database.write(() => {
@@ -175,6 +158,19 @@ export class SupplierInvoicePage extends React.Component {
         createRecord(database, 'ItemBatch', item, '')
       );
     });
+  }
+
+  getModalTitle() {
+    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+    switch (this.state.modalKey) {
+      default:
+      case ITEM_SELECT:
+        return modalStrings.search_for_an_item_to_add;
+      case COMMENT_EDIT:
+        return modalStrings.edit_the_invoice_comment;
+      case THEIR_REF_EDIT:
+        return modalStrings.edit_their_reference;
+    }
   }
 
   openModal(key) {
@@ -351,7 +347,6 @@ export class SupplierInvoicePage extends React.Component {
         renderTopLeftComponent={this.renderPageInfo}
         renderTopRightComponent={this.renderAddBatchButton}
         onEndEditing={this.onEndEditing}
-        onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
         columns={[
@@ -407,7 +402,6 @@ export class SupplierInvoicePage extends React.Component {
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         finalisableDataType={'Transaction'}
         database={this.props.database}
-        selection={this.state.selection}
         {...this.props.genericTablePageStyles}
         topRoute={this.props.topRoute}
       >
