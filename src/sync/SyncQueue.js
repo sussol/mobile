@@ -56,39 +56,11 @@ export class SyncQueue {
         case CREATE:
         case UPDATE:
         case DELETE: {
-<<<<<<< HEAD
-          let isDuplicate = false;
-          if (!record.id) return;
-
-          if (recordType === 'Transaction' && record.isFinalised) {
-            // Remove old snapshots from the same transaction to be sync with lines
-            const result = this.database
-              .objects('SyncOut')
-              .filtered('recordType == $0 && recordId == $1', recordType, record.id);
-
-            Object.entries(result).forEach(([key, value]) => {
-              this.database.delete('SyncOut', value);
-            });
-          } else {
-            isDuplicate =
-              this.database
-                .objects('SyncOut')
-                .filtered(
-                  'changeType == $0 && recordType == $1 && recordId == $2',
-                  changeType,
-                  recordType,
-                  record.id
-                ).length > 0;
-          }
-
-          if (!isDuplicate) {
-=======
           if (!record.id) return;
           const existingSyncOutRecord = this.database
             .objects('SyncOut')
             .filtered('recordId == $0', record.id)[0];
           if (!existingSyncOutRecord) {
->>>>>>> #332-fix-lines-si-between-mobiles
             this.database.create('SyncOut', {
               id: generateUUID(),
               changeTime: new Date().getTime(),
