@@ -59,7 +59,7 @@ const dataMigrations = [
     migrate: database => {
       // Changed SyncQueue to expect no more than one SyncOut record for every record in database.
       // Assume that last SyncOut record is correct.
-      const allRecords = database.objects('SyncOut').sorted('changeTime');
+      const allRecords = database.objects('SyncOut').sorted('changeTime').snapshot();
       database.write(() => {
         allRecords.forEach(record => {
           const hasDuplicates = allRecords.filtered('recordId == $0', record.id).length > 1;
