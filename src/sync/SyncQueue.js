@@ -52,14 +52,6 @@ export class SyncQueue {
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     if (causedBy === 'sync') return; // Don't re-sync any changes caused by a sync
     if (recordTypesSynced.indexOf(recordType) >= 0) {
-      // If a delete, first remove any sync out records that already have the id,
-      // so that sync doesn't try to refer to them next time it does a push
-      if (changeType === DELETE) {
-        const recordsToDelete = this.database
-          .objects('SyncOut')
-          .filtered('recordId == $0', record.id);
-        this.database.delete('SyncOut', recordsToDelete);
-      }
       switch (changeType) {
         case CREATE:
         case UPDATE:
