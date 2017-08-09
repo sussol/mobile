@@ -13,7 +13,7 @@ export class PostSyncProcessor {
   constructor(database) {
     this.database = database;
     this.recordQueue = new Map(); // Map of [recordId, recordType]
-    this.actionQueue = [];
+    this.functionQueue = [];
     autobind(this);
     this.database.addListener(this.onDatabaseEvent);
   }
@@ -41,36 +41,37 @@ export class PostSyncProcessor {
   }
 
   /**
-   * Runs post sync checks across specified tables, ensuring data is correct.
-   * Tables manually added as to not iterate over tables that don't have any post processing.
+   * Attempts to enqueue functions for every record in specified tables of
+   * local database, ensuring data is correct.
+   * Tables manually added as to not iterate over tables function generators.
    */
   processAnyUnprocessedRecords() {
-    this.actionQueue = [];
+    this.functionQueue = [];
     this.recordQueue = []; // Reset the recordQueue to avoid unnessary runs
 
     this.database
       .objects('Requisition')
-      .forEach(record => this.enqueuePostProcessesForRecordType('Requisition', record));
+      .forEach(record => this.enqueueFunctionsForRecordType('Requisition', record));
 
     this.database
       .objects('Transaction')
-      .forEach(record => this.enqueuePostProcessesForRecordType('Transaction', record));
+      .forEach(record => this.enqueueFunctionsForRecordType('Transaction', record));
 
-    this.runActionQueue();
+    this.runFunctionQueue();
   }
 
   /**
-   * Iterates through records added through listening to sync, adding needed actions
-   * to actionQueue. Runs the actionQueue, making the changes.
+   * Iterates through records added through listening to sync, adding needed functions
+   * to functionQueue. Runs the functionQueue, making the changes.
    */
   processRecordQueue() {
     this.recordQueue.forEach((recordType, recordId) => {
       // Use local database record, not what comes in sync. Ensures that records are
       // integrated information (definitely after sync is done)
       const internalRecord = this.database.objects(recordType).filtered('id == $0', recordId)[0];
-      this.enqueuePostProcessesForRecordType(recordType, internalRecord);
+      this.enqueueFunctionsForRecordType(recordType, internalRecord);
     });
-    this.runActionQueue();
+    this.runFunctionQueue();
     this.recordQueue = []; // Reset the recordQueue to avoid unnessary reruns
   }
 
@@ -78,24 +79,29 @@ export class PostSyncProcessor {
    * Runs all the post sync functions triggered by sync events on database through
    * this.onDatabaseEvent
    */
-  runActionQueue() {
-    this.database.write(() => this.actionQueue.forEach(func => func()));
-    this.actionQueue = [];
+  runFunctionQueue() {
+    this.database.write(() => this.functionQueue.forEach(func => func()));
+    this.functionQueue = [];
   }
 
   /**
-   * Delegates records to the correct utility function
+   * Delegates records to the correct utility function and adds generated functions
+   * to this.functionQueue
    * @param  {string} recordType  The type of record changed (from database schema)
    * @param  {object} record      The record changed
    * @return {none}
    */
-  enqueuePostProcessesForRecordType(recordType, record) {
+  enqueueFunctionsForRecordType(recordType, record) {
     switch (recordType) {
       case 'Requisition':
-        this.actionQueue = this.actionQueue.concat(this.generateFunctionsForRequisition(record));
+        this.functionQueue = this.functionQueue.concat(
+          this.generateFunctionsForRequisition(record)
+        );
         break;
       case 'Transaction':
-        this.actionQueue = this.actionQueue.concat(this.generateFunctionsForTransaction(record));
+        this.functionQueue = this.functionQueue.concat(
+          this.generateFunctionsForTransaction(record)
+        );
         break;
       default:
         break;
@@ -103,8 +109,8 @@ export class PostSyncProcessor {
   }
 
   /**
-   * Builds an array of post process functions based on conditions, runs a database write call
-   * to apply all the post process functions if there are any.
+   * Builds an array of post sync functions based on conditions, appends a database write call
+   * to apply all the post sync functions if there are any.
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
@@ -127,8 +133,8 @@ export class PostSyncProcessor {
   }
 
   /**
-   * Builds an array of post process functions based on conditions, runs a database write call
-   * to apply all the post process functions if there are any.
+   * Builds an array of post sync functions based on conditions, appends a database write call
+   * to apply all the post sync functions if there are any.
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
