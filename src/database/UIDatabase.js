@@ -42,9 +42,7 @@ export class UIDatabase {
 function translateToCoreDatabaseType(type) {
   switch (type) {
     case 'Customer':
-      return 'Name';
     case 'Supplier':
-      return 'Name';
     case 'ExternalSupplier':
       return 'Name';
     default:
