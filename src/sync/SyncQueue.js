@@ -52,18 +52,11 @@ export class SyncQueue {
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     if (causedBy === 'sync') return; // Don't re-sync any changes caused by a sync
     if (recordTypesSynced.indexOf(recordType) >= 0) {
-      // If a delete, first remove any sync out records that already have the id,
-      // so that sync doesn't try to refer to them next time it does a push
-      if (changeType === DELETE) {
-        const recordsToDelete = this.database
-          .objects('SyncOut')
-          .filtered('recordId == $0', record.id);
-        this.database.delete('SyncOut', recordsToDelete);
-      }
       switch (changeType) {
         case CREATE:
         case UPDATE:
         case DELETE: {
+<<<<<<< HEAD
           let isDuplicate = false;
           if (!record.id) return;
 
@@ -89,6 +82,13 @@ export class SyncQueue {
           }
 
           if (!isDuplicate) {
+=======
+          if (!record.id) return;
+          const existingSyncOutRecord = this.database
+            .objects('SyncOut')
+            .filtered('recordId == $0', record.id)[0];
+          if (!existingSyncOutRecord) {
+>>>>>>> #332-fix-lines-si-between-mobiles
             this.database.create('SyncOut', {
               id: generateUUID(),
               changeTime: new Date().getTime(),
@@ -96,6 +96,10 @@ export class SyncQueue {
               recordType: recordType,
               recordId: record.id,
             });
+          } else {
+            existingSyncOutRecord.changeTime = new Date().getTime();
+            existingSyncOutRecord.changeType = changeType;
+            this.database.update('SyncOut', existingSyncOutRecord);
           }
           break;
         }
