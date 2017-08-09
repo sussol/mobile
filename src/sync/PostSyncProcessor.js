@@ -1,5 +1,5 @@
 /**
- * All utility functions for processing synced records after being synced. These should changes
+ * All utility functions for processing synced records after being synced. These changes
  * should be detected by SyncQueue and sent back to the server on next sync.
  */
 
@@ -7,19 +7,14 @@ import { getNextNumber, NUMBER_SEQUENCE_KEYS } from '../database/utilities';
 
 const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
 
+import autobind from 'react-autobind';
+
 export class PostSyncProcessor {
   constructor(database) {
     this.database = database;
     this.recordQueue = new Map(); // Map of [recordId, recordType]
     this.actionQueue = [];
-    this.checkTables = this.checkTables.bind(this);
-    this.processRecordQueue = this.processRecordQueue.bind(this);
-    this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
-    this.runActionQueue = this.runActionQueue.bind(this);
-    this.delegateByRecordType = this.delegateByRecordType.bind(this);
-    this.postProcessRequisition = this.postProcessRequisition.bind(this);
-    this.postProcessTransaction = this.postProcessTransaction.bind(this);
-
+    autobind(this);
     this.database.addListener(this.onDatabaseEvent);
   }
 
@@ -55,11 +50,11 @@ export class PostSyncProcessor {
 
     this.database
       .objects('Requisition')
-      .forEach(record => this.delegateByRecordType('Requisition', record));
+      .forEach(record => this.enqueuePostProcessesForRecordType('Requisition', record));
 
     this.database
       .objects('Transaction')
-      .forEach(record => this.delegateByRecordType('Transaction', record));
+      .forEach(record => this.enqueuePostProcessesForRecordType('Transaction', record));
 
     this.runActionQueue();
   }
@@ -73,7 +68,7 @@ export class PostSyncProcessor {
       // Use local database record, not what comes in sync. Ensures that records are
       // integrated information (definitely after sync is done)
       const internalRecord = this.database.objects(recordType).filtered('id == $0', recordId)[0];
-      this.delegateByRecordType(recordType, internalRecord);
+      this.enqueuePostProcessesForRecordType(recordType, internalRecord);
     });
     this.runActionQueue();
     this.recordQueue = []; // Reset the recordQueue to avoid unnessary reruns
@@ -94,7 +89,7 @@ export class PostSyncProcessor {
    * @param  {object} record      The record changed
    * @return {none}
    */
-  delegateByRecordType(recordType, record) {
+  enqueuePostProcessesForRecordType(recordType, record) {
     switch (recordType) {
       case 'Requisition':
         this.actionQueue = this.actionQueue.concat(this.postProcessRequisition(record));
@@ -113,7 +108,7 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  postProcessRequisition(record) {
+  generatePostProcessesForRequisition(record) {
     const processes = [];
     // Allocate serial number to requisitions with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
@@ -137,7 +132,7 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  postProcessTransaction(record) {
+  generatePostProcessesForTransaction(record) {
     const processes = [];
     // Allocate serial number to supplier invoices with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
