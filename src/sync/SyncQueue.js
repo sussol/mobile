@@ -65,16 +65,10 @@ export class SyncQueue {
         case UPDATE:
         case DELETE: {
           if (!record.id) return;
-          const duplicate =
-            this.database
-              .objects('SyncOut')
-              .filtered(
-                'changeType == $0 && recordType == $1 && recordId == $2',
-                changeType,
-                recordType,
-                record.id
-              ).length > 0;
-          if (!duplicate) {
+          const existingSyncOutRecord = this.database
+            .objects('SyncOut')
+            .filtered('recordId == $0', record.id)[0];
+          if (!existingSyncOutRecord) {
             this.database.create('SyncOut', {
               id: generateUUID(),
               changeTime: new Date().getTime(),
@@ -82,6 +76,10 @@ export class SyncQueue {
               recordType: recordType,
               recordId: record.id,
             });
+          } else {
+            existingSyncOutRecord.changeTime = new Date().getTime();
+            existingSyncOutRecord.changeType = changeType;
+            this.database.update(recordType, existingSyncOutRecord);
           }
           break;
         }
