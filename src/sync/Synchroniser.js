@@ -92,8 +92,8 @@ export class Synchroniser {
   }
 
   /**
-   * Return whether the synchroniser has been completely or partially initialised.
-   * @return {string} Either 'complete', 'partial', 'uninitialised' TODO: make sure this is corrected
+   * Return whether the synchroniser has been initialised.
+   * @return {boolean} True if initial sync has been completed successfully
    */
   isInitialised() {
     const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
@@ -103,7 +103,7 @@ export class Synchroniser {
   /**
    * Return whether the whether or not the app is syncing. Useful for checking if sync was
    * interrupted on app close or crash
-   * @return {boolean} True if it was syncing
+   * @return {boolean} 'true' if the app was (in case of app crash or close) or currently is syncing
    */
   isSyncing() {
     const isSyncing = this.settings.get(SYNC_IS_SYNCING);
