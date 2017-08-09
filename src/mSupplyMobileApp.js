@@ -97,7 +97,7 @@ class MSupplyMobileAppContainer extends React.Component {
     if (this.state.isInitialised && this.synchroniser.isSyncing()) {
       // Sync was interrupted, so ensure any recently synced records have been
       // properly post sync processed
-      this.postSyncProcessor.checkTables();
+      this.postSyncProcessor.processAnyUnprocessedRecords();
     }
   }
 
@@ -113,7 +113,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   onInitialised() {
     this.setState({ isInitialised: true });
-    this.postSyncProcessor.checkTables();
+    this.postSyncProcessor.processAnyUnprocessedRecords();
   }
 
   getCanNavigateBack() {

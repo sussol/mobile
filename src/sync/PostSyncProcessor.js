@@ -41,10 +41,10 @@ export class PostSyncProcessor {
   }
 
   /**
-   * Runs post checks across tables, ensuring data is correct.
+   * Runs post sync checks across specified tables, ensuring data is correct.
    * Tables manually added as to not iterate over tables that don't have any post processing.
    */
-  checkTables() {
+  processAnyUnprocessedRecords() {
     this.actionQueue = [];
     this.recordQueue = []; // Reset the recordQueue to avoid unnessary runs
 
