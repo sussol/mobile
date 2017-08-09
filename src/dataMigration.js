@@ -69,7 +69,7 @@ const dataMigrations = [
             // Transactions and Requisitions need to be synced after all their children records
             // for 2.0.0 interstore features
             record.changeTime = new Date().getTime();
-            this.database.update('SyncOut', record);
+            database.update('SyncOut', record);
           }
         });
       });
