@@ -72,7 +72,10 @@ export class TransactionItem extends Realm.Object {
    * are finalised, whereas customer invoices immediately influence stock levels.
    * @param {double} quantity The total quantity to set across all batches
    */
-  setTotalQuantity(database, quantity) {
+   // TODO: document function param
+  setTotalQuantity(database, requestedQuantity, referenceQuantity = -1) {
+    let quantity = requestedQuantity;
+    if (referenceQuantity > 0) quantity = Math.min(requestedQuantity, referenceQuantity);
     if (this.transaction.isFinalised) {
       throw new Error('Cannot set quantity of an item in a finalised transaction');
     }
