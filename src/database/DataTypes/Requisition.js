@@ -1,7 +1,6 @@
 import Realm from 'realm';
 import { createRecord, getTotal } from '../utilities';
 import { complement } from 'set-manipulator';
-import { SETTINGS_KEYS } from '../../settings';
 
 export class Requisition extends Realm.Object {
   constructor() {
@@ -52,6 +51,10 @@ export class Requisition extends Realm.Object {
     this.daysToSupply = months * 30;
   }
 
+  get isLinkedToRequisition() {
+    return typeof this.linkedRequisition === 'object';
+  }
+
   hasItemWithId(itemId) {
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
@@ -65,6 +68,28 @@ export class Requisition extends Realm.Object {
     if (this.items.filtered('id == $0', requisitionItem.id).length > 0) return;
     this.addItem(requisitionItem);
   }
+
+  createCustomerInvoice(database) {
+    if (this.isRequest || this.isFinalised) {
+      throw new Error('Cannot create invoice from Finalised or Request Requistion ');
+    }
+    if (database.objects('Transaction').
+            filtered('linkedRequisition.id = $0', this.id).length > 0) return;
+    database.write(() => {
+      const transaction = createRecord(database, 'CustomerInvoice',
+                                    this.otherStoreName, /* TODO: USER */);
+      this.items.forEach(requisitionItem => {
+        const transactionItem = createRecord(database, 'TransactionItem',
+                                    transaction, requisitionItem.item);
+        database.save('TransactionItem', transactionItem);
+      });
+      transaction.linkedRequisition = this;
+      this.linkedTransaction = transaction;
+      transaction.comment = `From supply requisition ${this.serialNumber}`;
+      database.save('Transaction', transaction);
+    });
+  }
+
 
   /**
    * Add all items from the mobile store's master list to this requisition
@@ -88,18 +113,6 @@ export class Requisition extends Realm.Object {
     this.addItemsFromMasterList(database, thisStore);
     this.setRequestedToSuggested(database);
     this.pruneRedundantItems(database);
-  }
-
-  /**
-   * Get supplyingStoreName or default supplying store name
-   */
-  getOtherStoreName(database, settings) {
-    if (this.supplyingStoreName) return this.supplyingStoreName.name;
-
-    const nameResults = database.objects('Name').filtered('id == $0',
-                        settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-    if (nameResults.length < 1) return '';
-    return nameResults[0].name;
   }
 
   removeItemsById(database, itemIds) {
@@ -137,6 +150,8 @@ export class Requisition extends Realm.Object {
   finalise(database) {
     this.pruneRedundantItems(database);
     this.status = 'finalised';
+
+    if (this.linkedTransaction) this.linkedTransaction.finalise(database);
   }
 }
 
@@ -146,7 +161,7 @@ Requisition.schema = {
   properties: {
     id: 'string',
     status: { type: 'string', default: 'new' },
-    supplyingStoreName: { type: 'Name', optional: true }, // optional, for ease of migration
+    otherStoreName: { type: 'Name', optional: true }, // optional, for ease of migration
     type: { type: 'string', default: 'request' }, // imprest, forecast, request or response
     entryDate: { type: 'date', default: new Date() },
     daysToSupply: { type: 'double', default: 30 },
@@ -155,5 +170,6 @@ Requisition.schema = {
     comment: { type: 'string', optional: true },
     enteredBy: { type: 'User', optional: true },
     items: { type: 'list', objectType: 'RequisitionItem' },
+    linkedTransaction: { type: 'Transaction', optional: true },
   },
 };

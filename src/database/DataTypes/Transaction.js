@@ -277,5 +277,6 @@ Transaction.schema = {
     theirRef: { type: 'string', optional: true }, // An external reference code
     category: { type: 'TransactionCategory', optional: true },
     items: { type: 'list', objectType: 'TransactionItem' },
+    linkedRequisition: { type: 'Requisition', optional: true },
   },
 };

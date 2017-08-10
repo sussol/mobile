@@ -5,10 +5,6 @@ export class RequisitionItem extends Realm.Object {
     return this.item ? this.item.id : '';
   }
 
-  get ourStockOnHand() {
-    return this.item ? this.item.totalQuantity : 0;
-  }
-
   get itemCode() {
     return this.item ? this.item.code : '';
   }
@@ -28,6 +24,18 @@ export class RequisitionItem extends Realm.Object {
   get suggestedQuantity() {
     const daysToSupply = this.requisition ? this.requisition.daysToSupply : 0;
     return Math.ceil(Math.max((this.dailyUsage * daysToSupply) - this.stockOnHand, 0));
+  }
+
+  get linkedTransactionItem() {
+    if (this.isRequest || !this.requisition.linkedTransaction) return null;
+    const resultList = this.requisition.linkedTransaction.items.filtered('item.id = $0', this.item.id);
+    return resultList.length > 0 ? resultList[0] : null;
+  }
+
+  get ourStockOnHand() {
+    const linkedTransactionItem = this.linkedTransactionItem;
+    return linkedTransactionItem ?
+           linkedTransactionItem.availableQuantity : this.item.totalQuantity;
   }
 }
 
