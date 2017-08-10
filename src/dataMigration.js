@@ -59,11 +59,18 @@ const dataMigrations = [
     migrate: database => {
       // Changed SyncQueue to expect no more than one SyncOut record for every record in database.
       // Assume that last SyncOut record is correct.
-      const allRecords = database.objects('SyncOut').sorted('changeTime');
+      const allRecords = database.objects('SyncOut').sorted('changeTime').snapshot();
       database.write(() => {
         allRecords.forEach(record => {
-          const hasDuplicates = allRecords.filtered('recordId == $0', record.id).length > 0;
-          if (hasDuplicates) database.delete('SyncOut', record);
+          const hasDuplicates = allRecords.filtered('recordId == $0', record.id).length > 1;
+          if (hasDuplicates) {
+            database.delete('SyncOut', record);
+          } else if (record.recordType === 'Transaction' || record.recordType === 'Requisition') {
+            // Transactions and Requisitions need to be synced after all their children records
+            // for 2.0.0 interstore features
+            record.changeTime = new Date().getTime();
+            database.update('SyncOut', record);
+          }
         });
       });
     },
