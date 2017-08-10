@@ -31,8 +31,10 @@ export async function migrateDataToVersion(database, settings) {
   if (fromVersion === toVersion) return;
   // Do any required version update data migrations
   for (const migration of dataMigrations) {
-    if (compareVersions(fromVersion, migration.version) < 0 &&
-        compareVersions(toVersion, migration.version) >= 0) {
+    if (
+      compareVersions(fromVersion, migration.version) < 0 &&
+      compareVersions(toVersion, migration.version) >= 0
+    ) {
       migration.migrate(database, settings);
     }
   }
@@ -50,6 +52,27 @@ const dataMigrations = [
       // 1.0.30 added the setting 'SYNC_IS_INITIALISED', where it previously relied on 'SYNC_URL'
       const syncURL = settings.get(SETTINGS_KEYS.SYNC_URL);
       if (syncURL && syncURL.length > 0) settings.set(SETTINGS_KEYS.SYNC_IS_INITIALISED, 'true');
+    },
+  },
+  {
+    version: '2.0.0',
+    migrate: database => {
+      // Changed SyncQueue to expect no more than one SyncOut record for every record in database.
+      // Assume that last SyncOut record is correct.
+      const allRecords = database.objects('SyncOut').sorted('changeTime').snapshot();
+      database.write(() => {
+        allRecords.forEach(record => {
+          const hasDuplicates = allRecords.filtered('recordId == $0', record.id).length > 1;
+          if (hasDuplicates) {
+            database.delete('SyncOut', record);
+          } else if (record.recordType === 'Transaction' || record.recordType === 'Requisition') {
+            // Transactions and Requisitions need to be synced after all their children records
+            // for 2.0.0 interstore features
+            record.changeTime = new Date().getTime();
+            database.update('SyncOut', record);
+          }
+        });
+      });
     },
   },
 ];
