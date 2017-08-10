@@ -103,7 +103,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
-    this.database.removeAllListeners();
     this.scheduler.clearAll();
   }
 
