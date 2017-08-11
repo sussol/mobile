@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { addNavigationHelpers } from 'react-navigation';
+import autobind from 'react-autobind';
 
 import globalStyles, {
   dataTableColors,
@@ -58,7 +59,16 @@ class MSupplyMobileAppContainer extends React.Component {
     this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
     this.postSyncProcessor = new PostSyncProcessor(this.database);
     this.scheduler = new Scheduler();
+    autobind(this);
+
     const isInitialised = this.synchroniser.isInitialised();
+    this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
+    this.scheduler.schedule(() => {
+      if (this.state.currentUser !== null) {
+        // Only reauthenticate if currently logged in
+        this.userAuthenticator.reauthenticate(this.onAuthentication);
+      }
+    }, AUTHENTICATION_INTERVAL);
     this.state = {
       confirmFinalise: false,
       currentUser: null,
@@ -68,28 +78,6 @@ class MSupplyMobileAppContainer extends React.Component {
       lastSync: null, // Date of the last successful sync
       isLoading: false,
     };
-  }
-
-  componentWillMount() {
-    this.logOut = this.logOut.bind(this);
-    this.onAuthentication = this.onAuthentication.bind(this);
-    this.onInitialised = this.onInitialised.bind(this);
-    this.runWithLoadingIndicator = this.runWithLoadingIndicator.bind(this);
-    this.renderFinaliseButton = this.renderFinaliseButton.bind(this);
-    this.renderLoadingIndicator = this.renderLoadingIndicator.bind(this);
-    this.renderLogo = this.renderLogo.bind(this);
-    this.renderSyncState = this.renderSyncState.bind(this);
-    this.synchronise = this.synchronise.bind(this);
-    this.handleBackEvent = this.handleBackEvent.bind(this);
-    this.getCanNavigateBack = this.getCanNavigateBack.bind(this);
-    this.renderPageTitle = this.renderPageTitle.bind(this);
-    this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
-    this.scheduler.schedule(() => {
-      if (this.state.currentUser !== null) {
-        // Only reauthenticate if currently logged in
-        this.userAuthenticator.reauthenticate(this.onAuthentication);
-      }
-    }, AUTHENTICATION_INTERVAL);
   }
 
   componentDidMount() {
