@@ -61,7 +61,13 @@ class MSupplyMobileAppContainer extends React.Component {
     this.scheduler = new Scheduler();
     autobind(this);
 
+    const isSyncing = this.synchroniser.isSyncing();
     const isInitialised = this.synchroniser.isInitialised();
+    if (isInitialised && isSyncing) {
+      // Sync was interrupted, so ensure any recently synced records have been
+      // properly post sync processed
+      this.postSyncProcessor.processAnyUnprocessedRecords();
+    }
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
       if (this.state.currentUser !== null) {
@@ -82,11 +88,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-    if (this.state.isInitialised && this.synchroniser.isSyncing()) {
-      // Sync was interrupted, so ensure any recently synced records have been
-      // properly post sync processed
-      this.postSyncProcessor.processAnyUnprocessedRecords();
-    }
   }
 
   componentWillUnmount() {
