@@ -17,7 +17,9 @@ import { RequisitionsPage } from './RequisitionsPage';
 import { RequisitionPage,
          checkForFinaliseError as checkForRequisitionFinaliseError,
        } from './RequisitionPage';
-import { SupplyRequisitionPage } from './SupplyRequisitionPage'; // TODO finalise checking
+import { SupplyRequisitionPage,
+         checkForFinaliseError as checkForSupplierRequisitionError
+       } from './SupplyRequisitionPage'; // TODO finalise checking
 import { StockPage } from './StockPage';
 import { StocktakeEditPage,
          checkForFinaliseError as checkForStocktakeFinaliseError,
@@ -75,4 +77,10 @@ export const FINALISABLE_PAGES = {
     recordToFinaliseKey: 'stocktake',
     finaliseText: 'finalise_stocktake',
   },
+  supplyRequisition: {
+    checkForError: checkForSupplierRequisitionError,
+    recordType: 'Requisition',
+    recordToFinaliseKey: 'requisition',
+    finaliseText: 'finalise_requisition',
+  }
 };
