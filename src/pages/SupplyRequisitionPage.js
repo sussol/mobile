@@ -44,10 +44,6 @@ export class SupplyRequisitionPage extends React.Component {
     autobind(this);
   }
 
-  createCustomerInvoice() {
-    this.props.requisition.createCustomerInvoice(this.props.database);
-  }
-
   /**
    * Respond to the user editing the number in the required quantity column
    * @param  {string} key             Should always be 'requiredQuantity'
@@ -258,12 +254,6 @@ export class SupplyRequisitionPage extends React.Component {
             style={globalStyles.topButton}
             text={buttonStrings.use_requested_quantity}
             onPress={this.onUseRequestedQuantity}
-            isDisabled={this.props.requisition.isFinalised}
-          />
-          <PageButton
-            style={globalStyles.topButton}
-            text={'create customer invoice'}
-            onPress={this.createCustomerInvoice}
             isDisabled={this.props.requisition.isFinalised}
           />
         </View>

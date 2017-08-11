@@ -135,6 +135,13 @@ export class PostSyncProcessor {
       });
     }
 
+    if (!record.isRequest && !record.isFinalised) {
+      funcs.push(() => {
+        record.createCustomerInvoice(this.database);
+      });
+    }
+
+
     // If any changes, add database update for record
     if (funcs.length > 0) {
       funcs.push(() => this.database.save('Requisition', record));

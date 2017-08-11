@@ -75,19 +75,17 @@ export class Requisition extends Realm.Object {
     }
     if (database.objects('Transaction').
             filtered('linkedRequisition.id = $0', this.id).length > 0) return;
-    database.write(() => {
-      const transaction = createRecord(database, 'CustomerInvoice',
-                                    this.otherStoreName, /* TODO: USER */);
-      this.items.forEach(requisitionItem => {
-        const transactionItem = createRecord(database, 'TransactionItem',
-                                    transaction, requisitionItem.item);
-        database.save('TransactionItem', transactionItem);
-      });
-      transaction.linkedRequisition = this;
-      this.linkedTransaction = transaction;
-      transaction.comment = `From supply requisition ${this.serialNumber}`;
-      database.save('Transaction', transaction);
+    const transaction = createRecord(database, 'CustomerInvoice',
+                                  this.otherStoreName, /* TODO: USER */);
+    this.items.forEach(requisitionItem => {
+      const transactionItem = createRecord(database, 'TransactionItem',
+                                  transaction, requisitionItem.item);
+      database.save('TransactionItem', transactionItem);
     });
+    transaction.linkedRequisition = this;
+    this.linkedTransaction = transaction;
+    transaction.comment = `From supply requisition ${this.serialNumber}`;
+    database.save('Transaction', transaction);
   }
 
 
