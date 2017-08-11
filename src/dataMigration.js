@@ -53,20 +53,26 @@ const dataMigrations = [
     },
   },
   {
-    version: '1.2.0',
+    version: '1.2.2',
     migrate: (database, settings) => {
       const nameResults = database.objects('Name').filtered('id = $0',
                                 settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-      if (nameResults.length < 1) return;
+      if (nameResults.length < 1) throw new Error('Supplying Store Name ID missing from settings');
       const mainSupplyingStoreName = nameResults[0];
 
-      const requisitions = database.objects('Requisition').filtered('supplyingStoreName = Null');
-
-      const unfinalisedRequisitions = requisitions.filter(requisition => !requisition.isFinalised);
+      const requisitions = database.objects('Requisition')
+                                   .filtered('otherStoreName = Null').snapshot();
 
       database.write(() => {
-        unfinalisedRequisitions.forEach(requisition => {
-          requisition.supplyingStoreName = mainSupplyingStoreName;
+        requisitions.forEach(requisition => {
+          if (!requisition.isRequest) return;
+          // The reason for database.update is we don't want to update finalized transactions
+          // and incase database.save is replaced by automatic way of invoking db event listeners
+          // simply assigning property may cause changes to finalized transaction to be synced.
+          database.update('Requisition', {
+            id: requisition.id,
+            otherStoreName: mainSupplyingStoreName,
+          }, 'sync');
         });
       });
     },
