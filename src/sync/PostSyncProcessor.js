@@ -112,17 +112,18 @@ export class PostSyncProcessor {
    */
   generateFunctionsForRequisition(record) {
     const funcs = [];
+
     // Allocate serial number to requisitions with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
-
     if (record.serialNumber === '-1') {
       funcs.push(() => {
         record.serialNumber = getNextNumber(this.database, REQUISITION_SERIAL_NUMBER);
       });
     }
 
+    // If any changes, add database update for record
     if (funcs.length > 0) {
-      funcs.push(() => this.database.update('Requisition', record));
+      funcs.push(() => this.database.save('Requisition', record));
     }
 
     return funcs;
@@ -136,6 +137,7 @@ export class PostSyncProcessor {
    */
   generateFunctionsForTransaction(record) {
     const funcs = [];
+
     // Allocate serial number to supplier invoices with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
     if (record.serialNumber === '-1' && record.type === 'supplier_invoice') {
@@ -146,7 +148,7 @@ export class PostSyncProcessor {
 
     // If any changes, add database update for record
     if (funcs.length > 0) {
-      funcs.push(() => this.database.update('Transaction', record));
+      funcs.push(() => this.database.save('Transaction', record));
     }
 
     return funcs;
