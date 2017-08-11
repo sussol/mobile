@@ -65,11 +65,11 @@ export class RequisitionsPage extends React.Component {
     this.refreshData();
   }
 
-  onNewRequisition(supplyingStoreName) {
+  onNewRequisition(otherStoreName) {
     let requisition;
     this.props.database.write(() => {
       requisition = createRecord(this.props.database,
-                                'Requisition', this.props.currentUser, supplyingStoreName);
+                                'Requisition', this.props.currentUser, otherStoreName);
     });
     this.navigateToRequisition(requisition);
   }
@@ -126,23 +126,20 @@ export class RequisitionsPage extends React.Component {
 
   renderCell(key, requisition) {
     switch (key) {
-      default:
-      case 'serialNumber':
-        return requisition.serialNumber;
-      case 'otherStoreName':
-        return requisition.getOtherStoreName(this.props.database, this.props.settings);
       case 'entryDate':
         return requisition.entryDate.toDateString();
-      case 'numberOfItems':
-        return requisition.numberOfItems;
+      case 'otherStoreName':
+        return requisition.otherStoreName.name;
       case 'status':
         return formatStatus(requisition.status);
       case 'delete':
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
-          isDisabled: requisition.isFinalised,
+          isDisabled: requisition.isFinalised || !requisition.isRequest,
         };
+      default:
+        return requisition[key];
     }
   }
 

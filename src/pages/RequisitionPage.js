@@ -187,7 +187,7 @@ export class RequisitionPage extends React.Component {
   }
 
   renderPageInfo() {
-    const { requisition, database, settings } = this.props;
+    const { requisition } = this.props;
     const infoColumns = [
       [
         {},
@@ -203,7 +203,7 @@ export class RequisitionPage extends React.Component {
       [
         {
           title: `${pageInfoStrings.supplying_store_name}`,
-          info: requisition.getOtherStoreName(database, settings),
+          info: requisition.otherStoreName.name,
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
