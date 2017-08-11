@@ -62,8 +62,8 @@ export class SyncAuthenticator {
    * @return {string} Authorization header value
    */
   getAuthHeader() {
-    const username = this.settings.get('SyncSiteName');
-    const password = this.settings.get('SyncSitePasswordHash');
+    const username = this.settings.get(SYNC_SITE_NAME);
+    const password = this.settings.get(SYNC_SITE_PASSWORD_HASH);
     return getAuthHeader(username, password);
   }
 }
