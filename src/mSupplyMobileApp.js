@@ -132,6 +132,8 @@ class MSupplyMobileAppContainer extends React.Component {
 
   async synchronise() {
     if (!this.state.isInitialised || this.state.isSyncing) return; // If already syncing, skip
+    // True if last this.synchroniser.synchronise() call failed
+    const lastSyncFailed = this.synchroniser.lastSyncFailed();
     try {
       this.setState({ isSyncing: true });
       await this.synchroniser.synchronise();
@@ -139,7 +141,13 @@ class MSupplyMobileAppContainer extends React.Component {
         isSyncing: false,
         syncError: '',
       });
-      this.postSyncProcessor.processRecordQueue();
+      if (lastSyncFailed) {
+        // Sync was interrupted, so ensure any recently synced records have been
+        // properly post sync processed
+        this.postSyncProcessor.processAnyUnprocessedRecords();
+      } else {
+        this.postSyncProcessor.processRecordQueue();
+      }
     } catch (error) {
       this.setState({
         isSyncing: false,

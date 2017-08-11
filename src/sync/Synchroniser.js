@@ -12,7 +12,7 @@ import { formatDate } from '../utilities';
 
 const {
   SYNC_IS_INITIALISED,
-  SYNC_IS_SYNCING,
+  SYNC_PRIOR_FAILED,
   SYNC_LAST_SUCCESS,
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
@@ -101,13 +101,12 @@ export class Synchroniser {
   }
 
   /**
-   * Return whether the whether or not the app is syncing. Useful for checking if sync was
-   * interrupted on app close or crash
-   * @return {boolean} 'true' if the app was (in case of app crash or close) or currently is syncing
+   * Return whether or not the last sync of the app failed
+   * @return {boolean} 'true' if the last call of synchronise failed
    */
-  isSyncing() {
-    const isSyncing = this.settings.get(SYNC_IS_SYNCING);
-    return isSyncing && isSyncing === 'true';
+  lastSyncFailed() {
+    const lastSyncFailed = this.settings.get(SYNC_PRIOR_FAILED);
+    return lastSyncFailed && lastSyncFailed === 'true';
   }
 
   /**
@@ -117,17 +116,15 @@ export class Synchroniser {
    */
   async synchronise() {
     if (!this.isInitialised()) throw new Error('Not yet initialised');
-    // Use try/finally so that SYNC_IS_SYNCING is correctly set on success or error
-    try {
-      this.settings.set(SYNC_IS_SYNCING, 'true');
-      // Using async/await here means that any errors thrown by push or pull
-      // will be passed up as a rejection of the promise returned by synchronise
-      await this.push();
-      await this.pull();
-    } finally {
-      this.settings.set(SYNC_IS_SYNCING, 'false');
-    }
 
+    // Keeps track between app close/open whether last sync was successful
+    this.settings.set(SYNC_PRIOR_FAILED, 'true');
+    // Using async/await here means that any errors thrown by push or pull
+    // will be passed up as a rejection of the promise returned by synchronise
+    await this.push();
+    await this.pull();
+
+    this.settings.set(SYNC_PRIOR_FAILED, 'false');
     this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));
   }
 
