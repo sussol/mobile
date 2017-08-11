@@ -137,8 +137,8 @@ class MSupplyMobileAppContainer extends React.Component {
       });
       if (lastSyncFailed) {
         // Last sync was interrupted so would not have entered this if block.
-        // If the app was closed, it would have forgotton the records left in the
-        // record queue.
+        // If the app was closed, it would have forgotten the records left in the
+        // record queue, so we need to check tables for unprocessed records.
         this.postSyncProcessor.processAnyUnprocessedRecords();
       } else {
         this.postSyncProcessor.processRecordQueue();
