@@ -52,44 +52,15 @@ export class SyncQueue {
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     if (causedBy === 'sync') return; // Don't re-sync any changes caused by a sync
     if (recordTypesSynced.indexOf(recordType) >= 0) {
-      // If a delete, first remove any sync out records that already have the id,
-      // so that sync doesn't try to refer to them next time it does a push
-      if (changeType === DELETE) {
-        const recordsToDelete = this.database
-          .objects('SyncOut')
-          .filtered('recordId == $0', record.id);
-        this.database.delete('SyncOut', recordsToDelete);
-      }
       switch (changeType) {
         case CREATE:
         case UPDATE:
         case DELETE: {
-          let duplicate = false;
           if (!record.id) return;
-
-          if ((recordType === 'Transaction' || recordType === 'Requisition')
-                                            && record.isFinalised) {
-            // Remove old snapshots from the same transaction to be sync with lines
-            const result = this.database
-              .objects('SyncOut')
-              .filtered('recordType == $0 && recordId == $1', recordType, record.id);
-
-            Object.entries(result).forEach(([key, value]) => {
-              this.database.delete('SyncOut', value);
-            });
-          } else {
-            duplicate =
-              this.database
-                .objects('SyncOut')
-                .filtered(
-                  'changeType == $0 && recordType == $1 && recordId == $2',
-                  changeType,
-                  recordType,
-                  record.id
-                ).length > 0;
-          }
-
-          if (!duplicate) {
+          const existingSyncOutRecord = this.database
+            .objects('SyncOut')
+            .filtered('recordId == $0', record.id)[0];
+          if (!existingSyncOutRecord) {
             this.database.create('SyncOut', {
               id: generateUUID(),
               changeTime: new Date().getTime(),
@@ -97,6 +68,10 @@ export class SyncQueue {
               recordType: recordType,
               recordId: record.id,
             });
+          } else {
+            existingSyncOutRecord.changeTime = new Date().getTime();
+            existingSyncOutRecord.changeType = changeType;
+            this.database.save('SyncOut', existingSyncOutRecord);
           }
           break;
         }

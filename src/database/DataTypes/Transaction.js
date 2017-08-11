@@ -23,7 +23,7 @@ export class Transaction extends Realm.Object {
   }
   // Is external supplier invoice
   get isExternalSupplierInvoice() {
-    return this.isSupplierInvoice && this.otherParty.isExternalSupplier;
+    return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
   }
 
   get isFinalised() {

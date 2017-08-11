@@ -25,27 +25,27 @@ class SyncTranslator {
 
 // Map of internal database object types to external record types
 export const RECORD_TYPES = new SyncTranslator({
-  'Item': 'item',
-  'ItemStoreJoin': 'item_store_join',
-  'ItemBatch': 'item_line',
-  'ItemDepartment': 'item_department',
-  'ItemCategory': 'item_category',
-  'LocalListItem': 'list_local_line',
-  'MasterList': 'list_master',
-  'MasterListItem': 'list_master_line',
-  'MasterListNameJoin': 'list_master_name_join',
-  'Name': 'name',
-  'NameStoreJoin': 'name_store_join',
-  'NumberSequence': 'number',
-  'NumberToReuse': 'number_reuse',
-  'Requisition': 'requisition',
-  'RequisitionItem': 'requisition_line',
-  'Stocktake': 'Stock_take',
-  'StocktakeBatch': 'Stock_take_lines',
-  'Transaction': 'transact',
-  'TransactionCategory': 'transaction_category',
-  'TransactionBatch': 'trans_line',
-  'User': 'user',
+  Item: 'item',
+  ItemStoreJoin: 'item_store_join',
+  ItemBatch: 'item_line',
+  ItemDepartment: 'item_department',
+  ItemCategory: 'item_category',
+  LocalListItem: 'list_local_line',
+  MasterList: 'list_master',
+  MasterListItem: 'list_master_line',
+  MasterListNameJoin: 'list_master_name_join',
+  Name: 'name',
+  NameStoreJoin: 'name_store_join',
+  NumberSequence: 'number',
+  NumberToReuse: 'number_reuse',
+  Requisition: 'requisition',
+  RequisitionItem: 'requisition_line',
+  Stocktake: 'Stock_take',
+  StocktakeBatch: 'Stock_take_lines',
+  Transaction: 'transact',
+  TransactionCategory: 'transaction_category',
+  TransactionBatch: 'trans_line',
+  User: 'user',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
@@ -57,34 +57,34 @@ export const REQUISITION_TYPES = new SyncTranslator({
 
 // Map of internal database change types to external sync types
 export const SYNC_TYPES = new SyncTranslator({
-  'create': 'I', // For 'insert'
-  'update': 'U',
-  'delete': 'D',
+  create: 'I', // For 'insert'
+  update: 'U',
+  delete: 'D',
 });
 
 export const TRANSACTION_TYPES = new SyncTranslator({
-  'customer_invoice': 'ci',
-  'customer_credit': 'cc',
-  'supplier_invoice': 'si',
-  'supplier_credit': 'sc',
-  'inventory_adjustment': 'in',
-  'prescription': 'pi',
+  customer_invoice: 'ci',
+  customer_credit: 'cc',
+  supplier_invoice: 'si',
+  supplier_credit: 'sc',
+  inventory_adjustment: 'in',
+  prescription: 'pi',
 });
 
 export const TRANSACTION_BATCH_TYPES = new SyncTranslator({
-  'customer_invoice': 'stock_out',
-  'customer_credit': 'stock_in',
-  'supplier_invoice': 'stock_in',
-  'supplier_credit': 'stock_out',
+  customer_invoice: 'stock_out',
+  customer_credit: 'stock_in',
+  supplier_invoice: 'stock_in',
+  supplier_credit: 'stock_out',
 });
 
 export const NAME_TYPES = new SyncTranslator({
-  'inventory_adjustment': 'invad',
-  'facility': 'facility',
-  'patient': 'patient',
-  'build': 'build',
-  'store': 'store',
-  'repack': 'repack',
+  inventory_adjustment: 'invad',
+  facility: 'facility',
+  patient: 'patient',
+  build: 'build',
+  store: 'store',
+  repack: 'repack',
 });
 
 /**
@@ -101,7 +101,6 @@ class RequisitionStatusTranslator extends SyncTranslator {
   }
 }
 export const REQUISITION_STATUSES = new RequisitionStatusTranslator({
-  new: 'nw',
   suggested: 'sg',
   finalised: 'fn',
 });
@@ -124,10 +123,10 @@ class StatusTranslator extends SyncTranslator {
 }
 // Map of internal statuses to external statuses (of transactions, stocktakes, etc.)
 export const STATUSES = new StatusTranslator({
-  'confirmed': 'cn',
-  'finalised': 'fn',
-  'suggested': 'sg',
-  'new': 'nw',
+  confirmed: 'cn',
+  finalised: 'fn',
+  suggested: 'sg',
+  new: 'nw',
 });
 
 /**
@@ -157,5 +156,5 @@ export const SEQUENCE_KEYS = new SequenceKeyTranslator({
   requisition_serial_number: 'requisition_serial_number_for_store_',
   requisition_requester_reference: 'requisition_requester_reference_for_store_',
   stocktake_serial_number: 'stock_take_number_for_store_',
-  supplier_invoice_serial_number: 'supplier_invoice_number_for_store_'
+  supplier_invoice_serial_number: 'supplier_invoice_number_for_store_',
 });

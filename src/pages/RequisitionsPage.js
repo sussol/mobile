@@ -3,7 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-
 import React from 'react';
 import { View } from 'react-native';
 import PropTypes from 'prop-types';
@@ -48,8 +47,9 @@ export class RequisitionsPage extends React.Component {
     database.write(() => {
       const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const requisition = this.requisitions.find(currentRequisition =>
-                                                currentRequisition.id === selection[i]);
+        const requisition = this.requisitions.find(
+          currentRequisition => currentRequisition.id === selection[i]
+        );
         if (requisition.isValid() && !requisition.isFinalised) {
           requisitionsToDelete.push(requisition);
         }
@@ -163,6 +163,7 @@ export class RequisitionsPage extends React.Component {
   }
 
   renderNewRequisitionButton() {
+<<<<<<< HEAD
     return (
       <PageButton
         text={buttonStrings.new_requisition}
@@ -171,6 +172,9 @@ export class RequisitionsPage extends React.Component {
         }}
       />
     );
+=======
+    return <PageButton text={buttonStrings.new_requisition} onPress={this.onNewRequisition} />;
+>>>>>>> master
   }
 
   render() {
