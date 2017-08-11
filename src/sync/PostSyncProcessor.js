@@ -20,14 +20,14 @@ export class PostSyncProcessor {
   }
 
   /**
- * Respond to a database change event relating to incoming sync records. Adds records
- * to end of this.recordQueue and removes any earlier duplicates.
- * @param  {string} changeType  The type of database change, e.g. CREATE, UPDATE, DELETE
- * @param  {string} recordType  The type of record changed (from database schema)
- * @param  {object} record      The record changed
- * @param  {string} causedBy    The cause of this database event, either 'sync' or undefined
- * @return {none}
- */
+   * Respond to a database change event relating to incoming sync records. Adds records
+   * to end of this.recordQueue and removes any earlier duplicates.
+   * @param  {string} changeType  The type of database change, e.g. CREATE, UPDATE, DELETE
+   * @param  {string} recordType  The type of record changed (from database schema)
+   * @param  {object} record      The record changed
+   * @param  {string} causedBy    The cause of this database event, either 'sync' or undefined
+   * @return {none}
+   */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     // Exit if not a change caused by incoming sync
     if (causedBy !== 'sync' || recordType === 'SyncOut') return;
