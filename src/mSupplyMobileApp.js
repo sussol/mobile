@@ -128,6 +128,7 @@ class MSupplyMobileAppContainer extends React.Component {
     if (!this.state.isInitialised || this.state.isSyncing) return; // If already syncing, skip
     // True if last this.synchroniser.synchronise() call failed
     const lastSyncFailed = this.synchroniser.lastSyncFailed();
+    const lastPostSyncProcessingFailed = this.postSyncProcessor.lastPostSyncProcessingFailed();
     try {
       this.setState({ isSyncing: true });
       await this.synchroniser.synchronise();
@@ -135,10 +136,12 @@ class MSupplyMobileAppContainer extends React.Component {
         isSyncing: false,
         syncError: '',
       });
-      if (lastSyncFailed) {
+      if (lastSyncFailed || lastPostSyncProcessingFailed) {
         // Last sync was interrupted so would not have entered this if block.
         // If the app was closed, it would have forgotten the records left in the
         // record queue, so we need to check tables for unprocessed records.
+        // If the last processing of the record queue was interrupted by app crash
+        // then we again need to check all records.
         this.postSyncProcessor.processAnyUnprocessedRecords();
       } else {
         this.postSyncProcessor.processRecordQueue();
