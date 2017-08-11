@@ -258,9 +258,9 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
-      let supplyingStoreName;
+      let otherStoreName;
       const nameResults = database.objects('Name').filtered('id = $0', record.name_ID);
-      if (nameResults && nameResults.length > 0) supplyingStoreName = nameResults[0];
+      if (nameResults && nameResults.length > 0) otherStoreName = nameResults[0];
       // If not a special wp or wf status, use the normal status translation
       if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       internalRecord = {
@@ -273,7 +273,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         comment: record.comment,
         enteredBy: getObject(database, 'User', record.user_ID), // TODO: should be..
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
-        supplyingStoreName,
+        otherStoreName,
       };
       database.update(recordType, internalRecord);
       break;
@@ -342,6 +342,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = getObject(database, 'Name', record.name_ID);
       const enteredBy = getObject(database, 'User', record.user_ID);
+      const linkedRequisition = record.requisition_ID ?
+                                getObject(database, 'Requisition', record.requisition_ID) : null;
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
@@ -352,8 +354,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
         theirRef: record.their_ref,
+        linkedRequisition,
       };
       const transaction = database.update(recordType, internalRecord);
+      linkedRequisition.linkedTransaction = transaction;
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
@@ -592,9 +596,7 @@ function getObject(database, type, primaryKey, primaryKeyField = 'id') {
   if (!primaryKey || primaryKey.length < 1) return null;
   const results = database.objects(type).filtered(`${primaryKeyField} == $0`, primaryKey);
   if (results.length > 0) return results[0];
-  const defaultObject = {};
-  defaultObject[primaryKeyField] = primaryKey;
-  return database.create(type, defaultObject);
+  return database.create(type, { [primaryKeyField]: primaryKey });
 }
 
 /**

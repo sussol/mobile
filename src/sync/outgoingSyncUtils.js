@@ -14,7 +14,6 @@ import { SETTINGS_KEYS } from '../settings';
 const {
   SUPPLYING_STORE_NAME_ID,
   THIS_STORE_ID,
-  THIS_STORE_NAME_ID,
 } = SETTINGS_KEYS;
 import { CHANGE_TYPES } from '../database';
 
@@ -117,7 +116,7 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
-        name_ID: record.supplyingStoreName.id,  // TODO: check if there is a case when outgoing req might not have supplyingStoreName
+        name_ID: record.otherStoreName.id,  // TODO: check if there is a case when outgoing req might not have otherStoreName
         status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(THIS_STORE_ID),
@@ -192,6 +191,8 @@ function generateSyncData(settings, recordType, record) {
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
+        requisition_ID: record.isLinkedToRequisition ?
+                        record.linkedRequisition.id : undefined,
       };
     }
     case 'TransactionBatch': {
