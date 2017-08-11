@@ -12,16 +12,13 @@ import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
-import { SETTINGS_KEYS } from '../settings';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
-  BottomConfirmModal,
   PageButton,
   PageInfo,
   PageContentModal,
   TextEditor,
-  ToggleSelector,
 } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
@@ -47,24 +44,8 @@ export class SupplyRequisitionPage extends React.Component {
     autobind(this);
   }
 
-  onAddMasterItems() {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.requisition.addItemsFromMasterList(this.props.database, this.getThisStore());
-        this.props.database.save('Requisition', this.props.requisition);
-      });
-      this.refreshData();
-    });
-  }
-
-  onCreateAutomaticOrder() {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.requisition.createAutomaticOrder(this.props.database, this.getThisStore());
-        this.props.database.save('Requisition', this.props.requisition);
-      });
-      this.refreshData();
-    });
+  createCustomerInvoice() {
+    this.props.requisition.createCustomerInvoice(this.props.database);
   }
 
   /**
@@ -75,27 +56,17 @@ export class SupplyRequisitionPage extends React.Component {
    * @return {none}
    */
   onEndEditing(key, requisitionItem, newValue) {
-    if (key !== 'requiredQuantity') return;
-    this.props.database.write(() => {
-      requisitionItem.requiredQuantity = parsePositiveInteger(newValue);
-      this.props.database.save('RequisitionItem', requisitionItem);
-    });
-  }
-
-  onDeleteConfirm() {
-    const { selection } = this.state;
-    const { requisition, database } = this.props;
+    if (key !== 'suppliedQuantity') return;
+    const { database } = this.props;
     database.write(() => {
-      requisition.removeItemsById(database, selection);
-      database.save('Requisition', requisition);
+      const transactionItem = requisitionItem.linkedTransactionItem;
+      if (!transactionItem) return;
+      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
+                                                 transactionItem.availableQuantity);
+      requisitionItem.suppliedQuantity = transactionItem.totalQuantity;
+      database.save('TransactionItem', transactionItem);
+      database.save('RequisitionItem', requisitionItem);
     });
-    this.setState({ selection: [] });
-    this.refreshData();
-  }
-
-  onDeleteCancel() {
-    this.setState({ selection: [] });
-    this.refreshData();
   }
 
   onUseSuggestedQuantities() {
@@ -111,14 +82,6 @@ export class SupplyRequisitionPage extends React.Component {
 
   onSelectionChange(newSelection) {
     this.setState({ selection: newSelection });
-  }
-
-  getThisStore() {
-    const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
-    const nameResults = this.props.database.objects('Name')
-                                           .filtered('id == $0', thisStoreNameId);
-    if (!nameResults | nameResults.length <= 0) return null;
-    return nameResults[0];
   }
 
   getModalTitle() {
@@ -181,7 +144,7 @@ export class SupplyRequisitionPage extends React.Component {
   }
 
   renderPageInfo() {
-    const { requisition, database, settings } = this.props;
+    const { requisition } = this.props;
     const infoColumns = [
       [
         {},
@@ -197,7 +160,7 @@ export class SupplyRequisitionPage extends React.Component {
       [
         {
           title: `${pageInfoStrings.supplying_store_name}`,
-          info: requisition.getOtherStoreName(database, settings),
+          info: requisition.otherStoreName.name,
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
@@ -220,17 +183,17 @@ export class SupplyRequisitionPage extends React.Component {
   }
 
   renderCell(key, requisitionItem) {
+    const { requisition } = this.props;
     switch (key) {
-      default:
-        return requisitionItem[key];
       case 'monthlyUsage':
       case 'suggestedQuantity':
       case 'requiredQuantity':
+      case 'ourStockOnHand':
         return Math.round(requisitionItem[key]);
       case 'suppliedQuantity':
         return {
-          type: this.props.requisition.isFinalised ? 'text' : 'editable',
-          cellContents: Math.round(requisitionItem.suppliedQuantity),
+          type: requisition.isFinalised ? 'text' : 'editable',
+          cellContents: requisitionItem.suppliedQuantity || 0,
         };
       case 'remove':
         return {
@@ -238,11 +201,13 @@ export class SupplyRequisitionPage extends React.Component {
           icon: 'md-remove-circle',
           isDisabled: this.props.requisition.isFinalised,
         };
+      default:
+        return requisitionItem[key];
     }
   }
 
   renderModalContent() {
-    const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
+    const { COMMENT_EDIT, ITEM_SELECT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
@@ -267,21 +232,6 @@ export class SupplyRequisitionPage extends React.Component {
             renderRightText={(item) => `${item.totalQuantity}`}
           />
         );
-      case MONTHS_SELECT:
-        return (
-          <ToggleSelector
-            options={[1, 2, 3, 4, 5, 6]}
-            onSelect={(number) => {
-              this.props.database.write(() => {
-                this.props.requisition.monthsToSupply = number;
-                this.props.database.save('Requisition', this.props.requisition);
-              });
-              this.refreshData();
-              this.closeModal();
-            }}
-            selected={this.props.requisition.monthsToSupply}
-          />
-          );
       case COMMENT_EDIT:
         return (
           <TextEditor
@@ -308,6 +258,12 @@ export class SupplyRequisitionPage extends React.Component {
             style={globalStyles.topButton}
             text={buttonStrings.use_requested_quantity}
             onPress={this.onUseRequestedQuantity}
+            isDisabled={this.props.requisition.isFinalised}
+          />
+          <PageButton
+            style={globalStyles.topButton}
+            text={'create customer invoice'}
+            onPress={this.createCustomerInvoice}
             isDisabled={this.props.requisition.isFinalised}
           />
         </View>
@@ -341,7 +297,7 @@ export class SupplyRequisitionPage extends React.Component {
             sortable: true,
           },
           {
-            key: 'ourStockOnHand',
+            key: 'ourStockOnHand', // TODO: should this column name be consistent with other pages
             width: 1.5,
             title: tableStrings.our_stock,
             sortable: true,
@@ -390,13 +346,6 @@ export class SupplyRequisitionPage extends React.Component {
         {...this.props.genericTablePageStyles}
         topRoute={this.props.topRoute}
       >
-        <BottomConfirmModal
-          isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={this.onDeleteCancel}
-          onConfirm={this.onDeleteConfirm}
-          confirmText={modalStrings.remove}
-        />
         <PageContentModal
           isOpen={this.state.modalIsOpen && !this.props.requisition.isFinalised}
           onClose={this.closeModal}
@@ -418,17 +367,6 @@ SupplyRequisitionPage.propTypes = {
   settings: PropTypes.object.isRequired,
 };
 
-/**
- * Check whether a given requisition is safe to be finalised. Return null if it is,
- * otherwise return an appropriate error message if not.
- * @param  {object}  requisition  The requisition to check
- * @return {string}  An error message if not able to be finalised
- */
-export function checkForFinaliseError(requisition) {
-  if (requisition.items.length === 0) {
-    return modalStrings.add_at_least_one_item_before_finalising;
-  } else if (requisition.totalRequiredQuantity === 0) {
-    return modalStrings.record_stock_required_before_finalising;
-  }
+export function checkForFinaliseError() {
   return null;
 }
