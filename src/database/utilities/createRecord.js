@@ -1,14 +1,6 @@
 import { generateUUID } from 'react-native-database';
-import { getNextNumber } from './numberSequenceUtilities';
+import { getNextNumber, NUMBER_SEQUENCE_KEYS } from './numberSequenceUtilities';
 
-const NUMBER_SEQUENCE_KEYS = {
-  CUSTOMER_INVOICE_NUMBER: 'customer_invoice_serial_number',
-  INVENTORY_ADJUSTMENT_SERIAL_NUMBER: 'inventory_adjustment_serial_number',
-  REQUISITION_SERIAL_NUMBER: 'requisition_serial_number',
-  REQUISITION_REQUESTER_REFERENCE: 'requisition_requester_reference',
-  STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
-  SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
-};
 const {
   CUSTOMER_INVOICE_NUMBER,
   INVENTORY_ADJUSTMENT_SERIAL_NUMBER,
@@ -110,7 +102,7 @@ function createInventoryAdjustment(database, user, date, isAddition) {
     status: 'confirmed',
     comment: '',
     enteredBy: user,
-    otherParty: database.objects('Name').find((name) => name.type === 'inventory_adjustment'),
+    otherParty: database.objects('Name').find(name => name.type === 'inventory_adjustment'),
   });
 }
 
