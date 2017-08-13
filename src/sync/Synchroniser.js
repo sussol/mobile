@@ -14,6 +14,7 @@ const {
   SYNC_IS_INITIALISED,
   SYNC_IS_SYNCING,
   SYNC_LAST_SUCCESS,
+  SYNC_SITE_NAME,
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
@@ -56,9 +57,13 @@ export class Synchroniser {
     // Check if the serverURL passed in is the same as one we have already been using during
     // initialisation, in which case we are continuing a failed partial initialisation. If the
     // serverURL is different, it is either completely fresh, or the URL has been changed so we
-    // should start afresh
-    const oldUrl = this.settings.get(SYNC_URL);
-    const isFresh = !oldUrl || serverURL !== oldUrl;
+    // should start afresh. Do the same for syncSiteName, so that it isn't possible to start syncing
+    // data from a site different to what initialisation was previously started with.
+    const oldSyncUrl = this.settings.get(SYNC_URL);
+    const oldSyncSiteName = this.settings.get(SYNC_SITE_NAME);
+    const isFresh =
+      !oldSyncUrl || serverURL !== oldSyncUrl || !syncSiteName || syncSiteName !== oldSyncSiteName;
+
     if (isFresh) {
       this.database.write(() => {
         this.database.deleteAll();
