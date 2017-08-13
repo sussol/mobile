@@ -163,7 +163,6 @@ export class RequisitionsPage extends React.Component {
   }
 
   renderNewRequisitionButton() {
-<<<<<<< HEAD
     return (
       <PageButton
         text={buttonStrings.new_requisition}
@@ -172,9 +171,6 @@ export class RequisitionsPage extends React.Component {
         }}
       />
     );
-=======
-    return <PageButton text={buttonStrings.new_requisition} onPress={this.onNewRequisition} />;
->>>>>>> master
   }
 
   render() {
