@@ -2,9 +2,10 @@
  * All utility functions for processing synced records after being synced. These changes
  * should be detected by SyncQueue and sent back to the server on next sync.
  */
-
+import { SETTINGS_KEYS } from '../settings';
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from '../database/utilities';
 
+const { LAST_POST_PROCESSING_FAILED } = SETTINGS_KEYS;
 const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
 
 import autobind from 'react-autobind';
@@ -18,15 +19,15 @@ export class PostSyncProcessor {
     this.database.addListener(this.onDatabaseEvent);
   }
 
-/**
- * Respond to a database change event relating to incoming sync records. Adds records
- * to end of this.recordQueue and removes any earlier duplicates.
- * @param  {string} changeType  The type of database change, e.g. CREATE, UPDATE, DELETE
- * @param  {string} recordType  The type of record changed (from database schema)
- * @param  {object} record      The record changed
- * @param  {string} causedBy    The cause of this database event, either 'sync' or undefined
- * @return {none}
- */
+  /**
+   * Respond to a database change event relating to incoming sync records. Adds records
+   * to end of this.recordQueue and removes any earlier duplicates.
+   * @param  {string} changeType  The type of database change, e.g. CREATE, UPDATE, DELETE
+   * @param  {string} recordType  The type of record changed (from database schema)
+   * @param  {object} record      The record changed
+   * @param  {string} causedBy    The cause of this database event, either 'sync' or undefined
+   * @return {none}
+   */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     // Exit if not a change caused by incoming sync
     if (causedBy !== 'sync' || recordType === 'SyncOut') return;
@@ -39,11 +40,21 @@ export class PostSyncProcessor {
   }
 
   /**
+   * Return whether or not the last sync of the app failed
+   * @return {boolean} 'true' if the last call of synchronise failed
+   */
+  lastPostSyncProcessingFailed() {
+    const lastPostSyncProcessingFailed = this.settings.get(LAST_POST_PROCESSING_FAILED);
+    return lastPostSyncProcessingFailed && lastPostSyncProcessingFailed === 'true';
+  }
+
+  /**
    * Attempts to enqueue functions for every record in specified tables of
    * local database, ensuring data is correct.
    * Tables manually added as to not iterate over tables function generators.
    */
   processAnyUnprocessedRecords() {
+    this.settings.set(LAST_POST_PROCESSING_FAILED, 'true');
     this.functionQueue = [];
     this.recordQueue = []; // Reset the recordQueue to avoid unnessary runs
 
@@ -56,6 +67,7 @@ export class PostSyncProcessor {
       .forEach(record => this.enqueueFunctionsForRecordType('Transaction', record));
 
     this.processFunctionQueue();
+    this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
   }
 
   /**
@@ -63,6 +75,7 @@ export class PostSyncProcessor {
    * to functionQueue. Runs the functionQueue, making the changes.
    */
   processRecordQueue() {
+    this.settings.set(LAST_POST_PROCESSING_FAILED, 'true');
     this.recordQueue.forEach((recordType, recordId) => {
       // Use local database record, not what comes in sync. Ensures that records are
       // integrated information (definitely after sync is done)
@@ -70,6 +83,7 @@ export class PostSyncProcessor {
       this.enqueueFunctionsForRecordType(recordType, internalRecord);
     });
     this.processFunctionQueue();
+    this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
   }
 
   /**
