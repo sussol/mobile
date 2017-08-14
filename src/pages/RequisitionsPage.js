@@ -239,7 +239,7 @@ export class RequisitionsPage extends React.Component {
         />
         <SelectModal
           isOpen={this.state.isCreatingRequisition}
-          options={this.props.database.objects('mSupplyStore')}
+          options={this.props.database.objects('InternalSupplier')}
           placeholderText={modalStrings.start_typing_to_select_supplier}
           queryString={'name BEGINSWITH[c] $0'}
           sortByString={'name'}
