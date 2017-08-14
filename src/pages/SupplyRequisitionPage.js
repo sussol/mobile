@@ -225,7 +225,7 @@ export class SupplyRequisitionPage extends React.Component {
         <View style={globalStyles.verticalContainer}>
           <PageButton
             style={globalStyles.topButton}
-            text={buttonStrings.use_requested_quantity}
+            text={buttonStrings.use_requested_quantities}
             onPress={this.onUseRequestedQuantity}
             isDisabled={this.props.requisition.isFinalised}
           />
@@ -260,7 +260,7 @@ export class SupplyRequisitionPage extends React.Component {
             sortable: true,
           },
           {
-            key: 'ourStockOnHand', // TODO: should this column name be consistent with other pages
+            key: 'ourStockOnHand',
             width: 1.5,
             title: tableStrings.our_stock,
             sortable: true,

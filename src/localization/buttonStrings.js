@@ -23,9 +23,9 @@ export const buttonStrings = new LocalizedStrings({
     use_suggested_quantities: 'Use Suggested Quantities',
     request_requisition: 'REQUEST STOCK',
     response_requisition: 'SUPPLY STOCK',
-    use_requested_quantity: 'Use Requested Quantities',
+    use_requested_quantities: 'Use Requested Quantities',
   },
-  gil: {  // TODO: request_requisition, response_requisition, use_requested_quantity
+  gil: {  // TODO: request_requisition, response_requisition, use_requested_quantities
     add_master_list_items: 'Rinea am list',
     all_items_selected: 'Aikai nikabane',
     create_automatic_order: 'Create Automatic Order',
