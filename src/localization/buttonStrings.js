@@ -25,7 +25,7 @@ export const buttonStrings = new LocalizedStrings({
     response_requisition: 'SUPPLY STOCK',
     use_requested_quantities: 'Use Requested Quantities',
   },
-  gil: {  // TODO: request_requisition, response_requisition, use_requested_quantities
+  gil: {  // TODO: request_requisition, response_requisition, use_requested_quantities, new_supplier_invoice, add_batch
     add_master_list_items: 'Rinea am list',
     all_items_selected: 'Aikai nikabane',
     create_automatic_order: 'Create Automatic Order',
@@ -39,7 +39,7 @@ export const buttonStrings = new LocalizedStrings({
     past: 'Are I mwaina',
     use_suggested_quantities: 'Kabongana te\nmwaiti are e katauaki',
   },
-  tl: {  // TODO add: new_supplier_invoice, add_batch
+  tl: { // TODO: request_requisition, response_requisition, use_requested_quantities, new_supplier_invoice, add_batch
     add_master_list_items: 'Aumenta Sasán ba Lista Master',
     all_items_selected: 'Hili Sasán Hotu',
     create_automatic_order: 'Kria Orden Automátiku',
