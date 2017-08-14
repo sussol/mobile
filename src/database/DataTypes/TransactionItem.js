@@ -48,7 +48,7 @@ export class TransactionItem extends Realm.Object {
         this.transaction.isFinalised)) {
       return this.item.totalQuantity + this.totalQuantity;
     }
-    return this.item.totalQuantity;  // TODO think about this logic, will never hit this return, createRecord, new invoice is always confirmed
+    return this.item.totalQuantity;
   }
 
   /**
