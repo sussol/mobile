@@ -74,9 +74,7 @@ export class Requisition extends Realm.Object {
     const transaction = createRecord(database, 'CustomerInvoice',
                                   this.otherStoreName, user);
     this.items.forEach(requisitionItem => {
-      const transactionItem = createRecord(database, 'TransactionItem',
-                                  transaction, requisitionItem.item);
-      database.save('TransactionItem', transactionItem);
+      createRecord(database, 'TransactionItem', transaction, requisitionItem.item);
     });
     transaction.linkedRequisition = this;
     this.linkedTransaction = transaction;
