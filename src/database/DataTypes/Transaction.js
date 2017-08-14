@@ -103,6 +103,10 @@ export class Transaction extends Realm.Object {
     }
   }
 
+  get isLinkedToRequisition() {
+    return !(!this.linkedRequisition);
+  }
+
   /**
    * Remove the transaction items with the given ids from this transaction
    * @param  {Realm}  database        App wide local database

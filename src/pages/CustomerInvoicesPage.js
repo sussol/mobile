@@ -94,7 +94,7 @@ export class CustomerInvoicesPage extends React.Component {
     this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
     // Navigate to requisition if one is linked to selected customer invoice
     const { linkedRequisition } = invoice;
-    const navigateToParams = linkedRequisition ?
+    const navigateToParams = invoice.isLinkedToRequisition ?
       ['supplyRequisition', `${navStrings.requisition} ${linkedRequisition.serialNumber}`,
       { requisition: linkedRequisition }] :
       ['customerInvoice', `${navStrings.invoice} ${invoice.serialNumber}`,

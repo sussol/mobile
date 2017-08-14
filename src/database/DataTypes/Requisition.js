@@ -51,10 +51,6 @@ export class Requisition extends Realm.Object {
     this.daysToSupply = months * 30;
   }
 
-  get isLinkedToRequisition() {
-    return !(!this.linkedRequisition);
-  }
-
   hasItemWithId(itemId) {
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
