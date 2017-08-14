@@ -162,7 +162,7 @@ export class SupplyRequisitionPage extends React.Component {
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
-          info: Math.round(requisition.monthsToSupply),
+          info: requisition.monthsToSupply,
         },
         {
           title: `${pageInfoStrings.comment}:`,

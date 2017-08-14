@@ -207,7 +207,7 @@ export class RequisitionPage extends React.Component {
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
-          info: Math.round(requisition.monthsToSupply),
+          info: requisition.monthsToSupply,
           onPress: this.openMonthsSelector,
           editableType: 'selectable',
         },
