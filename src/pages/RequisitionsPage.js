@@ -262,7 +262,6 @@ RequisitionsPage.propTypes = {
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
 };
 
 const localStyle = {

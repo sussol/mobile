@@ -52,6 +52,8 @@ export class SupplyRequisitionPage extends React.Component {
    * @return {none}
    */
   onEndEditing(key, requisitionItem, newValue) {
+    // This will update associated CustomerInvoice if one exists or if linked
+    // CustomerInvoice does not exist, suppliedQuantity will not be updated
     if (key !== 'suppliedQuantity') return;
     const { database } = this.props;
     database.write(() => {
@@ -354,7 +356,6 @@ SupplyRequisitionPage.propTypes = {
   topRoute: PropTypes.bool,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,
-  settings: PropTypes.object.isRequired,
 };
 
 export function checkForFinaliseError() {
