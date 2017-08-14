@@ -4,7 +4,6 @@
  */
 
 import React from 'react';
-import { View } from 'react-native';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 
@@ -13,7 +12,7 @@ import { BottomConfirmModal, PageButton, SelectModal, ToggleBar } from '../widge
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import globalStyles, { LIGHT_GREY } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -268,15 +267,4 @@ RequisitionsPage.propTypes = {
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
-};
-
-const localStyle = {
-  selectedButton: {
-    backgroundColor: LIGHT_GREY,
-  },
-  toggleButton: {
-    margin: 5,
-    borderRadius: 2,
-  },
-
 };
