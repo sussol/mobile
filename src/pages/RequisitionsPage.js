@@ -149,7 +149,7 @@ export class RequisitionsPage extends React.Component {
         <PageButton
           style={[localStyle.toggleButton, this.state.isRequestView ?
                             localStyle.selectedButton : {}]}
-          text={buttonStrings.request_requisition} /* TODO: change to agreed name  */
+          text={buttonStrings.request_requisition}
           onPress={this.toggleRequisitionViewType}
         />
         <PageButton
