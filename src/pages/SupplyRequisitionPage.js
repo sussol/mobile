@@ -328,7 +328,3 @@ SupplyRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,
 };
-
-export function checkForFinaliseError() {
-  return null;
-}
