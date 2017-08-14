@@ -52,7 +52,7 @@ export class Requisition extends Realm.Object {
   }
 
   get isLinkedToRequisition() {
-    return typeof this.linkedRequisition === 'object';
+    return !(!this.linkedRequisition);
   }
 
   hasItemWithId(itemId) {
