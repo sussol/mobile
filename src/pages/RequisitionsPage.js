@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 
 import { createRecord } from '../database';
-import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
+import { BottomConfirmModal, PageButton, SelectModal, ToggleBar } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
@@ -143,25 +143,6 @@ export class RequisitionsPage extends React.Component {
     }
   }
 
-  renderRequisitionTypeToggle() {
-    return (
-      <View style={globalStyles.horizontalContainer}>
-        <PageButton
-          style={[localStyle.toggleButton, this.state.isRequestView ?
-                            localStyle.selectedButton : {}]}
-          text={buttonStrings.request_requisition}
-          onPress={this.toggleRequisitionViewType}
-        />
-        <PageButton
-          style={[localStyle.toggleButton, !this.state.isRequestView ?
-                            localStyle.selectedButton : {}]}
-          text={buttonStrings.response_requisition}
-          onPress={this.toggleRequisitionViewType}
-        />
-      </View>
-    );
-  }
-
   renderNewRequisitionButton() {
     return (
       <PageButton
@@ -172,6 +153,31 @@ export class RequisitionsPage extends React.Component {
       />
     );
   }
+
+  renderRequisitionTypeToggle() {
+    return (
+      <ToggleBar
+        style={globalStyles.toggleBar}
+        textOffStyle={globalStyles.toggleText}
+        textOnStyle={globalStyles.toggleTextSelected}
+        toggleOffStyle={globalStyles.toggleOption}
+        toggleOnStyle={globalStyles.toggleOptionSelected}
+        toggles={[
+          {
+            text: buttonStrings.request_requisition,
+            onPress: () => this.toggleRequisitionViewType(),
+            isOn: this.state.isRequestView,
+          },
+          {
+            text: buttonStrings.response_requisition,
+            onPress: () => this.toggleRequisitionViewType(),
+            isOn: !this.state.isRequestView,
+          },
+        ]}
+      />
+    );
+  }
+
 
   render() {
     return (
