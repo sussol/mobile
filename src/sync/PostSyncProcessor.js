@@ -19,6 +19,10 @@ export class PostSyncProcessor {
     this.database.addListener(this.onDatabaseEvent);
   }
 
+  setUser(user) {
+    this.user = user;
+  }
+
   /**
    * Respond to a database change event relating to incoming sync records. Adds records
    * to end of this.recordQueue and removes any earlier duplicates.
@@ -137,7 +141,7 @@ export class PostSyncProcessor {
 
     if (!record.isRequest && !record.isFinalised) {
       funcs.push(() => {
-        record.createCustomerInvoice(this.database);
+        record.createCustomerInvoice(this.database, this.user);
       });
     }
 

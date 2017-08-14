@@ -91,6 +91,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   onAuthentication(user) {
     this.setState({ currentUser: user });
+    this.postSyncProcessor.setUser(user);
   }
 
   onInitialised() {

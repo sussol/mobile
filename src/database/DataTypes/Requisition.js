@@ -69,14 +69,14 @@ export class Requisition extends Realm.Object {
     this.addItem(requisitionItem);
   }
 
-  createCustomerInvoice(database) {
+  createCustomerInvoice(database, user) {
     if (this.isRequest || this.isFinalised) {
       throw new Error('Cannot create invoice from Finalised or Request Requistion ');
     }
     if (database.objects('Transaction').
             filtered('linkedRequisition.id = $0', this.id).length > 0) return;
     const transaction = createRecord(database, 'CustomerInvoice',
-                                  this.otherStoreName, /* TODO: USER */);
+                                  this.otherStoreName, user);
     this.items.forEach(requisitionItem => {
       const transactionItem = createRecord(database, 'TransactionItem',
                                   transaction, requisitionItem.item);
