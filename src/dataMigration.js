@@ -81,13 +81,11 @@ const dataMigrations = [
       const mainSupplyingStoreName = nameResults[0];
 
       const requisitions = database.objects('Requisition')
-                                   .filtered('otherStoreName = Null').snapshot();
+                                   .filtered('otherStoreName = Null AND type == "request"')
+                                   .snapshot();
 
       database.write(() => {
-        requisitions.forEach(requisition => {
-          if (!requisition.isRequest) return;
-          requisition.otherStoreName = mainSupplyingStoreName;
-        });
+        requisitions.forEach(requisition => (requisition.otherStoreName = mainSupplyingStoreName));
       });
     },
   },
