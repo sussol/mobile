@@ -277,7 +277,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         serialNumber: record.serial_number,
         requesterReference: record.requester_reference,
         comment: record.comment,
-        enteredBy: getObject(database, 'User', record.user_ID), // TODO: should be..
+        enteredBy: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         otherStoreName,
       };
@@ -363,7 +363,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         linkedRequisition,
       };
       const transaction = database.update(recordType, internalRecord);
-      linkedRequisition.linkedTransaction = transaction;
+      if (linkedRequisition) linkedRequisition.linkedTransaction = transaction;
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
