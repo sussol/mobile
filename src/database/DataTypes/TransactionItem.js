@@ -75,11 +75,11 @@ export class TransactionItem extends Realm.Object {
    * @param {double} referenceQuantity max available quantity or -1 to use requestedQuantity
    */
   setTotalQuantity(database, requestedQuantity, referenceQuantity = -1) {
-    let quantity = requestedQuantity;
-    if (referenceQuantity > 0) quantity = Math.min(requestedQuantity, referenceQuantity);
     if (this.transaction.isFinalised) {
       throw new Error('Cannot set quantity of an item in a finalised transaction');
     }
+    let quantity = requestedQuantity;
+    if (referenceQuantity > 0) quantity = Math.min(requestedQuantity, referenceQuantity);
     if (quantity < 0) throw new Error('Cannot set a negative quantity on a transaction item');
 
     const difference = quantity - this.totalQuantity; // Positive if new quantity is greater
