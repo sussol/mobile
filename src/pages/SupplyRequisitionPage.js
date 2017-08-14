@@ -11,10 +11,8 @@ import { View } from 'react-native';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { createRecord } from '../database';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
-  AutocompleteSelector,
   PageButton,
   PageInfo,
   PageContentModal,
@@ -133,10 +131,6 @@ export class SupplyRequisitionPage extends React.Component {
     this.setState({ modalIsOpen: false });
   }
 
-  openItemSelector() {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
-  }
-
   openCommentEditor() {
     this.openModal(MODAL_KEYS.COMMENT_EDIT);
   }
@@ -205,31 +199,9 @@ export class SupplyRequisitionPage extends React.Component {
   }
 
   renderModalContent() {
-    const { COMMENT_EDIT, ITEM_SELECT } = MODAL_KEYS;
+    const { COMMENT_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
-      case ITEM_SELECT:
-        return (
-          <AutocompleteSelector
-            options={this.props.database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            queryStringSecondary={'name CONTAINS[c] $0'}
-            sortByString={'name'}
-            onSelect={(item) => {
-              const { database, requisition } = this.props;
-              database.write(() => {
-                if (!requisition.hasItemWithId(item.id)) {
-                  createRecord(database, 'RequisitionItem', requisition, item);
-                  database.save('Requisition', requisition);
-                }
-              });
-              this.refreshData();
-              this.closeModal();
-            }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
-          />
-        );
       case COMMENT_EDIT:
         return (
           <TextEditor
@@ -243,8 +215,7 @@ export class SupplyRequisitionPage extends React.Component {
               }
               this.closeModal();
             }}
-          />
-          );
+          />);
     }
   }
 
