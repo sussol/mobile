@@ -98,7 +98,7 @@ export class CustomerInvoicePage extends GenericPage {
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'totalQuantity') return;
     const { database } = this.props;
-    this.props.database.write(() => {
+    database.write(() => {
       transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
                                                  transactionItem.availableQuantity);
       database.save('TransactionItem', transactionItem);
