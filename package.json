@@ -5,8 +5,8 @@
   },
   "name": "mSupplyMobile",
   "version": "2.0.0",
-  "private": true,
-  "license": "proprietary",
+  "private": false,
+  "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
   "repository": {
     "type": "git",
