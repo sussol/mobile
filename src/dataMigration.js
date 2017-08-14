@@ -73,7 +73,8 @@ const dataMigrations = [
           }
         });
       });
-
+      // Migration for v2 api request Requisitions, set otherStoreName to main supplying store name
+      // for all existing requisition (shouldn't have any response requisition at this stage)
       const nameResults = database.objects('Name').filtered('id = $0',
                                 settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
       if (nameResults.length < 1) throw new Error('Supplying Store Name ID missing from settings');
@@ -85,13 +86,7 @@ const dataMigrations = [
       database.write(() => {
         requisitions.forEach(requisition => {
           if (!requisition.isRequest) return;
-          // The reason for database.update is we don't want to update finalised transactions
-          // and in case database.save is replaced by automatic way of invoking db event listeners
-          // simply assigning property may cause changes to finalised transaction to be synced.
-          database.update('Requisition', {
-            id: requisition.id,
-            otherStoreName: mainSupplyingStoreName,
-          }, 'sync');
+          requisition.otherStoreName = mainSupplyingStoreName;
         });
       });
     },
