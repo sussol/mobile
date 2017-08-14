@@ -11,8 +11,9 @@ const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_K
 import autobind from 'react-autobind';
 
 export class PostSyncProcessor {
-  constructor(database) {
+  constructor(database, settings) {
     this.database = database;
+    this.settings = settings;
     this.recordQueue = new Map(); // Map of [recordId, recordType]
     this.functionQueue = [];
     autobind(this);
