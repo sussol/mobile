@@ -28,8 +28,7 @@ export class RequisitionItem extends Realm.Object {
 
   get linkedTransactionItem() {
     if (this.isRequest || !this.requisition.linkedTransaction) return null;
-    const resultList = this.requisition.linkedTransaction.items.filtered('item.id = $0', this.item.id);
-    return resultList.length > 0 ? resultList[0] : null;
+    return this.requisition.linkedTransaction.items.filtered('item.id = $0', this.item.id)[0];
   }
 
   get ourStockOnHand() {
