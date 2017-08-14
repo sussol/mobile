@@ -85,9 +85,9 @@ const dataMigrations = [
       database.write(() => {
         requisitions.forEach(requisition => {
           if (!requisition.isRequest) return;
-          // The reason for database.update is we don't want to update finalized transactions
-          // and incase database.save is replaced by automatic way of invoking db event listeners
-          // simply assigning property may cause changes to finalized transaction to be synced.
+          // The reason for database.update is we don't want to update finalised transactions
+          // and in case database.save is replaced by automatic way of invoking db event listeners
+          // simply assigning property may cause changes to finalised transaction to be synced.
           database.update('Requisition', {
             id: requisition.id,
             otherStoreName: mainSupplyingStoreName,
