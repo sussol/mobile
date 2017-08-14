@@ -191,7 +191,7 @@ function generateSyncData(settings, recordType, record) {
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
-        requisition_ID: record.isLinkedToRequisition ?
+        requisition_ID: record.linkedRequisition && record.linkedRequisition.id ?
                         record.linkedRequisition.id : undefined,
       };
     }
