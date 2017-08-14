@@ -70,7 +70,7 @@ export class Requisition extends Realm.Object {
       throw new Error('Cannot create invoice from Finalised or Request Requistion ');
     }
     if (database.objects('Transaction').
-            filtered('linkedRequisition.id = $0', this.id).length > 0) return;
+            filtered('linkedRequisition.id == $0', this.id).length > 0) return;
     const transaction = createRecord(database, 'CustomerInvoice',
                                   this.otherStoreName, user);
     this.items.forEach(requisitionItem => {

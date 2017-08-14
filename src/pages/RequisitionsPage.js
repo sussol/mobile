@@ -110,7 +110,7 @@ export class RequisitionsPage extends React.Component {
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const type = this.state.isRequestView ? 'request' : 'response';
     const data =
-        this.requisitions.filtered('serialNumber BEGINSWITH $0 AND type = $1',
+        this.requisitions.filtered('serialNumber BEGINSWITH $0 AND type == $1',
         searchTerm, type);
     let sortDataType;
     switch (sortBy) {

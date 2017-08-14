@@ -204,7 +204,7 @@ export class Transaction extends Realm.Object {
   getTransactionBatches(database) {
     return database
       .objects('TransactionBatch')
-      .filtered('transaction.id = $0', this.id);
+      .filtered('transaction.id == $0', this.id);
   }
 
   /**

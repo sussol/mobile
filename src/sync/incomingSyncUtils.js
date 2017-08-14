@@ -265,7 +265,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       let otherStoreName;
-      const nameResults = database.objects('Name').filtered('id = $0', record.name_ID);
+      const nameResults = database.objects('Name').filtered('id == $0', record.name_ID);
       if (nameResults && nameResults.length > 0) otherStoreName = nameResults[0];
       // If not a special wp or wf status, use the normal status translation
       if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
