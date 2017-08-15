@@ -1,21 +1,17 @@
-import {
-  authenticateAsync,
-  getAuthHeader,
-  hashPassword,
-} from 'sussol-utilities';
+import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
 const {
-   SUPPLYING_STORE_ID,
-   SUPPLYING_STORE_NAME_ID,
-   SYNC_URL,
-   SYNC_SERVER_ID,
-   SYNC_SITE_ID,
-   SYNC_SITE_NAME,
-   SYNC_SITE_PASSWORD_HASH,
-   THIS_STORE_ID,
-   THIS_STORE_NAME_ID,
- } = SETTINGS_KEYS;
+  SUPPLYING_STORE_ID,
+  SUPPLYING_STORE_NAME_ID,
+  SYNC_URL,
+  SYNC_SERVER_ID,
+  SYNC_SITE_ID,
+  SYNC_SITE_NAME,
+  SYNC_SITE_PASSWORD_HASH,
+  THIS_STORE_ID,
+  THIS_STORE_NAME_ID,
+} = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v2/site';
 
@@ -24,7 +20,7 @@ export class SyncAuthenticator {
     this.settings = settings;
   }
 
-/**
+  /**
  * Check whether the username and password are valid, against the server. On
  * successful authentication, save the details in settings.
  * @param  {string}   username         The sync site username to test
@@ -55,7 +51,8 @@ export class SyncAuthenticator {
       this.settings.set(THIS_STORE_NAME_ID, responseJson.NameID);
       this.settings.set(SUPPLYING_STORE_ID, responseJson.SupplyingStoreID);
       this.settings.set(SUPPLYING_STORE_NAME_ID, responseJson.SupplyingStoreNameID);
-    } catch (error) { // Pass error up
+    } catch (error) {
+      // Pass error up
       throw error;
     }
   }
@@ -65,8 +62,8 @@ export class SyncAuthenticator {
    * @return {string} Authorization header value
    */
   getAuthHeader() {
-    const username = this.settings.get('SyncSiteName');
-    const password = this.settings.get('SyncSitePasswordHash');
+    const username = this.settings.get(SYNC_SITE_NAME);
+    const password = this.settings.get(SYNC_SITE_PASSWORD_HASH);
     return getAuthHeader(username, password);
   }
 }
