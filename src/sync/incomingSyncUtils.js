@@ -361,8 +361,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       };
       const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
-        linkedRequisition.linkedTransaction = transaction;
-        database.save('Requisition', linkedRequisition);
+        database.update('Requisition', {
+          ...linkedRequisition,
+          linkedTransaction: transaction,
+        });
       }
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
