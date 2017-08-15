@@ -32,7 +32,7 @@ export class Spinner extends React.Component {
     Animated.loop(
       Animated.timing(
         this.progressAnimation,
-        { toValue: 100, duration: 5000, useNativeDriver: true },
+        { toValue: 100, duration: 1000, useNativeDriver: true },
       ),
     ).start();
   }
