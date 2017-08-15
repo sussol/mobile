@@ -197,7 +197,13 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     if (!this.state.isInitialised) {
-      return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
+      return (
+        <FirstUsePage
+          synchroniser={this.synchroniser}
+          onInitialised={this.onInitialised}
+          syncState={this.props.syncState}
+        />
+      );
     }
     const { finaliseItem, dispatch, navigationState } = this.props;
     return (

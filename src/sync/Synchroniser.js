@@ -50,6 +50,17 @@ export class Synchroniser {
   }
 
   /**
+   * Redux progress setting functions
+   */
+  setTotal(totalCount) { this.dispatch(setSyncTotal(totalCount)); }
+  incrementProgress(increment) { this.dispatch(incrementSyncProgress(increment)); }
+  setProgress(currentCount) { this.dispatch(setSyncProgress(currentCount)); }
+  setProgressMessage(message) { this.dispatch(setSyncProgressMessage(message)); }
+  setError(errorMessage) { this.dispatch(setSyncError(errorMessage)); }
+  setIsSyncing(isSyncing) { this.dispatch(setSyncIsSyncing(isSyncing)); }
+  setCompletionTime(time) { this.dispatch(setSyncCompletionTime(time)); }
+
+  /**
    * Wipe the current database, check that the given url can be synced against
    * using the given name and password, and if so populate the database by pulling
    * from the remote server.
@@ -59,8 +70,9 @@ export class Synchroniser {
    * @return {Promise}                 Resolve if successfully authenticated and
    *                                   initialised, otherwise throw error
    */
-  async initialise(serverURL, syncSiteName, syncSitePassword, setProgress) {
-    if (setProgress) setProgress('Initialising...');
+  async initialise(serverURL, syncSiteName, syncSitePassword) {
+    this.setIsSyncing(true);
+    this.setProgressMessage('Initialising...');
     this.syncQueue.disable(); // Stop sync queue listening to database changes
     // Check if the serverURL passed in is the same as one we have already been using during
     // initialisation, in which case we are continuing a failed partial initialisation. If the
@@ -91,13 +103,15 @@ export class Synchroniser {
         // records queued and ready to send. Safe to store as this.serverURL
         this.serverURL = serverURL;
       }
-      await this.pull(setProgress);
+      await this.pull();
     } catch (error) {
       // Did not authenticate, sync error, or no internet, pass error up
+      this.setIsSyncing(false);
       throw error;
     }
     this.settings.set(SYNC_IS_INITIALISED, 'true');
     this.syncQueue.enable(); // Begin the sync queue listening to database changes
+    this.setIsSyncing(false);
   }
 
   /**
@@ -124,40 +138,27 @@ export class Synchroniser {
    * @return {[type]} [description]
    */
   async synchronise() {
-    // Create progress setter, which dispatches a redux action
-    const setTotal = (totalCount) => this.dispatch(setSyncTotal(totalCount));
-    const incrementProgress = (increment) => this.dispatch(incrementSyncProgress(increment));
-    const setProgress = (currentCount) => this.dispatch(setSyncProgress(currentCount));
-    const setProgressMessage = (message) => this.dispatch(setSyncProgressMessage(message));
-    const setError = (errorMessage) => this.dispatch(setSyncError(errorMessage));
-    const setIsSyncing = (isSyncing) => this.dispatch(setSyncIsSyncing(isSyncing));
-    const setCompletionTime = (time) => this.dispatch(setSyncCompletionTime(time));
-
     try {
       if (!this.isInitialised()) throw new Error('Not yet initialised');
-      setIsSyncing(true);
+      this.setIsSyncing(true);
 
       // Keeps track between app close/open whether last sync was successful
       this.settings.set(SYNC_PRIOR_FAILED, 'true');
 
       // Using async/await here means that any errors thrown by push or pull will be caught by the
       // outer try/catch
-      setProgressMessage('Pushing');
-      setProgress(0);
-      await this.push(incrementProgress, setTotal);
-      setProgressMessage('Pulling');
-      setProgress(0);
-      await this.pull(incrementProgress, setTotal);
+      await this.push();
+      await this.pull();
 
       // Store persistent sync details in settings
       this.settings.set(SYNC_PRIOR_FAILED, 'false');
 
       // Store sync completion progress in redux
-      setIsSyncing(false);
-      setCompletionTime(new Date().getTime());
+      this.setIsSyncing(false);
+      this.setCompletionTime(new Date().getTime());
     } catch (error) {
-      setError(error.message);
-      setIsSyncing(false);
+      this.setError(error.message);
+      this.setIsSyncing(false);
     }
   }
 
@@ -166,10 +167,12 @@ export class Synchroniser {
    * all local changes have been synced.
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async push(incrementProgress, setTotal) {
+  async push() {
+    this.setProgressMessage('Syncing changes to the server');
+    this.setProgress(0);
     let recordsToSync;
     let translatedRecords;
-    setTotal(this.syncQueue.length);
+    this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
       recordsToSync = this.syncQueue.next(BATCH_SIZE);
       translatedRecords = recordsToSync.map(record =>
@@ -177,7 +180,7 @@ export class Synchroniser {
       );
       await this.pushRecords(translatedRecords);
       this.syncQueue.use(recordsToSync);
-      incrementProgress(recordsToSync.length);
+      this.incrementProgress(recordsToSync.length);
     }
   }
 
@@ -215,11 +218,13 @@ export class Synchroniser {
    * Pulls any changes to data on the sync server down to the local database
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async pull(incrementProgress, setTotal) {
+  async pull() {
+    this.setProgressMessage('Pulling changes from server');
+    this.setProgress(0);
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
-    await this.recursivePull(serverURL, thisSiteId, serverId, incrementProgress, setTotal);
+    await this.recursivePull(serverURL, thisSiteId, serverId, true);
   }
 
   /**
@@ -230,7 +235,7 @@ export class Synchroniser {
    * @param  {string} serverId   The sync ID of the server
    * @return {Promise}          Resolves if successful, or passes up any error thrown
    */
-  async recursivePull(serverURL, thisSiteId, serverId, incrementProgress, setTotal) {
+  async recursivePull(serverURL, thisSiteId, serverId, isFirstRecursion) {
     const authHeader = this.authenticator.getAuthHeader();
     const waitingRecordCount = await this.getWaitingRecordCount(
       serverURL,
@@ -238,7 +243,7 @@ export class Synchroniser {
       serverId,
       authHeader
     );
-    if (setTotal) setTotal(waitingRecordCount);
+    if (isFirstRecursion) this.setTotal(waitingRecordCount);
     if (waitingRecordCount === 0) return; // Done recursing through records
 
     // Get a batch of records and integrate them
@@ -251,10 +256,10 @@ export class Synchroniser {
     );
     this.integrateRecords(incomingRecords);
     await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
-    incrementProgress(incomingRecords.length);
+    this.incrementProgress(incomingRecords.length);
 
     // Recurse to get the next batch of records from the server
-    await this.recursivePull(serverURL, thisSiteId, serverId, incrementProgress);
+    await this.recursivePull(serverURL, thisSiteId, serverId);
   }
 
   /**
