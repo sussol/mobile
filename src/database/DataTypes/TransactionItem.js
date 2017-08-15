@@ -70,12 +70,16 @@ export class TransactionItem extends Realm.Object {
    * N.B. For customer invoices, will create and delete transaction batches as appropriate.
    * N.B. Supplier invoices do not take effect on the rest of the stock until they
    * are finalised, whereas customer invoices immediately influence stock levels.
-   * @param {double} quantity The total quantity to set across all batches
+   * @param {Database} Realm DB wrapper
+   * @param {double} requestedQuantity try to set this quanity against all batches
+   * @param {double} referenceQuantity max available quantity or -1 to use requestedQuantity
    */
-  setTotalQuantity(database, quantity) {
+  setTotalQuantity(database, requestedQuantity, referenceQuantity) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot set quantity of an item in a finalised transaction');
     }
+    let quantity = requestedQuantity;
+    if (referenceQuantity !== undefined) quantity = Math.min(requestedQuantity, referenceQuantity);
     if (quantity < 0) throw new Error('Cannot set a negative quantity on a transaction item');
 
     const difference = quantity - this.totalQuantity; // Positive if new quantity is greater

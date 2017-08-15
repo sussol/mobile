@@ -3,17 +3,26 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+import autobind from 'react-autobind';
+
 import { SyncQueue } from './SyncQueue';
 import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { integrateRecord } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
-import { formatDate } from '../utilities';
+import {
+  incrementSyncProgress,
+  setSyncProgress,
+  setSyncProgressMessage,
+  setSyncTotal,
+  setSyncError,
+  setSyncIsSyncing,
+  setSyncCompletionTime,
+} from './actions';
 
 const {
   SYNC_IS_INITIALISED,
   SYNC_PRIOR_FAILED,
-  SYNC_LAST_SUCCESS,
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
@@ -30,13 +39,13 @@ const BATCH_SIZE = 20; // Number of records to sync at one time
  * @param  {Settings}          settings       Access to locally stored settings
  */
 export class Synchroniser {
-  constructor(database, authenticator, settings) {
+  constructor(database, authenticator, settings, dispatch) {
     this.database = new SyncDatabase(database);
     this.authenticator = authenticator;
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
-    this.synchronise = this.synchronise.bind(this);
-    this.initialise = this.initialise.bind(this);
+    this.dispatch = dispatch;
+    autobind(this);
     if (this.isInitialised()) this.syncQueue.enable();
   }
 
@@ -71,7 +80,7 @@ export class Synchroniser {
       if (isFresh) {
         // If a fresh initialisation, tell the server to prepare required sync records
         await fetch(
-          `${serverURL}/sync/v2/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
+          `${serverURL}/sync/v3/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
           {
             headers: {
               Authorization: this.authenticator.getAuthHeader(),
@@ -115,17 +124,41 @@ export class Synchroniser {
    * @return {[type]} [description]
    */
   async synchronise() {
-    if (!this.isInitialised()) throw new Error('Not yet initialised');
+    // Create progress setter, which dispatches a redux action
+    const setTotal = (totalCount) => this.dispatch(setSyncTotal(totalCount));
+    const incrementProgress = (increment) => this.dispatch(incrementSyncProgress(increment));
+    const setProgress = (currentCount) => this.dispatch(setSyncProgress(currentCount));
+    const setProgressMessage = (message) => this.dispatch(setSyncProgressMessage(message));
+    const setError = (errorMessage) => this.dispatch(setSyncError(errorMessage));
+    const setIsSyncing = (isSyncing) => this.dispatch(setSyncIsSyncing(isSyncing));
+    const setCompletionTime = (time) => this.dispatch(setSyncCompletionTime(time));
 
-    // Keeps track between app close/open whether last sync was successful
-    this.settings.set(SYNC_PRIOR_FAILED, 'true');
-    // Using async/await here means that any errors thrown by push or pull
-    // will be passed up as a rejection of the promise returned by synchronise
-    await this.push();
-    await this.pull();
+    try {
+      if (!this.isInitialised()) throw new Error('Not yet initialised');
+      setIsSyncing(true);
 
-    this.settings.set(SYNC_PRIOR_FAILED, 'false');
-    this.settings.set(SYNC_LAST_SUCCESS, formatDate(new Date(), 'dots'));
+      // Keeps track between app close/open whether last sync was successful
+      this.settings.set(SYNC_PRIOR_FAILED, 'true');
+
+      // Using async/await here means that any errors thrown by push or pull will be caught by the
+      // outer try/catch
+      setProgressMessage('Pushing');
+      setProgress(0);
+      await this.push(incrementProgress, setTotal);
+      setProgressMessage('Pulling');
+      setProgress(0);
+      await this.pull(incrementProgress, setTotal);
+
+      // Store persistent sync details in settings
+      this.settings.set(SYNC_PRIOR_FAILED, 'false');
+
+      // Store sync completion progress in redux
+      setIsSyncing(false);
+      setCompletionTime(new Date().getTime());
+    } catch (error) {
+      setError(error.message);
+      setIsSyncing(false);
+    }
   }
 
   /**
@@ -133,9 +166,10 @@ export class Synchroniser {
    * all local changes have been synced.
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async push() {
+  async push(incrementProgress, setTotal) {
     let recordsToSync;
     let translatedRecords;
+    setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
       recordsToSync = this.syncQueue.next(BATCH_SIZE);
       translatedRecords = recordsToSync.map(record =>
@@ -143,6 +177,7 @@ export class Synchroniser {
       );
       await this.pushRecords(translatedRecords);
       this.syncQueue.use(recordsToSync);
+      incrementProgress(recordsToSync.length);
     }
   }
 
@@ -156,7 +191,7 @@ export class Synchroniser {
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${serverURL}/sync/v3/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         method: 'POST',
         headers: {
@@ -180,11 +215,11 @@ export class Synchroniser {
    * Pulls any changes to data on the sync server down to the local database
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async pull(setProgress) {
+  async pull(incrementProgress, setTotal) {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
-    await this.recursivePull(serverURL, thisSiteId, serverId, setProgress);
+    await this.recursivePull(serverURL, thisSiteId, serverId, incrementProgress, setTotal);
   }
 
   /**
@@ -195,7 +230,7 @@ export class Synchroniser {
    * @param  {string} serverId   The sync ID of the server
    * @return {Promise}          Resolves if successful, or passes up any error thrown
    */
-  async recursivePull(serverURL, thisSiteId, serverId, setProgress) {
+  async recursivePull(serverURL, thisSiteId, serverId, incrementProgress, setTotal) {
     const authHeader = this.authenticator.getAuthHeader();
     const waitingRecordCount = await this.getWaitingRecordCount(
       serverURL,
@@ -203,7 +238,7 @@ export class Synchroniser {
       serverId,
       authHeader
     );
-    if (setProgress) setProgress(`${waitingRecordCount} records to go`);
+    if (setTotal) setTotal(waitingRecordCount);
     if (waitingRecordCount === 0) return; // Done recursing through records
 
     // Get a batch of records and integrate them
@@ -216,9 +251,10 @@ export class Synchroniser {
     );
     this.integrateRecords(incomingRecords);
     await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
+    incrementProgress(incomingRecords.length);
 
     // Recurse to get the next batch of records from the server
-    await this.recursivePull(serverURL, thisSiteId, serverId, setProgress);
+    await this.recursivePull(serverURL, thisSiteId, serverId, incrementProgress);
   }
 
   /**
@@ -230,7 +266,7 @@ export class Synchroniser {
    */
   async getWaitingRecordCount(serverURL, thisSiteId, serverId, authHeader) {
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${serverURL}/sync/v3/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         headers: {
           Authorization: authHeader,
@@ -260,7 +296,7 @@ export class Synchroniser {
    */
   async getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records` +
+      `${serverURL}/sync/v3/queued_records` +
         `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
       {
         headers: {
@@ -307,7 +343,7 @@ export class Synchroniser {
       SyncRecordIDs: syncIds,
     };
     await fetch(
-      `${serverURL}/sync/v2/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${serverURL}/sync/v3/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         method: 'POST',
         headers: {

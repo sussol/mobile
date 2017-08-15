@@ -11,17 +11,12 @@ import { View } from 'react-native';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { createRecord } from '../database';
-import { SETTINGS_KEYS } from '../settings';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
-  AutocompleteSelector,
-  BottomConfirmModal,
   PageButton,
   PageInfo,
   PageContentModal,
   TextEditor,
-  ToggleSelector,
 } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
@@ -31,7 +26,7 @@ const MODAL_KEYS = {
   MONTHS_SELECT: 'monthsSelect',
 };
 
-export class RequisitionPage extends React.Component {
+export class SupplyRequisitionPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -47,26 +42,6 @@ export class RequisitionPage extends React.Component {
     autobind(this);
   }
 
-  onAddMasterItems() {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.requisition.addItemsFromMasterList(this.props.database, this.getThisStore());
-        this.props.database.save('Requisition', this.props.requisition);
-      });
-      this.refreshData();
-    });
-  }
-
-  onCreateAutomaticOrder() {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.requisition.createAutomaticOrder(this.props.database, this.getThisStore());
-        this.props.database.save('Requisition', this.props.requisition);
-      });
-      this.refreshData();
-    });
-  }
-
   /**
    * Respond to the user editing the number in the required quantity column
    * @param  {string} key             Should always be 'requiredQuantity'
@@ -75,27 +50,19 @@ export class RequisitionPage extends React.Component {
    * @return {none}
    */
   onEndEditing(key, requisitionItem, newValue) {
-    if (key !== 'requiredQuantity') return;
-    this.props.database.write(() => {
-      requisitionItem.requiredQuantity = parsePositiveInteger(newValue);
-      this.props.database.save('RequisitionItem', requisitionItem);
-    });
-  }
-
-  onDeleteConfirm() {
-    const { selection } = this.state;
-    const { requisition, database } = this.props;
+    // This will update associated CustomerInvoice if one exists or if linked
+    // CustomerInvoice does not exist, suppliedQuantity will not be updated
+    if (key !== 'suppliedQuantity') return;
+    const { database } = this.props;
     database.write(() => {
-      requisition.removeItemsById(database, selection);
-      database.save('Requisition', requisition);
+      const transactionItem = requisitionItem.linkedTransactionItem;
+      if (!transactionItem) return;
+      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
+                                                 transactionItem.availableQuantity);
+      requisitionItem.suppliedQuantity = transactionItem.totalQuantity;
+      database.save('TransactionItem', transactionItem);
+      database.save('RequisitionItem', requisitionItem);
     });
-    this.setState({ selection: [] });
-    this.refreshData();
-  }
-
-  onDeleteCancel() {
-    this.setState({ selection: [] });
-    this.refreshData();
   }
 
   onUseSuggestedQuantities() {
@@ -113,24 +80,14 @@ export class RequisitionPage extends React.Component {
     this.setState({ selection: newSelection });
   }
 
-  getThisStore() {
-    const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
-    const nameResults = this.props.database.objects('Name')
-                                           .filtered('id == $0', thisStoreNameId);
-    if (!nameResults | nameResults.length <= 0) return null;
-    return nameResults[0];
-  }
-
   getModalTitle() {
-    const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
+    const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
         return modalStrings.search_for_an_item_to_add;
       case COMMENT_EDIT:
         return modalStrings.edit_the_requisition_comment;
-      case MONTHS_SELECT:
-        return modalStrings.select_the_number_of_months_stock_required;
     }
   }
 
@@ -174,14 +131,6 @@ export class RequisitionPage extends React.Component {
     this.setState({ modalIsOpen: false });
   }
 
-  openItemSelector() {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
-  }
-
-  openMonthsSelector() {
-    this.openModal(MODAL_KEYS.MONTHS_SELECT);
-  }
-
   openCommentEditor() {
     this.openModal(MODAL_KEYS.COMMENT_EDIT);
   }
@@ -208,8 +157,6 @@ export class RequisitionPage extends React.Component {
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
-          onPress: this.openMonthsSelector,
-          editableType: 'selectable',
         },
         {
           title: `${pageInfoStrings.comment}:`,
@@ -228,16 +175,17 @@ export class RequisitionPage extends React.Component {
   }
 
   renderCell(key, requisitionItem) {
+    const { requisition } = this.props;
     switch (key) {
-      default:
-        return requisitionItem[key];
       case 'monthlyUsage':
       case 'suggestedQuantity':
-        return Math.round(requisitionItem[key]);
       case 'requiredQuantity':
+      case 'ourStockOnHand':
+        return Math.round(requisitionItem[key]);
+      case 'suppliedQuantity':
         return {
-          type: this.props.requisition.isFinalised ? 'text' : 'editable',
-          cellContents: Math.round(requisitionItem.requiredQuantity),
+          type: requisition.isFinalised ? 'text' : 'editable',
+          cellContents: requisitionItem.suppliedQuantity || 0,
         };
       case 'remove':
         return {
@@ -245,50 +193,15 @@ export class RequisitionPage extends React.Component {
           icon: 'md-remove-circle',
           isDisabled: this.props.requisition.isFinalised,
         };
+      default:
+        return requisitionItem[key];
     }
   }
 
   renderModalContent() {
-    const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
+    const { COMMENT_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
-      case ITEM_SELECT:
-        return (
-          <AutocompleteSelector
-            options={this.props.database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            queryStringSecondary={'name CONTAINS[c] $0'}
-            sortByString={'name'}
-            onSelect={(item) => {
-              const { database, requisition } = this.props;
-              database.write(() => {
-                if (!requisition.hasItemWithId(item.id)) {
-                  createRecord(database, 'RequisitionItem', requisition, item);
-                  database.save('Requisition', requisition);
-                }
-              });
-              this.refreshData();
-              this.closeModal();
-            }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
-          />
-        );
-      case MONTHS_SELECT:
-        return (
-          <ToggleSelector
-            options={[1, 2, 3, 4, 5, 6]}
-            onSelect={(number) => {
-              this.props.database.write(() => {
-                this.props.requisition.monthsToSupply = number;
-                this.props.database.save('Requisition', this.props.requisition);
-              });
-              this.refreshData();
-              this.closeModal();
-            }}
-            selected={this.props.requisition.monthsToSupply}
-          />
-          );
       case COMMENT_EDIT:
         return (
           <TextEditor
@@ -302,38 +215,18 @@ export class RequisitionPage extends React.Component {
               }
               this.closeModal();
             }}
-          />
-          );
+          />);
     }
   }
 
-  renderButtons() {
+  renderButton() {
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
           <PageButton
             style={globalStyles.topButton}
-            text={buttonStrings.create_automatic_order}
-            onPress={this.onCreateAutomaticOrder}
-            isDisabled={this.props.requisition.isFinalised}
-          />
-          <PageButton
-            style={globalStyles.leftButton}
-            text={buttonStrings.use_suggested_quantities}
-            onPress={this.onUseSuggestedQuantities}
-            isDisabled={this.props.requisition.isFinalised}
-          />
-        </View>
-        <View style={globalStyles.verticalContainer}>
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.new_item}
-            onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
-            isDisabled={this.props.requisition.isFinalised}
-          />
-          <PageButton
-            text={buttonStrings.add_master_list_items}
-            onPress={this.onAddMasterItems}
+            text={buttonStrings.use_requested_quantities}
+            onPress={this.onUseRequestedQuantity}
             isDisabled={this.props.requisition.isFinalised}
           />
         </View>
@@ -348,7 +241,7 @@ export class RequisitionPage extends React.Component {
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderButtons}
+        renderTopRightComponent={this.renderButton}
         onEndEditing={this.onEndEditing}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
@@ -367,9 +260,16 @@ export class RequisitionPage extends React.Component {
             sortable: true,
           },
           {
+            key: 'ourStockOnHand',
+            width: 1.5,
+            title: tableStrings.our_stock,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
             key: 'stockOnHand',
-            width: 2,
-            title: tableStrings.current_stock,
+            width: 1.5,
+            title: tableStrings.their_stock,
             sortable: true,
             alignText: 'right',
           },
@@ -395,10 +295,11 @@ export class RequisitionPage extends React.Component {
             alignText: 'right',
           },
           {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
+            key: 'suppliedQuantity',
+            width: 2,
+            title: tableStrings.supply_quantity,
+            sortable: true,
+            alignText: 'right',
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
@@ -408,13 +309,6 @@ export class RequisitionPage extends React.Component {
         {...this.props.genericTablePageStyles}
         topRoute={this.props.topRoute}
       >
-        <BottomConfirmModal
-          isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={this.onDeleteCancel}
-          onConfirm={this.onDeleteConfirm}
-          confirmText={modalStrings.remove}
-        />
         <PageContentModal
           isOpen={this.state.modalIsOpen && !this.props.requisition.isFinalised}
           onClose={this.closeModal}
@@ -427,26 +321,10 @@ export class RequisitionPage extends React.Component {
   }
 }
 
-RequisitionPage.propTypes = {
+SupplyRequisitionPage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,
-  settings: PropTypes.object.isRequired,
 };
-
-/**
- * Check whether a given requisition is safe to be finalised. Return null if it is,
- * otherwise return an appropriate error message if not.
- * @param  {object}  requisition  The requisition to check
- * @return {string}  An error message if not able to be finalised
- */
-export function checkForFinaliseError(requisition) {
-  if (requisition.items.length === 0) {
-    return modalStrings.add_at_least_one_item_before_finalising;
-  } else if (requisition.totalRequiredQuantity === 0) {
-    return modalStrings.record_stock_required_before_finalising;
-  }
-  return null;
-}

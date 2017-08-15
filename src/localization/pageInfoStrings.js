@@ -18,6 +18,7 @@ export const pageInfoStrings = new LocalizedStrings({
     supplier: 'Supplier',
     total_price: 'Total Price',
     their_ref: 'Their Ref',
+    supplying_store_name: 'Supplying Store',
   },
   gil: {
     address: 'Am tabo',
@@ -31,7 +32,7 @@ export const pageInfoStrings = new LocalizedStrings({
     their_ref: 'Ana Ref',
   },
   tl: {
-    // TODO add: total_price, supplier
+    // TODO add: total_price, supplier, supplying_store_name
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',

@@ -92,9 +92,15 @@ export class CustomerInvoicesPage extends React.Component {
       });
     }
     this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
-    this.props.navigateTo('customerInvoice',
-                          `${navStrings.invoice} ${invoice.serialNumber}`,
-                          { transaction: invoice });
+    // Navigate to requisition if one is linked to selected customer invoice
+    const { linkedRequisition } = invoice;
+    const navigateToParams = invoice.isLinkedToRequisition ?
+      ['supplyRequisition', `${navStrings.requisition} ${linkedRequisition.serialNumber}`,
+      { requisition: linkedRequisition }] :
+      ['customerInvoice', `${navStrings.invoice} ${invoice.serialNumber}`,
+      { transaction: invoice }];
+
+    this.props.navigateTo(...navigateToParams);
   }
 
   updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
@@ -144,7 +150,7 @@ export class CustomerInvoicesPage extends React.Component {
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
-          isDisabled: invoice.isFinalised,
+          isDisabled: invoice.isFinalised || invoice.isLinkedToRequisition,
         };
     }
   }
