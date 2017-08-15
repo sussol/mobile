@@ -31,7 +31,8 @@ export class RequisitionsPage extends React.Component {
       isRequestView: true,
       isCreatingRequisition: false,
     };
-    this.requisitions = props.database.objects('Requisition');
+    this.requisitions = props.database.objects('Requisition')
+                                      .filtered('serialNumber != "-1"');
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'entryDate',

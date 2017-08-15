@@ -5,33 +5,23 @@ export class UIDatabase {
   }
 
   objects(type) {
-    let results = this.database.objects(translateToCoreDatabaseType(type));
+    const results = this.database.objects(translateToCoreDatabaseType(type));
     switch (type) {
       case 'Customer':
-        results = results.filtered('isVisible == true AND isCustomer == true');
-        break;
+        return results.filtered('isVisible == true AND isCustomer == true');
       case 'Supplier':
-        results = results.filtered('isVisible == true AND isSupplier == true');
-        break;
+        return results.filtered('isVisible == true AND isSupplier == true');
       case 'InternalSupplier':
-        results = results.filtered('isVisible == true AND isSupplier == true AND type == "store"');
-        break;
+        return results.filtered('isVisible == true AND isSupplier == true AND type == "store"');
       case 'ExternalSupplier':
-        results = results.filtered(
+        return results.filtered(
           "isVisible == true AND isSupplier == true AND type == 'facility'"
         );
-        break;
       case 'Item':
-        results = results.filtered('isVisible == true');
-        break;
-      case 'Requisition':
-      // Hide Requisitions that have not been updated with a serialNumber in postSync
-        results = results.filtered('serialNumber != "-1"');
-        break;
+        return results.filtered('isVisible == true');
       default:
-        break;
+        return results;
     }
-    return results;
   }
 
   addListener(...args) { return this.database.addListener(...args); }
