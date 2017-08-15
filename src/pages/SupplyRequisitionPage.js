@@ -219,7 +219,7 @@ export class SupplyRequisitionPage extends React.Component {
     }
   }
 
-  renderButtons() {
+  renderButton() {
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
@@ -241,7 +241,7 @@ export class SupplyRequisitionPage extends React.Component {
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderButtons}
+        renderTopRightComponent={this.renderButton}
         onEndEditing={this.onEndEditing}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
