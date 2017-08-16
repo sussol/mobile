@@ -127,7 +127,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   async synchronise() {
-    if (!this.state.isInitialised || this.props.isSyncing) return; // If already syncing, skip
+    if (!this.state.isInitialised || this.props.syncState.isSyncing) return; // Ignore if syncing
     // True if last this.synchroniser.synchronise() call failed
     const lastSyncFailed = this.synchroniser.lastSyncFailed();
     const lastPostSyncProcessingFailed = this.postSyncProcessor.lastPostSyncProcessingFailed();
