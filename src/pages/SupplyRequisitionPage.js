@@ -10,7 +10,7 @@ import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
+import { formatDate, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   PageButton,
@@ -55,26 +55,32 @@ export class SupplyRequisitionPage extends React.Component {
     if (key !== 'suppliedQuantity') return;
     const { database } = this.props;
     database.write(() => {
-      const transactionItem = requisitionItem.linkedTransactionItem;
-      if (!transactionItem) return;
-      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
-                                                 transactionItem.availableQuantity);
-      requisitionItem.suppliedQuantity = transactionItem.totalQuantity;
-      database.save('TransactionItem', transactionItem);
-      database.save('RequisitionItem', requisitionItem);
+      requisitionItem.setSuppliedQuantity(database, newValue);
     });
   }
 
-  onUseSuggestedQuantities() {
-    this.props.runWithLoadingIndicator(() => {
-      const { database, requisition } = this.props;
-      database.write(() => {
-        requisition.setRequestedToSuggested(database);
-        database.save('Requisition', requisition);
+  onUseRequestedQuantities() {
+    const { database, requisition } = this.props;
+    database.write(() => {
+      requisition.items.forEach(requisitionItem => {
+        requisitionItem.setSuppliedQuantity(database, requisitionItem.requiredQuantity);
       });
-      this.refreshData();
     });
+
+    this.refreshData();
   }
+
+  onUseSuggestedQuantities() {
+    const { database, requisition } = this.props;
+    database.write(() => {
+      requisition.items.forEach(requisitionItem => {
+        requisitionItem.setSuppliedQuantity(database, requisitionItem.suggestedQuantity);
+      });
+    });
+
+    this.refreshData();
+  }
+
 
   onSelectionChange(newSelection) {
     this.setState({ selection: newSelection });
@@ -219,14 +225,20 @@ export class SupplyRequisitionPage extends React.Component {
     }
   }
 
-  renderButton() {
+  renderButtons() {
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
           <PageButton
             style={globalStyles.topButton}
             text={buttonStrings.use_requested_quantities}
-            onPress={this.onUseRequestedQuantity}
+            onPress={this.onUseRequestedQuantities}
+            isDisabled={this.props.requisition.isFinalised}
+          />
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.use_suggested_quantities}
+            onPress={this.onUseSuggestedQuantities}
             isDisabled={this.props.requisition.isFinalised}
           />
         </View>
@@ -241,7 +253,7 @@ export class SupplyRequisitionPage extends React.Component {
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderButton}
+        renderTopRightComponent={this.renderButtons}
         onEndEditing={this.onEndEditing}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
@@ -263,8 +275,7 @@ export class SupplyRequisitionPage extends React.Component {
             key: 'ourStockOnHand',
             width: 1.5,
             title: tableStrings.our_stock,
-            sortable: true,
-            alignText: 'right',
+            alignText: 'center',
           },
           {
             key: 'stockOnHand',

@@ -360,7 +360,12 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         linkedRequisition,
       };
       const transaction = database.update(recordType, internalRecord);
-      if (linkedRequisition) linkedRequisition.linkedTransaction = transaction;
+      if (linkedRequisition) {
+        database.update('Requisition', {
+          ...linkedRequisition,
+          linkedTransaction: transaction,
+        });
+      }
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);

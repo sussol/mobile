@@ -29,10 +29,12 @@ export class Spinner extends React.Component {
   }
 
   startSpinning() {
-    Animated.timing(
-              this.progressAnimation,
-              { toValue: 100, duration: 1000, useNativeDriver: true, shouldLoop: true })
-            .start();
+    Animated.loop(
+      Animated.timing(
+        this.progressAnimation,
+        { toValue: 100, duration: 1000, useNativeDriver: true },
+      ),
+    ).start();
   }
 
   stopSpinning() {

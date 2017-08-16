@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import { parsePositiveInteger } from '../../utilities';
 
 export class RequisitionItem extends Realm.Object {
   get itemId() {
@@ -35,6 +36,20 @@ export class RequisitionItem extends Realm.Object {
     const linkedTransactionItem = this.linkedTransactionItem;
     return linkedTransactionItem ?
            linkedTransactionItem.availableQuantity : this.item.totalQuantity;
+  }
+
+  setSuppliedQuantity(database, newValue) {
+    if (this.requisition.isFinalised || this.requisition.isRequest) {
+      throw new Error('Cannot set supplied quantity for Finalised or Request Requisition');
+    }
+
+    const transactionItem = this.linkedTransactionItem;
+    if (!transactionItem) return;
+    transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
+                                               transactionItem.availableQuantity);
+    this.suppliedQuantity = transactionItem.totalQuantity;
+    database.save('TransactionItem', transactionItem);
+    database.save('RequisitionItem', this);
   }
 }
 
