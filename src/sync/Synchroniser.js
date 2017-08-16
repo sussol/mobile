@@ -106,6 +106,7 @@ export class Synchroniser {
       await this.pull();
     } catch (error) {
       // Did not authenticate, sync error, or no internet, pass error up
+      this.setError(error.message);
       this.setIsSyncing(false);
       throw error;
     }
