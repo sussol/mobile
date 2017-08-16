@@ -174,7 +174,7 @@ export class Synchroniser {
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
   async push() {
-    this.setProgressMessage('Syncing changes to the server');
+    this.setProgressMessage('Pushing changes to the server');
     this.setProgress(0);
     let recordsToSync;
     let translatedRecords;
@@ -225,12 +225,13 @@ export class Synchroniser {
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
   async pull() {
-    this.setProgressMessage('Pulling changes from server');
+    this.setProgressMessage('Pulling changes from the server');
     this.setProgress(0);
+    this.setTotal(0);
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
-    await this.recursivePull(serverURL, thisSiteId, serverId, true);
+    await this.recursivePull(serverURL, thisSiteId, serverId, 0);
   }
 
   /**
@@ -241,7 +242,7 @@ export class Synchroniser {
    * @param  {string} serverId   The sync ID of the server
    * @return {Promise}          Resolves if successful, or passes up any error thrown
    */
-  async recursivePull(serverURL, thisSiteId, serverId, isFirstRecursion) {
+  async recursivePull(serverURL, thisSiteId, serverId, currentTotal) {
     const authHeader = this.authenticator.getAuthHeader();
     const waitingRecordCount = await this.getWaitingRecordCount(
       serverURL,
@@ -249,7 +250,9 @@ export class Synchroniser {
       serverId,
       authHeader
     );
-    if (isFirstRecursion) this.setTotal(waitingRecordCount);
+    // Allow total to increase in case more records are added to the server sync queue during sync
+    const newTotal = Math.max(waitingRecordCount, currentTotal);
+    this.setTotal(newTotal);
     if (waitingRecordCount === 0) return; // Done recursing through records
 
     // Get a batch of records and integrate them
@@ -265,7 +268,7 @@ export class Synchroniser {
     this.incrementProgress(incomingRecords.length);
 
     // Recurse to get the next batch of records from the server
-    await this.recursivePull(serverURL, thisSiteId, serverId);
+    await this.recursivePull(serverURL, thisSiteId, serverId, newTotal);
   }
 
   /**

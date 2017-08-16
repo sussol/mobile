@@ -16,8 +16,8 @@ import {
     PROGRESS_LOADING,
 } from './constants';
 
-const getStatusMessage = (progress, total, isSyncing, errorMessage) => {
-  let message;
+const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
+  let message = '';
 
   if (errorMessage !== '') {
     message = errorMessage;
@@ -28,7 +28,8 @@ const getStatusMessage = (progress, total, isSyncing, errorMessage) => {
   } else if (progress === PROGRESS_LOADING) {
     message = 'Loading change count...';
   } else {
-    message = `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;
+    message = progressMessage ? `${progressMessage}\n` : '';
+    message += `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;
   }
 
   return message;
@@ -48,6 +49,7 @@ export function SyncModal({ isOpen, onClose, onPressManualSync, state }) {
     isSyncing,
     lastSyncTime,
     errorMessage,
+    progressMessage,
   } = state;
   return (
     <Modal
@@ -64,7 +66,7 @@ export function SyncModal({ isOpen, onClose, onPressManualSync, state }) {
       <View style={localStyles.contentContainer} >
         <View style={localStyles.row}>
           <Text style={localStyles.progressDescription}>
-            {getStatusMessage(progress, total, isSyncing, errorMessage)}
+            {getStatusMessage(progress, total, isSyncing, errorMessage, progressMessage)}
           </Text>
           <View style={localStyles.progressBarContainer} >
             <ProgressBar total={total} progress={progress} isComplete={!isSyncing} />
