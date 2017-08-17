@@ -5,8 +5,6 @@
 
 import React from 'react';
 
-import { CustomerPage } from './CustomerPage';
-import { CustomersPage } from './CustomersPage';
 import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
@@ -33,12 +31,10 @@ import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
-  customer: (props) => <PageContainer page={CustomerPage} {...props} />,
   customerInvoice: (props) => <PageContainer page={CustomerInvoicePage} {...props} />,
   customerInvoices: (props) => <PageContainer page={CustomerInvoicesPage} {...props} />,
   customerRequisition: (props) => <PageContainer page={CustomerRequisitionPage} {...props} />,
   customerRequisitions: (props) => <PageContainer page={CustomerRequisitionsPage} {...props} />,
-  customers: (props) => <PageContainer page={CustomersPage} {...props} />,
   menu: (props) => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: (props) => <PageContainer page={RealmExplorer} {...props} />,
   root: (props) => <PageContainer page={MenuPage} {...props} />,
