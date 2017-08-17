@@ -4,7 +4,7 @@
     "email": "info@sussol.net"
   },
   "name": "mSupplyMobile",
-  "version": "2.0.1",
+  "version": "2.0.0",
   "private": false,
   "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
