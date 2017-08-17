@@ -191,7 +191,7 @@ export class SupplierRequisitionPage extends React.Component {
     const infoColumns = [
       [
         {
-          title: `${pageInfoStrings.supplier}`,
+          title: `${pageInfoStrings.supplier}:`,
           info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
         },
         {
