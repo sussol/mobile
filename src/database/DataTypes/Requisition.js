@@ -47,6 +47,20 @@ export class Requisition extends Realm.Object {
     return this.items.length;
   }
 
+  /**
+   * Get any items that would cause a reduction larger than the amount of available stock in
+   * inventory if it were finalised.
+   * @return {array} All items that have been reduced below minimum level
+   */
+  get overIssuedItems() {
+    if (this.isRequest) return []; // Can't over issue any item if this is a request
+    const overIssuedItems = [];
+    this.items.forEach((requisitionItem) => {
+      if (requisitionItem.isReducedBelowMinimum) overIssuedItems.push(requisitionItem.item);
+    });
+    return overIssuedItems;
+  }
+
   set monthsToSupply(months) {
     this.daysToSupply = months * 30;
   }

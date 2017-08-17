@@ -14,9 +14,7 @@ export class UIDatabase {
       case 'InternalSupplier':
         return results.filtered('isVisible == true AND isSupplier == true AND type == "store"');
       case 'ExternalSupplier':
-        return results.filtered(
-          "isVisible == true AND isSupplier == true AND type == 'facility'"
-        );
+        return results.filtered('isVisible == true AND isSupplier == true AND type == "facility"');
       case 'Item':
         return results.filtered('isVisible == true');
       case 'RequestRequisition':

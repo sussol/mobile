@@ -10,7 +10,7 @@ import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
-import { formatDate, sortDataBy } from '../utilities';
+import { formatDate, sortDataBy, truncateString } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   PageButton,
@@ -338,3 +338,30 @@ CustomerRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,
 };
+
+const MAX_ITEMS_IN_ERROR_MESSAGE = 4; // Number of items to display in finalise error modal
+const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in error modal
+
+/**
+ * Check whether a given requisition is safe to be finalised. Return null if it is,
+ * otherwise return an appropriate error message if not.
+ * @param  {object}  requisition  The requisition to check
+ * @return {string}  An error message if not able to be finalised
+ */
+export function checkForFinaliseError(requisition) {
+  const overIssuedItems = requisition.overIssuedItems;
+  if (overIssuedItems.length > 0) {
+    let errorString = modalStrings.following_items_more_issued_than_available;
+    overIssuedItems.forEach((item, index) => {
+      if (index >= MAX_ITEMS_IN_ERROR_MESSAGE) return;
+      errorString += truncateString(`\n${item.code} - ${item.name}`, MAX_ITEM_STRING_LENGTH);
+    });
+    if (overIssuedItems.length > MAX_ITEMS_IN_ERROR_MESSAGE) {
+      errorString += `\n${modalStrings.and} ` +
+        `${overIssuedItems.length - MAX_ITEMS_IN_ERROR_MESSAGE} ` +
+        `${modalStrings.more}.`;
+    }
+    return errorString;
+  }
+  return null;
+}

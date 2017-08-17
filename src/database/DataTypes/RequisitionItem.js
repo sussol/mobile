@@ -38,6 +38,10 @@ export class RequisitionItem extends Realm.Object {
            linkedTransactionItem.availableQuantity : this.item.totalQuantity;
   }
 
+  get isOverIssued() {
+    return this.suppliedQuantity > this.ourStockOnHand;
+  }
+
   setSuppliedQuantity(database, newValue) {
     if (this.requisition.isFinalised || this.requisition.isRequest) {
       throw new Error('Cannot set supplied quantity for Finalised or Request Requisition');
