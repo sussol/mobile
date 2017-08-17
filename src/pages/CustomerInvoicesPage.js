@@ -25,8 +25,7 @@ export class CustomerInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      transactions: props.database.objects('Transaction')
-                                  .filtered('type == "customer_invoice"'),
+      transactions: props.database.objects('CustomerInvoice'),
       selection: [],
       isCreatingInvoice: false,
     };

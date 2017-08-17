@@ -7,6 +7,14 @@ export class UIDatabase {
   objects(type) {
     const results = this.database.objects(translateToCoreDatabaseType(type));
     switch (type) {
+      case 'CustomerInvoice':
+        return results.filtered('type == "customer_invoice"');
+      case 'SupplierInvoice': {
+        const queryString = 'type == "supplier_invoice"'
+                            + ' AND otherParty.type != "inventory_adjustment"'
+                            + ' AND (linkedRequisition == null OR status == "finalised")';
+        return results.filtered(queryString);
+      }
       case 'Customer':
         return results.filtered('isVisible == true AND isCustomer == true');
       case 'Supplier':
@@ -40,6 +48,9 @@ export class UIDatabase {
 
 function translateToCoreDatabaseType(type) {
   switch (type) {
+    case 'CustomerInvoice':
+    case 'SupplierInvoice':
+      return 'Transaction';
     case 'Customer':
     case 'Supplier':
     case 'InternalSupplier':

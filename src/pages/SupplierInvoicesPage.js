@@ -24,9 +24,7 @@ export class SupplierInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      transactions: props.database.objects('Transaction')
-                                  .filtered('type == "supplier_invoice"')
-                                  .filtered('otherParty.type != "inventory_adjustment"'),
+      transactions: props.database.objects('SupplierInvoice'),
       isCreatingInvoice: false,
       selection: [],
     };
