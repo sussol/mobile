@@ -56,7 +56,7 @@ const dataMigrations = [
   },
   {
     version: '2.0.0',
-    migrate: database => {
+    migrate: (database, settings) => {
       // Changed SyncQueue to expect no more than one SyncOut record for every record in database.
       // Assume that last SyncOut record is correct.
       const allRecords = database.objects('SyncOut').sorted('changeTime').snapshot();
@@ -72,6 +72,20 @@ const dataMigrations = [
             database.update('SyncOut', record);
           }
         });
+      });
+      // Migration for v2 api request Requisitions, set otherStoreName to main supplying store name
+      // for all existing requisition (shouldn't have any response requisition at this stage)
+      const nameResults = database.objects('Name').filtered('id == $0',
+                                settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
+      if (nameResults.length < 1) throw new Error('Supplying Store Name ID missing from settings');
+      const mainSupplyingStoreName = nameResults[0];
+
+      const requisitions = database.objects('Requisition')
+                                   .filtered('otherStoreName = Null AND type == "request"')
+                                   .snapshot();
+
+      database.write(() => {
+        requisitions.forEach(requisition => (requisition.otherStoreName = mainSupplyingStoreName));
       });
     },
   },

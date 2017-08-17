@@ -11,12 +11,17 @@ const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_K
 import autobind from 'react-autobind';
 
 export class PostSyncProcessor {
-  constructor(database) {
+  constructor(database, settings) {
     this.database = database;
+    this.settings = settings;
     this.recordQueue = new Map(); // Map of [recordId, recordType]
     this.functionQueue = [];
     autobind(this);
     this.database.addListener(this.onDatabaseEvent);
+  }
+
+  setUser(user) {
+    this.user = user;
   }
 
   /**
@@ -56,7 +61,7 @@ export class PostSyncProcessor {
   processAnyUnprocessedRecords() {
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'true');
     this.functionQueue = [];
-    this.recordQueue = []; // Reset the recordQueue to avoid unnessary runs
+    this.recordQueue = new Map(); // Reset the recordQueue to avoid unnessary runs
 
     this.database
       .objects('Requisition')
@@ -134,6 +139,13 @@ export class PostSyncProcessor {
         record.serialNumber = getNextNumber(this.database, REQUISITION_SERIAL_NUMBER);
       });
     }
+
+    if (!record.isRequest && !record.isFinalised) {
+      funcs.push(() => {
+        record.createCustomerInvoice(this.database, this.user);
+      });
+    }
+
 
     // If any changes, add database update for record
     if (funcs.length > 0) {

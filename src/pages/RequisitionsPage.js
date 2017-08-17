@@ -8,10 +8,11 @@ import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 
 import { createRecord } from '../database';
-import { BottomConfirmModal, PageButton } from '../widgets';
+import { BottomConfirmModal, PageButton, SelectModal, ToggleBar } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -27,8 +28,11 @@ export class RequisitionsPage extends React.Component {
     super(props);
     this.state = {
       selection: [],
+      isRequestView: true,
+      isCreatingRequisition: false,
     };
-    this.requisitions = props.database.objects('Requisition');
+    this.requisitions = props.database.objects('Requisition')
+                                      .filtered('serialNumber != "-1"');
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'entryDate',
@@ -61,10 +65,11 @@ export class RequisitionsPage extends React.Component {
     this.refreshData();
   }
 
-  onNewRequisition() {
+  onNewRequisition(otherStoreName) {
     let requisition;
     this.props.database.write(() => {
-      requisition = createRecord(this.props.database, 'Requisition', this.props.currentUser);
+      requisition = createRecord(this.props.database,
+                                'Requisition', this.props.currentUser, otherStoreName);
     });
     this.navigateToRequisition(requisition);
   }
@@ -77,11 +82,17 @@ export class RequisitionsPage extends React.Component {
     this.setState({ selection: newSelection });
   }
 
+  toggleRequisitionViewType() {
+    this.setState({ isRequestView: !this.state.isRequestView }, this.refreshData);
+  }
+
   navigateToRequisition(requisition) {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
-    this.props.navigateTo('requisition', `${navStrings.requisition} ${requisition.serialNumber}`, {
-      requisition: requisition,
-    });
+    this.props.navigateTo(
+      requisition.isRequest ? 'requisition' : 'supplyRequisition',
+      `${navStrings.requisition} ${requisition.serialNumber}`,
+      { requisition: requisition },
+    );
   }
 
   updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
@@ -97,7 +108,10 @@ export class RequisitionsPage extends React.Component {
   refreshData(newSearchTerm, newSortBy, newIsAscending) {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
+    const type = this.state.isRequestView ? 'request' : 'response';
+    const data =
+        this.requisitions.filtered('serialNumber BEGINSWITH $0 AND type == $1',
+        searchTerm, type);
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
@@ -112,27 +126,58 @@ export class RequisitionsPage extends React.Component {
 
   renderCell(key, requisition) {
     switch (key) {
-      default:
-      case 'serialNumber':
-        return requisition.serialNumber;
       case 'entryDate':
         return requisition.entryDate.toDateString();
-      case 'numberOfItems':
-        return requisition.numberOfItems;
+      case 'otherStoreName':
+        return requisition.otherStoreName.name;
       case 'status':
         return formatStatus(requisition.status);
       case 'delete':
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
-          isDisabled: requisition.isFinalised,
+          isDisabled: requisition.isFinalised || !requisition.isRequest,
         };
+      default:
+        return requisition[key];
     }
   }
 
   renderNewRequisitionButton() {
-    return <PageButton text={buttonStrings.new_requisition} onPress={this.onNewRequisition} />;
+    return (
+      <PageButton
+        text={buttonStrings.new_requisition}
+        onPress={() => {
+          this.setState({ isCreatingRequisition: true });
+        }}
+      />
+    );
   }
+
+  renderRequisitionTypeToggle() {
+    return (
+      <ToggleBar
+        style={globalStyles.toggleBar}
+        textOffStyle={globalStyles.toggleText}
+        textOnStyle={globalStyles.toggleTextSelected}
+        toggleOffStyle={globalStyles.toggleOption}
+        toggleOnStyle={globalStyles.toggleOptionSelected}
+        toggles={[
+          {
+            text: buttonStrings.request_requisition,
+            onPress: () => this.toggleRequisitionViewType(),
+            isOn: this.state.isRequestView,
+          },
+          {
+            text: buttonStrings.response_requisition,
+            onPress: () => this.toggleRequisitionViewType(),
+            isOn: !this.state.isRequestView,
+          },
+        ]}
+      />
+    );
+  }
+
 
   render() {
     return (
@@ -140,7 +185,8 @@ export class RequisitionsPage extends React.Component {
         data={this.state.data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
-        renderTopRightComponent={this.renderNewRequisitionButton}
+        renderTopLeftComponent={this.renderRequisitionTypeToggle}
+        renderTopRightComponent={this.state.isRequestView ? this.renderNewRequisitionButton : null}
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
@@ -148,9 +194,15 @@ export class RequisitionsPage extends React.Component {
         columns={[
           {
             key: 'serialNumber',
-            width: 2,
+            width: 1.5,
             title: tableStrings.requisition_number,
             sortable: true,
+          },
+          {
+            key: 'otherStoreName',
+            width: 2,
+            title: tableStrings.store_name,
+            sortable: false,
           },
           {
             key: 'entryDate',
@@ -190,6 +242,20 @@ export class RequisitionsPage extends React.Component {
           onCancel={() => this.onDeleteCancel()}
           onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.delete}
+        />
+        <SelectModal
+          isOpen={this.state.isCreatingRequisition}
+          options={this.props.database.objects('InternalSupplier')}
+          placeholderText={modalStrings.start_typing_to_select_supplier}
+          queryString={'name BEGINSWITH[c] $0'}
+          sortByString={'name'}
+          onSelect={name => {
+            this.setState({ isCreatingRequisition: false }, () => {
+              this.onNewRequisition(name);
+            });
+          }}
+          onClose={() => this.setState({ isCreatingRequisition: false })}
+          title={modalStrings.search_for_the_supplier}
         />
       </GenericPage>
     );
