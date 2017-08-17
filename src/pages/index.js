@@ -7,9 +7,7 @@ import React from 'react';
 
 import { CustomerPage } from './CustomerPage';
 import { CustomersPage } from './CustomersPage';
-import { CustomerInvoicePage,
-         checkForFinaliseError as checkForCustomerInvoiceFinaliseError,
-       } from './CustomerInvoicePage';
+import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
@@ -62,7 +60,6 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_supplier_invoice',
   },
   customerInvoice: {
-    checkForError: checkForCustomerInvoiceFinaliseError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_customer_invoice',
