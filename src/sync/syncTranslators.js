@@ -95,12 +95,12 @@ export const NAME_TYPES = new SyncTranslator({
  */
 class RequisitionStatusTranslator extends SyncTranslator {
   translate(status, direction) {
-    if (['cn', 'fn', 'wf'].includes(status)) return 'finalised';
-    if (['wp'].includes(status)) return 'new';
+    if (['cn', 'wf'].includes(status)) return 'finalised';
     return super.translate(status, direction);
   }
 }
 export const REQUISITION_STATUSES = new RequisitionStatusTranslator({
+  new: 'wp', // wp, wf, cn should never be returned in api/v3
   suggested: 'sg',
   finalised: 'fn',
 });
