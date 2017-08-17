@@ -139,7 +139,8 @@ export class Requisition extends Realm.Object {
     database.delete('RequisitionItem', itemsToPrune);
   }
 
-  finalise(database) {
+  finalise(database, user) {
+    if (!this.isRequest) this.createCustomerInvoice(database, user);
     this.pruneRedundantItems(database);
     this.status = 'finalised';
 

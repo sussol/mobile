@@ -13,11 +13,10 @@ import { CustomerInvoicePage,
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
-import { RequisitionsPage } from './RequisitionsPage';
-import { RequisitionPage,
-         checkForFinaliseError as checkForRequisitionFinaliseError,
-       } from './RequisitionPage';
-import { SupplyRequisitionPage } from './SupplyRequisitionPage';
+import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
+import { CustomerRequisitionPage,
+         checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
+       } from './CustomerRequisitionPage';
 import { StockPage } from './StockPage';
 import { StocktakeEditPage,
          checkForFinaliseError as checkForStocktakeFinaliseError,
@@ -28,6 +27,10 @@ import { SupplierInvoicePage,
          checkForFinaliseError as checkForSupplierInvoiceError,
         } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
+import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
+import { SupplierRequisitionPage,
+         checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
+       } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
@@ -35,19 +38,20 @@ export const PAGES = {
   customer: (props) => <PageContainer page={CustomerPage} {...props} />,
   customerInvoice: (props) => <PageContainer page={CustomerInvoicePage} {...props} />,
   customerInvoices: (props) => <PageContainer page={CustomerInvoicesPage} {...props} />,
+  customerRequisition: (props) => <PageContainer page={CustomerRequisitionPage} {...props} />,
+  customerRequisitions: (props) => <PageContainer page={CustomerRequisitionsPage} {...props} />,
   customers: (props) => <PageContainer page={CustomersPage} {...props} />,
   menu: (props) => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: (props) => <PageContainer page={RealmExplorer} {...props} />,
   root: (props) => <PageContainer page={MenuPage} {...props} />,
   stock: (props) => <PageContainer page={StockPage} {...props} />,
-  requisitions: (props) => <PageContainer page={RequisitionsPage} {...props} />,
-  requisition: (props) => <PageContainer page={RequisitionPage} {...props} />,
-  supplyRequisition: (props) => <PageContainer page={SupplyRequisitionPage} {...props} />,
   stocktakeEditor: (props) => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: (props) => <PageContainer page={StocktakeManagePage} {...props} />,
   stocktakes: (props) => <PageContainer page={StocktakesPage} {...props} />,
   supplierInvoice: (props) => <PageContainer page={SupplierInvoicePage} {...props} />,
   supplierInvoices: (props) => <PageContainer page={SupplierInvoicesPage} {...props} />,
+  supplierRequisition: (props) => <PageContainer page={SupplierRequisitionPage} {...props} />,
+  supplierRequisitions: (props) => <PageContainer page={SupplierRequisitionsPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
@@ -63,11 +67,11 @@ export const FINALISABLE_PAGES = {
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_customer_invoice',
   },
-  requisition: {
-    checkForError: checkForRequisitionFinaliseError,
+  customerRequisition: {
+    checkForError: checkForCustomerRequisitionFinaliseError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
-    finaliseText: 'finalise_requisition',
+    finaliseText: 'finalise_customer_requisition',
   },
   stocktakeEditor: {
     checkForError: checkForStocktakeFinaliseError,
@@ -75,9 +79,10 @@ export const FINALISABLE_PAGES = {
     recordToFinaliseKey: 'stocktake',
     finaliseText: 'finalise_stocktake',
   },
-  supplyRequisition: {
+  supplierRequisition: {
+    checkForError: checkForSupplierRequisitionFinaliseError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
-    finaliseText: 'finalise_requisition',
+    finaliseText: 'finalise_supplier_requisition',
   },
 };

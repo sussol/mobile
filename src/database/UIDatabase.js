@@ -19,6 +19,10 @@ export class UIDatabase {
         );
       case 'Item':
         return results.filtered('isVisible == true');
+      case 'RequestRequisition':
+        return results.filtered('type == "request"');
+      case 'ResponseRequisition':
+        return results.filtered('serialNumber != "-1" AND type == "response"');
       default:
         return results;
     }
@@ -43,6 +47,9 @@ function translateToCoreDatabaseType(type) {
     case 'InternalSupplier':
     case 'ExternalSupplier':
       return 'Name';
+    case 'RequestRequisition':
+    case 'ResponseRequisition':
+      return 'Requisition';
     default:
       return type;
   }

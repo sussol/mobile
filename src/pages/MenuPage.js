@@ -62,6 +62,12 @@ export class MenuPage extends React.Component {
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
+              text={navStrings.customer_requisitions}
+              onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
+            />
+            <Button
+              style={globalStyles.menuButton}
+              textStyle={globalStyles.menuButtonText}
               text={navStrings.customers}
               onPress={() => navigateTo('customers', navStrings.customers)}
             />
@@ -83,8 +89,8 @@ export class MenuPage extends React.Component {
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
-              text={navStrings.requisitions}
-              onPress={() => navigateTo('requisitions', navStrings.requisitions)}
+              text={navStrings.supplier_requisitions}
+              onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
             />
           </View>
 

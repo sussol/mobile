@@ -31,7 +31,7 @@ const MODAL_KEYS = {
   MONTHS_SELECT: 'monthsSelect',
 };
 
-export class RequisitionPage extends React.Component {
+export class SupplierRequisitionPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -190,7 +190,10 @@ export class RequisitionPage extends React.Component {
     const { requisition } = this.props;
     const infoColumns = [
       [
-        {},
+        {
+          title: `${pageInfoStrings.supplier}`,
+          info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
+        },
         {
           title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(requisition.entryDate),
@@ -201,10 +204,6 @@ export class RequisitionPage extends React.Component {
         },
       ],
       [
-        {
-          title: `${pageInfoStrings.supplying_store_name}`,
-          info: requisition.otherStoreName.name,
-        },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
@@ -427,7 +426,7 @@ export class RequisitionPage extends React.Component {
   }
 }
 
-RequisitionPage.propTypes = {
+SupplierRequisitionPage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,

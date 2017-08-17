@@ -12,15 +12,16 @@ export const pageInfoStrings = new LocalizedStrings({
     comment: 'Comment',
     confirm_date: 'Confirm Date',
     customer: 'Customer',
+    customer_invoice_number: 'Customer Invoice Number',
     entered_by: 'Entered By',
     entry_date: 'Entry Date',
     months_stock_required: 'Months Stock',
     supplier: 'Supplier',
     total_price: 'Total Price',
     their_ref: 'Their Ref',
-    supplying_store_name: 'Supplying Store',
   },
   gil: {
+    // TODO add: total_price, supplier, customer_invoice_number
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -32,7 +33,7 @@ export const pageInfoStrings = new LocalizedStrings({
     their_ref: 'Ana Ref',
   },
   tl: {
-    // TODO add: total_price, supplier, supplying_store_name
+    // TODO add: total_price, supplier, customer_invoice_number
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
