@@ -44,7 +44,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
-  gil: { // TODO add: stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier
+  gil: { // TODO add: search_for_the_supplier, stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',

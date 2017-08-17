@@ -4648,9 +4648,9 @@ react-native-drawer-layout@1.3.2:
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
 
-react-native-generic-table-page@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.2.1.tgz#92a068d6190e864c444c381da3a2969bad389e76"
+react-native-generic-table-page@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.2.0.tgz#01aad1514cc2a11a330e3886a1a1d91fa101ad7f"
   dependencies:
     react-native-data-table "^0.1.0"
     react-native-ui-components "^0.3.0"

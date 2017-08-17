@@ -5,26 +5,23 @@ export class UIDatabase {
   }
 
   objects(type) {
-    let results = this.database.objects(translateToCoreDatabaseType(type));
+    const results = this.database.objects(translateToCoreDatabaseType(type));
     switch (type) {
       case 'Customer':
-        results = results.filtered('isVisible == true AND isCustomer == true');
-        break;
+        return results.filtered('isVisible == true AND isCustomer == true');
       case 'Supplier':
-        results = results.filtered('isVisible == true AND isSupplier == true');
-        break;
+        return results.filtered('isVisible == true AND isSupplier == true');
+      case 'InternalSupplier':
+        return results.filtered('isVisible == true AND isSupplier == true AND type == "store"');
       case 'ExternalSupplier':
-        results = results.filtered(
+        return results.filtered(
           "isVisible == true AND isSupplier == true AND type == 'facility'"
         );
-        break;
       case 'Item':
-        results = results.filtered('isVisible == true');
-        break;
+        return results.filtered('isVisible == true');
       default:
-        break;
+        return results;
     }
-    return results;
   }
 
   addListener(...args) { return this.database.addListener(...args); }
@@ -43,6 +40,7 @@ function translateToCoreDatabaseType(type) {
   switch (type) {
     case 'Customer':
     case 'Supplier':
+    case 'InternalSupplier':
     case 'ExternalSupplier':
       return 'Name';
     default:

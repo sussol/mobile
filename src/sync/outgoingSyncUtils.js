@@ -12,10 +12,8 @@ import {
 
 import { SETTINGS_KEYS } from '../settings';
 const {
-  SUPPLYING_STORE_ID,
   SUPPLYING_STORE_NAME_ID,
   THIS_STORE_ID,
-  THIS_STORE_NAME_ID,
 } = SETTINGS_KEYS;
 import { CHANGE_TYPES } from '../database';
 
@@ -118,10 +116,10 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
-        name_ID: settings.get(THIS_STORE_NAME_ID),
+        name_ID: record.otherStoreName.id,  // TODO: check if there is a case when outgoing req might not have otherStoreName
         status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
         daysToSupply: String(record.daysToSupply),
-        store_ID: settings.get(SUPPLYING_STORE_ID),
+        store_ID: settings.get(THIS_STORE_ID),
         serial_number: record.serialNumber,
         requester_reference: record.requesterReference,
         comment: record.comment,
@@ -136,6 +134,7 @@ function generateSyncData(settings, recordType, record) {
         stock_on_hand: String(record.stockOnHand),
         daily_usage: String(record.dailyUsage),
         suggested_quantity: String(record.suggestedQuantity),
+        actualQuan: String(record.suppliedQuantity),
         line_number: String(record.sortIndex),
         Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
@@ -192,6 +191,8 @@ function generateSyncData(settings, recordType, record) {
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
+        requisition_ID: record.linkedRequisition && record.linkedRequisition.id ?
+                        record.linkedRequisition.id : undefined,
       };
     }
     case 'TransactionBatch': {

@@ -97,10 +97,11 @@ export class CustomerInvoicePage extends GenericPage {
    */
   onEndEditing(key, transactionItem, newValue) {
     if (key !== 'totalQuantity') return;
-    this.props.database.write(() => {
-      const quantity = Math.min(parsePositiveInteger(newValue), transactionItem.availableQuantity);
-      transactionItem.setTotalQuantity(this.props.database, quantity);
-      this.props.database.save('TransactionItem', transactionItem);
+    const { database } = this.props;
+    database.write(() => {
+      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
+                                                 transactionItem.availableQuantity);
+      database.save('TransactionItem', transactionItem);
     });
   }
 

@@ -23,7 +23,7 @@ export class Transaction extends Realm.Object {
   }
   // Is external supplier invoice
   get isExternalSupplierInvoice() {
-    return this.isSupplierInvoice && this.otherParty.isExternalSupplier;
+    return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
   }
 
   get isFinalised() {
@@ -101,6 +101,10 @@ export class Transaction extends Realm.Object {
         );
       });
     }
+  }
+
+  get isLinkedToRequisition() {
+    return !(!this.linkedRequisition);
   }
 
   /**
@@ -200,7 +204,7 @@ export class Transaction extends Realm.Object {
   getTransactionBatches(database) {
     return database
       .objects('TransactionBatch')
-      .filtered('transaction.id = $0', this.id);
+      .filtered('transaction.id == $0', this.id);
   }
 
   /**
@@ -277,5 +281,6 @@ Transaction.schema = {
     theirRef: { type: 'string', optional: true }, // An external reference code
     category: { type: 'TransactionCategory', optional: true },
     items: { type: 'list', objectType: 'TransactionItem' },
+    linkedRequisition: { type: 'Requisition', optional: true },
   },
 };

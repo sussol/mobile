@@ -146,7 +146,8 @@ export class SupplierInvoicePage extends React.Component {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const { database, transaction } = this.props;
-    const transactionBatches = transaction.getTransactionBatches(database)
+    const transactionBatches = transaction
+      .getTransactionBatches(database)
       .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
     const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
@@ -154,10 +155,10 @@ export class SupplierInvoicePage extends React.Component {
     // Calculate and set total price
     const transactionPrice = transactionBatches.reduce(
       (sum, transactionBatch) =>
-        sum + transactionBatch.costPrice
-        * transactionBatch.numberOfPacks
-        * transactionBatch.packSize
-      , 0);
+        sum +
+        transactionBatch.costPrice * transactionBatch.numberOfPacks * transactionBatch.packSize,
+      0
+    );
     this.setState({
       totalPrice: transactionPrice,
       data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
@@ -431,11 +432,9 @@ export class SupplierInvoicePage extends React.Component {
 }
 
 export function checkForFinaliseError(transaction) {
-  if (transaction.items.length === 0) {
-    return modalStrings.add_at_least_one_item_before_finalising;
-  } else if (transaction.totalQuantity === 0) {
-    return modalStrings.stock_quantity_greater_then_zero;
-  }
+  if (!transaction.isExternalSupplierInvoice) return null;
+  if (transaction.items.length === 0) return modalStrings.add_at_least_one_item_before_finalising;
+  if (transaction.totalQuantity === 0) return modalStrings.stock_quantity_greater_then_zero;
   return null;
 }
 

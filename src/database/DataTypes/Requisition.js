@@ -23,6 +23,10 @@ export class Requisition extends Realm.Object {
     return this.status === 'finalised';
   }
 
+  get isRequest() {
+    return this.type === 'request';
+  }
+
   get enteredByName() {
     return this.enteredBy ? this.enteredBy.username : '';
   }
@@ -60,6 +64,24 @@ export class Requisition extends Realm.Object {
     if (this.items.filtered('id == $0', requisitionItem.id).length > 0) return;
     this.addItem(requisitionItem);
   }
+
+  createCustomerInvoice(database, user) {
+    if (this.isRequest || this.isFinalised) {
+      throw new Error('Cannot create invoice from Finalised or Request Requistion ');
+    }
+    if (database.objects('Transaction').
+            filtered('linkedRequisition.id == $0', this.id).length > 0) return;
+    const transaction = createRecord(database, 'CustomerInvoice',
+                                  this.otherStoreName, user);
+    this.items.forEach(requisitionItem => {
+      createRecord(database, 'TransactionItem', transaction, requisitionItem.item);
+    });
+    transaction.linkedRequisition = this;
+    this.linkedTransaction = transaction;
+    transaction.comment = `From supply requisition ${this.serialNumber}`;
+    database.save('Transaction', transaction);
+  }
+
 
   /**
    * Add all items from the mobile store's master list to this requisition
@@ -120,6 +142,8 @@ export class Requisition extends Realm.Object {
   finalise(database) {
     this.pruneRedundantItems(database);
     this.status = 'finalised';
+
+    if (this.linkedTransaction) this.linkedTransaction.finalise(database);
   }
 }
 
@@ -129,7 +153,8 @@ Requisition.schema = {
   properties: {
     id: 'string',
     status: { type: 'string', default: 'new' },
-    type: { type: 'string', default: 'request' }, // imprest, forecast or request
+    otherStoreName: { type: 'Name', optional: true },
+    type: { type: 'string', default: 'request' }, // imprest, forecast, request or response
     entryDate: { type: 'date', default: new Date() },
     daysToSupply: { type: 'double', default: 30 },
     serialNumber: { type: 'string', default: '0' },
@@ -137,5 +162,6 @@ Requisition.schema = {
     comment: { type: 'string', optional: true },
     enteredBy: { type: 'User', optional: true },
     items: { type: 'list', objectType: 'RequisitionItem' },
+    linkedTransaction: { type: 'Transaction', optional: true },
   },
 };

@@ -12,7 +12,7 @@ const {
    INVALID_PASSWORD,
  } = AUTH_ERROR_CODES;
 
-const AUTH_ENDPOINT = '/sync/v2/user';
+const AUTH_ENDPOINT = '/sync/v3/user';
 
 export class UserAuthenticator {
   constructor(database, settings) {
