@@ -150,10 +150,6 @@ export class CustomerRequisitionPage extends React.Component {
           info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
         },
         {
-          title: `${pageInfoStrings.customer_invoice_number}`,
-          info: requisition.linkedTransaction ? requisition.linkedTransaction.serialNumber : '',
-        },
-        {
           title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(requisition.entryDate),
         },

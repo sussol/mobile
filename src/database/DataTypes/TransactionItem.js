@@ -78,7 +78,7 @@ export class TransactionItem extends Realm.Object {
       throw new Error('Cannot set quantity of an item in a finalised transaction');
     }
     let cappedQuantity = quantity;
-    if (this.isOutgoing) cappedQuantity = Math.min(quantity, this.availableQuantity);
+    if (this.transaction.isOutgoing) cappedQuantity = Math.min(quantity, this.availableQuantity);
     if (quantity < 0) throw new Error('Cannot set a negative quantity on a transaction item');
 
     const difference = cappedQuantity - this.totalQuantity; // Positive if new quantity is greater

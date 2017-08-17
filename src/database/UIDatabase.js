@@ -8,13 +8,12 @@ export class UIDatabase {
     const results = this.database.objects(translateToCoreDatabaseType(type));
     switch (type) {
       case 'CustomerInvoice':
-        return results.filtered('type == "customer_invoice"');
-      case 'SupplierInvoice': {
-        const queryString = 'type == "supplier_invoice"'
-                            + ' AND otherParty.type != "inventory_adjustment"'
-                            + ' AND (linkedRequisition == null OR status == "finalised")';
-        return results.filtered(queryString);
-      }
+        // Only show invoices generated from requisitions once finalised
+        return results.filtered('type == "customer_invoice"'
+                                + ' AND (linkedRequisition == null OR status == "finalised")');
+      case 'SupplierInvoice':
+        return results.filtered('type == "supplier_invoice"'
+                                + ' AND otherParty.type != "inventory_adjustment"');
       case 'Customer':
         return results.filtered('isVisible == true AND isCustomer == true');
       case 'Supplier':
