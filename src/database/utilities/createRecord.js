@@ -128,7 +128,7 @@ function createRequisition(database, user, otherStoreName) {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
     requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
-    status: 'new',
+    status: 'suggested',
     type: 'request',
     entryDate: new Date(),
     daysToSupply: 30, // 1 month
