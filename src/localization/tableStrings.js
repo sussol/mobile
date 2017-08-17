@@ -53,7 +53,7 @@ export const tableStrings = new LocalizedStrings({
     their_stock: 'THEIR\nSTOCK',
   },
   gil: {
-    // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size
+    // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size, store_name, our_stock, supply_quantity
     actual_quantity: 'Iraua\nMwaitina',
     available_stock: 'Mwaitin ae\niai ngkai',
     category: 'Kurubu',
