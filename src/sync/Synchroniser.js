@@ -76,7 +76,7 @@ export class Synchroniser {
       if (isFresh) {
         // If a fresh initialisation, tell the server to prepare required sync records
         await fetch(
-          `${serverURL}/sync/v2/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
+          `${serverURL}/sync/v3/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
           {
             headers: {
               Authorization: this.authenticator.getAuthHeader(),
@@ -126,6 +126,7 @@ export class Synchroniser {
     this.settings.set(SYNC_PRIOR_FAILED, 'true');
     // Using async/await here means that any errors thrown by push or pull
     // will be passed up as a rejection of the promise returned by synchronise
+
     await this.push();
     await this.pull();
 
@@ -161,7 +162,7 @@ export class Synchroniser {
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${serverURL}/sync/v3/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         method: 'POST',
         headers: {
@@ -235,7 +236,7 @@ export class Synchroniser {
    */
   async getWaitingRecordCount(serverURL, thisSiteId, serverId, authHeader) {
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${serverURL}/sync/v3/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         headers: {
           Authorization: authHeader,
@@ -265,7 +266,7 @@ export class Synchroniser {
    */
   async getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
     const response = await fetch(
-      `${serverURL}/sync/v2/queued_records` +
+      `${serverURL}/sync/v3/queued_records` +
         `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
       {
         headers: {
@@ -312,7 +313,7 @@ export class Synchroniser {
       SyncRecordIDs: syncIds,
     };
     await fetch(
-      `${serverURL}/sync/v2/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${serverURL}/sync/v3/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         method: 'POST',
         headers: {

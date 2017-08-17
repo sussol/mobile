@@ -276,6 +276,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         comment: record.comment,
         enteredBy: getObject(database, 'User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+        otherStoreName: getObject(database, 'Name', record.name_ID),
       };
       database.update(recordType, internalRecord);
       break;
@@ -289,6 +290,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         stockOnHand: parseNumber(record.stock_on_hand),
         dailyUsage: parseNumber(record.daily_usage),
         requiredQuantity: parseNumber(record.Cust_stock_order),
+        suppliedQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
       };
@@ -343,6 +345,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = getObject(database, 'Name', record.name_ID);
       const enteredBy = getObject(database, 'User', record.user_ID);
+      const linkedRequisition = record.requisition_ID ?
+                                getObject(database, 'Requisition', record.requisition_ID) : null;
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
@@ -353,8 +357,15 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
         theirRef: record.their_ref,
+        linkedRequisition,
       };
       const transaction = database.update(recordType, internalRecord);
+      if (linkedRequisition) {
+        database.update('Requisition', {
+          ...linkedRequisition,
+          linkedTransaction: transaction,
+        });
+      }
       transaction.otherParty = otherParty;
       transaction.enteredBy = getObject(database, 'User', record.user_ID);
       transaction.category = getObject(database, 'TransactionCategory', record.category_ID);
@@ -607,9 +618,7 @@ function getObject(database, type, primaryKey, primaryKeyField = 'id') {
   if (!primaryKey || primaryKey.length < 1) return null;
   const results = database.objects(type).filtered(`${primaryKeyField} == $0`, primaryKey);
   if (results.length > 0) return results[0];
-  const defaultObject = {};
-  defaultObject[primaryKeyField] = primaryKey;
-  return database.create(type, defaultObject);
+  return database.create(type, { [primaryKeyField]: primaryKey });
 }
 
 /**

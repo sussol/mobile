@@ -49,9 +49,10 @@ export const RECORD_TYPES = new SyncTranslator({
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
-  imprest: 'im',
-  forecast: 'sh',
-  request: 'request',
+  'imprest': 'im',
+  'forecast': 'sh',
+  'request': 'request',
+  'response': 'response',
 });
 
 // Map of internal database change types to external sync types
@@ -94,13 +95,14 @@ export const NAME_TYPES = new SyncTranslator({
  */
 class RequisitionStatusTranslator extends SyncTranslator {
   translate(status, direction) {
-    if (['sg', 'cn', 'fn'].includes(status)) return 'finalised';
+    if (['cn', 'wf'].includes(status)) return 'finalised';
     return super.translate(status, direction);
   }
 }
 export const REQUISITION_STATUSES = new RequisitionStatusTranslator({
-  new: 'wp',
-  finalised: 'wf',
+  new: 'wp', // wp, wf, cn should never be returned in api/v3
+  suggested: 'sg',
+  finalised: 'fn',
 });
 
 /**

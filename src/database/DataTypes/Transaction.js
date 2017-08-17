@@ -103,6 +103,10 @@ export class Transaction extends Realm.Object {
     }
   }
 
+  get isLinkedToRequisition() {
+    return !(!this.linkedRequisition);
+  }
+
   /**
    * Remove the transaction items with the given ids from this transaction
    * @param  {Realm}  database        App wide local database
@@ -200,7 +204,7 @@ export class Transaction extends Realm.Object {
   getTransactionBatches(database) {
     return database
       .objects('TransactionBatch')
-      .filtered('transaction.id = $0', this.id);
+      .filtered('transaction.id == $0', this.id);
   }
 
   /**
@@ -277,5 +281,6 @@ Transaction.schema = {
     theirRef: { type: 'string', optional: true }, // An external reference code
     category: { type: 'TransactionCategory', optional: true },
     items: { type: 'list', objectType: 'TransactionItem' },
+    linkedRequisition: { type: 'Requisition', optional: true },
   },
 };
