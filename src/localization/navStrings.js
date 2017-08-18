@@ -9,6 +9,7 @@ export const navStrings = new LocalizedStrings({
   gb: {
     current_stock: 'Current Stock',
     customer_invoices: 'Customer Invoices',
+    customer_requisitions: 'Customer Requisitions',
     customers: 'Customers',
     finalise: 'FINALISE',
     finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED',
@@ -18,11 +19,13 @@ export const navStrings = new LocalizedStrings({
     manage_stocktake: 'Manage Stockake',
     new_stocktake: 'New Stocktake',
     requisition: 'Requisition',
-    requisitions: 'Requisitions',
     stocktakes: 'Stocktakes',
     supplier_invoices: 'Supplier Invoices',
+    supplier_requisitions: 'Supplier Requisitions',
   },
   gil: {
+    // TODO add: customer_requisitions, supplier_requisitions
+    // TODO remove: requisitions
     current_stock: 'Mwaitin am bwai n aoraki ke am supply',
     customer_invoices: 'Ana invoice am kiriniki\nke am aoraki',
     customers: 'Kiriniki',

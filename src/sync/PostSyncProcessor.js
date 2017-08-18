@@ -146,7 +146,6 @@ export class PostSyncProcessor {
       });
     }
 
-
     // If any changes, add database update for record
     if (funcs.length > 0) {
       funcs.push(() => this.database.save('Requisition', record));

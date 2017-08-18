@@ -45,8 +45,7 @@ export class RequisitionItem extends Realm.Object {
 
     const transactionItem = this.linkedTransactionItem;
     if (!transactionItem) return;
-    transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
-                                               transactionItem.availableQuantity);
+    transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
     this.suppliedQuantity = transactionItem.totalQuantity;
     database.save('TransactionItem', transactionItem);
     database.save('RequisitionItem', this);
