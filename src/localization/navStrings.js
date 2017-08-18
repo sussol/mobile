@@ -15,7 +15,6 @@ export const navStrings = new LocalizedStrings({
     finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED',
     invoice: 'Invoice',
     language: 'LANGUAGE',
-    last_sync: 'LAST SYNC',
     log_out: 'LOG OUT',
     manage_stocktake: 'Manage Stockake',
     new_stocktake: 'New Stocktake',
@@ -23,9 +22,6 @@ export const navStrings = new LocalizedStrings({
     stocktakes: 'Stocktakes',
     supplier_invoices: 'Supplier Invoices',
     supplier_requisitions: 'Supplier Requisitions',
-    sync_enabled: 'SYNC ENABLED',
-    sync_error: 'SYNC ERROR',
-    sync_in_progress: 'SYNC IN PROGRESS',
   },
   gil: {
     // TODO add: customer_requisitions, supplier_requisitions
@@ -37,7 +33,6 @@ export const navStrings = new LocalizedStrings({
     finalised_cannot_be_edited: 'Finalised, e aki kona n manga bitaki',
     invoice: 'Invoice',
     language: 'English ke Kiribati',
-    last_sync: 'LAST SYNC',
     log_out: 'Kainna',
     manage_stocktake: 'Taraan am warebwai',
     new_stocktake: 'Am warebwai ae boou',
@@ -45,9 +40,6 @@ export const navStrings = new LocalizedStrings({
     requisitions: 'Taian oota aika a karina',
     stocktakes: 'Warebwai',
     supplier_invoices: 'Ana Invoice\nam Supplier',
-    sync_enabled: 'SYNC ENABLED',
-    sync_error: 'SYNC ERROR',
-    sync_in_progress: 'SYNC IN PROGRESS',
   },
   tl: {
     current_stock: 'Sasán Atuál',
@@ -57,7 +49,6 @@ export const navStrings = new LocalizedStrings({
     finalised_cannot_be_edited: 'FINALIZA TIHA ONA. LA BELE HADIA ONA',
     invoice: 'Konta',
     language: 'LINGUA',
-    last_sync: 'SYNC FOIN DADAUN',
     log_out: 'SAI HUSI PROGRAMA',
     manage_stocktake: 'Maneja Ajustamentu',
     new_stocktake: 'Ajustamentu Foun',
@@ -65,8 +56,5 @@ export const navStrings = new LocalizedStrings({
     requisitions: 'Rekuizisaun sira',
     stocktakes: 'Ajustamentu sira',
     supplier_invoices: 'Distribuidór nia Konta',
-    sync_enabled: 'HAMORIS SYNC',
-    sync_error: 'SYNC SALA',
-    sync_in_progress: "SYNC LA'O HELA",
   },
 });
