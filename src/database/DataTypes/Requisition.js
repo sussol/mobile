@@ -142,6 +142,7 @@ export class Requisition extends Realm.Object {
   finalise(database) {
     this.pruneRedundantItems(database);
     this.status = 'finalised';
+    database.save('Requisition', this);
 
     if (this.linkedTransaction) this.linkedTransaction.finalise(database);
   }

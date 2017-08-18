@@ -262,6 +262,7 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
     if (!this.isConfirmed) this.confirm(database);
     this.status = 'finalised';
+    database.save('Transaction', this);
   }
 }
 
