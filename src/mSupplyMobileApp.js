@@ -50,17 +50,17 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
-    const coreDatabase = new Database(schema);
-    this.database = new UIDatabase(coreDatabase);
+    const database = new Database(schema);
+    this.database = new UIDatabase(database);
     this.settings = new MobileAppSettings(this.database);
     migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
-    this.synchroniser = new Synchroniser(coreDatabase,
+    this.synchroniser = new Synchroniser(database,
                                          syncAuthenticator,
                                          this.settings,
                                          props.dispatch);
-    this.postSyncProcessor = new PostSyncProcessor(coreDatabase, this.settings);
+    this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
     autobind(this);
 
