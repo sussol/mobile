@@ -13,8 +13,8 @@ import {
 } from 'react-native';
 
 import { SyncIcon } from './SyncIcon';
-import { SETTINGS_KEYS as SETTINGS } from '../settings';
-import { navStrings } from '../localization';
+import { syncStrings } from '../localization';
+import { formatDate } from '../utilities';
 
 import globalStyles, {
   GREY,
@@ -25,17 +25,19 @@ const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
 
 export function SyncState(props) {
-  let text = navStrings.sync_enabled;
+  let text = syncStrings.sync_enabled;
   let cloudColor = ACTIVE_COLOR;
   let arrowsColor = ACTIVE_COLOR;
   let wifiColor = ACTIVE_COLOR;
 
-  if (props.isSyncing) {
-    text = navStrings.sync_in_progress;
-  } else if (props.syncError && props.syncError.length > 0) {
-    const lastSync = props.settings ? props.settings.get(SETTINGS.SYNC_LAST_SUCCESS) : '';
-    text = navStrings.sync_error;
-    if (lastSync) text = `${text}. ${navStrings.last_sync} ${lastSync}`;
+  const { lastSyncTime, isSyncing, errorMessage } = props.state;
+
+  if (isSyncing) {
+    text = syncStrings.sync_in_progress;
+  } else if (errorMessage && errorMessage.length > 0) {
+    const lastSync = lastSyncTime && formatDate(new Date(lastSyncTime), 'dots');
+    text = syncStrings.sync_error;
+    if (lastSync) text = `${text}. ${syncStrings.last_sync} ${lastSync}`;
     cloudColor = INACTIVE_COLOR;
     arrowsColor = INACTIVE_COLOR;
     wifiColor = INACTIVE_COLOR;
@@ -50,9 +52,7 @@ export function SyncState(props) {
 }
 
 SyncState.propTypes = {
-  isSyncing: PropTypes.bool.isRequired,
-  syncError: PropTypes.string,
-  settings: PropTypes.object,
+  state: PropTypes.object.isRequired,
   showText: PropTypes.bool,
   style: View.propTypes.style,
 };

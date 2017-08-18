@@ -6,6 +6,7 @@ export { navStrings } from './navStrings';
 export { pageInfoStrings } from './pageInfoStrings';
 export { setCurrentLanguage } from './utilities';
 export { tableStrings } from './tableStrings';
+export { syncStrings } from './syncStrings';
 
 // Order of pairs defines the order they show in the ListView of LanguageModal. Keep
 // it alphabetical except for English, keep it at the top. JS objects don't guarentee insertion
