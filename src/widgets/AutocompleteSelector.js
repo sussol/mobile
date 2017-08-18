@@ -61,6 +61,7 @@ export class AutocompleteSelector extends React.Component {
       <Autocomplete
         style={localStyles.text}
         inputContainerStyle={localStyles.inputContainer}
+        listStyle={localStyles.list}
         autoFocus
         autoCapitalize="none"
         autoCorrect={false}
@@ -108,6 +109,9 @@ AutocompleteSelector.defaultProps = {
 };
 
 const localStyles = StyleSheet.create({
+  list: {
+    borderRadius: 0, // To fix https://github.com/l-urence/react-native-autocomplete-input/issues/60
+  },
   text: {
     fontSize: 20,
     fontFamily: APP_FONT_FAMILY,

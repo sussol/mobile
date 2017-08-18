@@ -38,7 +38,7 @@ import {
 } from './widgets';
 
 import { migrateDataToVersion } from './dataMigration';
-import { Synchroniser, PostSyncProcessor } from './sync';
+import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from 'sussol-utilities';
@@ -48,15 +48,18 @@ const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
 class MSupplyMobileAppContainer extends React.Component {
-  constructor() {
-    super();
+  constructor(props, ...otherArgs) {
+    super(props, ...otherArgs);
     const database = new Database(schema);
     this.database = new UIDatabase(database);
     this.settings = new MobileAppSettings(this.database);
     migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
-    this.synchroniser = new Synchroniser(database, syncAuthenticator, this.settings);
+    this.synchroniser = new Synchroniser(database,
+                                         syncAuthenticator,
+                                         this.settings,
+                                         props.dispatch);
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
     autobind(this);
@@ -73,10 +76,8 @@ class MSupplyMobileAppContainer extends React.Component {
       confirmFinalise: false,
       currentUser: null,
       isInitialised: isInitialised,
-      isSyncing: false,
-      syncError: '',
-      lastSync: null, // Date of the last successful sync
       isLoading: false,
+      syncModalIsOpen: false,
     };
   }
 
@@ -126,32 +127,20 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   async synchronise() {
-    if (!this.state.isInitialised || this.state.isSyncing) return; // If already syncing, skip
+    if (!this.state.isInitialised || this.props.syncState.isSyncing) return; // Ignore if syncing
     // True if last this.synchroniser.synchronise() call failed
     const lastSyncFailed = this.synchroniser.lastSyncFailed();
     const lastPostSyncProcessingFailed = this.postSyncProcessor.lastPostSyncProcessingFailed();
-    try {
-      this.setState({ isSyncing: true });
-      await this.synchroniser.synchronise();
-      this.setState({
-        isSyncing: false,
-        syncError: '',
-      });
-      if (lastSyncFailed || lastPostSyncProcessingFailed) {
-        // Last sync was interrupted so would not have entered this if block.
-        // If the app was closed, it would have forgotten the records left in the
-        // record queue, so we need to check tables for unprocessed records.
-        // If the last processing of the record queue was interrupted by app crash
-        // then we again need to check all records.
-        this.postSyncProcessor.processAnyUnprocessedRecords();
-      } else {
-        this.postSyncProcessor.processRecordQueue();
-      }
-    } catch (error) {
-      this.setState({
-        isSyncing: false,
-        syncError: error.message,
-      });
+    await this.synchroniser.synchronise();
+    if (lastSyncFailed || lastPostSyncProcessingFailed) {
+      // Last sync was interrupted so would not have entered this if block.
+      // If the app was closed, it would have forgotten the records left in the
+      // record queue, so we need to check tables for unprocessed records.
+      // If the last processing of the record queue was interrupted by app crash
+      // then we again need to check all records.
+      this.postSyncProcessor.processAnyUnprocessedRecords();
+    } else {
+      this.postSyncProcessor.processRecordQueue();
     }
   }
 
@@ -199,21 +188,22 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <TouchableOpacity
         style={{ flexDirection: 'row' }}
-        disabled={!this.state.isInAdminMode}
-        onPress={this.synchronise}
+        onPress={() => this.setState({ syncModalIsOpen: true })}
       >
-        <SyncState
-          isSyncing={this.state.isSyncing}
-          syncError={this.state.syncError}
-          settings={this.settings}
-        />
+        <SyncState state={this.props.syncState} />
       </TouchableOpacity>
     );
   }
 
   render() {
     if (!this.state.isInitialised) {
-      return <FirstUsePage synchroniser={this.synchroniser} onInitialised={this.onInitialised} />;
+      return (
+        <FirstUsePage
+          synchroniser={this.synchroniser}
+          onInitialised={this.onInitialised}
+          syncState={this.props.syncState}
+        />
+      );
     }
     const { finaliseItem, dispatch, navigationState } = this.props;
     return (
@@ -255,6 +245,12 @@ class MSupplyMobileAppContainer extends React.Component {
           user={this.state.currentUser}
           runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
+        <SyncModal
+          isOpen={this.state.syncModalIsOpen}
+          state={this.props.syncState}
+          onPressManualSync={this.synchronise}
+          onClose={() => this.setState({ syncModalIsOpen: false })}
+        />
         <LoginModal
           authenticator={this.userAuthenticator}
           settings={this.settings}
@@ -272,16 +268,23 @@ MSupplyMobileAppContainer.propTypes = {
   dispatch: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
   navigationState: PropTypes.object.isRequired,
+  syncState: PropTypes.object.isRequired,
 };
 
-function mapStateToProps({ navigation: navigationState }) {
+function mapStateToProps({ navigation: navigationState, sync: syncState }) {
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
   const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
   if (finaliseItem && currentParams) {
     finaliseItem.record = currentParams[finaliseItem.recordToFinaliseKey];
   }
-  return { currentTitle, finaliseItem, navigationState };
+
+  return {
+    currentTitle,
+    finaliseItem,
+    navigationState,
+    syncState,
+  };
 }
 
 export const MSupplyMobileApp = connect(mapStateToProps)(MSupplyMobileAppContainer);

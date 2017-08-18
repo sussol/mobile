@@ -99,8 +99,7 @@ export class CustomerInvoicePage extends GenericPage {
     if (key !== 'totalQuantity') return;
     const { database } = this.props;
     database.write(() => {
-      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue),
-                                                 transactionItem.availableQuantity);
+      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
       database.save('TransactionItem', transactionItem);
     });
   }

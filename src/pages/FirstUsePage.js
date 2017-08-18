@@ -26,8 +26,7 @@ export class FirstUsePage extends React.Component {
     super(props);
     this.state = {
       appVersion: '',
-      progress: 'uninitialised', // uninitialised, initialising, initialised, error
-      progressMessage: '',
+      status: 'uninitialised', // uninitialised, initialising, initialised, error
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
@@ -36,22 +35,19 @@ export class FirstUsePage extends React.Component {
     this.siteNameInputRef = null;
     this.passwordInputRef = null;
     this.onPressConnect = this.onPressConnect.bind(this);
-    this.setProgress = this.setProgress.bind(this);
   }
 
   async onPressConnect() {
     try {
-      this.setState({ progress: 'initialising' });
+      this.setState({ status: 'initialising' });
       await this.props.synchroniser.initialise(
         this.state.serverURL,
         this.state.syncSiteName,
-        this.state.syncSitePassword,
-        this.setProgress);
-      this.setState({ progress: 'initialised' });
+        this.state.syncSitePassword);
+      this.setState({ status: 'initialised' });
       this.props.onInitialised();
     } catch (error) {
-      this.setState({ progress: 'error' });
-      this.setProgress(error.message);
+      this.setState({ status: 'error' });
     }
   }
 
@@ -60,13 +56,9 @@ export class FirstUsePage extends React.Component {
     this.setState({ appVersion: appVersion });
   }
 
-  setProgress(progressMessage) {
-    this.setState({ progressMessage: progressMessage });
-  }
-
   get canAttemptLogin() {
     return (
-      (this.state.progress === 'uninitialised' || this.state.progress === 'error') &&
+      (this.state.status === 'uninitialised' || this.state.status === 'error') &&
       this.state.serverURL.length > 0 &&
       this.state.syncSiteName.length > 0 &&
       this.state.syncSitePassword.length > 0
@@ -74,11 +66,12 @@ export class FirstUsePage extends React.Component {
   }
 
   get buttonText() {
-    switch (this.state.progress) {
+    const { progressMessage, errorMessage, progress, total } = this.props.syncState;
+    switch (this.state.status) {
       case 'initialising':
-        return this.state.progressMessage;
+        return `${progressMessage}${total > 0 ? `\n${progress}/${total}` : ''}`;
       case 'error':
-        return `${this.state.progressMessage}\nTap to retry.`;
+        return `${errorMessage}\nTap to retry.`;
       case 'initialised':
         return 'Success!';
       default:
@@ -102,11 +95,11 @@ export class FirstUsePage extends React.Component {
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Primary Server URL"
               value={this.state.serverURL}
-              editable={this.state.progress !== 'initialising'}
+              editable={this.state.status !== 'initialising'}
               returnKeyType={'next'}
               selectTextOnFocus
               onChangeText={(text) => {
-                this.setState({ serverURL: text, progress: 'uninitialised' });
+                this.setState({ serverURL: text, status: 'uninitialised' });
               }}
               onSubmitEditing={() => {
                 if (this.siteNameInputRef) this.siteNameInputRef.focus();
@@ -121,11 +114,11 @@ export class FirstUsePage extends React.Component {
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Sync Site Name"
               value={this.state.syncSiteName}
-              editable={this.state.progress !== 'initialising'}
+              editable={this.state.status !== 'initialising'}
               returnKeyType={'next'}
               selectTextOnFocus
               onChangeText={(text) => {
-                this.setState({ syncSiteName: text, progress: 'uninitialised' });
+                this.setState({ syncSiteName: text, status: 'uninitialised' });
               }}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.focus();
@@ -141,11 +134,11 @@ export class FirstUsePage extends React.Component {
               underlineColorAndroid={SUSSOL_ORANGE}
               value={this.state.syncSitePassword}
               secureTextEntry
-              editable={this.state.progress !== 'initialising'}
+              editable={this.state.status !== 'initialising'}
               returnKeyType={'done'}
               selectTextOnFocus
               onChangeText={(text) => {
-                this.setState({ syncSitePassword: text, progress: 'uninitialised' });
+                this.setState({ syncSitePassword: text, status: 'uninitialised' });
               }}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
@@ -155,8 +148,7 @@ export class FirstUsePage extends React.Component {
           </View>
           <SyncState
             style={localStyles.initialisationStateIcon}
-            isSyncing={this.state.progress === 'initialising'}
-            syncError={this.state.progress === 'error' ? 'error' : ''}
+            state={this.props.syncState}
             showText={false}
           />
           <View style={globalStyles.authFormButtonContainer}>
@@ -179,6 +171,7 @@ export class FirstUsePage extends React.Component {
 FirstUsePage.propTypes = {
   onInitialised: PropTypes.func.isRequired,
   synchroniser: PropTypes.object.isRequired,
+  syncState: PropTypes.object.isRequired,
 };
 
 const localStyles = StyleSheet.create({

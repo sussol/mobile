@@ -17,9 +17,9 @@ export const pageInfoStrings = new LocalizedStrings({
     months_stock_required: 'Months Stock',
     supplier: 'Supplier',
     their_ref: 'Their Ref',
-    supplying_store_name: 'Supplying Store',
   },
   gil: {
+    // TODO add: total_price, supplier
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -31,7 +31,7 @@ export const pageInfoStrings = new LocalizedStrings({
     their_ref: 'Ana Ref',
   },
   tl: {
-    // TODO add: supplier, supplying_store_name
+    // TODO add: total_price, supplier, supplying_store_name
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
