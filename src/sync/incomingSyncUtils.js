@@ -362,7 +362,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
         database.update('Requisition', {
-          ...linkedRequisition,
+          id: linkedRequisition.id,
           linkedTransaction: transaction,
         });
       }
