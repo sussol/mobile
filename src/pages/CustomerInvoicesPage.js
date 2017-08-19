@@ -25,8 +25,7 @@ export class CustomerInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      transactions: props.database.objects('Transaction')
-                                  .filtered('type == "customer_invoice"'),
+      transactions: props.database.objects('CustomerInvoice'),
       selection: [],
       isCreatingInvoice: false,
     };
@@ -92,15 +91,11 @@ export class CustomerInvoicesPage extends React.Component {
       });
     }
     this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
-    // Navigate to requisition if one is linked to selected customer invoice
-    const { linkedRequisition } = invoice;
-    const navigateToParams = invoice.isLinkedToRequisition ?
-      ['supplyRequisition', `${navStrings.requisition} ${linkedRequisition.serialNumber}`,
-      { requisition: linkedRequisition }] :
-      ['customerInvoice', `${navStrings.invoice} ${invoice.serialNumber}`,
-      { transaction: invoice }];
-
-    this.props.navigateTo(...navigateToParams);
+    this.props.navigateTo(
+      'customerInvoice',
+      `${navStrings.invoice} ${invoice.serialNumber}`,
+      { transaction: invoice },
+    );
   }
 
   updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {

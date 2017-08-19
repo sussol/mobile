@@ -6,37 +6,41 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
-import { GenericPage } from './GenericPage';
-import { sortDataBy } from '../utilities';
-import { tableStrings } from '../localization';
 
-const DATA_TYPES_SYNCHRONISED = ['Name'];
+import { GenericPage } from './GenericPage';
+import { formatStatus, sortDataBy } from '../utilities';
+import { navStrings, tableStrings } from '../localization';
+
+const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
 /**
-* Renders the page for displaying Customers.
+* Renders the page for displaying Customer Requisitions, i.e. requests from a customer to this store
 * @prop   {Realm}               database      App wide database.
 * @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
+* @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
 */
-export class CustomersPage extends React.Component {
+export class CustomerRequisitionsPage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      customers: props.database.objects('Customer'),
-    };
+    this.requisitions = props.database.objects('ResponseRequisition');
+    this.state = {};
     this.dataFilters = {
       searchTerm: '',
-      sortBy: 'name',
-      isAscending: true,
+      sortBy: 'entryDate',
+      isAscending: false,
     };
     autobind(this);
   }
 
-  onRowPress(customer) {
+  onRowPress(requisition) {
+    this.navigateToRequisition(requisition);
+  }
+
+  navigateToRequisition(requisition) {
     this.props.navigateTo(
-      'customer',
-      `${customer.name}`,
-      { customer: customer },
+      'customerRequisition',
+      `${navStrings.requisition} ${requisition.serialNumber}`,
+      { requisition: requisition },
     );
   }
 
@@ -53,14 +57,12 @@ export class CustomersPage extends React.Component {
   refreshData(newSearchTerm, newSortBy, newIsAscending) {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.state.customers.filtered(
-      'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
-      searchTerm
-    );
-
+    const data =
+        this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
-      case 'numberOfTransactions':
+      case 'serialNumber':
+      case 'numberOfItems':
         sortDataType = 'number';
         break;
       default:
@@ -69,17 +71,19 @@ export class CustomersPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  renderCell(key, customer) {
+  renderCell(key, requisition) {
     switch (key) {
+      case 'entryDate':
+        return requisition.entryDate.toDateString();
+      case 'customerName':
+        return requisition.otherStoreName ? requisition.otherStoreName.name : '';
+      case 'status':
+        return formatStatus(requisition.status);
       default:
-      case 'code':
-        return customer.code;
-      case 'name':
-        return customer.name;
-      case 'numberOfTransactions':
-        return customer.numberOfTransactions;
+        return requisition[key];
     }
   }
+
 
   render() {
     return (
@@ -92,22 +96,34 @@ export class CustomersPage extends React.Component {
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
         columns={[
           {
-            key: 'code',
-            width: 1,
-            title: tableStrings.code,
+            key: 'serialNumber',
+            width: 1.5,
+            title: tableStrings.requisition_number,
             sortable: true,
           },
           {
-            key: 'name',
-            width: 5,
-            title: tableStrings.name,
+            key: 'customerName',
+            width: 2,
+            title: tableStrings.customer,
+            sortable: false,
+          },
+          {
+            key: 'entryDate',
+            width: 1,
+            title: tableStrings.entered_date,
             sortable: true,
           },
           {
-            key: 'numberOfTransactions',
+            key: 'numberOfItems',
             width: 1,
-            title: tableStrings.invoices,
+            title: tableStrings.items,
+            sortable: true,
             alignText: 'right',
+          },
+          {
+            key: 'status',
+            width: 1,
+            title: tableStrings.status,
             sortable: true,
           },
         ]}
@@ -120,10 +136,10 @@ export class CustomersPage extends React.Component {
   }
 }
 
-CustomersPage.propTypes = {
-  database: PropTypes.object,
+CustomerRequisitionsPage.propTypes = {
+  database: PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
 };

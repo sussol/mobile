@@ -9,7 +9,6 @@ import autobind from 'react-autobind';
 import {
   formatDate,
   parsePositiveFloat,
-  parsePositiveInteger,
   formatExpiryDate,
   parseExpiryDate,
   sortDataBy,
@@ -52,7 +51,6 @@ export class SupplierInvoicePage extends React.Component {
       isAscending: true,
     };
     this.state = {
-      totalPrice: 0,
       modalKey: null,
       modalIsOpen: false,
       selection: [],
@@ -92,17 +90,6 @@ export class SupplierInvoicePage extends React.Component {
       switch (key) {
         case 'numberOfPacks':
           transactionBatch.numberOfPacks = parsePositiveFloat(newValue);
-          break;
-        case 'costPrice':
-          transactionBatch.costPrice = parsePositiveFloat(newValue);
-          break;
-        case 'packSize': {
-          const packSize = parsePositiveInteger(newValue);
-          transactionBatch.packSize = packSize || 1; // Don't allow pack size of 0
-          break;
-        }
-        case 'batch':
-          if (newValue) transactionBatch.batch = newValue;
           break;
         case 'expiryDate':
           {
@@ -152,15 +139,7 @@ export class SupplierInvoicePage extends React.Component {
 
     const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
 
-    // Calculate and set total price
-    const transactionPrice = transactionBatches.reduce(
-      (sum, transactionBatch) =>
-        sum +
-        transactionBatch.costPrice * transactionBatch.numberOfPacks * transactionBatch.packSize,
-      0
-    );
     this.setState({
-      totalPrice: transactionPrice,
       data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
     });
   }
@@ -213,10 +192,6 @@ export class SupplierInvoicePage extends React.Component {
           title: `${pageInfoStrings.confirm_date}:`,
           info: formatDate(transaction.confirmDate),
         },
-        {
-          title: `${pageInfoStrings.total_price}:`,
-          info: this.state.totalPrice,
-        },
       ],
       [
         {
@@ -254,15 +229,8 @@ export class SupplierInvoicePage extends React.Component {
         return {
           cellContents: transactionBatch[key],
         };
-      case 'packSize':
       case 'numberOfPacks':
-      case 'costPrice':
         return editableCell;
-      case 'batch':
-        return {
-          ...editableCell,
-          keyboardType: 'default',
-        };
       case 'expiryDate': {
         return {
           type: type,
@@ -369,33 +337,15 @@ export class SupplierInvoicePage extends React.Component {
             sortable: true,
           },
           {
-            key: 'packSize',
-            width: 1.3,
-            title: tableStrings.pack_size,
-            alignText: 'center',
-          },
-          {
             key: 'numberOfPacks',
             width: 1.3,
             title: tableStrings.quantity,
             alignText: 'center',
           },
           {
-            key: 'batch',
-            width: 1.8,
-            title: tableStrings.batch_name,
-            alignText: 'center',
-          },
-          {
             key: 'expiryDate',
             width: 2,
             title: tableStrings.batch_expiry,
-            alignText: 'center',
-          },
-          {
-            key: 'costPrice',
-            width: 1.4,
-            title: tableStrings.batch_cost_price,
             alignText: 'center',
           },
           {

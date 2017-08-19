@@ -16,12 +16,10 @@ export const pageInfoStrings = new LocalizedStrings({
     entry_date: 'Entry Date',
     months_stock_required: 'Months Stock',
     supplier: 'Supplier',
-    total_price: 'Total Price',
     their_ref: 'Their Ref',
-    supplying_store_name: 'Supplying Store',
   },
   gil: {
-    // TODO add: total_price, supplier, supplying_store_name
+    // TODO add: supplier
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -33,7 +31,6 @@ export const pageInfoStrings = new LocalizedStrings({
     their_ref: 'Ana Ref',
   },
   tl: {
-    // TODO add: supplying_store_name
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
@@ -43,7 +40,6 @@ export const pageInfoStrings = new LocalizedStrings({
     entry_date: 'Data Hatama',
     months_stock_required: 'Pedido ba fulan',
     supplier: 'Distribuidor',
-    total_price: 'Presu Montante',
     their_ref: 'Referensia',
   },
 });

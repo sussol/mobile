@@ -10,8 +10,6 @@ export const tableStrings = new LocalizedStrings({
     actual_quantity: 'ACTUAL\nQUANTITY',
     available_stock: 'AVAILABLE STOCK',
     batch_expiry: 'EXPIRY',
-    batch_cost_price: 'COST PRICE',
-    batch_name: 'BATCH',
     category: 'Category',
     code: 'CODE',
     comment: 'COMMENT',
@@ -38,7 +36,6 @@ export const tableStrings = new LocalizedStrings({
     number_received: 'NUMBER RECEIVED',
     number_sent: 'NUMBER SENT',
     our_stock: 'OUR\nSTOCK',
-    pack_size: 'PACK SIZE',
     quantity: 'QUANTITY',
     remove: 'REMOVE',
     required_quantity: 'REQUESTED\nQUANTITY',
@@ -47,13 +44,12 @@ export const tableStrings = new LocalizedStrings({
     snapshot_quantity: 'SNAPSHOT\nQUANTITY',
     status: 'STATUS',
     stock_on_hand: 'STOCK ON HAND',
-    store_name: 'STORE NAME',
+    supplier: 'SUPPLIER',
     suggested_quantity: 'SUGGESTED\nQUANTITY',
     supply_quantity: 'SUPPLY THIS\nINVOICE',
     their_stock: 'THEIR\nSTOCK',
   },
-  gil: {
-    // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size, store_name, our_stock, supply_quantity
+  gil: { // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size, our_stock, supply_quantity, supplier
     actual_quantity: 'Iraua\nMwaitina',
     available_stock: 'Mwaitin ae\niai ngkai',
     category: 'Kurubu',
@@ -91,12 +87,9 @@ export const tableStrings = new LocalizedStrings({
     stock_on_hand: 'Mwaitin ae\niai ngkai',
     suggested_quantity: 'Mwaiti ae\nkaantaningaki',
   },
-  tl: { // TODO add: store_name, our_stock, supply_quantity
-    actual_quantity: 'Qtd. Hasai',
-    available_stock: 'Qtd. Disponivel',
-    batch_expiry: 'PRAZU SASAN',
-    batch_cost_price: 'KUSTU PRESU',
-    batch_name: 'NUMERU-BATCH',
+  tl: { // TODO add: batch_expiry, our_stock, supply_quantity, supplier
+    actual_quantity: 'ATUÁL\nKUANTIDADE',
+    available_stock: 'SASÁN DISPONIVEL',
     category: 'Kategoria',
     code: 'KODIGU',
     comment: 'KOMENTÁRIU',

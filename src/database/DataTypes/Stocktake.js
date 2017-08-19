@@ -96,6 +96,7 @@ export class Stocktake extends Realm.Object {
     this.finalisedBy = user;
     this.stocktakeDate = date;
     this.status = 'finalised';
+    database.save('Stocktake', this);
   }
 
   /**

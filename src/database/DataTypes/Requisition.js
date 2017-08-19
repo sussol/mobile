@@ -78,7 +78,7 @@ export class Requisition extends Realm.Object {
     });
     transaction.linkedRequisition = this;
     this.linkedTransaction = transaction;
-    transaction.comment = `From supply requisition ${this.serialNumber}`;
+    transaction.comment = `From customer requisition ${this.serialNumber}`;
     database.save('Transaction', transaction);
   }
 
@@ -142,6 +142,7 @@ export class Requisition extends Realm.Object {
   finalise(database) {
     this.pruneRedundantItems(database);
     this.status = 'finalised';
+    database.save('Requisition', this);
 
     if (this.linkedTransaction) this.linkedTransaction.finalise(database);
   }
