@@ -116,7 +116,6 @@ export const tableStrings = new LocalizedStrings({
     number_of_batches: 'Numeru-Batch',
     number_received: 'Qtd. SIMU',
     number_sent: 'Qtd. HARUKA MAI',
-    pack_size: 'PAKOTE SASUKAT',
     quantity: 'KUANTIDADE',
     remove: 'HASAI',
     required_quantity: 'Qtd. HUSU/EZIJE',
