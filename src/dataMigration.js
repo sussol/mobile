@@ -73,11 +73,22 @@ const dataMigrations = [
           }
         });
       });
+      // An ugly hack to change main supplying store from Adara to SAMES,
+      // for stores that had Adara PS as Supplying Store during initial sync
+      if (settings.get(SETTINGS_KEYS.
+                       SUPPLYING_STORE_NAME_ID) === 'B1938F4FFDC2074DB5408B435ACEB198' ||
+          settings.get(SETTINGS_KEYS.
+                       SUPPLYING_STORE_ID === '734CC3EC70283A4AABC4E645C8B1E11D')) {
+        settings.set(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID, 'E5D7BB38571C1F428AF397240EEB285F');
+        settings.set(SETTINGS_KEYS.SUPPLYING_STORE_ID, '6CFDCD1916B098478422A489625AB9E7');
+      }
       // Migration for v2 api request Requisitions, set otherStoreName to main supplying store name
       // for all existing requisition (shouldn't have any response requisition at this stage)
       const nameResults = database.objects('Name').filtered('id == $0',
                                 settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-      if (nameResults.length < 1) throw new Error('Supplying Store Name ID missing from settings');
+      if (nameResults.length < 1) {
+        throw new Error('Supplying Store Name ID missing from Settings or Name record not found');
+      }
       const mainSupplyingStoreName = nameResults[0];
 
       const requisitions = database.objects('Requisition')
