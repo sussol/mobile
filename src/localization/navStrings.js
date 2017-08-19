@@ -25,7 +25,6 @@ export const navStrings = new LocalizedStrings({
   },
   gil: {
     // TODO add: customer_requisitions, supplier_requisitions
-    // TODO remove: requisitions
     current_stock: 'Mwaitin am bwai n aoraki ke am supply',
     customer_invoices: 'Ana invoice am kiriniki\nke am aoraki',
     customers: 'Kiriniki',
@@ -37,11 +36,11 @@ export const navStrings = new LocalizedStrings({
     manage_stocktake: 'Taraan am warebwai',
     new_stocktake: 'Am warebwai ae boou',
     requisition: 'Am oota ae karina',
-    requisitions: 'Taian oota aika a karina',
     stocktakes: 'Warebwai',
     supplier_invoices: 'Ana Invoice\nam Supplier',
   },
   tl: {
+    // TODO add: customer_requisitions, supplier_requisitions
     current_stock: 'Sasán Atuál',
     customer_invoices: 'Kliente nia Konta',
     customers: 'Kliente',
@@ -53,7 +52,6 @@ export const navStrings = new LocalizedStrings({
     manage_stocktake: 'Maneja Ajustamentu',
     new_stocktake: 'Ajustamentu Foun',
     requisition: 'Rekuizisaun ida',
-    requisitions: 'Rekuizisaun sira',
     stocktakes: 'Ajustamentu sira',
     supplier_invoices: 'Distribuidór nia Konta',
   },

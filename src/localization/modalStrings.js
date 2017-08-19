@@ -42,7 +42,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
-  gil: { // TODO add: search_for_the_supplier, stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier
+  gil: { // TODO add: stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -74,7 +74,7 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_customer: 'Karina aran am kiriniki ke am aoraki',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
-  tl: { // TODO add: stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier
+  tl: {
     add_at_least_one_item_before_finalising: 'Tenke hatama sasán ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',
@@ -101,6 +101,9 @@ export const modalStrings = new LocalizedStrings({
     remove: 'Hasai',
     search_for_an_item_to_add: 'Buka-hetan sasán atu hatama',
     search_for_the_customer: 'Buka-hetan kliente',
+    search_for_the_supplier: 'Buka-hetan distribuidor',
+    start_typing_to_select_supplier: "Hakerek iha ne'e atu selekta distribuidor",
+    stock_quantity_greater_then_zero: 'Kuantidade Disponivel tenki bot liu Zero antes finaliza',
     select_a_language: 'Hili lingua',
     select_the_number_of_months_stock_required: 'Hili sasán fulan hira mak presiza',
     start_typing_to_select_customer: 'Komesa ketik hodi bele hili kliente',
