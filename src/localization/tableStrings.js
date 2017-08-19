@@ -49,7 +49,7 @@ export const tableStrings = new LocalizedStrings({
     supply_quantity: 'SUPPLY THIS\nINVOICE',
     their_stock: 'THEIR\nSTOCK',
   },
-  gil: { // TODO add: batch_expiry, batch_cost_price, batch_name, pack_size, our_stock, supply_quantity, supplier
+  gil: { // TODO add: batch_expiry, our_stock, supply_quantity, supplier
     actual_quantity: 'Iraua\nMwaitina',
     available_stock: 'Mwaitin ae\niai ngkai',
     category: 'Kurubu',
@@ -87,9 +87,10 @@ export const tableStrings = new LocalizedStrings({
     stock_on_hand: 'Mwaitin ae\niai ngkai',
     suggested_quantity: 'Mwaiti ae\nkaantaningaki',
   },
-  tl: { // TODO add: batch_expiry, our_stock, supply_quantity, supplier
+  tl: { // TODO add: our_stock, supply_quantity, their_stock
     actual_quantity: 'ATUÁL\nKUANTIDADE',
     available_stock: 'SASÁN DISPONIVEL',
+    batch_expiry: 'PRAZU SASAN',
     category: 'Kategoria',
     code: 'KODIGU',
     comment: 'KOMENTÁRIU',
@@ -125,5 +126,6 @@ export const tableStrings = new LocalizedStrings({
     status: 'ESTATUS',
     stock_on_hand: 'Qtd. IHA ARMAZEN',
     suggested_quantity: 'Qtd. SUJERE',
+    supplier: 'Distribuidor',
   },
 });
