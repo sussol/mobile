@@ -24,5 +24,6 @@ export const syncStrings = new LocalizedStrings({
     sync_enabled: 'HAMORIS SYNC',
     sync_error: 'SYNC SALA',
     sync_in_progress: "SYNC LA'O HELA",
+    manual_sync: 'Synk Manual',
   },
 });

@@ -276,8 +276,7 @@ export class CustomerRequisitionPage extends React.Component {
             key: 'stockOnHand',
             width: 1.5,
             title: tableStrings.their_stock,
-            sortable: true,
-            alignText: 'right',
+            alignText: 'center',
           },
           {
             key: 'monthlyUsage',

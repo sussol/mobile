@@ -52,5 +52,6 @@ export const buttonStrings = new LocalizedStrings({
     new_supplier_invoice: 'Distribuidor nia Invoice Foun',
     past: 'Pasadu',
     use_suggested_quantities: 'Kuantidade Sujere',
+    use_requested_quantities: 'Kuantidade Ezije',
   },
 });
