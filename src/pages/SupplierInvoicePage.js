@@ -9,13 +9,11 @@ import autobind from 'react-autobind';
 import {
   formatDate,
   parsePositiveFloat,
-  formatExpiryDate,
-  parseExpiryDate,
   sortDataBy,
 } from '../utilities';
 import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
-import globalStyles from '../globalStyles';
+import globalStyles, { dataTableStyles } from '../globalStyles';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
@@ -24,6 +22,7 @@ import {
   PageContentModal,
   PageInfo,
   TextEditor,
+  ExpiryTextInput,
 } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
@@ -92,12 +91,7 @@ export class SupplierInvoicePage extends React.Component {
           transactionBatch.numberOfPacks = parsePositiveFloat(newValue);
           break;
         case 'expiryDate':
-          {
-            const expiryDate = parseExpiryDate(newValue);
-            if (expiryDate) {
-              transactionBatch.expiryDate = expiryDate;
-            }
-          }
+          transactionBatch.expiryDate = newValue;
           break;
         default:
           break;
@@ -232,10 +226,14 @@ export class SupplierInvoicePage extends React.Component {
       case 'numberOfPacks':
         return editableCell;
       case 'expiryDate': {
-        return {
-          type: type,
-          cellContents: formatExpiryDate(transactionBatch.expiryDate) || 'month/year',
-        };
+        return (
+          <ExpiryTextInput
+            isEditable={isEditable}
+            onEndEditing={(newValue) => this.onEndEditing(key, transactionBatch, newValue)}
+            text={transactionBatch[key]}
+            style={dataTableStyles.text}
+          />
+        );
       }
       case 'remove':
         return {
@@ -326,25 +324,25 @@ export class SupplierInvoicePage extends React.Component {
         columns={[
           {
             key: 'itemCode',
-            width: 2,
+            width: 1,
             title: tableStrings.item_code,
             sortable: true,
           },
           {
             key: 'itemName',
-            width: 4,
+            width: 3,
             title: tableStrings.item_name,
             sortable: true,
           },
           {
             key: 'numberOfPacks',
-            width: 1.3,
+            width: 1,
             title: tableStrings.quantity,
             alignText: 'center',
           },
           {
             key: 'expiryDate',
-            width: 2,
+            width: 1,
             title: tableStrings.batch_expiry,
             alignText: 'center',
           },
