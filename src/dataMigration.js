@@ -104,6 +104,26 @@ const dataMigrations = [
           });
         });
       });
+
+      // Previous versions did not add requisitions, transactions, or stocktakes to the sync queue
+      // when they were finalised, so unless they were already on the sync queue, they may not have
+      // synced to the server in finalised form. Find all of them, and set them to resync
+      database.write(() => {
+        // Requisitions
+        const finalisedRequisitions = database.objects('Requisition')
+          .filtered('status == "finalised"');
+        finalisedRequisitions.forEach(requisition => database.save('Requisition', requisition));
+
+        // Transactions
+        const finalisedTransactions = database.objects('Transaction')
+          .filtered('status == "finalised"');
+        finalisedTransactions.forEach(transaction => database.save('Transaction', transaction));
+
+        // Stocktakes
+        const finalisedStocktakes = database.objects('Stocktake')
+          .filtered('status == "finalised"');
+        finalisedStocktakes.forEach(stocktake => database.save('Stocktake', stocktake));
+      });
     },
   },
 ];
