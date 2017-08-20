@@ -13,7 +13,7 @@ import { formatExpiryDate, parseExpiryDate } from '../utilities';
 export class ExpiryTextInput extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { text: getFormatedDate(this.props.text) };
+    this.state = { text: getFormattedDate(this.props.text) };
     this.previousText = '';
     autobind(this);
   }
@@ -44,7 +44,7 @@ export class ExpiryTextInput extends React.Component {
         newTextValue = `${text}/`;
       }
     } else if (text.length > 3 && text.length < 8) {
-      // Dissalow chaning cursor position changing of month
+      // Disallow chaning cursor position changing of month
       if (text.slice(2, 3) !== '/') return;
       // Make sure everything after '/' is a number
       const yearValue = parseInt(text.slice(3), 10);
@@ -60,7 +60,7 @@ export class ExpiryTextInput extends React.Component {
     if (expiryDate && this.props.onEndEditing) {
       this.props.onEndEditing(expiryDate);
     }
-    this.setState({ text: getFormatedDate(expiryDate) });
+    this.setState({ text: getFormattedDate(expiryDate) });
   }
 
   render() {
@@ -74,14 +74,14 @@ export class ExpiryTextInput extends React.Component {
         onChangeText={this.onChangeText}
         onFocus={this.onFocus}
         value={this.state.text}
-        style={[style, localStyles.middleAllignText]}
+        style={[style, localStyles.middleAlignText]}
       />
     );
   }
 }
 
-function getFormatedDate(date) {
-  return formatExpiryDate(date) || 'month/year';
+function getFormattedDate(date) {
+  return formatExpiryDate(date) || 'mm/yy';
 }
 
 ExpiryTextInput.propTypes = {
@@ -92,7 +92,7 @@ ExpiryTextInput.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  middleAllignText: {
+  middleAlignText: {
     textAlign: 'center',
   },
 });
