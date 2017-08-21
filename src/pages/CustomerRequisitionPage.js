@@ -146,8 +146,8 @@ export class CustomerRequisitionPage extends React.Component {
     const infoColumns = [
       [
         {
-          title: `${pageInfoStrings.customer}:`,
-          info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
+          title: `${pageInfoStrings.months_stock_required}:`,
+          info: requisition.monthsToSupply,
         },
         {
           title: `${pageInfoStrings.entry_date}:`,
@@ -156,8 +156,8 @@ export class CustomerRequisitionPage extends React.Component {
       ],
       [
         {
-          title: `${pageInfoStrings.months_stock_required}:`,
-          info: requisition.monthsToSupply,
+          title: `${pageInfoStrings.customer}:`,
+          info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
         },
         {
           title: `${pageInfoStrings.comment}:`,

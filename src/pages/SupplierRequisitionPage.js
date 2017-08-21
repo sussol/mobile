@@ -191,10 +191,6 @@ export class SupplierRequisitionPage extends React.Component {
     const infoColumns = [
       [
         {
-          title: `${pageInfoStrings.supplier}:`,
-          info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
-        },
-        {
           title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(requisition.entryDate),
         },
@@ -204,6 +200,10 @@ export class SupplierRequisitionPage extends React.Component {
         },
       ],
       [
+        {
+          title: `${pageInfoStrings.supplier}:`,
+          info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
+        },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
