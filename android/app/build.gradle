@@ -89,9 +89,9 @@ def getAppVersion() {
     return packageJson["version"]
 }
 
-def (appVersion, provisional) = getAppVersion().tokenize('-')
+def (appVersion, provisional) = getAppVersion().tokenize('-rc')
 def (major, minor, patch) = appVersion.tokenize('.')
-def appVersionCode = ((major.toInteger() * 1000000) + (minor.toInteger() * 1000) + patch.toInteger())
+def appVersionCode = ((major.toInteger() * 10000000) + (minor.toInteger() * 100000) + (patch.toInteger() * 100) + (provisional != null ? provisional.toInteger() : 0))
 
 android {
     compileSdkVersion 23
