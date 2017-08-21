@@ -13,9 +13,9 @@ import { formatExpiryDate, parseExpiryDate } from '../utilities';
 export class ExpiryTextInput extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { text: getFormattedDate(this.props.text) };
     this.previousText = '';
     autobind(this);
+    this.state = { text: this.getFormattedDate(this.props.text) };
   }
 
   // Remove all text on focus
@@ -60,7 +60,13 @@ export class ExpiryTextInput extends React.Component {
     if (expiryDate && this.props.onEndEditing) {
       this.props.onEndEditing(expiryDate);
     }
-    this.setState({ text: getFormattedDate(expiryDate) });
+    this.setState({ text: this.getFormattedDate(expiryDate) });
+  }
+
+  getFormattedDate(date) {
+    // Remember previous good date
+    this.previousFormatedDate = formatExpiryDate(date) || this.previousFormatedDate;
+    return this.previousFormatedDate || 'mm/yy';
   }
 
   render() {
@@ -78,10 +84,6 @@ export class ExpiryTextInput extends React.Component {
       />
     );
   }
-}
-
-function getFormattedDate(date) {
-  return formatExpiryDate(date) || 'mm/yy';
 }
 
 ExpiryTextInput.propTypes = {
