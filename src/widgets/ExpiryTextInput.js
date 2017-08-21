@@ -67,8 +67,8 @@ export class ExpiryTextInput extends React.Component {
 
   getFormattedDate(date) {
     // Remember previous good date
-    this.previousFormatedDate = formatExpiryDate(date) || this.previousFormatedDate;
-    return this.previousFormatedDate || 'mm/yy';
+    this.previousFormattedDate = formatExpiryDate(date) || this.previousFormattedDate;
+    return this.previousFormattedDate || 'mm/yy';
   }
 
   render() {
