@@ -21,21 +21,22 @@ export async function migrateDataToVersion(database, settings) {
     AsyncStorage.setItem(APP_VERSION_KEY, fromVersion);
     settings.delete(SETTINGS_KEYS.APP_VERSION);
   }
-  // If it was in neither local storage or settings, this is a new install, so no need to migrate
-  if (!fromVersion || fromVersion.length === 0) {
-    return;
-  }
+
   // Get the new version we are upgrading to
   const toVersion = packageJson.version;
-  // If the version has not changed, we are not upgrading, so don't do anything
-  if (fromVersion === toVersion) return;
-  // Do any required version update data migrations
-  for (const migration of dataMigrations) {
-    if (
-      compareVersions(fromVersion, migration.version) < 0 &&
-      compareVersions(toVersion, migration.version) >= 0
-    ) {
-      migration.migrate(database, settings);
+
+  // If it was in neither local storage or settings, this is a new install, so no need to migrate
+  if (fromVersion && fromVersion.length === 0) {
+    // If the version has not changed, we are not upgrading, so don't do anything
+    if (fromVersion === toVersion) return;
+    // Do any required version update data migrations
+    for (const migration of dataMigrations) {
+      if (
+        compareVersions(fromVersion, migration.version) < 0 &&
+        compareVersions(toVersion, migration.version) >= 0
+      ) {
+        migration.migrate(database, settings);
+      }
     }
   }
   // Record the new app version
