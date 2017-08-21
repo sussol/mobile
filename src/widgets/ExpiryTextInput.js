@@ -28,7 +28,9 @@ export class ExpiryTextInput extends React.Component {
 
     if (text.length === 1) {
       const monthValue = parseInt(text, 10);
-      if (isNaN(monthValue) || monthValue < 0) return;
+      if (isNaN(monthValue)) return;
+      // If first digit > 1, then consider first digit as the month number
+      if (monthValue > 1) newTextValue = `0${text}/`;
     } else if (this.previousText.length === 3 && text.length === 2) {
       // In case backspace is pressed after '/' is inserted, we delete the last digit
       // of the month
