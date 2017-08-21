@@ -26,7 +26,7 @@ export async function migrateDataToVersion(database, settings) {
   const toVersion = packageJson.version;
 
   // If it was in neither local storage or settings, this is a new install, so no need to migrate
-  if (fromVersion && fromVersion.length === 0) {
+  if (fromVersion && fromVersion.length !== 0) {
     // If the version has not changed, we are not upgrading, so don't do anything
     if (fromVersion === toVersion) return;
     // Do any required version update data migrations
