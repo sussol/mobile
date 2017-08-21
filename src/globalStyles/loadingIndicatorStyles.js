@@ -11,5 +11,6 @@ export const loadingIndicatorStyles = {
     alignItems: 'center',
     backgroundColor: DARK_GREY,
     opacity: 0.88,
+    zIndex: 2,
   },
 };
