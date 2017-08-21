@@ -12,7 +12,9 @@ import {
 
 import { Button } from 'react-native-ui-components';
 import { TextInput } from './index';
+import { buttonStrings } from '../localization';
 import globalStyles from '../globalStyles';
+
 
 /**
  * Renders a View containing a TextInput and confirm Button, to allow editing
@@ -43,7 +45,7 @@ export class TextEditor extends React.Component {
         <Button
           style={[globalStyles.button, globalStyles.modalOrangeButton]}
           textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-          text="Done"
+          text={buttonStrings.done}
           onPress={() => this.props.onEndEditing(this.state.text)}
         />
       </View>

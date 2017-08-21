@@ -12,6 +12,7 @@ export const buttonStrings = new LocalizedStrings({
     all_items_selected: 'All Items Selected',
     create_automatic_order: 'Create Automatic Order',
     current: 'Current',
+    done: 'Done',
     hide_stockouts: 'Hide Stockouts',
     manage_stocktake: 'Manage Stocktake',
     new_invoice: 'New Invoice',
@@ -23,7 +24,7 @@ export const buttonStrings = new LocalizedStrings({
     use_suggested_quantities: 'Use Suggested Quantities',
     use_requested_quantities: 'Use Requested Quantities',
   },
-  gil: {  // TODO: use_requested_quantities, new_supplier_invoice, add_batch
+  gil: {  // TODO: use_requested_quantities, new_supplier_invoice, add_batch, done
     add_master_list_items: 'Rinea am list',
     all_items_selected: 'Aikai nikabane',
     create_automatic_order: 'Create Automatic Order',
@@ -37,12 +38,13 @@ export const buttonStrings = new LocalizedStrings({
     past: 'Are I mwaina',
     use_suggested_quantities: 'Kabongana te\nmwaiti are e katauaki',
   },
-  tl: { // TODO: use_requested_quantities
+  tl: {
     add_batch: 'Linha Foun',
     add_master_list_items: 'Utiliza Lista Master',
     all_items_selected: 'Hili Item Hotu',
     create_automatic_order: 'Kria Orden Automátiku',
     current: 'Atuál',
+    done: 'Hotu',
     hide_stockouts: 'Hili item ho Qtd ejiste',
     manage_stocktake: 'Maneja Ajustamentu',
     new_invoice: 'Invoice Foun',
