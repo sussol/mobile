@@ -173,7 +173,7 @@ export class CustomerInvoicesPage extends React.Component {
         columns={[
           {
             key: 'otherPartyName',
-            width: 3,
+            width: 2.5,
             title: tableStrings.customer,
             sortable: true,
           },
@@ -185,7 +185,7 @@ export class CustomerInvoicesPage extends React.Component {
           },
           {
             key: 'status',
-            width: 1,
+            width: 2,
             title: tableStrings.status,
             sortable: true,
           },
