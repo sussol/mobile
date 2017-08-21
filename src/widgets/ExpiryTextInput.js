@@ -87,7 +87,7 @@ export class ExpiryTextInput extends React.Component {
 }
 
 ExpiryTextInput.propTypes = {
-  text: PropTypes.string,
+  text: PropTypes.object,
   style: PropTypes.object,
   onEndEditing: PropTypes.func,
   isEditable: PropTypes.bool,
