@@ -30,7 +30,7 @@ export class SupplierInvoicesPage extends React.Component {
     };
     this.dataFilters = {
       searchTerm: '',
-      sortBy: 'entryDate',
+      sortBy: 'serialNumber',
       isAscending: false,
     };
     autobind(this);

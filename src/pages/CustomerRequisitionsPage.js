@@ -26,7 +26,7 @@ export class CustomerRequisitionsPage extends React.Component {
     this.state = {};
     this.dataFilters = {
       searchTerm: '',
-      sortBy: 'entryDate',
+      sortBy: 'serialNumber',
       isAscending: false,
     };
     autobind(this);
