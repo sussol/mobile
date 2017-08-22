@@ -124,14 +124,11 @@ export class SupplierInvoicesPage extends React.Component {
   renderCell(key, invoice) {
     switch (key) {
       default:
-      case 'serialNumber':
-        return invoice.serialNumber;
+        return invoice[key];
       case 'status':
         return formatStatus(invoice.status);
       case 'entryDate':
         return invoice.entryDate.toDateString();
-      case 'comment':
-        return invoice.comment;
       case 'remove':
         return {
           type: 'checkable',
@@ -169,14 +166,20 @@ export class SupplierInvoicesPage extends React.Component {
             sortable: true,
           },
           {
+            key: 'otherPartyName',
+            width: 2.5,
+            title: tableStrings.supplier,
+            sortable: true,
+          },
+          {
             key: 'status',
-            width: 1,
+            width: 2,
             title: tableStrings.status,
             sortable: true,
           },
           {
             key: 'entryDate',
-            width: 1,
+            width: 2,
             title: tableStrings.entered_date,
             sortable: true,
           },
@@ -184,6 +187,7 @@ export class SupplierInvoicesPage extends React.Component {
             key: 'comment',
             width: 3,
             title: tableStrings.comment,
+            lines: 2,
           },
           {
             key: 'remove',
