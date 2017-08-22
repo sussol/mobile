@@ -172,15 +172,15 @@ export class CustomerInvoicesPage extends React.Component {
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
         columns={[
           {
-            key: 'otherPartyName',
-            width: 2.5,
-            title: tableStrings.customer,
-            sortable: true,
-          },
-          {
             key: 'serialNumber',
             width: 1,
             title: tableStrings.invoice_number,
+            sortable: true,
+          },
+          {
+            key: 'otherPartyName',
+            width: 2.5,
+            title: tableStrings.customer,
             sortable: true,
           },
           {
