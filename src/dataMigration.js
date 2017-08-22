@@ -89,14 +89,13 @@ const dataMigrations = [
       if (!supplyingStoreId || supplyingStoreId === '') {
         throw new Error('Supplying Store Name ID missing from Settings');
       }
-      const nameResults = database.getOrCreate('Name', supplyingStoreId);
-      const mainSupplyingStoreName = nameResults[0];
 
       const requisitions = database.objects('Requisition')
                                    .filtered('otherStoreName == null AND type == "request"')
                                    .snapshot();
-
       database.write(() => {
+        const mainSupplyingStoreName = database.getOrCreate('Name', supplyingStoreId);
+
         requisitions.forEach(requisition => {
           database.update('Requisition', {
             id: requisition.id,
