@@ -61,7 +61,7 @@ export class PostSyncProcessor {
   processAnyUnprocessedRecords() {
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'true');
     this.functionQueue = [];
-    this.recordQueue = new Map(); // Reset the recordQueue to avoid unnessary runs
+    this.recordQueue.clear(); // Reset the recordQueue to avoid unnessary runs
 
     this.database
       .objects('Requisition')
@@ -88,6 +88,7 @@ export class PostSyncProcessor {
       this.enqueueFunctionsForRecordType(recordType, internalRecord);
     });
     this.processFunctionQueue();
+    this.recordQueue.clear(); // Reset the recordQueue to avoid unnessary runs
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
   }
 
