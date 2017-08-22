@@ -32,7 +32,7 @@ export class SupplierRequisitionsPage extends React.Component {
     this.requisitions = props.database.objects('RequestRequisition');
     this.dataFilters = {
       searchTerm: '',
-      sortBy: 'entryDate',
+      sortBy: 'serialNumber',
       isAscending: false,
     };
     autobind(this);
