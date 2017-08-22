@@ -1,5 +1,5 @@
 import packageJson from '../package.json';
-import compareVersions from 'semver-compare';
+import compareVersions from 'compare-versions';
 import { SETTINGS_KEYS } from './settings';
 import { AsyncStorage } from 'react-native';
 
