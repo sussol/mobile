@@ -85,11 +85,11 @@ const dataMigrations = [
       }
       // Migration for v2 api request Requisitions, set otherStoreName to main supplying store name
       // for all existing requisition (shouldn't have any response requisition at this stage)
-      const nameResults = database.objects('Name').filtered('id == $0',
-                                settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID));
-      if (nameResults.length < 1) {
-        throw new Error('Supplying Store Name ID missing from Settings or Name record not found');
+      const supplyingStoreId = settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID);
+      if (!supplyingStoreId || supplyingStoreId === '') {
+        throw new Error('Supplying Store Name ID missing from Settings');
       }
+      const nameResults = database.getOrCreate('Name', supplyingStoreId);
       const mainSupplyingStoreName = nameResults[0];
 
       const requisitions = database.objects('Requisition')

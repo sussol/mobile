@@ -4626,9 +4626,9 @@ react-native-data-table@^0.1.4:
   dependencies:
     react-native-vector-icons "^2.0.2"
 
-react-native-database@^0.2.0:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-database/-/react-native-database-0.2.2.tgz#a99429de38c007be26c3b9ad361ab7ce7c6646c7"
+react-native-database@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-database/-/react-native-database-0.3.1.tgz#7db51ae3c1af9d88423632b1d5d416c39859e307"
   dependencies:
     react-native-uuid "^1.4.8"
 
