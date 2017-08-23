@@ -40,7 +40,7 @@ export class Item extends Realm.Object {
       if (
         batch.totalQuantity > 0 &&
         batch.expiryDate &&
-        batch.expiryDate < earliestBatch.expiryDate
+        (!earliestBatch.expiryDate || batch.expiryDate < earliestBatch.expiryDate)
       ) {
         earliestBatch = batch;
       }
