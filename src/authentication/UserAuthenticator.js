@@ -13,7 +13,7 @@ const {
  } = AUTH_ERROR_CODES;
 
 const AUTH_ENDPOINT = '/sync/v3/user';
-const CONNECTION_TIMEOUT_PERIOD = 10000; // 10 second timeout for authenticating connection
+const CONNECTION_TIMEOUT_PERIOD = 10 * 1000; // 10 second timeout for authenticating connection
 
 export class UserAuthenticator {
   constructor(database, settings) {
