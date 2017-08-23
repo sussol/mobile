@@ -18,7 +18,9 @@ export class SyncDatabase {
    * passed through to database listeners as the cause of database change
    */
   create(...args) { return this.database.create(...args, 'sync'); }
-  getOrCreate(...args) { return this.database.create(...args, 'sync'); }
+  getOrCreate(type, primaryKey, primaryKeyField = 'id') {
+    return this.database.getOrCreate(type, primaryKey, primaryKeyField, 'sync');
+  }
   delete(...args) { return this.database.delete(...args, 'sync'); }
   save(...args) { return this.database.save(...args, 'sync'); }
   update(...args) { return this.database.update(...args, 'sync'); }
