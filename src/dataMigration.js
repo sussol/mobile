@@ -56,7 +56,7 @@ const dataMigrations = [
     },
   },
   {
-    version: '2.0.0',
+    version: '2.0.0-rc0',
     migrate: (database, settings) => {
       // Changed SyncQueue to expect no more than one SyncOut record for every record in database.
       // Assume that last SyncOut record is correct.
