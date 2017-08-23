@@ -45,7 +45,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
-  gil: { // TODO add: stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier
+  gil: { // TODO add: stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier, finalise_customer_requisition
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -59,7 +59,7 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Manga bita am oota',
     edit_their_reference: 'Bita ana reference number',
     finalise_customer_invoice: 'Ko aki kona n manga bita te invoice ae a tia n Finalise',
-    finalise_requisition: 'Am order ae Finalise, e nako, ao ko aki kona n bitia',
+    finalise_supplier_requisition: 'Am order ae Finalise, e nako, ao ko aki kona n bitia',
     finalise_stocktake: 'Am warebwai ae Finalise, ko aki manga kona n bitia',
     finalise_supplier_invoice: 'Am karao-oota ae Finalise, ko aki manga kona n bitia',
     following_items_reduced_more_than_available_stock:
@@ -95,7 +95,8 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Hadia komentáriu iha rekuizisaun',
     edit_their_reference: 'Hadia Referensia',
     finalise_customer_invoice: "Finaliza sei xave permanente Invoice ne'e.",
-    finalise_requisition: "Finaliza sei labele edit rekuizasaun ne'eno xave permanente.",
+    finalise_customer_requisition: "Finaliza sei afi kliente nia kontaida ne'e, ajusta inventori, sei konfirma xafi permanente",
+    finalise_supplier_requisition: "Finaliza sei labele edit rekuizasaun ne'eno xave permanente.",
     finalise_stocktake: "Finaliza sei ajusta inventariu no xave permanente Invoice ne'e.",
     finalise_supplier_invoice:
       "Finaliza sei ajusta inventariu no xave permanente ajustamentu ne'e.",
