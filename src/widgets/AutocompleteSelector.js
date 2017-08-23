@@ -15,6 +15,7 @@ import Autocomplete from 'react-native-autocomplete-input';
 import { complement } from 'set-manipulator';
 
 import { APP_FONT_FAMILY } from '../globalStyles';
+import { generalStrings } from '../localization';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
@@ -105,7 +106,7 @@ AutocompleteSelector.propTypes = {
   renderRightText: PropTypes.func,
 };
 AutocompleteSelector.defaultProps = {
-  placeholderText: 'Start typing to search',
+  placeholderText: generalStrings.start_typing_to_search,
 };
 
 const localStyles = StyleSheet.create({

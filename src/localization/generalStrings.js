@@ -8,11 +8,12 @@ import LocalizedStrings from 'react-native-localization';
 export const generalStrings = new LocalizedStrings({
   gb: {
     stocktake: 'Stocktake',
+    start_typing_to_search: 'Start typing to search',
   },
-  gil: {
+  gil: { // TODO add: start_typing_to_search
     stocktake: 'Warebwai',
   },
-  tl: {
+  tl: { // TODO add: start_typing_to_search
     stocktake: 'Ajustamentu',
   },
 });
