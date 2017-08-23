@@ -13,6 +13,7 @@ const {
  } = AUTH_ERROR_CODES;
 
 const AUTH_ENDPOINT = '/sync/v3/user';
+const CONNECTION_TIMEOUT_PERIOD = 10 * 1000; // 10 second timeout for authenticating connection
 
 export class UserAuthenticator {
   constructor(database, settings) {
@@ -51,7 +52,11 @@ export class UserAuthenticator {
     const authURL = `${serverURL}${AUTH_ENDPOINT}?store=${this.settings.get(THIS_STORE_ID)}`;
 
     try {
-      const userJson = await authenticateAsync(authURL, username, passwordHash);
+      // Race condition promise, if connection is taking to long will be rejected
+      // with CONNECTION_FAILURE error
+      const userJson = await Promise.race([
+        authenticateAsync(authURL, username, passwordHash),
+        createConnectionTimeoutPromise()]);
       if (!userJson || !userJson.UserID) throw new Error('Unexpected response from server');
       else { // Success, save user to database
         this.database.write(() => {
@@ -71,7 +76,6 @@ export class UserAuthenticator {
         }
         throw new Error(INVALID_PASSWORD); // Didn't match cache, throw error
       }
-
       // If anything other than connection failure, and they used the currently
       // cached password, wipe that password from the cache (may now be invalid)
       if (user && user.passwordHash === passwordHash) {
@@ -101,4 +105,14 @@ export class UserAuthenticator {
       onAuthentication(null);
     }
   }
+}
+
+// Promise will be called parallel to authenticating connection
+function createConnectionTimeoutPromise() {
+  return new Promise((resolve, reject) => {
+    const id = setTimeout(() => {
+      clearTimeout(id);
+      reject(new Error(CONNECTION_FAILURE));
+    }, CONNECTION_TIMEOUT_PERIOD);
+  });
 }
