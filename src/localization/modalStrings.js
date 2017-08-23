@@ -81,7 +81,7 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_customer: 'Karina aran am kiriniki ke am aoraki',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
-  tl: { // TODO add: finalise_customer_requisition
+  tl: {
     add_at_least_one_item_before_finalising: 'Tenke hatama sasán ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',
@@ -95,6 +95,7 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Hadia komentáriu iha rekuizisaun',
     edit_their_reference: 'Hadia Referensia',
     finalise_customer_invoice: "Finaliza sei xave permanente Invoice ne'e.",
+    finalise_customer_requisition: "Finaliza sei afi kliente nia kontaida ne'e, ajusta inventori, sei konfirma xafi permanente",
     finalise_supplier_requisition: "Finaliza sei labele edit rekuizasaun ne'eno xave permanente.",
     finalise_stocktake: "Finaliza sei ajusta inventariu no xave permanente Invoice ne'e.",
     finalise_supplier_invoice:

@@ -13,7 +13,8 @@ export const generalStrings = new LocalizedStrings({
   gil: { // TODO add: start_typing_to_search
     stocktake: 'Warebwai',
   },
-  tl: { // TODO add: start_typing_to_search
+  tl: {
     stocktake: 'Ajustamentu',
+    start_typing_to_search: "Hakerek iha ne'e hodi buka-hetan",
   },
 });
