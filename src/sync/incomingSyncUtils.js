@@ -347,16 +347,19 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const enteredBy = database.getOrCreate('User', record.user_ID);
       const linkedRequisition = record.requisition_ID ?
                                 database.getOrCreate('Requisition', record.requisition_ID) : null;
+      const category = database.getOrCreate('TransactionCategory', record.category_ID);
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
         comment: record.comment,
         entryDate: parseDate(record.entry_date),
-        enteredBy: enteredBy,
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
         theirRef: record.their_ref,
+        category,
+        enteredBy,
+        otherParty,
         linkedRequisition,
       };
       const transaction = database.update(recordType, internalRecord);
@@ -366,9 +369,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
           linkedTransaction: transaction,
         });
       }
-      transaction.otherParty = otherParty;
-      transaction.enteredBy = database.getOrCreate('User', record.user_ID);
-      transaction.category = database.getOrCreate('TransactionCategory', record.category_ID);
       otherParty.addTransactionIfUnique(transaction);
       database.save('Name', otherParty);
       break;
