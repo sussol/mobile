@@ -11,6 +11,7 @@ import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { persistStore } from 'redux-persist';
+import { ErrorHandler } from 'redux-persist-error-handler';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import { MSupplyMobileApp } from './mSupplyMobileApp';
@@ -28,9 +29,11 @@ const persistedStore = persistStore(store, { storage: AsyncStorage });
 
 function App() {
   return (
-    <Provider store={store}>
-      <MSupplyMobileApp />
-    </Provider>
+    <ErrorHandler persistedStore={persistedStore}>
+      <Provider store={store}>
+        <MSupplyMobileApp />
+      </Provider>
+    </ErrorHandler>
   );
 }
 

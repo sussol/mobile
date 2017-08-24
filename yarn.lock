@@ -4953,6 +4953,10 @@ redeyed@~1.0.0:
   dependencies:
     esprima "~3.0.0"
 
+redux-persist-error-handler@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/redux-persist-error-handler/-/redux-persist-error-handler-0.1.0.tgz#6ad55f36675f0825b43070b991e422c259fedbc2"
+
 redux-persist@^4.9.1:
   version "4.9.1"
   resolved "https://registry.yarnpkg.com/redux-persist/-/redux-persist-4.9.1.tgz#271fa31d1c782ebf9082fb5174e829db24faf59e"
