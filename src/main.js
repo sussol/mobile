@@ -25,7 +25,7 @@ const store = createStore(
   applyMiddleware(thunk),
 );
 
-const persistedStore = persistStore(store, { storage: AsyncStorage });
+const persistedStore = persistStore(store, { blacklist: ['navigation'], storage: AsyncStorage });
 
 function App() {
   return (
