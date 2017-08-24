@@ -3,10 +3,18 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+import { REHYDRATE } from 'redux-persist/constants';
+export { REHYDRATE };
 
 /**
 * Helper function that returns a reducer based on an object that contains an entry for each action
 * type, with a function that describes what changes to state that action would cause.
+* @param  {object}   defaultState   The default state of the reducer
+* @param  {object}   stateChanges   An object containing a function for each action constant, which
+*                                   takes the payload of the action and the current state as params,
+*                                   and returns the new state. Can opt in to rehydration by
+*                                   including an entry for the REHYDRATE action
+* @return {function} reducer        A redux reducer
 **/
 export const createReducer = (defaultState = {}, stateChanges = {}) =>
     (state = defaultState, action) => {

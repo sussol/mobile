@@ -62,6 +62,7 @@
     "react-redux": "^5.0.5",
     "realm": "^1.10.0",
     "redux": "^3.7.2",
+    "redux-persist": "^4.9.1",
     "redux-thunk": "^2.2.0",
     "set-manipulator": "0.3.1",
     "sussol-utilities": "^0.4.5"
