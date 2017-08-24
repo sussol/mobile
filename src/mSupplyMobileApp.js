@@ -102,7 +102,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   getCanNavigateBack() {
     const { navigationState } = this.props;
-    return navigationState.index !== 0;
+    return this.navigator && navigationState.index !== 0;
   }
 
   handleBackEvent() {
