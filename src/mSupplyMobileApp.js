@@ -102,14 +102,16 @@ class MSupplyMobileAppContainer extends React.Component {
 
   getCanNavigateBack() {
     const { navigationState } = this.props;
-    return navigationState.index !== 0;
+    return this.navigator && navigationState.index !== 0;
   }
 
   handleBackEvent() {
-    const { navigation } = this.navigator.props;
     // If we are on base screen (e.g. home), back button should close app as we can't go back
     if (!this.getCanNavigateBack()) BackHandler.exitApp();
-    else navigation.goBack();
+    else {
+      const { navigation } = this.navigator.props;
+      navigation.goBack();
+    }
     return true;
   }
 
