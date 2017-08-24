@@ -25,6 +25,9 @@ const store = createStore(
   applyMiddleware(thunk),
 );
 
+// Persist the redux store. We have to blacklist navigation because some of the props we pass
+// around via redux are enormous, possibly infinitely nested realm objects, which can't be quickly
+// serialised and persisted to AsyncStorage
 const persistedStore = persistStore(store, { blacklist: ['navigation'], storage: AsyncStorage });
 
 function App() {
