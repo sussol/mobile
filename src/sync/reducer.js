@@ -2,8 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-
-import { createReducer } from '../utilities';
+import { createReducer, REHYDRATE } from '../utilities';
 
 import {
     INCREMENT_SYNC_PROGRESS,
@@ -50,6 +49,14 @@ const stateChanges = {
   [SET_SYNC_COMPLETION_TIME]: ({ lastSyncTime }) => ({
     lastSyncTime,
   }),
+  [REHYDRATE]: ({ sync: persistedSyncState = {} }) => {
+    // For sync, we want to keep any error message and last sync time persistent across sessions
+    const { errorMessage, lastSyncTime } = persistedSyncState;
+    return {
+      errorMessage,
+      lastSyncTime,
+    };
+  },
 };
 
 export const reducer = createReducer(defaultState, stateChanges);

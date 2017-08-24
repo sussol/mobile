@@ -10,4 +10,4 @@ export {
 } from 'sussol-utilities';
 export { formatStatus } from './formatStatus';
 export { sortDataBy } from './sortDataBy';
-export { createReducer } from './createReducer';
+export { createReducer, REHYDRATE } from './createReducer';
