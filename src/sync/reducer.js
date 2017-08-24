@@ -49,7 +49,7 @@ const stateChanges = {
   [SET_SYNC_COMPLETION_TIME]: ({ lastSyncTime }) => ({
     lastSyncTime,
   }),
-  [REHYDRATE]: ({ sync: persistedSyncState = {} }) => {
+  [REHYDRATE]: ({ sync: persistedSyncState = defaultState }) => {
     // For sync, we want to keep any error message and last sync time persistent across sessions
     const { errorMessage, lastSyncTime } = persistedSyncState;
     return {
