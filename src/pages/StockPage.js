@@ -10,7 +10,7 @@ import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
 import { dataTableStyles } from '../globalStyles';
-import { formatDate, sortDataBy } from '../utilities';
+import { formatExpiryDate, sortDataBy, padEnd } from '../utilities';
 import { tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
@@ -66,8 +66,20 @@ export class StockPage extends React.Component {
   }
 
   renderExpansion(item) {
-    const earliestExpiringBatch = item.earliestExpiringBatch;
-    const numberOfBatchesInStock = item.totalBatchesInStock;
+    const batchInfo = item.batchesWithStock.map((ItemBatch) => {
+      const quantityInfo = `${tableStrings.quantity}:\t${ItemBatch.numberOfPacks}`;
+      const expiryInfo = ItemBatch.expiryDate ?
+        padEnd(`${tableStrings.batch_expiry}:\t${formatExpiryDate(ItemBatch.expiryDate)}`, 19)
+        : '';
+      const nameInfo = ItemBatch.batch ? `${tableStrings.name}:\t${ItemBatch.batch}` : '';
+
+      return {
+        title: `${tableStrings.batch}:`,
+        info: `${padEnd(quantityInfo, 19)}${expiryInfo}${nameInfo}`,
+      };
+    });
+
+    const dailyUsage = item.dailyUsage;
     const infoColumns = [
       [
         {
@@ -78,19 +90,14 @@ export class StockPage extends React.Component {
           title: `${tableStrings.department}:`,
           info: item.departmentName,
         },
+        dailyUsage && {
+          title: 'Montly Usage : ',
+          info: Math.round(item.dailyUsage * 30),
+        }
       ],
-      [
-        {
-          title: `${tableStrings.number_of_batches}:`,
-          info: numberOfBatchesInStock || 0,
-        },
-        {
-          title: `${tableStrings.earliest_expiry}:`,
-          info: earliestExpiringBatch
-                && formatDate(earliestExpiringBatch.expiryDate),
-        },
-      ],
+      batchInfo
     ];
+
     return (
       <Expansion style={dataTableStyles.expansion}>
         <PageInfo columns={infoColumns} />
