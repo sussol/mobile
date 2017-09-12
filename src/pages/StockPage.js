@@ -10,7 +10,7 @@ import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
 import { dataTableStyles } from '../globalStyles';
-import { formatExpiryDate, sortDataBy, padEnd } from '../utilities';
+import { formatExpiryDate, sortDataBy } from '../utilities';
 import { tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
@@ -67,15 +67,15 @@ export class StockPage extends React.Component {
 
   renderExpansion(item) {
     const batchInfo = item.batchesWithStock.map((ItemBatch) => {
-      const quantityInfo = `${tableStrings.quantity}:\t${ItemBatch.numberOfPacks}`;
+      const quantityInfo = `${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
       const expiryInfo = ItemBatch.expiryDate ?
-        padEnd(`${tableStrings.batch_expiry}:\t${formatExpiryDate(ItemBatch.expiryDate)}`, 19)
+        `,  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)}`
         : '';
-      const nameInfo = ItemBatch.batch ? `${tableStrings.name}:\t${ItemBatch.batch}` : '';
+      const nameInfo = ItemBatch.batch ? `,  ${tableStrings.name}: ${ItemBatch.batch}` : '';
 
       return {
         title: `${tableStrings.batch}:`,
-        info: `${padEnd(quantityInfo, 19)}${expiryInfo}${nameInfo}`,
+        info: `${quantityInfo}${expiryInfo}${nameInfo}`,
       };
     });
 

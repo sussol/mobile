@@ -11,4 +11,3 @@ export {
 export { formatStatus } from './formatStatus';
 export { sortDataBy } from './sortDataBy';
 export { createReducer, REHYDRATE } from './createReducer';
-export { padEnd } from './padEnd';
