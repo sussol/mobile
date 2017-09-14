@@ -67,7 +67,9 @@ export class RealmExplorer extends React.Component {
       data: null,
       dataSource: dataSource,
     };
+    this.unfilteredData = null;
     this.onSearchChange = this.onSearchChange.bind(this);
+    this.onFilterChange = this.onFilterChange.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
@@ -80,9 +82,33 @@ export class RealmExplorer extends React.Component {
     });
   }
 
+  onFilterChange(filterString) {
+    if (!this.unfilteredData) return;
+    let data = null;
+    if (filterString === '') { // if filter is emptied, clear filter
+      data = this.unfilteredData;
+    } else {
+      try {
+          // using this.unfilteredData, so we don't stack filters
+        data = this.unfilteredData.filtered(filterString);
+      } catch (err) {
+        // ignore error silently
+      }
+    }
+
+    if (data) {
+      this.setState({
+        data,
+        dataSource: this.state.dataSource.cloneWithRows(data),
+      });
+    }
+  }
+
+
   onSearchChange(searchTerm) {
     if (OBJECT_TYPES.indexOf(searchTerm) < 0) return;
     const data = this.props.database.objects(searchTerm);
+    this.unfilteredData = data;
     this.setState({
       data: data,
       dataSource: this.state.dataSource.cloneWithRows(data),
@@ -147,7 +173,8 @@ export class RealmExplorer extends React.Component {
   render() {
     return (
       <View style={[globalStyles.container]}>
-        <SearchBar onChange={this.onSearchChange} />
+        <SearchBar onChange={this.onSearchChange} placeholder="Table Name" />
+        <SearchBar onChange={this.onFilterChange} placeholder="Filter" />
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}
