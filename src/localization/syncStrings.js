@@ -15,7 +15,7 @@ export const syncStrings = new LocalizedStrings({
   },
   gil: {
     last_sync: 'LAST SYNC',
-    manual_sync: 'kamatoaa bwa e rin\nte bwai are ko karaoia',
+    manual_sync: 'Manual Sync',
     sync_enabled: 'SYNC ENABLED',
     sync_error: 'SYNC ERROR',
     sync_in_progress: 'SYNC IN PROGRESS',
