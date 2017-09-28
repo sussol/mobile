@@ -67,15 +67,15 @@ export class StockPage extends React.Component {
 
   renderExpansion(item) {
     const batchInfo = item.batchesWithStock.map((ItemBatch) => {
-      const quantityInfo = `${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
+      const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
       const expiryInfo = ItemBatch.expiryDate ?
-        `,  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)}`
+        `  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)},`
         : '';
-      const nameInfo = ItemBatch.batch ? `,  ${tableStrings.name}: ${ItemBatch.batch}` : '';
+      const nameInfo = ItemBatch.batch ? `  ${ItemBatch.batch},` : '';
 
       return {
         title: `${tableStrings.batch}:`,
-        info: `${quantityInfo}${expiryInfo}${nameInfo}`,
+        info: `${nameInfo}${expiryInfo}${quantityInfo}`,
       };
     });
 
@@ -93,9 +93,9 @@ export class StockPage extends React.Component {
         dailyUsage && {
           title: 'Montly Usage : ',
           info: Math.round(item.dailyUsage * 30),
-        }
+        },
       ],
-      batchInfo
+      batchInfo,
     ];
 
     return (
