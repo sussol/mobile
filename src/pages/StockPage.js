@@ -92,7 +92,7 @@ export class StockPage extends React.Component {
         },
         dailyUsage && {
           title: 'Montly Usage : ',
-          info: Math.round(item.dailyUsage * 30),
+          info: Math.round(dailyUsage * 30),
         },
       ],
       batchInfo,
