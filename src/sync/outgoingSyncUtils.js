@@ -116,8 +116,7 @@ function generateSyncData(settings, recordType, record) {
         ID: record.id,
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
-        name_ID: record.otherStoreName.id,  // TODO: check if there is a case when outgoing req might not have otherStoreName
-        status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
+        name_ID: record.otherStoreName && record.otherStoreName.id,
         daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(THIS_STORE_ID),
         serial_number: record.serialNumber,
