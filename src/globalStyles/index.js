@@ -16,6 +16,7 @@ import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
 import {
   pageStyles,
+  expansionPageStyles,
   PAGE_TOP_LEFT_WIDTH,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
@@ -45,6 +46,7 @@ export {
   dataTableStyles,
   dataTableColors,
   pageStyles,
+  expansionPageStyles,
   PAGE_TOP_LEFT_WIDTH,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,

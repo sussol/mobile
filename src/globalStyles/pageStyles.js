@@ -50,3 +50,22 @@ export const pageStyles = {
     backgroundColor: TRANSPARENT,
   },
 };
+
+export const expansionPageStyles = {
+  ...pageStyles,
+  container: {
+    ...pageStyles.container,
+    backgroundColor: TRANSPARENT,
+  },
+  pageContentContainer: {
+    ...pageStyles.pageContentContainer,
+    backgroundColor: TRANSPARENT,
+    paddingHorizontal: 0,
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
+  pageTopSectionContainer: {
+    ...pageStyles.pageTopSectionContainer,
+    paddingVertical: 2,
+  },
+};
