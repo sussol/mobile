@@ -40,9 +40,9 @@ export class GenericPage extends React.Component {
   // Refetch data and render the list any time sync changes data displayed, or the
   // record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    if ((causedBy === 'sync' &&
-        this.props.dataTypesSynchronised &&
-        this.props.dataTypesSynchronised.indexOf(recordType) >= 0) ||
+    const dataTypesArray = causedBy === 'sync' ? this.props.dataTypesSynchronised
+                                              : this.props.dataTypesLinked;
+    if ((dataTypesArray && dataTypesArray.indexOf(recordType) >= 0) ||
         (recordType === this.props.finalisableDataType && record.isFinalised)) {
       this.props.refreshData();
     }
@@ -61,6 +61,7 @@ export class GenericPage extends React.Component {
 GenericPage.propTypes = {
   database: PropTypes.object.isRequired,
   dataTypesSynchronised: PropTypes.array,
+  dataTypesLinked: PropTypes.array,
   finalisableDataType: PropTypes.string,
   refreshData: PropTypes.func.isRequired,
   topRoute: PropTypes.bool,
