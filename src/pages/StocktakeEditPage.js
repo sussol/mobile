@@ -7,6 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
+import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { PageButton } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
@@ -42,11 +43,10 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing(key, stocktakeItem, newValue) {
     if (key !== 'countedTotalQuantity' || newValue === '') return;
-    this.props.database.write(() => {
-      const quantity = parsePositiveInteger(newValue);
-      stocktakeItem.countedTotalQuantity = quantity;
-      this.props.database.save('StocktakeItem', stocktakeItem);
-    });
+    const quantity = parsePositiveInteger(newValue);
+    if (quantity === null) return;
+
+    stocktakeItem.setCountedTotalQuantity(this.props.database, quantity);
   }
 
   updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
@@ -89,18 +89,13 @@ export class StocktakeEditPage extends React.Component {
       case 'countedTotalQuantity':
         return {
           type: this.props.stocktake.isFinalised ? 'text' : 'editable',
-          cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
+          cellContents: item.hasBatchWithQuantityChange ? item.countedTotalQuantity : '',
           placeholder: tableStrings.no_change,
         };
       case 'difference': {
-        // Catch items with no change (null - 50 === -50)
-        if (item.countedTotalQuantity === null) return { cellContents: 0 };
-
-        const difference = item.countedTotalQuantity - item.snapshotTotalQuantity;
-        if (difference > 0) {
-          return { cellContents: `+${difference}` };
-        }
-        return { cellContents: difference };
+        const difference = item.difference;
+        const prefix = difference > 0 ? '+' : '';
+        return { cellContents: `${prefix}${difference}` };
       }
     }
   }
@@ -118,13 +113,26 @@ export class StocktakeEditPage extends React.Component {
     );
   }
 
+  renderExpansion(item) {
+    return (
+      <StocktakeEditExpansion
+        data={item}
+        database={this.props.database}
+        genericTablePageStyles={this.props.genericTablePageStyles}
+        refreshParent={this.refreshData}
+      />
+    );
+  }
+
   render() {
     return (
       <GenericPage
         data={this.state.data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
+        renderExpansion={this.renderExpansion}
         renderTopRightComponent={this.renderManageStocktakeButton}
+        renderTopLeftComponent={this.renderLeftSize}
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
