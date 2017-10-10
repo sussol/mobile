@@ -10,6 +10,7 @@ export const tableStrings = new LocalizedStrings({
     actual_quantity: 'ACTUAL\nQUANTITY',
     available_stock: 'AVAILABLE STOCK',
     batch_expiry: 'EXPIRY',
+    batch: 'Batch',
     category: 'Category',
     code: 'CODE',
     comment: 'COMMENT',
@@ -93,6 +94,7 @@ export const tableStrings = new LocalizedStrings({
     their_stock: 'AIA BWAI\nN AORAKI',
   },
   tl: {
+    // TODO add: batch
     actual_quantity: 'ATUÁL\nKUANTIDADE',
     available_stock: 'SASÁN DISPONIVEL',
     batch_expiry: 'PRAZU SASAN',
