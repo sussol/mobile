@@ -47,7 +47,6 @@ export const modalStrings = new LocalizedStrings({
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
   gil: {
-    // TODO: finalise_customer_requisition
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -61,7 +60,8 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Manga bita am oota',
     edit_their_reference: 'Bita ana reference number',
     finalise_customer_invoice: 'Ko aki kona n manga bita te invoice ae a tia n Finalise',
-    // finalise_customer_requisition: 'taua mwiin te warebwai, ?',
+    finalise_customer_requisition:
+      'Kamatoakin raoi te katitama inwoiti ma mwaitin bwaain aoraki ni ikotaki ma bubuti ke oota ena tia raoi ao man aki kona ni bibitaki imwin te kamatoa ke te bainaraiti',
     finalise_supplier_requisition: 'Am order ae Finalise, e nako, ao ko aki kona n bitia',
     finalise_stocktake: 'Am warebwai ae Finalise, ko aki manga kona n bitia',
     finalise_supplier_invoice: 'Am karao-oota ae Finalise, ko aki manga kona n bitia',
