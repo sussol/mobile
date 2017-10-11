@@ -231,44 +231,45 @@ export class Synchroniser {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
-    await this.recursivePull(serverURL, thisSiteId, serverId, 0);
-  }
-
-  /**
-   * Recursively checks how many records left to pull, pulls in a batch, and calls
-   * itself
-   * @param  {string} serverURL  The URL of the sync server
-   * @param  {string} thisSiteId The sync ID of this sync site
-   * @param  {string} serverId   The sync ID of the server
-   * @return {Promise}          Resolves if successful, or passes up any error thrown
-   */
-  async recursivePull(serverURL, thisSiteId, serverId, currentTotal) {
     const authHeader = this.authenticator.getAuthHeader();
-    const waitingRecordCount = await this.getWaitingRecordCount(
+
+    // Pull BATCH_SIZE amount of records at a time from server. Loop used instead of recursion
+    // because recursion creates a callback stack that consumes too much of device memory when
+    // syncing more than ~150,000 records (takes about 1GB of RAM).
+    let waitingRecordCount = await this.getWaitingRecordCount(
       serverURL,
       thisSiteId,
       serverId,
       authHeader
     );
-    // Allow total to increase in case more records are added to the server sync queue during sync
-    const newTotal = Math.max(waitingRecordCount, currentTotal);
-    this.setTotal(newTotal);
-    if (waitingRecordCount === 0) return; // Done recursing through records
+    let total = waitingRecordCount;
+    while (waitingRecordCount > 0) {
+      // Allow total to increase in case more records are added to the server sync queue during sync
+      if (waitingRecordCount > total) {
+        total = waitingRecordCount;
+        this.setTotal(total);
+      }
 
-    // Get a batch of records and integrate them
-    const incomingRecords = await this.getIncomingRecords(
-      serverURL,
-      thisSiteId,
-      serverId,
-      authHeader,
-      BATCH_SIZE
-    );
-    this.integrateRecords(incomingRecords);
-    await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
-    this.incrementProgress(incomingRecords.length);
+      // Get a batch of records and integrate them
+      const incomingRecords = await this.getIncomingRecords(
+        serverURL,
+        thisSiteId,
+        serverId,
+        authHeader,
+        BATCH_SIZE
+      );
+      this.integrateRecords(incomingRecords);
+      await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
+      this.incrementProgress(incomingRecords.length);
 
-    // Recurse to get the next batch of records from the server
-    await this.recursivePull(serverURL, thisSiteId, serverId, newTotal);
+      // Get updated waiting record count. End when waitingRecordCount reaches 0
+      waitingRecordCount = await this.getWaitingRecordCount(
+        serverURL,
+        thisSiteId,
+        serverId,
+        authHeader
+      );
+    }
   }
 
   /**
