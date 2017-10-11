@@ -241,7 +241,7 @@ export class Transaction extends Realm.Object {
       itemBatch.packSize = 1;
       itemBatch.numberOfPacks = newNumberOfPacks;
       itemBatch.expiryDate = expiryDate;
-      itemBatch.batch = batch;
+      itemBatch.batch = this.adjustBatchName(batch);
       itemBatch.costPrice = packedToOneCostPrice;
       itemBatch.sellPrice = packedToOneSellPrice;
       database.save('ItemBatch', itemBatch);
@@ -249,6 +249,19 @@ export class Transaction extends Realm.Object {
 
     this.confirmDate = new Date();
     this.status = 'confirmed';
+  }
+
+  /**
+   * Return 'supplierinvoice_${invoiceNumber}' of batch name is empty and
+   * transaction is supplier invoice
+   * @param  {string}  batchName
+   * @return {string} adjustedBatchName
+   */
+  adjustBatchName(batchName) {
+    if (this.isSupplierInvoice && (!batchName || batchName === '')) {
+      return `supplierinvoice_${this.serialNumber}`;
+    }
+    return batchName;
   }
 
   /**
