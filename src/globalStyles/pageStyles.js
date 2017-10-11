@@ -66,6 +66,6 @@ export const expansionPageStyles = {
   },
   pageTopSectionContainer: {
     ...pageStyles.pageTopSectionContainer,
-    paddingVertical: 2,
+    paddingVertical: 4,
   },
 };

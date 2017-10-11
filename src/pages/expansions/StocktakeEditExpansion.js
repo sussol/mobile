@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
@@ -105,6 +106,7 @@ export class StocktakeEditExpansion extends React.Component {
         text={'Add Batch'}
         onPress={addNewBatch}
         isDisabled={this.item.stocktake.isFinalised}
+        style={localStyles.addBatchButton}
       />
     );
   }
@@ -136,7 +138,8 @@ export class StocktakeEditExpansion extends React.Component {
           data={this.state.data}
           renderCell={this.renderCell}
           refreshData={this.refreshData}
-          renderFooter={() => null} // overrides default generc pages footer
+          hideSearchBar={true}
+          renderDataTableFooter={() => null} // overrides default generc pages footer
           dontRenderSearchBar={true}
           onEndEditing={this.onEndEditing}
           renderTopLeftComponent={this.renderPageInfo}
@@ -157,20 +160,19 @@ export class StocktakeEditExpansion extends React.Component {
             {
               key: 'snapshotTotalQuantity',
               width: 1,
-              title: tableStrings.snapshot_quantity,
+              title: unwrapText(tableStrings.snapshot_quantity),
               alignText: 'right',
             },
             {
               key: 'countedTotalQuantity',
               width: 1,
-              title: tableStrings.actual_quantity,
+              title: unwrapText(tableStrings.actual_quantity),
               alignText: 'right',
             },
             {
               key: 'difference',
               width: 1,
               title: tableStrings.difference,
-              sortable: true,
               alignText: 'right',
             },
           ]}
@@ -190,3 +192,12 @@ StocktakeEditExpansion.propTypes = {
   data: PropTypes.object.isRequired,
   refreshParent: PropTypes.func.isRequired,
 };
+
+const unwrapText = (text) => text.replace(/\n/g, ' ');
+
+const localStyles = StyleSheet.create({
+  addBatchButton: {
+    height: 30,
+    width: 90,
+  },
+});
