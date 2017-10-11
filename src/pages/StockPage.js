@@ -10,7 +10,7 @@ import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
 import { dataTableStyles } from '../globalStyles';
-import { formatDate, sortDataBy } from '../utilities';
+import { formatExpiryDate, sortDataBy } from '../utilities';
 import { tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
@@ -66,8 +66,20 @@ export class StockPage extends React.Component {
   }
 
   renderExpansion(item) {
-    const earliestExpiringBatch = item.earliestExpiringBatch;
-    const numberOfBatchesInStock = item.totalBatchesInStock;
+    const batchInfo = item.batchesWithStock.map((ItemBatch) => {
+      const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
+      const expiryInfo = ItemBatch.expiryDate ?
+        `  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)},`
+        : '';
+      const nameInfo = ItemBatch.batch ? `  ${ItemBatch.batch},` : '';
+
+      return {
+        title: `${tableStrings.batch}:`,
+        info: `${nameInfo}${expiryInfo}${quantityInfo}`,
+      };
+    });
+
+    const dailyUsage = item.dailyUsage;
     const infoColumns = [
       [
         {
@@ -78,19 +90,14 @@ export class StockPage extends React.Component {
           title: `${tableStrings.department}:`,
           info: item.departmentName,
         },
-      ],
-      [
-        {
-          title: `${tableStrings.number_of_batches}:`,
-          info: numberOfBatchesInStock || 0,
-        },
-        {
-          title: `${tableStrings.earliest_expiry}:`,
-          info: earliestExpiringBatch
-                && formatDate(earliestExpiringBatch.expiryDate),
+        dailyUsage && {
+          title: 'Montly Usage : ',
+          info: Math.round(dailyUsage * 30),
         },
       ],
+      batchInfo,
     ];
+
     return (
       <Expansion style={dataTableStyles.expansion}>
         <PageInfo columns={infoColumns} />

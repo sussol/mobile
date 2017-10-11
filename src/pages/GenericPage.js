@@ -65,4 +65,9 @@ GenericPage.propTypes = {
   finalisableDataType: PropTypes.string,
   refreshData: PropTypes.func.isRequired,
   topRoute: PropTypes.bool,
+  isDataCircular: PropTypes.bool,
+};
+
+GenericPage.defaultProps = {
+  isDataCircular: true,
 };
