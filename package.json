@@ -53,7 +53,7 @@
     "react-native-autocomplete-input": "^3.3.1",
     "react-native-data-table": "^0.1.5",
     "react-native-database": "^0.3.1",
-    "react-native-generic-table-page": "^0.2.9",
+    "react-native-generic-table-page": "^0.2.10",
     "react-native-localization": "^0.1.30",
     "react-native-modalbox": "^1.4.1",
     "react-native-ui-components": "^0.4.2",
