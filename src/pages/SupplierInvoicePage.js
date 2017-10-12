@@ -302,7 +302,7 @@ export class SupplierInvoicePage extends React.Component {
     return (
       <PageButton
         style={globalStyles.topButton}
-        text={buttonStrings.add_batch}
+        text={buttonStrings.new_line}
         onPress={this.openItemSelector}
         isDisabled={this.props.transaction.isFinalised}
       />
