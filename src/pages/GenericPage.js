@@ -37,8 +37,8 @@ export class GenericPage extends React.Component {
     this.props.database.removeListener(this.databaseListenerId);
   }
 
-  // Refetch data and render the list any time sync changes data displayed, or the
-  // record is finalised
+  // Refetch data and render the list any time a listener is triggered for a data type
+  // that a page subscribes to listen to or if record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     const dataTypesArray = causedBy === 'sync' ? this.props.dataTypesSynchronised
                                               : this.props.dataTypesLinked;
