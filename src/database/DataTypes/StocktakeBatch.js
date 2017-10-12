@@ -35,15 +35,21 @@ export class StocktakeBatch extends Realm.Object {
     this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
+  /**
+   * Finalising StocktakeBatch will adjust inventory appropriatly and will add
+   * new TransactionBatch in reducing or increasing Transactino for this Stocktage
+   * @param  {Realm}  database   App wide local database
+   * @param  {object} user       The user that finalised this stocktake
+   */
   finalise(database, user) {
     const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
     const inventoryAdjustement = isAddition ? this.stocktake.getAdditions(database, user)
                                             : this.stocktake.getReductions(database, user);
-
+    // Adjust inventory
     this.itemBatch.batch = this.batch;
     this.itemBatch.numberOfPacks = this.countedNumberOfPacks;
     this.itemBatch.expiryDate = this.expiryDate;
-
+    // Create TransactionItem, TransactionBatch to store inventory adjustement in this Stocktake
     const item = this.itemBatch.item;
     const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustement, item);
     const transactionBatch = createRecord(database, 'TransactionBatch',

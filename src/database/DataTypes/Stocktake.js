@@ -56,14 +56,6 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Check whether at least one stocktake item has a counted quantity set
-   * @return {boolean} True if one or more counted items, otherwise false
-   */
-  get hasSomeCountedItems() {
-    return this.items.some((stocktakeItem) => stocktakeItem.difference !== 0);
-  }
-
-  /**
    * Get any stocktake items that would cause a reduction larger than the amount
    * of available stock in inventory if it were finalised.
    * @return {array} All stocktake items that have been reduced below minimum level
@@ -80,6 +72,12 @@ export class Stocktake extends Realm.Object {
     return getTotal(this.items, 'numberOfBatches');
   }
 
+  /**
+   * Get or create reducing invoice for this stocktake
+   * @param {Realm}         database
+   * @param {Realm.Object}  user     The current user logged in
+   * @return {Realm.Object} Transaction for reduction
+   */
   getReductions(database, user) {
     if (!this.reductions) {
       this.reductions = createRecord(database, 'InventoryAdjustment', user, new Date(), false);
@@ -87,6 +85,12 @@ export class Stocktake extends Realm.Object {
     return this.reductions;
   }
 
+  /**
+   * Get or create increasing invoice for this stocktake
+   * @param {Realm}         database
+   * @param {Realm.Object}  user     The current user logged in
+   * @return {Realm.Object} Transaction for stock increase
+   */
   getAdditions(database, user) {
     if (!this.additions) {
       this.additions = createRecord(database, 'InventoryAdjustment', user, new Date(), true);
@@ -96,8 +100,8 @@ export class Stocktake extends Realm.Object {
 
   /**
    * Finalises this stocktake, creating transactions to apply the stock changes to inventory
-   * @param {Realm.Object}  user     The current user logged in
    * @param {Realm}         database App wide local database
+   * @param {Realm.Object}  user     The current user logged in
    */
   finalise(database, user) {
     this.adjustInventory(database, user);
@@ -114,19 +118,17 @@ export class Stocktake extends Realm.Object {
    * adjustment transactions.
    * @param  {Realm}  database   App wide local database
    * @param  {object} user       The user that finalised this stocktake
-   * @param  {Date}   date       The current date
-   * @return {none}
    */
   adjustInventory(database, user) {
     // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
                              .filtered('stocktake.id = $0', this.id);
-     // Delete all stocktakeBathces that have been created by stocktake
+     // Delete all StocktakeBatches that have been created by stocktake
      // but have not been changed
     database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
       stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
-    // Get all changed stocktakeBatches, and finalise them
+    // Get all changed StocktakeBatches, and finalise them
     const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
                                                       stocktakeBatch.difference !== 0);
     changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database, user));

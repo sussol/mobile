@@ -34,6 +34,12 @@ export class StocktakeItem extends Realm.Object {
     return this.item ? this.item.code : '';
   }
 
+  /**
+   * Check to see if any StocktakeBatches have adjustements
+   * this.difference maybe === 0 but batches could have been adjusted so this check
+   * is more accurate
+   * @return  {boolean} True if StocktakeBatches have adjustements
+   */
   get hasBatchWithQuantityChange() {
     return this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0);
   }
@@ -73,14 +79,25 @@ export class StocktakeItem extends Realm.Object {
            countedTotalQuantity < this.minimumTotalQuantity;
   }
 
+  /**
+   * Function is used when adjusting inventory for the StocktakeItem
+   * rather then individual StocktakeBatches. Logic:
+   * Increasing -> From latest expiry to earliest expiry StocktakeBatch, increase
+   * to the maximum of snapshot quantity, after that if still have quantity
+   * to increase, apply it to earlies expiry batch.
+   * Reducing -> From earliest expiry to latest expiry StocktakeBatch, decrease
+   * quantity by maximum === current counted quantity
+   * @param  {Realm}  database   App wide local database
+   * @param  {number} quantity   Change in StocktakeItem counted quantity
+   */
   setCountedTotalQuantity(database, quantity) {
     let difference = quantity - this.countedTotalQuantity;
     if (difference === 0) return;
 
     database.write(() => {
-      // Create batch
+      // Create a StocktakeBatch and ItemBatch if none exist
       if (this.batches.length === 0) {
-        this.addNewBatch(database);
+        this.createNewBatch(database);
       }
       const isIncreasingQuantity = difference > 0;
       const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
@@ -92,8 +109,7 @@ export class StocktakeItem extends Realm.Object {
         if (isIncreasingQuantity) {
           thisBatchChangeQuantity = Math.min(stocktakeBatch.snapshotTotalQuantity -
                                             batchTotalQuantity, difference);
-          // In-case manually entered a Actual Quantity for a batch
-          // that is above batch Snapshot Quantity
+
           if (thisBatchChangeQuantity <= 0) return false;
         } else {
           thisBatchChangeQuantity = Math.min(batchTotalQuantity, -difference);
@@ -107,7 +123,8 @@ export class StocktakeItem extends Realm.Object {
         difference -= thisBatchChangeQuantity;
         return difference === 0;
       });
-
+      // If increasing and we still have difference to add to a batch, add it to the
+      // earliest expiry batch
       if (difference > 0) {
         const earliestExpiryBatch = sortedBatches[sortedBatches.length - 1];
 
@@ -121,7 +138,7 @@ export class StocktakeItem extends Realm.Object {
     this.batches.push(stocktakeBatch);
   }
 
-  addNewBatch(database) {
+  createNewBatch(database) {
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
     createRecord(database, 'StocktakeBatch', this, itemBatch, true);
