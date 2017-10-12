@@ -70,13 +70,15 @@ export class StocktakeEditExpansion extends React.Component {
           cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== '' ?
                         stocktakeBatch[key] : '(no batch name)', // TODO: localise
         };
-      case 'countedTotalQuantity':
+      case 'countedTotalQuantity': {
+        const emptyCellContents = isEditable ? '' : tableStrings.no_change;
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch.difference === 0 ? '' :
+          cellContents: stocktakeBatch.difference === 0 ? emptyCellContents :
                         stocktakeBatch.countedTotalQuantity,
           placeholder: tableStrings.no_change,
         };
+      }
       case 'expiryDate': {
         return (
           <ExpiryTextInput
