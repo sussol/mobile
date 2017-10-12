@@ -329,7 +329,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         itemBatch: itemBatch,
         snapshotNumberOfPacks: parseNumber(record.snapshot_qty) * packSize,
         packSize: 1, // Pack to one all mobile data
-        expiry: parseDate(record.expiry),
+        expiryDate: parseDate(record.expiry),
         batch: record.Batch,
         costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
