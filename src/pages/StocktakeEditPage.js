@@ -136,7 +136,6 @@ export class StocktakeEditPage extends React.Component {
         renderCell={this.renderCell}
         renderExpansion={this.renderExpansion}
         renderTopRightComponent={this.renderManageStocktakeButton}
-        renderTopLeftComponent={this.renderLeftSize}
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
@@ -204,7 +203,6 @@ const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in erro
  * @return {string}  An error message if not able to be finalised
  */
 export function checkForFinaliseError(stocktake) {
-  if (!stocktake.hasSomeCountedItems) return modalStrings.stocktake_no_counted_items;
   const itemsBelowMinimum = stocktake.itemsBelowMinimum;
   if (itemsBelowMinimum.length > 0) {
     let errorString = modalStrings.following_items_reduced_more_than_available_stock;
