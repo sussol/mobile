@@ -51,6 +51,7 @@ export const tableStrings = new LocalizedStrings({
     their_stock: 'THEIR\nSTOCK',
   },
   gil: {
+    // TODO add: batch
     actual_quantity: 'IRAUA\nMWAITINA',
     available_stock: 'MWAITIN AE\nIAI NGKAI',
     batch_expiry: 'BANEN TAINA',
