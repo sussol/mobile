@@ -12,7 +12,7 @@ import { dataTableStyles, expansionPageStyles } from '../../globalStyles';
 import { PageButton, ExpiryTextInput, PageInfo } from '../../widgets';
 import { GenericPage } from '../GenericPage';
 import { parsePositiveInteger } from '../../utilities';
-import { tableStrings } from '../../localization';
+import { tableStrings, buttonStrings } from '../../localization';
 
 /**
 * Renders page to be displayed in StocktakeEditPage -> expansion.
@@ -99,13 +99,13 @@ export class StocktakeEditExpansion extends React.Component {
   renderAddBatchButton() {
     const addNewBatch = () => {
       this.props.database.write(() => {
-        this.item.addNewBatch(this.props.database);
+        this.item.createNewBatch(this.props.database);
       });
       this.refreshData();
     };
     return ( // TODO: localise addNewBatch
       <PageButton
-        text={'Add Batch'}
+        text={buttonStrings.add_batch}
         onPress={addNewBatch}
         isDisabled={this.item.stocktake.isFinalised}
         style={localStyles.addBatchButton}
