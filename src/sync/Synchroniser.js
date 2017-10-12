@@ -233,9 +233,6 @@ export class Synchroniser {
     const serverId = this.settings.get(SYNC_SERVER_ID);
     const authHeader = this.authenticator.getAuthHeader();
 
-    // Pull BATCH_SIZE amount of records at a time from server. Loop used instead of recursion
-    // because recursion creates a callback stack that consumes too much of device memory when
-    // syncing more than ~150,000 records (takes about 1GB of RAM).
     let waitingRecordCount = await this.getWaitingRecordCount(
       serverURL,
       thisSiteId,
@@ -243,6 +240,7 @@ export class Synchroniser {
       authHeader
     );
     let total = waitingRecordCount;
+    // Pull BATCH_SIZE amount of records at a time from server
     while (waitingRecordCount > 0) {
       // Allow total to increase in case more records are added to the server sync queue during sync
       if (waitingRecordCount > total) {
