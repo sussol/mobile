@@ -118,16 +118,18 @@ export class Stocktake extends Realm.Object {
    * @return {none}
    */
   adjustInventory(database, user) {
-    // Delete all unchanged stocktake items
-    database.delete('StocktakeItem', this.item.filter(stocktakeItem =>
-                                            stocktakeItem.hasBatchWithQuantityChange));
-    // Delete all unchanged stocktake batches
+    // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
                              .filtered('stocktake.id = $0', this.id);
+     // Delete all stocktakeBathces that have been created by stocktake
+     // but have not been changed
     database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
-                                      stocktakeBatch.difference === 0));
-    // Filtered stocktakeBatches selection should have been adjusted after delete
-    stocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database, user));
+      stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
+
+    // Get all changed stocktakeBatches, and finalise them
+    const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
+                                                      stocktakeBatch.difference !== 0);
+    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database, user));
   }
 }
 
