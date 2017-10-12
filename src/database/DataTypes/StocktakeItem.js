@@ -35,7 +35,6 @@ export class StocktakeItem extends Realm.Object {
   }
 
   get hasBatchWithQuantityChange() {
-    console.log('batch changed', this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0));
     return this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0);
   }
 
@@ -110,7 +109,7 @@ export class StocktakeItem extends Realm.Object {
       });
 
       if (difference > 0) {
-        const earliestExpiryBatch = sortedBatches[0];
+        const earliestExpiryBatch = sortedBatches[sortedBatches.length - 1];
 
         earliestExpiryBatch.countedTotalQuantity += difference;
         database.save('StocktakeBatch', earliestExpiryBatch);
