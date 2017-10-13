@@ -21,7 +21,8 @@ export const modalStrings = new LocalizedStrings({
     edit_their_reference: 'Edit their reference',
     finalise_customer_invoice: 'Finalise will lock this invoice permanently.',
     finalise_supplier_requisition: 'Finalise will send this requisition and lock it permanently.',
-    finalise_customer_requisition: 'Finalise will generate a finalised customer invoice, adjust inventory, and lock this requisition permanently.',
+    finalise_customer_requisition:
+      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this requisition permanently.',
     finalise_stocktake: 'Finalise will adjust inventory and lock this stocktake permanently.',
     finalise_supplier_invoice: 'Finalise will adjust inventory and lock this invoice permanently.',
     following_items_reduced_more_than_available_stock:
@@ -45,7 +46,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
-  gil: { // TODO add: stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier, finalise_customer_requisition
+  gil: {
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -59,6 +60,8 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Manga bita am oota',
     edit_their_reference: 'Bita ana reference number',
     finalise_customer_invoice: 'Ko aki kona n manga bita te invoice ae a tia n Finalise',
+    finalise_customer_requisition:
+      'Kamatoakin raoi te katitama inwoiti ma mwaitin bwaain aoraki ni ikotaki ma bubuti ke oota ena tia raoi ao man aki kona ni bibitaki imwin te kamatoa ke te bainaraiti',
     finalise_supplier_requisition: 'Am order ae Finalise, e nako, ao ko aki kona n bitia',
     finalise_stocktake: 'Am warebwai ae Finalise, ko aki manga kona n bitia',
     finalise_supplier_invoice: 'Am karao-oota ae Finalise, ko aki manga kona n bitia',
@@ -75,10 +78,14 @@ export const modalStrings = new LocalizedStrings({
     remove: 'Kanakoi ke kamaunai',
     search_for_an_item_to_add: 'Rinea ke kakaea aran te bwai n aoraki',
     search_for_the_customer: 'Rinea am list',
+    search_for_the_supplier: 'Kakaea am kambana n oota',
     select_a_language: 'English ke Kiribati',
     select_the_number_of_months_stock_required:
       'Rinea mwaitin te namakaina ae ko kantaningaia ibukin am stock inanon baim',
     start_typing_to_select_customer: 'Karina aran am kiriniki ke am aoraki',
+    start_typing_to_select_supplier: 'Taibinna n rinea am kambana n oota',
+    stock_quantity_greater_then_zero:
+      'Te maiti are e warekaki e na maiti riki nakon AKEA imain kamatoana',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
   tl: {
@@ -95,7 +102,8 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Hadia komentáriu iha rekuizisaun',
     edit_their_reference: 'Hadia Referensia',
     finalise_customer_invoice: "Finaliza sei xave permanente Invoice ne'e.",
-    finalise_customer_requisition: "Finaliza sei afi kliente nia kontaida ne'e, ajusta inventori, sei konfirma xafi permanente",
+    finalise_customer_requisition:
+      "Finaliza sei afi kliente nia kontaida ne'e, ajusta inventori, sei konfirma xafi permanente",
     finalise_supplier_requisition: "Finaliza sei labele edit rekuizasaun ne'eno xave permanente.",
     finalise_stocktake: "Finaliza sei ajusta inventariu no xave permanente Invoice ne'e.",
     finalise_supplier_invoice:
@@ -114,11 +122,11 @@ export const modalStrings = new LocalizedStrings({
     search_for_an_item_to_add: 'Buka-hetan sasán atu hatama',
     search_for_the_customer: 'Buka-hetan kliente',
     search_for_the_supplier: 'Buka-hetan distribuidor',
-    start_typing_to_select_supplier: "Hakerek iha ne'e atu selekta distribuidor",
-    stock_quantity_greater_then_zero: 'Kuantidade Disponivel tenki bot liu Zero antes finaliza',
     select_a_language: 'Hili lingua',
     select_the_number_of_months_stock_required: 'Hili numeru sira tuir pedidu',
     start_typing_to_select_customer: "Hakerek kliente nia naran iha ne'e",
+    start_typing_to_select_supplier: "Hakerek iha ne'e atu selekta distribuidor",
+    stock_quantity_greater_then_zero: 'Kuantidade Disponivel tenki bot liu Zero antes finaliza',
     stocktake_no_counted_items: 'La bele finaliza ajustamentu se laiha item ida priense',
   },
 });

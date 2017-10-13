@@ -10,8 +10,9 @@ export const generalStrings = new LocalizedStrings({
     stocktake: 'Stocktake',
     start_typing_to_search: 'Start typing to search',
   },
-  gil: { // TODO add: start_typing_to_search
+  gil: {
     stocktake: 'Warebwai',
+    start_typing_to_search: 'Taibinna ni kakaea',
   },
   tl: {
     stocktake: 'Ajustamentu',

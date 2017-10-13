@@ -4,6 +4,7 @@ import { generalStrings } from './generalStrings';
 import { modalStrings } from './modalStrings';
 import { navStrings } from './navStrings';
 import { pageInfoStrings } from './pageInfoStrings';
+import { syncStrings } from './syncStrings';
 import { tableStrings } from './tableStrings';
 
 export function setCurrentLanguage(language) {
@@ -14,4 +15,5 @@ export function setCurrentLanguage(language) {
   navStrings.setLanguage(language);
   pageInfoStrings.setLanguage(language);
   tableStrings.setLanguage(language);
+  syncStrings.setLanguage(language);
 }
