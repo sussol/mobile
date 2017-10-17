@@ -37,7 +37,7 @@ export class StocktakeBatch extends Realm.Object {
 
   /**
    * Finalising StocktakeBatch will adjust inventory appropriatly and will add
-   * new TransactionBatch in reducing or increasing Transactino for this Stocktage
+   * new TransactionBatch in reducing or increasing Transactino for this Stocktake
    * @param  {Realm}  database   App wide local database
    * @param  {object} user       The user that finalised this stocktake
    */

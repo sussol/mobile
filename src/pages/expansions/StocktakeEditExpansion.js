@@ -103,7 +103,7 @@ export class StocktakeEditExpansion extends React.Component {
       });
       this.refreshData();
     };
-    return ( // TODO: localise addNewBatch
+    return (
       <PageButton
         text={buttonStrings.add_batch}
         onPress={addNewBatch}
