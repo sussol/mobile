@@ -191,7 +191,8 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
     stocktake: stocktakeItem.stocktake,
     itemBatch: itemBatch,
     snapshotNumberOfPacks: numberOfPacks,
-    countedNumberOfPacks: numberOfPacks, // countedNumberOfPacks === snapshotNumberOfPacks
+    // Assume counted quantity === snapshot quantity, when StocktakeBatch is created
+    countedNumberOfPacks: numberOfPacks,
     packSize: packSize,
     expiryDate: expiryDate,
     batch: batch,

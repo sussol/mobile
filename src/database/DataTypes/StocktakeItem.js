@@ -86,7 +86,7 @@ export class StocktakeItem extends Realm.Object {
    * to the maximum of snapshot quantity, after that if still have quantity
    * to increase, apply it to first expiry batch.
    * Reducing -> From first expiry to last expiry StocktakeBatch, decrease
-   * quantity by maximum === current counted quantity
+   * quantity by maximum of current counted quantity
    * @param  {Realm}  database   App wide local database
    * @param  {number} quantity   Change in StocktakeItem counted quantity
    */
