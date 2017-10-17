@@ -16,13 +16,13 @@ import { tableStrings, buttonStrings } from '../../localization';
 
 /**
 * Renders page to be displayed in StocktakeEditPage -> expansion.
-* @prop   {Realm}               database      App wide database.
-* @state  {Realm.Results}       items         the stocktakeItems of props.stocktake.
+* @prop   {Realm}               database        App wide database.
+* @prop   {Realm.object}        stocktakeItem   The stocktakeItem, a parent of
+*                                               StocktakeBatches in this expansion
 */
 export class StocktakeEditExpansion extends React.Component {
   constructor(props) {
     super(props);
-    this.item = props.data;
     this.state = {};
     autobind(this);
   }
@@ -35,9 +35,6 @@ export class StocktakeEditExpansion extends React.Component {
           if (newCountedQuantity === null) return;
 
           stocktakeBatch.countedTotalQuantity = parsePositiveInteger(newValue);
-          // Should refresh StocktakeEditPage, because no changes are made to
-          // StocktakeItem object, but countedTotalQuantity getter result will be different
-          this.props.refreshParent();
           break;
         }
         case 'batch': {
@@ -51,16 +48,17 @@ export class StocktakeEditExpansion extends React.Component {
         default:
           break;
       }
-      this.props.database.save('stocktakeBatch', stocktakeBatch);
+      this.props.database.save('StocktakeBatch', stocktakeBatch);
     });
   }
 
   refreshData() {
-    this.setState({ data: this.item.batches });
+    this.setState({ data: this.props.stocktakeItem.batches });
   }
 
   renderCell(key, stocktakeBatch) {
-    const isEditable = !this.item.stocktake.isFinalised;
+    const { stocktake } = this.props.stocktakeItem;
+    const isEditable = !stocktake.isFinalised;
     switch (key) {
       default:
         return {
@@ -99,9 +97,10 @@ export class StocktakeEditExpansion extends React.Component {
   }
 
   renderAddBatchButton() {
+    const { stocktakeItem } = this.props;
     const addNewBatch = () => {
       this.props.database.write(() => {
-        this.item.createNewBatch(this.props.database);
+        stocktakeItem.createNewBatch(this.props.database);
       });
       this.refreshData();
     };
@@ -109,7 +108,7 @@ export class StocktakeEditExpansion extends React.Component {
       <PageButton
         text={buttonStrings.add_batch}
         onPress={addNewBatch}
-        isDisabled={this.item.stocktake.isFinalised}
+        isDisabled={stocktakeItem.stocktake.isFinalised}
         style={localStyles.addBatchButton}
       />
     );
@@ -124,7 +123,7 @@ export class StocktakeEditExpansion extends React.Component {
       [
         {
           title: 'By Batch:',
-          info: this.item.item.name,
+          info: this.props.stocktakeItem.item.name,
         },
       ],
     ];
@@ -193,8 +192,7 @@ export class StocktakeEditExpansion extends React.Component {
 StocktakeEditExpansion.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
-  data: PropTypes.object.isRequired,
-  refreshParent: PropTypes.func.isRequired,
+  stocktakeItem: PropTypes.object.isRequired,
 };
 
 const unwrapText = (text) => text.replace(/\n/g, ' ');

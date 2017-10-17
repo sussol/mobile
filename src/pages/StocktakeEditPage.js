@@ -123,7 +123,6 @@ export class StocktakeEditPage extends React.Component {
         data={item}
         database={this.props.database}
         genericTablePageStyles={this.props.genericTablePageStyles}
-        refreshParent={this.refreshData}
       />
     );
   }
@@ -176,6 +175,7 @@ export class StocktakeEditPage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        dataTypesLinked={['StocktakeBatch']}
         finalisableDataType={'Stocktake'}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
