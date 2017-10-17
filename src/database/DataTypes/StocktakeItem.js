@@ -38,7 +38,7 @@ export class StocktakeItem extends Realm.Object {
    * Check to see if any StocktakeBatches have been adjusted for this StocktakeItem
    * Will return true if any StocktakeBatches were changed, even if net quantity change
    * for StocktakeItem is 0.
-   * @return  {boolean} True if StocktakeBatches have adjustements
+   * @return  {boolean} True if StocktakeBatches have adjustments
    */
   get hasBatchWithQuantityChange() {
     return this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0);
