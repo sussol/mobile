@@ -41,10 +41,10 @@ export class StocktakeBatch extends Realm.Object {
    * @param  {Realm}  database   App wide local database
    * @param  {object} user       The user that finalised this stocktake
    */
-  finalise(database, user) {
+  finalise(database) {
     const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
-    const inventoryAdjustement = isAddition ? this.stocktake.getAdditions(database, user)
-                                            : this.stocktake.getReductions(database, user);
+    const inventoryAdjustement = isAddition ? this.stocktake.getAdditions(database)
+                                            : this.stocktake.getReductions(database);
     // Adjust inventory
     this.itemBatch.batch = this.batch;
     this.itemBatch.numberOfPacks = this.countedNumberOfPacks;

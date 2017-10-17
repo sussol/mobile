@@ -78,9 +78,10 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  user     The current user logged in
    * @return {Realm.Object} Transaction for reduction
    */
-  getReductions(database, user) {
+  getReductions(database) {
     if (!this.reductions) {
-      this.reductions = createRecord(database, 'InventoryAdjustment', user, new Date(), false);
+      this.reductions = createRecord(database, 'InventoryAdjustment',
+                                     this.finalisedBy, this.stocktakeDate, false);
     }
     return this.reductions;
   }
@@ -91,9 +92,10 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  user     The current user logged in
    * @return {Realm.Object} Transaction for stock increase
    */
-  getAdditions(database, user) {
+  getAdditions(database) {
     if (!this.additions) {
-      this.additions = createRecord(database, 'InventoryAdjustment', user, new Date(), true);
+      this.additions = createRecord(database, 'InventoryAdjustment',
+                                    this.finalisedBy, this.stocktakeDate, true);
     }
     return this.additions;
   }
@@ -104,11 +106,12 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  user     The current user logged in
    */
   finalise(database, user) {
-    this.adjustInventory(database, user);
-
     // Set the stocktake finalise details
     this.finalisedBy = user;
     this.stocktakeDate = new Date();
+    // Ajust stocktake inventory
+    this.adjustInventory(database, user);
+
     this.status = 'finalised';
     database.save('Stocktake', this);
   }
@@ -119,7 +122,7 @@ export class Stocktake extends Realm.Object {
    * @param  {Realm}  database   App wide local database
    * @param  {object} user       The user that finalised this stocktake
    */
-  adjustInventory(database, user) {
+  adjustInventory(database) {
     // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
                              .filtered('stocktake.id = $0', this.id);
@@ -131,7 +134,7 @@ export class Stocktake extends Realm.Object {
     // Get all changed StocktakeBatches, and finalise them
     const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
                                                       stocktakeBatch.difference !== 0);
-    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database, user));
+    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
   }
 }
 
