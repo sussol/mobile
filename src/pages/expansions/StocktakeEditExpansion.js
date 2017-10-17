@@ -35,6 +35,8 @@ export class StocktakeEditExpansion extends React.Component {
           if (newCountedQuantity === null) return;
 
           stocktakeBatch.countedTotalQuantity = parsePositiveInteger(newValue);
+          // Should refresh StocktakeEditPage, because no changes are made to
+          // StocktakeItem object, but countedTotalQuantity getter result will be different
           this.props.refreshParent();
           break;
         }
