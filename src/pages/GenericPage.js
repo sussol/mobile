@@ -41,7 +41,7 @@ export class GenericPage extends React.Component {
   // that a page subscribes to listen to or if record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     const dataTypesArray = causedBy === 'sync' ? this.props.dataTypesSynchronised
-                                              : this.props.dataTypesLinked;
+                                               : this.props.dataTypesLinked;
     if ((dataTypesArray && dataTypesArray.indexOf(recordType) >= 0) ||
         (recordType === this.props.finalisableDataType && record.isFinalised)) {
       this.props.refreshData();
