@@ -14,6 +14,9 @@ import { GenericTablePage } from 'react-native-generic-table-page';
 * @prop  {array}  dataTypesSynchronised      Data types visible in the table displayed
 *         																		 on this page, that should therefore cause
 *         																		 an update if changed by sync
+* @prop  {array}  dataTypesLiked            Data types visible in the table displayed
+*         																		 on this page, that should therefore cause
+*         																		 an update if changed somewhere rather then sync
 * @prop  {string} finalisableDataType        The data type that can be finalised on this
 *         																		 page, that should therefore cause an update
 *         																		 if changed by being finalised
