@@ -38,8 +38,10 @@ export class StocktakeEditExpansion extends React.Component {
           break;
         }
         case 'batch': {
-          if (!newValue || newValue === '') return;
-          stocktakeBatch.batch = newValue;
+          if (!newValue || newValue === '' ||
+              newValue === `(${tableStrings.no_batch_name})`) {
+            stocktakeBatch.batch = '';
+          } else stocktakeBatch.batch = newValue;
           break;
         }
         case 'expiryDate':
@@ -68,7 +70,7 @@ export class StocktakeEditExpansion extends React.Component {
         return {
           type: isEditable ? 'editable' : 'text',
           cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== '' ?
-                        stocktakeBatch[key] : '(no batch name)', // TODO: localise
+                        stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
         };
       case 'countedTotalQuantity': {
         const emptyCellContents = isEditable ? '' : tableStrings.no_change;

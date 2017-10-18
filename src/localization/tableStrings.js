@@ -32,6 +32,7 @@ export const tableStrings = new LocalizedStrings({
     items: 'ITEMS',
     monthly_usage: 'MONTHLY\nUSE',
     name: 'NAME',
+    no_batch_name: 'no batch name',
     no_change: 'No change',
     number_of_batches: 'Number of batches',
     number_received: 'NUMBER RECEIVED',
@@ -51,7 +52,7 @@ export const tableStrings = new LocalizedStrings({
     their_stock: 'THEIR\nSTOCK',
   },
   gil: {
-    // TODO add: batch
+    // TODO add: batch, no_batch_name
     actual_quantity: 'IRAUA\nMWAITINA',
     available_stock: 'MWAITIN AE\nIAI NGKAI',
     batch_expiry: 'BANEN TAINA',
@@ -95,7 +96,7 @@ export const tableStrings = new LocalizedStrings({
     their_stock: 'AIA BWAI\nN AORAKI',
   },
   tl: {
-    // TODO add: batch
+    // TODO add: batch, no_batch_name
     actual_quantity: 'ATUÁL\nKUANTIDADE',
     available_stock: 'SASÁN DISPONIVEL',
     batch_expiry: 'PRAZU SASAN',
