@@ -95,6 +95,11 @@ export class StocktakeEditExpansion extends React.Component {
           />
         );
       }
+      case 'difference': {
+        const difference = stocktakeBatch.difference;
+        const prefix = difference > 0 ? '+' : '';
+        return { cellContents: `${prefix}${difference}` };
+      }
     }
   }
 

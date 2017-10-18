@@ -68,6 +68,10 @@ export class Stocktake extends Realm.Object {
     return itemsBelowMinimum;
   }
 
+  get hasSomeCountedItems() {
+    return this.items.some(item => item.hasBatchWithQuantityChange);
+  }
+
   get numberOfBatches() {
     return getTotal(this.items, 'numberOfBatches');
   }
@@ -123,17 +127,20 @@ export class Stocktake extends Realm.Object {
    * @param  {object} user       The user that finalised this stocktake
    */
   adjustInventory(database) {
+    // Prune all StocktakeItems with no quantity change
+    database.delete('StocktakeItem', this.items.filter(stocktakeItem =>
+                                     !stocktakeItem.hasBatchWithQuantityChange));
     // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
                              .filtered('stocktake.id = $0', this.id);
-     // Delete all StocktakeBatches that have been created by stocktake
+     // Delete all 'fresh' StocktakeBatches that have been created by stocktake
      // but have not been changed
     database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
-      stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
+        stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
-    // Get all changed StocktakeBatches, and finalise them
+    // Apply inventory adjustement to remaining StocktakeBatches
     const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
-                                                      stocktakeBatch.difference !== 0);
+                                    stocktakeBatch.difference !== 0);
     changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
   }
 }

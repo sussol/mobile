@@ -87,15 +87,12 @@ export class StocktakeEditPage extends React.Component {
     switch (key) {
       default:
         return item[key];
-      case 'countedTotalQuantity': {
-        const emptyCellContents = isEditable ? '' : tableStrings.no_change;
+      case 'countedTotalQuantity':
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: item.hasBatchWithQuantityChange ?
-                        item.countedTotalQuantity : emptyCellContents,
+          cellContents: item.hasBatchWithQuantityChange ? item.countedTotalQuantity : '',
           placeholder: tableStrings.no_change,
         };
-      }
       case 'difference': {
         const difference = item.difference;
         const prefix = difference > 0 ? '+' : '';
@@ -117,10 +114,10 @@ export class StocktakeEditPage extends React.Component {
     );
   }
 
-  renderExpansion(item) {
+  renderExpansion(stocktakeItem) {
     return (
       <StocktakeEditExpansion
-        data={item}
+        stocktakeItem={stocktakeItem}
         database={this.props.database}
         genericTablePageStyles={this.props.genericTablePageStyles}
       />
@@ -203,6 +200,7 @@ const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in erro
  * @return {string}  An error message if not able to be finalised
  */
 export function checkForFinaliseError(stocktake) {
+  if (!stocktake.hasSomeCountedItems) return modalStrings.stocktake_no_counted_items;
   const itemsBelowMinimum = stocktake.itemsBelowMinimum;
   if (itemsBelowMinimum.length > 0) {
     let errorString = modalStrings.following_items_reduced_more_than_available_stock;
