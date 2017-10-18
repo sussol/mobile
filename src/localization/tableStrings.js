@@ -33,7 +33,7 @@ export const tableStrings = new LocalizedStrings({
     monthly_usage: 'MONTHLY\nUSE',
     name: 'NAME',
     no_batch_name: 'no batch name',
-    no_change: 'No Change',
+    not_counted: 'Not Counted',
     number_of_batches: 'Number of batches',
     number_received: 'NUMBER RECEIVED',
     number_sent: 'NUMBER SENT',
@@ -53,6 +53,7 @@ export const tableStrings = new LocalizedStrings({
   },
   gil: {
     // TODO add: batch, no_batch_name
+    // TODO re-translate: not_counted
     actual_quantity: 'IRAUA\nMWAITINA',
     available_stock: 'MWAITIN AE\nIAI NGKAI',
     batch_expiry: 'BANEN TAINA',
@@ -77,7 +78,7 @@ export const tableStrings = new LocalizedStrings({
     items: 'ITEMS',
     monthly_usage: 'MONTHLY USE',
     name: 'ARANA',
-    no_change: 'Akea te bitaki',
+    not_counted: 'Akea te bitaki',
     number_of_batches: 'Mwatin taian batch',
     number_received: 'MWAITIN AE REKE RAOI',
     number_sent: 'MWAITIN AE KANAKOAKI',
@@ -97,6 +98,7 @@ export const tableStrings = new LocalizedStrings({
   },
   tl: {
     // TODO add: batch, no_batch_name
+    // TODO re-translate: not_counted
     actual_quantity: 'ATUÁL\nKUANTIDADE',
     available_stock: 'SASÁN DISPONIVEL',
     batch_expiry: 'PRAZU SASAN',
@@ -121,7 +123,7 @@ export const tableStrings = new LocalizedStrings({
     items: 'ITEMS',
     monthly_usage: 'KONSUMU\nMENSAL',
     name: 'NARAN',
-    no_change: "Prense iha ne'e",
+    not_counted: "Prense iha ne'e",
     number_of_batches: 'Numeru-Batch',
     number_received: 'Qtd. SIMU',
     number_sent: 'Qtd. HARUKA MAI',
