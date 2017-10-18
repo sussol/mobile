@@ -8,16 +8,16 @@ import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 import { View } from 'react-native';
 
-import { GenericPage } from './GenericPage';
-import globalStyles from '../globalStyles';
-import { formatDate, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import { GenericPage } from '../GenericPage';
+import globalStyles from '../../globalStyles';
+import { formatDate, sortDataBy } from '../../utilities';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../../localization';
 import {
   PageButton,
   PageInfo,
   PageContentModal,
   TextEditor,
-} from '../widgets';
+} from '../../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {

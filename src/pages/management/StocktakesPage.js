@@ -7,11 +7,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 
-import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
-import globalStyles from '../globalStyles';
-import { GenericPage } from './GenericPage';
-import { formatStatus } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { PageButton, BottomConfirmModal, ToggleBar } from '../../widgets';
+import globalStyles from '../../globalStyles';
+import { GenericPage } from '../GenericPage';
+import { formatStatus } from '../../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 

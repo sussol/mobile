@@ -12,12 +12,12 @@ import {
 } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
-import { BottomModal, TextInput, ToggleBar } from '../widgets';
-import globalStyles from '../globalStyles';
-import { GenericPage } from './GenericPage';
-import { createRecord } from '../database';
-import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
-import { formatDateAndTime } from '../utilities';
+import { BottomModal, TextInput, ToggleBar } from '../../widgets';
+import globalStyles from '../../globalStyles';
+import { GenericPage } from '../GenericPage';
+import { createRecord } from '../../database';
+import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../../localization';
+import { formatDateAndTime } from '../../utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 

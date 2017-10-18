@@ -10,11 +10,11 @@ import {
   View,
 } from 'react-native';
 
-import { GenericPage } from './GenericPage';
-import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { createRecord } from '../database';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import { GenericPage } from '../GenericPage';
+import globalStyles from '../../globalStyles';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../../utilities';
+import { createRecord } from '../../database';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -22,7 +22,7 @@ import {
   PageContentModal,
   PageInfo,
   TextEditor,
-} from '../widgets';
+} from '../../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {

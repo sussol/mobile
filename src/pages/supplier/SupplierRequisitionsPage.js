@@ -7,11 +7,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 
-import { createRecord } from '../database';
-import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
-import { GenericPage } from './GenericPage';
-import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { createRecord } from '../../database';
+import { BottomConfirmModal, PageButton, SelectModal } from '../../widgets';
+import { GenericPage } from '../GenericPage';
+import { formatStatus, sortDataBy } from '../../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 

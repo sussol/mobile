@@ -8,12 +8,12 @@ import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 import { View } from 'react-native';
 
-import { GenericPage } from './GenericPage';
-import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { createRecord } from '../database';
+import { GenericPage } from '../GenericPage';
+import globalStyles from '../../globalStyles';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../../utilities';
+import { createRecord } from '../../database';
 import { SETTINGS_KEYS } from '../settings';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -22,7 +22,7 @@ import {
   PageContentModal,
   TextEditor,
   ToggleSelector,
-} from '../widgets';
+} from '../../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {

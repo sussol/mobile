@@ -7,10 +7,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
-import { PageButton } from '../widgets';
-import { GenericPage } from './GenericPage';
-import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { PageButton } from '../../widgets';
+import { GenericPage } from '../GenericPage';
+import { parsePositiveInteger, truncateString, sortDataBy } from '../../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 

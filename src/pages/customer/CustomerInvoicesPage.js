@@ -3,30 +3,31 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+
 import React from 'react';
-import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
-import { GenericPage } from './GenericPage';
-import { createRecord } from '../database';
-import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { BottomConfirmModal, PageButton, SelectModal } from '../../widgets';
+import { GenericPage } from '../GenericPage';
+import { createRecord } from '../../database';
+import { formatStatus, sortDataBy } from '../../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**
-* Renders the page for displaying SupplierInvoices.
+* Renders the page for displaying CustomerInvoices.
 * @prop   {Realm}               database      App wide database.
 * @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
+* @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
 */
-export class SupplierInvoicesPage extends React.Component {
+export class CustomerInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      transactions: props.database.objects('SupplierInvoice'),
-      isCreatingInvoice: false,
+      transactions: props.database.objects('CustomerInvoice'),
       selection: [],
+      isCreatingInvoice: false,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -36,6 +37,15 @@ export class SupplierInvoicesPage extends React.Component {
     autobind(this);
   }
 
+  onNewInvoice(otherParty) {
+    const { database, currentUser } = this.props;
+    let invoice;
+    database.write(() => {
+      invoice = createRecord(database, 'CustomerInvoice', otherParty, currentUser);
+    });
+    this.navigateToInvoice(invoice);
+  }
+
   onDeleteConfirm() {
     const { selection, transactions } = this.state;
     const { database } = this.props;
@@ -43,55 +53,49 @@ export class SupplierInvoicesPage extends React.Component {
       const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const transaction = transactions.find(currentTransaction =>
-          currentTransaction.id === selection[i]);
+                                                currentTransaction.id === selection[i]);
         if (transaction.isValid() && !transaction.isFinalised) {
           transactionsToDelete.push(transaction);
         }
       }
       database.delete('Transaction', transactionsToDelete);
     });
-    this.setState({ selection: [] }, this.refreshData);
+    this.setState({ selection: [] });
+    this.refreshData();
   }
 
   onDeleteCancel() {
-    this.setState({ selection: [] }, this.refreshData);
-  }
-
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
+    this.setState({ selection: [] });
+    this.refreshData();
   }
 
   onRowPress(invoice) {
     this.navigateToInvoice(invoice);
   }
 
-  /**
-   * Create new Supplier Invoice and takes user to the editing SI page
-   */
-  onNewSupplierInvoice(otherParty) {
-    const { database, currentUser } = this.props;
-    let invoice;
-    database.write(() => {
-      invoice = createRecord(database, 'SupplierInvoice', otherParty, currentUser);
+  onSelectionChange(newSelection) {
+    this.setState({
+      selection: newSelection,
     });
-    this.navigateToInvoice(invoice);
   }
 
   navigateToInvoice(invoice) {
-    // For a supplier invoice to be opened for in the supplier invoice page, we need it to be
-    // either new or finalised, but not confirmed - if someone were to reduce the amount of stock on
-    // a confirmed supplier invoice, but it had already been issued in a customer invoice, we would
-    // have to deal with a tricky situation. We create supplier invoices with the status 'new', and
-    // then jump to 'finalised', so this is in case a 'cn' invoice came in through sync (an anomaly)
-    if (invoice.isConfirmed) {
+    // For a customer invoice to be opened for editing in the customer invoice page, we need it to
+    // be confirmed, otherwise we could end up in with more of a paticular item being issued across
+    // multiple invoices than is available. We generally create customer invoices with the status
+    // confirmed, so this is in case a 'nw' or 'sg' invoice came in through sync (i.e. an anomaly)
+    if (!invoice.isConfirmed && !invoice.isFinalised) {
       this.props.database.write(() => {
-        invoice.finalise(this.props.database);
+        invoice.confirm(this.props.database);
         this.props.database.save('Transaction', invoice);
       });
     }
-    this.props.navigateTo('supplierInvoice', `${navStrings.invoice} ${invoice.serialNumber}`, {
-      transaction: invoice,
-    });
+    this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
+    this.props.navigateTo(
+      'customerInvoice',
+      `${navStrings.invoice} ${invoice.serialNumber}`,
+      { transaction: invoice },
+    );
   }
 
   updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
@@ -107,9 +111,17 @@ export class SupplierInvoicesPage extends React.Component {
   refreshData(newSearchTerm, newSortBy, newIsAscending) {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
+
+    const data = this.state.transactions.filtered(
+      'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
+      searchTerm
+    );
+
     let sortDataType;
     switch (sortBy) {
+      case 'otherPartyName':
+        sortDataType = 'string';
+        break;
       case 'serialNumber':
         sortDataType = 'number';
         break;
@@ -129,11 +141,11 @@ export class SupplierInvoicesPage extends React.Component {
         return formatStatus(invoice.status);
       case 'entryDate':
         return invoice.entryDate.toDateString();
-      case 'remove':
+      case 'delete':
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
-          isDisabled: invoice.isFinalised || !invoice.isExternalSupplierInvoice,
+          isDisabled: invoice.isFinalised || invoice.isLinkedToRequisition,
         };
     }
   }
@@ -141,7 +153,7 @@ export class SupplierInvoicesPage extends React.Component {
   renderNewInvoiceButton() {
     return (
       <PageButton
-        text={buttonStrings.new_supplier_invoice}
+        text={buttonStrings.new_invoice}
         onPress={() => this.setState({ isCreatingInvoice: true })}
       />
     );
@@ -168,7 +180,7 @@ export class SupplierInvoicesPage extends React.Component {
           {
             key: 'otherPartyName',
             width: 2.5,
-            title: tableStrings.supplier,
+            title: tableStrings.customer,
             sortable: true,
           },
           {
@@ -190,9 +202,9 @@ export class SupplierInvoicesPage extends React.Component {
             lines: 2,
           },
           {
-            key: 'remove',
+            key: 'delete',
             width: 1,
-            title: tableStrings.remove,
+            title: tableStrings.delete,
             alignText: 'center',
           },
         ]}
@@ -204,33 +216,34 @@ export class SupplierInvoicesPage extends React.Component {
       >
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0}
-          questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.remove}
+          questionText={modalStrings.delete_these_invoices}
+          onCancel={this.onDeleteCancel}
+          onConfirm={this.onDeleteConfirm}
+          confirmText={modalStrings.delete}
         />
         <SelectModal
           isOpen={this.state.isCreatingInvoice}
-          options={this.props.database.objects('ExternalSupplier')}
-          placeholderText={modalStrings.start_typing_to_select_supplier}
+          options={this.props.database.objects('Customer')}
+          placeholderText={modalStrings.start_typing_to_select_customer}
           queryString={'name BEGINSWITH[c] $0'}
           sortByString={'name'}
           onSelect={name => {
-            this.onNewSupplierInvoice(name);
+            this.onNewInvoice(name);
             this.setState({ isCreatingInvoice: false });
           }}
           onClose={() => this.setState({ isCreatingInvoice: false })}
-          title={modalStrings.search_for_the_supplier}
+          title={modalStrings.search_for_the_customer}
         />
       </GenericPage>
     );
   }
 }
 
-SupplierInvoicesPage.propTypes = {
+CustomerInvoicesPage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   database: PropTypes.object,
   navigateTo: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
 };

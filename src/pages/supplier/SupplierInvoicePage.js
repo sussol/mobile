@@ -10,11 +10,11 @@ import {
   formatDate,
   parsePositiveFloat,
   sortDataBy,
-} from '../utilities';
-import { createRecord } from '../database';
-import { GenericPage } from './GenericPage';
-import globalStyles, { dataTableStyles } from '../globalStyles';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+} from '../../utilities';
+import { createRecord } from '../../database';
+import { GenericPage } from '../GenericPage';
+import globalStyles, { dataTableStyles } from '../../globalStyles';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -23,7 +23,7 @@ import {
   PageInfo,
   TextEditor,
   ExpiryTextInput,
-} from '../widgets';
+} from '../../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 

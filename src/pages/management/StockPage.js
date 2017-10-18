@@ -7,11 +7,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
-import { GenericPage } from './GenericPage';
-import { PageInfo } from '../widgets';
-import { dataTableStyles } from '../globalStyles';
-import { formatExpiryDate, sortDataBy } from '../utilities';
-import { tableStrings } from '../localization';
+import { GenericPage } from '../GenericPage';
+import { PageInfo } from '../../widgets';
+import { dataTableStyles } from '../../globalStyles';
+import { formatExpiryDate, sortDataBy } from '../../utilities';
+import { tableStrings } from '../../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 
