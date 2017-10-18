@@ -33,7 +33,7 @@ export const tableStrings = new LocalizedStrings({
     monthly_usage: 'MONTHLY\nUSE',
     name: 'NAME',
     no_batch_name: 'no batch name',
-    no_change: 'No change',
+    no_change: 'No Change',
     number_of_batches: 'Number of batches',
     number_received: 'NUMBER RECEIVED',
     number_sent: 'NUMBER SENT',
