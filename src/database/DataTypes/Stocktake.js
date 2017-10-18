@@ -113,7 +113,7 @@ export class Stocktake extends Realm.Object {
     // Set the stocktake finalise details
     this.finalisedBy = user;
     this.stocktakeDate = new Date();
-    // Ajust stocktake inventory
+    // Adjust stocktake inventory
     this.adjustInventory(database, user);
 
     this.status = 'finalised';
