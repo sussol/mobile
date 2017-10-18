@@ -90,8 +90,8 @@ export class StocktakeEditPage extends React.Component {
       case 'countedTotalQuantity':
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: item.hasBatchWithQuantityChange ? item.countedTotalQuantity : '',
-          placeholder: tableStrings.no_change,
+          cellContents: item.hasCountedBatches ? item.countedTotalQuantity : '',
+          placeholder: tableStrings.not_counted,
         };
       case 'difference': {
         const difference = item.difference;

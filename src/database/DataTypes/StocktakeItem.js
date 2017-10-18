@@ -44,6 +44,10 @@ export class StocktakeItem extends Realm.Object {
     return this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0);
   }
 
+  get hasCountedBatches() {
+    return this.batches.some(stocktakeBatch => stocktakeBatch.hasBeenCounted);
+  }
+
   get numberOfBatches() {
     return this.batches.length;
   }

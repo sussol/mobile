@@ -73,11 +73,11 @@ export class StocktakeEditExpansion extends React.Component {
                         stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
         };
       case 'countedTotalQuantity': {
-        const emptyCellContents = isEditable ? '' : tableStrings.no_change;
+        const emptyCellContents = isEditable ? '' : tableStrings.not_counted;
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch.difference === 0 ? emptyCellContents :
-                        stocktakeBatch.countedTotalQuantity,
+          cellContents: stocktakeBatch.hasBeenCounted ?
+                        stocktakeBatch.countedTotalQuantity : emptyCellContents,
           placeholder: tableStrings.no_change,
         };
       }
