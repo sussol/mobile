@@ -5,28 +5,28 @@
 
 import React from 'react';
 
-import { CustomerInvoicePage } from './CustomerInvoicePage';
-import { CustomerInvoicesPage } from './CustomerInvoicesPage';
+import { CustomerInvoicePage } from './customer/CustomerInvoicePage';
+import { CustomerInvoicesPage } from './customer/CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
-import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
+import { CustomerRequisitionsPage } from './customer/CustomerRequisitionsPage';
 import { CustomerRequisitionPage,
          checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
-       } from './CustomerRequisitionPage';
-import { StockPage } from './StockPage';
+       } from './customer/CustomerRequisitionPage';
+import { StockPage } from './management/StockPage';
 import { StocktakeEditPage,
          checkForFinaliseError as checkForStocktakeFinaliseError,
-       } from './StocktakeEditPage';
-import { StocktakeManagePage } from './StocktakeManagePage';
-import { StocktakesPage } from './StocktakesPage';
+       } from './management/StocktakeEditPage';
+import { StocktakeManagePage } from './management/StocktakeManagePage';
+import { StocktakesPage } from './management/StocktakesPage';
 import { SupplierInvoicePage,
          checkForFinaliseError as checkForSupplierInvoiceError,
-        } from './SupplierInvoicePage';
-import { SupplierInvoicesPage } from './SupplierInvoicesPage';
-import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
+        } from './supplier/SupplierInvoicePage';
+import { SupplierInvoicesPage } from './supplier/SupplierInvoicesPage';
+import { SupplierRequisitionsPage } from './supplier/SupplierRequisitionsPage';
 import { SupplierRequisitionPage,
          checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
-       } from './SupplierRequisitionPage';
+       } from './supplier/SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
