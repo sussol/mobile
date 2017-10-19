@@ -27,6 +27,7 @@ import { SupplierRequisitionsPage } from './supplier/SupplierRequisitionsPage';
 import { SupplierRequisitionPage,
          checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
        } from './supplier/SupplierRequisitionPage';
+import { ReportsDashboardPage } from './management/ReportsDashboardPage';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
@@ -37,6 +38,7 @@ export const PAGES = {
   customerRequisitions: (props) => <PageContainer page={CustomerRequisitionsPage} {...props} />,
   menu: (props) => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: (props) => <PageContainer page={RealmExplorer} {...props} />,
+  reports: (props) => <PageContainer page={ReportsDashboardPage} {...props} />,  
   root: (props) => <PageContainer page={MenuPage} {...props} />,
   stock: (props) => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: (props) => <PageContainer page={StocktakeEditPage} {...props} />,

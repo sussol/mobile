@@ -114,6 +114,12 @@ export class MenuPage extends React.Component {
               text={navStrings.stocktakes}
               onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
             />
+            <Button
+              style={globalStyles.menuButton}
+              textStyle={globalStyles.menuButtonText}
+              text={navStrings.reports}
+              onPress={() => navigateTo('reports', navStrings.reports)}
+            />
           </View>
         </View>
         <View style={globalStyles.bottomContainer}>
