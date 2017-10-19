@@ -82,19 +82,19 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  renderCell(key, item) {
+  renderCell(key, stocktakeItem) {
     const isEditable = !this.props.stocktake.isFinalised;
     switch (key) {
       default:
-        return item[key];
+        return stocktakeItem[key];
       case 'countedTotalQuantity':
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: item.hasCountedBatches ? item.countedTotalQuantity : '',
+          cellContents: stocktakeItem.hasCountedBatches ? stocktakeItem.countedTotalQuantity : '',
           placeholder: tableStrings.not_counted,
         };
       case 'difference': {
-        const difference = item.difference;
+        const difference = stocktakeItem.difference;
         const prefix = difference > 0 ? '+' : '';
         return { cellContents: `${prefix}${difference}` };
       }
