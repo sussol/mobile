@@ -1,6 +1,6 @@
 import Realm from 'realm';
 
-import { getTotal } from '../utilities';
+import { getTotal, createRecord } from '../utilities';
 
 export class StocktakeItem extends Realm.Object {
   destructor(database) {
@@ -14,6 +14,14 @@ export class StocktakeItem extends Realm.Object {
     return getTotal(this.batches, 'snapshotTotalQuantity');
   }
 
+  get countedTotalQuantity() {
+    return getTotal(this.batches, 'countedTotalQuantity');
+  }
+
+  get difference() {
+    return getTotal(this.batches, 'difference');
+  }
+
   get itemId() {
     return this.item ? this.item.id : '';
   }
@@ -24,6 +32,20 @@ export class StocktakeItem extends Realm.Object {
 
   get itemCode() {
     return this.item ? this.item.code : '';
+  }
+
+  /**
+   * Check to see if any StocktakeBatches have been adjusted for this StocktakeItem
+   * Will return true if any StocktakeBatches were changed, even if net quantity change
+   * for StocktakeItem is 0.
+   * @return  {boolean} True if StocktakeBatches have adjustments
+   */
+  get hasBatchWithQuantityChange() {
+    return this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0);
+  }
+
+  get hasCountedBatches() {
+    return this.batches.some(stocktakeBatch => stocktakeBatch.hasBeenCounted);
   }
 
   get numberOfBatches() {
@@ -55,48 +77,75 @@ export class StocktakeItem extends Realm.Object {
    * @return {Boolean} Whether the counted quantity is below the minimum for this item
    */
   get isReducedBelowMinimum() {
-    return this.countedTotalQuantity !== undefined &&
-           this.countedTotalQuantity !== null &&
-           this.countedTotalQuantity < this.minimumTotalQuantity;
+    const countedTotalQuantity = this.countedTotalQuantity;
+    return countedTotalQuantity !== undefined &&
+           countedTotalQuantity !== null &&
+           countedTotalQuantity < this.minimumTotalQuantity;
+  }
+
+  /**
+   * Function is used when adjusting inventory for the StocktakeItem
+   * rather then individual StocktakeBatches. Logic:
+   * Increasing -> From last expiry to first expiry StocktakeBatch, increase
+   * to the maximum of snapshot quantity, after that if still have quantity
+   * to increase, apply it to first expiry batch.
+   * Reducing -> From first expiry to last expiry StocktakeBatch, decrease
+   * quantity by maximum of current counted quantity
+   * @param  {Realm}  database   App wide local database
+   * @param  {number} quantity   Change in StocktakeItem counted quantity
+   */
+  setCountedTotalQuantity(database, quantity) {
+    let difference = quantity - this.countedTotalQuantity;
+    if (difference === 0) return;
+
+    database.write(() => {
+      // Create a StocktakeBatch and ItemBatch if none exist
+      if (this.batches.length === 0) {
+        this.createNewBatch(database);
+      }
+      const isIncreasingQuantity = difference > 0;
+      const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
+
+      sortedBatches.some(stocktakeBatch => {
+        const batchTotalQuantity = stocktakeBatch.countedTotalQuantity;
+
+        let thisBatchChangeQuantity = 0;
+        if (isIncreasingQuantity) {
+          thisBatchChangeQuantity = Math.min(stocktakeBatch.snapshotTotalQuantity -
+                                            batchTotalQuantity, difference);
+
+          if (thisBatchChangeQuantity <= 0) return false;
+        } else {
+          thisBatchChangeQuantity = Math.min(batchTotalQuantity, -difference);
+          thisBatchChangeQuantity = -thisBatchChangeQuantity;
+        }
+
+        stocktakeBatch.countedTotalQuantity = batchTotalQuantity + thisBatchChangeQuantity;
+
+        database.save('StocktakeBatch', stocktakeBatch);
+
+        difference -= thisBatchChangeQuantity;
+        return difference === 0;
+      });
+      // If increasing and we still have difference to add to a batch, add it to the
+      // earliest expiry batch
+      if (difference > 0) {
+        const earliestExpiryBatch = sortedBatches[sortedBatches.length - 1];
+
+        earliestExpiryBatch.countedTotalQuantity += difference;
+        database.save('StocktakeBatch', earliestExpiryBatch);
+      }
+    });
   }
 
   addBatch(stocktakeBatch) {
     this.batches.push(stocktakeBatch);
-    if (!this.countedTotalQuantity) this.countedTotalQuantity = stocktakeBatch.countedTotalQuantity;
-    else this.countedTotalQuantity += stocktakeBatch.countedTotalQuantity;
   }
 
-  /**
-   * Applies the adjustments to batches in the given transaction item to the batches
-   * in this stocktake item
-   * @param  {Realm}   database        App wide database
-   * @param  {object}  transactionItem The transaction item
-   * @return {none}
-   */
-  applyBatchAdjustments(database, transactionItem) {
-    this.batches.forEach((stocktakeBatch) => {
-      const transactionBatch = transactionItem.getBatch(stocktakeBatch.itemBatchId);
-      let difference = 0;
-      if (transactionBatch) { // If a matching transaction batch, work out the difference
-        difference = transactionItem.transaction.isIncoming ?
-                            transactionBatch.totalQuantity :
-                            -transactionBatch.totalQuantity;
-      }
-      stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity + difference;
-      database.save('StocktakeBatch', stocktakeBatch);
-    });
-  }
-
-  /**
-   * Deletes any batches from this stocktake item that had no stock and did not change
-   * @param  {Realm} database  App wide database
-   * @return {none}
-   */
-  pruneBatches(database) {
-    database.delete(
-      'StocktakeBatch',
-      this.batches.filtered('snapshotNumberOfPacks == 0 AND countedNumberOfPacks == 0')
-    );
+  createNewBatch(database) {
+    const batchString = `stocktake_${this.stocktake.serialNumber}`;
+    const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
+    createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 }
 
@@ -107,7 +156,6 @@ StocktakeItem.schema = {
     id: 'string',
     item: 'Item',
     stocktake: 'Stocktake',
-    countedTotalQuantity: { type: 'double', optional: true },
     batches: { type: 'list', objectType: 'StocktakeBatch' },
   },
 };

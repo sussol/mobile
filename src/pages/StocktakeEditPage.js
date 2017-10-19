@@ -7,6 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
+import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { PageButton } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
@@ -42,11 +43,10 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing(key, stocktakeItem, newValue) {
     if (key !== 'countedTotalQuantity' || newValue === '') return;
-    this.props.database.write(() => {
-      const quantity = parsePositiveInteger(newValue);
-      stocktakeItem.countedTotalQuantity = quantity;
-      this.props.database.save('StocktakeItem', stocktakeItem);
-    });
+    const quantity = parsePositiveInteger(newValue);
+    if (quantity === null) return;
+
+    stocktakeItem.setCountedTotalQuantity(this.props.database, quantity);
   }
 
   updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
@@ -82,25 +82,21 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  renderCell(key, item) {
+  renderCell(key, stocktakeItem) {
+    const isEditable = !this.props.stocktake.isFinalised;
     switch (key) {
       default:
-        return item[key];
+        return stocktakeItem[key];
       case 'countedTotalQuantity':
         return {
-          type: this.props.stocktake.isFinalised ? 'text' : 'editable',
-          cellContents: item.countedTotalQuantity !== null ? item.countedTotalQuantity : '',
-          placeholder: tableStrings.no_change,
+          type: isEditable ? 'editable' : 'text',
+          cellContents: stocktakeItem.hasCountedBatches ? stocktakeItem.countedTotalQuantity : '',
+          placeholder: tableStrings.not_counted,
         };
       case 'difference': {
-        // Catch items with no change (null - 50 === -50)
-        if (item.countedTotalQuantity === null) return { cellContents: 0 };
-
-        const difference = item.countedTotalQuantity - item.snapshotTotalQuantity;
-        if (difference > 0) {
-          return { cellContents: `+${difference}` };
-        }
-        return { cellContents: difference };
+        const difference = stocktakeItem.difference;
+        const prefix = difference > 0 ? '+' : '';
+        return { cellContents: `${prefix}${difference}` };
       }
     }
   }
@@ -118,12 +114,23 @@ export class StocktakeEditPage extends React.Component {
     );
   }
 
+  renderExpansion(stocktakeItem) {
+    return (
+      <StocktakeEditExpansion
+        stocktakeItem={stocktakeItem}
+        database={this.props.database}
+        genericTablePageStyles={this.props.genericTablePageStyles}
+      />
+    );
+  }
+
   render() {
     return (
       <GenericPage
         data={this.state.data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
+        renderExpansion={this.renderExpansion}
         renderTopRightComponent={this.renderManageStocktakeButton}
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
@@ -165,6 +172,7 @@ export class StocktakeEditPage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        dataTypesLinked={['StocktakeBatch']}
         finalisableDataType={'Stocktake'}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
@@ -192,7 +200,7 @@ const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in erro
  * @return {string}  An error message if not able to be finalised
  */
 export function checkForFinaliseError(stocktake) {
-  if (stocktake.hasSomeCountedItems) return modalStrings.stocktake_no_counted_items;
+  if (!stocktake.hasSomeCountedItems) return modalStrings.stocktake_no_counted_items;
   const itemsBelowMinimum = stocktake.itemsBelowMinimum;
   if (itemsBelowMinimum.length > 0) {
     let errorString = modalStrings.following_items_reduced_more_than_available_stock;
