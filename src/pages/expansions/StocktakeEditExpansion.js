@@ -78,7 +78,7 @@ export class StocktakeEditExpansion extends React.Component {
           type: isEditable ? 'editable' : 'text',
           cellContents: stocktakeBatch.hasBeenCounted ?
                         stocktakeBatch.countedTotalQuantity : emptyCellContents,
-          placeholder: tableStrings.no_change,
+          placeholder: tableStrings.not_counted,
         };
       }
       case 'expiryDate': {
@@ -130,7 +130,7 @@ export class StocktakeEditExpansion extends React.Component {
       [
         {
           title: 'By Batch:',
-          info: this.props.stocktakeItem.item.name,
+          info: this.props.stocktakeItem.itemName,
         },
       ],
     ];
