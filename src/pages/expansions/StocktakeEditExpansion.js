@@ -71,6 +71,7 @@ export class StocktakeEditExpansion extends React.Component {
           type: isEditable ? 'editable' : 'text',
           cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== '' ?
                         stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
+          keyboardType: 'default',
         };
       case 'countedTotalQuantity': {
         const emptyCellContents = isEditable ? '' : tableStrings.not_counted;
@@ -186,7 +187,7 @@ export class StocktakeEditExpansion extends React.Component {
               alignText: 'right',
             },
           ]}
-          dataTypesLinked={['StocktakeBatch']}
+          dataTypesLinked={['StocktakeBatch', 'Stocktake']}
           database={this.props.database}
           {...this.props.genericTablePageStyles}
           pageStyles={expansionPageStyles}
