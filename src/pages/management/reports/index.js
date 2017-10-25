@@ -1,1 +1,1 @@
-export const REPORTS = [{ key: 'rep1', page: 'test' }, { key: 'rep2', page: 'test' }];
+export const REPORTS = [{ name: 'rep1', page: 'test' }, { name: 'rep2', page: 'test' }];
