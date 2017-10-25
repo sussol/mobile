@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import { connect } from 'react-redux';
 import { addNavigationHelpers } from 'react-navigation';
-import autobind from 'react-autobind';
 
 import globalStyles, {
   dataTableColors,
@@ -62,8 +61,6 @@ class MSupplyMobileAppContainer extends React.Component {
                                          props.dispatch);
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
-    autobind(this);
-
     const isInitialised = this.synchroniser.isInitialised();
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
@@ -81,31 +78,29 @@ class MSupplyMobileAppContainer extends React.Component {
     };
   }
 
-  componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-  }
+  componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
 
-  componentWillUnmount() {
+  componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
     this.scheduler.clearAll();
   }
 
-  onAuthentication(user) {
+  onAuthentication = (user) => {
     this.setState({ currentUser: user });
     this.postSyncProcessor.setUser(user);
   }
 
-  onInitialised() {
+  onInitialised = () => {
     this.setState({ isInitialised: true });
     this.postSyncProcessor.processAnyUnprocessedRecords();
   }
 
-  getCanNavigateBack() {
+  getCanNavigateBack = () => {
     const { navigationState } = this.props;
     return this.navigator && navigationState.index !== 0;
   }
 
-  handleBackEvent() {
+  handleBackEvent = () => {
     // If we are on base screen (e.g. home), back button should close app as we can't go back
     if (!this.getCanNavigateBack()) BackHandler.exitApp();
     else {
@@ -115,7 +110,7 @@ class MSupplyMobileAppContainer extends React.Component {
     return true;
   }
 
-  async runWithLoadingIndicator(functionToRun) {
+  runWithLoadingIndicator = async (functionToRun) => {
     // We here set up an asyncronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay during which the javascript
     // thread unblocks and allows our spinner animation to start up. We cannot simply
@@ -128,7 +123,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.setState({ isLoading: false });
   }
 
-  async synchronise() {
+  synchronise = async () => {
     if (!this.state.isInitialised || this.props.syncState.isSyncing) return; // Ignore if syncing
     // True if last this.synchroniser.synchronise() call failed
     const lastSyncFailed = this.synchroniser.lastSyncFailed();
@@ -146,58 +141,48 @@ class MSupplyMobileAppContainer extends React.Component {
     }
   }
 
-  logOut() {
+  logOut = () => {
     this.setState({ currentUser: null });
   }
 
-  renderFinaliseButton() {
-    return (
-      <FinaliseButton
-        isFinalised={this.props.finaliseItem.record.isFinalised}
-        onPress={() => this.setState({ confirmFinalise: true })}
-      />
-    );
-  }
+  renderFinaliseButton = () => (
+    <FinaliseButton
+      isFinalised={this.props.finaliseItem.record.isFinalised}
+      onPress={() => this.setState({ confirmFinalise: true })}
+    />
+  )
 
-  renderLogo() {
-    return (
-      <TouchableWithoutFeedback
-        delayLongPress={3000}
-        onLongPress={() => this.setState({ isInAdminMode: !this.state.isInAdminMode })}
-      >
-        <Image resizeMode="contain" source={require('./images/logo.png')} />
-      </TouchableWithoutFeedback>
-    );
-  }
+  renderLogo = () => (
+    <TouchableWithoutFeedback
+      delayLongPress={3000}
+      onLongPress={() => this.setState({ isInAdminMode: !this.state.isInAdminMode })}
+    >
+      <Image resizeMode="contain" source={require('./images/logo.png')} />
+    </TouchableWithoutFeedback>
+  )
 
-  renderLoadingIndicator() {
-    return (
-      <View style={globalStyles.loadingIndicatorContainer}>
-        <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
-      </View>
-    );
-  }
+  renderLoadingIndicator = () => (
+    <View style={globalStyles.loadingIndicatorContainer}>
+      <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
+    </View>
+  )
 
-  renderPageTitle() {
-    return (
-      <Text style={textStyles}>
-        {this.props.currentTitle}
-      </Text>
-    );
-  }
+  renderPageTitle = () => (
+    <Text style={textStyles}>
+      {this.props.currentTitle}
+    </Text>
+  )
 
-  renderSyncState() {
-    return (
-      <TouchableOpacity
-        style={{ flexDirection: 'row' }}
-        onPress={() => this.setState({ syncModalIsOpen: true })}
-      >
-        <SyncState state={this.props.syncState} />
-      </TouchableOpacity>
-    );
-  }
+  renderSyncState = () => (
+    <TouchableOpacity
+      style={{ flexDirection: 'row' }}
+      onPress={() => this.setState({ syncModalIsOpen: true })}
+    >
+      <SyncState state={this.props.syncState} />
+    </TouchableOpacity>
+  )
 
-  render() {
+  render = () => {
     if (!this.state.isInitialised) {
       return (
         <FirstUsePage

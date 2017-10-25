@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
@@ -32,10 +31,9 @@ export class StockPage extends React.Component {
       sortBy: 'name',
       isAscending: true,
     };
-    autobind(this);
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -45,7 +43,7 @@ export class StockPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.state.items.filtered(
@@ -65,7 +63,7 @@ export class StockPage extends React.Component {
     });
   }
 
-  renderExpansion(item) {
+  renderExpansion = (item) => {
     const batchInfo = item.batchesWithStock.map((ItemBatch) => {
       const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
       const expiryInfo = ItemBatch.expiryDate ?
@@ -105,42 +103,40 @@ export class StockPage extends React.Component {
     );
   }
 
-  render() {
-    return (
-      <GenericPage
-        data={this.state.data}
-        refreshData={this.refreshData}
-        renderExpansion={this.renderExpansion}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'code',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'name',
-            width: 5,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'totalQuantity',
-            width: 1,
-            title: tableStrings.stock_on_hand,
-            sortable: true,
-            alignText: 'right',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={this.props.database}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
-      />
-    );
-  }
+  render = () => (
+    <GenericPage
+      data={this.state.data}
+      refreshData={this.refreshData}
+      renderExpansion={this.renderExpansion}
+      defaultSortKey={this.dataFilters.sortBy}
+      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+      columns={[
+        {
+          key: 'code',
+          width: 1,
+          title: tableStrings.item_code,
+          sortable: true,
+        },
+        {
+          key: 'name',
+          width: 5,
+          title: tableStrings.item_name,
+          sortable: true,
+        },
+        {
+          key: 'totalQuantity',
+          width: 1,
+          title: tableStrings.stock_on_hand,
+          sortable: true,
+          alignText: 'right',
+        },
+      ]}
+      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+      database={this.props.database}
+      {...this.props.genericTablePageStyles}
+      topRoute={this.props.topRoute}
+    />
+  );
 }
 
 StockPage.propTypes = {
