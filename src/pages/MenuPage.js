@@ -86,6 +86,14 @@ export class MenuPage extends React.Component {
               text={navStrings.supplier_requisitions}
               onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
             />
+            {isInAdminMode &&
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text="Realm Explorer"
+                onPress={() => navigateTo('realmExplorer', 'Database Contents')}
+              />
+            }
           </View>
 
           <View style={localStyles.container}>
@@ -106,14 +114,12 @@ export class MenuPage extends React.Component {
               text={navStrings.stocktakes}
               onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
             />
-            {isInAdminMode &&
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text="Realm Explorer"
-                onPress={() => navigateTo('realmExplorer', 'Database Contents')}
-              />
-            }
+            <Button
+              style={globalStyles.menuButton}
+              textStyle={globalStyles.menuButtonText}
+              text={'Reports'} // TODO: Localise
+              onPress={() => navigateTo('consumptionReport', 'Consumption Report')}
+            />
           </View>
         </View>
         <View style={globalStyles.bottomContainer}>

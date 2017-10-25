@@ -199,6 +199,15 @@ export class Synchroniser {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
+    console.log(`${serverURL}/sync/v3/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`);
+    console.log(  {
+        method: 'POST',
+        headers: {
+          Authorization: this.authenticator.getAuthHeader(),
+        },
+        body: JSON.stringify(records),
+      });
+
     const response = await fetch(
       `${serverURL}/sync/v3/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
       {
@@ -309,15 +318,21 @@ export class Synchroniser {
    * @return {Promise}            Resolves with the records, or passes up any error thrown
    */
   async getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
+    console.log(`${serverURL}/sync/v3/queued_records` +
+      `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`);
+      console.log(authHeader);
+
     const response = await fetch(
       `${serverURL}/sync/v3/queued_records` +
         `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
       {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: authHeader,
         },
       }
     );
+    console.log(response);
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while pulling sync records.');
     }
@@ -325,6 +340,7 @@ export class Synchroniser {
     if (responseJson.error && responseJson.error.length > 0) {
       throw new Error(responseJson.error);
     }
+    console.log(response);
     return responseJson;
   }
 

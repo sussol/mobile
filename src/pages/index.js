@@ -9,6 +9,7 @@ import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
+import { ConsumptionReportPage } from './ConsumptionReportPage';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
 import { CustomerRequisitionPage,
          checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
@@ -31,6 +32,7 @@ import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
+  consumptionReport: (props) => <PageContainer page={ConsumptionReportPage} {...props} />,
   customerInvoice: (props) => <PageContainer page={CustomerInvoicePage} {...props} />,
   customerInvoices: (props) => <PageContainer page={CustomerInvoicesPage} {...props} />,
   customerRequisition: (props) => <PageContainer page={CustomerRequisitionPage} {...props} />,
