@@ -103,40 +103,42 @@ export class StockPage extends React.Component {
     );
   }
 
-  render = () => (
-    <GenericPage
-      data={this.state.data}
-      refreshData={this.refreshData}
-      renderExpansion={this.renderExpansion}
-      defaultSortKey={this.dataFilters.sortBy}
-      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-      columns={[
-        {
-          key: 'code',
-          width: 1,
-          title: tableStrings.item_code,
-          sortable: true,
-        },
-        {
-          key: 'name',
-          width: 5,
-          title: tableStrings.item_name,
-          sortable: true,
-        },
-        {
-          key: 'totalQuantity',
-          width: 1,
-          title: tableStrings.stock_on_hand,
-          sortable: true,
-          alignText: 'right',
-        },
-      ]}
-      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-      database={this.props.database}
-      {...this.props.genericTablePageStyles}
-      topRoute={this.props.topRoute}
-    />
-  );
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderExpansion={this.renderExpansion}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'code',
+            width: 1,
+            title: tableStrings.item_code,
+            sortable: true,
+          },
+          {
+            key: 'name',
+            width: 5,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'totalQuantity',
+            width: 1,
+            title: tableStrings.stock_on_hand,
+            sortable: true,
+            alignText: 'right',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
+      />
+    );
+  }
 }
 
 StockPage.propTypes = {

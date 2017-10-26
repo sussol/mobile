@@ -288,72 +288,74 @@ export class SupplierInvoicePage extends React.Component {
     />
   );
 
-  render = () => (
-    <GenericPage
-      data={this.state.data}
-      refreshData={this.refreshData}
-      renderCell={this.renderCell}
-      renderTopLeftComponent={this.renderPageInfo}
-      renderTopRightComponent={this.renderAddBatchButton}
-      onEndEditing={this.onEndEditing}
-      onSelectionChange={this.onSelectionChange}
-      defaultSortKey={this.dataFilters.sortBy}
-      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-      columns={[
-        {
-          key: 'itemCode',
-          width: 1,
-          title: tableStrings.item_code,
-          sortable: true,
-        },
-        {
-          key: 'itemName',
-          width: 3,
-          title: tableStrings.item_name,
-          sortable: true,
-        },
-        {
-          key: 'numberOfPacks',
-          width: 1,
-          title: tableStrings.quantity,
-          alignText: 'center',
-        },
-        {
-          key: 'expiryDate',
-          width: 1,
-          title: tableStrings.batch_expiry,
-          alignText: 'center',
-        },
-        {
-          key: 'remove',
-          width: 1,
-          title: tableStrings.remove,
-          alignText: 'center',
-        },
-      ]}
-      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-      finalisableDataType={'Transaction'}
-      database={this.props.database}
-      selection={this.state.selection}
-      {...this.props.genericTablePageStyles}
-      topRoute={this.props.topRoute}
-    >
-      <BottomConfirmModal
-        isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
-        questionText={modalStrings.remove_these_items}
-        onCancel={() => this.onDeleteCancel()}
-        onConfirm={() => this.onDeleteConfirm()}
-        confirmText={modalStrings.remove}
-      />
-      <PageContentModal
-        isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
-        onClose={this.closeModal}
-        title={this.getModalTitle()}
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderPageInfo}
+        renderTopRightComponent={this.renderAddBatchButton}
+        onEndEditing={this.onEndEditing}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 1,
+            title: tableStrings.item_code,
+            sortable: true,
+          },
+          {
+            key: 'itemName',
+            width: 3,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'numberOfPacks',
+            width: 1,
+            title: tableStrings.quantity,
+            alignText: 'center',
+          },
+          {
+            key: 'expiryDate',
+            width: 1,
+            title: tableStrings.batch_expiry,
+            alignText: 'center',
+          },
+          {
+            key: 'remove',
+            width: 1,
+            title: tableStrings.remove,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        finalisableDataType={'Transaction'}
+        database={this.props.database}
+        selection={this.state.selection}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
-        {this.renderModalContent()}
-      </PageContentModal>
-    </GenericPage>
-  );
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
+          questionText={modalStrings.remove_these_items}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
+          confirmText={modalStrings.remove}
+        />
+        <PageContentModal
+          isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
+          onClose={this.closeModal}
+          title={this.getModalTitle()}
+        >
+          {this.renderModalContent()}
+        </PageContentModal>
+      </GenericPage>
+    );
+  }
 }
 
 

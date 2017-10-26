@@ -134,57 +134,59 @@ export class StocktakeEditExpansion extends React.Component {
     );
   }
 
-  render = () => (
-    <Expansion style={dataTableStyles.expansionWithInnerPage}>
-      <GenericPage
-        data={this.state.data}
-        renderCell={this.renderCell}
-        refreshData={this.refreshData}
-        hideSearchBar={true}
-        renderDataTableFooter={() => null} // overrides default generc pages footer
-        dontRenderSearchBar={true}
-        onEndEditing={this.onEndEditing}
-        renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderAddBatchButton}
-        columns={[
-          {
-            key: 'batch',
-            width: 2,
-            title: 'BATCH NAME',
-            alignText: 'center',
-          },
-          {
-            key: 'expiryDate',
-            width: 1,
-            title: 'EXPIRY',
-            alignText: 'center',
-          },
-          {
-            key: 'snapshotTotalQuantity',
-            width: 1,
-            title: unwrapText(tableStrings.snapshot_quantity),
-            alignText: 'right',
-          },
-          {
-            key: 'countedTotalQuantity',
-            width: 1,
-            title: unwrapText(tableStrings.actual_quantity),
-            alignText: 'right',
-          },
-          {
-            key: 'difference',
-            width: 1,
-            title: tableStrings.difference,
-            alignText: 'right',
-          },
-        ]}
-        dataTypesLinked={['StocktakeBatch', 'Stocktake']}
-        database={this.props.database}
-        {...this.props.genericTablePageStyles}
-        pageStyles={expansionPageStyles}
-      />
-    </Expansion>
-  );
+  render() {
+    return (
+      <Expansion style={dataTableStyles.expansionWithInnerPage}>
+        <GenericPage
+          data={this.state.data}
+          renderCell={this.renderCell}
+          refreshData={this.refreshData}
+          hideSearchBar={true}
+          renderDataTableFooter={() => null} // overrides default generc pages footer
+          dontRenderSearchBar={true}
+          onEndEditing={this.onEndEditing}
+          renderTopLeftComponent={this.renderPageInfo}
+          renderTopRightComponent={this.renderAddBatchButton}
+          columns={[
+            {
+              key: 'batch',
+              width: 2,
+              title: 'BATCH NAME',
+              alignText: 'center',
+            },
+            {
+              key: 'expiryDate',
+              width: 1,
+              title: 'EXPIRY',
+              alignText: 'center',
+            },
+            {
+              key: 'snapshotTotalQuantity',
+              width: 1,
+              title: unwrapText(tableStrings.snapshot_quantity),
+              alignText: 'right',
+            },
+            {
+              key: 'countedTotalQuantity',
+              width: 1,
+              title: unwrapText(tableStrings.actual_quantity),
+              alignText: 'right',
+            },
+            {
+              key: 'difference',
+              width: 1,
+              title: tableStrings.difference,
+              alignText: 'right',
+            },
+          ]}
+          dataTypesLinked={['StocktakeBatch', 'Stocktake']}
+          database={this.props.database}
+          {...this.props.genericTablePageStyles}
+          pageStyles={expansionPageStyles}
+        />
+      </Expansion>
+    );
+  }
 }
 
 StocktakeEditExpansion.propTypes = {

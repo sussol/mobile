@@ -182,7 +182,7 @@ class MSupplyMobileAppContainer extends React.Component {
     </TouchableOpacity>
   )
 
-  render = () => {
+  render() {
     if (!this.state.isInitialised) {
       return (
         <FirstUsePage

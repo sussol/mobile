@@ -137,57 +137,59 @@ export class StocktakesPage extends React.Component {
     />
   )
 
-  render = () => (
-    <GenericPage
-      data={this.state.data}
-      refreshData={this.refreshData}
-      renderCell={this.renderCell}
-      renderTopLeftComponent={this.renderToggleBar}
-      renderTopRightComponent={this.renderNewStocktakeButton}
-      onRowPress={this.onRowPress}
-      onSelectionChange={this.onSelectionChange}
-      defaultSortKey={this.dataFilters.sortBy}
-      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-      columns={[
-        {
-          key: 'name',
-          width: 6,
-          title: tableStrings.name,
-        },
-        {
-          key: 'createdDate',
-          width: 2,
-          title: tableStrings.created_date,
-          sortable: true,
-        },
-        {
-          key: 'status',
-          width: 2,
-          title: tableStrings.status,
-          sortable: true,
-        },
-        {
-          key: 'selected',
-          width: 1,
-          title: tableStrings.delete,
-          alignText: 'center',
-        },
-      ]}
-      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-      database={this.props.database}
-      selection={this.state.selection}
-      {...this.props.genericTablePageStyles}
-      topRoute={this.props.topRoute}
-    >
-      <BottomConfirmModal
-        isOpen={this.state.selection.length > 0 && this.state.showCurrent}
-        questionText={modalStrings.delete_these_stocktakes}
-        onCancel={() => this.onDeleteCancel()}
-        onConfirm={() => this.onDeleteConfirm()}
-        confirmText={modalStrings.delete}
-      />
-    </GenericPage>
-  );
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderToggleBar}
+        renderTopRightComponent={this.renderNewStocktakeButton}
+        onRowPress={this.onRowPress}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'name',
+            width: 6,
+            title: tableStrings.name,
+          },
+          {
+            key: 'createdDate',
+            width: 2,
+            title: tableStrings.created_date,
+            sortable: true,
+          },
+          {
+            key: 'status',
+            width: 2,
+            title: tableStrings.status,
+            sortable: true,
+          },
+          {
+            key: 'selected',
+            width: 1,
+            title: tableStrings.delete,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        selection={this.state.selection}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
+      >
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0 && this.state.showCurrent}
+          questionText={modalStrings.delete_these_stocktakes}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
+          confirmText={modalStrings.delete}
+        />
+      </GenericPage>
+    );
+  }
 }
 
 StocktakesPage.propTypes = {

@@ -187,65 +187,67 @@ export class StocktakeManagePage extends React.Component {
     );
   }
 
-  render = () => (
-    <GenericPage
-      data={this.state.data}
-      refreshData={this.refreshData}
-      renderCell={this.renderCell}
-      renderTopRightComponent={this.renderToggleBar}
-      onSelectionChange={this.onSelectionChange}
-      defaultSortKey={this.dataFilters.sortBy}
-      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-      columns={[
-        {
-          key: 'code',
-          width: 2,
-          title: tableStrings.item_code,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'name',
-          width: 6,
-          title: tableStrings.item_name,
-          sortable: true,
-        },
-        {
-          key: 'selected',
-          width: 1,
-          title: tableStrings.selected,
-          alignText: 'center',
-        },
-      ]}
-      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-      database={this.props.database}
-      selection={this.state.selection}
-      {...this.props.genericTablePageStyles}
-      topRoute={this.props.topRoute}
-    >
-      <BottomModal
-        isOpen={!(this.props.stocktake && this.props.stocktake.isFinalised)
-                                       && (this.state.selection.length > 0)}
-        style={localStyles.bottomModal}
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopRightComponent={this.renderToggleBar}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'code',
+            width: 2,
+            title: tableStrings.item_code,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'name',
+            width: 6,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'selected',
+            width: 1,
+            title: tableStrings.selected,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        selection={this.state.selection}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
-        <TextInput
-          style={globalStyles.modalTextInput}
-          textStyle={globalStyles.modalText}
-          underlineColorAndroid="transparent"
-          placeholderTextColor="white"
-          placeholder={modalStrings.give_your_stocktake_a_name}
-          value={this.state.stocktakeName}
-          onChangeText={(text) => this.setState({ stocktakeName: text })}
-        />
-        <Button
-          style={[globalStyles.button, globalStyles.modalOrangeButton]}
-          textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-          text={!this.props.stocktake ? modalStrings.create : modalStrings.confirm}
-          onPress={this.onConfirmPress}
-        />
-      </BottomModal>
-    </GenericPage>
-  );
+        <BottomModal
+          isOpen={!(this.props.stocktake && this.props.stocktake.isFinalised)
+                                         && (this.state.selection.length > 0)}
+          style={localStyles.bottomModal}
+        >
+          <TextInput
+            style={globalStyles.modalTextInput}
+            textStyle={globalStyles.modalText}
+            underlineColorAndroid="transparent"
+            placeholderTextColor="white"
+            placeholder={modalStrings.give_your_stocktake_a_name}
+            value={this.state.stocktakeName}
+            onChangeText={(text) => this.setState({ stocktakeName: text })}
+          />
+          <Button
+            style={[globalStyles.button, globalStyles.modalOrangeButton]}
+            textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
+            text={!this.props.stocktake ? modalStrings.create : modalStrings.confirm}
+            onPress={this.onConfirmPress}
+          />
+        </BottomModal>
+      </GenericPage>
+    );
+  }
 }
 
 StocktakeManagePage.propTypes = {

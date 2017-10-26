@@ -67,7 +67,7 @@ export class ExpiryTextInput extends React.Component {
     return this.previousFormattedDate || 'mm/yy';
   }
 
-  render = () => {
+  render() {
     const { style, ...extraProps } = this.props;
     return (
       <TextInput

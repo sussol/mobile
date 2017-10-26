@@ -325,88 +325,90 @@ export class SupplierRequisitionPage extends React.Component {
   );
 
 
-  render = () => (
-    <GenericPage
-      data={this.state.data}
-      refreshData={this.refreshData}
-      renderCell={this.renderCell}
-      renderTopLeftComponent={this.renderPageInfo}
-      renderTopRightComponent={this.renderButtons}
-      onEndEditing={this.onEndEditing}
-      onSelectionChange={this.onSelectionChange}
-      defaultSortKey={this.dataFilters.sortBy}
-      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-      columns={[
-        {
-          key: 'itemCode',
-          width: 1.5,
-          title: tableStrings.code,
-          sortable: true,
-        },
-        {
-          key: 'itemName',
-          width: 4,
-          title: tableStrings.item_name,
-          sortable: true,
-        },
-        {
-          key: 'stockOnHand',
-          width: 2,
-          title: tableStrings.current_stock,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'monthlyUsage',
-          width: 2,
-          title: tableStrings.monthly_usage,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'suggestedQuantity',
-          width: 2,
-          title: tableStrings.suggested_quantity,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'requiredQuantity',
-          width: 2,
-          title: tableStrings.required_quantity,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'remove',
-          width: 1,
-          title: tableStrings.remove,
-          alignText: 'center',
-        },
-      ]}
-      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-      finalisableDataType={'Requisition'}
-      database={this.props.database}
-      selection={this.state.selection}
-      {...this.props.genericTablePageStyles}
-      topRoute={this.props.topRoute}
-    >
-      <BottomConfirmModal
-        isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
-        questionText={modalStrings.remove_these_items}
-        onCancel={this.onDeleteCancel}
-        onConfirm={this.onDeleteConfirm}
-        confirmText={modalStrings.remove}
-      />
-      <PageContentModal
-        isOpen={this.state.modalIsOpen && !this.props.requisition.isFinalised}
-        onClose={this.closeModal}
-        title={this.getModalTitle()}
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderPageInfo}
+        renderTopRightComponent={this.renderButtons}
+        onEndEditing={this.onEndEditing}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 1.5,
+            title: tableStrings.code,
+            sortable: true,
+          },
+          {
+            key: 'itemName',
+            width: 4,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'stockOnHand',
+            width: 2,
+            title: tableStrings.current_stock,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'monthlyUsage',
+            width: 2,
+            title: tableStrings.monthly_usage,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'suggestedQuantity',
+            width: 2,
+            title: tableStrings.suggested_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'requiredQuantity',
+            width: 2,
+            title: tableStrings.required_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'remove',
+            width: 1,
+            title: tableStrings.remove,
+            alignText: 'center',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        finalisableDataType={'Requisition'}
+        database={this.props.database}
+        selection={this.state.selection}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
       >
-        {this.renderModalContent()}
-      </PageContentModal>
-    </GenericPage>
-  );
+        <BottomConfirmModal
+          isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
+          questionText={modalStrings.remove_these_items}
+          onCancel={this.onDeleteCancel}
+          onConfirm={this.onDeleteConfirm}
+          confirmText={modalStrings.remove}
+        />
+        <PageContentModal
+          isOpen={this.state.modalIsOpen && !this.props.requisition.isFinalised}
+          onClose={this.closeModal}
+          title={this.getModalTitle()}
+        >
+          {this.renderModalContent()}
+        </PageContentModal>
+      </GenericPage>
+    );
+  }
 }
 
 SupplierRequisitionPage.propTypes = {

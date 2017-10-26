@@ -81,53 +81,55 @@ export class CustomerRequisitionsPage extends React.Component {
   }
 
 
-  render = () => (
-    <GenericPage
-      data={this.state.data}
-      refreshData={this.refreshData}
-      renderCell={this.renderCell}
-      onRowPress={this.onRowPress}
-      defaultSortKey={this.dataFilters.sortBy}
-      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-      columns={[
-        {
-          key: 'serialNumber',
-          width: 1.5,
-          title: tableStrings.requisition_number,
-          sortable: true,
-        },
-        {
-          key: 'customerName',
-          width: 2,
-          title: tableStrings.customer,
-          sortable: false,
-        },
-        {
-          key: 'entryDate',
-          width: 1,
-          title: tableStrings.entered_date,
-          sortable: true,
-        },
-        {
-          key: 'numberOfItems',
-          width: 1,
-          title: tableStrings.items,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'status',
-          width: 1,
-          title: tableStrings.status,
-          sortable: true,
-        },
-      ]}
-      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-      database={this.props.database}
-      {...this.props.genericTablePageStyles}
-      topRoute={this.props.topRoute}
-    />
-  )
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        onRowPress={this.onRowPress}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'serialNumber',
+            width: 1.5,
+            title: tableStrings.requisition_number,
+            sortable: true,
+          },
+          {
+            key: 'customerName',
+            width: 2,
+            title: tableStrings.customer,
+            sortable: false,
+          },
+          {
+            key: 'entryDate',
+            width: 1,
+            title: tableStrings.entered_date,
+            sortable: true,
+          },
+          {
+            key: 'numberOfItems',
+            width: 1,
+            title: tableStrings.items,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'status',
+            width: 1,
+            title: tableStrings.status,
+            sortable: true,
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
+      />
+    );
+  }
 }
 
 CustomerRequisitionsPage.propTypes = {

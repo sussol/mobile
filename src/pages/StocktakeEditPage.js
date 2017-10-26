@@ -118,60 +118,62 @@ export class StocktakeEditPage extends React.Component {
     />
   );
 
-  render = () => (
-    <GenericPage
-      data={this.state.data}
-      refreshData={this.refreshData}
-      renderCell={this.renderCell}
-      renderExpansion={this.renderExpansion}
-      renderTopRightComponent={this.renderManageStocktakeButton}
-      onEndEditing={this.onEndEditing}
-      defaultSortKey={this.dataFilters.sortBy}
-      defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-      columns={[
-        {
-          key: 'itemCode',
-          width: 1,
-          title: tableStrings.item_code,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'itemName',
-          width: 3.2,
-          title: tableStrings.item_name,
-          sortable: true,
-        },
-        {
-          key: 'snapshotTotalQuantity',
-          width: 1.2,
-          title: tableStrings.snapshot_quantity,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'countedTotalQuantity',
-          width: 1.2,
-          title: tableStrings.actual_quantity,
-          sortable: true,
-          alignText: 'right',
-        },
-        {
-          key: 'difference',
-          width: 1,
-          title: tableStrings.difference,
-          sortable: true,
-          alignText: 'right',
-        },
-      ]}
-      dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-      dataTypesLinked={['StocktakeBatch']}
-      finalisableDataType={'Stocktake'}
-      database={this.props.database}
-      {...this.props.genericTablePageStyles}
-      topRoute={this.props.topRoute}
-    />
-  );
+  render() {
+    return (
+      <GenericPage
+        data={this.state.data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderExpansion={this.renderExpansion}
+        renderTopRightComponent={this.renderManageStocktakeButton}
+        onEndEditing={this.onEndEditing}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 1,
+            title: tableStrings.item_code,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'itemName',
+            width: 3.2,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'snapshotTotalQuantity',
+            width: 1.2,
+            title: tableStrings.snapshot_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'countedTotalQuantity',
+            width: 1.2,
+            title: tableStrings.actual_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'difference',
+            width: 1,
+            title: tableStrings.difference,
+            sortable: true,
+            alignText: 'right',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        dataTypesLinked={['StocktakeBatch']}
+        finalisableDataType={'Stocktake'}
+        database={this.props.database}
+        {...this.props.genericTablePageStyles}
+        topRoute={this.props.topRoute}
+      />
+    );
+  }
 }
 
 StocktakeEditPage.propTypes = {
