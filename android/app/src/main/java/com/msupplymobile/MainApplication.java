@@ -10,7 +10,6 @@ import com.facebook.react.ReactApplication;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
-import com.horcrux.svg.SvgPackage;
 import com.bugsnag.BugsnagReactNative;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -35,7 +34,6 @@ public class MainApplication extends Application implements ReactApplication {
           new RealmReactPackage(),
           new VectorIconsPackage(),
           new ReactNativeLocalizationPackage(),
-          new SvgPackage(),
           BugsnagReactNative.getPackage()
       );
     }
