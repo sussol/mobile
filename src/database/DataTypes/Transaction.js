@@ -97,14 +97,14 @@ export class Transaction extends Realm.Object {
       this.otherParty.masterLists.forEach(masterList => {
         const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
         itemsToAdd.forEach(masterListItem =>
-          createRecord(database, 'TransactionItem', this, masterListItem.item)
+          createRecord(database, 'TransactionItem', this, masterListItem.item),
         );
       });
     }
   }
 
   get isLinkedToRequisition() {
-    return !(!this.linkedRequisition);
+    return !!this.linkedRequisition;
   }
 
   /**
@@ -136,8 +136,9 @@ export class Transaction extends Realm.Object {
     const transactionBatches = this.getTransactionBatches(database);
     const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
-      const transactionBatch = transactionBatches.find(matchTransactionBatch =>
-                                  matchTransactionBatch.id === transactionBatchId);
+      const transactionBatch = transactionBatches.find(
+        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId,
+      );
       transactionBatchesToDelete.push(transactionBatch);
     });
     database.delete('TransactionBatch', transactionBatchesToDelete);
@@ -162,7 +163,7 @@ export class Transaction extends Realm.Object {
    */
   addBatchIfUnique(database, transactionBatch) {
     addBatchToParent(transactionBatch, this, () =>
-      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item)
+      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item),
     );
   }
 
@@ -173,8 +174,7 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   pruneRedundantBatchesAndItems(database) {
-    const batchesToRemove = this.getTransactionBatches(database)
-                              .filtered('numberOfPacks = 0');
+    const batchesToRemove = this.getTransactionBatches(database).filtered('numberOfPacks = 0');
 
     database.delete('TransactionBatch', batchesToRemove);
     this.pruneBatchlessTransactionItems(database);
@@ -202,9 +202,7 @@ export class Transaction extends Realm.Object {
    * @return {RealmCollection} all transaction batches
    */
   getTransactionBatches(database) {
-    return database
-      .objects('TransactionBatch')
-      .filtered('transaction.id == $0', this.id);
+    return database.objects('TransactionBatch').filtered('transaction.id == $0', this.id);
   }
 
   /**
@@ -219,14 +217,15 @@ export class Transaction extends Realm.Object {
     const isIncomingInvoice = this.isIncoming;
 
     this.getTransactionBatches(database).forEach(transactionBatch => {
-      const { itemBatch,
-              batch,
-              packSize,
-              numberOfPacks,
-              expiryDate,
-              costPrice,
-              sellPrice,
-             } = transactionBatch;
+      const {
+        itemBatch,
+        batch,
+        packSize,
+        numberOfPacks,
+        expiryDate,
+        costPrice,
+        sellPrice,
+      } = transactionBatch;
 
       // Pack to one all transactions in mobile, so multiply by packSize to get quantity and price
       const packedToOneQuantity = numberOfPacks * packSize;
@@ -234,8 +233,8 @@ export class Transaction extends Realm.Object {
       const packedToOneSellPrice = sellPrice / packSize;
 
       const newNumberOfPacks = isIncomingInvoice
-          ? itemBatch.numberOfPacks + packedToOneQuantity
-          : itemBatch.numberOfPacks - packedToOneQuantity;
+        ? itemBatch.numberOfPacks + packedToOneQuantity
+        : itemBatch.numberOfPacks - packedToOneQuantity;
       itemBatch.packSize = 1;
       itemBatch.numberOfPacks = newNumberOfPacks;
       itemBatch.expiryDate = expiryDate;
