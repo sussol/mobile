@@ -5,7 +5,7 @@ import {
   getTotal,
   reuseNumber as reuseSerialNumber,
 } from '../utilities';
-import { SERIAL_NUMBER_KEYS } from '../index';
+import { NUMBER_SEQUENCE_KEYS } from '../index';
 import { complement } from 'set-manipulator';
 
 export class Transaction extends Realm.Object {
@@ -17,7 +17,10 @@ export class Transaction extends Realm.Object {
   destructor(database) {
     if (this.isFinalised) throw new Error('Cannot delete finalised transaction');
     if (this.isCustomerInvoice) {
-      reuseSerialNumber(database, SERIAL_NUMBER_KEYS.CUSTOMER_INVOICE, this.serialNumber);
+      reuseSerialNumber(database, NUMBER_SEQUENCE_KEYS.CUSTOMER_INVOICE_NUMBER, this.serialNumber);
+    }
+    if (this.isSupplierInvoice) {
+      reuseSerialNumber(database, NUMBER_SEQUENCE_KEYS.SUPPLIER_INVOICE_NUMBER, this.serialNumber);
     }
     database.delete('TransactionItem', this.items);
   }
