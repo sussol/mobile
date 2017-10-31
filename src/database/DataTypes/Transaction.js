@@ -172,7 +172,7 @@ export class Transaction extends Realm.Object {
    * @param  {Realm} database   App wide local database
    * @return {none}
    */
-  pruneRedundantBatches(database) {
+  pruneRedundantBatchesAndItems(database) {
     const batchesToRemove = this.getTransactionBatches(database)
                               .filtered('numberOfPacks = 0');
 
@@ -217,8 +217,6 @@ export class Transaction extends Realm.Object {
     if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
     const isIncomingInvoice = this.isIncoming;
-
-    this.pruneRedundantBatches(database); // Remove any batches/items with 0 quantity
 
     this.getTransactionBatches(database).forEach(transactionBatch => {
       const { itemBatch,
@@ -273,6 +271,7 @@ export class Transaction extends Realm.Object {
    */
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
+    if (!this.isSupplierInvoice) this.pruneRedundantBatchesAndItems(database);
     if (!this.isConfirmed) this.confirm(database);
     this.status = 'finalised';
     database.save('Transaction', this);
