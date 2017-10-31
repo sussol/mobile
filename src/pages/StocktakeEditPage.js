@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { PageButton } from '../widgets';
 import { GenericPage } from './GenericPage';
@@ -31,7 +30,6 @@ export class StocktakeEditPage extends React.Component {
       sortBy: 'itemName',
       isAscending: true,
     };
-    autobind(this);
   }
 
   /**
@@ -41,7 +39,7 @@ export class StocktakeEditPage extends React.Component {
    * @param  {string} newValue      The value the user entered in the cell
    * @return {none}
    */
-  onEndEditing(key, stocktakeItem, newValue) {
+  onEndEditing = (key, stocktakeItem, newValue) => {
     if (key !== 'countedTotalQuantity' || newValue === '') return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
@@ -49,7 +47,7 @@ export class StocktakeEditPage extends React.Component {
     stocktakeItem.setCountedTotalQuantity(this.props.database, quantity);
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -59,7 +57,7 @@ export class StocktakeEditPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.items.filtered(
@@ -82,7 +80,7 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  renderCell(key, stocktakeItem) {
+  renderCell = (key, stocktakeItem) => {
     const isEditable = !this.props.stocktake.isFinalised;
     switch (key) {
       default:
@@ -101,28 +99,24 @@ export class StocktakeEditPage extends React.Component {
     }
   }
 
-  renderManageStocktakeButton() {
-    return (
-      <PageButton
-        text={buttonStrings.manage_stocktake}
-        onPress={() => this.props.navigateTo('stocktakeManager',
-          navStrings.manage_stocktake,
-          { stocktake: this.props.stocktake },
-          )}
-        isDisabled={this.props.stocktake.isFinalised}
-      />
-    );
-  }
+  renderManageStocktakeButton = () => (
+    <PageButton
+      text={buttonStrings.manage_stocktake}
+      onPress={() => this.props.navigateTo('stocktakeManager',
+        navStrings.manage_stocktake,
+        { stocktake: this.props.stocktake },
+        )}
+      isDisabled={this.props.stocktake.isFinalised}
+    />
+  );
 
-  renderExpansion(stocktakeItem) {
-    return (
-      <StocktakeEditExpansion
-        stocktakeItem={stocktakeItem}
-        database={this.props.database}
-        genericTablePageStyles={this.props.genericTablePageStyles}
-      />
-    );
-  }
+  renderExpansion = (stocktakeItem) => (
+    <StocktakeEditExpansion
+      stocktakeItem={stocktakeItem}
+      database={this.props.database}
+      genericTablePageStyles={this.props.genericTablePageStyles}
+    />
+  );
 
   render() {
     return (

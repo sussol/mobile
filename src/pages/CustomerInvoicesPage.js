@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
@@ -34,10 +33,9 @@ export class CustomerInvoicesPage extends React.Component {
       sortBy: 'serialNumber',
       isAscending: false,
     };
-    autobind(this);
   }
 
-  onNewInvoice(otherParty) {
+  onNewInvoice = (otherParty) => {
     const { database, currentUser } = this.props;
     let invoice;
     database.write(() => {
@@ -46,7 +44,7 @@ export class CustomerInvoicesPage extends React.Component {
     this.navigateToInvoice(invoice);
   }
 
-  onDeleteConfirm() {
+  onDeleteConfirm = () => {
     const { selection, transactions } = this.state;
     const { database } = this.props;
     database.write(() => {
@@ -64,22 +62,16 @@ export class CustomerInvoicesPage extends React.Component {
     this.refreshData();
   }
 
-  onDeleteCancel() {
+  onDeleteCancel = () => {
     this.setState({ selection: [] });
     this.refreshData();
   }
 
-  onRowPress(invoice) {
-    this.navigateToInvoice(invoice);
-  }
+  onRowPress = (invoice) => this.navigateToInvoice(invoice);
 
-  onSelectionChange(newSelection) {
-    this.setState({
-      selection: newSelection,
-    });
-  }
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
-  navigateToInvoice(invoice) {
+  navigateToInvoice = (invoice) => {
     // For a customer invoice to be opened for editing in the customer invoice page, we need it to
     // be confirmed, otherwise we could end up in with more of a paticular item being issued across
     // multiple invoices than is available. We generally create customer invoices with the status
@@ -98,7 +90,7 @@ export class CustomerInvoicesPage extends React.Component {
     );
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -108,7 +100,7 @@ export class CustomerInvoicesPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
 
@@ -133,7 +125,7 @@ export class CustomerInvoicesPage extends React.Component {
     });
   }
 
-  renderCell(key, invoice) {
+  renderCell = (key, invoice) => {
     switch (key) {
       default:
         return invoice[key];
@@ -150,14 +142,12 @@ export class CustomerInvoicesPage extends React.Component {
     }
   }
 
-  renderNewInvoiceButton() {
-    return (
-      <PageButton
-        text={buttonStrings.new_invoice}
-        onPress={() => this.setState({ isCreatingInvoice: true })}
-      />
-    );
-  }
+  renderNewInvoiceButton = () => (
+    <PageButton
+      text={buttonStrings.new_invoice}
+      onPress={() => this.setState({ isCreatingInvoice: true })}
+    />
+  )
 
   render() {
     return (
