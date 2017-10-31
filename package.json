@@ -17,7 +17,7 @@
   "homepage": "http://msupply.org.nz",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest --coverage",
+    "test": "jest --coverage"
   },
   "jest": {
     "preprocessorIgnorePatterns": [
