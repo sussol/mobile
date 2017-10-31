@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import autobind from 'react-autobind';
 import {
   formatDate,
-  parsePositiveFloat,
+  parsePositiveInteger,
   sortDataBy,
 } from '../utilities';
 import { createRecord } from '../database';
@@ -88,7 +88,7 @@ export class SupplierInvoicePage extends React.Component {
     database.write(() => {
       switch (key) {
         case 'numberOfPacks':
-          transactionBatch.numberOfPacks = parsePositiveFloat(newValue);
+          transactionBatch.setTotalQuantity(database, parsePositiveInteger(newValue));
           break;
         case 'expiryDate':
           transactionBatch.expiryDate = newValue;
@@ -338,7 +338,7 @@ export class SupplierInvoicePage extends React.Component {
             key: 'numberOfPacks',
             width: 1,
             title: tableStrings.quantity,
-            alignText: 'center',
+            alignText: 'right',
           },
           {
             key: 'expiryDate',
