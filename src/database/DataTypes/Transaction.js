@@ -21,10 +21,6 @@ export class Transaction extends Realm.Object {
     }
     database.delete('TransactionItem', this.items);
   }
-  // Is external supplier invoice
-  get isExternalSupplierInvoice() {
-    return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
-  }
 
   get isFinalised() {
     return this.status === 'finalised';
@@ -48,6 +44,14 @@ export class Transaction extends Realm.Object {
 
   get isSupplierInvoice() {
     return this.type === 'supplier_invoice';
+  }
+
+  get isExternalSupplierInvoice() {
+    return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
+  }
+
+  get isInternalSupplierInvoice() {
+    return this.isSupplierInvoice && this.otherParty && this.otherParty.isInternalSupplier;
   }
 
   get isInventoryAdjustment() {
@@ -270,8 +274,10 @@ export class Transaction extends Realm.Object {
    */
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
-    if (!this.isSupplierInvoice) this.pruneRedundantBatchesAndItems(database);
+    // Should prune all invoice except internal supplier invoices
+    if (!this.isInternalSupplierInvoice) this.pruneRedundantBatchesAndItems(database);
     if (!this.isConfirmed) this.confirm(database);
+
     this.status = 'finalised';
     database.save('Transaction', this);
   }
