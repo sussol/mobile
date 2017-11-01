@@ -78,6 +78,10 @@ export class Transaction extends Realm.Object {
     return this.items.length;
   }
 
+  get isLinkedToRequisition() {
+    return !!this.linkedRequisition;
+  }
+
   hasItemWithId(itemId) {
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
@@ -105,10 +109,6 @@ export class Transaction extends Realm.Object {
         );
       });
     }
-  }
-
-  get isLinkedToRequisition() {
-    return !!this.linkedRequisition;
   }
 
   /**
