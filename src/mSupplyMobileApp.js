@@ -239,6 +239,7 @@ class MSupplyMobileAppContainer extends React.Component {
           runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
         <SyncModal
+          database={this.database}
           isOpen={this.state.syncModalIsOpen}
           state={this.props.syncState}
           onPressManualSync={this.synchronise}
