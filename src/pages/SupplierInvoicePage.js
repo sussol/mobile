@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import {
   formatDate,
   parsePositiveFloat,
@@ -54,12 +53,11 @@ export class SupplierInvoicePage extends React.Component {
       modalIsOpen: false,
       selection: [],
     };
-    autobind(this);
   }
 
   // Delete transaction batch then delete transactionItem if no more
   // transaction batches
-  onDeleteConfirm() {
+  onDeleteConfirm = () => {
     const { selection } = this.state;
     const { transaction, database } = this.props;
     database.write(() => {
@@ -68,13 +66,9 @@ export class SupplierInvoicePage extends React.Component {
     this.setState({ selection: [] }, this.refreshData);
   }
 
-  onDeleteCancel() {
-    this.setState({ selection: [] }, this.refreshData);
-  }
+  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
-  }
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
   /**
    * Respond to the user editing fields
@@ -83,7 +77,7 @@ export class SupplierInvoicePage extends React.Component {
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
    */
-  onEndEditing(key, transactionBatch, newValue) {
+  onEndEditing = (key, transactionBatch, newValue) => {
     const { database } = this.props;
     database.write(() => {
       switch (key) {
@@ -100,7 +94,7 @@ export class SupplierInvoicePage extends React.Component {
     });
   }
 
-  getModalTitle() {
+  getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
@@ -113,7 +107,7 @@ export class SupplierInvoicePage extends React.Component {
     }
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -123,7 +117,7 @@ export class SupplierInvoicePage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const { database, transaction } = this.props;
@@ -138,7 +132,7 @@ export class SupplierInvoicePage extends React.Component {
     });
   }
 
-  addNewLine(item) {
+  addNewLine = (item) => {
     const { database, transaction } = this.props;
     database.write(() => {
       const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
@@ -151,30 +145,17 @@ export class SupplierInvoicePage extends React.Component {
     });
   }
 
-  openModal(key) {
-    this.setState({
-      modalKey: key,
-      modalIsOpen: true,
-    });
-  }
+  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
 
-  closeModal() {
-    this.setState({ modalIsOpen: false });
-  }
+  closeModal = () => this.setState({ modalIsOpen: false });
 
-  openItemSelector() {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
-  }
+  openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
 
-  openCommentEditor() {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  }
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
-  openTheirRefEditor() {
-    this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-  }
+  openTheirRefEditor = () => this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
 
-  renderPageInfo() {
+  renderPageInfo = () => {
     const { transaction } = this.props;
     const infoColumns = [
       [
@@ -211,7 +192,7 @@ export class SupplierInvoicePage extends React.Component {
     );
   }
 
-  renderCell(key, transactionBatch) {
+  renderCell = (key, transactionBatch) => {
     const isEditable = !this.props.transaction.isFinalised;
     const type = isEditable ? 'editable' : 'text';
     const editableCell = {
@@ -244,7 +225,7 @@ export class SupplierInvoicePage extends React.Component {
     }
   }
 
-  renderModalContent() {
+  renderModalContent = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
     const { database, transaction } = this.props;
     switch (this.state.modalKey) {
@@ -298,16 +279,14 @@ export class SupplierInvoicePage extends React.Component {
     }
   }
 
-  renderAddBatchButton() {
-    return (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_line}
-        onPress={this.openItemSelector}
-        isDisabled={this.props.transaction.isFinalised}
-      />
-    );
-  }
+  renderAddBatchButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.new_line}
+      onPress={this.openItemSelector}
+      isDisabled={this.props.transaction.isFinalised}
+    />
+  );
 
   render() {
     return (
@@ -378,6 +357,7 @@ export class SupplierInvoicePage extends React.Component {
     );
   }
 }
+
 
 export function checkForFinaliseError(transaction) {
   if (!transaction.isExternalSupplierInvoice) return null;

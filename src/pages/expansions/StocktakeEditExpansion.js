@@ -6,7 +6,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
 import { dataTableStyles, expansionPageStyles } from '../../globalStyles';
 import { PageButton, ExpiryTextInput, PageInfo } from '../../widgets';
@@ -24,10 +23,9 @@ export class StocktakeEditExpansion extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    autobind(this);
   }
 
-  onEndEditing(key, stocktakeBatch, newValue) {
+  onEndEditing = (key, stocktakeBatch, newValue) => {
     this.props.database.write(() => {
       switch (key) {
         case 'countedTotalQuantity': {
@@ -54,11 +52,9 @@ export class StocktakeEditExpansion extends React.Component {
     });
   }
 
-  refreshData() {
-    this.setState({ data: this.props.stocktakeItem.batches });
-  }
+  refreshData = () => this.setState({ data: this.props.stocktakeItem.batches });
 
-  renderCell(key, stocktakeBatch) {
+  renderCell = (key, stocktakeBatch) => {
     const { stocktake } = this.props.stocktakeItem;
     const isEditable = !stocktake.isFinalised;
     switch (key) {
@@ -104,7 +100,7 @@ export class StocktakeEditExpansion extends React.Component {
     }
   }
 
-  renderAddBatchButton() {
+  renderAddBatchButton = () => {
     const { stocktakeItem } = this.props;
     const addNewBatch = () => {
       this.props.database.write(() => {
@@ -122,11 +118,7 @@ export class StocktakeEditExpansion extends React.Component {
     );
   }
 
-  renderFooter() {
-    return null;
-  }
-
-  renderPageInfo() {
+  renderPageInfo = () => {
     const infoColumns = [
       [
         {
