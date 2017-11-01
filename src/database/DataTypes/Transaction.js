@@ -101,7 +101,7 @@ export class Transaction extends Realm.Object {
       this.otherParty.masterLists.forEach(masterList => {
         const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
         itemsToAdd.forEach(masterListItem =>
-          createRecord(database, 'TransactionItem', this, masterListItem.item),
+          createRecord(database, 'TransactionItem', this, masterListItem.item)
         );
       });
     }
@@ -137,7 +137,7 @@ export class Transaction extends Realm.Object {
     const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
       const transactionBatch = transactionBatches.find(
-        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId,
+        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId
       );
       transactionBatchesToDelete.push(transactionBatch);
     });
