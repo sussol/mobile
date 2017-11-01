@@ -50,10 +50,6 @@ export class Transaction extends Realm.Object {
     return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
   }
 
-  get isInternalSupplierInvoice() {
-    return this.isSupplierInvoice && this.otherParty && this.otherParty.isInternalSupplier;
-  }
-
   get isInventoryAdjustment() {
     return this.otherParty && this.otherParty.type === 'inventory_adjustment';
   }
@@ -275,7 +271,7 @@ export class Transaction extends Realm.Object {
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
     // Should prune all invoice except internal supplier invoices
-    if (!this.isInternalSupplierInvoice) this.pruneRedundantBatchesAndItems(database);
+    if (!this.isLinkedToRequisition) this.pruneRedundantBatchesAndItems(database);
     if (!this.isConfirmed) this.confirm(database);
 
     this.status = 'finalised';

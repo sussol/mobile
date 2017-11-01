@@ -10,10 +10,6 @@ export class Name extends Realm.Object {
     return this.type === 'facility' && this.isSupplier;
   }
 
-  get isInternalSupplier() {
-    return this.type === 'store' && this.isSupplier;
-  }
-
   addMasterListIfUnique(masterList) {
     if (this.masterLists.filtered('id == $0', masterList.id).length > 0) return;
     this.masterLists.push(masterList);
