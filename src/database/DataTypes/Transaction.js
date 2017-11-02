@@ -24,10 +24,6 @@ export class Transaction extends Realm.Object {
     }
     database.delete('TransactionItem', this.items);
   }
-  // Is external supplier invoice
-  get isExternalSupplierInvoice() {
-    return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
-  }
 
   get isFinalised() {
     return this.status === 'finalised';
@@ -53,6 +49,14 @@ export class Transaction extends Realm.Object {
     return this.type === 'supplier_invoice';
   }
 
+  get isExternalSupplierInvoice() {
+    return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
+  }
+
+  get isInternalSupplierInvoice() {
+    return this.isSupplierInvoice && this.otherParty && this.otherParty.isInternalSupplier;
+  }
+
   get isInventoryAdjustment() {
     return this.otherParty && this.otherParty.type === 'inventory_adjustment';
   }
@@ -75,6 +79,10 @@ export class Transaction extends Realm.Object {
 
   get numberOfItems() {
     return this.items.length;
+  }
+
+  get isLinkedToRequisition() {
+    return !!this.linkedRequisition;
   }
 
   hasItemWithId(itemId) {
@@ -106,10 +114,6 @@ export class Transaction extends Realm.Object {
     }
   }
 
-  get isLinkedToRequisition() {
-    return !(!this.linkedRequisition);
-  }
-
   /**
    * Remove the transaction items with the given ids from this transaction
    * @param  {Realm}  database        App wide local database
@@ -139,8 +143,9 @@ export class Transaction extends Realm.Object {
     const transactionBatches = this.getTransactionBatches(database);
     const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
-      const transactionBatch = transactionBatches.find(matchTransactionBatch =>
-                                  matchTransactionBatch.id === transactionBatchId);
+      const transactionBatch = transactionBatches.find(
+        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId
+      );
       transactionBatchesToDelete.push(transactionBatch);
     });
     database.delete('TransactionBatch', transactionBatchesToDelete);
@@ -175,9 +180,8 @@ export class Transaction extends Realm.Object {
    * @param  {Realm} database   App wide local database
    * @return {none}
    */
-  pruneRedundantBatches(database) {
-    const batchesToRemove = this.getTransactionBatches(database)
-                              .filtered('numberOfPacks = 0');
+  pruneRedundantBatchesAndItems(database) {
+    const batchesToRemove = this.getTransactionBatches(database).filtered('numberOfPacks = 0');
 
     database.delete('TransactionBatch', batchesToRemove);
     this.pruneBatchlessTransactionItems(database);
@@ -205,9 +209,7 @@ export class Transaction extends Realm.Object {
    * @return {RealmCollection} all transaction batches
    */
   getTransactionBatches(database) {
-    return database
-      .objects('TransactionBatch')
-      .filtered('transaction.id == $0', this.id);
+    return database.objects('TransactionBatch').filtered('transaction.id == $0', this.id);
   }
 
   /**
@@ -221,17 +223,16 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
     const isIncomingInvoice = this.isIncoming;
 
-    this.pruneRedundantBatches(database); // Remove any batches/items with 0 quantity
-
     this.getTransactionBatches(database).forEach(transactionBatch => {
-      const { itemBatch,
-              batch,
-              packSize,
-              numberOfPacks,
-              expiryDate,
-              costPrice,
-              sellPrice,
-             } = transactionBatch;
+      const {
+        itemBatch,
+        batch,
+        packSize,
+        numberOfPacks,
+        expiryDate,
+        costPrice,
+        sellPrice,
+      } = transactionBatch;
 
       // Pack to one all transactions in mobile, so multiply by packSize to get quantity and price
       const packedToOneQuantity = numberOfPacks * packSize;
@@ -239,8 +240,8 @@ export class Transaction extends Realm.Object {
       const packedToOneSellPrice = sellPrice / packSize;
 
       const newNumberOfPacks = isIncomingInvoice
-          ? itemBatch.numberOfPacks + packedToOneQuantity
-          : itemBatch.numberOfPacks - packedToOneQuantity;
+        ? itemBatch.numberOfPacks + packedToOneQuantity
+        : itemBatch.numberOfPacks - packedToOneQuantity;
       itemBatch.packSize = 1;
       itemBatch.numberOfPacks = newNumberOfPacks;
       itemBatch.expiryDate = expiryDate;
@@ -276,7 +277,10 @@ export class Transaction extends Realm.Object {
    */
   finalise(database) {
     if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
+    // Should prune all invoice except internal supplier invoices
+    if (!this.isInternalSupplierInvoice) this.pruneRedundantBatchesAndItems(database);
     if (!this.isConfirmed) this.confirm(database);
+
     this.status = 'finalised';
     database.save('Transaction', this);
   }
