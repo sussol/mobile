@@ -36,7 +36,7 @@ const SORT_DATA_TYPES = {
   itemName: 'string',
   itemCode: 'string',
   batch: 'string',
-  numberOfPacks: 'number',
+  totalQuantity: 'number',
   packSize: 'number',
 };
 
@@ -81,7 +81,7 @@ export class SupplierInvoicePage extends React.Component {
     const { database } = this.props;
     database.write(() => {
       switch (key) {
-        case 'quantity':
+        case 'totalQuantity':
           // Should edit the numberOfPacks directly if packSize becomes an editable column
           // that represents the number of packs counted
           transactionBatch.setTotalQuantity(database, parsePositiveInteger(newValue));
@@ -206,7 +206,7 @@ export class SupplierInvoicePage extends React.Component {
         return {
           cellContents: transactionBatch[key],
         };
-      case 'numberOfPacks':
+      case 'totalQuantity':
         return editableCell;
       case 'expiryDate': {
         return (
@@ -316,7 +316,7 @@ export class SupplierInvoicePage extends React.Component {
             sortable: true,
           },
           {
-            key: 'quantity',
+            key: 'totalQuantity',
             width: 1,
             title: tableStrings.quantity,
             alignText: 'right',
