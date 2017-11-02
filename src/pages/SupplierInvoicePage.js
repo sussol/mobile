@@ -87,7 +87,9 @@ export class SupplierInvoicePage extends React.Component {
     const { database } = this.props;
     database.write(() => {
       switch (key) {
-        case 'numberOfPacks':
+        case 'quantity':
+          // Should edit the numberOfPacks directly if packSize becomes an editable column
+          // that represents the number of packs counted
           transactionBatch.setTotalQuantity(database, parsePositiveInteger(newValue));
           break;
         case 'expiryDate':
@@ -335,7 +337,7 @@ export class SupplierInvoicePage extends React.Component {
             sortable: true,
           },
           {
-            key: 'numberOfPacks',
+            key: 'quantity',
             width: 1,
             title: tableStrings.quantity,
             alignText: 'right',
