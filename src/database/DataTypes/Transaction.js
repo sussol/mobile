@@ -167,7 +167,7 @@ export class Transaction extends Realm.Object {
    */
   addBatchIfUnique(database, transactionBatch) {
     addBatchToParent(transactionBatch, this, () =>
-      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item),
+      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item)
     );
   }
 
