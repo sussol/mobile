@@ -26,7 +26,7 @@ export function SyncModal({ database, isOpen, onClose, onPressManualSync, state 
       const recordsToSyncCount = database.objects('SyncOut').length;
       message = recordsToSyncCount > 0 ? `${recordsToSyncCount} Records Waiting` : 'Sync Complete';
     } else if (progress >= total) {
-      message = 'All records updated.';
+      message = 'Checking server for records...';
     } else if (progress === PROGRESS_LOADING) {
       message = 'Loading change count...';
     } else {
