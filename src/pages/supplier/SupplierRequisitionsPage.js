@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 
 import { createRecord } from '../../database';
 import { BottomConfirmModal, PageButton, SelectModal } from '../../widgets';
@@ -35,10 +34,9 @@ export class SupplierRequisitionsPage extends React.Component {
       sortBy: 'serialNumber',
       isAscending: false,
     };
-    autobind(this);
   }
 
-  onDeleteConfirm() {
+  onDeleteConfirm = () => {
     const { selection } = this.state;
     const { database } = this.props;
     database.write(() => {
@@ -57,12 +55,12 @@ export class SupplierRequisitionsPage extends React.Component {
     this.refreshData();
   }
 
-  onDeleteCancel() {
+  onDeleteCancel = () => {
     this.setState({ selection: [] });
     this.refreshData();
   }
 
-  onNewRequisition(otherStoreName) {
+  onNewRequisition = (otherStoreName) => {
     let requisition;
     this.props.database.write(() => {
       requisition = createRecord(this.props.database,
@@ -71,15 +69,11 @@ export class SupplierRequisitionsPage extends React.Component {
     this.navigateToRequisition(requisition);
   }
 
-  onRowPress(requisition) {
-    this.navigateToRequisition(requisition);
-  }
+  onRowPress = (requisition) => this.navigateToRequisition(requisition);
 
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
-  }
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
-  navigateToRequisition(requisition) {
+  navigateToRequisition = (requisition) => {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
       'supplierRequisition',
@@ -88,7 +82,7 @@ export class SupplierRequisitionsPage extends React.Component {
     );
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -98,7 +92,7 @@ export class SupplierRequisitionsPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data =
@@ -115,7 +109,7 @@ export class SupplierRequisitionsPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  renderCell(key, requisition) {
+  renderCell = (key, requisition) => {
     switch (key) {
       case 'entryDate':
         return requisition.entryDate.toDateString();
@@ -134,16 +128,14 @@ export class SupplierRequisitionsPage extends React.Component {
     }
   }
 
-  renderNewRequisitionButton() {
-    return (
-      <PageButton
-        text={buttonStrings.new_requisition}
-        onPress={() => {
-          this.setState({ isCreatingRequisition: true });
-        }}
-      />
-    );
-  }
+  renderNewRequisitionButton = () => (
+    <PageButton
+      text={buttonStrings.new_requisition}
+      onPress={() => {
+        this.setState({ isCreatingRequisition: true });
+      }}
+    />
+  )
 
 
   render() {

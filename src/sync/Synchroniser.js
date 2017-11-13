@@ -3,8 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import autobind from 'react-autobind';
-
 import { SyncQueue } from './SyncQueue';
 import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
@@ -46,20 +44,19 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
-    autobind(this);
     if (this.isInitialised()) this.syncQueue.enable();
   }
 
   /**
    * Redux progress setting functions
    */
-  setTotal(totalCount) { this.dispatch(setSyncTotal(totalCount)); }
-  incrementProgress(increment) { this.dispatch(incrementSyncProgress(increment)); }
-  setProgress(currentCount) { this.dispatch(setSyncProgress(currentCount)); }
-  setProgressMessage(message) { this.dispatch(setSyncProgressMessage(message)); }
-  setError(errorMessage) { this.dispatch(setSyncError(errorMessage)); }
-  setIsSyncing(isSyncing) { this.dispatch(setSyncIsSyncing(isSyncing)); }
-  setCompletionTime(time) { this.dispatch(setSyncCompletionTime(time)); }
+  setTotal = (totalCount) => this.dispatch(setSyncTotal(totalCount));
+  incrementProgress = (increment) => this.dispatch(incrementSyncProgress(increment));
+  setProgress = (currentCount) => this.dispatch(setSyncProgress(currentCount));
+  setProgressMessage = (message) => this.dispatch(setSyncProgressMessage(message));
+  setError = (errorMessage) => this.dispatch(setSyncError(errorMessage));
+  setIsSyncing = (isSyncing) => this.dispatch(setSyncIsSyncing(isSyncing));
+  setCompletionTime = (time) => this.dispatch(setSyncCompletionTime(time));
 
   /**
    * Wipe the current database, check that the given url can be synced against
@@ -71,7 +68,7 @@ export class Synchroniser {
    * @return {Promise}                 Resolve if successfully authenticated and
    *                                   initialised, otherwise throw error
    */
-  async initialise(serverURL, syncSiteName, syncSitePassword) {
+  initialise = async (serverURL, syncSiteName, syncSitePassword) => {
     this.setIsSyncing(true);
     this.setProgressMessage('Initialising...');
     this.syncQueue.disable(); // Stop sync queue listening to database changes
@@ -124,7 +121,7 @@ export class Synchroniser {
    * Return whether the synchroniser has been initialised.
    * @return {boolean} True if initial sync has been completed successfully
    */
-  isInitialised() {
+  isInitialised = () => {
     const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
     return syncIsInitialised && syncIsInitialised === 'true';
   }
@@ -133,7 +130,7 @@ export class Synchroniser {
    * Return whether or not the last sync of the app failed
    * @return {boolean} 'true' if the last call of synchronise failed
    */
-  lastSyncFailed() {
+  lastSyncFailed = () => {
     const lastSyncFailed = this.settings.get(SYNC_PRIOR_FAILED);
     return lastSyncFailed && lastSyncFailed === 'true';
   }
@@ -143,7 +140,7 @@ export class Synchroniser {
    * down remote changes and integrating them into the local database.
    * @return {[type]} [description]
    */
-  async synchronise() {
+  synchronise = async () => {
     try {
       if (!this.isInitialised()) throw new Error('Not yet initialised');
       this.setIsSyncing(true);
@@ -173,7 +170,7 @@ export class Synchroniser {
    * all local changes have been synced.
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async push() {
+  push = async () => {
     this.setProgressMessage('Pushing changes to the server');
     this.setProgress(0);
     let recordsToSync;
@@ -195,7 +192,7 @@ export class Synchroniser {
    * @param  {array}   records The records to push
    * @return {Promise}         Resolves if successful, or passes up any error thrown
    */
-  async pushRecords(records) {
+  pushRecords = async (records) => {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
@@ -224,7 +221,7 @@ export class Synchroniser {
    * Pulls any changes to data on the sync server down to the local database
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async pull() {
+  pull = async () => {
     this.setProgressMessage('Pulling changes from the server');
     this.setProgress(0);
     this.setTotal(0);
@@ -242,7 +239,7 @@ export class Synchroniser {
    * @param  {string} serverId   The sync ID of the server
    * @return {Promise}          Resolves if successful, or passes up any error thrown
    */
-  async recursivePull(serverURL, thisSiteId, serverId, currentTotal) {
+  recursivePull = async (serverURL, thisSiteId, serverId, currentTotal) => {
     const authHeader = this.authenticator.getAuthHeader();
     const waitingRecordCount = await this.getWaitingRecordCount(
       serverURL,
@@ -278,7 +275,7 @@ export class Synchroniser {
    * @param  {string} serverId   Sync ID of the server
    * @return {Promise}           Resolves with the record count, or passes up any error thrown
    */
-  async getWaitingRecordCount(serverURL, thisSiteId, serverId, authHeader) {
+  getWaitingRecordCount = async (serverURL, thisSiteId, serverId, authHeader) => {
     const response = await fetch(
       `${serverURL}/sync/v3/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
       {
@@ -308,7 +305,7 @@ export class Synchroniser {
    * @param  {integer} numRecords The number of records to fetch
    * @return {Promise}            Resolves with the records, or passes up any error thrown
    */
-  async getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
+  getIncomingRecords = async (serverURL, thisSiteId, serverId, authHeader, numRecords) => {
     const response = await fetch(
       `${serverURL}/sync/v3/queued_records` +
         `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
@@ -351,7 +348,7 @@ export class Synchroniser {
    * @param  {array}   records    Sync records that have been integrated
    * @return {none}
    */
-  async acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, records) {
+  acknowledgeRecords = async (serverURL, thisSiteId, serverId, authHeader, records) => {
     const syncIds = records.map(record => record.SyncID);
     const requestBody = {
       SyncRecordIDs: syncIds,

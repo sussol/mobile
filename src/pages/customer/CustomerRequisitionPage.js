@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { View } from 'react-native';
 
 import { GenericPage } from '../GenericPage';
@@ -39,7 +38,6 @@ export class CustomerRequisitionPage extends React.Component {
       sortBy: 'itemName',
       isAscending: true,
     };
-    autobind(this);
   }
 
   /**
@@ -49,7 +47,7 @@ export class CustomerRequisitionPage extends React.Component {
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
    */
-  onEndEditing(key, requisitionItem, newValue) {
+  onEndEditing = (key, requisitionItem, newValue) => {
     // This will update associated CustomerInvoice if one exists or if linked
     // CustomerInvoice does not exist, suppliedQuantity will not be updated
     if (key !== 'suppliedQuantity') return;
@@ -59,7 +57,7 @@ export class CustomerRequisitionPage extends React.Component {
     });
   }
 
-  onUseRequestedQuantities() {
+  onUseRequestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
       requisition.items.forEach(requisitionItem => {
@@ -70,7 +68,7 @@ export class CustomerRequisitionPage extends React.Component {
     this.refreshData();
   }
 
-  onUseSuggestedQuantities() {
+  onUseSuggestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
       requisition.items.forEach(requisitionItem => {
@@ -81,12 +79,9 @@ export class CustomerRequisitionPage extends React.Component {
     this.refreshData();
   }
 
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
-  }
-
-  getModalTitle() {
+  getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
@@ -97,7 +92,7 @@ export class CustomerRequisitionPage extends React.Component {
     }
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -107,7 +102,7 @@ export class CustomerRequisitionPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.requisition.items
@@ -129,19 +124,13 @@ export class CustomerRequisitionPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  openModal(key) {
-    this.setState({ modalKey: key, modalIsOpen: true });
-  }
+  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
 
-  closeModal() {
-    this.setState({ modalIsOpen: false });
-  }
+  closeModal = () => this.setState({ modalIsOpen: false });
 
-  openCommentEditor() {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  }
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
-  renderPageInfo() {
+  renderPageInfo = () => {
     const { requisition } = this.props;
     const infoColumns = [
       [
@@ -175,7 +164,7 @@ export class CustomerRequisitionPage extends React.Component {
     );
   }
 
-  renderCell(key, requisitionItem) {
+  renderCell = (key, requisitionItem) => {
     const { requisition } = this.props;
     switch (key) {
       case 'monthlyUsage':
@@ -199,7 +188,7 @@ export class CustomerRequisitionPage extends React.Component {
     }
   }
 
-  renderModalContent() {
+  renderModalContent = () => {
     const { COMMENT_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
@@ -220,26 +209,25 @@ export class CustomerRequisitionPage extends React.Component {
     }
   }
 
-  renderButtons() {
-    return (
-      <View style={globalStyles.pageTopRightSectionContainer}>
-        <View style={globalStyles.verticalContainer}>
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.use_requested_quantities}
-            onPress={this.onUseRequestedQuantities}
-            isDisabled={this.props.requisition.isFinalised}
-          />
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.use_suggested_quantities}
-            onPress={this.onUseSuggestedQuantities}
-            isDisabled={this.props.requisition.isFinalised}
-          />
-        </View>
+  renderButtons = () => (
+    <View style={globalStyles.pageTopRightSectionContainer}>
+      <View style={globalStyles.verticalContainer}>
+        <PageButton
+          style={globalStyles.topButton}
+          text={buttonStrings.use_requested_quantities}
+          onPress={this.onUseRequestedQuantities}
+          isDisabled={this.props.requisition.isFinalised}
+        />
+        <PageButton
+          style={globalStyles.topButton}
+          text={buttonStrings.use_suggested_quantities}
+          onPress={this.onUseSuggestedQuantities}
+          isDisabled={this.props.requisition.isFinalised}
+        />
       </View>
-    );
-  }
+    </View>
+  );
+
 
   render() {
     return (

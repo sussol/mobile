@@ -5,52 +5,59 @@
 
 import React from 'react';
 
-import { CustomerInvoicePage } from './customer/CustomerInvoicePage';
+import {
+  CustomerInvoicePage,
+  checkForFinaliseError as checkForCustomerInvoiceError,
+} from './customer/CustomerInvoicePage';
 import { CustomerInvoicesPage } from './customer/CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
 import { CustomerRequisitionsPage } from './customer/CustomerRequisitionsPage';
-import { CustomerRequisitionPage,
-         checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
-       } from './customer/CustomerRequisitionPage';
+import {
+  CustomerRequisitionPage,
+  checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
+} from './customer/CustomerRequisitionPage';
 import { StockPage } from './management/StockPage';
-import { StocktakeEditPage,
-         checkForFinaliseError as checkForStocktakeFinaliseError,
-       } from './management/StocktakeEditPage';
+import {
+  StocktakeEditPage,
+  checkForFinaliseError as checkForStocktakeFinaliseError,
+} from './management/StocktakeEditPage';
 import { StocktakeManagePage } from './management/StocktakeManagePage';
 import { StocktakesPage } from './management/StocktakesPage';
-import { SupplierInvoicePage,
-         checkForFinaliseError as checkForSupplierInvoiceError,
-        } from './supplier/SupplierInvoicePage';
+import {
+  SupplierInvoicePage,
+  checkForFinaliseError as checkForSupplierInvoiceError,
+} from './supplier/SupplierInvoicePage';
 import { SupplierInvoicesPage } from './supplier/SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './supplier/SupplierRequisitionsPage';
-import { SupplierRequisitionPage,
-         checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
-       } from './supplier/SupplierRequisitionPage';
+import {
+  SupplierRequisitionPage,
+  checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
+} from './supplier/SupplierRequisitionPage';
 import { ReportsDashboardPage } from './management/ReportsDashboardPage';
 import { Rep1Page, Rep2Page } from './management/reports';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
-  customerInvoice: (props) => <PageContainer page={CustomerInvoicePage} {...props} />,
-  customerInvoices: (props) => <PageContainer page={CustomerInvoicesPage} {...props} />,
-  customerRequisition: (props) => <PageContainer page={CustomerRequisitionPage} {...props} />,
-  customerRequisitions: (props) => <PageContainer page={CustomerRequisitionsPage} {...props} />,
-  menu: (props) => <PageContainer page={MenuPage} {...props} />,
-  realmExplorer: (props) => <PageContainer page={RealmExplorer} {...props} />,
-  reports: (props) => <PageContainer page={ReportsDashboardPage} {...props} />,
-  rep1: (props) => <PageContainer page={Rep1Page} {...props} />,
-  rep2: (props) => <PageContainer page={Rep2Page} {...props} />,
-  root: (props) => <PageContainer page={MenuPage} {...props} />,
-  stock: (props) => <PageContainer page={StockPage} {...props} />,
-  stocktakeEditor: (props) => <PageContainer page={StocktakeEditPage} {...props} />,
-  stocktakeManager: (props) => <PageContainer page={StocktakeManagePage} {...props} />,
-  stocktakes: (props) => <PageContainer page={StocktakesPage} {...props} />,
-  supplierInvoice: (props) => <PageContainer page={SupplierInvoicePage} {...props} />,
-  supplierInvoices: (props) => <PageContainer page={SupplierInvoicesPage} {...props} />,
-  supplierRequisition: (props) => <PageContainer page={SupplierRequisitionPage} {...props} />,
-  supplierRequisitions: (props) => <PageContainer page={SupplierRequisitionsPage} {...props} />,
+  customerInvoice: props => <PageContainer page={CustomerInvoicePage} {...props} />,
+  customerInvoices: props => <PageContainer page={CustomerInvoicesPage} {...props} />,
+  customerRequisition: props => <PageContainer page={CustomerRequisitionPage} {...props} />,
+  customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
+  menu: props => <PageContainer page={MenuPage} {...props} />,
+  realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
+  reports: props => <PageContainer page={ReportsDashboardPage} {...props} />,
+  rep1: props => <PageContainer page={Rep1Page} {...props} />,
+  rep2: props => <PageContainer page={Rep2Page} {...props} />,
+  root: props => <PageContainer page={MenuPage} {...props} />,
+  stock: props => <PageContainer page={StockPage} {...props} />,
+  stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
+  stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
+  stocktakes: props => <PageContainer page={StocktakesPage} {...props} />,
+  supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
+  supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
+  supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
+  supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
@@ -61,6 +68,7 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_supplier_invoice',
   },
   customerInvoice: {
+    checkForError: checkForCustomerInvoiceError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_customer_invoice',

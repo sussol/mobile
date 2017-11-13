@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import {
   StyleSheet,
 } from 'react-native';
@@ -42,10 +41,9 @@ export class StocktakeManagePage extends React.Component {
       sortBy: 'name',
       isAscending: true,
     };
-    autobind(this);
   }
 
-  componentWillMount() {
+  componentWillMount = () => {
     if (this.props.stocktake) {
       const selected = [];
       this.props.stocktake.items.forEach((stocktakeItem) => {
@@ -59,11 +57,9 @@ export class StocktakeManagePage extends React.Component {
     }
   }
 
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
-  }
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
-  onConfirmPress() {
+  onConfirmPress = () => {
     this.props.runWithLoadingIndicator(() => {
       const { selection } = this.state;
       const { database, navigateTo, currentUser } = this.props;
@@ -93,7 +89,7 @@ export class StocktakeManagePage extends React.Component {
     });
   }
 
-  toggleSelectAllItems(isAllItemsSelected) {
+  toggleSelectAllItems = (isAllItemsSelected) => {
     const { visibleItemIds, selection } = this.state;
 
     if (isAllItemsSelected) { // Deselect all visible items
@@ -116,13 +112,13 @@ export class StocktakeManagePage extends React.Component {
     }, this.refreshData);
   }
 
-  toggleShowItemsWithNoStock() {
+  toggleShowItemsWithNoStock = () => {
     this.setState({
       showItemsWithNoStock: !this.state.showItemsWithNoStock,
     }, this.refreshData);
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -132,7 +128,7 @@ export class StocktakeManagePage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const { showItemsWithNoStock } = this.state;
@@ -149,7 +145,7 @@ export class StocktakeManagePage extends React.Component {
     });
   }
 
-  renderCell(key, item) {
+  renderCell = (key, item) => {
     switch (key) {
       default:
         return item[key];
@@ -160,7 +156,7 @@ export class StocktakeManagePage extends React.Component {
     }
   }
 
-  renderToggleBar() {
+  renderToggleBar = () => {
     const {
       visibleItemIds,
       showItemsWithNoStock,
@@ -192,7 +188,6 @@ export class StocktakeManagePage extends React.Component {
   }
 
   render() {
-    const { stocktake } = this.props;
     return (
       <GenericPage
         data={this.state.data}
@@ -230,7 +225,8 @@ export class StocktakeManagePage extends React.Component {
         topRoute={this.props.topRoute}
       >
         <BottomModal
-          isOpen={!(stocktake && stocktake.isFinalised) && (this.state.selection.length > 0)}
+          isOpen={!(this.props.stocktake && this.props.stocktake.isFinalised)
+                                         && (this.state.selection.length > 0)}
           style={localStyles.bottomModal}
         >
           <TextInput
@@ -245,7 +241,7 @@ export class StocktakeManagePage extends React.Component {
           <Button
             style={[globalStyles.button, globalStyles.modalOrangeButton]}
             textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-            text={!stocktake ? modalStrings.create : modalStrings.confirm}
+            text={!this.props.stocktake ? modalStrings.create : modalStrings.confirm}
             onPress={this.onConfirmPress}
           />
         </BottomModal>

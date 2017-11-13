@@ -16,33 +16,34 @@ import {
     PROGRESS_LOADING,
 } from './constants';
 
-const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
-  let message = '';
+export function SyncModal({ database, isOpen, onClose, onPressManualSync, state }) {
+  const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
+    let message = '';
 
-  if (errorMessage !== '') {
-    message = errorMessage;
-  } else if (!isSyncing) {
-    message = 'Sync Complete.';
-  } else if (progress >= total) {
-    message = 'All records updated.';
-  } else if (progress === PROGRESS_LOADING) {
-    message = 'Loading change count...';
-  } else {
-    message = progressMessage ? `${progressMessage}\n` : '';
-    message += `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;
-  }
+    if (errorMessage !== '') {
+      message = errorMessage;
+    } else if (!isSyncing) {
+      const recordsToSyncCount = database.objects('SyncOut').length;
+      message = recordsToSyncCount > 0 ? `${recordsToSyncCount} Records Waiting` : 'Sync Complete';
+    } else if (progress >= total) {
+      message = 'All records updated.';
+    } else if (progress === PROGRESS_LOADING) {
+      message = 'Loading change count...';
+    } else {
+      message = progressMessage ? `${progressMessage}\n` : '';
+      message += `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;
+    }
 
-  return message;
-};
+    return message;
+  };
 
-const getSyncDateLabel = (syncTime) => {
-  if (syncTime > 0) {
-    return formatDate(new Date(syncTime), 'H:mm, MMMM D, YYYY');
-  }
-  return '-';
-};
+  const getSyncDateLabel = (syncTime) => {
+    if (syncTime > 0) {
+      return formatDate(new Date(syncTime), 'H:mm, MMMM D, YYYY');
+    }
+    return '-';
+  };
 
-export function SyncModal({ isOpen, onClose, onPressManualSync, state }) {
   const {
     progress,
     total,
@@ -51,6 +52,7 @@ export function SyncModal({ isOpen, onClose, onPressManualSync, state }) {
     errorMessage,
     progressMessage,
   } = state;
+
   return (
     <Modal
       isOpen={isOpen}
@@ -152,6 +154,7 @@ const localStyles = StyleSheet.create({
 });
 
 SyncModal.propTypes = {
+  database: PropTypes.object.isRequired,
   state: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
   onPressManualSync: PropTypes.func.isRequired,

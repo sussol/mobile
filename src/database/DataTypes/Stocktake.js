@@ -56,14 +56,6 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Check whether at least one stocktake item has a counted quantity set
-   * @return {boolean} True if one or more counted items, otherwise false
-   */
-  get hasSomeCountedItems() {
-    return this.items.filtered('countedTotalQuantity != null').length === 0;
-  }
-
-  /**
    * Get any stocktake items that would cause a reduction larger than the amount
    * of available stock in inventory if it were finalised.
    * @return {array} All stocktake items that have been reduced below minimum level
@@ -76,88 +68,80 @@ export class Stocktake extends Realm.Object {
     return itemsBelowMinimum;
   }
 
+  get hasSomeCountedItems() {
+    return this.items.some(item => item.hasBatchWithQuantityChange);
+  }
+
   get numberOfBatches() {
     return getTotal(this.items, 'numberOfBatches');
   }
 
   /**
-   * Finalises this stocktake, creating transactions to apply the stock changes to inventory
+   * Get or create reducing invoice for this stocktake
+   * @param {Realm}         database
    * @param {Realm.Object}  user     The current user logged in
+   * @return {Realm.Object} Transaction for reduction
+   */
+  getReductions(database) {
+    if (!this.reductions) {
+      this.reductions = createRecord(database, 'InventoryAdjustment',
+                                     this.finalisedBy, this.stocktakeDate, false);
+    }
+    return this.reductions;
+  }
+
+  /**
+   * Get or create increasing invoice for this stocktake
+   * @param {Realm}         database
+   * @param {Realm.Object}  user     The current user logged in
+   * @return {Realm.Object} Transaction for stock increase
+   */
+  getAdditions(database) {
+    if (!this.additions) {
+      this.additions = createRecord(database, 'InventoryAdjustment',
+                                    this.finalisedBy, this.stocktakeDate, true);
+    }
+    return this.additions;
+  }
+
+  /**
+   * Finalises this stocktake, creating transactions to apply the stock changes to inventory
    * @param {Realm}         database App wide local database
+   * @param {Realm.Object}  user     The current user logged in
    */
   finalise(database, user) {
-    // Create the transactions for additions and reductions
-    const date = new Date();
-
-    // Create inventory adjustment transactions as required, and allocate batches
-    this.adjustInventory(database, user, date);
-
     // Set the stocktake finalise details
     this.finalisedBy = user;
-    this.stocktakeDate = date;
+    this.stocktakeDate = new Date();
+    // Adjust stocktake inventory
+    this.adjustInventory(database, user);
+
     this.status = 'finalised';
     database.save('Stocktake', this);
   }
 
   /**
    * Applies differences in snapshot and counted quantities to the appropriate inventory
-   * adjustment transactions. Will create this.additions and this.reductions if needed.
+   * adjustment transactions.
    * @param  {Realm}  database   App wide local database
    * @param  {object} user       The user that finalised this stocktake
-   * @param  {Date}   date       The current date
-   * @return {none}
    */
-  adjustInventory(database, user, date) {
-    // Go through each item, add it to the appropriate transaction, then copy over the
-    // batch quantities allocated by the transaction item
-    const uncountedItems = [];
-    this.items.forEach((stocktakeItem) => {
-      // If no counted quantity was entered, remember the item to delete
-      if (stocktakeItem.countedTotalQuantity === null) {
-        uncountedItems.push(stocktakeItem);
-        return; // This is a 'continue' in the context of the forEach loop
-      }
+  adjustInventory(database) {
+    // Prune all StocktakeItems with no quantity change
+    database.delete('StocktakeItem', this.items.filter(stocktakeItem =>
+                                     !stocktakeItem.hasBatchWithQuantityChange));
+    // Get list of all StocktakeBatches associated with this stocktake
+    const stocktakeBatches = database.objects('StocktakeBatch')
+                             .filtered('stocktake.id = $0', this.id);
+     // Delete all 'fresh' StocktakeBatches that have been created by stocktake
+     // but have not been changed
+    database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
+        stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
-      // Work out whether this should be in the additions or reductions transaction
-      const difference = stocktakeItem.countedTotalQuantity - stocktakeItem.snapshotTotalQuantity;
-
-      // Lazily create additions/reductions as and when they are required
-      if (difference >= 0 && this.additions === null) {
-        this.additions = createRecord(database, 'InventoryAdjustment', user, date, true);
-      } else if (difference < 0 && this.reductions === null) {
-        this.reductions = createRecord(database, 'InventoryAdjustment', user, date, false);
-      }
-
-      // Get the appropriate transaction to use for this item
-      const transaction = difference >= 0 ? this.additions : this.reductions;
-
-      // Create and add TransactionItem to the transaction
-      const item = stocktakeItem.item;
-      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
-
-      // If this item has no batches with stock, add a new empty batch
-      if (difference > 0 && item.batchesWithStock.length === 0) {
-        const batchString = `stocktake_${this.serialNumber}`;
-        const itemBatch = createRecord(database, 'ItemBatch', item, batchString);
-        createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch);
-        createRecord(database, 'TransactionBatch', transactionItem, itemBatch);
-      }
-
-      // Set the transaction item's quantity, causing it to handle batch logic
-      // and apply adjustments to inventory
-      transactionItem.setTotalQuantity(database, Math.abs(difference));
-
-      // Copy batch quantities from transaction item to the stocktake item
-      stocktakeItem.applyBatchAdjustments(database, transactionItem);
-
-      // Prune off any batches with 0 quantity that were unchanged
-      stocktakeItem.pruneBatches(database);
-
-      // Save the stocktake item
-      database.save('StocktakeItem', stocktakeItem);
-    });
-    // Prune off any items that did not get counted
-    database.delete('StocktakeItem', uncountedItems);
+    // Apply inventory adjustement to remaining StocktakeBatches
+    const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
+                                    stocktakeBatch.difference !== 0);
+    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
   }
 }
 

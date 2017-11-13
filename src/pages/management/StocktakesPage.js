@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 
 import { PageButton, BottomConfirmModal, ToggleBar } from '../../widgets';
 import globalStyles from '../../globalStyles';
@@ -34,10 +33,9 @@ export class StocktakesPage extends React.Component {
       selection: [],
     };
     this.stocktakes = props.database.objects('Stocktake');
-    autobind(this);
   }
 
-  onRowPress(stocktake) {
+  onRowPress = (stocktake) => {
     this.props.navigateTo(
       'stocktakeEditor',
       `${stocktake.name}`,
@@ -45,11 +43,9 @@ export class StocktakesPage extends React.Component {
     );
   }
 
-  onNewStockTake() {
-    this.props.navigateTo('stocktakeManager', navStrings.new_stocktake);
-  }
+  onNewStockTake = () => this.props.navigateTo('stocktakeManager', navStrings.new_stocktake);
 
-  onDeleteConfirm() {
+  onDeleteConfirm = () => {
     const { selection } = this.state;
     const { database } = this.props;
     database.write(() => {
@@ -64,22 +60,16 @@ export class StocktakesPage extends React.Component {
     this.refreshData();
   }
 
-  onDeleteCancel() {
+  onDeleteCancel = () => {
     this.setState({ selection: [] });
     this.refreshData();
   }
 
-  onToggleStatusFilter(isCurrent) {
-    this.setState({
-      showCurrent: isCurrent,
-    }, this.refreshData);
-  }
+  onToggleStatusFilter = (isCurrent) => this.setState({ showCurrent: isCurrent }, this.refreshData);
 
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
-  }
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -89,7 +79,7 @@ export class StocktakesPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const toggleFilter = this.state.showCurrent ? 'status != "finalised"' : 'status == "finalised"';
@@ -100,7 +90,7 @@ export class StocktakesPage extends React.Component {
     this.setState({ data: data });
   }
 
-  renderCell(key, stocktake) {
+  renderCell = (key, stocktake) => {
     switch (key) {
       default:
       case 'name':
@@ -118,38 +108,34 @@ export class StocktakesPage extends React.Component {
     }
   }
 
-  renderToggleBar() {
-    return (
-      <ToggleBar
-        style={globalStyles.toggleBar}
-        textOffStyle={globalStyles.toggleText}
-        textOnStyle={globalStyles.toggleTextSelected}
-        toggleOffStyle={globalStyles.toggleOption}
-        toggleOnStyle={globalStyles.toggleOptionSelected}
-        toggles={[
-          {
-            text: buttonStrings.current,
-            onPress: () => this.onToggleStatusFilter(true),
-            isOn: this.state.showCurrent,
-          },
-          {
-            text: buttonStrings.past,
-            onPress: () => this.onToggleStatusFilter(false),
-            isOn: !this.state.showCurrent,
-          },
-        ]}
-      />
-    );
-  }
+  renderToggleBar = () => (
+    <ToggleBar
+      style={globalStyles.toggleBar}
+      textOffStyle={globalStyles.toggleText}
+      textOnStyle={globalStyles.toggleTextSelected}
+      toggleOffStyle={globalStyles.toggleOption}
+      toggleOnStyle={globalStyles.toggleOptionSelected}
+      toggles={[
+        {
+          text: buttonStrings.current,
+          onPress: () => this.onToggleStatusFilter(true),
+          isOn: this.state.showCurrent,
+        },
+        {
+          text: buttonStrings.past,
+          onPress: () => this.onToggleStatusFilter(false),
+          isOn: !this.state.showCurrent,
+        },
+      ]}
+    />
+  )
 
-  renderNewStocktakeButton() {
-    return (
-      <PageButton
-        text={buttonStrings.new_stocktake}
-        onPress={this.onNewStockTake}
-      />
-    );
-  }
+  renderNewStocktakeButton = () => (
+    <PageButton
+      text={buttonStrings.new_stocktake}
+      onPress={this.onNewStockTake}
+    />
+  )
 
   render() {
     return (
