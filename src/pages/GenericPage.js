@@ -14,6 +14,9 @@ import { GenericTablePage } from 'react-native-generic-table-page';
 * @prop  {array}  dataTypesSynchronised      Data types visible in the table displayed
 *         																		 on this page, that should therefore cause
 *         																		 an update if changed by sync
+* @prop  {array}  dataTypesLiked            Data types visible in the table displayed
+*         																		 on this page, that should therefore cause
+*         																		 an update if changed somewhere rather then sync
 * @prop  {string} finalisableDataType        The data type that can be finalised on this
 *         																		 page, that should therefore cause an update
 *         																		 if changed by being finalised
@@ -41,7 +44,7 @@ export class GenericPage extends React.Component {
   // that a page subscribes to listen to or if record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     const dataTypesArray = causedBy === 'sync' ? this.props.dataTypesSynchronised
-                                              : this.props.dataTypesLinked;
+                                               : this.props.dataTypesLinked;
     if ((dataTypesArray && dataTypesArray.indexOf(recordType) >= 0) ||
         (recordType === this.props.finalisableDataType && record.isFinalised)) {
       this.props.refreshData();

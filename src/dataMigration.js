@@ -126,24 +126,4 @@ const dataMigrations = [
       });
     },
   },
-  {
-    version: '2.1.0-rc0',
-    migrate: (database) => {
-      // In Previous version, for unfinalised Stocktakes, StocktakeItem.countedTotalQuantity
-      // was used to store current countedTotalQuantity, this field is removed in 2.1.0
-      // so without below migration, unfinalised Stocktake countedTotalQuantity will be 0 for
-      // all StocktakeBatches and thus for all StocktakeItems, so we 'reset' unfinalised Stocktakes
-      // and set StocktakeBatches countedTotalQuantity === snapshotTotalQuantity
-      const unfinalisedStocktakeBatches = database.objects('StocktakeBatch')
-                                            .filtered('stocktake.status != "finalised"');
-      database.write(() => {
-        unfinalisedStocktakeBatches.forEach(StocktakeBatch => {
-          database.update('StocktakeBatch', {
-            id: StocktakeBatch.id,
-            countedNumberOfPacks: StocktakeBatch.snapshotNumberOfPacks,
-          });
-        });
-      });
-    },
-  },
 ];

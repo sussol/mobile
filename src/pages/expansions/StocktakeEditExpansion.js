@@ -6,7 +6,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
 import { dataTableStyles, expansionPageStyles } from '../../globalStyles';
 import { PageButton, ExpiryTextInput, PageInfo } from '../../widgets';
@@ -16,18 +15,17 @@ import { tableStrings, buttonStrings } from '../../localization';
 
 /**
 * Renders page to be displayed in StocktakeEditPage -> expansion.
-* @prop   {Realm}               database      App wide database.
-* @state  {Realm.Results}       items         the stocktakeItems of props.stocktake.
+* @prop   {Realm}               database        App wide database.
+* @prop   {Realm.object}        stocktakeItem   The stocktakeItem, a parent of
+*                                               StocktakeBatches in this expansion
 */
 export class StocktakeEditExpansion extends React.Component {
   constructor(props) {
     super(props);
-    this.item = props.data;
     this.state = {};
-    autobind(this);
   }
 
-  onEndEditing(key, stocktakeBatch, newValue) {
+  onEndEditing = (key, stocktakeBatch, newValue) => {
     this.props.database.write(() => {
       switch (key) {
         case 'countedTotalQuantity': {
@@ -35,12 +33,13 @@ export class StocktakeEditExpansion extends React.Component {
           if (newCountedQuantity === null) return;
 
           stocktakeBatch.countedTotalQuantity = parsePositiveInteger(newValue);
-          this.props.refreshParent();
           break;
         }
         case 'batch': {
-          if (!newValue || newValue === '') return;
-          stocktakeBatch.batch = newValue;
+          if (!newValue || newValue === '' ||
+              newValue === `(${tableStrings.no_batch_name})`) {
+            stocktakeBatch.batch = '';
+          } else stocktakeBatch.batch = newValue;
           break;
         }
         case 'expiryDate':
@@ -49,16 +48,15 @@ export class StocktakeEditExpansion extends React.Component {
         default:
           break;
       }
-      this.props.database.save('stocktakeBatch', stocktakeBatch);
+      this.props.database.save('StocktakeBatch', stocktakeBatch);
     });
   }
 
-  refreshData() {
-    this.setState({ data: this.item.batches });
-  }
+  refreshData = () => this.setState({ data: this.props.stocktakeItem.batches });
 
-  renderCell(key, stocktakeBatch) {
-    const isEditable = !this.item.stocktake.isFinalised;
+  renderCell = (key, stocktakeBatch) => {
+    const { stocktake } = this.props.stocktakeItem;
+    const isEditable = !stocktake.isFinalised;
     switch (key) {
       default:
         return {
@@ -68,15 +66,16 @@ export class StocktakeEditExpansion extends React.Component {
         return {
           type: isEditable ? 'editable' : 'text',
           cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== '' ?
-                        stocktakeBatch[key] : '(no batch name)', // TODO: localise
+                        stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
+          keyboardType: 'default',
         };
       case 'countedTotalQuantity': {
-        const emptyCellContents = isEditable ? '' : tableStrings.no_change;
+        const emptyCellContents = isEditable ? '' : tableStrings.not_counted;
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch.difference === 0 ? emptyCellContents :
-                        stocktakeBatch.countedTotalQuantity,
-          placeholder: tableStrings.no_change,
+          cellContents: stocktakeBatch.hasBeenCounted ?
+                        stocktakeBatch.countedTotalQuantity : emptyCellContents,
+          placeholder: tableStrings.not_counted,
         };
       }
       case 'expiryDate': {
@@ -93,36 +92,38 @@ export class StocktakeEditExpansion extends React.Component {
           />
         );
       }
+      case 'difference': {
+        const difference = stocktakeBatch.difference;
+        const prefix = difference > 0 ? '+' : '';
+        return { cellContents: `${prefix}${difference}` };
+      }
     }
   }
 
-  renderAddBatchButton() {
+  renderAddBatchButton = () => {
+    const { stocktakeItem } = this.props;
     const addNewBatch = () => {
       this.props.database.write(() => {
-        this.item.createNewBatch(this.props.database);
+        stocktakeItem.createNewBatch(this.props.database);
       });
       this.refreshData();
     };
-    return ( // TODO: localise addNewBatch
+    return (
       <PageButton
         text={buttonStrings.add_batch}
         onPress={addNewBatch}
-        isDisabled={this.item.stocktake.isFinalised}
+        isDisabled={stocktakeItem.stocktake.isFinalised}
         style={localStyles.addBatchButton}
       />
     );
   }
 
-  renderFooter() {
-    return null;
-  }
-
-  renderPageInfo() {
+  renderPageInfo = () => {
     const infoColumns = [
       [
         {
           title: 'By Batch:',
-          info: this.item.item.name,
+          info: this.props.stocktakeItem.itemName,
         },
       ],
     ];
@@ -178,7 +179,7 @@ export class StocktakeEditExpansion extends React.Component {
               alignText: 'right',
             },
           ]}
-          dataTypesLinked={['StocktakeBatch']}
+          dataTypesLinked={['StocktakeBatch', 'Stocktake']}
           database={this.props.database}
           {...this.props.genericTablePageStyles}
           pageStyles={expansionPageStyles}
@@ -191,8 +192,7 @@ export class StocktakeEditExpansion extends React.Component {
 StocktakeEditExpansion.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
-  data: PropTypes.object.isRequired,
-  refreshParent: PropTypes.func.isRequired,
+  stocktakeItem: PropTypes.object.isRequired,
 };
 
 const unwrapText = (text) => text.replace(/\n/g, ' ');

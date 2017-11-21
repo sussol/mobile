@@ -15,7 +15,12 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   get countedTotalQuantity() {
+    if (this.countedNumberOfPacks === null) return this.snapshotTotalQuantity;
     return this.countedNumberOfPacks * this.packSize;
+  }
+
+  get hasBeenCounted() {
+    return this.countedNumberOfPacks !== null;
   }
 
   get itemId() {
@@ -36,22 +41,22 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * Finalising StocktakeBatch will adjust inventory appropriatly and will add
-   * new TransactionBatch in reducing or increasing Transactino for this Stocktage
+   * Finalising StocktakeBatch will adjust inventory appropriately and will add
+   * new TransactionBatch in reducing or increasing Transaction for this Stocktake
    * @param  {Realm}  database   App wide local database
    * @param  {object} user       The user that finalised this stocktake
    */
-  finalise(database, user) {
+  finalise(database) {
     const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
-    const inventoryAdjustement = isAddition ? this.stocktake.getAdditions(database, user)
-                                            : this.stocktake.getReductions(database, user);
+    const inventoryAdjustment = isAddition ? this.stocktake.getAdditions(database)
+                                            : this.stocktake.getReductions(database);
     // Adjust inventory
     this.itemBatch.batch = this.batch;
     this.itemBatch.numberOfPacks = this.countedNumberOfPacks;
     this.itemBatch.expiryDate = this.expiryDate;
-    // Create TransactionItem, TransactionBatch to store inventory adjustement in this Stocktake
+    // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
     const item = this.itemBatch.item;
-    const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustement, item);
+    const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
     const transactionBatch = createRecord(database, 'TransactionBatch',
                                           transactionItem, this.itemBatch);
     transactionBatch.numberOfPacks = Math.abs(this.snapshotTotalQuantity

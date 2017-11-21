@@ -35,13 +35,17 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Check to see if any StocktakeBatches have adjustements
-   * this.difference maybe === 0 but batches could have been adjusted so this check
-   * is more accurate
-   * @return  {boolean} True if StocktakeBatches have adjustements
+   * Check to see if any StocktakeBatches have been adjusted for this StocktakeItem
+   * Will return true if any StocktakeBatches were changed, even if net quantity change
+   * for StocktakeItem is 0.
+   * @return  {boolean} True if StocktakeBatches have adjustments
    */
   get hasBatchWithQuantityChange() {
     return this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0);
+  }
+
+  get hasCountedBatches() {
+    return this.batches.some(stocktakeBatch => stocktakeBatch.hasBeenCounted);
   }
 
   get numberOfBatches() {
@@ -82,11 +86,11 @@ export class StocktakeItem extends Realm.Object {
   /**
    * Function is used when adjusting inventory for the StocktakeItem
    * rather then individual StocktakeBatches. Logic:
-   * Increasing -> From latest expiry to earliest expiry StocktakeBatch, increase
+   * Increasing -> From last expiry to first expiry StocktakeBatch, increase
    * to the maximum of snapshot quantity, after that if still have quantity
-   * to increase, apply it to earlies expiry batch.
-   * Reducing -> From earliest expiry to latest expiry StocktakeBatch, decrease
-   * quantity by maximum === current counted quantity
+   * to increase, apply it to first expiry batch.
+   * Reducing -> From first expiry to last expiry StocktakeBatch, decrease
+   * quantity by maximum of current counted quantity
    * @param  {Realm}  database   App wide local database
    * @param  {number} quantity   Change in StocktakeItem counted quantity
    */

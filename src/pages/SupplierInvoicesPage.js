@@ -6,7 +6,6 @@
 import React from 'react';
 import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
@@ -33,10 +32,9 @@ export class SupplierInvoicesPage extends React.Component {
       sortBy: 'serialNumber',
       isAscending: false,
     };
-    autobind(this);
   }
 
-  onDeleteConfirm() {
+  onDeleteConfirm = () => {
     const { selection, transactions } = this.state;
     const { database } = this.props;
     database.write(() => {
@@ -53,22 +51,16 @@ export class SupplierInvoicesPage extends React.Component {
     this.setState({ selection: [] }, this.refreshData);
   }
 
-  onDeleteCancel() {
-    this.setState({ selection: [] }, this.refreshData);
-  }
+  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
-  }
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
-  onRowPress(invoice) {
-    this.navigateToInvoice(invoice);
-  }
+  onRowPress = (invoice) => this.navigateToInvoice(invoice);
 
   /**
    * Create new Supplier Invoice and takes user to the editing SI page
    */
-  onNewSupplierInvoice(otherParty) {
+  onNewSupplierInvoice = (otherParty) => {
     const { database, currentUser } = this.props;
     let invoice;
     database.write(() => {
@@ -77,7 +69,7 @@ export class SupplierInvoicesPage extends React.Component {
     this.navigateToInvoice(invoice);
   }
 
-  navigateToInvoice(invoice) {
+  navigateToInvoice = (invoice) => {
     // For a supplier invoice to be opened for in the supplier invoice page, we need it to be
     // either new or finalised, but not confirmed - if someone were to reduce the amount of stock on
     // a confirmed supplier invoice, but it had already been issued in a customer invoice, we would
@@ -94,7 +86,7 @@ export class SupplierInvoicesPage extends React.Component {
     });
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -104,7 +96,7 @@ export class SupplierInvoicesPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
@@ -121,7 +113,7 @@ export class SupplierInvoicesPage extends React.Component {
     });
   }
 
-  renderCell(key, invoice) {
+  renderCell = (key, invoice) => {
     switch (key) {
       default:
         return invoice[key];
@@ -138,14 +130,12 @@ export class SupplierInvoicesPage extends React.Component {
     }
   }
 
-  renderNewInvoiceButton() {
-    return (
-      <PageButton
-        text={buttonStrings.new_supplier_invoice}
-        onPress={() => this.setState({ isCreatingInvoice: true })}
-      />
-    );
-  }
+  renderNewInvoiceButton = () => (
+    <PageButton
+      text={buttonStrings.new_supplier_invoice}
+      onPress={() => this.setState({ isCreatingInvoice: true })}
+    />
+  )
 
   render() {
     return (

@@ -191,7 +191,6 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
     stocktake: stocktakeItem.stocktake,
     itemBatch: itemBatch,
     snapshotNumberOfPacks: numberOfPacks,
-    countedNumberOfPacks: numberOfPacks, // countedNumberOfPacks === snapshotNumberOfPacks
     packSize: packSize,
     expiryDate: expiryDate,
     batch: batch,
@@ -212,7 +211,7 @@ function createSupplierInvoice(database, supplier, user) {
     serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
     entryDate: currentDate,
     type: 'supplier_invoice',
-    status: 'suggested',
+    status: 'new',
     comment: '',
     otherParty: supplier,
     enteredBy: user,

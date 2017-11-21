@@ -68,6 +68,10 @@ export class Stocktake extends Realm.Object {
     return itemsBelowMinimum;
   }
 
+  get hasSomeCountedItems() {
+    return this.items.some(item => item.hasBatchWithQuantityChange);
+  }
+
   get numberOfBatches() {
     return getTotal(this.items, 'numberOfBatches');
   }
@@ -78,9 +82,10 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  user     The current user logged in
    * @return {Realm.Object} Transaction for reduction
    */
-  getReductions(database, user) {
+  getReductions(database) {
     if (!this.reductions) {
-      this.reductions = createRecord(database, 'InventoryAdjustment', user, new Date(), false);
+      this.reductions = createRecord(database, 'InventoryAdjustment',
+                                     this.finalisedBy, this.stocktakeDate, false);
     }
     return this.reductions;
   }
@@ -91,9 +96,10 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  user     The current user logged in
    * @return {Realm.Object} Transaction for stock increase
    */
-  getAdditions(database, user) {
+  getAdditions(database) {
     if (!this.additions) {
-      this.additions = createRecord(database, 'InventoryAdjustment', user, new Date(), true);
+      this.additions = createRecord(database, 'InventoryAdjustment',
+                                    this.finalisedBy, this.stocktakeDate, true);
     }
     return this.additions;
   }
@@ -104,11 +110,12 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  user     The current user logged in
    */
   finalise(database, user) {
-    this.adjustInventory(database, user);
-
     // Set the stocktake finalise details
     this.finalisedBy = user;
     this.stocktakeDate = new Date();
+    // Adjust stocktake inventory
+    this.adjustInventory(database, user);
+
     this.status = 'finalised';
     database.save('Stocktake', this);
   }
@@ -119,19 +126,22 @@ export class Stocktake extends Realm.Object {
    * @param  {Realm}  database   App wide local database
    * @param  {object} user       The user that finalised this stocktake
    */
-  adjustInventory(database, user) {
+  adjustInventory(database) {
+    // Prune all StocktakeItems with no quantity change
+    database.delete('StocktakeItem', this.items.filter(stocktakeItem =>
+                                     !stocktakeItem.hasBatchWithQuantityChange));
     // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
                              .filtered('stocktake.id = $0', this.id);
-     // Delete all StocktakeBatches that have been created by stocktake
+     // Delete all 'fresh' StocktakeBatches that have been created by stocktake
      // but have not been changed
     database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
-      stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
+        stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
-    // Get all changed StocktakeBatches, and finalise them
+    // Apply inventory adjustement to remaining StocktakeBatches
     const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
-                                                      stocktakeBatch.difference !== 0);
-    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database, user));
+                                    stocktakeBatch.difference !== 0);
+    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
   }
 }
 

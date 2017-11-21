@@ -5,29 +5,36 @@
 
 import React from 'react';
 
-import { CustomerInvoicePage } from './CustomerInvoicePage';
+import {
+  CustomerInvoicePage,
+  checkForFinaliseError as checkForCustomerInvoiceError,
+} from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
 import { ConsumptionReportPage } from './ConsumptionReportPage';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
-import { CustomerRequisitionPage,
-         checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
-       } from './CustomerRequisitionPage';
+import {
+  CustomerRequisitionPage,
+  checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
+} from './CustomerRequisitionPage';
 import { StockPage } from './StockPage';
-import { StocktakeEditPage,
-         checkForFinaliseError as checkForStocktakeFinaliseError,
-       } from './StocktakeEditPage';
+import {
+  StocktakeEditPage,
+  checkForFinaliseError as checkForStocktakeFinaliseError,
+} from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
-import { SupplierInvoicePage,
-         checkForFinaliseError as checkForSupplierInvoiceError,
-        } from './SupplierInvoicePage';
+import {
+  SupplierInvoicePage,
+  checkForFinaliseError as checkForSupplierInvoiceError,
+} from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
-import { SupplierRequisitionPage,
-         checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
-       } from './SupplierRequisitionPage';
+import {
+  SupplierRequisitionPage,
+  checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
+} from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
@@ -58,6 +65,7 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_supplier_invoice',
   },
   customerInvoice: {
+    checkForError: checkForCustomerInvoiceError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_customer_invoice',

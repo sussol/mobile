@@ -6,7 +6,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { PageButton } from '../widgets';
 import { GenericPage } from './GenericPage';
@@ -31,7 +30,6 @@ export class StocktakeEditPage extends React.Component {
       sortBy: 'itemName',
       isAscending: true,
     };
-    autobind(this);
   }
 
   /**
@@ -41,7 +39,7 @@ export class StocktakeEditPage extends React.Component {
    * @param  {string} newValue      The value the user entered in the cell
    * @return {none}
    */
-  onEndEditing(key, stocktakeItem, newValue) {
+  onEndEditing = (key, stocktakeItem, newValue) => {
     if (key !== 'countedTotalQuantity' || newValue === '') return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
@@ -49,7 +47,7 @@ export class StocktakeEditPage extends React.Component {
     stocktakeItem.setCountedTotalQuantity(this.props.database, quantity);
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -59,7 +57,7 @@ export class StocktakeEditPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.items.filtered(
@@ -82,51 +80,43 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  renderCell(key, item) {
+  renderCell = (key, stocktakeItem) => {
     const isEditable = !this.props.stocktake.isFinalised;
     switch (key) {
       default:
-        return item[key];
-      case 'countedTotalQuantity': {
-        const emptyCellContents = isEditable ? '' : tableStrings.no_change;
+        return stocktakeItem[key];
+      case 'countedTotalQuantity':
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: item.hasBatchWithQuantityChange ?
-                        item.countedTotalQuantity : emptyCellContents,
-          placeholder: tableStrings.no_change,
+          cellContents: stocktakeItem.hasCountedBatches ? stocktakeItem.countedTotalQuantity : '',
+          placeholder: tableStrings.not_counted,
         };
-      }
       case 'difference': {
-        const difference = item.difference;
+        const difference = stocktakeItem.difference;
         const prefix = difference > 0 ? '+' : '';
         return { cellContents: `${prefix}${difference}` };
       }
     }
   }
 
-  renderManageStocktakeButton() {
-    return (
-      <PageButton
-        text={buttonStrings.manage_stocktake}
-        onPress={() => this.props.navigateTo('stocktakeManager',
-          navStrings.manage_stocktake,
-          { stocktake: this.props.stocktake },
-          )}
-        isDisabled={this.props.stocktake.isFinalised}
-      />
-    );
-  }
+  renderManageStocktakeButton = () => (
+    <PageButton
+      text={buttonStrings.manage_stocktake}
+      onPress={() => this.props.navigateTo('stocktakeManager',
+        navStrings.manage_stocktake,
+        { stocktake: this.props.stocktake },
+        )}
+      isDisabled={this.props.stocktake.isFinalised}
+    />
+  );
 
-  renderExpansion(item) {
-    return (
-      <StocktakeEditExpansion
-        data={item}
-        database={this.props.database}
-        genericTablePageStyles={this.props.genericTablePageStyles}
-        refreshParent={this.refreshData}
-      />
-    );
-  }
+  renderExpansion = (stocktakeItem) => (
+    <StocktakeEditExpansion
+      stocktakeItem={stocktakeItem}
+      database={this.props.database}
+      genericTablePageStyles={this.props.genericTablePageStyles}
+    />
+  );
 
   render() {
     return (
@@ -176,6 +166,7 @@ export class StocktakeEditPage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        dataTypesLinked={['StocktakeBatch']}
         finalisableDataType={'Stocktake'}
         database={this.props.database}
         {...this.props.genericTablePageStyles}
@@ -203,6 +194,7 @@ const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in erro
  * @return {string}  An error message if not able to be finalised
  */
 export function checkForFinaliseError(stocktake) {
+  if (!stocktake.hasSomeCountedItems) return modalStrings.stocktake_no_counted_items;
   const itemsBelowMinimum = stocktake.itemsBelowMinimum;
   if (itemsBelowMinimum.length > 0) {
     let errorString = modalStrings.following_items_reduced_more_than_available_stock;
