@@ -19,6 +19,8 @@ export const modalStrings = new LocalizedStrings({
     edit_the_invoice_comment: 'Edit the invoice comment',
     edit_the_requisition_comment: 'Edit the requisition comment',
     edit_their_reference: 'Edit their reference',
+    edit_the_stocktake_comment: 'Edit stocktake comment',
+    edit_the_stocktake_name: 'Edit stocktake name',
     finalise_customer_invoice: 'Finalise will lock this invoice permanently.',
     finalise_supplier_requisition: 'Finalise will send this requisition and lock it permanently.',
     finalise_customer_requisition:
@@ -46,7 +48,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
   },
-  gil: {
+  gil: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -88,7 +90,7 @@ export const modalStrings = new LocalizedStrings({
       'Te maiti are e warekaki e na maiti riki nakon AKEA imain kamatoana',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
-  tl: {
+  tl: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name
     add_at_least_one_item_before_finalising: 'Tenke hatama sasán ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',
