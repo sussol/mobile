@@ -20,10 +20,11 @@ export const navStrings = new LocalizedStrings({
     new_stocktake: 'New Stocktake',
     requisition: 'Requisition',
     stocktakes: 'Stocktakes',
+    stocktake: 'Stocktake',
     supplier_invoices: 'Supplier Invoices',
     supplier_requisitions: 'Supplier Requisitions',
   },
-  gil: {
+  gil: { // TODO: add - stocktake
     current_stock: 'Mwaitin am bwai n\naoraki ke am supply',
     customer_invoices: 'Ana invoice am\nkiriniki ke am aoraki',
     customer_requisitions: 'Am oota n am clinic',
@@ -40,7 +41,7 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Ana Invoice\nam Supplier',
     supplier_requisitions: 'Am oota nakon\nte pharmacy',
   },
-  tl: {
+  tl: { // TODO: add - stocktake
     current_stock: 'Sasán Atuál',
     customer_invoices: 'Kliente nia Konta',
     customer_requisitions: 'Kliente nia Rekuizasaun',
