@@ -43,6 +43,11 @@ export const dataTableStyles = {
   row: {
     backgroundColor: BACKGROUND_COLOR,
   },
+  expandedRow: {
+    borderWidth: 1,
+    backgroundColor: BACKGROUND_COLOR,
+    borderColor: SUSSOL_ORANGE,
+  },
   expansion: {
     padding: 15,
     borderTopWidth: 2,
