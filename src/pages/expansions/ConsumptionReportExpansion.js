@@ -4,15 +4,10 @@
  */
 
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
 import { dataTableStyles, expansionPageStyles } from '../../globalStyles';
-import { PageButton, ExpiryTextInput, PageInfo } from '../../widgets';
 import { GenericPage } from '../GenericPage';
-import { parsePositiveInteger } from '../../utilities';
-import { tableStrings, buttonStrings } from '../../localization';
 
 /**
 * Renders page to be displayed in StocktakeEditPage -> expansion.
@@ -22,24 +17,27 @@ import { tableStrings, buttonStrings } from '../../localization';
 export class ConsumptionReportExpansion extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { data: [] };
-    autobind(this);
+    this.state = { data: [], columns: this.getColumns() };
   }
 
-  refreshData() {
-    this.setState({ data: this.props.data });
-  }
+  getColumns = () => (
+    [
+      {
+        key: 'customerName',
+        width: 3,
+        title: '',
+      },
+      ...this.props.dateRanges.map((dateRange) => ({
+        key: dateRange.formatedDate,
+        width: 2,
+      })),
+    ]
+  )
 
-  renderCell(key, dataRow) {
-    switch (key) {
-      default:
-        return dataRow[key];
-    }
-  }
+  refreshData = () =>
+    this.setState({ data: this.props.data, dateRanges: this.props.dateRanges });
 
-  renderFooter() {
-    return null;
-  }
+  renderCell = (key, dataRow) => dataRow[key];
 
   render() {
     return (
@@ -54,19 +52,7 @@ export class ConsumptionReportExpansion extends React.Component {
           onEndEditing={this.onEndEditing}
           renderTopLeftComponent={this.renderPageInfo}
           renderTopRightComponent={this.renderAddBatchButton}
-          columns={[
-            {
-              key: 'customerName',
-              width: 3,
-              title: '',
-            },
-            ...['','','',''].map((dateRange, index) => ({
-              key: index,
-              width: 2,
-              title: dateRange.header,
-              alignText: 'center',
-            })),
-          ]}
+          columns={this.state.columns}
           database={this.props.database}
           {...this.props.genericTablePageStyles}
           pageStyles={expansionPageStyles}
@@ -79,6 +65,7 @@ export class ConsumptionReportExpansion extends React.Component {
 ConsumptionReportExpansion.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dateRanges: PropTypes.array,
   refreshParent: PropTypes.func.isRequired,
 };
