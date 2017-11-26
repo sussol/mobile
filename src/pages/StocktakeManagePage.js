@@ -15,7 +15,13 @@ import { BottomModal, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, generalStrings, tableStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  generalStrings,
+  tableStrings,
+  navStrings,
+} from '../localization';
 import { formatDateAndTime } from '../utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
@@ -81,7 +87,7 @@ export class StocktakeManagePage extends React.Component {
 
       navigateTo(
         'stocktakeEditor',
-        stocktake.name,
+        navStrings.stocktake,
         { stocktake: stocktake },
         // Coming from StocktakesPage : coming from StocktakeEditPage.
         !this.props.stocktake ? 'replace' : 'goBack',
