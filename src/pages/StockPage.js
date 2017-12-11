@@ -63,6 +63,15 @@ export class StockPage extends React.Component {
     });
   }
 
+  renderCell = (key, item) => {
+    switch (key) {
+      default:
+        return item[key];
+      case 'totalQuantity':
+        return item[key] || 0;
+    }
+  }
+
   renderExpansion = (item) => {
     const batchInfo = item.batchesWithStock.map((ItemBatch) => {
       const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
@@ -108,6 +117,7 @@ export class StockPage extends React.Component {
       <GenericPage
         data={this.state.data}
         refreshData={this.refreshData}
+        renderCell={this.renderCell}
         renderExpansion={this.renderExpansion}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
