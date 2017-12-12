@@ -63,14 +63,7 @@ export class StockPage extends React.Component {
     });
   }
 
-  renderCell = (key, item) => {
-    switch (key) {
-      default:
-        return item[key];
-      case 'totalQuantity':
-        return item[key] || 0;
-    }
-  }
+  renderCell = (key, item) => item[key];
 
   renderExpansion = (item) => {
     const batchInfo = item.batchesWithStock.map((ItemBatch) => {
