@@ -109,40 +109,40 @@ export class StocktakeItem extends Realm.Object {
           stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
           database.save('StocktakeBatch', stocktakeBatch);
         });
-      } else {
-        // Actual Quantity is not snaphot quantity
-        const isIncreasingQuantity = difference > 0;
-        const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
+        return;
+      }
+      // Actual Quantity is not snaphot quantity
+      const isIncreasingQuantity = difference > 0;
+      const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
 
-        sortedBatches.some(stocktakeBatch => {
-          const batchTotalQuantity = stocktakeBatch.countedTotalQuantity;
+      sortedBatches.some(stocktakeBatch => {
+        const batchTotalQuantity = stocktakeBatch.countedTotalQuantity;
 
-          let thisBatchChangeQuantity = 0;
-          if (isIncreasingQuantity) {
-            thisBatchChangeQuantity = Math.min(stocktakeBatch.snapshotTotalQuantity -
-                                              batchTotalQuantity, difference);
+        let thisBatchChangeQuantity = 0;
+        if (isIncreasingQuantity) {
+          thisBatchChangeQuantity = Math.min(stocktakeBatch.snapshotTotalQuantity -
+                                            batchTotalQuantity, difference);
 
-            if (thisBatchChangeQuantity <= 0) return false;
-          } else {
-            thisBatchChangeQuantity = Math.min(batchTotalQuantity, -difference);
-            thisBatchChangeQuantity = -thisBatchChangeQuantity;
-          }
-
-          stocktakeBatch.countedTotalQuantity = batchTotalQuantity + thisBatchChangeQuantity;
-
-          database.save('StocktakeBatch', stocktakeBatch);
-
-          difference -= thisBatchChangeQuantity;
-          return difference === 0;
-        });
-        // If increasing and we still have difference to add to a batch, add it to the
-        // earliest expiry batch
-        if (difference > 0) {
-          const earliestExpiryBatch = sortedBatches[sortedBatches.length - 1];
-
-          earliestExpiryBatch.countedTotalQuantity += difference;
-          database.save('StocktakeBatch', earliestExpiryBatch);
+          if (thisBatchChangeQuantity <= 0) return false;
+        } else {
+          thisBatchChangeQuantity = Math.min(batchTotalQuantity, -difference);
+          thisBatchChangeQuantity = -thisBatchChangeQuantity;
         }
+
+        stocktakeBatch.countedTotalQuantity = batchTotalQuantity + thisBatchChangeQuantity;
+
+        database.save('StocktakeBatch', stocktakeBatch);
+
+        difference -= thisBatchChangeQuantity;
+        return difference === 0;
+      });
+      // If increasing and we still have difference to add to a batch, add it to the
+      // earliest expiry batch
+      if (difference > 0) {
+        const earliestExpiryBatch = sortedBatches[sortedBatches.length - 1];
+
+        earliestExpiryBatch.countedTotalQuantity += difference;
+        database.save('StocktakeBatch', earliestExpiryBatch);
       }
     });
   }
