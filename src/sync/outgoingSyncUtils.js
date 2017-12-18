@@ -224,7 +224,7 @@ function generateSyncData(settings, recordType, record) {
 
 function getDateString(date) {
   if (!date || typeof date !== 'object') return '0000-00-00T00:00:00';
-  return date.toISOString();
+  return date.toISOString().slice(0, 10); // remove time
 }
 
 function getTimeString(date) {
