@@ -211,6 +211,7 @@ export class SupplierInvoicePage extends React.Component {
       case 'expiryDate': {
         return (
           <ExpiryTextInput
+            key={transactionBatch.id}
             isEditable={isEditable}
             onEndEditing={(newValue) => this.onEndEditing(key, transactionBatch, newValue)}
             text={transactionBatch[key]}
