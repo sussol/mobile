@@ -5,22 +5,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { BottomModal } from './BottomModal';
-import
-{
-  APP_FONT_FAMILY,
-  DARK_GREY,
-  PAGE_CONTENT_PADDING_HORIZONTAL,
-} from '../../globalStyles';
+import { APP_FONT_FAMILY, PAGE_CONTENT_PADDING_HORIZONTAL } from '../../globalStyles';
 
 /**
  * A modal that can be displayed over the page content container, rendering any children
@@ -38,41 +27,28 @@ export class PageContentModal extends React.Component {
   }
 
   render() {
-    const {
-      onClose,
-      title,
-      style,
-      ...modalProps,
-    } = this.props;
-
-    const titleComponent = title && (
-      <View style={localStyles.titleContainer}>
-        <Text style={localStyles.title}>{title}</Text>
-      </View>
-    );
+    const { onClose, title, style, ...modalProps } = this.props;
 
     return (
-      <BottomModal
-        {...modalProps}
-        style={[localStyles.modal, style]}
-      >
-        {titleComponent}
-        <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
-          <Icon name="md-close" style={localStyles.closeIcon} />
-        </TouchableOpacity>
-        <View style={localStyles.childrenContainer}>
-          {this.props.children}
+      <BottomModal {...modalProps} style={[localStyles.modal, style]}>
+        <View style={localStyles.titleContainer}>
+          <View style={{ flex: 1 }} />
+          {title && <Text style={localStyles.title}>{title}</Text>}
+          <View style={localStyles.closeButtonContainer}>
+            <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
+              <Icon name="md-close" style={localStyles.closeIcon} />
+            </TouchableOpacity>
+          </View>
         </View>
+        <View style={localStyles.childrenContainer}>{this.props.children}</View>
       </BottomModal>
-     );
+    );
   }
 }
 
 PageContentModal.propTypes = {
-  children: PropTypes.element,
-  isOpen: PropTypes.bool.isRequired,
+  ...BottomModal.propTypes,
   onClose: PropTypes.func,
-  style: View.propTypes.style,
   title: PropTypes.string,
 };
 PageContentModal.defaultProps = {
@@ -85,37 +61,38 @@ PageContentModal.defaultProps = {
 
 const localStyles = StyleSheet.create({
   modal: {
-    height: Dimensions.get('window').height,
-    width: Dimensions.get('window').width - 2 * PAGE_CONTENT_PADDING_HORIZONTAL,
+    flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: DARK_GREY,
-    opacity: 0.88,
+    alignItems: 'stretch',
+    opacity: 0.94,
   },
   childrenContainer: {
     flex: 1,
-    position: 'absolute', // Otherwise it moves depending on size of autocomplete results
-    top: 170,
-    left: PAGE_CONTENT_PADDING_HORIZONTAL,
-    right: PAGE_CONTENT_PADDING_HORIZONTAL,
+    marginLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
+    marginRight: PAGE_CONTENT_PADDING_HORIZONTAL,
   },
   titleContainer: {
-    position: 'absolute',
     flexDirection: 'row',
-    width: Dimensions.get('window').width - 2 * PAGE_CONTENT_PADDING_HORIZONTAL,
-    justifyContent: 'space-around',
-    top: 15,
-    right: 0,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 15,
   },
   title: {
+    justifyContent: 'center',
     fontFamily: APP_FONT_FAMILY,
     color: 'white',
     fontSize: 20,
   },
+  closeButtonContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
   closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 20,
+    width: 75,
+    alignItems: 'center',
   },
   closeIcon: {
     fontSize: 36,

@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
-import { DARK_GREY } from '../../globalStyles';
+import { DARKER_GREY, PAGE_CONTENT_PADDING_HORIZONTAL } from '../../globalStyles/index';
 
 
 export class BottomModal extends React.Component {
@@ -60,6 +60,7 @@ const localStyles = StyleSheet.create({
   },
   modal: {
     height: 60,
-    backgroundColor: DARK_GREY,
+    backgroundColor: DARKER_GREY,
+    paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
   },
 });
