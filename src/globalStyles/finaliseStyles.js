@@ -11,6 +11,7 @@ export const finaliseStyles = {
   finaliseButton: {
     color: FINALISE_GREEN,
     fontSize: 40,
+    marginHorizontal: 8,
   },
   finaliseModal: {
     paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
