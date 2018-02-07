@@ -48,7 +48,6 @@
     "prop-types": "^15.5.10",
     "react": "16.0.0-alpha.12",
     "react-native": "^0.46.1",
-    "react-native-autocomplete-input": "^3.3.1",
     "react-native-data-table": "^0.1.5",
     "react-native-database": "^0.3.1",
     "react-native-generic-table-page": "^0.2.10",
