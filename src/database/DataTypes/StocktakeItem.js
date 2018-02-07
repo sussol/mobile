@@ -40,10 +40,6 @@ export class StocktakeItem extends Realm.Object {
    * for StocktakeItem is 0.
    * @return  {boolean} True if StocktakeBatches have adjustments
    */
-  get hasBatchWithQuantityChange() {
-    return this.batches.some(stocktakeBatch => stocktakeBatch.hasBeenCounted);
-  }
-
   get hasCountedBatches() {
     return this.batches.some(stocktakeBatch => stocktakeBatch.hasBeenCounted);
   }
