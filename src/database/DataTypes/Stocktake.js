@@ -69,7 +69,7 @@ export class Stocktake extends Realm.Object {
   }
 
   get hasSomeCountedItems() {
-    return this.items.some(item => item.hasBatchWithQuantityChange);
+    return this.items.some(item => item.hasCountedBatches);
   }
 
   get numberOfBatches() {
@@ -129,7 +129,7 @@ export class Stocktake extends Realm.Object {
   adjustInventory(database) {
     // Prune all StocktakeItems with no quantity change
     database.delete('StocktakeItem', this.items.filter(stocktakeItem =>
-                                     !stocktakeItem.hasBatchWithQuantityChange));
+                                     !stocktakeItem.hasCountedBatches));
     // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
                              .filtered('stocktake.id = $0', this.id);
