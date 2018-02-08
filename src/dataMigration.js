@@ -126,4 +126,43 @@ const dataMigrations = [
       });
     },
   },
+  {
+    version: '2.1.0-rc7',
+    migrate: (database) => {
+      const TEMP_STATUS = 'nw';
+      const matchBatch = (batches, batchToMatch) =>
+        batches.find(batch => batch.id === batchToMatch.id);
+      // It was possible to finalise stocktake twice, causing the creating of duplicate
+      // TransactionBatches in inventoryAdjustement, need to clean them up to avoid ledger
+      // discrepancies, const lines = all inventoryAdjustemet transactionItems
+      const lines = database.objects('TransactionItem')
+                            .filtered('transaction.otherParty.type == "inventory_adjustment"');
+      lines.forEach(line => {
+        let batchesToDelete = [];
+        const { batches } = line;
+        // Add duplicated batch to batchesToDelete
+        batches.forEach(batch => {
+          if (!matchBatch(batchesToDelete, batch)) {
+            batchesToDelete = [
+              ...batchesToDelete,
+              ...batches.filtered('itemBatch.id == $0 AND id != $1', batch.itemBatch.id, batch.id),
+            ];
+          }
+        });
+        // Delete batches
+        if (batchesToDelete.length > 0) deleteBatches(line.transaction, batchesToDelete);
+      });
+      // If we try to delete a transactionBatch whos parent transaction is 'confirmed'
+      // then a transactionBatch destructor will try to revert stock on related ItemBatches
+      // so we temporary change transaction status. Dot notation assignment won't fire sync events
+      function deleteBatches(inventoryAdjustement, batchesToDelete) {
+        const currentStatus = inventoryAdjustement.status;
+        database.write(() => {
+          inventoryAdjustement.status = TEMP_STATUS;
+          database.delete('TransactionBatch', batchesToDelete);
+          inventoryAdjustement.status = currentStatus;
+        });
+      }
+    },
+  },
 ];
