@@ -46,7 +46,6 @@ const localStyles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingRight: 3,
   },
   modal: {
     height: 60,

@@ -66,6 +66,7 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     opacity: 0.94,
+    paddingBottom: 10,
   },
   childrenContainer: {
     flex: 1,
