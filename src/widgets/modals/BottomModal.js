@@ -46,9 +46,12 @@ const localStyles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    paddingRight: 5,
+    paddingRight: 3,
   },
   modal: {
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
     backgroundColor: DARKER_GREY,
   },
 });
