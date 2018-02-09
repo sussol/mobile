@@ -68,20 +68,22 @@ export class AutocompleteSelector extends React.PureComponent {
           placeholderTextColor={'white'}
           style={[localStyles.text, localStyles.searchBar]}
         />
-        {data.length > 0 && <FlatList
-          data={data}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <ResultRow
-              item={item}
-              onPress={onSelect}
-              renderLeftText={renderLeftText}
-              renderRightText={renderRightText}
-            />
-          )}
-          keyboardShouldPersistTaps="always"
-          style={localStyles.resultlist}
-        />}
+        {data.length > 0 && (
+          <FlatList
+            data={data}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <ResultRow
+                item={item}
+                onPress={onSelect}
+                renderLeftText={renderLeftText}
+                renderRightText={renderRightText}
+              />
+            )}
+            keyboardShouldPersistTaps="always"
+            style={localStyles.resultlist}
+          />
+        )}
       </View>
     );
   }
