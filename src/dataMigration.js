@@ -131,10 +131,10 @@ const dataMigrations = [
     migrate: (database) => {
       const TEMP_STATUS = 'nw';
       const matchBatch = (batches, batchToMatch) =>
-        batches.find(batch => batch.id === batchToMatch.id);
+        batches.some(batch => batch.id === batchToMatch.id);
       // It was possible to finalise stocktake twice, causing the creating of duplicate
       // TransactionBatches in inventoryAdjustement, need to clean them up to avoid ledger
-      // discrepancies. (note: ) this did not affect actual ItemBatch quantity 
+      // discrepancies. (note: ) this did not affect actual ItemBatch quantity
       // const lines = all inventoryAdjustment transactionItems
       const lines = database.objects('TransactionItem')
                             .filtered('transaction.otherParty.type == "inventory_adjustment"');
