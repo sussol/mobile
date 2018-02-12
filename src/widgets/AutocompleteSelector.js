@@ -57,7 +57,7 @@ export class AutocompleteSelector extends React.PureComponent {
     }
 
     return (
-      <View style={localStyles.container}>
+      <View >
         <SearchBar
           autoCapitalize="none"
           autoCorrect={false}
@@ -120,11 +120,7 @@ class ResultRow extends React.PureComponent {
 }
 
 const localStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   resultlist: {
-    flex: 1,
     marginHorizontal: 10,
     backgroundColor: 'white',
     borderColor: '#b9b9b9',
