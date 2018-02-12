@@ -29,17 +29,24 @@ export class PageContentModal extends React.Component {
   render() {
     const { onClose, title, style, ...modalProps } = this.props;
 
+    // Title bar is a flex row that renders the title if available and the close
+    // button. Title should be top center. A View to the left of it achieves
+    // this in flex box.
+    const titleBar = (
+      <View style={localStyles.titleBar}>
+        {title && <View style={localStyles.flexSpacer} />}
+        {title && <Text style={localStyles.title}>{title}</Text>}
+        <View style={localStyles.closeButtonContainer}>
+          <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
+            <Icon name="md-close" style={localStyles.closeIcon} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+
     return (
       <BottomModal {...modalProps} style={[localStyles.modal, style]}>
-        <View style={localStyles.titleContainer}>
-          <View style={{ flex: 1 }} />
-          {title && <Text style={localStyles.title}>{title}</Text>}
-          <View style={localStyles.closeButtonContainer}>
-            <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
-              <Icon name="md-close" style={localStyles.closeIcon} />
-            </TouchableOpacity>
-          </View>
-        </View>
+        {titleBar}
         <View style={localStyles.childrenContainer}>{this.props.children}</View>
       </BottomModal>
     );
@@ -73,7 +80,7 @@ const localStyles = StyleSheet.create({
     marginLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
     marginRight: PAGE_CONTENT_PADDING_HORIZONTAL,
   },
-  titleContainer: {
+  titleBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -98,5 +105,8 @@ const localStyles = StyleSheet.create({
   closeIcon: {
     fontSize: 36,
     color: 'white',
+  },
+  flexSpacer: {
+    flex: 1,
   },
 });
