@@ -180,7 +180,7 @@ export class Synchroniser {
       translatedRecords = [];
       recordsToSync.forEach(translateRecord);
       await this.pushRecords(translatedRecords);
-      // Records that threw errors in generateSyncJson() are still removed
+      // Records that threw errors in translateRecord() are still removed
       this.syncQueue.use(recordsToSync);
       this.incrementProgress(recordsToSync.length);
     }
@@ -188,8 +188,7 @@ export class Synchroniser {
     const translateRecord = (record) => {
       try {
         const translatedRecord = generateSyncJson(this.database, this.settings, record);
-        // If an error was thrown no record is pushed BUT it will still be
-        // removed from syncQueue below
+        // If an error was thrown no record is pushed
         translatedRecords.push(translatedRecord);
       } catch (error) {
         // If error not safe to continue sync throw it again to pass it up to next handler
