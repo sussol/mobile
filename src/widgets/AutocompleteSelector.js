@@ -57,7 +57,7 @@ export class AutocompleteSelector extends React.PureComponent {
     }
 
     return (
-      <View >
+      <View style={localStyles.container}>
         <SearchBar
           autoCapitalize="none"
           autoCorrect={false}
