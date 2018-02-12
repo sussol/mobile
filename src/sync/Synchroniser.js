@@ -173,25 +173,30 @@ export class Synchroniser {
   push = async () => {
     this.setProgressMessage('Pushing changes to the server');
     this.setProgress(0);
-    let recordsToSync;
     let translatedRecords;
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
-      recordsToSync = this.syncQueue.next(BATCH_SIZE);
-      translatedRecords = recordsToSync.map(record => {
-        try {
-          return generateSyncJson(this.database, this.settings, record);
-        } catch (error) {
-          if (error.isSafe) return null;
-          // Error not safe to continue sync throw it again to pass it up to next handler
-          // See outgoingSyncUtils.js
-          throw error;
-        }
-      });
+      const recordsToSync = this.syncQueue.next(BATCH_SIZE);
+      translatedRecords = [];
+      recordsToSync.forEach(translateRecord);
       await this.pushRecords(translatedRecords);
+      // Records that threw errors in generateSyncJson() are still removed
       this.syncQueue.use(recordsToSync);
       this.incrementProgress(recordsToSync.length);
     }
+
+    const translateRecord = (record) => {
+      try {
+        const translatedRecord = generateSyncJson(this.database, this.settings, record);
+        // If an error was thrown no record is pushed BUT it will still be
+        // removed from syncQueue below
+        translatedRecords.push(translatedRecord);
+      } catch (error) {
+        // If error not safe to continue sync throw it again to pass it up to next handler
+        // See outgoingSyncUtils.js
+        if (!error.isSafe) throw error;
+      }
+    };
   };
 
   /**
