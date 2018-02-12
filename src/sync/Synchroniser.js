@@ -50,13 +50,13 @@ export class Synchroniser {
   /**
    * Redux progress setting functions
    */
-  setTotal = (totalCount) => this.dispatch(setSyncTotal(totalCount));
-  incrementProgress = (increment) => this.dispatch(incrementSyncProgress(increment));
-  setProgress = (currentCount) => this.dispatch(setSyncProgress(currentCount));
-  setProgressMessage = (message) => this.dispatch(setSyncProgressMessage(message));
-  setError = (errorMessage) => this.dispatch(setSyncError(errorMessage));
-  setIsSyncing = (isSyncing) => this.dispatch(setSyncIsSyncing(isSyncing));
-  setCompletionTime = (time) => this.dispatch(setSyncCompletionTime(time));
+  setTotal = totalCount => this.dispatch(setSyncTotal(totalCount));
+  incrementProgress = increment => this.dispatch(incrementSyncProgress(increment));
+  setProgress = currentCount => this.dispatch(setSyncProgress(currentCount));
+  setProgressMessage = message => this.dispatch(setSyncProgressMessage(message));
+  setError = errorMessage => this.dispatch(setSyncError(errorMessage));
+  setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
+  setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
 
   /**
    * Wipe the current database, check that the given url can be synced against
@@ -99,7 +99,7 @@ export class Synchroniser {
             headers: {
               Authorization: this.authenticator.getAuthHeader(),
             },
-          }
+          },
         );
         // If the initial_dump has been successful, serverURL is valid, and should now have all sync
         // records queued and ready to send. Safe to store as this.serverURL
@@ -115,7 +115,7 @@ export class Synchroniser {
     this.settings.set(SYNC_IS_INITIALISED, 'true');
     this.syncQueue.enable(); // Begin the sync queue listening to database changes
     this.setIsSyncing(false);
-  }
+  };
 
   /**
    * Return whether the synchroniser has been initialised.
@@ -124,7 +124,7 @@ export class Synchroniser {
   isInitialised = () => {
     const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
     return syncIsInitialised && syncIsInitialised === 'true';
-  }
+  };
 
   /**
    * Return whether or not the last sync of the app failed
@@ -133,7 +133,7 @@ export class Synchroniser {
   lastSyncFailed = () => {
     const lastSyncFailed = this.settings.get(SYNC_PRIOR_FAILED);
     return lastSyncFailed && lastSyncFailed === 'true';
-  }
+  };
 
   /**
    * Carry out a synchronization, first pushing any local changes, then pulling
@@ -163,7 +163,7 @@ export class Synchroniser {
       this.setError(error.message);
       this.setIsSyncing(false);
     }
-  }
+  };
 
   /**
    * Push batches of changes to the local database up to the remote server, until
@@ -178,21 +178,28 @@ export class Synchroniser {
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
       recordsToSync = this.syncQueue.next(BATCH_SIZE);
-      translatedRecords = recordsToSync.map(record =>
-        generateSyncJson(this.database, this.settings, record)
-      );
+      translatedRecords = recordsToSync.map(record => {
+        try {
+          return generateSyncJson(this.database, this.settings, record);
+        } catch (error) {
+          if (error.isSafe) return null;
+          // Error not safe to continue sync throw it again to pass it up to next handler
+          // See outgoingSyncUtils.js
+          throw error;
+        }
+      });
       await this.pushRecords(translatedRecords);
       this.syncQueue.use(recordsToSync);
       this.incrementProgress(recordsToSync.length);
     }
-  }
+  };
 
   /**
    * Pushes a collection of records to the remote sync server
    * @param  {array}   records The records to push
    * @return {Promise}         Resolves if successful, or passes up any error thrown
    */
-  pushRecords = async (records) => {
+  pushRecords = async records => {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
@@ -204,7 +211,7 @@ export class Synchroniser {
           Authorization: this.authenticator.getAuthHeader(),
         },
         body: JSON.stringify(records),
-      }
+      },
     );
     let responseJson;
     try {
@@ -215,7 +222,7 @@ export class Synchroniser {
     if (responseJson.error.length > 0) {
       throw new Error('Server rejected pushed records');
     }
-  }
+  };
 
   /**
    * Pulls any changes to data on the sync server down to the local database
@@ -229,7 +236,7 @@ export class Synchroniser {
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
     await this.recursivePull(serverURL, thisSiteId, serverId, 0);
-  }
+  };
 
   /**
    * Recursively checks how many records left to pull, pulls in a batch, and calls
@@ -245,7 +252,7 @@ export class Synchroniser {
       serverURL,
       thisSiteId,
       serverId,
-      authHeader
+      authHeader,
     );
     // Allow total to increase in case more records are added to the server sync queue during sync
     const newTotal = Math.max(waitingRecordCount, currentTotal);
@@ -258,7 +265,7 @@ export class Synchroniser {
       thisSiteId,
       serverId,
       authHeader,
-      BATCH_SIZE
+      BATCH_SIZE,
     );
     this.integrateRecords(incomingRecords);
     await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
@@ -266,7 +273,7 @@ export class Synchroniser {
 
     // Recurse to get the next batch of records from the server
     await this.recursivePull(serverURL, thisSiteId, serverId, newTotal);
-  }
+  };
 
   /**
    * Returns the number of records left to pull
@@ -282,7 +289,7 @@ export class Synchroniser {
         headers: {
           Authorization: authHeader,
         },
-      }
+      },
     );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to sync.');
@@ -295,7 +302,7 @@ export class Synchroniser {
       throw new Error('Unexpected response from server');
     }
     return responseJson.NumRecords;
-  }
+  };
 
   /**
    * Returns the next batch of incoming sync records
@@ -313,7 +320,7 @@ export class Synchroniser {
         headers: {
           Authorization: authHeader,
         },
-      }
+      },
     );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while pulling sync records.');
@@ -323,7 +330,7 @@ export class Synchroniser {
       throw new Error(responseJson.error);
     }
     return responseJson;
-  }
+  };
 
   /**
    * Parse the batch of incoming records, and integrate them into the local database
@@ -361,7 +368,7 @@ export class Synchroniser {
           Authorization: authHeader,
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
-  }
+  };
 }

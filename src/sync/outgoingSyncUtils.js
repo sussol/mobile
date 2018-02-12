@@ -1,4 +1,5 @@
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+import _ from 'lodash';
 
 import {
   INTERNAL_TO_EXTERNAL,
@@ -77,6 +78,7 @@ export function generateSyncJson(database, settings, syncOutRecord) {
         `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
       // Ping the error off to bugsnag
       bugsnagClient.notify(error);
+
       // Make a nicer message for users and throw it again.
       error.message =
         `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
@@ -219,7 +221,6 @@ function generateSyncData(settings, recordType, record) {
       };
     }
     case 'TransactionBatch': {
-      const itemBatch = record.itemBatch;
       const transaction = record.transaction;
       return {
         ID: record.id,
@@ -233,7 +234,9 @@ function generateSyncData(settings, recordType, record) {
         expiry_date: getDateString(record.expiryDate),
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
-        item_line_ID: itemBatch.id, // Should never be null. Can be null if merge deleted it (old server bug, v3.83).
+        // item_line_ID Should never be null. Can become null if merge
+        // deleted it (old server bug, v3.83).
+        item_line_ID: safeGet(record, 'itemBatch.id'),
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
@@ -255,4 +258,16 @@ function getDateString(date) {
 function getTimeString(date) {
   if (!date || typeof date !== 'object') return '00:00:00';
   return date.toTimeString().substring(0, 8);
+}
+
+// Tries to get a value that is known to potentially lead to crash
+// If path on the record returns null, throw an error with prototype
+// extended with 'isSafe' set to true so sync knows to continue
+function safeGet(record, path) {
+  const value = _.get(record, path);
+  if (!value) {
+    const error = Error(`Cannot access record value on path: '${path}'`);
+    error.isSafe = true;
+    throw error;
+  }
 }
