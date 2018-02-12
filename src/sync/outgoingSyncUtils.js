@@ -98,7 +98,6 @@ export function generateSyncJson(database, settings, syncOutRecord) {
  * @return {object}                  The data to sync (in the form of upstream record)
  */
 function generateSyncData(settings, recordType, record) {
-  throw Error("Haha this is Chris' experiment");
   switch (recordType) {
     case 'ItemBatch': {
       return {
