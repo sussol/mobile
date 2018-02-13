@@ -193,7 +193,7 @@ export class Synchroniser {
       } catch (error) {
         // If error not safe to continue sync throw it again to pass it up to next handler
         // See outgoingSyncUtils.js
-        if (!error.isSafe) throw error;
+        if (!error.canDeleteSyncOut) throw error;
       }
     };
   };
