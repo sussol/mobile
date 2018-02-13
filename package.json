@@ -44,7 +44,6 @@
     "buffer": "^5.0.6",
     "bugsnag-react-native": "^2.2.4",
     "compare-versions": "^3.0.1",
-    "lodash": "^4.17.5",
     "moment": "^2.18.1",
     "prop-types": "^15.5.10",
     "react": "16.0.0-alpha.12",

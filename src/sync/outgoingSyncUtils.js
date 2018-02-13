@@ -1,5 +1,4 @@
 import { Client as BugsnagClient } from 'bugsnag-react-native';
-import _ from 'lodash';
 
 import {
   INTERNAL_TO_EXTERNAL,
@@ -68,21 +67,21 @@ export function generateSyncJson(database, settings, syncOutRecord) {
       syncData = generateSyncData(settings, recordType, record);
     } catch (error) {
       // There was an error with data, often a null object
+      let message;
       const siteName = settings.get(SYNC_SITE_NAME);
       const syncUrl = settings.get(SYNC_URL);
       const originalMessage = error.message;
       // Change error message to be helpful in bugsnag
-      error.message =
+      message =
         `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
         `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, ` +
         `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
       // Ping the error off to bugsnag
-      bugsnagClient.notify(error);
+      bugsnagClient.notify(Object.assign({}, error, message));
 
       // Make a nicer message for users and throw it again.
-      error.message =
-        `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
-      throw error;
+      message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
+      throw Object.assign({}, error, message); // doesn't like object literal syntax
     }
   }
 
@@ -262,12 +261,18 @@ function getTimeString(date) {
 
 // Tries to get a value that is known to potentially lead to crash
 // If path on the record returns null, throw an error with prototype
-// extended with 'isSafe' set to true so sync knows to continue
+// extended with 'canDeleteSyncOut' set to true so sync knows to continue
 function safeGet(record, path) {
-  const value = _.get(record, path);
-  if (!value) {
-    const error = Error(`Cannot access record value on path: '${path}'`);
-    error.isSafe = true;
-    throw error;
+  const pathSegments = path.split('.');
+  let nestedProp = record;
+  for (let i = 0; i < pathSegments.length; i++) {
+    const segment = pathSegments[i];
+    try {
+      nestedProp = nestedProp[segment];
+    } catch (error) {
+      error.canDeleteSyncOut = true; // safe to delete syncOut
+      throw error; // Pass error up to next handler
+    }
   }
+  return nestedProp;
 }
