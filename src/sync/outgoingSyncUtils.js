@@ -67,21 +67,22 @@ export function generateSyncJson(database, settings, syncOutRecord) {
       syncData = generateSyncData(settings, recordType, record);
     } catch (error) {
       // There was an error with data, often a null object
-      let message;
       const siteName = settings.get(SYNC_SITE_NAME);
       const syncUrl = settings.get(SYNC_URL);
       const originalMessage = error.message;
+
       // Change error message to be helpful in bugsnag
-      message =
+      error.message =
         `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
         `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, ` +
         `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
+
       // Ping the error off to bugsnag
-      bugsnagClient.notify(Object.assign({}, error, message));
+      bugsnagClient.notify(error);
 
       // Make a nicer message for users and throw it again.
-      message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
-      throw Object.assign({}, error, message); // doesn't like object literal syntax
+      error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
+      throw error;
     }
   }
 
@@ -259,18 +260,28 @@ function getTimeString(date) {
   return date.toTimeString().substring(0, 8);
 }
 
-// Tries to get a value that is known to potentially lead to crash
-// If path on the record returns null, throw an error with prototype
-// extended with 'canDeleteSyncOut' set to true so sync knows to continue
+/**
+ * Tries to get a value that is known to potentially lead to crash
+ * If path on the record returns null, throw an error with prototype
+ * extended with 'canDeleteSyncOut' set to true so sync knows to continue
+ * @param {object} record The object to get properties from
+ * @param {string} path   The path on that object safely try
+ * @return {any}          Whatever variable was stored at path, if no error thrown
+ */
 function safeGet(record, path) {
   const pathSegments = path.split('.');
+  let currentPath = 'record';
   let nestedProp = record;
   for (let i = 0; i < pathSegments.length; i++) {
     const segment = pathSegments[i];
+    currentPath += `.${segment}`; // build up path so we know at what point potential errors occur
     try {
       nestedProp = nestedProp[segment];
     } catch (error) {
       error.canDeleteSyncOut = true; // safe to delete syncOut
+      error.message = `Error on object getter on path "${currentPath}", original message: ${
+        error.message
+        }`;
       throw error; // Pass error up to next handler
     }
   }

@@ -173,29 +173,34 @@ export class Synchroniser {
   push = async () => {
     this.setProgressMessage('Pushing changes to the server');
     this.setProgress(0);
-    let translatedRecords;
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
       const recordsToSync = this.syncQueue.next(BATCH_SIZE);
-      translatedRecords = [];
-      recordsToSync.forEach(translateRecord);
+      const translatedRecords = recordsToSync
+        .map(this.translateRecord) // Apply map function to get translated records
+        .filter((record) => !!record); // If error thrown, may be null so filter falsy values out
       await this.pushRecords(translatedRecords);
       // Records that threw errors in translateRecord() are still removed
       this.syncQueue.use(recordsToSync);
       this.incrementProgress(recordsToSync.length);
     }
+  };
 
-    const translateRecord = (record) => {
-      try {
-        const translatedRecord = generateSyncJson(this.database, this.settings, record);
-        // If an error was thrown no record is pushed
-        translatedRecords.push(translatedRecord);
-      } catch (error) {
-        // If error not safe to continue sync throw it again to pass it up to next handler
-        // See outgoingSyncUtils.js
-        if (!error.canDeleteSyncOut) throw error;
-      }
-    };
+  /**
+   * Handles translating records for push() and catching errors
+   * @param {object} record The outgoing record to be translated
+   * @return {object} The translated record output
+   */
+  translateRecord = record => {
+    try {
+      // Try translate the record
+      return generateSyncJson(this.database, this.settings, record);
+    } catch (error) {
+      // If error not safe to continue sync throw it again to pass it up to next handler
+      // See outgoingSyncUtils.js
+      if (!error.canDeleteSyncOut) throw error;
+      return null;
+    }
   };
 
   /**
