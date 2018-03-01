@@ -241,7 +241,8 @@ export class SupplierInvoicePage extends React.Component {
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
             onSelect={item => {
-              this.addNewLine(item);
+              const selectedItem = item.crossReferenceItem ? item.crossReferenceItem : item;
+              this.addNewLine(selectedItem);
               this.refreshData();
               this.closeModal();
             }}

@@ -9,7 +9,8 @@ export class Item extends Realm.Object {
   }
 
   get totalQuantity() {
-    return getTotal(this.batches, 'totalQuantity');
+    const item = this.crossReferenceItem ? this.crossReferenceItem : this;
+    return getTotal(item.batches, 'totalQuantity');
   }
 
   get dailyUsage() {
@@ -124,5 +125,6 @@ Item.schema = {
     category: { type: 'ItemCategory', optional: true },
     defaultPrice: { type: 'double', optional: true },
     isVisible: { type: 'bool', default: false },
+    crossReferenceItem: { type: 'Item', optional: true },
   },
 };

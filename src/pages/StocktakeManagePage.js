@@ -140,6 +140,7 @@ export class StocktakeManagePage extends React.Component {
     const { showItemsWithNoStock } = this.state;
     let data;
     data = this.items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
+    data = this.items.filtered('crossReferenceItem = null');
     data = data.sorted(sortBy, !isAscending);
     if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
