@@ -169,7 +169,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   renderLoadingIndicator = () => (
     <View style={globalStyles.loadingIndicatorContainer}>
-      <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
+      <Text style={{ ...textStyles, fontSize: 30, color: 'white' }}> PLEASE WAIT... </Text>
     </View>
   )
 
