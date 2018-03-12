@@ -101,6 +101,7 @@ export class StocktakeEditPage extends React.Component {
         sortDataType = 'string';
         break;
       case 'snapshotTotalQuantity':
+      case 'countedTotalQuantity':
       case 'difference':
         sortDataType = 'number';
         break;
