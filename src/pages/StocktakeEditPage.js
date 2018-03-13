@@ -116,12 +116,22 @@ export class StocktakeEditPage extends React.Component {
     switch (key) {
       default:
         return stocktakeItem[key];
-      case 'countedTotalQuantity':
+      case 'countedTotalQuantity': {
+        let cellContents;
+        if (!stocktakeItem.hasCountedBatches) {
+          // If not editable (i.e. finalised) we want to show 0 rather than '' as
+          // placeholder isn't shown
+          cellContents = isEditable ? '' : 0;
+        } else {
+          cellContents = stocktakeItem.countedTotalQuantity;
+        }
+        // If finalised we want to show 0 rather than '' as placeholder isn't shown
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeItem.hasCountedBatches ? stocktakeItem.countedTotalQuantity : '',
+          cellContents: cellContents,
           placeholder: tableStrings.not_counted,
         };
+      }
       case 'difference': {
         const difference = stocktakeItem.difference;
         const prefix = difference > 0 ? '+' : '';
@@ -136,7 +146,7 @@ export class StocktakeEditPage extends React.Component {
       onPress={() => this.props.navigateTo('stocktakeManager',
         navStrings.manage_stocktake,
         { stocktake: this.props.stocktake },
-        )}
+      )}
       isDisabled={this.props.stocktake.isFinalised}
     />
   );
@@ -305,12 +315,12 @@ export function checkForFinaliseError(stocktake) {
     itemsBelowMinimum.forEach((stocktakeItem, index) => {
       if (index >= MAX_ITEMS_IN_ERROR_MESSAGE) return;
       errorString += truncateString(`\n${stocktakeItem.itemCode} - ${stocktakeItem.itemName}`,
-                                    MAX_ITEM_STRING_LENGTH);
+        MAX_ITEM_STRING_LENGTH);
     });
     if (itemsBelowMinimum.length > MAX_ITEMS_IN_ERROR_MESSAGE) {
       errorString += `\n${modalStrings.and} ` +
-                      `${itemsBelowMinimum.length - MAX_ITEMS_IN_ERROR_MESSAGE} ` +
-                      `${modalStrings.more}.`;
+        `${itemsBelowMinimum.length - MAX_ITEMS_IN_ERROR_MESSAGE} ` +
+        `${modalStrings.more}.`;
     }
     return errorString;
   }
