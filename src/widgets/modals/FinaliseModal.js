@@ -5,9 +5,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Client as BugsnagClient } from 'bugsnag-react-native';
 import { ConfirmModal } from './ConfirmModal';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { modalStrings } from '../../localization';
+
+const bugsnagClient = new BugsnagClient();
 
 /**
  * Presents a modal allowing the user to confirm or cancel finalising a record.
@@ -30,6 +33,27 @@ export function FinaliseModal(props) {
   const { record, recordType, checkForError, finaliseText } = props.finaliseItem;
   if (!record || !record.isValid()) return null; // Record may have been deleted
   const errorText = !record.isFinalised && checkForError && checkForError(record);
+
+  // Wrapped in try-catch block so that finalise methods in schema can throw an error
+  // as last line of defence
+  const tryFinalise = () => {
+    props.runWithLoadingIndicator(() => {
+      try {
+        if (record) {
+          props.database.write(() => {
+            record.finalise(props.database, props.user);
+            props.database.save(recordType, record);
+          });
+        }
+        if (props.onClose) props.onClose();
+      } catch (error) {
+        // Fling off to bugsnag so we can be notified finalise isn't
+        // behaving
+        bugsnagClient.notify(error);
+      }
+    });
+  };
+
   return (
     <ConfirmModal
       style={[globalStyles.finaliseModal]}
@@ -45,18 +69,7 @@ export function FinaliseModal(props) {
       questionText={errorText || modalStrings[finaliseText]}
       confirmText={modalStrings.confirm}
       cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
-      onConfirm={
-        !errorText ? () => {
-          props.runWithLoadingIndicator(() => {
-            if (record) {
-              props.database.write(() => {
-                record.finalise(props.database, props.user);
-                props.database.save(recordType, record);
-              });
-            }
-            if (props.onClose) props.onClose();
-          });
-        } : null}
+      onConfirm={!errorText ? tryFinalise : null}
       onCancel={() => { if (props.onClose) props.onClose(); }}
     />);
 }
