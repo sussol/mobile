@@ -71,7 +71,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         department: database.getOrCreate('ItemDepartment', record.department_ID),
         description: record.description,
         name: record.item_name,
-        crossReferenceItem: database.getOrCreate('Item', record.cross_ref_ID),
+        crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
       };
       console.log('====================================');
       console.log(record);
