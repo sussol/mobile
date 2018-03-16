@@ -35,7 +35,7 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 export class StocktakeManagePage extends React.Component {
   constructor(props) {
     super(props);
-    this.items = props.database.objects('Item');
+    this.items = props.database.objects('Item').filtered('crossReferenceItem == null');
     this.state = {
       showItemsWithNoStock: true,
       stocktakeName: '',
@@ -140,7 +140,6 @@ export class StocktakeManagePage extends React.Component {
     const { showItemsWithNoStock } = this.state;
     let data;
     data = this.items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
-    data = this.items.filtered('crossReferenceItem = null');
     data = data.sorted(sortBy, !isAscending);
     if (!showItemsWithNoStock) {
       data = data.slice().filter((item) => item.totalQuantity !== 0);
