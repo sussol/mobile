@@ -93,8 +93,12 @@ export class Requisition extends Realm.Object {
       const itemsToAdd = complement(masterList.items,
                                     this.items,
                                     (item) => item.itemId);
-      itemsToAdd.forEach(masterListItem =>
-        createRecord(database, 'RequisitionItem', this, masterListItem.item));
+      itemsToAdd.forEach(masterListItem => {
+        if (!masterListItem.item.crossReferenceItem) {
+          // Don't add cross reference items or we'll get duplicates
+          createRecord(database, 'RequisitionItem', this, masterListItem.item);
+        }
+      });
     });
   }
 
