@@ -296,7 +296,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         sortIndex: parseNumber(record.line_number),
       };
       const requisitionItem = database.update(recordType, internalRecord);
-      requisition.addItemIfUnique(requisitionItem);
+      requisition.addItemIfUnique(requisitionItem); // requisitionItem will be an orphan record if it's not unique?
       database.save('Requisition', requisition);
       break;
     }
