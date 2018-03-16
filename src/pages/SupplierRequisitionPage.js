@@ -246,11 +246,9 @@ export class SupplierRequisitionPage extends React.Component {
             sortByString={'name'}
             onSelect={(item) => {
               const { database, requisition } = this.props;
-              const selectedItem = item.crossReferenceItem ? item.crossReferenceItem : item;
               database.write(() => {
-                if (!requisition.hasItemWithId(selectedItem.id)) {
-                  createRecord(database, 'RequisitionItem', requisition, selectedItem);
-                  database.save('Requisition', requisition);
+                if (!requisition.hasItem(item)) {
+                  createRecord(database, 'RequisitionItem', requisition, item);
                 }
               });
               this.refreshData();

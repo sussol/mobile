@@ -213,13 +213,9 @@ export class CustomerInvoicePage extends GenericPage {
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
             onSelect={(item) => {
-              console.log('====================================');
-              console.log(!!item.crossReferenceItem);
-              console.log('====================================');
-              const selectedItem = item.crossReferenceItem ? item.crossReferenceItem : item;
               database.write(() => {
-                if (!transaction.hasItemWithId(selectedItem.id)) {
-                  createRecord(database, 'TransactionItem', transaction, selectedItem);
+                if (!transaction.hasItem(item)) {
+                  createRecord(database, 'TransactionItem', transaction, item);
                 }
               });
               this.refreshData();

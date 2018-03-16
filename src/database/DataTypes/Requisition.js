@@ -51,7 +51,8 @@ export class Requisition extends Realm.Object {
     this.daysToSupply = months * 30;
   }
 
-  hasItemWithId(itemId) {
+  hasItem(item) {
+    const itemId = item.crossReferenceItem ? item.crossReferenceItem.id : item.id;
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
 
