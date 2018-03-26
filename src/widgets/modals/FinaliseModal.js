@@ -32,7 +32,7 @@ export function FinaliseModal(props) {
   if (!props.finaliseItem) return null;
   const { record, recordType, checkForError, finaliseText } = props.finaliseItem;
   if (!record || !record.isValid()) return null; // Record may have been deleted
-  const errorText = !record.isFinalised && checkForError && checkForError(record);
+  let errorText = !record.isFinalised && checkForError && checkForError(record);
 
   // Wrapped in try-catch block so that finalise methods in schema can throw an error
   // as last line of defence
@@ -40,6 +40,10 @@ export function FinaliseModal(props) {
     props.runWithLoadingIndicator(() => {
       try {
         if (record) {
+          // Check for error again to cleaning show user warning
+          // If the first attempt didn't catch it (was still writing changes)
+          errorText = checkForError && checkForError(record);
+          if (errorText) return;
           props.database.write(() => {
             record.finalise(props.database, props.user);
             props.database.save(recordType, record);
