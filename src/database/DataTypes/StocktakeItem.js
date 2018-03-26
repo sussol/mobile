@@ -98,6 +98,16 @@ export class StocktakeItem extends Realm.Object {
       }
 
       let difference = quantity - this.countedTotalQuantity;
+      // In case number is entered in Actual Quantity field, but it's the same as
+      // snapshot quantity, we want to remove 'Not Counted' placeholder
+      if (quantity === this.snapshotTotalQuantity) {
+        this.batches.forEach(stocktakeBatch => {
+          stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
+          database.save('StocktakeBatch', stocktakeBatch);
+        });
+        return;
+      }
+
       const isIncreasingQuantity = difference > 0;
       const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
 
