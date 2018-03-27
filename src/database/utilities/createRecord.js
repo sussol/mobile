@@ -109,7 +109,7 @@ function createInventoryAdjustment(database, user, date, isAddition) {
 // Creates a new empty ItemBatch and adds it to the item
 function createItemBatch(database, item, batchString) {
   // Handle cross reference items
-  const realItem = item.crossReferenceItem || item;
+  const realItem = item.realItem;
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
     item: realItem,
@@ -143,7 +143,7 @@ function createRequisition(database, user, otherStoreName) {
 // Creates a RequisitionItem and adds it to the requisition.
 function createRequisitionItem(database, requisition, item, dailyUsage) {
   // Handle cross reference items
-  const realItem = item.crossReferenceItem || item;
+  const realItem = item.realItem;
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
     item: realItem,
@@ -178,7 +178,7 @@ function createStocktake(database, user) {
 // Creates a StocktakeItem and adds it to the Stocktake.
 function createStocktakeItem(database, stocktake, item) {
   // Handle cross reference items
-  const realItem = item.crossReferenceItem || item;
+  const realItem = item.realItem;
   const stocktakeItem = database.create('StocktakeItem', {
     id: generateUUID(),
     item: realItem,
@@ -254,7 +254,7 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
 // Creates a TransactionItem and adds it to the Transaction
 function createTransactionItem(database, transaction, item) {
   // Handle cross reference items
-  const realItem = item.crossReferenceItem || item;
+  const realItem = item.realItem;
   const transactionItem = database.create('TransactionItem', {
     id: generateUUID(),
     item: realItem,

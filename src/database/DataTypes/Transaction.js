@@ -86,7 +86,7 @@ export class Transaction extends Realm.Object {
   }
 
   hasItem(item) {
-    const itemId = item.crossReferenceItem ? item.crossReferenceItem.id : item.id;
+    const itemId = item.realItem.id;
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
 
