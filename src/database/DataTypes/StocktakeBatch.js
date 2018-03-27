@@ -37,6 +37,7 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   set countedTotalQuantity(quantity) {
+    // Handle packsize being 0
     this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
