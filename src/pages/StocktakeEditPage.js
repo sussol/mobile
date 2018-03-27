@@ -128,7 +128,7 @@ export class StocktakeEditPage extends React.Component {
         // If finalised we want to show 0 rather than '' as placeholder isn't shown
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: cellContents,
+          cellContents,
           placeholder: tableStrings.not_counted,
         };
       }
