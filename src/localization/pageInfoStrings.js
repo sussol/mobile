@@ -15,10 +15,11 @@ export const pageInfoStrings = new LocalizedStrings({
     entered_by: 'Entered By',
     entry_date: 'Entry Date',
     months_stock_required: 'Months Stock',
+    stocktake_name: 'Stocktake Name',
     supplier: 'Supplier',
     their_ref: 'Their Ref',
   },
-  gil: {
+  gil: { // TODO: add - stocktake_name
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -30,7 +31,7 @@ export const pageInfoStrings = new LocalizedStrings({
     supplier: 'Kambana n oota, Pharmacy ke HC',
     their_ref: 'Ana Ref',
   },
-  tl: {
+  tl: { // TODO: add - stocktake_name
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',

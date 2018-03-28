@@ -81,7 +81,7 @@ export class StocktakeEditExpansion extends React.Component {
       case 'expiryDate': {
         return (
           <ExpiryTextInput
-            key={key}
+            key={stocktakeBatch.id}
             isEditable={isEditable}
             onEndEditing={(newValue) => {
               this.onEndEditing(key, stocktakeBatch, newValue);

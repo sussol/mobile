@@ -40,10 +40,6 @@ export class StocktakeItem extends Realm.Object {
    * for StocktakeItem is 0.
    * @return  {boolean} True if StocktakeBatches have adjustments
    */
-  get hasBatchWithQuantityChange() {
-    return this.batches.some(stocktakeBatch => stocktakeBatch.difference !== 0);
-  }
-
   get hasCountedBatches() {
     return this.batches.some(stocktakeBatch => stocktakeBatch.hasBeenCounted);
   }
@@ -95,14 +91,23 @@ export class StocktakeItem extends Realm.Object {
    * @param  {number} quantity   Change in StocktakeItem counted quantity
    */
   setCountedTotalQuantity(database, quantity) {
-    let difference = quantity - this.countedTotalQuantity;
-    if (difference === 0) return;
-
     database.write(() => {
-      // Create a StocktakeBatch and ItemBatch if none exist
+      // If there are no batches, create one
       if (this.batches.length === 0) {
         this.createNewBatch(database);
       }
+
+      let difference = quantity - this.countedTotalQuantity;
+      // In case number is entered in Actual Quantity field, but it's the same as
+      // snapshot quantity, we want to remove 'Not Counted' placeholder
+      if (difference === 0) {
+        this.batches.forEach(stocktakeBatch => {
+          stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
+          database.save('StocktakeBatch', stocktakeBatch);
+        });
+        return;
+      }
+      // Actual Quantity is not snaphot quantity
       const isIncreasingQuantity = difference > 0;
       const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
 

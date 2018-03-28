@@ -7,12 +7,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
-import { PageButton } from '../widgets';
+import { PageButton, PageInfo, TextEditor, PageContentModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  navStrings,
+  tableStrings,
+  pageInfoStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
+
+const MODAL_KEYS = {
+  COMMENT_EDIT: 'commentEdit',
+  NAME_EDIT: 'nameEdit',
+};
 
 /**
 * Renders the page for displaying StocktakeEditPage.
@@ -24,7 +35,10 @@ export class StocktakeEditPage extends React.Component {
   constructor(props) {
     super(props);
     this.items = props.stocktake.items;
-    this.state = {};
+    this.state = {
+      modalKey: null,
+      modalIsOpen: false,
+    };
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'itemName',
@@ -46,6 +60,22 @@ export class StocktakeEditPage extends React.Component {
 
     stocktakeItem.setCountedTotalQuantity(this.props.database, quantity);
   }
+
+  getModalTitle = () => {
+    const { NAME_EDIT, COMMENT_EDIT } = MODAL_KEYS;
+    switch (this.state.modalKey) {
+      default:
+      case NAME_EDIT:
+        return modalStrings.edit_the_stocktake_name;
+      case COMMENT_EDIT:
+        return modalStrings.edit_the_stocktake_comment;
+    }
+  }
+
+  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
+  openNameEditor = () => this.openModal(MODAL_KEYS.NAME_EDIT);
+  closeModal = () => this.setState({ modalIsOpen: false });
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
@@ -118,6 +148,70 @@ export class StocktakeEditPage extends React.Component {
     />
   );
 
+  renderModalContent = () => {
+    const { NAME_EDIT, COMMENT_EDIT } = MODAL_KEYS;
+    const { stocktake, database } = this.props;
+    switch (this.state.modalKey) {
+      default:
+      case COMMENT_EDIT:
+        return (
+          <TextEditor
+            text={stocktake.comment}
+            onEndEditing={(newComment) => {
+              if (newComment !== stocktake.comment) {
+                database.write(() => {
+                  stocktake.comment = newComment;
+                  database.save('Stocktake', stocktake);
+                });
+              }
+              this.closeModal();
+            }}
+          />
+        );
+      case NAME_EDIT:
+        return (
+          <TextEditor
+            text={stocktake.name}
+            onEndEditing={(newName) => {
+              if (newName !== stocktake.name) {
+                database.write(() => {
+                  stocktake.name = newName;
+                  database.save('Stocktake', stocktake);
+                });
+              }
+              this.closeModal();
+            }}
+          />
+        );
+    }
+  }
+
+  renderPageInfo = () => {
+    const { name, comment, isFinalised } = this.props.stocktake;
+    const infoColumns = [
+      [
+        {
+          title: `${pageInfoStrings.stocktake_name}:`,
+          info: name,
+          onPress: this.openNameEditor,
+          editableType: 'text',
+        },
+        {
+          title: `${pageInfoStrings.comment}:`,
+          info: comment,
+          onPress: this.openCommentEditor,
+          editableType: 'text',
+        },
+      ],
+    ];
+    return (
+      <PageInfo
+        columns={infoColumns}
+        isEditingDisabled={isFinalised}
+      />
+    );
+  }
+
   render() {
     return (
       <GenericPage
@@ -126,6 +220,7 @@ export class StocktakeEditPage extends React.Component {
         renderCell={this.renderCell}
         renderExpansion={this.renderExpansion}
         renderTopRightComponent={this.renderManageStocktakeButton}
+        renderTopLeftComponent={this.renderPageInfo}
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
@@ -171,7 +266,15 @@ export class StocktakeEditPage extends React.Component {
         database={this.props.database}
         {...this.props.genericTablePageStyles}
         topRoute={this.props.topRoute}
-      />
+      >
+        <PageContentModal
+          isOpen={this.state.modalIsOpen && !this.props.stocktake.isFinalised}
+          onClose={this.closeModal}
+          title={this.getModalTitle()}
+        >
+          {this.renderModalContent()}
+        </PageContentModal>
+      </GenericPage>
     );
   }
 }

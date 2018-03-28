@@ -38,7 +38,7 @@ export class StocktakesPage extends React.Component {
   onRowPress = (stocktake) => {
     this.props.navigateTo(
       'stocktakeEditor',
-      `${stocktake.name}`,
+      navStrings.stocktake,
       { stocktake: stocktake },
     );
   }

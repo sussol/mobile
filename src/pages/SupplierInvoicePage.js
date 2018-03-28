@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   formatDate,
-  parsePositiveFloat,
+  parsePositiveInteger,
   sortDataBy,
 } from '../utilities';
 import { createRecord } from '../database';
@@ -36,7 +36,7 @@ const SORT_DATA_TYPES = {
   itemName: 'string',
   itemCode: 'string',
   batch: 'string',
-  numberOfPacks: 'number',
+  totalQuantity: 'number',
   packSize: 'number',
 };
 
@@ -81,8 +81,10 @@ export class SupplierInvoicePage extends React.Component {
     const { database } = this.props;
     database.write(() => {
       switch (key) {
-        case 'numberOfPacks':
-          transactionBatch.numberOfPacks = parsePositiveFloat(newValue);
+        case 'totalQuantity':
+          // Should edit the numberOfPacks directly if packSize becomes an editable column
+          // that represents the number of packs counted
+          transactionBatch.setTotalQuantity(database, parsePositiveInteger(newValue));
           break;
         case 'expiryDate':
           transactionBatch.expiryDate = newValue;
@@ -204,11 +206,12 @@ export class SupplierInvoicePage extends React.Component {
         return {
           cellContents: transactionBatch[key],
         };
-      case 'numberOfPacks':
+      case 'totalQuantity':
         return editableCell;
       case 'expiryDate': {
         return (
           <ExpiryTextInput
+            key={transactionBatch.id}
             isEditable={isEditable}
             onEndEditing={(newValue) => this.onEndEditing(key, transactionBatch, newValue)}
             text={transactionBatch[key]}
@@ -314,10 +317,10 @@ export class SupplierInvoicePage extends React.Component {
             sortable: true,
           },
           {
-            key: 'numberOfPacks',
+            key: 'totalQuantity',
             width: 1,
             title: tableStrings.quantity,
-            alignText: 'center',
+            alignText: 'right',
           },
           {
             key: 'expiryDate',
