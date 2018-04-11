@@ -19,6 +19,11 @@ export class StocktakeBatch extends Realm.Object {
     return this.countedNumberOfPacks * this.packSize;
   }
 
+  get isReducedBelowMinimum() {
+    const stockOnHand = this.itemBatch.totalQuantity;
+    return (stockOnHand - Math.abs(this.difference)) < 0;
+  }
+
   get hasBeenCounted() {
     return this.countedNumberOfPacks !== null;
   }
