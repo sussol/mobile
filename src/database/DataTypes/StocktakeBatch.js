@@ -45,23 +45,22 @@ export class StocktakeBatch extends Realm.Object {
    * Finalising StocktakeBatch will adjust inventory appropriately and will add
    * new TransactionBatch in reducing or increasing Transaction for this Stocktake
    * @param  {Realm}  database   App wide local database
-   * @param  {object} user       The user that finalised this stocktake
    */
   finalise(database) {
     const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
-    const inventoryAdjustment = isAddition ? this.stocktake.getAdditions(database)
-                                            : this.stocktake.getReductions(database);
-    // Adjust inventory
-    this.itemBatch.batch = this.batch;
-    this.itemBatch.numberOfPacks = this.countedNumberOfPacks;
-    this.itemBatch.expiryDate = this.expiryDate;
+    const inventoryAdjustment = isAddition
+      ? this.stocktake.getAdditions(database)
+      : this.stocktake.getReductions(database);
+
     // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
-    const item = this.itemBatch.item;
-    const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
+    const transactionItem = createRecord(database, 'TransactionItem',
+      inventoryAdjustment, this.itemBatch.item);
     const transactionBatch = createRecord(database, 'TransactionBatch',
-                                          transactionItem, this.itemBatch);
-    transactionBatch.numberOfPacks = Math.abs(this.snapshotTotalQuantity
-                                              - this.countedTotalQuantity);
+      transactionItem, this.itemBatch);
+
+    // Apply difference from stocktake to actual stock on hand levels.
+    const snapshotDifference = Math.abs(this.snapshotTotalQuantity - this.countedTotalQuantity);
+    transactionBatch.setTotalQuantity(database, snapshotDifference);
 
     database.save('ItemBatch', this.itemBatch);
     database.save('TransactionBatch', transactionBatch);
