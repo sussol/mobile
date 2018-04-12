@@ -19,9 +19,14 @@ export class StocktakeBatch extends Realm.Object {
     return this.countedNumberOfPacks * this.packSize;
   }
 
+    /**
+     * Stock on hand should never be made negative. If the difference applied to the
+     * stock on hand for this batch would result in a negative, return true.
+     * @return {boolean} True if stock on hand - stocktakebatch.difference is negative
+     */
   get isReducedBelowMinimum() {
     const stockOnHand = this.itemBatch.totalQuantity;
-    return (stockOnHand - Math.abs(this.difference)) < 0;
+    return (stockOnHand + this.difference) < 0;
   }
 
   get hasBeenCounted() {
