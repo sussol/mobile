@@ -7,7 +7,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
-import { PageButton, PageInfo, TextEditor, PageContentModal } from '../widgets';
+import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import {
@@ -34,16 +34,25 @@ const MODAL_KEYS = {
 export class StocktakeEditPage extends React.Component {
   constructor(props) {
     super(props);
-    this.items = props.stocktake.items;
+    const { stocktake } = props;
+    this.items = stocktake.items;
     this.state = {
       modalKey: null,
       modalIsOpen: false,
+      isResetModalOpen: false,
     };
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'itemName',
       isAscending: true,
     };
+
+    // Validate the current state of the stocktake, warn user about any issues with modal
+    this.itemsBelowMinimum = stocktake.itemsBelowMinimum;
+    this.itemsUncountedWithStockChange = stocktake.itemsUncountedWithStockChange;
+    if (this.itemsBelowMinimum || this.itemsUncountedWithStockChange) {
+      this.state.isResetModalOpen = true;
+    }
   }
 
   /**
@@ -285,6 +294,17 @@ export class StocktakeEditPage extends React.Component {
         >
           {this.renderModalContent()}
         </PageContentModal>
+        <ConfirmModal
+          isOpen={this.state.isResetModalOpen}
+          questionText={
+            'TRANSLATE - This stocktake has items/batches that cannot be finalised as that ' +
+            'would cause quantity to become negative. This is caused by making a customer ' +
+            'invoice before finishing the stocktake. Would you like these to be reset for ' +
+            'recounting?'
+          }
+          onCancel={() => this.setState({ isResetModalOpen: false })}
+          onConfirm={() => { console.log('HAHAHAHAHAHHAHAHA worked'); }}
+        />
       </GenericPage>
     );
   }

@@ -17,6 +17,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { OnePressButton } from '../';
 import Modal from 'react-native-modalbox';
 import globalStyles from '../../globalStyles';
+import {
+  modalStrings,
+} from '../../localization';
 
 export function ConfirmModal(props) {
   // On opening, dismiss the keyboard to ensure editable cells lose their focus
@@ -69,8 +72,8 @@ ConfirmModal.propTypes = {
   onConfirm: PropTypes.func,
 };
 ConfirmModal.defaultProps = {
-  cancelText: 'Cancel',
-  confirmText: 'Confirm',
+  cancelText: modalStrings.cancel,
+  confirmText: modalStrings.confirm,
   style: {},
   globalStyles: {},
   swipeToClose: false, // negating the default.
