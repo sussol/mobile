@@ -24,7 +24,7 @@ export class StocktakeBatch extends Realm.Object {
    * stock on hand for this batch would result in a negative, return true. Can occur
    * when stock has been issued in a customer invoice for this batch before the parent
    * stocktake was finalised.
-   * @return {boolean} True if (stock on hand - stocktakebatch.difference) is negative
+   * @return {boolean} True if (stock on hand + stocktakebatch.difference) is negative
    */
   get isReducedBelowMinimum() {
     const stockOnHand = this.itemBatch.totalQuantity;
