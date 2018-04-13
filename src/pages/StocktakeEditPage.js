@@ -79,9 +79,6 @@ export class StocktakeEditPage extends React.Component {
    */
   onResetItemsConfirm = () => {
     const itemsToReset = [...this.itemsBelowMinimum, ...this.itemsUncountedAndOutdated];
-    console.log('====================================');
-    console.log(itemsToReset);
-    console.log('====================================');
     this.props.stocktake.resetStocktakeItems(this.props.database, itemsToReset);
     this.setState({ isResetModalOpen: false });
   }
