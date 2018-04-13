@@ -246,13 +246,11 @@ export class StocktakeEditPage extends React.Component {
 
   render() {
     const { data, isResetModalOpen, isModalOpen } = this.state;
-    const resetModalText = 'TRANSLATE - In this stocktake:\n' +
-      `${this.itemsBelowMinimum.length} item(s) counted will cause negative ` +
-      'stock levels for for at least one batch\n' +
-      `${this.itemsUncountedAndOutdated.length} uncounted item(s) are ` +
-      'out of date, to count them now will cause incorrect adjustments\n\n' +
-      'Would you like to reset counts and snapshots for these items?';
-
+    const resetModalText = modalStrings.formatString(
+      modalStrings.stocktake_invalid_stock,
+      this.itemsBelowMinimum.length,
+      this.itemsUncountedAndOutdated.length,
+    );
     return (
       <GenericPage
         data={data}
