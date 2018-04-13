@@ -16,7 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import { OnePressButton } from '../';
 import Modal from 'react-native-modalbox';
-import globalStyles from '../../globalStyles';
+import globalStyles, { DARK_GREY } from '../../globalStyles';
 import {
   modalStrings,
 } from '../../localization';
@@ -72,10 +72,16 @@ ConfirmModal.propTypes = {
   onConfirm: PropTypes.func,
 };
 ConfirmModal.defaultProps = {
+  backdropColor: DARK_GREY,
+  backdropOpacity: 0.97,
+  style: globalStyles.confirmModal,
+  textStyle: globalStyles.confirmModalText,
+  buttonContainerStyle: globalStyles.confirmModalButtonContainer,
+  cancelButtonStyle: globalStyles.confirmModalButton,
+  confirmButtonStyle: [globalStyles.confirmModalButton, globalStyles.confirmModalConfirmButton],
+  buttonTextStyle: globalStyles.confirmModalButtonText,
   cancelText: modalStrings.cancel,
   confirmText: modalStrings.confirm,
-  style: {},
-  globalStyles: {},
   swipeToClose: false, // negating the default.
   backdropPressToClose: false, // negating the default.
 };
