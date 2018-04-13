@@ -38,7 +38,7 @@ export class StocktakeEditPage extends React.Component {
     this.items = stocktake.items;
     this.state = {
       modalKey: null,
-      modalIsOpen: false,
+      isModalOpen: false,
       isResetModalOpen: false,
     };
     this.dataFilters = {
@@ -49,8 +49,11 @@ export class StocktakeEditPage extends React.Component {
 
     // Validate the current state of the stocktake, warn user about any issues with modal
     this.itemsBelowMinimum = stocktake.itemsBelowMinimum;
-    this.itemsUncountedWithStockChange = stocktake.itemsUncountedWithStockChange;
-    if (this.itemsBelowMinimum || this.itemsUncountedWithStockChange) {
+    this.itemsUncountedSnapshotOutdated = stocktake.itemsUncountedSnapshotOutdated;
+    if (
+      this.itemsBelowMinimum.length > 0 ||
+      this.itemsUncountedSnapshotOutdated.length > 0
+    ) {
       this.state.isResetModalOpen = true;
     }
   }
@@ -70,6 +73,16 @@ export class StocktakeEditPage extends React.Component {
     stocktakeItem.setCountedTotalQuantity(this.props.database, quantity);
   }
 
+  /**
+   * Will reset all items contained in this.itemsBelowMinimum and
+   * this.itemsUncountedSnapshotOutdated and reset them.
+   */
+  onResetItemsConfirm = () => {
+    const itemsToReset = this.itemsBelowMinimum.concat(this.itemsUncountedSnapshotOutdated);
+    this.props.stocktake.resetStocktakeItems(this.props.database, itemsToReset);
+    this.setState({ isResetModalOpen: false });
+  }
+
   getModalTitle = () => {
     const { NAME_EDIT, COMMENT_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
@@ -80,11 +93,10 @@ export class StocktakeEditPage extends React.Component {
         return modalStrings.edit_the_stocktake_comment;
     }
   }
-
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = (key) => this.setState({ modalKey: key, isModalOpen: true });
   openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
   openNameEditor = () => this.openModal(MODAL_KEYS.NAME_EDIT);
-  closeModal = () => this.setState({ modalIsOpen: false });
+  closeModal = () => this.setState({ isModalOpen: false });
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
@@ -233,9 +245,17 @@ export class StocktakeEditPage extends React.Component {
   }
 
   render() {
+    const { data, isResetModalOpen, isModalOpen } = this.state;
+    const resetModalText = 'TRANSLATE - In this stocktake:\n' +
+      `${this.itemsBelowMinimum.length} item(s) counted will cause negative ` +
+      'stock levels for for at least one batch\n' +
+      `${this.itemsUncountedSnapshotOutdated.length} item(s) uncounted have ` +
+      'out of date snapshots, to count them now will cause incorrect adjustments\n' +
+      'Would you like to reset counts and snapshots for these items?';
+
     return (
       <GenericPage
-        data={this.state.data}
+        data={data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderExpansion={this.renderExpansion}
@@ -288,22 +308,17 @@ export class StocktakeEditPage extends React.Component {
         topRoute={this.props.topRoute}
       >
         <PageContentModal
-          isOpen={this.state.modalIsOpen && !this.props.stocktake.isFinalised}
+          isOpen={isModalOpen && !this.props.stocktake.isFinalised}
           onClose={this.closeModal}
           title={this.getModalTitle()}
         >
           {this.renderModalContent()}
         </PageContentModal>
         <ConfirmModal
-          isOpen={this.state.isResetModalOpen}
-          questionText={
-            'TRANSLATE - This stocktake has items/batches that cannot be finalised as that ' +
-            'would cause quantity to become negative. This is caused by making a customer ' +
-            'invoice before finishing the stocktake. Would you like these to be reset for ' +
-            'recounting?'
-          }
+          isOpen={isResetModalOpen}
+          questionText={resetModalText}
           onCancel={() => this.setState({ isResetModalOpen: false })}
-          onConfirm={() => { console.log('HAHAHAHAHAHHAHAHA worked'); }}
+          onConfirm={this.onResetItemsConfirm}
         />
       </GenericPage>
     );

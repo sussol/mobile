@@ -50,7 +50,7 @@ export class StocktakeItem extends Realm.Object {
 
   /**
    * Returns true if this stocktake item's counted quantity would reduce the amount
-   * of stock in inventory to negative levels, if it were finalised. This can happen
+   * of any batch's stock in inventory to negative levels, if it were finalised. This can happen
    * if, for example, an item is added to a stocktake with a snapshot quantity of
    * 10, then is counted to have a quantity of 8, but concurrently there has been
    * a reduction in the stock in inventory, e.g. a customer invoice for 9. In this
@@ -60,6 +60,28 @@ export class StocktakeItem extends Realm.Object {
    */
   get isReducedBelowMinimum() {
     return this.batches.some(batch => batch.isReducedBelowMinimum);
+  }
+
+  /**
+   * Return true if any batch has snapshotTotalQuantity out of date
+   * That is, it no longer is equal to its corresponding itemBatch's totalQuantity
+   * @return {boolean} true if some batch has snapshotOutdated
+   */
+  get hasBatchSnapshotOutdated() {
+    return this.batches.some(batch => batch.isSnapshotOutdated);
+  }
+
+  /**
+   * Will reset this stocktakeItem, deleting all batches and recreating them for
+   * the corresponding itemBatches current in inventory.
+   * @param  {Realm}  database   App wide local database
+   */
+  reset(database) {
+    database.delete('StocktakeBatch', this.batches);
+    this.item.batches.forEach(itemBatch => {
+      // createRecord will do save; notifying listeners
+      createRecord(database, 'StocktakeBatch', this, itemBatch);
+    });
   }
 
   /**

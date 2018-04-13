@@ -56,16 +56,22 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Get any stocktake items that would cause a reduction larger than the amount
-   * of available stock in inventory if it were finalised.
+   * Get any stocktake items that for any of their batches would cause a reduction larger than
+   * the amount of available stock in inventory if it were finalised.
    * @return {array} All stocktake items that have been reduced below minimum level
    */
   get itemsBelowMinimum() {
-    const itemsBelowMinimum = [];
-    this.items.forEach((stocktakeItem) => {
-      if (stocktakeItem.isReducedBelowMinimum) itemsBelowMinimum.push(stocktakeItem);
-    });
-    return itemsBelowMinimum;
+    return this.items.filter(stocktakeItem => stocktakeItem.isReducedBelowMinimum);
+  }
+
+  /**
+   * Get any stocktake items that have not been counted
+   * @return {array} stocktakeItems with no count and current inventory doesn't match snapshot
+   */
+  get itemsUncountedSnapshotOutdated() {
+    return this.items.filter(stocktakeItem => (
+      !stocktakeItem.hasCountedBatches && stocktakeItem.hasBatchSnapshotOutdated
+    ));
   }
 
   get hasSomeCountedItems() {
@@ -74,6 +80,22 @@ export class Stocktake extends Realm.Object {
 
   get numberOfBatches() {
     return getTotal(this.items, 'numberOfBatches');
+  }
+
+  /**
+   * Resets provided array of stocktakeItems
+   * @param {Realm} database App wide local database
+   * @param {array} stocktakeItems The stocktakeItems to reset
+   * @param {func} progressUpdate Function of form func(total, currentProgress)
+   */
+  resetStocktakeItems(database, stocktakeItems, progressUpdate) {
+    database.write(() => {
+      stocktakeItems.forEach((stocktakeItem, i) => {
+        stocktakeItem.reset(database);
+        // If a function to update progress is given, call it.
+        if (progressUpdate) progressUpdate(stocktakeItems.length, i);
+      });
+    });
   }
 
   /**
