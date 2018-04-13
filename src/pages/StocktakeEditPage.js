@@ -49,10 +49,10 @@ export class StocktakeEditPage extends React.Component {
 
     // Validate the current state of the stocktake, warn user about any issues with modal
     this.itemsBelowMinimum = stocktake.itemsBelowMinimum;
-    this.itemsUncountedSnapshotOutdated = stocktake.itemsUncountedSnapshotOutdated;
+    this.itemsUncountedAndOutdated = stocktake.itemsUncountedAndOutdated;
     if (
       this.itemsBelowMinimum.length > 0 ||
-      this.itemsUncountedSnapshotOutdated.length > 0
+      this.itemsUncountedAndOutdated.length > 0
     ) {
       this.state.isResetModalOpen = true;
     }
@@ -75,10 +75,13 @@ export class StocktakeEditPage extends React.Component {
 
   /**
    * Will reset all items contained in this.itemsBelowMinimum and
-   * this.itemsUncountedSnapshotOutdated and reset them.
+   * this.itemsUncountedAndOutdated and reset them.
    */
   onResetItemsConfirm = () => {
-    const itemsToReset = this.itemsBelowMinimum.concat(this.itemsUncountedSnapshotOutdated);
+    const itemsToReset = [...this.itemsBelowMinimum, ...this.itemsUncountedAndOutdated];
+    console.log('====================================');
+    console.log(itemsToReset);
+    console.log('====================================');
     this.props.stocktake.resetStocktakeItems(this.props.database, itemsToReset);
     this.setState({ isResetModalOpen: false });
   }
@@ -249,8 +252,8 @@ export class StocktakeEditPage extends React.Component {
     const resetModalText = 'TRANSLATE - In this stocktake:\n' +
       `${this.itemsBelowMinimum.length} item(s) counted will cause negative ` +
       'stock levels for for at least one batch\n' +
-      `${this.itemsUncountedSnapshotOutdated.length} item(s) uncounted have ` +
-      'out of date snapshots, to count them now will cause incorrect adjustments\n' +
+      `${this.itemsUncountedAndOutdated.length} uncounted item(s) are ` +
+      'out of date, to count them now will cause incorrect adjustments\n\n' +
       'Would you like to reset counts and snapshots for these items?';
 
     return (

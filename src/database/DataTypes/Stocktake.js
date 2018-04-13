@@ -68,9 +68,9 @@ export class Stocktake extends Realm.Object {
    * Get any stocktake items that have not been counted
    * @return {array} stocktakeItems with no count and current inventory doesn't match snapshot
    */
-  get itemsUncountedSnapshotOutdated() {
+  get itemsUncountedAndOutdated() {
     return this.items.filter(stocktakeItem => (
-      !stocktakeItem.hasCountedBatches && stocktakeItem.hasBatchSnapshotOutdated
+      !stocktakeItem.hasCountedBatches && stocktakeItem.isOutdated
     ));
   }
 
@@ -86,7 +86,7 @@ export class Stocktake extends Realm.Object {
    * Resets provided array of stocktakeItems
    * @param {Realm} database App wide local database
    * @param {array} stocktakeItems The stocktakeItems to reset
-   * @param {func} progressUpdate Function of form func(total, currentProgress)
+   * @param {func} progressUpdate Function of form func(total, currentProgress, title, message)
    */
   resetStocktakeItems(database, stocktakeItems, progressUpdate) {
     database.write(() => {

@@ -63,12 +63,24 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Return true if any batch has snapshotTotalQuantity out of date
-   * That is, it no longer is equal to its corresponding itemBatch's totalQuantity
-   * @return {boolean} true if some batch has snapshotOutdated
+   * An item is out of date if:
+   * - Any batch has snapshotTotalQuantity !== corresponding itemBatch totalQuantity
+   * - Corresponding Item has different batches to this stocktakeItem
+   * @return {boolean} true if some batch is out of date
    */
-  get hasBatchSnapshotOutdated() {
-    return this.batches.some(batch => batch.isSnapshotOutdated);
+  get isOutdated() {
+    if (this.batches.some(batch => batch.isSnapshotOutdated)) return true;
+    // Check all item batches (with stock) are included by finding matching id in
+    // the stocktakeBatches for this this stocktakeItem
+    const itemBatchesWithStock = this.item.batchesWithStock;
+    if (
+      itemBatchesWithStock.some(itemBatch => (
+        !this.batches.some(stocktakeBatch => stocktakeBatch.itemBatch.id === itemBatch.id)
+      ))
+    ) return true;
+
+    // This stocktakeItem is not out of date
+    return false;
   }
 
   /**
