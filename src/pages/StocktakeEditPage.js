@@ -51,8 +51,8 @@ export class StocktakeEditPage extends React.Component {
     this.itemsBelowMinimum = stocktake.itemsBelowMinimum;
     this.itemsUncountedAndOutdated = stocktake.itemsUncountedAndOutdated;
     if (
-      this.itemsBelowMinimum.length > 0 ||
-      this.itemsUncountedAndOutdated.length > 0
+      !stocktake.isFinalised &&
+      (this.itemsBelowMinimum.length > 0 || this.itemsUncountedAndOutdated.length > 0)
     ) {
       this.state.isResetModalOpen = true;
     }
