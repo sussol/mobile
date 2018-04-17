@@ -102,9 +102,6 @@ export class Transaction extends Realm.Object {
    * Add all items from the customer's master list to this customer invoice
    */
   addItemsFromMasterList(database, progressCallback) {
-    console.log('====================================');
-    console.log(progressCallback);
-    console.log('====================================');
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
     if (this.otherParty) {
