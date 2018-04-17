@@ -101,15 +101,27 @@ export class Transaction extends Realm.Object {
   /**
    * Add all items from the customer's master list to this customer invoice
    */
-  addItemsFromMasterList(database) {
+  addItemsFromMasterList(database, progressCallback) {
+    console.log('====================================');
+    console.log(progressCallback);
+    console.log('====================================');
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
     if (this.otherParty) {
-      this.otherParty.masterLists.forEach(masterList => {
+      const { masterLists } = this.otherParty;
+      masterLists.forEach(masterList => {
         const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
-        itemsToAdd.forEach(masterListItem =>
-          createRecord(database, 'TransactionItem', this, masterListItem.item)
-        );
+        itemsToAdd.forEach((masterListItem, i) => {
+          if (progressCallback) {
+            progressCallback(
+              itemsToAdd.length,
+              i,
+              'Adding master list items',
+              `Name: ${masterList.name}`,
+            );
+          }
+          createRecord(database, 'TransactionItem', this, masterListItem.item);
+        });
       });
     }
   }

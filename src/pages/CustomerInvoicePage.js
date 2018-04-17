@@ -77,13 +77,11 @@ export class CustomerInvoicePage extends GenericPage {
   }
 
   onAddMasterItems = () => {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.transaction.addItemsFromMasterList(this.props.database);
-        this.props.database.save('Transaction', this.props.transaction);
-      });
-      this.refreshData();
+    this.props.database.write(() => {
+      this.props.transaction.addItemsFromMasterList(this.props.database, this.props.updateProgress);
+      this.props.database.save('Transaction', this.props.transaction);
     });
+    this.refreshData();
   }
 
   /**
@@ -352,6 +350,7 @@ CustomerInvoicePage.propTypes = {
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   transaction: PropTypes.object.isRequired,
+  updateProgress: PropTypes.func.isRequired,
 };
 
 /**

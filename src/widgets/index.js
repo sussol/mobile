@@ -13,6 +13,7 @@ export {
   LoginModal,
   PageContentModal,
   SelectModal,
+  ProgressModal,
 } from './modals';
 export { AutocompleteSelector } from './AutocompleteSelector';
 export { FinaliseButton } from './FinaliseButton';

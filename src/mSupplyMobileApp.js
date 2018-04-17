@@ -33,7 +33,7 @@ import {
   LoginModal,
   NavigationBar,
   SyncState,
-  Spinner,
+  ProgressModal,
 } from './widgets';
 
 import { migrateDataToVersion } from './dataMigration';
@@ -73,8 +73,11 @@ class MSupplyMobileAppContainer extends React.Component {
       confirmFinalise: false,
       currentUser: null,
       isInitialised: isInitialised,
-      isLoading: false,
       syncModalIsOpen: false,
+      progressTotal: 0,
+      progress: 0,
+      progressTitle: '',
+      progressMessage: '',
     };
   }
 
@@ -116,17 +119,11 @@ class MSupplyMobileAppContainer extends React.Component {
     return true;
   }
 
-  runWithLoadingIndicator = async (functionToRun) => {
-    // We here set up an asyncronous promise that will be resolved after a timeout
-    // of 1 millisecond. This allows a fraction of a delay during which the javascript
-    // thread unblocks and allows our spinner animation to start up. We cannot simply
-    // call the functionToRun inside a setTimeout as that relegates to a lower
-    // priority and results in very slow performance.
-    await new Promise(resolve => {
-      this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
-    });
-    functionToRun();
-    this.setState({ isLoading: false });
+  updateProgress = async (progressTotal, progress, progressTitle, progressMessage) => {
+    console.log('====================================');
+    console.log(progressTotal, progress, progressTitle, progressMessage);
+    console.log('====================================');
+    this.setState({ progressTotal, progress, progressTitle, progressMessage });
   }
 
   synchronise = async () => {
@@ -167,12 +164,6 @@ class MSupplyMobileAppContainer extends React.Component {
     </TouchableWithoutFeedback>
   )
 
-  renderLoadingIndicator = () => (
-    <View style={globalStyles.loadingIndicatorContainer}>
-      <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
-    </View>
-  )
-
   renderPageTitle = () => (
     <Text style={textStyles}>
       {this.props.currentTitle}
@@ -199,6 +190,10 @@ class MSupplyMobileAppContainer extends React.Component {
       );
     }
     const { finaliseItem, dispatch, navigationState } = this.props;
+    const { progressTotal, progress, progressTitle, progressMessage } = this.state;
+    console.log('====================================');
+    console.log('app render', progressTotal, progress);
+    console.log('====================================');
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
@@ -220,7 +215,7 @@ class MSupplyMobileAppContainer extends React.Component {
             settings: this.settings,
             logOut: this.logOut,
             currentUser: this.state.currentUser,
-            runWithLoadingIndicator: this.runWithLoadingIndicator,
+            updateProgress: this.updateProgress,
             isInAdminMode: this.state.isInAdminMode,
             genericTablePageStyles: {
               searchBarColor: SUSSOL_ORANGE,
@@ -236,7 +231,7 @@ class MSupplyMobileAppContainer extends React.Component {
           onClose={() => this.setState({ confirmFinalise: false })}
           finaliseItem={finaliseItem}
           user={this.state.currentUser}
-          runWithLoadingIndicator={this.runWithLoadingIndicator}
+          updateProgress={this.updateProgress}
         />
         <SyncModal
           database={this.database}
@@ -251,7 +246,12 @@ class MSupplyMobileAppContainer extends React.Component {
           isAuthenticated={this.state.currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
-        {this.state.isLoading && this.renderLoadingIndicator()}
+        <ProgressModal
+          total={progressTotal}
+          progress={progress}
+          title={progressTitle}
+          message={progressMessage}
+        />
       </View>
     );
   }
