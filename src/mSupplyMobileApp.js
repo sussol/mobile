@@ -119,7 +119,7 @@ class MSupplyMobileAppContainer extends React.Component {
     return true;
   }
 
-  updateProgress = async (progressTotal, progress, progressTitle, progressMessage) => {
+  updateProgress = (progressTotal, progress, progressTitle, progressMessage) => {
     console.log('====================================');
     console.log(progressTotal, progress, progressTitle, progressMessage);
     console.log('====================================');
