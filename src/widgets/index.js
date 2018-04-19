@@ -19,7 +19,6 @@ export { FinaliseButton } from './FinaliseButton';
 export { NavigationBar } from './NavigationBar';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
-export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
 export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';

@@ -6,6 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+  ActivityIndicator,
   BackHandler,
   Image,
   Text,
@@ -33,7 +34,6 @@ import {
   LoginModal,
   NavigationBar,
   SyncState,
-  Spinner,
 } from './widgets';
 
 import { migrateDataToVersion } from './dataMigration';
@@ -119,7 +119,7 @@ class MSupplyMobileAppContainer extends React.Component {
   runWithLoadingIndicator = async (functionToRun) => {
     // We here set up an asyncronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay during which the javascript
-    // thread unblocks and allows our spinner animation to start up. We cannot simply
+    // thread unblocks and allows the modal animation to start up. We cannot simply
     // call the functionToRun inside a setTimeout as that relegates to a lower
     // priority and results in very slow performance.
     await new Promise(resolve => {
@@ -169,7 +169,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   renderLoadingIndicator = () => (
     <View style={globalStyles.loadingIndicatorContainer}>
-      <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
+      <ActivityIndicator color={SUSSOL_ORANGE} size="large" />
     </View>
   )
 
