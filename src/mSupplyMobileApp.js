@@ -122,10 +122,14 @@ class MSupplyMobileAppContainer extends React.Component {
     // thread unblocks and allows the modal animation to start up. We cannot simply
     // call the functionToRun inside a setTimeout as that relegates to a lower
     // priority and results in very slow performance.
+    const start = new Date().getTime();
     await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
     functionToRun();
+    console.log('====================================');
+    console.log((new Date().getTime()) - start);
+    console.log('====================================');
     this.setState({ isLoading: false });
   }
 
