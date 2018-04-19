@@ -119,17 +119,13 @@ class MSupplyMobileAppContainer extends React.Component {
   runWithLoadingIndicator = async (functionToRun) => {
     // We here set up an asyncronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay during which the javascript
-    // thread unblocks and allows the modal animation to start up. We cannot simply
+    // thread unblocks and allows the loadingIndicator to render. We cannot simply
     // call the functionToRun inside a setTimeout as that relegates to a lower
     // priority and results in very slow performance.
-    const start = new Date().getTime();
     await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
     functionToRun();
-    console.log('====================================');
-    console.log((new Date().getTime()) - start);
-    console.log('====================================');
     this.setState({ isLoading: false });
   }
 
