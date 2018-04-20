@@ -85,7 +85,8 @@ export class Transaction extends Realm.Object {
     return !!this.linkedRequisition;
   }
 
-  hasItemWithId(itemId) {
+  hasItem(item) {
+    const itemId = item.realItem.id;
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
 
@@ -107,9 +108,12 @@ export class Transaction extends Realm.Object {
     if (this.otherParty) {
       this.otherParty.masterLists.forEach(masterList => {
         const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
-        itemsToAdd.forEach(masterListItem =>
-          createRecord(database, 'TransactionItem', this, masterListItem.item)
-        );
+        itemsToAdd.forEach(masterListItem => {
+          if (!masterListItem.item.crossReferenceItem) {
+            // Don't add cross reference items or we'll get duplicates
+            createRecord(database, 'TransactionItem', this, masterListItem.item);
+          }
+        });
       });
     }
   }

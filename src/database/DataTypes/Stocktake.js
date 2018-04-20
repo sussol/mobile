@@ -166,10 +166,9 @@ export class Stocktake extends Realm.Object {
     database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
       stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
-    // Apply inventory adjustement to remaining StocktakeBatches
-    const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
-      stocktakeBatch.difference !== 0);
-    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
+    // stocktakeBatch.finalise handles optimisation based on what fields were entered
+    // i.e. count/batch/expiry
+    stocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
   }
 }
 

@@ -108,17 +108,19 @@ function createInventoryAdjustment(database, user, date, isAddition) {
 
 // Creates a new empty ItemBatch and adds it to the item
 function createItemBatch(database, item, batchString) {
+  // Handle cross reference items
+  const realItem = item.realItem;
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
-    item: item,
+    item: realItem,
     batch: batchString,
     packSize: 1,
     numberOfPacks: 0,
-    costPrice: item.defaultPrice ? item.defaultPrice : 0,
-    sellPrice: item.defaultPrice ? item.defaultPrice : 0,
+    costPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
+    sellPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
   });
-  item.addBatch(itemBatch);
-  database.save('Item', item);
+  realItem.addBatch(itemBatch);
+  database.save('Item', realItem);
   return itemBatch;
 }
 
@@ -139,13 +141,15 @@ function createRequisition(database, user, otherStoreName) {
 }
 
 // Creates a RequisitionItem and adds it to the requisition.
-function createRequisitionItem(database, requisition, item, dailyUsage = item.dailyUsage) {
+function createRequisitionItem(database, requisition, item, dailyUsage) {
+  // Handle cross reference items
+  const realItem = item.realItem;
   const requisitionItem = database.create('RequisitionItem', {
     id: generateUUID(),
-    item: item,
+    item: realItem,
     requisition: requisition,
-    stockOnHand: item.totalQuantity,
-    dailyUsage: dailyUsage,
+    stockOnHand: realItem.totalQuantity,
+    dailyUsage: dailyUsage || realItem.dailyUsage,
     requiredQuantity: 0,
     comment: '',
     sortIndex: requisition.items.length + 1,
@@ -173,9 +177,11 @@ function createStocktake(database, user) {
 
 // Creates a StocktakeItem and adds it to the Stocktake.
 function createStocktakeItem(database, stocktake, item) {
+  // Handle cross reference items
+  const realItem = item.realItem;
   const stocktakeItem = database.create('StocktakeItem', {
     id: generateUUID(),
-    item: item,
+    item: realItem,
     stocktake: stocktake,
   });
   stocktake.items.push(stocktakeItem);
@@ -247,9 +253,11 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
 
 // Creates a TransactionItem and adds it to the Transaction
 function createTransactionItem(database, transaction, item) {
+  // Handle cross reference items
+  const realItem = item.realItem;
   const transactionItem = database.create('TransactionItem', {
     id: generateUUID(),
-    item: item,
+    item: realItem,
     transaction: transaction,
   });
   transaction.addItem(transactionItem);
