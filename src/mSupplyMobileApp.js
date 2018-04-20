@@ -128,7 +128,7 @@ class MSupplyMobileAppContainer extends React.Component {
     });
     functionToRun();
     this.setState({ isLoading: false });
-    this.database.isLoading = true;
+    this.database.isLoading = false;
   }
 
   synchronise = async () => {
