@@ -42,26 +42,21 @@ export class GenericPage extends React.Component {
   // Refetch data and render the list any time a listener is triggered for a data type
   // that a page subscribes to listen to or if record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    // Below is a little hack to make sure that refreshData isn't triggered on every
-    // database event in a given write I.e. finalising a big invoice would refresh and
-    // re-render a table for every line saved/updated/deleted, slowing the app down
-    // for big database writes.
-    const isInTransaction = (
-      this.props.database.database.realm.isInTransaction &&
-      causedBy !== 'sync'
-    );
-
     // For sync we may want to listen to different data sources
     const dataTypesArray =
       causedBy === 'sync' ? this.props.dataTypesSynchronised : this.props.dataTypesLinked;
-
-    // If database is in a transaction, don't update table for every listener event (if
+    // Below is a little hack to make sure that refreshData isn't triggered on every
+    // database event in a given write I.e. finalising a big invoice would refresh and
+    // re-render a table for every line saved/updated/deleted, slowing the app down
+    // for big database writes. A refactor for better React practices would be better.
+    const isLoading = this.props.database.isLoading;
+    // If database is loading, don't update table for every listener event (if
     // dataTypesLinked rather than dataTypesSynchronised)
     // If recordType is finalisable and is finalised, it'll bypass this.
     // So it'll ignore all the business in a big finalisation but notify at the end
     // When updating the parent (i.e. the finalised stocktake/transaction/requisition is updated)
     if (
-      (!isInTransaction && dataTypesArray && dataTypesArray.includes(recordType)) ||
+      (!isLoading && dataTypesArray && dataTypesArray.includes(recordType)) ||
       (recordType === this.props.finalisableDataType && record.isFinalised)
     ) {
       this.props.refreshData();
