@@ -79,7 +79,7 @@ export class StocktakeBatch extends Realm.Object {
       // Apply difference from stocktake to actual stock on hand levels.
       // Whether stock is increased or decreased is determined by the transaction
       // so we need to use the absolute value of difference (i.e. always treat as positive)
-      const snapshotDifference = Math.abs(this.snapshotTotalQuantity - this.countedTotalQuantity);
+      const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
       database.save('TransactionBatch', transactionBatch);
     }
