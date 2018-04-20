@@ -59,25 +59,31 @@ export class StocktakeBatch extends Realm.Object {
    * @param  {Realm}  database   App wide local database
    */
   finalise(database) {
-    const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
-    const inventoryAdjustment = isAddition
-      ? this.stocktake.getAdditions(database)
-      : this.stocktake.getReductions(database);
+    // Update the itemBatch details
+    this.itemBatch.batch = this.batch;
+    this.itemBatch.expiryDate = this.expiryDate;
 
-    // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
-    const transactionItem = createRecord(database, 'TransactionItem',
-      inventoryAdjustment, this.itemBatch.item);
-    const transactionBatch = createRecord(database, 'TransactionBatch',
-      transactionItem, this.itemBatch);
+    // Make inventory adjustments if there is a difference to apply
+    if (this.difference !== 0) {
+      const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
+      const inventoryAdjustment = isAddition
+        ? this.stocktake.getAdditions(database)
+        : this.stocktake.getReductions(database);
 
-    // Apply difference from stocktake to actual stock on hand levels.
-    // Whether stock is increased or decreased is determined by the transaction
-    // so we need to use the absolute value of difference (i.e. always treat as positive)
-    const snapshotDifference = Math.abs(this.snapshotTotalQuantity - this.countedTotalQuantity);
-    transactionBatch.setTotalQuantity(database, snapshotDifference);
+      // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
+      const transactionItem = createRecord(database, 'TransactionItem',
+        inventoryAdjustment, this.itemBatch.item);
+      const transactionBatch = createRecord(database, 'TransactionBatch',
+        transactionItem, this.itemBatch);
 
+      // Apply difference from stocktake to actual stock on hand levels.
+      // Whether stock is increased or decreased is determined by the transaction
+      // so we need to use the absolute value of difference (i.e. always treat as positive)
+      const snapshotDifference = Math.abs(this.snapshotTotalQuantity - this.countedTotalQuantity);
+      transactionBatch.setTotalQuantity(database, snapshotDifference);
+      database.save('TransactionBatch', transactionBatch);
+    }
     database.save('ItemBatch', this.itemBatch);
-    database.save('TransactionBatch', transactionBatch);
   }
 
   toString() {
