@@ -49,20 +49,6 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * If the stock has increased or not been changed since the item quantity was
-   * snapshot, the minimum is 0. If the stock has reduced since the item was
-   * snapshot, the minimum total quantity that can be sensibly considered as the
-   * counted quantity is the snapshot quantity minus the current stock on hand.
-   * This is because it doesn't make sense to count an amount that represents a
-   * reduction greater than the current stock on hand, which would create negative
-   * inventory.
-   * @return {integer} The minimum total quantity that can be sensibly counted
-   */
-  get minimumTotalQuantity() {
-    return this.item ? Math.max(0, this.snapshotTotalQuantity - this.item.totalQuantity) : 0;
-  }
-
-  /**
    * Returns true if this stocktake item's counted quantity would reduce the amount
    * of stock in inventory to negative levels, if it were finalised. This can happen
    * if, for example, an item is added to a stocktake with a snapshot quantity of
@@ -73,10 +59,7 @@ export class StocktakeItem extends Realm.Object {
    * @return {Boolean} Whether the counted quantity is below the minimum for this item
    */
   get isReducedBelowMinimum() {
-    const countedTotalQuantity = this.countedTotalQuantity;
-    return countedTotalQuantity !== undefined &&
-           countedTotalQuantity !== null &&
-           countedTotalQuantity < this.minimumTotalQuantity;
+    return this.batches.some(batch => batch.isReducedBelowMinimum);
   }
 
   /**

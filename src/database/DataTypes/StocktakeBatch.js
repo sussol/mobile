@@ -19,6 +19,18 @@ export class StocktakeBatch extends Realm.Object {
     return this.countedNumberOfPacks * this.packSize;
   }
 
+  /**
+   * Stock on hand should never be made negative. If the difference applied to the
+   * stock on hand for this batch would result in a negative, return true. Can occur
+   * when stock has been issued in a customer invoice for this batch before the parent
+   * stocktake was finalised.
+   * @return {boolean} True if (stock on hand + stocktakebatch.difference) is negative
+   */
+  get isReducedBelowMinimum() {
+    const stockOnHand = this.itemBatch.totalQuantity;
+    return (stockOnHand + this.difference) < 0;
+  }
+
   get hasBeenCounted() {
     return this.countedNumberOfPacks !== null;
   }
@@ -45,26 +57,33 @@ export class StocktakeBatch extends Realm.Object {
    * Finalising StocktakeBatch will adjust inventory appropriately and will add
    * new TransactionBatch in reducing or increasing Transaction for this Stocktake
    * @param  {Realm}  database   App wide local database
-   * @param  {object} user       The user that finalised this stocktake
    */
   finalise(database) {
-    const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
-    const inventoryAdjustment = isAddition ? this.stocktake.getAdditions(database)
-                                            : this.stocktake.getReductions(database);
-    // Adjust inventory
+    // Update the itemBatch details
     this.itemBatch.batch = this.batch;
-    this.itemBatch.numberOfPacks = this.countedNumberOfPacks;
     this.itemBatch.expiryDate = this.expiryDate;
-    // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
-    const item = this.itemBatch.item;
-    const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
-    const transactionBatch = createRecord(database, 'TransactionBatch',
-                                          transactionItem, this.itemBatch);
-    transactionBatch.numberOfPacks = Math.abs(this.snapshotTotalQuantity
-                                              - this.countedTotalQuantity);
 
+    // Make inventory adjustments if there is a difference to apply
+    if (this.difference !== 0) {
+      const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
+      const inventoryAdjustment = isAddition
+        ? this.stocktake.getAdditions(database)
+        : this.stocktake.getReductions(database);
+
+      // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
+      const transactionItem = createRecord(database, 'TransactionItem',
+        inventoryAdjustment, this.itemBatch.item);
+      const transactionBatch = createRecord(database, 'TransactionBatch',
+        transactionItem, this.itemBatch);
+
+      // Apply difference from stocktake to actual stock on hand levels.
+      // Whether stock is increased or decreased is determined by the transaction
+      // so we need to use the absolute value of difference (i.e. always treat as positive)
+      const snapshotDifference = Math.abs(this.difference);
+      transactionBatch.setTotalQuantity(database, snapshotDifference);
+      database.save('TransactionBatch', transactionBatch);
+    }
     database.save('ItemBatch', this.itemBatch);
-    database.save('TransactionBatch', transactionBatch);
   }
 
   toString() {
