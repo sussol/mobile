@@ -28,6 +28,7 @@ export const syncStrings = new LocalizedStrings({
     sync_error: 'SYNC ERROR',
     sync_in_progress: 'SYNC IN PROGRESS',
   },
+  // Add: checking_server_for_records, records_waiting, sync_complete, all_records_updated, loading_change_count
   tl: {
     last_sync: 'SYNC FOIN DADAUN',
     manual_sync: 'Synk Manual',
