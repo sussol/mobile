@@ -51,7 +51,8 @@ export class Requisition extends Realm.Object {
     this.daysToSupply = months * 30;
   }
 
-  hasItemWithId(itemId) {
+  hasItem(item) {
+    const itemId = item.realItem.id;
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
 
@@ -92,8 +93,12 @@ export class Requisition extends Realm.Object {
       const itemsToAdd = complement(masterList.items,
                                     this.items,
                                     (item) => item.itemId);
-      itemsToAdd.forEach(masterListItem =>
-        createRecord(database, 'RequisitionItem', this, masterListItem.item));
+      itemsToAdd.forEach(masterListItem => {
+        if (!masterListItem.item.crossReferenceItem) {
+          // Don't add cross reference items or we'll get duplicates
+          createRecord(database, 'RequisitionItem', this, masterListItem.item);
+        }
+      });
     });
   }
 

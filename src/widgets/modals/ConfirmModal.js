@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Button } from 'react-native-ui-components';
+import { OnePressButton } from '../';
 import Modal from 'react-native-modalbox';
 import globalStyles from '../../globalStyles';
 
@@ -36,13 +36,13 @@ export function ConfirmModal(props) {
           {questionText}
         </Text>
         <View style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}>
-          {onCancel && <Button
+          {onCancel && <OnePressButton
             style={[globalStyles.button, props.cancelButtonStyle]}
             textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
             text={props.cancelText}
             onPress={onCancel}
           />}
-          {onConfirm && <Button
+          {onConfirm && <OnePressButton
             style={[globalStyles.button, props.confirmButtonStyle]}
             textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
             text={props.confirmText}

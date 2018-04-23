@@ -1,3 +1,5 @@
+import { Client as BugsnagClient } from 'bugsnag-react-native';
+
 import {
   INTERNAL_TO_EXTERNAL,
   RECORD_TYPES,
@@ -11,11 +13,10 @@ import {
 } from './syncTranslators';
 
 import { SETTINGS_KEYS } from '../settings';
-const {
-  SUPPLYING_STORE_NAME_ID,
-  THIS_STORE_ID,
-} = SETTINGS_KEYS;
+const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
 import { CHANGE_TYPES } from '../database';
+
+const bugsnagClient = new BugsnagClient();
 
 /**
  * Returns a json object fulfilling the requirements of the mSupply primary sync
@@ -31,14 +32,14 @@ export function generateSyncJson(database, settings, syncOutRecord) {
     throw new Error('Malformed sync out record');
   }
   const { recordType, recordId, changeType } = syncOutRecord;
-
+  const storeId = settings.get(THIS_STORE_ID);
   // Create the JSON object to sync
   const syncJson = {
     SyncID: syncOutRecord.id,
     RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
     RecordID: recordId,
     SyncType: SYNC_TYPES.translate(changeType, INTERNAL_TO_EXTERNAL),
-    StoreID: settings.get(THIS_STORE_ID),
+    StoreID: storeId,
   };
   if (changeType === CHANGE_TYPES.DELETE) {
     return syncJson; // Don't need record data for deletes
@@ -51,16 +52,38 @@ export function generateSyncJson(database, settings, syncOutRecord) {
   } else {
     // Get the record the syncOutRecord refers to from the database
     const recordResults = database.objects(recordType).filtered('id == $0', recordId);
-    if (!recordResults || recordResults.length === 0) { // No such record
+    if (!recordResults || recordResults.length === 0) {
+      // No such record
       throw new Error(`${recordType} with id = ${recordId} missing`);
-    } else if (recordResults.length > 1) { // Duplicate records
+    } else if (recordResults.length > 1) {
+      // Duplicate records
       throw new Error(`Multiple ${recordType} records with id = ${recordId}`);
     }
     const record = recordResults[0];
 
     // Generate the appropriate data for the sync object to carry, representing the
     // record in its upstream form
-    syncData = generateSyncData(settings, recordType, record);
+    try {
+      syncData = generateSyncData(settings, recordType, record);
+    } catch (error) {
+      // There was an error with data, often a null object
+      const siteName = settings.get(SYNC_SITE_NAME);
+      const syncUrl = settings.get(SYNC_URL);
+      const originalMessage = error.message;
+
+      // Change error message to be helpful in bugsnag
+      error.message =
+        `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
+        `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, ` +
+        `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
+
+      // Ping the error off to bugsnag
+      bugsnagClient.notify(error);
+
+      // Make a nicer message for users and throw it again.
+      error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
+      throw error;
+    }
   }
 
   // Attach the record data to the json object
@@ -191,12 +214,13 @@ function generateSyncData(settings, recordType, record) {
         category_ID: record.category && record.category.id,
         confirm_time: getTimeString(record.confirmDate),
         store_ID: settings.get(THIS_STORE_ID),
-        requisition_ID: record.linkedRequisition && record.linkedRequisition.id ?
-                        record.linkedRequisition.id : undefined,
+        requisition_ID:
+          record.linkedRequisition && record.linkedRequisition.id
+            ? record.linkedRequisition.id
+            : undefined,
       };
     }
     case 'TransactionBatch': {
-      const itemBatch = record.itemBatch;
       const transaction = record.transaction;
       return {
         ID: record.id,
@@ -210,7 +234,9 @@ function generateSyncData(settings, recordType, record) {
         expiry_date: getDateString(record.expiryDate),
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
-        item_line_ID: itemBatch.id,
+        // item_line_ID Should never be null. Can become null if merge
+        // deleted it (old server bug, v3.83).
+        item_line_ID: safeGet(record, 'itemBatch.id'),
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
@@ -232,4 +258,32 @@ function getDateString(date) {
 function getTimeString(date) {
   if (!date || typeof date !== 'object') return '00:00:00';
   return date.toTimeString().substring(0, 8);
+}
+
+/**
+ * Tries to get a value that is known to potentially lead to crash
+ * If path on the record returns null, throw an error with prototype
+ * extended with 'canDeleteSyncOut' set to true so sync knows to continue
+ * @param {object} record The object to get properties from
+ * @param {string} path   The path on that object safely try
+ * @return {any}          Whatever variable was stored at path, if no error thrown
+ */
+function safeGet(record, path) {
+  const pathSegments = path.split('.');
+  let currentPath = 'record';
+  let nestedProp = record;
+  for (let i = 0; i < pathSegments.length; i++) {
+    const segment = pathSegments[i];
+    currentPath += `.${segment}`; // build up path so we know at what point potential errors occur
+    try {
+      nestedProp = nestedProp[segment];
+    } catch (error) {
+      error.canDeleteSyncOut = true; // safe to delete syncOut
+      error.message = `Error on object getter on path "${currentPath}", original message: ${
+        error.message
+        }`;
+      throw error; // Pass error up to next handler
+    }
+  }
+  return nestedProp;
 }

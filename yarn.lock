@@ -4920,15 +4920,16 @@ readline2@^1.0.1:
     is-fullwidth-code-point "^1.0.0"
     mute-stream "0.0.5"
 
-realm@^1.10.0:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/realm/-/realm-1.10.3.tgz#b30a052eb58f9a36c53ca2a57a5f2bf6df0d20a5"
+realm@^1.11.1:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-1.13.0.tgz#ba8c8f1f886182457e9b36dea169d2ea87a24011"
   dependencies:
     extract-zip "^1.6.0"
     ini "^1.3.4"
     nan "^2.3.3"
     node-fetch "^1.6.3"
     node-pre-gyp "^0.6.30"
+    prop-types "^15.5.10"
     request "^2.78.0"
     sync-request "^3.0.1"
     url-parse "^1.1.7"

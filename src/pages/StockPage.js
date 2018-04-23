@@ -24,7 +24,7 @@ export class StockPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: props.database.objects('Item'),
+      items: props.database.objects('Item').filtered('crossReferenceItem == null'),
     };
     this.dataFilters = {
       searchTerm: '',
