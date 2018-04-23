@@ -28,13 +28,13 @@ export class Stocktake extends Realm.Object {
 
     // Delete any stocktake items that aren't in the new array of ids
     const itemsToRemove = complement(this.items,
-                                     itemIds.map((itemId) => ({ itemId: itemId })),
-                                     (stocktakeItem) => stocktakeItem.itemId);
+      itemIds.map((itemId) => ({ itemId: itemId })),
+      (stocktakeItem) => stocktakeItem.itemId);
     if (itemsToRemove && itemsToRemove.length > 0) database.delete('StocktakeItem', itemsToRemove);
 
     // Add a new StocktakeItem for each new item id not currently in the stocktake
     const itemIdsToAdd = complement(itemIds,
-                                    this.items.map((stocktakeItem) => stocktakeItem.itemId));
+      this.items.map((stocktakeItem) => stocktakeItem.itemId));
     const items = database.objects('Item');
     itemIdsToAdd.forEach((itemId) => {
       // Find the matching database item and use it to create a stocktake item
@@ -85,7 +85,7 @@ export class Stocktake extends Realm.Object {
   getReductions(database) {
     if (!this.reductions) {
       this.reductions = createRecord(database, 'InventoryAdjustment',
-                                     this.finalisedBy, this.stocktakeDate, false);
+        this.finalisedBy, this.stocktakeDate, false);
     }
     return this.reductions;
   }
@@ -99,7 +99,7 @@ export class Stocktake extends Realm.Object {
   getAdditions(database) {
     if (!this.additions) {
       this.additions = createRecord(database, 'InventoryAdjustment',
-                                    this.finalisedBy, this.stocktakeDate, true);
+        this.finalisedBy, this.stocktakeDate, true);
     }
     return this.additions;
   }
@@ -110,6 +110,12 @@ export class Stocktake extends Realm.Object {
    * @param {Realm.Object}  user     The current user logged in
    */
   finalise(database, user) {
+    if (this.isFinalised) throw Error('Cannot finalise as stocktake already finalised');
+    if (this.itemsBelowMinimum.length > 0) {
+      // Last stop before making ledger problems!
+      throw Error('Attempt to finalise stocktake with ' +
+        'adjustments that make item(s) stock negative');
+    }
     // Set the stocktake finalise details
     this.finalisedBy = user;
     this.stocktakeDate = new Date();
@@ -129,19 +135,18 @@ export class Stocktake extends Realm.Object {
   adjustInventory(database) {
     // Prune all StocktakeItems with no quantity change
     database.delete('StocktakeItem', this.items.filter(stocktakeItem =>
-                                     !stocktakeItem.hasCountedBatches));
+      !stocktakeItem.hasCountedBatches));
     // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
-                             .filtered('stocktake.id = $0', this.id);
-     // Delete all 'fresh' StocktakeBatches that have been created by stocktake
-     // but have not been changed
+      .filtered('stocktake.id = $0', this.id);
+    // Delete all 'fresh' StocktakeBatches that have been created by stocktake
+    // but have not been changed
     database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
-        stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
+      stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
-    // Apply inventory adjustement to remaining StocktakeBatches
-    const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
-                                    stocktakeBatch.difference !== 0);
-    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
+    // stocktakeBatch.finalise handles optimisation based on what fields were entered
+    // i.e. count/batch/expiry
+    stocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
   }
 }
 
