@@ -102,7 +102,6 @@ export class LoginModal extends React.Component {
           isOpen={true}
           style={[globalStyles.modal, globalStyles.authFormModal]}
           backdropPressToClose={false}
-          backdropOpacity={1}
           swipeToClose={false}
           startOpen
         >

@@ -20,7 +20,7 @@
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
         android:screenOrientation="landscape"
         android:launchMode="singleTop"
-        android:windowSoftInputMode="adjustResize|stateUnchanged">
+        android:windowSoftInputMode="adjustResize">
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
