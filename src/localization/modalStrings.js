@@ -47,7 +47,7 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_supplier: 'Start typing to select supplier',
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
-    stocktake_invalid_stock: 'In this stocktake:\n{0} item(s) counted will cause negative stock levels for for at least one batch\n{1} uncounted item(s) are out of date, to count them now will cause incorrect adjustments\n\nWould you like to reset counts and snapshots for these items?',
+    stocktake_invalid_stock: 'In this stocktake:\n{0} item(s) counted will cause negative stock levels for at least one batch\n{1} uncounted item(s) are out of date, to count them now will cause incorrect adjustments\n\nWould you like to reset counts and snapshots for these items?',
   },
   gil: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',

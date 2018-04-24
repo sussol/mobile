@@ -71,7 +71,7 @@ export class StocktakeItem extends Realm.Object {
   get isOutdated() {
     if (this.batches.some(batch => batch.isSnapshotOutdated)) return true;
     // Check all item batches (with stock) are included by finding matching id in
-    // the stocktakeBatches for this this stocktakeItem
+    // the stocktakeBatches for this stocktakeItem
     const itemBatchesWithStock = this.item.batchesWithStock;
     if (
       itemBatchesWithStock.some(itemBatch => (
@@ -90,7 +90,7 @@ export class StocktakeItem extends Realm.Object {
    */
   reset(database) {
     database.delete('StocktakeBatch', this.batches);
-    this.item.batches.forEach(itemBatch => {
+    this.item.batchesWithStock.forEach(itemBatch => {
       // createRecord will do save; notifying listeners
       createRecord(database, 'StocktakeBatch', this, itemBatch);
     });
