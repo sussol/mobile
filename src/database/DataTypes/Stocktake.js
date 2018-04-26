@@ -86,14 +86,11 @@ export class Stocktake extends Realm.Object {
    * Resets provided array of stocktakeItems
    * @param {Realm} database App wide local database
    * @param {array} stocktakeItems The stocktakeItems to reset
-   * @param {func} progressUpdate Function of form func(total, currentProgress, title, message)
    */
-  resetStocktakeItems(database, stocktakeItems, progressUpdate) {
+  resetStocktakeItems(database, stocktakeItems) {
     database.write(() => {
-      stocktakeItems.forEach((stocktakeItem, i) => {
+      stocktakeItems.forEach(stocktakeItem => {
         stocktakeItem.reset(database);
-        // If a function to update progress is given, call it.
-        if (progressUpdate) progressUpdate(stocktakeItems.length, i);
       });
     });
   }
