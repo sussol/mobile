@@ -65,13 +65,13 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Get any stocktake items that have not been counted
-   * @return {array} stocktakeItems with no count and current inventory doesn't match snapshot
+   * Get all stocktake items where snapshot doesn't match stock on hand or
+   * the corresponding item has any batch with stock with no corresponding stocktake
+   * batch
+   * @return {array} stocktakeItems that are outdated.
    */
-  get itemsUncountedAndOutdated() {
-    return this.items.filter(stocktakeItem => (
-      !stocktakeItem.hasCountedBatches && stocktakeItem.isOutdated
-    ));
+  get itemsOutdated() {
+    return this.items.filter(stocktakeItem => stocktakeItem.isOutdated);
   }
 
   get hasSomeCountedItems() {
