@@ -3,8 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import LocalizedStrings from 'react-native-localization';
 /* eslint-disable max-len */
+
+import LocalizedStrings from 'react-native-localization';
+
 export const modalStrings = new LocalizedStrings({
   gb: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',

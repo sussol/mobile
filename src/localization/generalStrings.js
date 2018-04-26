@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+/* eslint-disable max-len */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const generalStrings = new LocalizedStrings({
