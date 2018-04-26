@@ -31,6 +31,17 @@ export class StocktakeBatch extends Realm.Object {
     return (stockOnHand + this.difference) < 0;
   }
 
+  /**
+   * Returns true if the snapshotTotalQuantity doesn't match the totalQuantity of the
+   * itemBatch this stocktakeBatch is associated with. Will occur if inventory has
+   * changed since this stocktakeBatch was created. If the net change on this batch
+   * is 0, then this should return false.
+   * @return {boolean} True if snapshotTotalQuantity !== this.itemBatch.totalQuantity
+   */
+  get isSnapshotOutdated() {
+    return this.snapshotTotalQuantity !== this.itemBatch.totalQuantity;
+  }
+
   get hasBeenCounted() {
     return this.countedNumberOfPacks !== null;
   }

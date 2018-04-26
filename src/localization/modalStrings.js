@@ -47,8 +47,9 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_supplier: 'Start typing to select supplier',
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
+    stocktake_invalid_stock: 'Stock on hand for these item(s) have changed since this stocktake was last opened (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" and "Actual Quantity" will be reset:',
   },
-  gil: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name
+  gil: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -90,7 +91,7 @@ export const modalStrings = new LocalizedStrings({
       'Te maiti are e warekaki e na maiti riki nakon AKEA imain kamatoana',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
-  tl: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name
+  tl: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
     add_at_least_one_item_before_finalising: 'Tenke hatama sasán ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',
@@ -132,4 +133,3 @@ export const modalStrings = new LocalizedStrings({
     stocktake_no_counted_items: 'La bele finaliza ajustamentu se laiha item ida priense',
   },
 });
-/* eslint-enable max-len */

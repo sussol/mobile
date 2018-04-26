@@ -50,7 +50,7 @@ export class StocktakeItem extends Realm.Object {
 
   /**
    * Returns true if this stocktake item's counted quantity would reduce the amount
-   * of stock in inventory to negative levels, if it were finalised. This can happen
+   * of any batch's stock in inventory to negative levels, if it were finalised. This can happen
    * if, for example, an item is added to a stocktake with a snapshot quantity of
    * 10, then is counted to have a quantity of 8, but concurrently there has been
    * a reduction in the stock in inventory, e.g. a customer invoice for 9. In this
@@ -60,6 +60,40 @@ export class StocktakeItem extends Realm.Object {
    */
   get isReducedBelowMinimum() {
     return this.batches.some(batch => batch.isReducedBelowMinimum);
+  }
+
+  /**
+   * An item is out of date if:
+   * - Any batch has snapshotTotalQuantity !== corresponding itemBatch totalQuantity
+   * - Corresponding Item has different batches to this stocktakeItem
+   * @return {boolean} true if some batch is out of date
+   */
+  get isOutdated() {
+    if (this.batches.some(batch => batch.isSnapshotOutdated)) return true;
+    // Check all item batches (with stock) are included by finding matching id in
+    // the stocktakeBatches for this stocktakeItem
+    const itemBatchesWithStock = this.item.batchesWithStock;
+    if (
+      itemBatchesWithStock.some(itemBatch => (
+        !this.batches.some(stocktakeBatch => stocktakeBatch.itemBatch.id === itemBatch.id)
+      ))
+    ) return true;
+
+    // This stocktakeItem is not out of date
+    return false;
+  }
+
+  /**
+   * Will reset this stocktakeItem, deleting all batches and recreating them for
+   * the corresponding itemBatches current in inventory.
+   * @param  {Realm}  database   App wide local database
+   */
+  reset(database) {
+    database.delete('StocktakeBatch', this.batches);
+    this.item.batchesWithStock.forEach(itemBatch => {
+      // createRecord will do save; notifying listeners
+      createRecord(database, 'StocktakeBatch', this, itemBatch);
+    });
   }
 
   /**
