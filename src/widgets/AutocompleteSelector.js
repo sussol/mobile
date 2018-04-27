@@ -81,7 +81,7 @@ export class AutocompleteSelector extends React.PureComponent {
               />
             )}
             keyboardShouldPersistTaps="always"
-            style={localStyles.resultlist}
+            style={localStyles.resultList}
           />
         )}
       </View>
@@ -123,7 +123,7 @@ const localStyles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  resultlist: {
+  resultList: {
     flex: 1,
     marginHorizontal: 10,
     backgroundColor: 'white',
