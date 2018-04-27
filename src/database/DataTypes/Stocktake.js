@@ -65,13 +65,13 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Get any stocktake items that have not been counted
-   * @return {array} stocktakeItems with no count and current inventory doesn't match snapshot
+   * Get all stocktake items where snapshot doesn't match stock on hand or
+   * the corresponding item has any batch with stock with no corresponding stocktake
+   * batch
+   * @return {array} stocktakeItems that are outdated.
    */
-  get itemsUncountedAndOutdated() {
-    return this.items.filter(stocktakeItem => (
-      !stocktakeItem.hasCountedBatches && stocktakeItem.isOutdated
-    ));
+  get itemsOutdated() {
+    return this.items.filter(stocktakeItem => stocktakeItem.isOutdated);
   }
 
   get hasSomeCountedItems() {
@@ -86,14 +86,11 @@ export class Stocktake extends Realm.Object {
    * Resets provided array of stocktakeItems
    * @param {Realm} database App wide local database
    * @param {array} stocktakeItems The stocktakeItems to reset
-   * @param {func} progressUpdate Function of form func(total, currentProgress, title, message)
    */
-  resetStocktakeItems(database, stocktakeItems, progressUpdate) {
+  resetStocktakeItems(database, stocktakeItems) {
     database.write(() => {
-      stocktakeItems.forEach((stocktakeItem, i) => {
+      stocktakeItems.forEach(stocktakeItem => {
         stocktakeItem.reset(database);
-        // If a function to update progress is given, call it.
-        if (progressUpdate) progressUpdate(stocktakeItems.length, i);
       });
     });
   }
@@ -166,10 +163,9 @@ export class Stocktake extends Realm.Object {
     database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
       stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
-    // Apply inventory adjustement to remaining StocktakeBatches
-    const changedStocktakeBatches = stocktakeBatches.filter(stocktakeBatch =>
-      stocktakeBatch.difference !== 0);
-    changedStocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
+    // stocktakeBatch.finalise handles optimisation based on what fields were entered
+    // i.e. count/batch/expiry
+    stocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
   }
 }
 
