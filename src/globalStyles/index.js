@@ -10,7 +10,7 @@ import { appStyles, COMPONENT_HEIGHT } from './appStyles';
 import { authStyles } from './authStyles';
 import { buttonStyles } from './buttonStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
-import { finaliseStyles } from './finaliseStyles';
+import { confirmModalStyles } from './confirmModalStyles';
 import { loadingIndicatorStyles } from './loadingIndicatorStyles';
 import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
@@ -57,7 +57,7 @@ export default StyleSheet.create({
   ...appStyles,
   ...authStyles,
   ...buttonStyles,
-  ...finaliseStyles,
+  ...confirmModalStyles,
   ...loadingIndicatorStyles,
   ...modalStyles,
   ...navigationStyles,

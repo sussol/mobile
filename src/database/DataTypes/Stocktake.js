@@ -56,16 +56,22 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Get any stocktake items that would cause a reduction larger than the amount
-   * of available stock in inventory if it were finalised.
+   * Get any stocktake items that for any of their batches would cause a reduction larger than
+   * the amount of available stock in inventory if it were finalised.
    * @return {array} All stocktake items that have been reduced below minimum level
    */
   get itemsBelowMinimum() {
-    const itemsBelowMinimum = [];
-    this.items.forEach((stocktakeItem) => {
-      if (stocktakeItem.isReducedBelowMinimum) itemsBelowMinimum.push(stocktakeItem);
-    });
-    return itemsBelowMinimum;
+    return this.items.filter(stocktakeItem => stocktakeItem.isReducedBelowMinimum);
+  }
+
+  /**
+   * Get all stocktake items where snapshot doesn't match stock on hand or
+   * the corresponding item has any batch with stock with no corresponding stocktake
+   * batch
+   * @return {array} stocktakeItems that are outdated.
+   */
+  get itemsOutdated() {
+    return this.items.filter(stocktakeItem => stocktakeItem.isOutdated);
   }
 
   get hasSomeCountedItems() {
@@ -74,6 +80,19 @@ export class Stocktake extends Realm.Object {
 
   get numberOfBatches() {
     return getTotal(this.items, 'numberOfBatches');
+  }
+
+  /**
+   * Resets provided array of stocktakeItems
+   * @param {Realm} database App wide local database
+   * @param {array} stocktakeItems The stocktakeItems to reset
+   */
+  resetStocktakeItems(database, stocktakeItems) {
+    database.write(() => {
+      stocktakeItems.forEach(stocktakeItem => {
+        stocktakeItem.reset(database);
+      });
+    });
   }
 
   /**

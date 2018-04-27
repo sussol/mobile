@@ -7,7 +7,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 import { ConfirmModal } from './ConfirmModal';
-import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { modalStrings } from '../../localization';
 
 const bugsnagClient = new BugsnagClient();
@@ -60,15 +59,6 @@ export function FinaliseModal(props) {
 
   return (
     <ConfirmModal
-      style={[globalStyles.finaliseModal]}
-      textStyle={globalStyles.finaliseModalText}
-      buttonContainerStyle={globalStyles.finaliseModalButtonContainer}
-      cancelButtonStyle={globalStyles.finaliseModalButton}
-      confirmButtonStyle={[globalStyles.finaliseModalButton,
-                           globalStyles.finaliseModalConfirmButton]}
-      backdropColor={DARK_GREY}
-      backdropOpacity={0.97}
-      buttonTextStyle={globalStyles.finaliseModalButtonText}
       isOpen={props.isOpen}
       questionText={errorText || modalStrings[finaliseText]}
       confirmText={modalStrings.confirm}
