@@ -35,7 +35,7 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 export class StocktakeManagePage extends React.Component {
   constructor(props) {
     super(props);
-    this.items = props.database.objects('Item');
+    this.items = props.database.objects('Item').filtered('crossReferenceItem == null');
     this.state = {
       showItemsWithNoStock: true,
       stocktakeName: '',

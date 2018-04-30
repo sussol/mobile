@@ -5,19 +5,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Keyboard,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Keyboard, StyleSheet, View } from 'react-native';
 import Modal from 'react-native-modalbox';
-import { DARK_GREY } from '../../globalStyles';
-
+import { DARKER_GREY } from '../../globalStyles/index';
 
 export class BottomModal extends React.Component {
-
   componentWillReceiveProps(nextProps) {
-    if (!this.props.isOpen && nextProps.isOpen) { // Opening modal, dismiss the keyboard
+    if (!this.props.isOpen && nextProps.isOpen) {
+      // Opening modal, dismiss the keyboard
       Keyboard.dismiss();
     }
   }
@@ -25,13 +20,8 @@ export class BottomModal extends React.Component {
   render() {
     const { children, style, ...modalProps } = this.props;
     return (
-      <Modal
-        {...modalProps}
-        style={[localStyles.modal, style]}
-      >
-        <View style={[localStyles.container, style]}>
-          {children}
-        </View>
+      <Modal {...modalProps} style={[localStyles.modal, style]}>
+        <View style={[localStyles.container, style]}>{children}</View>
       </Modal>
     );
   }
@@ -56,10 +46,11 @@ const localStyles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    padding: 5,
   },
   modal: {
     height: 60,
-    backgroundColor: DARK_GREY,
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    backgroundColor: DARKER_GREY,
   },
 });

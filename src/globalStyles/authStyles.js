@@ -8,9 +8,7 @@ import { APP_FONT_FAMILY } from './fonts';
 
 export const authStyles = {
   authFormModal: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
+    flex: 1,
     backgroundColor: BACKGROUND_COLOR,
     justifyContent: 'flex-start',
   },

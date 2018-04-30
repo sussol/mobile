@@ -24,11 +24,13 @@ export function SyncModal({ database, isOpen, onClose, onPressManualSync, state 
       message = errorMessage;
     } else if (!isSyncing) {
       const recordsToSyncCount = database.objects('SyncOut').length;
-      message = recordsToSyncCount > 0 ? `${recordsToSyncCount} Records Waiting` : 'Sync Complete';
+      message = recordsToSyncCount > 0
+        ? `${recordsToSyncCount} ${syncStrings.records_waiting}`
+        : syncStrings.sync_complete;
     } else if (progress >= total) {
-      message = 'All records updated.';
+      message = syncStrings.checking_server_for_records;
     } else if (progress === PROGRESS_LOADING) {
-      message = 'Loading change count...';
+      message = syncStrings.loading_change_count;
     } else {
       message = progressMessage ? `${progressMessage}\n` : '';
       message += `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;

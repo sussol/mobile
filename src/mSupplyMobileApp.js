@@ -117,6 +117,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   runWithLoadingIndicator = async (functionToRun) => {
+    this.database.isLoading = true;
     // We here set up an asyncronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay during which the javascript
     // thread unblocks and allows our spinner animation to start up. We cannot simply
@@ -127,6 +128,7 @@ class MSupplyMobileAppContainer extends React.Component {
     });
     functionToRun();
     this.setState({ isLoading: false });
+    this.database.isLoading = false;
   }
 
   synchronise = async () => {
