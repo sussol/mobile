@@ -4616,10 +4616,6 @@ react-element-to-jsx-string@^3.0.0:
     stringify-object "^2.3.1"
     traverse "^0.6.6"
 
-react-native-autocomplete-input@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-3.3.1.tgz#70a1be97d98bddb63d94879739069610d1817f54"
-
 react-native-data-table@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/react-native-data-table/-/react-native-data-table-0.1.5.tgz#504304109a6e7ca2b6967beae31ec8e92aa1fd90"
