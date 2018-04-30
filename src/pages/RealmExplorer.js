@@ -5,10 +5,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { PageButton } from '../widgets';
 import {
   View,
+  Alert,
 } from 'react-native';
-
+import Realm from 'realm';
 import { SearchBar } from 'react-native-ui-components';
 import {
   Cell,
@@ -17,7 +19,7 @@ import {
   HeaderCell,
   Row,
 } from 'react-native-data-table';
-
+import FileSystem from 'react-native-filesystem';
 import { ListView } from 'realm/react-native';
 
 import globalStyles from '../globalStyles';
@@ -70,6 +72,7 @@ export class RealmExplorer extends React.Component {
     this.unfilteredData = null;
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
+    this.EmailData = this.EmailData.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.renderRow = this.renderRow.bind(this);
   }
@@ -114,6 +117,61 @@ export class RealmExplorer extends React.Component {
       dataSource: this.state.dataSource.cloneWithRows(data),
     });
   }
+
+  EmailData() {
+
+    const TransactionListAll = this.props.database.objects('Transaction');
+    console.log('Ujwal log');
+  //  console.log('TransactionAllt', Object.key(TransactionAll));
+  //  const myJSON = JSON.stringify(TransactionAll);
+    //console.log('Json data', myJSON);
+
+/**    for (let i = 0; i < oldObjects.length; i++) {
+           newObjects[i].name = oldObjects[i].firstName + ' ' + oldObjects[i].lastName;
+         }
+*/
+
+    let DataforTextFile = '';
+     for(let i = 0; i < TransactionListAll.length; i++){
+       console.log('Line');
+       console.log(TransactionListAll[i].serialNumber+' '+TransactionListAll[i].type);
+        DataforTextFile = DataforTextFile+TransactionListAll[i].serialNumber+' '+TransactionListAll[i].type
+    //   newObjects[i].name = oldObjects[i].firstName + ' ' + oldObjects[i].lastName;
+     	}
+
+      const fileContents = DataforTextFile;
+      const FilepathAnd = Context.getFilesDir();
+      console.log(FilepathAnd);
+
+      FileSystem.writeToFile('mSupplyData.txt', fileContents);
+      console.log('file is written -  mSupply');
+
+
+    async function writeToFile() {
+    const fileContents = DataforTextFile;
+    await FileSystem.writeToFile('mSupplyData.txt', fileContents);
+    console.log('file is written');
+  }
+
+
+
+    Alert.alert(
+
+        // This is Alert Dialog Title
+        'Alert Dialog Title',
+
+        // This is Alert Dialog Message.
+        'Alert Dialog Message', [
+          // Second Cancel Button in Alert Dialog.
+          { text: 'Cancel', onPress: () => console.log('Cancel Button Pressed'), style: 'cancel' },
+
+          // Third OK Button in Alert Dialog
+          { text: 'OK', onPress: () => console.log('OK ButtonPressed') }]
+      );
+  }
+
+
+
 
   renderHeader() {
     const headerCells = [];
@@ -175,6 +233,8 @@ export class RealmExplorer extends React.Component {
       <View style={[globalStyles.container]}>
         <SearchBar onChange={this.onSearchChange} placeholder="Table Name" />
         <SearchBar onChange={this.onFilterChange} placeholder="Filter" />
+        <PageButton text="Email Data" onPress={this.EmailData} />
+
         <DataTable
           style={globalStyles.container}
           listViewStyle={globalStyles.container}
