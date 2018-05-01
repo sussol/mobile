@@ -81,6 +81,7 @@ export class SupplierInvoicesPage extends React.Component {
         this.props.database.save('Transaction', invoice);
       });
     }
+    this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
     this.props.navigateTo('supplierInvoice', `${navStrings.invoice} ${invoice.serialNumber}`, {
       transaction: invoice,
     });

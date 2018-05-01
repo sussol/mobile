@@ -10,6 +10,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { complement } from 'set-manipulator';
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { generalStrings } from '../localization';
+import withOnePress from './withOnePress';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
@@ -73,7 +74,7 @@ export class AutocompleteSelector extends React.PureComponent {
             data={data}
             keyExtractor={item => item.id}
             renderItem={({ item }) => (
-              <ResultRow
+              <ResultRowWithOnePress
                 item={item}
                 onPress={onSelect}
                 renderLeftText={renderLeftText}
@@ -105,9 +106,9 @@ AutocompleteSelector.defaultProps = {
 
 class ResultRow extends React.PureComponent {
   render() {
-    const { item, renderLeftText, renderRightText } = this.props;
+    const { item, renderLeftText, renderRightText, onPress } = this.props;
     return (
-      <TouchableOpacity style={localStyles.resultRow} onPress={() => this.props.onPress(item)}>
+      <TouchableOpacity style={localStyles.resultRow} onPress={() => onPress(item)}>
         <Text style={[localStyles.text, localStyles.itemText]}>
           {renderLeftText ? renderLeftText(item) : item.toString()}
         </Text>
@@ -118,6 +119,7 @@ class ResultRow extends React.PureComponent {
     );
   }
 }
+const ResultRowWithOnePress = withOnePress(ResultRow);
 
 const localStyles = StyleSheet.create({
   container: {

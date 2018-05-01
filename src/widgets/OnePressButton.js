@@ -1,20 +1,4 @@
-import React from 'react';
+import withOnePress from './withOnePress';
 import { Button } from 'react-native-ui-components';
 
-export function OnePressButton(props) {
-  let hasBeenPressed = false;
-  const onPress = () => {
-    if (hasBeenPressed || !props.onPress) return;
-    props.onPress();
-    hasBeenPressed = true;
-  };
-  return (
-    <Button
-      {...props}
-      onPress={onPress}
-    />
-  );
-}
-
-OnePressButton.propTypes = Button.propTypes;
-
+export const OnePressButton = withOnePress(Button);
