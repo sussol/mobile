@@ -14,7 +14,7 @@ export { syncStrings } from './syncStrings';
 const languageKeys = {
   gb: 'English',
   gil: 'te taetae ni Kiribati',
-  // fr: 'French',
+  fr: 'French',
   tl: 'Tetum',
 };
 

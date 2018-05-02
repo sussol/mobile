@@ -12,6 +12,10 @@ export const generalStrings = new LocalizedStrings({
     stocktake: 'Stocktake',
     start_typing_to_search: 'Start typing to search',
   },
+  fr: {
+    stocktake: 'Inventaire',
+    start_typing_to_search: 'Tapez pour rechercher',
+  },
   gil: {
     stocktake: 'Warebwai',
     start_typing_to_search: 'Taibinna ni kakaea',
