@@ -23,7 +23,8 @@ function versionToInteger(version) {
          Number(minor) * 100000 +
          Number(patch) * 100 +
          Number(!provisional ? '99' : provisional.match(/[0-9]+/)[0]);
-         // Regex /[0-9]+/ matches only numbers and at least on digit number
+        // Regex /[0-9]+/, '[0-9]' means match any digit
+        // '+' means match one or more of the preceding token
 }
 
 export function test() {
@@ -37,6 +38,7 @@ export function test() {
   testHelper('1.0.0', '1.0.1', -1);
   testHelper('1.0.0', '1.1.0', -1);
   testHelper('1.0.0', '2.0.0', -1);
+  testHelper('2.0.0', '1.0.0', 1);
   testHelper('2.0.0', '2.0.0', 0);
   testHelper('2.1.0-RC2', '2.1.0-RC0', 1);
   testHelper('2.1.0-RC10', '2.1.0-RC0', 1);
@@ -53,6 +55,8 @@ checking 1.0.0 vs 1.1.0, status: pass
 expected result: -1, actual result: -1
 checking 1.0.0 vs 2.0.0, status: pass
 expected result: -1, actual result: -1
+checking 2.0.0 vs 1.0.0, status: pass
+expected result: 1, actual result: 1
 checking 2.0.0 vs 2.0.0, status: pass
 expected result: 0, actual result: 0
 checking 2.1.0-RC2 vs 2.1.0-RC0, status: pass
