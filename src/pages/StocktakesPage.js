@@ -56,7 +56,7 @@ export class StocktakesPage extends React.Component {
       }
       database.delete('Stocktake', stocktakesToDelete);
     });
-    this.clearSelection();
+    this.clearSelection(true);
   };
 
   onToggleStatusFilter = isCurrent => this.setState({ showCurrent: isCurrent }, this.refreshData);
