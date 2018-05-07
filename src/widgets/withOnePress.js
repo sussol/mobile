@@ -10,7 +10,7 @@ import React from 'react';
 export default function withOnePress(WrappedComponent) {
   return class extends React.Component {
     state = { hasBeenPressed: false };
-    propTypes = WrappedComponent.propTypes
+    static propTypes = WrappedComponent.propTypes
 
     onPress = (...args) => {
       if (this.state.hasBeenPressed || !this.props.onPress) return;

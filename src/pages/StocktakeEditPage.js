@@ -73,8 +73,12 @@ export class StocktakeEditPage extends React.Component {
    * this.itemsOutdated and reset them.
    */
   onResetItemsConfirm = () => {
-    this.props.stocktake.resetStocktakeItems(this.props.database, this.itemsOutdated);
+    const { stocktake, runWithLoadingIndicator } = this.props;
     this.setState({ isResetModalOpen: false });
+    runWithLoadingIndicator(() => {
+      stocktake.resetStocktakeItems(this.props.database, this.itemsOutdated);
+      this.refreshData();
+    });
   };
 
   getModalTitle = () => {
@@ -236,9 +240,10 @@ export class StocktakeEditPage extends React.Component {
 
   render() {
     const { data, isResetModalOpen, isModalOpen } = this.state;
-    const resetModalText = (
-      modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
-    );
+    const resetModalText = isResetModalOpen // small optimisation,
+      ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
+      : '';
+
     return (
       <GenericPage
         data={data}
@@ -315,9 +320,10 @@ export class StocktakeEditPage extends React.Component {
 StocktakeEditPage.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
-  stocktake: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
+  stocktake: PropTypes.object.isRequired,
+  topRoute: PropTypes.bool,
 };
 
 // This is redundant in stocktake now, as stock movement check when opening the stocktake
@@ -346,6 +352,7 @@ function formatErrorItemNames(items) {
   const MAX_ITEM_STRING_LENGTH = 40; // Length of string representing item in error modal
   let itemsString = '';
   items.forEach((item, index) => {
+    if (!item) return; // re-render can cause crash here sometimes
     if (index >= MAX_ITEMS_IN_ERROR_MESSAGE) return;
     itemsString += truncateString(`\n${item.itemCode} - ${item.itemName}`, MAX_ITEM_STRING_LENGTH);
   });
