@@ -5,37 +5,39 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Text,
-  StyleSheet,
-  View,
-} from 'react-native';
-import { Button } from 'react-native-ui-components';
+import { Text, StyleSheet, View } from 'react-native';
+import { OnePressButton } from '../OnePressButton';
 import { BottomModal } from './BottomModal';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { modalStrings } from '../../localization';
 
 export function BottomConfirmModal(props) {
-  const { onCancel, onConfirm, questionText, confirmText, cancelText, ...modalProps } = props;
+  const {
+    onCancel,
+    onConfirm,
+    questionText,
+    confirmText,
+    cancelText,
+    style,
+    ...modalProps,
+  } = props;
   return (
-    <BottomModal {...modalProps}>
-      <Text style={[globalStyles.text, localStyles.questionText]}>
-        {questionText}
-      </Text>
-      <Button
+    <BottomModal {...modalProps} style={[localStyles.modal, style]}>
+      <Text style={[globalStyles.text, localStyles.questionText]}>{questionText}</Text>
+      <OnePressButton
         style={[globalStyles.button, localStyles.cancelButton]}
         textStyle={[globalStyles.buttonText, localStyles.buttonText]}
         text={cancelText}
         onPress={onCancel}
       />
-      <Button
+      <OnePressButton
         style={[globalStyles.button, localStyles.deleteButton]}
         textStyle={[globalStyles.buttonText, localStyles.buttonText]}
         text={confirmText}
         onPress={onConfirm}
       />
     </BottomModal>
-   );
+  );
 }
 
 BottomConfirmModal.propTypes = {
@@ -54,6 +56,9 @@ BottomConfirmModal.defaultProps = {
 };
 
 const localStyles = StyleSheet.create({
+  modal: {
+    paddingRight: 3,
+  },
   questionText: {
     color: 'white',
     fontSize: 22,

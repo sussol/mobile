@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+/* eslint-disable max-len */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const buttonStrings = new LocalizedStrings({
@@ -24,6 +26,25 @@ export const buttonStrings = new LocalizedStrings({
     past: 'Past',
     use_suggested_quantities: 'Use Suggested Quantities',
     use_requested_quantities: 'Use Requested Quantities',
+  },
+  fr: {
+    add_batch: 'Ajouter un lot',
+    add_master_list_items: "Ajouter une liste-Maître d'articles ?",
+    all_items_selected: 'Tout les articles sélectionnés',
+    create_automatic_order: 'Créer une commande automatiquement',
+    current: 'Actuel',
+    done: 'Terminé',
+    hide_stockouts: 'Cacher les ruptures de stocks',
+    manage_stocktake: "Gérer l'inventaire",
+    new_invoice: 'Nouvelle facture',
+    new_item: 'Nouvel Article',
+    new_line: 'Nouvelle ligne',
+    new_requisition: 'Nouvelle réquisition',
+    new_stocktake: 'Nouvel inventaire',
+    new_supplier_invoice: 'Nouvelle facture fournisseur',
+    past: 'Archives',
+    use_suggested_quantities: 'Utiliser les quantités suggérées',
+    use_requested_quantities: 'Utiliser les quantités demandées',
   },
   gil: {  // TODO: add_batch
     add_master_list_items: 'Rinea am list',

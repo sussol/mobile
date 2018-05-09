@@ -10,8 +10,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import { Button } from 'react-native-ui-components';
-import { BottomModal, TextInput, ToggleBar } from '../widgets';
+import { BottomModal, OnePressButton, TextInput, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
@@ -35,7 +34,7 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 export class StocktakeManagePage extends React.Component {
   constructor(props) {
     super(props);
-    this.items = props.database.objects('Item');
+    this.items = props.database.objects('Item').filtered('crossReferenceItem == null');
     this.state = {
       showItemsWithNoStock: true,
       stocktakeName: '',
@@ -244,7 +243,7 @@ export class StocktakeManagePage extends React.Component {
             value={this.state.stocktakeName}
             onChangeText={(text) => this.setState({ stocktakeName: text })}
           />
-          <Button
+          <OnePressButton
             style={[globalStyles.button, globalStyles.modalOrangeButton]}
             textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
             text={!this.props.stocktake ? modalStrings.create : modalStrings.confirm}

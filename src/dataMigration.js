@@ -1,5 +1,5 @@
 import packageJson from '../package.json';
-import compareVersions from 'compare-versions';
+import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
 import { AsyncStorage } from 'react-native';
 
@@ -127,7 +127,7 @@ const dataMigrations = [
     },
   },
   {
-    version: '2.1.0-rc7',
+    version: '2.1.0-rc10',
     migrate: (database) => {
       const TEMP_STATUS = 'nw';
       const matchBatch = (batches, batchToMatch) =>

@@ -15,11 +15,11 @@ import { buttonStrings, modalStrings, navStrings, tableStrings } from '../locali
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
 /**
-* Renders the page for displaying Stocktakes.
-* @prop   {Realm}               database    App wide database.
-* @prop   {func}                navigateTo  CallBack for navigation stack.
-* @state  {Realm.Results}       stocktakes  Realm.Result object containing all Items.
-*/
+ * Renders the page for displaying Stocktakes.
+ * @prop   {Realm}               database    App wide database.
+ * @prop   {func}                navigateTo  CallBack for navigation stack.
+ * @state  {Realm.Results}       stocktakes  Realm.Result object containing all Items.
+ */
 export class StocktakesPage extends React.Component {
   constructor(props) {
     super(props);
@@ -35,15 +35,15 @@ export class StocktakesPage extends React.Component {
     this.stocktakes = props.database.objects('Stocktake');
   }
 
-  onRowPress = (stocktake) => {
-    this.props.navigateTo(
-      'stocktakeEditor',
-      navStrings.stocktake,
-      { stocktake: stocktake },
-    );
-  }
+  onRowPress = stocktake => {
+    this.clearSelection();
+    this.props.navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake: stocktake });
+  };
 
-  onNewStockTake = () => this.props.navigateTo('stocktakeManager', navStrings.new_stocktake);
+  onNewStockTake = () => {
+    this.clearSelection();
+    this.props.navigateTo('stocktakeManager', navStrings.new_stocktake);
+  };
 
   onDeleteConfirm = () => {
     const { selection } = this.state;
@@ -56,25 +56,22 @@ export class StocktakesPage extends React.Component {
       }
       database.delete('Stocktake', stocktakesToDelete);
     });
-    this.setState({ selection: [] });
-    this.refreshData();
-  }
+    this.clearSelection(true);
+  };
 
-  onDeleteCancel = () => {
-    this.setState({ selection: [] });
-    this.refreshData();
-  }
+  onToggleStatusFilter = isCurrent => this.setState({ showCurrent: isCurrent }, this.refreshData);
 
-  onToggleStatusFilter = (isCurrent) => this.setState({ showCurrent: isCurrent }, this.refreshData);
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  clearSelection = shouldRefreshData =>
+    this.setState({ selection: [] }, () => shouldRefreshData && this.refreshData());
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -84,11 +81,11 @@ export class StocktakesPage extends React.Component {
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const toggleFilter = this.state.showCurrent ? 'status != "finalised"' : 'status == "finalised"';
     const data = this.stocktakes
-                     .filtered(toggleFilter)
-                     .filtered('name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0', searchTerm)
-                     .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
+      .filtered(toggleFilter)
+      .filtered('name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0', searchTerm)
+      .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
     this.setState({ data: data });
-  }
+  };
 
   renderCell = (key, stocktake) => {
     switch (key) {
@@ -106,7 +103,7 @@ export class StocktakesPage extends React.Component {
           isDisabled: stocktake.isFinalised,
         };
     }
-  }
+  };
 
   renderToggleBar = () => (
     <ToggleBar
@@ -128,14 +125,11 @@ export class StocktakesPage extends React.Component {
         },
       ]}
     />
-  )
+  );
 
   renderNewStocktakeButton = () => (
-    <PageButton
-      text={buttonStrings.new_stocktake}
-      onPress={this.onNewStockTake}
-    />
-  )
+    <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />
+  );
 
   render() {
     return (
@@ -183,7 +177,7 @@ export class StocktakesPage extends React.Component {
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0 && this.state.showCurrent}
           questionText={modalStrings.delete_these_stocktakes}
-          onCancel={() => this.onDeleteCancel()}
+          onCancel={() => this.clearSelection(true)}
           onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.delete}
         />

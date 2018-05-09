@@ -41,7 +41,9 @@ export class StocktakeItem extends Realm.Object {
    * @return  {boolean} True if StocktakeBatches have adjustments
    */
   get hasCountedBatches() {
-    return this.batches.some(stocktakeBatch => stocktakeBatch.hasBeenCounted);
+    return this.batches.some(
+      stocktakeBatch => stocktakeBatch.isValid() && stocktakeBatch.hasBeenCounted,
+    );
   }
 
   get numberOfBatches() {
@@ -49,22 +51,8 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * If the stock has increased or not been changed since the item quantity was
-   * snapshot, the minimum is 0. If the stock has reduced since the item was
-   * snapshot, the minimum total quantity that can be sensibly considered as the
-   * counted quantity is the snapshot quantity minus the current stock on hand.
-   * This is because it doesn't make sense to count an amount that represents a
-   * reduction greater than the current stock on hand, which would create negative
-   * inventory.
-   * @return {integer} The minimum total quantity that can be sensibly counted
-   */
-  get minimumTotalQuantity() {
-    return this.item ? Math.max(0, this.snapshotTotalQuantity - this.item.totalQuantity) : 0;
-  }
-
-  /**
    * Returns true if this stocktake item's counted quantity would reduce the amount
-   * of stock in inventory to negative levels, if it were finalised. This can happen
+   * of any batch's stock in inventory to negative levels, if it were finalised. This can happen
    * if, for example, an item is added to a stocktake with a snapshot quantity of
    * 10, then is counted to have a quantity of 8, but concurrently there has been
    * a reduction in the stock in inventory, e.g. a customer invoice for 9. In this
@@ -73,10 +61,41 @@ export class StocktakeItem extends Realm.Object {
    * @return {Boolean} Whether the counted quantity is below the minimum for this item
    */
   get isReducedBelowMinimum() {
-    const countedTotalQuantity = this.countedTotalQuantity;
-    return countedTotalQuantity !== undefined &&
-           countedTotalQuantity !== null &&
-           countedTotalQuantity < this.minimumTotalQuantity;
+    return this.batches.some(batch => batch.isReducedBelowMinimum);
+  }
+
+  /**
+   * An item is out of date if:
+   * - Any batch has snapshotTotalQuantity !== corresponding itemBatch totalQuantity
+   * - Corresponding Item has different batches to this stocktakeItem
+   * @return {boolean} true if some batch is out of date
+   */
+  get isOutdated() {
+    if (this.batches.some(batch => batch.isSnapshotOutdated)) return true;
+    // Check all item batches (with stock) are included by finding matching id in
+    // the stocktakeBatches for this stocktakeItem
+    const itemBatchesWithStock = this.item.batchesWithStock;
+    if (
+      itemBatchesWithStock.some(itemBatch => (
+        !this.batches.some(stocktakeBatch => stocktakeBatch.itemBatch.id === itemBatch.id)
+      ))
+    ) return true;
+
+    // This stocktakeItem is not out of date
+    return false;
+  }
+
+  /**
+   * Will reset this stocktakeItem, deleting all batches and recreating them for
+   * the corresponding itemBatches current in inventory.
+   * @param  {Realm}  database   App wide local database
+   */
+  reset(database) {
+    database.delete('StocktakeBatch', this.batches);
+    this.item.batchesWithStock.forEach(itemBatch => {
+      // createRecord will do save; notifying listeners
+      createRecord(database, 'StocktakeBatch', this, itemBatch);
+    });
   }
 
   /**
@@ -100,14 +119,14 @@ export class StocktakeItem extends Realm.Object {
       let difference = quantity - this.countedTotalQuantity;
       // In case number is entered in Actual Quantity field, but it's the same as
       // snapshot quantity, we want to remove 'Not Counted' placeholder
-      if (difference === 0) {
+      if (quantity === this.snapshotTotalQuantity) {
         this.batches.forEach(stocktakeBatch => {
           stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
           database.save('StocktakeBatch', stocktakeBatch);
         });
         return;
       }
-      // Actual Quantity is not snaphot quantity
+
       const isIncreasingQuantity = difference > 0;
       const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
 

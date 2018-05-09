@@ -247,9 +247,8 @@ export class SupplierRequisitionPage extends React.Component {
             onSelect={(item) => {
               const { database, requisition } = this.props;
               database.write(() => {
-                if (!requisition.hasItemWithId(item.id)) {
+                if (!requisition.hasItem(item)) {
                   createRecord(database, 'RequisitionItem', requisition, item);
-                  database.save('Requisition', requisition);
                 }
               });
               this.refreshData();

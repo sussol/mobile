@@ -3,12 +3,18 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+/* eslint-disable max-len */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const generalStrings = new LocalizedStrings({
   gb: {
     stocktake: 'Stocktake',
     start_typing_to_search: 'Start typing to search',
+  },
+  fr: {
+    stocktake: 'Inventaire',
+    start_typing_to_search: 'Tapez pour rechercher',
   },
   gil: {
     stocktake: 'Warebwai',

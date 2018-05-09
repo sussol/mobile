@@ -8,8 +8,17 @@ export class Item extends Realm.Object {
     database.delete('ItemBatch', this.batches);
   }
 
+  /**
+   * A useful getter to ensure that if the item is a cross reference item,
+   * we use the item it references (the real item) rather than the cross
+   * reference item
+   */
+  get realItem() {
+    return this.crossReferenceItem ? this.crossReferenceItem : this;
+  }
+
   get totalQuantity() {
-    return getTotal(this.batches, 'totalQuantity');
+    return getTotal(this.realItem.batches, 'totalQuantity');
   }
 
   get dailyUsage() {
@@ -124,5 +133,6 @@ Item.schema = {
     category: { type: 'ItemCategory', optional: true },
     defaultPrice: { type: 'double', optional: true },
     isVisible: { type: 'bool', default: false },
+    crossReferenceItem: { type: 'Item', optional: true },
   },
 };

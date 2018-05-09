@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+/* eslint-disable max-len */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const navStrings = new LocalizedStrings({
@@ -23,6 +25,24 @@ export const navStrings = new LocalizedStrings({
     stocktake: 'Stocktake',
     supplier_invoices: 'Supplier Invoices',
     supplier_requisitions: 'Supplier Requisitions',
+  },
+  fr: {
+    current_stock: 'Stock actuel',
+    customer_invoices: 'Factures client',
+    customer_requisitions: 'Réquisitions clients',
+    customers: 'Clients',
+    finalise: 'FINALISER',
+    finalised_cannot_be_edited: 'FINALISÉ. NE PEUT ÊTRE MODIFIÉ',
+    invoice: 'Facture',
+    language: 'Langage',
+    log_out: 'SE DÉCONNECTER or DÉCONNEXION',
+    manage_stocktake: "Gérer les relevés d'inventaire",
+    new_stocktake: "Nouveau relevé d'inventaire",
+    requisition: 'Réquisition',
+    stocktakes: "Relevés d'inventaire",
+    stocktake: "Relevé d'nventaire",
+    supplier_invoices: 'Factures fournisseurs',
+    supplier_requisitions: 'Factures réquisitions',
   },
   gil: { // TODO: add - stocktake
     current_stock: 'Mwaitin am bwai n\naoraki ke am supply',

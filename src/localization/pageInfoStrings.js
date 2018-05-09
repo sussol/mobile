@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+/* eslint-disable max-len */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const pageInfoStrings = new LocalizedStrings({
@@ -18,6 +20,19 @@ export const pageInfoStrings = new LocalizedStrings({
     stocktake_name: 'Stocktake Name',
     supplier: 'Supplier',
     their_ref: 'Their Ref',
+  },
+  fr: {
+    address: 'Addresse',
+    code: 'Code',
+    comment: 'Commentaire',
+    confirm_date: 'Date de confirmation',
+    customer: 'Client',
+    entered_by: 'Entrée par',
+    entry_date: "Date d'entrée",
+    months_stock_required: 'Mois de stock',
+    stocktake_name: "Nom du relevé d'inventaire",
+    supplier: 'Fournisseur',
+    their_ref: 'Leur référence',
   },
   gil: { // TODO: add - stocktake_name
     address: 'Am tabo',
