@@ -7,6 +7,8 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.artirigo.fileprovider.RNFileProviderPackage;
+import com.benwixen.rnfilesystem.RNFileSystemPackage;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
@@ -31,6 +33,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFileProviderPackage(),
+            new RNFileSystemPackage(),
           new RealmReactPackage(),
           new VectorIconsPackage(),
           new ReactNativeLocalizationPackage(),

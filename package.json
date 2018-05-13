@@ -49,6 +49,8 @@
     "react-native": "^0.46.1",
     "react-native-data-table": "^0.1.5",
     "react-native-database": "^0.3.1",
+    "react-native-file-provider": "^1.1.0",
+    "react-native-filesystem": "^0.1.0",
     "react-native-generic-table-page": "^0.2.10",
     "react-native-localization": "^0.1.30",
     "react-native-modalbox": "^1.4.1",
