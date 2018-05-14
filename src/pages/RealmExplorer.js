@@ -140,18 +140,29 @@ export class RealmExplorer extends React.Component {
      	}
 
       const fileContents = DataforTextFile;
-      const FilepathAnd = Context.getFilesDir();
-      console.log(FilepathAnd);
-
-      FileSystem.writeToFile('mSupplyData.txt', fileContents);
-      console.log('file is written -  mSupply');
 
 
-    async function writeToFile() {
-    const fileContents = DataforTextFile;
-    await FileSystem.writeToFile('mSupplyData.txt', fileContents);
-    console.log('file is written');
-  }
+      FileSystem.writeToFile('mSupplyFolder/mSupplyData.txt', fileContents);
+      console.log('file is written -  mSupply',FileSystem.storage.important);
+
+
+
+      var RNFS = require('react-native-fs');
+
+      // create a path you want to write to
+      var path = RNFS.DocumentDirectoryPath + '/mSupplyDataRNFS.txt';
+
+      // write the file
+      RNFS.writeFile(path,fileContents, 'utf8')
+        .then((success) => {
+          console.log('FILE WRITTEN!',path);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+
+
+
 
 
 
@@ -233,7 +244,7 @@ export class RealmExplorer extends React.Component {
       <View style={[globalStyles.container]}>
         <SearchBar onChange={this.onSearchChange} placeholder="Table Name" />
         <SearchBar onChange={this.onFilterChange} placeholder="Filter" />
-        <PageButton text="Email Data" onPress={this.EmailData} />
+        <PageButton text="Create Text File" onPress={this.EmailData} />
 
         <DataTable
           style={globalStyles.container}
