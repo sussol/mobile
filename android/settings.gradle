@@ -1,4 +1,10 @@
 rootProject.name = 'mSupplyMobile'
+include ':react-native-fs'
+project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
+include ':react-native-file-provider'
+project(':react-native-file-provider').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-file-provider/android')
+include ':react-native-filesystem'
+project(':react-native-filesystem').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-filesystem/android')
 include ':realm'
 project(':realm').projectDir = new File(rootProject.projectDir, '../node_modules/realm/android')
 include ':react-native-vector-icons'

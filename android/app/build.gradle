@@ -146,6 +146,9 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fs')
+    compile project(':react-native-file-provider')
+    compile project(':react-native-filesystem')
     compile project(':realm')
     compile project(':react-native-vector-icons')
     compile project(':react-native-localization')
