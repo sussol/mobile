@@ -1,5 +1,3 @@
-import { Client as BugsnagClient } from 'bugsnag-react-native';
-
 import {
   INTERNAL_TO_EXTERNAL,
   RECORD_TYPES,
@@ -15,8 +13,6 @@ import {
 import { SETTINGS_KEYS } from '../settings';
 const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
 import { CHANGE_TYPES } from '../database';
-
-const bugsnagClient = new BugsnagClient();
 
 /**
  * Returns a json object fulfilling the requirements of the mSupply primary sync
@@ -77,11 +73,8 @@ export function generateSyncJson(database, settings, syncOutRecord) {
         `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, ` +
         `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
 
-      // Ping the error off to bugsnag
-      bugsnagClient.notify(error);
-
       // Make a nicer message for users and throw it again.
-      error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
+      error.userMessage = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`; // eslint-disable-line max-len
       throw error;
     }
   }

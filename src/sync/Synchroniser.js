@@ -3,6 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+import { Client as BugsnagClient } from 'bugsnag-react-native';
 import { SyncQueue } from './SyncQueue';
 import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
@@ -18,12 +19,15 @@ import {
   setSyncCompletionTime,
 } from './actions';
 
+const bugsnagClient = new BugsnagClient();
+
 const {
   SYNC_IS_INITIALISED,
   SYNC_PRIOR_FAILED,
   SYNC_SITE_NAME,
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
+  THIS_STORE_ID,
   SYNC_URL,
 } = SETTINGS_KEYS;
 
@@ -160,7 +164,10 @@ export class Synchroniser {
       this.setIsSyncing(false);
       this.setCompletionTime(new Date().getTime());
     } catch (error) {
-      this.setError(error.message);
+      // Ping the error off to bugsnag
+      bugsnagClient.notify(error);
+
+      this.setError(error.userMessage);
       this.setIsSyncing(false);
     }
   };
@@ -212,6 +219,9 @@ export class Synchroniser {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
+    const siteName = this.settings.get(SYNC_SITE_NAME);
+    const storeId = this.settings.get(THIS_STORE_ID);
+
     const response = await fetch(
       `${serverURL}/sync/v3/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
       {
@@ -226,10 +236,20 @@ export class Synchroniser {
     try {
       responseJson = await response.json();
     } catch (error) {
-      throw new Error('Unexpected response from sync server');
+      // Could refactor this message structure into a nice util function.
+      const userMessage = `Error with server response, please contact mSupply mobile support. ${error.message}`; // eslint-disable-line max-len
+      const message = `SYNC SERVER RESPONSE ERROR. siteName: ${siteName}, serverUrl: ${serverURL}, storeId: ${storeId}, error message: ${error.message}`; // eslint-disable-line max-len
+      const syncError = new Error(message);
+      syncError.userMessage = userMessage;
+      throw syncError;
     }
-    if (responseJson.error.length > 0) {
-      throw new Error('Server rejected pushed records');
+    if (responseJson.errors.length > 0) {
+      const errors = JSON.stringify(responseJson.errors);
+      const userMessage = `Server rejected pushed records, please contact mSupply mobile support. ${errors}`; // eslint-disable-line max-len
+      const message = `SYNC SERVER RESPONSE ERROR. siteName: ${siteName}, serverUrl: ${serverURL}, storeId: ${storeId}, errors: ${errors}`; // eslint-disable-line max-len
+      const syncError = new Error(message);
+      syncError.userMessage = userMessage;
+      throw syncError;
     }
   };
 
