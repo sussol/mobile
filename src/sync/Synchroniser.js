@@ -229,7 +229,7 @@ export class Synchroniser {
         headers: {
           Authorization: this.authenticator.getAuthHeader(),
         },
-        body: JSON.stringify(records),
+        body: 'asd' + JSON.stringify(records),
       },
     );
     let responseJson;
@@ -243,10 +243,10 @@ export class Synchroniser {
       syncError.userMessage = userMessage;
       throw syncError;
     }
-    if (responseJson.errors.length > 0) {
-      const errors = JSON.stringify(responseJson.errors);
-      const userMessage = `Server rejected pushed records, please contact mSupply mobile support. ${errors}`; // eslint-disable-line max-len
-      const message = `SYNC SERVER RESPONSE ERROR. siteName: ${siteName}, serverUrl: ${serverURL}, storeId: ${storeId}, errors: ${errors}`; // eslint-disable-line max-len
+    if (responseJson.error.length > 0) {
+      const parsedError = JSON.stringify(responseJson);
+      const userMessage = `Server rejected pushed records, please contact mSupply mobile support. ${parsedError}`; // eslint-disable-line max-len
+      const message = `SYNC SERVER RESPONSE ERROR. siteName: ${siteName}, serverUrl: ${serverURL}, storeId: ${storeId}, errors: ${parsedError}`; // eslint-disable-line max-len
       const syncError = new Error(message);
       syncError.userMessage = userMessage;
       throw syncError;
