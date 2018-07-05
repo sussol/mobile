@@ -26,7 +26,7 @@ export class MenuPage extends React.Component {
   componentWillMount() {
     this.databaseListenerId = this.props.database.addListener(
       // Ensure that language changes in login modal are re-rendered onto the MenuPage
-      (recordType) => recordType === 'Setting' && this.forceUpdate(),
+      (changeType, recordType) => recordType === 'Setting' && this.forceUpdate(),
     );
   }
 
