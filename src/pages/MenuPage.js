@@ -5,22 +5,15 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { SETTINGS_KEYS } from '../settings';
 
-import globalStyles, {
-  APP_FONT_FAMILY,
-  SHADOW_BORDER,
-  GREY,
-  WARMER_GREY,
-} from '../globalStyles';
+const { SYNC_SITE_NAME } = SETTINGS_KEYS;
+
+import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
 
 import { navStrings } from '../localization';
 
@@ -33,7 +26,7 @@ export class MenuPage extends React.Component {
   componentWillMount() {
     this.databaseListenerId = this.props.database.addListener(
       // Ensure that language changes in login modal are re-rendered onto the MenuPage
-      (changeType, recordType) => recordType === 'Setting' && this.forceUpdate()
+      (recordType) => recordType === 'Setting' && this.forceUpdate(),
     );
   }
 
@@ -41,8 +34,14 @@ export class MenuPage extends React.Component {
     this.props.database.removeListener(this.databaseListenerId);
   }
 
+  exportData = () => {
+    const { settings, database } = this.props;
+    const syncSiteName = settings.get(SYNC_SITE_NAME);
+    database.exportData(syncSiteName);
+  };
+
   render() {
-    const { isInAdminMode, logOut, navigateTo, database } = this.props;
+    const { isInAdminMode, logOut, navigateTo } = this.props;
     return (
       <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
         <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
@@ -56,8 +55,7 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_invoices}
-              onPress={() => navigateTo(
-                'customerInvoices', navStrings.customer_invoices)}
+              onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
             />
             <Button
               style={globalStyles.menuButton}
@@ -77,8 +75,7 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_invoices}
-              onPress={() => navigateTo(
-                'supplierInvoices', navStrings.supplier_invoices)}
+              onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
             />
             <Button
               style={globalStyles.menuButton}
@@ -106,7 +103,7 @@ export class MenuPage extends React.Component {
               text={navStrings.stocktakes}
               onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
             />
-            {isInAdminMode &&
+            {isInAdminMode && (
               <View>
                 <Button
                   style={globalStyles.menuButton}
@@ -118,10 +115,10 @@ export class MenuPage extends React.Component {
                   style={globalStyles.menuButton}
                   textStyle={globalStyles.menuButtonText}
                   text="Export Data"
-                  onPress={() => database.exportData()}
+                  onPress={this.exportData}
                 />
               </View>
-            }
+            )}
           </View>
         </View>
         <View style={globalStyles.bottomContainer}>
@@ -146,6 +143,7 @@ MenuPage.propTypes = {
   isInAdminMode: PropTypes.bool,
   logOut: PropTypes.func.isRequired,
   navigateTo: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
 };
 
 const localStyles = StyleSheet.create({

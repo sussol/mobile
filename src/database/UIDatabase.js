@@ -11,19 +11,26 @@ export class UIDatabase {
    * Closes the database, exports the .realm file to android 'Download/mSupplyMobile data'
    * The app will cease to function (crash) if anything tries to access the database while
    * it is closed.
+   *
+   * This method should perhaps be added to react-native-databse
    */
-  exportData() {
+  exportData(filename = 'msupply-mobile-data') {
     const realm = this.database.realm; // TODO: refactor away from 'database.database.realm'
     const realmPath = realm.path;
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
-    const exportFilePath = `${exportFolder}/mSupplyMobileData.realm`;
+
+    const date = new Date();
+    const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+    const copyFileName = `${filename} ${dateString}`;
 
     // If the database is not closed, there is a small chance of corrupting the data
     // if it's currently in a transaction
     realm.close();
     RNFS.mkdir(exportFolder)
-      .then(RNFS.copyFile(realmPath, exportFilePath))
-      .then(() => { this.database.realm = new Realm(schema); }); // reopen the realm
+      .then(() => RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`)
+        .catch(() => RNFS.copyFile(realmPath, `${exportFolder}/msupply-mobile-data.realm`))
+      )
+      .finally(() => { this.database.realm = new Realm(schema); }); // reopen the realm
   }
 
   objects(type) {
