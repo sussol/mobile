@@ -1,4 +1,6 @@
 import RNFS from 'react-native-fs';
+import Realm from 'realm';
+import { schema } from './schema';
 
 export class UIDatabase {
   constructor(database) {
@@ -9,9 +11,8 @@ export class UIDatabase {
    * Closes the database, exports the .realm file to android 'Download/mSupplyMobile data'
    * The app will cease to function (crash) if anything tries to access the database while
    * it is closed.
-   * @param {function} callback function to call after the realm datafile has been copied
    */
-  exportData(callback) {
+  exportData() {
     const realm = this.database.realm; // TODO: refactor away from 'database.database.realm'
     const realmPath = realm.path;
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
@@ -20,7 +21,9 @@ export class UIDatabase {
     // If the database is not closed, there is a small chance of corrupting the data
     // if it's currently in a transaction
     realm.close();
-    RNFS.mkdir(exportFolder).then(RNFS.copyFile(realmPath, exportFilePath).then(callback));
+    RNFS.mkdir(exportFolder)
+      .then(RNFS.copyFile(realmPath, exportFilePath))
+      .then(() => { this.database.realm = new Realm(schema); }); // reopen the realm
   }
 
   objects(type) {

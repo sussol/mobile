@@ -10,7 +10,6 @@ import {
   StyleSheet,
   Text,
   View,
-  BackHandler,
 } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
@@ -108,20 +107,20 @@ export class MenuPage extends React.Component {
               onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
             />
             {isInAdminMode &&
-              [
+              <View>
                 <Button
                   style={globalStyles.menuButton}
                   textStyle={globalStyles.menuButtonText}
                   text="Realm Explorer"
                   onPress={() => navigateTo('realmExplorer', 'Database Contents')}
-                />,
+                />
                 <Button
                   style={globalStyles.menuButton}
                   textStyle={globalStyles.menuButtonText}
                   text="Export Data"
-                  onPress={() => database.exportData(BackHandler.exitApp())}
-                />,
-              ]
+                  onPress={() => database.exportData()}
+                />
+              </View>
             }
           </View>
         </View>
