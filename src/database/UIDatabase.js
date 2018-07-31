@@ -8,11 +8,11 @@ export class UIDatabase {
 
   objects(type) {
     const results = this.database.objects(translateToCoreDatabaseType(type));
-    const thisStoreIdSetting = this.database
+    const thisStoreNameIdSetting = this.database
       .objects('Setting')
       .filtered('key == $0', THIS_STORE_NAME_ID)[0];
     // Check ownStoreIdSetting exists, won't if not initialised
-    const thisStoreNameId = thisStoreIdSetting && thisStoreIdSetting.value;
+    const thisStoreNameId = thisStoreNameIdSetting && thisStoreNameIdSetting.value;
 
     switch (type) {
       case 'CustomerInvoice':
