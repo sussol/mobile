@@ -12,7 +12,7 @@ export class UIDatabase {
       .objects('Setting')
       .filtered('key == $0', THIS_STORE_NAME_ID)[0];
     // Check ownStoreIdSetting exists, won't if not initialised
-    const thisStoreId = thisStoreIdSetting && thisStoreIdSetting.value;
+    const thisStoreNameId = thisStoreIdSetting && thisStoreIdSetting.value;
 
     switch (type) {
       case 'CustomerInvoice':
@@ -27,12 +27,18 @@ export class UIDatabase {
       case 'Customer':
         return results.filtered(
           'isVisible == true AND isCustomer == true AND id != $0',
-          thisStoreId,
+          thisStoreNameId,
         );
       case 'Supplier':
-        return results.filtered('isVisible == true AND isSupplier == true');
+        return results.filtered(
+          'isVisible == true AND isSupplier == true AND id != $0',
+          thisStoreNameId,
+        );
       case 'InternalSupplier':
-        return results.filtered('isVisible == true AND isSupplier == true AND type == "store"');
+        return results.filtered(
+          'isVisible == true AND isSupplier == true AND type == "store" AND id != $0',
+          thisStoreNameId,
+        );
       case 'ExternalSupplier':
         return results.filtered('isVisible == true AND isSupplier == true AND type == "facility"');
       case 'Item':
