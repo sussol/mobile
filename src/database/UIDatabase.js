@@ -52,57 +52,17 @@ export class UIDatabase {
     }
   }
 
-  delete(type, record, ...rest) {
-    let safeRecordsToDelete;
-    let errorMessage;
-    const records = Array.isArray(record) ? record : [record];
+  addListener(...args) { return this.database.addListener(...args); }
+  removeListener(...args) { return this.database.removeListener(...args); }
+  alertListeners(...args) { return this.database.alertListeners(...args); }
+  create(...args) { return this.database.create(...args); }
+  getOrCreate(...args) { return this.database.getOrCreate(...args); }
+  delete(...args) { return this.database.delete(...args); }
+  deleteAll(...args) { return this.database.deleteAll(...args); }
+  save(...args) { return this.database.save(...args); }
+  update(...args) { return this.database.update(...args); }
+  write(...args) { return this.database.write(...args); }
 
-    switch (type) {
-      case 'Transaction':
-        safeRecordsToDelete = records.filter(transaction => !transaction.isFinalised);
-        errorMessage = count =>
-          `Cannot delete finalised transactions. Blocked deleting ${count} transaction records`;
-        break;
-      default:
-        break;
-    }
-
-    this.database.delete(type, safeRecordsToDelete, ...rest);
-
-    // Throw an error if someone managed to try deleting records they should be able to delete
-    const recordCountDiff = records.length - safeRecordsToDelete.length;
-    if (recordCountDiff > 0) {
-      throw new Error(errorMessage(recordCountDiff));
-    }
-  }
-
-  addListener(...args) {
-    return this.database.addListener(...args);
-  }
-  removeListener(...args) {
-    return this.database.removeListener(...args);
-  }
-  alertListeners(...args) {
-    return this.database.alertListeners(...args);
-  }
-  create(...args) {
-    return this.database.create(...args);
-  }
-  getOrCreate(...args) {
-    return this.database.getOrCreate(...args);
-  }
-  deleteAll(...args) {
-    return this.database.deleteAll(...args);
-  }
-  save(...args) {
-    return this.database.save(...args);
-  }
-  update(...args) {
-    return this.database.update(...args);
-  }
-  write(...args) {
-    return this.database.write(...args);
-  }
 }
 
 function translateToCoreDatabaseType(type) {
