@@ -15,7 +15,6 @@ export class Transaction extends Realm.Object {
   }
 
   destructor(database) {
-    if (this.isFinalised) throw new Error('Cannot delete finalised transaction');
     if (this.isCustomerInvoice) {
       reuseSerialNumber(database, NUMBER_SEQUENCE_KEYS.CUSTOMER_INVOICE_NUMBER, this.serialNumber);
     }
