@@ -52,22 +52,26 @@ export class UIDatabase {
     }
   }
 
-  delete(type, records, ...rest) {
+  delete(type, record, ...rest) {
     let safeRecordsToDelete;
     let errorMessage;
+    const records = Array.isArray(record) ? record : [record];
+
     switch (type) {
       case 'Transaction':
-        safeRecordsToDelete = records.filtered('status != "finalised"');
-        errorMessage = count => `Blocked deleting ${count} transaction records`;
+        safeRecordsToDelete = records.filter(transaction => !transaction.isFinalised);
+        errorMessage = count =>
+          `Cannot delete finalised transactions. Blocked deleting ${count} transaction records`;
         break;
       default:
         break;
     }
+
     this.database.delete(type, safeRecordsToDelete, ...rest);
 
     // Throw an error if someone managed to try deleting records they should be able to delete
     const recordCountDiff = records.length - safeRecordsToDelete.length;
-    if (!recordCountDiff) {
+    if (recordCountDiff > 0) {
       throw new Error(errorMessage(recordCountDiff));
     }
   }
