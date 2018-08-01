@@ -49,6 +49,13 @@ export const dataTableStyles = {
     borderBottomWidth: 2,
     borderColor: BLUE_WHITE,
   },
+  expansionWithInnerPage: {
+    padding: 2,
+    paddingBottom: 5,
+    borderTopWidth: 2,
+    borderBottomWidth: 2,
+    borderColor: BLUE_WHITE,
+  },
   cell: {
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,

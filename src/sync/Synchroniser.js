@@ -3,8 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import autobind from 'react-autobind';
-
 import { SyncQueue } from './SyncQueue';
 import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
@@ -29,7 +27,7 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
-const BATCH_SIZE = 20; // Number of records to sync at one time
+const INITIAL_BATCH_SIZE = 20; // Number of records to sync at one time
 
 /**
  * Provides core synchronization functionality, initilising the database with an
@@ -46,20 +44,19 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
-    autobind(this);
     if (this.isInitialised()) this.syncQueue.enable();
   }
 
   /**
    * Redux progress setting functions
    */
-  setTotal(totalCount) { this.dispatch(setSyncTotal(totalCount)); }
-  incrementProgress(increment) { this.dispatch(incrementSyncProgress(increment)); }
-  setProgress(currentCount) { this.dispatch(setSyncProgress(currentCount)); }
-  setProgressMessage(message) { this.dispatch(setSyncProgressMessage(message)); }
-  setError(errorMessage) { this.dispatch(setSyncError(errorMessage)); }
-  setIsSyncing(isSyncing) { this.dispatch(setSyncIsSyncing(isSyncing)); }
-  setCompletionTime(time) { this.dispatch(setSyncCompletionTime(time)); }
+  setTotal = totalCount => this.dispatch(setSyncTotal(totalCount));
+  incrementProgress = increment => this.dispatch(incrementSyncProgress(increment));
+  setProgress = currentCount => this.dispatch(setSyncProgress(currentCount));
+  setProgressMessage = message => this.dispatch(setSyncProgressMessage(message));
+  setError = errorMessage => this.dispatch(setSyncError(errorMessage));
+  setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
+  setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
 
   /**
    * Wipe the current database, check that the given url can be synced against
@@ -71,7 +68,7 @@ export class Synchroniser {
    * @return {Promise}                 Resolve if successfully authenticated and
    *                                   initialised, otherwise throw error
    */
-  async initialise(serverURL, syncSiteName, syncSitePassword) {
+  initialise = async (serverURL, syncSiteName, syncSitePassword) => {
     this.setIsSyncing(true);
     this.setProgressMessage('Initialising...');
     this.syncQueue.disable(); // Stop sync queue listening to database changes
@@ -102,7 +99,7 @@ export class Synchroniser {
             headers: {
               Authorization: this.authenticator.getAuthHeader(),
             },
-          }
+          },
         );
         // If the initial_dump has been successful, serverURL is valid, and should now have all sync
         // records queued and ready to send. Safe to store as this.serverURL
@@ -118,32 +115,32 @@ export class Synchroniser {
     this.settings.set(SYNC_IS_INITIALISED, 'true');
     this.syncQueue.enable(); // Begin the sync queue listening to database changes
     this.setIsSyncing(false);
-  }
+  };
 
   /**
    * Return whether the synchroniser has been initialised.
    * @return {boolean} True if initial sync has been completed successfully
    */
-  isInitialised() {
+  isInitialised = () => {
     const syncIsInitialised = this.settings.get(SYNC_IS_INITIALISED);
     return syncIsInitialised && syncIsInitialised === 'true';
-  }
+  };
 
   /**
    * Return whether or not the last sync of the app failed
    * @return {boolean} 'true' if the last call of synchronise failed
    */
-  lastSyncFailed() {
+  lastSyncFailed = () => {
     const lastSyncFailed = this.settings.get(SYNC_PRIOR_FAILED);
     return lastSyncFailed && lastSyncFailed === 'true';
-  }
+  };
 
   /**
    * Carry out a synchronization, first pushing any local changes, then pulling
    * down remote changes and integrating them into the local database.
    * @return {[type]} [description]
    */
-  async synchronise() {
+  synchronise = async () => {
     try {
       if (!this.isInitialised()) throw new Error('Not yet initialised');
       this.setIsSyncing(true);
@@ -166,36 +163,52 @@ export class Synchroniser {
       this.setError(error.message);
       this.setIsSyncing(false);
     }
-  }
+  };
 
   /**
    * Push batches of changes to the local database up to the remote server, until
    * all local changes have been synced.
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async push() {
+  push = async () => {
     this.setProgressMessage('Pushing changes to the server');
     this.setProgress(0);
-    let recordsToSync;
-    let translatedRecords;
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
-      recordsToSync = this.syncQueue.next(BATCH_SIZE);
-      translatedRecords = recordsToSync.map(record =>
-        generateSyncJson(this.database, this.settings, record)
-      );
+      const recordsToSync = this.syncQueue.next(INITIAL_BATCH_SIZE);
+      const translatedRecords = recordsToSync
+        .map(this.translateRecord) // Apply map function to get translated records
+        .filter((record) => !!record); // If error thrown, may be null so filter falsy values out
       await this.pushRecords(translatedRecords);
+      // Records that threw errors in translateRecord() are still removed
       this.syncQueue.use(recordsToSync);
       this.incrementProgress(recordsToSync.length);
     }
-  }
+  };
+
+  /**
+   * Handles translating records for push() and catching errors
+   * @param {object} record The outgoing record to be translated
+   * @return {object} The translated record output
+   */
+  translateRecord = record => {
+    try {
+      // Try translate the record
+      return generateSyncJson(this.database, this.settings, record);
+    } catch (error) {
+      // If error not safe to continue sync throw it again to pass it up to next handler
+      // See outgoingSyncUtils.js
+      if (!error.canDeleteSyncOut) throw error;
+      return null;
+    }
+  };
 
   /**
    * Pushes a collection of records to the remote sync server
    * @param  {array}   records The records to push
    * @return {Promise}         Resolves if successful, or passes up any error thrown
    */
-  async pushRecords(records) {
+  pushRecords = async records => {
     const serverURL = this.settings.get(SYNC_URL);
     const thisSiteId = this.settings.get(SYNC_SITE_ID);
     const serverId = this.settings.get(SYNC_SERVER_ID);
@@ -207,7 +220,7 @@ export class Synchroniser {
           Authorization: this.authenticator.getAuthHeader(),
         },
         body: JSON.stringify(records),
-      }
+      },
     );
     let responseJson;
     try {
@@ -218,13 +231,13 @@ export class Synchroniser {
     if (responseJson.error.length > 0) {
       throw new Error('Server rejected pushed records');
     }
-  }
+  };
 
   /**
    * Pulls any changes to data on the sync server down to the local database
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
-  async pull() {
+  pull = async () => {
     this.setProgressMessage('Pulling changes from the server');
     this.setProgress(0);
     this.setTotal(0);
@@ -237,7 +250,7 @@ export class Synchroniser {
       serverURL,
       thisSiteId,
       serverId,
-      authHeader
+      authHeader,
     );
     let total = waitingRecordCount;
     // Pull BATCH_SIZE amount of records at a time from server
@@ -254,7 +267,7 @@ export class Synchroniser {
         thisSiteId,
         serverId,
         authHeader,
-        BATCH_SIZE
+        INITIAL_BATCH_SIZE
       );
       this.integrateRecords(incomingRecords);
       await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
@@ -277,14 +290,14 @@ export class Synchroniser {
    * @param  {string} serverId   Sync ID of the server
    * @return {Promise}           Resolves with the record count, or passes up any error thrown
    */
-  async getWaitingRecordCount(serverURL, thisSiteId, serverId, authHeader) {
+  getWaitingRecordCount = async (serverURL, thisSiteId, serverId, authHeader) => {
     const response = await fetch(
       `${serverURL}/sync/v3/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
       {
         headers: {
           Authorization: authHeader,
         },
-      }
+      },
     );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to sync.');
@@ -297,7 +310,7 @@ export class Synchroniser {
       throw new Error('Unexpected response from server');
     }
     return responseJson.NumRecords;
-  }
+  };
 
   /**
    * Returns the next batch of incoming sync records
@@ -307,7 +320,7 @@ export class Synchroniser {
    * @param  {integer} numRecords The number of records to fetch
    * @return {Promise}            Resolves with the records, or passes up any error thrown
    */
-  async getIncomingRecords(serverURL, thisSiteId, serverId, authHeader, numRecords) {
+  getIncomingRecords = async (serverURL, thisSiteId, serverId, authHeader, numRecords) => {
     const response = await fetch(
       `${serverURL}/sync/v3/queued_records` +
         `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
@@ -315,7 +328,7 @@ export class Synchroniser {
         headers: {
           Authorization: authHeader,
         },
-      }
+      },
     );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while pulling sync records.');
@@ -325,7 +338,7 @@ export class Synchroniser {
       throw new Error(responseJson.error);
     }
     return responseJson;
-  }
+  };
 
   /**
    * Parse the batch of incoming records, and integrate them into the local database
@@ -350,7 +363,7 @@ export class Synchroniser {
    * @param  {array}   records    Sync records that have been integrated
    * @return {none}
    */
-  async acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, records) {
+  acknowledgeRecords = async (serverURL, thisSiteId, serverId, authHeader, records) => {
     const syncIds = records.map(record => record.SyncID);
     const requestBody = {
       SyncRecordIDs: syncIds,
@@ -363,7 +376,7 @@ export class Synchroniser {
           Authorization: authHeader,
         },
         body: JSON.stringify(requestBody),
-      }
+      },
     );
-  }
+  };
 }

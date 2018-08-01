@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import {
   View,
 } from 'react-native';
@@ -44,10 +43,9 @@ export class CustomerInvoicePage extends GenericPage {
       sortBy: 'itemName',
       isAscending: true,
     };
-    autobind(this);
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -57,7 +55,7 @@ export class CustomerInvoicePage extends GenericPage {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.transaction.items
@@ -78,7 +76,7 @@ export class CustomerInvoicePage extends GenericPage {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  onAddMasterItems() {
+  onAddMasterItems = () => {
     this.props.runWithLoadingIndicator(() => {
       this.props.database.write(() => {
         this.props.transaction.addItemsFromMasterList(this.props.database);
@@ -95,7 +93,7 @@ export class CustomerInvoicePage extends GenericPage {
    * @param  {string} newValue        The value the user entered in the cell
    * @return {none}
    */
-  onEndEditing(key, transactionItem, newValue) {
+  onEndEditing = (key, transactionItem, newValue) => {
     if (key !== 'totalQuantity') return;
     const { database } = this.props;
     database.write(() => {
@@ -104,7 +102,7 @@ export class CustomerInvoicePage extends GenericPage {
     });
   }
 
-  onDeleteConfirm() {
+  onDeleteConfirm = () => {
     const { selection } = this.state;
     const { transaction, database } = this.props;
     database.write(() => {
@@ -114,35 +112,21 @@ export class CustomerInvoicePage extends GenericPage {
     this.setState({ selection: [] }, this.refreshData);
   }
 
-  onDeleteCancel() {
-    this.setState({ selection: [] }, this.refreshData);
-  }
+  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange(newSelection) {
-    this.setState({ selection: newSelection });
-  }
+  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
 
-  openModal(key) {
-    this.setState({ modalKey: key, modalIsOpen: true });
-  }
+  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
 
-  closeModal() {
-    this.setState({ modalIsOpen: false });
-  }
+  closeModal = () => this.setState({ modalIsOpen: false });
 
-  openItemSelector() {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
-  }
+  openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
 
-  openCommentEditor() {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  }
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
-  openTheirRefEditor() {
-    this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-  }
+  openTheirRefEditor = () => this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
 
-  getModalTitle() {
+  getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
@@ -155,7 +139,7 @@ export class CustomerInvoicePage extends GenericPage {
     }
   }
 
-  renderPageInfo() {
+  renderPageInfo = () => {
     const infoColumns = [
       [
         {
@@ -198,7 +182,7 @@ export class CustomerInvoicePage extends GenericPage {
     );
   }
 
-  renderCell(key, transactionItem) {
+  renderCell = (key, transactionItem) => {
     switch (key) {
       default:
         return transactionItem[key];
@@ -216,7 +200,7 @@ export class CustomerInvoicePage extends GenericPage {
     }
   }
 
-  renderModalContent() {
+  renderModalContent = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
     const { database, transaction } = this.props;
     switch (this.state.modalKey) {
@@ -230,7 +214,7 @@ export class CustomerInvoicePage extends GenericPage {
             sortByString={'name'}
             onSelect={(item) => {
               database.write(() => {
-                if (!transaction.hasItemWithId(item.id)) {
+                if (!transaction.hasItem(item)) {
                   createRecord(database, 'TransactionItem', transaction, item);
                 }
               });
@@ -274,23 +258,21 @@ export class CustomerInvoicePage extends GenericPage {
     }
   }
 
-  renderButtons() {
-    return (
-      <View style={globalStyles.verticalContainer}>
-        <PageButton
-          style={globalStyles.topButton}
-          text={buttonStrings.new_item}
-          onPress={this.openItemSelector}
-          isDisabled={this.props.transaction.isFinalised}
-        />
-        <PageButton
-          text={buttonStrings.add_master_list_items}
-          onPress={this.onAddMasterItems}
-          isDisabled={this.props.transaction.isFinalised}
-        />
-      </View>
-    );
-  }
+  renderButtons = () => (
+    <View style={globalStyles.verticalContainer}>
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.new_item}
+        onPress={this.openItemSelector}
+        isDisabled={this.props.transaction.isFinalised}
+      />
+      <PageButton
+        text={buttonStrings.add_master_list_items}
+        onPress={this.onAddMasterItems}
+        isDisabled={this.props.transaction.isFinalised}
+      />
+    </View>
+  );
 
   render() {
     return (

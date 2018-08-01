@@ -8,19 +8,16 @@ import { getNextNumber, NUMBER_SEQUENCE_KEYS } from '../database/utilities';
 const { LAST_POST_PROCESSING_FAILED } = SETTINGS_KEYS;
 const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
 
-import autobind from 'react-autobind';
-
 export class PostSyncProcessor {
   constructor(database, settings) {
     this.database = database;
     this.settings = settings;
     this.recordQueue = new Map(); // Map of [recordId, recordType]
     this.functionQueue = [];
-    autobind(this);
     this.database.addListener(this.onDatabaseEvent);
   }
 
-  setUser(user) {
+  setUser = (user) => {
     this.user = user;
   }
 
@@ -33,7 +30,7 @@ export class PostSyncProcessor {
    * @param  {string} causedBy    The cause of this database event, either 'sync' or undefined
    * @return {none}
    */
-  onDatabaseEvent(changeType, recordType, record, causedBy) {
+  onDatabaseEvent = (changeType, recordType, record, causedBy) => {
     // Exit if not a change caused by incoming sync
     if (causedBy !== 'sync' || recordType === 'SyncOut') return;
     if (this.recordQueue.has(record.id)) {
@@ -48,7 +45,7 @@ export class PostSyncProcessor {
    * Return whether or not the last sync of the app failed
    * @return {boolean} 'true' if the last call of synchronise failed
    */
-  lastPostSyncProcessingFailed() {
+  lastPostSyncProcessingFailed = () => {
     const lastPostSyncProcessingFailed = this.settings.get(LAST_POST_PROCESSING_FAILED);
     return lastPostSyncProcessingFailed && lastPostSyncProcessingFailed === 'true';
   }
@@ -58,7 +55,7 @@ export class PostSyncProcessor {
    * local database, ensuring data is correct.
    * Tables manually added as to not iterate over tables function generators.
    */
-  processAnyUnprocessedRecords() {
+  processAnyUnprocessedRecords = () => {
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'true');
     this.functionQueue = [];
     this.recordQueue.clear(); // Reset the recordQueue to avoid unnessary runs
@@ -79,7 +76,7 @@ export class PostSyncProcessor {
    * Iterates through records added through listening to sync, adding needed functions
    * to functionQueue. Runs the functionQueue, making the changes.
    */
-  processRecordQueue() {
+  processRecordQueue = () => {
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'true');
     this.recordQueue.forEach((recordType, recordId) => {
       // Use local database record, not what comes in sync. Ensures that records are
@@ -95,7 +92,7 @@ export class PostSyncProcessor {
   /**
    * Runs all the post sync functions in this.functionQueue and clears queue.
    */
-  processFunctionQueue() {
+  processFunctionQueue = () => {
     this.database.write(() => this.functionQueue.forEach(func => func()));
     this.functionQueue = [];
   }
@@ -107,7 +104,7 @@ export class PostSyncProcessor {
    * @param  {object} record      The record changed
    * @return {none}
    */
-  enqueueFunctionsForRecordType(recordType, record) {
+  enqueueFunctionsForRecordType = (recordType, record) => {
     switch (recordType) {
       case 'Requisition':
         this.functionQueue = this.functionQueue.concat(
@@ -130,7 +127,7 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  generateFunctionsForRequisition(record) {
+  generateFunctionsForRequisition = (record) => {
     const funcs = [];
 
     // Allocate serial number to requisitions with serial number of -1. This has been generated
@@ -161,7 +158,7 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  generateFunctionsForTransaction(record) {
+  generateFunctionsForTransaction = (record) => {
     const funcs = [];
 
     // Allocate serial number to supplier invoices with serial number of -1. This has been generated

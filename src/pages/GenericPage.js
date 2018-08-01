@@ -8,18 +8,20 @@ import PropTypes from 'prop-types';
 import { GenericTablePage } from 'react-native-generic-table-page';
 
 /**
-* A generic mSupply Mobile page, adding database change notification functionality
-* to the standard react-native-generic-table-page.
-* Extending classes should own the following fields:
-* @prop  {array}  dataTypesSynchronised      Data types visible in the table displayed
-*         																		 on this page, that should therefore cause
-*         																		 an update if changed by sync
-* @prop  {string} finalisableDataType        The data type that can be finalised on this
-*         																		 page, that should therefore cause an update
-*         																		 if changed by being finalised
-*/
+ * A generic mSupply Mobile page, adding database change notification functionality
+ * to the standard react-native-generic-table-page.
+ * Extending classes should own the following fields:
+ * @prop  {array}  dataTypesSynchronised      Data types visible in the table displayed
+ *         																		 on this page, that should therefore cause
+ *         																		 an update if changed by sync
+ * @prop  {array}  dataTypesLiked            Data types visible in the table displayed
+ *         																		 on this page, that should therefore cause
+ *         																		 an update if changed somewhere rather then sync
+ * @prop  {string} finalisableDataType        The data type that can be finalised on this
+ *         																		 page, that should therefore cause an update
+ *         																		 if changed by being finalised
+ */
 export class GenericPage extends React.Component {
-
   componentWillMount() {
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
     this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
@@ -37,30 +39,39 @@ export class GenericPage extends React.Component {
     this.props.database.removeListener(this.databaseListenerId);
   }
 
-  // Refetch data and render the list any time sync changes data displayed, or the
-  // record is finalised
+  // Refetch data and render the list any time a listener is triggered for a data type
+  // that a page subscribes to listen to or if record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    if ((causedBy === 'sync' &&
-        this.props.dataTypesSynchronised &&
-        this.props.dataTypesSynchronised.indexOf(recordType) >= 0) ||
-        (recordType === this.props.finalisableDataType && record.isFinalised)) {
+    // For sync we may want to listen to different data sources
+    const dataTypesArray =
+      causedBy === 'sync' ? this.props.dataTypesSynchronised : this.props.dataTypesLinked;
+    // Below is a little hack to make sure that refreshData isn't triggered on every
+    // database event in a given write I.e. finalising a big invoice would refresh and
+    // re-render a table for every line saved/updated/deleted, slowing the app down
+    // for big database writes. A refactor for better React practices would be better.
+    const isLoading = this.props.database.isLoading;
+    // If database is loading, don't update table for every listener event (if
+    // dataTypesLinked rather than dataTypesSynchronised)
+    // If recordType is finalisable and is finalised, it'll bypass this.
+    // So it'll ignore all the business in a big finalisation but notify at the end
+    // When updating the parent (i.e. the finalised stocktake/transaction/requisition is updated)
+    if (
+      (!isLoading && dataTypesArray && dataTypesArray.includes(recordType)) ||
+      (recordType === this.props.finalisableDataType && record.isFinalised)
+    ) {
       this.props.refreshData();
     }
   }
 
   render() {
-    return (
-      <GenericTablePage
-        {...this.props}
-      />
-    );
+    return <GenericTablePage {...this.props} />;
   }
-
 }
 
 GenericPage.propTypes = {
   database: PropTypes.object.isRequired,
   dataTypesSynchronised: PropTypes.array,
+  dataTypesLinked: PropTypes.array,
   finalisableDataType: PropTypes.string,
   refreshData: PropTypes.func.isRequired,
   topRoute: PropTypes.bool,

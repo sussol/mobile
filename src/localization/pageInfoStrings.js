@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
+/* eslint-disable max-len */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const pageInfoStrings = new LocalizedStrings({
@@ -15,11 +17,24 @@ export const pageInfoStrings = new LocalizedStrings({
     entered_by: 'Entered By',
     entry_date: 'Entry Date',
     months_stock_required: 'Months Stock',
+    stocktake_name: 'Stocktake Name',
     supplier: 'Supplier',
     their_ref: 'Their Ref',
   },
-  gil: {
-    // TODO add: supplier
+  fr: {
+    address: 'Addresse',
+    code: 'Code',
+    comment: 'Commentaire',
+    confirm_date: 'Date de confirmation',
+    customer: 'Client',
+    entered_by: 'Entrée par',
+    entry_date: "Date d'entrée",
+    months_stock_required: 'Mois de stock',
+    stocktake_name: "Nom du relevé d'inventaire",
+    supplier: 'Fournisseur',
+    their_ref: 'Leur référence',
+  },
+  gil: { // TODO: add - stocktake_name
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -28,9 +43,10 @@ export const pageInfoStrings = new LocalizedStrings({
     entered_by: 'Entered By',
     entry_date: 'Entry Date',
     months_stock_required: 'Iraua te Namakaina?',
+    supplier: 'Kambana n oota, Pharmacy ke HC',
     their_ref: 'Ana Ref',
   },
-  tl: {
+  tl: { // TODO: add - stocktake_name
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',

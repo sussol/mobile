@@ -10,12 +10,13 @@ import { appStyles, COMPONENT_HEIGHT } from './appStyles';
 import { authStyles } from './authStyles';
 import { buttonStyles } from './buttonStyles';
 import { dataTableStyles, dataTableColors } from './dataTableStyles';
-import { finaliseStyles } from './finaliseStyles';
+import { confirmModalStyles } from './confirmModalStyles';
 import { loadingIndicatorStyles } from './loadingIndicatorStyles';
 import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
 import {
   pageStyles,
+  expansionPageStyles,
   PAGE_TOP_LEFT_WIDTH,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
@@ -45,6 +46,7 @@ export {
   dataTableStyles,
   dataTableColors,
   pageStyles,
+  expansionPageStyles,
   PAGE_TOP_LEFT_WIDTH,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
@@ -55,7 +57,7 @@ export default StyleSheet.create({
   ...appStyles,
   ...authStyles,
   ...buttonStyles,
-  ...finaliseStyles,
+  ...confirmModalStyles,
   ...loadingIndicatorStyles,
   ...modalStyles,
   ...navigationStyles,

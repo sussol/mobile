@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { TextInput, StyleSheet } from 'react-native';
 import { formatExpiryDate, parseExpiryDate } from '../utilities';
 
@@ -14,16 +13,13 @@ export class ExpiryTextInput extends React.Component {
   constructor(props) {
     super(props);
     this.previousText = '';
-    autobind(this);
     this.state = { text: this.getFormattedDate(this.props.text) };
   }
 
   // Remove all text on focus
-  onFocus() {
-    this.setState({ text: '' });
-  }
+  onFocus = () => this.setState({ text: '' });
 
-  onChangeText(text) {
+  onChangeText = (text) => {
     let newTextValue = text;
 
     if (text.length === 1) {
@@ -57,7 +53,7 @@ export class ExpiryTextInput extends React.Component {
     this.setState({ text: newTextValue });
   }
 
-  onEndEditing(event) {
+  onEndEditing = (event) => {
     const expiryDate = parseExpiryDate(event.nativeEvent.text);
     if (expiryDate && this.props.onEndEditing) {
       this.props.onEndEditing(expiryDate);
@@ -65,7 +61,7 @@ export class ExpiryTextInput extends React.Component {
     this.setState({ text: this.getFormattedDate(expiryDate) });
   }
 
-  getFormattedDate(date) {
+  getFormattedDate = (date) => {
     // Remember previous good date
     this.previousFormattedDate = formatExpiryDate(date) || this.previousFormattedDate;
     return this.previousFormattedDate || 'mm/yy';

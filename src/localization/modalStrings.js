@@ -3,8 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import LocalizedStrings from 'react-native-localization';
 /* eslint-disable max-len */
+
+import LocalizedStrings from 'react-native-localization';
+
 export const modalStrings = new LocalizedStrings({
   gb: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',
@@ -19,9 +21,12 @@ export const modalStrings = new LocalizedStrings({
     edit_the_invoice_comment: 'Edit the invoice comment',
     edit_the_requisition_comment: 'Edit the requisition comment',
     edit_their_reference: 'Edit their reference',
+    edit_the_stocktake_comment: 'Edit stocktake comment',
+    edit_the_stocktake_name: 'Edit stocktake name',
     finalise_customer_invoice: 'Finalise will lock this invoice permanently.',
     finalise_supplier_requisition: 'Finalise will send this requisition and lock it permanently.',
-    finalise_customer_requisition: 'Finalise will generate a finalised customer invoice, adjust inventory, and lock this requisition permanently.',
+    finalise_customer_requisition:
+      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this requisition permanently.',
     finalise_stocktake: 'Finalise will adjust inventory and lock this stocktake permanently.',
     finalise_supplier_invoice: 'Finalise will adjust inventory and lock this invoice permanently.',
     following_items_reduced_more_than_available_stock:
@@ -44,8 +49,52 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_supplier: 'Start typing to select supplier',
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
+    stocktake_invalid_stock: 'Stock on hand for these item(s) have changed since this stocktake was last opened (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" and "Actual Quantity" will be reset:',
   },
-  gil: { // TODO add: stock_quantity_greater_then_zero, start_typing_to_select_supplier, search_for_the_supplier, finalise_customer_requisition
+  fr: {
+    add_at_least_one_item_before_finalising: 'Vous devez ajouter au moins un article avant de finaliser',
+    and: 'et',
+    cancel: 'Annuler',
+    confirm: 'Confirmer',
+    create: 'Créer',
+    delete_these_invoices: 'Êtes-vous sûr de vouloir supprimer ces factures ?',
+    delete_these_requisitions: 'Êtes-vous sûr de vouloir supprimer ces réquisitions ?',
+    delete_these_stocktakes: "Êtes-vous sûr de vouloir supprimer ces relevé d'inventaires ?",
+    delete: 'Supprimer',
+    edit_the_invoice_comment: 'Modifier le commentaire de la facture',
+    edit_the_requisition_comment: 'Modifier le commentaire de la réquisition',
+    edit_their_reference: 'Modifier leur référence',
+    edit_the_stocktake_comment: "Modifier le commmentaire de ce relevé d'inventaire",
+    edit_the_stocktake_name: "Modifier le nom de ce relevé d'inventaire:",
+    finalise_customer_invoice: 'Finaliser verrouillera cette facture de façon permanente.',
+    finalise_supplier_requisition: 'Finaliser enverra cette réquisition et la verrouillera de façon permanente',
+    finalise_customer_requisition:
+      "Finaliser va générer une facture client finalisé, ajuster l'inventaire et verrouiller cette réquisition de façon permanente.",
+    finalise_stocktake: "Finaliser ajustera l'inventaire et verrouillera ce relevé d'inventaire de façon permanente.",
+    finalise_supplier_invoice: "Finaliser ajustera l'inventaire and verrouillera cette facture de façon permanente.",
+    following_items_reduced_more_than_available_stock:
+      'Les articles suivants:',
+    give_your_stocktake_a_name: "Nommer votre relevé d'inventaire",
+    got_it: 'Je comprends',
+    more: 'plus',
+    record_stock_required_before_finalising:
+      'Vous devez spécifier la quantité de stock requise avant de pouvoir finaliser',
+    record_stock_to_issue_before_finalising:
+      'Vous devez spécifier la quantité de stock à émettre avant de pouvoir finaliser',
+    remove_these_items: 'Êtes-vous sûr de vouloir enlever ces articles ?',
+    remove: 'Enlever',
+    search_for_an_item_to_add: 'Rechercher un article à ajouter',
+    search_for_the_customer: 'Rechercher un client',
+    search_for_the_supplier: 'Rechercher un fournisseur',
+    select_a_language: 'Sélectionner un langage',
+    select_the_number_of_months_stock_required: 'Sélectionner le nombre de mois de stock requis',
+    start_typing_to_select_customer: 'Tapez pour rechercher un client',
+    start_typing_to_select_supplier: 'Tapez pour rechercher un fournisseur',
+    stock_quantity_greater_then_zero: 'La quantité de stock doit être plus grande que zéro avant de finaliser',
+    stocktake_no_counted_items: "Ne peut finaliser un relevé d'inventaire sans articles dénombrés",
+    stocktake_invalid_stock: "Le stock disponible pour ces article(s) a changé depuis que ce relevé d'inventaire a été ouvert pour la dernière fois ( à cause de factures clients, factures de fournisseurs ou d'autres relevé d'inventaire). La quantité actuelle et celle de l'instantané seront réinitialisées.",
+  },
+  gil: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -59,6 +108,8 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Manga bita am oota',
     edit_their_reference: 'Bita ana reference number',
     finalise_customer_invoice: 'Ko aki kona n manga bita te invoice ae a tia n Finalise',
+    finalise_customer_requisition:
+      'Kamatoakin raoi te katitama inwoiti ma mwaitin bwaain aoraki ni ikotaki ma bubuti ke oota ena tia raoi ao man aki kona ni bibitaki imwin te kamatoa ke te bainaraiti',
     finalise_supplier_requisition: 'Am order ae Finalise, e nako, ao ko aki kona n bitia',
     finalise_stocktake: 'Am warebwai ae Finalise, ko aki manga kona n bitia',
     finalise_supplier_invoice: 'Am karao-oota ae Finalise, ko aki manga kona n bitia',
@@ -75,13 +126,17 @@ export const modalStrings = new LocalizedStrings({
     remove: 'Kanakoi ke kamaunai',
     search_for_an_item_to_add: 'Rinea ke kakaea aran te bwai n aoraki',
     search_for_the_customer: 'Rinea am list',
+    search_for_the_supplier: 'Kakaea am kambana n oota',
     select_a_language: 'English ke Kiribati',
     select_the_number_of_months_stock_required:
       'Rinea mwaitin te namakaina ae ko kantaningaia ibukin am stock inanon baim',
     start_typing_to_select_customer: 'Karina aran am kiriniki ke am aoraki',
+    start_typing_to_select_supplier: 'Taibinna n rinea am kambana n oota',
+    stock_quantity_greater_then_zero:
+      'Te maiti are e warekaki e na maiti riki nakon AKEA imain kamatoana',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
-  tl: {
+  tl: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
     add_at_least_one_item_before_finalising: 'Tenke hatama sasán ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',
@@ -95,7 +150,8 @@ export const modalStrings = new LocalizedStrings({
     edit_the_requisition_comment: 'Hadia komentáriu iha rekuizisaun',
     edit_their_reference: 'Hadia Referensia',
     finalise_customer_invoice: "Finaliza sei xave permanente Invoice ne'e.",
-    finalise_customer_requisition: "Finaliza sei afi kliente nia kontaida ne'e, ajusta inventori, sei konfirma xafi permanente",
+    finalise_customer_requisition:
+      "Finaliza sei afi kliente nia kontaida ne'e, ajusta inventori, sei konfirma xafi permanente",
     finalise_supplier_requisition: "Finaliza sei labele edit rekuizasaun ne'eno xave permanente.",
     finalise_stocktake: "Finaliza sei ajusta inventariu no xave permanente Invoice ne'e.",
     finalise_supplier_invoice:
@@ -114,12 +170,11 @@ export const modalStrings = new LocalizedStrings({
     search_for_an_item_to_add: 'Buka-hetan sasán atu hatama',
     search_for_the_customer: 'Buka-hetan kliente',
     search_for_the_supplier: 'Buka-hetan distribuidor',
-    start_typing_to_select_supplier: "Hakerek iha ne'e atu selekta distribuidor",
-    stock_quantity_greater_then_zero: 'Kuantidade Disponivel tenki bot liu Zero antes finaliza',
     select_a_language: 'Hili lingua',
     select_the_number_of_months_stock_required: 'Hili numeru sira tuir pedidu',
     start_typing_to_select_customer: "Hakerek kliente nia naran iha ne'e",
+    start_typing_to_select_supplier: "Hakerek iha ne'e atu selekta distribuidor",
+    stock_quantity_greater_then_zero: 'Kuantidade Disponivel tenki bot liu Zero antes finaliza',
     stocktake_no_counted_items: 'La bele finaliza ajustamentu se laiha item ida priense',
   },
 });
-/* eslint-enable max-len */

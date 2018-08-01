@@ -1593,6 +1593,10 @@ decompress@^3.0.0:
     vinyl-assign "^1.0.1"
     vinyl-fs "^2.2.0"
 
+deep-equal@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/deep-equal/-/deep-equal-1.0.1.tgz#f5d260292b660e084eff4cdbc9f08ad3247448b5"
+
 deep-extend@~0.4.0:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/deep-extend/-/deep-extend-0.4.2.tgz#48b699c27e334bf89f10892be432f6e4c7d34a7f"
@@ -4585,10 +4589,6 @@ react-addons-update@=15.1.0:
   version "15.1.0"
   resolved "https://registry.yarnpkg.com/react-addons-update/-/react-addons-update-15.1.0.tgz#86d7361e9b2cbb71cd64f19cd63e85c0b615e99a"
 
-react-autobind@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/react-autobind/-/react-autobind-1.0.6.tgz#936bb58edf6b89b619c50f82f0e617159fdfd4f1"
-
 react-clone-referenced-element@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/react-clone-referenced-element/-/react-clone-referenced-element-1.0.1.tgz#2bba8c69404c5e4a944398600bcc4c941f860682"
@@ -4616,13 +4616,9 @@ react-element-to-jsx-string@^3.0.0:
     stringify-object "^2.3.1"
     traverse "^0.6.6"
 
-react-native-autocomplete-input@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-autocomplete-input/-/react-native-autocomplete-input-3.3.1.tgz#70a1be97d98bddb63d94879739069610d1817f54"
-
-react-native-data-table@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/react-native-data-table/-/react-native-data-table-0.1.4.tgz#1dd4e5681762a7971257776eab482755dbe55bb5"
+react-native-data-table@^0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/react-native-data-table/-/react-native-data-table-0.1.5.tgz#504304109a6e7ca2b6967beae31ec8e92aa1fd90"
   dependencies:
     react-native-vector-icons "^2.0.2"
 
@@ -4648,11 +4644,12 @@ react-native-drawer-layout@1.3.2:
   dependencies:
     react-native-dismiss-keyboard "1.0.0"
 
-react-native-generic-table-page@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.2.2.tgz#c2f63dd6d4dabac34f32c4c0513f8a4a3dbad937"
+react-native-generic-table-page@^0.2.10:
+  version "0.2.10"
+  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.2.10.tgz#978750fb35b8489be98428c4a6568d39d4ca1fad"
   dependencies:
-    react-native-data-table "^0.1.4"
+    deep-equal "^1.0.1"
+    react-native-data-table "^0.1.5"
     react-native-ui-components "^0.4.2"
 
 react-native-localization@^0.1.30:
@@ -4923,15 +4920,16 @@ readline2@^1.0.1:
     is-fullwidth-code-point "^1.0.0"
     mute-stream "0.0.5"
 
-realm@^1.10.0:
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/realm/-/realm-1.10.3.tgz#b30a052eb58f9a36c53ca2a57a5f2bf6df0d20a5"
+realm@^1.11.1:
+  version "1.13.0"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-1.13.0.tgz#ba8c8f1f886182457e9b36dea169d2ea87a24011"
   dependencies:
     extract-zip "^1.6.0"
     ini "^1.3.4"
     nan "^2.3.3"
     node-fetch "^1.6.3"
     node-pre-gyp "^0.6.30"
+    prop-types "^15.5.10"
     request "^2.78.0"
     sync-request "^3.0.1"
     url-parse "^1.1.7"

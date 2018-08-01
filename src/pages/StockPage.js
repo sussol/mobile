@@ -5,7 +5,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import autobind from 'react-autobind';
 import { Expansion } from 'react-native-data-table';
 import { GenericPage } from './GenericPage';
 import { PageInfo } from '../widgets';
@@ -25,17 +24,16 @@ export class StockPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: props.database.objects('Item'),
+      items: props.database.objects('Item').filtered('crossReferenceItem == null'),
     };
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'name',
       isAscending: true,
     };
-    autobind(this);
   }
 
-  updateDataFilters(newSearchTerm, newSortBy, newIsAscending) {
+  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
@@ -45,7 +43,7 @@ export class StockPage extends React.Component {
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
    */
-  refreshData(newSearchTerm, newSortBy, newIsAscending) {
+  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.state.items.filtered(
@@ -65,7 +63,9 @@ export class StockPage extends React.Component {
     });
   }
 
-  renderExpansion(item) {
+  renderCell = (key, item) => item[key];
+
+  renderExpansion = (item) => {
     const batchInfo = item.batchesWithStock.map((ItemBatch) => {
       const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
       const expiryInfo = ItemBatch.expiryDate ?
@@ -110,6 +110,7 @@ export class StockPage extends React.Component {
       <GenericPage
         data={this.state.data}
         refreshData={this.refreshData}
+        renderCell={this.renderCell}
         renderExpansion={this.renderExpansion}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}

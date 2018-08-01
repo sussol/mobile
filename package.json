@@ -5,7 +5,7 @@
   },
   "name": "mSupplyMobile",
   "//": "version must be in the format ${majorNumber}.${minorNumber}.${patchNumber}-rc${releaseCandidateNumber}",
-  "version": "2.0.3",
+  "version": "2.1.0",
   "private": false,
   "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
@@ -17,8 +17,7 @@
   "homepage": "http://msupply.org.nz",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest --coverage",
-    "postinstall": "find node_modules -type f -name '.babelrc' -delete # as per https://github.com/cassiozen/React-autobind/issues/4#issuecomment-316561400"
+    "test": "jest --coverage"
   },
   "jest": {
     "preprocessorIgnorePatterns": [
@@ -44,23 +43,20 @@
   "dependencies": {
     "buffer": "^5.0.6",
     "bugsnag-react-native": "^2.2.4",
-    "compare-versions": "^3.0.1",
     "moment": "^2.18.1",
     "prop-types": "^15.5.10",
     "react": "16.0.0-alpha.12",
-    "react-autobind": "^1.0.6",
     "react-native": "^0.46.1",
-    "react-native-autocomplete-input": "^3.3.1",
-    "react-native-data-table": "^0.1.4",
+    "react-native-data-table": "^0.1.5",
     "react-native-database": "^0.3.1",
-    "react-native-generic-table-page": "^0.2.7",
+    "react-native-generic-table-page": "^0.2.10",
     "react-native-localization": "^0.1.30",
     "react-native-modalbox": "^1.4.1",
     "react-native-ui-components": "^0.4.2",
     "react-native-vector-icons": "~4.2.0",
     "react-navigation": "^1.0.0-beta.11",
     "react-redux": "^5.0.5",
-    "realm": "^1.10.0",
+    "realm": "^1.11.1",
     "redux": "^3.7.2",
     "redux-persist": "^4.9.1",
     "redux-persist-error-handler": "^0.1.0",
