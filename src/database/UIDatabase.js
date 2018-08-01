@@ -1,6 +1,8 @@
 import RNFS from 'react-native-fs';
 import Realm from 'realm';
 import { schema } from './schema';
+import { SETTINGS_KEYS } from '../settings';
+const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
 export class UIDatabase {
   constructor(database) {
@@ -35,6 +37,12 @@ export class UIDatabase {
 
   objects(type) {
     const results = this.database.objects(translateToCoreDatabaseType(type));
+    const thisStoreIdSetting = this.database
+      .objects('Setting')
+      .filtered('key == $0', THIS_STORE_NAME_ID)[0];
+    // Check ownStoreIdSetting exists, won't if not initialised
+    const thisStoreNameId = thisStoreIdSetting && thisStoreIdSetting.value;
+
     switch (type) {
       case 'CustomerInvoice':
         // Only show invoices generated from requisitions once finalised
@@ -46,11 +54,20 @@ export class UIDatabase {
           'type == "supplier_invoice" AND otherParty.type != "inventory_adjustment"',
         );
       case 'Customer':
-        return results.filtered('isVisible == true AND isCustomer == true');
+        return results.filtered(
+          'isVisible == true AND isCustomer == true AND id != $0',
+          thisStoreNameId,
+        );
       case 'Supplier':
-        return results.filtered('isVisible == true AND isSupplier == true');
+        return results.filtered(
+          'isVisible == true AND isSupplier == true AND id != $0',
+          thisStoreNameId,
+        );
       case 'InternalSupplier':
-        return results.filtered('isVisible == true AND isSupplier == true AND type == "store"');
+        return results.filtered(
+          'isVisible == true AND isSupplier == true AND type == "store" AND id != $0',
+          thisStoreNameId,
+        );
       case 'ExternalSupplier':
         return results.filtered('isVisible == true AND isSupplier == true AND type == "facility"');
       case 'Item':
