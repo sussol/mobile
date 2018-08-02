@@ -269,7 +269,7 @@ export class Synchroniser {
       // Check no new records added to incoming queue on last iteration.
       if (progress >= total) {
         waitingRecordCount = await this.getWaitingRecordCount();
-        if (waitingRecordCount > total) {
+        if (waitingRecordCount > 0) {
           total += waitingRecordCount;
           this.setTotal(total);
         }
