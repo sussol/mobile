@@ -266,6 +266,9 @@ export class Synchroniser {
       const incomingRecords = await this.getIncomingRecords();
       this.integrateRecords(incomingRecords);
       await this.acknowledgeRecords(incomingRecords);
+      // Break out if incoming records is actually empty (something weird happened on server API).
+      // Basically future proof to not get infinite loop.
+      if (incomingRecords.length <= 0) break;
       progress += incomingRecords.length;
 
       // Check no new records added to incoming queue on last iteration.
@@ -276,6 +279,7 @@ export class Synchroniser {
           this.setTotal(total);
         }
       }
+
       this.incrementProgress(incomingRecords.length);
       batchComplete();
     }
