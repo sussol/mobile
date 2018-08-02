@@ -105,6 +105,7 @@ export class PostSyncProcessor {
    * @return {none}
    */
   enqueueFunctionsForRecordType = (recordType, record) => {
+    if (!record) return;
     switch (recordType) {
       case 'Requisition':
         this.functionQueue = this.functionQueue.concat(
