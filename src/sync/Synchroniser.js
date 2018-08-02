@@ -150,7 +150,7 @@ export class Synchroniser {
   /**
    * Carry out a synchronization, first pushing any local changes, then pulling
    * down remote changes and integrating them into the local database.
-   * @return {[type]} [description]
+   * @return {none}
    */
   synchronise = async () => {
     try {
@@ -330,8 +330,7 @@ export class Synchroniser {
 
   /**
    * Parse the batch of incoming records, and integrate them into the local database
-   * @param  {Realm}  database The local database
-   * @param  {object} records  The json object the server sent to represent records
+   * @param  {object} syncJson  The json object the server sent to represent records
    * @return {none}
    */
   integrateRecords(syncJson) {
@@ -344,10 +343,6 @@ export class Synchroniser {
 
   /**
    * Sends the sync server a message to indicate the sync records have been consumed
-   * @param  {string}  serverURL  Base URL of the sync server
-   * @param  {string}  thisSiteId Sync id of this mobile site
-   * @param  {string}  serverId   Sync id of the primary server
-   * @param  {string}  authHeader Base64 encoded Basic auth header
    * @param  {array}   records    Sync records that have been integrated
    * @return {none}
    */
