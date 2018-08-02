@@ -263,17 +263,17 @@ export class Synchroniser {
       const incomingRecords = await this.getIncomingRecords();
       this.integrateRecords(incomingRecords);
       await this.acknowledgeRecords(incomingRecords);
-      this.incrementProgress(incomingRecords.length);
       progress += incomingRecords.length;
 
       // Check no new records added to incoming queue on last iteration.
       if (progress >= total) {
         waitingRecordCount = await this.getWaitingRecordCount();
         if (waitingRecordCount > 0) {
-          total += waitingRecordCount;
+          total = progress + waitingRecordCount;
           this.setTotal(total);
         }
       }
+      this.incrementProgress(incomingRecords.length);
     }
   };
 
