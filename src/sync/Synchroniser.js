@@ -27,7 +27,7 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
-const INITIAL_BATCH_SIZE = 20; // Number of records to sync at one time
+const INITIAL_SYNC_BATCH_SIZE = 10;
 
 /**
  * Provides core synchronization functionality, initilising the database with an
@@ -65,7 +65,7 @@ export class Synchroniser {
     this.serverId = this.settings.get(SYNC_SERVER_ID);
     this.thisSiteName = this.settings.get(SYNC_SITE_NAME);
     this.authHeader = this.authenticator.getAuthHeader();
-    this.batchSize = INITIAL_BATCH_SIZE;
+    this.batchSize = INITIAL_SYNC_BATCH_SIZE;
   };
 
   /**
@@ -188,6 +188,7 @@ export class Synchroniser {
     this.setProgress(0);
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
+      const batchComplete = this.batchSizeAdjustor();
       const recordsToSync = this.syncQueue.next(this.batchSize);
       const translatedRecords = recordsToSync
         .map(this.translateRecord) // Apply map function to get translated records
@@ -196,6 +197,7 @@ export class Synchroniser {
       // Records that threw errors in translateRecord() are still removed
       this.syncQueue.use(recordsToSync);
       this.incrementProgress(recordsToSync.length);
+      batchComplete();
     }
   };
 
@@ -259,6 +261,7 @@ export class Synchroniser {
 
     // Pull this.batchSize amount of records at a time from server
     while (progress < total) {
+      const batchComplete = this.batchSizeAdjustor();
       // Get a batch of records and integrate them
       const incomingRecords = await this.getIncomingRecords();
       this.integrateRecords(incomingRecords);
@@ -274,6 +277,7 @@ export class Synchroniser {
         }
       }
       this.incrementProgress(incomingRecords.length);
+      batchComplete();
     }
   };
 
@@ -362,5 +366,28 @@ export class Synchroniser {
         body: JSON.stringify(requestBody),
       },
     );
+  };
+
+  /**
+   * Closure for handling adjusting the batch size that sync uses
+   * @return {none}
+   */
+  batchSizeAdjustor = () => {
+    const start = Date.now();
+    return () => {
+      const timeTaken = (Date.now() - start) / 1000;
+      if (timeTaken > 10) {
+        // Reset if taking over 10 seconds
+        this.batchSize = INITIAL_SYNC_BATCH_SIZE;
+      } else if (timeTaken > 5) {
+        // Decrease if taking over 5 seconds
+        const adjustment = this.batchSize / 2;
+        this.batchSize = Math.max(this.batchSize - adjustment, INITIAL_SYNC_BATCH_SIZE);
+      } else if (timeTaken < 3) {
+        // Increase if taking less than 3 seconds
+        const adjustment = Math.min(this.batchSize, 100);
+        this.batchSize = Math.min(this.batchSize + adjustment, 500);
+      }
+    };
   };
 }
