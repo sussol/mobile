@@ -257,8 +257,7 @@ export class Synchroniser {
     this.setProgress(progress);
     this.setTotal(total);
 
-    this.setTotal(waitingRecordCount);
-    // Pull BATCH_SIZE amount of records at a time from server
+    // Pull this.batchSize amount of records at a time from server
     while (progress < total) {
       // Get a batch of records and integrate them
       const incomingRecords = await this.getIncomingRecords();
@@ -271,7 +270,7 @@ export class Synchroniser {
       if (progress >= total) {
         waitingRecordCount = await this.getWaitingRecordCount();
         if (waitingRecordCount > total) {
-          total = waitingRecordCount;
+          total += waitingRecordCount;
           this.setTotal(total);
         }
       }
