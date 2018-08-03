@@ -229,7 +229,8 @@ export class Synchroniser {
       throw new Error('Unexpected response from sync server');
     }
     if (responseJson.error.length > 0) {
-      throw new Error('Server rejected pushed records');
+      const message = responseJson.message && `: ${responseJson.message}`;
+      throw new Error(`Server rejected pushed records${message}`);
     }
   };
 
