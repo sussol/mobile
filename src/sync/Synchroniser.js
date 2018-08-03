@@ -27,7 +27,9 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
-const INITIAL_SYNC_BATCH_SIZE = 10;
+const MIN_SYNC_BATCH_SIZE = 10;
+const MAX_SYNC_BATCH_SIZE = 500;
+const OPTIMAL_BATCH_SPEED = 5;
 
 /**
  * Provides core synchronization functionality, initilising the database with an
