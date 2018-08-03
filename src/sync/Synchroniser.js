@@ -27,7 +27,7 @@ const {
   SYNC_URL,
 } = SETTINGS_KEYS;
 
-const BATCH_SIZE = 20; // Number of records to sync at one time
+const INITIAL_BATCH_SIZE = 20; // Number of records to sync at one time
 
 /**
  * Provides core synchronization functionality, initilising the database with an
@@ -44,6 +44,7 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
+    this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }
 
@@ -57,6 +58,15 @@ export class Synchroniser {
   setError = errorMessage => this.dispatch(setSyncError(errorMessage));
   setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
   setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
+
+  refreshSyncParams = () => {
+    this.serverURL = this.settings.get(SYNC_URL);
+    this.thisSiteId = this.settings.get(SYNC_SITE_ID);
+    this.serverId = this.settings.get(SYNC_SERVER_ID);
+    this.thisSiteName = this.settings.get(SYNC_SITE_NAME);
+    this.authHeader = this.authenticator.getAuthHeader();
+    this.batchSize = INITIAL_BATCH_SIZE;
+  };
 
   /**
    * Wipe the current database, check that the given url can be synced against
@@ -77,10 +87,10 @@ export class Synchroniser {
     // serverURL is different, it is either completely fresh, or the URL has been changed so we
     // should start afresh. Do the same for syncSiteName, so that it isn't possible to start syncing
     // data from a site different to what initialisation was previously started with.
-    const oldSyncUrl = this.settings.get(SYNC_URL);
-    const oldSyncSiteName = this.settings.get(SYNC_SITE_NAME);
+    const oldSyncURL = this.serverURL;
+    const oldSyncSiteName = this.thisSiteName;
     const isFresh =
-      !oldSyncUrl || serverURL !== oldSyncUrl || !syncSiteName || syncSiteName !== oldSyncSiteName;
+      !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
 
     if (isFresh) {
       this.database.write(() => {
@@ -89,15 +99,16 @@ export class Synchroniser {
     }
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
-      const thisSiteId = this.settings.get(SYNC_SITE_ID);
-      const serverId = this.settings.get(SYNC_SERVER_ID);
+      this.refreshSyncParams(); // authenticate sets all the sync settings in database, so refresh
+
       if (isFresh) {
         // If a fresh initialisation, tell the server to prepare required sync records
         await fetch(
-          `${serverURL}/sync/v3/initial_dump/?from_site=${thisSiteId}&to_site=${serverId}`,
+          `${this.serverURL}/sync/v3/initial_dump/` +
+            `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
           {
             headers: {
-              Authorization: this.authenticator.getAuthHeader(),
+              Authorization: this.authHeader,
             },
           },
         );
@@ -112,6 +123,7 @@ export class Synchroniser {
       this.setIsSyncing(false);
       throw error;
     }
+
     this.settings.set(SYNC_IS_INITIALISED, 'true');
     this.syncQueue.enable(); // Begin the sync queue listening to database changes
     this.setIsSyncing(false);
@@ -138,12 +150,13 @@ export class Synchroniser {
   /**
    * Carry out a synchronization, first pushing any local changes, then pulling
    * down remote changes and integrating them into the local database.
-   * @return {[type]} [description]
+   * @return {none}
    */
   synchronise = async () => {
     try {
       if (!this.isInitialised()) throw new Error('Not yet initialised');
       this.setIsSyncing(true);
+      this.refreshSyncParams();
 
       // Keeps track between app close/open whether last sync was successful
       this.settings.set(SYNC_PRIOR_FAILED, 'true');
@@ -175,10 +188,10 @@ export class Synchroniser {
     this.setProgress(0);
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {
-      const recordsToSync = this.syncQueue.next(BATCH_SIZE);
+      const recordsToSync = this.syncQueue.next(this.batchSize);
       const translatedRecords = recordsToSync
         .map(this.translateRecord) // Apply map function to get translated records
-        .filter((record) => !!record); // If error thrown, may be null so filter falsy values out
+        .filter(record => !!record); // If error thrown, may be null so filter falsy values out
       await this.pushRecords(translatedRecords);
       // Records that threw errors in translateRecord() are still removed
       this.syncQueue.use(recordsToSync);
@@ -209,15 +222,13 @@ export class Synchroniser {
    * @return {Promise}         Resolves if successful, or passes up any error thrown
    */
   pushRecords = async records => {
-    const serverURL = this.settings.get(SYNC_URL);
-    const thisSiteId = this.settings.get(SYNC_SITE_ID);
-    const serverId = this.settings.get(SYNC_SERVER_ID);
     const response = await fetch(
-      `${serverURL}/sync/v3/queued_records/?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${this.serverURL}/sync/v3/queued_records/` +
+        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         method: 'POST',
         headers: {
-          Authorization: this.authenticator.getAuthHeader(),
+          Authorization: this.authHeader,
         },
         body: JSON.stringify(records),
       },
@@ -238,65 +249,49 @@ export class Synchroniser {
    * @return {Promise} Resolves if successful, or passes up any error thrown
    */
   pull = async () => {
+    let waitingRecordCount = await this.getWaitingRecordCount();
+    let total = waitingRecordCount;
+    let progress = 0;
+
     this.setProgressMessage('Pulling changes from the server');
-    this.setProgress(0);
-    this.setTotal(0);
-    const serverURL = this.settings.get(SYNC_URL);
-    const thisSiteId = this.settings.get(SYNC_SITE_ID);
-    const serverId = this.settings.get(SYNC_SERVER_ID);
-    await this.recursivePull(serverURL, thisSiteId, serverId, 0);
-  };
+    this.setProgress(progress);
+    this.setTotal(total);
 
-  /**
-   * Recursively checks how many records left to pull, pulls in a batch, and calls
-   * itself
-   * @param  {string} serverURL  The URL of the sync server
-   * @param  {string} thisSiteId The sync ID of this sync site
-   * @param  {string} serverId   The sync ID of the server
-   * @return {Promise}          Resolves if successful, or passes up any error thrown
-   */
-  recursivePull = async (serverURL, thisSiteId, serverId, currentTotal) => {
-    const authHeader = this.authenticator.getAuthHeader();
-    const waitingRecordCount = await this.getWaitingRecordCount(
-      serverURL,
-      thisSiteId,
-      serverId,
-      authHeader,
-    );
-    // Allow total to increase in case more records are added to the server sync queue during sync
-    const newTotal = Math.max(waitingRecordCount, currentTotal);
-    this.setTotal(newTotal);
-    if (waitingRecordCount === 0) return; // Done recursing through records
+    // Pull this.batchSize amount of records at a time from server
+    while (progress < total) {
+      // Get a batch of records and integrate them
+      const incomingRecords = await this.getIncomingRecords();
+      this.integrateRecords(incomingRecords);
+      await this.acknowledgeRecords(incomingRecords);
+      // Break out if incoming records is actually empty (something weird happened on server API).
+      // Basically future proof to not get infinite loop.
+      if (incomingRecords.length <= 0) break;
+      progress += incomingRecords.length;
 
-    // Get a batch of records and integrate them
-    const incomingRecords = await this.getIncomingRecords(
-      serverURL,
-      thisSiteId,
-      serverId,
-      authHeader,
-      BATCH_SIZE,
-    );
-    this.integrateRecords(incomingRecords);
-    await this.acknowledgeRecords(serverURL, thisSiteId, serverId, authHeader, incomingRecords);
-    this.incrementProgress(incomingRecords.length);
+      // Check no new records added to incoming queue on last iteration.
+      if (progress >= total) {
+        waitingRecordCount = await this.getWaitingRecordCount();
+        if (waitingRecordCount > 0) {
+          total = progress + waitingRecordCount;
+          this.setTotal(total);
+        }
+      }
 
-    // Recurse to get the next batch of records from the server
-    await this.recursivePull(serverURL, thisSiteId, serverId, newTotal);
+      this.incrementProgress(incomingRecords.length);
+    }
   };
 
   /**
    * Returns the number of records left to pull
-   * @param  {string} serverURL  URL of the sync server
-   * @param  {string} thisSiteId Sync ID of this sync site
-   * @param  {string} serverId   Sync ID of the server
    * @return {Promise}           Resolves with the record count, or passes up any error thrown
    */
-  getWaitingRecordCount = async (serverURL, thisSiteId, serverId, authHeader) => {
+  getWaitingRecordCount = async () => {
     const response = await fetch(
-      `${serverURL}/sync/v3/queued_records/count?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${this.serverURL}/sync/v3/queued_records/count` +
+        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         headers: {
-          Authorization: authHeader,
+          Authorization: this.authHeader,
         },
       },
     );
@@ -315,19 +310,15 @@ export class Synchroniser {
 
   /**
    * Returns the next batch of incoming sync records
-   * @param  {string}  serverURL  The URL of the sync server
-   * @param  {string}  thisSiteId The sync ID of this sync site
-   * @param  {string}  serverId   The sync ID of the server
-   * @param  {integer} numRecords The number of records to fetch
    * @return {Promise}            Resolves with the records, or passes up any error thrown
    */
-  getIncomingRecords = async (serverURL, thisSiteId, serverId, authHeader, numRecords) => {
+  getIncomingRecords = async () => {
     const response = await fetch(
-      `${serverURL}/sync/v3/queued_records` +
-        `?from_site=${thisSiteId}&to_site=${serverId}&limit=${numRecords}`,
+      `${this.serverURL}/sync/v3/queued_records` +
+        `?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${this.batchSize}`,
       {
         headers: {
-          Authorization: authHeader,
+          Authorization: this.authHeader,
         },
       },
     );
@@ -343,8 +334,7 @@ export class Synchroniser {
 
   /**
    * Parse the batch of incoming records, and integrate them into the local database
-   * @param  {Realm}  database The local database
-   * @param  {object} records  The json object the server sent to represent records
+   * @param  {object} syncJson  The json object the server sent to represent records
    * @return {none}
    */
   integrateRecords(syncJson) {
@@ -357,24 +347,21 @@ export class Synchroniser {
 
   /**
    * Sends the sync server a message to indicate the sync records have been consumed
-   * @param  {string}  serverURL  Base URL of the sync server
-   * @param  {string}  thisSiteId Sync id of this mobile site
-   * @param  {string}  serverId   Sync id of the primary server
-   * @param  {string}  authHeader Base64 encoded Basic auth header
    * @param  {array}   records    Sync records that have been integrated
    * @return {none}
    */
-  acknowledgeRecords = async (serverURL, thisSiteId, serverId, authHeader, records) => {
+  acknowledgeRecords = async records => {
     const syncIds = records.map(record => record.SyncID);
     const requestBody = {
       SyncRecordIDs: syncIds,
     };
     await fetch(
-      `${serverURL}/sync/v3/acknowledged_records?from_site=${thisSiteId}&to_site=${serverId}`,
+      `${this.serverURL}/sync/v3/acknowledged_records` +
+        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         method: 'POST',
         headers: {
-          Authorization: authHeader,
+          Authorization: this.authHeader,
         },
         body: JSON.stringify(requestBody),
       },
