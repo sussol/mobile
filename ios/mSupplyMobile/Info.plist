@@ -62,7 +62,7 @@
 		<string>MaterialCommunityIcons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 	</array>
-  <key>BugsnagAPIKey</key>
-  <string>16a680e189b1e5f03f28665870f1401f</string>
+	<key>BugsnagAPIKey</key>
+	<string>16a680e189b1e5f03f28665870f1401f</string>
 </dict>
 </plist>
