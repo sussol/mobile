@@ -22,7 +22,7 @@ export class UIDatabase {
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
 
     const date = new Date();
-    const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
+    const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`; // eslint-disable-line max-len
     const copyFileName = `${filename} ${dateString}`;
 
     // If the database is not closed, there is a small chance of corrupting the data
@@ -30,6 +30,7 @@ export class UIDatabase {
     realm.close();
     RNFS.mkdir(exportFolder)
       .then(() => RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`)
+        // copyFileName, derived from store name, might have invalid characters for filesystem
         .catch(() => RNFS.copyFile(realmPath, `${exportFolder}/msupply-mobile-data.realm`))
       )
       .finally(() => { this.database.realm = new Realm(schema); }); // reopen the realm
