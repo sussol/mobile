@@ -65,7 +65,7 @@ export class Synchroniser {
     this.serverId = this.settings.get(SYNC_SERVER_ID);
     this.thisSiteName = this.settings.get(SYNC_SITE_NAME);
     this.authHeader = this.authenticator.getAuthHeader();
-    this.batchSize = INITIAL_SYNC_BATCH_SIZE;
+    this.batchSize = MIN_SYNC_BATCH_SIZE;
   };
 
   /**
@@ -374,24 +374,21 @@ export class Synchroniser {
 
   /**
    * Closure for handling adjusting the batch size that sync uses
-   * @return {none}
+   * @return {function} A closure function that when called ends timing and adjusts batch size
    */
   batchSizeAdjustor = () => {
     const start = Date.now();
     return () => {
       const timeTaken = (Date.now() - start) / 1000;
-      if (timeTaken > 10) {
-        // Reset if taking over 10 seconds
-        this.batchSize = INITIAL_SYNC_BATCH_SIZE;
-      } else if (timeTaken > 5) {
-        // Decrease if taking over 5 seconds
-        const adjustment = this.batchSize / 2;
-        this.batchSize = Math.max(this.batchSize - adjustment, INITIAL_SYNC_BATCH_SIZE);
-      } else if (timeTaken < 3) {
-        // Increase if taking less than 3 seconds
-        const adjustment = Math.min(this.batchSize, 100);
-        this.batchSize = Math.min(this.batchSize + adjustment, 500);
-      }
+      const durationPerRecord = timeTaken / this.batchSize;
+      const optimalBatchSize = OPTIMAL_BATCH_SPEED / durationPerRecord;
+      let newBatchSize = optimalBatchSize;
+
+      newBatchSize = Math.floor(newBatchSize);
+      newBatchSize = Math.max(newBatchSize, MIN_SYNC_BATCH_SIZE);
+      newBatchSize = Math.min(newBatchSize, MAX_SYNC_BATCH_SIZE);
+
+      this.batchSize = newBatchSize;
     };
   };
 }
