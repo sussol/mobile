@@ -180,11 +180,7 @@ export class Synchroniser {
       this.setIsSyncing(false);
       this.setCompletionTime(new Date().getTime());
     } catch (error) {
-      // Ping the error off to bugsnag
-      bugsnagClient.notify(error);
-
-      this.setError(error.userMessage);
-      this.setIsSyncing(false);
+      this.handleSyncError(error);
     }
   };
 
@@ -242,27 +238,19 @@ export class Synchroniser {
         headers: {
           Authorization: this.authHeader,
         },
-        body: 'asf'+JSON.stringify(records),
+        body: 'asf' + JSON.stringify(records),
       },
     );
     let responseJson;
     try {
       responseJson = await response.json();
     } catch (error) {
-      throwSyncError(error.message);
+      this.handleSyncError(error);
     }
     if (responseJson.error.length > 0) {
       const parsedError = JSON.stringify(responseJson);
-      throwSyncError(parsedError);
+      throw Error(parsedError);
     }
-
-    const throwSyncError = (errorMessage) => {
-      const userMessage = `Error with server response, please contact mSupply mobile support. ${errorMessage}`; // eslint-disable-line max-len
-      const message = `SYNC SERVER RESPONSE ERROR. siteName: ${this.siteName}, serverUrl: ${this.serverURL}, storeId: ${this.thisStoreId}, error message: ${errorMessage}`; // eslint-disable-line max-len
-      const syncError = new Error('sdfdsfsf;l');
-      syncError.userMessage = userMessage;
-      throw syncError;
-    };
   };
 
   /**
@@ -326,7 +314,7 @@ export class Synchroniser {
       throw new Error(responseJson.error);
     }
     if (typeof responseJson.NumRecords !== 'number') {
-      throw new Error('Unexpected response from server');
+      throw new Error('queued_records: Unexpected response from server');
     }
     return responseJson.NumRecords;
   };
@@ -409,5 +397,20 @@ export class Synchroniser {
 
       this.batchSize = newBatchSize;
     };
+  };
+
+  /**
+   * Handles a given error, updating message to user and customing the error.message for bugsnag
+   * before notifying
+   * @param {Error} error The error to handle
+   * @return {none}
+   */
+  handleSyncError = error => {
+    this.setError(`Sync error: ${error.message}`);
+    error.message = `SYNC SERVER RESPONSE ERROR. siteName: ${this.siteName}, serverUrl: ${
+      this.serverURL
+    }, storeId: ${this.thisStoreId}, error message: ${error.message}`; // eslint-disable-line max-len
+    bugsnagClient.notify(error);
+    this.setIsSyncing(false);
   };
 }
