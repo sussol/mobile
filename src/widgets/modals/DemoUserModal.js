@@ -43,6 +43,7 @@ export class DemoUserModal extends React.Component {
         this.state.password,
         this.state.repeatPassword,
       );
+      this.setState({ status: 'submitted' });
     } catch (error) {
       this.setState({ status: 'error', error: error.message });
       if (!error.message.startsWith('Invalid username or password')) {

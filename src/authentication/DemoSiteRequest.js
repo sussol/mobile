@@ -2,9 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-
-// const DEMO_SITE_REQUST_URL = '/sync/v3/mobile/requestDemo';
-
+import { hashPassword } from 'sussol-utilities';
 export class DemoSiteRequest {
   async createActivationURL(username, email, password, repeatPassword) {
     // Client side validation
@@ -14,6 +12,32 @@ export class DemoSiteRequest {
     if (password.length === 0) throw new Error('Enter the password');
     if (repeatPassword.length === 0) throw new Error('Enter the repeat password');
     if (password !== repeatPassword) throw new Error('Password & repeat password must match');
+
+    // Hash the password
+    const passwordHash = hashPassword(password);
+
+    // TODO: Need proper URL in 4D to work
+    const URL = 'http://localhost:8080/v4/mobile/requestDemo';
+    let responseJson;
+    try {
+      const response = await fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({
+          username: username,
+          email: email,
+          password: passwordHash,
+        }),
+      });
+      responseJson = response.json();
+
+      if (responseJson.error) {
+        throw new Error(responseJson.error);
+      }
+      return responseJson;
+    } catch (error) {
+      // Pass error up
+      throw error;
+    }
   }
 
   validateEmail(text) {
