@@ -11,6 +11,7 @@ export {
   FinaliseModal,
   LanguageModal,
   LoginModal,
+  DemoUserModal,
   PageContentModal,
   SelectModal,
 } from './modals';

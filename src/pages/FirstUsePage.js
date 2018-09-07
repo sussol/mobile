@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
-import { SyncState } from '../widgets';
+import { SyncState, DemoUserModal } from '../widgets';
 import globalStyles, {
   SUSSOL_ORANGE,
   WARM_GREY,
@@ -30,6 +30,7 @@ export class FirstUsePage extends React.Component {
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
+      isDemoUserModalOpen: false,
     };
     this.setAppVersion();
     this.siteNameInputRef = null;
@@ -162,7 +163,23 @@ export class FirstUsePage extends React.Component {
             />
           </View>
         </View>
+        <View style={localStyles.demoSiteRequestButtonContainer}>
+          <View style={globalStyles.horizontalContainer}>
+            <Button
+              style={[globalStyles.authFormButton, { flex: 1 }]}
+              textStyle={globalStyles.authFormButtonText}
+              text="Request a Demo Store"
+              onPress={() => this.setState({ isDemoUserModalOpen: true })}
+              disabledColor={WARM_GREY}
+              isDisabled={this.state.status !== 'uninitialised' && this.state.status !== 'error'}
+            />
+          </View>
+        </View>
         <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
+        <DemoUserModal
+          isOpen={this.state.isDemoUserModalOpen}
+          onClose={() => this.setState({ isDemoUserModalOpen: false })}
+        />
       </View>
     );
   }
@@ -175,6 +192,11 @@ FirstUsePage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
+  demoSiteRequestButtonContainer: {
+    marginHorizontal: 300,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
   initialisationStateIcon: {
     marginTop: 46,
     marginBottom: 24,
