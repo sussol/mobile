@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
+import { DemoSiteRequest } from '../../authentication';
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { authStrings, generalStrings } from '../../localization';
 import { ConfirmModal } from '../../widgets';
@@ -16,6 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 export class DemoUserModal extends React.Component {
   constructor(props) {
     super(props);
+    this.demoSiteRequest = new DemoSiteRequest();
     this.state = {
       status: 'submit', // submit, submitting, submitted, error
       error: '',
@@ -31,19 +33,18 @@ export class DemoUserModal extends React.Component {
     if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 
-  onDemoRequestSubmit = () => {
+  onDemoRequestSubmit = async () => {
     this.setState({ status: 'submitting' });
     try {
-      // TODO: Probably a client side js validation of username, password, email
-      //       Compare validation of password with repeat password
       // TODO: Demo store creation request logic goes here.
-      // Just to simulate form submission time, remove when server-side
-      // script is ready
-      setTimeout(() => {
-        this.setState({ status: 'submitted' });
-      }, 5000);
+      await this.demoSiteRequest.createActivationURL(
+        this.state.username,
+        this.state.email,
+        this.state.password,
+        this.state.repeatPassword,
+      );
     } catch (error) {
-      this.setState({ authStatus: 'error', error: error.message });
+      this.setState({ status: 'error', error: error.message });
       if (!error.message.startsWith('Invalid username or password')) {
         // After ten seconds of displaying the error, re-enable the button
         this.errorTimeoutId = setTimeout(() => {
