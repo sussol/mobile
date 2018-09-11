@@ -16,8 +16,7 @@ export class DemoSiteRequest {
     if (!this.textNotBlank(password)) throw new Error('Password cannot contain spaces.');
     // Hash the password
     const passwordHash = hashPassword(password);
-
-    // TODO: Need proper URL in 4D to work
+    // Need proper demo server URL in 4D to work
     const URL = 'http://192.168.3.145:7848/api/v4/mobile/requestDemo';
     let responseJson;
     try {
@@ -41,6 +40,8 @@ export class DemoSiteRequest {
     }
   }
 
+  // Validation methods
+  // TODO: Could be extracted to a helper file to be used elsewhere
   validateEmail(text) {
     const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return reg.test(text);
