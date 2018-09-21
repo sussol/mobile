@@ -12,8 +12,8 @@ export class DemoSiteRequest {
     if (password.length === 0) throw new Error('Enter the password');
     if (repeatPassword.length === 0) throw new Error('Enter the repeat password');
     if (password !== repeatPassword) throw new Error('Password & repeat password must match');
-    if (this.textLengthBetween(password)) throw new Error('Password must be 8-32 characters long');
-    if (!this.textNotBlank(password)) throw new Error('Password cannot contain spaces.');
+    if (this.textLengthInvalid(password)) throw new Error('Password must be 8-32 characters long');
+    if (this.textContainsSpaces(password)) throw new Error('Password cannot contain spaces.');
     // Hash the password
     const passwordHash = hashPassword(password);
     // Need proper demo server URL in 4D to work
@@ -47,12 +47,12 @@ export class DemoSiteRequest {
     return reg.test(text);
   }
 
-  textNotBlank(text) {
+  textContainsSpaces(text) {
     const reg = /^\S*$/;
-    return reg.test(text);
+    return !(reg.test(text));
   }
 
-  textLengthBetween(text, lessThen = 8, greaterThen = 32) {
+  textLengthInvalid(text, lessThen = 8, greaterThen = 32) {
     return text.length < lessThen || text.length > greaterThen;
   }
 }
