@@ -57,6 +57,9 @@ export class FirstUsePage extends React.Component {
     this.setState({ appVersion: appVersion });
   }
 
+  handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
+  handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
+
   get canAttemptLogin() {
     return (
       (this.state.status === 'uninitialised' || this.state.status === 'error') &&
@@ -169,7 +172,7 @@ export class FirstUsePage extends React.Component {
               style={[globalStyles.authFormButton, { flex: 1 }]}
               textStyle={globalStyles.authFormButtonText}
               text="Request a Demo Store"
-              onPress={() => this.setState({ isDemoUserModalOpen: true })}
+              onPress={this.handleDemoModalOpen}
               disabledColor={WARM_GREY}
               isDisabled={this.state.status !== 'uninitialised' && this.state.status !== 'error'}
             />
@@ -178,7 +181,7 @@ export class FirstUsePage extends React.Component {
         <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
         <DemoUserModal
           isOpen={this.state.isDemoUserModalOpen}
-          onClose={() => this.setState({ isDemoUserModalOpen: false })}
+          onClose={this.handleDemoModalClose}
         />
       </View>
     );

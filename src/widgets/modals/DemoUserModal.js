@@ -34,6 +34,7 @@ export class DemoUserModal extends React.Component {
   }
 
   onDemoRequestSubmit = async () => {
+    if (! this.canAttemptSubmit) return false;
     this.setState({ status: 'submitting' });
     try {
       // TODO: Demo store creation request logic goes here.
@@ -54,6 +55,7 @@ export class DemoUserModal extends React.Component {
         }, 10 * 1000);
       }
     }
+    return true;
   };
 
   onDemoSubmittedModalClose() {
@@ -89,6 +91,16 @@ export class DemoUserModal extends React.Component {
       default:
         return generalStrings.submit;
     }
+  }
+
+  // Handlers to set state of form variables on input onChange trigger
+  // Extracting into local methods because calling an anonymous function in onChange would
+  // re-render the input fields each time render() is called, causing slight performance hit
+  handleOnChangeEmail = (text) => this.setState({ email: text, status: 'submit' });
+  handleOnChangeUsername = (text) => this.setState({ username: text, status: 'submit' });
+  handleOnChangePassword = (text) => this.setState({ password: text, status: 'submit' });
+  handleOnChangeRepeatPassword = (text) => {
+    this.setState({ repeatPassword: text, status: 'submit' });
   }
 
   render() {
@@ -127,9 +139,7 @@ export class DemoUserModal extends React.Component {
                 editable={this.state.status !== 'submitting'}
                 returnKeyType={'next'}
                 selectTextOnFocus
-                onChangeText={text => {
-                  this.setState({ username: text, status: 'submit' });
-                }}
+                onChangeText={this.handleOnChangeUsername}
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
@@ -143,9 +153,7 @@ export class DemoUserModal extends React.Component {
                 editable={this.state.status !== 'submitting'}
                 returnKeyType={'next'}
                 selectTextOnFocus
-                onChangeText={text => {
-                  this.setState({ email: text, status: 'submit' });
-                }}
+                onChangeText={this.handleOnChangeEmail}
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
@@ -159,9 +167,7 @@ export class DemoUserModal extends React.Component {
                 editable={this.state.status !== 'submitting'}
                 returnKeyType={'next'}
                 selectTextOnFocus
-                onChangeText={text => {
-                  this.setState({ password: text, status: 'submit' });
-                }}
+                onChangeText={this.handleOnChangePassword}
               />
             </View>
             <View style={globalStyles.horizontalContainer}>
@@ -175,12 +181,8 @@ export class DemoUserModal extends React.Component {
                 editable={this.state.status !== 'submitting'}
                 returnKeyType={'next'}
                 selectTextOnFocus
-                onChangeText={text => {
-                  this.setState({ repeatPassword: text, status: 'submit' });
-                }}
-                onSubmitEditing={() => {
-                  if (this.canAttemptSubmit) this.onDemoRequestSubmit();
-                }}
+                onChangeText={this.handleOnChangeRepeatPassword}
+                onSubmitEditing={this.onDemoRequestSubmit}
               />
             </View>
             <View style={globalStyles.authFormButtonContainer}>
