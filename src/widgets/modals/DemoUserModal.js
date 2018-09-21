@@ -10,7 +10,7 @@ import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import { DemoSiteRequest } from '../../authentication';
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
-import { authStrings, generalStrings } from '../../localization';
+import { authStrings, generalStrings, demoUserModelStrings } from '../../localization';
 import { ConfirmModal } from '../../widgets';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -126,7 +126,7 @@ export class DemoUserModal extends React.Component {
             />
             <View style={globalStyles.horizontalContainer}>
               <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
-                Please provide your User Name, Email address & Password below
+                {demoUserModelStrings.modalBodyText}
               </Text>
             </View>
             <View style={globalStyles.horizontalContainer}>
@@ -198,10 +198,7 @@ export class DemoUserModal extends React.Component {
           </View>
           <ConfirmModal
             isOpen={this.state.status === 'submitted'}
-            questionText="One step closer to creating your Demo Store. We need to verify
-            the email address you have provided so that we could generate your store and
-            send you the credentials to it. We have sent you an e-mail with a verification
-            link. Please check your provided email address and click on the verification link."
+            questionText={demoUserModelStrings.confirmModalBody}
             onConfirm={() => this.onDemoSubmittedModalClose()}
             confirmText="Close"
           />

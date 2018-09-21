@@ -7,9 +7,11 @@ export { pageInfoStrings } from './pageInfoStrings';
 export { setCurrentLanguage } from './utilities';
 export { tableStrings } from './tableStrings';
 export { syncStrings } from './syncStrings';
+export { demoUserModelStrings } from './demoUserModelStrings';
+export { validationStrings } from './validationStrings';
 
 // Order of pairs defines the order they show in the ListView of LanguageModal. Keep
-// it alphabetical except for English, keep it at the top. JS objects don't guarentee insertion
+// it alphabetical except for English, keep it at the top. JS objects don't guarantee insertion
 // order, so if the default is ever reported wrong, that is a good place to look first.
 const languageKeys = {
   gb: 'English',

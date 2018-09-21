@@ -3,17 +3,20 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 import { hashPassword } from 'sussol-utilities';
+import { validationStrings } from '../localization';
 export class DemoSiteRequest {
   async createActivationURL(username, email, password, repeatPassword) {
     // Client side validation
-    if (email.length === 0) throw new Error('Enter the E-mail');
-    if (!this.validateEmail(email)) throw new Error('Enter a valid E-mail');
-    if (username.length === 0) throw new Error('Enter the username');
-    if (password.length === 0) throw new Error('Enter the password');
-    if (repeatPassword.length === 0) throw new Error('Enter the repeat password');
-    if (password !== repeatPassword) throw new Error('Password & repeat password must match');
-    if (this.textLengthInvalid(password)) throw new Error('Password must be 8-32 characters long');
-    if (this.textContainsSpaces(password)) throw new Error('Password cannot contain spaces.');
+    if (email.length === 0) throw new Error(validationStrings.email.required);
+    if (!this.validateEmail(email)) throw new Error(validationStrings.email.valid);
+    if (username.length === 0) throw new Error(validationStrings.username.required);
+    if (password.length === 0) throw new Error(validationStrings.password.required);
+    if (repeatPassword.length === 0) throw new Error(validationStrings.repeatPassword.required);
+    if (password !== repeatPassword) throw new Error(validationStrings.password.matchRepeat);
+    if (this.textLengthInvalid(password)) throw new Error(validationStrings.password.lengthInvalid);
+    if (this.textContainsSpaces(password)) {
+      throw new Error(validationStrings.password.containsSpaces);
+    }
     // Hash the password
     const passwordHash = hashPassword(password);
     // Need proper demo server URL in 4D to work
