@@ -20,7 +20,9 @@ export class DemoSiteRequest {
     // Hash the password
     const passwordHash = hashPassword(password);
     // Need proper demo server URL in 4D to work
-    const URL = 'http://192.168.3.145:7848/api/v4/mobile/requestDemo';
+    const domainName = 'http://192.168.3.145:7848';
+    const URL = `${domainName}/api/v4/mobile/requestDemo`;
+
     let responseJson;
     try {
       const response = await fetch(URL, {
