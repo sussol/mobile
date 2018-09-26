@@ -18,7 +18,12 @@ export class DemoSiteRequest {
       throw new Error(validationStrings.password.containsSpaces);
     }
     // Hash the password
-    const passwordHash = hashPassword(password);
+    // TODO: If we send password hashed from here it will be stored that way in database
+    //       Later during authentication REST_Authenticate tries to double hash it
+    //      This is what we should do but we need to discuss how we are going to handle
+    //      Password in database that are not hashed yet
+    // const passwordHash = hashPassword(password);
+    const passwordHash = password;
     // Need proper demo server URL in 4D to work
     const domainName = 'http://192.168.3.145:7848';
     const URL = `${domainName}/api/v4/mobile/requestDemo`;
