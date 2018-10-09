@@ -34,7 +34,7 @@ export class DemoUserModal extends React.Component {
   }
 
   onDemoRequestSubmit = async () => {
-    if (! this.canAttemptSubmit) return false;
+    if (!this.canAttemptSubmit) return false;
     this.setState({ status: 'submitting' });
     try {
       // TODO: Demo store creation request logic goes here.
