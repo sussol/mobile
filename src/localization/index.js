@@ -7,7 +7,7 @@ export { pageInfoStrings } from './pageInfoStrings';
 export { setCurrentLanguage } from './utilities';
 export { tableStrings } from './tableStrings';
 export { syncStrings } from './syncStrings';
-export { demoUserModelStrings } from './demoUserModelStrings';
+export { demoUserModalStrings } from './demoUserModalStrings';
 export { validationStrings } from './validationStrings';
 
 // Order of pairs defines the order they show in the ListView of LanguageModal. Keep
