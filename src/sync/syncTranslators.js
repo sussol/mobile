@@ -27,6 +27,7 @@ class SyncTranslator {
 export const RECORD_TYPES = new SyncTranslator({
   Item: 'item',
   ItemStoreJoin: 'item_store_join',
+  LocationType: 'Location_type',
   ItemBatch: 'item_line',
   ItemDepartment: 'item_department',
   ItemCategory: 'item_category',

@@ -21,7 +21,7 @@ import {
 import { ListView } from 'realm/react-native';
 
 import globalStyles from '../globalStyles';
-
+// TODO, get this from schema
 const OBJECT_TYPES = [
   'Address',
   'Item',
@@ -36,12 +36,16 @@ const OBJECT_TYPES = [
   'MasterList',
   'MasterListItem',
   'MasterListNameJoin',
+  'Location',
+  'LocationType',
   'Name',
   'NameStoreJoin',
   'NumberSequence',
   'NumberToReuse',
   'Requisition',
   'RequisitionItem',
+  'Sensor',
+  'SensorLog',
   'Setting',
   'SyncOut',
   'Stocktake',

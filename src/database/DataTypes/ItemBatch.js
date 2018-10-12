@@ -7,13 +7,17 @@ export class ItemBatch extends Realm.Object {
     return this.numberOfPacks * this.packSize;
   }
 
+  get itemCode() {
+    return this.item.code;
+  }
+
   // Return the date this batch was added, assuming that was in the earliest transaction batch
   // connected to this item batch
   get addedDate() {
     if (this.transactionBatches.length === 0) return new Date();
     const transactionBatches = this.transactionBatches.slice();
     const sortedTransactionBatches = transactionBatches.sort(
-      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate
+      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate,
     );
     return sortedTransactionBatches[0].transaction.confirmDate;
   }
@@ -24,6 +28,28 @@ export class ItemBatch extends Realm.Object {
 
   get itemName() {
     return this.item ? this.item.name : '';
+  }
+
+  get thresholdTemperature() {
+    const { locationType } = this.item;
+    if (locationType === null) return 'no location type for item';
+
+    return `${locationType.minTemperature.toFixed(1)} to ${locationType.maxTemperature.toFixed(1)}`;
+  }
+
+  get temperatureExposure() {
+    if (!this.location || !this.location.sensor) return '';
+
+    const sortedTemperatures = this.location.sensor.sensorLogs
+      .filtered('timestamp > $0', this.addedDate)
+      .sorted('value');
+
+    if (sortedTemperatures.length === 0) return '';
+
+    return (
+      `${sortedTemperatures[0].value.toFixed(1)} to ` +
+      `${sortedTemperatures[sortedTemperatures.length - 1].value.toFixed(1)}`
+    );
   }
 
   set totalQuantity(quantity) {
@@ -42,7 +68,7 @@ export class ItemBatch extends Realm.Object {
     const transactionBatches = this.transactionBatches.filtered(
       'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
       startDate,
-      endDate
+      endDate,
     );
 
     return getTotal(transactionBatches, 'usage');
@@ -72,6 +98,7 @@ ItemBatch.schema = {
     numberOfPacks: { type: 'double', default: 0 },
     expiryDate: { type: 'date', optional: true },
     batch: { type: 'string', default: '' },
+    location: { type: 'Location', default: null },
     costPrice: { type: 'double', default: 0 },
     sellPrice: { type: 'double', default: 0 },
     supplier: { type: 'Name', optional: true },

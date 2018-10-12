@@ -25,8 +25,9 @@ export const navStrings = new LocalizedStrings({
     stocktake: 'Stocktake',
     supplier_invoices: 'Supplier Invoices',
     supplier_requisitions: 'Supplier Requisitions',
+    vaccine_module: 'Vaccine Module',
   },
-  fr: {
+  fr: { // TODO: add - vaccine_module
     current_stock: 'Stock actuel',
     customer_invoices: 'Factures client',
     customer_requisitions: 'Réquisitions clients',
@@ -43,8 +44,9 @@ export const navStrings = new LocalizedStrings({
     stocktake: "Relevé d'nventaire",
     supplier_invoices: 'Factures fournisseurs',
     supplier_requisitions: 'Factures réquisitions',
+    vaccine_module: 'Vaccine Module',
   },
-  gil: { // TODO: add - stocktake
+  gil: { // TODO: add - vaccine_module, stocktake
     current_stock: 'Mwaitin am bwai n\naoraki ke am supply',
     customer_invoices: 'Ana invoice am\nkiriniki ke am aoraki',
     customer_requisitions: 'Am oota n am clinic',
@@ -60,8 +62,9 @@ export const navStrings = new LocalizedStrings({
     stocktakes: 'Warebwai',
     supplier_invoices: 'Ana Invoice\nam Supplier',
     supplier_requisitions: 'Am oota nakon\nte pharmacy',
+    vaccine_module: 'Vaccine Module',
   },
-  tl: { // TODO: add - stocktake
+  tl: { // TODO: add - vaccine_module, stocktake
     current_stock: 'Sasán Atuál',
     customer_invoices: 'Kliente nia Konta',
     customer_requisitions: 'Kliente nia Rekuizasaun',
@@ -77,5 +80,6 @@ export const navStrings = new LocalizedStrings({
     stocktakes: 'Ajustamentu sira',
     supplier_invoices: 'Distribuidór nia Konta',
     supplier_requisitions: 'Rekuizasaun\nba Distribuidor',
+    vaccine_module: 'Vaccine Module',
   },
 });

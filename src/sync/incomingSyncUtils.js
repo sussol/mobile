@@ -113,18 +113,41 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'ItemStoreJoin': {
       const joinsThisStore = record.store_ID === settings.get(THIS_STORE_ID);
+      console.log('Receiving Item Store Join');
+      console.log(record);
       internalRecord = {
         id: record.ID,
         itemId: record.item_ID,
         joinsThisStore: joinsThisStore,
       };
       database.update(recordType, internalRecord);
+
       if (joinsThisStore) {
         // If it joins this store, set the item's visibility
         const item = database.getOrCreate('Item', record.item_ID);
         item.isVisible = !parseBoolean(record.inactive);
+
+        let LocationType = null;
+        const storeJoinRecord = database.getOrCreate('ItemStoreJoin', record.ID);
+        // LocationType
+        if (record.restricted_location_type_id !== '') {
+          LocationType = database.getOrCreate('LocationType', record.restricted_location_type_id);
+        }
+        storeJoinRecord.locationType = LocationType;
+        item.locationType = LocationType;
+
         database.save('Item', item);
       }
+      break;
+    }
+    case 'LocationType': {
+      internalRecord = {
+        id: record.ID,
+        minTemperature: parseNumber(record.Temperature_min),
+        maxTemperature: parseNumber(record.Temperature_max),
+        description: record.Description,
+      };
+      database.update(recordType, internalRecord);
       break;
     }
     // LocalListItem not a class defined in our realm. The structure from mSupply
@@ -202,7 +225,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
           record.bill_address2,
           record.bill_address3,
           record.bill_address4,
-          record.bill_postal_zip_code
+          record.bill_postal_zip_code,
         ),
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
@@ -346,8 +369,9 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = database.getOrCreate('Name', record.name_ID);
       const enteredBy = database.getOrCreate('User', record.user_ID);
-      const linkedRequisition = record.requisition_ID ?
-                                database.getOrCreate('Requisition', record.requisition_ID) : null;
+      const linkedRequisition = record.requisition_ID
+        ? database.getOrCreate('Requisition', record.requisition_ID)
+        : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
       internalRecord = {
         id: record.ID,
@@ -556,6 +580,10 @@ export function sanityCheckIncomingRecord(recordType, record) {
       cannotBeBlank: ['status'],
       canBeBlank: ['Description', 'stock_take_created_date', 'serial_number'],
     },
+    LocationType: {
+      cannotBeBlank: ['Description', 'Temperature_min', 'Temperature_max'],
+      canBeBlank: [],
+    },
     StocktakeBatch: {
       cannotBeBlank: [
         'stock_take_ID',
@@ -592,7 +620,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist
       record[fieldName].length > 0, // And must not be blank
-    true
+    true,
   );
   if (!hasAllNonBlankFields) return false; // Return early if record already not valid
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
@@ -600,7 +628,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist
       record[fieldName] !== undefined, // May be blank, i.e. just ''
-    hasAllNonBlankFields
+    hasAllNonBlankFields,
   ); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
   return hasRequiredFields;
 }
@@ -614,7 +642,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
  * @param  {string} line3    Line 3 of the address (can be undefined)
  * @param  {string} line4    Line 4 of the address (can be undefined)
  * @param  {string} zipCode  Zip code of the address (can be undefined)
-   * @return {Realm.object}  The Address object described by the params
+ * @return {Realm.object}  The Address object described by the params
  */
 function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   let results = database.objects('Address');

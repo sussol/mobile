@@ -5,6 +5,8 @@ import {
   ItemCategory,
   ItemDepartment,
   ItemStoreJoin,
+  Location,
+  LocationType,
   MasterList,
   MasterListItem,
   MasterListNameJoin,
@@ -14,6 +16,8 @@ import {
   NumberToReuse,
   Requisition,
   RequisitionItem,
+  Sensor,
+  SensorLog,
   Setting,
   Stocktake,
   StocktakeBatch,
@@ -81,7 +85,6 @@ SyncOut.schema = {
   },
 };
 
-
 TransactionCategory.schema = {
   name: 'TransactionCategory',
   primaryKey: 'id',
@@ -91,6 +94,45 @@ TransactionCategory.schema = {
     code: { type: 'string', default: 'placeholderCode' },
     type: { type: 'string', default: 'placeholderType' },
     parentCategory: { type: 'TransactionCategory', optional: true },
+  },
+};
+
+LocationType.schema = {
+  name: 'LocationType',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    minTemperature: { type: 'float', optional: true },
+    maxTemperature: { type: 'float', optional: true },
+    description: { type: 'string', optional: true },
+  },
+};
+
+Sensor.schema = {
+  name: 'Sensor',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    address: 'string',
+    name: 'string',
+    sensorLogs: { type: 'list', objectType: 'SensorLog' },
+    latestValue: { type: 'float' },
+    latestValueTimestamp: { type: 'date' },
+    latestBatteryLevel: { type: 'float' },
+    latestDownloadDate: { type: 'date', optional: true },
+    logInterval: 'int',
+  },
+};
+
+SensorLog.schema = {
+  name: 'SensorLog',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    timestamp: { type: 'date', optional: true },
+    logCounter: 'int',
+    logInterval: 'int',
+    value: { type: 'float' },
   },
 };
 
@@ -112,34 +154,37 @@ User.schema = {
   },
 };
 
-export const schema =
-  {
-    schema: [
-      Address,
-      Item,
-      ItemBatch,
-      ItemDepartment,
-      ItemCategory,
-      ItemStoreJoin,
-      Transaction,
-      TransactionItem,
-      TransactionBatch,
-      TransactionCategory,
-      MasterList,
-      MasterListItem,
-      MasterListNameJoin,
-      Name,
-      NameStoreJoin,
-      NumberSequence,
-      NumberToReuse,
-      Requisition,
-      RequisitionItem,
-      Setting,
-      SyncOut,
-      Stocktake,
-      StocktakeItem,
-      StocktakeBatch,
-      User,
-    ],
-    schemaVersion: 5,
-  };
+export const schema = {
+  schema: [
+    Address,
+    Item,
+    ItemBatch,
+    ItemDepartment,
+    ItemCategory,
+    ItemStoreJoin,
+    Transaction,
+    TransactionItem,
+    TransactionBatch,
+    TransactionCategory,
+    Location,
+    LocationType,
+    MasterList,
+    MasterListItem,
+    MasterListNameJoin,
+    Name,
+    NameStoreJoin,
+    NumberSequence,
+    NumberToReuse,
+    Requisition,
+    RequisitionItem,
+    Sensor,
+    SensorLog,
+    Setting,
+    SyncOut,
+    Stocktake,
+    StocktakeItem,
+    StocktakeBatch,
+    User,
+  ],
+  schemaVersion: 6,
+};

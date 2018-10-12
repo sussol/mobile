@@ -41,34 +41,38 @@ export class AutocompleteSelector extends React.PureComponent {
       renderLeftText,
       renderRightText,
     } = this.props;
+    let data;
+    if (!this.props.hideSearchBar) {
+      data = options
+        .filtered(queryString, this.state.queryText)
+        .sorted(sortByString)
+        .slice();
+      if (queryStringSecondary) {
+        const secondQueryResult = options
+          .filtered(queryStringSecondary, this.state.queryText)
+          .sorted(sortByString);
+        // Remove duplicates from secondQueryResult
+        const secondaryData = complement(secondQueryResult, data);
 
-    let data = options
-      .filtered(queryString, this.state.queryText)
-      .sorted(sortByString)
-      .slice();
-    if (queryStringSecondary) {
-      const secondQueryResult = options
-        .filtered(queryStringSecondary, this.state.queryText)
-        .sorted(sortByString);
-      // Remove duplicates from secondQueryResult
-      const secondaryData = complement(secondQueryResult, data);
-
-      // Append secondary results to the first query results
-      data = data.concat(secondaryData);
-    }
+        // Append secondary results to the first query results
+        data = data.concat(secondaryData);
+      }
+    } else data = options.slice();
 
     return (
       <View style={localStyles.container}>
-        <SearchBar
-          autoCapitalize="none"
-          autoCorrect={false}
-          autoFocus
-          color={'white'}
-          onChange={text => this.setState({ queryText: text })}
-          placeholder={placeholderText}
-          placeholderTextColor={'white'}
-          style={[localStyles.text, localStyles.searchBar]}
-        />
+        {!this.props.hideSearchBar && (
+          <SearchBar
+            autoCapitalize="none"
+            autoCorrect={false}
+            autoFocus
+            color={'white'}
+            onChange={text => this.setState({ queryText: text })}
+            placeholder={placeholderText}
+            placeholderTextColor={'white'}
+            style={[localStyles.text, localStyles.searchBar]}
+          />
+        )}
         {data.length > 0 && (
           <FlatList
             data={data}
@@ -92,7 +96,7 @@ export class AutocompleteSelector extends React.PureComponent {
 
 AutocompleteSelector.propTypes = {
   options: PropTypes.object.isRequired,
-  queryString: PropTypes.string.isRequired,
+  queryString: PropTypes.string,
   queryStringSecondary: PropTypes.string,
   sortByString: PropTypes.string.isRequired,
   placeholderText: PropTypes.string,

@@ -83,7 +83,7 @@ export class Item extends Realm.Object {
   totalUsageForPeriod(startDate, endDate) {
     return this.batches.reduce(
       (total, batch) => total + batch.totalUsageForPeriod(startDate, endDate),
-      0
+      0,
     );
   }
 
@@ -134,5 +134,6 @@ Item.schema = {
     defaultPrice: { type: 'double', optional: true },
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
+    locationType: { type: 'LocationType', defualt: null },
   },
 };

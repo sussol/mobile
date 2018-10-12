@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
+  NativeModules,
 } from 'react-native';
 import { connect } from 'react-redux';
 import { addNavigationHelpers } from 'react-navigation';
@@ -42,6 +43,7 @@ import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { Scheduler } from 'sussol-utilities';
 import { MobileAppSettings } from './settings';
+import { generateUUID } from 'react-native-database';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -55,10 +57,12 @@ class MSupplyMobileAppContainer extends React.Component {
     migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
-    this.synchroniser = new Synchroniser(database,
-                                         syncAuthenticator,
-                                         this.settings,
-                                         props.dispatch);
+    this.synchroniser = new Synchroniser(
+      database,
+      syncAuthenticator,
+      this.settings,
+      props.dispatch,
+    );
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
@@ -76,29 +80,170 @@ class MSupplyMobileAppContainer extends React.Component {
       isLoading: false,
       syncModalIsOpen: false,
     };
+
+    // this.logTesting();
   }
+  /// TO BE REMOVED
+  // logTesting = () => {
+  //   console.log('starting test');
+  //   console.log('\n******* empty logs test');
+  //   let data = {};
+
+  //   data = {
+  //     sensor: {
+  //       logInterval: 60,
+  //       lastSensorLog: {},
+  //     },
+  //     logCounter: 3,
+  //     currentDate: new Date('2018-01-10T12:00:00'),
+  //     temperatureReadings: [
+  //       1,2,3
+  //     ]
+  //   }
+  //   console.log('params:', data);
+  //   console.log('result:', this.calculateNewLogs(data));
+
+  //   console.log('\n******* empty logs test, more records then sent');
+
+  //   data = {
+  //     sensor: {
+  //       logInterval: 60,
+  //       lastSensorLog: {},
+  //     },
+  //     logCounter: 10,
+  //     currentDate: new Date('2018-01-10T12:00:00'),
+  //     temperatureReadings: [
+  //       1,2,3
+  //     ]
+  //   }
+  //   console.log('params:', data);
+  //   console.log('result:', this.calculateNewLogs(data));
+
+  //   console.log('\n******* log counter match test');
+
+  //   data = {
+  //     sensor: {
+  //       logInterval: 60,
+  //       lastSensorLog: {
+  //         logInterval: 60,
+  //         logCounter: 10
+  //       },
+  //     },
+  //     logCounter: 10,
+  //     currentDate: new Date('2018-01-10T12:00:00'),
+  //     temperatureReadings: [
+  //       1,2,3
+  //     ]
+  //   }
+  //   console.log('params:', data);
+  //   console.log('result:', this.calculateNewLogs(data));
+
+  //   console.log('\n******* addition test, receiving all new records');
+
+  //   data = {
+  //     sensor: {
+  //       logInterval: 60,
+  //       lastSensorLog: {
+  //         logInterval: 60,
+  //         logCounter: 10,
+  //         timestamp: new Date('2018-01-09T12:00:00')
+  //       },
+  //     },
+  //     logCounter: 20,
+  //     currentDate: new Date('2018-01-10T12:00:00'),
+  //     temperatureReadings: [
+  //       1,2,3,4,5,6,7
+  //     ]
+  //   }
+  //   console.log('params:', data);
+  //   console.log('result:', this.calculateNewLogs(data));
+
+  //   console.log('\n******* addition test, receiving more readings');
+
+  //   data = {
+  //     sensor: {
+  //       logInterval: 60,
+  //       lastSensorLog: {
+  //         logInterval: 60,
+  //         logCounter: 10,
+  //         timestamp: new Date('2018-01-10T12:00:00')
+  //       },
+  //     },
+  //     logCounter: 15,
+  //     currentDate: new Date('2018-01-10T12:05:00'),
+  //     temperatureReadings: [
+  //       10,20,30,40,50,60,70
+  //     ]
+  //   }
+  //   console.log('params:', data);
+  //   console.log('result:', this.calculateNewLogs(data));
+
+  //   console.log('\n******* addition test, change of log interval');
+
+  //   data = {
+  //     sensor: {
+  //       logInterval: 10,
+  //       lastSensorLog: {
+  //         logInterval: 60,
+  //         logCounter: 10,
+  //         timestamp: new Date('2018-01-10T12:00:00')
+  //       },
+  //     },
+  //     logCounter: 15,
+  //     currentDate: new Date('2018-01-10T12:05:00'),
+  //     temperatureReadings: [
+  //       10,20,30,40,50,60,70
+  //     ]
+  //   }
+  //   console.log('params:', data);
+  //   console.log('result:', this.calculateNewLogs(data));
+
+  //   console.log('\n******* addition test, change of log interval');
+
+  //   data = {
+  //     sensor: {
+  //       logInterval: 10,
+  //       lastSensorLog: {
+  //         logInterval: 60,
+  //         logCounter: 10,
+  //         timestamp: new Date('2018-01-10T12:00:00')
+  //       },
+  //     },
+  //     logCounter: 15,
+  //     currentDate: new Date('2018-01-10T12:01:00'),
+  //     temperatureReadings: [
+  //       10,20,30,40,50,60,70
+  //     ]
+  //   }
+  //   console.log('params:', data);
+  //   console.log('result:', this.calculateNewLogs(data));
+
+  //   breakhere;
+  // }
+
+  /// END OF - TO BE REMOVED
 
   componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
     this.scheduler.clearAll();
-  }
+  };
 
-  onAuthentication = (user) => {
+  onAuthentication = user => {
     this.setState({ currentUser: user });
     this.postSyncProcessor.setUser(user);
-  }
+  };
 
   onInitialised = () => {
     this.setState({ isInitialised: true });
     this.postSyncProcessor.processAnyUnprocessedRecords();
-  }
+  };
 
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
     return this.navigator && navigationState.index !== 0;
-  }
+  };
 
   handleBackEvent = () => {
     const { confirmFinalise, syncModalIsOpen } = this.state;
@@ -114,9 +259,9 @@ class MSupplyMobileAppContainer extends React.Component {
       navigation.goBack();
     }
     return true;
-  }
+  };
 
-  runWithLoadingIndicator = async (functionToRun) => {
+  runWithLoadingIndicator = async (functionToRun, isAsync = false) => {
     this.database.isLoading = true;
     // We here set up an asyncronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay during which the javascript
@@ -126,10 +271,11 @@ class MSupplyMobileAppContainer extends React.Component {
     await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
-    functionToRun();
+    if (isAsync) await functionToRun();
+    else functionToRun();
     this.setState({ isLoading: false });
     this.database.isLoading = false;
-  }
+  };
 
   synchronise = async () => {
     if (!this.state.isInitialised || this.props.syncState.isSyncing) return; // Ignore if syncing
@@ -147,18 +293,18 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       this.postSyncProcessor.processRecordQueue();
     }
-  }
+  };
 
   logOut = () => {
     this.setState({ currentUser: null });
-  }
+  };
 
   renderFinaliseButton = () => (
     <FinaliseButton
       isFinalised={this.props.finaliseItem.record.isFinalised}
       onPress={() => this.setState({ confirmFinalise: true })}
     />
-  )
+  );
 
   renderLogo = () => (
     <TouchableWithoutFeedback
@@ -167,19 +313,15 @@ class MSupplyMobileAppContainer extends React.Component {
     >
       <Image resizeMode="contain" source={require('./images/logo.png')} />
     </TouchableWithoutFeedback>
-  )
+  );
 
   renderLoadingIndicator = () => (
     <View style={globalStyles.loadingIndicatorContainer}>
       <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
     </View>
-  )
+  );
 
-  renderPageTitle = () => (
-    <Text style={textStyles}>
-      {this.props.currentTitle}
-    </Text>
-  )
+  renderPageTitle = () => <Text style={textStyles}>{this.props.currentTitle}</Text>;
 
   renderSyncState = () => (
     <TouchableOpacity
@@ -188,7 +330,7 @@ class MSupplyMobileAppContainer extends React.Component {
     >
       <SyncState state={this.props.syncState} />
     </TouchableOpacity>
-  )
+  );
 
   render() {
     if (!this.state.isInitialised) {

@@ -10,6 +10,8 @@ export { Transaction } from './Transaction';
 export class TransactionCategory extends Realm.Object {}
 export { TransactionItem } from './TransactionItem';
 export { TransactionBatch } from './TransactionBatch';
+export { Location } from './Location';
+export class LocationType extends Realm.Object {}
 export { MasterList } from './MasterList';
 export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';
@@ -19,6 +21,8 @@ export { NumberSequence } from './NumberSequence';
 export { NumberToReuse } from './NumberToReuse';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
+export class Sensor extends Realm.Object {}
+export class SensorLog extends Realm.Object {}
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export { Stocktake } from './Stocktake';
