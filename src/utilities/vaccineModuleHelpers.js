@@ -24,7 +24,7 @@ export function parseDownloadedData(downloadedData) {
   for (let i = 1; i < rawResultLines.length; i++) {
     const line = rawResultLines[i];
     for (let y = 0; y < line.length; y += 2) {
-      const reading = this.toInt(line, y);
+      const reading = toInt(line, y);
       if (reading === 11308) {
         return {
           temperatureReadings,
@@ -43,10 +43,10 @@ export function calculateNewLogs(data) {
   const returnData = { returnMessage: '', logsToAdd: [] };
   const {
     sensor,
-    logCounter,
     temperatureReadings,
     currentDate,
-    totalNumberOfRecords: lastSensorLog,
+    lastSensorLog,
+    totalNumberOfRecords: logCounter,
   } = data;
 
   const { logInterval } = sensor;
@@ -65,7 +65,7 @@ export function calculateNewLogs(data) {
 
     startOfLogCounter = logCounter - numberOfReadings;
 
-    returnData.logsToAdd = this.generateLogs(
+    returnData.logsToAdd = generateLogs(
       readingsStartDate,
       startOfReading,
       startOfLogCounter,
@@ -94,7 +94,7 @@ export function calculateNewLogs(data) {
       );
     } else startOfLogCounter = logCounter - numberOfReadings;
 
-    returnData.logsToAdd = this.generateLogs(
+    returnData.logsToAdd = generateLogs(
       readingsStartDate,
       startOfReading,
       startOfLogCounter,
@@ -111,7 +111,7 @@ export function calculateNewLogs(data) {
   if (lastTimestamp < readingsStartDate) {
     returnData.returnMessage += 'earliest reading date is after earliest log date \n';
     startOfLogCounter = logCounter - numberOfReadings;
-    returnData.logsToAdd = this.generateLogs(
+    returnData.logsToAdd = generateLogs(
       readingsStartDate,
       startOfReading,
       startOfLogCounter,
@@ -126,7 +126,7 @@ export function calculateNewLogs(data) {
   readingsStartDate = new Date(lastTimestamp);
   readingsStartDate.setSeconds(readingsStartDate.getSeconds() + logInterval);
 
-  returnData.logsToAdd = this.generateLogs(
+  returnData.logsToAdd = generateLogs(
     readingsStartDate,
     startOfReading,
     startOfLogCounter,
@@ -154,6 +154,30 @@ function addRefreshSensor(sensorInfo, sensorData, database) {
       ...sensorData,
     });
   });
+}
+
+function generateLogs(
+  readingsStartDate,
+  startOfReading,
+  startOfLogCounter,
+  logInterval,
+  temperatureReadings,
+) {
+  const returnData = [];
+  for (let i = startOfReading; i < temperatureReadings.length; i++) {
+    const id = generateUUID();
+    const timestamp = new Date(readingsStartDate);
+    const newRecordNumber = i - startOfReading;
+    timestamp.setSeconds(timestamp.getSeconds() + logInterval * newRecordNumber);
+    returnData.push({
+      id,
+      logInterval,
+      timestamp,
+      value: temperatureReadings[i] / 10,
+      logCounter: newRecordNumber + 1 + startOfLogCounter,
+    });
+  }
+  return returnData;
 }
 
 function parseSensorAdvertisment(advertismentData) {

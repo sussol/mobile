@@ -42,34 +42,25 @@ export class VaccineModuleExpansion extends React.Component {
 
   downloadLog = async () => {
     const { address } = this.props.location.sensor;
+    let downloadedData = {};
     let foundSensors = false;
     await this.props.runWithLoadingIndicator(async () => {
       try {
-        // Try to download data
-        let downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
-          address,
-          '*logall',
-        );
-        // If sensor not found then try to search for it again
-        if (downloadedData.failed && downloadedData.failureReason === 'device not scanned') {
-          const sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, address);
+        const sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, address);
 
-          foundSensors = Object.entries(sensors).length > 0;
-          if (foundSensors) {
-            updateSensors(sensors, this.props.database);
-            downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
-              address,
-              '*logall',
-            );
-            this.porcessDownloadedData(downloadedData, this.props.location.sensor);
-          }
-        } else this.porcessDownloadedData(downloadedData, this.props.location.sensor);
-        console.log(downloadedData);
+        foundSensors = Object.entries(sensors).length > 0;
+        if (foundSensors) {
+          updateSensors(sensors, this.props.database);
+          downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
+            address,
+            '*logall',
+          );
+          this.porcessDownloadedData(downloadedData, this.props.location.sensor);
+        } else console.log('cant find senor');
       } catch (e) {
         console.log('rejected ', e);
       }
     }, true);
-
     // Refresh expansion and parent page
     if (foundSensors) {
       this.props.database.write(() => {
