@@ -121,8 +121,6 @@
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
 		};
-<<<<<<< ours
-=======
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
@@ -312,7 +310,6 @@
 			remoteGlobalIDString = 2D2A28201D9B03D100D4039D;
 			remoteInfo = "RCTAnimation-tvOS";
 		};
->>>>>>> theirs
 		78C398B81ACF4ADC00677621 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */;
@@ -390,7 +387,6 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-<<<<<<< ours
 				A5AB2FEAE8E24949B864AD89 /* libRNVectorIcons.a in Frameworks */,
 				1A71ADB58FEF401A9A51B3F0 /* libRealmReact.a in Frameworks */,
 				C4DA5B40463840BA95D0E145 /* libc++.tbd in Resources */,
@@ -398,7 +394,6 @@
 				B47D37398E4A46919550CD61 /* libReactNativeLocalization.a in Frameworks */,
 				0FE4B1B5CCE941D5A65E4682 /* libBugsnagReactNative.a in Frameworks */,
 				E6CD9B95BFDC447D9412AD07 /* libRNFS.a in Frameworks */,
-=======
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -422,7 +417,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2DF0FFEE2056DD460020B375 /* libReact.a in Frameworks */,
->>>>>>> theirs
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -498,12 +492,9 @@
 			isa = PBXGroup;
 			children = (
 				139FDEF41B06529B00C62182 /* libRCTWebSocket.a */,
-<<<<<<< ours
-=======
 				3DAD3E991DF850E9000B6D8A /* libRCTWebSocket-tvOS.a */,
 				2D16E6841FA4F8DC00B85C8A /* libfishhook.a */,
 				2D16E6861FA4F8DC00B85C8A /* libfishhook-tvOS.a */,
->>>>>>> theirs
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -526,8 +517,6 @@
 			isa = PBXGroup;
 			children = (
 				146834041AC3E56700842450 /* libReact.a */,
-<<<<<<< ours
-=======
 				3DAD3EA31DF850E9000B6D8A /* libReact.a */,
 				3DAD3EA51DF850E9000B6D8A /* libyoga.a */,
 				3DAD3EA71DF850E9000B6D8A /* libyoga.a */,
@@ -560,7 +549,6 @@
 			children = (
 				5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */,
 				5E9157351DD0AC6500FF2AA8 /* libRCTAnimation.a */,
->>>>>>> theirs
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -611,12 +599,8 @@
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* mSupplyMobileTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
-<<<<<<< ours
-				9EF94CD420F74DD19B61E9B9 /* Frameworks */,
-				2109ECCD1764462987FDB701 /* Resources */,
-=======
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
->>>>>>> theirs
+				2109ECCD1764462987FDB701 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -632,7 +616,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-<<<<<<< ours
 		9EF94CD420F74DD19B61E9B9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -659,15 +642,6 @@
 			);
 			name = Resources;
 			path = "";
-=======
-		ADBDB9201DFEBF0600ED6528 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */,
-				2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */,
-			);
-			name = Products;
->>>>>>> theirs
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -741,8 +715,6 @@
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
 				},
 				{
-<<<<<<< ours
-=======
 					ProductGroup = 5E91572E1DD0AC6500FF2AA8 /* Products */;
 					ProjectRef = 5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */;
 				},
@@ -751,7 +723,6 @@
 					ProjectRef = ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */;
 				},
 				{
->>>>>>> theirs
 					ProductGroup = 00C302B61ABCB90400DB3ED1 /* Products */;
 					ProjectRef = 00C302B51ABCB90400DB3ED1 /* RCTGeolocation.xcodeproj */;
 				},
@@ -853,8 +824,6 @@
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-<<<<<<< ours
-=======
 		2D16E6721FA4F8DC00B85C8A /* libRCTBlob-tvOS.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1037,7 +1006,6 @@
 			remoteRef = 5E9157341DD0AC6500FF2AA8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
->>>>>>> theirs
 		78C398B91ACF4ADC00677621 /* libRCTLinking.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1158,11 +1126,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = mSupplyMobileTests/Info.plist;
-<<<<<<< ours
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-=======
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
->>>>>>> theirs
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mSupplyMobile.app/mSupplyMobile";
@@ -1183,11 +1147,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = mSupplyMobileTests/Info.plist;
-<<<<<<< ours
-				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
-=======
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
->>>>>>> theirs
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mSupplyMobile.app/mSupplyMobile";
@@ -1249,11 +1209,8 @@
 					"-ObjC",
 					"-lc++",
 				);
-<<<<<<< ours
-				PRODUCT_NAME = mSupplyMobile;
-=======
 				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.mSupplyMobile-tvOS";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = mSupplyMobile;
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
@@ -1307,7 +1264,6 @@
 				SDKROOT = appletvos;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mSupplyMobile-tvOS.app/mSupplyMobile-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
->>>>>>> theirs
 			};
 			name = Release;
 		};
@@ -1345,7 +1301,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-<<<<<<< ours
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1354,10 +1309,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-localization",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-=======
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
->>>>>>> theirs
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -1392,7 +1344,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-<<<<<<< ours
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
@@ -1401,10 +1352,7 @@
 					"$(SRCROOT)/../node_modules/realm/src/**",
 					"$(SRCROOT)/../node_modules/react-native-localization",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
-=======
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
->>>>>>> theirs
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
