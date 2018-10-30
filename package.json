@@ -44,7 +44,7 @@
     "buffer": "^5.0.6",
     "bugsnag-react-native": "^2.2.4",
     "moment": "^2.18.1",
-    "prop-types": "^15.5.10",
+    "prop-types": "^15.6.2",
     "react": "16.4.1",
     "react-native": "0.56.1",
     "react-native-data-table": "^0.1.5",
