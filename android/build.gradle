@@ -32,4 +32,14 @@ ext {
     targetSdkVersion = 26
     supportLibVersion = "26.1.0"
 }
+
+subprojects {
+    afterEvaluate {project ->
+        if (project.hasProperty("android")) {
+            android {
+                buildToolsVersion rootProject.ext.buildToolsVersion
+                compileSdkVersion rootProject.ext.compileSdkVersion
+            }
+        }
+    }
 }
