@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import {
   StyleSheet,
   Text,
-  View,
+  ViewPropTypes,
 } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
@@ -32,7 +32,7 @@ export function PageButton(props) {
 }
 
 PageButton.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   textStyle: Text.propTypes.style,
   onPress: PropTypes.func,
   text: PropTypes.string,

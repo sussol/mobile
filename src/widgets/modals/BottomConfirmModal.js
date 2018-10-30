@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, ViewPropTypes } from 'react-native';
 import { OnePressButton } from '../OnePressButton';
 import { BottomModal } from './BottomModal';
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
@@ -41,7 +41,7 @@ export function BottomConfirmModal(props) {
 }
 
 BottomConfirmModal.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   isOpen: PropTypes.bool.isRequired,
   questionText: PropTypes.string.isRequired,
   onCancel: PropTypes.func.isRequired,
