@@ -43,7 +43,7 @@ export function ToggleBar(props) {
     textOffStyle,
     textOnStyle,
     toggles,
-    ...containerProps,
+    ...containerProps
   } = props;
 
   function renderToggles(buttons) {

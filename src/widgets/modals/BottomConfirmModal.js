@@ -19,7 +19,7 @@ export function BottomConfirmModal(props) {
     confirmText,
     cancelText,
     style,
-    ...modalProps,
+    ...modalProps
   } = props;
   return (
     <BottomModal {...modalProps} style={[localStyles.modal, style]}>
