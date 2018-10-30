@@ -10,7 +10,7 @@ import { AppRegistry, AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { persistStore } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
 import { ErrorHandler } from 'redux-persist-error-handler';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
@@ -19,16 +19,22 @@ import { reducers } from './reducers';
 
 const bugsnagClient = new BugsnagClient();
 
+const persistConfig = {
+  keyPrefix: '',
+  key: 'root',
+  storage: AsyncStorage,
+  blacklist: ['navigation'],
+};
+
+const persistedReducer = persistReducer(persistConfig, reducers);
+
 const store = createStore(
-  reducers,
+  persistedReducer,
   {},
   applyMiddleware(thunk),
 );
 
-// Persist the redux store. We have to blacklist navigation because some of the props we pass
-// around via redux are enormous, possibly infinitely nested realm objects, which can't be quickly
-// serialised and persisted to AsyncStorage
-const persistedStore = persistStore(store, { blacklist: ['navigation'], storage: AsyncStorage });
+const persistedStore = persistStore(store);
 
 function App() {
   return (

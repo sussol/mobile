@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { REHYDRATE } from 'redux-persist/lib/constants';
+import { REHYDRATE } from 'redux-persist';
 export { REHYDRATE };
 
 /**
