@@ -19,7 +19,7 @@ export function SelectModal(props) {
     queryString,
     queryStringSecondary,
     sortByString,
-    ...modalProps,
+    ...modalProps
   } = props;
 
   return (

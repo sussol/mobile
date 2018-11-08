@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Keyboard, StyleSheet, View } from 'react-native';
+import { Keyboard, StyleSheet, View, ViewPropTypes } from 'react-native';
 import Modal from 'react-native-modalbox';
 import { DARKER_GREY } from '../../globalStyles/index';
 
@@ -28,7 +28,7 @@ export class BottomModal extends React.Component {
 }
 
 BottomModal.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   isOpen: PropTypes.bool.isRequired,
   children: PropTypes.any,
 };

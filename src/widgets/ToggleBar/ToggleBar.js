@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  ViewPropTypes,
   View,
 } from 'react-native';
 
@@ -43,7 +44,7 @@ export function ToggleBar(props) {
     textOffStyle,
     textOnStyle,
     toggles,
-    ...containerProps,
+    ...containerProps
   } = props;
 
   function renderToggles(buttons) {
@@ -76,10 +77,10 @@ export function ToggleBar(props) {
 }
 
 ToggleBar.propTypes = {
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   toggles: PropTypes.array,
-  toggleOffStyle: View.propTypes.style,
-  toggleOnStyle: View.propTypes.style,
+  toggleOffStyle: ViewPropTypes.style,
+  toggleOnStyle: ViewPropTypes.style,
   textOffStyle: Text.propTypes.style,
   textOnStyle: Text.propTypes.style,
 };
