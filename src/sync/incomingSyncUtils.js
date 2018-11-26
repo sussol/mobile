@@ -33,6 +33,10 @@ export function integrateRecord(database, settings, syncRecord) {
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
   const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
 
+  if (changeType === 'merge') {
+      mergeRecords(database, syncRecord);
+  }
+
   switch (changeType) {
     case CHANGE_TYPES.CREATE:
     case CHANGE_TYPES.UPDATE:
@@ -44,8 +48,17 @@ export function integrateRecord(database, settings, syncRecord) {
       deleteRecord(database, internalRecordType, syncRecord.RecordID);
       break;
     default:
-      return; // Silently ignore change types we don't handle, e.g. merges
+      return;
   }
+}
+
+/**
+ * Merge two existing records.
+ * @param {Realm} database The local database
+ * @param {object} syncRecord Data representing the sync record
+ */
+export function mergeRecords(database, syncRecord) {
+    console.log('Merge detected. Silently ignoring...');
 }
 
 /**
