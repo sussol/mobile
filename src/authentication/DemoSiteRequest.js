@@ -25,7 +25,8 @@ export class DemoSiteRequest {
     // const passwordHash = hashPassword(password);
     const passwordHash = password;
     // Need proper demo server URL in 4D to work
-    const domainName = 'http://192.168.3.145:7848';
+    // 83.96.252.40 2048
+    const domainName = 'https://demo.msupply.org';
     const URL = `${domainName}/api/v4/mobile/requestDemo`;
 
     let responseJson;
