@@ -12,9 +12,8 @@ import {
 
 import { SETTINGS_KEYS } from '../settings';
 const { THIS_STORE_ID } = SETTINGS_KEYS;
-
 import { CHANGE_TYPES, generateUUID } from '../database';
-import { createTransform } from 'redux-persist';
+import { expansionPageStyles } from '../globalStyles/index';
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -34,7 +33,7 @@ export function integrateRecord(database, settings, syncRecord) {
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
   const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   if (changeType === 'merge') {
-      mergeRecords(database, syncRecord);
+      mergeRecords(database, settings, syncRecord);
   }
 
   switch (changeType) {
@@ -53,11 +52,13 @@ export function integrateRecord(database, settings, syncRecord) {
 }
 
 /**
- * Merge two existing records.
+ * Merge two existing records. Two-level lookup table for 1) the objects related to the type
+ * of the merging objects 2) the fields of the related object to update. Point related objects
+ * of the merged object to point to the kept object and delete.
  * @param {Realm} database The local database
- * @param {object} syncRecord Data representing the sync record
+ * @param {object} mergeRecord Data representing the sync record
  */
-export function mergeRecords(database, syncRecord) {
+export function mergeRecords(database, settings, mergeRecord) {
   const objectsToUpdate = {
     "item" : {
       "StocktakeItem" : "item",
@@ -69,22 +70,36 @@ export function mergeRecords(database, syncRecord) {
         "Transaction": "otherParty",
         "Requisition": "otherStoreName"
     }
-  }
-  const tableLookup = objectsToUpdate[syncRecord.RecordType];
-  let recordsToUpdate = null;
-  if (tableLookup){
-      Object.keys(tableLookup)
-            .forEach( (objectToUpdate) => {
-              recordsToUpdate = database.objects(objectToUpdate)
-                                        .filtered(`${tableLookup[objectToUpdate]} = $0`, syncRecord.mergeIDtodelete);
+  };
+  const mergedObjectsType = mergeRecord.RecordType;
+  console.log(mergedObjectsType);
+  const tableLookup = objectsToUpdate[mergedObjectsType];
+  const objectToKeep = database.objects(mergedObjectsType.capitilize())
+                                 .filtered('id == $0', mergeRecord.mergeIDtokeep)[0];
+  const objectToMerge = database.objects(mergedObjectsType.capitilize())
+                                   .filtered('id == $0', mergeRecord.mergeIDtodelete)[0];
+  
+  if (tableLookup){  
+    Object.keys(tableLookup)
+          .forEach( (tableToUpdate) => {
+            const objectName = tableLookup[tableToUpdate];
+            const recordsToUpdate = database.objects(tableToUpdate)
+                                            .filtered(`${objectName} == $0` , objectToMerge);                      
+            if (recordsToUpdate.length > 0){              
               recordsToUpdate.forEach( (record) => {
-                record[tableLookup[objectToUpdate]] = syncRecord.mergeIDtokeep;
-                database.update(objectToUpdate, record);
-              })
-            })
-                                          }
-  database.delete(syncRecord);
+              if(typeof(record) === 'object'){
+                record[objectName] = objectToKeep;
+                database.update(tableToUpdate, record);
+              }});
+            }
+          });
+        };
 }
+
+Object.assign(String.prototype, {
+  capitilize() {
+  return this.charAt(0).toUpperCase() + this.slice(1);
+}})
 
 
 /**
