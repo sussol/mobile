@@ -14,6 +14,7 @@ import { SETTINGS_KEYS } from '../settings';
 const { THIS_STORE_ID } = SETTINGS_KEYS;
 
 import { CHANGE_TYPES, generateUUID } from '../database';
+import { createTransform } from 'redux-persist';
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -32,7 +33,6 @@ export function integrateRecord(database, settings, syncRecord) {
   const recordType = syncRecord.RecordType;
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
   const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
-
   if (changeType === 'merge') {
       mergeRecords(database, syncRecord);
   }
@@ -58,8 +58,34 @@ export function integrateRecord(database, settings, syncRecord) {
  * @param {object} syncRecord Data representing the sync record
  */
 export function mergeRecords(database, syncRecord) {
-    console.log('Merge detected. Silently ignoring...');
+  const objectsToUpdate = {
+    "item" : {
+      "StocktakeItem" : "item",
+      "TransactionItem" : "item",
+      "ItemBatch" : "item",   
+    },
+    "name" : {
+        "ItemBatch": "supplier",
+        "Transaction": "otherParty",
+        "Requisition": "otherStoreName"
+    }
+  }
+  const tableLookup = objectsToUpdate[syncRecord.RecordType];
+  let recordsToUpdate = null;
+  if (tableLookup){
+      Object.keys(tableLookup)
+            .forEach( (objectToUpdate) => {
+              recordsToUpdate = database.objects(objectToUpdate)
+                                        .filtered(`${tableLookup[objectToUpdate]} = $0`, syncRecord.mergeIDtodelete);
+              recordsToUpdate.forEach( (record) => {
+                record[tableLookup[objectToUpdate]] = syncRecord.mergeIDtokeep;
+                database.update(objectToUpdate, record);
+              })
+            })
+                                          }
+  database.delete(syncRecord);
 }
+
 
 /**
  * Update an existing record or create a new one based on the sync record.
