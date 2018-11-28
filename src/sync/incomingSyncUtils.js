@@ -8,6 +8,7 @@ import {
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_TYPES,
+  INTERNAL_TO_EXTERNAL,
 } from './syncTranslators';
 
 import { SETTINGS_KEYS } from '../settings';
@@ -72,13 +73,17 @@ export function mergeRecords(database, settings, mergeRecord) {
       Requisition: 'otherStoreName',
     },
   };
-  const mergedObjectsType = mergeRecord.RecordType;
+
+  const mergedObjectsInternalType = RECORD_TYPES.translate(
+    mergeRecord.RecordType,
+    EXTERNAL_TO_INTERNAL,
+  );
   const tableLookup = objectsToUpdate[mergedObjectsType];
   const objectToKeep = database
-    .objects(mergedObjectsType.capitilize())
+    .objects(mergedObjectsInternalType)
     .filtered('id == $0', mergeRecord.mergeIDtokeep)[0];
   const objectToMerge = database
-    .objects(mergedObjectsType.capitilize())
+    .objects(mergedObjectsInternalType)
     .filtered('id == $0', mergeRecord.mergeIDtodelete)[0];
 
   if (tableLookup) {
@@ -86,13 +91,11 @@ export function mergeRecords(database, settings, mergeRecord) {
       const objectName = tableLookup[tableToUpdate];
       const recordsToUpdate = database
         .objects(tableToUpdate)
-        .filtered(`${objectName} == $0`, objectToMerge);
+        .filtered(`${objectName}.id == $0`, objectToMerge.id);
       if (recordsToUpdate.length > 0) {
         recordsToUpdate.forEach(record => {
-          if (record) {
-            record[objectName] = objectToKeep;
-            database.update(tableToUpdate, record);
-          }
+          record[objectName] = objectToKeep;
+          database.update(tableToUpdate, record);
         });
       }
     });
@@ -101,50 +104,37 @@ export function mergeRecords(database, settings, mergeRecord) {
     case 'item':
       const keptMasterListItem = database
         .objects('MasterListItem')
-        .filtered('item = $0', objectToKeep)[0]; // Get the kept masterlist item,
+        .filtered('item.id == $0', objectToKeep.id)[0];
       const mergedMasterListItem = database
         .objects('MasterListItem')
-        .filtered('item = $0', objectToMerge)[0]; // Get the merged masterListItem
-      if (keptMasterListItem) {
-        // if theres a kept master list item, just delete the merged master list item
-        deleteRecord(database, mergedObjectsType, mergedMasterListItem); // delete merged object
+        .filtered('item.id == $0', objectToMerge)[0].id;
+      if (keptMasterListItem && mergedMasterListItem) {
+        deleteRecord(database, 'MasterListItem', mergedMasterListItem.id);
       } else {
-        // otherwise, createOrUpdate the merged one
         mergedMasterListItem.item = objectToKeep;
-        createOrUpdateRecord(
-          database,
-          settings,
-          mergedObjectsType.capitilize(),
-          mergedMasterListItem,
-        ); // create or update the merged record with the keptrecord
+        createOrUpdateRecord(database, settings, mergedObjectsInternalType, mergedMasterListItem);
       }
       break;
 
     case 'name':
       const keptMasterListNameJoin = database
         .objects('MasterListNameJoin')
-        .filtered('name = $0', objectToKeep)[0];
+        .filtered('name.id == $0', objectToKeep.id)[0];
       const mergedMasterListNameJoin = database
         .objects('MasterListNameJoin')
-        .filtered('name = $0', objectToMerge)[0];
-      if (keptMasterListNameJoin) {
-        deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin);
+        .filtered('name.id == $0', objectToMerge.id)[0];
+      if (keptMasterListNameJoin && mergedMasterListNameJoin) {
+        deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
       } else {
         if (mergedMasterListNameJoin) {
           mergedMasterListNameJoin.name = objectToKeep;
           createOrUpdateRecord(database, settings, 'Name', mergedMasterListNameJoin);
         }
       }
-      deleteRecord(database, 'Name', objectToMerge.id);
       break;
   }
+  deleteRecord(database, mergedObjectsInternalType, objectToMerge.id);
 }
-
-Object.assign(String.prototype, {
-  capitilize() {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-  },
-});
 
 /**
  * Update an existing record or create a new one based on the sync record.
