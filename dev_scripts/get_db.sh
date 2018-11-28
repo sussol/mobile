@@ -15,4 +15,5 @@ if [ ! -d "$DIR_LOCAL" ]; then
     mkdir "$DIR_LOCAL"
 fi
 
+adb root > /dev/null
 adb pull $DIR_EMULATOR/$DB_NAME $DIR_LOCAL
