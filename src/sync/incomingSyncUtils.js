@@ -107,7 +107,7 @@ export function mergeRecords(database, settings, mergeRecord) {
         .filtered('item.id == $0', objectToKeep.id)[0];
       const mergedMasterListItem = database
         .objects('MasterListItem')
-        .filtered('item.id == $0', objectToMerge)[0].id;
+        .filtered('item.id == $0', objectToMerge.id)[0];
       if (keptMasterListItem && mergedMasterListItem) {
         deleteRecord(database, 'MasterListItem', mergedMasterListItem.id);
       } else {
