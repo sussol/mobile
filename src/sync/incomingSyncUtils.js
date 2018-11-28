@@ -13,7 +13,6 @@ import {
 import { SETTINGS_KEYS } from '../settings';
 const { THIS_STORE_ID } = SETTINGS_KEYS;
 import { CHANGE_TYPES, generateUUID } from '../database';
-import { expansionPageStyles } from '../globalStyles/index';
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -33,7 +32,7 @@ export function integrateRecord(database, settings, syncRecord) {
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
   const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   if (changeType === 'merge') {
-      mergeRecords(database, settings, syncRecord);
+    mergeRecords(database, settings, syncRecord);
   }
 
   switch (changeType) {
@@ -60,47 +59,91 @@ export function integrateRecord(database, settings, syncRecord) {
  */
 export function mergeRecords(database, settings, mergeRecord) {
   const objectsToUpdate = {
-    "item" : {
-      "StocktakeItem" : "item",
-      "TransactionItem" : "item",
-      "ItemBatch" : "item",   
+    item: {
+      StocktakeItem: 'item',
+      TransactionItem: 'item',
+      ItemBatch: 'item',
+      RequisitionItem: 'item',
     },
-    "name" : {
-        "ItemBatch": "supplier",
-        "Transaction": "otherParty",
-        "Requisition": "otherStoreName"
-    }
+    name: {
+      ItemBatch: 'supplier',
+      Transaction: 'otherParty',
+      Requisition: 'otherStoreName',
+    },
   };
   const mergedObjectsType = mergeRecord.RecordType;
-  console.log(mergedObjectsType);
   const tableLookup = objectsToUpdate[mergedObjectsType];
-  const objectToKeep = database.objects(mergedObjectsType.capitilize())
-                                 .filtered('id == $0', mergeRecord.mergeIDtokeep)[0];
-  const objectToMerge = database.objects(mergedObjectsType.capitilize())
-                                   .filtered('id == $0', mergeRecord.mergeIDtodelete)[0];
-  
-  if (tableLookup){  
-    Object.keys(tableLookup)
-          .forEach( (tableToUpdate) => {
-            const objectName = tableLookup[tableToUpdate];
-            const recordsToUpdate = database.objects(tableToUpdate)
-                                            .filtered(`${objectName} == $0` , objectToMerge);                      
-            if (recordsToUpdate.length > 0){              
-              recordsToUpdate.forEach( (record) => {
-              if(typeof(record) === 'object'){
-                record[objectName] = objectToKeep;
-                database.update(tableToUpdate, record);
-              }});
-            }
-          });
-        };
+  const objectToKeep = database
+    .objects(mergedObjectsType.capitilize())
+    .filtered('id == $0', mergeRecord.mergeIDtokeep)[0];
+  const objectToMerge = database
+    .objects(mergedObjectsType.capitilize())
+    .filtered('id == $0', mergeRecord.mergeIDtodelete)[0];
+
+  if (tableLookup) {
+    Object.keys(tableLookup).forEach(tableToUpdate => {
+      const objectName = tableLookup[tableToUpdate];
+      const recordsToUpdate = database
+        .objects(tableToUpdate)
+        .filtered(`${objectName} == $0`, objectToMerge);
+      if (recordsToUpdate.length > 0) {
+        recordsToUpdate.forEach(record => {
+          if (record) {
+            record[objectName] = objectToKeep;
+            database.update(tableToUpdate, record);
+          }
+        });
+      }
+    });
+  }
+  switch (mergedObjectsType) {
+    case 'item':
+      const keptMasterListItem = database
+        .objects('MasterListItem')
+        .filtered('item = $0', objectToKeep)[0]; // Get the kept masterlist item,
+      const mergedMasterListItem = database
+        .objects('MasterListItem')
+        .filtered('item = $0', objectToMerge)[0]; // Get the merged masterListItem
+      if (keptMasterListItem) {
+        // if theres a kept master list item, just delete the merged master list item
+        deleteRecord(database, mergedObjectsType, mergedMasterListItem); // delete merged object
+      } else {
+        // otherwise, createOrUpdate the merged one
+        mergedMasterListItem.item = objectToKeep;
+        createOrUpdateRecord(
+          database,
+          settings,
+          mergedObjectsType.capitilize(),
+          mergedMasterListItem,
+        ); // create or update the merged record with the keptrecord
+      }
+      break;
+
+    case 'name':
+      const keptMasterListNameJoin = database
+        .objects('MasterListNameJoin')
+        .filtered('name = $0', objectToKeep)[0];
+      const mergedMasterListNameJoin = database
+        .objects('MasterListNameJoin')
+        .filtered('name = $0', objectToMerge)[0];
+      if (keptMasterListNameJoin) {
+        deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin);
+      } else {
+        if (mergedMasterListNameJoin) {
+          mergedMasterListNameJoin.name = objectToKeep;
+          createOrUpdateRecord(database, settings, 'Name', mergedMasterListNameJoin);
+        }
+      }
+      deleteRecord(database, 'Name', objectToMerge.id);
+      break;
+  }
 }
 
 Object.assign(String.prototype, {
   capitilize() {
-  return this.charAt(0).toUpperCase() + this.slice(1);
-}})
-
+    return this.charAt(0).toUpperCase() + this.slice(1);
+  },
+});
 
 /**
  * Update an existing record or create a new one based on the sync record.
@@ -256,7 +299,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
           record.bill_address2,
           record.bill_address3,
           record.bill_address4,
-          record.bill_postal_zip_code
+          record.bill_postal_zip_code,
         ),
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
@@ -400,8 +443,9 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = database.getOrCreate('Name', record.name_ID);
       const enteredBy = database.getOrCreate('User', record.user_ID);
-      const linkedRequisition = record.requisition_ID ?
-                                database.getOrCreate('Requisition', record.requisition_ID) : null;
+      const linkedRequisition = record.requisition_ID
+        ? database.getOrCreate('Requisition', record.requisition_ID)
+        : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
       internalRecord = {
         id: record.ID,
@@ -646,7 +690,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist
       record[fieldName].length > 0, // And must not be blank
-    true
+    true,
   );
   if (!hasAllNonBlankFields) return false; // Return early if record already not valid
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
@@ -654,7 +698,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist
       record[fieldName] !== undefined, // May be blank, i.e. just ''
-    hasAllNonBlankFields
+    hasAllNonBlankFields,
   ); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
   return hasRequiredFields;
 }
@@ -668,7 +712,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
  * @param  {string} line3    Line 3 of the address (can be undefined)
  * @param  {string} line4    Line 4 of the address (can be undefined)
  * @param  {string} zipCode  Zip code of the address (can be undefined)
-   * @return {Realm.object}  The Address object described by the params
+ * @return {Realm.object}  The Address object described by the params
  */
 function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   let results = database.objects('Address');
