@@ -54,7 +54,8 @@ export function integrateRecord(database, settings, syncRecord) {
  * Merge two existing records. Two-level lookup table for 1) the objects related to the type
  * of the merging objects 2) the fields of the related object to update. Point related objects
  * of the merged object to point to the kept object and delete.
- * @param {Realm} database The local database
+ * @param {Realm}  database    The local database
+ * @param {object} settings    Accessto app settings
  * @param {object} mergeRecord Data representing the sync record
  */
 export function mergeRecords(database, settings, mergeRecord) {
