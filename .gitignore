@@ -62,3 +62,6 @@ android/keystores/debug.keystore
 
 # Bundle artifact
 *.jsbundle
+
+# Realm data
+/data
