@@ -8,7 +8,6 @@ import {
   STATUSES,
   SYNC_TYPES,
   TRANSACTION_TYPES,
-  INTERNAL_TO_EXTERNAL,
 } from './syncTranslators';
 
 import { SETTINGS_KEYS } from '../settings';
@@ -78,7 +77,7 @@ export function mergeRecords(database, settings, mergeRecord) {
     mergeRecord.RecordType,
     EXTERNAL_TO_INTERNAL,
   );
-  const tableLookup = objectsToUpdate[mergedObjectsType];
+  const tableLookup = objectsToUpdate[mergeRecord.RecordType];
   const objectToKeep = database
     .objects(mergedObjectsInternalType)
     .filtered('id == $0', mergeRecord.mergeIDtokeep)[0];
@@ -94,13 +93,15 @@ export function mergeRecords(database, settings, mergeRecord) {
         .filtered(`${objectName}.id == $0`, objectToMerge.id);
       if (recordsToUpdate.length > 0) {
         recordsToUpdate.forEach(record => {
-          record[objectName] = objectToKeep;
-          database.update(tableToUpdate, record);
+          if (record) {
+            record[objectName] = objectToKeep;
+            database.update(tableToUpdate, record);
+          }
         });
       }
     });
   }
-  switch (mergedObjectsType) {
+  switch (mergedObjectsInternalType) {
     case 'item':
       const keptMasterListItem = database
         .objects('MasterListItem')
