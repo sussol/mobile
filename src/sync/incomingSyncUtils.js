@@ -13,6 +13,8 @@ import {
 import { SETTINGS_KEYS } from '../settings';
 const { THIS_STORE_ID } = SETTINGS_KEYS;
 import { CHANGE_TYPES, generateUUID } from '../database';
+import { setPriority } from 'os';
+import { PassThrough } from 'stream';
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -85,7 +87,9 @@ export function mergeRecords(database, settings, mergeRecord) {
     .objects(mergedObjectsInternalType)
     .filtered('id == $0', mergeRecord.mergeIDtodelete)[0];
 
-  // Add a check for the two objects? If one of the two doesn't exist - ignore?
+  if (!(objectToKeep && objectToMerge)) {
+    return;
+  }
 
   if (tableLookup) {
     Object.keys(tableLookup).forEach(tableToUpdate => {
@@ -98,7 +102,6 @@ export function mergeRecords(database, settings, mergeRecord) {
         recordsToUpdate.forEach(record => {
           if (record) {
             if (tableToUpdate === 'Transaction') {
-              // Need to get setter working, rather than explicit method.
               record.setOtherParty(objectToKeep);
             } else {
               record[fieldToUpdate] = objectToKeep;
@@ -111,28 +114,33 @@ export function mergeRecords(database, settings, mergeRecord) {
   }
   switch (mergeRecord.RecordType) {
     case 'item':
-      const keptMasterListItem = database
+      const mergedMasterListItems = database
         .objects('MasterListItem')
-        .filtered('item.id == $0', objectToKeep.id)[0];
-      const mergedMasterListItem = database
-        .objects('MasterListItem')
-        .filtered('item.id == $0', objectToMerge.id)[0];
-      if (keptMasterListItem && mergedMasterListItem) {
-        deleteRecord(database, 'MasterListItem', mergedMasterListItem.id);
-      } else {
-        if (mergedMasterListItem) {
-          mergedMasterListItem.item = objectToKeep;
-          createOrUpdateRecord(database, settings, mergedObjectsInternalType, mergedMasterListItem);
-        }
-      }
+        .filtered('item.id == $0', objectToMerge.id)
+        .snapshot()
+        .forEach(masterListItem => {
+          const duplicateMasterListItem = database
+            .objects('MasterListItem')
+            .filtered('item.id == $0', objectToKeep.id)
+            .filtered('masterList.id == $0', masterListItem.masterList.id)[0];
+          if (duplicateMasterListItem && mergedMasterListItem) {
+            deleteRecord(database, 'MasterListItem', mergedMasterListItem.id);
+          } else {
+            if (mergedMasterListItem) {
+              mergedMasterListItem.item = objectToKeep;
+              createOrUpdateRecord(database, settings, 'MasterListItem', mergedMasterListItem);
+            }
+          }
+        });
+      objectToMerge.batches.forEach(batch => {
+        objectToKeep.addBatchIfUnique(batch);
+      });
       break;
 
     case 'name':
-      const keptMasterListNameJoin = database
+      const mergedMasterListNameJoins = database
         .objects('MasterListNameJoin')
-        .filtered('name.id == $0', objectToKeep.id)[0];
-      const mergedMasterListNameJoin = database
-        .objects('MasterListNameJoin')
+<<<<<<< Updated upstream
         .filtered('name.id == $0', objectToMerge.id)[0];
       if (keptMasterListNameJoin && mergedMasterListNameJoin) {
         deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
@@ -142,6 +150,29 @@ export function mergeRecords(database, settings, mergeRecord) {
           createOrUpdateRecord(database, settings, 'MasterListNameJoin', mergedMasterListNameJoin);
         }
       }
+=======
+        .filtered('name.id == $0', objectToMerge.id)
+        .snapshot()
+        .forEach(masterListNameJoin => {
+          const duplicateNameJoin = database
+            .objects('MasterListNameJoin')
+            .filtered('name.id == $0', objectToKeep.id)
+            .filtered('masterlist.id == $0', masterListNameJoin.masterList.id)[0];
+          if (duplicateNameJoin && mergedMasterListNameJoin) {
+            deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
+          } else {
+            if (mergedMasterListNameJoin) {
+              mergedMasterListNameJoin.name = objectToKeep;
+              createOrUpdateRecord(
+                database,
+                settings,
+                'MasterListNameJoin',
+                mergedMasterListNameJoin,
+              );
+            }
+          }
+        });
+>>>>>>> Stashed changes
       objectToMerge.masterLists.forEach(masterList => {
         objectToKeep.addMasterListIfUnique(masterList);
       });
