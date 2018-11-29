@@ -97,8 +97,13 @@ export function mergeRecords(database, settings, mergeRecord) {
       if (recordsToUpdate.length > 0) {
         recordsToUpdate.forEach(record => {
           if (record) {
-            record[fieldToUpdate] = objectToKeep;
-            database.update(tableToUpdate, record);
+            if (tableToUpdate === 'Transaction') {
+              // Need to get setter working, rather than explicit method.
+              record.setOtherParty(objectToKeep);
+            } else {
+              record[fieldToUpdate] = objectToKeep;
+              database.update(tableToUpdate, record);
+            }
           }
         });
       }
@@ -129,14 +134,6 @@ export function mergeRecords(database, settings, mergeRecord) {
       const mergedMasterListNameJoin = database
         .objects('MasterListNameJoin')
         .filtered('name.id == $0', objectToMerge.id)[0];
-      console.log(
-        'MasterListNameJoin -- KEEP: ',
-        keptMasterListNameJoin === undefined ? 'undefined' : keptMasterListNameJoin.id,
-      );
-      console.log(
-        'MasterListNameJoin -- Merge: ',
-        mergedMasterListNameJoin === undefined ? 'undefined' : mergedMasterListNameJoin.id,
-      );
       if (keptMasterListNameJoin && mergedMasterListNameJoin) {
         deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
       } else {

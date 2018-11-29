@@ -65,7 +65,7 @@ export class Transaction extends Realm.Object {
     return this.otherParty ? this.otherParty.name : '';
   }
 
-  set otherPartyName(name) {
+  setOtherParty(name) {
     name.addTransaction(this);
     this.otherParty = name;
   }
