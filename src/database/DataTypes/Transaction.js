@@ -65,6 +65,11 @@ export class Transaction extends Realm.Object {
     return this.otherParty ? this.otherParty.name : '';
   }
 
+  set otherPartyName(name) {
+    name.addTransaction(this);
+    this.otherParty = name;
+  }
+
   get totalPrice() {
     return getTotal(this.items, 'totalPrice');
   }
@@ -148,7 +153,7 @@ export class Transaction extends Realm.Object {
     const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
       const transactionBatch = transactionBatches.find(
-        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId
+        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId,
       );
       transactionBatchesToDelete.push(transactionBatch);
     });
@@ -174,7 +179,7 @@ export class Transaction extends Realm.Object {
    */
   addBatchIfUnique(database, transactionBatch) {
     addBatchToParent(transactionBatch, this, () =>
-      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item)
+      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item),
     );
   }
 

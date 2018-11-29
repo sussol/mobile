@@ -85,23 +85,26 @@ export function mergeRecords(database, settings, mergeRecord) {
     .objects(mergedObjectsInternalType)
     .filtered('id == $0', mergeRecord.mergeIDtodelete)[0];
 
+  // Add a check for the two objects? If one of the two doesn't exist - ignore?
+
   if (tableLookup) {
     Object.keys(tableLookup).forEach(tableToUpdate => {
-      const objectName = tableLookup[tableToUpdate];
+      const fieldToUpdate = tableLookup[tableToUpdate];
       const recordsToUpdate = database
         .objects(tableToUpdate)
-        .filtered(`${objectName}.id == $0`, objectToMerge.id);
+        .filtered(`${fieldToUpdate}.id == $0`, objectToMerge.id)
+        .snapshot();
       if (recordsToUpdate.length > 0) {
         recordsToUpdate.forEach(record => {
           if (record) {
-            record[objectName] = objectToKeep;
+            record[fieldToUpdate] = objectToKeep;
             database.update(tableToUpdate, record);
           }
         });
       }
     });
   }
-  switch (mergedObjectsInternalType) {
+  switch (mergeRecord.RecordType) {
     case 'item':
       const keptMasterListItem = database
         .objects('MasterListItem')
@@ -112,8 +115,10 @@ export function mergeRecords(database, settings, mergeRecord) {
       if (keptMasterListItem && mergedMasterListItem) {
         deleteRecord(database, 'MasterListItem', mergedMasterListItem.id);
       } else {
-        mergedMasterListItem.item = objectToKeep;
-        createOrUpdateRecord(database, settings, mergedObjectsInternalType, mergedMasterListItem);
+        if (mergedMasterListItem) {
+          mergedMasterListItem.item = objectToKeep;
+          createOrUpdateRecord(database, settings, mergedObjectsInternalType, mergedMasterListItem);
+        }
       }
       break;
 
@@ -124,6 +129,14 @@ export function mergeRecords(database, settings, mergeRecord) {
       const mergedMasterListNameJoin = database
         .objects('MasterListNameJoin')
         .filtered('name.id == $0', objectToMerge.id)[0];
+      console.log(
+        'MasterListNameJoin -- KEEP: ',
+        keptMasterListNameJoin === undefined ? 'undefined' : keptMasterListNameJoin.id,
+      );
+      console.log(
+        'MasterListNameJoin -- Merge: ',
+        mergedMasterListNameJoin === undefined ? 'undefined' : mergedMasterListNameJoin.id,
+      );
       if (keptMasterListNameJoin && mergedMasterListNameJoin) {
         deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
       } else {
@@ -132,6 +145,11 @@ export function mergeRecords(database, settings, mergeRecord) {
           createOrUpdateRecord(database, settings, 'Name', mergedMasterListNameJoin);
         }
       }
+      objectToMerge.masterLists.forEach(masterList => {
+        objectToKeep.addMasterListIfUnique(masterList);
+      });
+      break;
+    default:
       break;
   }
   deleteRecord(database, mergedObjectsInternalType, objectToMerge.id);
