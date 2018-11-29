@@ -139,7 +139,7 @@ export function mergeRecords(database, settings, mergeRecord) {
       } else {
         if (mergedMasterListNameJoin) {
           mergedMasterListNameJoin.name = objectToKeep;
-          createOrUpdateRecord(database, settings, 'Name', mergedMasterListNameJoin);
+          createOrUpdateRecord(database, settings, 'MasterListNameJoin', mergedMasterListNameJoin);
         }
       }
       objectToMerge.masterLists.forEach(masterList => {
