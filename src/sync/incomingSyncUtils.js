@@ -18,15 +18,30 @@ import { CHANGE_TYPES, generateUUID } from '../database';
 // TODO: bind translations to DataType constants to avoid breakage on schema update.
 const RECORD_TYPE_TO_TABLE = {
   Item: {
-    StocktakeItem: 'item',
-    TransactionItem: 'item',
-    ItemBatch: 'item',
-    RequisitionItem: 'item',
+    StocktakeItem: { 
+      field: 'item'
+    },
+    TransactionItem: {
+       field: 'item'
+    },
+    ItemBatch: {
+      field: 'item'
+    },
+    RequisitionItem: { 
+      field: 'item'
+    },
   },
   Name: {
-    ItemBatch: 'supplier',
-    Transaction: 'otherParty',
-    Requisition: 'otherStoreName',
+    ItemBatch: { 
+      field: 'supplier' 
+    },
+    Transaction: { 
+      field: 'otherParty',
+      setterMethod: 'setOtherParty'
+    },
+    Requisition: { 
+      field: 'otherStoreName'
+    },
   },
 };
 
@@ -88,8 +103,10 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
 
   if (!recordsExist || !tablesToUpdate) return;
 
-  Object.entries(RECORD_TYPE_TO_TABLE)
-  .forEach((tableToUpdate, fieldToUpdate) => {
+  Object.keys(tablesToUpdate)
+  .forEach(tableToUpdate => {
+    const fieldToUpdate = tablesToUpdate[tableToUpdate].field;
+    const setterMethod = typeof tableToUpdate.setterMethod === typeof Function ? tableToUpdate.setterMethod : null;
     const recordsToUpdate = database
       .objects(tableToUpdate)
       .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
@@ -97,11 +114,8 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       recordsToUpdate.forEach(record => {
         if (record) {
           // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
-          if (tableToUpdate === 'Transaction') {
-            record.setOtherParty(recordToKeep);
-          } else {
-            record[fieldToUpdate] = recordToKeep;
-          }
+          if (setterMethod) record[setterMethod](recordToKeep);
+          record[fieldToUpdate] = recordToKeep;
         }
       });
   });
