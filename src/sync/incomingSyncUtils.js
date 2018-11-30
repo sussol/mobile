@@ -18,29 +18,29 @@ import { CHANGE_TYPES, generateUUID } from '../database';
 // TODO: bind translations to DataType constants to avoid breakage on schema update.
 const RECORD_TYPE_TO_TABLE = {
   Item: {
-    StocktakeItem: { 
-      field: 'item'
+    StocktakeItem: {
+      field: 'item',
     },
     TransactionItem: {
-       field: 'item'
+      field: 'item',
     },
     ItemBatch: {
-      field: 'item'
+      field: 'item',
     },
-    RequisitionItem: { 
-      field: 'item'
+    RequisitionItem: {
+      field: 'item',
     },
   },
   Name: {
-    ItemBatch: { 
-      field: 'supplier' 
+    ItemBatch: {
+      field: 'supplier',
     },
-    Transaction: { 
+    Transaction: {
       field: 'otherParty',
-      setterMethod: 'setOtherParty'
+      setterMethod: 'setOtherParty',
     },
-    Requisition: { 
-      field: 'otherStoreName'
+    Requisition: {
+      field: 'otherStoreName',
     },
   },
 };
@@ -48,12 +48,12 @@ const RECORD_TYPE_TO_TABLE = {
 const RECORD_TYPE_TO_MASTERLIST = {
   Item: {
     MasterListItem: {
-      field: 'item'
+      field: 'item',
     },
   },
   Name: {
     MasterListNameJoin: {
-      field: 'name'
+      field: 'name',
     },
   },
 };
@@ -97,7 +97,7 @@ export function integrateRecord(database, settings, syncRecord) {
  * Merge two existing records. One record is retained and the other is merged. After the objects
  * are merged, the merged object is deleted from the database. The merge operation updates the
  * fields of the retained record to reference the same data as the merged object.
- * 
+ *
  * @param {Realm}  database           The local database
  * @param {object} settings           Access to app settings
  * @param {string} internalRecordType Internal record type for merge operation
@@ -110,62 +110,61 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const recordToMerge = database
     .objects(internalRecordType)
     .filtered('id == $0', syncRecord.mergeIDtodelete)[0];
-  
+
   const recordsExist = recordToKeep && recordToMerge;
   const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
 
   if (!recordsExist || !tablesToUpdate) return;
 
-  Object.keys(tablesToUpdate)
-  .forEach(tableToUpdate => {
+  Object.keys(tablesToUpdate).forEach(tableToUpdate => {
     const fieldToUpdate = tablesToUpdate[tableToUpdate].field;
-    const setterMethod = typeof tableToUpdate.setterMethod === typeof Function ? tableToUpdate.setterMethod : null;
+    const setterMethod =
+      typeof tableToUpdate.setterMethod === typeof Function ? tableToUpdate.setterMethod : null;
     const recordsToUpdate = database
       .objects(tableToUpdate)
       .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
       .snapshot();
-      recordsToUpdate.forEach(record => {
-        if (record) {
-          // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
-          if (setterMethod) record[setterMethod](recordToKeep);
-          record[fieldToUpdate] = recordToKeep;
-        }
-      });
+    recordsToUpdate.forEach(record => {
+      if (record) {
+        // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
+        if (setterMethod) record[setterMethod](recordToKeep);
+        record[fieldToUpdate] = recordToKeep;
+      }
+    });
   });
 
   const masterListsToUpdate = RECORD_TYPE_TO_MASTERLIST[internalRecordType];
 
-  Object.keys(masterListsToUpdate)
-  .forEach(masterListToUpdate => {
+  Object.keys(masterListsToUpdate).forEach(masterListToUpdate => {
     const fieldToUpdate = masterListsToUpdate[masterListToUpdate].field;
     database
-    .objects(masterListToUpdate)
-    .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
-    .snapshot()
-    .forEach(masterListRecord => {
-      const duplicateMasterListRecord = database
-        .objects(masterListToUpdate)
-        .filtered(`${fieldToUpdate}.id == $0`, recordToKeep.id)
-        .filtered('masterList.id == $0', masterListRecord.masterList.id)[0];
+      .objects(masterListToUpdate)
+      .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
+      .snapshot()
+      .forEach(masterListRecord => {
+        const duplicateMasterListRecord = database
+          .objects(masterListToUpdate)
+          .filtered(`${fieldToUpdate}.id == $0`, recordToKeep.id)
+          .filtered('masterList.id == $0', masterListRecord.masterList.id)[0];
         if (duplicateMasterListRecord) {
-          deleteRecord(database,  masterListToUpdate, masterListRecord.id);
+          deleteRecord(database, masterListToUpdate, masterListRecord.id);
         } else {
           masterListRecord[fieldToUpdate] = recordToKeep;
           createOrUpdateRecord(database, settings, masterListToUpdate, masterListRecord);
         }
       });
-    });
+  });
 
-    switch (internalRecordType) {
-      case 'Item':
-        recordToMerge.batches.forEach(batch => {
-          recordToKeep.addBatchIfUnique(batch);
-        });
-      case 'Name':
-        recordToMerge.masterLists.forEach(masterList => {
-          recordToKeep.addMasterListIfUnique(masterList);
-        });
-    }
+  switch (internalRecordType) {
+    case 'Item':
+      recordToMerge.batches.forEach(batch => {
+        recordToKeep.addBatchIfUnique(batch);
+      });
+    case 'Name':
+      recordToMerge.masterLists.forEach(masterList => {
+        recordToKeep.addMasterListIfUnique(masterList);
+      });
+  }
 
   deleteRecord(database, internalRecordType, recordToMerge.id);
 }
