@@ -1,7 +1,7 @@
 import {
   EXTERNAL_TO_INTERNAL,
   NAME_TYPES,
-  object_TYPES,
+  RECORD_TYPES,
   REQUISITION_STATUSES,
   REQUISITION_TYPES,
   SEQUENCE_KEYS,
@@ -17,35 +17,35 @@ import { setPriority } from 'os';
 import { PassThrough } from 'stream';
 
 /**
- * Take the data from a sync object, and integrate it into the local database as
- * the given objectType. If create or update, will update an existing object if
+ * Take the data from a sync record, and integrate it into the local database as
+ * the given recordType. If create or update, will update an existing record if
  * an id matches, or create a new one if not. If delete, will just clean up/delete.
  * @param  {Realm}  database   The local database
  * @param  {object} settings   Access to app settings
- * @param  {string} syncType   The type of change that created this sync object
- * @param  {object} syncobject Data representing the sync object
+ * @param  {string} syncType   The type of change that created this sync record
+ * @param  {object} syncRecord Data representing the sync record
  * @return {none}
  */
-export function integrateobject(database, settings, syncobject) {
-  // If the sync object is missing either data, object type, sync type, or object ID, ignore
-  if (!syncobject.objectType || !syncobject.SyncType) return;
-  const syncType = syncobject.SyncType;
-  const objectType = syncobject.objectType;
+export function integrateRecord(database, settings, syncRecord) {
+  // If the sync record is missing either data, record type, sync type, or record ID, ignore
+  if (!syncRecord.RecordType || !syncRecord.SyncType) return;
+  const syncType = syncRecord.SyncType;
+  const recordType = syncRecord.RecordType;
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
-  const internalobjectType = object_TYPES.translate(objectType, EXTERNAL_TO_INTERNAL);
+  const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
   if (changeType === 'merge') {
-    mergeobjects(database, settings, syncobject);
+    mergeRecords(database, settings, syncRecord);
   }
 
   switch (changeType) {
     case CHANGE_TYPES.CREATE:
     case CHANGE_TYPES.UPDATE:
-      if (!syncobject.data) return; // If missing data representing object, ignore
-      createOrUpdateobject(database, settings, internalobjectType, syncobject.data);
+      if (!syncRecord.data) return; // If missing data representing record, ignore
+      createOrUpdateRecord(database, settings, internalRecordType, syncRecord.data);
       break;
     case CHANGE_TYPES.DELETE:
-      if (!syncobject.objectID) return; // If missing object id, ignore
-      deleteobject(database, internalobjectType, syncobject.objectID);
+      if (!syncRecord.RecordID) return; // If missing record id, ignore
+      deleteRecord(database, internalRecordType, syncRecord.RecordID);
       break;
     default:
       return;
@@ -53,15 +53,15 @@ export function integrateobject(database, settings, syncobject) {
 }
 
 /**
- * Merge two existing objects. Two-level lookup table for 1) the objects related to the type
+ * Merge two existing records. Two-level lookup table for 1) the objects related to the type
  * of the merging objects 2) the fields of the related object to update. Point related objects
  * of the merged object to point to the kept object and delete.
  * @param {Realm}  database    The local database
- * @param {object} settings    Access to app settings
- * @param {object} mergeobject Data representing the sync object
+ * @param {object} settings    Accessto app settings
+ * @param {object} mergeRecord Data representing the sync record
  */
-export function mergeobjects(database, settings, mergeobject) {
-  const object_TYPE_TO_TABLES = {
+export function mergeRecords(database, settings, mergeRecord) {
+  const objectsToUpdate = {
     item: {
       StocktakeItem: 'item',
       TransactionItem: 'item',
@@ -75,67 +75,63 @@ export function mergeobjects(database, settings, mergeobject) {
     },
   };
 
-  const mergedObjectsInternalType = object_TYPES.translate(
-    mergeobject.objectType,
+  const mergedObjectsInternalType = RECORD_TYPES.translate(
+    mergeRecord.RecordType,
     EXTERNAL_TO_INTERNAL,
   );
-
+  const tableLookup = objectsToUpdate[mergeRecord.RecordType];
   const objectToKeep = database
     .objects(mergedObjectsInternalType)
-    .filtered('id == $0', mergeobject.mergeIDtokeep)[0];
+    .filtered('id == $0', mergeRecord.mergeIDtokeep)[0];
   const objectToMerge = database
     .objects(mergedObjectsInternalType)
-    .filtered('id == $0', mergeobject.mergeIDtodelete)[0];
+    .filtered('id == $0', mergeRecord.mergeIDtodelete)[0];
 
   if (!(objectToKeep && objectToMerge)) {
     return;
   }
 
-  const tablesToUpdate = object_TYPE_TO_TABLES[mergeobject.objectType];
-
-  if (tablesToUpdate) {
-    Object.keys(tablesToUpdate).forEach(tableToUpdate => {
-      const fieldToUpdate = tablesToUpdate[tableToUpdate];
-      const objectsToUpdate = database
+  if (tableLookup) {
+    Object.keys(tableLookup).forEach(tableToUpdate => {
+      const fieldToUpdate = tableLookup[tableToUpdate];
+      const recordsToUpdate = database
         .objects(tableToUpdate)
         .filtered(`${fieldToUpdate}.id == $0`, objectToMerge.id)
         .snapshot();
-      if (objectsToUpdate.length > 0) {
-        objectsToUpdate.forEach(object => {
-          if (object) {
-            // Explicitly set Transaction.otherParty
-            // TODO: replace with listener or setter on Transaction object
+      if (recordsToUpdate.length > 0) {
+        recordsToUpdate.forEach(record => {
+          if (record) {
             if (tableToUpdate === 'Transaction') {
-              object.setOtherParty(objectToKeep);
+              record.setOtherParty(objectToKeep);
             } else {
-              object[fieldToUpdate] = objectToKeep;
-              database.update(tableToUpdate, object);
+              record[fieldToUpdate] = objectToKeep;
+              database.update(tableToUpdate, record);
             }
           }
         });
       }
     });
   }
-  switch (mergeobject.objectType) {
+  switch (mergeRecord.RecordType) {
     case 'item':
       const mergedMasterListItems = database
         .objects('MasterListItem')
         .filtered('item.id == $0', objectToMerge.id)
-        .snapshot();
-      mergedMasterListItems.forEach(masterListItem => {
-        const duplicateMasterListItem = database
-          .objects('MasterListItem')
-          .filtered('item.id == $0', objectToKeep.id)
-          .filtered('masterList.id == $0', masterListItem.masterList.id)[0];
-        if (duplicateMasterListItem && mergedMasterListItem) {
-          deleteobject(database, 'MasterListItem', mergedMasterListItem.id);
-        } else {
-          if (mergedMasterListItem) {
-            mergedMasterListItem.item = objectToKeep;
-            createOrUpdateobject(database, settings, 'MasterListItem', mergedMasterListItem);
+        .snapshot()
+        .forEach(masterListItem => {
+          const duplicateMasterListItem = database
+            .objects('MasterListItem')
+            .filtered('item.id == $0', objectToKeep.id)
+            .filtered('masterList.id == $0', masterListItem.masterList.id)[0];
+          if (duplicateMasterListItem && mergedMasterListItem) {
+            deleteRecord(database, 'MasterListItem', mergedMasterListItem.id);
+          } else {
+            if (mergedMasterListItem) {
+              mergedMasterListItem.item = objectToKeep;
+              createOrUpdateRecord(database, settings, 'MasterListItem', mergedMasterListItem);
+            }
           }
-        }
-      });
+        });
       objectToMerge.batches.forEach(batch => {
         objectToKeep.addBatchIfUnique(batch);
       });
@@ -144,27 +140,39 @@ export function mergeobjects(database, settings, mergeobject) {
     case 'name':
       const mergedMasterListNameJoins = database
         .objects('MasterListNameJoin')
-        .filtered('name.id == $0', objectToMerge.id)
-        .snapshot();
-      mergedMasterListNameJoins.forEach(masterListNameJoin => {
-        const duplicateNameJoin = database
-          .objects('MasterListNameJoin')
-          .filtered('name.id == $0', objectToKeep.id)
-          .filtered('masterlist.id == $0', masterListNameJoin.masterList.id)[0];
-        if (duplicateNameJoin && mergedMasterListNameJoin) {
-          deleteobject(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
-        } else {
-          if (mergedMasterListNameJoin) {
-            mergedMasterListNameJoin.name = objectToKeep;
-            createOrUpdateobject(
-              database,
-              settings,
-              'MasterListNameJoin',
-              mergedMasterListNameJoin,
-            );
-          }
+<<<<<<< Updated upstream
+        .filtered('name.id == $0', objectToMerge.id)[0];
+      if (keptMasterListNameJoin && mergedMasterListNameJoin) {
+        deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
+      } else {
+        if (mergedMasterListNameJoin) {
+          mergedMasterListNameJoin.name = objectToKeep;
+          createOrUpdateRecord(database, settings, 'MasterListNameJoin', mergedMasterListNameJoin);
         }
-      });
+      }
+=======
+        .filtered('name.id == $0', objectToMerge.id)
+        .snapshot()
+        .forEach(masterListNameJoin => {
+          const duplicateNameJoin = database
+            .objects('MasterListNameJoin')
+            .filtered('name.id == $0', objectToKeep.id)
+            .filtered('masterlist.id == $0', masterListNameJoin.masterList.id)[0];
+          if (duplicateNameJoin && mergedMasterListNameJoin) {
+            deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
+          } else {
+            if (mergedMasterListNameJoin) {
+              mergedMasterListNameJoin.name = objectToKeep;
+              createOrUpdateRecord(
+                database,
+                settings,
+                'MasterListNameJoin',
+                mergedMasterListNameJoin,
+              );
+            }
+          }
+        });
+>>>>>>> Stashed changes
       objectToMerge.masterLists.forEach(masterList => {
         objectToKeep.addMasterListIfUnique(masterList);
       });
@@ -172,84 +180,84 @@ export function mergeobjects(database, settings, mergeobject) {
     default:
       break;
   }
-  deleteobject(database, mergedObjectsInternalType, objectToMerge.id);
+  deleteRecord(database, mergedObjectsInternalType, objectToMerge.id);
 }
 
 /**
- * Update an existing object or create a new one based on the sync object.
+ * Update an existing record or create a new one based on the sync record.
  * @param  {Realm}  database   The local database
  * @param  {object} settings   Access to app settings
- * @param  {string} objectType Internal object type
- * @param  {object} object     Data from sync representing the object
+ * @param  {string} recordType Internal record type
+ * @param  {object} record     Data from sync representing the record
  * @return {none}
  */
-export function createOrUpdateobject(database, settings, objectType, object) {
-  if (!sanityCheckIncomingobject(objectType, object)) return; // Unsupported or malformed object
-  let internalobject;
-  switch (objectType) {
+export function createOrUpdateRecord(database, settings, recordType, record) {
+  if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record
+  let internalRecord;
+  switch (recordType) {
     case 'Item': {
-      const packSize = parseNumber(object.default_pack_size);
-      internalobject = {
-        id: object.ID,
-        category: database.getOrCreate('ItemCategory', object.category_ID),
-        code: object.code,
+      const packSize = parseNumber(record.default_pack_size);
+      internalRecord = {
+        id: record.ID,
+        category: database.getOrCreate('ItemCategory', record.category_ID),
+        code: record.code,
         defaultPackSize: 1, // Every item batch in mobile should be pack-to-one
-        defaultPrice: packSize ? parseNumber(object.buy_price) / packSize : 0,
-        department: database.getOrCreate('ItemDepartment', object.department_ID),
-        description: object.description,
-        name: object.item_name,
-        crossReferenceItem: database.getOrCreate('Item', object.cross_ref_item_ID),
+        defaultPrice: packSize ? parseNumber(record.buy_price) / packSize : 0,
+        department: database.getOrCreate('ItemDepartment', record.department_ID),
+        description: record.description,
+        name: record.item_name,
+        crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'ItemCategory': {
-      internalobject = {
-        id: object.ID,
-        name: object.Description,
+      internalRecord = {
+        id: record.ID,
+        name: record.Description,
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'ItemDepartment': {
-      internalobject = {
-        id: object.ID,
-        name: object.department,
+      internalRecord = {
+        id: record.ID,
+        name: record.department,
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'ItemBatch': {
-      const item = database.getOrCreate('Item', object.item_ID);
-      const packSize = parseNumber(object.pack_size);
-      internalobject = {
-        id: object.ID,
+      const item = database.getOrCreate('Item', record.item_ID);
+      const packSize = parseNumber(record.pack_size);
+      internalRecord = {
+        id: record.ID,
         item: item,
         packSize: 1, // Every item batch in mobile should be pack-to-one
-        numberOfPacks: parseNumber(object.quantity) * packSize,
-        expiryDate: parseDate(object.expiry_date),
-        batch: object.batch,
-        costPrice: packSize ? parseNumber(object.sell_price) / packSize : 0,
-        sellPrice: packSize ? parseNumber(object.sell_price) / packSize : 0,
-        supplier: database.getOrCreate('Name', object.name_ID),
+        numberOfPacks: parseNumber(record.quantity) * packSize,
+        expiryDate: parseDate(record.expiry_date),
+        batch: record.batch,
+        costPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        supplier: database.getOrCreate('Name', record.name_ID),
       };
-      const itemBatch = database.update(objectType, internalobject);
+      const itemBatch = database.update(recordType, internalRecord);
       item.addBatchIfUnique(itemBatch);
       database.save('Item', item);
       break;
     }
     case 'ItemStoreJoin': {
-      const joinsThisStore = object.store_ID === settings.get(THIS_STORE_ID);
-      internalobject = {
-        id: object.ID,
-        itemId: object.item_ID,
+      const joinsThisStore = record.store_ID === settings.get(THIS_STORE_ID);
+      internalRecord = {
+        id: record.ID,
+        itemId: record.item_ID,
         joinsThisStore: joinsThisStore,
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       if (joinsThisStore) {
         // If it joins this store, set the item's visibility
-        const item = database.getOrCreate('Item', object.item_ID);
-        item.isVisible = !parseBoolean(object.inactive);
+        const item = database.getOrCreate('Item', record.item_ID);
+        item.isVisible = !parseBoolean(record.inactive);
         database.save('Item', item);
       }
       break;
@@ -258,38 +266,38 @@ export function createOrUpdateobject(database, settings, objectType, object) {
     // will be replaced by storing equivalent infomation in a MasterList. LocalListItem
     // objects will be mapped to MasterListItems in sync.
     case 'LocalListItem': {
-      const item = database.getOrCreate('Item', object.item_ID);
+      const item = database.getOrCreate('Item', record.item_ID);
       // Grabbing the masterList using list_master_name_join_ID as the join's id is used in mobile
       // to mimic the local list join with a MasterList.
-      const masterList = database.getOrCreate('MasterList', object.list_master_name_join_ID);
+      const masterList = database.getOrCreate('MasterList', record.list_master_name_join_ID);
 
-      internalobject = {
-        id: object.ID,
+      internalRecord = {
+        id: record.ID,
         item: item,
-        imprestQuantity: parseNumber(object.imprest_quantity),
+        imprestQuantity: parseNumber(record.imprest_quantity),
         masterList: masterList,
       };
-      const localListItem = database.update('MasterListItem', internalobject);
+      const localListItem = database.update('MasterListItem', internalRecord);
       masterList.addItemIfUnique(localListItem);
       break;
     }
     case 'MasterListNameJoin': {
-      const name = database.getOrCreate('Name', object.name_ID);
+      const name = database.getOrCreate('Name', record.name_ID);
       let masterList;
-      if (!object.list_master_ID) {
+      if (!record.list_master_ID) {
         // mSupply list_local_line don't have a list_master_ID, map the join to a MasterList
-        masterList = database.getOrCreate('MasterList', object.ID);
-        masterList.name = object.description;
+        masterList = database.getOrCreate('MasterList', record.ID);
+        masterList.name = record.description;
         database.save('MasterList', masterList);
       } else {
         // Regular MasterListNameJoin
-        masterList = database.getOrCreate('MasterList', object.list_master_ID);
-        internalobject = {
-          id: object.ID,
+        masterList = database.getOrCreate('MasterList', record.list_master_ID);
+        internalRecord = {
+          id: record.ID,
           name: name,
           masterList: masterList,
         };
-        database.update(objectType, internalobject);
+        database.update(recordType, internalRecord);
       }
 
       name.addMasterListIfUnique(masterList);
@@ -297,69 +305,69 @@ export function createOrUpdateobject(database, settings, objectType, object) {
       break;
     }
     case 'MasterList': {
-      internalobject = {
-        id: object.ID,
-        name: object.description,
-        note: object.note,
+      internalRecord = {
+        id: record.ID,
+        name: record.description,
+        note: record.note,
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'MasterListItem': {
-      const masterList = database.getOrCreate('MasterList', object.item_master_ID);
-      internalobject = {
-        id: object.ID,
-        item: database.getOrCreate('Item', object.item_ID),
-        imprestQuantity: parseNumber(object.imprest_quan),
+      const masterList = database.getOrCreate('MasterList', record.item_master_ID);
+      internalRecord = {
+        id: record.ID,
+        item: database.getOrCreate('Item', record.item_ID),
+        imprestQuantity: parseNumber(record.imprest_quan),
         masterList: masterList,
       };
-      const masterListItem = database.update(objectType, internalobject);
+      const masterListItem = database.update(recordType, internalRecord);
       masterList.addItemIfUnique(masterListItem);
       break;
     }
     case 'Name': {
-      internalobject = {
-        id: object.ID,
-        name: object.name,
-        code: object.code,
-        phoneNumber: object.phone,
+      internalRecord = {
+        id: record.ID,
+        name: record.name,
+        code: record.code,
+        phoneNumber: record.phone,
         billingAddress: getOrCreateAddress(
           database,
-          object.bill_address1,
-          object.bill_address2,
-          object.bill_address3,
-          object.bill_address4,
-          object.bill_postal_zip_code,
+          record.bill_address1,
+          record.bill_address2,
+          record.bill_address3,
+          record.bill_address4,
+          record.bill_postal_zip_code,
         ),
-        emailAddress: object.email,
-        type: NAME_TYPES.translate(object.type, EXTERNAL_TO_INTERNAL),
-        isCustomer: parseBoolean(object.customer),
-        isSupplier: parseBoolean(object.supplier),
-        isManufacturer: parseBoolean(object.manufacturer),
-        supplyingStoreId: object.supplying_store_id,
+        emailAddress: record.email,
+        type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+        isCustomer: parseBoolean(record.customer),
+        isSupplier: parseBoolean(record.supplier),
+        isManufacturer: parseBoolean(record.manufacturer),
+        supplyingStoreId: record.supplying_store_id,
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'NameStoreJoin': {
-      const joinsThisStore = object.store_ID === settings.get(THIS_STORE_ID);
-      internalobject = {
-        id: object.ID,
-        nameId: object.name_ID,
+      const joinsThisStore = record.store_ID === settings.get(THIS_STORE_ID);
+      internalRecord = {
+        id: record.ID,
+        nameId: record.name_ID,
         joinsThisStore: joinsThisStore,
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       if (joinsThisStore) {
         // If it joins this store, set the name's visibility
-        const name = database.getOrCreate('Name', object.name_ID);
-        name.isVisible = !parseBoolean(object.inactive);
+        const name = database.getOrCreate('Name', record.name_ID);
+        name.isVisible = !parseBoolean(record.inactive);
         database.save('Name', name);
       }
       break;
     }
     case 'NumberSequence': {
       const thisStoreId = settings.get(THIS_STORE_ID);
-      const sequenceKey = SEQUENCE_KEYS.translate(object.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
       // Don't accept updates to number sequences
       if (
         database.objects('NumberSequence').filtered('sequenceKey == $0', sequenceKey).length > 0
@@ -367,131 +375,131 @@ export function createOrUpdateobject(database, settings, objectType, object) {
         break;
       }
       if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
-      internalobject = {
-        id: object.ID,
+      internalRecord = {
+        id: record.ID,
         sequenceKey: sequenceKey,
-        highestNumberUsed: parseNumber(object.value),
+        highestNumberUsed: parseNumber(record.value),
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'NumberToReuse': {
       const thisStoreId = settings.get(THIS_STORE_ID);
-      const sequenceKey = SEQUENCE_KEYS.translate(object.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
       if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
       const numberSequence = database.getOrCreate('NumberSequence', sequenceKey, 'sequenceKey');
-      internalobject = {
-        id: object.ID,
+      internalRecord = {
+        id: record.ID,
         numberSequence: numberSequence,
-        number: parseNumber(object.number_to_use),
+        number: parseNumber(record.number_to_use),
       };
-      const numberToReuse = database.update(objectType, internalobject);
+      const numberToReuse = database.update(recordType, internalRecord);
       // Attach the number to reuse to the number seqeunce
       numberSequence.addNumberToReuse(numberToReuse);
       break;
     }
     case 'Requisition': {
-      let status = REQUISITION_STATUSES.translate(object.status, EXTERNAL_TO_INTERNAL);
+      let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       // If not a special wp or wf status, use the normal status translation
-      if (!status) status = STATUSES.translate(object.status, EXTERNAL_TO_INTERNAL);
-      internalobject = {
-        id: object.ID,
-        status: REQUISITION_STATUSES.translate(object.status, EXTERNAL_TO_INTERNAL),
-        entryDate: parseDate(object.date_entered),
-        daysToSupply: parseNumber(object.daysToSupply),
-        serialNumber: object.serial_number,
-        requesterReference: object.requester_reference,
-        comment: object.comment,
-        enteredBy: database.getOrCreate('User', object.user_ID),
-        type: REQUISITION_TYPES.translate(object.type, EXTERNAL_TO_INTERNAL),
-        otherStoreName: database.getOrCreate('Name', object.name_ID),
+      if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      internalRecord = {
+        id: record.ID,
+        status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        entryDate: parseDate(record.date_entered),
+        daysToSupply: parseNumber(record.daysToSupply),
+        serialNumber: record.serial_number,
+        requesterReference: record.requester_reference,
+        comment: record.comment,
+        enteredBy: database.getOrCreate('User', record.user_ID),
+        type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+        otherStoreName: database.getOrCreate('Name', record.name_ID),
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'RequisitionItem': {
-      const requisition = database.getOrCreate('Requisition', object.requisition_ID);
-      internalobject = {
-        id: object.ID,
+      const requisition = database.getOrCreate('Requisition', record.requisition_ID);
+      internalRecord = {
+        id: record.ID,
         requisition: requisition,
-        item: database.getOrCreate('Item', object.item_ID),
-        stockOnHand: parseNumber(object.stock_on_hand),
-        dailyUsage: parseNumber(object.daily_usage),
-        requiredQuantity: parseNumber(object.Cust_stock_order),
-        suppliedQuantity: parseNumber(object.actualQuan),
-        comment: object.comment,
-        sortIndex: parseNumber(object.line_number),
+        item: database.getOrCreate('Item', record.item_ID),
+        stockOnHand: parseNumber(record.stock_on_hand),
+        dailyUsage: parseNumber(record.daily_usage),
+        requiredQuantity: parseNumber(record.Cust_stock_order),
+        suppliedQuantity: parseNumber(record.actualQuan),
+        comment: record.comment,
+        sortIndex: parseNumber(record.line_number),
       };
-      const requisitionItem = database.update(objectType, internalobject);
-      requisition.addItemIfUnique(requisitionItem); // requisitionItem will be an orphan object if it's not unique?
+      const requisitionItem = database.update(recordType, internalRecord);
+      requisition.addItemIfUnique(requisitionItem); // requisitionItem will be an orphan record if it's not unique?
       database.save('Requisition', requisition);
       break;
     }
     case 'Stocktake': {
-      internalobject = {
-        id: object.ID,
-        name: object.Description,
-        createdDate: parseDate(object.stock_take_created_date),
-        stocktakeDate: parseDate(object.stock_take_date, object.stock_take_time),
-        status: STATUSES.translate(object.status, EXTERNAL_TO_INTERNAL),
-        createdBy: database.getOrCreate('User', object.created_by_ID),
-        finalisedBy: database.getOrCreate('User', object.finalised_by_ID),
-        comment: object.comment,
-        serialNumber: object.serial_number,
-        additions: database.getOrCreate('Transaction', object.invad_additions_ID),
-        reductions: database.getOrCreate('Transaction', object.invad_reductions_ID),
+      internalRecord = {
+        id: record.ID,
+        name: record.Description,
+        createdDate: parseDate(record.stock_take_created_date),
+        stocktakeDate: parseDate(record.stock_take_date, record.stock_take_time),
+        status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        createdBy: database.getOrCreate('User', record.created_by_ID),
+        finalisedBy: database.getOrCreate('User', record.finalised_by_ID),
+        comment: record.comment,
+        serialNumber: record.serial_number,
+        additions: database.getOrCreate('Transaction', record.invad_additions_ID),
+        reductions: database.getOrCreate('Transaction', record.invad_reductions_ID),
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'StocktakeBatch': {
-      const stocktake = database.getOrCreate('Stocktake', object.stock_take_ID);
-      const packSize = parseNumber(object.snapshot_packsize);
-      const itemBatch = database.getOrCreate('ItemBatch', object.item_line_ID);
-      const item = database.getOrCreate('Item', object.item_ID);
+      const stocktake = database.getOrCreate('Stocktake', record.stock_take_ID);
+      const packSize = parseNumber(record.snapshot_packsize);
+      const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
+      const item = database.getOrCreate('Item', record.item_ID);
       itemBatch.item = item;
       item.addBatchIfUnique(itemBatch);
-      internalobject = {
-        id: object.ID,
+      internalRecord = {
+        id: record.ID,
         stocktake: stocktake,
         itemBatch: itemBatch,
-        snapshotNumberOfPacks: parseNumber(object.snapshot_qty) * packSize,
+        snapshotNumberOfPacks: parseNumber(record.snapshot_qty) * packSize,
         packSize: 1, // Pack to one all mobile data
-        expiryDate: parseDate(object.expiry),
-        batch: object.Batch,
-        costPrice: packSize ? parseNumber(object.cost_price) / packSize : 0,
-        sellPrice: packSize ? parseNumber(object.sell_price) / packSize : 0,
-        countedNumberOfPacks: parseNumber(object.stock_take_qty) * packSize,
-        sortIndex: parseNumber(object.line_number),
+        expiryDate: parseDate(record.expiry),
+        batch: record.Batch,
+        costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
+        sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
+        sortIndex: parseNumber(record.line_number),
       };
-      const stocktakeBatch = database.update(objectType, internalobject);
+      const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
       database.save('Stocktake', stocktake);
       break;
     }
     case 'Transaction': {
-      if (object.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
-      const otherParty = database.getOrCreate('Name', object.name_ID);
-      const enteredBy = database.getOrCreate('User', object.user_ID);
-      const linkedRequisition = object.requisition_ID
-        ? database.getOrCreate('Requisition', object.requisition_ID)
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
+      const otherParty = database.getOrCreate('Name', record.name_ID);
+      const enteredBy = database.getOrCreate('User', record.user_ID);
+      const linkedRequisition = record.requisition_ID
+        ? database.getOrCreate('Requisition', record.requisition_ID)
         : null;
-      const category = database.getOrCreate('TransactionCategory', object.category_ID);
-      internalobject = {
-        id: object.ID,
-        serialNumber: object.invoice_num,
-        comment: object.comment,
-        entryDate: parseDate(object.entry_date),
-        type: TRANSACTION_TYPES.translate(object.type, EXTERNAL_TO_INTERNAL),
-        status: STATUSES.translate(object.status, EXTERNAL_TO_INTERNAL),
-        confirmDate: parseDate(object.confirm_date),
-        theirRef: object.their_ref,
+      const category = database.getOrCreate('TransactionCategory', record.category_ID);
+      internalRecord = {
+        id: record.ID,
+        serialNumber: record.invoice_num,
+        comment: record.comment,
+        entryDate: parseDate(record.entry_date),
+        type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
+        status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        confirmDate: parseDate(record.confirm_date),
+        theirRef: record.their_ref,
         category,
         enteredBy,
         otherParty,
         linkedRequisition,
       };
-      const transaction = database.update(objectType, internalobject);
+      const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
         database.update('Requisition', {
           id: linkedRequisition.id,
@@ -503,39 +511,39 @@ export function createOrUpdateobject(database, settings, objectType, object) {
       break;
     }
     case 'TransactionCategory': {
-      internalobject = {
-        id: object.ID,
-        name: object.category,
-        code: object.code,
-        type: TRANSACTION_TYPES.translate(object.type, EXTERNAL_TO_INTERNAL),
+      internalRecord = {
+        id: record.ID,
+        name: record.category,
+        code: record.code,
+        type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
       };
-      database.update(objectType, internalobject);
+      database.update(recordType, internalRecord);
       break;
     }
     case 'TransactionBatch': {
-      const transaction = database.getOrCreate('Transaction', object.transaction_ID);
-      const itemBatch = database.getOrCreate('ItemBatch', object.item_line_ID);
-      const item = database.getOrCreate('Item', object.item_ID);
+      const transaction = database.getOrCreate('Transaction', record.transaction_ID);
+      const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
+      const item = database.getOrCreate('Item', record.item_ID);
       itemBatch.item = item;
       item.addBatchIfUnique(itemBatch);
-      const packSize = parseNumber(object.pack_size);
-      internalobject = {
-        id: object.ID,
-        itemId: object.item_ID,
-        itemName: object.item_name,
+      const packSize = parseNumber(record.pack_size);
+      internalRecord = {
+        id: record.ID,
+        itemId: record.item_ID,
+        itemName: record.item_name,
         itemBatch: itemBatch,
         packSize: 1, // Pack to one all mobile data
-        numberOfPacks: parseNumber(object.quantity) * packSize,
-        numberOfPacksSent: parseNumber(object.quantity) * packSize,
+        numberOfPacks: parseNumber(record.quantity) * packSize,
+        numberOfPacksSent: parseNumber(record.quantity) * packSize,
         transaction: transaction,
-        note: object.note,
-        costPrice: packSize ? parseNumber(object.cost_price) / packSize : 0,
-        sellPrice: packSize ? parseNumber(object.sell_price) / packSize : 0,
-        sortIndex: parseNumber(object.line_number),
-        expiryDate: parseDate(object.expiry_date),
-        batch: object.batch,
+        note: record.note,
+        costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
+        sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        sortIndex: parseNumber(record.line_number),
+        expiryDate: parseDate(record.expiry_date),
+        batch: record.batch,
       };
-      const transactionBatch = database.update(objectType, internalobject);
+      const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);
       database.save('Transaction', transaction);
       itemBatch.addTransactionBatchIfUnique(transactionBatch);
@@ -543,29 +551,29 @@ export function createOrUpdateobject(database, settings, objectType, object) {
       break;
     }
     default:
-      break; // Silently ignore object types we don't want to sync into mobile
+      break; // Silently ignore record types we don't want to sync into mobile
   }
 }
 
 /**
- * Delete the object with the given id, relying on its destructor to initiate any
- * changes that are required to clean up that type of object.
+ * Delete the record with the given id, relying on its destructor to initiate any
+ * changes that are required to clean up that type of record.
  * @param  {Realm}  database   App wide local database
- * @param  {string} objectType Internal object type
+ * @param  {string} recordType Internal record type
  * @param  {string} primaryKey       The primary key of the database object, usually its id
  * @param  {string} primaryKeyField  The field used as the primary key, defaults to 'id'
  * @return {none}
  */
-function deleteobject(database, objectType, primaryKey, primaryKeyField = 'id') {
-  // 'delete' is a reserved word, deleteobject is in the upper scope, so here we have:
+function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') {
+  // 'delete' is a reserved word, deleteRecord is in the upper scope, so here we have:
   const obliterate = () => {
     const deleteResults = database
-      .objects(objectType)
+      .objects(recordType)
       .filtered(`${primaryKeyField} == $0`, primaryKey);
-    if (deleteResults && deleteResults.length > 0) database.delete(objectType, deleteResults[0]);
+    if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
   };
 
-  switch (objectType) {
+  switch (recordType) {
     case 'Item':
     case 'ItemBatch':
     case 'ItemCategory':
@@ -589,14 +597,14 @@ function deleteobject(database, objectType, primaryKey, primaryKeyField = 'id') 
     }
     // LocalListItem is mimicked with MasterListItem
     case 'LocalListItem':
-      deleteobject(database, 'MasterListItem', primaryKey, primaryKeyField);
+      deleteRecord(database, 'MasterListItem', primaryKey, primaryKeyField);
       break;
     case 'MasterListNameJoin': {
       // Joins for local lists are mapped to and mimicked by a MasterList of the same id.
       const masterList = database.objects('MasterList').filtered('id == $0', primaryKey)[0];
       if (masterList) {
         // Is a local list, so delete the MasterList that was created for it.
-        deleteobject(database, 'MasterList', primaryKey, primaryKeyField);
+        deleteRecord(database, 'MasterList', primaryKey, primaryKeyField);
       } else {
         // Delete the MasterListNameJoin as in the normal/expected case.
         obliterate();
@@ -604,21 +612,21 @@ function deleteobject(database, objectType, primaryKey, primaryKeyField = 'id') 
       break;
     }
     default:
-      break; // Silently ignore object types we don't want to sync into mobile
+      break; // Silently ignore record types we don't want to sync into mobile
   }
 }
 
 /**
- * Ensure the given object has the right data to create an internal object of the
- * given objectType. We check only that it is a recognised object type, and that it contains values
- * for all expected keys, but not what those values are (so the content of the object itself could
+ * Ensure the given record has the right data to create an internal record of the
+ * given recordType. We check only that it is a recognised record type, and that it contains values
+ * for all expected keys, but not what those values are (so the content of the record itself could
  * be unexpected or invalid, and we wouldn't detect it)
- * @param  {string} objectType The internal object type this sync object should be used for
- * @param  {object} object     The data from the sync object
- * @return {boolean}           Whether the data is sufficient to create an internal object from
+ * @param  {string} recordType The internal record type this sync record should be used for
+ * @param  {object} record     The data from the sync record
+ * @return {boolean}           Whether the data is sufficient to create an internal record from
  */
-export function sanityCheckIncomingobject(objectType, object) {
-  if (!object.ID || object.ID.length < 1) return false; // Every object needs an ID
+export function sanityCheckIncomingRecord(recordType, record) {
+  if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
   const requiredFields = {
     Item: {
       cannotBeBlank: ['code', 'item_name'],
@@ -714,20 +722,20 @@ export function sanityCheckIncomingobject(objectType, object) {
       canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
     },
   };
-  if (!requiredFields[objectType]) return false; // Unsupported object type
-  const hasAllNonBlankFields = requiredFields[objectType].cannotBeBlank.reduce(
+  if (!requiredFields[recordType]) return false; // Unsupported record type
+  const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
-      object[fieldName] !== null && // Key must exist
-      object[fieldName].length > 0, // And must not be blank
+      record[fieldName] !== null && // Key must exist
+      record[fieldName].length > 0, // And must not be blank
     true,
   );
-  if (!hasAllNonBlankFields) return false; // Return early if object already not valid
-  const hasRequiredFields = requiredFields[objectType].canBeBlank.reduce(
+  if (!hasAllNonBlankFields) return false; // Return early if record already not valid
+  const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
-      object[fieldName] !== null && // Key must exist
-      object[fieldName] !== undefined, // May be blank, i.e. just ''
+      record[fieldName] !== null && // Key must exist
+      record[fieldName] !== undefined, // May be blank, i.e. just ''
     hasAllNonBlankFields,
   ); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
   return hasRequiredFields;
