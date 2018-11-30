@@ -82,14 +82,11 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const recordToMerge = database
     .objects(mergedRecordType)
     .filtered('id == $0', syncRecord.mergeIDtodelete)[0];
-
-  if (!(recordToKeep && recordToMerge)) {
-    return;
-  }
-
+  
+  const recordsExist = recordToKeep && recordToMerge;
   const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
 
-  if (!tablesToUpdate) return;
+  if (!recordsExist || !tablesToUpdate) return;
 
   Object.entries(RECORD_TYPE_TO_TABLE)
   .forEach((tableToUpdate, fieldToUpdate) => {
