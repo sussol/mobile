@@ -112,9 +112,10 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     .filtered('id == $0', syncRecord.mergeIDtodelete)[0];
 
   const recordsExist = recordToKeep && recordToMerge;
-  const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
+  if (!recordsExist) return;
 
-  if (!recordsExist || !tablesToUpdate) return;
+  const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
+  if (!tablesToUpdate) return; // TODO: log to bugsnag if merging not implemented for a certain recordType.
 
   Object.keys(tablesToUpdate).forEach(tableToUpdate => {
     const fieldToUpdate = tablesToUpdate[tableToUpdate].field;
