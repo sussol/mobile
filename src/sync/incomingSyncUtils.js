@@ -108,7 +108,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     .objects(internalRecordType)
     .filtered('id == $0', syncRecord.mergeIDtokeep)[0];
   const recordToMerge = database
-    .objects(mergedRecordType)
+    .objects(internalRecordType)
     .filtered('id == $0', syncRecord.mergeIDtodelete)[0];
   
   const recordsExist = recordToKeep && recordToMerge;
