@@ -45,6 +45,19 @@ const RECORD_TYPE_TO_TABLE = {
   },
 };
 
+const RECORD_TYPE_TO_MASTERLIST = {
+  Item: {
+    MasterListItem: {
+      field: 'item'
+    },
+  },
+  Name: {
+    MasterListNameJoin: {
+      field: 'name'
+    },
+  },
+};
+
 /**
  * Take the data from a sync record, and integrate it into the local database as
  * the given recordType. If create or update, will update an existing record if
@@ -120,61 +133,40 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       });
   });
 
-  switch (internalRecordType) {
-    case 'Item':
-      database
-        .objects('MasterListItem')
-        .filtered('item.id == $0', recordToMerge.id)
-        .snapshot()
-        .forEach(masterListItem => {
-          const duplicateMasterListItem = database
-            .objects('MasterListItem')
-            .filtered('item.id == $0', recordToKeep.id)
-            .filtered('masterList.id == $0', masterListItem.masterList.id)[0];
-          if (duplicateMasterListItem && mergedMasterListItem) {
-            deleteRecord(database, 'MasterListItem', mergedMasterListItem.id);
-          } else {
-            if (mergedMasterListItem) {
-              mergedMasterListItem.item = recordToKeep;
-              createOrUpdateRecord(database, settings, 'MasterListItem', mergedMasterListItem);
-            }
-          }
-        });
-      recordToMerge.batches.forEach(batch => {
-        recordToKeep.addBatchIfUnique(batch);
+  const masterListsToUpdate = RECORD_TYPE_TO_MASTERLIST[internalRecordType];
+
+  Object.keys(masterListsToUpdate)
+  .forEach(masterListToUpdate => {
+    const fieldToUpdate = masterListsToUpdate[masterListToUpdate].field;
+    database
+    .objects(masterListToUpdate)
+    .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
+    .snapshot()
+    .forEach(masterListRecord => {
+      const duplicateMasterListRecord = database
+        .objects(masterListToUpdate)
+        .filtered(`${fieldToUpdate}.id == $0`, recordToKeep.id)
+        .filtered('masterList.id == $0', masterListRecord.masterList.id)[0];
+        if (duplicateMasterListRecord) {
+          deleteRecord(database,  masterListToUpdate, masterListRecord.id);
+        } else {
+          masterListRecord[fieldToUpdate] = recordToKeep;
+          createOrUpdateRecord(database, settings, masterListToUpdate, masterListRecord);
+        }
       });
-      break;
-    case 'Name':
-      database
-        .objects('MasterListNameJoin')
-        .filtered('name.id == $0', recordToMerge.id)
-        .snapshot()
-        .forEach(masterListNameJoin => {
-          const duplicateNameJoin = database
-            .objects('MasterListNameJoin')
-            .filtered('name.id == $0', recordToKeep.id)
-            .filtered('masterlist.id == $0', masterListNameJoin.masterList.id)[0];
-          if (duplicateNameJoin && mergedMasterListNameJoin) {
-            deleteRecord(database, 'MasterListNameJoin', mergedMasterListNameJoin.id);
-          } else {
-            if (mergedMasterListNameJoin) {
-              mergedMasterListNameJoin.name = recordToKeep;
-              createOrUpdateRecord(
-                database,
-                settings,
-                'MasterListNameJoin',
-                mergedMasterListNameJoin,
-              );
-            }
-          }
+    });
+
+    switch (internalRecordType) {
+      case 'Item':
+        recordToMerge.batches.forEach(batch => {
+          recordToKeep.addBatchIfUnique(batch);
         });
-      recordToMerge.masterLists.forEach(masterList => {
-        recordToKeep.addMasterListIfUnique(masterList);
-      });
-      break;
-    default:
-      break;
-  }
+      case 'Name':
+        recordToMerge.masterLists.forEach(masterList => {
+          recordToKeep.addMasterListIfUnique(masterList);
+        });
+    }
+
   deleteRecord(database, internalRecordType, recordToMerge.id);
 }
 
