@@ -117,10 +117,8 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
   if (!tablesToUpdate) return; // TODO: log to bugsnag if merging not implemented for a certain recordType.
 
-  Object.entries(tablesToUpdate).forEach(([tableToUpdate, { field: fieldToUpdate }]) => {
+  Object.entries(tablesToUpdate).forEach(([tableToUpdate, { field: fieldToUpdate, setter: fieldSetter }]) => {
     console.log(tableToUpdate);
-    const setterMethod =
-      typeof tableToUpdate.setterMethod === typeof Function ? tableToUpdate.setterMethod : null;
     const recordsToUpdate = database
       .objects(tableToUpdate)
       .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
@@ -128,7 +126,8 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     recordsToUpdate.forEach(record => {
       if (record) {
         // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
-        if (setterMethod) record[setterMethod](recordToKeep);
+        setterMethod = typeof record[fieldSetter] === typeof Function ? record[fieldSetter] : null;
+        if (setterMethod) setterMethod(recordToKeep);
         record[fieldToUpdate] = recordToKeep;
       }
     });
