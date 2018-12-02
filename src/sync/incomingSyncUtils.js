@@ -139,20 +139,20 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     RECORD_TYPE_TO_MASTERLIST[internalRecordType],
   );
   const masterListRecord = database
-    .objects(masterListToUpdate)
+    .objects(tableToUpdate)
     .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)[0];
   const duplicateMasterListRecord = database
-    .objects(masterListToUpdate)
+    .objects(tableToUpdate)
     .filtered(
       `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
       recordToKeep.id,
       masterListRecord.masterList.id,
     );
   if (duplicateMasterListRecord) {
-    deleteRecord(database, masterListToUpdate, masterListRecord.id);
+    deleteRecord(database, tableToUpdate, masterListRecord.id);
   } else {
     masterListRecord[fieldToUpdate] = recordToKeep;
-    createOrUpdateRecord(database, settings, masterListToUpdate, masterListRecord);
+    createOrUpdateRecord(database, settings, tableToUpdate, masterListRecord);
   }
 
   switch (internalRecordType) {
