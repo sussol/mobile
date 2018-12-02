@@ -144,9 +144,9 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const duplicateMasterListRecord = database
     .objects(masterListToUpdate)
     .filtered(
-      `(${fieldToUpdate}.id == $0) && ('masterList.id == $0')`,
+      `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
       recordToKeep.id,
-      masterListRecord.masterList.id[0],
+      masterListRecord.masterList.id,
     );
   if (duplicateMasterListRecord) {
     deleteRecord(database, masterListToUpdate, masterListRecord.id);
