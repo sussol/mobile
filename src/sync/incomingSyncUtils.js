@@ -147,7 +147,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
       recordToKeep.id,
       masterListRecord.masterList.id,
-    );
+    )[0];
   if (duplicateMasterListRecord) {
     deleteRecord(database, tableToUpdate, masterListRecord.id);
   } else {
