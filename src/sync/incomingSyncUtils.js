@@ -125,7 +125,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     recordsToUpdate.forEach(record => {
       if (record) {
         // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
-        setterMethod = typeof record[fieldSetter] === typeof Function ? record[fieldSetter] : null;
+        const setterMethod = typeof record[fieldSetter] === typeof Function ? record[fieldSetter] : null;
         if (setterMethod) setterMethod(recordToKeep);
         record[fieldToUpdate] = recordToKeep;
       }
