@@ -117,20 +117,23 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
   if (!tablesToUpdate) return; // TODO: log to bugsnag if merging not implemented for a certain recordType.
 
-  Object.entries(tablesToUpdate).forEach(([tableToUpdate, { field: fieldToUpdate, setter: fieldSetter }]) => {
-    const recordsToUpdate = database
-      .objects(tableToUpdate)
-      .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
-      .snapshot();
-    recordsToUpdate.forEach(record => {
-      if (record) {
-        // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
-        const setterMethod = typeof record[fieldSetter] === typeof Function ? record[fieldSetter] : null;
-        if (setterMethod) setterMethod(recordToKeep);
-        record[fieldToUpdate] = recordToKeep;
-      }
-    });
-  });
+  Object.entries(tablesToUpdate).forEach(
+    ([tableToUpdate, { field: fieldToUpdate, setter: fieldSetter }]) => {
+      const recordsToUpdate = database
+        .objects(tableToUpdate)
+        .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
+        .snapshot();
+      recordsToUpdate.forEach(record => {
+        if (record) {
+          // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
+          const setterMethod =
+            typeof record[fieldSetter] === typeof Function ? record[fieldSetter] : null;
+          if (setterMethod) setterMethod(recordToKeep);
+          record[fieldToUpdate] = recordToKeep;
+        }
+      });
+    },
+  );
 
   const masterListsToUpdate = RECORD_TYPE_TO_MASTERLIST[internalRecordType];
 
