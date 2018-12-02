@@ -159,10 +159,12 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       recordToMerge.batches.forEach(batch => {
         recordToKeep.addBatchIfUnique(batch);
       });
+      break;
     case 'Name':
       recordToMerge.masterLists.forEach(masterList => {
         recordToKeep.addMasterListIfUnique(masterList);
       });
+      break;
   }
 
   deleteRecord(database, internalRecordType, recordToMerge.id);
