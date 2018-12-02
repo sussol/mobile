@@ -135,26 +135,25 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     },
   );
 
-  const masterListsToUpdate = RECORD_TYPE_TO_MASTERLIST[internalRecordType];
-
-  Object.entries(masterListsToUpdate).forEach(([masterListToUpdate, { field: fieldToUpdate }]) => {
-    database
-      .objects(masterListToUpdate)
-      .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
-      .snapshot()
-      .forEach(masterListRecord => {
-        const duplicateMasterListRecord = database
-          .objects(masterListToUpdate)
-          .filtered(`${fieldToUpdate}.id == $0`, recordToKeep.id)
-          .filtered('masterList.id == $0', masterListRecord.masterList.id)[0];
-        if (duplicateMasterListRecord) {
-          deleteRecord(database, masterListToUpdate, masterListRecord.id);
-        } else {
-          masterListRecord[fieldToUpdate] = recordToKeep;
-          createOrUpdateRecord(database, settings, masterListToUpdate, masterListRecord);
-        }
-      });
-  });
+  const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
+    RECORD_TYPE_TO_MASTERLIST[internalRecordType],
+  );
+  const masterListRecord = database
+    .objects(masterListToUpdate)
+    .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)[0];
+  const duplicateMasterListRecord = database
+    .objects(masterListToUpdate)
+    .filtered(
+      `(${fieldToUpdate}.id == $0) && ('masterList.id == $0')`,
+      recordToKeep.id,
+      masterListRecord.masterList.id[0],
+    );
+  if (duplicateMasterListRecord) {
+    deleteRecord(database, masterListToUpdate, masterListRecord.id);
+  } else {
+    masterListRecord[fieldToUpdate] = recordToKeep;
+    createOrUpdateRecord(database, settings, masterListToUpdate, masterListRecord);
+  }
 
   switch (internalRecordType) {
     case 'Item':
