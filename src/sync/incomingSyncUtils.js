@@ -110,26 +110,21 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const recordToMerge = database
     .objects(internalRecordType)
     .filtered('id == $0', syncRecord.mergeIDtodelete)[0];
-
   const recordsExist = recordToKeep && recordToMerge;
   if (!recordsExist) return;
-
   const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
   if (!tablesToUpdate) return; // TODO: log to bugsnag if merging not implemented for a certain recordType.
 
   Object.entries(tablesToUpdate).forEach(
-    ([tableToUpdate, { field: fieldToUpdate, setter: fieldSetter }]) => {
+    ([tableToUpdate, { field: fieldToUpdate, setterMethod: fieldSetter }]) => {
       const recordsToUpdate = database
         .objects(tableToUpdate)
         .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
         .snapshot();
       recordsToUpdate.forEach(record => {
         if (record) {
-          // TODO: automatically add Transaction to otherParty.transactions when Transaction.otherParty is set
-          const setterMethod =
-            typeof record[fieldSetter] === typeof Function ? record[fieldSetter] : null;
-          if (setterMethod) setterMethod(recordToKeep);
-          record[fieldToUpdate] = recordToKeep;
+          if (typeof record[fieldSetter] === typeof Function) record[fieldSetter](recordToKeep);
+          else record[fieldToUpdate] = recordToKeep;
         }
       });
     },
@@ -138,22 +133,25 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
     RECORD_TYPE_TO_MASTERLIST[internalRecordType],
   );
-  const masterListRecord = database
+  const masterListJoinRecords = database
     .objects(tableToUpdate)
-    .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)[0];
-  const duplicateMasterListRecord = database
-    .objects(tableToUpdate)
-    .filtered(
-      `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
-      recordToKeep.id,
-      masterListRecord.masterList.id,
-    )[0];
-  if (duplicateMasterListRecord) {
-    deleteRecord(database, tableToUpdate, masterListRecord.id);
-  } else {
-    masterListRecord[fieldToUpdate] = recordToKeep;
-    createOrUpdateRecord(database, settings, tableToUpdate, masterListRecord);
-  }
+    .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
+    .snapshot()
+    .forEach(joinRecord => {
+      const duplicateJoinRecord = database
+        .objects(tableToUpdate)
+        .filtered(
+          `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
+          recordToKeep.id,
+          joinRecord.masterList.id,
+        )[0];
+      if (duplicateJoinRecord) {
+        deleteRecord(database, tableToUpdate, joinRecord.id);
+      } else {
+        joinRecord[fieldToUpdate] = recordToKeep;
+        createOrUpdateRecord(database, settings, tableToUpdate, joinRecord);
+      }
+    });
 
   switch (internalRecordType) {
     case 'Item':
@@ -167,7 +165,6 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       });
       break;
   }
-
   deleteRecord(database, internalRecordType, recordToMerge.id);
 }
 
