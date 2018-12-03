@@ -5,6 +5,10 @@ const USAGE_PERIOD_MILLISECONDS = 3 * 30 * MILLISECONDS_PER_DAY; // Three months
 
 export class Item extends Realm.Object {
   destructor(database) {
+    // Clean up item store joins referencing deleted item.
+    const itemStoreJoins = database.objects('ItemStoreJoin').filtered('itemId == $0', this.id);
+    database.delete('ItemStoreJoin', itemStoreJoins);
+
     this.batches = database.objects('ItemBatch').filtered('item.id == $0', this.id);
     database.delete('ItemBatch', this.batches);
   }
