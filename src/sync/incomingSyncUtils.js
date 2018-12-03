@@ -165,6 +165,9 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       });
       break;
   }
+
+  recordToKeep.isVisible = recordToKeep.isVisible | recordToMerge.isVisible;
+
   deleteRecord(database, internalRecordType, recordToMerge.id);
 }
 
