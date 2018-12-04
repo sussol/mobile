@@ -9,6 +9,7 @@ export class Item extends Realm.Object {
     const itemStoreJoins = database.objects('ItemStoreJoin').filtered('itemId == $0', this.id);
     database.delete('ItemStoreJoin', itemStoreJoins);
 
+    // In case of merge-deletion, ensure only delete batches currently associated with this item.
     this.batches = database.objects('ItemBatch').filtered('item.id == $0', this.id);
     database.delete('ItemBatch', this.batches);
   }
