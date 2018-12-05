@@ -3,6 +3,8 @@ package com.msupplymobile;
 import io.realm.react.RealmReactPackage;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 
+import com.horcrux.svg.SvgPackage;
+
 import android.app.Application;
 import android.util.Log;
 
@@ -32,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+          new SvgPackage(),
           new RNFSPackage(),
           new RealmReactPackage(),
           new VectorIconsPackage(),
