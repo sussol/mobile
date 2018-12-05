@@ -36,6 +36,7 @@ import {
 } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
+import { DashboardPage } from './DashboardPage';
 
 export const PAGES = {
   customerInvoice: props => <PageContainer page={CustomerInvoicePage} {...props} />,
@@ -44,7 +45,7 @@ export const PAGES = {
   customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
   menu: props => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
-  root: props => <PageContainer page={MenuPage} {...props} />,
+  root: props => <PageContainer page={DashboardPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,

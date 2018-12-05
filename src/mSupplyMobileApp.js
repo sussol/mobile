@@ -250,7 +250,7 @@ class MSupplyMobileAppContainer extends React.Component {
         <LoginModal
           authenticator={this.userAuthenticator}
           settings={this.settings}
-          isAuthenticated={this.state.currentUser !== null}
+          isAuthenticated
           onAuthentication={this.onAuthentication}
         />
         {this.state.isLoading && this.renderLoadingIndicator()}
