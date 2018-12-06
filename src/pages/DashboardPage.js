@@ -10,39 +10,61 @@ import globalStyles, {
   WARMER_GREY,
   verticalContainer,
   pageStyles,
+  DARK_GREY,
 } from '../globalStyles';
 
 export class DashboardPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: null,
-      reportNames: this.reports.map(report => {
-        console.log(report.name);
-        return { key: report.name + 'abc', data: report.name };
-      }),
-      isDisplayingChart: false,
+      selected: 0,
+      reportNames: null,
+      testData: 'test1',
+      loading: true,
+      error: null,
     };
   }
 
-  onSelection = id => {
-    this.setState({ selected: id });
-  };
+  // Handler for list item selection, should alter the state to trigger a re render, showing a new graph
+  onSelection = (id, index) => {};
 
+  // Potentially refactor into it's own ListItem/ReportItem/ListReportItem component
   renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={this.onSelection}>
-        <Text>{item.data}</Text>
+      <TouchableOpacity style={{ height: 80 }}>
+        <View style={localStyles.ListViewItem}>
+          <Text style={localStyles.ListViewItemTitle}>{item.name}</Text>
+          <Text style={localStyles.ListViewItemLabel}>{item.label}</Text>
+        </View>
       </TouchableOpacity>
     );
   };
 
-  itemSeperator = highlighted => {
-    <View style={{ backgroundColor: 'black' }} />;
+  //Extracts a unique key for the flatmap - using the name of the report currently?
+  extractKey = item => {
+    return item.name;
   };
 
-  extractKey = item => {
-    return item.key;
+  //renders a seperator component for between flatmap items, refactor into it's own reusable component?
+  renderSeperator = highlighted => {
+    return <View style={highlighted && { backgroundColor: GREY, height: 1 }} />;
+  };
+
+  componentDidMount() {
+    // call database here.
+    const reportNames = this.reports.map(report => {
+      return { name: report.name, label: report.data[0].label };
+    });
+    this.setState({ reportNames: reportNames });
+  }
+
+  //Renders a header for the list, probably won't need to refactor this
+  renderHeader = () => {
+    return (
+      <View>
+        <Text style={localStyles.ListViewHeader}>Reports</Text>
+      </View>
+    );
   };
 
   render() {
@@ -56,9 +78,13 @@ export class DashboardPage extends React.Component {
                 renderItem={this.renderItem}
                 extraData={this.state}
                 keyExtractor={this.extractKey}
+                ItemSeparatorComponent={this.renderSeperator}
+                ListHeaderComponent={this.renderHeader}
               />
             </View>
-            <View style={[localStyles.ChartContainer]} />
+            <View style={[localStyles.ChartContainer]}>
+              <Text>{this.state.testData}</Text>
+            </View>
           </View>
         </View>
       </View>
@@ -135,10 +161,39 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'white',
     width: '20%',
     minHeight: '100%',
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: WARMER_GREY,
   },
   ChartContainer: {
     backgroundColor: 'white',
     minWidth: '75%',
     minHeight: '100%',
+    borderWidth: 1,
+    borderRadius: 4,
+    borderColor: WARMER_GREY,
+  },
+  ListViewItem: {
+    alignItems: 'flex-start',
+    paddingTop: 12,
+    paddingLeft: 5,
+  },
+  ListViewItemTitle: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 16,
+    textAlignVertical: 'center',
+  },
+  ListViewItemLabel: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 10,
+    color: WARMER_GREY,
+  },
+  ListViewHeader: {
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: 18,
+    marginVertical: 10,
+    marginHorizontal: 14,
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
   },
 });
