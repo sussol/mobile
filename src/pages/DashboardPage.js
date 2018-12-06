@@ -37,21 +37,28 @@ export class DashboardPage extends React.Component {
     );
   };
 
+  itemSeperator = highlighted => {
+    <View style={{ backgroundColor: 'black' }} />;
+  };
+
   extractKey = item => {
     return item.key;
   };
 
   render() {
     return (
-      <View style={pageStyles.container}>
-        <View style={localStyles.ListViewContainer}>
-          <View style={pageStyles.verticalContainer}>
-            <FlatList
-              data={this.state.reportNames}
-              renderItem={this.renderItem}
-              extraData={this.state}
-              keyExtractor={this.extractKey}
-            />
+      <View style={globalStyles.pageContentContainer}>
+        <View style={globalStyles.container}>
+          <View style={globalStyles.pageTopSectionContainer}>
+            <View style={[localStyles.ListViewContainer, { minHeight: '100%' }]}>
+              <FlatList
+                data={this.state.reportNames}
+                renderItem={this.renderItem}
+                extraData={this.state}
+                keyExtractor={this.extractKey}
+              />
+            </View>
+            <View style={[localStyles.ChartContainer]} />
           </View>
         </View>
       </View>
@@ -125,9 +132,13 @@ DashboardPage.propTypes = {
 
 const localStyles = StyleSheet.create({
   ListViewContainer: {
-    marginLeft: 20,
-
-    marginVertical: 30,
+    backgroundColor: 'white',
     width: '20%',
+    minHeight: '100%',
+  },
+  ChartContainer: {
+    backgroundColor: 'white',
+    minWidth: '75%',
+    minHeight: '100%',
   },
 });
