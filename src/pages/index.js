@@ -17,6 +17,7 @@ import {
   CustomerRequisitionPage,
   checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
 } from './CustomerRequisitionPage';
+import { DashboardPage } from './DashboardPage';
 import { StockPage } from './StockPage';
 import {
   StocktakeEditPage,
@@ -36,16 +37,16 @@ import {
 } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
-import { DashboardPage } from './DashboardPage';
 
 export const PAGES = {
   customerInvoice: props => <PageContainer page={CustomerInvoicePage} {...props} />,
   customerInvoices: props => <PageContainer page={CustomerInvoicesPage} {...props} />,
   customerRequisition: props => <PageContainer page={CustomerRequisitionPage} {...props} />,
   customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
+  dashboard: props => <PageContainer page={DashboardPage} {...props} />,
   menu: props => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
-  root: props => <PageContainer page={DashboardPage} {...props} />,
+  root: props => <PageContainer page={MenuPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
