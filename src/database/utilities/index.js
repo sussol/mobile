@@ -1,4 +1,5 @@
 export { createRecord } from './createRecord';
+export { mergeRecords } from './mergeRecords';
 export {
   getNextNumber,
   getNumberSequence,
