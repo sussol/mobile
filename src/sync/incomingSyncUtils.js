@@ -60,6 +60,15 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
   if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record
   let internalRecord;
   switch (recordType) {
+    case 'User': {
+      internalRecord = {
+        id: record.ID,
+        username: record.name,
+        passwordHash: record.hashed_password,
+      };
+      database.update(recordType, internalRecord);
+      break;
+    }
     case 'Item': {
       const packSize = parseNumber(record.default_pack_size);
       internalRecord = {
@@ -438,6 +447,7 @@ function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') 
   };
 
   switch (recordType) {
+    case 'User':
     case 'Item':
     case 'ItemBatch':
     case 'ItemCategory':
@@ -492,6 +502,10 @@ function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') 
 export function sanityCheckIncomingRecord(recordType, record) {
   if (!record.ID || record.ID.length < 1) return false; // Every record needs an ID
   const requiredFields = {
+    User: {
+      cannotBeBlank: ['name', 'hashed_password'],
+      canBeBlank: [],
+    },
     Item: {
       cannotBeBlank: ['code', 'item_name'],
       canBeBlank: ['default_pack_size'],
