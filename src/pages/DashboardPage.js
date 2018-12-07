@@ -115,7 +115,7 @@ export class DashboardPage extends React.Component {
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
+          <View style={[globalStyles.pageTopSectionContainer, { paddingHorizontal: 0 }]}>
             <View style={localStyles.ListViewContainer}>
               <FlatList
                 data={this.state.reportNames}
