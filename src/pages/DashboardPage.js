@@ -156,11 +156,11 @@ const localStyles = StyleSheet.create({
     paddingVertical: 0,
     borderRightColor: GREY,
     borderRightWidth: 1,
-    minHeight: '100%',
+    height: '100%',
     margin: 0,
   },
   ChartContainer: {
-    minWidth: '80%',
+    width: '80%',
     minHeight: '100%',
     backgroundColor: 'white',
     alignItems: 'flex-start',
