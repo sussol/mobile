@@ -24,4 +24,4 @@ export class SyncOut extends Realm.Object {}
 export { Stocktake } from './Stocktake';
 export { StocktakeItem } from './StocktakeItem';
 export { StocktakeBatch } from './StocktakeBatch';
-export class User extends Realm.Object {}
+export { User } from './User';
