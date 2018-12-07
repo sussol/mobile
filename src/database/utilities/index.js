@@ -1,4 +1,5 @@
 export { createRecord } from './createRecord';
+export { deleteRecord } from './deleteRecord';
 export { mergeRecords } from './mergeRecords';
 export {
   getNextNumber,
