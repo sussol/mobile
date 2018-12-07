@@ -1,97 +1,11 @@
 import React from 'react';
-import { VictoryBar } from 'victory-native';
-import { View, FlatList, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { View, FlatList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import globalStyles, {
-  APP_FONT_FAMILY,
-  SHADOW_BORDER,
-  GREY,
-  WARMER_GREY,
-  verticalContainer,
-  pageStyles,
-  DARK_GREY,
-} from '../globalStyles';
+import { ListItem } from '../widgets/ListItem';
+import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
 
 export class DashboardPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selected: 0,
-      reportNames: null,
-      testData: 'test1',
-      loading: true,
-      error: null,
-    };
-  }
-
-  // Handler for list item selection, should alter the state to trigger a re render, showing a new graph
-  onSelection = (id, index) => {};
-
-  // Potentially refactor into it's own ListItem/ReportItem/ListReportItem component
-  renderItem = ({ item }) => {
-    return (
-      <TouchableOpacity style={{ height: 80 }}>
-        <View style={localStyles.ListViewItem}>
-          <Text style={localStyles.ListViewItemTitle}>{item.name}</Text>
-          <Text style={localStyles.ListViewItemLabel}>{item.label}</Text>
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
-  //Extracts a unique key for the flatmap - using the name of the report currently?
-  extractKey = item => {
-    return item.name;
-  };
-
-  //renders a seperator component for between flatmap items, refactor into it's own reusable component?
-  renderSeperator = highlighted => {
-    return <View style={highlighted && { backgroundColor: GREY, height: 1 }} />;
-  };
-
-  componentDidMount() {
-    // call database here.
-    const reportNames = this.reports.map(report => {
-      return { name: report.name, label: report.data[0].label };
-    });
-    this.setState({ reportNames: reportNames });
-  }
-
-  //Renders a header for the list, probably won't need to refactor this
-  renderHeader = () => {
-    return (
-      <View>
-        <Text style={localStyles.ListViewHeader}>Reports</Text>
-      </View>
-    );
-  };
-
-  render() {
-    return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={globalStyles.pageTopSectionContainer}>
-            <View style={[localStyles.ListViewContainer, { minHeight: '100%' }]}>
-              <FlatList
-                data={this.state.reportNames}
-                renderItem={this.renderItem}
-                extraData={this.state}
-                keyExtractor={this.extractKey}
-                ItemSeparatorComponent={this.renderSeperator}
-                ListHeaderComponent={this.renderHeader}
-              />
-            </View>
-            <View style={[localStyles.ChartContainer]}>
-              <Text>{this.state.testData}</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    );
-  }
-
   reports = [
     {
       data: [
@@ -147,6 +61,80 @@ export class DashboardPage extends React.Component {
       name: 'Month_Transacs',
     },
   ];
+  constructor(props) {
+    super(props);
+    this.state = {
+      selected: 0,
+      reportNames: null,
+      loading: true,
+      error: null,
+    };
+  }
+  componentDidMount() {
+    // call database here.
+    const reportNames = this.reports.map((report, index) => {
+      return { name: report.name, label: report.data[0].label, date: '7/12/2018', id: index };
+    });
+    this.setState({ reportNames: reportNames });
+  }
+
+  onPressItem = id => {
+    if (this.state.selected === id) return;
+    this.setState({ selected: id });
+  };
+
+  renderItem = ({ item }) => {
+    return (
+      <ListItem
+        name={item.name}
+        date={item.date}
+        label={item.label}
+        id={item.id}
+        onPress={this.onPressItem}
+        numReports={this.state.reportNames ? this.state.reportNames.length : 0}
+        selected={this.state.selected === item.id ? true : false}
+      />
+    );
+  };
+
+  renderHeader = () => {
+    return (
+      <View>
+        <Text style={localStyles.ListViewHeader}>Reports</Text>
+      </View>
+    );
+  };
+
+  //TODO: Change to reportID once db is setup.
+  extractKey = item => {
+    return item.id;
+  };
+
+  //
+  render() {
+    return (
+      <View style={globalStyles.pageContentContainer}>
+        <View style={globalStyles.container}>
+          <View style={globalStyles.pageTopSectionContainer}>
+            <View style={localStyles.ListViewContainer}>
+              <FlatList
+                data={this.state.reportNames}
+                renderItem={this.renderItem}
+                extraData={this.state}
+                keyExtractor={this.extractKey}
+                ListHeaderComponent={this.renderHeader}
+              />
+            </View>
+            <View style={localStyles.ChartContainer}>
+              <Text>
+                {this.state.reportNames ? this.state.reportNames[this.state.selected].name : null}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    );
+  }
 }
 
 DashboardPage.propTypes = {
@@ -158,43 +146,31 @@ DashboardPage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
+  Black: {
+    backgroundColor: 'black',
+  },
   ListViewContainer: {
     backgroundColor: 'white',
     width: '20%',
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderRightColor: GREY,
+    borderRightWidth: 1,
     minHeight: '100%',
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: WARMER_GREY,
+    margin: 0,
   },
   ChartContainer: {
-    backgroundColor: 'white',
-    minWidth: '75%',
+    minWidth: '80%',
     minHeight: '100%',
-    borderWidth: 1,
-    borderRadius: 4,
-    borderColor: WARMER_GREY,
-  },
-  ListViewItem: {
+    backgroundColor: 'white',
     alignItems: 'flex-start',
-    paddingTop: 12,
-    paddingLeft: 5,
-  },
-  ListViewItemTitle: {
-    fontFamily: APP_FONT_FAMILY,
-    fontSize: 16,
-    textAlignVertical: 'center',
-  },
-  ListViewItemLabel: {
-    fontFamily: APP_FONT_FAMILY,
-    fontSize: 10,
-    color: WARMER_GREY,
   },
   ListViewHeader: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 18,
-    marginVertical: 10,
-    marginHorizontal: 14,
-    borderBottomColor: 'black',
-    borderBottomWidth: 1,
+    alignItems: 'flex-start',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+    color: GREY,
   },
 });
