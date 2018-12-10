@@ -25,8 +25,10 @@ export class ReportChart extends React.Component {
   }
 
   render() {
+    // TODO: return "loading...".
+    if (!this.state.width || !this.state.height) return null;
     return (
-      <VictoryChart width={this.state.width} height={this.state.height}>
+      <VictoryChart width={this.state.width} height={this.state.height} domainPadding={50}>
         {this.getChart()}
       </VictoryChart>
     );

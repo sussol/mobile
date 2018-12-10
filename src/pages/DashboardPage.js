@@ -115,6 +115,8 @@ export class DashboardPage extends React.Component {
   render() {
     // TODO: handle initialisation gracefully.
     const report = this.state.reports ? this.state.reports[this.state.selected] : null;
+    const chartWidth = this.state.chartWidth;
+    const chartHeight = this.state.chartHeight;
     if (report === null) return null;
     return (
       <View style={globalStyles.pageContentContainer}>
@@ -134,8 +136,8 @@ export class DashboardPage extends React.Component {
                 title={report.title}
                 type={report.type}
                 data={report.data}
-                width={this.state.chartWidth}
-                height={this.state.chartHeight}
+                width={chartWidth}
+                height={chartHeight}
               />
             </View>
           </View>
