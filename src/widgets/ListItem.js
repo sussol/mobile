@@ -18,7 +18,7 @@ export class ListItem extends React.PureComponent {
     return (
       <TouchableOpacity onPress={this.onPressItem}>
         <View style={[localStyles.ListViewItem, bottomBorder]}>
-          <Text style={[localStyles.ListViewItemTitle, selectedItem]}>{this.props.name}</Text>
+          <Text style={[localStyles.ListViewItemTitle, selectedItem]}>{this.props.title}</Text>
           <Text style={[localStyles.ListViewItemLabel, selectedItem]}>{this.props.label}</Text>
           <Text style={[localStyles.ListViewItemLabel, selectedItem]}>{this.props.date}</Text>
         </View>
@@ -47,7 +47,8 @@ const localStyles = StyleSheet.create({
 
 ListItem.propTypes = {
   id: PropTypes.number.isRequired,
-  name: PropTypes.string.isRequired,
+  reportID: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   label: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
