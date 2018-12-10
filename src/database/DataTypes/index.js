@@ -1,5 +1,6 @@
 import Realm from 'realm';
 
+//export class Report extends Realm.Object {}
 export class Address extends Realm.Object {}
 export { Item } from './Item';
 export { ItemBatch } from './ItemBatch';
