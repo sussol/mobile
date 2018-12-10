@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { VictoryBar } from 'victory-native';
+import { VictoryBar, VictoryChart } from 'victory-native';
 
 export class ReportChart extends React.Component {
   constructor(props) {
@@ -16,13 +16,19 @@ export class ReportChart extends React.Component {
     this.setState({ ...nextProps });
   }
 
-  render() {
+  getChart() {
+    // TODO: handle other chart types.
     switch (this.state.type) {
-      // TODO: handle other chart types.
       case 'BarChart':
-        return (
-          <VictoryBar width={this.state.width} height={this.state.height} data={this.state.data} />
-        );
+        return <VictoryBar data={this.state.data} />;
     }
+  }
+
+  render() {
+    return (
+      <VictoryChart width={this.state.width} height={this.state.height}>
+        {this.getChart()}
+      </VictoryChart>
+    );
   }
 }
