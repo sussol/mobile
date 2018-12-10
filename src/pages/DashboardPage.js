@@ -56,6 +56,9 @@ export class DashboardPage extends React.Component {
   }
   componentDidMount() {
     // call database here.
+    // Creating a snapshot and storing this in state, should prevent
+    // the page from updating if a sync occurs..?
+    //const reports = database.objects('Report').snapshot();
     const reports = reportTable.map((report, index) => {
       return {
         id: index,
