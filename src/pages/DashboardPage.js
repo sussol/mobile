@@ -2,6 +2,7 @@ import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { ListItem } from '../widgets/ListItem';
+import ReportChart from '../widgets/ReportChart';
 import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
 
 const reportTable = [
@@ -62,6 +63,7 @@ export class DashboardPage extends React.Component {
         title: report.title,
         label: report.label,
         type: report.type,
+        data: report.data,
         date: new Date().toDateString(), //this will be report generated date at some point?
       };
     });
@@ -104,7 +106,17 @@ export class DashboardPage extends React.Component {
     return item.reportID;
   };
 
+  onLayout = event => {
+    this.setState({
+      chartWidth: event.nativeEvent.layout.width,
+      chartHeight: event.nativeEvent.layout.height,
+    });
+  };
+
   render() {
+    // TODO: handle initialisation gracefully.
+    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
+    if (report === null) return null;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -118,10 +130,14 @@ export class DashboardPage extends React.Component {
                 ListHeaderComponent={this.renderHeader}
               />
             </View>
-            <View style={localStyles.ChartContainer}>
-              <Text>
-                {this.state.reports ? this.state.reports[this.state.selected].title : null}
-              </Text>
+            <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
+              <ReportChart
+                title={report.title}
+                type={report.type}
+                data={report.data}
+                width={this.state.chartWidth}
+                height={this.state.chartHeight}
+              />
             </View>
           </View>
         </View>
