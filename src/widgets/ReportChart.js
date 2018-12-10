@@ -17,10 +17,20 @@ export class ReportChart extends React.Component {
   }
 
   getChart() {
-    // TODO: handle other chart types.
     switch (this.state.type) {
       case 'BarChart':
         return <VictoryBar data={this.state.data} />;
+      case 'PieChart':
+        // TODO: pie chart implementation.
+        return null;
+      case 'LineChart':
+        // TODO: line chart implementation.
+        return null;
+      case 'Table':
+        // TODO: table implementation.
+        return null;
+      default:
+        return null;
     }
   }
 
