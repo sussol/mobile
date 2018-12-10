@@ -53,4 +53,5 @@ ListItem.propTypes = {
   label: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   numReports: PropTypes.number.isRequired,
+  selected: PropTypes.bool.isRequired,
 };

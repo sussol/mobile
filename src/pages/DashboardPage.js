@@ -27,7 +27,7 @@ const reportTable = [
       { y: 5611265.45, x: '12 months' },
     ],
   },
-  { 
+  {
     ID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD',
     storeID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE',
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF',
@@ -56,19 +56,28 @@ export class DashboardPage extends React.Component {
   componentDidMount() {
     // call database here.
     const reports = reportTable.map((report, index) => {
-      return { id: index, reportID: report.reportID, title: report.title, label: report.label, type: report.type, date: new Date().toDateString() }
+      return {
+        id: index,
+        reportID: report.reportID,
+        title: report.title,
+        label: report.label,
+        type: report.type,
+        date: new Date().toDateString(), //this will be report generated date at some point?
+      };
     });
-    this.setState({ 
-      reports: reports });
+    this.setState({
+      reports: reports,
+    });
   }
 
   onPressItem = id => {
+    // is this if needed? Will changing selected to the same value trigger a re-render?
+    // set loading, display a spinner and then set state to selected?
     if (this.state.selected === id) return;
     this.setState({ selected: id });
   };
 
   renderItem = ({ item }) => {
-    console.log(item);
     return (
       <ListItem
         id={item.id}
@@ -78,7 +87,7 @@ export class DashboardPage extends React.Component {
         label={item.label}
         onPress={this.onPressItem}
         numReports={this.state.reports ? this.state.reports.length : 0}
-        selected={this.state.selected === item.id ? true : false} 
+        selected={this.state.selected === item.id}
       />
     );
   };
@@ -131,6 +140,7 @@ DashboardPage.propTypes = {
 
 const localStyles = StyleSheet.create({
   Black: {
+    //for testing blocks..
     backgroundColor: 'black',
   },
   ListViewContainer: {
