@@ -24,7 +24,22 @@ import {
   TransactionCategory,
   TransactionItem,
   User,
+  //Report
 } from './DataTypes';
+
+// Report schema for when data is finalized.
+// Report.schema = {
+//   name: 'Report',
+//   primaryKey: 'reportID',
+//   properties: {
+//     reportID: 'string',
+//     reportName: 'string',
+//     reportType: 'string',
+//     storeID: 'string',
+//     generationDate: 'string',
+//     data: 'string',
+//   }
+// }
 
 Address.schema = {
   name: 'Address',
@@ -81,7 +96,6 @@ SyncOut.schema = {
   },
 };
 
-
 TransactionCategory.schema = {
   name: 'TransactionCategory',
   primaryKey: 'id',
@@ -112,34 +126,33 @@ User.schema = {
   },
 };
 
-export const schema =
-  {
-    schema: [
-      Address,
-      Item,
-      ItemBatch,
-      ItemDepartment,
-      ItemCategory,
-      ItemStoreJoin,
-      Transaction,
-      TransactionItem,
-      TransactionBatch,
-      TransactionCategory,
-      MasterList,
-      MasterListItem,
-      MasterListNameJoin,
-      Name,
-      NameStoreJoin,
-      NumberSequence,
-      NumberToReuse,
-      Requisition,
-      RequisitionItem,
-      Setting,
-      SyncOut,
-      Stocktake,
-      StocktakeItem,
-      StocktakeBatch,
-      User,
-    ],
-    schemaVersion: 5,
-  };
+export const schema = {
+  schema: [
+    Address,
+    Item,
+    ItemBatch,
+    ItemDepartment,
+    ItemCategory,
+    ItemStoreJoin,
+    Transaction,
+    TransactionItem,
+    TransactionBatch,
+    TransactionCategory,
+    MasterList,
+    MasterListItem,
+    MasterListNameJoin,
+    Name,
+    NameStoreJoin,
+    NumberSequence,
+    NumberToReuse,
+    Requisition,
+    RequisitionItem,
+    Setting,
+    SyncOut,
+    Stocktake,
+    StocktakeItem,
+    StocktakeBatch,
+    User,
+  ],
+  schemaVersion: 5,
+};
