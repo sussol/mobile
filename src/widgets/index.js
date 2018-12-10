@@ -16,9 +16,11 @@ export {
 } from './modals';
 export { AutocompleteSelector } from './AutocompleteSelector';
 export { FinaliseButton } from './FinaliseButton';
+export { ListItem } from './ListItem';
 export { NavigationBar } from './NavigationBar';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
+export { ReportChart } from './ReportChart';
 export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
 export { TextEditor } from './TextEditor';

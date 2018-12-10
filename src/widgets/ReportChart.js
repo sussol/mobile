@@ -6,7 +6,7 @@
 import React from 'react';
 import { VictoryBar } from 'victory-native';
 
-export default class ReportChart extends React.Component {
+export class ReportChart extends React.Component {
   constructor(props) {
     super(props);
     this.state = { ...props };
