@@ -47,7 +47,7 @@ const reportTable = [
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI',
     title: 'LastSyncConnectionDate',
     label: 'Last Sync Connection Date',
-    type: 'table',
+    type: 'Table',
     data: {
       header: ['Site', 'Last Connection Date'],
       rows: [
