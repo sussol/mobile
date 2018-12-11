@@ -170,10 +170,10 @@ export class DashboardPage extends React.Component {
   renderVisualisation() {
     const report = this.state.reports ? this.state.reports[this.state.selected] : null;
     if (report === null) return null;
-    switch (report.reportType) {
+    switch (report.type) {
       case 'Table':
         // TODO: return table
-        return null;
+        return <ReportTable rows={report.data.rows} headers={report.data.header} />;
       default:
         return (
           <ReportChart
