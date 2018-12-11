@@ -3,6 +3,7 @@ import { View, FlatList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { ListItem, ReportChart } from '../widgets';
 import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { ReportTable } from '../widgets/index';
 
 const reportTable = [
   {
@@ -49,7 +50,7 @@ const reportTable = [
     label: 'Last Sync Connection Date',
     type: 'Table',
     data: {
-      header: ['Site', 'Last Connection Date'],
+      header: ['SITE', 'LAST CONNECTION DATE'],
       rows: [
         ['Thazin Orchid Clinic', '09/11/2018'],
         ['Lotus Clinic', '09/11/2018'],
@@ -211,6 +212,20 @@ export class DashboardPage extends React.Component {
   }
 }
 
+// For Table Testing
+{
+  /* <ReportTable
+ID={rep.ID}
+storeID={rep.storeID}
+reportID={rep.storeID}
+title={rep.title}
+label={rep.label}
+type={rep.type}
+headers={rep.data.header}
+rows={rep.data.rows}
+/>  */
+}
+
 DashboardPage.propTypes = {
   database: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
@@ -238,7 +253,8 @@ const localStyles = StyleSheet.create({
     width: '80%',
     minHeight: '100%',
     backgroundColor: 'white',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ListViewHeader: {
     fontFamily: APP_FONT_FAMILY,
@@ -247,5 +263,6 @@ const localStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 5,
     color: GREY,
+    minHeight: 50,
   },
 });
