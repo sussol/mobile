@@ -10,8 +10,7 @@ const reportTable = [
     ID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
     storeID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB',
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC',
-    title: 'ExpiringStock',
-    label: 'Cumulative Expiring Stock',
+    title: 'Cumulative Expiring Stock',
     type: 'LineChart',
     data: [
       { y: 502, x: '1 month' },
@@ -32,8 +31,7 @@ const reportTable = [
     ID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD',
     storeID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE',
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAF',
-    title: 'MonthlyTransactions',
-    label: "Yangon Warehouse's Transactions of the Month",
+    title: "Yangon Warehouse's Transactions of the Month",
     type: 'BarChart',
     data: [
       { y: 150, x: 'Purchased orders' },
@@ -46,8 +44,7 @@ const reportTable = [
     ID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG',
     storeID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAH',
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI',
-    title: 'LastSyncConnectionDate',
-    label: 'Last Sync Connection Date',
+    title: 'Last Sync Connection Date',
     type: 'Table',
     data: {
       header: ['SITE', 'LAST CONNECTION DATE'],
@@ -83,8 +80,7 @@ const reportTable = [
     ID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ',
     storeID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK',
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL',
-    title: 'MonthlyTransactions',
-    label: "Yangon Warehouse's Transactions of the Month",
+    title: "Yangon Warehouse's Transactions of the Month",
     type: 'PieChart',
     data: [
       { y: 150, x: 'Purchased orders' },
@@ -115,7 +111,6 @@ export class DashboardPage extends React.Component {
         id: index,
         reportID: report.reportID,
         title: report.title,
-        label: report.label,
         type: report.type,
         data: report.data,
         date: new Date().toDateString(), //this will be report generated date at some point?
@@ -137,7 +132,6 @@ export class DashboardPage extends React.Component {
         reportID={item.reportID}
         title={item.title}
         date={item.date}
-        label={item.label}
         onPress={this.onPressItem}
         numReports={this.state.reports ? this.state.reports.length : 0}
         selected={this.state.selected === item.id}

@@ -19,7 +19,6 @@ export class ListItem extends React.PureComponent {
       <TouchableOpacity onPress={this.onPressItem}>
         <View style={[localStyles.ListViewItem, bottomBorder]}>
           <Text style={[localStyles.ListViewItemTitle, selectedItem]}>{this.props.title}</Text>
-          <Text style={[localStyles.ListViewItemLabel, selectedItem]}>{this.props.label}</Text>
           <Text style={[localStyles.ListViewItemLabel, selectedItem]}>{this.props.date}</Text>
         </View>
       </TouchableOpacity>
@@ -50,7 +49,6 @@ ListItem.propTypes = {
   reportID: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   numReports: PropTypes.number.isRequired,
   selected: PropTypes.bool.isRequired,
