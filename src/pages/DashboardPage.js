@@ -12,7 +12,7 @@ const reportTable = [
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC',
     title: 'ExpiringStock',
     label: 'Cumulative Expiring Stock',
-    type: 'BarChart',
+    type: 'LineChart',
     data: [
       { y: 502, x: '1 month' },
       { y: 3070.48, x: '2 months' },
@@ -78,6 +78,20 @@ const reportTable = [
         ['Nan Yun', '01/11/2018'],
       ],
     },
+  },
+  {
+    ID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ',
+    storeID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK',
+    reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL',
+    title: 'MonthlyTransactions',
+    label: "Yangon Warehouse's Transactions of the Month",
+    type: 'PieChart',
+    data: [
+      { y: 150, x: 'Purchased orders' },
+      { y: 50, x: 'Goods Received Notes' },
+      { y: 100, x: 'Supplier invoices' },
+      { y: 300, x: 'Customer Invoices' },
+    ],
   },
 ];
 
@@ -153,14 +167,28 @@ export class DashboardPage extends React.Component {
     });
   };
 
-  //TODO: Refactgor sidebar flatlist to it's own component.
+  renderVisualisation() {
+    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
+    if (report === null) return null;
+    switch (report.reportType) {
+      case 'Table':
+        // TODO: return table
+        return null;
+      default:
+        return (
+          <ReportChart
+            title={report.title}
+            type={report.type}
+            data={report.data}
+            width={this.state.chartWidth}
+            height={this.state.chartHeight}
+          />
+        );
+    }
+  }
+
   render() {
     // TODO: handle initialisation gracefully.
-    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
-    const rep = this.state.reports ? this.state.reports[2] : null;
-    const chartWidth = this.state.chartWidth;
-    const chartHeight = this.state.chartHeight;
-    if (report === null) return null;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -175,7 +203,7 @@ export class DashboardPage extends React.Component {
               />
             </View>
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
-              <ReportTable headers={rep.data.header} rows={rep.data.rows} />
+              {this.renderVisualisation()}
             </View>
           </View>
         </View>
