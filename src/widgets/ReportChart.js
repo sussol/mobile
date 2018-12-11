@@ -4,8 +4,16 @@
  */
 
 import React from 'react';
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine, VictoryPie } from 'victory-native';
-import { SUSSOL_ORANGE } from '../globalStyles';
+import {
+  VictoryAxis,
+  VictoryBar,
+  VictoryChart,
+  VictoryLabel,
+  VictoryLine,
+  VictoryPie,
+  VictoryScatter,
+} from 'victory-native';
+import { APP_FONT_FAMILY, DARK_GREY, LIGHT_GREY, GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 export class ReportChart extends React.Component {
   constructor(props) {
@@ -52,6 +60,14 @@ export class ReportChart extends React.Component {
           <VictoryPie
             width={this.state.width}
             height={this.state.height}
+            labelComponent={
+              <VictoryLabel
+                style={{
+                  fontFamily: victoryStyles.PieChart.labelFontFamily,
+                  fill: victoryStyles.PieChart.labelFill,
+                }}
+              />
+            }
             labelRadius={victoryStyles.PieChart.labelRadius}
             innerRadius={victoryStyles.PieChart.innerRadius}
             padAngle={victoryStyles.PieChart.padAngle}
@@ -108,19 +124,27 @@ const victoryStyles = {
     padding: { top: 75, bottom: 75, left: 90, right: 60 },
     domainPadding: 50,
     fixLabelOverlap: true,
-    axis: { stroke: SUSSOL_ORANGE },
-    ticks: { stroke: SUSSOL_ORANGE },
-    tickLabels: { stroke: SUSSOL_ORANGE },
+    axis: { stroke: LIGHT_GREY },
+    ticks: { stroke: DARK_GREY },
+    tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
     data: { fill: SUSSOL_ORANGE },
   },
   LineChart: {
     padding: { top: 75, bottom: 75, left: 90, right: 60 },
     domainPadding: 50,
     fixLabelOverlap: true,
-    axis: { stroke: SUSSOL_ORANGE },
-    ticks: { stroke: SUSSOL_ORANGE },
-    tickLabels: { stroke: SUSSOL_ORANGE },
+    axis: { stroke: LIGHT_GREY },
+    ticks: { stroke: DARK_GREY },
+    tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
     data: { stroke: SUSSOL_ORANGE },
   },
-  PieChart: { labelRadius: 325, innerRadius: 200, padAngle: 2.5, padding: 75, colorScale: 'warm' },
+  PieChart: {
+    labelFontFamily: APP_FONT_FAMILY,
+    labelFill: GREY,
+    labelRadius: 325,
+    innerRadius: 200,
+    padAngle: 2.5,
+    padding: 75,
+    colorScale: 'warm',
+  },
 };
