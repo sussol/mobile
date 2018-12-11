@@ -174,15 +174,12 @@ export class DashboardPage extends React.Component {
               />
             </View>
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
-              <ReportTable
-                ID={rep.ID}
-                storeID={rep.storeID}
-                reportID={rep.storeID}
-                title={rep.title}
-                label={rep.label}
-                type={rep.type}
-                headers={rep.data.header}
-                rows={rep.data.rows}
+              <ReportChart
+                title={report.title}
+                type={report.type}
+                data={report.data}
+                width={chartWidth}
+                height={chartHeight}
               />
             </View>
           </View>
@@ -192,14 +189,18 @@ export class DashboardPage extends React.Component {
   }
 }
 
+// For Table Testing
 {
-  /* <ReportChart
-                title={report.title}
-                type={report.type}
-                data={report.data}
-                width={chartWidth}
-                height={chartHeight}
-              /> */
+  /* <ReportTable
+ID={rep.ID}
+storeID={rep.storeID}
+reportID={rep.storeID}
+title={rep.title}
+label={rep.label}
+type={rep.type}
+headers={rep.data.header}
+rows={rep.data.rows}
+/>  */
 }
 
 DashboardPage.propTypes = {
