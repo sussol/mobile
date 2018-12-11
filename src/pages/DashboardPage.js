@@ -78,6 +78,20 @@ const reportTable = [
       ],
     },
   },
+  {
+    ID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJ',
+    storeID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAK',
+    reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAL',
+    title: 'MonthlyTransactions',
+    label: "Yangon Warehouse's Transactions of the Month",
+    type: 'PieChart',
+    data: [
+      { y: 150, x: 'Purchased orders' },
+      { y: 50, x: 'Goods Received Notes' },
+      { y: 100, x: 'Supplier invoices' },
+      { y: 300, x: 'Customer Invoices' },
+    ],
+  },
 ];
 
 export class DashboardPage extends React.Component {

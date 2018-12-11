@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine } from 'victory-native';
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine, VictoryPie } from 'victory-native';
 import { SUSSOL_ORANGE } from '../globalStyles';
 
 export class ReportChart extends React.Component {
@@ -20,12 +20,60 @@ export class ReportChart extends React.Component {
   getChart() {
     switch (this.state.type) {
       case 'BarChart':
-        return <VictoryBar style={victoryStyles.BarChart} data={this.state.data} />;
+        return (
+          <VictoryChart width={this.state.width} height={this.state.height} domainPadding={50}>
+            <VictoryBar style={victoryStyles.BarChart} data={this.state.data} />
+            <VictoryAxis
+              style={{
+                axis: { stroke: SUSSOL_ORANGE },
+                ticks: { stroke: SUSSOL_ORANGE },
+                tickLabels: { stroke: SUSSOL_ORANGE },
+              }}
+            />
+            <VictoryAxis
+              dependentAxis
+              style={{
+                axis: { stroke: SUSSOL_ORANGE },
+                ticks: { stroke: SUSSOL_ORANGE },
+                tickLabels: { stroke: SUSSOL_ORANGE },
+              }}
+            />
+          </VictoryChart>
+        );
       case 'PieChart':
-        // TODO: pie chart implementation.
-        return null;
+        return (
+          <VictoryPie
+            width={this.state.width}
+            height={this.state.height}
+            labelRadius={victoryStyles.PieChart.labelRadius}
+            innerRadius={victoryStyles.PieChart.innerRadius}
+            padAngle={victoryStyles.PieChart.padAngle}
+            padding={victoryStyles.PieChart.padding}
+            colorScale={victoryStyles.PieChart.colorScale}
+            data={this.state.data}
+          />
+        );
       case 'LineChart':
-        return <VictoryLine style={victoryStyles.LineChart} data={this.state.data} />;
+        return (
+          <VictoryChart width={this.state.width} height={this.state.height} domainPadding={50}>
+            <VictoryLine style={victoryStyles.LineChart} data={this.state.data} />
+            <VictoryAxis
+              style={{
+                axis: { stroke: SUSSOL_ORANGE },
+                ticks: { stroke: SUSSOL_ORANGE },
+                tickLabels: { stroke: SUSSOL_ORANGE },
+              }}
+            />
+            <VictoryAxis
+              dependentAxis
+              style={{
+                axis: { stroke: SUSSOL_ORANGE },
+                ticks: { stroke: SUSSOL_ORANGE },
+                tickLabels: { stroke: SUSSOL_ORANGE },
+              }}
+            />
+          </VictoryChart>
+        );
       case 'Table':
         // TODO: table implementation.
         return null;
@@ -37,30 +85,12 @@ export class ReportChart extends React.Component {
   render() {
     // TODO: return "loading...".
     if (!this.state.width || !this.state.height) return null;
-    return (
-      <VictoryChart width={this.state.width} height={this.state.height} domainPadding={50}>
-        {this.getChart()}
-        <VictoryAxis
-          style={{
-            axis: { stroke: SUSSOL_ORANGE },
-            ticks: { stroke: SUSSOL_ORANGE },
-            tickLabels: { stroke: SUSSOL_ORANGE },
-          }}
-        />
-        <VictoryAxis
-          dependentAxis
-          style={{
-            axis: { stroke: SUSSOL_ORANGE },
-            ticks: { stroke: SUSSOL_ORANGE },
-            tickLabels: { stroke: SUSSOL_ORANGE },
-          }}
-        />
-      </VictoryChart>
-    );
+    return this.getChart();
   }
 }
 
 const victoryStyles = {
   BarChart: { data: { fill: SUSSOL_ORANGE } },
   LineChart: { data: { stroke: SUSSOL_ORANGE } },
+  PieChart: { labelRadius: 325, innerRadius: 200, padAngle: 2.5, padding: 75, colorScale: 'warm' },
 };
