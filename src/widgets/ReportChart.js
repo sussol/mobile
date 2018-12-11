@@ -102,9 +102,6 @@ export class ReportChart extends React.Component {
         return this.renderLineChart();
       case 'PieChart':
         return this.renderPieChart();
-      case 'Table':
-        // TODO: table implementation.
-        return null;
       default:
         return null;
     }

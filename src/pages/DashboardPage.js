@@ -166,12 +166,28 @@ export class DashboardPage extends React.Component {
     });
   };
 
+  renderVisualisation() {
+    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
+    if (report === null) return null;
+    switch (report.reportType) {
+      case 'Table':
+        // TODO: return table
+        return null;
+      default:
+        return (
+          <ReportChart
+            title={report.title}
+            type={report.type}
+            data={report.data}
+            width={this.state.chartWidth}
+            height={this.state.chartHeight}
+          />
+        );
+    }
+  }
+
   render() {
     // TODO: handle initialisation gracefully.
-    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
-    const chartWidth = this.state.chartWidth;
-    const chartHeight = this.state.chartHeight;
-    if (report === null) return null;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -186,13 +202,7 @@ export class DashboardPage extends React.Component {
               />
             </View>
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
-              <ReportChart
-                title={report.title}
-                type={report.type}
-                data={report.data}
-                width={chartWidth}
-                height={chartHeight}
-              />
+              {this.renderVisualisation()}
             </View>
           </View>
         </View>
