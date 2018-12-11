@@ -25,89 +25,98 @@ export class ReportChart extends React.Component {
     this.setState({ ...nextProps });
   }
 
-  getChart() {
+  renderXAxis() {
+    return (
+      <VictoryAxis
+        fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
+        style={{
+          axis: victoryStyles.BarChart.axis,
+          ticks: victoryStyles.BarChart.ticks,
+          tickLabels: victoryStyles.BarChart.tickLabels,
+        }}
+      />
+    );
+  }
+
+  renderYAxis() {
+    return (
+      <VictoryAxis
+        dependentAxis
+        fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
+        style={{
+          axis: victoryStyles.BarChart.axis,
+          ticks: victoryStyles.BarChart.ticks,
+          tickLabels: victoryStyles.BarChart.tickLabels,
+        }}
+      />
+    );
+  }
+
+  renderBarChart() {
+    return (
+      <VictoryChart
+        width={this.state.width}
+        height={this.state.height}
+        padding={victoryStyles.BarChart.padding}
+        domainPadding={victoryStyles.BarChart.domainPadding}
+      >
+        <VictoryBar style={{ data: victoryStyles.BarChart.data }} data={this.state.data} />
+        {this.renderXAxis()}
+        {this.renderYAxis()}
+      </VictoryChart>
+    );
+  }
+
+  renderLineChart() {
+    return (
+      <VictoryChart
+        width={this.state.width}
+        height={this.state.height}
+        padding={victoryStyles.LineChart.padding}
+      >
+        <VictoryScatter
+          size={victoryStyles.ScatterChart.size}
+          style={{ data: victoryStyles.ScatterChart.data }}
+          data={this.state.data}
+        />
+        <VictoryLine style={{ data: victoryStyles.LineChart.data }} data={this.state.data} />
+        {this.renderXAxis()}
+        {this.renderYAxis()}
+      </VictoryChart>
+    );
+  }
+
+  renderPieChart() {
+    return (
+      <VictoryPie
+        width={this.state.width}
+        height={this.state.height}
+        labelComponent={
+          <VictoryLabel
+            style={{
+              fontFamily: victoryStyles.PieChart.labelFontFamily,
+              fill: victoryStyles.PieChart.labelFill,
+            }}
+          />
+        }
+        labelRadius={victoryStyles.PieChart.labelRadius}
+        innerRadius={victoryStyles.PieChart.innerRadius}
+        padAngle={victoryStyles.PieChart.padAngle}
+        padding={victoryStyles.PieChart.padding}
+        colorScale={victoryStyles.PieChart.colorScale}
+        data={this.state.data}
+      />
+    );
+  }
+
+  renderChart() {
     switch (this.state.type) {
       case 'BarChart':
-        return (
-          <VictoryChart
-            width={this.state.width}
-            height={this.state.height}
-            padding={victoryStyles.BarChart.padding}
-            domainPadding={victoryStyles.BarChart.domainPadding}
-          >
-            <VictoryBar style={{ data: victoryStyles.BarChart.data }} data={this.state.data} />
-            <VictoryAxis
-              fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
-              style={{
-                axis: victoryStyles.BarChart.axis,
-                ticks: victoryStyles.BarChart.ticks,
-                tickLabels: victoryStyles.BarChart.tickLabels,
-              }}
-            />
-            <VictoryAxis
-              dependentAxis
-              fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
-              style={{
-                axis: victoryStyles.BarChart.axis,
-                ticks: victoryStyles.BarChart.ticks,
-                tickLabels: victoryStyles.BarChart.tickLabels,
-              }}
-            />
-          </VictoryChart>
-        );
-      case 'PieChart':
-        return (
-          <VictoryPie
-            width={this.state.width}
-            height={this.state.height}
-            labelComponent={
-              <VictoryLabel
-                style={{
-                  fontFamily: victoryStyles.PieChart.labelFontFamily,
-                  fill: victoryStyles.PieChart.labelFill,
-                }}
-              />
-            }
-            labelRadius={victoryStyles.PieChart.labelRadius}
-            innerRadius={victoryStyles.PieChart.innerRadius}
-            padAngle={victoryStyles.PieChart.padAngle}
-            padding={victoryStyles.PieChart.padding}
-            colorScale={victoryStyles.PieChart.colorScale}
-            data={this.state.data}
-          />
-        );
+        return this.renderBarChart();
       case 'LineChart':
-        return (
-          <VictoryChart
-            width={this.state.width}
-            height={this.state.height}
-            padding={victoryStyles.LineChart.padding}
-          >
-            <VictoryScatter
-              size={victoryStyles.ScatterChart.size}
-              style={{ data: victoryStyles.ScatterChart.data }}
-              data={this.state.data}
-            />
-            <VictoryLine style={{ data: victoryStyles.LineChart.data }} data={this.state.data} />
-            <VictoryAxis
-              fixLabelOverlap={victoryStyles.LineChart.fixLabelOverlap}
-              style={{
-                axis: victoryStyles.LineChart.axis,
-                ticks: victoryStyles.LineChart.ticks,
-                tickLabels: victoryStyles.LineChart.tickLabels,
-              }}
-            />
-            <VictoryAxis
-              dependentAxis
-              fixLabelOverlap={victoryStyles.LineChart.fixLabelOverlap}
-              style={{
-                axis: victoryStyles.LineChart.axis,
-                ticks: victoryStyles.LineChart.ticks,
-                tickLabels: victoryStyles.LineChart.tickLabels,
-              }}
-            />
-          </VictoryChart>
-        );
+        return this.renderLineChart();
+      case 'PieChart':
+        return this.renderPieChart();
       case 'Table':
         // TODO: table implementation.
         return null;
@@ -119,7 +128,7 @@ export class ReportChart extends React.Component {
   render() {
     // TODO: return "loading...".
     if (!this.state.width || !this.state.height) return null;
-    return this.getChart();
+    return this.renderChart();
   }
 }
 
