@@ -4,7 +4,8 @@
  */
 
 import React from 'react';
-import { VictoryBar, VictoryChart } from 'victory-native';
+import { VictoryAxis, VictoryBar, VictoryChart } from 'victory-native';
+import { SUSSOL_ORANGE } from '../globalStyles';
 
 export class ReportChart extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ export class ReportChart extends React.Component {
   getChart() {
     switch (this.state.type) {
       case 'BarChart':
-        return <VictoryBar data={this.state.data} />;
+        return <VictoryBar style={victoryStyles.BarChart} data={this.state.data} />;
       case 'PieChart':
         // TODO: pie chart implementation.
         return null;
@@ -40,7 +41,26 @@ export class ReportChart extends React.Component {
     return (
       <VictoryChart width={this.state.width} height={this.state.height} domainPadding={50}>
         {this.getChart()}
+        <VictoryAxis
+          style={{
+            axis: { stroke: SUSSOL_ORANGE },
+            ticks: { stroke: SUSSOL_ORANGE },
+            tickLabels: { stroke: SUSSOL_ORANGE },
+          }}
+        />
+        <VictoryAxis
+          dependentAxis
+          style={{
+            axis: { stroke: SUSSOL_ORANGE },
+            ticks: { stroke: SUSSOL_ORANGE },
+            tickLabels: { stroke: SUSSOL_ORANGE },
+          }}
+        />
       </VictoryChart>
     );
   }
 }
+
+const victoryStyles = {
+  BarChart: { data: { fill: SUSSOL_ORANGE } },
+};
