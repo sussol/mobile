@@ -127,9 +127,6 @@ export class DashboardPage extends React.Component {
   }
 
   onPressItem = id => {
-    // is this if needed? Will changing selected to the same value trigger a re-render?
-    // set loading, display a spinner and then set state to selected?
-    if (this.state.selected === id) return;
     this.setState({ selected: id });
   };
 
@@ -172,7 +169,6 @@ export class DashboardPage extends React.Component {
     if (report === null) return null;
     switch (report.type) {
       case 'Table':
-        // TODO: return table
         return <ReportTable rows={report.data.rows} headers={report.data.header} />;
       default:
         return (
@@ -211,17 +207,6 @@ export class DashboardPage extends React.Component {
     );
   }
 }
-
-// // For Table Testing
-// {
-//   <ReportChart
-//   title={report.title}
-//   type={report.type}
-//   data={report.data}
-//   width={chartWidth}
-//   height={chartHeight}
-// />
-// }
 
 DashboardPage.propTypes = {
   database: PropTypes.object.isRequired,

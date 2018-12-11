@@ -1,22 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../globalStyles';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 export class ReportCell extends React.PureComponent {
-  //TODO: Refactor into sorting by asc & desc, changing icon
-  // appropriately.
-  sortBy = () => {
-    this.props.sortBy(this.props.index);
-  };
-
-  renderIcon = () => {
-    const { sortedBy, index } = this.props;
-    if (sortedBy === index) null;
-    return <Icon name="sort-desc" size={16} />;
-  };
-
   render() {
     let style;
     if (!(this.props.id % 2 !== 0)) {
