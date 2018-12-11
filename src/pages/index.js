@@ -46,7 +46,7 @@ export const PAGES = {
   dashboard: props => <PageContainer page={DashboardPage} {...props} />,
   menu: props => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
-  root: props => <PageContainer page={MenuPage} {...props} />,
+  root: props => <PageContainer page={DashboardPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,

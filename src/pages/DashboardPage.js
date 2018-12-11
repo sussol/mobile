@@ -3,6 +3,7 @@ import { View, FlatList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { ListItem, ReportChart } from '../widgets';
 import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { ReportTable } from '../widgets/index';
 
 const reportTable = [
   {
@@ -49,7 +50,7 @@ const reportTable = [
     label: 'Last Sync Connection Date',
     type: 'Table',
     data: {
-      header: ['Site', 'Last Connection Date'],
+      header: ['SITE', 'LAST CONNECTION DATE'],
       rows: [
         ['Thazin Orchid Clinic', '09/11/2018'],
         ['Lotus Clinic', '09/11/2018'],
@@ -155,6 +156,7 @@ export class DashboardPage extends React.Component {
   render() {
     // TODO: handle initialisation gracefully.
     const report = this.state.reports ? this.state.reports[this.state.selected] : null;
+    const rep = this.state.reports ? this.state.reports[2] : null;
     const chartWidth = this.state.chartWidth;
     const chartHeight = this.state.chartHeight;
     if (report === null) return null;
@@ -172,12 +174,15 @@ export class DashboardPage extends React.Component {
               />
             </View>
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
-              <ReportChart
-                title={report.title}
-                type={report.type}
-                data={report.data}
-                width={chartWidth}
-                height={chartHeight}
+              <ReportTable
+                ID={rep.ID}
+                storeID={rep.storeID}
+                reportID={rep.storeID}
+                title={rep.title}
+                label={rep.label}
+                type={rep.type}
+                headers={rep.data.header}
+                rows={rep.data.rows}
               />
             </View>
           </View>
@@ -185,6 +190,16 @@ export class DashboardPage extends React.Component {
       </View>
     );
   }
+}
+
+{
+  /* <ReportChart
+                title={report.title}
+                type={report.type}
+                data={report.data}
+                width={chartWidth}
+                height={chartHeight}
+              /> */
 }
 
 DashboardPage.propTypes = {
@@ -214,7 +229,8 @@ const localStyles = StyleSheet.create({
     width: '80%',
     minHeight: '100%',
     backgroundColor: 'white',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ListViewHeader: {
     fontFamily: APP_FONT_FAMILY,
@@ -223,5 +239,6 @@ const localStyles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 5,
     color: GREY,
+    minHeight: 50,
   },
 });
