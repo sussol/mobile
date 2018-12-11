@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { VictoryAxis, VictoryBar, VictoryChart } from 'victory-native';
+import { VictoryAxis, VictoryBar, VictoryChart, VictoryLine } from 'victory-native';
 import { SUSSOL_ORANGE } from '../globalStyles';
 
 export class ReportChart extends React.Component {
@@ -25,8 +25,7 @@ export class ReportChart extends React.Component {
         // TODO: pie chart implementation.
         return null;
       case 'LineChart':
-        // TODO: line chart implementation.
-        return null;
+        return <VictoryLine style={victoryStyles.LineChart} data={this.state.data} />;
       case 'Table':
         // TODO: table implementation.
         return null;
@@ -63,4 +62,5 @@ export class ReportChart extends React.Component {
 
 const victoryStyles = {
   BarChart: { data: { fill: SUSSOL_ORANGE } },
+  LineChart: { data: { stroke: SUSSOL_ORANGE } },
 };

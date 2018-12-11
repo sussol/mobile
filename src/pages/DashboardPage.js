@@ -11,7 +11,7 @@ const reportTable = [
     reportID: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC',
     title: 'ExpiringStock',
     label: 'Cumulative Expiring Stock',
-    type: 'BarChart',
+    type: 'LineChart',
     data: [
       { y: 502, x: '1 month' },
       { y: 3070.48, x: '2 months' },
