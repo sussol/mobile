@@ -82,8 +82,12 @@ export class ReportChart extends React.Component {
             width={this.state.width}
             height={this.state.height}
             padding={victoryStyles.LineChart.padding}
-            domainPadding={victoryStyles.LineChart.domainPadding}
           >
+            <VictoryScatter
+              size={victoryStyles.ScatterChart.size}
+              style={{ data: victoryStyles.ScatterChart.data }}
+              data={this.state.data}
+            />
             <VictoryLine style={{ data: victoryStyles.LineChart.data }} data={this.state.data} />
             <VictoryAxis
               fixLabelOverlap={victoryStyles.LineChart.fixLabelOverlap}
@@ -127,6 +131,10 @@ const victoryStyles = {
     axis: { stroke: LIGHT_GREY },
     ticks: { stroke: DARK_GREY },
     tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
+    data: { fill: SUSSOL_ORANGE },
+  },
+  ScatterChart: {
+    size: 3.5,
     data: { fill: SUSSOL_ORANGE },
   },
   LineChart: {
