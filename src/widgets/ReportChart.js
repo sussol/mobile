@@ -31,19 +31,18 @@ export class ReportChart extends React.Component {
             <VictoryAxis
               fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
               style={{
-                axis: { stroke: SUSSOL_ORANGE },
-                ticks: { stroke: SUSSOL_ORANGE },
-                tickLabels: { stroke: SUSSOL_ORANGE },
-                fixLabelOverlap: victoryStyles.BarChart.fixLabelOverlap,
+                axis: victoryStyles.BarChart.axis,
+                ticks: victoryStyles.BarChart.ticks,
+                tickLabels: victoryStyles.BarChart.tickLabels,
               }}
             />
             <VictoryAxis
               dependentAxis
               fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
               style={{
-                axis: { stroke: SUSSOL_ORANGE },
-                ticks: { stroke: SUSSOL_ORANGE },
-                tickLabels: { stroke: SUSSOL_ORANGE },
+                axis: victoryStyles.BarChart.axis,
+                ticks: victoryStyles.BarChart.ticks,
+                tickLabels: victoryStyles.BarChart.tickLabels,
               }}
             />
           </VictoryChart>
@@ -73,19 +72,18 @@ export class ReportChart extends React.Component {
             <VictoryAxis
               fixLabelOverlap={victoryStyles.LineChart.fixLabelOverlap}
               style={{
-                axis: { stroke: SUSSOL_ORANGE },
-                ticks: { stroke: SUSSOL_ORANGE },
-                tickLabels: { stroke: SUSSOL_ORANGE },
-                fixLabelOverlap: victoryStyles.LineChart.fixLabelOverlap,
+                axis: victoryStyles.LineChart.axis,
+                ticks: victoryStyles.LineChart.ticks,
+                tickLabels: victoryStyles.LineChart.tickLabels,
               }}
             />
             <VictoryAxis
               dependentAxis
               fixLabelOverlap={victoryStyles.LineChart.fixLabelOverlap}
               style={{
-                axis: { stroke: SUSSOL_ORANGE },
-                ticks: { stroke: SUSSOL_ORANGE },
-                tickLabels: { stroke: SUSSOL_ORANGE },
+                axis: victoryStyles.LineChart.axis,
+                ticks: victoryStyles.LineChart.ticks,
+                tickLabels: victoryStyles.LineChart.tickLabels,
               }}
             />
           </VictoryChart>
@@ -110,12 +108,18 @@ const victoryStyles = {
     padding: { top: 75, bottom: 75, left: 90, right: 60 },
     domainPadding: 50,
     fixLabelOverlap: true,
+    axis: { stroke: SUSSOL_ORANGE },
+    ticks: { stroke: SUSSOL_ORANGE },
+    tickLabels: { stroke: SUSSOL_ORANGE },
     data: { fill: SUSSOL_ORANGE },
   },
   LineChart: {
     padding: { top: 75, bottom: 75, left: 90, right: 60 },
     domainPadding: 50,
     fixLabelOverlap: true,
+    axis: { stroke: SUSSOL_ORANGE },
+    ticks: { stroke: SUSSOL_ORANGE },
+    tickLabels: { stroke: SUSSOL_ORANGE },
     data: { stroke: SUSSOL_ORANGE },
   },
   PieChart: { labelRadius: 325, innerRadius: 200, padAngle: 2.5, padding: 75, colorScale: 'warm' },
