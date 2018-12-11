@@ -28,12 +28,8 @@ export class ReportChart extends React.Component {
   renderXAxis() {
     return (
       <VictoryAxis
-        fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
-        style={{
-          axis: victoryStyles.BarChart.axis,
-          ticks: victoryStyles.BarChart.ticks,
-          tickLabels: victoryStyles.BarChart.tickLabels,
-        }}
+        fixLabelOverlap={victoryStyles.axisX.fixLabelOverlap}
+        style={victoryStyles.axisX.style}
       />
     );
   }
@@ -42,12 +38,8 @@ export class ReportChart extends React.Component {
     return (
       <VictoryAxis
         dependentAxis
-        fixLabelOverlap={victoryStyles.BarChart.fixLabelOverlap}
-        style={{
-          axis: victoryStyles.BarChart.axis,
-          ticks: victoryStyles.BarChart.ticks,
-          tickLabels: victoryStyles.BarChart.tickLabels,
-        }}
+        fixLabelOverlap={victoryStyles.axisY.fixLabelOverlap}
+        style={victoryStyles.axisY.style}
       />
     );
   }
@@ -57,10 +49,10 @@ export class ReportChart extends React.Component {
       <VictoryChart
         width={this.state.width}
         height={this.state.height}
-        padding={victoryStyles.BarChart.padding}
-        domainPadding={victoryStyles.BarChart.domainPadding}
+        padding={victoryStyles.barChart.padding}
+        domainPadding={victoryStyles.barChart.domainPadding}
       >
-        <VictoryBar style={{ data: victoryStyles.BarChart.data }} data={this.state.data} />
+        <VictoryBar style={victoryStyles.barChart.style} data={this.state.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -72,14 +64,14 @@ export class ReportChart extends React.Component {
       <VictoryChart
         width={this.state.width}
         height={this.state.height}
-        padding={victoryStyles.LineChart.padding}
+        padding={victoryStyles.lineChart.padding}
       >
         <VictoryScatter
-          size={victoryStyles.ScatterChart.size}
-          style={{ data: victoryStyles.ScatterChart.data }}
+          size={victoryStyles.scatterChart.size}
+          style={victoryStyles.scatterChart.style}
           data={this.state.data}
         />
-        <VictoryLine style={{ data: victoryStyles.LineChart.data }} data={this.state.data} />
+        <VictoryLine style={victoryStyles.lineChart.style} data={this.state.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -91,19 +83,12 @@ export class ReportChart extends React.Component {
       <VictoryPie
         width={this.state.width}
         height={this.state.height}
-        labelComponent={
-          <VictoryLabel
-            style={{
-              fontFamily: victoryStyles.PieChart.labelFontFamily,
-              fill: victoryStyles.PieChart.labelFill,
-            }}
-          />
-        }
-        labelRadius={victoryStyles.PieChart.labelRadius}
-        innerRadius={victoryStyles.PieChart.innerRadius}
-        padAngle={victoryStyles.PieChart.padAngle}
-        padding={victoryStyles.PieChart.padding}
-        colorScale={victoryStyles.PieChart.colorScale}
+        padding={victoryStyles.pieChart.padding}
+        padAngle={victoryStyles.pieChart.padAngle}
+        innerRadius={victoryStyles.pieChart.innerRadius}
+        labelRadius={victoryStyles.pieChart.labelRadius}
+        colorScale={victoryStyles.pieChart.colorScale}
+        labelComponent={<VictoryLabel style={victoryStyles.pieChart.style} />}
         data={this.state.data}
       />
     );
@@ -133,35 +118,42 @@ export class ReportChart extends React.Component {
 }
 
 const victoryStyles = {
-  BarChart: {
+  axisX: {
+    fixLabelOverlap: true,
+    style: {
+      axis: { stroke: LIGHT_GREY },
+      ticks: { stroke: DARK_GREY },
+      tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
+    },
+  },
+  axisY: {
+    fixLabelOverlap: false,
+    style: {
+      axis: { stroke: LIGHT_GREY },
+      ticks: { stroke: DARK_GREY },
+      tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
+    },
+  },
+  barChart: {
     padding: { top: 75, bottom: 75, left: 90, right: 60 },
     domainPadding: 50,
-    fixLabelOverlap: true,
-    axis: { stroke: LIGHT_GREY },
-    ticks: { stroke: DARK_GREY },
-    tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
-    data: { fill: SUSSOL_ORANGE },
+    style: { data: { fill: SUSSOL_ORANGE } },
   },
-  ScatterChart: {
+  scatterChart: {
     size: 3.5,
-    data: { fill: SUSSOL_ORANGE },
+    style: { data: { fill: SUSSOL_ORANGE } },
   },
-  LineChart: {
+  lineChart: {
     padding: { top: 75, bottom: 75, left: 90, right: 60 },
     domainPadding: 50,
-    fixLabelOverlap: true,
-    axis: { stroke: LIGHT_GREY },
-    ticks: { stroke: DARK_GREY },
-    tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
-    data: { stroke: SUSSOL_ORANGE },
+    style: { data: { stroke: SUSSOL_ORANGE } },
   },
-  PieChart: {
-    labelFontFamily: APP_FONT_FAMILY,
-    labelFill: GREY,
-    labelRadius: 325,
-    innerRadius: 200,
-    padAngle: 2.5,
+  pieChart: {
     padding: 75,
+    padAngle: 2.5,
+    innerRadius: 200,
+    labelRadius: 325,
     colorScale: 'warm',
+    style: { fontFamily: APP_FONT_FAMILY, fill: GREY },
   },
 };
