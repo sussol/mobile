@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ReportCell } from './ReportCell';
-
+import PropTypes from 'prop-types';
 export class ReportRow extends React.Component {
   render() {
     let rowStyle;
@@ -11,10 +11,10 @@ export class ReportRow extends React.Component {
       rowStyle = {
         marginBottom: 1,
       };
-      elements = this.props.rowData.map(cell => {
+      elements = this.props.rowData.map((cell, index) => {
         increment++;
         return (
-          <ReportCell id={0} key={increment}>
+          <ReportCell id={0} key={increment} index={index}>
             {cell}
           </ReportCell>
         );
@@ -29,7 +29,7 @@ export class ReportRow extends React.Component {
         );
       });
     }
-    return <View style={[rowStyle, localStyles.container]}>{elements}</View>;
+    return <View style={[localStyles.container, rowStyle]}>{elements}</View>;
   }
 }
 
@@ -41,4 +41,7 @@ const localStyles = StyleSheet.create({
   },
 });
 
-//TODO PropTypes
+ReportRow.propTypes = {
+  rowData: PropTypes.object.isRequired,
+  header: PropTypes.bool.isRequired,
+};

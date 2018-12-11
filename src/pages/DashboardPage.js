@@ -153,6 +153,7 @@ export class DashboardPage extends React.Component {
     });
   };
 
+  //TODO: Refactgor sidebar flatlist to it's own component.
   render() {
     // TODO: handle initialisation gracefully.
     const report = this.state.reports ? this.state.reports[this.state.selected] : null;
@@ -174,13 +175,7 @@ export class DashboardPage extends React.Component {
               />
             </View>
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
-              <ReportChart
-                title={report.title}
-                type={report.type}
-                data={report.data}
-                width={chartWidth}
-                height={chartHeight}
-              />
+              <ReportTable headers={rep.data.header} rows={rep.data.rows} />
             </View>
           </View>
         </View>
@@ -189,19 +184,16 @@ export class DashboardPage extends React.Component {
   }
 }
 
-// For Table Testing
-{
-  /* <ReportTable
-ID={rep.ID}
-storeID={rep.storeID}
-reportID={rep.storeID}
-title={rep.title}
-label={rep.label}
-type={rep.type}
-headers={rep.data.header}
-rows={rep.data.rows}
-/>  */
-}
+// // For Table Testing
+// {
+//   <ReportChart
+//   title={report.title}
+//   type={report.type}
+//   data={report.data}
+//   width={chartWidth}
+//   height={chartHeight}
+// />
+// }
 
 DashboardPage.propTypes = {
   database: PropTypes.object.isRequired,
@@ -212,10 +204,6 @@ DashboardPage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  Black: {
-    //for testing blocks..
-    backgroundColor: 'black',
-  },
   ListViewContainer: {
     backgroundColor: 'white',
     width: '20%',
