@@ -21,9 +21,11 @@ export class ReportChart extends React.Component {
     this.state = { ...props };
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ ...nextProps });
-  }
+  componentDidUpdate = prevProps => {
+    if (!this.state.width || prevProps.id !== this.props.id) {
+      this.setState({ ...this.props });
+    }
+  };
 
   renderXAxis() {
     return (
@@ -121,7 +123,9 @@ export class ReportChart extends React.Component {
     );
   }
 
-  renderChart() {
+  render() {
+    // TODO: return "loading...".
+    if (!this.state.width || !this.state.height) return null;
     switch (this.state.type) {
       case 'BarChart':
         return this.renderBarChart();
@@ -132,12 +136,6 @@ export class ReportChart extends React.Component {
       default:
         return null;
     }
-  }
-
-  render() {
-    // TODO: return "loading...".
-    if (!this.state.width || !this.state.height) return null;
-    return this.renderChart();
   }
 }
 
@@ -169,6 +167,11 @@ const victoryStyles = {
     style: { data: { stroke: SUSSOL_ORANGE } },
   },
   pieChart: {
+<<<<<<< HEAD
+=======
+    // These styles are causing the issues?
+    padding: 75,
+>>>>>>> eb990b4d9ec4cbbe0d5b776cd64cd04c5ff6a2b7
     padAngle: 2.5,
     colorScale: 'warm',
     style: { fontFamily: APP_FONT_FAMILY, fill: GREY },

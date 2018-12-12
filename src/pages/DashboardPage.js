@@ -121,6 +121,7 @@ export class DashboardPage extends React.Component {
   }
 
   onPressItem = id => {
+    if (this.state.selected === id) return;
     this.setState({ selected: id });
   };
 
@@ -171,6 +172,7 @@ export class DashboardPage extends React.Component {
             data={report.data}
             width={this.state.chartWidth}
             height={this.state.chartHeight}
+            id={report.reportID}
           />
         );
     }
