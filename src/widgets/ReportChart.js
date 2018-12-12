@@ -21,6 +21,12 @@ export class ReportChart extends React.Component {
     this.state = { ...props };
   }
 
+  componentDidUpdate = prevProps => {
+    if (!this.state.width || prevProps.id !== this.props.id) {
+      this.setState({ ...this.props });
+    }
+  };
+
   renderXAxis() {
     return (
       <VictoryAxis
@@ -100,7 +106,6 @@ export class ReportChart extends React.Component {
   }
 
   render() {
-    console.log('render - chart');
     // TODO: return "loading...".
     if (!this.state.width || !this.state.height) return null;
     switch (this.state.type) {
