@@ -3,6 +3,7 @@ import { View, FlatList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { ListItem, ReportChart, ReportTable } from '../widgets';
 import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const reportTable = [
   {
@@ -135,6 +136,7 @@ export class DashboardPage extends React.Component {
         onPress={this.onPressItem}
         numReports={this.state.reports ? this.state.reports.length : 0}
         selected={this.state.selected === item.id}
+        type={item.type}
       />
     );
   };
