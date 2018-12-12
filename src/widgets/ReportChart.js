@@ -47,10 +47,13 @@ export class ReportChart extends React.Component {
   }
 
   renderBarChart() {
-    const paddingVertical = this.state.height * 0.1;
-    const paddingLeft = this.state.width * 0.1;
-    const paddingRight = this.state.width * 0.05;
-    const domainPadding = this.state.width * 0.85 * 0.05;
+    const paddingVertical = this.state.height * victoryStyles.barChart.paddingVerticalRel;
+    const paddingLeft = this.state.width * victoryStyles.barChart.paddingLeftRel;
+    const paddingRight = this.state.width * victoryStyles.barChart.paddingRightRel;
+    const domainPadding =
+      this.state.width *
+      (1 - (victoryStyles.barChart.paddingLeftRel + victoryStyles.barChart.paddingRightRel)) *
+      victoryStyles.barChart.domainPaddingRel;
     return (
       <VictoryChart
         width={this.state.width}
@@ -71,9 +74,9 @@ export class ReportChart extends React.Component {
   }
 
   renderLineChart() {
-    const paddingVertical = this.state.height * 0.1;
-    const paddingLeft = this.state.width * 0.1;
-    const paddingRight = this.state.width * 0.05;
+    const paddingVertical = this.state.height * victoryStyles.barChart.paddingVerticalRel;
+    const paddingLeft = this.state.width * victoryStyles.barChart.paddingLeftRel;
+    const paddingRight = this.state.width * victoryStyles.barChart.paddingRightRel;
     return (
       <VictoryChart
         width={this.state.width}
@@ -98,11 +101,11 @@ export class ReportChart extends React.Component {
   }
 
   renderPieChart() {
-    const paddingVertical = this.state.height * 0.15;
-    const paddingHorizontal = this.state.width * 0.15;
-    const heightPadded = this.state.width * 0.85;
-    const innerRadius = heightPadded * 0.2;
-    const labelRadius = heightPadded * 0.35;
+    const paddingVertical = this.state.height * victoryStyles.pieChart.paddingVerticalRel;
+    const paddingHorizontal = this.state.width * victoryStyles.pieChart.paddingHorizontalRel;
+    const heightPadded = this.state.width * (1 - victoryStyles.pieChart.paddingVerticalRel);
+    const innerRadius = heightPadded * victoryStyles.pieChart.innerRadiusRel;
+    const labelRadius = heightPadded * victoryStyles.pieChart.labelRadiusRel;
     return (
       <VictoryPie
         width={this.state.width}
@@ -157,6 +160,10 @@ const victoryStyles = {
     },
   },
   barChart: {
+    paddingVerticalRel: 0.1,
+    paddingLeftRel: 0.1,
+    paddingRightRel: 0.05,
+    domainPaddingRel: 0.05,
     style: { data: { fill: SUSSOL_ORANGE } },
   },
   scatterChart: {
@@ -164,9 +171,16 @@ const victoryStyles = {
     style: { data: { fill: SUSSOL_ORANGE } },
   },
   lineChart: {
+    paddingVerticalRel: 0.1,
+    paddingLeftRel: 0.1,
+    paddingRightRel: 0.05,
     style: { data: { stroke: SUSSOL_ORANGE } },
   },
   pieChart: {
+    paddingVerticalRel: 0.15,
+    paddingHorizontalRel: 0.15,
+    innerRadiusRel: 0.2,
+    labelRadiusRel: 0.35,
     padAngle: 2.5,
     colorScale: 'warm',
     style: { fontFamily: APP_FONT_FAMILY, fill: GREY },
