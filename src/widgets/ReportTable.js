@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2018
+ */
+
 import React from 'react';
 import { StyleSheet, FlatList, View } from 'react-native';
 import PropTypes from 'prop-types';

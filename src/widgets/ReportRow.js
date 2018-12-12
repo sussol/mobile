@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2018
+ */
+
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ReportCell } from './ReportCell';
