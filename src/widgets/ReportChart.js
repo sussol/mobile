@@ -75,14 +75,23 @@ export class ReportChart extends React.Component {
   }
 
   renderPieChart() {
+    const paddingVertical = this.state.height * 0.15;
+    const paddingHorizontal = this.state.width * 0.15;
+    const heightPadded = this.state.width * 0.85;
+    const widthPadded = this.state.height * 0.85;
     return (
       <VictoryPie
         width={this.state.width}
         height={this.state.height}
-        padding={victoryStyles.pieChart.padding}
+        padding={{
+          top: paddingVertical,
+          bottom: paddingVertical,
+          right: paddingHorizontal,
+          left: paddingHorizontal,
+        }}
         padAngle={victoryStyles.pieChart.padAngle}
-        innerRadius={victoryStyles.pieChart.innerRadius}
-        labelRadius={victoryStyles.pieChart.labelRadius}
+        innerRadius={heightPadded * 0.2}
+        labelRadius={heightPadded * 0.35}
         colorScale={victoryStyles.pieChart.colorScale}
         labelComponent={<VictoryLabel style={victoryStyles.pieChart.style} />}
         data={this.state.data}
