@@ -8,38 +8,24 @@ export class ReportTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      headers: props.headers,
-      rows: null,
+      headers: this.props.headers,
+      rows: this.props.rows,
     };
   }
 
-  componentDidMount() {
-    const rows = this.props.rows.map((data, index) => {
-      return {
-        id: index,
-        data: data,
-      };
-    });
-    this.setState({ rows: rows });
-  }
-
-  renderItem = ({ item }) => {
-    return <ReportRow rowData={item} />;
+  renderItem = ({ item, index }) => {
+    return <ReportRow rowData={item} index={index} />;
   };
 
   renderHeader = () => {
-    return <ReportRow rowData={this.state.headers} header />;
+    return <ReportRow rowData={this.state.headers} header index={0} />;
   };
 
   render() {
     return (
       <View style={[localStyles.container]}>
         {this.renderHeader()}
-        <FlatList
-          data={this.state.rows}
-          renderItem={this.renderItem}
-          keyExtractor={item => item.id}
-        />
+        <FlatList data={this.state.rows} renderItem={this.renderItem} keyExtractor={item => item} />
       </View>
     );
   }

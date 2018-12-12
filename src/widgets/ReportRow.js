@@ -2,36 +2,18 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ReportCell } from './ReportCell';
 import PropTypes from 'prop-types';
-export class ReportRow extends React.Component {
-  render() {
-    let rowStyle;
-    let elements;
-    let increment = 0;
-    if (this.props.header) {
-      rowStyle = {
-        marginBottom: 1,
-      };
-      elements = this.props.rowData.map((cell, index) => {
-        increment++;
-        return (
-          <ReportCell id={0} key={increment} index={index}>
-            {cell}
-          </ReportCell>
-        );
-      });
-    } else {
-      elements = this.props.rowData.data.map(cell => {
-        increment++;
-        return (
-          <ReportCell id={this.props.rowData.id} key={increment}>
-            {cell}
-          </ReportCell>
-        );
-      });
-    }
-    return <View style={[localStyles.container, rowStyle]}>{elements}</View>;
-  }
-}
+
+export const ReportRow = props => {
+  const headerStyle = props.header ? { marginBottom: 1 } : null;
+  const elements = props.rowData.map((cell, index) => {
+    return (
+      <ReportCell key={index} even={props.index % 2 === 0}>
+        {cell}
+      </ReportCell>
+    );
+  });
+  return <View style={[localStyles.container, headerStyle]}>{elements}</View>;
+};
 
 const localStyles = StyleSheet.create({
   container: {
@@ -42,6 +24,6 @@ const localStyles = StyleSheet.create({
 });
 
 ReportRow.propTypes = {
-  rowData: PropTypes.object.isRequired,
-  header: PropTypes.bool.isRequired,
+  rowData: PropTypes.array.isRequired,
+  header: PropTypes.bool,
 };

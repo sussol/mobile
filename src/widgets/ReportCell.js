@@ -3,26 +3,14 @@ import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../globalStyles';
 
-export class ReportCell extends React.PureComponent {
-  render() {
-    let style;
-    if (!(this.props.id % 2 !== 0)) {
-      style = { backgroundColor: 'white' };
-    }
-    if (this.props.canSort) {
-      return (
-        <View style={[localStyles.container, style]}>
-          <Text style={[style, localStyles.cell]}>{this.props.children}</Text>
-        </View>
-      );
-    }
-    return (
-      <View style={[localStyles.container, style]}>
-        <Text style={[style, localStyles.cell]}>{this.props.children}</Text>
-      </View>
-    );
-  }
-}
+export const ReportCell = props => {
+  const style = props.even ? { backgroundColor: 'white' } : null;
+  return (
+    <View style={[localStyles.container, style]}>
+      <Text style={[style, localStyles.cell]}>{props.children}</Text>
+    </View>
+  );
+};
 
 const localStyles = StyleSheet.create({
   container: {
@@ -37,16 +25,8 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     fontSize: 12,
   },
-  iconStyle: {
-    marginRight: 10,
-  },
 });
 
 ReportCell.propTypes = {
-  id: PropTypes.string.isRequired,
-  key: PropTypes.number.isRequired,
-  index: PropTypes.number.isRequired,
-  canSort: PropTypes.bool.isRequired,
-  sortBy: PropTypes.func,
-  sortedBy: PropTypes.number,
+  even: PropTypes.bool.isRequired,
 };
