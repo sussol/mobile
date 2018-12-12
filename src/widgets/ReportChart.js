@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   VictoryAxis,
   VictoryBar,
@@ -15,6 +16,17 @@ import {
 } from 'victory-native';
 import { APP_FONT_FAMILY, DARK_GREY, LIGHT_GREY, GREY, SUSSOL_ORANGE } from '../globalStyles';
 
+/**
+ * A charting widget for displaying reports as bar charts, line charts and pie graphs.
+ *
+ * @prop  {string}       id      The report ID.
+ * @prop  {string}       title   The title of the report.
+ * @prop  {string}       type    The type of chart to use to display the report,
+ *                               options are BarChart, LineChart and PieChart.
+ * @prop  {data}         array   An array of {x, y} datapoints to plot.
+ * @prop  {width}        number  The width of the parent container.
+ * @prop  {height}       number  The height of the parent continer.
+ */
 export class ReportChart extends React.Component {
   constructor(props) {
     super(props);
@@ -127,7 +139,6 @@ export class ReportChart extends React.Component {
   }
 
   render() {
-    // TODO: return "loading...".
     if (!this.state.width || !this.state.height) return null;
     switch (this.state.type) {
       case 'BarChart':
@@ -141,6 +152,15 @@ export class ReportChart extends React.Component {
     }
   }
 }
+
+ReportChart.propTypes = {
+  id: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  data: PropTypes.array.isRequired,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+};
 
 const victoryStyles = {
   axisX: {
