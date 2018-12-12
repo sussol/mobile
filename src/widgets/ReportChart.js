@@ -167,11 +167,6 @@ const victoryStyles = {
     style: { data: { stroke: SUSSOL_ORANGE } },
   },
   pieChart: {
-<<<<<<< HEAD
-=======
-    // These styles are causing the issues?
-    padding: 75,
->>>>>>> eb990b4d9ec4cbbe0d5b776cd64cd04c5ff6a2b7
     padAngle: 2.5,
     colorScale: 'warm',
     style: { fontFamily: APP_FONT_FAMILY, fill: GREY },
