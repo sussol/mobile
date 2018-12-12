@@ -23,6 +23,7 @@ export { PageInfo } from './PageInfo';
 export { ReportChart } from './ReportChart';
 export { ReportTable } from './ReportTable';
 export { ReportCell } from './ReportCell';
+export { ReportSidebar } from './ReportSidebar';
 export { ReportRow } from './ReportRow';
 export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';

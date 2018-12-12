@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 export class ListItem extends React.PureComponent {
   onPressItem = () => {
-    this.props.onPress(this.props.id);
+    this.props.onPress(this.props.index);
   };
 
   lookupTable = {
@@ -18,10 +18,9 @@ export class ListItem extends React.PureComponent {
   };
 
   render() {
-    const bottomBorder =
-      this.props.id + 1 === this.props.numReports
-        ? { borderBottomWidth: 1, borderBottomColor: GREY }
-        : null;
+    const bottomBorder = this.props.lastItem
+      ? { borderBottomWidth: 1, borderBottomColor: GREY }
+      : null;
     const selectedItem = this.props.selected ? { color: SUSSOL_ORANGE } : null;
     const iconColour = this.props.selected ? SUSSOL_ORANGE : WARMER_GREY;
     return (
@@ -61,11 +60,12 @@ const localStyles = StyleSheet.create({
 });
 
 ListItem.propTypes = {
-  id: PropTypes.number.isRequired,
-  reportID: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   numReports: PropTypes.number.isRequired,
   selected: PropTypes.bool.isRequired,
+  icon: PropTypes.string,
 };

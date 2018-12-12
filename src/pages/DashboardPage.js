@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { ListItem, ReportChart, ReportTable } from '../widgets';
+import { ListItem, ReportChart, ReportTable, ReportSidebar } from '../widgets';
 import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
-import Icon from 'react-native-vector-icons/Ionicons';
 
 const reportTable = [
   {
@@ -108,8 +107,8 @@ export class DashboardPage extends React.Component {
     //const reports = database.objects('Report').snapshot();
     const reports = reportTable.map((report, index) => {
       return {
-        id: index,
-        reportID: report.reportID,
+        id: report.reportID,
+        index: index,
         title: report.title,
         type: report.type,
         data: report.data,
@@ -149,10 +148,6 @@ export class DashboardPage extends React.Component {
     );
   };
 
-  extractKey = item => {
-    return item.reportID;
-  };
-
   onLayout = event => {
     this.setState({
       chartWidth: event.nativeEvent.layout.width,
@@ -182,19 +177,13 @@ export class DashboardPage extends React.Component {
 
   render() {
     // TODO: handle initialisation gracefully.
+    if (!this.state.reports) return null;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={[globalStyles.pageTopSectionContainer, { paddingHorizontal: 0 }]}>
-            <View style={localStyles.ListViewContainer}>
-              <FlatList
-                data={this.state.reports}
-                renderItem={this.renderItem}
-                extraData={this.state}
-                keyExtractor={this.extractKey}
-                ListHeaderComponent={this.renderHeader}
-              />
-            </View>
+            <ReportSidebar data={this.state.reports} onPressItem={this.onPressItem} />
+
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
               {this.renderVisualisation()}
             </View>
@@ -225,19 +214,10 @@ const localStyles = StyleSheet.create({
     margin: 0,
   },
   ChartContainer: {
-    width: '80%',
+    width: '75%',
     minHeight: '100%',
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  ListViewHeader: {
-    fontFamily: APP_FONT_FAMILY,
-    fontSize: 18,
-    alignItems: 'flex-start',
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    color: GREY,
-    minHeight: 50,
   },
 });
