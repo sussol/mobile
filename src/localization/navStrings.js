@@ -28,11 +28,11 @@ export const navStrings = new LocalizedStrings({
     supplier_requisitions: 'Supplier Requisitions',
   },
   fr: {
-    // TODO: add - dashboard
     current_stock: 'Stock actuel',
     customer_invoices: 'Factures client',
     customer_requisitions: 'Réquisitions clients',
     customers: 'Clients',
+    dashboard: 'Tableau de bord',
     finalise: 'FINALISER',
     finalised_cannot_be_edited: 'FINALISÉ. NE PEUT ÊTRE MODIFIÉ',
     invoice: 'Facture',
