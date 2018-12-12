@@ -13,7 +13,7 @@ export const navStrings = new LocalizedStrings({
     customer_invoices: 'Customer Invoices',
     customer_requisitions: 'Customer Requisitions',
     customers: 'Customers',
-    dashboard: 'Dashboard',
+    dashboard: 'DASHBOARD',
     finalise: 'FINALISE',
     finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED',
     invoice: 'Invoice',
@@ -27,7 +27,8 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Supplier Invoices',
     supplier_requisitions: 'Supplier Requisitions',
   },
-  fr: { // TODO: add - dashboard
+  fr: {
+    // TODO: add - dashboard
     current_stock: 'Stock actuel',
     customer_invoices: 'Factures client',
     customer_requisitions: 'Réquisitions clients',
@@ -45,7 +46,8 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Factures fournisseurs',
     supplier_requisitions: 'Factures réquisitions',
   },
-  gil: { // TODO: add - stocktake, dashboard
+  gil: {
+    // TODO: add - stocktake, dashboard
     current_stock: 'Mwaitin am bwai n\naoraki ke am supply',
     customer_invoices: 'Ana invoice am\nkiriniki ke am aoraki',
     customer_requisitions: 'Am oota n am clinic',
@@ -62,7 +64,8 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Ana Invoice\nam Supplier',
     supplier_requisitions: 'Am oota nakon\nte pharmacy',
   },
-  tl: { // TODO: add - stocktake, dashboard
+  tl: {
+    // TODO: add - stocktake, dashboard
     current_stock: 'Sasán Atuál',
     customer_invoices: 'Kliente nia Konta',
     customer_requisitions: 'Kliente nia Rekuizasaun',

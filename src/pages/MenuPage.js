@@ -63,12 +63,6 @@ export class MenuPage extends React.Component {
               text={navStrings.customer_requisitions}
               onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.dashboard}
-              onPress={() => navigateTo('dashboard', navStrings.dashboard)}
-            />
           </View>
 
           <View style={[localStyles.container, localStyles.centralContainer]}>
@@ -136,7 +130,17 @@ export class MenuPage extends React.Component {
             backgroundColor="rgba(255,255,255,0)"
             onPress={logOut}
           >
-            <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
+            <Text style={localStyles.dashboardText}>{navStrings.log_out}</Text>
+          </Icon.Button>
+          <Icon.Button
+            name="tachometer"
+            underlayColor="#888888"
+            iconStyle={localStyles.bottomIcon}
+            borderRadius={4}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={() => navigateTo('dashboard', navStrings.dashboard)}
+          >
+            <Text style={localStyles.logOutText}>{navStrings.dashboard}</Text>
           </Icon.Button>
         </View>
       </View>
@@ -180,6 +184,10 @@ const localStyles = StyleSheet.create({
     marginBottom: 30,
   },
   logOutText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: WARMER_GREY,
+  },
+  dashboardText: {
     fontFamily: APP_FONT_FAMILY,
     color: WARMER_GREY,
   },
