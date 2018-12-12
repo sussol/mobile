@@ -1,9 +1,8 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { ListItem, ReportChart } from '../widgets';
+import { ListItem, ReportChart, ReportTable } from '../widgets';
 import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
-import { ReportTable } from '../widgets/index';
 
 const reportTable = [
   {
