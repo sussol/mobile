@@ -7,10 +7,7 @@ import { ReportRow } from './ReportRow';
 export class ReportTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      headers: this.props.headers,
-      rows: this.props.rows,
-    };
+    this.state = { ...this.props };
   }
 
   renderItem = ({ item, index }) => {
@@ -21,6 +18,7 @@ export class ReportTable extends React.Component {
     return <ReportRow rowData={this.state.headers} header index={0} />;
   };
 
+  //TODO: Different keyextraction method..
   render() {
     return (
       <View style={[localStyles.container]}>

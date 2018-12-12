@@ -14,12 +14,13 @@ export const ReportCell = props => {
 
 const localStyles = StyleSheet.create({
   container: {
-    width: '50%',
+    flex: 1,
     justifyContent: 'space-between',
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 20,
     backgroundColor: BACKGROUND_COLOR,
+    marginRight: 1,
   },
   cell: {
     fontFamily: APP_FONT_FAMILY,
