@@ -45,12 +45,21 @@ export class ReportChart extends React.Component {
   }
 
   renderBarChart() {
+    const paddingVertical = this.state.height * 0.1;
+    const paddingLeft = this.state.width * 0.1;
+    const paddingRight = this.state.width * 0.05;
+    const domainPadding = this.state.width * 0.85 * 0.05;
     return (
       <VictoryChart
         width={this.state.width}
         height={this.state.height}
-        padding={victoryStyles.barChart.padding}
-        domainPadding={victoryStyles.barChart.domainPadding}
+        padding={{
+          top: paddingVertical,
+          bottom: paddingVertical,
+          left: paddingLeft,
+          right: paddingRight,
+        }}
+        domainPadding={domainPadding}
       >
         <VictoryBar style={victoryStyles.barChart.style} data={this.state.data} />
         {this.renderXAxis()}
@@ -60,11 +69,19 @@ export class ReportChart extends React.Component {
   }
 
   renderLineChart() {
+    const paddingVertical = this.state.height * 0.1;
+    const paddingLeft = this.state.width * 0.1;
+    const paddingRight = this.state.width * 0.05;
     return (
       <VictoryChart
         width={this.state.width}
         height={this.state.height}
-        padding={victoryStyles.lineChart.padding}
+        padding={{
+          top: paddingVertical,
+          bottom: paddingVertical,
+          left: paddingLeft,
+          right: paddingRight,
+        }}
       >
         <VictoryScatter
           size={victoryStyles.scatterChart.size}
@@ -82,7 +99,8 @@ export class ReportChart extends React.Component {
     const paddingVertical = this.state.height * 0.15;
     const paddingHorizontal = this.state.width * 0.15;
     const heightPadded = this.state.width * 0.85;
-    const widthPadded = this.state.height * 0.85;
+    const innerRadius = heightPadded * 0.2;
+    const labelRadius = heightPadded * 0.35;
     return (
       <VictoryPie
         width={this.state.width}
@@ -94,8 +112,8 @@ export class ReportChart extends React.Component {
           left: paddingHorizontal,
         }}
         padAngle={victoryStyles.pieChart.padAngle}
-        innerRadius={heightPadded * 0.2}
-        labelRadius={heightPadded * 0.35}
+        innerRadius={innerRadius}
+        labelRadius={labelRadius}
         colorScale={victoryStyles.pieChart.colorScale}
         labelComponent={<VictoryLabel style={victoryStyles.pieChart.style} />}
         data={this.state.data}
@@ -141,8 +159,6 @@ const victoryStyles = {
     },
   },
   barChart: {
-    padding: { top: 75, bottom: 75, left: 90, right: 60 },
-    domainPadding: 50,
     style: { data: { fill: SUSSOL_ORANGE } },
   },
   scatterChart: {
@@ -150,15 +166,10 @@ const victoryStyles = {
     style: { data: { fill: SUSSOL_ORANGE } },
   },
   lineChart: {
-    padding: { top: 75, bottom: 75, left: 90, right: 60 },
-    domainPadding: 50,
     style: { data: { stroke: SUSSOL_ORANGE } },
   },
   pieChart: {
-    padding: 75,
     padAngle: 2.5,
-    innerRadius: 200,
-    labelRadius: 325,
     colorScale: 'warm',
     style: { fontFamily: APP_FONT_FAMILY, fill: GREY },
   },
