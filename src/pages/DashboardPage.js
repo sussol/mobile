@@ -4,10 +4,10 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { ListItem, ReportChart, ReportTable, ReportSidebar } from '../widgets';
-import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { ReportChart, ReportTable, ReportSidebar } from '../widgets';
+import globalStyles, { GREY } from '../globalStyles';
 
 const reportTable = [
   {
@@ -105,6 +105,7 @@ export class DashboardPage extends React.Component {
       error: null,
     };
   }
+
   componentDidMount() {
     // call database here.
     // Creating a snapshot and storing this in state, should prevent
@@ -130,29 +131,6 @@ export class DashboardPage extends React.Component {
     this.setState({ selected: id });
   };
 
-  renderItem = ({ item }) => {
-    return (
-      <ListItem
-        id={item.id}
-        reportID={item.reportID}
-        title={item.title}
-        date={item.date}
-        onPress={this.onPressItem}
-        numReports={this.state.reports ? this.state.reports.length : 0}
-        selected={this.state.selected === item.id}
-        type={item.type}
-      />
-    );
-  };
-
-  renderHeader = () => {
-    return (
-      <View>
-        <Text style={localStyles.ListViewHeader}>Reports</Text>
-      </View>
-    );
-  };
-
   onLayout = event => {
     this.setState({
       chartWidth: event.nativeEvent.layout.width,
@@ -174,7 +152,7 @@ export class DashboardPage extends React.Component {
             data={report.data}
             width={this.state.chartWidth}
             height={this.state.chartHeight}
-            id={report.reportID}
+            id={report.id}
           />
         );
     }
@@ -183,11 +161,17 @@ export class DashboardPage extends React.Component {
   render() {
     // TODO: handle initialisation gracefully.
     if (!this.state.reports) return null;
+    const sideBarDimensions = { width: '25%', height: '100%' };
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={[globalStyles.pageTopSectionContainer, { paddingHorizontal: 0 }]}>
-            <ReportSidebar data={this.state.reports} onPressItem={this.onPressItem} />
+            <ReportSidebar
+              data={this.state.reports}
+              onPressItem={this.onPressItem}
+              selected={this.state.selected}
+              dimensions={sideBarDimensions}
+            />
 
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
               {this.renderVisualisation()}
