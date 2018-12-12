@@ -4,11 +4,10 @@
  */
 
 import React from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { ListItem, ReportChart, ReportTable } from '../widgets';
-import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { ReportChart, ReportTable, ReportSidebar } from '../widgets';
+import globalStyles, { GREY } from '../globalStyles';
 
 const reportTable = [
   {
@@ -106,6 +105,7 @@ export class DashboardPage extends React.Component {
       error: null,
     };
   }
+
   componentDidMount() {
     // call database here.
     // Creating a snapshot and storing this in state, should prevent
@@ -113,8 +113,8 @@ export class DashboardPage extends React.Component {
     //const reports = database.objects('Report').snapshot();
     const reports = reportTable.map((report, index) => {
       return {
-        id: index,
-        reportID: report.reportID,
+        id: report.reportID,
+        index: index,
         title: report.title,
         type: report.type,
         data: report.data,
@@ -129,33 +129,6 @@ export class DashboardPage extends React.Component {
   onPressItem = id => {
     if (this.state.selected === id) return;
     this.setState({ selected: id });
-  };
-
-  renderItem = ({ item }) => {
-    return (
-      <ListItem
-        id={item.id}
-        reportID={item.reportID}
-        title={item.title}
-        date={item.date}
-        onPress={this.onPressItem}
-        numReports={this.state.reports ? this.state.reports.length : 0}
-        selected={this.state.selected === item.id}
-        type={item.type}
-      />
-    );
-  };
-
-  renderHeader = () => {
-    return (
-      <View>
-        <Text style={localStyles.ListViewHeader}>Reports</Text>
-      </View>
-    );
-  };
-
-  extractKey = item => {
-    return item.reportID;
   };
 
   onLayout = event => {
@@ -179,7 +152,7 @@ export class DashboardPage extends React.Component {
             data={report.data}
             width={this.state.chartWidth}
             height={this.state.chartHeight}
-            id={report.reportID}
+            id={report.id}
           />
         );
     }
@@ -187,19 +160,19 @@ export class DashboardPage extends React.Component {
 
   render() {
     // TODO: handle initialisation gracefully.
+    if (!this.state.reports) return null;
+    const sideBarDimensions = { width: '25%', height: '100%' };
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={[globalStyles.pageTopSectionContainer, { paddingHorizontal: 0 }]}>
-            <View style={localStyles.ListViewContainer}>
-              <FlatList
-                data={this.state.reports}
-                renderItem={this.renderItem}
-                extraData={this.state}
-                keyExtractor={this.extractKey}
-                ListHeaderComponent={this.renderHeader}
-              />
-            </View>
+            <ReportSidebar
+              data={this.state.reports}
+              onPressItem={this.onPressItem}
+              selected={this.state.selected}
+              dimensions={sideBarDimensions}
+            />
+
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
               {this.renderVisualisation()}
             </View>
@@ -230,19 +203,10 @@ const localStyles = StyleSheet.create({
     margin: 0,
   },
   ChartContainer: {
-    width: '80%',
+    width: '75%',
     minHeight: '100%',
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  ListViewHeader: {
-    fontFamily: APP_FONT_FAMILY,
-    fontSize: 18,
-    alignItems: 'flex-start',
-    paddingVertical: 10,
-    paddingHorizontal: 5,
-    color: GREY,
-    minHeight: 50,
   },
 });
