@@ -13,7 +13,7 @@ export const navStrings = new LocalizedStrings({
     customer_invoices: 'Customer Invoices',
     customer_requisitions: 'Customer Requisitions',
     customers: 'Customers',
-    dashboard: 'DASHBOARD',
+    dashboard: 'Dashboard',
     finalise: 'FINALISE',
     finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED',
     invoice: 'Invoice',

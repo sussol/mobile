@@ -130,7 +130,7 @@ export class MenuPage extends React.Component {
             backgroundColor="rgba(255,255,255,0)"
             onPress={logOut}
           >
-            <Text style={localStyles.dashboardText}>{navStrings.log_out}</Text>
+            <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
           </Icon.Button>
           <Icon.Button
             name="tachometer"
@@ -140,7 +140,7 @@ export class MenuPage extends React.Component {
             backgroundColor="rgba(255,255,255,0)"
             onPress={() => navigateTo('dashboard', navStrings.dashboard)}
           >
-            <Text style={localStyles.logOutText}>{navStrings.dashboard}</Text>
+            <Text style={localStyles.dashboardText}>{navStrings.dashboard.toUpperCase()}</Text>
           </Icon.Button>
         </View>
       </View>
