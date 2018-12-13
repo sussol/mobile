@@ -16,15 +16,10 @@ export {
 } from './modals';
 export { AutocompleteSelector } from './AutocompleteSelector';
 export { FinaliseButton } from './FinaliseButton';
-export { ListItem } from './ListItem';
 export { NavigationBar } from './NavigationBar';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
 export { ReportChart } from './ReportChart';
-export { ReportTable } from './ReportTable';
-export { ReportCell } from './ReportCell';
-export { ReportSidebar } from './ReportSidebar';
-export { ReportRow } from './ReportRow';
 export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
 export { TextEditor } from './TextEditor';

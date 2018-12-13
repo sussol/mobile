@@ -6,24 +6,26 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { APP_FONT_FAMILY, GREY, WARMER_GREY } from '../globalStyles';
-import { SUSSOL_ORANGE } from '../globalStyles/index';
+import { APP_FONT_FAMILY, GREY, WARMER_GREY } from '../../globalStyles';
+import { SUSSOL_ORANGE } from '../../globalStyles/index';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 /**
  * Component designed to be used in conjunction with ReportSidebar as the rendered items.
  *
- * @prop  {int}     id        Unique identifier for the item.
- * @prop  {index}   index     Index of the item within the FlatList.
- * @prop  {title}   selected  Indicator of if this is the currently selected item within the list.
- * @prop  {date}    style     A date to display under the title.
- * @prop  {func}    onPress   Function to call on touch, passing the index of the item as a parameter.
- * @prop  {bool}    lastItem  Indicator of whether this is the last item in the list, adding a bottom seperator if true.
- * @prop  {stirng}  icon      String indicating the type of icon to display.
+ * @prop  {int}     id          Unique identifier for the item.
+ * @prop  {index}   index       Index of the item within the FlatList.
+ * @prop  {title}   selected    Indicator of if this is the currently selected item within the list.
+ * @prop  {func}    onPress     Function to call on touch, passing the index of the item as a parameter.
+ * @prop  {bool}    lastItem    Indicator of whether this is the last item in the list, adding a bottom seperator if true.
+ * @prop  {string}  icon        String indicating the type of icon to display (FontAwesome).
+ * @prop  {string}  content     Main content to display within the ListItem.
+ * @prop  {string}  subContent  Sub content to display under the main content.
  */
 
 export class ListItem extends React.PureComponent {
-  REPORT_TYPE_TO_ICON = {
+  // Translations between icon props and names of FontAwesome icons.
+  TYPE_TO_ICON = {
     PieChart: 'pie-chart',
     LineChart: 'line-chart',
     Table: 'table',
@@ -35,19 +37,19 @@ export class ListItem extends React.PureComponent {
   };
 
   render() {
-    const bottomBorder = this.props.lastItem
+    const hasBottomBorder = this.props.isLastItem
       ? { borderBottomWidth: 1, borderBottomColor: GREY }
       : null;
-    const selectedItem = this.props.selected ? { color: SUSSOL_ORANGE } : null;
+    const isSelected = this.props.selected ? { color: SUSSOL_ORANGE } : null;
     const iconColour = this.props.selected ? SUSSOL_ORANGE : WARMER_GREY;
     return (
       <TouchableOpacity onPress={this.onPressItem}>
-        <View style={[localStyles.ListViewItem, bottomBorder]}>
+        <View style={[localStyles.FlatListItem, hasBottomBorder]}>
           <View style={{ flexDirection: 'column', width: '80%' }}>
-            <Text style={[localStyles.ListViewItemTitle, selectedItem]}>{this.props.title}</Text>
-            <Text style={[localStyles.ListViewItemLabel, selectedItem]}>{this.props.date}</Text>
+            <Text style={[localStyles.Content, isSelected]}>{this.props.content}</Text>
+            <Text style={[localStyles.SubContent, isSelected]}>{this.props.subContent}</Text>
           </View>
-          <Icon name={this.REPORT_TYPE_TO_ICON[this.props.icon]} size={18} color={iconColour} />
+          <Icon name={this.TYPE_TO_ICON[this.props.icon]} size={18} color={iconColour} />
         </View>
       </TouchableOpacity>
     );
@@ -55,7 +57,7 @@ export class ListItem extends React.PureComponent {
 }
 
 const localStyles = StyleSheet.create({
-  ListViewItem: {
+  FlatListItem: {
     padding: 10,
     borderTopWidth: 1,
     borderTopColor: GREY,
@@ -65,12 +67,12 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     height: 85,
   },
-  ListViewItemTitle: {
+  Content: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 16,
     textAlignVertical: 'center',
   },
-  ListViewItemLabel: {
+  SubContent: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 12,
     color: WARMER_GREY,

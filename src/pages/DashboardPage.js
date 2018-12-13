@@ -6,8 +6,10 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { ReportChart, ReportTable, ReportSidebar } from '../widgets';
-import globalStyles, { GREY } from '../globalStyles';
+import { ReportChart } from '../widgets';
+import { ReportTable } from '../widgets/ReportTable';
+import { ReportSidebar } from '../widgets/ReportSidebar';
+import globalStyles from '../globalStyles';
 
 const reportTable = [
   {

@@ -4,18 +4,19 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { ListItem } from './ListItem';
-import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
 
 /**
  * FlatList wrapper component to render a vertical, clickable sidebar. Each ListItem has a
  * Title, date and icon. The currently selected ListItem is highlighted SUSSOL_ORANGE.
  *
- * @prop    {array}            data             2d array of strings, each representing a cell.
+ * @prop    {array}            data             Array of objects with properties for each list item: title, date, index, id, type (icon type)
  * @prop    {func}             onPressItem      Action to take on pressing on an item.
  * @prop    {int}              selected         Index of the selected ListItem.
- * @prop    {object}           style            Additional styles to apply to the parent container.
+ * @prop    {object}           dimensions       Additional styles to apply to the parent container.
  */
 export class ReportSidebar extends React.Component {
   renderItem = ({ item }) => {
@@ -23,12 +24,12 @@ export class ReportSidebar extends React.Component {
       <ListItem
         id={item.id}
         index={item.index}
-        title={item.title}
-        date={item.date}
         onPress={this.props.onPressItem}
-        lastItem={item.index + 1 === this.props.data.length}
+        isLastItem={item.index + 1 === this.props.data.length}
         selected={this.props.selected === item.index}
         icon={item.type}
+        content={item.title}
+        subContent={item.date}
       />
     );
   };
@@ -60,6 +61,13 @@ export class ReportSidebar extends React.Component {
     );
   }
 }
+
+ReportSidebar.propTypes = {
+  data: PropTypes.array.isRequired,
+  onPressItem: PropTypes.func,
+  selected: PropTypes.number,
+  dimensions: PropTypes.object,
+};
 
 const localStyles = StyleSheet.create({
   ListViewHeader: {

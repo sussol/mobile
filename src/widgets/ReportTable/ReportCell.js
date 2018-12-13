@@ -6,7 +6,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../globalStyles';
+import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../../globalStyles';
+
+/**
+ * Designed to be used in conjunction with ReportTable.
+ * @prop  {int}      key        Identifier - Cell index within the row).
+ * @prop  {bool}     even       Identifier for the row being even or odd within the FlatList.
+ * @prop  {string}   children   Content to display.
+ */
 
 export const ReportCell = props => {
   const style = props.even ? { backgroundColor: 'white' } : null;
@@ -15,6 +22,12 @@ export const ReportCell = props => {
       <Text style={[style, localStyles.cell]}>{props.children}</Text>
     </View>
   );
+};
+
+ReportCell.propTypes = {
+  key: PropTypes.number.isRequired,
+  even: PropTypes.bool,
+  children: PropTypes.string.isRequired,
 };
 
 const localStyles = StyleSheet.create({
