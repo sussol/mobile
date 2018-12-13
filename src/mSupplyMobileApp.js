@@ -55,10 +55,12 @@ class MSupplyMobileAppContainer extends React.Component {
     migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
-    this.synchroniser = new Synchroniser(database,
-                                         syncAuthenticator,
-                                         this.settings,
-                                         props.dispatch);
+    this.synchroniser = new Synchroniser(
+      database,
+      syncAuthenticator,
+      this.settings,
+      props.dispatch,
+    );
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
@@ -83,22 +85,22 @@ class MSupplyMobileAppContainer extends React.Component {
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
     this.scheduler.clearAll();
-  }
+  };
 
-  onAuthentication = (user) => {
+  onAuthentication = user => {
     this.setState({ currentUser: user });
     this.postSyncProcessor.setUser(user);
-  }
+  };
 
   onInitialised = () => {
     this.setState({ isInitialised: true });
     this.postSyncProcessor.processAnyUnprocessedRecords();
-  }
+  };
 
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
     return this.navigator && navigationState.index !== 0;
-  }
+  };
 
   handleBackEvent = () => {
     const { confirmFinalise, syncModalIsOpen } = this.state;
@@ -114,9 +116,9 @@ class MSupplyMobileAppContainer extends React.Component {
       navigation.goBack();
     }
     return true;
-  }
+  };
 
-  runWithLoadingIndicator = async (functionToRun) => {
+  runWithLoadingIndicator = async functionToRun => {
     this.database.isLoading = true;
     // We here set up an asyncronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay during which the javascript
@@ -129,7 +131,7 @@ class MSupplyMobileAppContainer extends React.Component {
     functionToRun();
     this.setState({ isLoading: false });
     this.database.isLoading = false;
-  }
+  };
 
   synchronise = async () => {
     if (!this.state.isInitialised || this.props.syncState.isSyncing) return; // Ignore if syncing
@@ -147,18 +149,18 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       this.postSyncProcessor.processRecordQueue();
     }
-  }
+  };
 
   logOut = () => {
     this.setState({ currentUser: null });
-  }
+  };
 
   renderFinaliseButton = () => (
     <FinaliseButton
       isFinalised={this.props.finaliseItem.record.isFinalised}
       onPress={() => this.setState({ confirmFinalise: true })}
     />
-  )
+  );
 
   renderLogo = () => (
     <TouchableWithoutFeedback
@@ -167,19 +169,15 @@ class MSupplyMobileAppContainer extends React.Component {
     >
       <Image resizeMode="contain" source={require('./images/logo.png')} />
     </TouchableWithoutFeedback>
-  )
+  );
 
   renderLoadingIndicator = () => (
     <View style={globalStyles.loadingIndicatorContainer}>
       <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
     </View>
-  )
+  );
 
-  renderPageTitle = () => (
-    <Text style={textStyles}>
-      {this.props.currentTitle}
-    </Text>
-  )
+  renderPageTitle = () => <Text style={textStyles}>{this.props.currentTitle}</Text>;
 
   renderSyncState = () => (
     <TouchableOpacity
@@ -188,7 +186,7 @@ class MSupplyMobileAppContainer extends React.Component {
     >
       <SyncState state={this.props.syncState} />
     </TouchableOpacity>
-  )
+  );
 
   render() {
     if (!this.state.isInitialised) {

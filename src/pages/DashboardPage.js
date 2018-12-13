@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { ReportChart } from '../widgets';
 import { ReportTable } from '../widgets/ReportTable';
 import { ReportSidebar } from '../widgets/ReportSidebar';
-import globalStyles, { GREY } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
 const reportTable = [
   {
@@ -194,16 +194,6 @@ DashboardPage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  ListViewContainer: {
-    backgroundColor: 'white',
-    width: '20%',
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    borderRightColor: GREY,
-    borderRightWidth: 1,
-    height: '100%',
-    margin: 0,
-  },
   ChartContainer: {
     width: '75%',
     minHeight: '100%',
