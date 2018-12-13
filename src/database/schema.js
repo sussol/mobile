@@ -24,22 +24,22 @@ import {
   TransactionCategory,
   TransactionItem,
   User,
-  //Report
+  Report,
 } from './DataTypes';
 
-// Report schema for when data is finalized.
-// Report.schema = {
-//   name: 'Report',
-//   primaryKey: 'reportID',
-//   properties: {
-//     reportID: 'string',
-//     reportName: 'string',
-//     reportType: 'string',
-//     storeID: 'string',
-//     generationDate: 'string',
-//     data: 'string',
-//   }
-// }
+Report.schema = {
+  name: 'Report',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    reportID: 'string',
+    storeID: 'string',
+    title: 'string',
+    type: 'string',
+    generationDate: 'string',
+    data: 'string',
+  },
+};
 
 Address.schema = {
   name: 'Address',

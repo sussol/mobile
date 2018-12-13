@@ -10,6 +10,7 @@ import { ReportChart } from '../widgets';
 import { ReportSidebar } from '../widgets/ReportSidebar';
 import globalStyles, { GREY } from '../globalStyles';
 import { testData } from './DashboardTestData'; // REMOVE THIS AND THE FILE DashboardTestData :)
+import { createOrUpdateRecord } from '../sync/incomingSyncUtils';
 
 export class DashboardPage extends React.Component {
   constructor(props) {
@@ -20,9 +21,13 @@ export class DashboardPage extends React.Component {
       loading: true,
       error: null,
     };
+    testData.forEach(x => {
+      createOrUpdateRecord(props.database, props.settings, 'Report', x);
+    });
   }
 
   componentDidMount() {
+    console.log(this.props.database.objects('Report'));
     // call database here.
     // Creating a snapshot and storing this in state, should prevent
     // the page from updating if a sync occurs..?
@@ -48,7 +53,6 @@ export class DashboardPage extends React.Component {
   };
 
   render() {
-    // TODO: handle initialisation gracefully.
     if (!this.state.reports) return null;
     const report = this.state.reports ? this.state.reports[this.state.selected] : null;
     return (

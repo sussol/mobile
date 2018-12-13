@@ -15,14 +15,33 @@ import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../../globalStyles';
  * @prop  {string}   children   Content to display.
  */
 
-export const ReportCell = props => {
-  const style = props.even ? { backgroundColor: 'white' } : null;
-  return (
-    <View style={[localStyles.container, style]}>
-      <Text style={[style, localStyles.cell]}>{props.children}</Text>
-    </View>
-  );
-};
+export class ReportCell extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      width: null,
+    };
+  }
+
+  onLayout = event => {
+    this.setState({
+      width: event.nativeEvent.layout.width,
+    });
+  };
+
+  render() {
+    const content =
+      this.props.children.length > this.state.width / 4
+        ? this.props.children.slice(0, this.state.width / 6) + '...'
+        : this.props.children;
+    const style = this.props.even ? { backgroundColor: 'white' } : null;
+    return (
+      <View style={[localStyles.container, style]} onLayout={this.onLayout}>
+        <Text style={[style, localStyles.cell]}>{content}</Text>
+      </View>
+    );
+  }
+}
 
 ReportCell.propTypes = {
   key: PropTypes.number.isRequired,

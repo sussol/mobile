@@ -59,13 +59,19 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
   if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record
   let internalRecord;
   switch (recordType) {
-    // Soon to be the creation of a report type when schema/json received is finalized.
-    // case 'Report': {
-    //   internalRecord = {
-    //     ...record,
-    //   };
-    //   database.update(recordType, internalRecord);
-    // }
+    // Need to finalize incoming data and decode Base64 encoded data.
+    case 'Report': {
+      internalRecord = {
+        id: record.ID,
+        storeID: record.storeID,
+        reportID: record.reportID,
+        title: record.title,
+        generationDate: new Date().toDateString(),
+        type: record.type,
+        data: JSON.stringify(record.data),
+      };
+      database.update(recordType, internalRecord);
+    }
     case 'Item': {
       const packSize = parseNumber(record.default_pack_size);
       internalRecord = {
