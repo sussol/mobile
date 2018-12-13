@@ -35,6 +35,7 @@ export class DashboardPage extends React.Component {
     // Add more data to testData if needed.
     props.database.write(() =>
       testData.forEach(report => {
+        report.data = JSON.stringify(report.data);
         createOrUpdateRecord(props.database, props.settings, 'Report', report);
       }),
     );
