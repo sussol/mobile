@@ -7,9 +7,8 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { ReportChart } from '../widgets';
-import { ReportTable } from '../widgets/ReportTable';
 import { ReportSidebar } from '../widgets/ReportSidebar';
-import globalStyles from '../globalStyles';
+import globalStyles, { GREY } from '../globalStyles';
 
 const reportTable = [
   {
