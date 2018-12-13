@@ -36,7 +36,7 @@ Report.schema = {
     storeID: 'string',
     title: 'string',
     type: 'string',
-    generationDate: 'string',
+    date: 'string',
     data: 'string',
   },
 };

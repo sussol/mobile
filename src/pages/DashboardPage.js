@@ -54,9 +54,8 @@ export class DashboardPage extends React.Component {
           index: index,
           title: report.title,
           type: report.type,
+          date: report.date,
           data: JSON.parse(report.data),
-          //this will be report generated date at some point?
-          date: new Date().toDateString(),
         };
       });
     this.setState({

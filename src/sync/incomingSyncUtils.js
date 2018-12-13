@@ -66,7 +66,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         storeID: record.storeID,
         reportID: record.reportID,
         title: record.title,
-        generationDate: new Date().toDateString(),
+        date: record.date,
         type: record.type,
         data: JSON.stringify(record.data),
       };
@@ -599,7 +599,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
     },
     Report: {
-      cannotBeBlank: ['ID', 'storeID', 'reportID', 'title', 'type', 'data'],
+      cannotBeBlank: ['ID', 'storeID', 'reportID', 'title', 'type', 'date', 'data'],
       canBeBlank: [],
     },
   };
