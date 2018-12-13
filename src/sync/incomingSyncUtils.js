@@ -68,7 +68,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         title: record.title,
         date: record.date,
         type: record.type,
-        data: JSON.stringify(record.data),
+        data: record.data,
       };
       database.update(recordType, internalRecord);
     }

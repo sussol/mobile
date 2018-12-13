@@ -26,8 +26,6 @@ export class DashboardPage extends React.Component {
       database: props.database,
       selectedItemIndex: 0,
       reports: null,
-      loading: true,
-      error: null,
     };
 
     // Used for adding data within ./DashboardTestData to the database for
