@@ -33,8 +33,9 @@ export class DashboardPage extends React.Component {
     // Add more data to testData if needed.
     props.database.write(() =>
       testData.forEach(report => {
-        report.data = JSON.stringify(report.data);
-        createOrUpdateRecord(props.database, props.settings, 'Report', report);
+        const recordCopy = { ...report };
+        recordCopy.data = JSON.stringify(report.data);
+        createOrUpdateRecord(props.database, props.settings, 'Report', recordCopy);
       }),
     );
   }
@@ -42,7 +43,7 @@ export class DashboardPage extends React.Component {
   componentDidMount() {
     const { database } = this.state;
     // Creating a snapshot and storing this in state, should prevent
-    // the page from updating if a sync occurs. This is the desired behaviour.
+    // the page from updating if a sync occurs.
     const reports = database
       .objects('Report')
       .snapshot()
