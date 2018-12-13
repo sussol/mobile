@@ -33,23 +33,25 @@ export class ListItem extends React.PureComponent {
   };
 
   onPressItem = () => {
-    this.props.onPress(this.props.index);
+    const { onPress, index } = this.props;
+    onPress(index);
   };
 
   render() {
-    const hasBottomBorder = this.props.isLastItem
-      ? { borderBottomWidth: 1, borderBottomColor: GREY }
-      : null;
-    const isSelected = this.props.selected ? { color: SUSSOL_ORANGE } : null;
-    const iconColour = this.props.selected ? SUSSOL_ORANGE : WARMER_GREY;
+    const { isLastItem, isSelected, content, subContent, icon } = this.props;
+
+    const isLastItemBorder = isLastItem ? { borderBottomWidth: 1, borderBottomColor: GREY } : null;
+    const isSelectedColor = isSelected ? { color: SUSSOL_ORANGE } : null;
+    const iconColour = isSelected ? SUSSOL_ORANGE : WARMER_GREY;
+
     return (
       <TouchableOpacity onPress={this.onPressItem}>
-        <View style={[localStyles.FlatListItem, hasBottomBorder]}>
+        <View style={[localStyles.FlatListItem, isLastItemBorder]}>
           <View style={{ flexDirection: 'column', width: '80%' }}>
-            <Text style={[localStyles.Content, isSelected]}>{this.props.content}</Text>
-            <Text style={[localStyles.SubContent, isSelected]}>{this.props.subContent}</Text>
+            <Text style={[localStyles.Content, isSelectedColor]}>{content}</Text>
+            <Text style={[localStyles.SubContent, isSelectedColor]}>{subContent}</Text>
           </View>
-          <Icon name={this.TYPE_TO_ICON[this.props.icon]} size={18} color={iconColour} />
+          <Icon name={this.TYPE_TO_ICON[icon]} size={18} color={iconColour} />
         </View>
       </TouchableOpacity>
     );

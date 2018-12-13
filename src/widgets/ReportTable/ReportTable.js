@@ -25,9 +25,10 @@ export class ReportTable extends React.Component {
     return <ReportRow rowData={this.props.headers} isHeader index={0} />;
   };
 
+  // TODO: KeyExtractor should be altered to not use the index.
   render() {
     return (
-      <View style={[localStyles.container]}>
+      <View style={localStyles.container}>
         {this.renderHeader()}
         <FlatList
           data={this.props.rows}

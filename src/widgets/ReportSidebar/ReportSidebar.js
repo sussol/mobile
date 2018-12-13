@@ -20,13 +20,14 @@ import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
  */
 export class ReportSidebar extends React.Component {
   renderItem = ({ item }) => {
+    const { onPressItem, selectedItemIndex, data } = this.props;
     return (
       <ListItem
         id={item.id}
         index={item.index}
-        onPress={this.props.onPressItem}
-        isLastItem={item.index + 1 === this.props.data.length}
-        selected={this.props.selected === item.index}
+        onPress={onPressItem}
+        isLastItem={item.index + 1 === data.length}
+        isSelected={selectedItemIndex === item.index}
         icon={item.type}
         content={item.title}
         subContent={item.date}
@@ -42,18 +43,13 @@ export class ReportSidebar extends React.Component {
     );
   };
 
-  // Keys must be strings with the current react version.
-  extractKey = item => {
-    return `${item.id}`;
-  };
-
   render() {
     return (
       <View style={[localStyles.ListViewContainer, this.props.dimensions]}>
         <FlatList
           data={this.props.data}
           renderItem={this.renderItem}
-          keyExtractor={this.extractKey}
+          keyExtractor={item => item.id}
           extraData={this.props}
           ListHeaderComponent={this.renderHeader}
         />

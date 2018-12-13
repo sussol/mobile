@@ -24,7 +24,7 @@ export class DashboardPage extends React.Component {
     super(props);
     this.state = {
       database: props.database,
-      selected: 0,
+      selectedItemIndex: 0,
       reports: null,
       loading: true,
       error: null,
@@ -64,22 +64,22 @@ export class DashboardPage extends React.Component {
   }
 
   onPressItem = id => {
-    if (this.state.selected === id) return;
-    this.setState({ selected: id });
+    if (this.state.selectedItemIndex === id) return;
+    this.setState({ selectedItemIndex: id });
   };
 
   render() {
-    const { reports, selected } = this.state;
+    const { reports, selectedItemIndex } = this.state;
     if (!reports) return null;
-    const report = reports ? reports[selected] : null;
+    const report = reports ? reports[selectedItemIndex] : null;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
-          <View style={[globalStyles.pageTopSectionContainer, { paddingHorizontal: 0 }]}>
+          <View style={[globalStyles.pageTopSectionContainer]}>
             <ReportSidebar
               data={reports}
               onPressItem={this.onPressItem}
-              selected={selected}
+              selectedItemIndex={selectedItemIndex}
               dimensions={localStyles.sidebarDimensions}
             />
             <ReportChart report={report} />
