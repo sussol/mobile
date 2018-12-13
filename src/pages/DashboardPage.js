@@ -161,7 +161,6 @@ export class DashboardPage extends React.Component {
   render() {
     // TODO: handle initialisation gracefully.
     if (!this.state.reports) return null;
-    const sideBarDimensions = { width: '25%', height: '100%' };
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -170,9 +169,8 @@ export class DashboardPage extends React.Component {
               data={this.state.reports}
               onPressItem={this.onPressItem}
               selected={this.state.selected}
-              dimensions={sideBarDimensions}
+              dimensions={localStyles.sidebarDimensions}
             />
-
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
               {this.renderVisualisation()}
             </View>
@@ -208,5 +206,9 @@ const localStyles = StyleSheet.create({
     backgroundColor: 'white',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  sidebarDimensions: {
+    width: '25%',
+    height: '100%',
   },
 });
