@@ -46,26 +46,16 @@ export class ReportChart extends React.Component {
   };
 
   renderXAxis() {
-    return (
-      <VictoryAxis
-        fixLabelOverlap={victoryStyles.axisX.fixLabelOverlap}
-        style={victoryStyles.axisX.style}
-      />
-    );
+    return <VictoryAxis style={victoryStyles.axisX.style} />;
   }
 
   renderYAxis() {
-    return (
-      <VictoryAxis
-        dependentAxis
-        fixLabelOverlap={victoryStyles.axisY.fixLabelOverlap}
-        style={victoryStyles.axisY.style}
-      />
-    );
+    return <VictoryAxis dependentAxis style={victoryStyles.axisY.style} />;
   }
 
   renderBarChart() {
-    const paddingVertical = this.state.height * victoryStyles.barChart.paddingVerticalRel;
+    const paddingTop = this.state.height * victoryStyles.barChart.paddingTopRel;
+    const paddingBottom = this.state.height * victoryStyles.barChart.paddingBottomRel;
     const paddingLeft = this.state.width * victoryStyles.barChart.paddingLeftRel;
     const paddingRight = this.state.width * victoryStyles.barChart.paddingRightRel;
     const domainPadding =
@@ -77,8 +67,8 @@ export class ReportChart extends React.Component {
         width={this.state.width}
         height={this.state.height}
         padding={{
-          top: paddingVertical,
-          bottom: paddingVertical,
+          top: paddingTop,
+          bottom: paddingBottom,
           left: paddingLeft,
           right: paddingRight,
         }}
@@ -92,16 +82,17 @@ export class ReportChart extends React.Component {
   }
 
   renderLineChart() {
-    const paddingVertical = this.state.height * victoryStyles.barChart.paddingVerticalRel;
-    const paddingLeft = this.state.width * victoryStyles.barChart.paddingLeftRel;
-    const paddingRight = this.state.width * victoryStyles.barChart.paddingRightRel;
+    const paddingTop = this.state.height * victoryStyles.lineChart.paddingTopRel;
+    const paddingBottom = this.state.height * victoryStyles.lineChart.paddingBottomRel;
+    const paddingLeft = this.state.width * victoryStyles.lineChart.paddingLeftRel;
+    const paddingRight = this.state.width * victoryStyles.lineChart.paddingRightRel;
     return (
       <VictoryChart
         width={this.state.width}
         height={this.state.height}
         padding={{
-          top: paddingVertical,
-          bottom: paddingVertical,
+          top: paddingTop,
+          bottom: paddingBottom,
           left: paddingLeft,
           right: paddingRight,
         }}
@@ -196,7 +187,7 @@ const victoryStyles = {
     style: {
       axis: { stroke: LIGHT_GREY },
       ticks: { stroke: DARK_GREY },
-      tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY },
+      tickLabels: { fontFamily: APP_FONT_FAMILY, fill: GREY, textAnchor: 'end', angle: -45 },
     },
   },
   axisY: {
@@ -208,7 +199,8 @@ const victoryStyles = {
     },
   },
   barChart: {
-    paddingVerticalRel: 0.1,
+    paddingTopRel: 0.1,
+    paddingBottomRel: 0.15,
     paddingLeftRel: 0.1,
     paddingRightRel: 0.05,
     domainPaddingRel: 0.05,
@@ -219,7 +211,8 @@ const victoryStyles = {
     style: { data: { fill: SUSSOL_ORANGE } },
   },
   lineChart: {
-    paddingVerticalRel: 0.1,
+    paddingTopRel: 0.1,
+    paddingBottomRel: 0.15,
     paddingLeftRel: 0.1,
     paddingRightRel: 0.05,
     style: { data: { stroke: SUSSOL_ORANGE } },
