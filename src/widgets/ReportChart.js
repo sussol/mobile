@@ -4,6 +4,7 @@
  */
 
 import React from 'react';
+import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import {
   VictoryAxis,
@@ -14,6 +15,7 @@ import {
   VictoryPie,
   VictoryScatter,
 } from 'victory-native';
+import { ReportTable } from './ReportTable';
 import { APP_FONT_FAMILY, DARK_GREY, LIGHT_GREY, GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 /**
@@ -34,9 +36,16 @@ export class ReportChart extends React.Component {
   }
 
   componentDidUpdate = prevProps => {
-    if (!this.state.width || prevProps.id !== this.props.id) {
+    if (prevProps.report.id !== this.props.report.id) {
       this.setState({ ...this.props });
     }
+  };
+
+  onLayout = event => {
+    this.setState({
+      width: event.nativeEvent.layout.width,
+      height: event.nativeEvent.layout.height,
+    });
   };
 
   renderXAxis() {
@@ -78,7 +87,7 @@ export class ReportChart extends React.Component {
         }}
         domainPadding={domainPadding}
       >
-        <VictoryBar style={victoryStyles.barChart.style} data={this.state.data} />
+        <VictoryBar style={victoryStyles.barChart.style} data={this.state.report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -103,12 +112,18 @@ export class ReportChart extends React.Component {
         <VictoryScatter
           size={victoryStyles.scatterChart.size}
           style={victoryStyles.scatterChart.style}
-          data={this.state.data}
+          data={this.state.report.data}
         />
-        <VictoryLine style={victoryStyles.lineChart.style} data={this.state.data} />
+        <VictoryLine style={victoryStyles.lineChart.style} data={this.state.report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
+    );
+  }
+
+  renderTable() {
+    return (
+      <ReportTable rows={this.state.report.data.rows} headers={this.state.report.data.header} />
     );
   }
 
@@ -133,34 +148,50 @@ export class ReportChart extends React.Component {
         labelRadius={labelRadius}
         colorScale={victoryStyles.pieChart.colorScale}
         labelComponent={<VictoryLabel style={victoryStyles.pieChart.style} />}
-        data={this.state.data}
+        data={this.state.report.data}
       />
     );
   }
 
-  render() {
+  renderVisualisation() {
+    if (this.state.report === null) return null;
     if (!this.state.width || !this.state.height) return null;
-    switch (this.state.type) {
+    switch (this.state.report.type) {
       case 'BarChart':
         return this.renderBarChart();
       case 'LineChart':
         return this.renderLineChart();
+      case 'Table':
+        return this.renderTable();
       case 'PieChart':
         return this.renderPieChart();
       default:
         return null;
     }
   }
+
+  render() {
+    return (
+      <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
+        {this.renderVisualisation()}
+      </View>
+    );
+  }
 }
 
 ReportChart.propTypes = {
-  id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  type: PropTypes.string.isRequired,
-  data: PropTypes.array.isRequired,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
+  report: PropTypes.object.isRequired,
 };
+
+const localStyles = StyleSheet.create({
+  ChartContainer: {
+    width: '75%',
+    minHeight: '100%',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 const victoryStyles = {
   axisX: {

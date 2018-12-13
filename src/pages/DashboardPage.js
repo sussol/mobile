@@ -131,36 +131,10 @@ export class DashboardPage extends React.Component {
     this.setState({ selected: id });
   };
 
-  onLayout = event => {
-    this.setState({
-      chartWidth: event.nativeEvent.layout.width,
-      chartHeight: event.nativeEvent.layout.height,
-    });
-  };
-
-  renderVisualisation() {
-    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
-    if (report === null) return null;
-    switch (report.type) {
-      case 'Table':
-        return <ReportTable rows={report.data.rows} headers={report.data.header} />;
-      default:
-        return (
-          <ReportChart
-            title={report.title}
-            type={report.type}
-            data={report.data}
-            width={this.state.chartWidth}
-            height={this.state.chartHeight}
-            id={report.id}
-          />
-        );
-    }
-  }
-
   render() {
     // TODO: handle initialisation gracefully.
     if (!this.state.reports) return null;
+    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -171,9 +145,7 @@ export class DashboardPage extends React.Component {
               selected={this.state.selected}
               dimensions={localStyles.sidebarDimensions}
             />
-            <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
-              {this.renderVisualisation()}
-            </View>
+            <ReportChart report={report} />
           </View>
         </View>
       </View>
@@ -199,13 +171,6 @@ const localStyles = StyleSheet.create({
     borderRightWidth: 1,
     height: '100%',
     margin: 0,
-  },
-  ChartContainer: {
-    width: '75%',
-    minHeight: '100%',
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   sidebarDimensions: {
     width: '25%',
