@@ -12,36 +12,52 @@ import globalStyles, { GREY } from '../globalStyles';
 import { testData } from './DashboardTestData'; // REMOVE THIS AND THE FILE DashboardTestData :)
 import { createOrUpdateRecord } from '../sync/incomingSyncUtils';
 
+//TODO: Alter database/sync logic when schema is locked in.
+// Includes:
+// sync/incomingSyncUtils.js :: createOrUpdateRecord, sanityCheckIncomingRecord
+// database/DataTypes/index.js
+// database/schema.js :: import list, Report.schema, export list
+// ./DashboardTestData.js -- delete
+// DashboardPage.js :: componentDidMount, constructor
 export class DashboardPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      database: props.database,
       selected: 0,
       reports: null,
       loading: true,
       error: null,
     };
-    testData.forEach(x => {
-      createOrUpdateRecord(props.database, props.settings, 'Report', x);
-    });
+
+    // Used for adding data within ./DashboardTestData to the database for
+    // testing while syncing from mobile is not functional.
+    // Add more data to testData if needed.
+    props.database.write(() =>
+      testData.forEach(report => {
+        createOrUpdateRecord(props.database, props.settings, 'Report', report);
+      }),
+    );
   }
 
   componentDidMount() {
-    console.log(this.props.database.objects('Report'));
-    // call database here.
+    const { database } = this.state;
     // Creating a snapshot and storing this in state, should prevent
-    // the page from updating if a sync occurs..?
-    //const reports = database.objects('Report').snapshot();
-    const reports = testData.map((report, index) => {
-      return {
-        id: report.reportID,
-        index: index,
-        title: report.title,
-        type: report.type,
-        data: report.data,
-        date: new Date().toDateString(), //this will be report generated date at some point?
-      };
-    });
+    // the page from updating if a sync occurs. This is the desired behaviour.
+    const reports = database
+      .objects('Report')
+      .snapshot()
+      .map((report, index) => {
+        return {
+          id: report.reportID,
+          index: index,
+          title: report.title,
+          type: report.type,
+          data: JSON.parse(report.data),
+          //this will be report generated date at some point?
+          date: new Date().toDateString(),
+        };
+      });
     this.setState({
       reports: reports,
     });
@@ -53,16 +69,17 @@ export class DashboardPage extends React.Component {
   };
 
   render() {
-    if (!this.state.reports) return null;
-    const report = this.state.reports ? this.state.reports[this.state.selected] : null;
+    const { reports, selected } = this.state;
+    if (!reports) return null;
+    const report = reports ? reports[selected] : null;
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
           <View style={[globalStyles.pageTopSectionContainer, { paddingHorizontal: 0 }]}>
             <ReportSidebar
-              data={this.state.reports}
+              data={reports}
               onPressItem={this.onPressItem}
-              selected={this.state.selected}
+              selected={selected}
               dimensions={localStyles.sidebarDimensions}
             />
             <ReportChart report={report} />

@@ -153,6 +153,7 @@ export const schema = {
     StocktakeItem,
     StocktakeBatch,
     User,
+    Report,
   ],
   schemaVersion: 5,
 };

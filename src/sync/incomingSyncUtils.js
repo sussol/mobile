@@ -598,7 +598,12 @@ export function sanityCheckIncomingRecord(recordType, record) {
       ],
       canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
     },
+    Report: {
+      cannotBeBlank: ['ID', 'storeID', 'reportID', 'title', 'type', 'data'],
+      canBeBlank: [],
+    },
   };
+
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
     (containsAllFieldsSoFar, fieldName) =>
