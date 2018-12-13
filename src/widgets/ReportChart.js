@@ -32,14 +32,11 @@ import { APP_FONT_FAMILY, DARK_GREY, LIGHT_GREY, GREY, SUSSOL_ORANGE } from '../
 export class ReportChart extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { ...props };
+    this.state = {
+      width: null,
+      height: null,
+    };
   }
-
-  componentDidUpdate = prevProps => {
-    if (prevProps.report.id !== this.props.report.id) {
-      this.setState({ ...this.props });
-    }
-  };
 
   onLayout = event => {
     this.setState({
@@ -87,7 +84,7 @@ export class ReportChart extends React.Component {
         }}
         domainPadding={domainPadding}
       >
-        <VictoryBar style={victoryStyles.barChart.style} data={this.state.report.data} />
+        <VictoryBar style={victoryStyles.barChart.style} data={this.props.report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -112,9 +109,9 @@ export class ReportChart extends React.Component {
         <VictoryScatter
           size={victoryStyles.scatterChart.size}
           style={victoryStyles.scatterChart.style}
-          data={this.state.report.data}
+          data={this.props.report.data}
         />
-        <VictoryLine style={victoryStyles.lineChart.style} data={this.state.report.data} />
+        <VictoryLine style={victoryStyles.lineChart.style} data={this.props.report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -123,7 +120,7 @@ export class ReportChart extends React.Component {
 
   renderTable() {
     return (
-      <ReportTable rows={this.state.report.data.rows} headers={this.state.report.data.header} />
+      <ReportTable rows={this.props.report.data.rows} headers={this.props.report.data.header} />
     );
   }
 
@@ -148,15 +145,15 @@ export class ReportChart extends React.Component {
         labelRadius={labelRadius}
         colorScale={victoryStyles.pieChart.colorScale}
         labelComponent={<VictoryLabel style={victoryStyles.pieChart.style} />}
-        data={this.state.report.data}
+        data={this.props.report.data}
       />
     );
   }
 
   renderVisualisation() {
-    if (this.state.report === null) return null;
+    if (this.props.report === null) return null;
     if (!this.state.width || !this.state.height) return null;
-    switch (this.state.report.type) {
+    switch (this.props.report.type) {
       case 'BarChart':
         return this.renderBarChart();
       case 'LineChart':
