@@ -46,7 +46,12 @@ export class ReportChart extends React.Component {
   };
 
   renderXAxis() {
-    return <VictoryAxis style={victoryStyles.axisX.style} />;
+    return (
+      <VictoryAxis
+        tickFormat={v => (v.length > 11 ? v.slice(0, 11) + '...' : v)}
+        style={victoryStyles.axisX.style}
+      />
+    );
   }
 
   renderYAxis() {
