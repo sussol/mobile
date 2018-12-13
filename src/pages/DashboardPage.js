@@ -6,7 +6,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { ReportChart, ReportTable, ReportSidebar } from '../widgets';
+import { ReportChart } from '../widgets';
+import { ReportTable } from '../widgets/ReportTable';
+import { ReportSidebar } from '../widgets/ReportSidebar';
 import globalStyles, { GREY } from '../globalStyles';
 
 const reportTable = [
@@ -162,6 +164,7 @@ export class DashboardPage extends React.Component {
     // TODO: handle initialisation gracefully.
     if (!this.state.reports) return null;
     const sideBarDimensions = { width: '25%', height: '100%' };
+    console.log(this.props);
     return (
       <View style={globalStyles.pageContentContainer}>
         <View style={globalStyles.container}>
@@ -172,7 +175,6 @@ export class DashboardPage extends React.Component {
               selected={this.state.selected}
               dimensions={sideBarDimensions}
             />
-
             <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
               {this.renderVisualisation()}
             </View>

@@ -6,7 +6,7 @@
 import React from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { ListItem } from './ListItem';
-import globalStyles, { APP_FONT_FAMILY, GREY } from '../globalStyles';
+import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
 
 /**
  * FlatList wrapper component to render a vertical, clickable sidebar. Each ListItem has a

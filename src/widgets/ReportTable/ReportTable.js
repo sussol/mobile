@@ -6,7 +6,7 @@
 import React from 'react';
 import { StyleSheet, FlatList, View } from 'react-native';
 import PropTypes from 'prop-types';
-import { LIGHT_GREY } from '../globalStyles';
+import { LIGHT_GREY } from '../../globalStyles';
 import { ReportRow } from './ReportRow';
 
 export class ReportTable extends React.Component {

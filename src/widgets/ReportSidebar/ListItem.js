@@ -6,8 +6,8 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
-import { APP_FONT_FAMILY, GREY, WARMER_GREY } from '../globalStyles';
-import { SUSSOL_ORANGE } from '../globalStyles/index';
+import { APP_FONT_FAMILY, GREY, WARMER_GREY } from '../../globalStyles';
+import { SUSSOL_ORANGE } from '../../globalStyles/index';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 /**
