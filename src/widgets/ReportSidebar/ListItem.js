@@ -40,23 +40,41 @@ export class ListItem extends React.PureComponent {
   render() {
     const { isLastItem, isSelected, content, subContent, icon } = this.props;
 
-    const isLastItemBorder = isLastItem ? { borderBottomWidth: 1, borderBottomColor: GREY } : null;
-    const isSelectedColor = isSelected ? { color: SUSSOL_ORANGE } : null;
-    const iconColour = isSelected ? SUSSOL_ORANGE : WARMER_GREY;
+    const isLastItemBorder = isLastItem
+      ? {
+          borderBottomWidth: localStyles.FlatListItem.borderTopWidth,
+          borderBottomColor: localStyles.FlatListItem.borderTopColor,
+        }
+      : null;
+
+    const contentColor = isSelected ? selectionStyles.selected : selectionStyles.unselected;
 
     return (
       <TouchableOpacity onPress={this.onPressItem}>
         <View style={[localStyles.FlatListItem, isLastItemBorder]}>
-          <View style={{ flexDirection: 'column', width: '80%' }}>
-            <Text style={[localStyles.Content, isSelectedColor]}>{content}</Text>
-            <Text style={[localStyles.SubContent, isSelectedColor]}>{subContent}</Text>
+          <View style={localStyles.ContentContainer}>
+            <Text style={[localStyles.Content, contentColor]}>{content}</Text>
+            <Text style={[localStyles.SubContent, contentColor]}>{subContent}</Text>
           </View>
-          <Icon name={this.TYPE_TO_ICON[icon]} size={18} color={iconColour} />
+          <Icon
+            name={this.TYPE_TO_ICON[icon]}
+            style={localStyles.Icon}
+            color={contentColor.color}
+          />
         </View>
       </TouchableOpacity>
     );
   }
 }
+
+const selectionStyles = {
+  selected: {
+    color: SUSSOL_ORANGE,
+  },
+  unselected: {
+    color: WARMER_GREY,
+  },
+};
 
 const localStyles = StyleSheet.create({
   FlatListItem: {
@@ -69,6 +87,10 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     height: 85,
   },
+  ContentContainer: {
+    flexDirection: 'column',
+    width: '80%',
+  },
   Content: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 16,
@@ -78,6 +100,9 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     fontSize: 12,
     color: WARMER_GREY,
+  },
+  Icon: {
+    fontSize: 18,
   },
 });
 
