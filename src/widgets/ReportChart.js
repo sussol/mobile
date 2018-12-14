@@ -45,8 +45,8 @@ export class ReportChart extends React.Component {
     }
   };
 
-  // victory-native requires absolute values to render. We use the parents dimensions to
-  // create relative values for width and hight for each chart.
+  // Victory Native sizes are set using absolute values. Parents dimensions are used to
+  // calculate relative values for width and height for each chart.
   onLayout = event => {
     this.setState({
       width: event.nativeEvent.layout.width,
@@ -54,31 +54,34 @@ export class ReportChart extends React.Component {
     });
   };
 
+  // X-axis for bar and line charts.
   renderXAxis() {
-    const labelTruncating = label => (label.length > 11 ? label.slice(0, 11) + '...' : label);
-    return <VictoryAxis tickFormat={labelTruncating} style={victoryStyles.axisX.style} />;
+    const tickTruncate = label => (label.length > 11 ? label.slice(0, 11) + '...' : label);
+    return <VictoryAxis tickFormat={tickTruncate} style={victoryStyles.axisX.style} />;
   }
 
+  // Y-axis for bar and line charts.
   renderYAxis() {
     return <VictoryAxis dependentAxis style={victoryStyles.axisY.style} />;
   }
 
   renderBarChart() {
     const { height, width, report } = this.state;
-    const barStyles = victoryStyles.barChart;
-    const chartPadding = {
-      top: height * barStyles.paddingTopRel,
-      bottom: height * barStyles.paddingBottomRel,
-      left: width * barStyles.paddingLeftRel,
-      right: width * barStyles.paddingRightRel,
+    const { padTop, padBottom, padLeft, padRight, padDomain, style } = victoryStyles.barChart;
+
+    const padding = {
+      top: height * padTop,
+      bottom: height * padBottom,
+      left: width * padLeft,
+      right: width * padRight,
     };
-    const domainPadMultiplier =
-      (1 - (barStyles.paddingLeftRel + barStyles.paddingRightRel)) * barStyles.domainPaddingRel;
-    const domainPad = width * domainPadMultiplier;
+
+    const chartDimensions = width * (1 - (padLeft + padRight));
+    const domainPadding = chartDimensions * padDomain;
 
     return (
-      <VictoryChart width={width} height={height} padding={chartPadding} domainPadding={domainPad}>
-        <VictoryBar style={barStyles.style} data={report.data} />
+      <VictoryChart width={width} height={height} padding={padding} domainPadding={domainPadding}>
+        <VictoryBar style={style} data={report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -87,18 +90,28 @@ export class ReportChart extends React.Component {
 
   renderLineChart() {
     const { height, width, report } = this.state;
-    const lineStyles = victoryStyles.lineChart;
-    const scatterStyles = victoryStyles.scatterChart;
-    const chartPadding = {
-      top: height * lineStyles.paddingTopRel,
-      bottom: height * lineStyles.paddingBottomRel,
-      left: width * lineStyles.paddingLeftRel,
-      right: width * lineStyles.paddingRightRel,
+
+    const {
+      padTop,
+      padBottom,
+      padLeft,
+      padRight,
+      dotSize,
+      dotStyle,
+      lineStyle,
+    } = victoryStyles.lineChart;
+
+    const padding = {
+      top: height * padTop,
+      bottom: height * padBottom,
+      left: width * padLeft,
+      right: width * padRight,
     };
+
     return (
-      <VictoryChart width={width} height={height} padding={chartPadding}>
-        <VictoryScatter size={scatterStyles.size} style={scatterStyles.style} data={report.data} />
-        <VictoryLine style={lineStyles.style} data={report.data} />
+      <VictoryChart width={width} height={height} padding={padding}>
+        <VictoryScatter size={dotSize} style={dotStyle} data={report.data} />
+        <VictoryLine style={lineStyle} data={report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -106,31 +119,42 @@ export class ReportChart extends React.Component {
   }
 
   renderTable() {
-    const { report } = this.state;
-    return <ReportTable rows={report.data.rows} headers={report.data.header} />;
+    const { rows, header } = this.state.report.data;
+    return <ReportTable rows={rows} headers={header} />;
   }
 
   renderPieChart() {
     const { height, width, report } = this.state;
-    const pieStyles = victoryStyles.pieChart;
-    const heightPadded = width * (1 - pieStyles.paddingVerticalRel);
-    const chartPadding = {
-      top: height * pieStyles.paddingVerticalRel,
-      bottom: height * pieStyles.paddingVerticalRel,
-      right: width * pieStyles.paddingHorizontalRel,
-      left: width * pieStyles.paddingHorizontalRel,
+
+    const {
+      padVertical,
+      padHorizontal,
+      innerRadius,
+      labelRadius,
+      padAngle,
+      colorScale,
+      style,
+    } = victoryStyles.pieChart;
+
+    const padding = {
+      top: height * padVertical,
+      bottom: height * padVertical,
+      right: width * padHorizontal,
+      left: width * padHorizontal,
     };
+
+    const widthPadded = width * (1 - padHorizontal);
 
     return (
       <VictoryPie
         width={width}
         height={height}
-        padding={chartPadding}
-        padAngle={pieStyles.padAngle}
-        innerRadius={heightPadded * pieStyles.innerRadiusRel}
-        labelRadius={heightPadded * pieStyles.labelRadiusRel}
-        colorScale={pieStyles.colorScale}
-        labelComponent={<VictoryLabel style={pieStyles.style} />}
+        padding={padding}
+        padAngle={padAngle}
+        innerRadius={widthPadded * innerRadius}
+        labelRadius={widthPadded * labelRadius}
+        colorScale={colorScale}
+        labelComponent={<VictoryLabel style={style} />}
         data={report.data}
       />
     );
@@ -194,29 +218,27 @@ const victoryStyles = {
     },
   },
   barChart: {
-    paddingTopRel: 0.1,
-    paddingBottomRel: 0.15,
-    paddingLeftRel: 0.1,
-    paddingRightRel: 0.05,
-    domainPaddingRel: 0.05,
-    style: { data: { fill: SUSSOL_ORANGE } },
-  },
-  scatterChart: {
-    size: 3.5,
+    padTop: 0.1,
+    padBottom: 0.15,
+    padLeft: 0.1,
+    padRight: 0.05,
+    padDomain: 0.05,
     style: { data: { fill: SUSSOL_ORANGE } },
   },
   lineChart: {
-    paddingTopRel: 0.1,
-    paddingBottomRel: 0.15,
-    paddingLeftRel: 0.1,
-    paddingRightRel: 0.05,
-    style: { data: { stroke: SUSSOL_ORANGE } },
+    padTop: 0.1,
+    padBottom: 0.15,
+    padLeft: 0.1,
+    padRight: 0.05,
+    dotSize: 3.5,
+    dotStyle: { data: { fill: SUSSOL_ORANGE } },
+    lineStyle: { data: { stroke: SUSSOL_ORANGE } },
   },
   pieChart: {
-    paddingVerticalRel: 0.15,
-    paddingHorizontalRel: 0.15,
-    innerRadiusRel: 0.2,
-    labelRadiusRel: 0.35,
+    padVertical: 0.15,
+    padHorizontal: 0.15,
+    innerRadius: 0.2,
+    labelRadius: 0.375,
     padAngle: 2.5,
     colorScale: 'warm',
     style: { fontFamily: APP_FONT_FAMILY, fill: GREY },
