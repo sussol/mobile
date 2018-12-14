@@ -35,9 +35,18 @@ export class ReportChart extends React.Component {
     this.state = {
       width: null,
       height: null,
+      report: props.report,
     };
   }
 
+  componentDidUpdate = () => {
+    if (this.state.report.id !== this.props.report.id) {
+      this.setState({ report: this.props.report });
+    }
+  };
+
+  // victory-native requires absolute values to render. We use the parents dimensions to
+  // create relative values for width and hight for each chart.
   onLayout = event => {
     this.setState({
       width: event.nativeEvent.layout.width,
@@ -46,12 +55,8 @@ export class ReportChart extends React.Component {
   };
 
   renderXAxis() {
-    return (
-      <VictoryAxis
-        tickFormat={v => (v.length > 11 ? v.slice(0, 11) + '...' : v)}
-        style={victoryStyles.axisX.style}
-      />
-    );
+    const labelTruncating = label => (label.length > 11 ? label.slice(0, 11) + '...' : label);
+    return <VictoryAxis tickFormat={labelTruncating} style={victoryStyles.axisX.style} />;
   }
 
   renderYAxis() {
@@ -59,27 +64,21 @@ export class ReportChart extends React.Component {
   }
 
   renderBarChart() {
-    const paddingTop = this.state.height * victoryStyles.barChart.paddingTopRel;
-    const paddingBottom = this.state.height * victoryStyles.barChart.paddingBottomRel;
-    const paddingLeft = this.state.width * victoryStyles.barChart.paddingLeftRel;
-    const paddingRight = this.state.width * victoryStyles.barChart.paddingRightRel;
-    const domainPadding =
-      this.state.width *
-      (1 - (victoryStyles.barChart.paddingLeftRel + victoryStyles.barChart.paddingRightRel)) *
-      victoryStyles.barChart.domainPaddingRel;
+    const { height, width, report } = this.state;
+    const barStyles = victoryStyles.barChart;
+    const chartPadding = {
+      top: height * barStyles.paddingTopRel,
+      bottom: height * barStyles.paddingBottomRel,
+      left: width * barStyles.paddingLeftRel,
+      right: width * barStyles.paddingRightRel,
+    };
+    const domainPadMultiplier =
+      (1 - (barStyles.paddingLeftRel + barStyles.paddingRightRel)) * barStyles.domainPaddingRel;
+    const domainPad = width * domainPadMultiplier;
+
     return (
-      <VictoryChart
-        width={this.state.width}
-        height={this.state.height}
-        padding={{
-          top: paddingTop,
-          bottom: paddingBottom,
-          left: paddingLeft,
-          right: paddingRight,
-        }}
-        domainPadding={domainPadding}
-      >
-        <VictoryBar style={victoryStyles.barChart.style} data={this.props.report.data} />
+      <VictoryChart width={width} height={height} padding={chartPadding} domainPadding={domainPad}>
+        <VictoryBar style={barStyles.style} data={report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -87,27 +86,19 @@ export class ReportChart extends React.Component {
   }
 
   renderLineChart() {
-    const paddingTop = this.state.height * victoryStyles.lineChart.paddingTopRel;
-    const paddingBottom = this.state.height * victoryStyles.lineChart.paddingBottomRel;
-    const paddingLeft = this.state.width * victoryStyles.lineChart.paddingLeftRel;
-    const paddingRight = this.state.width * victoryStyles.lineChart.paddingRightRel;
+    const { height, width, report } = this.state;
+    const lineStyles = victoryStyles.lineChart;
+    const scatterStyles = victoryStyles.scatterChart;
+    const chartPadding = {
+      top: height * lineStyles.paddingTopRel,
+      bottom: height * lineStyles.paddingBottomRel,
+      left: width * lineStyles.paddingLeftRel,
+      right: width * lineStyles.paddingRightRel,
+    };
     return (
-      <VictoryChart
-        width={this.state.width}
-        height={this.state.height}
-        padding={{
-          top: paddingTop,
-          bottom: paddingBottom,
-          left: paddingLeft,
-          right: paddingRight,
-        }}
-      >
-        <VictoryScatter
-          size={victoryStyles.scatterChart.size}
-          style={victoryStyles.scatterChart.style}
-          data={this.props.report.data}
-        />
-        <VictoryLine style={victoryStyles.lineChart.style} data={this.props.report.data} />
+      <VictoryChart width={width} height={height} padding={chartPadding}>
+        <VictoryScatter size={scatterStyles.size} style={scatterStyles.style} data={report.data} />
+        <VictoryLine style={lineStyles.style} data={report.data} />
         {this.renderXAxis()}
         {this.renderYAxis()}
       </VictoryChart>
@@ -115,41 +106,40 @@ export class ReportChart extends React.Component {
   }
 
   renderTable() {
-    return (
-      <ReportTable rows={this.props.report.data.rows} headers={this.props.report.data.header} />
-    );
+    const { report } = this.state;
+    return <ReportTable rows={report.data.rows} headers={report.data.header} />;
   }
 
   renderPieChart() {
-    const paddingVertical = this.state.height * victoryStyles.pieChart.paddingVerticalRel;
-    const paddingHorizontal = this.state.width * victoryStyles.pieChart.paddingHorizontalRel;
-    const heightPadded = this.state.width * (1 - victoryStyles.pieChart.paddingVerticalRel);
-    const innerRadius = heightPadded * victoryStyles.pieChart.innerRadiusRel;
-    const labelRadius = heightPadded * victoryStyles.pieChart.labelRadiusRel;
+    const { height, width, report } = this.state;
+    const pieStyles = victoryStyles.pieChart;
+    const heightPadded = width * (1 - pieStyles.paddingVerticalRel);
+    const chartPadding = {
+      top: height * pieStyles.paddingVerticalRel,
+      bottom: height * pieStyles.paddingVerticalRel,
+      right: width * pieStyles.paddingHorizontalRel,
+      left: width * pieStyles.paddingHorizontalRel,
+    };
+
     return (
       <VictoryPie
-        width={this.state.width}
-        height={this.state.height}
-        padding={{
-          top: paddingVertical,
-          bottom: paddingVertical,
-          right: paddingHorizontal,
-          left: paddingHorizontal,
-        }}
-        padAngle={victoryStyles.pieChart.padAngle}
-        innerRadius={innerRadius}
-        labelRadius={labelRadius}
-        colorScale={victoryStyles.pieChart.colorScale}
-        labelComponent={<VictoryLabel style={victoryStyles.pieChart.style} />}
-        data={this.props.report.data}
+        width={width}
+        height={height}
+        padding={chartPadding}
+        padAngle={pieStyles.padAngle}
+        innerRadius={heightPadded * pieStyles.innerRadiusRel}
+        labelRadius={heightPadded * pieStyles.labelRadiusRel}
+        colorScale={pieStyles.colorScale}
+        labelComponent={<VictoryLabel style={pieStyles.style} />}
+        data={report.data}
       />
     );
   }
 
   renderVisualisation() {
-    if (this.props.report === null) return null;
-    if (!this.state.width || !this.state.height) return null;
-    switch (this.props.report.type) {
+    const { height, width, report } = this.state;
+    if (report === null || !width || !height) return null;
+    switch (report.type) {
       case 'BarChart':
         return this.renderBarChart();
       case 'LineChart':
