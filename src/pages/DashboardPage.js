@@ -8,7 +8,7 @@ import { View, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import { ReportChart } from '../widgets';
 import { ReportSidebar } from '../widgets/ReportSidebar';
-import globalStyles, { GREY } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { testData } from './DashboardTestData'; // REMOVE THIS AND THE FILE DashboardTestData :)
 import { createOrUpdateRecord } from '../sync/incomingSyncUtils';
 
@@ -27,7 +27,6 @@ export class DashboardPage extends React.Component {
       selectedItemIndex: 0,
       reports: null,
     };
-
     // Used for adding data within ./DashboardTestData to the database for
     // testing while syncing from mobile is not functional.
     // Add more data to testData if needed.
@@ -69,12 +68,15 @@ export class DashboardPage extends React.Component {
 
   render() {
     const { reports, selectedItemIndex } = this.state;
+    const { pageContentContainer, container, pageTopSectionContainer } = globalStyles;
+    const pageContainer = StyleSheet.flatten([pageTopSectionContainer, { paddingHorizontal: 0 }]);
+
     if (!reports) return null;
     const report = reports ? reports[selectedItemIndex] : null;
     return (
-      <View style={globalStyles.pageContentContainer}>
-        <View style={globalStyles.container}>
-          <View style={[globalStyles.pageTopSectionContainer]}>
+      <View style={pageContentContainer}>
+        <View style={container}>
+          <View style={pageContainer}>
             <ReportSidebar
               data={reports}
               onPressItem={this.onPressItem}
@@ -98,16 +100,6 @@ DashboardPage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
-  ListViewContainer: {
-    backgroundColor: 'white',
-    width: '20%',
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    borderRightColor: GREY,
-    borderRightWidth: 1,
-    height: '100%',
-    margin: 0,
-  },
   sidebarDimensions: {
     width: '25%',
     height: '100%',
