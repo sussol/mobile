@@ -14,9 +14,10 @@ import PropTypes from 'prop-types';
  * @prop  {int}     index     Index of the row within the FlatList.
  * @prop  {bool}    isHeader    Indicating if this row is a header row.
  */
-
 export const ReportRow = props => {
-  const headerStyle = props.isHeader ? { marginBottom: 1 } : null;
+  const headerStyle = props.isHeader ? localStyles.header : null;
+  const rowStyle = StyleSheet.flatten([localStyles.container, headerStyle]);
+
   const cellsToRender = props.rowData.map((cell, index) => {
     return (
       <ReportCell key={index} even={props.index % 2 === 0}>
@@ -24,10 +25,14 @@ export const ReportRow = props => {
       </ReportCell>
     );
   });
-  return <View style={[localStyles.container, headerStyle]}>{cellsToRender}</View>;
+
+  return <View style={rowStyle}>{cellsToRender}</View>;
 };
 
 const localStyles = StyleSheet.create({
+  header: {
+    marginBottom: 1,
+  },
   container: {
     width: '100%',
     flexDirection: 'row',

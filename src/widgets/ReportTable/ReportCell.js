@@ -10,16 +10,19 @@ import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../../globalStyles';
 
 /**
  * Designed to be used in conjunction with ReportTable.
- * @prop  {int}      key        Identifier - Cell index within the row).
+ * @prop  {int}      key        Identifier - Ccll index within the row.
  * @prop  {bool}     even       Identifier for the row being even or odd within the FlatList.
  * @prop  {string}   children   Content to display.
  */
-
 export const ReportCell = props => {
-  const backgroundColor = props.even ? { backgroundColor: 'white' } : null;
+  backgroundColor = props.even ? 'white' : BACKGROUND_COLOR;
+  containerStyle = StyleSheet.flatten([
+    localStyles.container,
+    { backgroundColor: backgroundColor },
+  ]);
   return (
-    <View style={[localStyles.container, backgroundColor]}>
-      <Text style={[localStyles.cell]}>{props.children}</Text>
+    <View style={containerStyle}>
+      <Text style={localStyles.cell}>{props.children}</Text>
     </View>
   );
 };
@@ -35,7 +38,6 @@ const localStyles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingLeft: '2%',
-    backgroundColor: BACKGROUND_COLOR,
     marginRight: 1,
   },
   cell: {
