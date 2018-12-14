@@ -14,14 +14,11 @@ import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../../globalStyles';
  * @prop  {bool}     even       Identifier for the row being even or odd within the FlatList.
  * @prop  {string}   children   Content to display.
  */
+
 export const ReportCell = props => {
-  backgroundColor = props.even ? 'white' : BACKGROUND_COLOR;
-  containerStyle = StyleSheet.flatten([
-    localStyles.container,
-    { backgroundColor: backgroundColor },
-  ]);
+  const backgroundColor = props.even ? { backgroundColor: 'white' } : null;
   return (
-    <View style={containerStyle}>
+    <View style={[localStyles.container, backgroundColor]}>
       <Text style={localStyles.cell}>{props.children}</Text>
     </View>
   );
@@ -39,6 +36,7 @@ const localStyles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: '2%',
     marginRight: 1,
+    backgroundColor: BACKGROUND_COLOR,
   },
   cell: {
     fontFamily: APP_FONT_FAMILY,

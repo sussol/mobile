@@ -24,6 +24,11 @@ import Icon from 'react-native-vector-icons/FontAwesome';
  */
 
 export class ListItem extends React.PureComponent {
+  CONTENT_COLOR = {
+    selected: SUSSOL_ORANGE,
+    unselected: WARMER_GREY,
+  };
+
   // Translations between icon props and names of FontAwesome icons.
   TYPE_TO_ICON = {
     PieChart: 'pie-chart',
@@ -39,42 +44,25 @@ export class ListItem extends React.PureComponent {
 
   render() {
     const { isLastItem, isSelected, content, subContent, icon } = this.props;
-
-    const isLastItemBorder = isLastItem
-      ? {
-          borderBottomWidth: localStyles.FlatListItem.borderTopWidth,
-          borderBottomColor: localStyles.FlatListItem.borderTopColor,
-        }
+    const { borderTopWidth, borderTopColor } = localStyles.FlatListItem;
+    const contentColor = isSelected ? this.CONTENT_COLOR.selected : this.CONTENT_COLOR.unselected;
+    const bottomBorder = isLastItem
+      ? { borderBottomWidth: borderTopWidth, borderBottomColor: borderTopColor }
       : null;
-
-    const contentColor = isSelected ? selectionStyles.selected : selectionStyles.unselected;
 
     return (
       <TouchableOpacity onPress={this.onPressItem}>
-        <View style={[localStyles.FlatListItem, isLastItemBorder]}>
+        <View style={[localStyles.FlatListItem, bottomBorder]}>
           <View style={localStyles.ContentContainer}>
-            <Text style={[localStyles.Content, contentColor]}>{content}</Text>
-            <Text style={[localStyles.SubContent, contentColor]}>{subContent}</Text>
+            <Text style={[localStyles.Content, { color: contentColor }]}>{content}</Text>
+            <Text style={[localStyles.SubContent, { color: contentColor }]}>{subContent}</Text>
           </View>
-          <Icon
-            name={this.TYPE_TO_ICON[icon]}
-            style={localStyles.Icon}
-            color={contentColor.color}
-          />
+          <Icon name={this.TYPE_TO_ICON[icon]} style={localStyles.Icon} color={contentColor} />
         </View>
       </TouchableOpacity>
     );
   }
 }
-
-const selectionStyles = {
-  selected: {
-    color: SUSSOL_ORANGE,
-  },
-  unselected: {
-    color: WARMER_GREY,
-  },
-};
 
 const localStyles = StyleSheet.create({
   FlatListItem: {

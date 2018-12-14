@@ -17,7 +17,6 @@ import PropTypes from 'prop-types';
 export const ReportRow = props => {
   const headerStyle = props.isHeader ? localStyles.header : null;
   const rowStyle = StyleSheet.flatten([localStyles.container, headerStyle]);
-
   const cellsToRender = props.rowData.map((cell, index) => {
     return (
       <ReportCell key={index} even={props.index % 2 === 0}>

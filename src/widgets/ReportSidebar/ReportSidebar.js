@@ -21,15 +21,13 @@ import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
 export class ReportSidebar extends React.Component {
   renderItem = ({ item }) => {
     const { onPressItem, selectedItemIndex, data } = this.props;
-    const isLastItem = item.index + 1 === data.length;
-    const isSelected = selectedItemIndex === item.index;
     return (
       <ListItem
         id={item.id}
         index={item.index}
         onPress={onPressItem}
-        isLastItem={isLastItem}
-        isSelected={isSelected}
+        isLastItem={item.index + 1 === data.length}
+        isSelected={selectedItemIndex === item.index}
         icon={item.type}
         content={item.title}
         subContent={item.date}
