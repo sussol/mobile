@@ -10,7 +10,7 @@ import { APP_FONT_FAMILY, BACKGROUND_COLOR } from '../../globalStyles';
 
 /**
  * Designed to be used in conjunction with ReportTable.
- * @prop  {int}      key        Identifier - Ccll index within the row.
+ * @prop  {int}      key        Identifier - cell index within the row.
  * @prop  {bool}     even       Identifier for the row being even or odd within the FlatList.
  * @prop  {string}   children   Content to display.
  */
