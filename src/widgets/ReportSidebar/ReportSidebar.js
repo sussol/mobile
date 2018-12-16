@@ -8,6 +8,7 @@ import PropTypes from 'prop-types';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
 import { ListItem } from './ListItem';
 import { APP_FONT_FAMILY, GREY } from '../../globalStyles';
+import { pageInfoStrings } from '../../localization/pageInfoStrings';
 
 /**
  * FlatList wrapper component to render a vertical, clickable sidebar. Each ListItem has a
@@ -38,7 +39,7 @@ export class ReportSidebar extends React.Component {
   renderHeader = () => {
     return (
       <View>
-        <Text style={localStyles.ListViewHeader}>Reports</Text>
+        <Text style={localStyles.ListViewHeader}>{pageInfoStrings.reports}</Text>
       </View>
     );
   };

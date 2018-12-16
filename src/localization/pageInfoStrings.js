@@ -20,6 +20,7 @@ export const pageInfoStrings = new LocalizedStrings({
     stocktake_name: 'Stocktake Name',
     supplier: 'Supplier',
     their_ref: 'Their Ref',
+    reports: 'Reports',
   },
   fr: {
     address: 'Addresse',
@@ -33,8 +34,10 @@ export const pageInfoStrings = new LocalizedStrings({
     stocktake_name: "Nom du relevé d'inventaire",
     supplier: 'Fournisseur',
     their_ref: 'Leur référence',
+    reports: 'rapporte',
   },
-  gil: { // TODO: add - stocktake_name
+  gil: {
+    // TODO: add - stocktake_name, reports
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -46,7 +49,8 @@ export const pageInfoStrings = new LocalizedStrings({
     supplier: 'Kambana n oota, Pharmacy ke HC',
     their_ref: 'Ana Ref',
   },
-  tl: { // TODO: add - stocktake_name
+  tl: {
+    // TODO: add - stocktake_name, reports
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
