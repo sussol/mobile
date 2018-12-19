@@ -2,7 +2,6 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-import { hashPassword } from 'sussol-utilities';
 import { validationStrings } from '../localization';
 export class DemoSiteRequest {
   async createActivationURL(username, email, password, repeatPassword) {
@@ -17,13 +16,7 @@ export class DemoSiteRequest {
     if (this.textContainsSpaces(password)) {
       throw new Error(validationStrings.password.containsSpaces);
     }
-    // Hash the password
-    // TODO: If we send password hashed from here it will be stored that way in database
-    //       Later during authentication REST_Authenticate tries to double hash it
-    //      This is what we should do but we need to discuss how we are going to handle
-    //      Password in database that are not hashed yet
-    // const passwordHash = hashPassword(password);
-    const passwordHash = password;
+
     // Need proper demo server URL in 4D to work
     // 83.96.252.40 2048
     const domainName = 'https://demo.msupply.org';
@@ -33,11 +26,7 @@ export class DemoSiteRequest {
     try {
       const response = await fetch(URL, {
         method: 'POST',
-        body: JSON.stringify({
-          username: username,
-          email: email,
-          password: passwordHash,
-        }),
+        body: JSON.stringify({ username, email, password }),
       });
       responseJson = await response.json();
 
