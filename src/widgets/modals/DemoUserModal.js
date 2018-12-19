@@ -56,7 +56,7 @@ export class DemoUserModal extends React.Component {
     }
   };
 
-  onDemoSubmittedModalClose() {
+  onDemoSubmittedModalClose = () => {
     // Reset state, close modals and go back to FirstUsePage
     this.setState({
       status: 'submit',
@@ -197,7 +197,7 @@ export class DemoUserModal extends React.Component {
           <ConfirmModal
             isOpen={this.state.status === 'submitted'}
             questionText={demoUserModalStrings.confirmModalBody}
-            onConfirm={() => this.onDemoSubmittedModalClose()}
+            onConfirm={this.onDemoSubmittedModalClose()}
             confirmText="Close"
           />
         </View>
