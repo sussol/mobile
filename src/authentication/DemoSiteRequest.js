@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 import { validationStrings } from '../localization';
+
+const DEMO_SITE_URL = 'https://demo.msupply.org/api/v4/mobile/requestDemo';
 export class DemoSiteRequest {
   async createActivationURL(username, email, password, repeatPassword) {
     // Client side validation
@@ -17,14 +19,9 @@ export class DemoSiteRequest {
       throw new Error(validationStrings.password.containsSpaces);
     }
 
-    // Need proper demo server URL in 4D to work
-    // 83.96.252.40 2048
-    const domainName = 'https://demo.msupply.org';
-    const URL = `${domainName}/api/v4/mobile/requestDemo`;
-
     let responseJson;
     try {
-      const response = await fetch(URL, {
+      const response = await fetch(DEMO_SITE_URL, {
         method: 'POST',
         body: JSON.stringify({ username, email, password }),
       });
