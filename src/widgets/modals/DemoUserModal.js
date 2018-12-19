@@ -37,7 +37,6 @@ export class DemoUserModal extends React.Component {
     if (!this.canAttemptSubmit) return false;
     this.setState({ status: 'submitting' });
     try {
-      // TODO: Demo store creation request logic goes here.
       await this.demoSiteRequest.createActivationURL(
         this.state.username,
         this.state.email,
