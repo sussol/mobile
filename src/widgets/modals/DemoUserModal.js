@@ -55,7 +55,6 @@ export class DemoUserModal extends React.Component {
         }, 10 * 1000);
       }
     }
-    return true;
   };
 
   onDemoSubmittedModalClose() {
