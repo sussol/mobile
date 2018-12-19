@@ -6,3 +6,4 @@ export { LanguageModal } from './LanguageModal';
 export { LoginModal } from './LoginModal';
 export { PageContentModal } from './PageContentModal';
 export { SelectModal } from './SelectModal';
+export { DemoUserModal } from './DemoUserModal';
