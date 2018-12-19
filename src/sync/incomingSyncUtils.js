@@ -12,8 +12,9 @@ import {
 
 import { SETTINGS_KEYS } from '../settings';
 const { THIS_STORE_ID } = SETTINGS_KEYS;
-
 import { CHANGE_TYPES, generateUUID } from '../database';
+
+import { deleteRecord, mergeRecords } from '../database/utilities';
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -43,8 +44,10 @@ export function integrateRecord(database, settings, syncRecord) {
       if (!syncRecord.RecordID) return; // If missing record id, ignore
       deleteRecord(database, internalRecordType, syncRecord.RecordID);
       break;
+    case 'merge':
+      mergeRecords(database, settings, internalRecordType, syncRecord);
     default:
-      return; // Silently ignore change types we don't handle, e.g. merges
+      return;
   }
 }
 
@@ -202,7 +205,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
           record.bill_address2,
           record.bill_address3,
           record.bill_address4,
-          record.bill_postal_zip_code
+          record.bill_postal_zip_code,
         ),
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
@@ -346,8 +349,9 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = database.getOrCreate('Name', record.name_ID);
       const enteredBy = database.getOrCreate('User', record.user_ID);
-      const linkedRequisition = record.requisition_ID ?
-                                database.getOrCreate('Requisition', record.requisition_ID) : null;
+      const linkedRequisition = record.requisition_ID
+        ? database.getOrCreate('Requisition', record.requisition_ID)
+        : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
       internalRecord = {
         id: record.ID,
@@ -412,67 +416,6 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       database.save('Transaction', transaction);
       itemBatch.addTransactionBatchIfUnique(transactionBatch);
       database.save('ItemBatch', itemBatch);
-      break;
-    }
-    default:
-      break; // Silently ignore record types we don't want to sync into mobile
-  }
-}
-
-/**
- * Delete the record with the given id, relying on its destructor to initiate any
- * changes that are required to clean up that type of record.
- * @param  {Realm}  database   App wide local database
- * @param  {string} recordType Internal record type
- * @param  {string} primaryKey       The primary key of the database object, usually its id
- * @param  {string} primaryKeyField  The field used as the primary key, defaults to 'id'
- * @return {none}
- */
-function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') {
-  // 'delete' is a reserved word, deleteRecord is in the upper scope, so here we have:
-  const obliterate = () => {
-    const deleteResults = database
-      .objects(recordType)
-      .filtered(`${primaryKeyField} == $0`, primaryKey);
-    if (deleteResults && deleteResults.length > 0) database.delete(recordType, deleteResults[0]);
-  };
-
-  switch (recordType) {
-    case 'Item':
-    case 'ItemBatch':
-    case 'ItemCategory':
-    case 'ItemDepartment':
-    case 'ItemStoreJoin':
-    case 'MasterList':
-    case 'MasterListItem':
-    case 'Name':
-    case 'NameStoreJoin':
-    case 'NumberSequence':
-    case 'NumberToReuse':
-    case 'Requisition':
-    case 'RequisitionItem':
-    case 'Stocktake':
-    case 'StocktakeBatch':
-    case 'Transaction':
-    case 'TransactionBatch':
-    case 'TransactionCategory': {
-      obliterate();
-      break;
-    }
-    // LocalListItem is mimicked with MasterListItem
-    case 'LocalListItem':
-      deleteRecord(database, 'MasterListItem', primaryKey, primaryKeyField);
-      break;
-    case 'MasterListNameJoin': {
-      // Joins for local lists are mapped to and mimicked by a MasterList of the same id.
-      const masterList = database.objects('MasterList').filtered('id == $0', primaryKey)[0];
-      if (masterList) {
-        // Is a local list, so delete the MasterList that was created for it.
-        deleteRecord(database, 'MasterList', primaryKey, primaryKeyField);
-      } else {
-        // Delete the MasterListNameJoin as in the normal/expected case.
-        obliterate();
-      }
       break;
     }
     default:
@@ -592,7 +535,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist
       record[fieldName].length > 0, // And must not be blank
-    true
+    true,
   );
   if (!hasAllNonBlankFields) return false; // Return early if record already not valid
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
@@ -600,7 +543,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist
       record[fieldName] !== undefined, // May be blank, i.e. just ''
-    hasAllNonBlankFields
+    hasAllNonBlankFields,
   ); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
   return hasRequiredFields;
 }
@@ -614,7 +557,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
  * @param  {string} line3    Line 3 of the address (can be undefined)
  * @param  {string} line4    Line 4 of the address (can be undefined)
  * @param  {string} zipCode  Zip code of the address (can be undefined)
-   * @return {Realm.object}  The Address object described by the params
+ * @return {Realm.object}  The Address object described by the params
  */
 function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   let results = database.objects('Address');

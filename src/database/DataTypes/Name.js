@@ -1,6 +1,11 @@
 import Realm from 'realm';
 
 export class Name extends Realm.Object {
+  destructor(database) {
+    // Clean up name store joins referencing deleted name.
+    const nameStoreJoins = database.objects('NameStoreJoin').filtered('nameId == $0', this.id);
+    database.delete('NameStoreJoin', nameStoreJoins);
+  }
 
   get numberOfTransactions() {
     return this.transactions.length;
