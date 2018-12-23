@@ -8,6 +8,7 @@ import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { integrateRecord } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
+import DeviceInfo from 'react-native-device-info';
 import {
   incrementSyncProgress,
   setSyncProgress,
@@ -30,6 +31,7 @@ const {
 const MIN_SYNC_BATCH_SIZE = 10;
 const MAX_SYNC_BATCH_SIZE = 500;
 const OPTIMAL_BATCH_SPEED = 5;
+const uniqueId = DeviceInfo.getUniqueID();
 
 /**
  * Provides core synchronization functionality, initilising the database with an
@@ -111,9 +113,14 @@ export class Synchroniser {
           {
             headers: {
               Authorization: this.authHeader,
+              msupply_site_uuid: uniqueId,
             },
           },
-        );
+        )
+          .then(response => response.json()
+            .then(responseJson => {
+              if (responseJson.error) throw new Error(responseJson.error);
+            }));
         // If the initial_dump has been successful, serverURL is valid, and should now have all sync
         // records queued and ready to send. Safe to store as this.serverURL
         this.serverURL = serverURL;
@@ -233,6 +240,7 @@ export class Synchroniser {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
+          msupply_site_uuid: uniqueId,
         },
         body: JSON.stringify(records),
       },
@@ -244,7 +252,11 @@ export class Synchroniser {
       throw new Error('Unexpected response from sync server');
     }
     if (responseJson.error.length > 0) {
-      throw new Error('Server rejected pushed records');
+      if (responseJson.error.startsWith('Site registration doesn\'t match.')) {
+        throw new Error(responseJson.error);
+      } else {
+        throw new Error('Server rejected pushed records');
+      }
     }
   };
 
@@ -298,6 +310,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
+          msupply_site_uuid: uniqueId,
         },
       },
     );
@@ -325,6 +338,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
+          msupply_site_uuid: uniqueId,
         },
       },
     );
@@ -368,10 +382,15 @@ export class Synchroniser {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
+          msupply_site_uuid: uniqueId,
         },
         body: JSON.stringify(requestBody),
       },
-    );
+    )
+      .then(response => response.json()
+        .then(responseJson => {
+          if (responseJson.error) throw new Error(responseJson.error);
+        }));
   };
 
   /**
