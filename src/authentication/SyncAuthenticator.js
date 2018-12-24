@@ -1,4 +1,5 @@
 import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
+import DeviceInfo from 'react-native-device-info';
 
 import { SETTINGS_KEYS } from '../settings';
 const {
@@ -14,6 +15,7 @@ const {
 } = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v3/site';
+const uniqueId = DeviceInfo.getUniqueID();
 
 export class SyncAuthenticator {
   constructor(settings) {
@@ -41,7 +43,7 @@ export class SyncAuthenticator {
     const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
     try {
-      const responseJson = await authenticateAsync(authURL, username, passwordHash);
+      const responseJson = await authenticateAsync(authURL, username, passwordHash, uniqueId);
       this.settings.set(SYNC_URL, serverURL);
       this.settings.set(SYNC_SITE_NAME, username);
       this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);
