@@ -113,7 +113,7 @@ export class Synchroniser {
           {
             headers: {
               Authorization: this.authHeader,
-              msupply_site_uuid: uniqueId,
+              'msupply-site-uuid': uniqueId,
             },
           },
         )
@@ -240,7 +240,7 @@ export class Synchroniser {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
-          msupply_site_uuid: uniqueId,
+          'msupply-site-uuid': uniqueId,
         },
         body: JSON.stringify(records),
       },
@@ -310,7 +310,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
-          msupply_site_uuid: uniqueId,
+          'msupply-site-uuid': uniqueId,
         },
       },
     );
@@ -338,7 +338,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
-          msupply_site_uuid: uniqueId,
+          'msupply-site-uuid': uniqueId,
         },
       },
     );
@@ -382,7 +382,7 @@ export class Synchroniser {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
-          msupply_site_uuid: uniqueId,
+          'msupply-site-uuid': uniqueId,
         },
         body: JSON.stringify(requestBody),
       },
