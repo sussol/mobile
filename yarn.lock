@@ -8306,7 +8306,7 @@ supports-color@^4.0.0:
   dependencies:
     has-flag "^2.0.0"
 
-sussol-utilities@^0.4.6:
+sussol-utilities@^0.5.1:
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/sussol-utilities/-/sussol-utilities-0.4.6.tgz#5ff00a90d57c586c1c77d29d8a716003ceca8e64"
   integrity sha512-a8/aAxR31iQNOrLYvO8XFCXetsVdgyfbbJzxKwd755OoyXf5KlPiYdUZYCzgfhZiOQ/MeD9pPSpIcpgu+pzn/g==
