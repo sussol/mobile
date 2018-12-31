@@ -11,12 +11,8 @@ import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
-import {
-  PageButton,
-  PageInfo,
-  PageContentModal,
-  TextEditor,
-} from '../widgets';
+import { PageButton, PageInfo, PageContentModal, TextEditor } from '../widgets';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -55,7 +51,7 @@ export class CustomerRequisitionPage extends React.Component {
     database.write(() => {
       requisitionItem.setSuppliedQuantity(database, newValue);
     });
-  }
+  };
 
   onUseRequestedQuantities = () => {
     const { database, requisition } = this.props;
@@ -66,7 +62,7 @@ export class CustomerRequisitionPage extends React.Component {
     });
 
     this.refreshData();
-  }
+  };
 
   onUseSuggestedQuantities = () => {
     const { database, requisition } = this.props;
@@ -77,9 +73,9 @@ export class CustomerRequisitionPage extends React.Component {
     });
 
     this.refreshData();
-  }
+  };
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
@@ -90,14 +86,14 @@ export class CustomerRequisitionPage extends React.Component {
       case COMMENT_EDIT:
         return modalStrings.edit_the_requisition_comment;
     }
-  }
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -105,8 +101,10 @@ export class CustomerRequisitionPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.props.requisition.items
-                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    const data = this.props.requisition.items.filtered(
+      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -122,9 +120,9 @@ export class CustomerRequisitionPage extends React.Component {
         sortDataType = 'realm';
     }
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
-  }
+  };
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -156,13 +154,8 @@ export class CustomerRequisitionPage extends React.Component {
         },
       ],
     ];
-    return (
-      <PageInfo
-        columns={infoColumns}
-        isEditingDisabled={requisition.isFinalised}
-      />
-    );
-  }
+    return <PageInfo columns={infoColumns} isEditingDisabled={requisition.isFinalised} />;
+  };
 
   renderCell = (key, requisitionItem) => {
     const { requisition } = this.props;
@@ -186,7 +179,7 @@ export class CustomerRequisitionPage extends React.Component {
       default:
         return requisitionItem[key];
     }
-  }
+  };
 
   renderModalContent = () => {
     const { COMMENT_EDIT } = MODAL_KEYS;
@@ -196,7 +189,7 @@ export class CustomerRequisitionPage extends React.Component {
         return (
           <TextEditor
             text={this.props.requisition.comment}
-            onEndEditing={(newComment) => {
+            onEndEditing={newComment => {
               if (newComment !== this.props.requisition.comment) {
                 this.props.database.write(() => {
                   this.props.requisition.comment = newComment;
@@ -205,9 +198,10 @@ export class CustomerRequisitionPage extends React.Component {
               }
               this.closeModal();
             }}
-          />);
+          />
+        );
     }
-  }
+  };
 
   renderButtons = () => (
     <View style={globalStyles.pageTopRightSectionContainer}>
@@ -228,88 +222,89 @@ export class CustomerRequisitionPage extends React.Component {
     </View>
   );
 
-
   render() {
     return (
-      <GenericPage
-        data={this.state.data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderButtons}
-        onEndEditing={this.onEndEditing}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1.5,
-            title: tableStrings.code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 4,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'ourStockOnHand',
-            width: 1.5,
-            title: tableStrings.our_stock,
-            alignText: 'center',
-          },
-          {
-            key: 'stockOnHand',
-            width: 1.5,
-            title: tableStrings.their_stock,
-            alignText: 'center',
-          },
-          {
-            key: 'monthlyUsage',
-            width: 2,
-            title: tableStrings.monthly_usage,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'suggestedQuantity',
-            width: 2,
-            title: tableStrings.suggested_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'requiredQuantity',
-            width: 2,
-            title: tableStrings.required_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'suppliedQuantity',
-            width: 2,
-            title: tableStrings.supply_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Requisition'}
-        database={this.props.database}
-        selection={this.state.selection}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
-      >
-        <PageContentModal
-          isOpen={this.state.modalIsOpen && !this.props.requisition.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
+      <KeyboardAwareScrollView>
+        <GenericPage
+          data={this.state.data}
+          refreshData={this.refreshData}
+          renderCell={this.renderCell}
+          renderTopLeftComponent={this.renderPageInfo}
+          renderTopRightComponent={this.renderButtons}
+          onEndEditing={this.onEndEditing}
+          onSelectionChange={this.onSelectionChange}
+          defaultSortKey={this.dataFilters.sortBy}
+          defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+          columns={[
+            {
+              key: 'itemCode',
+              width: 1.5,
+              title: tableStrings.code,
+              sortable: true,
+            },
+            {
+              key: 'itemName',
+              width: 4,
+              title: tableStrings.item_name,
+              sortable: true,
+            },
+            {
+              key: 'ourStockOnHand',
+              width: 1.5,
+              title: tableStrings.our_stock,
+              alignText: 'center',
+            },
+            {
+              key: 'stockOnHand',
+              width: 1.5,
+              title: tableStrings.their_stock,
+              alignText: 'center',
+            },
+            {
+              key: 'monthlyUsage',
+              width: 2,
+              title: tableStrings.monthly_usage,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'suggestedQuantity',
+              width: 2,
+              title: tableStrings.suggested_quantity,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'requiredQuantity',
+              width: 2,
+              title: tableStrings.required_quantity,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'suppliedQuantity',
+              width: 2,
+              title: tableStrings.supply_quantity,
+              sortable: true,
+              alignText: 'right',
+            },
+          ]}
+          dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+          finalisableDataType={'Requisition'}
+          database={this.props.database}
+          selection={this.state.selection}
+          {...this.props.genericTablePageStyles}
+          topRoute={this.props.topRoute}
         >
-          {this.renderModalContent()}
-        </PageContentModal>
-      </GenericPage>
+          <PageContentModal
+            isOpen={this.state.modalIsOpen && !this.props.requisition.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        </GenericPage>
+      </KeyboardAwareScrollView>
     );
   }
 }

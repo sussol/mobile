@@ -16,6 +16,7 @@ import {
   tableStrings,
   pageInfoStrings,
 } from '../localization';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -245,74 +246,76 @@ export class StocktakeEditPage extends React.Component {
       : '';
 
     return (
-      <GenericPage
-        data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderExpansion={this.renderExpansion}
-        renderTopRightComponent={this.renderManageStocktakeButton}
-        renderTopLeftComponent={this.renderPageInfo}
-        onEndEditing={this.onEndEditing}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'itemName',
-            width: 3.2,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'snapshotTotalQuantity',
-            width: 1.2,
-            title: tableStrings.snapshot_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'countedTotalQuantity',
-            width: 1.2,
-            title: tableStrings.actual_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'difference',
-            width: 1,
-            title: tableStrings.difference,
-            sortable: true,
-            alignText: 'right',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        dataTypesLinked={['StocktakeBatch']}
-        finalisableDataType={'Stocktake'}
-        database={this.props.database}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
-      >
-        <PageContentModal
-          isOpen={isModalOpen && !this.props.stocktake.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
+      <KeyboardAwareScrollView>
+        <GenericPage
+          data={data}
+          refreshData={this.refreshData}
+          renderCell={this.renderCell}
+          renderExpansion={this.renderExpansion}
+          renderTopRightComponent={this.renderManageStocktakeButton}
+          renderTopLeftComponent={this.renderPageInfo}
+          onEndEditing={this.onEndEditing}
+          defaultSortKey={this.dataFilters.sortBy}
+          defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+          columns={[
+            {
+              key: 'itemCode',
+              width: 1,
+              title: tableStrings.item_code,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'itemName',
+              width: 3.2,
+              title: tableStrings.item_name,
+              sortable: true,
+            },
+            {
+              key: 'snapshotTotalQuantity',
+              width: 1.2,
+              title: tableStrings.snapshot_quantity,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'countedTotalQuantity',
+              width: 1.2,
+              title: tableStrings.actual_quantity,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'difference',
+              width: 1,
+              title: tableStrings.difference,
+              sortable: true,
+              alignText: 'right',
+            },
+          ]}
+          dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+          dataTypesLinked={['StocktakeBatch']}
+          finalisableDataType={'Stocktake'}
+          database={this.props.database}
+          {...this.props.genericTablePageStyles}
+          topRoute={this.props.topRoute}
         >
-          {this.renderModalContent()}
-        </PageContentModal>
-        <ConfirmModal
-          coverScreen
-          noCancel
-          isOpen={isResetModalOpen}
-          questionText={resetModalText}
-          onConfirm={this.onResetItemsConfirm}
-        />
-      </GenericPage>
+          <PageContentModal
+            isOpen={isModalOpen && !this.props.stocktake.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+          <ConfirmModal
+            coverScreen
+            noCancel
+            isOpen={isResetModalOpen}
+            questionText={resetModalText}
+            onConfirm={this.onResetItemsConfirm}
+          />
+        </GenericPage>
+      </KeyboardAwareScrollView>
     );
   }
 }

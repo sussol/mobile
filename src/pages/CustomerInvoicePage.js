@@ -5,9 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-} from 'react-native';
+import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
@@ -22,6 +20,7 @@ import {
   PageInfo,
   TextEditor,
 } from '../widgets';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -50,7 +49,7 @@ export class CustomerInvoicePage extends GenericPage {
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -58,8 +57,10 @@ export class CustomerInvoicePage extends GenericPage {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.props.transaction.items
-                .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    const data = this.props.transaction.items.filtered(
+      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -74,7 +75,7 @@ export class CustomerInvoicePage extends GenericPage {
         sortDataType = 'realm';
     }
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
-  }
+  };
 
   onAddMasterItems = () => {
     this.props.runWithLoadingIndicator(() => {
@@ -84,7 +85,7 @@ export class CustomerInvoicePage extends GenericPage {
       });
       this.refreshData();
     });
-  }
+  };
 
   /**
    * Respond to the user editing the number in the number received column
@@ -100,7 +101,7 @@ export class CustomerInvoicePage extends GenericPage {
       transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
       database.save('TransactionItem', transactionItem);
     });
-  }
+  };
 
   onDeleteConfirm = () => {
     const { selection } = this.state;
@@ -110,13 +111,13 @@ export class CustomerInvoicePage extends GenericPage {
       database.save('Transaction', transaction);
     });
     this.setState({ selection: [] }, this.refreshData);
-  }
+  };
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -137,7 +138,7 @@ export class CustomerInvoicePage extends GenericPage {
       case THEIR_REF_EDIT:
         return modalStrings.edit_their_reference;
     }
-  }
+  };
 
   renderPageInfo = () => {
     const infoColumns = [
@@ -175,12 +176,9 @@ export class CustomerInvoicePage extends GenericPage {
       ],
     ];
     return (
-      <PageInfo
-        columns={infoColumns}
-        isEditingDisabled={this.props.transaction.isFinalised}
-      />
+      <PageInfo columns={infoColumns} isEditingDisabled={this.props.transaction.isFinalised} />
     );
-  }
+  };
 
   renderCell = (key, transactionItem) => {
     switch (key) {
@@ -198,7 +196,7 @@ export class CustomerInvoicePage extends GenericPage {
           isDisabled: this.props.transaction.isFinalised,
         };
     }
-  }
+  };
 
   renderModalContent = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -212,7 +210,7 @@ export class CustomerInvoicePage extends GenericPage {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
-            onSelect={(item) => {
+            onSelect={item => {
               database.write(() => {
                 if (!transaction.hasItem(item)) {
                   createRecord(database, 'TransactionItem', transaction, item);
@@ -221,15 +219,15 @@ export class CustomerInvoicePage extends GenericPage {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:
         return (
           <TextEditor
             text={transaction.comment}
-            onEndEditing={(newComment) => {
+            onEndEditing={newComment => {
               if (newComment !== transaction.comment) {
                 database.write(() => {
                   transaction.comment = newComment;
@@ -244,7 +242,7 @@ export class CustomerInvoicePage extends GenericPage {
         return (
           <TextEditor
             text={transaction.theirRef}
-            onEndEditing={(newTheirRef) => {
+            onEndEditing={newTheirRef => {
               if (newTheirRef !== transaction.theirRef) {
                 database.write(() => {
                   transaction.theirRef = newTheirRef;
@@ -256,7 +254,7 @@ export class CustomerInvoicePage extends GenericPage {
           />
         );
     }
-  }
+  };
 
   renderButtons = () => (
     <View style={globalStyles.verticalContainer}>
@@ -276,73 +274,75 @@ export class CustomerInvoicePage extends GenericPage {
 
   render() {
     return (
-      <GenericPage
-        data={this.state.data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderButtons}
-        onRowPress={this.onRowPress}
-        onSelectionChange={this.onSelectionChange}
-        onEndEditing={this.onEndEditing}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 2,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 4,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'availableQuantity',
-            width: 2,
-            title: tableStrings.available_stock,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'totalQuantity',
-            width: 2,
-            title: tableStrings.quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Transaction'}
-        database={this.props.database}
-        selection={this.state.selection}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
-      >
-        <BottomConfirmModal
-          isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.remove}
-        />
-        <PageContentModal
-          isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
+      <KeyboardAwareScrollView>
+        <GenericPage
+          data={this.state.data}
+          refreshData={this.refreshData}
+          renderCell={this.renderCell}
+          renderTopLeftComponent={this.renderPageInfo}
+          renderTopRightComponent={this.renderButtons}
+          onRowPress={this.onRowPress}
+          onSelectionChange={this.onSelectionChange}
+          onEndEditing={this.onEndEditing}
+          defaultSortKey={this.dataFilters.sortBy}
+          defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+          columns={[
+            {
+              key: 'itemCode',
+              width: 2,
+              title: tableStrings.item_code,
+              sortable: true,
+            },
+            {
+              key: 'itemName',
+              width: 4,
+              title: tableStrings.item_name,
+              sortable: true,
+            },
+            {
+              key: 'availableQuantity',
+              width: 2,
+              title: tableStrings.available_stock,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'totalQuantity',
+              width: 2,
+              title: tableStrings.quantity,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'remove',
+              width: 1,
+              title: tableStrings.remove,
+              alignText: 'center',
+            },
+          ]}
+          dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+          finalisableDataType={'Transaction'}
+          database={this.props.database}
+          selection={this.state.selection}
+          {...this.props.genericTablePageStyles}
+          topRoute={this.props.topRoute}
         >
-          {this.renderModalContent()}
-        </PageContentModal>
-      </GenericPage>
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
+            questionText={modalStrings.remove_these_items}
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.remove}
+          />
+          <PageContentModal
+            isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        </GenericPage>
+      </KeyboardAwareScrollView>
     );
   }
 }

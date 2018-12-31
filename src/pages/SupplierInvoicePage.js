@@ -5,11 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  formatDate,
-  parsePositiveInteger,
-  sortDataBy,
-} from '../utilities';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
 import globalStyles, { dataTableStyles } from '../globalStyles';
@@ -23,6 +19,7 @@ import {
   TextEditor,
   ExpiryTextInput,
 } from '../widgets';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
@@ -64,11 +61,11 @@ export class SupplierInvoicePage extends React.Component {
       transaction.removeTransactionBatchesById(database, selection);
     });
     this.setState({ selection: [] }, this.refreshData);
-  }
+  };
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   /**
    * Respond to the user editing fields
@@ -94,7 +91,7 @@ export class SupplierInvoicePage extends React.Component {
       }
       database.save('TransactionBatch', transactionBatch);
     });
-  }
+  };
 
   getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -107,14 +104,14 @@ export class SupplierInvoicePage extends React.Component {
       case THEIR_REF_EDIT:
         return modalStrings.edit_their_reference;
     }
-  }
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -132,9 +129,9 @@ export class SupplierInvoicePage extends React.Component {
     this.setState({
       data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
     });
-  }
+  };
 
-  addNewLine = (item) => {
+  addNewLine = item => {
     const { database, transaction } = this.props;
     database.write(() => {
       const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
@@ -142,12 +139,12 @@ export class SupplierInvoicePage extends React.Component {
         database,
         'TransactionBatch',
         transactionItem,
-        createRecord(database, 'ItemBatch', item, '')
+        createRecord(database, 'ItemBatch', item, ''),
       );
     });
-  }
+  };
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -192,7 +189,7 @@ export class SupplierInvoicePage extends React.Component {
     return (
       <PageInfo columns={infoColumns} isEditingDisabled={this.props.transaction.isFinalised} />
     );
-  }
+  };
 
   renderCell = (key, transactionBatch) => {
     const isEditable = !this.props.transaction.isFinalised;
@@ -213,7 +210,7 @@ export class SupplierInvoicePage extends React.Component {
           <ExpiryTextInput
             key={transactionBatch.id}
             isEditable={isEditable}
-            onEndEditing={(newValue) => this.onEndEditing(key, transactionBatch, newValue)}
+            onEndEditing={newValue => this.onEndEditing(key, transactionBatch, newValue)}
             text={transactionBatch[key]}
             style={dataTableStyles.text}
           />
@@ -226,7 +223,7 @@ export class SupplierInvoicePage extends React.Component {
           isDisabled: this.props.transaction.isFinalised,
         };
     }
-  }
+  };
 
   renderModalContent = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -280,7 +277,7 @@ export class SupplierInvoicePage extends React.Component {
           />
         );
     }
-  }
+  };
 
   renderAddBatchButton = () => (
     <PageButton
@@ -293,74 +290,75 @@ export class SupplierInvoicePage extends React.Component {
 
   render() {
     return (
-      <GenericPage
-        data={this.state.data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderAddBatchButton}
-        onEndEditing={this.onEndEditing}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 3,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'totalQuantity',
-            width: 1,
-            title: tableStrings.quantity,
-            alignText: 'right',
-          },
-          {
-            key: 'expiryDate',
-            width: 1,
-            title: tableStrings.batch_expiry,
-            alignText: 'center',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Transaction'}
-        database={this.props.database}
-        selection={this.state.selection}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
-      >
-        <BottomConfirmModal
-          isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.remove}
-        />
-        <PageContentModal
-          isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
+      <KeyboardAwareScrollView>
+        <GenericPage
+          data={this.state.data}
+          refreshData={this.refreshData}
+          renderCell={this.renderCell}
+          renderTopLeftComponent={this.renderPageInfo}
+          renderTopRightComponent={this.renderAddBatchButton}
+          onEndEditing={this.onEndEditing}
+          onSelectionChange={this.onSelectionChange}
+          defaultSortKey={this.dataFilters.sortBy}
+          defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+          columns={[
+            {
+              key: 'itemCode',
+              width: 1,
+              title: tableStrings.item_code,
+              sortable: true,
+            },
+            {
+              key: 'itemName',
+              width: 3,
+              title: tableStrings.item_name,
+              sortable: true,
+            },
+            {
+              key: 'totalQuantity',
+              width: 1,
+              title: tableStrings.quantity,
+              alignText: 'right',
+            },
+            {
+              key: 'expiryDate',
+              width: 1,
+              title: tableStrings.batch_expiry,
+              alignText: 'center',
+            },
+            {
+              key: 'remove',
+              width: 1,
+              title: tableStrings.remove,
+              alignText: 'center',
+            },
+          ]}
+          dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+          finalisableDataType={'Transaction'}
+          database={this.props.database}
+          selection={this.state.selection}
+          {...this.props.genericTablePageStyles}
+          topRoute={this.props.topRoute}
         >
-          {this.renderModalContent()}
-        </PageContentModal>
-      </GenericPage>
+          <BottomConfirmModal
+            isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
+            questionText={modalStrings.remove_these_items}
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.remove}
+          />
+          <PageContentModal
+            isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        </GenericPage>
+      </KeyboardAwareScrollView>
     );
   }
 }
-
 
 export function checkForFinaliseError(transaction) {
   if (!transaction.isExternalSupplierInvoice) return null;

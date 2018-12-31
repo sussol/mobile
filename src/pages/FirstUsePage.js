@@ -5,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import {
   Image,
   StyleSheet,
@@ -81,89 +82,93 @@ export class FirstUsePage extends React.Component {
 
   render() {
     return (
-      <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
-        <View style={globalStyles.authFormContainer}>
-          <Image
-            resizeMode="contain"
-            style={globalStyles.authFormLogo}
-            source={require('../images/logo_large.png')}
-          />
-          <View style={globalStyles.horizontalContainer}>
-            <TextInput
-              style={globalStyles.authFormTextInputStyle}
-              placeholderTextColor={SUSSOL_ORANGE}
-              underlineColorAndroid={SUSSOL_ORANGE}
-              placeholder="Primary Server URL"
-              value={this.state.serverURL}
-              editable={this.state.status !== 'initialising'}
-              returnKeyType={'next'}
-              selectTextOnFocus
-              onChangeText={(text) => {
-                this.setState({ serverURL: text, status: 'uninitialised' });
-              }}
-              onSubmitEditing={() => {
-                if (this.siteNameInputRef) this.siteNameInputRef.focus();
-              }}
+      <KeyboardAwareScrollView>
+        <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
+          <View style={globalStyles.authFormContainer}>
+            <Image
+              resizeMode="contain"
+              style={globalStyles.authFormLogo}
+              source={require('../images/logo_large.png')}
             />
-          </View>
-          <View style={globalStyles.horizontalContainer}>
-            <TextInput
-              ref={(reference) => (this.siteNameInputRef = reference)}
-              style={globalStyles.authFormTextInputStyle}
-              placeholderTextColor={SUSSOL_ORANGE}
-              underlineColorAndroid={SUSSOL_ORANGE}
-              placeholder="Sync Site Name"
-              value={this.state.syncSiteName}
-              editable={this.state.status !== 'initialising'}
-              returnKeyType={'next'}
-              selectTextOnFocus
-              onChangeText={(text) => {
-                this.setState({ syncSiteName: text, status: 'uninitialised' });
-              }}
-              onSubmitEditing={() => {
-                if (this.passwordInputRef) this.passwordInputRef.focus();
-              }}
+            <View style={globalStyles.horizontalContainer}>
+              <TextInput
+                style={globalStyles.authFormTextInputStyle}
+                placeholderTextColor={SUSSOL_ORANGE}
+                underlineColorAndroid={SUSSOL_ORANGE}
+                placeholder="Primary Server URL"
+                value={this.state.serverURL}
+                editable={this.state.status !== 'initialising'}
+                returnKeyType={'next'}
+                selectTextOnFocus
+                onChangeText={(text) => {
+                  this.setState({ serverURL: text, status: 'uninitialised' });
+                }}
+                onSubmitEditing={() => {
+                  if (this.siteNameInputRef) this.siteNameInputRef.focus();
+                }}
+              />
+            </View>
+            <View style={globalStyles.horizontalContainer}>
+              <TextInput
+                ref={(reference) => (this.siteNameInputRef = reference)}
+                style={globalStyles.authFormTextInputStyle}
+                placeholderTextColor={SUSSOL_ORANGE}
+                underlineColorAndroid={SUSSOL_ORANGE}
+                placeholder="Sync Site Name"
+                value={this.state.syncSiteName}
+                editable={this.state.status !== 'initialising'}
+                returnKeyType={'next'}
+                selectTextOnFocus
+                onChangeText={(text) => {
+                  this.setState({ syncSiteName: text, status: 'uninitialised' });
+                }}
+                onSubmitEditing={() => {
+                  if (this.passwordInputRef) this.passwordInputRef.focus();
+                }}
+              />
+            </View>
+            <View style={globalStyles.horizontalContainer}>
+              <TextInput
+                ref={(reference) => (this.passwordInputRef = reference)}
+                style={globalStyles.authFormTextInputStyle}
+                placeholder="Sync Site Password"
+                placeholderTextColor={SUSSOL_ORANGE}
+                underlineColorAndroid={SUSSOL_ORANGE}
+                value={this.state.syncSitePassword}
+                secureTextEntry
+                editable={this.state.status !== 'initialising'}
+                returnKeyType={'done'}
+                selectTextOnFocus
+                onChangeText={(text) => {
+                  this.setState({ syncSitePassword: text, status: 'uninitialised' });
+                }}
+                onSubmitEditing={() => {
+                  if (this.passwordInputRef) this.passwordInputRef.blur();
+                  if (this.canAttemptLogin) this.onPressConnect();
+                }}
+              />
+            </View>
+            <SyncState
+              style={localStyles.initialisationStateIcon}
+              state={this.props.syncState}
+              showText={false}
             />
+            <View style={globalStyles.authFormButtonContainer}>
+              <Button
+                style={globalStyles.authFormButton}
+                textStyle={globalStyles.authFormButtonText}
+                text={this.buttonText}
+                onPress={this.onPressConnect}
+                disabledColor={WARM_GREY}
+                isDisabled={!this.canAttemptLogin}
+              />
+            </View>
           </View>
-          <View style={globalStyles.horizontalContainer}>
-            <TextInput
-              ref={(reference) => (this.passwordInputRef = reference)}
-              style={globalStyles.authFormTextInputStyle}
-              placeholder="Sync Site Password"
-              placeholderTextColor={SUSSOL_ORANGE}
-              underlineColorAndroid={SUSSOL_ORANGE}
-              value={this.state.syncSitePassword}
-              secureTextEntry
-              editable={this.state.status !== 'initialising'}
-              returnKeyType={'done'}
-              selectTextOnFocus
-              onChangeText={(text) => {
-                this.setState({ syncSitePassword: text, status: 'uninitialised' });
-              }}
-              onSubmitEditing={() => {
-                if (this.passwordInputRef) this.passwordInputRef.blur();
-                if (this.canAttemptLogin) this.onPressConnect();
-              }}
-            />
-          </View>
-          <SyncState
-            style={localStyles.initialisationStateIcon}
-            state={this.props.syncState}
-            showText={false}
-          />
-          <View style={globalStyles.authFormButtonContainer}>
-            <Button
-              style={globalStyles.authFormButton}
-              textStyle={globalStyles.authFormButtonText}
-              text={this.buttonText}
-              onPress={this.onPressConnect}
-              disabledColor={WARM_GREY}
-              isDisabled={!this.canAttemptLogin}
-            />
-          </View>
+          <Text
+            style={[globalStyles.authWindowButtonText, localStyles.authWindowButton]}
+          > v{this.state.appVersion}</Text>
         </View>
-        <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
-      </View>
+      </KeyboardAwareScrollView>
     );
   }
 }
@@ -182,5 +187,8 @@ const localStyles = StyleSheet.create({
   verticalContainer: {
     alignItems: 'center',
     flex: 1,
+  },
+  authWindowButton: {
+    marginTop: 50,
   },
 });
