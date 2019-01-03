@@ -1,0 +1,440 @@
+id,code,name,defaultPackSize,batches,department,description,category,defaultPrice,isVisible,crossReferenceItem
+F5F418DA38719D4C824552FAF8B0ED6A,NSI,"Non stock items",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+9D15F5D7430A314DBE386DF47B03FA3A,service,"Service charges",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+81B65A4CFB966C418A355EC92145B223,CWATLLIN2,"MOSQUITO NET, LLIN, 190x180x150cm, denier 100, white, (WHOPES)",1,<ItemBatch>{1 6},<null>,,<null>,0,true,<null>
+4C34040530C2C147B052DE8E313B8298,DBACATET25,"IMMUNOGLOBULIN, HUMAN, ANTITETANUS, 250 IU/ml, syr.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C53E9A7E14C1154D92106512D68832B9,DDGTDENG3T,"DENGUE NS1/IgM/IgG TEST (Dengue Duo), ser/pl, 1 test",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+389C4FCF010497489FE48B324904B83E,DDGTPREG1S,"TEST, PREGNANCY (RST/hCG), 1 strip",1,<ItemBatch>{17 32 131 200 258 259 319 341 360 387},<null>,,<null>,0,true,<null>
+333B6D98BFF90C43A954C02AE49C33BA,DDGTSPEP103,"Triglycerides Liquicolor,4x100ml 10724",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+083731D9330D4945AE6B654E82C4F947,DDGTSPEP104,"Cholesterol Liquicolor, 4x100ml 10028",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+87CEC871FA3ECA478FB8A3DCD93DA40E,DDGTSPEP105,"HDL Cholesterol, 4x100ml 10018",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+76CDE36E49C3BD439C0C0D0E2C336AF3,DDGTSPEPALT,"ALAT, IFCC mod LiquiUV, 12022",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+EF07FA42F79C644C9070C5820B2AA3DB,DDGTSPEPCRE,"Auto-Creatinine Liquicolor, Ref-10052",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+839E9F7A7CDE204683839338D8C7B369,DDGTURIS1M,"TEST, URINE, pH,dens,prot,gluc,ket,blood,nit,leuc, 1 strip",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+82253A98F4AF0241BE321423038B1535,DDGTZMM0001,"TEST, MALARIA, P.F/P.V, SD bioline (25 tests/kit), test",1,<ItemBatch>{85 199 256 257 283 290 291 323 337 354 367 401},<null>,,<null>,0,true,<null>
+7386210BED3F5A49BA879E90A1A1DE25,DDGTZNL0115,"TEST, HIV 1 + 2, rapid, (Stat-Pak), 30 tests, kit",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+02F4A9EDEE8F424784DADBA12A339F81,DDGTZNL0116,"TEST, HEPATITIS B (SD Bioline), ser/pl/wb, 30 tests, kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+E9FB2F3548F2C84799AB0787F11A5016,DDGTZNL0118,"TEST, HIV 1 + 2 (Determine) ser/pl/wb, rapid, 100 tests, kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+DDFCDC41C7020244A8A5059B00F13DA6,DDGTZNL0120,"TEST, HIV 1 + 2 (Uni-Gold), ser/pl/wb, rapid, 20 tests, kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F673E8DECC695446A9EA7021A9573F75,DDGTZNL0123,"TEST SYPHILIS, RPR, (carbon test), serum/pl., 100 tests, kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+254DA955F40EB54D98E45CB5D50E0AFD,DDGTZNL0168,"TEST,CRYPTOCOCCUS(Crypto-AG-LFA),50tests,kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+A1522ED09025E948BC313EE244DFE44D,DDGTZNL0171,"TEST, HEPATITIS C (SD Bioline), 30 tests, kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+49EA20A91484FC4CAEAC748AF4FE0701,DDGTZTB1T,"TEST, TB LAM Ag (Determine), 1 test",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+0AAA92A677569D499F2A87C5D563ED2F,DDISNADC1T,"CHLORINE, 1g (NaDCC/dichloroisocyan.sodium 1.67 g), tab",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+AADDD9267BFDAF4D8B9AAAA042FF3C68,DDISZMM0001,"METHYLATED spirit, external use, 500ml, bottle",1,<ItemBatch>{33 109 116 155 192 209 241 264 265 335 388},<null>,,<null>,0,true,<null>
+F761DABBD1F42144A6723519C897DDC9,DEXOCHLO5D0,"CHLORAMPHENICOL, 0.5%, eye drops, sterile, 10 ml, bot.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+8BFAC148B993F84D9D1D32CED68D79DE,DEXOOXYB1,"OXYBUPROCAINE, 0.4 %, eye drops, ster, 0.5 ml, unidose, amp. ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1FA657EEED0AB04AAF1AE1418C61CEB9,DEXOTETR1O4,"TETRACYCLINE hydrochloride, 1%, eye ointment, ster, 5g, tube",1,<ItemBatch>{407},<null>,,<null>,0,true,<null>
+9E3CE1D5A95B734EACAF8F630AF6E33A,DEXOTROP5D3,"TROPICAMIDE 1% EYE DROPS 0.5 ML, UNIDOSE",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+98966A7CDA6CCC48B8AF4418E6766B92,DEXTBENS6O3,"BENZOIC ACID 6% / SALICYLIC ACID 3%, ointment, 40 g, tube",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+2EE132A7A6899C469CB69BBF3E49F049,DEXTBENZ2L0,"BENZYL BENZOATE, 25%, lotion, 1 l, bot.",1,<ItemBatch>{12 125 178 324 338 355 365},<null>,,<null>,0,true,<null>
+33CFF5676B110843801214297B7C1A32,DEXTCALA1L4,"CALAMINE, 15%, lotion, 60 ml, bot.",1,<ItemBatch>{7 105 171},<null>,,<null>,0,true,<null>
+F183A021D83CB94984FCA30AF685D2C7,DEXTCLOT5T,"CLOTRIMAZOLE, 500 mg, vaginal tab. + applicator",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+838C7364F8A939449A26805ED4018533,DEXTHYDR1O0,"HYDROCORTISONE acetate, 1%, ointment, 15 g, tube",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B758D0C53874E449B1F437064F140042,DEXTIODP1S1,"POLYVIDONE IODINE, 10%, solution, 200 ml, dropper bot.",1,<ItemBatch>{193 194 247 320 321 336},<null>,,<null>,0,true,<null>
+CCA93D36ADFABE469A2C0BDFF462680B,DEXTMICO2C2,"MICONAZOL nitrate, 2%, cream, 30 g, tube",1,<ItemBatch>{34 153 211 242 325 339 348 356 366 371 390 417},<null>,,<null>,0,true,<null>
+D4B73EDF01EFDE42B91C71025E8FDCA6,DEXTPERM1L0,"PERMETHRIN, 1 %, lotion, bot.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C99074AD99438A4794C1398AAF589BE1,DEXTPODO5S2,"PODOPHYLLOTOXIN, 0.5%, solution, 3.5ml, + 30 applicator tips",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+EEDFFE81A65EC54AA656D3F43C006E6A,DEXTSULZ1C4,"SULFADIAZINE SILVER, 1%, cream, 50 g, tube",1,<ItemBatch>{0},<null>,,<null>,0,true,<null>
+8606522C503B04459EA86F93F0FE300D,DEXTZMM0001,"LUBRICATING JELLY, 35 gr., tube",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+298F1E271DF2E44B9A75DE4EEC21B5F0,DEXTZNL0018,"PARACETAMOL, 250mg, suppositories",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+2F8BCD1E08E3624A8B1C5B42810B23DC,DEXTZNL0019,"PARACETAMOL, 500mg, suppositories",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+636CC95E79A87840AB7C6199C0D2BC27,DEXTZNL0209,"PARACETAMOL, 120mg, suppositories",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+0292FD5F797A8A418C0A020537D1FA73,DINFDEXT5N4,"DEXTROSE (GLUCOSE) 5% 500 ml, plastic pouch",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+348857DDABC3CA449D49FAD34CA2654C,DINFRINL1N4,"RINGER lactate, 500 ml, plastic pouch",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+1EA1B4DB5069EF42B126F8715C0964A6,DINFSODC9N4,"SODIUM chloride, 0.9%, 500 ml, plastic pouch",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+8542B11FAC0AAA4E9D0EB427966A437B,DINFZMM0001,"DEXTROSE (GLUCOSE) 5% in SODIUM CHLORIDE 0.9%, 500ml, ",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+B805FEDFEDDDF74699A41AF6447A96E7,DINJAMPH5VC,"AMPHOTERICIN B conventional, 50 mg, powder, vial",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+70D1D782F41B954DAD249BAA73D7066A,DINJCEFT1V,"CEFTRIAXONE, 1 g, powder, vial",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,true,<null>
+52086F3F0772324BA0F11BA4B910A0B9,DINJCEFT2V,"CEFTRIAXONE sodium, 250 mg, powder, vial",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+24E9E193D4FBAD489A1082016AE9237A,DINJDEXA4A,"DEXAMETHASONE phosphate, 4 mg/ml, 1 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B041FC5EBCED194AB127077CC38D6F00,DINJDIAZ1A,"DIAZEPAM, 5 mg/ml, 2 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FF6E39A8B814F743A923218614BFC2DC,DINJDICL7A,"DICLOFENAC sodium, 25 mg/ml, 3 ml, amp.",1,<ItemBatch>{80 184 286 408},<null>,,<null>,0,true,<null>
+A88DE2710C935E4BBEE10E2E055CBF9B,DINJEPIN1A,"EPINEPHRINE (adrenaline) tartrate, 1 mg/ml base, 1 ml, amp IM",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+5C19BE6A6AD37943BFD680BFF35CBC12,DINJFURO2A,"FUROSEMIDE, 10 mg/ml, 2 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+C67D4CF6B138DF4092C60CB88E42690B,DINJGANC5V,"GANCICLOVIR, 500 mg, powder, vial for infusion",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+70BFF66289AD13448D126983962208D2,DINJGLUC5V4,"GLUCOSE HYPERTONIC, 50%, 50 ml, vial",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+36D0A654E68BA44BB60CD269114534DB,DINJHYDR1V,"HYDROCORTISONE sodium succinate, eq.100mg base, powder, vial",1,<ItemBatch>{66 191},<null>,,<null>,0,true,<null>
+6B7BB9237452FA458ABB7492AB20CF4D,DINJHYOS2A,"HYOSCINE BUTYLBROMIDE (scopolamine butylbrom), 20 mg/1ml,amp",1,<ItemBatch>{2},<null>,,<null>,0,true,<null>
+595037CFFB8FF04CB00DD3777D80319C,DINJLIDO1V0,"LIDOCAINE hydrochloride, 1%, 20 ml, vial",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1AE31DB442812841BD28A88FA8412E39,DINJMEDR1V,"MEDROXYPROGESTERONE acetate, 150 mg, 1 ml, vial",1,<ItemBatch>{21 35 54 55 56 59 60 61 62 157 158 240 263 313 326 340 418},<null>,,<null>,0,true,<null>
+8CAE5876E643BB4BB8A6D68DDF14C7FE,DINJMETO1A,"METOCLOPRAMIDE hydrochloride, 5 mg/ml, 2 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+95FE4D22F50B174D8241DC1417EA9CD4,DINJOXYT1A,"OXYTOCIN, 10 IU/ml, 1 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5F01AF3B6C86F1488C686B26CD1F0B9F,DINJPENB2V,"BENZATHINE BENZYLPENICILLIN , 2.4 M IU, powder, vial",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5C01DD08F37BD9468B49BF3433D1AA14,DINJPHYT2AN,"PHYTOMENADIONE (vitamin K), 10 mg/ml, 0.2 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F356D3F0B37BBA4380F5F22905C714CD,DINJPROM25A,"PROMETHAZINE hydrochloride, 25mg/ml, 2ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+DF3C03BF18B91644854F185FE34B0E81,DINJSTRE1V,"STREPTOMYCIN sulfate, 1 g, powder, vial",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+5FB53FEC36F23B46ADCA04CC3310160D,DINJTHIA1A,"THIAMINE (vitamin B1), 50 mg/ml, 2 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+77D6104B234F08409A75EEBFCBC2B729,DINJTRAM1A,"TRAMADOL hydrochloride, 50 mg/ml, 2 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+3BF2F3A2939E054993DEEE867B90A190,DINJWATE1A,"WATER for injection, 10 ml, plastic amp.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+6CC3456CFB54B24BAB2F5ED77C04032A,DINJZMM0001,"CHLORPHENAMINE 10mg/ml, 1ml, amp.",1,<ItemBatch>{67 180},<null>,,<null>,0,true,<null>
+CDF9E0D9977AA443ADA08AC4238DE512,DINJZMM0002,"WATER for injection, 5ml, plastic amp",1,<ItemBatch>{},<ItemDepartment>{2},,<null>,0,true,<null>
+264AAF0EB5EF1F489D9A5B938AE19010,DORAABCV3T,"ABACAVIR sulfate (ABC), 300 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+F4970C203F3E8C4594467086618A7092,DORAABCV6T,"ABACAVIR sulfate (ABC), 60 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+26361944EA3CED498CA6DF7693A59355,DORAABLA02T,"ABACAVIR (ABC), 600mg/ LAMIVUDINE (3TC), 300mg, tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+7BAD77F748CC814C993B3274B73A1D76,DORAABLA6DT,"ABACAVIR (ABC), 60 mg / LAMIVUDINE (3TC), 30 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+03023D816792C44990434B0E11B63D4A,DORAACIV2T,"ACICLOVIR, 200 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+787DCC887927D74FB17F53E164F1C148,DORAALBE4T,"ALBENDAZOLE, 400 mg, tab.",1,<ItemBatch>{22 36 86 129 206 238 262 322 391},<null>,,<null>,0,true,<null>
+115C8817AC366A4C988A60FAAE64FC63,DORAALBF06D,"ARTEMETHER 20mg / LUMEFANTRINE 120mg, blister infant 6 tab",1,<ItemBatch>{311},<null>,,<null>,0,true,<null>
+28D1A7154505B3419EE96EF7D75E7175,DORAALBF12D,"ARTEMETHER 20mg / LUMEFANTRINE 120mg, blister child 12 tab.",1,<ItemBatch>{119 120 327},<null>,,<null>,0,true,<null>
+E7F84FC94E8B4647B1954DB8C1F2D93C,DORAALBF18Y,"ARTEMETHER 20mg / LUMEFANTRINE 120mg, blister youth 18 tab.",1,<ItemBatch>{121},<null>,,<null>,0,true,<null>
+15B98CDED983524199A74AED2E816496,DORAALBF24A,"ARTEMETHER 20mg / LUMEFANTRINE 120mg, blister adults 24 tab.",1,<ItemBatch>{10 39 77 229 369 393},<null>,,<null>,0,true,<null>
+84ADCDB8C5A00047AB51516CE8627FFE,DORAALUM4T,"ALUMINIUM hydroxide 400mg / MAGNESIUM hydroxide 400mg, tab.",1,<ItemBatch>{37 88 127 174 207 237 267 328 342 349 358 368 375 392 396},<null>,,<null>,0,true,<null>
+D75763DFCC67694A8425DAE568E71175,DORAAMIT2T,"AMITRIPTYLINE hydrochloride, 25 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F41E43056742734DA84505B6A64A5D44,DORAAMOC5T0,"AMOXICILLIN 500 mg / CLAVULANIC acid 125 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+C8400A9B6B3E7044AA6F90F6C4A6F972,DORAAMOX1S0,"AMOXICILLIN 125mg / CLAVUL.ac. 31.25mg/5ml, oral susp.,100ml",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+321545D17F8543428A875A0F68754956,DORAAMOX5T,"AMOXICILLIN, 500 mg, tab.",1,<ItemBatch>{90},<null>,,<null>,0,true,<null>
+6D4A7635C23ACB4E9C8420CC478F3158,DORAASCA2T,"ASCORBIC acid (vitamin C), 250 mg, tab.",1,<ItemBatch>{9 40 93 122 301},<null>,,<null>,0,true,<null>
+7268D064D78554469423E769D0C6EE4C,DORAATRI3T1,"Atazanavir(ATZ)300mg/Ritonavir¨ 100mg tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+3492C0EC6F0F464288EBB0860E4AC78D,DORAAZIT2C,"AZITHROMYCIN, 250 mg, caps.",1,<ItemBatch>{68 123 228 409},<null>,,<null>,0,true,<null>
+CCDC9764208D4D4799DBA3331520B08F,DORABISA5T,"BISACODYL, 5mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+DBC929ECEE76DD4A88B88271A6B97366,DORACARB2T,"CARBAMAZEPINE, 200 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B308F53A2D4A244688234D46C01E215E,DORACEFI1S,"CEFIXIME, 100 mg/5 ml, powder for oral susp., 40ml, bottle",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+89DC4DB6CC39A14CB8BAB694AC801B2D,DORACEFI2T,"CEFIXIME, 200 mg, tab.",1,<ItemBatch>{79 170 212 235 312 410 411 425},<null>,,<null>,0,true,<null>
+25B06E70357D4B4EB02F7B2AAA5F3D75,DORACHLP4T,"CHLORPHENAMINE hydrogen maleate, 4 mg, tab.",1,<ItemBatch>{42 91 166 181 182 213 234 271 302 330 351 397 420},<null>,,<null>,0,true,<null>
+8517022E30703D4AADC2B8D5F86BE82E,DORACHLQ3T,"CHLOROQUINE, 155 mg base, (250 mg phosphate), tab.",1,<ItemBatch>{16 41 169 214 227 422},<null>,,<null>,0,true,<null>
+046331E09A3CD847BD4A0AD099C2B9E0,DORACIPR5T,"CIPROFLOXACIN hydrochloride, eq. 500 mg base, breakable tab.",1,<ItemBatch>{215},<null>,,<null>,0,true,<null>
+AD2D5DB09B14AD4FB7C6DFB7FFD2E04D,DORACLOX2C,"CLOXACILLIN sodium, eq. 250 mg base, caps.",1,<ItemBatch>{87 183},<null>,,<null>,0,true,<null>
+55BB497453399F45B8905121513A528E,DORACOTR1T,"COTRIMOXAZOLE, 100 mg / 20 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+4E5956FE231D6E4DA348D77B5E1A57CC,DORACOTR4T,"COTRIMOXAZOLE, 400 mg / 80 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+B9C9EC398DDB4444A8B5A906E31C2D2B,DORACOTR8T,"COTRIMOXAZOLE, 800 mg / 160 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+30E7E8836E04394595F92CB0D4619C6D,DORADAPS1T,"DAPSONE, 100mg, tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+D60B62EBBF7DB94696F4829DBB574084,DORADIAZ5T,"DIAZEPAM, 5 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+977C300C8383D94AB382F15BF9137F6D,DORADOXY1T,"DOXYCYCLINE hydrochloride, 100 mg, tab.",1,<ItemBatch>{185},<null>,,<null>,0,true,<null>
+1D156DD46082C44AB8B01867228B438C,DORAEFAV2C,"EFAVIRENZ (EFV or EFZ), 200 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+449650819EA95C409F3970C639930491,DORAEFAV6T,"EFAVIRENZ (EFV or EFZ), 600 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+01E3DFDB8E988447BE7E6DA3DA6E63AA,DORAENAL5T,"ENALAPRIL maleate, 5 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+390585C436774A42A9075411151951EC,DORAETHA1T,"ETHAMBUTOL hydrochloride (E), 100 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+83BEC082023BC1408334D9CFE75AE8B8,DORAETHA4T,"ETHAMBUTOL hydrochloride (E), 400 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+0B9B6A41369F3A449E69FDCE68B25F9E,DORAETHL3T0,"ETHINYLESTR. 0.03 mg / LEVONORGESTREL 0.15 mg, plaq. 28 tab.",1,<ItemBatch>{13 19 27 43 84 98 167 186 216 303 329 343 352 372},<null>,,<null>,0,true,<null>
+6375CBEA8046DE4B82341840572E70F3,DORAFEGL50,"FERROUS GLUCONATE 50mg, drinkable ampoule",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F14234C9384C4B47906EC92890EBE2FB,DORAFERS2T,"FERROUS sulfate (or fumarate), 200 mg (= 65 mg iron), tab",1,<ItemBatch>{45 82 83 165 187 188 233 331 344 353 361 379 385 386 404 405 421},<null>,,<null>,0,true,<null>
+21C4A8E4E2DFA040AA248B051B2AE19A,DORAFLUC2T,"FLUCONAZOLE, 200 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+1954F5D3F1047C49A8FDBCF549A9940F,DORAFOLA5T,"FOLIC acid, 5 mg, tab.",1,<ItemBatch>{99 101 164 189 190 232 275 294 332 345 362 398 413},<null>,,<null>,0,true,<null>
+9C775E4FC705944CB7973125CE64825A,DORAFURO4T,"FUROSEMIDE, 40 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+827D03BC911F0740925EFCE88698ABD7,DORAGLI8T,"GLICLAZIDE 80mg, tabs",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+45E0C1E4A90EE44A8CBCFCA3D5C82AF5,DORAGLUC4P,"GLUCOSE Powder, 450g, (Cal-D)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+694D1A4B13EF834993B552F7F0B11B55,DORAIBUP4T,"IBUPROFEN, 400 mg, tab.",1,<ItemBatch>{107 161 226 287},<null>,,<null>,0,true,<null>
+9882CFAE5481294FA62C797298337614,DORAISON1T,"ISONIAZID (H), 100 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{3},,<null>,0,false,<null>
+13389DA18B7E754BA90B184C4734C2D0,DORAISON3T,"ISONIAZID (H), 300 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{3},,<null>,0,false,<null>
+D1AF795D440DB34591911123326514FE,DORAITRA1C,"ITRACONAZOLE, 100 mg, caps.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+CD15A19E145DEF44862E32AA78789770,DORAIVER3T3,"IVERMECTIN (scabies + other indic), 3 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+20D0B120A0A11B45A4FD5DB4456F9762,DORALAMI1T,"LAMIVUDINE, (3TC), 150 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+94C42DFDFC160B4499901DA77759AB8D,DORALEVO1T,"LEVONORGESTREL, 1.5mg, tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+8B1E6341AEB94842B0F59D1DAC905DEA,DORALOPE2T,"LOPERAMIDE, 2 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+AEBC4C74CD4F294084224C037068E57B,DORALPRF1T1,"LOPINAVIR (LPV) 100 mg / RITONAVIR (r) 25 mg tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+6CD80BE52CBDF54580ED110F0831EE58,DORALPRF2T4,"LOPINAVIR (LPV) 200 mg / RITONAVIR (r) 50 mg tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+089967241BC0F542B99CD1D5BFCC994C,DORALPRF8S1,"LOPINAVIR(LPV) / RITONAVIR(r) 80/20mg/ml, oral susp, 60ml bot",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+6ABCEE5A36FD5C47AEEBE2C47698A0F8,DORALZNV1T2,"LAMIVUD(3TC) 150mg/ZIDOVUD(AZT) 300mg/NEVIR(NVP) 200mg tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+84D6CE7BAE23A04E9434BBA230587751,DORALZNV3T4,"LAMIVUD(3TC) 30 mg / ZIDOVUD(AZT) 60 mg / NEVIR(NVP) 50 mg tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+8E6C0472F4A6BA4C8DEB1B0F13962A82,DORAMDDS64T,"MYHEP DVIR(DACL/SOFO) 60/400mg tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1C4072B18B2ED348BB7F4AFC2ED00689,DORAMETF5T,"METFORMIN hydrochloride, 500 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+82A09C323DAEB747B294CADBCD413A0F,DORAMETO1T,"METOCLOPRAMIDE hydrochloride anhydrous, 10 mg, tab.",1,<ItemBatch>{110 154 156},<null>,,<null>,0,true,<null>
+2DF0C728C770364585370939A7B83F0C,DORAMIFP1T,"MIFEPRISTONE, 10mg, tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+D75AEE6119E6274C81793A40CAF32CF4,DORAMOX1S0,"AMOXICILLIN, 125mg/5ml, powder for oral susp., 100ml, bot",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+A78939DB38CFD34B92B57AC1560F9DC2,DORAMULT1T,"MULTIVITAMINES, tab.",1,<ItemBatch>{69 81 102 115 117 118 217 243 414},<null>,,<null>,0,true,<null>
+323DD9E94BC64A4BAE7D335F1FD2E7A1,DORAMYDE30T,"MYDEKLA 30(Daclatasvir) 30mg tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+ECBF1FF13A88C54A9157B3C752DBBF0D,DORANEVI1S0,"NEVIRAPINE (NVP), 50mg/5ml, oral suspension 100 ml, bott.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+71EFD4EBF6BE4F47A5E482F688ADA1E0,DORANEVI2T,"NEVIRAPINE (NVP), 200 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+40AECFB4B413DA45A7B5BD9D089861D9,DORANYST1S,"NYSTATIN, 100,000 IU/ml, oral suspension",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+3FBF55496070964A887CCBBF4B6EB9A1,DORAOMEP2C,"OMEPRAZOLE, 20 mg, enteric caps.",1,<ItemBatch>{74 100 152 244},<null>,,<null>,0,true,<null>
+63AB54F4F46D9546A298CCF6AC4D2FA0,DORAORSA2S,"ORAL REHYDRATION SALTS (ORS) low osmol., sachet 20.5 g/1l",1,<ItemBatch>{50 111 112 150 151 245 276 288 314 357 394},<null>,,<null>,0,true,<null>
+A110B345E490AD43913CEF9ABF21EA97,DORAPARA1S,"PARACETAMOL (acetaminophen), 120 mg/5 ml, syrup, 60 ml, bot.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+448CCD81B082404EB0F4BC971EC18124,DORAPARA1T,"PARACETAMOL (acetaminophen), 100 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+E6A244E41CF3BD449BC6AF6069A67F5A,DORAPARA5T,"PARACETAMOL (acetaminophen), 500 mg, tab.",1,<ItemBatch>{103 148 149 218 277 278 292 293 315 316 317},<null>,,<null>,0,true,<null>
+402FB416EDA0884ABDF7D41DA0D55F49,DORAPOTC6T,"POTASSIUM chloride, 600 mg, sustained release tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+88A480BFBC260B4AAE237E9E7542B418,DORAPRED5T,"PREDNISOLONE, 5 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+3037D83DAA506C48A337792DBD52D09D,DORAPRIM1T,"PRIMAQUINE diphosphate, eq. 15 mg base, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+7974FADB4DBE744DAAB81DAFF5407373,DORAPROM2T,"PROMETHAZINE hydrochloride, eq. 25 mg base, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+8AEA0DD73AC6404D9DE2CB878FF09DE1,DORAPYRI1T,"PYRIDOXINE hydrochloride (vitamin B6), 10 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+9C1E0D5882B1844BB8CA5352ADDCA4F0,DORAPYRI5T,"PYRIDOXINE hydrochloride (vitamin B6), 50 mg, tab.",1,<ItemBatch>{89 146 147 225 412},<null>,,<null>,0,true,<null>
+EAD83238D464764D90C56542CDF8E2C0,DORAPYRZ4T,"PYRAZINAMIDE (Z), 400 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+3D4D67E86CC563409BE4686786B87E2E,DORAPYRZ5T,"PYRAZINAMIDE (Z), 500 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+3BC663F58298F141A4C023C95EC32845,DORARETI1C,"RETINOL (vitamin A) stabil., 100,000 IU, soft gelat. caps.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+4696BE35CAD46B4CAEA512B71F9FECD5,DORARETI2C,"RETINOL (vitamin A) stabil., 200,000 IU, soft gelat. caps.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+095B1B9705C69844BAC9B9FE91AC856F,DORARHEF01T,"RIFAMPICIN 150 mg / ISONIAZID 75 mg/ ETHAMBUTOL 275mg, tab",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+1C1771EB54EAF44986A2530478BE3D47,DORARHFD1T5,"RIFAMPICIN 75 mg / ISONIAZID 50 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+56B302A3991A6E43A1853F6D1F056B62,DORARHFD1T6,"RIFAMPICIN 150 mg / ISONIAZID 75 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+2816C2009DF7F041A27FE8A11DC8D32B,DORARHZE1FD,"RIFAMP.150 / ISONIAZ.75 / PYRAZINAM.400/ ETHAMB.275 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+FBBF6F10DBC0F1428D4750EECF4E592A,DORARHZT50,"RIFAMPICIN 75 mg / ISONIAZID 50 mg / PYRAZINAMIDE 150 mg tab",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+A719FA3FF40CDD48A3476A75F623A9F8,DORARIFA1T,"RIFAMPICIN (R), 150 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+320E1F087CD5C744A02E97C9F3B85DEE,DORARIFA3C,"RIFAMPICIN (R), 300 mg, caps.",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+F5D8157A5ACDB24EB847241035DE738E,DORASALB1N,"Nebulized ventolin 2.5mg/2ml nebules",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+117D42F1163ECB44BABE64332FE3FF8D,DORASALB2S,"SALBUTAMOL sulfate, 0.1mg/puff, 200 puffs, aerosol",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+0A0898F86CF3AA46A3C893BA08D03A36,DORASPIR2T,"SPIRONOLACTONE, 25mg tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5CC52FFCE3867D41BBDDC704D19B9200,DORASTOP1C,"STOP TB KIT, (Cat 1)",1,<ItemBatch>{},<ItemDepartment>{1},,<null>,0,false,<null>
+8EC32FF8EB2B2140AA021E5BA3A5DF92,DORATEEF3T1,"TENOFOVIR 300mg / EMTRICITABINE 200mg / EFAVIRENZ 600mg, tb",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+B1F2C21EBEE17B4D928D7B4FD6E51BD0,DORATELA3T2,"TENOFOVIR (TDF) 300 mg/ LAMIVUDINE (3TC) 300 mg. tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+1A01D8C99DB10944A328ACB0269BE2C2,DORATELF3T5,"TENOFOVIR 300mg / LAMIVUDINE 300mg / EFAVIRENZ 600mg, tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+8A2BAFC5D8276948AB2FC1AD735BBE25,DORATENO3T,"TENOFOVIR, 300mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+AB92C98FC18DD643BD6999C3081D0EA5,DORATHIA5T,"THIAMINE hydrochloride (vitamin B1), 50 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+A98455BE6A82BF4FBC13539C6B90C710,DORATINI5T,"TINIDAZOLE, 500 mg, tab.",1,<ItemBatch>{223 304},<null>,,<null>,0,true,<null>
+CED538B2F2EB164D8A7FCEE9189D8894,DORATRAM5C,"TRAMADOL hydrochloride, 50 mg, caps.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FE86BDCAC0481D4DBBBCAFF2248C30C2,DORAVALG4T,"VALGANCICLOVIR hydrochloride, eq. 450 mg base, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+0F5DA79CF1278342A447E16042D39280,DORAVALP2T,"VALPROATE SODIUM, 200 mg, enteric coated tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+ED2CC2020234E746AD454C2C5C23F3C7,DORAYIDO1S,"ZIDOVUDINE, (AZT), 50mg/5ml, oral solution, 100ml bot.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C294F92D65007F49A102ED17F6C2E25E,DORAYILA3T0,"ZIDOVUDINE (AZT) 300 mg / LAMIVUDINE (3TC) 150 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+579D973B2518204A9304EB5BDECF3E11,DORAYILA6TD,"LAMIVUDINE 30mg/ ZIDOVUDINE 60mg tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+5847A4158B45FE429DA06D8ACB6EBBA3,DORAYINS2T,"ZINC sulfate, eq. to 20 mg zinc mineral, dispersible tab.",1,<ItemBatch>{29 113 114 202 203 204 261 266 284 359},<null>,,<null>,0,true,<null>
+4AE0A261F696724CB7A8C78760E3920D,DORAZFR0546,"RITONAVIR, 100 mg, heatstable tab",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+81C469B4F1607046B72DA60C249AACFA,DORAZMM0001,"AMLODAPINE 5mg, tab",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+3339F4527F89F640B0C9D53DEA87D016,DORAZMM0002,"HYDROCHLOROTHIAZIDE 25mg, tab",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+E539B580C6B3CF429600BAA4170757BE,DORAZMM0003,"LAMIVUDINE, (3TC), 300 mg, tab.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+75C64F662626B943B0F2CD938C17E467,DORAZMM0004,"DEXAMETHASONE 0.5 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+3DD73484BB578D498761EEA97349B12F,DORAZMM0005,"PRIMAQUINE diphosphate, eq. 7.5 mg base, tab.",1,<ItemBatch>{44 248 281 305 333 346 363 403 424},<null>,,<null>,0,true,<null>
+B39051E94CBE774AB988AE363ED6702A,DORAZNL0049,"DICLOFENAC SODIUM, enteric coated, 25mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+ECCE82A23D6EB840BFCA552BBA64A56E,DORAZNL0120,"Retinol, (vitamin A), 50 000 IU, cap.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+BBA73A73DE2DED4A86EAEA03144260BF,DORAZNL0244,"FENOFIBRATE MICRONISED 200MG CAPSULES",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+86650271176553448A8790F2F5886F4D,DORAZNL0246,"COTRIMOXAZOLE, 200mg/40mg/5ml, powder oral susp,100 ml, bot.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+06D28CC57F9F67448C05CC88467ABB3E,DORAZNL0277,"ATORVASTATIN 10mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+761649BF9BE81748BE98CB486DCA08E4,DORAZNL0319,"ACETYLSALICYLIC acid (aspirin), enteric coated 75 mg, tabs",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+7C57D9EEDB3FA842821908DB9D30147A,ELAEZMM0011,"Caps for sample tube 3.5ml, PARTEC",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+532C509DBBA94248B9093B9C5CDE25FB,DVACIMTE2S,"IMMUNOGLOBULIN, HUMAN, ANTITETANUS, 250 IU/ml, syr.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+DB3065134B57B742B291F999EDCAB5DE,DVACVHEB1VA,"VACCINE HEPATITIS B, Adult, one dose, vial",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+2FDCFF63D507A94DA916EA50AEA99984,DVACVHEB1VP,"VACCINE HEPATITIS B, Paediatric, one dose, vial",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6D4A7700497FD146B8C24CB3406B17BA,DDGTSVDRLK-,"Test Syphilis,VDRL test kit",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+95ADC9FAB430364AB4769E692556EAE9,DVACVTET1VD,"VACCINE TT (tetanus), 1 dose, multidose vial",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FAD7AB98B558A345A7BA8DFF595E45B0,EANEOXYM4,"OXYMETER, PULSE (Masimo RAD-5V) + accessories",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+EF006B05A6917E4386A4FF156B054FC0,EANTBRAB114,"BRACELET, BRACHIAL PERIMETER (MUAC), paediatric, PP, 115 mm",1,<ItemBatch>{28 92 173 230 270 306},<null>,,<null>,0,true,<null>
+CF76189BB60D744BACDA36DD6EAAE43A,EANTSCAL25,"SCALE, SALTER TYPE, 0-25 kg, no trousers, grad. 100 g",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+49ED4A7108F45549B1BD286574BBE77A,EANTSCAL3A,"SCALE, mechanical, adult 0-150 kg, grad. 500 g",1,<ItemBatch>{24 51 141 142 143 144 253},<null>,,<null>,0,true,<null>
+AF5A5F1C83CB6C48BFF25CD3B9CEEF12,EHOENEBU2,"MACHINE, Nebulizer",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+9CD5D1338DB0274EA5A1C44B77AFB019,EHOENEBU208,"Nebulizer Mask (for Adult)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+910DADBF4AA55A49AF74C4CBFE316B6E,EHOENEBU209,"Nebulizer Mask (for paediatric)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+437BB5C0A77CC742BF3AE75CC30CBE80,EHOEZNL610W,"Halogen Lamp 6V, 10 W",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C8E2B693376B65469377B3C263DF7769,ELAEBOXL99,"BOX, SLIDES, plastic, for 100 slides",1,<ItemBatch>{},<ItemDepartment>{4},,<null>,0,true,<null>
+F2E0D2A5C77718468A31A14F62C5A962,ELAEBSVT5P,"(blds.syst.) TUBE, VACUUM, plastic, SERUM, 4 ml, red (Plain Tube)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1569BAC5A58A604B93292F5753326963,ELAEBSVT6E,"(blds.syst.) TUBE, VACUUM, plastic, EDTA, 6 ml, purple",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+E0B9642CCD7159498109DBE82998951B,ELAEBSVV1H,"(blds. syst.) HOLDER for VACUUM TUBE, reusable, non-sterile",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+CEB5AE292BFAE04E84FE87E74371928B,ELAEBSVV21N,"(blds.syst.) NEEDLE, sterile, 21G (Vacutainer)",1,<ItemBatch>{},<ItemDepartment>{2},,<null>,0,false,<null>
+EF5F608E6E8D4D4C851511971417D0FA,ELAECONTA11,"CONTAINER, antiseptic solution, plastic, non-sterile",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+F8481F0A3F7BE743A7D437DEA8F59D77,ELAECONTS11,"CONTAINER, SAMPLE, sputum/urine, plastic, non-sterile",1,<ItemBatch>{23 272 273},<ItemDepartment>{4},,<null>,0,true,<null>
+354CF372074F12419E513C5359BD97EB,ELAECOVG2,"COVER GLASS, 22 x 22 mm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FF450743D0DFFD4D9BC5267F08B413CD,ELAECYLM2P,"CYLINDER, MEASURING, plastic, graduated, spout, 250 ml",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+4E0A40F9E9766D4BB5DFBC2E8F5BB4FA,ELAEDBSC1S,"DBS card, Dried Blood Spot Collection Card, Set",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+17BF364409D9AB49A60C4AD06E8302CC,ELAEDR2100,"Digital Rotator DSR 2100D",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F345ABDBF3AA964A943A4989A2175FCB,ELAEGLUC2,"GLUCOMETER, blood glucose monitor",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+9A57402357CE6842A1FEC41B23BAC32B,ELAEHAEM2C,"(HemoCue Hb 201+) MICROCUVETTES, s.u.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5FEECAB728B3B24CAB513C689D9310BA,ELAEHAEM2CL,"(HemoCue Hb 201+/301) CLEANER, box of 5",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+118A48E6FB7D4D459234F148A1DBC56A,ELAEHAEM3,"HAEMOGLOBIN PHOTOMETER (HemoCue Hb 201+)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C23C3948A31EAF488023E32E45E1E01C,ELAEHAEM3C,"(HemoCue Hb 301+) MICROCUVETTES, s.u.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5B4FEE1BDAA8D94BAC8079BF3EF0B6D4,ELAELAMP7S,"LAMP, spirit, 65-100 ml, complete, wick ¯ 7 mm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+DBC4727FB2C6EA478EED8C5207390339,ELAEPAPE1L,"PAPER, LENS CLEANING, sheet",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+D171B84BE24B1F4BB8BA31F41C8BF553,ELAEPAPW3D,"PAPER, FILTER",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+D83B45789BCDA948B37591298370DD86,ELAEPIAA1,"PIPETTE, AUTOMATIC (Eppendorf), adjustable volume 10-100 µl",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FC285D86A22D9D479998CA575F45E29E,ELAEPIAA10,"PIPETTE, AUTOMATIC (Eppendorf), adjustable volume 100-1000 µl",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+A681D420333ECC4BA05F215F713B8C34,ELAEPIAATY,"(pipette, automatic 10-100 µl, Eppendorf) TIP, YELLOW",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+12053703C191A640A0B7B325D5D3FB24,ELAEPIPT3N,"PIPETTE, TRANSFER, graduated, plastic, non sterile, s.u.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5A8E5B3960303341BE3867D57542719E,ELAERACK1,"RACK, FOR STAINING SLIDES, expendable, stainless steel",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B9C0339D443BCF42A9E49847883E5D5F,ELAERACK2D,"RACK FOR DRYING SLIDES, vertical, plastic 10 slides",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+0AC942B333BF004F9B2B7886F5F5298F,ELAEROTA2,"ROTATOR, orbital, for agglutination test, 230 V",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6F82307CB793F24BAD76E6B229BD4E48,ELAESLID1FT,"SLIDE, frosted, 76 x 26 mm, tropical packaging",1,<ItemBatch>{},<ItemDepartment>{4},,<null>,0,true,<null>
+F32126D1A37D1B4FB2DB4A1F2A4776F8,ELAETUCE5P,"TUBE, CENTRIFUGE, 15 ml, conical bottom, plastic",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+D7FA23308E3D4949870543F01510FAB1,ELAEZMM0001,"Beaker, graduated, 500ml",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B7B5D2C3AC964D43AB041B97CB622AA5,ELAEZMM0002,"RESPIRATOR, FFP2 or N95 (3M-1862)",1,<ItemBatch>{},<ItemDepartment>{3},,<null>,0,true,<null>
+31AC7B6AE5A9F643B146B62FA45D9F59,ELAEZMM0003,"CENTRIFUGE, electrical 220V, 8 tubes",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1A6BDE6F9954F7499DEB23F0350867EA,ELAEZMM0008,"RESPIRATOR, FFP2 or N95 (3M-1860)",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+4817B1CBBD2F1746A810DBEC67253DCC,ELAEZMM0004,"SWAB, cotton tips, for sampling (Q-tips), pcs",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+33AF52F6205C6043BF00465F340A2E13,ELAEZMM0009,"RESPIRATOR, FFP2 or N95 (3M-1860s)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+922CD08F22F8494ABADDB8AEB0A1311A,ELAEZMM0005,"(blds.syst.) TUBE, VACUUM, plastic, EDTA, 3 ml, purple",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+043974D9C527E743A92AC2D0F7EB5C69,ELAEZMM0010,"RESPIRATOR, FFP2 or N95 (5321)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+CC2B90690060B149BB9F12DA10D28016,ELAEZMM0006,"RESPIRATOR, FFP2 or N95 (3M-8210)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+3EFB70D97FE4674C9465C77474676E50,ELAEZMM0007,"RESPIRATOR, FFP2 or N95 (3M V FLEX 1805)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+9AD98CAE37325548B0697DA8FA7BB69F,ELAEZMM0087,"(CyFlow Counter Partec) TUBE, plastic, 3.5 ml",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+47851F030399E24AA3441DA8203DA028,ELAEZNL0049,"RACK, TUBES, 4 x 12, squares 18mm, stainless steel, height a",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+4143FF867F6E6F4787F228E6B2E36672,ELAEZNL0226,"SWAB, alcohol (wipes), disposable",1,<ItemBatch>{},<ItemDepartment>{2},,<null>,0,false,<null>
+44B602EB28A2E449A62615EF41051735,ELAEZNL0392,"STRIP, blood glucose",1,<ItemBatch>{},<null>,,<ItemCategory>{0},0,true,<null>
+012CDA9F0E4DA3408DE910862B84B359,ELAEZNL0393,"(Glucometer) LANCING DEVICE, adjustable, microlet",1,<ItemBatch>{52 380 382 383},<null>,,<null>,0,true,<null>
+752319DFD352B74C9A570489FA6CE862,ELAEZNL0394,"(Glucometer) BLOOD LANCET for lancing device",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+E6810078A9CC244EAFCE585FD263F5E7,ELAEZNL0398,"PAPER, pH INDICATOR, 3.6 to 6.1, strip",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6DD157CC5129D74EB30F6919530D1773,ELAEZNL0451,"CRYOTUBE, 1.5 ml, conical bottom, screw lid, non-sterile",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+9E128825E89251478309A17590E3CF00,ELAEZNL0510,"MICROSCOPE (Olympus CX22), COMPLETE (bin.,mirror/mains, box)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C4B933C945AB7540A5FE9674982EC277,ELINMASS3,"MASK, SURGICAL, type II, s.u.",1,<ItemBatch>{14 108 159 160 370 415 416},<ItemDepartment>{0},,<null>,0,true,<null>
+8D9EF315EBE53745BEE47FF6180D2293,ELINPRP1P,"APRON PROTECTION, plastic",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+FF24ADC78D7BF84FAF65AF2E5CE2E0DB,ELLINCADS1S,"CAP, SURGICAL, bouffant, nonwoven, s.u",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+13191E6353489249B774209C5092BEB8,EMEDOPTH,"Direct Opthalmoscope",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+8B46BAA20B4D1E408B3A7C87BBF823BF,EMEQHAMR1,"HAMMER, REFLEXES, BABINSKY model, 25 cm, adult",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+3E2C594A4CB12F4EBB99C0C779C36BBF,EMEQOPHT1,"OPHTHALMOSCOPE, halogen",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+07D67EAD3F8E6849B8EF3A5063CD145C,EMEQOTOS1,"OTOSCOPE, halogen + 4 SPECULA",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+9D17D08D8C75364A8072C0A229D27CDF,EMEQSPHY1A,"SPHYGMOMANOMETER, one-hand manometer, Velcro, adult",1,<ItemBatch>{70 138 139},<null>,,<null>,0,true,<null>
+5F976B4EA860FE499F516EDD98E43510,EMEQSPHY1P,"SPHYGMOMANOMETER, one-hand manometer, Velcro, pediatric",1,<ItemBatch>{3 11 53},<null>,,<null>,0,true,<null>
+18BF0CBCB2EBB04EBA341901BBE364C1,EMEQSTET1,"STETHOSCOPE, one cup, nurse",1,<ItemBatch>{71 136 137},<null>,,<null>,0,true,<null>
+E8AEED08F73C3E49BA7551CBC53C39F5,EMEQSTET2,"STETHOSCOPE, double cup, clinician",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+DE22CF95473E5D48A438229D0DCDC82B,EMEQTACO17,"TABLET COUNTER, triangular, fiber",1,<ItemBatch>{381},<null>,,<null>,0,true,<null>
+26B3976BCD148D4DAD0BE3ED76C2749E,EMEQTACU1,"TABLET CUTTER, stainless blade",1,<ItemBatch>{378},<null>,,<null>,0,true,<null>
+057475931B2EE54CA0A2960402A494C2,EMEQTOUR1,"TOURNIQUET, elastic, 100 x 1.8 cm",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+CDF505AB7C96344AB5FB325C6C33ABB2,EMEQZNL0069,"MANOMETER CEREBRO-SPINAL+STOPCOCK SET PLASTIC DISPOSABLE",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+4E7FF9BB7E2D184E9B5F46F3FE88008F,ESTETIME1,"TIMER, 60 mn",1,<ItemBatch>{201 205},<null>,,<null>,0,true,<null>
+0A3BDEEF40680A4398842933BB84D357,ESTEZNL0007,"Drum for cotton wool and gauze height 15 cm diameter 15 cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+D6E0BD2287B15449A4FADBECE02B2452,ESURFOAP14S,"FORCEPS, HAEMOST., PEAN, 14 cm, straight 16-10-14",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5C39B736DA32824495A9D5A58C977F46,ESURSCALB10,"BLADE, surgical, scapel, sterile, No. 10",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+ECA2CC0EE1EB9242976B4A8AE83CA95B,ESURSCALB11,"BLADE, surgical, scapel, sterile, No. 11",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+0DB0C127DF86E3499F7790A488F5FB44,ESURSCALB16,"BLADE, surgical, scapel, sterile, No. 16",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+0822E3F6A0D3BA4D9129CA85B4B63222,ESURSPVC16,"SPECULUM, VAGINAL, COLLIN, for virgin, 90 x 16 mm 52-10-11",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+521B802D61EC6444A61EC6537D943A9E,ESURSPVC35,"SPECULUM, VAGINAL, COLLIN, standard, 100 x 35 mm 52-11-12",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B7D70DAF9459484C9CE4F83149504DB1,LLAECONI5T,"CONICAL CENTRIFUGE TUBE, falcon, 50ml",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6989939AE62B88409E38EE0CA22ED543,NFOSRICA4P,"NUTRITION powder, (rice & carrot), 480g(Gold Power)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+36F9D48DF6216F498CFF4066CF561EA8,NFOSRISP4P,"NUTRITION powder, (rice, potato & spinach), 480g(Gold Power)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+910D0C02C94C0E4EBAC20EC3B5F82B4E,NFOSRUTFP5S,"READY TO USE THERAPEUTIC FOOD, paste, 500 kcal, 92 g sachet",1,<ItemBatch>{46 145 249 250 251 252 318 402},<null>,,<null>,0,true,<null>
+0ED75014B6651B469F9EE6BAE6005AAE,NFOSTHMI1P0,"THERAPEUTIC MILK, F100, powder, 114g",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+2E931F01E966D34C9F47B348D6E48B38,NFOSTHMI7P0,"THERAPEUTIC MILK, F75, powder, 102.5g",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+24CE18B37ED1AC4F8322E1FDC511F34F,NFOSZMM0001,"Oil, cooking, 1ltr",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+C8B806130F7DE844857CACF664A1FEA4,NFOSZMM0002,"Rice, kg",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+518340EC69FA5E4FB18B85A988C9DE4F,NFOSZMM0003,"SALT, kg",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+86E850F5E232974088136D4339F9D58D,NFOSZMM0004,"Bean, kg",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+8355F0E6B2E5B64193CDF8994BE80D7F,NFOSZMM0005,"Blend food, WSB+, kg",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+31F4EAD12B0C6A4B8423912C9D309EC1,NFOSZMM0006,"Canned Fish, can",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+76AFEBFD40C3B3448FB074418DD5C5A1,NFOSZMM0007,"MILK, INFANT, FORMULA, Lactogen Step 1, 0-6 month, 350 g, pcs",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+ECF522780C6E4747934A82AE3D9478E6,NFOSZMM0008,"MILK, INFANT, FORMULA, Lactogen Step 2, 7-36 month, 350 g, pcs",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B15F63F5A2A0E748A3159AACA9B51F7A,SCTDBAGU2VS,"BAG, URINE, 2 l, drainable + non-return valves, sterile",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+3B92796B35BA1C4D804FE7C285C42DD8,SCTDCANN2A,"CANNULA, NASAL, OXYGEN, adult",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+DEA59A40C5F2D54892BDAFA415F22BE4,SCTDCANN2P,"CANNULA, NASAL, OXYGEN, paediatric",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+18259433F8CB74448042524BCDB1A13F,SCTDCAUR16F,"CATHETER, URINARY, FOLEY, balloon, sterile, s.u., CH16",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+6555109D9A98C147A9106A16A287B316,SCTDMASO1A,"OXYGEN MASK, adult size",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+73B46E98DB3AEB4ABB3CA3C9C83A4CBE,SCTDMASO1P,"OXYGEN MASK, paediatric size",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6F753FF7CBD8334AB09078BAC2F89F89,SDRECOMP1N,"COMPRESS, GAUZE, 10 cm, 12 plies, 17 threads, non sterile",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+2F1ADAB6E2453947A84C49B5C3CAA5DE,SDRECOTW5R,"COTTON WOOL, hydrophilic, roll, 500 g",1,<ItemBatch>{47 106 168 274},<null>,,<null>,0,true,<null>
+6CCC5743567C814A9ABCE316FD5DDBD6,SDRETAPA1P4,"TAPE, ADHESIVE, ROLL, perforated, 10 cm x 5 m",1,<ItemBatch>{26 30 133 255 282 395},<null>,,<null>,0,true,<null>
+B3CCDC148FA86441ACE715E958137A6D,SDREZMM0000,"PLASTERS, (hansaplast), for small cuts, etc.",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+598EE18F3EB7CC4DA9346DBB2AA3C8B2,SDREZMM0003,"Bandage, hydrophylic, w.o.w., 5 cm x 10 m, roll",1,<ItemBatch>{104 172 179 219 220 221 239 285 295 296 299 307 377 399},<null>,,<null>,0,true,<null>
+EA519454C9189B47A8A66BAAE5B60FC0,SDREZMM0004,"TAPE, ADHESIVE, zinc oxide, ROLL, 7.5 cm x 10 m",1,<ItemBatch>{132 198 308 334 347},<null>,,<null>,0,true,<null>
+666D2C873AF66C47944D14D93BF8DAAF,SINSIVPP18,"IV CATHETER, injection port, s.u. 18 G (1.2 x 45 mm), green",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+380551D68F06C246AD9F837BE1143891,SINSIVPP20,"IV CATHETER, injection port, s.u. 20 G (1.0 x 32 mm), pink",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+AD1BA47AC234E7458C679FEA132E35B9,SINSIVPP22,"IV CATHETER, injjection port, s.u. 22G (0.8 x 25mm), blue",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+E51D20420115BD469F47F9893E6E8532,SINSIVPP24,"IV CATHETER, injection port, s.u. 24 G (0.7 x 19 mm) yellow",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+4CF7435AA7B8FF41BE2024612058F696,SINSNEED19,"NEEDLE, s.u., Luer, 19 G (1.1 x 40 mm) cream, IV",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+544E5759A84BD040BEF1856A4C3BC6E3,SINSNEED21,"NEEDLE, s.u., Luer, 21 G (0.8 x 40 mm) green, IM",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+36A7AF11B4A45840A53F869B0F769E78,SINSNEED23,"NEEDLE, s.u., Luer, 23 G (0.6 x 30mm) blue,  SC, IM child",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+87348770A484BE4BA2EC50318ADEB692,SINSNESD20,"NEEDLE, SPINAL L.P., s.u., 20 G (0.9 x 90 mm)",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+B93E94783C19FE4E93D56FAA4DBC0F41,SINSNESD22,"NEEDLE, SPINAL L.P., s.u., 22 G (0.7 x 40 mm)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+A66333019D2D7341A595EB242A996FCC,SINSSETI2,"SET, INFUSION 'Y', Luer lock, air inlet, sterile, s.u.",1,<ItemBatch>{140},<null>,,<null>,0,true,<null>
+92E3C9930E29D1498A099FC7C1835182,SINSSYDI01,"SYRINGE, s.u., Luer, 1 ml, graduated 1/100",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+496210AE19083A4E8181BD7A7F5F4163,SINSZMM0001,"SYRINGE, s.u., Luer, 3 ml, + needle, 23 G x 1 1/4'",1,<ItemBatch>{20 31 57 58 63 64 65 134 196 197 222 254 423},<ItemDepartment>{2},,<null>,0,true,<null>
+D5E277D43458284485F0F8D46FEBA3BD,SINSZMM0002,"SYRINGE, Disposable, Luer, 20 ml, + needle, 23 G x 1 1/4'",1,<ItemBatch>{195},<ItemDepartment>{2},,<null>,0,true,<null>
+04119806A8BEA94C9FF33B4966F9536E,SINSZMM0003,"SYRINGE, disposable, Luer, 5 ml, + needle, 23 G x 1 1/4'",1,<ItemBatch>{},<ItemDepartment>{2},,<null>,0,true,<null>
+DC622B83A28A6847BE98F596E5B8197A,SINSZMM0004,"SYRINGE, s.u., Luer, 10 ml, + needle, 23 G x 1 1/4'",1,<ItemBatch>{135},<null>,,<null>,0,true,<null>
+E975EBB293874749BD32FA61E7754118,SINSZMM0005,"NEEDLE, SPINAL L.P., s.u., 23 G",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+465A50532AA27E458CB5E551C1E60228,SINSZNL0009,"Scalp vein infusion set 23G (0.7x19mm)",1,<ItemBatch>{126},<null>,,<null>,0,true,<null>
+FEC9A6FBE9F1BB4FAF5311985C1825EE,SINSZNL0013,"NEEDLE, 30 G (YELLOW), 13 mm½",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C3895B3D8AB73C43A67E674C171E7BF4,SLAHUMN1351,"Humatrol N, Lyophilise 13511",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+30F00B69EF309D4DBA2C1C0060B3E598,SLASBUFF70B,"(Determine rapid test) BUFFER CHASE, 2.5ml, ref.7D2243",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+749E61435BBBD34AB956DBA590225465,SLASETHA9B1,"ETHANOL, denaturated, 95%, 1 l, bot.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+CC8F414FECCF8F4199975E7D3289F09B,SLASFUN145210,"Funnel, plastic, 145mmx210mm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+793E8CE442CEE0478B08C82BFE061C39,SLASFUN75130,"Funnel, plastic, 75mmx130mm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6C8D844FEC3C07429446137FC2C7CE13,SLASGIEM1B4,"GIEMSA, stain (Merck), solution, 500 ml, bot.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6657F37B14104546B7D18BAE668434BC,SLASGRAM4,"GRAM HUCKER, bacterio. (RAL), 4 x 230 ml, kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+207E5BB948CB7F45892542817BAD37AD,SLASIINK1B0,"INDIAN INK, black, cryptococcus test, dropper, 0.5 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+A4DDA1A6F3D55F40BEC1E59792A1743D,SLASMETA1B0,"METHANOL, 1 l, bot.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F28803EF0D46B44AAF414497680E4D96,SLASMETB1L0,"METHYLENE BLUE, 1L , bot.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F53A0BF5373CB545AD0CBBFECF56D146,SLASOILI1B4,"OIL, IMMERSION, 1000 ml, bot.",1,<ItemBatch>{},<ItemDepartment>{4},,<null>,0,false,<null>
+23751AB724A86E4D96D5DE0CC7B40019,SLASZMM0001,"Carbol Fuchsin, (ZN1), solution, 1L",1,<ItemBatch>{},<ItemDepartment>{4},,<null>,0,false,<null>
+D43F8603933CB946AA9BE6675E86A3D6,SLASZMM0002,"POTASSIUM HYDROXIDE, (KOH), gram",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+CFB3E674BE240A48887A1692DE516B01,SLASZMM0004,"GENTIAN VIOLET, for bacteriology, powderGentian Violet,powder,25g,bot",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+7FD5F63476BAEC4798B939938927030B,SLASZMM0021,"(Cyflow counter Partec) Partec CD4% easy count kit (05-8405), 100 test",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+DE6EA723798CAE4DB9D965A01A592EED,SLASZMM0033,"(Cyflow counter Partec) COUNT CHECK BEADS, green, 2x25ml 50t",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+6A0D1EBBDE43DA4EB34A0F4ED8B146B4,SLASZMM0034,"(Cyflow counter Partec) CD4, REAGENTS KIT (05-8401) for 100 tests",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+B1E21540C621BB449D39535D3F329DC1,SLASZMM0035,"(Cyflow counter Partec) CLEANING SOLUTION, 250 ml btl.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+9345C6ADECA2E54F99B5E7D9875319A2,"SLASZMM0039 ","(Cyflow counter Partec) SHEATH FLUIDE 5 L CONTAINER(Ref: 04-4007)",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+2A1D244B4B1FA84C988F8D4DD4F3DB47,SLASZNL0011,"TB DECOLORIZER,1000ml, bottle",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+81B2A8E83697C549B833848B99B532AE,SMSUBAGP04,"BAG, plastic, for drug, 4x 3, per lb (Zip Bag)",1,<ItemBatch>{96 124 176 231 269 406},<null>,,<null>,0,true,<null>
+7D42F92575FAF34DA62BB2893DC92A8C,SMSUBAGP05,"BAG, plastic, for drug, 5x 3.5, per lb (Zip Bag)",1,<ItemBatch>{48 72 95},<null>,,<null>,0,true,<null>
+B3F29C830FC75644B4C1F789BEA01342,SMSUBAGP07,"BAG, plastic, for drug, 7x 4.5, per lb (Zip Bag)",1,<ItemBatch>{8 15 94 177},<null>,,<null>,0,true,<null>
+B286680058105F479118CF8414EE726D,SMSUCONDF1,"FEMALE CONDOM, lubricated, 170 mm, s.u.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+550C7FF68D0605458E2EA725020FD92F,SMSUDEPT1W,"DEPRESSOR, TONGUE, wooden",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+8F941175CE39AD44B39A8AA8BEAAFBEF,SMSUGLOE1L,"GLOVE, EXAMINATION, latex, s.u. non sterile, large",1,<ItemBatch>{163 373},<null>,,<null>,0,true,<null>
+BEAEEF64688FD844BB0F8BC2D7C9C606,SMSUGLOE1M,"GLOVE, EXAMINATION, latex, s.u. non sterile, medium",1,<ItemBatch>{5 162},<ItemDepartment>{2},,<null>,0,true,<null>
+DF0A867BB4695D42B9DACC05CCA882D6,SMSUGLOE1S,"GLOVE, EXAMINATION, latex, s.u. non sterile, small",1,<ItemBatch>{4},<ItemDepartment>{2},,<null>,0,true,<null>
+5B715F54ECC1C64E87FD96DA3936021D,SMSUGLOS60,"GLOVES, SURGICAL, latex, s.u., sterile, pair, 6",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1D4612D0DC1B8B429F55CA316779095B,SMSUGLOS65,"GLOVES, SURGICAL, latex, s.u., sterile, pair, 6.5",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+247230A297F5F84EA62C6DB4D507A2AE,SMSUGLOS70,"GLOVES, SURGICAL, latex, s.u., sterile, pair, 7",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+F8F6C50BCB1E42419DF0B1B2A281D5FE,SMSUGLOS75,"GLOVES, SURGICAL, latex, s.u., sterile, pair, 7.5",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+6F157EE2EAAA9B4390DD711C38C365EB,SMSUIMP1C,"LEVONORGESTREL, 2x75mg, Contraceptive implant, Jadelle",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FF62F33C960F094DADA66E38FFD15426,SMSUIUDE1C,"INTRA UTERINE DEVICE, (I.U.D.), copper, TCU 380 A",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+7ED8F5679AC8F04A8F232A862FCBC215,SMSUTHER1D,"THERMOMETER, ELECTRONIC, accuracy 0.1 ºC + case",1,<ItemBatch>{18 25 97 130 224 260 309 384},<null>,,<null>,0,true,<null>
+5812A9CD7415DA498B15EDC97286F9D3,SMSUZMM0001,"THERMOMETER, Tympanic",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+B605D1B7B8DF534CA94B7B99E676FB96,SMSUZMM0002,"CONDOM, with LUBR.GEL, non-flavor, 3pcs/pack ",1,<ItemBatch>{310},<ItemDepartment>{2},,<null>,0,true,<null>
+934BCD60C0CBBF4989E291801526D0F8,SMSUZMM0003,"PMTCT Kit",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+2E5E2C5A98BB894C8F9D3C73B9C04920,SMSUZMM0004,"GLOVES, examination, plastic, s.u., non-sterile",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+35711A49D1278A49802AA1CB4BCCB3D8,ELAEPIAATB-,"(pipette, automatic 50-1000 μl, Eppendorf) TIP, Blue",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+449C315B85273C4E96DD433E6ED0ED9E,ELAEPIE20Y,"PIPETTE, Eppendorf 20μl yellow",1,<ItemBatch>{},<ItemDepartment>{2},,<null>,0,false,<null>
+9C7C2A623548784ABBE81E94D1968B06,ELAETUCE5R-,"(tube 50ml, centrifuge, Ø 35 mm) RACK",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+77BC65A78B0BE74BAE74FAB4281C82CE,SLASZMM0036,"(Cyflow counter Partec)DECONTAMINATION SOLUTION,250ml, bt.",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+C233C3E73E280644AF938665B5BDD59F,SLASZMM0040,"PARTEC, Hypochlorite sol., 250 ml, bot",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F1BAD0199869404B8AD906541AB9AF49,ELAEPIE3S-,"PIPETTE, 3ml, Graduated Pasteur, sterile, individual pack",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B8F8EE2C279E3748956BF4EBED74BD40,EMEQKIDD26-,"KIDNEY DISH, 26 cm x 14 cm, stainless steel",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+AAC87C8079B9C44DA32F40D799A10A7F,DEXTLIDO2J3,"LIDOCAINE Hydrochloride, 2%, 100mg, 20mg/ml, jelly, sterile, tube",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+9B7E88AE64410F48A25636E209EDB6E4,ELINGOWSSL-,"GOWN, SURGICAL, nonwoven, s.u., L",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+156209E906BE124CB70B67DF270711D9,ELINGOWSSXL,"GOWN, SURGICAL, nonwoven, s.u., XL",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+CA7B2FD7741A5B4A81FAEC2889132DF0,ESURFOAK14C,"FORCEPS, HAEMOST, KOCHER, 22 cm, 1x2 teeth curved",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+A47101EF5949A447B29A7453210DFCCC,ESURNEHM18-,"NEEDLE HOLDER, MAYO-HEGAR, standard, 18 cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+783005D3FBEA1749AB9BFDDD89C2EE94,INDBSOWLSZ-,"Bowl, Stainless Steel, small size",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+EDD2D6C55B8BE94E8B0ECF5400B72C8D,INDSFORS25-,"FORCEPS, Sponge Holding, Straight, 25.4cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+CF95B01D4D60DC499A8DD2CE6D4ABE63,INDSSCIEP14,"SCISSORS, Episiotomy, 14cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6AC01E4D53AFBE47AA9F89BD1ABADEE5,INDSSCIMAC1,"SCISSORS, MAYO, curved 14 cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+BAA1F7A7E504024388033C4ADCB892D7,INDSSCIMAS1,"SCISSORS, MAYO, straight 14 cm",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+A5E490EEB41DB947A2A79CB24AB95962,INDSFORAS1,"FORCEPS, ARTERY, 14 cm, straight",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+59AECCB5E63ACF4EB27000BFA00B766E,INDSFORAC1,"FORCEPS, ARTERY, 14 cm, Curved",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+4A880EB66B18DD47AE83A06201F17F9C,INDSFORDT1,"FORCEPS, DISSECTING with tooth, 15cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+83B3FA0C6C389240AE4C2A5645C24194,INDSFORD15,"FORCEPS, DISSECTING with non-tooth, 15 cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C4C4D4ED1FD40B48818421CA2CE44C1C,INDSCAURS14,"CATHETER, URETHRAL, Red Rubber, sterile, s.u., CH14",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+A3A48CD3A0A1214094CD1ECAD610D5BA,INDSCAURS16,"CATHETER, URETHRAL, Red Rubber, sterile, s.u., CH16",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+0E608F0FBE46984CA6B8FD95F1CA717B,INDSCCUGHS-,"Cord Clamps, umbilical, with gated hinges, sterile",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+42F8B8CBC1177249895F87B0949A6DCA,INDSCS75CR-,"Chromic Catgut, 2/0 (3.5 Meteric) 75cm, with 1/2 circle round bodies 35mm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+6A2E2066841B0045B42B6CE848964EA5,INDSFORAUS2,"FORCEPS, ARTERY, (Umbilical Cord Clamp Forcep), Straight Big, 20cm",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+D9CF887B55DE5148878025284E6DCBC2,"NFOSZMM0009 ","Blend food, WSB++, kg ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+31F3E2EB897298448A36ED85E9E59BCA,SLASZMM0037,"PARTEC, Control blood dry kit",1,<ItemBatch>{},<ItemDepartment>{0},,<null>,0,false,<null>
+FC6BCB063465344C9BC8A23619FE1BA3,ELAEBVT3E-,"(blds.syst.) TUBE, VACUUM, plastic, EDTA, 2 ml, purple",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+FFDA9B1621B6564CAB1FC801D85AB522,NSTDDEXOTROP5DM,"TROPICAMIDE 1% EYE DROPS 10ML, MULTIDOSE",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+92A830620D13D44AAA28F70D5767AF1A,NSTDDEXTIODP1S2,"POLYVIDONE IODINE, 10% solution, 100ml, dropper bot.",1,<ItemBatch>{49 210 279 364 374 389},<null>,,<null>,0,true,<null>
+3231887DAB7DC1489EB636DACF96EA34,NSTDDDISNADC2T,"CHLORINE 2G, Tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+DFE30CFDD9EAE2479A23788784900E4D,NSTDDEXTIODP1S3,"POLYVIDONE IODINE, 10%, solution, 15 ml, dropper bot",1,<ItemBatch>{246 280 400},<null>,,<null>,0,true,<null>
+C156095A3811024C91C1F5DD1A3D4ECE,"NSTDDORAZMM0005 ","HYDROCHLOROTHIAZIDE 50mg, tab",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+60B7B1A0AD44BB4FB93042E6750EB12A,"NSTDDINJAMPI1V- ","AMPICILLIN, 1 g, powder, vial ",1,<ItemBatch>{38 128 175 208 236 268 297 300 350 419},<null>,,<null>,0,true,<null>
+A004C09D5DA25344B9D28B586E02DF64,"NSTDDINJGENT8A- ","GENTAMICIN sulfate, 40 mg/ml, 2 ml, amp. ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F37456065CAF504ABCC887980D8F8C77,"NSTDDORAPROP4T- ","PROPRANOLOL 40mg, tab ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FE3D2BC9B5DC7F46A72EFAD2629E19B8,"NSTDSDREZMM0002 ","BANDAGE, PLASTER OF PARIS, 20 cm x 2.7 m ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+704B231AA42411489C66FDB69478E86A,"NSTDELAEZNL0382 ","PIPETTE, PASTEUR, PE 3 ml, sterile, 0.5ml graduation ",1,<ItemBatch>{},<ItemDepartment>{2},,<null>,0,false,<null>
+2B703969EFE77446A9AB72B6B8206A24,"NSTDDORATHIA1T- ","THIAMINE hydrochloride (vitamin B1), 10 mg, tab. ",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+FCB360F4269B714AB6DEB66D0D650FB5,"NSTDELAESAFE001 ","SAFETY boxes ",1,<ItemBatch>{75},<ItemDepartment>{2},,<null>,0,true,<null>
+A0A5E5F1EBF5D540BDBBFE0EA8B26852,"NSTDEXTBENZ2500 ","BENZYL BENZOATE, 25%, lotion, 500ml, bot. ",1,<ItemBatch>{289 298 376},<null>,,<null>,0,true,<null>
+4F075745611B2846889FA791F802B2C3,"NSTDDORAZNL0334 ","SOFOSBUVIR (SOF), 400 mg, tab. ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+2C3C519DF88D714DBB63E85EB1CB7687,"NSTDDORAZNL0327 ","DACLATASVIR dihydrochloride (DCV), eq. 60 mg base, tab. ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+18DC6D96A1042049A22F058D3A9A7F06,"NSTDDEXTCALA1L1 ","CALAMINE, 15%, lotion, 100 ml, bot. ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+96B63AB12E345C46A485430A05B47C19,"NSTDDEXTCALA1L5 ","CALAMINE, 15%, lotion, 500 ml, bot. ",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+93F6AFACFF16C84F8397965710567AFD,"NSTDDORAPYRM2T- ","PYRIMETHAMINE, 25 mg, tab. ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+94FB7B1D77C60C45A456754F63B014F8,NSTDDORAMETN2T-,"METRONIDAZOLE, 250 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+E8D41DB534F42649A785FF9C6A40B11C,NSTDDORAMETN5T-,"METRONIDAZOLE, 500 mg, tab.",1,<ItemBatch>{73 78},<null>,,<null>,0,true,<null>
+40906C3558615D4AAF1241FA6F4AE8CE,NSTDDORAPRED2T-,"PREDNISOLONE, 20 mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+ED63A89B4A85CB49BD6B9F25DD62ABC4,NSTDDORASALB1N-,"SALBUTAMOL, solution for nebulizer, 2 mg/ml, 2,5ml monodosis",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+CE3B4AA799DD044181C9C3DF9C82271B,NSTDDORASALB4T-,"SALBUTAMOL sulfate, 4mg, tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+936B472509CD7F4AAFD5E47AF86EB981,NSTDDINJCALG1A-,"CALCIUM GLUCONATE, 100 mg/ml, 10 ml, amp.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5315DACFC51DB04993DA479464DD479D,NSTDDVACIMHB2V-,"IMMUNOGLOBULIN HUMAN HEPATITIS B, 100 IU/ml, 2 ml, vial.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B0A2301409D01D4196CA4DE1B0FA250B,NSTDDEXTYINO1O1,"ZINC OXIDE, 10%, ointment, 100 g, tube",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+866871A88B257548AF6B1F012F7291B9,NSTDDEXOZNL0019,"DEXAMETHASONE 5 mg / NEOMYCINE 17500 IU, eye drops, 5ml, bot",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+2842FE3AB5A21C4B8BFDB367C9505009,NSTDDINJGLUC5V2,"GLUCOSE HYPERTONIC, 50%, 20 ml, vial",1,<ItemBatch>{},<null>,,<null>,0,true,<null>
+3FE9A95719AA544292CDD2453F810CDC,NSTDELAEBSVT5E-,"(blds.syst.) TUBE, VACUUM, plastic, EDTA, 4 ml, purple",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5BC49DA439C83C4F95FA89A950B52560,NSTDDINJAMBL5V-,"AMPHOTERICIN B liposomal complex, 50 mg,powder, vial",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C474927E5A29064FAD1E5C0CA40551D8,"NSTDDORAHYOS1T- ","HYOSCINE BUTYLBROMIDE (scopolamine butylbromide), 10 mg, tab ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+0D43BA17E78F0A4F939D13D2E9E18F11,"NSTDDEXOACIVT5- ","ACICLOVIR, cream,sterile,5 g,Tube ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+32BAE980820CF846AC5424F4E989EEEE,"NSTDDORAPHYT1T- ","PHYTOMENADIONE ( Vitamin K), tab, 10mg ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+595BD06E1FF25141A37BD7C2EC035A49,"NSTDDORATRAN5T- ","TRANEXAMIC ACID, 500 mg tab ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+B41E85B70C0EDB4CA3717EEBC7807EF7,"NSTDDINJTRAN55A ","TRANEXAMIC ACID, 500 mg/5ml, amp ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+27909F7D663ECD489D514F77E45317C9,"NSTDELAEHAEE3-- ","HAEMOGLOBIN PHOTOMETER (HemoCue Hb 301+) ",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+D02EE5487FA996438F3B77DA39B019D8,NSTDSLASZN425B,"TB DECOLORIZER,4*250ML,BOT(BD-212517)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1E35975889522B48B92787EB5B6A6FE7,NSTDORADOLUT5T,DOLUTEGRAVIR(50)mg,1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+35D1D6BC9D51474BBF17799F1B162E08,aaa123,"Asdfer 10mg",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+548E7F63828179419862230E1DF84D29,NSTDMTHER0002-,THERMOMETER(REFRIGERATOR),1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+754862C973A2BB4897AC5F1209C7C22D,NSTDMSSSSB4-,"SQUARE SHAPE STAINLESS STEEL BOX",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C0CAC41F7B7E8E4A8C1E7D10FCCE3885,NSTDSMSUBAGP02,"BAG,plastic, for drug, 2 x 3, per lb (Zip Bag)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+44E8E11CDB839D42873F1F0110F8BF35,NSTDDORASALB2T-,"SALBUTAMOL sulfate,2mg, tab",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+DB473D417729284C8DE7C6A80FC9454D,NSTDINJRNTD001-,"RANITIDINE INJECTION",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+C4BF0C6099BDB646A25ADDB97C9DF27D,NSTDANTSEUS001-,"EUSOL SOLUTION,500ML",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+1AEBB9441149CC49BBCD2C2371864B0A,NSTDEXOCIPR03DO,"CIPROFLOXACIN, 0.3%, eye drops, sterile, 5ml, bot.",1,<ItemBatch>{76},<null>,,<null>,0,true,<null>
+513338D29E491843B5F106EB0AC2E891,NSTDORADEX10-,"DEXTROMETHOPHAN, 10mg, cap.",1,<ItemBatch>{426},<null>,,<null>,0,true,<null>
+FCBB3977C7F9584DB86EDA06D5CB146F,NSTDORALFC250-,"LEVOFLOXACIN,250mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+5B040CEF3CAAFF4C9FCE72FD6C27889E,NSTDORALFC500-,"LEVOFLOXACIN, 500mg, tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+66063B3EF18B144CA24CB1EE739022E6,NSTDEXTMICO2C15G,"MICONAZOL nitrate,2% cream, 15g, tube",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+FA4BD0197A681849B5D0C3EC3DB47FFE,DORALPRF4T1,"LOPINAVIR(LPV)40mg/RITONAVIR10mg tab.",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+45B188D46453734494247B93ED7159D2,DEXTPERM5L0,"PERMETHRIN, 5% lotion, bot",1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+774DB3E85A529B4D81D0CF5B6F4A2350,001,Voltex,1,<ItemBatch>{},<null>,,<null>,0,false,<null>
+F5243AC985818146A7679ADC13F39E54,ELAEZMM09001,"RESPIRATOR, FFP2 or N95 (3M-9001)",1,<ItemBatch>{},<null>,,<null>,0,false,<null>

@@ -1,0 +1,7 @@
+id,sequenceKey,highestNumberUsed,numbersToReuse
+163a3310e14711e7a5872fa61e46d180,supplier_invoice_serial_number,89,<NumberToReuse>{}
+302e9b80f1cd11e79031b5af59368f9f,stocktake_serial_number,27,<NumberToReuse>{}
+bb816670f1d411e79031b5af59368f9f,inventory_adjustment_serial_number,15,<NumberToReuse>{}
+e6056340f1ef11e7900945d7ca3e6bf7,requisition_serial_number,31,<NumberToReuse>{}
+e605ff80f1ef11e7900945d7ca3e6bf7,requisition_requester_reference,31,<NumberToReuse>{}
+e01fe080f1f011e7900945d7ca3e6bf7,customer_invoice_serial_number,368,<NumberToReuse>{}

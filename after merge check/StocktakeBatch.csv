@@ -1,0 +1,620 @@
+id,stocktake,itemBatch,snapshotNumberOfPacks,packSize,expiryDate,batch,costPrice,sellPrice,countedNumberOfPacks,sortIndex
+321eabb0f1cd11e79031b5af59368f9f,<Stocktake>{1},<ItemBatch>{115},1200,1,"2018-07-31 00:00:00 +0000",543150702,0,0,0,32
+c503cdc0f1cd11e79031b5af59368f9f,<Stocktake>{1},<ItemBatch>{116},0,1,<null>,stocktake_1,0,0,37,56
+2ca1d1a0f1d511e79031b5af59368f9f,<Stocktake>{2},<ItemBatch>{117},0,1,"2018-07-31 00:00:00 +0000",543150702,0,0,1200,1
+086d0520f1d511e79031b5af59368f9f,<Stocktake>{2},<ItemBatch>{118},220,1,"2019-06-30 00:00:00 +0000",543160604,0,0,1000,0
+32319770f1cd11e79031b5af59368f9f,<Stocktake>{1},<ItemBatch>{118},1000,1,"2019-06-30 00:00:00 +0000",543160604,0,0,220,33
+01efb250348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{119},1,1,"2018-10-31 00:00:00 +0000",supplierinvoice_1,0,0,1,3
+01f111e0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{120},63,1,"2018-04-30 00:00:00 +0000",DYI1516167,0,0,63,4
+01f382e0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{121},143,1,"2018-09-30 00:00:00 +0000",supplierinvoice_1,0,0,143,5
+01f5f3e0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{122},700,1,"2019-02-28 00:00:00 +0000",AAM17004,0,0,700,6
+01f8da10348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{123},200,1,"2019-04-30 00:00:00 +0000",HE16E05,0,0,200,7
+01fecd80348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{124},11600,1,<null>,stocktake_8,0,0,11600,9
+0201b3b0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{8},3000,1,<null>,stocktake_8,0,0,3000,10
+02044bc0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{125},59,1,"2019-06-30 00:00:00 +0000",16018B99,37,0,59,11
+138213c0f74711e7a8580fb1f78de0a2,<Stocktake>{4},<ItemBatch>{126},25,1,"2018-04-30 00:00:00 +0000",supplierinvoice_1,0,0,24,0
+aa4a3c60f74711e7a8580fb1f78de0a2,<Stocktake>{3},<ItemBatch>{126},25,1,"2018-04-30 00:00:00 +0000",supplierinvoice_1,0,0,24,0
+01e9bee0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{127},14600,1,"2020-11-30 00:00:00 +0000",S15,0.01,0,14600,1
+01ed6860348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{128},29600,1,"2019-07-31 00:00:00 +0000",6777160702,1,0,29600,2
+01e6b1a0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{129},40,1,"2019-12-31 00:00:00 +0000",supplierinvoice_17,0,0,40,0
+02fc4050348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{130},70,1,<null>,supplierinvoice_18,0,0,70,63
+02f51460348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{131},1290,1,"2019-12-31 00:00:00 +0000",HCG21612,6,0,1290,62
+02ee0f80348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{132},56,1,<null>,supplierinvoice_21,0.79,0,56,61
+02e731b0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{133},172,1,<null>,supplierinvoice_20,2.08,2.08,172,60
+02e053e0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{134},1235,1,"2020-12-31 00:00:00 +0000",1801001,24,0,1235,59
+02d97610348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{135},100,1,"2019-08-31 00:00:00 +0000",supplierinvoice_1,0,0,100,58
+02d35b90348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{0},20,1,"2018-08-31 00:00:00 +0000",supplierinvoice_1,0,0,20,57
+02cd1a00348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{136},1,1,<null>,supplierinvoice_19,0,0,1,56
+02c774b0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{137},4,1,<null>,supplierinvoice_1,0,0,4,55
+02c0bdf0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{3},5,1,<null>,supplierinvoice_1,0,0,5,54
+02ba7c60348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{138},1,1,<null>,supplierinvoice_19,0,0,1,53
+02b52530348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{139},1,1,<null>,supplierinvoice_1,0,0,1,52
+02aebc90348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{140},20,1,"2021-04-30 00:00:00 +0000",supplierinvoice_1,0,0,20,51
+02a8c920348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{141},3,1,<null>,supplierinvoice_21,7.67,0,3,50
+02a39900348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{142},14,1,<null>,supplierinvoice_21,7.67,0,14,49
+029e68e0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{143},1,1,<null>,supplierinvoice_21,767,0,1,48
+029938c0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{144},7,1,<null>,supplierinvoice_3,0,0,7,47
+02934550348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{145},700,1,"2018-10-31 00:00:00 +0000",421016F,0,0,700,46
+028da000348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{146},1000,1,"2019-05-31 00:00:00 +0000",supplierinvoice_1,0,0,1000,45
+0288be00348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{147},283,1,"2018-12-31 00:00:00 +0000",supplierinvoice_1,0,0,283,44
+0283dc00348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{148},54000,1,"2020-08-31 00:00:00 +0000",PRA716,0.01,0,54000,43
+028080a0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{149},10000,1,"2020-08-31 00:00:00 +0000",PRA716,0,0,10000,42
+027b9ea0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{150},2100,1,<null>,supplierinvoice_21,0.07000000000000001,0,2100,41
+027758e0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{151},370,1,<null>,supplierinvoice_18,0,0,370,40
+0271daa0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{152},720,1,"2020-03-31 00:00:00 +0000",supplierinvoice_1,0,0,720,39
+026caa80348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{118},1000,1,"2019-06-30 00:00:00 +0000",543160604,0,0,1000,38
+02677a60348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{6},154,1,<null>,supplierinvoice_15,0,0,154,37
+026334a0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{1},6737,1,<null>,supplierinvoice_1,0,0,6737,36
+025e2b90348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{153},238,1,"2020-04-30 00:00:00 +0000",M27007,0.28,0,238,35
+025a0ce0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{154},500,1,"2019-07-31 00:00:00 +0000",supplierinvoice_1,0,0,500,34
+0251a870348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{155},28,1,<null>,supplierinvoice_20,0.48,0,28,32
+0256b180348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{156},81,1,"2018-11-30 00:00:00 +0000",supplierinvoice_1,0,0,81,33
+024cc670348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{157},1080,1,"2022-03-31 00:00:00 +0000",76702302,0.38,0,1080,31
+02491cf0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{158},545,1,"2022-03-31 00:00:00 +0000",7C702202,38,0,545,30
+0244b020348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{159},200,1,<null>,supplierinvoice_19,0,0,200,29
+02417bd0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{160},700,1,<null>,supplierinvoice_1,0,0,700,28
+023ce7f0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{161},1500,1,"2019-08-31 00:00:00 +0000",supplierinvoice_1,0,0,1500,27
+02393e70348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{2},10,1,"2019-11-30 00:00:00 +0000",supplierinvoice_1,0,0,10,26
+02356de0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,25
+02317640348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{5},6500,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,6500,24
+022e1ae0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{162},23300,1,"2022-01-31 00:00:00 +0000",supplierinvoice_1,0,0,23300,23
+0229ae10348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{163},4000,1,"2019-01-31 00:00:00 +0000",supplierinvoice_1,0,0,4000,22
+0225b670348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{164},9800,1,"2019-02-28 00:00:00 +0000",0937K3,1,0,9800,21
+022197c0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{165},12000,1,"2020-11-30 00:00:00 +0000",T3017403,0,0,12000,20
+021785a0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{166},18500,1,"2020-03-31 00:00:00 +0000",CP7002,0,0,18500,17
+021e6370348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{167},1518,1,"2020-01-31 00:00:00 +0000",7153B,0.38,0,1518,19
+021b2f20348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{168},294,1,<null>,supplierinvoice_1,0,0,294,18
+02147860348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{169},640,1,"2019-11-30 00:00:00 +0000",supplierinvoice_1,0,0,640,16
+021080c0348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{170},-100,1,"2018-05-31 00:00:00 +0000",supplierinvoice_1,0,0,100,15
+020d2560348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{7},2,1,"2018-11-30 00:00:00 +0000",supplierinvoice_19,0,0,2,14
+020adb70348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{171},36,1,<null>,supplierinvoice_1,0,0,36,13
+01fbe750348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{172},1340,1,"2020-12-31 00:00:00 +0000"," 000",0,0,1340,8
+0207a720348b11e1bd5fc5c422a3fadd,<Stocktake>{5},<ItemBatch>{173},192,1,<null>,supplierinvoice_21,0.1,0,192,12
+35691bb00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{129},1770,1,"2019-12-31 00:00:00 +0000",supplierinvoice_17,0.02,0,1770,0
+356c28f00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{174},6500,1,"2020-04-30 00:00:00 +0000",514,1,0,6500,1
+356dd6a00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{175},16500,1,"2019-07-31 00:00:00 +0000",6777160702,1,0,16500,2
+356fd2700afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{119},1,1,"2018-10-31 00:00:00 +0000",supplierinvoice_1,0,0,1,3
+3570e3e00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{120},71,1,"2018-04-30 00:00:00 +0000",DYI1516167,0,0,71,4
+3572b8a00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{121},148,1,"2018-09-30 00:00:00 +0000",supplierinvoice_1,0,0,148,5
+357529a00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{122},700,1,"2019-02-28 00:00:00 +0000",AAM17004,0.01,0,700,6
+3577c1b00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{123},200,1,"2019-04-30 00:00:00 +0000",HE16E05,11,0,200,7
+357d8e100afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{176},15000,1,<null>,supplierinvoice_18,0,0,15000,9
+358026200afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{177},3000,1,<null>,supplierinvoice_17,0,0,3000,10
+358333600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{178},14,1,"2019-06-30 00:00:00 +0000",16018B99,37,0,14,11
+357a80d00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{179},770,1,<null>,supplierinvoice_18,0.05,0,770,8
+3585cb700afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{171},36,1,<null>,supplierinvoice_1,0,0,36,12
+3587a0300afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{7},2,1,"2018-11-30 00:00:00 +0000",supplierinvoice_19,0,0,2,13
+358a86600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{170},200,1,"2018-05-31 00:00:00 +0000",supplierinvoice_1,0,0,200,14
+358d93a00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{169},2640,1,"2019-11-30 00:00:00 +0000",supplierinvoice_1,0,0,2640,15
+359052c00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{180},25,1,"2018-04-30 00:00:00 +0000",supplierinvoice_1,0,0,25,16
+359338f00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{181},1400,1,"2019-12-31 00:00:00 +0000",999161201,0,0,1400,17
+3595a9f00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{182},11000,1,"2019-12-31 00:00:00 +0000",999161201,0,0,11000,18
+35992c600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{183},800,1,"2018-05-31 00:00:00 +0000",supplierinvoice_1,0,0,800,19
+359c87c00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{168},353,1,<null>,supplierinvoice_1,0,0,353,20
+359f95000afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{184},17,1,"2018-04-30 00:00:00 +0000",supplierinvoice_1,0,0,17,21
+35a2f0600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{185},1000,1,"2018-06-30 00:00:00 +0000",supplierinvoice_1,0,0,1000,22
+35a672d00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{186},597,1,"2019-08-31 00:00:00 +0000",ZP656003,38,0,597,23
+35a9ce300afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{187},1800,1,"2020-11-30 00:00:00 +0000",502,0,0,1800,24
+35acdb700afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{188},4400,1,"2020-11-30 00:00:00 +0000",T3017403,0,0,4400,25
+35b0ac000afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{189},1400,1,"2020-07-31 00:00:00 +0000",supplierinvoice_1,0,0,1400,26
+35b344100afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{190},4100,1,"2019-04-30 00:00:00 +0000",0937K3,1,0,4100,27
+35b73bb00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{163},4000,1,"2019-01-31 00:00:00 +0000",supplierinvoice_1,0,0,4000,28
+35bb0c400afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{162},27500,1,"2022-01-31 00:00:00 +0000",supplierinvoice_1,0,0,27500,29
+35bdf2700afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{5},6500,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,6500,30
+35c174e00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,31
+35c51e600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{191},10,1,"2018-02-28 00:00:00 +0000",supplierinvoice_1,0,0,10,32
+35c8c7e00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{2},10,1,"2019-11-30 00:00:00 +0000",supplierinvoice_1,0,0,10,33
+35ccbf800afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{161},1500,1,"2019-08-31 00:00:00 +0000",supplierinvoice_1,0,0,1500,34
+35d105400afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{160},1100,1,<null>,supplierinvoice_1,0,0,1100,35
+35d439900afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{159},200,1,<null>,supplierinvoice_19,0,0,200,36
+35d831300afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{192},43,1,"2020-09-30 00:00:00 +0000",3434C1,0.48,0,43,37
+35dc28d00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{156},81,1,"2018-11-30 00:00:00 +0000",supplierinvoice_1,0,0,81,38
+35df84300afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{154},500,1,"2019-07-31 00:00:00 +0000",supplierinvoice_1,0,0,500,39
+35e3c9f00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{1},6748,1,<null>,supplierinvoice_1,0,0,6748,40
+35e74c600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{6},154,1,<null>,supplierinvoice_15,0,0,154,41
+35ec2e600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{118},1000,1,"2019-06-30 00:00:00 +0000",543160604,0,0,1000,42
+35f04d100afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{117},500,1,"2018-07-31 00:00:00 +0000",543150702,0,0,500,43
+35f492d00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{152},720,1,"2020-03-31 00:00:00 +0000",supplierinvoice_1,0,0,720,44
+35f8ffa00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{151},2734,1,<null>,supplierinvoice_18,0.07000000000000001,0,2734,45
+35fd45600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{149},45200,1,"2020-08-31 00:00:00 +0000",PRA716,0.01,0,45200,46
+3601b2300afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{193},29,1,"2019-09-30 00:00:00 +0000",supplierinvoice_7,0,0,29,47
+3604bf700afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{194},37,1,"2023-01-31 00:00:00 +0000",8592,1.4,0,37,48
+36092c400afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{147},283,1,"2018-12-31 00:00:00 +0000",supplierinvoice_1,0,0,283,49
+360caeb00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{146},1000,1,"2019-05-31 00:00:00 +0000",supplierinvoice_1,0,0,1000,50
+3611ded00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{145},1650,1,"2018-10-31 00:00:00 +0000",421016F,35,0,1650,51
+361adf800afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{144},13,1,<null>,supplierinvoice_3,0,0,13,53
+361f9a700afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{140},20,1,"2021-04-30 00:00:00 +0000",supplierinvoice_1,0,0,20,54
+3624ca900afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{139},1,1,<null>,supplierinvoice_1,0,0,1,55
+362910500afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{138},1,1,<null>,supplierinvoice_19,0,0,1,56
+362e67800afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{3},5,1,<null>,supplierinvoice_1,0,0,5,57
+363397a00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{137},4,1,<null>,supplierinvoice_1,0,0,4,58
+3637b6500afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{136},1,1,<null>,supplierinvoice_19,0,0,1,59
+363c71400afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{0},20,1,"2018-08-31 00:00:00 +0000",supplierinvoice_1,0,0,20,60
+36423da00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{195},3,1,"2018-06-30 00:00:00 +0000",supplierinvoice_1,0,0,3,61
+3647bbe00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{135},100,1,"2019-08-31 00:00:00 +0000",supplierinvoice_1,0,0,100,62
+364d13100afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{196},3,1,"2022-03-31 00:00:00 +0000",supplierinvoice_11,0,0,3,63
+3651ce000afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{197},272,1,"2020-12-31 00:00:00 +0000",1801001,24,0,272,64
+361672b00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{126},24,1,"2018-04-30 00:00:00 +0000",supplierinvoice_1,0,0,24,52
+365725300afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{198},13,1,<null>,supplierinvoice_18,0.79,0,13,65
+365c7c600afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{199},1100,1,"2019-11-30 00:00:00 +0000",05DDCO34A,0.34,0,1100,66
+3661faa00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{200},515,1,"2019-12-31 00:00:00 +0000",HCG21612,6,0,515,67
+36679ff00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{130},202,1,<null>,supplierinvoice_18,125,0,202,68
+366f1a000afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{201},16,1,<null>,supplierinvoice_1,0,0,16,69
+36755b900afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{202},1250,1,"2020-09-30 00:00:00 +0000",supplierinvoice_2,0,0,1250,70
+367ab2c00afb11e8b3cc4b7fa3cb3cef,<Stocktake>{0},<ItemBatch>{203},110,1,"2020-03-31 00:00:00 +0000",supplierinvoice_3,0,0,110,71
+0ba0aca0152611e8884ef1796b006edd,<Stocktake>{6},<ItemBatch>{204},0,1,<null>,stocktake_8,0,0,1360,3
+9bda0510152511e8884ef1796b006edd,<Stocktake>{6},<ItemBatch>{205},0,1,<null>,stocktake_8,0,0,16,2
+982e3b20152511e8884ef1796b006edd,<Stocktake>{6},<ItemBatch>{8},0,1,<null>,stocktake_8,0,0,3000,1
+6b806530152511e8884ef1796b006edd,<Stocktake>{6},<ItemBatch>{124},0,1,<null>,stocktake_8,0,0,15000,0
+34e05310331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{206},8185,1,"2019-01-31 00:00:00 +0000",supplierinvoice_29,0,0,8185,0
+34e4e6f0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{207},7065,1,"2019-08-31 00:00:00 +0000",supplierinvoice_29,0,0,7065,1
+34e97ad0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{208},14000,1,"2019-07-31 00:00:00 +0000",6777160702,0,0,14000,2
+34ebebd0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{10},283,1,"2020-09-30 00:00:00 +0000",ID74014,1.51,1.51,283,3
+34eed200331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{119},1,1,"2018-10-31 00:00:00 +0000",supplierinvoice_1,0,0,1,4
+34f058a0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{120},48,1,"2018-04-30 00:00:00 +0000",DYI1516167,0,0,48,5
+34f2c9a0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{121},133,1,"2018-09-30 00:00:00 +0000",supplierinvoice_1,0,0,133,6
+34f51390331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{9},3600,1,"2019-02-28 00:00:00 +0000",AAM17004,0,0,3600,7
+35014890331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{8},1400,1,<null>,stocktake_8,0,0,1400,12
+35042ec0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{173},74,1,<null>,supplierinvoice_21,0,0,74,13
+353bb980331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{209},11,1,"2020-06-30 00:00:00 +0000",supplierinvoice_26,0,0,11,30
+35073c00331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{171},33,1,<null>,supplierinvoice_1,0,0,33,14
+3508e9b0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{7},2,1,"2018-11-30 00:00:00 +0000",supplierinvoice_19,0,0,2,15
+35619100331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{210},72,1,"2023-01-31 00:00:00 +0000",supplierinvoice_26,0,0,72,39
+3546dd10331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{211},654,1,"2020-07-31 00:00:00 +0000",supplierinvoice_23,0,0,654,33
+35808ab0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{0},18,1,"2018-08-31 00:00:00 +0000",supplierinvoice_1,0,0,18,46
+35379ad0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{157},500,1,"2022-03-31 00:00:00 +0000",76702302,0,0,500,29
+350bcfe0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{212},100,1,"2018-07-31 00:00:00 +0000",217415009,0,0,100,16
+35125f90331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{213},2700,1,"2020-03-31 00:00:00 +0000",CP7002,0,0,2700,18
+350f0430331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{214},2100,1,"2019-11-30 00:00:00 +0000",supplierinvoice_26,0,0,2100,17
+35156cd0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{215},400,1,"2018-10-31 00:00:00 +0000",784151004,0,0,400,19
+3518c830331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{168},207,1,<null>,supplierinvoice_1,0,0,207,20
+351bfc80331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{167},117,1,"2020-01-31 00:00:00 +0000",7153B,0,0,117,21
+351e9490331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{216},750,1,"2020-01-31 00:00:00 +0000",7153B,0,0,750,22
+3533a330331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{161},300,1,"2019-08-31 00:00:00 +0000",supplierinvoice_1,0,0,300,28
+353f6300331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{156},81,1,"2018-11-30 00:00:00 +0000",supplierinvoice_1,0,0,81,31
+3542be60331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{154},500,1,"2019-07-31 00:00:00 +0000",supplierinvoice_1,0,0,500,32
+35538740331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{217},2500,1,"2020-03-31 00:00:00 +0000",DMTA0173001,0,0,2500,36
+35586940331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{148},9700,1,"2020-08-31 00:00:00 +0000",PRA716,0,0,9700,37
+355c87f0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{218},9100,1,"2020-08-31 00:00:00 +0000",PRA716,0,0,9100,38
+3572a800331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{3},3,1,<null>,supplierinvoice_1,0,0,3,43
+3577d820331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{137},3,1,<null>,supplierinvoice_1,0,0,3,44
+357b5a90331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{136},1,1,<null>,supplierinvoice_19,0,0,1,45
+35228c30331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{163},4000,1,"2019-01-31 00:00:00 +0000",supplierinvoice_1,0,0,4000,23
+352635b0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{162},16200,1,"2022-01-31 00:00:00 +0000",supplierinvoice_1,0,0,16200,24
+35287fa0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{5},6500,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,6500,25
+352c7740331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,26
+34f847e0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{172},770,1,"2020-12-31 00:00:00 +0000"," 000",0,0,770,8
+34fa91d0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{219},310,1,<null>,supplierinvoice_23,0,0,310,9
+34fc3f80331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{220},440,1,<null>,supplierinvoice_26,0,0,440,10
+34fe3b50331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{221},10,1,<null>,supplierinvoice_29,0,0,10,11
+35856cb0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{135},60,1,"2019-08-31 00:00:00 +0000",supplierinvoice_1,0,0,60,47
+358b8730331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{222},565,1,"2021-01-31 00:00:00 +0000",supplierinvoice_24,0,0,565,48
+35960e80331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{223},300,1,"2022-09-30 00:00:00 +0000",73697,0,0,300,50
+35910570331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{224},43,1,<null>,supplierinvoice_26,0,0,43,49
+354b9800331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{1},6676,1,<null>,supplierinvoice_1,0,0,6676,34
+354f4180331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{6},154,1,<null>,supplierinvoice_15,0,0,154,35
+356624e0331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{147},183,1,"2018-12-31 00:00:00 +0000",supplierinvoice_1,0,0,183,40
+3569a750331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{146},1000,1,"2019-05-31 00:00:00 +0000",supplierinvoice_1,0,0,1000,41
+356ded10331011e8baf10984b52a6d1a,<Stocktake>{7},<ItemBatch>{225},1000,1,"2019-09-30 00:00:00 +0000",667160901,0,0,1000,42
+912a7800366011e88fbccdc0dc0120d2,<Stocktake>{8},<ItemBatch>{3},3,1,<null>,supplierinvoice_1,0,0,3,0
+912bd790366011e88fbccdc0dc0120d2,<Stocktake>{8},<ItemBatch>{11},1,1,<null>,supplierinvoice_31,0,0,1,1
+912e2180366011e88fbccdc0dc0120d2,<Stocktake>{8},<ItemBatch>{137},2,1,<null>,supplierinvoice_1,0,0,2,2
+912f32f0366011e88fbccdc0dc0120d2,<Stocktake>{8},<ItemBatch>{136},1,1,<null>,supplierinvoice_19,0,0,1,3
+1422ed0051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{226},2000,1,"2019-11-30 00:00:00 +0000",MG16962,0.01,0,2000,37
+140308f051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{216},345,1,"2020-01-31 00:00:00 +0000",7153B,0,0,345,28
+13fcc76051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{215},400,1,"2018-10-31 00:00:00 +0000",784151004,0,0,400,26
+13f65ec051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{227},2700,1,"2019-12-31 00:00:00 +0000",supplierinvoice_33,0.01,0,2700,24
+13ee969051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{212},50,1,"2018-07-31 00:00:00 +0000",217415009,0,0,50,21
+13df545051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{15},1800,1,<null>,supplierinvoice_36,0,0,1800,15
+13dd7f9051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{8},1000,1,<null>,stocktake_8,0,0,1000,14
+13d3bb9051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{228},80,1,"2020-05-31 00:00:00 +0000",HE17F02,0.11,0,80,10
+13d14a9051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{9},3600,1,"2019-02-28 00:00:00 +0000",AAM17004,0,0,3600,9
+144e42c051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{6},154,1,<null>,supplierinvoice_15,0,0,0,47
+13c870f051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{229},5,1,<null>,supplierinvoice_45,0,0,5,5
+13c7116051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{10},147,1,"2020-09-30 00:00:00 +0000",ID74014,1.51,1.51,147,4
+13e6f57051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{230},86,1,<null>,supplierinvoice_33,0.1,0,86,18
+13e4d29051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{173},1,1,<null>,supplierinvoice_21,0,0,1,17
+13dae78051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{231},17000,1,<null>,supplierinvoice_36,0,0,17000,13
+13cc689051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{120},48,1,"2018-04-30 00:00:00 +0000",DYI1516167,0,0,48,7
+13cae1f051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{119},1,1,"2018-10-31 00:00:00 +0000",supplierinvoice_1,0,0,1,6
+13d67ab051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{172},770,1,"2020-12-31 00:00:00 +0000"," 000",0,0,770,11
+1427a7f051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{14},700,1,"2022-09-30 00:00:00 +0000",20170915,4,0,700,38
+141ef56051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{2},10,1,"2019-11-30 00:00:00 +0000",supplierinvoice_1,0,0,10,36
+14146e1051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{162},13600,1,"2022-01-31 00:00:00 +0000",supplierinvoice_1,0,0,13600,33
+14109d8051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{163},3000,1,"2019-01-31 00:00:00 +0000",supplierinvoice_1,0,0,3000,32
+141b24d051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,35
+14177b5051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{5},6500,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,6500,34
+140d1b1051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{232},37300,1,"2020-07-31 00:00:00 +0000",672026,1,0,37300,31
+1409bfb051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{233},52900,1,"2020-11-30 00:00:00 +0000",S09,0,0,52900,30
+1406163051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{13},1734,1,"2020-04-30 00:00:00 +0000",53238A,38,0,1734,29
+13fffbb051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{168},154,1,<null>,supplierinvoice_1,0,0,154,27
+13f9931051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{234},60900,1,"2020-03-31 00:00:00 +0000",CP7002,0,0,60900,25
+13f3edc051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{214},350,1,"2019-11-30 00:00:00 +0000",supplierinvoice_26,0,0,350,23
+13f1079051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{235},100,1,"2020-02-29 00:00:00 +0000",7217004,0.1,0,100,22
+13ebd77051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{7},2,1,"2018-11-30 00:00:00 +0000",supplierinvoice_19,0,0,2,20
+13e9b49051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{171},33,1,<null>,supplierinvoice_1,0,0,33,19
+13e2137051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{12},126,1,"2019-06-30 00:00:00 +0000",16018B99,37,0,126,16
+13cf00a051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{121},128,1,"2018-09-30 00:00:00 +0000",supplierinvoice_1,0,0,128,8
+13c4a06051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{236},57000,1,"2019-07-31 00:00:00 +0000",6777160702,1,0,57000,3
+13c22f6051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{237},42309,1,"2019-08-31 00:00:00 +0000",supplierinvoice_36,0.01,0,42309,2
+13bf975051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{238},2000,1,"2019-01-31 00:00:00 +0000",supplierinvoice_36,0.02,0,2000,1
+13bed40051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{206},7050,1,"2019-01-31 00:00:00 +0000",supplierinvoice_29,0,0,7050,0
+13d84f7051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{239},1800,1,<null>,supplierinvoice_36,0.05,0,1800,12
+142c62e051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{157},205,1,"2022-03-31 00:00:00 +0000",76702302,0,0,205,39
+142fe55051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{240},1500,1,"2022-10-31 00:00:00 +0000",supplierinvoice_35,0.38,0,1500,40
+1434a04051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{241},254,1,"2020-06-30 00:00:00 +0000",supplierinvoice_36,0.48,0,254,41
+1439d06051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{156},81,1,"2018-11-30 00:00:00 +0000",supplierinvoice_1,0,0,81,42
+143d79e051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{154},500,1,"2019-07-31 00:00:00 +0000",supplierinvoice_1,0,0,500,43
+1441e6b051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{211},60,1,"2020-07-31 00:00:00 +0000",supplierinvoice_23,0,0,60,44
+1445903051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{242},3056,1,"2020-10-31 00:00:00 +0000",M270250,0.28,0,3056,45
+144a241051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{1},6662,1,<null>,supplierinvoice_1,0,0,6662,46
+145372e051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{217},1500,1,"2020-03-31 00:00:00 +0000",DMTA0173001,0,0,1500,48
+1457437051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{243},3000,1,"2020-03-31 00:00:00 +0000",DMTA0173001,0,0,3000,49
+145b3b1051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{244},200,1,"2020-03-31 00:00:00 +0000",HE17D25,0.02,0,200,50
+145fcef051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{245},5600,1,"2021-03-31 00:00:00 +0000",NV7171,0.07000000000000001,0,5600,51
+146489e051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{210},5,1,"2023-01-31 00:00:00 +0000",supplierinvoice_26,0,0,5,52
+14696be051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{246},308,1,"2020-03-31 00:00:00 +0000",LE610,0,0,308,53
+146e26d051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{247},20,1,"2023-01-31 00:00:00 +0000",8592,1.4,0,20,54
+147308d051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{248},50,1,"2018-05-31 00:00:00 +0000",55471,0.01,0,50,55
+147811e051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{225},1000,1,"2019-09-30 00:00:00 +0000",667160901,0,0,1000,56
+147d902051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{249},51,1,"2018-08-31 00:00:00 +0000",K340816,0,0,51,57
+1482c04051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{250},899,1,"2018-10-31 00:00:00 +0000",421016F,0,0,899,58
+1487f06051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{251},50,1,<null>,supplierinvoice_41,0,0,50,59
+148d208051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{252},960,1,<null>,stocktake_13,0,0,960,60
+1493d74051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{253},38,1,<null>,supplierinvoice_36,7.67,0,38,61
+1499f1c051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{3},3,1,<null>,supplierinvoice_1,0,0,3,62
+149f21e051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{11},1,1,<null>,supplierinvoice_31,0,0,1,63
+14a53c6051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{137},2,1,<null>,supplierinvoice_1,0,0,2,64
+14a9f75051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{136},1,1,<null>,supplierinvoice_19,0,0,1,65
+14afeac051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{0},13,1,"2018-08-31 00:00:00 +0000",supplierinvoice_1,0,0,13,66
+14b5de3051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{135},60,1,"2019-08-31 00:00:00 +0000",supplierinvoice_1,0,0,60,67
+14bbf8b051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{222},245,1,"2021-01-31 00:00:00 +0000",supplierinvoice_24,0,0,245,68
+14c0dab051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{254},2015,1,<null>,supplierinvoice_36,24,0,2015,69
+14c87bd051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{255},378,1,"2020-11-30 00:00:00 +0000",supplierinvoice_36,2.08,2.08,378,70
+14cfa7c051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{256},2500,1,"2019-12-31 00:00:00 +0000",05DD043A,0.34,0,2500,71
+14d6fac051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{257},350,1,"2019-05-31 00:00:00 +0000",05DDC011A,0.34,0,350,72
+14de4dc051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{258},2990,1,"2020-05-31 00:00:00 +0000",20170612,0.06,0,2990,73
+14e5048051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{259},20,1,<null>,supplierinvoice_44,0,0,20,74
+14ecf3c051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{260},178,1,<null>,supplierinvoice_36,125,0,178,75
+14f446c051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{223},100,1,"2022-09-30 00:00:00 +0000",73697,0,0,100,76
+14f99df051af11e8b9b66789e723d72c,<Stocktake>{9},<ItemBatch>{261},7200,1,"2021-01-31 00:00:00 +0000",DZW1801,0.02,0,7200,77
+9dc24020658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{238},2000,1,"2019-01-31 00:00:00 +0000",supplierinvoice_36,0.02,0,0,1
+9dc32a80658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{262},1500,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,0,2
+9dc46300658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{22},1500,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,0,3
+9dfcd820658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{23},200,1,<null>,supplierinvoice_54,0.04,0.04,0,25
+9e3462e0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{263},250,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,40
+9e37e550658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{21},250,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,41
+9e40bef0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{264},30,1,"2020-06-30 00:00:00 +0000",247,0.48,0,0,43
+9e44b690658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{265},30,1,"2020-06-30 00:00:00 +0000",247,0.48,0,0,44
+9f00daa0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{266},2500,1,"2021-02-28 00:00:00 +0000",DZW1806,0.02,0,0,82
+9dc107a0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{206},2850,1,"2019-01-31 00:00:00 +0000",supplierinvoice_29,0,0,1350,0
+9dc6acf0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{267},7560,1,"2019-09-30 00:00:00 +0000",3856093,0.01,0,0,4
+9dc91df0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{268},10700,1,"2020-05-31 00:00:00 +0000",173132161,0.01,0,10700,5
+9dcb40d0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{10},66,1,"2020-09-30 00:00:00 +0000",ID74014,1.51,1.51,66,6
+9dcdd8e0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{9},3600,1,"2019-02-28 00:00:00 +0000",AAM17004,0,0,3600,7
+9dd049e0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{228},80,1,"2020-05-31 00:00:00 +0000",HE17F02,0.11,0,80,8
+9dd5ef30658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{231},2400,1,<null>,supplierinvoice_36,0,0,2400,10
+9dd7c3f0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{269},5000,1,<null>,supplierinvoice_55,0,0,5000,11
+9ddaaa20658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{8},1000,1,<null>,stocktake_8,0,0,1000,12
+9ddc7ee0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{15},1800,1,<null>,supplierinvoice_36,0,0,1800,13
+9ddf8c20658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{12},112,1,"2019-06-30 00:00:00 +0000",16018B99,37,0,112,14
+9de24b40658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{230},4,1,<null>,supplierinvoice_33,0.1,0,4,15
+9de42000658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{270},60,1,<null>,supplierinvoice_47,0.1,0,60,16
+9dd30900658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{172},110,1,"2020-12-31 00:00:00 +0000"," 000",0,0,110,9
+9de72d40658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{171},3,1,<null>,supplierinvoice_1,0,0,3,17
+9de92910658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{7},2,1,"2018-11-30 00:00:00 +0000",supplierinvoice_19,0,0,2,18
+9dec0f40658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{16},1650,1,"2019-12-31 00:00:00 +0000",supplierinvoice_47,0.01,0,1650,19
+9deef570658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{234},11200,1,"2020-03-31 00:00:00 +0000",CP7002,0,0,11200,20
+9df11850658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{271},5000,1,"2020-03-31 00:00:00 +0000",CP7002,0,0,5000,21
+9df473b0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{215},400,1,"2018-10-31 00:00:00 +0000",784151004,0,0,400,22
+9df81d30658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{272},150,1,<null>,supplierinvoice_51,0.04,0.04,0,23
+9dfa8e30658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{273},50,1,<null>,supplierinvoice_51,0.04,0.04,0,24
+9dffe560658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{168},95,1,<null>,supplierinvoice_1,0,0,95,26
+9e025660658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{274},25,1,"2020-10-31 00:00:00 +0000",supplierinvoice_47,2.33,0,25,27
+9e058ab0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{13},1118,1,"2020-04-30 00:00:00 +0000",53238A,38,0,1118,28
+9e07fbb0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{19},400,1,"2020-11-30 00:00:00 +0000",supplierinvoice_52,0.38,0,400,29
+9e0bf350658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{233},3800,1,"2020-11-30 00:00:00 +0000",S09,0,0,3800,30
+9e0f9cd0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{275},2500,1,"2020-07-31 00:00:00 +0000",672026,1,0,2500,31
+9e134650658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{163},1500,1,"2019-01-31 00:00:00 +0000",supplierinvoice_1,0,0,1500,32
+9e1716e0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{162},9600,1,"2022-01-31 00:00:00 +0000",supplierinvoice_1,0,0,9600,33
+9e1a7240658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{5},6500,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,6500,34
+9e1f7b50658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,35
+9e243640658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{2},10,1,"2019-11-30 00:00:00 +0000",supplierinvoice_1,0,0,10,36
+9e2854f0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{226},1500,1,"2019-11-30 00:00:00 +0000",MG16962,0.01,0,1500,37
+9e2d0fe0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{14},700,1,"2022-09-30 00:00:00 +0000",20170915,4,0,700,38
+9e310780658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{240},570,1,"2022-10-31 00:00:00 +0000",supplierinvoice_35,0.38,0,320,39
+9e3cc750658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{241},117,1,"2020-06-30 00:00:00 +0000",supplierinvoice_36,0.48,0,87,42
+9e494a70658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{154},100,1,"2019-07-31 00:00:00 +0000",supplierinvoice_1,0,0,100,45
+9e4dde50658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{242},2300,1,"2020-10-31 00:00:00 +0000",M270250,0.28,0,2300,46
+9e524b20658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{1},6662,1,<null>,supplierinvoice_1,0,0,6662,47
+9e55a680658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{6},154,1,<null>,supplierinvoice_15,0,0,154,48
+9e5a1350658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{243},3000,1,"2020-03-31 00:00:00 +0000",DMTA0173001,0,0,3000,49
+9e5de3e0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{244},100,1,"2020-03-31 00:00:00 +0000",HE17D25,0.02,0,100,50
+9e62c5e0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{276},500,1,"2021-03-31 00:00:00 +0000",NV7171,0.07000000000000001,0,500,51
+9e67a7e0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{277},12000,1,"2019-09-30 00:00:00 +0000",1160903,0.01,0,12000,52
+9e6beda0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{278},25000,1,"2019-09-30 00:00:00 +0000",1160903,0.01,0,25000,53
+9e70cfa0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{279},30,1,"2021-05-31 00:00:00 +0000",supplierinvoice_54,0,0,0,54
+9e75d8b0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{246},178,1,"2020-03-31 00:00:00 +0000",LE610,0,0,178,55
+9e7a1e70658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{280},500,1,"2021-03-31 00:00:00 +0000",supplierinvoice_55,0,0,500,56
+9e7fead0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{281},4600,1,"2019-11-30 00:00:00 +0000",74560,0.01,0,4600,57
+9e862c60658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{225},1000,1,"2019-09-30 00:00:00 +0000",667160901,0,0,1000,58
+91ef55f0658411e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{249},51,1,"2018-08-31 00:00:00 +0000",K340816,0,0,51,79
+91f5e5a0658411e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{250},899,1,"2018-10-31 00:00:00 +0000",421016F,0,0,899,80
+91fc0020658411e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{252},176,1,<null>,stocktake_13,0,0,176,81
+9e9dac00658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{253},10,1,<null>,supplierinvoice_36,7.67,0,10,63
+9ea266f0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{24},25,1,<null>,supplierinvoice_55,7.67,0,25,64
+9ea85a60658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{3},3,1,<null>,supplierinvoice_1,0,0,3,65
+9eacc730658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{11},1,1,<null>,supplierinvoice_31,0,0,1,66
+9eb21e60658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{137},2,1,<null>,supplierinvoice_1,0,0,2,67
+9eb68b30658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{136},1,1,<null>,supplierinvoice_19,0,0,1,68
+9ebc0970658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{0},13,1,"2018-08-31 00:00:00 +0000",supplierinvoice_1,0,0,13,69
+9ec187b0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{222},245,1,"2021-01-31 00:00:00 +0000",supplierinvoice_24,0,0,245,70
+9ec669b0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{254},875,1,<null>,supplierinvoice_36,24,0,875,71
+9ecafd90658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{20},250,1,"2021-02-28 00:00:00 +0000",supplierinvoice_52,24,0,250,72
+9ed0c9f0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{282},5,1,"2020-11-30 00:00:00 +0000",supplierinvoice_52,2.08,2.08,5,73
+9ed7a7c0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{283},4400,1,"2020-03-31 00:00:00 +0000",05DDD00(7A-8A),0.34,0,4400,74
+9edde950658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{258},1230,1,"2020-05-31 00:00:00 +0000",20170612,0.06,0,1230,75
+9ee2cb50658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{17},800,1,"2020-10-31 00:00:00 +0000",supplierinvoice_52,0.06,0,800,76
+9ee90ce0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{260},81,1,<null>,supplierinvoice_36,125,0,81,77
+9eedeee0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{18},50,1,<null>,supplierinvoice_52,125,0,50,78
+9ef36d20658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{223},100,1,"2022-09-30 00:00:00 +0000",73697,0,0,100,79
+9ef82810658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{261},1730,1,"2021-01-31 00:00:00 +0000",DZW1801,0.02,0,0,80
+9efc6dd0658111e8b622dd5ee426118d,<Stocktake>{10},<ItemBatch>{284},2500,1,"2021-02-28 00:00:00 +0000",DZW1806,0.02,0,1730,81
+d5f8cbc0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{59},5,1,"2021-02-28 00:00:00 +0000",supplierinvoice_79,0,0,0,12
+d5ef7cf0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{21},230,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,7
+d5f4fb30dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{55},7,1,"2021-10-31 00:00:00 +0000",supplierinvoice_78,0,0,0,10
+d5f6cff0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{56},7,1,"2022-03-31 00:00:00 +0000",supplierinvoice_78,0,0,0,11
+2c13be20acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{285},120,1,<null>,supplierinvoice_80,0.05,0,120,64
+2b71b1c0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{67},30,1,"2019-06-30 00:00:00 +0000",4542G5,0.1,0,30,23
+2c00ab50acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{168},34,1,<null>,supplierinvoice_1,0,0,34,60
+2b54daf0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{286},40,1,"2020-08-31 00:00:00 +0000",17IA120,0.08,0.08,40,11
+2c6efd80acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,83
+93d2d400acf611e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{287},1300,1,"2020-09-30 00:00:00 +0000",MG17847,0.01,0,1300,84
+3c964cb0acf811e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{33},172,1,"2020-06-30 00:00:00 +0000",247,0.48,0,172,84
+2bc1cd90acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{288},850,1,"2021-05-31 00:00:00 +0000",675,0,0,850,45
+2bf70e60acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{136},1,1,<null>,supplierinvoice_19,0,0,1,58
+2bfb7b30acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{71},2,1,<null>,supplierinvoice_80,15,0,2,59
+2b3c49e0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{17},800,1,"2020-10-31 00:00:00 +0000",supplierinvoice_52,0.06,0,800,2
+2c4e0800acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{18},50,1,<null>,supplierinvoice_52,125,0,50,76
+2b4634f0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{289},10,1,<null>,supplierinvoice_61,0,0,10,6
+2b8c3ea0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{40},1000,1,"2019-02-28 00:00:00 +0000",AAM17004,0.01,0,1000,33
+2b89a690acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{9},2700,1,"2019-02-28 00:00:00 +0000",AAM17004,0,0,2700,32
+2b66dc50acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{60},12,1,"2021-10-31 00:00:00 +0000",supplierinvoice_79,0,0,0,19
+2bd02570acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{29},5250,1,"2021-02-28 00:00:00 +0000",supplierinvoice_69,0.02,0,5250,49
+2c524dc0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{25},10,1,<null>,supplierinvoice_57,125,0,10,77
+2c49c240acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{260},39,1,<null>,supplierinvoice_36,125,0,39,75
+2b3df790acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{32},1640,1,"2020-09-30 00:00:00 +0000",20171009,0.06,0.06,1640,3
+2b393ca0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{290},2000,1,"2020-05-31 00:00:00 +0000",05DDD023A,0.34,0,2000,1
+2b3719c0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{291},3375,1,"2020-05-31 00:00:00 +0000",05DDD023A,0.34,0,3375,0
+2c21eef0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{30},399,1,"2020-11-30 00:00:00 +0000",supplierinvoice_69,2.08,2.08,399,67
+2c1d5b10acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{26},453,1,"2023-01-31 00:00:00 +0000",supplierinvoice_58,2.08,2.08,453,66
+2c31cd70acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{57},2,1,"2020-05-31 00:00:00 +0000",supplierinvoice_78,0,0,172,70
+2bf22c60acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{53},1,1,<null>,supplierinvoice_75,0,0,1,57
+2bee0db0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{11},1,1,<null>,supplierinvoice_31,0,0,1,56
+2bea3d20acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{3},2,1,<null>,supplierinvoice_1,0,0,2,55
+2bdc5a70acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{51},5,1,<null>,supplierinvoice_72,7.67,0,5,52
+2be5a940acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{70},3,1,<null>,supplierinvoice_80,30,0,3,54
+2bd8b0f0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{24},24,1,<null>,supplierinvoice_55,7.67,0,24,51
+2c73df80acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{46},3216,1,"2019-11-30 00:00:00 +0000",471117C,0.35,0,3216,84
+2b4bb330acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{280},322,1,"2021-03-31 00:00:00 +0000",supplierinvoice_55,0,0,322,8
+2b48cd00acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{49},700,1,"2021-05-31 00:00:00 +0000",supplierinvoice_70,0,0,700,7
+2bcc7bf0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{292},50000,1,"2021-03-31 00:00:00 +0000",supplierinvoice_72,0.01,0,50000,48
+2bc92090acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{293},34400,1,"2020-10-31 00:00:00 +0000",171033,0.01,0,34400,47
+2bc501e0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{50},11000,1,"2021-07-31 00:00:00 +0000",supplierinvoice_71,0.07000000000000001,0,11000,46
+2bbd39b0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{69},6700,1,"2020-10-31 00:00:00 +0000",DMTA0174001,0,0,6700,44
+2b515880acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{34},660,1,"2020-10-31 00:00:00 +0000",MZP026,0.28,0,660,10
+2b4f83c0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{242},508,1,"2020-10-31 00:00:00 +0000",M270250,0.28,0,508,9
+2c60ccb0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{73},900,1,"2019-04-30 00:00:00 +0000",59419,0.02,0.02,900,80
+2bb87ec0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{154},100,1,"2019-07-31 00:00:00 +0000",supplierinvoice_1,0,0,100,43
+2b5ec600acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{54},11,1,"2021-02-28 00:00:00 +0000",supplierinvoice_78,0,0,212,15
+2b5b1c80acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{21},230,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,13
+2be0c740acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{14},400,1,"2022-09-30 00:00:00 +0000",20170915,4,0,400,53
+2b6e5660acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{2},5,1,"2019-11-30 00:00:00 +0000",supplierinvoice_1,0,0,5,22
+2b57e830acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{66},10,1,"2019-04-30 00:00:00 +0000",DHG508C,0.53,0,10,12
+2c669910acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{162},6500,1,"2022-01-31 00:00:00 +0000",supplierinvoice_1,0,0,6600,81
+2bb04160acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{294},38600,1,"2020-09-30 00:00:00 +0000",T2017293,0.01,0,38600,41
+2babfba0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{45},66300,1,"2021-06-30 00:00:00 +0000",T3018167,0,0,67100,40
+2b9e8e20acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{43},1991,1,"2020-03-31 00:00:00 +0000",71168B,0.38,0,1991,39
+2b995e00acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{19},400,1,"2020-11-30 00:00:00 +0000",supplierinvoice_52,0.38,0,400,37
+2b96c5f0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{13},545,1,"2020-04-30 00:00:00 +0000",53238A,38,0,545,36
+2c09ac00acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{47},55,1,"2020-10-31 00:00:00 +0000",supplierinvoice_70,2.33,0,55,62
+2b9bcf00acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{27},25,1,"2020-11-30 00:00:00 +0000",supplierinvoice_61,0,0,25,38
+2c056640acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{274},25,1,"2020-10-31 00:00:00 +0000",supplierinvoice_47,2.33,0,25,61
+2b5ca320acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{35},1900,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,14
+2b60e8e0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{55},7,1,"2021-10-31 00:00:00 +0000",supplierinvoice_78,0,0,0,16
+2b934380acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{215},300,1,"2018-10-31 00:00:00 +0000",784151004,0,0,300,35
+2b62bda0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{56},7,1,"2022-03-31 00:00:00 +0000",supplierinvoice_78,0,0,0,17
+d6182900acf611e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{28},11,1,<null>,supplierinvoice_61,0,0,11,84
+d60eda30acf611e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{270},29,1,<null>,supplierinvoice_47,0.1,0,29,83
+2b7e5bf0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{39},99,1,"2019-07-31 00:00:00 +0000",PA2647H,29.72,0,99,28
+2b7c1200acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{10},35,1,"2020-09-30 00:00:00 +0000",ID74014,1.51,1.51,35,27
+2b86c060acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{38},80000,1,"2020-05-31 00:00:00 +0000",173132161,0.01,0,80000,31
+2c182af0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{295},770,1,<null>,supplierinvoice_80,0.05,0,770,65
+2c0f2a40acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{296},1050,1,<null>,supplierinvoice_70,0.05,0,1050,63
+2b7904c0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{36},3000,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,3000,26
+2b819040acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{37},69552,1,"2019-09-30 00:00:00 +0000",3856093,0.01,0,69552,29
+2b8f9a00acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{68},888,1,"2020-12-31 00:00:00 +0000",HE18A02,0.11,0,888,34
+2b4375d0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{12},110,1,"2019-06-30 00:00:00 +0000",16018B99,37,0,110,5
+2b76e1e0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{22},1500,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,1500,25
+2b74bf00acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{262},715,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,715,24
+2c6aded0acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{5},6500,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,0,82
+2c449220acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{65},8,1,"2022-03-31 00:00:00 +0000",supplierinvoice_79,0,0,0,74
+2c3f8910acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{64},27,1,"2021-01-31 00:00:00 +0000",supplierinvoice_79,0,0,0,73
+2b64e080acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{59},5,1,"2021-02-28 00:00:00 +0000",supplierinvoice_79,0,0,0,18
+2c3b4350acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{63},15,1,"2020-11-30 00:00:00 +0000",supplierinvoice_79,0,0,0,72
+2c36af70acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{58},12,1,"2020-12-31 00:00:00 +0000",supplierinvoice_78,0,0,0,71
+2c2d3990acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{31},2400,1,"2022-09-30 00:00:00 +0000",supplierinvoice_69,24,0,0,69
+2c285790acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{20},170,1,"2021-02-28 00:00:00 +0000",supplierinvoice_52,24,0,0,68
+2b849d80acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{297},900,1,"2020-05-31 00:00:00 +0000",173132161,0.01,0,900,30
+2b6b2210acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{62},55,1,"2022-01-31 00:00:00 +0000",supplierinvoice_79,0,0,0,21
+2b692640acf011e8bb9a9d9b746c4641,<Stocktake>{11},<ItemBatch>{61},17,1,"2022-03-31 00:00:00 +0000",supplierinvoice_79,0,0,0,20
+ff41f760c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{274},10,1,"2020-10-31 00:00:00 +0000",supplierinvoice_47,2.33,0,0,64
+ff472780c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{47},55,1,"2020-10-31 00:00:00 +0000",supplierinvoice_70,2.33,0,0,65
+fedc57c0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{22},1265,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,1265,62
+fee187e0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{36},2950,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,2950,63
+fe9c6890c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{291},300,1,"2020-05-31 00:00:00 +0000",05DDD023A,0.34,0,300,60
+fea409b0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{290},1475,1,"2020-05-31 00:00:00 +0000",05DDD023A,0.34,0,1475,61
+feaa9960c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{17},800,1,"2020-10-31 00:00:00 +0000",supplierinvoice_52,0.06,0,800,60
+feaff090c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{32},1220,1,"2020-09-30 00:00:00 +0000",20171009,0.06,0.06,1220,61
+e31b7050c30111e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{33},114,1,"2020-06-30 00:00:00 +0000",247,0.48,0,114,3
+fec96c00c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{280},163,1,"2021-03-31 00:00:00 +0000",supplierinvoice_55,0,0,163,62
+feb65930c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{12},109,1,"2019-06-30 00:00:00 +0000",16018B99,37,0,109,61
+febc9ac0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{289},3,1,<null>,supplierinvoice_61,0,0,3,61
+fec21900c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{298},1,1,<null>,supplierinvoice_86,0,0,1,62
+fecfad90c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{242},20,1,"2020-10-31 00:00:00 +0000",M270250,0.28,0,20,62
+fed52bd0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{34},517,1,"2020-10-31 00:00:00 +0000",MZP026,0.28,0,517,63
+fee7c970c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{37},34992,1,"2019-09-30 00:00:00 +0000",3856093,0.01,0,34992,63
+feedbce0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{38},48400,1,"2020-05-31 00:00:00 +0000",173132161,0.01,0,49200,63
+0ffa9e00c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{10},35,1,"2020-09-30 00:00:00 +0000",ID74014,1.51,1.51,35,12
+0ffdab40c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{39},99,1,"2019-07-31 00:00:00 +0000",PA2647H,29.72,0,99,13
+1000df90c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{77},13,1,"2020-09-30 00:00:00 +0000",ID74034/5,1.51,0,13,14
+1ab44760c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{9},1700,1,"2019-02-28 00:00:00 +0000",AAM17004,0,0,1700,64
+1abafe20c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{40},1000,1,"2019-02-28 00:00:00 +0000",AAM17004,0.01,0,1000,65
+1ac166c0c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{68},580,1,"2020-12-31 00:00:00 +0000",HE18A02,0.11,0,580,65
+10cd5750c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{270},24,1,<null>,supplierinvoice_47,0.1,0,24,57
+10d28770c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{28},11,1,<null>,supplierinvoice_61,0,0,11,58
+10b2f180c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{295},310,1,<null>,supplierinvoice_80,0.05,0,310,52
+10b7fa90c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{299},1110,1,<null>,supplierinvoice_84,0.05,0,1110,53
+101bba90c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{16},250,1,"2019-12-31 00:00:00 +0000",supplierinvoice_47,0.01,0,250,21
+101ec7d0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{41},800,1,"2019-11-30 00:00:00 +0000",324987,0.01,0,800,22
+fef3d760c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{42},56100,1,"2020-03-31 00:00:00 +0000",CP7002,0,0,56100,63
+1ada9410c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{76},30,1,"2021-04-30 00:00:00 +0000",supplierinvoice_84,0,0,30,64
+ff3ca030c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{168},4,1,<null>,supplierinvoice_1,0,0,5,63
+fefb2a60c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{13},545,1,"2020-04-30 00:00:00 +0000",53238A,38,0,545,60
+ff008190c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{19},400,1,"2020-11-30 00:00:00 +0000",supplierinvoice_52,0.38,0,400,61
+ff058aa0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{27},25,1,"2020-11-30 00:00:00 +0000",supplierinvoice_61,0,0,25,62
+ff0a93b0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{43},1433,1,"2020-03-31 00:00:00 +0000",71168B,0.38,0,1433,63
+10930d70c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,46
+1065e2f0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{14},400,1,"2022-09-30 00:00:00 +0000",20170915,4,0,400,37
+1ae0fcb0c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{73},300,1,"2019-04-30 00:00:00 +0000",59419,0.02,0.02,300,64
+ff178c00c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{50},9700,1,"2021-07-31 00:00:00 +0000",supplierinvoice_71,0.07000000000000001,0,9700,63
+1054f300c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{44},6850,1,"2020-02-29 00:00:00 +0000",75681,0.01,0,6850,34
+b62bf5b0c5ef11e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{46},1351,1,"2019-11-30 00:00:00 +0000",471117C,0.35,0,1350,65
+105ba9c0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{24},17,1,<null>,supplierinvoice_55,7.67,0,17,35
+10601690c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{51},5,1,<null>,supplierinvoice_72,7.67,0,5,36
+106c2480c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{70},1,1,<null>,supplierinvoice_80,30,0,1,38
+1071f0e0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{3},2,1,<null>,supplierinvoice_1,0,0,2,39
+1076d2e0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{11},1,1,<null>,supplierinvoice_31,0,0,1,40
+107b18a0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{53},1,1,<null>,supplierinvoice_75,0,0,1,41
+1ad4c7b0c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{71},2,1,<null>,supplierinvoice_80,15,0,2,64
+e3314240c30111e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{0},11,1,"2018-08-31 00:00:00 +0000",supplierinvoice_1,0,0,11,9
+10bd9fe0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{260},23,1,<null>,supplierinvoice_36,125,0,23,54
+10c233c0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{18},50,1,<null>,supplierinvoice_52,125,0,50,55
+10c715c0c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{25},10,1,<null>,supplierinvoice_57,125,0,10,56
+ff298d60c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{29},3800,1,"2021-02-28 00:00:00 +0000",supplierinvoice_69,0.02,0,3800,64
+ff112360c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{45},35100,1,"2021-06-30 00:00:00 +0000",T3018167,0,0,35100,63
+10369590c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{294},12000,1,"2020-09-30 00:00:00 +0000",T2017293,0.01,0,12000,28
+ff2ff600c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{162},3500,1,"2022-01-31 00:00:00 +0000",supplierinvoice_1,0,0,3500,63
+ff35c260c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{5},6500,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,6500,64
+1ac78140c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{69},3600,1,"2020-10-31 00:00:00 +0000",DMTA0174001,0,0,3600,65
+ff1df4a0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{293},900,1,"2020-10-31 00:00:00 +0000",171033,0.01,0,900,63
+ff2324c0c55711e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{292},35500,1,"2021-03-31 00:00:00 +0000",supplierinvoice_72,0.01,0,35500,64
+e32693e0c30111e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{49},700,1,"2021-05-31 00:00:00 +0000",supplierinvoice_70,0,0,700,6
+500b8390c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{21},230,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,65
+50126160c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{35},1900,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,66
+501f59b0c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{55},7,1,"2021-10-31 00:00:00 +0000",supplierinvoice_78,0,0,0,68
+50254d20c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{56},7,1,"2022-03-31 00:00:00 +0000",supplierinvoice_78,0,0,0,69
+502c5200c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{59},5,1,"2021-02-28 00:00:00 +0000",supplierinvoice_79,0,0,0,70
+50324570c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{60},12,1,"2021-10-31 00:00:00 +0000",supplierinvoice_79,0,0,0,71
+5037eac0c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{61},17,1,"2022-03-31 00:00:00 +0000",supplierinvoice_79,0,0,0,72
+503d41f0c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{62},55,1,"2022-01-31 00:00:00 +0000",supplierinvoice_79,0,0,0,73
+50446de0c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{20},170,1,"2021-02-28 00:00:00 +0000",supplierinvoice_52,24,0,0,74
+504a3a40c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{31},2400,1,"2022-09-30 00:00:00 +0000",supplierinvoice_69,24,0,0,75
+5055abf0c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{58},12,1,"2020-12-31 00:00:00 +0000",supplierinvoice_78,0,0,0,77
+505b9f60c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{63},15,1,"2020-11-30 00:00:00 +0000",supplierinvoice_79,0,0,0,78
+506192d0c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{64},27,1,"2021-01-31 00:00:00 +0000",supplierinvoice_79,0,0,0,79
+50673820c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{65},8,1,"2022-03-31 00:00:00 +0000",supplierinvoice_79,0,0,0,80
+50191820c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{54},212,1,"2021-02-28 00:00:00 +0000",supplierinvoice_78,0,0,236,67
+1ace10f0c5f211e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{74},1500,1,"2021-02-28 00:00:00 +0000",AMN025C18,0.02,0,1500,65
+504fdf90c60811e8bf5f21ced190b1f8,<Stocktake>{12},<ItemBatch>{57},172,1,"2020-05-31 00:00:00 +0000",supplierinvoice_78,0,0,292,76
+10a81c10c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{26},453,1,"2023-01-31 00:00:00 +0000",supplierinvoice_58,2.08,2.08,453,50
+10acd700c54811e8bf50e93da3372528,<Stocktake>{12},<ItemBatch>{30},312,1,"2020-11-30 00:00:00 +0000",supplierinvoice_69,2.08,2.08,312,51
+d5f151b0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{35},1900,1,"2022-10-31 00:00:00 +0000",7J702225,0.38,0,0,8
+d5fa7970dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{60},12,1,"2021-10-31 00:00:00 +0000",supplierinvoice_79,0,0,0,13
+d5fc4e30dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{61},17,1,"2022-03-31 00:00:00 +0000",supplierinvoice_79,0,0,0,14
+d5fdd4d0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{62},55,1,"2022-01-31 00:00:00 +0000",supplierinvoice_79,0,0,0,15
+d60cf000dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{22},500,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,0,21
+d60ec4c0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{36},2950,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,0,22
+d64257e0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{16},250,1,"2019-12-31 00:00:00 +0000",supplierinvoice_47,0.01,0,0,40
+d67c2c90dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{20},170,1,"2021-02-28 00:00:00 +0000",supplierinvoice_52,24,0,0,56
+d6802430dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{31},2400,1,"2022-09-30 00:00:00 +0000",supplierinvoice_69,24,0,0,57
+d6875020dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{58},12,1,"2020-12-31 00:00:00 +0000",supplierinvoice_78,0,0,0,59
+d68af9a0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{63},15,1,"2020-11-30 00:00:00 +0000",supplierinvoice_79,0,0,0,60
+d68e7c10dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{64},27,1,"2021-01-31 00:00:00 +0000",supplierinvoice_79,0,0,0,61
+d69273b0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{65},8,1,"2022-03-31 00:00:00 +0000",supplierinvoice_79,0,0,0,62
+d610c090dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{86},1700,1,"2020-11-30 00:00:00 +0000",QK6663,0.02,0,1800,23
+d6170220dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{37},9072,1,"2019-09-30 00:00:00 +0000",3856093,0.01,0,9072,25
+d6197320dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{88},90000,1,"2020-11-30 00:00:00 +0000",171111,0.01,0,90000,26
+d63b5300dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{38},11400,1,"2020-05-31 00:00:00 +0000",173132161,0.01,0,11400,38
+d63ed570dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{90},40000,1,"2020-12-31 00:00:00 +0000",173132432,0.04,0,40000,39
+d61c8060dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{10},35,1,"2020-09-30 00:00:00 +0000",ID74014,1.51,1.51,35,27
+d61ef160dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{39},95,1,"2019-07-31 00:00:00 +0000",PA2647H,29.72,0,95,28
+d6216260dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{77},13,1,"2020-09-30 00:00:00 +0000",ID74034/5,1.51,0,13,29
+d71ba0e0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{9},1400,1,"2019-02-28 00:00:00 +0000",AAM17004,0,0,1400,90
+d72082e0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{40},1000,1,"2019-02-28 00:00:00 +0000",AAM17004,0.01,0,1000,91
+d7253dd0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{93},2000,1,"2019-11-30 00:00:00 +0000",AAM17007,0.01,0.01,2000,92
+d71622a0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{68},420,1,"2020-12-31 00:00:00 +0000",HE18A02,0.11,0,420,89
+d6d19f90dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{96},32500,1,<null>,supplierinvoice_87,0,0,32500,75
+d6c3bce0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{48},100,1,<null>,supplierinvoice_70,0,0,100,72
+d6c829b0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{72},1900,1,<null>,supplierinvoice_80,0,0,1900,73
+d6cc6f70dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{95},4000,1,<null>,supplierinvoice_87,0,0,4000,74
+d6b42c80dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{8},1000,1,<null>,stocktake_8,0,0,1000,69
+d6b93590dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{15},1800,1,<null>,supplierinvoice_36,0,0,1800,70
+d6be65b0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{94},2000,1,<null>,supplierinvoice_87,0,0,2000,71
+d5e87810dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{12},89,1,"2019-06-30 00:00:00 +0000",16018B99,37,0,89,5
+d659fe90dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{270},12,1,<null>,supplierinvoice_47,0.1,0,12,47
+d65d32e0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{28},11,1,<null>,supplierinvoice_61,0,0,11,48
+d6601910dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{92},5,1,<null>,MM,0.1,0,5,49
+46e108c0dce311e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{299},20,1,<null>,supplierinvoice_84,0.05,0,20,92
+d644eff0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{41},500,1,"2019-11-30 00:00:00 +0000",324987,0.01,0,550,41
+d6484b50dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{67},20,1,"2019-06-30 00:00:00 +0000",4542G5,0.1,0,20,42
+d6010920dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{45},13800,1,"2021-06-30 00:00:00 +0000",T3018167,0,0,13800,16
+d602dde0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{82},116000,1,"2021-04-30 00:00:00 +0000",S06,0,0,116000,17
+d6048b90dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{83},1000,1,"2021-06-30 00:00:00 +0000",T301820617,0,0,1000,18
+d5f34d80dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{54},226,1,"2021-02-28 00:00:00 +0000",supplierinvoice_78,0,0,1040,9
+d5e51cb0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{49},670,1,"2021-05-31 00:00:00 +0000",supplierinvoice_70,0,0,670,4
+d6281920dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{44},5400,1,"2020-02-29 00:00:00 +0000",75681,0.01,0,5400,31
+d710cb70dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{89},6000,1,"2021-01-31 00:00:00 +0000",667180101,0.01,0,6000,88
+d6aeae40dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{46},450,1,"2019-11-30 00:00:00 +0000",471117C,0.35,0,450,68
+46d4fad0dce311e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{24},13,1,<null>,supplierinvoice_55,7.67,0,13,91
+46db1550dce311e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{51},5,1,<null>,supplierinvoice_72,7.67,0,5,92
+d6fdb8a0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{70},1,1,<null>,supplierinvoice_80,30,0,1,84
+d702c1b0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{3},2,1,<null>,supplierinvoice_1,0,0,2,85
+d707cac0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{11},1,1,<null>,supplierinvoice_31,0,0,1,86
+d70bc260dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{53},1,1,<null>,supplierinvoice_75,0,0,1,87
+d6f8d6a0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{71},2,1,<null>,supplierinvoice_80,15,0,2,83
+d683f4c0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{57},232,1,"2020-05-31 00:00:00 +0000",supplierinvoice_78,0,0,1191,58
+d66ee620dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{26},453,1,"2023-01-31 00:00:00 +0000",supplierinvoice_58,2.08,2.08,453,53
+d6721a70dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{30},109,1,"2020-11-30 00:00:00 +0000",supplierinvoice_69,2.08,2.08,109,54
+46e7bf80dce311e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{18},37,1,<null>,supplierinvoice_52,125,0,37,90
+46eca180dce311e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{25},10,1,<null>,supplierinvoice_57,125,0,10,91
+46f18380dce311e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{97},8,1,<null>,supplierinvoice_87,125,0,8,92
+d65606f0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{29},2500,1,"2021-02-28 00:00:00 +0000",supplierinvoice_69,0.02,0,2500,46
+d64bf4d0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{42},30100,1,"2020-03-31 00:00:00 +0000",CP7002,0,0,30100,43
+d64e8ce0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{91},57000,1,"2020-11-30 00:00:00 +0000",S06,0,0,57000,44
+fb70ad40dd8311e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{76},1,1,"2021-04-30 00:00:00 +0000",supplierinvoice_84,0,0,1,93
+d613a6c0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{87},1000,1,"2020-11-30 00:00:00 +0000",AAGC7008,0.02,0.02,1000,24
+cae67590dd8511e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{47},2,1,"2020-10-31 00:00:00 +0000",supplierinvoice_70,2.33,0,2,93
+e26df710dd8011e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{13},545,1,"2020-04-30 00:00:00 +0000",53238A,38,0,545,87
+e2737550dd8011e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{19},400,1,"2020-11-30 00:00:00 +0000",supplierinvoice_52,0.38,0,400,88
+e2783040dd8011e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{27},25,1,"2020-11-30 00:00:00 +0000",supplierinvoice_61,0,0,25,89
+e27e4ac0dd8011e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{43},1052,1,"2020-03-31 00:00:00 +0000",71168B,0.38,0,1052,90
+e28353d0dd8011e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{98},1377,1,"2020-11-30 00:00:00 +0000",17165,0.38,0,1377,91
+e28835d0dd8011e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{84},423,1,"2020-11-30 00:00:00 +0000",17166,0.38,0,423,92
+8cfc2830dd8311e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{99},63100,1,"2022-03-31 00:00:00 +0000",872013,0.01,0.01,63100,92
+8d010a30dd8311e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{101},36900,1,"2022-03-31 00:00:00 +0000",872015,0.01,0.01,36900,93
+d6972ea0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{5},5800,1,"2022-04-30 00:00:00 +0000",supplierinvoice_1,0,0,5800,63
+d69c10a0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{4},31000,1,"2021-09-30 00:00:00 +0000",supplierinvoice_1,0,0,31000,64
+46f701c0dce311e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{14},300,1,"2022-09-30 00:00:00 +0000",20170915,4,0,300,92
+d6523660dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{50},7150,1,"2021-07-31 00:00:00 +0000",supplierinvoice_71,0.07000000000000001,0,7150,45
+d624bdc0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{292},200,1,"2021-03-31 00:00:00 +0000",supplierinvoice_72,0.01,0,100,30
+8cf4ae20dd8311e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{85},11925,1,"2020-06-30 00:00:00 +0000",05DDD056A,0.34,0,12175,93
+d5dabc70dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{17},800,1,"2020-10-31 00:00:00 +0000",supplierinvoice_52,0.06,0,800,1
+d5dd7b90dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{32},1050,1,"2020-09-30 00:00:00 +0000",20171009,0.06,0.06,1050,2
+4256ac20dd8711e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{69},800,1,"2020-10-31 00:00:00 +0000",DMTA0174001,0,0,800,91
+425cc6a0dd8711e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{102},8600,1,"2020-10-31 00:00:00 +0000",DMTA0174001,0,0,8600,92
+4261f6c0dd8711e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{81},3400,1,"2020-10-31 00:00:00 +0000",MTB873002,0,0,3400,93
+d6e94640dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{74},1100,1,"2021-02-28 00:00:00 +0000",AMN025C18,0.02,0,1100,80
+d6edda20dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{100},100,1,"2021-02-28 00:00:00 +0000",AMN022C18,0.02,0,100,81
+424e47b0dd8711e8a22ad759b095277d,<Stocktake>{13},<ItemBatch>{33},58,1,"2020-06-30 00:00:00 +0000",247,0.48,0,58,93
+d5ec6fb0dcba11e8b3be8554970e016f,<Stocktake>{13},<ItemBatch>{34},10,1,"2020-10-31 00:00:00 +0000",MZP026,0.28,0,10,6

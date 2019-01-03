@@ -1,0 +1,392 @@
+id,item,stocktake,batches
+3059e6200f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{1},<StocktakeBatch>{0 4}
+305aa9700f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{1},<StocktakeBatch>{1}
+305b6cc00f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{2},<StocktakeBatch>{2 3}
+305ccc500f0211e9bbbead055da188b2,<Item>{77},<Stocktake>{5},<StocktakeBatch>{5 6}
+305dddc00f0211e9bbbead055da188b2,<Item>{78},<Stocktake>{5},<StocktakeBatch>{7}
+305ea1100f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{5},<StocktakeBatch>{8}
+305f8b700f0211e9bbbead055da188b2,<Item>{87},<Stocktake>{5},<StocktakeBatch>{9}
+30604ec00f0211e9bbbead055da188b2,<Item>{337},<Stocktake>{5},<StocktakeBatch>{10}
+306139200f0211e9bbbead055da188b2,<Item>{339},<Stocktake>{5},<StocktakeBatch>{11}
+3061d5600f0211e9bbbead055da188b2,<Item>{28},<Stocktake>{5},<StocktakeBatch>{12}
+306298b00f0211e9bbbead055da188b2,<Item>{315},<Stocktake>{4},<StocktakeBatch>{13}
+30630de00f0211e9bbbead055da188b2,<Item>{315},<Stocktake>{3},<StocktakeBatch>{14}
+3063d1300f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{5},<StocktakeBatch>{15}
+3064bb900f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{5},<StocktakeBatch>{16}
+3065a5f00f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{5},<StocktakeBatch>{17}
+3066de700f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{5},<StocktakeBatch>{18}
+3068da400f0211e9bbbead055da188b2,<Item>{5},<Stocktake>{5},<StocktakeBatch>{19}
+3069ebb00f0211e9bbbead055da188b2,<Item>{298},<Stocktake>{5},<StocktakeBatch>{20}
+306b24300f0211e9bbbead055da188b2,<Item>{295},<Stocktake>{5},<StocktakeBatch>{21}
+306c35a00f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{5},<StocktakeBatch>{22}
+306d95300f0211e9bbbead055da188b2,<Item>{313},<Stocktake>{5},<StocktakeBatch>{23}
+306ef4c00f0211e9bbbead055da188b2,<Item>{36},<Stocktake>{5},<StocktakeBatch>{24}
+30707b600f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{5},<StocktakeBatch>{25 26}
+3072ec600f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{5},<StocktakeBatch>{27}
+30744bf00f0211e9bbbead055da188b2,<Item>{257},<Stocktake>{5},<StocktakeBatch>{28 29}
+307780400f0211e9bbbead055da188b2,<Item>{308},<Stocktake>{5},<StocktakeBatch>{30}
+307a3f600f0211e9bbbead055da188b2,<Item>{198},<Stocktake>{5},<StocktakeBatch>{31 32 33 34}
+3080f6200f0211e9bbbead055da188b2,<Item>{276},<Stocktake>{5},<StocktakeBatch>{35}
+30827cc00f0211e9bbbead055da188b2,<Item>{148},<Stocktake>{5},<StocktakeBatch>{36 37}
+30864d500f0211e9bbbead055da188b2,<Item>{142},<Stocktake>{5},<StocktakeBatch>{38 39}
+308a44f00f0211e9bbbead055da188b2,<Item>{139},<Stocktake>{5},<StocktakeBatch>{40 41}
+308e8ab00f0211e9bbbead055da188b2,<Item>{138},<Stocktake>{5},<StocktakeBatch>{42}
+309038600f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{5},<StocktakeBatch>{43}
+3091e6100f0211e9bbbead055da188b2,<Item>{2},<Stocktake>{5},<StocktakeBatch>{44 45}
+30962bd00f0211e9bbbead055da188b2,<Item>{33},<Stocktake>{5},<StocktakeBatch>{46}
+30989cd00f0211e9bbbead055da188b2,<Item>{130},<Stocktake>{5},<StocktakeBatch>{47 49}
+309a71900f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{5},<StocktakeBatch>{48}
+309e90400f0211e9bbbead055da188b2,<Item>{58},<Stocktake>{5},<StocktakeBatch>{50 51}
+30a2aef00f0211e9bbbead055da188b2,<Item>{250},<Stocktake>{5},<StocktakeBatch>{52 53}
+30a790f00f0211e9bbbead055da188b2,<Item>{115},<Stocktake>{5},<StocktakeBatch>{54}
+30a98cc00f0211e9bbbead055da188b2,<Item>{56},<Stocktake>{5},<StocktakeBatch>{55}
+30abd6b00f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{5},<StocktakeBatch>{56}
+30ae47b00f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{5},<StocktakeBatch>{57 58}
+30b350c00f0211e9bbbead055da188b2,<Item>{342},<Stocktake>{5},<StocktakeBatch>{59}
+30b60fe00f0211e9bbbead055da188b2,<Item>{111},<Stocktake>{5},<StocktakeBatch>{60}
+30b832c00f0211e9bbbead055da188b2,<Item>{109},<Stocktake>{5},<StocktakeBatch>{61}
+30bb67100f0211e9bbbead055da188b2,<Item>{92},<Stocktake>{5},<StocktakeBatch>{62}
+30be26300f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{5},<StocktakeBatch>{63}
+30c097300f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{5},<StocktakeBatch>{64}
+30c419a00f0211e9bbbead055da188b2,<Item>{93},<Stocktake>{5},<StocktakeBatch>{65}
+30c6d8c00f0211e9bbbead055da188b2,<Item>{91},<Stocktake>{5},<StocktakeBatch>{66}
+30c9bef00f0211e9bbbead055da188b2,<Item>{29},<Stocktake>{5},<StocktakeBatch>{67 68}
+30cf64400f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{5},<StocktakeBatch>{69}
+30d2e6b00f0211e9bbbead055da188b2,<Item>{196},<Stocktake>{5},<StocktakeBatch>{70}
+30d35be00f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{0},<StocktakeBatch>{71}
+30d3f8200f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{0},<StocktakeBatch>{72}
+30d494600f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{0},<StocktakeBatch>{73}
+30d530a00f0211e9bbbead055da188b2,<Item>{77},<Stocktake>{0},<StocktakeBatch>{74 75}
+30d669200f0211e9bbbead055da188b2,<Item>{78},<Stocktake>{0},<StocktakeBatch>{76}
+30d72c700f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{0},<StocktakeBatch>{77}
+30d7efc00f0211e9bbbead055da188b2,<Item>{87},<Stocktake>{0},<StocktakeBatch>{78}
+30d8da200f0211e9bbbead055da188b2,<Item>{337},<Stocktake>{0},<StocktakeBatch>{79}
+30da12a00f0211e9bbbead055da188b2,<Item>{339},<Stocktake>{0},<StocktakeBatch>{80}
+30dafd000f0211e9bbbead055da188b2,<Item>{28},<Stocktake>{0},<StocktakeBatch>{81}
+30dbe7600f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{0},<StocktakeBatch>{82}
+30dcf8d00f0211e9bbbead055da188b2,<Item>{29},<Stocktake>{0},<StocktakeBatch>{83 84}
+30def4a00f0211e9bbbead055da188b2,<Item>{91},<Stocktake>{0},<StocktakeBatch>{85}
+30e006100f0211e9bbbead055da188b2,<Item>{93},<Stocktake>{0},<StocktakeBatch>{86}
+30e1b3c00f0211e9bbbead055da188b2,<Item>{68},<Stocktake>{0},<StocktakeBatch>{87}
+30e2ec400f0211e9bbbead055da188b2,<Item>{92},<Stocktake>{0},<StocktakeBatch>{88 89}
+30e536300f0211e9bbbead055da188b2,<Item>{95},<Stocktake>{0},<StocktakeBatch>{90}
+30e695c00f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{0},<StocktakeBatch>{91}
+30e843700f0211e9bbbead055da188b2,<Item>{50},<Stocktake>{0},<StocktakeBatch>{92}
+30ea18300f0211e9bbbead055da188b2,<Item>{101},<Stocktake>{0},<StocktakeBatch>{93}
+30ebc5e00f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{0},<StocktakeBatch>{94}
+30ed25700f0211e9bbbead055da188b2,<Item>{109},<Stocktake>{0},<StocktakeBatch>{95 96}
+30f0a7e00f0211e9bbbead055da188b2,<Item>{111},<Stocktake>{0},<StocktakeBatch>{97 98}
+30f403400f0211e9bbbead055da188b2,<Item>{342},<Stocktake>{0},<StocktakeBatch>{99}
+30f589e00f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{0},<StocktakeBatch>{100 101}
+30f981800f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{0},<StocktakeBatch>{102}
+30fb2f300f0211e9bbbead055da188b2,<Item>{55},<Stocktake>{0},<StocktakeBatch>{103}
+30fd03f00f0211e9bbbead055da188b2,<Item>{56},<Stocktake>{0},<StocktakeBatch>{104}
+30fed8b00f0211e9bbbead055da188b2,<Item>{115},<Stocktake>{0},<StocktakeBatch>{105}
+3100fb900f0211e9bbbead055da188b2,<Item>{250},<Stocktake>{0},<StocktakeBatch>{106 107}
+310456f00f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{0},<StocktakeBatch>{108}
+31062bb00f0211e9bbbead055da188b2,<Item>{130},<Stocktake>{0},<StocktakeBatch>{109 110}
+310a71700f0211e9bbbead055da188b2,<Item>{2},<Stocktake>{0},<StocktakeBatch>{111 112}
+310e1af00f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{0},<StocktakeBatch>{113 114}
+3112fcf00f0211e9bbbead055da188b2,<Item>{138},<Stocktake>{0},<StocktakeBatch>{115}
+311631400f0211e9bbbead055da188b2,<Item>{139},<Stocktake>{0},<StocktakeBatch>{116}
+3118a2400f0211e9bbbead055da188b2,<Item>{142},<Stocktake>{0},<StocktakeBatch>{117}
+311b13400f0211e9bbbead055da188b2,<Item>{32},<Stocktake>{0},<StocktakeBatch>{118 119}
+311ff5400f0211e9bbbead055da188b2,<Item>{148},<Stocktake>{0},<StocktakeBatch>{120 121}
+312462100f0211e9bbbead055da188b2,<Item>{276},<Stocktake>{0},<StocktakeBatch>{122}
+312748400f0211e9bbbead055da188b2,<Item>{198},<Stocktake>{0},<StocktakeBatch>{123}
+312992300f0211e9bbbead055da188b2,<Item>{308},<Stocktake>{0},<StocktakeBatch>{124}
+312c03300f0211e9bbbead055da188b2,<Item>{257},<Stocktake>{0},<StocktakeBatch>{125 126}
+313181700f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{0},<StocktakeBatch>{127}
+3133f2700f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{0},<StocktakeBatch>{128 129}
+313970b00f0211e9bbbead055da188b2,<Item>{36},<Stocktake>{0},<StocktakeBatch>{130}
+313b6c800f0211e9bbbead055da188b2,<Item>{311},<Stocktake>{0},<StocktakeBatch>{131}
+313e79c00f0211e9bbbead055da188b2,<Item>{313},<Stocktake>{0},<StocktakeBatch>{132}
+31409ca00f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{0},<StocktakeBatch>{133 134}
+314641f00f0211e9bbbead055da188b2,<Item>{315},<Stocktake>{0},<StocktakeBatch>{135}
+314864d00f0211e9bbbead055da188b2,<Item>{298},<Stocktake>{0},<StocktakeBatch>{136}
+314b4b000f0211e9bbbead055da188b2,<Item>{12},<Stocktake>{0},<StocktakeBatch>{137}
+314e58400f0211e9bbbead055da188b2,<Item>{5},<Stocktake>{0},<StocktakeBatch>{138}
+3150c9400f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{0},<StocktakeBatch>{139}
+31550f000f0211e9bbbead055da188b2,<Item>{265},<Stocktake>{0},<StocktakeBatch>{140}
+3157ce200f0211e9bbbead055da188b2,<Item>{176},<Stocktake>{0},<StocktakeBatch>{141 142}
+315b02700f0211e9bbbead055da188b2,<Item>{176},<Stocktake>{6},<StocktakeBatch>{143}
+315becd00f0211e9bbbead055da188b2,<Item>{265},<Stocktake>{6},<StocktakeBatch>{144}
+315c62000f0211e9bbbead055da188b2,<Item>{339},<Stocktake>{6},<StocktakeBatch>{145}
+315cfe400f0211e9bbbead055da188b2,<Item>{337},<Stocktake>{6},<StocktakeBatch>{146}
+315d9a800f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{7},<StocktakeBatch>{147}
+315de8a00f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{7},<StocktakeBatch>{148}
+315e84e00f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{7},<StocktakeBatch>{149}
+315efa100f0211e9bbbead055da188b2,<Item>{79},<Stocktake>{7},<StocktakeBatch>{150}
+315f6f400f0211e9bbbead055da188b2,<Item>{77},<Stocktake>{7},<StocktakeBatch>{151 152}
+3160ced00f0211e9bbbead055da188b2,<Item>{78},<Stocktake>{7},<StocktakeBatch>{153}
+31616b100f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{7},<StocktakeBatch>{154}
+31622e600f0211e9bbbead055da188b2,<Item>{339},<Stocktake>{7},<StocktakeBatch>{155}
+31633fd00f0211e9bbbead055da188b2,<Item>{196},<Stocktake>{7},<StocktakeBatch>{156}
+316451400f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{7},<StocktakeBatch>{157}
+316589c00f0211e9bbbead055da188b2,<Item>{29},<Stocktake>{7},<StocktakeBatch>{158 159}
+316737700f0211e9bbbead055da188b2,<Item>{386},<Stocktake>{7},<StocktakeBatch>{160}
+316821d00f0211e9bbbead055da188b2,<Item>{33},<Stocktake>{7},<StocktakeBatch>{161}
+31695a500f0211e9bbbead055da188b2,<Item>{36},<Stocktake>{7},<StocktakeBatch>{162}
+316a92d00f0211e9bbbead055da188b2,<Item>{58},<Stocktake>{7},<StocktakeBatch>{163}
+316bcb500f0211e9bbbead055da188b2,<Item>{91},<Stocktake>{7},<StocktakeBatch>{164}
+316cdcc00f0211e9bbbead055da188b2,<Item>{92},<Stocktake>{7},<StocktakeBatch>{165}
+316dee300f0211e9bbbead055da188b2,<Item>{93},<Stocktake>{7},<StocktakeBatch>{166}
+316f26b00f0211e9bbbead055da188b2,<Item>{94},<Stocktake>{7},<StocktakeBatch>{167}
+317038200f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{7},<StocktakeBatch>{168}
+3171bec00f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{7},<StocktakeBatch>{169 170}
+3174a4f00f0211e9bbbead055da188b2,<Item>{115},<Stocktake>{7},<StocktakeBatch>{171}
+3175dd700f0211e9bbbead055da188b2,<Item>{130},<Stocktake>{7},<StocktakeBatch>{172 173}
+3178c3a00f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{7},<StocktakeBatch>{174}
+317a98600f0211e9bbbead055da188b2,<Item>{142},<Stocktake>{7},<StocktakeBatch>{175 176}
+317d7e900f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{7},<StocktakeBatch>{177}
+317e90000f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{7},<StocktakeBatch>{178 179}
+318260900f0211e9bbbead055da188b2,<Item>{342},<Stocktake>{7},<StocktakeBatch>{180}
+31840e400f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{7},<StocktakeBatch>{181 182}
+318769a00f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{7},<StocktakeBatch>{183}
+31898c800f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{7},<StocktakeBatch>{184 185 186 187}
+31923f100f0211e9bbbead055da188b2,<Item>{313},<Stocktake>{7},<StocktakeBatch>{188}
+319461f00f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{7},<StocktakeBatch>{189}
+3196abe00f0211e9bbbead055da188b2,<Item>{169},<Stocktake>{7},<StocktakeBatch>{190}
+31996b000f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{7},<StocktakeBatch>{191}
+319c2a200f0211e9bbbead055da188b2,<Item>{2},<Stocktake>{7},<StocktakeBatch>{192 193}
+31a244a00f0211e9bbbead055da188b2,<Item>{148},<Stocktake>{7},<StocktakeBatch>{194 195 196}
+31a838100f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{8},<StocktakeBatch>{197 198}
+31a997a00f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{8},<StocktakeBatch>{199 200}
+31aaa9100f0211e9bbbead055da188b2,<Item>{115},<Stocktake>{9},<StocktakeBatch>{201}
+31ab45500f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{9},<StocktakeBatch>{202 227}
+31abe1900f0211e9bbbead055da188b2,<Item>{94},<Stocktake>{9},<StocktakeBatch>{203}
+31accbf00f0211e9bbbead055da188b2,<Item>{93},<Stocktake>{9},<StocktakeBatch>{204 230}
+31ad8f400f0211e9bbbead055da188b2,<Item>{91},<Stocktake>{9},<StocktakeBatch>{205 231}
+31ae52900f0211e9bbbead055da188b2,<Item>{339},<Stocktake>{9},<StocktakeBatch>{206 207}
+31b027500f0211e9bbbead055da188b2,<Item>{87},<Stocktake>{9},<StocktakeBatch>{208}
+31b111b00f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{9},<StocktakeBatch>{209}
+31b24a300f0211e9bbbead055da188b2,<Item>{2},<Stocktake>{9},<StocktakeBatch>{210 248}
+31b382b00f0211e9bbbead055da188b2,<Item>{79},<Stocktake>{9},<StocktakeBatch>{211 212}
+31b5a5900f0211e9bbbead055da188b2,<Item>{196},<Stocktake>{9},<StocktakeBatch>{213 214}
+31b816900f0211e9bbbead055da188b2,<Item>{337},<Stocktake>{9},<StocktakeBatch>{215}
+31b94f100f0211e9bbbead055da188b2,<Item>{77},<Stocktake>{9},<StocktakeBatch>{216 217}
+31bbe7200f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{9},<StocktakeBatch>{218 240}
+31bd1fa00f0211e9bbbead055da188b2,<Item>{250},<Stocktake>{9},<StocktakeBatch>{219}
+31bea6400f0211e9bbbead055da188b2,<Item>{56},<Stocktake>{9},<StocktakeBatch>{220}
+31c02ce00f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{9},<StocktakeBatch>{221 224}
+31c165600f0211e9bbbead055da188b2,<Item>{342},<Stocktake>{9},<StocktakeBatch>{222}
+31c313100f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{9},<StocktakeBatch>{223}
+31c70ab00f0211e9bbbead055da188b2,<Item>{111},<Stocktake>{9},<StocktakeBatch>{225}
+31c8b8600f0211e9bbbead055da188b2,<Item>{109},<Stocktake>{9},<StocktakeBatch>{226}
+31cb29600f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{9},<StocktakeBatch>{228}
+31ccfe200f0211e9bbbead055da188b2,<Item>{92},<Stocktake>{9},<StocktakeBatch>{229}
+31d080900f0211e9bbbead055da188b2,<Item>{29},<Stocktake>{9},<StocktakeBatch>{232 233}
+31d3dbf00f0211e9bbbead055da188b2,<Item>{28},<Stocktake>{9},<StocktakeBatch>{234}
+31d64cf00f0211e9bbbead055da188b2,<Item>{78},<Stocktake>{9},<StocktakeBatch>{235}
+31d86fd00f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{9},<StocktakeBatch>{236}
+31da92b00f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{9},<StocktakeBatch>{237}
+31dcdca00f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{9},<StocktakeBatch>{238 239}
+31e2d0100f0211e9bbbead055da188b2,<Item>{58},<Stocktake>{9},<StocktakeBatch>{241 242}
+31e763f00f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{9},<StocktakeBatch>{243}
+31e9ade00f0211e9bbbead055da188b2,<Item>{130},<Stocktake>{9},<StocktakeBatch>{244 245}
+31edcc900f0211e9bbbead055da188b2,<Item>{33},<Stocktake>{9},<StocktakeBatch>{246 247}
+31f2fcb00f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{9},<StocktakeBatch>{249 250}
+31f853e00f0211e9bbbead055da188b2,<Item>{138},<Stocktake>{9},<StocktakeBatch>{251}
+31fb13000f0211e9bbbead055da188b2,<Item>{139},<Stocktake>{9},<StocktakeBatch>{252}
+31fdab100f0211e9bbbead055da188b2,<Item>{386},<Stocktake>{9},<StocktakeBatch>{253}
+32001c100f0211e9bbbead055da188b2,<Item>{388},<Stocktake>{9},<StocktakeBatch>{254}
+320329500f0211e9bbbead055da188b2,<Item>{32},<Stocktake>{9},<StocktakeBatch>{255}
+32065da00f0211e9bbbead055da188b2,<Item>{182},<Stocktake>{9},<StocktakeBatch>{256}
+320943d00f0211e9bbbead055da188b2,<Item>{148},<Stocktake>{9},<StocktakeBatch>{257}
+320c02f00f0211e9bbbead055da188b2,<Item>{276},<Stocktake>{9},<StocktakeBatch>{258 259 260 261}
+3217e9d00f0211e9bbbead055da188b2,<Item>{198},<Stocktake>{9},<StocktakeBatch>{262}
+321ad0000f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{9},<StocktakeBatch>{263 264}
+32209c600f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{9},<StocktakeBatch>{265 266}
+32283d800f0211e9bbbead055da188b2,<Item>{36},<Stocktake>{9},<StocktakeBatch>{267}
+322be7000f0211e9bbbead055da188b2,<Item>{313},<Stocktake>{9},<StocktakeBatch>{268}
+322f69700f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{9},<StocktakeBatch>{269 270}
+3235ab000f0211e9bbbead055da188b2,<Item>{295},<Stocktake>{9},<StocktakeBatch>{271}
+3238df500f0211e9bbbead055da188b2,<Item>{12},<Stocktake>{9},<StocktakeBatch>{272 273}
+323fbd200f0211e9bbbead055da188b2,<Item>{5},<Stocktake>{9},<StocktakeBatch>{274 275}
+32475e400f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{9},<StocktakeBatch>{276}
+324b55e00f0211e9bbbead055da188b2,<Item>{169},<Stocktake>{9},<StocktakeBatch>{277}
+324f4d800f0211e9bbbead055da188b2,<Item>{176},<Stocktake>{9},<StocktakeBatch>{278}
+324fe9c00f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{10},<StocktakeBatch>{279 280 281 288}
+3251e5900f0211e9bbbead055da188b2,<Item>{209},<Stocktake>{10},<StocktakeBatch>{282 308 309}
+3252a8e00f0211e9bbbead055da188b2,<Item>{58},<Stocktake>{10},<StocktakeBatch>{283 284 323}
+3254a4b00f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{10},<StocktakeBatch>{285 286 324}
+3256a0800f0211e9bbbead055da188b2,<Item>{176},<Stocktake>{10},<StocktakeBatch>{287 359 360}
+325875400f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{10},<StocktakeBatch>{289}
+3259adc00f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{10},<StocktakeBatch>{290}
+325abf300f0211e9bbbead055da188b2,<Item>{79},<Stocktake>{10},<StocktakeBatch>{291}
+325bd0a00f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{10},<StocktakeBatch>{292}
+325d30300f0211e9bbbead055da188b2,<Item>{87},<Stocktake>{10},<StocktakeBatch>{293}
+325e68b00f0211e9bbbead055da188b2,<Item>{337},<Stocktake>{10},<StocktakeBatch>{294 295}
+32614ee00f0211e9bbbead055da188b2,<Item>{339},<Stocktake>{10},<StocktakeBatch>{296 297}
+3263bfe00f0211e9bbbead055da188b2,<Item>{28},<Stocktake>{10},<StocktakeBatch>{298}
+3264f8600f0211e9bbbead055da188b2,<Item>{196},<Stocktake>{10},<StocktakeBatch>{299 300}
+32687ad00f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{10},<StocktakeBatch>{301}
+3269da600f0211e9bbbead055da188b2,<Item>{29},<Stocktake>{10},<StocktakeBatch>{302 303}
+326ce7a00f0211e9bbbead055da188b2,<Item>{93},<Stocktake>{10},<StocktakeBatch>{304}
+326ee3700f0211e9bbbead055da188b2,<Item>{92},<Stocktake>{10},<StocktakeBatch>{305 306}
+3271f0b00f0211e9bbbead055da188b2,<Item>{94},<Stocktake>{10},<StocktakeBatch>{307}
+327525000f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{10},<StocktakeBatch>{310 311}
+3278ce800f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{10},<StocktakeBatch>{312 313}
+327c78000f0211e9bbbead055da188b2,<Item>{109},<Stocktake>{10},<StocktakeBatch>{314}
+327e9ae00f0211e9bbbead055da188b2,<Item>{111},<Stocktake>{10},<StocktakeBatch>{315}
+328096b00f0211e9bbbead055da188b2,<Item>{342},<Stocktake>{10},<StocktakeBatch>{316}
+3282e0a00f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{10},<StocktakeBatch>{317 318}
+32874d700f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{10},<StocktakeBatch>{319}
+328997600f0211e9bbbead055da188b2,<Item>{56},<Stocktake>{10},<StocktakeBatch>{320}
+328b45100f0211e9bbbead055da188b2,<Item>{115},<Stocktake>{10},<StocktakeBatch>{321}
+328d8f000f0211e9bbbead055da188b2,<Item>{250},<Stocktake>{10},<StocktakeBatch>{322}
+3290ea600f0211e9bbbead055da188b2,<Item>{130},<Stocktake>{10},<StocktakeBatch>{325}
+32930d400f0211e9bbbead055da188b2,<Item>{33},<Stocktake>{10},<StocktakeBatch>{326}
+329557300f0211e9bbbead055da188b2,<Item>{2},<Stocktake>{10},<StocktakeBatch>{327 328}
+329975e00f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{10},<StocktakeBatch>{329}
+329bbfd00f0211e9bbbead055da188b2,<Item>{138},<Stocktake>{10},<StocktakeBatch>{330}
+329de2b00f0211e9bbbead055da188b2,<Item>{139},<Stocktake>{10},<StocktakeBatch>{331}
+32a0eff00f0211e9bbbead055da188b2,<Item>{142},<Stocktake>{10},<StocktakeBatch>{332 333}
+32a55cc00f0211e9bbbead055da188b2,<Item>{386},<Stocktake>{10},<StocktakeBatch>{334}
+32a77fa00f0211e9bbbead055da188b2,<Item>{388},<Stocktake>{10},<StocktakeBatch>{335 336}
+32ac3a900f0211e9bbbead055da188b2,<Item>{182},<Stocktake>{10},<StocktakeBatch>{337}
+32ae36600f0211e9bbbead055da188b2,<Item>{148},<Stocktake>{10},<StocktakeBatch>{338}
+32b0a7600f0211e9bbbead055da188b2,<Item>{276},<Stocktake>{10},<StocktakeBatch>{339 340 341}
+32b7d3500f0211e9bbbead055da188b2,<Item>{198},<Stocktake>{10},<StocktakeBatch>{342 343}
+32bc8e400f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{10},<StocktakeBatch>{344 345}
+32c0acf00f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{10},<StocktakeBatch>{346 347}
+32c567e00f0211e9bbbead055da188b2,<Item>{36},<Stocktake>{10},<StocktakeBatch>{348}
+32c763b00f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{10},<StocktakeBatch>{349 350 351}
+32ceb6b00f0211e9bbbead055da188b2,<Item>{295},<Stocktake>{10},<StocktakeBatch>{352}
+32d14ec00f0211e9bbbead055da188b2,<Item>{12},<Stocktake>{10},<StocktakeBatch>{353}
+32d3e6d00f0211e9bbbead055da188b2,<Item>{5},<Stocktake>{10},<StocktakeBatch>{354 355}
+32d93e000f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{10},<StocktakeBatch>{356 357}
+32ddf8f00f0211e9bbbead055da188b2,<Item>{169},<Stocktake>{10},<StocktakeBatch>{358}
+32df7f900f0211e9bbbead055da188b2,<Item>{58},<Stocktake>{13},<StocktakeBatch>{361 362 363 364 530 531 532 533 572}
+32e17b600f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{11},<StocktakeBatch>{365 430 431}
+32e1f0900f0211e9bbbead055da188b2,<Item>{68},<Stocktake>{11},<StocktakeBatch>{366}
+32e2daf00f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{11},<StocktakeBatch>{367 418 420}
+32e377300f0211e9bbbead055da188b2,<Item>{50},<Stocktake>{11},<StocktakeBatch>{368}
+32e43a800f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{11},<StocktakeBatch>{369}
+32e4fdd00f0211e9bbbead055da188b2,<Item>{115},<Stocktake>{11},<StocktakeBatch>{370}
+32e5e8300f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{11},<StocktakeBatch>{371}
+32e6ab800f0211e9bbbead055da188b2,<Item>{139},<Stocktake>{11},<StocktakeBatch>{372 401}
+32e7e4000f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{11},<StocktakeBatch>{373 374}
+32ea06e00f0211e9bbbead055da188b2,<Item>{5},<Stocktake>{11},<StocktakeBatch>{375 384}
+32eb3f600f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{11},<StocktakeBatch>{376 382 383}
+32ec50d00f0211e9bbbead055da188b2,<Item>{397},<Stocktake>{11},<StocktakeBatch>{377}
+32ed62400f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{11},<StocktakeBatch>{378 379}
+32efd3400f0211e9bbbead055da188b2,<Item>{58},<Stocktake>{11},<StocktakeBatch>{380 407 408 421 422 424 441 447 448}
+32f10bc00f0211e9bbbead055da188b2,<Item>{176},<Stocktake>{11},<StocktakeBatch>{381}
+32f5edc00f0211e9bbbead055da188b2,<Item>{12},<Stocktake>{11},<StocktakeBatch>{385 386}
+32f8fb000f0211e9bbbead055da188b2,<Item>{295},<Stocktake>{11},<StocktakeBatch>{387 388}
+32fbba200f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{11},<StocktakeBatch>{389 439 440 442 443 444 445}
+32fddd000f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{11},<StocktakeBatch>{390 391 392}
+330297f00f0211e9bbbead055da188b2,<Item>{198},<Stocktake>{11},<StocktakeBatch>{393 395}
+33046cb00f0211e9bbbead055da188b2,<Item>{257},<Stocktake>{11},<StocktakeBatch>{394}
+330816300f0211e9bbbead055da188b2,<Item>{276},<Stocktake>{11},<StocktakeBatch>{396}
+330a12000f0211e9bbbead055da188b2,<Item>{388},<Stocktake>{11},<StocktakeBatch>{397}
+330c0dd00f0211e9bbbead055da188b2,<Item>{386},<Stocktake>{11},<StocktakeBatch>{398}
+330e09a00f0211e9bbbead055da188b2,<Item>{142},<Stocktake>{11},<StocktakeBatch>{399 400}
+3313aef00f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{11},<StocktakeBatch>{402}
+3315f8e00f0211e9bbbead055da188b2,<Item>{33},<Stocktake>{11},<StocktakeBatch>{403 404}
+331954400f0211e9bbbead055da188b2,<Item>{404},<Stocktake>{11},<StocktakeBatch>{405}
+331b01f00f0211e9bbbead055da188b2,<Item>{130},<Stocktake>{11},<StocktakeBatch>{406}
+331ef9900f0211e9bbbead055da188b2,<Item>{250},<Stocktake>{11},<StocktakeBatch>{409}
+3320a7400f0211e9bbbead055da188b2,<Item>{56},<Stocktake>{11},<StocktakeBatch>{410}
+332254f00f0211e9bbbead055da188b2,<Item>{55},<Stocktake>{11},<StocktakeBatch>{411}
+332450c00f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{11},<StocktakeBatch>{412 438}
+332673a00f0211e9bbbead055da188b2,<Item>{111},<Stocktake>{11},<StocktakeBatch>{413}
+34733ef00f0211e9bbbead055da188b2,<Item>{109},<Stocktake>{11},<StocktakeBatch>{414}
+3475d7000f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{11},<StocktakeBatch>{415 416 417 419}
+348344800f0211e9bbbead055da188b2,<Item>{94},<Stocktake>{11},<StocktakeBatch>{423}
+3487d8600f0211e9bbbead055da188b2,<Item>{196},<Stocktake>{11},<StocktakeBatch>{425 426}
+348e41000f0211e9bbbead055da188b2,<Item>{79},<Stocktake>{11},<StocktakeBatch>{427 428}
+349482900f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{11},<StocktakeBatch>{429 446}
+34998ba00f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{11},<StocktakeBatch>{432 436 437}
+349d5c300f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{11},<StocktakeBatch>{433}
+34a069700f0211e9bbbead055da188b2,<Item>{87},<Stocktake>{11},<StocktakeBatch>{434}
+34a3c4d00f0211e9bbbead055da188b2,<Item>{28},<Stocktake>{11},<StocktakeBatch>{435}
+34c1ad100f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{12},<StocktakeBatch>{449 450 480}
+34c2be800f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{12},<StocktakeBatch>{451 452}
+34c4ba500f0211e9bbbead055da188b2,<Item>{12},<Stocktake>{12},<StocktakeBatch>{453 454}
+34c640f00f0211e9bbbead055da188b2,<Item>{5},<Stocktake>{12},<StocktakeBatch>{455 456}
+34c815b00f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{12},<StocktakeBatch>{457}
+34c927200f0211e9bbbead055da188b2,<Item>{388},<Stocktake>{12},<StocktakeBatch>{458}
+34ca38900f0211e9bbbead055da188b2,<Item>{28},<Stocktake>{12},<StocktakeBatch>{459}
+34cb4a000f0211e9bbbead055da188b2,<Item>{397},<Stocktake>{12},<StocktakeBatch>{460 461}
+34ce57400f0211e9bbbead055da188b2,<Item>{33},<Stocktake>{12},<StocktakeBatch>{462 463}
+34d07a200f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{12},<StocktakeBatch>{464}
+34d1b2a00f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{12},<StocktakeBatch>{465}
+34d2eb200f0211e9bbbead055da188b2,<Item>{79},<Stocktake>{12},<StocktakeBatch>{466 467 468}
+34d7a6100f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{12},<StocktakeBatch>{469 470}
+34db76a00f0211e9bbbead055da188b2,<Item>{87},<Stocktake>{12},<StocktakeBatch>{471}
+34dd4b600f0211e9bbbead055da188b2,<Item>{196},<Stocktake>{12},<StocktakeBatch>{472 473}
+34e031900f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{12},<StocktakeBatch>{474 475}
+34e27b800f0211e9bbbead055da188b2,<Item>{93},<Stocktake>{12},<StocktakeBatch>{476 477}
+34e4c5700f0211e9bbbead055da188b2,<Item>{92},<Stocktake>{12},<StocktakeBatch>{478}
+34e5fdf00f0211e9bbbead055da188b2,<Item>{430},<Stocktake>{12},<StocktakeBatch>{479}
+34e959500f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{12},<StocktakeBatch>{481 482 483 484}
+34ee89700f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{12},<StocktakeBatch>{485}
+34efe9000f0211e9bbbead055da188b2,<Item>{250},<Stocktake>{12},<StocktakeBatch>{486}
+34f148900f0211e9bbbead055da188b2,<Item>{404},<Stocktake>{12},<StocktakeBatch>{487}
+34f2a8200f0211e9bbbead055da188b2,<Item>{139},<Stocktake>{12},<StocktakeBatch>{488}
+34f42ec00f0211e9bbbead055da188b2,<Item>{182},<Stocktake>{12},<StocktakeBatch>{489}
+34f603800f0211e9bbbead055da188b2,<Item>{276},<Stocktake>{12},<StocktakeBatch>{490}
+34f7ff500f0211e9bbbead055da188b2,<Item>{198},<Stocktake>{12},<StocktakeBatch>{491 492}
+34fb5ab00f0211e9bbbead055da188b2,<Item>{257},<Stocktake>{12},<StocktakeBatch>{493}
+34fd08600f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{12},<StocktakeBatch>{494 495 496}
+35025f900f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{12},<StocktakeBatch>{497}
+3503e6300f0211e9bbbead055da188b2,<Item>{36},<Stocktake>{12},<StocktakeBatch>{498}
+3505e2000f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{12},<StocktakeBatch>{499 500 501}
+350d0df00f0211e9bbbead055da188b2,<Item>{176},<Stocktake>{12},<StocktakeBatch>{502}
+350f7ef00f0211e9bbbead055da188b2,<Item>{109},<Stocktake>{12},<StocktakeBatch>{503}
+351217000f0211e9bbbead055da188b2,<Item>{111},<Stocktake>{12},<StocktakeBatch>{504}
+351488000f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{12},<StocktakeBatch>{505 506}
+35196a000f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{12},<StocktakeBatch>{507}
+351c02100f0211e9bbbead055da188b2,<Item>{142},<Stocktake>{12},<StocktakeBatch>{508 509}
+352159400f0211e9bbbead055da188b2,<Item>{386},<Stocktake>{12},<StocktakeBatch>{510}
+3523a3300f0211e9bbbead055da188b2,<Item>{58},<Stocktake>{12},<StocktakeBatch>{511 512 513 514 515 516 517 518 525}
+3537c7700f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{12},<StocktakeBatch>{519 520 521 522 523 524 527}
+3549a1c00f0211e9bbbead055da188b2,<Item>{138},<Stocktake>{12},<StocktakeBatch>{526}
+354e83c00f0211e9bbbead055da188b2,<Item>{295},<Stocktake>{12},<StocktakeBatch>{528 529}
+35538cd00f0211e9bbbead055da188b2,<Item>{75},<Stocktake>{13},<StocktakeBatch>{534 535 543}
+3554c5500f0211e9bbbead055da188b2,<Item>{93},<Stocktake>{13},<StocktakeBatch>{536 567}
+355588a00f0211e9bbbead055da188b2,<Item>{310},<Stocktake>{13},<StocktakeBatch>{537 538 539 540 541 542 584}
+3559f5700f0211e9bbbead055da188b2,<Item>{80},<Stocktake>{13},<StocktakeBatch>{544 545}
+355b55000f0211e9bbbead055da188b2,<Item>{390},<Stocktake>{13},<StocktakeBatch>{546}
+355bf1400f0211e9bbbead055da188b2,<Item>{84},<Stocktake>{13},<StocktakeBatch>{547}
+355cdba00f0211e9bbbead055da188b2,<Item>{79},<Stocktake>{13},<StocktakeBatch>{548 549 550}
+355fe8e00f0211e9bbbead055da188b2,<Item>{85},<Stocktake>{13},<StocktakeBatch>{551 552 553}
+35631d300f0211e9bbbead055da188b2,<Item>{87},<Stocktake>{13},<StocktakeBatch>{554}
+356455b00f0211e9bbbead055da188b2,<Item>{337},<Stocktake>{13},<StocktakeBatch>{555}
+356567200f0211e9bbbead055da188b2,<Item>{338},<Stocktake>{13},<StocktakeBatch>{556 557 558}
+3568e9900f0211e9bbbead055da188b2,<Item>{339},<Stocktake>{13},<StocktakeBatch>{559 560 561}
+356c44f00f0211e9bbbead055da188b2,<Item>{28},<Stocktake>{13},<StocktakeBatch>{562}
+356d56600f0211e9bbbead055da188b2,<Item>{196},<Stocktake>{13},<StocktakeBatch>{563 564 565}
+35708ab00f0211e9bbbead055da188b2,<Item>{297},<Stocktake>{13},<StocktakeBatch>{566}
+35725f700f0211e9bbbead055da188b2,<Item>{68},<Stocktake>{13},<StocktakeBatch>{568}
+357434300f0211e9bbbead055da188b2,<Item>{109},<Stocktake>{13},<StocktakeBatch>{569 570 571}
+3578c8100f0211e9bbbead055da188b2,<Item>{386},<Stocktake>{13},<StocktakeBatch>{573}
+357a75c00f0211e9bbbead055da188b2,<Item>{182},<Stocktake>{13},<StocktakeBatch>{574}
+357bd5500f0211e9bbbead055da188b2,<Item>{148},<Stocktake>{13},<StocktakeBatch>{575}
+357d0dd00f0211e9bbbead055da188b2,<Item>{276},<Stocktake>{13},<StocktakeBatch>{576}
+357e94700f0211e9bbbead055da188b2,<Item>{198},<Stocktake>{13},<StocktakeBatch>{577 578}
+358216e00f0211e9bbbead055da188b2,<Item>{257},<Stocktake>{13},<StocktakeBatch>{579}
+35839d800f0211e9bbbead055da188b2,<Item>{258},<Stocktake>{13},<StocktakeBatch>{580 581 582}
+3588cda00f0211e9bbbead055da188b2,<Item>{259},<Stocktake>{13},<StocktakeBatch>{583}
+358af0800f0211e9bbbead055da188b2,<Item>{295},<Stocktake>{13},<StocktakeBatch>{585 586}
+358e9a000f0211e9bbbead055da188b2,<Item>{351},<Stocktake>{13},<StocktakeBatch>{587 588 589}
+359466600f0211e9bbbead055da188b2,<Item>{176},<Stocktake>{13},<StocktakeBatch>{590}
+3596b0500f0211e9bbbead055da188b2,<Item>{92},<Stocktake>{13},<StocktakeBatch>{591 592}
+359a59d00f0211e9bbbead055da188b2,<Item>{430},<Stocktake>{13},<StocktakeBatch>{593}
+359c7cb00f0211e9bbbead055da188b2,<Item>{95},<Stocktake>{13},<StocktakeBatch>{594}
+359ec6a00f0211e9bbbead055da188b2,<Item>{294},<Stocktake>{13},<StocktakeBatch>{595}
+35a185c00f0211e9bbbead055da188b2,<Item>{107},<Stocktake>{13},<StocktakeBatch>{596 597 598 599 600 601}
+35b200800f0211e9bbbead055da188b2,<Item>{111},<Stocktake>{13},<StocktakeBatch>{602 603}
+35b890300f0211e9bbbead055da188b2,<Item>{343},<Stocktake>{13},<StocktakeBatch>{604}
+35bb01300f0211e9bbbead055da188b2,<Item>{344},<Stocktake>{13},<StocktakeBatch>{605}
+35bdc0500f0211e9bbbead055da188b2,<Item>{250},<Stocktake>{13},<StocktakeBatch>{606}
+35c031500f0211e9bbbead055da188b2,<Item>{139},<Stocktake>{13},<StocktakeBatch>{607}
+35c33e900f0211e9bbbead055da188b2,<Item>{142},<Stocktake>{13},<StocktakeBatch>{608}
+35c672e00f0211e9bbbead055da188b2,<Item>{12},<Stocktake>{13},<StocktakeBatch>{609}
+35c959100f0211e9bbbead055da188b2,<Item>{5},<Stocktake>{13},<StocktakeBatch>{610 611}
+35cf73900f0211e9bbbead055da188b2,<Item>{133},<Stocktake>{13},<StocktakeBatch>{612 613 614}
+35d89b500f0211e9bbbead055da188b2,<Item>{138},<Stocktake>{13},<StocktakeBatch>{615 616}
+35de40a00f0211e9bbbead055da188b2,<Item>{22},<Stocktake>{13},<StocktakeBatch>{617}
+35e0d8b00f0211e9bbbead055da188b2,<Item>{33},<Stocktake>{13},<StocktakeBatch>{618}
