@@ -1,0 +1,13 @@
+key,value,user
+SyncURL,http://10.0.3.2:2048,<null>
+SyncSiteName,Taungoo,<null>
+SyncSitePasswordHash,d74ff0ee8da3b9806b18c877dbf29bbde50b5bd8e4dad7a3a725000feb82e8f1,<null>
+SyncServerId,1,<null>
+SyncSiteId,4,<null>
+ThisStoreId,82EC0E207F2B6442BD69891049826F0A,<null>
+ThisStoreNameId,649D07F782792E49AE501E7C28CAAD83,<null>
+SupplyingStoreId,BC8A9F183B9032449B1145D8FA1A4904,<null>
+SupplyingStoreNameId,A511DBE657C19149A92E8F1AF38C993F,<null>
+SyncIsInitialised,true,<null>
+LastPostProcessingFailed,false,<null>
+MostRecentUsername,TGO,<null>
