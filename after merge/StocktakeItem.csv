@@ -1,392 +1,392 @@
-id,item,stocktake,batches
-038bdad00efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{1},<StocktakeBatch>{0 4}
-038cc5300efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{1},<StocktakeBatch>{1}
-038d3a600efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{2},<StocktakeBatch>{2 3}
-038e99f00efe11e9b6570927331dac8c,<Item>{77},<Stocktake>{5},<StocktakeBatch>{5 6}
-038fd2700efe11e9b6570927331dac8c,<Item>{78},<Stocktake>{5},<StocktakeBatch>{7}
-039047a00efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{5},<StocktakeBatch>{8}
-0390e3e00efe11e9b6570927331dac8c,<Item>{88},<Stocktake>{5},<StocktakeBatch>{9}
-0391a7300efe11e9b6570927331dac8c,<Item>{338},<Stocktake>{5},<StocktakeBatch>{10}
-039291900efe11e9b6570927331dac8c,<Item>{340},<Stocktake>{5},<StocktakeBatch>{11}
-03937bf00efe11e9b6570927331dac8c,<Item>{28},<Stocktake>{5},<StocktakeBatch>{12}
-0393f1200efe11e9b6570927331dac8c,<Item>{316},<Stocktake>{4},<StocktakeBatch>{13}
-039466500efe11e9b6570927331dac8c,<Item>{316},<Stocktake>{3},<StocktakeBatch>{14}
-039550b00efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{5},<StocktakeBatch>{15}
-03963b100efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{5},<StocktakeBatch>{16}
-039725700efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{5},<StocktakeBatch>{17}
-03980fd00efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{5},<StocktakeBatch>{18}
-039948500efe11e9b6570927331dac8c,<Item>{5},<Stocktake>{5},<StocktakeBatch>{19}
-039a80d00efe11e9b6570927331dac8c,<Item>{299},<Stocktake>{5},<StocktakeBatch>{20}
-039b92400efe11e9b6570927331dac8c,<Item>{296},<Stocktake>{5},<StocktakeBatch>{21}
-039ca3b00efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{5},<StocktakeBatch>{22}
-039ddc300efe11e9b6570927331dac8c,<Item>{314},<Stocktake>{5},<StocktakeBatch>{23}
-039eeda00efe11e9b6570927331dac8c,<Item>{36},<Stocktake>{5},<StocktakeBatch>{24}
-03a04d300efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{5},<StocktakeBatch>{25 26}
-03a2be300efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{5},<StocktakeBatch>{27}
-03a41dc00efe11e9b6570927331dac8c,<Item>{258},<Stocktake>{5},<StocktakeBatch>{28 29}
-03a88a900efe11e9b6570927331dac8c,<Item>{309},<Stocktake>{5},<StocktakeBatch>{30}
-03a9c3100efe11e9b6570927331dac8c,<Item>{199},<Stocktake>{5},<StocktakeBatch>{31 32 33 34}
-03aef3300efe11e9b6570927331dac8c,<Item>{277},<Stocktake>{5},<StocktakeBatch>{35}
-03b0a0e00efe11e9b6570927331dac8c,<Item>{149},<Stocktake>{5},<StocktakeBatch>{36 37}
-03b387100efe11e9b6570927331dac8c,<Item>{143},<Stocktake>{5},<StocktakeBatch>{38 39}
-03b709800efe11e9b6570927331dac8c,<Item>{140},<Stocktake>{5},<StocktakeBatch>{40 41}
-03b9efb00efe11e9b6570927331dac8c,<Item>{139},<Stocktake>{5},<StocktakeBatch>{42}
-03bb76500efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{5},<StocktakeBatch>{43}
-03bcfcf00efe11e9b6570927331dac8c,<Item>{2},<Stocktake>{5},<StocktakeBatch>{44 45}
-03c031400efe11e9b6570927331dac8c,<Item>{33},<Stocktake>{5},<StocktakeBatch>{46}
-03c27b300efe11e9b6570927331dac8c,<Item>{131},<Stocktake>{5},<StocktakeBatch>{47 49}
-03c428e00efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{5},<StocktakeBatch>{48}
-03c7f9700efe11e9b6570927331dac8c,<Item>{58},<Stocktake>{5},<StocktakeBatch>{50 51}
-03cba2f00efe11e9b6570927331dac8c,<Item>{251},<Stocktake>{5},<StocktakeBatch>{52 53}
-03d05de00efe11e9b6570927331dac8c,<Item>{116},<Stocktake>{5},<StocktakeBatch>{54}
-03d232a00efe11e9b6570927331dac8c,<Item>{56},<Stocktake>{5},<StocktakeBatch>{55}
-03d407600efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{5},<StocktakeBatch>{56}
-03d5b5100efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{5},<StocktakeBatch>{57 58}
-03da21e00efe11e9b6570927331dac8c,<Item>{343},<Stocktake>{5},<StocktakeBatch>{59}
-03dc44c00efe11e9b6570927331dac8c,<Item>{112},<Stocktake>{5},<StocktakeBatch>{60}
-03de67a00efe11e9b6570927331dac8c,<Item>{110},<Stocktake>{5},<StocktakeBatch>{61}
-03e08a800efe11e9b6570927331dac8c,<Item>{93},<Stocktake>{5},<StocktakeBatch>{62}
-03e2ad600efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{5},<StocktakeBatch>{63}
-03e51e600efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{5},<StocktakeBatch>{64}
-03e71a300efe11e9b6570927331dac8c,<Item>{94},<Stocktake>{5},<StocktakeBatch>{65}
-03e9b2400efe11e9b6570927331dac8c,<Item>{92},<Stocktake>{5},<StocktakeBatch>{66}
-03ebfc300efe11e9b6570927331dac8c,<Item>{29},<Stocktake>{5},<StocktakeBatch>{67 68}
-03f105400efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{5},<StocktakeBatch>{69}
-03f39d500efe11e9b6570927331dac8c,<Item>{197},<Stocktake>{5},<StocktakeBatch>{70}
-03f3eb700efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{0},<StocktakeBatch>{71}
-03f487b00efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{0},<StocktakeBatch>{72}
-03f54b000efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{0},<StocktakeBatch>{73}
-03f5e7400efe11e9b6570927331dac8c,<Item>{77},<Stocktake>{0},<StocktakeBatch>{74 75}
-03f746d00efe11e9b6570927331dac8c,<Item>{78},<Stocktake>{0},<StocktakeBatch>{76}
-03f7e3100efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{0},<StocktakeBatch>{77}
-03f87f500efe11e9b6570927331dac8c,<Item>{88},<Stocktake>{0},<StocktakeBatch>{78}
-03f969b00efe11e9b6570927331dac8c,<Item>{338},<Stocktake>{0},<StocktakeBatch>{79}
-03fa54100efe11e9b6570927331dac8c,<Item>{340},<Stocktake>{0},<StocktakeBatch>{80}
-03fb3e700efe11e9b6570927331dac8c,<Item>{28},<Stocktake>{0},<StocktakeBatch>{81}
-03fc01c00efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{0},<StocktakeBatch>{82}
-03fd13300efe11e9b6570927331dac8c,<Item>{29},<Stocktake>{0},<StocktakeBatch>{83 84}
-03fee7f00efe11e9b6570927331dac8c,<Item>{92},<Stocktake>{0},<StocktakeBatch>{85}
-03fff9600efe11e9b6570927331dac8c,<Item>{94},<Stocktake>{0},<StocktakeBatch>{86}
-04010ad00efe11e9b6570927331dac8c,<Item>{68},<Stocktake>{0},<StocktakeBatch>{87}
-040243500efe11e9b6570927331dac8c,<Item>{93},<Stocktake>{0},<StocktakeBatch>{88 89}
-040502700efe11e9b6570927331dac8c,<Item>{96},<Stocktake>{0},<StocktakeBatch>{90}
-040662000efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{0},<StocktakeBatch>{91}
-04079a800efe11e9b6570927331dac8c,<Item>{50},<Stocktake>{0},<StocktakeBatch>{92}
-0408fa100efe11e9b6570927331dac8c,<Item>{102},<Stocktake>{0},<StocktakeBatch>{93}
-040a32900efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{0},<StocktakeBatch>{94}
-040be0400efe11e9b6570927331dac8c,<Item>{110},<Stocktake>{0},<StocktakeBatch>{95 96}
-040f14900efe11e9b6570927331dac8c,<Item>{112},<Stocktake>{0},<StocktakeBatch>{97 98}
-041248e00efe11e9b6570927331dac8c,<Item>{343},<Stocktake>{0},<StocktakeBatch>{99}
-0413cf800efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{0},<StocktakeBatch>{100 101}
-04168ea00efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{0},<StocktakeBatch>{102}
-041815400efe11e9b6570927331dac8c,<Item>{55},<Stocktake>{0},<StocktakeBatch>{103}
-04199be00efe11e9b6570927331dac8c,<Item>{56},<Stocktake>{0},<StocktakeBatch>{104}
-041b49900efe11e9b6570927331dac8c,<Item>{116},<Stocktake>{0},<StocktakeBatch>{105}
-041cd0300efe11e9b6570927331dac8c,<Item>{251},<Stocktake>{0},<StocktakeBatch>{106 107}
-042079b00efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{0},<StocktakeBatch>{108}
-04229c900efe11e9b6570927331dac8c,<Item>{131},<Stocktake>{0},<StocktakeBatch>{109 110}
-0426bb400efe11e9b6570927331dac8c,<Item>{2},<Stocktake>{0},<StocktakeBatch>{111 112}
-042beb600efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{0},<StocktakeBatch>{113 114}
-042fe3000efe11e9b6570927331dac8c,<Item>{139},<Stocktake>{0},<StocktakeBatch>{115}
-04327b100efe11e9b6570927331dac8c,<Item>{140},<Stocktake>{0},<StocktakeBatch>{116}
-043513200efe11e9b6570927331dac8c,<Item>{143},<Stocktake>{0},<StocktakeBatch>{117}
-043736000efe11e9b6570927331dac8c,<Item>{32},<Stocktake>{0},<StocktakeBatch>{118 119}
-043d02600efe11e9b6570927331dac8c,<Item>{149},<Stocktake>{0},<StocktakeBatch>{120 121}
-0442cec00efe11e9b6570927331dac8c,<Item>{277},<Stocktake>{0},<StocktakeBatch>{122}
-044566d00efe11e9b6570927331dac8c,<Item>{199},<Stocktake>{0},<StocktakeBatch>{123}
-0447b0c00efe11e9b6570927331dac8c,<Item>{309},<Stocktake>{0},<StocktakeBatch>{124}
-044abe000efe11e9b6570927331dac8c,<Item>{258},<Stocktake>{0},<StocktakeBatch>{125 126}
-0450b1700efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{0},<StocktakeBatch>{127}
-0453e5c00efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{0},<StocktakeBatch>{128 129}
-04598b100efe11e9b6570927331dac8c,<Item>{36},<Stocktake>{0},<StocktakeBatch>{130}
-045c4a300efe11e9b6570927331dac8c,<Item>{312},<Stocktake>{0},<StocktakeBatch>{131}
-045ebb300efe11e9b6570927331dac8c,<Item>{314},<Stocktake>{0},<StocktakeBatch>{132}
-0461a1600efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{0},<StocktakeBatch>{133 134}
-0466f8900efe11e9b6570927331dac8c,<Item>{316},<Stocktake>{0},<StocktakeBatch>{135}
-046a05d00efe11e9b6570927331dac8c,<Item>{299},<Stocktake>{0},<StocktakeBatch>{136}
-046d88400efe11e9b6570927331dac8c,<Item>{12},<Stocktake>{0},<StocktakeBatch>{137}
-04706e700efe11e9b6570927331dac8c,<Item>{5},<Stocktake>{0},<StocktakeBatch>{138}
-0473c9d00efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{0},<StocktakeBatch>{139}
-0476d7100efe11e9b6570927331dac8c,<Item>{266},<Stocktake>{0},<StocktakeBatch>{140}
-0479e4500efe11e9b6570927331dac8c,<Item>{177},<Stocktake>{0},<StocktakeBatch>{141 142}
-047d3fb00efe11e9b6570927331dac8c,<Item>{177},<Stocktake>{6},<StocktakeBatch>{143}
-047ddbf00efe11e9b6570927331dac8c,<Item>{266},<Stocktake>{6},<StocktakeBatch>{144}
-047e78300efe11e9b6570927331dac8c,<Item>{340},<Stocktake>{6},<StocktakeBatch>{145}
-047f3b800efe11e9b6570927331dac8c,<Item>{338},<Stocktake>{6},<StocktakeBatch>{146}
-047fb0b00efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{7},<StocktakeBatch>{147}
-04804cf00efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{7},<StocktakeBatch>{148}
-0480e9300efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{7},<StocktakeBatch>{149}
-048185700efe11e9b6570927331dac8c,<Item>{79},<Stocktake>{7},<StocktakeBatch>{150}
-048248c00efe11e9b6570927331dac8c,<Item>{77},<Stocktake>{7},<StocktakeBatch>{151 152}
-048381400efe11e9b6570927331dac8c,<Item>{78},<Stocktake>{7},<StocktakeBatch>{153}
-048444900efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{7},<StocktakeBatch>{154}
-048507e00efe11e9b6570927331dac8c,<Item>{340},<Stocktake>{7},<StocktakeBatch>{155}
-048667700efe11e9b6570927331dac8c,<Item>{197},<Stocktake>{7},<StocktakeBatch>{156}
-04879ff00efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{7},<StocktakeBatch>{157}
-048926900efe11e9b6570927331dac8c,<Item>{29},<Stocktake>{7},<StocktakeBatch>{158 159}
-048b49700efe11e9b6570927331dac8c,<Item>{387},<Stocktake>{7},<StocktakeBatch>{160}
-048c33d00efe11e9b6570927331dac8c,<Item>{33},<Stocktake>{7},<StocktakeBatch>{161}
-048d6c500efe11e9b6570927331dac8c,<Item>{36},<Stocktake>{7},<StocktakeBatch>{162}
-048ea4d00efe11e9b6570927331dac8c,<Item>{58},<Stocktake>{7},<StocktakeBatch>{163}
-049004600efe11e9b6570927331dac8c,<Item>{92},<Stocktake>{7},<StocktakeBatch>{164}
-049163f00efe11e9b6570927331dac8c,<Item>{93},<Stocktake>{7},<StocktakeBatch>{165}
-0492c3800efe11e9b6570927331dac8c,<Item>{94},<Stocktake>{7},<StocktakeBatch>{166}
-0493fc000efe11e9b6570927331dac8c,<Item>{95},<Stocktake>{7},<StocktakeBatch>{167}
-0495a9b00efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{7},<StocktakeBatch>{168}
-049757600efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{7},<StocktakeBatch>{169 170}
-049a64a00efe11e9b6570927331dac8c,<Item>{116},<Stocktake>{7},<StocktakeBatch>{171}
-049beb400efe11e9b6570927331dac8c,<Item>{131},<Stocktake>{7},<StocktakeBatch>{172 173}
-04a3da800efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{7},<StocktakeBatch>{174}
-04a5d6500efe11e9b6570927331dac8c,<Item>{143},<Stocktake>{7},<StocktakeBatch>{175 176}
-04a958c00efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{7},<StocktakeBatch>{177}
-04ab2d800efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{7},<StocktakeBatch>{178 179}
-04afe8700efe11e9b6570927331dac8c,<Item>{343},<Stocktake>{7},<StocktakeBatch>{180}
-04b16f100efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{7},<StocktakeBatch>{181 182}
-04b4a3600efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{7},<StocktakeBatch>{183}
-04b62a000efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{7},<StocktakeBatch>{184 185 186 187}
-04bd7d000efe11e9b6570927331dac8c,<Item>{314},<Stocktake>{7},<StocktakeBatch>{188}
-04bf2ab00efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{7},<StocktakeBatch>{189}
-04c0d8600efe11e9b6570927331dac8c,<Item>{170},<Stocktake>{7},<StocktakeBatch>{190}
-04c2d4300efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{7},<StocktakeBatch>{191}
-04c4f7100efe11e9b6570927331dac8c,<Item>{2},<Stocktake>{7},<StocktakeBatch>{192 193}
-04c8a0900efe11e9b6570927331dac8c,<Item>{149},<Stocktake>{7},<StocktakeBatch>{194 195 196}
-04cd0d600efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{8},<StocktakeBatch>{197 198}
-04cdd0b00efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{8},<StocktakeBatch>{199 200}
-04cebb100efe11e9b6570927331dac8c,<Item>{116},<Stocktake>{9},<StocktakeBatch>{201}
-04cf30400efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{9},<StocktakeBatch>{202 227}
-04cfa5700efe11e9b6570927331dac8c,<Item>{95},<Stocktake>{9},<StocktakeBatch>{203}
-04d041b00efe11e9b6570927331dac8c,<Item>{94},<Stocktake>{9},<StocktakeBatch>{204 230}
-04d105000efe11e9b6570927331dac8c,<Item>{92},<Stocktake>{9},<StocktakeBatch>{205 231}
-04d1c8500efe11e9b6570927331dac8c,<Item>{340},<Stocktake>{9},<StocktakeBatch>{206 207}
-04d34ef00efe11e9b6570927331dac8c,<Item>{88},<Stocktake>{9},<StocktakeBatch>{208}
-04d3eb300efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{9},<StocktakeBatch>{209}
-04d4ae800efe11e9b6570927331dac8c,<Item>{2},<Stocktake>{9},<StocktakeBatch>{210 248}
-04d571d00efe11e9b6570927331dac8c,<Item>{79},<Stocktake>{9},<StocktakeBatch>{211 212}
-04d746900efe11e9b6570927331dac8c,<Item>{197},<Stocktake>{9},<StocktakeBatch>{213 214}
-04d8f4400efe11e9b6570927331dac8c,<Item>{338},<Stocktake>{9},<StocktakeBatch>{215}
-04d990800efe11e9b6570927331dac8c,<Item>{77},<Stocktake>{9},<StocktakeBatch>{216 217}
-04db8c500efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{9},<StocktakeBatch>{218 240}
-04dc76b00efe11e9b6570927331dac8c,<Item>{251},<Stocktake>{9},<StocktakeBatch>{219}
-04dd61100efe11e9b6570927331dac8c,<Item>{56},<Stocktake>{9},<StocktakeBatch>{220}
-04de4b700efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{9},<StocktakeBatch>{221 224}
-04df5ce00efe11e9b6570927331dac8c,<Item>{343},<Stocktake>{9},<StocktakeBatch>{222}
-04e06e500efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{9},<StocktakeBatch>{223}
-04e2b8400efe11e9b6570927331dac8c,<Item>{112},<Stocktake>{9},<StocktakeBatch>{225}
-04e417d00efe11e9b6570927331dac8c,<Item>{110},<Stocktake>{9},<StocktakeBatch>{226}
-04e59e700efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{9},<StocktakeBatch>{228}
-04e6d6f00efe11e9b6570927331dac8c,<Item>{93},<Stocktake>{9},<StocktakeBatch>{229}
-04e96f000efe11e9b6570927331dac8c,<Item>{29},<Stocktake>{9},<StocktakeBatch>{232 233}
-04ec2e200efe11e9b6570927331dac8c,<Item>{28},<Stocktake>{9},<StocktakeBatch>{234}
-04ed8db00efe11e9b6570927331dac8c,<Item>{78},<Stocktake>{9},<StocktakeBatch>{235}
-04ef14500efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{9},<StocktakeBatch>{236}
-04f0e9100efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{9},<StocktakeBatch>{237}
-04f296c00efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{9},<StocktakeBatch>{238 239}
-04f703900efe11e9b6570927331dac8c,<Item>{58},<Stocktake>{9},<StocktakeBatch>{241 242}
-04fb49500efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{9},<StocktakeBatch>{243}
-04fd45200efe11e9b6570927331dac8c,<Item>{131},<Stocktake>{9},<StocktakeBatch>{244 245}
-05018ae00efe11e9b6570927331dac8c,<Item>{33},<Stocktake>{9},<StocktakeBatch>{246 247}
-0506e2100efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{9},<StocktakeBatch>{249 250}
-050c12300efe11e9b6570927331dac8c,<Item>{139},<Stocktake>{9},<StocktakeBatch>{251}
-050eaa400efe11e9b6570927331dac8c,<Item>{140},<Stocktake>{9},<StocktakeBatch>{252}
-051169600efe11e9b6570927331dac8c,<Item>{387},<Stocktake>{9},<StocktakeBatch>{253}
-051401700efe11e9b6570927331dac8c,<Item>{389},<Stocktake>{9},<StocktakeBatch>{254}
-0516e7a00efe11e9b6570927331dac8c,<Item>{32},<Stocktake>{9},<StocktakeBatch>{255}
-0519cdd00efe11e9b6570927331dac8c,<Item>{183},<Stocktake>{9},<StocktakeBatch>{256}
-051c65e00efe11e9b6570927331dac8c,<Item>{149},<Stocktake>{9},<StocktakeBatch>{257}
-051f25000efe11e9b6570927331dac8c,<Item>{277},<Stocktake>{9},<StocktakeBatch>{258 259 260 261}
-052b0be00efe11e9b6570927331dac8c,<Item>{199},<Stocktake>{9},<StocktakeBatch>{262}
-052e40300efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{9},<StocktakeBatch>{263 264}
-053322300efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{9},<StocktakeBatch>{265 266}
-0538c7800efe11e9b6570927331dac8c,<Item>{36},<Stocktake>{9},<StocktakeBatch>{267}
-053b5f900efe11e9b6570927331dac8c,<Item>{314},<Stocktake>{9},<StocktakeBatch>{268}
-053ebaf00efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{9},<StocktakeBatch>{269 270}
-054460400efe11e9b6570927331dac8c,<Item>{296},<Stocktake>{9},<StocktakeBatch>{271}
-054794900efe11e9b6570927331dac8c,<Item>{12},<Stocktake>{9},<StocktakeBatch>{272 273}
-054daf100efe11e9b6570927331dac8c,<Item>{5},<Stocktake>{9},<StocktakeBatch>{274 275}
-055354600efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{9},<StocktakeBatch>{276}
-055613800efe11e9b6570927331dac8c,<Item>{170},<Stocktake>{9},<StocktakeBatch>{277}
-055920c00efe11e9b6570927331dac8c,<Item>{177},<Stocktake>{9},<StocktakeBatch>{278}
-055995f00efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{10},<StocktakeBatch>{279 280 281 288}
-055ace700efe11e9b6570927331dac8c,<Item>{210},<Stocktake>{10},<StocktakeBatch>{282 308 309}
-055b91c00efe11e9b6570927331dac8c,<Item>{58},<Stocktake>{10},<StocktakeBatch>{283 284 323}
-055cf1500efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{10},<StocktakeBatch>{285 286 324}
-055e9f000efe11e9b6570927331dac8c,<Item>{177},<Stocktake>{10},<StocktakeBatch>{287 359 360}
-055fd7800efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{10},<StocktakeBatch>{289}
-05609ad00efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{10},<StocktakeBatch>{290}
-056185300efe11e9b6570927331dac8c,<Item>{79},<Stocktake>{10},<StocktakeBatch>{291}
-056296a00efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{10},<StocktakeBatch>{292}
-0563a8100efe11e9b6570927331dac8c,<Item>{88},<Stocktake>{10},<StocktakeBatch>{293}
-0564b9800efe11e9b6570927331dac8c,<Item>{338},<Stocktake>{10},<StocktakeBatch>{294 295}
-0566dc600efe11e9b6570927331dac8c,<Item>{340},<Stocktake>{10},<StocktakeBatch>{296 297}
-0568b1200efe11e9b6570927331dac8c,<Item>{28},<Stocktake>{10},<StocktakeBatch>{298}
-0569c2900efe11e9b6570927331dac8c,<Item>{197},<Stocktake>{10},<StocktakeBatch>{299 300}
-056c33900efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{10},<StocktakeBatch>{301}
-056d45000efe11e9b6570927331dac8c,<Item>{29},<Stocktake>{10},<StocktakeBatch>{302 303}
-056fb6000efe11e9b6570927331dac8c,<Item>{94},<Stocktake>{10},<StocktakeBatch>{304}
-057115900efe11e9b6570927331dac8c,<Item>{93},<Stocktake>{10},<StocktakeBatch>{305 306}
-057470f00efe11e9b6570927331dac8c,<Item>{95},<Stocktake>{10},<StocktakeBatch>{307}
-0576e1f00efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{10},<StocktakeBatch>{310 311}
-057a3d500efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{10},<StocktakeBatch>{312 313}
-057d4a900efe11e9b6570927331dac8c,<Item>{110},<Stocktake>{10},<StocktakeBatch>{314}
-057ed1300efe11e9b6570927331dac8c,<Item>{112},<Stocktake>{10},<StocktakeBatch>{315}
-05807ee00efe11e9b6570927331dac8c,<Item>{343},<Stocktake>{10},<StocktakeBatch>{316}
-05827ab00efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{10},<StocktakeBatch>{317 318}
-0585af000efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{10},<StocktakeBatch>{319}
-0587aad00efe11e9b6570927331dac8c,<Item>{56},<Stocktake>{10},<StocktakeBatch>{320}
-0589cdb00efe11e9b6570927331dac8c,<Item>{116},<Stocktake>{10},<StocktakeBatch>{321}
-058c17a00efe11e9b6570927331dac8c,<Item>{251},<Stocktake>{10},<StocktakeBatch>{322}
-058f4bf00efe11e9b6570927331dac8c,<Item>{131},<Stocktake>{10},<StocktakeBatch>{325}
-05916ed00efe11e9b6570927331dac8c,<Item>{33},<Stocktake>{10},<StocktakeBatch>{326}
-059391b00efe11e9b6570927331dac8c,<Item>{2},<Stocktake>{10},<StocktakeBatch>{327 328}
-059762400efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{10},<StocktakeBatch>{329}
-0599ac300efe11e9b6570927331dac8c,<Item>{139},<Stocktake>{10},<StocktakeBatch>{330}
-059c1d300efe11e9b6570927331dac8c,<Item>{140},<Stocktake>{10},<StocktakeBatch>{331}
-059e40100efe11e9b6570927331dac8c,<Item>{143},<Stocktake>{10},<StocktakeBatch>{332 333}
-05a4f6d00efe11e9b6570927331dac8c,<Item>{387},<Stocktake>{10},<StocktakeBatch>{334}
-05a7b5f00efe11e9b6570927331dac8c,<Item>{389},<Stocktake>{10},<StocktakeBatch>{335 336}
-05ace6100efe11e9b6570927331dac8c,<Item>{183},<Stocktake>{10},<StocktakeBatch>{337}
-05aff3500efe11e9b6570927331dac8c,<Item>{149},<Stocktake>{10},<StocktakeBatch>{338}
-05b264500efe11e9b6570927331dac8c,<Item>{277},<Stocktake>{10},<StocktakeBatch>{339 340 341}
-05bac8c00efe11e9b6570927331dac8c,<Item>{199},<Stocktake>{10},<StocktakeBatch>{342 343}
-05c095200efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{10},<StocktakeBatch>{344 345}
-05c577200efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{10},<StocktakeBatch>{346 347}
-05ca0b000efe11e9b6570927331dac8c,<Item>{36},<Stocktake>{10},<StocktakeBatch>{348}
-05cd18400efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{10},<StocktakeBatch>{349 350 351}
-05d751700efe11e9b6570927331dac8c,<Item>{296},<Stocktake>{10},<StocktakeBatch>{352}
-05db49100efe11e9b6570927331dac8c,<Item>{12},<Stocktake>{10},<StocktakeBatch>{353}
-05decb800efe11e9b6570927331dac8c,<Item>{5},<Stocktake>{10},<StocktakeBatch>{354 355}
-05e422b00efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{10},<StocktakeBatch>{356 357}
-05eb27900efe11e9b6570927331dac8c,<Item>{170},<Stocktake>{10},<StocktakeBatch>{358}
-05ed98900efe11e9b6570927331dac8c,<Item>{58},<Stocktake>{13},<StocktakeBatch>{361 362 363 364 530 531 532 533 572}
-07c95d700efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{11},<StocktakeBatch>{365 430 431}
-07c9ab900efe11e9b6570927331dac8c,<Item>{68},<Stocktake>{11},<StocktakeBatch>{366}
-07ca6ee00efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{11},<StocktakeBatch>{367 418 420}
-07cb32300efe11e9b6570927331dac8c,<Item>{50},<Stocktake>{11},<StocktakeBatch>{368}
-07cbce700efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{11},<StocktakeBatch>{369}
-07cc91c00efe11e9b6570927331dac8c,<Item>{116},<Stocktake>{11},<StocktakeBatch>{370}
-07cd2e000efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{11},<StocktakeBatch>{371}
-07cdf1500efe11e9b6570927331dac8c,<Item>{140},<Stocktake>{11},<StocktakeBatch>{372 401}
-07cedbb00efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{11},<StocktakeBatch>{373 374}
-07d03b400efe11e9b6570927331dac8c,<Item>{5},<Stocktake>{11},<StocktakeBatch>{375 384}
-07d14cb00efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{11},<StocktakeBatch>{376 382 383}
-07d237100efe11e9b6570927331dac8c,<Item>{398},<Stocktake>{11},<StocktakeBatch>{377}
-07d396a00efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{11},<StocktakeBatch>{378 379}
-07d5e0900efe11e9b6570927331dac8c,<Item>{58},<Stocktake>{11},<StocktakeBatch>{380 407 408 421 422 424 441 447 448}
-07d719100efe11e9b6570927331dac8c,<Item>{177},<Stocktake>{11},<StocktakeBatch>{381}
-07da9b800efe11e9b6570927331dac8c,<Item>{12},<Stocktake>{11},<StocktakeBatch>{385 386}
-07dd0c800efe11e9b6570927331dac8c,<Item>{296},<Stocktake>{11},<StocktakeBatch>{387 388}
-07dfa4900efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{11},<StocktakeBatch>{389 439 440 442 443 444 445}
-07e104200efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{11},<StocktakeBatch>{390 391 392}
-07e549e00efe11e9b6570927331dac8c,<Item>{199},<Stocktake>{11},<StocktakeBatch>{393 395}
-07e6a9700efe11e9b6570927331dac8c,<Item>{258},<Stocktake>{11},<StocktakeBatch>{394}
-07e941800efe11e9b6570927331dac8c,<Item>{277},<Stocktake>{11},<StocktakeBatch>{396}
-07eaa1100efe11e9b6570927331dac8c,<Item>{389},<Stocktake>{11},<StocktakeBatch>{397}
-07ec75d00efe11e9b6570927331dac8c,<Item>{387},<Stocktake>{11},<StocktakeBatch>{398}
-07edfc700efe11e9b6570927331dac8c,<Item>{143},<Stocktake>{11},<StocktakeBatch>{399 400}
-07f290500efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{11},<StocktakeBatch>{402}
-07f465100efe11e9b6570927331dac8c,<Item>{33},<Stocktake>{11},<StocktakeBatch>{403 404}
-07f80e900efe11e9b6570927331dac8c,<Item>{405},<Stocktake>{11},<StocktakeBatch>{405}
-07f9bc400efe11e9b6570927331dac8c,<Item>{131},<Stocktake>{11},<StocktakeBatch>{406}
-07fddaf00efe11e9b6570927331dac8c,<Item>{251},<Stocktake>{11},<StocktakeBatch>{409}
-080024e00efe11e9b6570927331dac8c,<Item>{56},<Stocktake>{11},<StocktakeBatch>{410}
-080247c00efe11e9b6570927331dac8c,<Item>{55},<Stocktake>{11},<StocktakeBatch>{411}
-080491b00efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{11},<StocktakeBatch>{412 438}
-08068d800efe11e9b6570927331dac8c,<Item>{112},<Stocktake>{11},<StocktakeBatch>{413}
-080889500efe11e9b6570927331dac8c,<Item>{110},<Stocktake>{11},<StocktakeBatch>{414}
-080aac300efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{11},<StocktakeBatch>{415 416 417 419}
-081581a00efe11e9b6570927331dac8c,<Item>{95},<Stocktake>{11},<StocktakeBatch>{423}
-081904100efe11e9b6570927331dac8c,<Item>{197},<Stocktake>{11},<StocktakeBatch>{425 426}
-081de6100efe11e9b6570927331dac8c,<Item>{79},<Stocktake>{11},<StocktakeBatch>{427 428}
-0822c8100efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{11},<StocktakeBatch>{429 446}
-0826bfb00efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{11},<StocktakeBatch>{432 436 437}
-0829ccf00efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{11},<StocktakeBatch>{433}
-082d28500efe11e9b6570927331dac8c,<Item>{88},<Stocktake>{11},<StocktakeBatch>{434}
-082fc0600efe11e9b6570927331dac8c,<Item>{28},<Stocktake>{11},<StocktakeBatch>{435}
-08489f900efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{12},<StocktakeBatch>{449 450 480}
-084989f00efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{12},<StocktakeBatch>{451 452}
-084ae9800efe11e9b6570927331dac8c,<Item>{12},<Stocktake>{12},<StocktakeBatch>{453 454}
-084c49100efe11e9b6570927331dac8c,<Item>{5},<Stocktake>{12},<StocktakeBatch>{455 456}
-084df6c00efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{12},<StocktakeBatch>{457}
-084f2f400efe11e9b6570927331dac8c,<Item>{389},<Stocktake>{12},<StocktakeBatch>{458}
-085040b00efe11e9b6570927331dac8c,<Item>{28},<Stocktake>{12},<StocktakeBatch>{459}
-085104000efe11e9b6570927331dac8c,<Item>{398},<Stocktake>{12},<StocktakeBatch>{460 461}
-0852d8c00efe11e9b6570927331dac8c,<Item>{33},<Stocktake>{12},<StocktakeBatch>{462 463}
-0854d4900efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{12},<StocktakeBatch>{464}
-08560d100efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{12},<StocktakeBatch>{465}
-08576ca00efe11e9b6570927331dac8c,<Item>{79},<Stocktake>{12},<StocktakeBatch>{466 467 468}
-085aa0f00efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{12},<StocktakeBatch>{469 470}
-085d39000efe11e9b6570927331dac8c,<Item>{88},<Stocktake>{12},<StocktakeBatch>{471}
-085e98900efe11e9b6570927331dac8c,<Item>{197},<Stocktake>{12},<StocktakeBatch>{472 473}
-08617ec00efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{12},<StocktakeBatch>{474 475}
-08643de00efe11e9b6570927331dac8c,<Item>{94},<Stocktake>{12},<StocktakeBatch>{476 477}
-086724100efe11e9b6570927331dac8c,<Item>{93},<Stocktake>{12},<StocktakeBatch>{478}
-086883a00efe11e9b6570927331dac8c,<Item>{431},<Stocktake>{12},<StocktakeBatch>{479}
-086aa6800efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{12},<StocktakeBatch>{481 482 483 484}
-08710f200efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{12},<StocktakeBatch>{485}
-0872e3e00efe11e9b6570927331dac8c,<Item>{251},<Stocktake>{12},<StocktakeBatch>{486}
-087491900efe11e9b6570927331dac8c,<Item>{405},<Stocktake>{12},<StocktakeBatch>{487}
-0876db800efe11e9b6570927331dac8c,<Item>{140},<Stocktake>{12},<StocktakeBatch>{488}
-087889300efe11e9b6570927331dac8c,<Item>{183},<Stocktake>{12},<StocktakeBatch>{489}
-087a85000efe11e9b6570927331dac8c,<Item>{277},<Stocktake>{12},<StocktakeBatch>{490}
-087c80d00efe11e9b6570927331dac8c,<Item>{199},<Stocktake>{12},<StocktakeBatch>{491 492}
-0880c6900efe11e9b6570927331dac8c,<Item>{258},<Stocktake>{12},<StocktakeBatch>{493}
-0882c2600efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{12},<StocktakeBatch>{494 495 496}
-0887cb700efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{12},<StocktakeBatch>{497}
-088952100efe11e9b6570927331dac8c,<Item>{36},<Stocktake>{12},<StocktakeBatch>{498}
-088b74f00efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{12},<StocktakeBatch>{499 500 501}
-0890f3300efe11e9b6570927331dac8c,<Item>{177},<Stocktake>{12},<StocktakeBatch>{502}
-089316100efe11e9b6570927331dac8c,<Item>{110},<Stocktake>{12},<StocktakeBatch>{503}
-089511e00efe11e9b6570927331dac8c,<Item>{112},<Stocktake>{12},<StocktakeBatch>{504}
-0896e6a00efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{12},<StocktakeBatch>{505 506}
-089b05500efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{12},<StocktakeBatch>{507}
-089d28300efe11e9b6570927331dac8c,<Item>{143},<Stocktake>{12},<StocktakeBatch>{508 509}
-08a16df00efe11e9b6570927331dac8c,<Item>{387},<Stocktake>{12},<StocktakeBatch>{510}
-08a406000efe11e9b6570927331dac8c,<Item>{58},<Stocktake>{12},<StocktakeBatch>{511 512 513 514 515 516 517 518 525}
-08b89f700efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{12},<StocktakeBatch>{519 520 521 522 523 524 527}
-08cebf800efe11e9b6570927331dac8c,<Item>{139},<Stocktake>{12},<StocktakeBatch>{526}
-08d464d00efe11e9b6570927331dac8c,<Item>{296},<Stocktake>{12},<StocktakeBatch>{528 529}
-08d8f8b00efe11e9b6570927331dac8c,<Item>{75},<Stocktake>{13},<StocktakeBatch>{534 535 543}
-08da7f500efe11e9b6570927331dac8c,<Item>{94},<Stocktake>{13},<StocktakeBatch>{536 567}
-08daf4800efe11e9b6570927331dac8c,<Item>{311},<Stocktake>{13},<StocktakeBatch>{537 538 539 540 541 542 584}
-08deec200efe11e9b6570927331dac8c,<Item>{80},<Stocktake>{13},<StocktakeBatch>{544 545}
-08e072c00efe11e9b6570927331dac8c,<Item>{391},<Stocktake>{13},<StocktakeBatch>{546}
-08e247800efe11e9b6570927331dac8c,<Item>{85},<Stocktake>{13},<StocktakeBatch>{547}
-08e30ad00efe11e9b6570927331dac8c,<Item>{79},<Stocktake>{13},<StocktakeBatch>{548 549 550}
-08e52db00efe11e9b6570927331dac8c,<Item>{86},<Stocktake>{13},<StocktakeBatch>{551 552 553}
-08e813e00efe11e9b6570927331dac8c,<Item>{88},<Stocktake>{13},<StocktakeBatch>{554}
-08e94c600efe11e9b6570927331dac8c,<Item>{338},<Stocktake>{13},<StocktakeBatch>{555}
-08ea5dd00efe11e9b6570927331dac8c,<Item>{339},<Stocktake>{13},<StocktakeBatch>{556 557 558}
-08ede0400efe11e9b6570927331dac8c,<Item>{340},<Stocktake>{13},<StocktakeBatch>{559 560 561}
-08f162b00efe11e9b6570927331dac8c,<Item>{28},<Stocktake>{13},<StocktakeBatch>{562}
-08f2e9500efe11e9b6570927331dac8c,<Item>{197},<Stocktake>{13},<StocktakeBatch>{563 564 565}
-08f756200efe11e9b6570927331dac8c,<Item>{298},<Stocktake>{13},<StocktakeBatch>{566}
-08f951f00efe11e9b6570927331dac8c,<Item>{68},<Stocktake>{13},<StocktakeBatch>{568}
-08faffa00efe11e9b6570927331dac8c,<Item>{110},<Stocktake>{13},<StocktakeBatch>{569 570 571}
-090056d00efe11e9b6570927331dac8c,<Item>{387},<Stocktake>{13},<StocktakeBatch>{573}
-09022b900efe11e9b6570927331dac8c,<Item>{183},<Stocktake>{13},<StocktakeBatch>{574}
-090364100efe11e9b6570927331dac8c,<Item>{149},<Stocktake>{13},<StocktakeBatch>{575}
-0904eab00efe11e9b6570927331dac8c,<Item>{277},<Stocktake>{13},<StocktakeBatch>{576}
-090698600efe11e9b6570927331dac8c,<Item>{199},<Stocktake>{13},<StocktakeBatch>{577 578}
-090a41e00efe11e9b6570927331dac8c,<Item>{258},<Stocktake>{13},<StocktakeBatch>{579}
-090c64c00efe11e9b6570927331dac8c,<Item>{259},<Stocktake>{13},<StocktakeBatch>{580 581 582}
-0913b7c00efe11e9b6570927331dac8c,<Item>{260},<Stocktake>{13},<StocktakeBatch>{583}
-09169df00efe11e9b6570927331dac8c,<Item>{296},<Stocktake>{13},<StocktakeBatch>{585 586}
-091abca00efe11e9b6570927331dac8c,<Item>{352},<Stocktake>{13},<StocktakeBatch>{587 588 589}
-092125400efe11e9b6570927331dac8c,<Item>{177},<Stocktake>{13},<StocktakeBatch>{590}
-092348200efe11e9b6570927331dac8c,<Item>{93},<Stocktake>{13},<StocktakeBatch>{591 592}
-09278de00efe11e9b6570927331dac8c,<Item>{431},<Stocktake>{13},<StocktakeBatch>{593}
-092962a00efe11e9b6570927331dac8c,<Item>{96},<Stocktake>{13},<StocktakeBatch>{594}
-092b5e700efe11e9b6570927331dac8c,<Item>{295},<Stocktake>{13},<StocktakeBatch>{595}
-092e6bb00efe11e9b6570927331dac8c,<Item>{108},<Stocktake>{13},<StocktakeBatch>{596 597 598 599 600 601}
-093c4e600efe11e9b6570927331dac8c,<Item>{112},<Stocktake>{13},<StocktakeBatch>{602 603}
-094109500efe11e9b6570927331dac8c,<Item>{344},<Stocktake>{13},<StocktakeBatch>{604}
-0943c8700efe11e9b6570927331dac8c,<Item>{345},<Stocktake>{13},<StocktakeBatch>{605}
-0945eb500efe11e9b6570927331dac8c,<Item>{251},<Stocktake>{13},<StocktakeBatch>{606}
-0947e7200efe11e9b6570927331dac8c,<Item>{140},<Stocktake>{13},<StocktakeBatch>{607}
-094a0a000efe11e9b6570927331dac8c,<Item>{143},<Stocktake>{13},<StocktakeBatch>{608}
-094cc9200efe11e9b6570927331dac8c,<Item>{12},<Stocktake>{13},<StocktakeBatch>{609}
-094f3a200efe11e9b6570927331dac8c,<Item>{5},<Stocktake>{13},<StocktakeBatch>{610 611}
-095443300efe11e9b6570927331dac8c,<Item>{134},<Stocktake>{13},<StocktakeBatch>{612 613 614}
-095b96300efe11e9b6570927331dac8c,<Item>{139},<Stocktake>{13},<StocktakeBatch>{615 616}
-096051200efe11e9b6570927331dac8c,<Item>{22},<Stocktake>{13},<StocktakeBatch>{617}
-096337500efe11e9b6570927331dac8c,<Item>{33},<Stocktake>{13},<StocktakeBatch>{618}
+ignore ID,,item,stocktake,batches
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,302e4d60f1cd11e79031b5af59368f9f ,321eabb0f1cd11e79031b5af59368f9f 32319770f1cd11e79031b5af59368f9f 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,302e4d60f1cd11e79031b5af59368f9f ,c503cdc0f1cd11e79031b5af59368f9f 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,086b0950f1d511e79031b5af59368f9f ,2ca1d1a0f1d511e79031b5af59368f9f 086d0520f1d511e79031b5af59368f9f 
+ignore ID,,28D1A7154505B3419EE96EF7D75E7175 ,01e32f30348b11e1bd5fc5c422a3fadd ,01efb250348b11e1bd5fc5c422a3fadd 01f111e0348b11e1bd5fc5c422a3fadd 
+ignore ID,,E7F84FC94E8B4647B1954DB8C1F2D93C ,01e32f30348b11e1bd5fc5c422a3fadd ,01f382e0348b11e1bd5fc5c422a3fadd 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,01e32f30348b11e1bd5fc5c422a3fadd ,01f5f3e0348b11e1bd5fc5c422a3fadd 
+ignore ID,,3492C0EC6F0F464288EBB0860E4AC78D ,01e32f30348b11e1bd5fc5c422a3fadd ,01f8da10348b11e1bd5fc5c422a3fadd 
+ignore ID,,81B2A8E83697C549B833848B99B532AE ,01e32f30348b11e1bd5fc5c422a3fadd ,01fecd80348b11e1bd5fc5c422a3fadd 
+ignore ID,,B3F29C830FC75644B4C1F789BEA01342 ,01e32f30348b11e1bd5fc5c422a3fadd ,0201b3b0348b11e1bd5fc5c422a3fadd 
+ignore ID,,2EE132A7A6899C469CB69BBF3E49F049 ,01e32f30348b11e1bd5fc5c422a3fadd ,02044bc0348b11e1bd5fc5c422a3fadd 
+ignore ID,,465A50532AA27E458CB5E551C1E60228 ,137f54a0f74711e7a8580fb1f78de0a2 ,138213c0f74711e7a8580fb1f78de0a2 
+ignore ID,,465A50532AA27E458CB5E551C1E60228 ,aa472f20f74711e7a8580fb1f78de0a2 ,aa4a3c60f74711e7a8580fb1f78de0a2 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,01e32f30348b11e1bd5fc5c422a3fadd ,01e9bee0348b11e1bd5fc5c422a3fadd 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,01e32f30348b11e1bd5fc5c422a3fadd ,01ed6860348b11e1bd5fc5c422a3fadd 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,01e32f30348b11e1bd5fc5c422a3fadd ,01e6b1a0348b11e1bd5fc5c422a3fadd 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,01e32f30348b11e1bd5fc5c422a3fadd ,02fc4050348b11e1bd5fc5c422a3fadd 
+ignore ID,,389C4FCF010497489FE48B324904B83E ,01e32f30348b11e1bd5fc5c422a3fadd ,02f51460348b11e1bd5fc5c422a3fadd 
+ignore ID,,EA519454C9189B47A8A66BAAE5B60FC0 ,01e32f30348b11e1bd5fc5c422a3fadd ,02ee0f80348b11e1bd5fc5c422a3fadd 
+ignore ID,,6CCC5743567C814A9ABCE316FD5DDBD6 ,01e32f30348b11e1bd5fc5c422a3fadd ,02e731b0348b11e1bd5fc5c422a3fadd 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,01e32f30348b11e1bd5fc5c422a3fadd ,02e053e0348b11e1bd5fc5c422a3fadd 
+ignore ID,,DC622B83A28A6847BE98F596E5B8197A ,01e32f30348b11e1bd5fc5c422a3fadd ,02d97610348b11e1bd5fc5c422a3fadd 
+ignore ID,,EEDFFE81A65EC54AA656D3F43C006E6A ,01e32f30348b11e1bd5fc5c422a3fadd ,02d35b90348b11e1bd5fc5c422a3fadd 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,01e32f30348b11e1bd5fc5c422a3fadd ,02cd1a00348b11e1bd5fc5c422a3fadd 02c774b0348b11e1bd5fc5c422a3fadd 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,01e32f30348b11e1bd5fc5c422a3fadd ,02c0bdf0348b11e1bd5fc5c422a3fadd 
+ignore ID,,9D17D08D8C75364A8072C0A229D27CDF ,01e32f30348b11e1bd5fc5c422a3fadd ,02ba7c60348b11e1bd5fc5c422a3fadd 02b52530348b11e1bd5fc5c422a3fadd 
+ignore ID,,A66333019D2D7341A595EB242A996FCC ,01e32f30348b11e1bd5fc5c422a3fadd ,02aebc90348b11e1bd5fc5c422a3fadd 
+ignore ID,,49ED4A7108F45549B1BD286574BBE77A ,01e32f30348b11e1bd5fc5c422a3fadd ,02a8c920348b11e1bd5fc5c422a3fadd 02a39900348b11e1bd5fc5c422a3fadd 029e68e0348b11e1bd5fc5c422a3fadd 029938c0348b11e1bd5fc5c422a3fadd 
+ignore ID,,910D0C02C94C0E4EBAC20EC3B5F82B4E ,01e32f30348b11e1bd5fc5c422a3fadd ,02934550348b11e1bd5fc5c422a3fadd 
+ignore ID,,9C1E0D5882B1844BB8CA5352ADDCA4F0 ,01e32f30348b11e1bd5fc5c422a3fadd ,028da000348b11e1bd5fc5c422a3fadd 0288be00348b11e1bd5fc5c422a3fadd 
+ignore ID,,E6A244E41CF3BD449BC6AF6069A67F5A ,01e32f30348b11e1bd5fc5c422a3fadd ,0283dc00348b11e1bd5fc5c422a3fadd 028080a0348b11e1bd5fc5c422a3fadd 
+ignore ID,,63AB54F4F46D9546A298CCF6AC4D2FA0 ,01e32f30348b11e1bd5fc5c422a3fadd ,027b9ea0348b11e1bd5fc5c422a3fadd 027758e0348b11e1bd5fc5c422a3fadd 
+ignore ID,,3FBF55496070964A887CCBBF4B6EB9A1 ,01e32f30348b11e1bd5fc5c422a3fadd ,0271daa0348b11e1bd5fc5c422a3fadd 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,01e32f30348b11e1bd5fc5c422a3fadd ,026caa80348b11e1bd5fc5c422a3fadd 
+ignore ID,,81B65A4CFB966C418A355EC92145B223 ,01e32f30348b11e1bd5fc5c422a3fadd ,02677a60348b11e1bd5fc5c422a3fadd 026334a0348b11e1bd5fc5c422a3fadd 
+ignore ID,,CCA93D36ADFABE469A2C0BDFF462680B ,01e32f30348b11e1bd5fc5c422a3fadd ,025e2b90348b11e1bd5fc5c422a3fadd 
+ignore ID,,82A09C323DAEB747B294CADBCD413A0F ,01e32f30348b11e1bd5fc5c422a3fadd ,025a0ce0348b11e1bd5fc5c422a3fadd 0256b180348b11e1bd5fc5c422a3fadd 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,01e32f30348b11e1bd5fc5c422a3fadd ,0251a870348b11e1bd5fc5c422a3fadd 
+ignore ID,,1AE31DB442812841BD28A88FA8412E39 ,01e32f30348b11e1bd5fc5c422a3fadd ,024cc670348b11e1bd5fc5c422a3fadd 02491cf0348b11e1bd5fc5c422a3fadd 
+ignore ID,,C4B933C945AB7540A5FE9674982EC277 ,01e32f30348b11e1bd5fc5c422a3fadd ,0244b020348b11e1bd5fc5c422a3fadd 02417bd0348b11e1bd5fc5c422a3fadd 
+ignore ID,,694D1A4B13EF834993B552F7F0B11B55 ,01e32f30348b11e1bd5fc5c422a3fadd ,023ce7f0348b11e1bd5fc5c422a3fadd 
+ignore ID,,6B7BB9237452FA458ABB7492AB20CF4D ,01e32f30348b11e1bd5fc5c422a3fadd ,02393e70348b11e1bd5fc5c422a3fadd 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,01e32f30348b11e1bd5fc5c422a3fadd ,02356de0348b11e1bd5fc5c422a3fadd 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,01e32f30348b11e1bd5fc5c422a3fadd ,02317640348b11e1bd5fc5c422a3fadd 022e1ae0348b11e1bd5fc5c422a3fadd 
+ignore ID,,8F941175CE39AD44B39A8AA8BEAAFBEF ,01e32f30348b11e1bd5fc5c422a3fadd ,0229ae10348b11e1bd5fc5c422a3fadd 
+ignore ID,,1954F5D3F1047C49A8FDBCF549A9940F ,01e32f30348b11e1bd5fc5c422a3fadd ,0225b670348b11e1bd5fc5c422a3fadd 
+ignore ID,,F14234C9384C4B47906EC92890EBE2FB ,01e32f30348b11e1bd5fc5c422a3fadd ,022197c0348b11e1bd5fc5c422a3fadd 
+ignore ID,,25B06E70357D4B4EB02F7B2AAA5F3D75 ,01e32f30348b11e1bd5fc5c422a3fadd ,021785a0348b11e1bd5fc5c422a3fadd 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,01e32f30348b11e1bd5fc5c422a3fadd ,021e6370348b11e1bd5fc5c422a3fadd 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,01e32f30348b11e1bd5fc5c422a3fadd ,021b2f20348b11e1bd5fc5c422a3fadd 
+ignore ID,,8517022E30703D4AADC2B8D5F86BE82E ,01e32f30348b11e1bd5fc5c422a3fadd ,02147860348b11e1bd5fc5c422a3fadd 
+ignore ID,,89DC4DB6CC39A14CB8BAB694AC801B2D ,01e32f30348b11e1bd5fc5c422a3fadd ,021080c0348b11e1bd5fc5c422a3fadd 
+ignore ID,,33CFF5676B110843801214297B7C1A32 ,01e32f30348b11e1bd5fc5c422a3fadd ,020d2560348b11e1bd5fc5c422a3fadd 020adb70348b11e1bd5fc5c422a3fadd 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,01e32f30348b11e1bd5fc5c422a3fadd ,01fbe750348b11e1bd5fc5c422a3fadd 
+ignore ID,,EF006B05A6917E4386A4FF156B054FC0 ,01e32f30348b11e1bd5fc5c422a3fadd ,0207a720348b11e1bd5fc5c422a3fadd 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35691bb00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,356c28f00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,356dd6a00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,28D1A7154505B3419EE96EF7D75E7175 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,356fd2700afb11e8b3cc4b7fa3cb3cef 3570e3e00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,E7F84FC94E8B4647B1954DB8C1F2D93C ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3572b8a00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,357529a00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,3492C0EC6F0F464288EBB0860E4AC78D ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3577c1b00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,81B2A8E83697C549B833848B99B532AE ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,357d8e100afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,B3F29C830FC75644B4C1F789BEA01342 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,358026200afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,2EE132A7A6899C469CB69BBF3E49F049 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,358333600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,357a80d00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,33CFF5676B110843801214297B7C1A32 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3585cb700afb11e8b3cc4b7fa3cb3cef 3587a0300afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,89DC4DB6CC39A14CB8BAB694AC801B2D ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,358a86600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,8517022E30703D4AADC2B8D5F86BE82E ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,358d93a00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,6CC3456CFB54B24BAB2F5ED77C04032A ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,359052c00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,25B06E70357D4B4EB02F7B2AAA5F3D75 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,359338f00afb11e8b3cc4b7fa3cb3cef 3595a9f00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,AD2D5DB09B14AD4FB7C6DFB7FFD2E04D ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35992c600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,359c87c00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,FF6E39A8B814F743A923218614BFC2DC ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,359f95000afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,977C300C8383D94AB382F15BF9137F6D ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35a2f0600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35a672d00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,F14234C9384C4B47906EC92890EBE2FB ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35a9ce300afb11e8b3cc4b7fa3cb3cef 35acdb700afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,1954F5D3F1047C49A8FDBCF549A9940F ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35b0ac000afb11e8b3cc4b7fa3cb3cef 35b344100afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,8F941175CE39AD44B39A8AA8BEAAFBEF ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35b73bb00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35bb0c400afb11e8b3cc4b7fa3cb3cef 35bdf2700afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35c174e00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,36D0A654E68BA44BB60CD269114534DB ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35c51e600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,6B7BB9237452FA458ABB7492AB20CF4D ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35c8c7e00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,694D1A4B13EF834993B552F7F0B11B55 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35ccbf800afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,C4B933C945AB7540A5FE9674982EC277 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35d105400afb11e8b3cc4b7fa3cb3cef 35d439900afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35d831300afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,82A09C323DAEB747B294CADBCD413A0F ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35dc28d00afb11e8b3cc4b7fa3cb3cef 35df84300afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,81B65A4CFB966C418A355EC92145B223 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35e3c9f00afb11e8b3cc4b7fa3cb3cef 35e74c600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35ec2e600afb11e8b3cc4b7fa3cb3cef 35f04d100afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,3FBF55496070964A887CCBBF4B6EB9A1 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35f492d00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,63AB54F4F46D9546A298CCF6AC4D2FA0 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35f8ffa00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,E6A244E41CF3BD449BC6AF6069A67F5A ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,35fd45600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,B758D0C53874E449B1F437064F140042 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3601b2300afb11e8b3cc4b7fa3cb3cef 3604bf700afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,9C1E0D5882B1844BB8CA5352ADDCA4F0 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,36092c400afb11e8b3cc4b7fa3cb3cef 360caeb00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,910D0C02C94C0E4EBAC20EC3B5F82B4E ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3611ded00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,49ED4A7108F45549B1BD286574BBE77A ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,361adf800afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,A66333019D2D7341A595EB242A996FCC ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,361f9a700afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,9D17D08D8C75364A8072C0A229D27CDF ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3624ca900afb11e8b3cc4b7fa3cb3cef 362910500afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,362e67800afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,363397a00afb11e8b3cc4b7fa3cb3cef 3637b6500afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,EEDFFE81A65EC54AA656D3F43C006E6A ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,363c71400afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,D5E277D43458284485F0F8D46FEBA3BD ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,36423da00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,DC622B83A28A6847BE98F596E5B8197A ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3647bbe00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,364d13100afb11e8b3cc4b7fa3cb3cef 3651ce000afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,465A50532AA27E458CB5E551C1E60228 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,361672b00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,EA519454C9189B47A8A66BAAE5B60FC0 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,365725300afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,82253A98F4AF0241BE321423038B1535 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,365c7c600afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,389C4FCF010497489FE48B324904B83E ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,3661faa00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,36679ff00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,4E7FF9BB7E2D184E9B5F46F3FE88008F ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,366f1a000afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,5847A4158B45FE429DA06D8ACB6EBBA3 ,3564d5f00afb11e8b3cc4b7fa3cb3cef ,36755b900afb11e8b3cc4b7fa3cb3cef 367ab2c00afb11e8b3cc4b7fa3cb3cef 
+ignore ID,,5847A4158B45FE429DA06D8ACB6EBBA3 ,2c933be0152511e8884ef1796b006edd ,0ba0aca0152611e8884ef1796b006edd 
+ignore ID,,4E7FF9BB7E2D184E9B5F46F3FE88008F ,2c933be0152511e8884ef1796b006edd ,9bda0510152511e8884ef1796b006edd 
+ignore ID,,B3F29C830FC75644B4C1F789BEA01342 ,2c933be0152511e8884ef1796b006edd ,982e3b20152511e8884ef1796b006edd 
+ignore ID,,81B2A8E83697C549B833848B99B532AE ,2c933be0152511e8884ef1796b006edd ,6b806530152511e8884ef1796b006edd 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,34daadc0331011e8baf10984b52a6d1a ,34e05310331011e8baf10984b52a6d1a 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,34daadc0331011e8baf10984b52a6d1a ,34e4e6f0331011e8baf10984b52a6d1a 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,34daadc0331011e8baf10984b52a6d1a ,34e97ad0331011e8baf10984b52a6d1a 
+ignore ID,,15B98CDED983524199A74AED2E816496 ,34daadc0331011e8baf10984b52a6d1a ,34ebebd0331011e8baf10984b52a6d1a 
+ignore ID,,28D1A7154505B3419EE96EF7D75E7175 ,34daadc0331011e8baf10984b52a6d1a ,34eed200331011e8baf10984b52a6d1a 34f058a0331011e8baf10984b52a6d1a 
+ignore ID,,E7F84FC94E8B4647B1954DB8C1F2D93C ,34daadc0331011e8baf10984b52a6d1a ,34f2c9a0331011e8baf10984b52a6d1a 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,34daadc0331011e8baf10984b52a6d1a ,34f51390331011e8baf10984b52a6d1a 
+ignore ID,,B3F29C830FC75644B4C1F789BEA01342 ,34daadc0331011e8baf10984b52a6d1a ,35014890331011e8baf10984b52a6d1a 
+ignore ID,,EF006B05A6917E4386A4FF156B054FC0 ,34daadc0331011e8baf10984b52a6d1a ,35042ec0331011e8baf10984b52a6d1a 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,34daadc0331011e8baf10984b52a6d1a ,353bb980331011e8baf10984b52a6d1a 
+ignore ID,,33CFF5676B110843801214297B7C1A32 ,34daadc0331011e8baf10984b52a6d1a ,35073c00331011e8baf10984b52a6d1a 3508e9b0331011e8baf10984b52a6d1a 
+ignore ID,,92A830620D13D44AAA28F70D5767AF1A ,34daadc0331011e8baf10984b52a6d1a ,35619100331011e8baf10984b52a6d1a 
+ignore ID,,CCA93D36ADFABE469A2C0BDFF462680B ,34daadc0331011e8baf10984b52a6d1a ,3546dd10331011e8baf10984b52a6d1a 
+ignore ID,,EEDFFE81A65EC54AA656D3F43C006E6A ,34daadc0331011e8baf10984b52a6d1a ,35808ab0331011e8baf10984b52a6d1a 
+ignore ID,,1AE31DB442812841BD28A88FA8412E39 ,34daadc0331011e8baf10984b52a6d1a ,35379ad0331011e8baf10984b52a6d1a 
+ignore ID,,89DC4DB6CC39A14CB8BAB694AC801B2D ,34daadc0331011e8baf10984b52a6d1a ,350bcfe0331011e8baf10984b52a6d1a 
+ignore ID,,25B06E70357D4B4EB02F7B2AAA5F3D75 ,34daadc0331011e8baf10984b52a6d1a ,35125f90331011e8baf10984b52a6d1a 
+ignore ID,,8517022E30703D4AADC2B8D5F86BE82E ,34daadc0331011e8baf10984b52a6d1a ,350f0430331011e8baf10984b52a6d1a 
+ignore ID,,046331E09A3CD847BD4A0AD099C2B9E0 ,34daadc0331011e8baf10984b52a6d1a ,35156cd0331011e8baf10984b52a6d1a 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,34daadc0331011e8baf10984b52a6d1a ,3518c830331011e8baf10984b52a6d1a 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,34daadc0331011e8baf10984b52a6d1a ,351bfc80331011e8baf10984b52a6d1a 351e9490331011e8baf10984b52a6d1a 
+ignore ID,,694D1A4B13EF834993B552F7F0B11B55 ,34daadc0331011e8baf10984b52a6d1a ,3533a330331011e8baf10984b52a6d1a 
+ignore ID,,82A09C323DAEB747B294CADBCD413A0F ,34daadc0331011e8baf10984b52a6d1a ,353f6300331011e8baf10984b52a6d1a 3542be60331011e8baf10984b52a6d1a 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,34daadc0331011e8baf10984b52a6d1a ,35538740331011e8baf10984b52a6d1a 
+ignore ID,,E6A244E41CF3BD449BC6AF6069A67F5A ,34daadc0331011e8baf10984b52a6d1a ,35586940331011e8baf10984b52a6d1a 355c87f0331011e8baf10984b52a6d1a 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,34daadc0331011e8baf10984b52a6d1a ,3572a800331011e8baf10984b52a6d1a 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,34daadc0331011e8baf10984b52a6d1a ,3577d820331011e8baf10984b52a6d1a 357b5a90331011e8baf10984b52a6d1a 
+ignore ID,,8F941175CE39AD44B39A8AA8BEAAFBEF ,34daadc0331011e8baf10984b52a6d1a ,35228c30331011e8baf10984b52a6d1a 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,34daadc0331011e8baf10984b52a6d1a ,352635b0331011e8baf10984b52a6d1a 35287fa0331011e8baf10984b52a6d1a 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,34daadc0331011e8baf10984b52a6d1a ,352c7740331011e8baf10984b52a6d1a 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,34daadc0331011e8baf10984b52a6d1a ,34f847e0331011e8baf10984b52a6d1a 34fa91d0331011e8baf10984b52a6d1a 34fc3f80331011e8baf10984b52a6d1a 34fe3b50331011e8baf10984b52a6d1a 
+ignore ID,,DC622B83A28A6847BE98F596E5B8197A ,34daadc0331011e8baf10984b52a6d1a ,35856cb0331011e8baf10984b52a6d1a 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,34daadc0331011e8baf10984b52a6d1a ,358b8730331011e8baf10984b52a6d1a 
+ignore ID,,A98455BE6A82BF4FBC13539C6B90C710 ,34daadc0331011e8baf10984b52a6d1a ,35960e80331011e8baf10984b52a6d1a 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,34daadc0331011e8baf10984b52a6d1a ,35910570331011e8baf10984b52a6d1a 
+ignore ID,,81B65A4CFB966C418A355EC92145B223 ,34daadc0331011e8baf10984b52a6d1a ,354b9800331011e8baf10984b52a6d1a 354f4180331011e8baf10984b52a6d1a 
+ignore ID,,9C1E0D5882B1844BB8CA5352ADDCA4F0 ,34daadc0331011e8baf10984b52a6d1a ,356624e0331011e8baf10984b52a6d1a 3569a750331011e8baf10984b52a6d1a 356ded10331011e8baf10984b52a6d1a 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,91259600366011e88fbccdc0dc0120d2 ,912a7800366011e88fbccdc0dc0120d2 912bd790366011e88fbccdc0dc0120d2 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,91259600366011e88fbccdc0dc0120d2 ,912e2180366011e88fbccdc0dc0120d2 912f32f0366011e88fbccdc0dc0120d2 
+ignore ID,,694D1A4B13EF834993B552F7F0B11B55 ,13bb9fb051af11e8b9b66789e723d72c ,1422ed0051af11e8b9b66789e723d72c 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,13bb9fb051af11e8b9b66789e723d72c ,140308f051af11e8b9b66789e723d72c 1406163051af11e8b9b66789e723d72c 
+ignore ID,,046331E09A3CD847BD4A0AD099C2B9E0 ,13bb9fb051af11e8b9b66789e723d72c ,13fcc76051af11e8b9b66789e723d72c 
+ignore ID,,8517022E30703D4AADC2B8D5F86BE82E ,13bb9fb051af11e8b9b66789e723d72c ,13f65ec051af11e8b9b66789e723d72c 13f3edc051af11e8b9b66789e723d72c 
+ignore ID,,89DC4DB6CC39A14CB8BAB694AC801B2D ,13bb9fb051af11e8b9b66789e723d72c ,13ee969051af11e8b9b66789e723d72c 13f1079051af11e8b9b66789e723d72c 
+ignore ID,,B3F29C830FC75644B4C1F789BEA01342 ,13bb9fb051af11e8b9b66789e723d72c ,13df545051af11e8b9b66789e723d72c 13dd7f9051af11e8b9b66789e723d72c 
+ignore ID,,3492C0EC6F0F464288EBB0860E4AC78D ,13bb9fb051af11e8b9b66789e723d72c ,13d3bb9051af11e8b9b66789e723d72c 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,13bb9fb051af11e8b9b66789e723d72c ,13d14a9051af11e8b9b66789e723d72c 
+ignore ID,,81B65A4CFB966C418A355EC92145B223 ,13bb9fb051af11e8b9b66789e723d72c ,144e42c051af11e8b9b66789e723d72c 144a241051af11e8b9b66789e723d72c 
+ignore ID,,15B98CDED983524199A74AED2E816496 ,13bb9fb051af11e8b9b66789e723d72c ,13c870f051af11e8b9b66789e723d72c 13c7116051af11e8b9b66789e723d72c 
+ignore ID,,EF006B05A6917E4386A4FF156B054FC0 ,13bb9fb051af11e8b9b66789e723d72c ,13e6f57051af11e8b9b66789e723d72c 13e4d29051af11e8b9b66789e723d72c 
+ignore ID,,81B2A8E83697C549B833848B99B532AE ,13bb9fb051af11e8b9b66789e723d72c ,13dae78051af11e8b9b66789e723d72c 
+ignore ID,,28D1A7154505B3419EE96EF7D75E7175 ,13bb9fb051af11e8b9b66789e723d72c ,13cc689051af11e8b9b66789e723d72c 13cae1f051af11e8b9b66789e723d72c 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,13bb9fb051af11e8b9b66789e723d72c ,13d67ab051af11e8b9b66789e723d72c 13d84f7051af11e8b9b66789e723d72c 
+ignore ID,,C4B933C945AB7540A5FE9674982EC277 ,13bb9fb051af11e8b9b66789e723d72c ,1427a7f051af11e8b9b66789e723d72c 
+ignore ID,,6B7BB9237452FA458ABB7492AB20CF4D ,13bb9fb051af11e8b9b66789e723d72c ,141ef56051af11e8b9b66789e723d72c 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,13bb9fb051af11e8b9b66789e723d72c ,14146e1051af11e8b9b66789e723d72c 14177b5051af11e8b9b66789e723d72c 
+ignore ID,,8F941175CE39AD44B39A8AA8BEAAFBEF ,13bb9fb051af11e8b9b66789e723d72c ,14109d8051af11e8b9b66789e723d72c 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,13bb9fb051af11e8b9b66789e723d72c ,141b24d051af11e8b9b66789e723d72c 
+ignore ID,,1954F5D3F1047C49A8FDBCF549A9940F ,13bb9fb051af11e8b9b66789e723d72c ,140d1b1051af11e8b9b66789e723d72c 
+ignore ID,,F14234C9384C4B47906EC92890EBE2FB ,13bb9fb051af11e8b9b66789e723d72c ,1409bfb051af11e8b9b66789e723d72c 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,13bb9fb051af11e8b9b66789e723d72c ,13fffbb051af11e8b9b66789e723d72c 
+ignore ID,,25B06E70357D4B4EB02F7B2AAA5F3D75 ,13bb9fb051af11e8b9b66789e723d72c ,13f9931051af11e8b9b66789e723d72c 
+ignore ID,,33CFF5676B110843801214297B7C1A32 ,13bb9fb051af11e8b9b66789e723d72c ,13ebd77051af11e8b9b66789e723d72c 13e9b49051af11e8b9b66789e723d72c 
+ignore ID,,2EE132A7A6899C469CB69BBF3E49F049 ,13bb9fb051af11e8b9b66789e723d72c ,13e2137051af11e8b9b66789e723d72c 
+ignore ID,,E7F84FC94E8B4647B1954DB8C1F2D93C ,13bb9fb051af11e8b9b66789e723d72c ,13cf00a051af11e8b9b66789e723d72c 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,13bb9fb051af11e8b9b66789e723d72c ,13c4a06051af11e8b9b66789e723d72c 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,13bb9fb051af11e8b9b66789e723d72c ,13c22f6051af11e8b9b66789e723d72c 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,13bb9fb051af11e8b9b66789e723d72c ,13bf975051af11e8b9b66789e723d72c 13bed40051af11e8b9b66789e723d72c 
+ignore ID,,1AE31DB442812841BD28A88FA8412E39 ,13bb9fb051af11e8b9b66789e723d72c ,142c62e051af11e8b9b66789e723d72c 142fe55051af11e8b9b66789e723d72c 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,13bb9fb051af11e8b9b66789e723d72c ,1434a04051af11e8b9b66789e723d72c 
+ignore ID,,82A09C323DAEB747B294CADBCD413A0F ,13bb9fb051af11e8b9b66789e723d72c ,1439d06051af11e8b9b66789e723d72c 143d79e051af11e8b9b66789e723d72c 
+ignore ID,,CCA93D36ADFABE469A2C0BDFF462680B ,13bb9fb051af11e8b9b66789e723d72c ,1441e6b051af11e8b9b66789e723d72c 1445903051af11e8b9b66789e723d72c 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,13bb9fb051af11e8b9b66789e723d72c ,145372e051af11e8b9b66789e723d72c 1457437051af11e8b9b66789e723d72c 
+ignore ID,,3FBF55496070964A887CCBBF4B6EB9A1 ,13bb9fb051af11e8b9b66789e723d72c ,145b3b1051af11e8b9b66789e723d72c 
+ignore ID,,63AB54F4F46D9546A298CCF6AC4D2FA0 ,13bb9fb051af11e8b9b66789e723d72c ,145fcef051af11e8b9b66789e723d72c 
+ignore ID,,92A830620D13D44AAA28F70D5767AF1A ,13bb9fb051af11e8b9b66789e723d72c ,146489e051af11e8b9b66789e723d72c 
+ignore ID,,DFE30CFDD9EAE2479A23788784900E4D ,13bb9fb051af11e8b9b66789e723d72c ,14696be051af11e8b9b66789e723d72c 
+ignore ID,,B758D0C53874E449B1F437064F140042 ,13bb9fb051af11e8b9b66789e723d72c ,146e26d051af11e8b9b66789e723d72c 
+ignore ID,,3DD73484BB578D498761EEA97349B12F ,13bb9fb051af11e8b9b66789e723d72c ,147308d051af11e8b9b66789e723d72c 
+ignore ID,,9C1E0D5882B1844BB8CA5352ADDCA4F0 ,13bb9fb051af11e8b9b66789e723d72c ,147811e051af11e8b9b66789e723d72c 
+ignore ID,,910D0C02C94C0E4EBAC20EC3B5F82B4E ,13bb9fb051af11e8b9b66789e723d72c ,147d902051af11e8b9b66789e723d72c 1482c04051af11e8b9b66789e723d72c 1487f06051af11e8b9b66789e723d72c 148d208051af11e8b9b66789e723d72c 
+ignore ID,,49ED4A7108F45549B1BD286574BBE77A ,13bb9fb051af11e8b9b66789e723d72c ,1493d74051af11e8b9b66789e723d72c 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,13bb9fb051af11e8b9b66789e723d72c ,1499f1c051af11e8b9b66789e723d72c 149f21e051af11e8b9b66789e723d72c 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,13bb9fb051af11e8b9b66789e723d72c ,14a53c6051af11e8b9b66789e723d72c 14a9f75051af11e8b9b66789e723d72c 
+ignore ID,,EEDFFE81A65EC54AA656D3F43C006E6A ,13bb9fb051af11e8b9b66789e723d72c ,14afeac051af11e8b9b66789e723d72c 
+ignore ID,,DC622B83A28A6847BE98F596E5B8197A ,13bb9fb051af11e8b9b66789e723d72c ,14b5de3051af11e8b9b66789e723d72c 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,13bb9fb051af11e8b9b66789e723d72c ,14bbf8b051af11e8b9b66789e723d72c 14c0dab051af11e8b9b66789e723d72c 
+ignore ID,,6CCC5743567C814A9ABCE316FD5DDBD6 ,13bb9fb051af11e8b9b66789e723d72c ,14c87bd051af11e8b9b66789e723d72c 
+ignore ID,,82253A98F4AF0241BE321423038B1535 ,13bb9fb051af11e8b9b66789e723d72c ,14cfa7c051af11e8b9b66789e723d72c 14d6fac051af11e8b9b66789e723d72c 
+ignore ID,,389C4FCF010497489FE48B324904B83E ,13bb9fb051af11e8b9b66789e723d72c ,14de4dc051af11e8b9b66789e723d72c 14e5048051af11e8b9b66789e723d72c 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,13bb9fb051af11e8b9b66789e723d72c ,14ecf3c051af11e8b9b66789e723d72c 
+ignore ID,,A98455BE6A82BF4FBC13539C6B90C710 ,13bb9fb051af11e8b9b66789e723d72c ,14f446c051af11e8b9b66789e723d72c 
+ignore ID,,5847A4158B45FE429DA06D8ACB6EBBA3 ,13bb9fb051af11e8b9b66789e723d72c ,14f99df051af11e8b9b66789e723d72c 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,9dbd3710658111e8b622dd5ee426118d ,9dc24020658111e8b622dd5ee426118d 9dc32a80658111e8b622dd5ee426118d 9dc46300658111e8b622dd5ee426118d 9dc107a0658111e8b622dd5ee426118d 
+ignore ID,,F8481F0A3F7BE743A7D437DEA8F59D77 ,9dbd3710658111e8b622dd5ee426118d ,9dfcd820658111e8b622dd5ee426118d 9df81d30658111e8b622dd5ee426118d 9dfa8e30658111e8b622dd5ee426118d 
+ignore ID,,1AE31DB442812841BD28A88FA8412E39 ,9dbd3710658111e8b622dd5ee426118d ,9e3462e0658111e8b622dd5ee426118d 9e37e550658111e8b622dd5ee426118d 9e310780658111e8b622dd5ee426118d 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,9dbd3710658111e8b622dd5ee426118d ,9e40bef0658111e8b622dd5ee426118d 9e44b690658111e8b622dd5ee426118d 9e3cc750658111e8b622dd5ee426118d 
+ignore ID,,5847A4158B45FE429DA06D8ACB6EBBA3 ,9dbd3710658111e8b622dd5ee426118d ,9f00daa0658111e8b622dd5ee426118d 9ef82810658111e8b622dd5ee426118d 9efc6dd0658111e8b622dd5ee426118d 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,9dbd3710658111e8b622dd5ee426118d ,9dc6acf0658111e8b622dd5ee426118d 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,9dbd3710658111e8b622dd5ee426118d ,9dc91df0658111e8b622dd5ee426118d 
+ignore ID,,15B98CDED983524199A74AED2E816496 ,9dbd3710658111e8b622dd5ee426118d ,9dcb40d0658111e8b622dd5ee426118d 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,9dbd3710658111e8b622dd5ee426118d ,9dcdd8e0658111e8b622dd5ee426118d 
+ignore ID,,3492C0EC6F0F464288EBB0860E4AC78D ,9dbd3710658111e8b622dd5ee426118d ,9dd049e0658111e8b622dd5ee426118d 
+ignore ID,,81B2A8E83697C549B833848B99B532AE ,9dbd3710658111e8b622dd5ee426118d ,9dd5ef30658111e8b622dd5ee426118d 9dd7c3f0658111e8b622dd5ee426118d 
+ignore ID,,B3F29C830FC75644B4C1F789BEA01342 ,9dbd3710658111e8b622dd5ee426118d ,9ddaaa20658111e8b622dd5ee426118d 9ddc7ee0658111e8b622dd5ee426118d 
+ignore ID,,2EE132A7A6899C469CB69BBF3E49F049 ,9dbd3710658111e8b622dd5ee426118d ,9ddf8c20658111e8b622dd5ee426118d 
+ignore ID,,EF006B05A6917E4386A4FF156B054FC0 ,9dbd3710658111e8b622dd5ee426118d ,9de24b40658111e8b622dd5ee426118d 9de42000658111e8b622dd5ee426118d 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,9dbd3710658111e8b622dd5ee426118d ,9dd30900658111e8b622dd5ee426118d 
+ignore ID,,33CFF5676B110843801214297B7C1A32 ,9dbd3710658111e8b622dd5ee426118d ,9de72d40658111e8b622dd5ee426118d 9de92910658111e8b622dd5ee426118d 
+ignore ID,,8517022E30703D4AADC2B8D5F86BE82E ,9dbd3710658111e8b622dd5ee426118d ,9dec0f40658111e8b622dd5ee426118d 
+ignore ID,,25B06E70357D4B4EB02F7B2AAA5F3D75 ,9dbd3710658111e8b622dd5ee426118d ,9deef570658111e8b622dd5ee426118d 9df11850658111e8b622dd5ee426118d 
+ignore ID,,046331E09A3CD847BD4A0AD099C2B9E0 ,9dbd3710658111e8b622dd5ee426118d ,9df473b0658111e8b622dd5ee426118d 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,9dbd3710658111e8b622dd5ee426118d ,9dffe560658111e8b622dd5ee426118d 9e025660658111e8b622dd5ee426118d 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,9dbd3710658111e8b622dd5ee426118d ,9e058ab0658111e8b622dd5ee426118d 9e07fbb0658111e8b622dd5ee426118d 
+ignore ID,,F14234C9384C4B47906EC92890EBE2FB ,9dbd3710658111e8b622dd5ee426118d ,9e0bf350658111e8b622dd5ee426118d 
+ignore ID,,1954F5D3F1047C49A8FDBCF549A9940F ,9dbd3710658111e8b622dd5ee426118d ,9e0f9cd0658111e8b622dd5ee426118d 
+ignore ID,,8F941175CE39AD44B39A8AA8BEAAFBEF ,9dbd3710658111e8b622dd5ee426118d ,9e134650658111e8b622dd5ee426118d 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,9dbd3710658111e8b622dd5ee426118d ,9e1716e0658111e8b622dd5ee426118d 9e1a7240658111e8b622dd5ee426118d 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,9dbd3710658111e8b622dd5ee426118d ,9e1f7b50658111e8b622dd5ee426118d 
+ignore ID,,6B7BB9237452FA458ABB7492AB20CF4D ,9dbd3710658111e8b622dd5ee426118d ,9e243640658111e8b622dd5ee426118d 
+ignore ID,,694D1A4B13EF834993B552F7F0B11B55 ,9dbd3710658111e8b622dd5ee426118d ,9e2854f0658111e8b622dd5ee426118d 
+ignore ID,,C4B933C945AB7540A5FE9674982EC277 ,9dbd3710658111e8b622dd5ee426118d ,9e2d0fe0658111e8b622dd5ee426118d 
+ignore ID,,82A09C323DAEB747B294CADBCD413A0F ,9dbd3710658111e8b622dd5ee426118d ,9e494a70658111e8b622dd5ee426118d 
+ignore ID,,CCA93D36ADFABE469A2C0BDFF462680B ,9dbd3710658111e8b622dd5ee426118d ,9e4dde50658111e8b622dd5ee426118d 
+ignore ID,,81B65A4CFB966C418A355EC92145B223 ,9dbd3710658111e8b622dd5ee426118d ,9e524b20658111e8b622dd5ee426118d 9e55a680658111e8b622dd5ee426118d 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,9dbd3710658111e8b622dd5ee426118d ,9e5a1350658111e8b622dd5ee426118d 
+ignore ID,,3FBF55496070964A887CCBBF4B6EB9A1 ,9dbd3710658111e8b622dd5ee426118d ,9e5de3e0658111e8b622dd5ee426118d 
+ignore ID,,63AB54F4F46D9546A298CCF6AC4D2FA0 ,9dbd3710658111e8b622dd5ee426118d ,9e62c5e0658111e8b622dd5ee426118d 
+ignore ID,,E6A244E41CF3BD449BC6AF6069A67F5A ,9dbd3710658111e8b622dd5ee426118d ,9e67a7e0658111e8b622dd5ee426118d 9e6beda0658111e8b622dd5ee426118d 
+ignore ID,,92A830620D13D44AAA28F70D5767AF1A ,9dbd3710658111e8b622dd5ee426118d ,9e70cfa0658111e8b622dd5ee426118d 
+ignore ID,,DFE30CFDD9EAE2479A23788784900E4D ,9dbd3710658111e8b622dd5ee426118d ,9e75d8b0658111e8b622dd5ee426118d 9e7a1e70658111e8b622dd5ee426118d 
+ignore ID,,3DD73484BB578D498761EEA97349B12F ,9dbd3710658111e8b622dd5ee426118d ,9e7fead0658111e8b622dd5ee426118d 
+ignore ID,,9C1E0D5882B1844BB8CA5352ADDCA4F0 ,9dbd3710658111e8b622dd5ee426118d ,9e862c60658111e8b622dd5ee426118d 
+ignore ID,,910D0C02C94C0E4EBAC20EC3B5F82B4E ,9dbd3710658111e8b622dd5ee426118d ,91ef55f0658411e8b622dd5ee426118d 91f5e5a0658411e8b622dd5ee426118d 91fc0020658411e8b622dd5ee426118d 
+ignore ID,,49ED4A7108F45549B1BD286574BBE77A ,9dbd3710658111e8b622dd5ee426118d ,9e9dac00658111e8b622dd5ee426118d 9ea266f0658111e8b622dd5ee426118d 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,9dbd3710658111e8b622dd5ee426118d ,9ea85a60658111e8b622dd5ee426118d 9eacc730658111e8b622dd5ee426118d 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,9dbd3710658111e8b622dd5ee426118d ,9eb21e60658111e8b622dd5ee426118d 9eb68b30658111e8b622dd5ee426118d 
+ignore ID,,EEDFFE81A65EC54AA656D3F43C006E6A ,9dbd3710658111e8b622dd5ee426118d ,9ebc0970658111e8b622dd5ee426118d 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,9dbd3710658111e8b622dd5ee426118d ,9ec187b0658111e8b622dd5ee426118d 9ec669b0658111e8b622dd5ee426118d 9ecafd90658111e8b622dd5ee426118d 
+ignore ID,,6CCC5743567C814A9ABCE316FD5DDBD6 ,9dbd3710658111e8b622dd5ee426118d ,9ed0c9f0658111e8b622dd5ee426118d 
+ignore ID,,82253A98F4AF0241BE321423038B1535 ,9dbd3710658111e8b622dd5ee426118d ,9ed7a7c0658111e8b622dd5ee426118d 
+ignore ID,,389C4FCF010497489FE48B324904B83E ,9dbd3710658111e8b622dd5ee426118d ,9edde950658111e8b622dd5ee426118d 9ee2cb50658111e8b622dd5ee426118d 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,9dbd3710658111e8b622dd5ee426118d ,9ee90ce0658111e8b622dd5ee426118d 9eedeee0658111e8b622dd5ee426118d 
+ignore ID,,A98455BE6A82BF4FBC13539C6B90C710 ,9dbd3710658111e8b622dd5ee426118d ,9ef36d20658111e8b622dd5ee426118d 
+ignore ID,,1AE31DB442812841BD28A88FA8412E39 ,d5cefca0dcba11e8b3be8554970e016f ,d5f8cbc0dcba11e8b3be8554970e016f d5ef7cf0dcba11e8b3be8554970e016f d5f4fb30dcba11e8b3be8554970e016f d5f6cff0dcba11e8b3be8554970e016f d5f151b0dcba11e8b3be8554970e016f d5fa7970dcba11e8b3be8554970e016f d5fc4e30dcba11e8b3be8554970e016f d5fdd4d0dcba11e8b3be8554970e016f d5f34d80dcba11e8b3be8554970e016f 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c13be20acf011e8bb9a9d9b746c4641 2c182af0acf011e8bb9a9d9b746c4641 2c0f2a40acf011e8bb9a9d9b746c4641 
+ignore ID,,6CC3456CFB54B24BAB2F5ED77C04032A ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b71b1c0acf011e8bb9a9d9b746c4641 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c00ab50acf011e8bb9a9d9b746c4641 2c09ac00acf011e8bb9a9d9b746c4641 2c056640acf011e8bb9a9d9b746c4641 
+ignore ID,,FF6E39A8B814F743A923218614BFC2DC ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b54daf0acf011e8bb9a9d9b746c4641 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c6efd80acf011e8bb9a9d9b746c4641 
+ignore ID,,694D1A4B13EF834993B552F7F0B11B55 ,2b3237c0acf011e8bb9a9d9b746c4641 ,93d2d400acf611e8bb9a9d9b746c4641 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,2b3237c0acf011e8bb9a9d9b746c4641 ,3c964cb0acf811e8bb9a9d9b746c4641 
+ignore ID,,63AB54F4F46D9546A298CCF6AC4D2FA0 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bc1cd90acf011e8bb9a9d9b746c4641 2bc501e0acf011e8bb9a9d9b746c4641 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bf70e60acf011e8bb9a9d9b746c4641 2bfb7b30acf011e8bb9a9d9b746c4641 
+ignore ID,,389C4FCF010497489FE48B324904B83E ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b3c49e0acf011e8bb9a9d9b746c4641 2b3df790acf011e8bb9a9d9b746c4641 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c4e0800acf011e8bb9a9d9b746c4641 2c524dc0acf011e8bb9a9d9b746c4641 2c49c240acf011e8bb9a9d9b746c4641 
+ignore ID,,A0A5E5F1EBF5D540BDBBFE0EA8B26852 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b4634f0acf011e8bb9a9d9b746c4641 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b8c3ea0acf011e8bb9a9d9b746c4641 2b89a690acf011e8bb9a9d9b746c4641 
+ignore ID,,1AE31DB442812841BD28A88FA8412E39 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b66dc50acf011e8bb9a9d9b746c4641 2b5ec600acf011e8bb9a9d9b746c4641 2b5b1c80acf011e8bb9a9d9b746c4641 2b5ca320acf011e8bb9a9d9b746c4641 2b60e8e0acf011e8bb9a9d9b746c4641 2b62bda0acf011e8bb9a9d9b746c4641 2b64e080acf011e8bb9a9d9b746c4641 2b6b2210acf011e8bb9a9d9b746c4641 2b692640acf011e8bb9a9d9b746c4641 
+ignore ID,,5847A4158B45FE429DA06D8ACB6EBBA3 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bd02570acf011e8bb9a9d9b746c4641 
+ignore ID,,82253A98F4AF0241BE321423038B1535 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b393ca0acf011e8bb9a9d9b746c4641 2b3719c0acf011e8bb9a9d9b746c4641 
+ignore ID,,6CCC5743567C814A9ABCE316FD5DDBD6 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c21eef0acf011e8bb9a9d9b746c4641 2c1d5b10acf011e8bb9a9d9b746c4641 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c31cd70acf011e8bb9a9d9b746c4641 2c449220acf011e8bb9a9d9b746c4641 2c3f8910acf011e8bb9a9d9b746c4641 2c3b4350acf011e8bb9a9d9b746c4641 2c36af70acf011e8bb9a9d9b746c4641 2c2d3990acf011e8bb9a9d9b746c4641 2c285790acf011e8bb9a9d9b746c4641 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bf22c60acf011e8bb9a9d9b746c4641 2bee0db0acf011e8bb9a9d9b746c4641 2bea3d20acf011e8bb9a9d9b746c4641 
+ignore ID,,49ED4A7108F45549B1BD286574BBE77A ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bdc5a70acf011e8bb9a9d9b746c4641 2bd8b0f0acf011e8bb9a9d9b746c4641 
+ignore ID,,9D17D08D8C75364A8072C0A229D27CDF ,2b3237c0acf011e8bb9a9d9b746c4641 ,2be5a940acf011e8bb9a9d9b746c4641 
+ignore ID,,910D0C02C94C0E4EBAC20EC3B5F82B4E ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c73df80acf011e8bb9a9d9b746c4641 
+ignore ID,,DFE30CFDD9EAE2479A23788784900E4D ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b4bb330acf011e8bb9a9d9b746c4641 
+ignore ID,,92A830620D13D44AAA28F70D5767AF1A ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b48cd00acf011e8bb9a9d9b746c4641 
+ignore ID,,E6A244E41CF3BD449BC6AF6069A67F5A ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bcc7bf0acf011e8bb9a9d9b746c4641 2bc92090acf011e8bb9a9d9b746c4641 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bbd39b0acf011e8bb9a9d9b746c4641 
+ignore ID,,CCA93D36ADFABE469A2C0BDFF462680B ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b515880acf011e8bb9a9d9b746c4641 2b4f83c0acf011e8bb9a9d9b746c4641 
+ignore ID,,E8D41DB534F42649A785FF9C6A40B11C ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c60ccb0acf011e8bb9a9d9b746c4641 
+ignore ID,,82A09C323DAEB747B294CADBCD413A0F ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bb87ec0acf011e8bb9a9d9b746c4641 
+ignore ID,,C4B933C945AB7540A5FE9674982EC277 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2be0c740acf011e8bb9a9d9b746c4641 
+ignore ID,,6B7BB9237452FA458ABB7492AB20CF4D ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b6e5660acf011e8bb9a9d9b746c4641 
+ignore ID,,36D0A654E68BA44BB60CD269114534DB ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b57e830acf011e8bb9a9d9b746c4641 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2c669910acf011e8bb9a9d9b746c4641 2c6aded0acf011e8bb9a9d9b746c4641 
+ignore ID,,1954F5D3F1047C49A8FDBCF549A9940F ,2b3237c0acf011e8bb9a9d9b746c4641 ,2bb04160acf011e8bb9a9d9b746c4641 
+ignore ID,,F14234C9384C4B47906EC92890EBE2FB ,2b3237c0acf011e8bb9a9d9b746c4641 ,2babfba0acf011e8bb9a9d9b746c4641 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b9e8e20acf011e8bb9a9d9b746c4641 2b995e00acf011e8bb9a9d9b746c4641 2b96c5f0acf011e8bb9a9d9b746c4641 2b9bcf00acf011e8bb9a9d9b746c4641 
+ignore ID,,046331E09A3CD847BD4A0AD099C2B9E0 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b934380acf011e8bb9a9d9b746c4641 
+ignore ID,,EF006B05A6917E4386A4FF156B054FC0 ,2b3237c0acf011e8bb9a9d9b746c4641 ,d6182900acf611e8bb9a9d9b746c4641 d60eda30acf611e8bb9a9d9b746c4641 
+ignore ID,,15B98CDED983524199A74AED2E816496 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b7e5bf0acf011e8bb9a9d9b746c4641 2b7c1200acf011e8bb9a9d9b746c4641 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b86c060acf011e8bb9a9d9b746c4641 2b849d80acf011e8bb9a9d9b746c4641 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b7904c0acf011e8bb9a9d9b746c4641 2b76e1e0acf011e8bb9a9d9b746c4641 2b74bf00acf011e8bb9a9d9b746c4641 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b819040acf011e8bb9a9d9b746c4641 
+ignore ID,,3492C0EC6F0F464288EBB0860E4AC78D ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b8f9a00acf011e8bb9a9d9b746c4641 
+ignore ID,,2EE132A7A6899C469CB69BBF3E49F049 ,2b3237c0acf011e8bb9a9d9b746c4641 ,2b4375d0acf011e8bb9a9d9b746c4641 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,e30d8da0c30111e8bf50e93da3372528 ,ff41f760c55711e8bf50e93da3372528 ff472780c55711e8bf50e93da3372528 ff3ca030c55711e8bf50e93da3372528 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,e30d8da0c30111e8bf50e93da3372528 ,fedc57c0c55711e8bf50e93da3372528 fee187e0c55711e8bf50e93da3372528 
+ignore ID,,82253A98F4AF0241BE321423038B1535 ,e30d8da0c30111e8bf50e93da3372528 ,fe9c6890c55711e8bf50e93da3372528 fea409b0c55711e8bf50e93da3372528 
+ignore ID,,389C4FCF010497489FE48B324904B83E ,e30d8da0c30111e8bf50e93da3372528 ,feaa9960c55711e8bf50e93da3372528 feaff090c55711e8bf50e93da3372528 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,e30d8da0c30111e8bf50e93da3372528 ,e31b7050c30111e8bf50e93da3372528 
+ignore ID,,DFE30CFDD9EAE2479A23788784900E4D ,e30d8da0c30111e8bf50e93da3372528 ,fec96c00c55711e8bf50e93da3372528 
+ignore ID,,2EE132A7A6899C469CB69BBF3E49F049 ,e30d8da0c30111e8bf50e93da3372528 ,feb65930c55711e8bf50e93da3372528 
+ignore ID,,A0A5E5F1EBF5D540BDBBFE0EA8B26852 ,e30d8da0c30111e8bf50e93da3372528 ,febc9ac0c55711e8bf50e93da3372528 fec21900c55711e8bf50e93da3372528 
+ignore ID,,CCA93D36ADFABE469A2C0BDFF462680B ,e30d8da0c30111e8bf50e93da3372528 ,fecfad90c55711e8bf50e93da3372528 fed52bd0c55711e8bf50e93da3372528 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,e30d8da0c30111e8bf50e93da3372528 ,fee7c970c55711e8bf50e93da3372528 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,e30d8da0c30111e8bf50e93da3372528 ,feedbce0c55711e8bf50e93da3372528 
+ignore ID,,15B98CDED983524199A74AED2E816496 ,e30d8da0c30111e8bf50e93da3372528 ,0ffa9e00c54811e8bf50e93da3372528 0ffdab40c54811e8bf50e93da3372528 1000df90c54811e8bf50e93da3372528 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,e30d8da0c30111e8bf50e93da3372528 ,1ab44760c5f211e8bf5f21ced190b1f8 1abafe20c5f211e8bf5f21ced190b1f8 
+ignore ID,,3492C0EC6F0F464288EBB0860E4AC78D ,e30d8da0c30111e8bf50e93da3372528 ,1ac166c0c5f211e8bf5f21ced190b1f8 
+ignore ID,,EF006B05A6917E4386A4FF156B054FC0 ,e30d8da0c30111e8bf50e93da3372528 ,10cd5750c54811e8bf50e93da3372528 10d28770c54811e8bf50e93da3372528 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,e30d8da0c30111e8bf50e93da3372528 ,10b2f180c54811e8bf50e93da3372528 10b7fa90c54811e8bf50e93da3372528 
+ignore ID,,8517022E30703D4AADC2B8D5F86BE82E ,e30d8da0c30111e8bf50e93da3372528 ,101bba90c54811e8bf50e93da3372528 101ec7d0c54811e8bf50e93da3372528 
+ignore ID,,25B06E70357D4B4EB02F7B2AAA5F3D75 ,e30d8da0c30111e8bf50e93da3372528 ,fef3d760c55711e8bf50e93da3372528 
+ignore ID,,1AEBB9441149CC49BBCD2C2371864B0A ,e30d8da0c30111e8bf50e93da3372528 ,1ada9410c5f211e8bf5f21ced190b1f8 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,e30d8da0c30111e8bf50e93da3372528 ,fefb2a60c55711e8bf50e93da3372528 ff008190c55711e8bf50e93da3372528 ff058aa0c55711e8bf50e93da3372528 ff0a93b0c55711e8bf50e93da3372528 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,e30d8da0c30111e8bf50e93da3372528 ,10930d70c54811e8bf50e93da3372528 
+ignore ID,,C4B933C945AB7540A5FE9674982EC277 ,e30d8da0c30111e8bf50e93da3372528 ,1065e2f0c54811e8bf50e93da3372528 
+ignore ID,,E8D41DB534F42649A785FF9C6A40B11C ,e30d8da0c30111e8bf50e93da3372528 ,1ae0fcb0c5f211e8bf5f21ced190b1f8 
+ignore ID,,63AB54F4F46D9546A298CCF6AC4D2FA0 ,e30d8da0c30111e8bf50e93da3372528 ,ff178c00c55711e8bf50e93da3372528 
+ignore ID,,3DD73484BB578D498761EEA97349B12F ,e30d8da0c30111e8bf50e93da3372528 ,1054f300c54811e8bf50e93da3372528 
+ignore ID,,910D0C02C94C0E4EBAC20EC3B5F82B4E ,e30d8da0c30111e8bf50e93da3372528 ,b62bf5b0c5ef11e8bf5f21ced190b1f8 
+ignore ID,,49ED4A7108F45549B1BD286574BBE77A ,e30d8da0c30111e8bf50e93da3372528 ,105ba9c0c54811e8bf50e93da3372528 10601690c54811e8bf50e93da3372528 
+ignore ID,,9D17D08D8C75364A8072C0A229D27CDF ,e30d8da0c30111e8bf50e93da3372528 ,106c2480c54811e8bf50e93da3372528 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,e30d8da0c30111e8bf50e93da3372528 ,1071f0e0c54811e8bf50e93da3372528 1076d2e0c54811e8bf50e93da3372528 107b18a0c54811e8bf50e93da3372528 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,e30d8da0c30111e8bf50e93da3372528 ,1ad4c7b0c5f211e8bf5f21ced190b1f8 
+ignore ID,,EEDFFE81A65EC54AA656D3F43C006E6A ,e30d8da0c30111e8bf50e93da3372528 ,e3314240c30111e8bf50e93da3372528 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,e30d8da0c30111e8bf50e93da3372528 ,10bd9fe0c54811e8bf50e93da3372528 10c233c0c54811e8bf50e93da3372528 10c715c0c54811e8bf50e93da3372528 
+ignore ID,,5847A4158B45FE429DA06D8ACB6EBBA3 ,e30d8da0c30111e8bf50e93da3372528 ,ff298d60c55711e8bf50e93da3372528 
+ignore ID,,F14234C9384C4B47906EC92890EBE2FB ,e30d8da0c30111e8bf50e93da3372528 ,ff112360c55711e8bf50e93da3372528 
+ignore ID,,1954F5D3F1047C49A8FDBCF549A9940F ,e30d8da0c30111e8bf50e93da3372528 ,10369590c54811e8bf50e93da3372528 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,e30d8da0c30111e8bf50e93da3372528 ,ff2ff600c55711e8bf50e93da3372528 ff35c260c55711e8bf50e93da3372528 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,e30d8da0c30111e8bf50e93da3372528 ,1ac78140c5f211e8bf5f21ced190b1f8 
+ignore ID,,E6A244E41CF3BD449BC6AF6069A67F5A ,e30d8da0c30111e8bf50e93da3372528 ,ff1df4a0c55711e8bf50e93da3372528 ff2324c0c55711e8bf50e93da3372528 
+ignore ID,,92A830620D13D44AAA28F70D5767AF1A ,e30d8da0c30111e8bf50e93da3372528 ,e32693e0c30111e8bf50e93da3372528 
+ignore ID,,1AE31DB442812841BD28A88FA8412E39 ,e30d8da0c30111e8bf50e93da3372528 ,500b8390c60811e8bf5f21ced190b1f8 50126160c60811e8bf5f21ced190b1f8 501f59b0c60811e8bf5f21ced190b1f8 50254d20c60811e8bf5f21ced190b1f8 502c5200c60811e8bf5f21ced190b1f8 50324570c60811e8bf5f21ced190b1f8 5037eac0c60811e8bf5f21ced190b1f8 503d41f0c60811e8bf5f21ced190b1f8 50191820c60811e8bf5f21ced190b1f8 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,e30d8da0c30111e8bf50e93da3372528 ,50446de0c60811e8bf5f21ced190b1f8 504a3a40c60811e8bf5f21ced190b1f8 5055abf0c60811e8bf5f21ced190b1f8 505b9f60c60811e8bf5f21ced190b1f8 506192d0c60811e8bf5f21ced190b1f8 50673820c60811e8bf5f21ced190b1f8 504fdf90c60811e8bf5f21ced190b1f8 
+ignore ID,,3FBF55496070964A887CCBBF4B6EB9A1 ,e30d8da0c30111e8bf50e93da3372528 ,1ace10f0c5f211e8bf5f21ced190b1f8 
+ignore ID,,6CCC5743567C814A9ABCE316FD5DDBD6 ,e30d8da0c30111e8bf50e93da3372528 ,10a81c10c54811e8bf50e93da3372528 10acd700c54811e8bf50e93da3372528 
+ignore ID,,787DCC887927D74FB17F53E164F1C148 ,d5cefca0dcba11e8b3be8554970e016f ,d60cf000dcba11e8b3be8554970e016f d60ec4c0dcba11e8b3be8554970e016f d610c090dcba11e8b3be8554970e016f 
+ignore ID,,8517022E30703D4AADC2B8D5F86BE82E ,d5cefca0dcba11e8b3be8554970e016f ,d64257e0dcba11e8b3be8554970e016f d644eff0dcba11e8b3be8554970e016f 
+ignore ID,,496210AE19083A4E8181BD7A7F5F4163 ,d5cefca0dcba11e8b3be8554970e016f ,d67c2c90dcba11e8b3be8554970e016f d6802430dcba11e8b3be8554970e016f d6875020dcba11e8b3be8554970e016f d68af9a0dcba11e8b3be8554970e016f d68e7c10dcba11e8b3be8554970e016f d69273b0dcba11e8b3be8554970e016f d683f4c0dcba11e8b3be8554970e016f 
+ignore ID,,84ADCDB8C5A00047AB51516CE8627FFE ,d5cefca0dcba11e8b3be8554970e016f ,d6170220dcba11e8b3be8554970e016f d6197320dcba11e8b3be8554970e016f 
+ignore ID,,60B7B1A0AD44BB4FB93042E6750EB12A ,d5cefca0dcba11e8b3be8554970e016f ,d63b5300dcba11e8b3be8554970e016f 
+ignore ID,,321545D17F8543428A875A0F68754956 ,d5cefca0dcba11e8b3be8554970e016f ,d63ed570dcba11e8b3be8554970e016f 
+ignore ID,,15B98CDED983524199A74AED2E816496 ,d5cefca0dcba11e8b3be8554970e016f ,d61c8060dcba11e8b3be8554970e016f d61ef160dcba11e8b3be8554970e016f d6216260dcba11e8b3be8554970e016f 
+ignore ID,,6D4A7635C23ACB4E9C8420CC478F3158 ,d5cefca0dcba11e8b3be8554970e016f ,d71ba0e0dcba11e8b3be8554970e016f d72082e0dcba11e8b3be8554970e016f d7253dd0dcba11e8b3be8554970e016f 
+ignore ID,,3492C0EC6F0F464288EBB0860E4AC78D ,d5cefca0dcba11e8b3be8554970e016f ,d71622a0dcba11e8b3be8554970e016f 
+ignore ID,,81B2A8E83697C549B833848B99B532AE ,d5cefca0dcba11e8b3be8554970e016f ,d6d19f90dcba11e8b3be8554970e016f 
+ignore ID,,7D42F92575FAF34DA62BB2893DC92A8C ,d5cefca0dcba11e8b3be8554970e016f ,d6c3bce0dcba11e8b3be8554970e016f d6c829b0dcba11e8b3be8554970e016f d6cc6f70dcba11e8b3be8554970e016f 
+ignore ID,,B3F29C830FC75644B4C1F789BEA01342 ,d5cefca0dcba11e8b3be8554970e016f ,d6b42c80dcba11e8b3be8554970e016f d6b93590dcba11e8b3be8554970e016f d6be65b0dcba11e8b3be8554970e016f 
+ignore ID,,2EE132A7A6899C469CB69BBF3E49F049 ,d5cefca0dcba11e8b3be8554970e016f ,d5e87810dcba11e8b3be8554970e016f 
+ignore ID,,EF006B05A6917E4386A4FF156B054FC0 ,d5cefca0dcba11e8b3be8554970e016f ,d659fe90dcba11e8b3be8554970e016f d65d32e0dcba11e8b3be8554970e016f d6601910dcba11e8b3be8554970e016f 
+ignore ID,,598EE18F3EB7CC4DA9346DBB2AA3C8B2 ,d5cefca0dcba11e8b3be8554970e016f ,46e108c0dce311e8b3be8554970e016f 
+ignore ID,,6CC3456CFB54B24BAB2F5ED77C04032A ,d5cefca0dcba11e8b3be8554970e016f ,d6484b50dcba11e8b3be8554970e016f 
+ignore ID,,F14234C9384C4B47906EC92890EBE2FB ,d5cefca0dcba11e8b3be8554970e016f ,d6010920dcba11e8b3be8554970e016f d602dde0dcba11e8b3be8554970e016f d6048b90dcba11e8b3be8554970e016f 
+ignore ID,,92A830620D13D44AAA28F70D5767AF1A ,d5cefca0dcba11e8b3be8554970e016f ,d5e51cb0dcba11e8b3be8554970e016f 
+ignore ID,,3DD73484BB578D498761EEA97349B12F ,d5cefca0dcba11e8b3be8554970e016f ,d6281920dcba11e8b3be8554970e016f 
+ignore ID,,9C1E0D5882B1844BB8CA5352ADDCA4F0 ,d5cefca0dcba11e8b3be8554970e016f ,d710cb70dcba11e8b3be8554970e016f 
+ignore ID,,910D0C02C94C0E4EBAC20EC3B5F82B4E ,d5cefca0dcba11e8b3be8554970e016f ,d6aeae40dcba11e8b3be8554970e016f 
+ignore ID,,49ED4A7108F45549B1BD286574BBE77A ,d5cefca0dcba11e8b3be8554970e016f ,46d4fad0dce311e8b3be8554970e016f 46db1550dce311e8b3be8554970e016f 
+ignore ID,,9D17D08D8C75364A8072C0A229D27CDF ,d5cefca0dcba11e8b3be8554970e016f ,d6fdb8a0dcba11e8b3be8554970e016f 
+ignore ID,,5F976B4EA860FE499F516EDD98E43510 ,d5cefca0dcba11e8b3be8554970e016f ,d702c1b0dcba11e8b3be8554970e016f d707cac0dcba11e8b3be8554970e016f d70bc260dcba11e8b3be8554970e016f 
+ignore ID,,18BF0CBCB2EBB04EBA341901BBE364C1 ,d5cefca0dcba11e8b3be8554970e016f ,d6f8d6a0dcba11e8b3be8554970e016f 
+ignore ID,,6CCC5743567C814A9ABCE316FD5DDBD6 ,d5cefca0dcba11e8b3be8554970e016f ,d66ee620dcba11e8b3be8554970e016f d6721a70dcba11e8b3be8554970e016f 
+ignore ID,,7ED8F5679AC8F04A8F232A862FCBC215 ,d5cefca0dcba11e8b3be8554970e016f ,46e7bf80dce311e8b3be8554970e016f 46eca180dce311e8b3be8554970e016f 46f18380dce311e8b3be8554970e016f 
+ignore ID,,5847A4158B45FE429DA06D8ACB6EBBA3 ,d5cefca0dcba11e8b3be8554970e016f ,d65606f0dcba11e8b3be8554970e016f 
+ignore ID,,25B06E70357D4B4EB02F7B2AAA5F3D75 ,d5cefca0dcba11e8b3be8554970e016f ,d64bf4d0dcba11e8b3be8554970e016f d64e8ce0dcba11e8b3be8554970e016f 
+ignore ID,,1AEBB9441149CC49BBCD2C2371864B0A ,d5cefca0dcba11e8b3be8554970e016f ,fb70ad40dd8311e8a22ad759b095277d 
+ignore ID,,AD2D5DB09B14AD4FB7C6DFB7FFD2E04D ,d5cefca0dcba11e8b3be8554970e016f ,d613a6c0dcba11e8b3be8554970e016f 
+ignore ID,,2F1ADAB6E2453947A84C49B5C3CAA5DE ,d5cefca0dcba11e8b3be8554970e016f ,cae67590dd8511e8a22ad759b095277d 
+ignore ID,,0B9B6A41369F3A449E69FDCE68B25F9E ,d5cefca0dcba11e8b3be8554970e016f ,e26df710dd8011e8a22ad759b095277d e2737550dd8011e8a22ad759b095277d e2783040dd8011e8a22ad759b095277d e27e4ac0dd8011e8a22ad759b095277d e28353d0dd8011e8a22ad759b095277d e28835d0dd8011e8a22ad759b095277d 
+ignore ID,,1954F5D3F1047C49A8FDBCF549A9940F ,d5cefca0dcba11e8b3be8554970e016f ,8cfc2830dd8311e8a22ad759b095277d 8d010a30dd8311e8a22ad759b095277d 
+ignore ID,,BEAEEF64688FD844BB0F8BC2D7C9C606 ,d5cefca0dcba11e8b3be8554970e016f ,d6972ea0dcba11e8b3be8554970e016f 
+ignore ID,,DF0A867BB4695D42B9DACC05CCA882D6 ,d5cefca0dcba11e8b3be8554970e016f ,d69c10a0dcba11e8b3be8554970e016f 
+ignore ID,,C4B933C945AB7540A5FE9674982EC277 ,d5cefca0dcba11e8b3be8554970e016f ,46f701c0dce311e8b3be8554970e016f 
+ignore ID,,63AB54F4F46D9546A298CCF6AC4D2FA0 ,d5cefca0dcba11e8b3be8554970e016f ,d6523660dcba11e8b3be8554970e016f 
+ignore ID,,E6A244E41CF3BD449BC6AF6069A67F5A ,d5cefca0dcba11e8b3be8554970e016f ,d624bdc0dcba11e8b3be8554970e016f 
+ignore ID,,82253A98F4AF0241BE321423038B1535 ,d5cefca0dcba11e8b3be8554970e016f ,8cf4ae20dd8311e8a22ad759b095277d 
+ignore ID,,389C4FCF010497489FE48B324904B83E ,d5cefca0dcba11e8b3be8554970e016f ,d5dabc70dcba11e8b3be8554970e016f d5dd7b90dcba11e8b3be8554970e016f 
+ignore ID,,A78939DB38CFD34B92B57AC1560F9DC2 ,d5cefca0dcba11e8b3be8554970e016f ,4256ac20dd8711e8a22ad759b095277d 425cc6a0dd8711e8a22ad759b095277d 4261f6c0dd8711e8a22ad759b095277d 
+ignore ID,,3FBF55496070964A887CCBBF4B6EB9A1 ,d5cefca0dcba11e8b3be8554970e016f ,d6e94640dcba11e8b3be8554970e016f d6edda20dcba11e8b3be8554970e016f 
+ignore ID,,AADDD9267BFDAF4D8B9AAAA042FF3C68 ,d5cefca0dcba11e8b3be8554970e016f ,424e47b0dd8711e8a22ad759b095277d 
+ignore ID,,CCA93D36ADFABE469A2C0BDFF462680B ,d5cefca0dcba11e8b3be8554970e016f ,d5ec6fb0dcba11e8b3be8554970e016f 
