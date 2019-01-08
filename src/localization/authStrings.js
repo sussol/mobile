@@ -39,7 +39,5 @@ export const authStrings = new LocalizedStrings({
     login: 'ເຂົ້າ​ລະ​ບົບ',
     password: 'ລະຫັດຜ່ານ',
     user_name: 'ຊື່​ຜູ້​ນຳ​ໃຊ້',
-    repeat_password: 'Please re-enter password',
-    email: 'E-mail Address',
   },
 });

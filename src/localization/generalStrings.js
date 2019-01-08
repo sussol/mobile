@@ -28,9 +28,6 @@ export const generalStrings = new LocalizedStrings({
     start_typing_to_search: "Hakerek iha ne'e hodi buka-hetan",
   },
   la: {
-    submit: 'Submit',
-    submitting: 'Submitting...',
-    submitted: 'Submitted',
     stocktake: 'ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
     start_typing_to_search: 'ພິມ ເພື່ອ​ຄົ້ນ​ຫາ',
   },
