@@ -1,21 +1,17 @@
 package com.msupplymobile;
 
-import io.realm.react.RealmReactPackage;
-import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
-
 import android.app.Application;
-import android.util.Log;
 
 import com.facebook.react.ReactApplication;
-import com.rnfs.RNFSPackage;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
+import com.rnfs.RNFSPackage;
 import com.bugsnag.BugsnagReactNative;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
+import com.facebook.soloader.SoLoader;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,11 +28,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-          new RNFSPackage(),
-          new RealmReactPackage(),
-          new VectorIconsPackage(),
-          new ReactNativeLocalizationPackage(),
-          BugsnagReactNative.getPackage()
+            new RealmReactPackage(),
+            new VectorIconsPackage(),
+            new ReactNativeLocalizationPackage(),
+            new RNFSPackage(),
+            BugsnagReactNative.getPackage()
       );
     }
 
@@ -48,6 +44,12 @@ public class MainApplication extends Application implements ReactApplication {
 
   @Override
   public ReactNativeHost getReactNativeHost() {
-      return mReactNativeHost;
+    return mReactNativeHost;
+  }
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    SoLoader.init(this, /* native exopackage */ false);
   }
 }
