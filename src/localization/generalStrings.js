@@ -24,4 +24,8 @@ export const generalStrings = new LocalizedStrings({
     stocktake: 'Ajustamentu',
     start_typing_to_search: "Hakerek iha ne'e hodi buka-hetan",
   },
+  la: {
+    stocktake: 'ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
+    start_typing_to_search: 'ພິມ ເພື່ອ​ຄົ້ນ​ຫາ',
+  },
 });

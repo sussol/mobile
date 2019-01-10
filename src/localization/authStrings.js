@@ -32,4 +32,10 @@ export const authStrings = new LocalizedStrings({
     password: 'Liafuan-pase',
     user_name: 'Naran',
   },
+  la: {
+    logging_in: 'ກຳ​ລັງ​ເຂົ້າ​ລະ​ບົບ',
+    login: 'ເຂົ້າ​ລະ​ບົບ',
+    password: 'ລະຫັດຜ່ານ',
+    user_name: 'ຊື່​ຜູ້​ນຳ​ໃຊ້',
+  },
 });
