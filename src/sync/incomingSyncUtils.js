@@ -600,8 +600,9 @@ function parseDate(ISODate, ISOTime) {
  * @return {float}               The numeric representation of the string
  */
 function parseNumber(numberString) {
-  if (!numberString || numberString.length < 1) return null;
-  return parseFloat(numberString);
+  if (!numberString) return null;
+  const result = parseFloat(numberString);
+  return isNaN(result) ? null : result;
 }
 
 /**
