@@ -116,7 +116,6 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
         .snapshot()
         .forEach(batch => {
           batch.itemId = recordToKeep.id;
-          batch.itemName = recordToKeep.name;
         });
 
       //createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
