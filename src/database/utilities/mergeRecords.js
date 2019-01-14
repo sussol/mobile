@@ -112,11 +112,14 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       });
       const batch = database
         .objects('TransactionBatch')
-        .filtered('itemId == $0', recordToMerge.id)[0];
-      batch.itemId = recordToKeep.id;
-      batch.itemName = recordToKeep.name;
+        .filtered('itemId == $0', recordToMerge.id)
+        .snapshot()
+        .forEach(batch => {
+          batch.itemId = recordToKeep.id;
+          batch.itemName = recordToKeep.name;
+        });
 
-      createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
+      //createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
       break;
     case 'Name':
       recordToMerge.masterLists.forEach(masterList => {
