@@ -1,4 +1,5 @@
-import { deleteRecord } from './deleteRecord'
+import { createOrUpdateRecord } from '../../sync/incomingSyncUtils';
+import { deleteRecord } from './deleteRecord';
 
 // Translations for merge logic.
 // TODO: bind translations to DataType constants to avoid breakage on schema update.
