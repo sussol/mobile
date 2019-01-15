@@ -6498,10 +6498,10 @@ readable-stream@^3.0.6:
     string_decoder "^1.1.1"
     util-deprecate "^1.0.1"
 
-realm@^2.21.1:
-  version "2.21.1"
-  resolved "https://registry.yarnpkg.com/realm/-/realm-2.21.1.tgz#a6e3bf86b8469665a176f1ff8db6ab35a8854d56"
-  integrity sha512-8O+A2DG2RFUuE7noRuaDa45v5fwwr6/CU/HVdMbv1w/DJV+4RxPkSiwF9OhecZ34KkAsWUbUPYZVdj5JNq3Aag==
+realm@^2.22.0:
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/realm/-/realm-2.22.0.tgz#608e55d562b2ddca03f70a3617befad130202efc"
+  integrity sha512-KPIxqFBOZxXxXD+pH2a43Bfmmp3lu7eK5Bf0aXQv970hyciRoJfzwMj0W+8GlNNLqtApWRtfEGtFlQHfPv1gFg==
   dependencies:
     command-line-args "^4.0.6"
     decompress "^4.2.0"

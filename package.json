@@ -40,7 +40,7 @@
     "react-native-vector-icons": "^6.1.0",
     "react-navigation": "1.0.0-beta.11",
     "react-redux": "^6.0.0",
-    "realm": "^2.21.1",
+    "realm": "^2.22.0",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
     "redux-persist-error-handler": "^0.1.1",
