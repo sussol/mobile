@@ -9,8 +9,7 @@ import LocalizedStrings from 'react-native-localization';
 
 export const validationStrings = new LocalizedStrings({
   gb: {
-    general: {
-    },
+    general: {},
     username: {
       required: 'Enter the username',
     },
@@ -28,10 +27,7 @@ export const validationStrings = new LocalizedStrings({
       required: 'Enter the repeat password',
     },
   },
-  fr: {
-  },
-  gil: {
-  },
-  tl: {
-  },
+  fr: {},
+  gil: {},
+  tl: {},
 });

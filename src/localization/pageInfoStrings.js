@@ -34,7 +34,8 @@ export const pageInfoStrings = new LocalizedStrings({
     supplier: 'Fournisseur',
     their_ref: 'Leur référence',
   },
-  gil: { // TODO: add - stocktake_name
+  gil: {
+    // TODO: add - stocktake_name
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -46,7 +47,8 @@ export const pageInfoStrings = new LocalizedStrings({
     supplier: 'Kambana n oota, Pharmacy ke HC',
     their_ref: 'Ana Ref',
   },
-  tl: { // TODO: add - stocktake_name
+  tl: {
+    // TODO: add - stocktake_name
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
