@@ -19,7 +19,9 @@ export class UIDatabase {
   exportData(filename = 'msupply-mobile-data') {
     const realm = this.database.realm; // TODO: refactor away from 'database.database.realm'
     const realmPath = realm.path;
-    const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
+    const exportFolder = `${
+      RNFS.ExternalStorageDirectoryPath
+    }/Download/mSupplyMobile_data`;
 
     const date = new Date();
     const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`; // eslint-disable-line max-len
@@ -29,11 +31,19 @@ export class UIDatabase {
     // if it's currently in a transaction
     realm.close();
     RNFS.mkdir(exportFolder)
-      .then(() => RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`)
-        // copyFileName, derived from store name, might have invalid characters for filesystem
-        .catch(() => RNFS.copyFile(realmPath, `${exportFolder}/msupply-mobile-data.realm`))
+      .then(() =>
+        RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`)
+          // copyFileName, derived from store name, might have invalid characters for filesystem
+          .catch(() =>
+            RNFS.copyFile(
+              realmPath,
+              `${exportFolder}/msupply-mobile-data.realm`,
+            ),
+          ),
       )
-      .finally(() => { this.database.realm = new Realm(schema); }); // reopen the realm
+      .finally(() => {
+        this.database.realm = new Realm(schema);
+      }); // reopen the realm
   }
 
   objects(type) {
@@ -42,7 +52,8 @@ export class UIDatabase {
       .objects('Setting')
       .filtered('key == $0', THIS_STORE_NAME_ID)[0];
     // Check ownStoreIdSetting exists, won't if not initialised
-    const thisStoreNameId = thisStoreNameIdSetting && thisStoreNameIdSetting.value;
+    const thisStoreNameId =
+      thisStoreNameIdSetting && thisStoreNameIdSetting.value;
 
     switch (type) {
       case 'CustomerInvoice':
@@ -70,7 +81,9 @@ export class UIDatabase {
           thisStoreNameId,
         );
       case 'ExternalSupplier':
-        return results.filtered('isVisible == true AND isSupplier == true AND type == "facility"');
+        return results.filtered(
+          'isVisible == true AND isSupplier == true AND type == "facility"',
+        );
       case 'Item':
         return results.filtered('isVisible == true');
       case 'RequestRequisition':

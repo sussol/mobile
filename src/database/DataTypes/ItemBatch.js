@@ -13,7 +13,7 @@ export class ItemBatch extends Realm.Object {
     if (this.transactionBatches.length === 0) return new Date();
     const transactionBatches = this.transactionBatches.slice();
     const sortedTransactionBatches = transactionBatches.sort(
-      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate
+      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate,
     );
     return sortedTransactionBatches[0].transaction.confirmDate;
   }
@@ -27,7 +27,9 @@ export class ItemBatch extends Realm.Object {
   }
 
   set totalQuantity(quantity) {
-    if (quantity < 0) throw new Error('Cannot set a negative item batch quantity');
+    if (quantity < 0) {
+      throw new Error('Cannot set a negative item batch quantity');
+    }
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
@@ -42,7 +44,7 @@ export class ItemBatch extends Realm.Object {
     const transactionBatches = this.transactionBatches.filtered(
       'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
       startDate,
-      endDate
+      endDate,
     );
 
     return getTotal(transactionBatches, 'usage');
@@ -53,7 +55,12 @@ export class ItemBatch extends Realm.Object {
   }
 
   addTransactionBatchIfUnique(transactionBatch) {
-    if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) return;
+    if (
+      this.transactionBatches.filtered('id == $0', transactionBatch.id).length >
+      0
+    ) {
+      return;
+    }
     this.addTransactionBatch(transactionBatch);
   }
 

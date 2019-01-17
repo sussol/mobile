@@ -2,10 +2,12 @@ import Realm from 'realm';
 import { createRecord } from '../utilities';
 
 export class StocktakeBatch extends Realm.Object {
-
   destructor(database) {
     // Delete ItemBatch that was created as a result of creating this StocktakeBatch
-    if (this.snapshotNumberOfPacks === 0 && this.itemBatch.numberOfPacks === 0) {
+    if (
+      this.snapshotNumberOfPacks === 0 &&
+      this.itemBatch.numberOfPacks === 0
+    ) {
       database.delete('ItemBatch', this.itemBatch);
     }
   }
@@ -28,7 +30,7 @@ export class StocktakeBatch extends Realm.Object {
    */
   get isReducedBelowMinimum() {
     const stockOnHand = this.itemBatch.totalQuantity;
-    return (stockOnHand + this.difference) < 0;
+    return stockOnHand + this.difference < 0;
   }
 
   /**
@@ -82,10 +84,18 @@ export class StocktakeBatch extends Realm.Object {
         : this.stocktake.getReductions(database);
 
       // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
-      const transactionItem = createRecord(database, 'TransactionItem',
-        inventoryAdjustment, this.itemBatch.item);
-      const transactionBatch = createRecord(database, 'TransactionBatch',
-        transactionItem, this.itemBatch);
+      const transactionItem = createRecord(
+        database,
+        'TransactionItem',
+        inventoryAdjustment,
+        this.itemBatch.item,
+      );
+      const transactionBatch = createRecord(
+        database,
+        'TransactionBatch',
+        transactionItem,
+        this.itemBatch,
+      );
 
       // Apply difference from stocktake to actual stock on hand levels.
       // Whether stock is increased or decreased is determined by the transaction

@@ -1,11 +1,12 @@
 import Realm from 'realm';
 
 export class TransactionBatch extends Realm.Object {
-
   destructor(database) {
     this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item batches
     // Can safely remove ItemBatch if transaction batch was created by an ExternalSupplierInvoice
-    if (this.transaction.isExternalSupplierInvoice) database.delete('ItemBatch', this.itemBatch);
+    if (this.transaction.isExternalSupplierInvoice) {
+      database.delete('ItemBatch', this.itemBatch);
+    }
   }
 
   get totalQuantity() {
@@ -17,7 +18,8 @@ export class TransactionBatch extends Realm.Object {
   }
 
   get usage() {
-    if (!this.transaction.isConfirmed && !this.transaction.isFinalised) return 0;
+    if (!this.transaction.isConfirmed && !this.transaction.isFinalised)
+      return 0;
     switch (this.transaction.type) {
       case 'customer_invoice':
         return this.totalQuantity;
@@ -34,14 +36,18 @@ export class TransactionBatch extends Realm.Object {
 
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
-      throw new Error('Cannot change quantity of batches in a finalised transaction');
+      throw new Error(
+        'Cannot change quantity of batches in a finalised transaction',
+      );
     }
 
     const difference = quantity - this.totalQuantity;
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
 
     if (this.transaction.isConfirmed) {
-      const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
+      const inventoryDifference = this.transaction.isIncoming
+        ? difference
+        : -difference;
       this.itemBatch.totalQuantity += inventoryDifference;
       database.save('ItemBatch', this.itemBatch);
     }
@@ -72,7 +78,9 @@ export class TransactionBatch extends Realm.Object {
     // Max that can be removed is the total quantity currently in the transaction batch
     if (quantity < 0) return Math.max(quantity, -this.totalQuantity);
     // For outgoing transactions, max that can be added is amount in item batch
-    if (this.transaction.isOutgoing) return Math.min(quantity, this.itemBatch.totalQuantity);
+    if (this.transaction.isOutgoing) {
+      return Math.min(quantity, this.itemBatch.totalQuantity);
+    }
     // For supplier invoice, there is no maximum amount that can be added
     return quantity;
   }
@@ -80,7 +88,6 @@ export class TransactionBatch extends Realm.Object {
   toString() {
     return `${this.itemBatch} in a ${this.transaction.type}`;
   }
-
 }
 
 TransactionBatch.schema = {

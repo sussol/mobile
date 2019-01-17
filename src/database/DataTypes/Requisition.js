@@ -68,14 +68,30 @@ export class Requisition extends Realm.Object {
 
   createCustomerInvoice(database, user) {
     if (this.isRequest || this.isFinalised) {
-      throw new Error('Cannot create invoice from Finalised or Request Requistion ');
+      throw new Error(
+        'Cannot create invoice from Finalised or Request Requistion ',
+      );
     }
-    if (database.objects('Transaction').
-            filtered('linkedRequisition.id == $0', this.id).length > 0) return;
-    const transaction = createRecord(database, 'CustomerInvoice',
-                                  this.otherStoreName, user);
+    if (
+      database
+        .objects('Transaction')
+        .filtered('linkedRequisition.id == $0', this.id).length > 0
+    ) {
+      return;
+    }
+    const transaction = createRecord(
+      database,
+      'CustomerInvoice',
+      this.otherStoreName,
+      user,
+    );
     this.items.forEach(requisitionItem => {
-      createRecord(database, 'TransactionItem', transaction, requisitionItem.item);
+      createRecord(
+        database,
+        'TransactionItem',
+        transaction,
+        requisitionItem.item,
+      );
     });
     transaction.linkedRequisition = this;
     this.linkedTransaction = transaction;
@@ -83,16 +99,19 @@ export class Requisition extends Realm.Object {
     database.save('Transaction', transaction);
   }
 
-
   /**
    * Add all items from the mobile store's master list to this requisition
    */
   addItemsFromMasterList(database, thisStore) {
-    if (this.isFinalised) throw new Error('Cannot add items to a finalised requisition');
-    thisStore.masterLists.forEach((masterList) => {
-      const itemsToAdd = complement(masterList.items,
-                                    this.items,
-                                    (item) => item.itemId);
+    if (this.isFinalised) {
+      throw new Error('Cannot add items to a finalised requisition');
+    }
+    thisStore.masterLists.forEach(masterList => {
+      const itemsToAdd = complement(
+        masterList.items,
+        this.items,
+        item => item.itemId,
+      );
       itemsToAdd.forEach(masterListItem => {
         if (!masterListItem.item.crossReferenceItem) {
           // Don't add cross reference items or we'll get duplicates
@@ -106,7 +125,9 @@ export class Requisition extends Realm.Object {
    * Add all items from the mobile store's master list that require more stock
    */
   createAutomaticOrder(database, thisStore) {
-    if (this.isFinalised) throw new Error('Cannot add items to a finalised requisition');
+    if (this.isFinalised) {
+      throw new Error('Cannot add items to a finalised requisition');
+    }
     this.addItemsFromMasterList(database, thisStore);
     this.setRequestedToSuggested(database);
     this.pruneRedundantItems(database);
@@ -138,8 +159,10 @@ export class Requisition extends Realm.Object {
    */
   pruneRedundantItems(database) {
     const itemsToPrune = [];
-    this.items.forEach((requisitionItem) => {
-      if (requisitionItem.requiredQuantity === 0) itemsToPrune.push(requisitionItem);
+    this.items.forEach(requisitionItem => {
+      if (requisitionItem.requiredQuantity === 0) {
+        itemsToPrune.push(requisitionItem);
+      }
     });
     database.delete('RequisitionItem', itemsToPrune);
   }

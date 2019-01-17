@@ -24,23 +24,31 @@ export class RequisitionItem extends Realm.Object {
 
   get suggestedQuantity() {
     const daysToSupply = this.requisition ? this.requisition.daysToSupply : 0;
-    return Math.ceil(Math.max((this.dailyUsage * daysToSupply) - this.stockOnHand, 0));
+    return Math.ceil(
+      Math.max(this.dailyUsage * daysToSupply - this.stockOnHand, 0),
+    );
   }
 
   get linkedTransactionItem() {
     if (this.isRequest || !this.requisition.linkedTransaction) return null;
-    return this.requisition.linkedTransaction.items.filtered('item.id == $0', this.item.id)[0];
+    return this.requisition.linkedTransaction.items.filtered(
+      'item.id == $0',
+      this.item.id,
+    )[0];
   }
 
   get ourStockOnHand() {
     const linkedTransactionItem = this.linkedTransactionItem;
-    return linkedTransactionItem ?
-           linkedTransactionItem.availableQuantity : this.item.totalQuantity;
+    return linkedTransactionItem
+      ? linkedTransactionItem.availableQuantity
+      : this.item.totalQuantity;
   }
 
   setSuppliedQuantity(database, newValue) {
     if (this.requisition.isFinalised || this.requisition.isRequest) {
-      throw new Error('Cannot set supplied quantity for Finalised or Request Requisition');
+      throw new Error(
+        'Cannot set supplied quantity for Finalised or Request Requisition',
+      );
     }
 
     const transactionItem = this.linkedTransactionItem;

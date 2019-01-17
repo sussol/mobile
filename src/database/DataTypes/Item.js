@@ -1,16 +1,24 @@
 import Realm from 'realm';
-import { getTotal, millisecondsToDays, MILLISECONDS_PER_DAY } from '../utilities';
+import {
+  getTotal,
+  millisecondsToDays,
+  MILLISECONDS_PER_DAY,
+} from '../utilities';
 
 const USAGE_PERIOD_MILLISECONDS = 3 * 30 * MILLISECONDS_PER_DAY; // Three months in milliseconds
 
 export class Item extends Realm.Object {
   destructor(database) {
     // Clean up item store joins referencing deleted item.
-    const itemStoreJoins = database.objects('ItemStoreJoin').filtered('itemId == $0', this.id);
+    const itemStoreJoins = database
+      .objects('ItemStoreJoin')
+      .filtered('itemId == $0', this.id);
     database.delete('ItemStoreJoin', itemStoreJoins);
 
     // In case of merge-deletion, ensure only delete batches currently associated with this item.
-    this.batches = database.objects('ItemBatch').filtered('item.id == $0', this.id);
+    this.batches = database
+      .objects('ItemBatch')
+      .filtered('item.id == $0', this.id);
     database.delete('ItemBatch', this.batches);
   }
 
@@ -40,7 +48,8 @@ export class Item extends Realm.Object {
     let itemAddedDate = new Date();
     this.batches.forEach(batch => {
       const batchAddedDate = batch.addedDate;
-      itemAddedDate = batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
+      itemAddedDate =
+        batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
     });
     return itemAddedDate;
   }
@@ -55,7 +64,8 @@ export class Item extends Realm.Object {
       if (
         batch.totalQuantity > 0 &&
         batch.expiryDate &&
-        (!earliestBatch.expiryDate || batch.expiryDate < earliestBatch.expiryDate)
+        (!earliestBatch.expiryDate ||
+          batch.expiryDate < earliestBatch.expiryDate)
       ) {
         earliestBatch = batch;
       }
@@ -89,7 +99,7 @@ export class Item extends Realm.Object {
   totalUsageForPeriod(startDate, endDate) {
     return this.batches.reduce(
       (total, batch) => total + batch.totalUsageForPeriod(startDate, endDate),
-      0
+      0,
     );
   }
 

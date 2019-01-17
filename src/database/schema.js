@@ -81,7 +81,6 @@ SyncOut.schema = {
   },
 };
 
-
 TransactionCategory.schema = {
   name: 'TransactionCategory',
   primaryKey: 'id',
@@ -106,40 +105,40 @@ User.schema = {
     email: { type: 'string', optional: true },
     passwordHash: {
       type: 'string',
-      default: '4ada0b60df8fe299b8a412bbc8c97d0cb204b80e5693608ab2fb09ecde6d252d',
+      default:
+        '4ada0b60df8fe299b8a412bbc8c97d0cb204b80e5693608ab2fb09ecde6d252d',
     },
     salt: { type: 'string', optional: true },
   },
 };
 
-export const schema =
-  {
-    schema: [
-      Address,
-      Item,
-      ItemBatch,
-      ItemDepartment,
-      ItemCategory,
-      ItemStoreJoin,
-      Transaction,
-      TransactionItem,
-      TransactionBatch,
-      TransactionCategory,
-      MasterList,
-      MasterListItem,
-      MasterListNameJoin,
-      Name,
-      NameStoreJoin,
-      NumberSequence,
-      NumberToReuse,
-      Requisition,
-      RequisitionItem,
-      Setting,
-      SyncOut,
-      Stocktake,
-      StocktakeItem,
-      StocktakeBatch,
-      User,
-    ],
-    schemaVersion: 5,
-  };
+export const schema = {
+  schema: [
+    Address,
+    Item,
+    ItemBatch,
+    ItemDepartment,
+    ItemCategory,
+    ItemStoreJoin,
+    Transaction,
+    TransactionItem,
+    TransactionBatch,
+    TransactionCategory,
+    MasterList,
+    MasterListItem,
+    MasterListNameJoin,
+    Name,
+    NameStoreJoin,
+    NumberSequence,
+    NumberToReuse,
+    Requisition,
+    RequisitionItem,
+    Setting,
+    SyncOut,
+    Stocktake,
+    StocktakeItem,
+    StocktakeBatch,
+    User,
+  ],
+  schemaVersion: 5,
+};

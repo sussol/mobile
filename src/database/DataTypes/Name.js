@@ -3,7 +3,9 @@ import Realm from 'realm';
 export class Name extends Realm.Object {
   destructor(database) {
     // Clean up name store joins referencing deleted name.
-    const nameStoreJoins = database.objects('NameStoreJoin').filtered('nameId == $0', this.id);
+    const nameStoreJoins = database
+      .objects('NameStoreJoin')
+      .filtered('nameId == $0', this.id);
     database.delete('NameStoreJoin', nameStoreJoins);
   }
 
@@ -29,7 +31,9 @@ export class Name extends Realm.Object {
   }
 
   addTransactionIfUnique(transaction) {
-    if (this.transactions.filtered('id == $0', transaction.id).length > 0) return;
+    if (this.transactions.filtered('id == $0', transaction.id).length > 0) {
+      return;
+    }
     this.addTransaction(transaction);
   }
 

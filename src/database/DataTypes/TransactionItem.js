@@ -4,7 +4,6 @@ import { complement } from 'set-manipulator';
 import { createRecord, getTotal } from '../utilities';
 
 export class TransactionItem extends Realm.Object {
-
   destructor(database) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot delete an item from a finalised transaction');
@@ -43,9 +42,10 @@ export class TransactionItem extends Realm.Object {
   // for the fact that any issued in a confirmed customer invoice has already
   // been taken off the total
   get availableQuantity() {
-    if (this.transaction.isOutgoing &&
-       (this.transaction.isConfirmed ||
-        this.transaction.isFinalised)) {
+    if (
+      this.transaction.isOutgoing &&
+      (this.transaction.isConfirmed || this.transaction.isFinalised)
+    ) {
       return this.item.totalQuantity + this.totalQuantity;
     }
     return this.item.totalQuantity;
@@ -57,7 +57,9 @@ export class TransactionItem extends Realm.Object {
    * @return {object}        The TransactionBatch with the matching item id
    */
   getBatch(itemBatchId) {
-    return this.batches.find(transactionBatch => transactionBatch.itemBatchId === itemBatchId);
+    return this.batches.find(
+      transactionBatch => transactionBatch.itemBatchId === itemBatchId,
+    );
   }
 
   addBatch(transactionBatch) {
@@ -75,11 +77,17 @@ export class TransactionItem extends Realm.Object {
    */
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
-      throw new Error('Cannot set quantity of an item in a finalised transaction');
+      throw new Error(
+        'Cannot set quantity of an item in a finalised transaction',
+      );
     }
     let cappedQuantity = quantity;
-    if (this.transaction.isOutgoing) cappedQuantity = Math.min(quantity, this.availableQuantity);
-    if (quantity < 0) throw new Error('Cannot set a negative quantity on a transaction item');
+    if (this.transaction.isOutgoing) {
+      cappedQuantity = Math.min(quantity, this.availableQuantity);
+    }
+    if (quantity < 0) {
+      throw new Error('Cannot set a negative quantity on a transaction item');
+    }
 
     const difference = cappedQuantity - this.totalQuantity; // Positive if new quantity is greater
 
@@ -113,7 +121,11 @@ export class TransactionItem extends Realm.Object {
     // First apply as much of the quantity as possible to existing batches
     let remainder = difference;
     for (let index = 0; remainder !== 0 && index < batches.length; index++) {
-      remainder = this.allocateDifferenceToBatch(database, remainder, batches[index]);
+      remainder = this.allocateDifferenceToBatch(
+        database,
+        remainder,
+        batches[index],
+      );
     }
 
     // If there is a positive remainder, i.e. more to allocate, add more batches
@@ -127,30 +139,50 @@ export class TransactionItem extends Realm.Object {
       // Unless there are no batches with stock, in which case start with the batch
       // that was most likely to be recently in stock, i.e. the one with the longest
       // expiry date.
-      const batchesToUse = batchesWithStock.length > 0 ?
-                           batchesWithStock :
-                           this.item.batches.sorted('expiryDate', true);
+      const batchesToUse =
+        batchesWithStock.length > 0
+          ? batchesWithStock
+          : this.item.batches.sorted('expiryDate', true);
 
       // Use complement to only get batches not already in the transaction.
       // TODO may actually slow things if most batches not already in transaction item
       // or all batches already in
-      const itemBatchesToAdd = complement(batchesToUse,
-                                          this.batches.map((transactionBatch) =>
-                                            ({ id: transactionBatch.itemBatchId })),
-                                          (batch) => batch.id);
+      const itemBatchesToAdd = complement(
+        batchesToUse,
+        this.batches.map(transactionBatch => ({
+          id: transactionBatch.itemBatchId,
+        })),
+        batch => batch.id,
+      );
       // Go through item batches, adding transaction batches and allocating remainder
       // until no remainder left
-      for (let index = 0; index < itemBatchesToAdd.length && remainder !== 0; index ++) {
+      for (
+        let index = 0;
+        index < itemBatchesToAdd.length && remainder !== 0;
+        index++
+      ) {
         // Create the new transaction batch and attach it to this transaction item
-        const newBatch = createRecord(database, 'TransactionBatch', this, itemBatchesToAdd[index]);
+        const newBatch = createRecord(
+          database,
+          'TransactionBatch',
+          this,
+          itemBatchesToAdd[index],
+        );
 
         // Apply as much of the remainder to it as possible
-        remainder = this.allocateDifferenceToBatch(database, remainder, newBatch);
+        remainder = this.allocateDifferenceToBatch(
+          database,
+          remainder,
+          newBatch,
+        );
       }
     }
 
-    if (remainder > 0) { // Something went wrong
-      throw new Error(`Failed to allocate ${remainder} of ${difference} to ${this.item.name}`);
+    if (remainder > 0) {
+      // Something went wrong
+      throw new Error(
+        `Failed to allocate ${remainder} of ${difference} to ${this.item.name}`,
+      );
     }
   }
 
@@ -178,7 +210,9 @@ export class TransactionItem extends Realm.Object {
   pruneEmptyBatches(database) {
     const batchesToDelete = [];
     this.batches.forEach(batch => {
-      if (batch.totalQuantity === 0 && batch.totalQuantitySent === 0) batchesToDelete.push(batch);
+      if (batch.totalQuantity === 0 && batch.totalQuantitySent === 0) {
+        batchesToDelete.push(batch);
+      }
     });
     database.delete('TransactionBatch', batchesToDelete);
   }

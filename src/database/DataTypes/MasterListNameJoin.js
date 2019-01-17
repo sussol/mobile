@@ -6,7 +6,8 @@ export class MasterListNameJoin extends Realm.Object {
     if (!this.name || !this.masterList) return; // Not a full join record
 
     const indexInMasterLists = this.name.masterLists.findIndex(
-      (masterList) => masterList.id === this.masterList.id);
+      masterList => masterList.id === this.masterList.id,
+    );
 
     // If the master list/name aren't actually joined, do nothing
     if (!indexInMasterLists >= 0) return;
@@ -16,7 +17,9 @@ export class MasterListNameJoin extends Realm.Object {
   }
 
   toString() {
-    return `Joins master list '${this.masterList.name}' with name '${this.name}'`;
+    return `Joins master list '${this.masterList.name}' with name '${
+      this.name
+    }'`;
   }
 }
 

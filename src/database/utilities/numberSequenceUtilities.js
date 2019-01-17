@@ -29,7 +29,9 @@ export function getNumberSequence(database, sequenceKey) {
   const sequenceResults = database
     .objects('NumberSequence')
     .filtered('sequenceKey == $0', sequenceKey);
-  if (sequenceResults.length > 1) throw new Error(`More than one ${sequenceKey} sequence`);
+  if (sequenceResults.length > 1) {
+    throw new Error(`More than one ${sequenceKey} sequence`);
+  }
   if (sequenceResults.length <= 0) {
     return createRecord(database, 'NumberSequence', sequenceKey);
   }

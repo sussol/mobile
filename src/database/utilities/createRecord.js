@@ -102,7 +102,9 @@ function createInventoryAdjustment(database, user, date, isAddition) {
     status: 'confirmed',
     comment: '',
     enteredBy: user,
-    otherParty: database.objects('Name').find(name => name.type === 'inventory_adjustment'),
+    otherParty: database
+      .objects('Name')
+      .find(name => name.type === 'inventory_adjustment'),
   });
 }
 
@@ -129,7 +131,10 @@ function createRequisition(database, user, otherStoreName) {
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
-    requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
+    requesterReference: getNextNumber(
+      database,
+      REQUISITION_REQUESTER_REFERENCE,
+    ),
     status: 'suggested',
     type: 'request',
     entryDate: new Date(),
@@ -191,7 +196,14 @@ function createStocktakeItem(database, stocktake, item) {
 
 // Creates a StocktakeBatch and adds it to the StocktakeItem
 function createStocktakeBatch(database, stocktakeItem, itemBatch) {
-  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const {
+    numberOfPacks,
+    packSize,
+    expiryDate,
+    batch,
+    costPrice,
+    sellPrice,
+  } = itemBatch;
   const stocktakeBatch = database.create('StocktakeBatch', {
     id: generateUUID(),
     stocktake: stocktakeItem.stocktake,
@@ -202,7 +214,9 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
     batch: batch,
     costPrice: costPrice,
     sellPrice: sellPrice,
-    sortIndex: stocktakeItem.stocktake ? stocktakeItem.stocktake.numberOfBatches : 0,
+    sortIndex: stocktakeItem.stocktake
+      ? stocktakeItem.stocktake.numberOfBatches
+      : 0,
   });
   stocktakeItem.addBatch(stocktakeBatch);
   database.save('StocktakeItem', stocktakeItem);
@@ -242,7 +256,9 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
     costPrice: costPrice,
     sellPrice: sellPrice,
     transaction: transactionItem.transaction,
-    sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
+    sortIndex: transactionItem.transaction
+      ? transactionItem.transaction.numberOfBatches
+      : 0,
   });
   transactionItem.addBatch(transactionBatch);
   database.save('TransactionItem', transactionItem);

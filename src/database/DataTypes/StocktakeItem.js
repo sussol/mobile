@@ -5,7 +5,9 @@ import { getTotal, createRecord } from '../utilities';
 export class StocktakeItem extends Realm.Object {
   destructor(database) {
     if (this.stocktake && this.stocktake.isFinalised) {
-      throw new Error('Cannot delete a StocktakeItem belonging to a finalised stocktake');
+      throw new Error(
+        'Cannot delete a StocktakeItem belonging to a finalised stocktake',
+      );
     }
     database.delete('StocktakeBatch', this.batches);
   }
@@ -42,7 +44,8 @@ export class StocktakeItem extends Realm.Object {
    */
   get hasCountedBatches() {
     return this.batches.some(
-      stocktakeBatch => stocktakeBatch.isValid() && stocktakeBatch.hasBeenCounted,
+      stocktakeBatch =>
+        stocktakeBatch.isValid() && stocktakeBatch.hasBeenCounted,
     );
   }
 
@@ -76,10 +79,15 @@ export class StocktakeItem extends Realm.Object {
     // the stocktakeBatches for this stocktakeItem
     const itemBatchesWithStock = this.item.batchesWithStock;
     if (
-      itemBatchesWithStock.some(itemBatch => (
-        !this.batches.some(stocktakeBatch => stocktakeBatch.itemBatch.id === itemBatch.id)
-      ))
-    ) return true;
+      itemBatchesWithStock.some(
+        itemBatch =>
+          !this.batches.some(
+            stocktakeBatch => stocktakeBatch.itemBatch.id === itemBatch.id,
+          ),
+      )
+    ) {
+      return true;
+    }
 
     // This stocktakeItem is not out of date
     return false;
@@ -121,22 +129,28 @@ export class StocktakeItem extends Realm.Object {
       // snapshot quantity, we want to remove 'Not Counted' placeholder
       if (quantity === this.snapshotTotalQuantity) {
         this.batches.forEach(stocktakeBatch => {
-          stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
+          stocktakeBatch.countedTotalQuantity =
+            stocktakeBatch.snapshotTotalQuantity;
           database.save('StocktakeBatch', stocktakeBatch);
         });
         return;
       }
 
       const isIncreasingQuantity = difference > 0;
-      const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
+      const sortedBatches = this.batches.sorted(
+        'expiryDate',
+        isIncreasingQuantity,
+      );
 
       sortedBatches.some(stocktakeBatch => {
         const batchTotalQuantity = stocktakeBatch.countedTotalQuantity;
 
         let thisBatchChangeQuantity = 0;
         if (isIncreasingQuantity) {
-          thisBatchChangeQuantity = Math.min(stocktakeBatch.snapshotTotalQuantity -
-                                            batchTotalQuantity, difference);
+          thisBatchChangeQuantity = Math.min(
+            stocktakeBatch.snapshotTotalQuantity - batchTotalQuantity,
+            difference,
+          );
 
           if (thisBatchChangeQuantity <= 0) return false;
         } else {
@@ -144,7 +158,8 @@ export class StocktakeItem extends Realm.Object {
           thisBatchChangeQuantity = -thisBatchChangeQuantity;
         }
 
-        stocktakeBatch.countedTotalQuantity = batchTotalQuantity + thisBatchChangeQuantity;
+        stocktakeBatch.countedTotalQuantity =
+          batchTotalQuantity + thisBatchChangeQuantity;
 
         database.save('StocktakeBatch', stocktakeBatch);
 
@@ -168,7 +183,12 @@ export class StocktakeItem extends Realm.Object {
 
   createNewBatch(database) {
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
-    const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
+    const itemBatch = createRecord(
+      database,
+      'ItemBatch',
+      this.item,
+      batchString,
+    );
     createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 }

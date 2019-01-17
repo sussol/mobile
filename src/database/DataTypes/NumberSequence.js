@@ -7,7 +7,6 @@ import { createRecord } from '../utilities';
  * used numbers back for reuse
  */
 export class NumberSequence extends Realm.Object {
-
   destructor(database) {
     database.delete('NumberToReuse', this.numbersToReuse);
   }
@@ -17,7 +16,8 @@ export class NumberSequence extends Realm.Object {
    * @return {integer} Next number in sequence
    */
   getNextNumber(database) {
-    if (this.numbersToReuse.length > 0) { // There is at least one number we can reuse
+    if (this.numbersToReuse.length > 0) {
+      // There is at least one number we can reuse
       const numberToReuse = this.numbersToReuse.sorted('number')[0];
       const number = numberToReuse.number;
       database.delete('NumberToReuse', numberToReuse);
@@ -44,20 +44,28 @@ export class NumberSequence extends Realm.Object {
    */
   addNumberToReuse(numberToReuse) {
     if (numberToReuse.number > this.highestNumberUsed) {
-      throw new Error(`Cannot reuse ${numberToReuse.number} as it has not been used yet`);
+      throw new Error(
+        `Cannot reuse ${numberToReuse.number} as it has not been used yet`,
+      );
     }
-    if (this.numbersToReuse.find((testNumberToReuse) =>
-                                  testNumberToReuse.number === numberToReuse.number)) {
-      throw new Error(`Sequence ${this.sequenceKey} already reusing ${numberToReuse.number}`);
+    if (
+      this.numbersToReuse.find(
+        testNumberToReuse => testNumberToReuse.number === numberToReuse.number,
+      )
+    ) {
+      throw new Error(
+        `Sequence ${this.sequenceKey} already reusing ${numberToReuse.number}`,
+      );
     }
     this.numbersToReuse.push(numberToReuse);
   }
 
   toString() {
-    return `Highest in sequence ${this.sequenceKey} is ${this.highestNumberUsed}`;
+    return `Highest in sequence ${this.sequenceKey} is ${
+      this.highestNumberUsed
+    }`;
   }
 }
-
 
 // Number sequence has sequenceKey as primary key, to a) ensure it is always unique,
 // and b) allow us to change the id after it is created (i.e. on incoming sync)

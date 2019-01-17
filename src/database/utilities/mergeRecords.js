@@ -55,7 +55,12 @@ const RECORD_TYPE_TO_MASTERLIST = {
  * @param {string} internalRecordType Internal record type for merge operation
  * @param {object} syncRecord         Data representing the sync record
  */
-export function mergeRecords(database, settings, internalRecordType, syncRecord) {
+export function mergeRecords(
+  database,
+  settings,
+  internalRecordType,
+  syncRecord,
+) {
   const recordToKeep = database
     .objects(internalRecordType)
     .filtered('id == $0', syncRecord.mergeIDtokeep)[0];
@@ -65,7 +70,8 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const recordsExist = recordToKeep && recordToMerge;
   if (!recordsExist) return;
   const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
-  if (!tablesToUpdate) return; // TODO: log to bugsnag if merging not implemented for a certain recordType.
+  // TODO: log to bugsnag if merging not implemented for a certain recordType.
+  if (!tablesToUpdate) return;
 
   Object.entries(tablesToUpdate).forEach(
     ([tableToUpdate, { field: fieldToUpdate, setterMethod: fieldSetter }]) => {
@@ -75,8 +81,11 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
         .snapshot();
       recordsToUpdate.forEach(record => {
         if (record) {
-          if (typeof record[fieldSetter] === typeof Function) record[fieldSetter](recordToKeep);
-          else record[fieldToUpdate] = recordToKeep;
+          if (typeof record[fieldSetter] === typeof Function) {
+            record[fieldSetter](recordToKeep);
+          } else {
+            record[fieldToUpdate] = recordToKeep;
+          }
         }
       });
     },
@@ -85,7 +94,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
     RECORD_TYPE_TO_MASTERLIST[internalRecordType],
   );
-  const masterListJoinRecords = database
+  database
     .objects(tableToUpdate)
     .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
     .snapshot()
@@ -110,7 +119,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       recordToMerge.batches.forEach(batch => {
         recordToKeep.addBatchIfUnique(batch);
       });
-      const batch = database
+      database
         .objects('TransactionBatch')
         .filtered('itemId == $0', recordToMerge.id)
         .snapshot()
@@ -118,12 +127,14 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
           batch.itemId = recordToKeep.id;
         });
 
-      //createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
+      // createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
       break;
     case 'Name':
       recordToMerge.masterLists.forEach(masterList => {
         recordToKeep.addMasterListIfUnique(masterList);
       });
+      break;
+    default:
       break;
   }
 

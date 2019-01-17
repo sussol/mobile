@@ -4,7 +4,9 @@ import Realm from 'realm';
 export class NameStoreJoin extends Realm.Object {
   destructor(database) {
     if (!this.joinsThisStore) return; // Don't need to change visibility if record not this store
-    const nameResults = database.objects('Name').filtered('id == $0', this.nameId);
+    const nameResults = database
+      .objects('Name')
+      .filtered('id == $0', this.nameId);
     if (!nameResults || nameResults.length <= 0) return; // Doesn't join a name in this database
     // Make the name no longer visible in this store
     const name = nameResults[0];
@@ -13,7 +15,9 @@ export class NameStoreJoin extends Realm.Object {
   }
 
   toString() {
-    return `Joins name ${this.nameId} with ${this.joinsThisStore ? 'this' : 'another'} store`;
+    return `Joins name ${this.nameId} with ${
+      this.joinsThisStore ? 'this' : 'another'
+    } store`;
   }
 }
 

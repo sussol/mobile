@@ -15,12 +15,22 @@ export class Transaction extends Realm.Object {
   }
 
   destructor(database) {
-    if (this.isFinalised) throw new Error('Cannot delete finalised transaction');
+    if (this.isFinalised) {
+      throw new Error('Cannot delete finalised transaction');
+    }
     if (this.isCustomerInvoice) {
-      reuseSerialNumber(database, NUMBER_SEQUENCE_KEYS.CUSTOMER_INVOICE_NUMBER, this.serialNumber);
+      reuseSerialNumber(
+        database,
+        NUMBER_SEQUENCE_KEYS.CUSTOMER_INVOICE_NUMBER,
+        this.serialNumber,
+      );
     }
     if (this.isSupplierInvoice) {
-      reuseSerialNumber(database, NUMBER_SEQUENCE_KEYS.SUPPLIER_INVOICE_NUMBER, this.serialNumber);
+      reuseSerialNumber(
+        database,
+        NUMBER_SEQUENCE_KEYS.SUPPLIER_INVOICE_NUMBER,
+        this.serialNumber,
+      );
     }
     database.delete('TransactionItem', this.items);
   }
@@ -50,11 +60,19 @@ export class Transaction extends Realm.Object {
   }
 
   get isExternalSupplierInvoice() {
-    return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
+    return (
+      this.isSupplierInvoice &&
+      this.otherParty &&
+      this.otherParty.isExternalSupplier
+    );
   }
 
   get isInternalSupplierInvoice() {
-    return this.isSupplierInvoice && this.otherParty && this.otherParty.isInternalSupplier;
+    return (
+      this.isSupplierInvoice &&
+      this.otherParty &&
+      this.otherParty.isInternalSupplier
+    );
   }
 
   get isInventoryAdjustment() {
@@ -108,15 +126,28 @@ export class Transaction extends Realm.Object {
    * Add all items from the customer's master list to this customer invoice
    */
   addItemsFromMasterList(database) {
-    if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
-    if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
+    if (!this.isCustomerInvoice) {
+      throw new Error(`Cannot add master lists to ${this.type}`);
+    }
+    if (this.isFinalised) {
+      throw new Error('Cannot add items to a finalised transaction');
+    }
     if (this.otherParty) {
       this.otherParty.masterLists.forEach(masterList => {
-        const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
+        const itemsToAdd = complement(
+          masterList.items,
+          this.items,
+          item => item.itemId,
+        );
         itemsToAdd.forEach(masterListItem => {
           if (!masterListItem.item.crossReferenceItem) {
             // Don't add cross reference items or we'll get duplicates
-            createRecord(database, 'TransactionItem', this, masterListItem.item);
+            createRecord(
+              database,
+              'TransactionItem',
+              this,
+              masterListItem.item,
+            );
           }
         });
       });
@@ -132,7 +163,9 @@ export class Transaction extends Realm.Object {
   removeItemsById(database, itemIds) {
     const itemsToDelete = [];
     for (let i = 0; i < itemIds.length; i++) {
-      const transactionItem = this.items.find(testItem => testItem.id === itemIds[i]);
+      const transactionItem = this.items.find(
+        testItem => testItem.id === itemIds[i],
+      );
       if (transactionItem.isValid()) {
         itemsToDelete.push(transactionItem);
       }
@@ -148,12 +181,15 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   removeTransactionBatchesById(database, transactionBatchIds) {
-    if (this.isFinalised) throw new Error('Cannot modify finalised transaction');
+    if (this.isFinalised) {
+      throw new Error('Cannot modify finalised transaction');
+    }
     const transactionBatches = this.getTransactionBatches(database);
     const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
       const transactionBatch = transactionBatches.find(
-        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId,
+        matchTransactionBatch =>
+          matchTransactionBatch.id === transactionBatchId,
       );
       transactionBatchesToDelete.push(transactionBatch);
     });
@@ -179,7 +215,12 @@ export class Transaction extends Realm.Object {
    */
   addBatchIfUnique(database, transactionBatch) {
     addBatchToParent(transactionBatch, this, () =>
-      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item),
+      createRecord(
+        database,
+        'TransactionItem',
+        this,
+        transactionBatch.itemBatch.item,
+      ),
     );
   }
 
@@ -190,7 +231,9 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   pruneRedundantBatchesAndItems(database) {
-    const batchesToRemove = this.getTransactionBatches(database).filtered('numberOfPacks = 0');
+    const batchesToRemove = this.getTransactionBatches(database).filtered(
+      'numberOfPacks = 0',
+    );
 
     database.delete('TransactionBatch', batchesToRemove);
     this.pruneBatchlessTransactionItems(database);
@@ -218,7 +261,9 @@ export class Transaction extends Realm.Object {
    * @return {RealmCollection} all transaction batches
    */
   getTransactionBatches(database) {
-    return database.objects('TransactionBatch').filtered('transaction.id == $0', this.id);
+    return database
+      .objects('TransactionBatch')
+      .filtered('transaction.id == $0', this.id);
   }
 
   /**
@@ -228,8 +273,12 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   confirm(database) {
-    if (this.isConfirmed) throw new Error('Cannot confirm as transaction is already confirmed');
-    if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
+    if (this.isConfirmed) {
+      throw new Error('Cannot confirm as transaction is already confirmed');
+    }
+    if (this.isFinalised) {
+      throw new Error('Cannot confirm as transaction is already finalised');
+    }
     const isIncomingInvoice = this.isIncoming;
 
     this.getTransactionBatches(database).forEach(transactionBatch => {
@@ -285,9 +334,13 @@ export class Transaction extends Realm.Object {
    * @return {none}
    */
   finalise(database) {
-    if (this.isFinalised) throw new Error('Cannot finalise as transaction is already finalised');
+    if (this.isFinalised) {
+      throw new Error('Cannot finalise as transaction is already finalised');
+    }
     // Should prune all invoice except internal supplier invoices
-    if (!this.isInternalSupplierInvoice) this.pruneRedundantBatchesAndItems(database);
+    if (!this.isInternalSupplierInvoice) {
+      this.pruneRedundantBatchesAndItems(database);
+    }
     if (!this.isConfirmed) this.confirm(database);
 
     this.status = 'finalised';
