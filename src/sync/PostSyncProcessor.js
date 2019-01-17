@@ -6,7 +6,10 @@ import { SETTINGS_KEYS } from '../settings';
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from '../database/utilities';
 
 const { LAST_POST_PROCESSING_FAILED } = SETTINGS_KEYS;
-const { REQUISITION_SERIAL_NUMBER, SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+const {
+  REQUISITION_SERIAL_NUMBER,
+  SUPPLIER_INVOICE_NUMBER,
+} = NUMBER_SEQUENCE_KEYS;
 
 export class PostSyncProcessor {
   constructor(database, settings) {
@@ -17,9 +20,9 @@ export class PostSyncProcessor {
     this.database.addListener(this.onDatabaseEvent);
   }
 
-  setUser = (user) => {
+  setUser = user => {
     this.user = user;
-  }
+  };
 
   /**
    * Respond to a database change event relating to incoming sync records. Adds records
@@ -39,16 +42,20 @@ export class PostSyncProcessor {
     }
     // Add new entry at end of Map
     this.recordQueue.set(record.id, recordType);
-  }
+  };
 
   /**
    * Return whether or not the last sync of the app failed
    * @return {boolean} 'true' if the last call of synchronise failed
    */
   lastPostSyncProcessingFailed = () => {
-    const lastPostSyncProcessingFailed = this.settings.get(LAST_POST_PROCESSING_FAILED);
-    return lastPostSyncProcessingFailed && lastPostSyncProcessingFailed === 'true';
-  }
+    const lastPostSyncProcessingFailed = this.settings.get(
+      LAST_POST_PROCESSING_FAILED,
+    );
+    return (
+      lastPostSyncProcessingFailed && lastPostSyncProcessingFailed === 'true'
+    );
+  };
 
   /**
    * Attempts to enqueue functions for every record in specified tables of
@@ -62,15 +69,19 @@ export class PostSyncProcessor {
 
     this.database
       .objects('Requisition')
-      .forEach(record => this.enqueueFunctionsForRecordType('Requisition', record));
+      .forEach(record =>
+        this.enqueueFunctionsForRecordType('Requisition', record),
+      );
 
     this.database
       .objects('Transaction')
-      .forEach(record => this.enqueueFunctionsForRecordType('Transaction', record));
+      .forEach(record =>
+        this.enqueueFunctionsForRecordType('Transaction', record),
+      );
 
     this.processFunctionQueue();
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
-  }
+  };
 
   /**
    * Iterates through records added through listening to sync, adding needed functions
@@ -81,13 +92,15 @@ export class PostSyncProcessor {
     this.recordQueue.forEach((recordType, recordId) => {
       // Use local database record, not what comes in sync. Ensures that records are
       // integrated information (definitely after sync is done)
-      const internalRecord = this.database.objects(recordType).filtered('id == $0', recordId)[0];
+      const internalRecord = this.database
+        .objects(recordType)
+        .filtered('id == $0', recordId)[0];
       this.enqueueFunctionsForRecordType(recordType, internalRecord);
     });
     this.processFunctionQueue();
     this.recordQueue.clear(); // Reset the recordQueue to avoid unnessary runs
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
-  }
+  };
 
   /**
    * Runs all the post sync functions in this.functionQueue and clears queue.
@@ -95,7 +108,7 @@ export class PostSyncProcessor {
   processFunctionQueue = () => {
     this.database.write(() => this.functionQueue.forEach(func => func()));
     this.functionQueue = [];
-  }
+  };
 
   /**
    * Delegates records to the correct utility function and adds generated functions
@@ -109,18 +122,18 @@ export class PostSyncProcessor {
     switch (recordType) {
       case 'Requisition':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForRequisition(record)
+          this.generateFunctionsForRequisition(record),
         );
         break;
       case 'Transaction':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForTransaction(record)
+          this.generateFunctionsForTransaction(record),
         );
         break;
       default:
         break;
     }
-  }
+  };
 
   /**
    * Builds an array of post sync functions based on conditions, appends a database write call
@@ -128,14 +141,17 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  generateFunctionsForRequisition = (record) => {
+  generateFunctionsForRequisition = record => {
     const funcs = [];
 
     // Allocate serial number to requisitions with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
     if (record.serialNumber === '-1') {
       funcs.push(() => {
-        record.serialNumber = getNextNumber(this.database, REQUISITION_SERIAL_NUMBER);
+        record.serialNumber = getNextNumber(
+          this.database,
+          REQUISITION_SERIAL_NUMBER,
+        );
       });
     }
 
@@ -151,7 +167,7 @@ export class PostSyncProcessor {
     }
 
     return funcs;
-  }
+  };
 
   /**
    * Builds an array of post sync functions based on conditions, appends a database write call
@@ -159,14 +175,17 @@ export class PostSyncProcessor {
    * @param  {object} record     The record changed
    * @return {array}  An array of functions to be called for the given record
    */
-  generateFunctionsForTransaction = (record) => {
+  generateFunctionsForTransaction = record => {
     const funcs = [];
 
     // Allocate serial number to supplier invoices with serial number of -1. This has been generated
     // by the server, coming from another store as supplier.
     if (record.serialNumber === '-1' && record.type === 'supplier_invoice') {
       funcs.push(() => {
-        record.serialNumber = getNextNumber(this.database, SUPPLIER_INVOICE_NUMBER);
+        record.serialNumber = getNextNumber(
+          this.database,
+          SUPPLIER_INVOICE_NUMBER,
+        );
       });
     }
 
@@ -176,5 +195,5 @@ export class PostSyncProcessor {
     }
 
     return funcs;
-  }
+  };
 }

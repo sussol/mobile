@@ -1,7 +1,7 @@
 /**
-* mSupply Mobile
-* Sustainable Solutions (NZ) Ltd. 2016
-*/
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
 
 export const INCREMENT_SYNC_PROGRESS = 'INCREMENT_SYNC_PROGRESS';
 export const SET_SYNC_ERROR = 'SET_SYNC_ERROR';

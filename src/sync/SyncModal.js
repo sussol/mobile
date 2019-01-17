@@ -5,41 +5,66 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  Dimensions,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modalbox';
 import { Button, ProgressBar } from '../widgets';
 import { formatPlural, formatDate } from '../utilities';
 import { syncStrings } from '../localization';
-import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
-import {
-    PROGRESS_LOADING,
-} from './constants';
+import globalStyles, {
+  DARK_GREY,
+  WARM_GREY,
+  SUSSOL_ORANGE,
+} from '../globalStyles';
+import { PROGRESS_LOADING } from './constants';
 
-export function SyncModal({ database, isOpen, onClose, onPressManualSync, state }) {
-  const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
+export function SyncModal({
+  database,
+  isOpen,
+  onClose,
+  onPressManualSync,
+  state,
+}) {
+  const getStatusMessage = (
+    progress,
+    total,
+    isSyncing,
+    errorMessage,
+    progressMessage,
+  ) => {
     let message = '';
 
     if (errorMessage !== '') {
       message = errorMessage;
     } else if (!isSyncing) {
       const recordsToSyncCount = database.objects('SyncOut').length;
-      message = recordsToSyncCount > 0
-        ? `${recordsToSyncCount} ${syncStrings.records_waiting}`
-        : syncStrings.sync_complete;
+      message =
+        recordsToSyncCount > 0
+          ? `${recordsToSyncCount} ${syncStrings.records_waiting}`
+          : syncStrings.sync_complete;
     } else if (progress >= total) {
       message = syncStrings.checking_server_for_records;
     } else if (progress === PROGRESS_LOADING) {
       message = syncStrings.loading_change_count;
     } else {
       message = progressMessage ? `${progressMessage}\n` : '';
-      message += `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;
+      message += `${progress} of ${formatPlural(
+        '@count record',
+        '@count records',
+        total,
+      )} updated`;
     }
 
     return message;
   };
 
-  const getSyncDateLabel = (syncTime) => {
+  const getSyncDateLabel = syncTime => {
     if (syncTime > 0) {
       return formatDate(new Date(syncTime), 'H:mm, MMMM D, YYYY');
     }
@@ -67,19 +92,27 @@ export function SyncModal({ database, isOpen, onClose, onPressManualSync, state 
       <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
         <Icon name="md-close" style={localStyles.closeIcon} />
       </TouchableOpacity>
-      <View style={localStyles.contentContainer} >
+      <View style={localStyles.contentContainer}>
         <View style={localStyles.row}>
           <Text style={localStyles.progressDescription}>
-            {getStatusMessage(progress, total, isSyncing, errorMessage, progressMessage)}
+            {getStatusMessage(
+              progress,
+              total,
+              isSyncing,
+              errorMessage,
+              progressMessage,
+            )}
           </Text>
-          <View style={localStyles.progressBarContainer} >
-            <ProgressBar total={total} progress={progress} isComplete={!isSyncing} />
+          <View style={localStyles.progressBarContainer}>
+            <ProgressBar
+              total={total}
+              progress={progress}
+              isComplete={!isSyncing}
+            />
           </View>
         </View>
         <View style={localStyles.row}>
-          <Text style={localStyles.lastSyncText}>
-            Last successful sync
-          </Text>
+          <Text style={localStyles.lastSyncText}>Last successful sync</Text>
           <Text style={localStyles.lastSyncText}>
             {getSyncDateLabel(lastSyncTime)}
           </Text>
@@ -87,7 +120,10 @@ export function SyncModal({ database, isOpen, onClose, onPressManualSync, state 
         <View style={localStyles.row}>
           <Button
             style={[globalStyles.button, localStyles.button]}
-            textStyle={[globalStyles.authFormButtonText, localStyles.buttonText]}
+            textStyle={[
+              globalStyles.authFormButtonText,
+              localStyles.buttonText,
+            ]}
             text={syncStrings.manual_sync}
             onPress={onPressManualSync}
             disabledColor={WARM_GREY}

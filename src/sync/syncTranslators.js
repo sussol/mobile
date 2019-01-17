@@ -49,10 +49,10 @@ export const RECORD_TYPES = new SyncTranslator({
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
-  'imprest': 'im',
-  'forecast': 'sh',
-  'request': 'request',
-  'response': 'response',
+  imprest: 'im',
+  forecast: 'sh',
+  request: 'request',
+  response: 'response',
 });
 
 // Map of internal database change types to external sync types
@@ -60,7 +60,7 @@ export const SYNC_TYPES = new SyncTranslator({
   create: 'I', // For 'insert'
   update: 'U',
   delete: 'D',
-  merge:  'M',
+  merge: 'M',
 });
 
 export const TRANSACTION_TYPES = new SyncTranslator({
@@ -157,7 +157,8 @@ class SequenceKeyTranslator extends SyncTranslator {
 }
 export const SEQUENCE_KEYS = new SequenceKeyTranslator({
   customer_invoice_serial_number: 'customer_invoice_number_for_store_',
-  inventory_adjustment_serial_number: 'inventory_adjustment_serial_number_for_store_',
+  inventory_adjustment_serial_number:
+    'inventory_adjustment_serial_number_for_store_',
   requisition_serial_number: 'requisition_serial_number_for_store_',
   requisition_requester_reference: 'requisition_requester_reference_for_store_',
   stocktake_serial_number: 'stock_take_number_for_store_',

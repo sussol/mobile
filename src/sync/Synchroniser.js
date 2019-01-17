@@ -54,9 +54,11 @@ export class Synchroniser {
    * Redux progress setting functions
    */
   setTotal = totalCount => this.dispatch(setSyncTotal(totalCount));
-  incrementProgress = increment => this.dispatch(incrementSyncProgress(increment));
+  incrementProgress = increment =>
+    this.dispatch(incrementSyncProgress(increment));
   setProgress = currentCount => this.dispatch(setSyncProgress(currentCount));
-  setProgressMessage = message => this.dispatch(setSyncProgressMessage(message));
+  setProgressMessage = message =>
+    this.dispatch(setSyncProgressMessage(message));
   setError = errorMessage => this.dispatch(setSyncError(errorMessage));
   setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
   setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
@@ -92,7 +94,10 @@ export class Synchroniser {
     const oldSyncURL = this.serverURL;
     const oldSyncSiteName = this.thisSiteName;
     const isFresh =
-      !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
+      !oldSyncURL ||
+      serverURL !== oldSyncURL ||
+      !syncSiteName ||
+      syncSiteName !== oldSyncSiteName;
 
     if (isFresh) {
       this.database.write(() => {
@@ -100,7 +105,11 @@ export class Synchroniser {
       });
     }
     try {
-      await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
+      await this.authenticator.authenticate(
+        serverURL,
+        syncSiteName,
+        syncSitePassword,
+      );
       this.refreshSyncParams(); // authenticate sets all the sync settings in database, so refresh
 
       if (isFresh) {
@@ -321,7 +330,9 @@ export class Synchroniser {
   getIncomingRecords = async () => {
     const response = await fetch(
       `${this.serverURL}/sync/v3/queued_records` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${this.batchSize}`,
+        `?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${
+          this.batchSize
+        }`,
       {
         headers: {
           Authorization: this.authHeader,

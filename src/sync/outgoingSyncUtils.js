@@ -13,7 +13,12 @@ import {
 } from './syncTranslators';
 
 import { SETTINGS_KEYS } from '../settings';
-const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
+const {
+  SUPPLYING_STORE_NAME_ID,
+  THIS_STORE_ID,
+  SYNC_URL,
+  SYNC_SITE_NAME,
+} = SETTINGS_KEYS;
 import { CHANGE_TYPES } from '../database';
 
 const bugsnagClient = new BugsnagClient();
@@ -27,8 +32,14 @@ const bugsnagClient = new BugsnagClient();
  * @return {object}                     The generated json object, ready to sync
  */
 export function generateSyncJson(database, settings, syncOutRecord) {
-  if (!syncOutRecord || !syncOutRecord.isValid()) throw new Error('Missing sync out record');
-  if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
+  if (!syncOutRecord || !syncOutRecord.isValid()) {
+    throw new Error('Missing sync out record');
+  }
+  if (
+    !syncOutRecord.recordType ||
+    !syncOutRecord.id ||
+    !syncOutRecord.recordId
+  ) {
     throw new Error('Malformed sync out record');
   }
   const { recordType, recordId, changeType } = syncOutRecord;
@@ -51,7 +62,9 @@ export function generateSyncJson(database, settings, syncOutRecord) {
     syncData = { ID: recordId };
   } else {
     // Get the record the syncOutRecord refers to from the database
-    const recordResults = database.objects(recordType).filtered('id == $0', recordId);
+    const recordResults = database
+      .objects(recordType)
+      .filtered('id == $0', recordId);
     if (!recordResults || recordResults.length === 0) {
       // No such record
       throw new Error(`${recordType} with id = ${recordId} missing`);
@@ -74,7 +87,9 @@ export function generateSyncJson(database, settings, syncOutRecord) {
       // Change error message to be helpful in bugsnag
       error.message =
         `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
-        `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, ` +
+        `syncOutRecord.id: ${
+          syncOutRecord.id
+        }, storeId: ${storeId} changeType: ${changeType}, ` +
         `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
 
       // Ping the error off to bugsnag
@@ -122,7 +137,11 @@ function generateSyncData(settings, recordType, record) {
       const thisStoreId = settings.get(THIS_STORE_ID);
       return {
         ID: record.id,
-        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
+        name: SEQUENCE_KEYS.translate(
+          record.sequenceKey,
+          INTERNAL_TO_EXTERNAL,
+          thisStoreId,
+        ),
         value: String(record.highestNumberUsed),
       };
     }
@@ -130,7 +149,11 @@ function generateSyncData(settings, recordType, record) {
       const thisStoreId = settings.get(THIS_STORE_ID);
       return {
         ID: record.id,
-        name: SEQUENCE_KEYS.translate(record.sequenceKey, INTERNAL_TO_EXTERNAL, thisStoreId),
+        name: SEQUENCE_KEYS.translate(
+          record.sequenceKey,
+          INTERNAL_TO_EXTERNAL,
+          thisStoreId,
+        ),
         number_to_use: String(record.number),
       };
     }
@@ -140,7 +163,10 @@ function generateSyncData(settings, recordType, record) {
         date_entered: getDateString(record.entryDate),
         user_ID: record.enteredById,
         name_ID: record.otherStoreName && record.otherStoreName.id,
-        status: REQUISITION_STATUSES.translate(record.status, INTERNAL_TO_EXTERNAL),
+        status: REQUISITION_STATUSES.translate(
+          record.status,
+          INTERNAL_TO_EXTERNAL,
+        ),
         daysToSupply: String(record.daysToSupply),
         store_ID: settings.get(THIS_STORE_ID),
         serial_number: record.serialNumber,
@@ -240,7 +266,10 @@ function generateSyncData(settings, recordType, record) {
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
-        type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
+        type: TRANSACTION_BATCH_TYPES.translate(
+          transaction.type,
+          INTERNAL_TO_EXTERNAL,
+        ),
       };
     }
     default:
@@ -250,7 +279,8 @@ function generateSyncData(settings, recordType, record) {
 
 function getDateString(date) {
   let returnDate = '0000-00-00';
-  if (date && typeof date === 'object') returnDate = date.toISOString().slice(0, 10);
+  if (date && typeof date === 'object')
+    returnDate = date.toISOString().slice(0, 10);
 
   return `${returnDate}T00:00:00`;
 }
@@ -281,7 +311,7 @@ function safeGet(record, path) {
       error.canDeleteSyncOut = true; // safe to delete syncOut
       error.message = `Error on object getter on path "${currentPath}", original message: ${
         error.message
-        }`;
+      }`;
       throw error; // Pass error up to next handler
     }
   }

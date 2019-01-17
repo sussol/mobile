@@ -32,13 +32,21 @@ export function integrateRecord(database, settings, syncRecord) {
   const syncType = syncRecord.SyncType;
   const recordType = syncRecord.RecordType;
   const changeType = SYNC_TYPES.translate(syncType, EXTERNAL_TO_INTERNAL);
-  const internalRecordType = RECORD_TYPES.translate(recordType, EXTERNAL_TO_INTERNAL);
+  const internalRecordType = RECORD_TYPES.translate(
+    recordType,
+    EXTERNAL_TO_INTERNAL,
+  );
 
   switch (changeType) {
     case CHANGE_TYPES.CREATE:
     case CHANGE_TYPES.UPDATE:
       if (!syncRecord.data) return; // If missing data representing record, ignore
-      createOrUpdateRecord(database, settings, internalRecordType, syncRecord.data);
+      createOrUpdateRecord(
+        database,
+        settings,
+        internalRecordType,
+        syncRecord.data,
+      );
       break;
     case CHANGE_TYPES.DELETE:
       if (!syncRecord.RecordID) return; // If missing record id, ignore
@@ -46,7 +54,9 @@ export function integrateRecord(database, settings, syncRecord) {
       break;
     case 'merge':
       mergeRecords(database, settings, internalRecordType, syncRecord);
+      break;
     default:
+      // Handle unexpected changeType.
       return;
   }
 }
@@ -71,10 +81,16 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         code: record.code,
         defaultPackSize: 1, // Every item batch in mobile should be pack-to-one
         defaultPrice: packSize ? parseNumber(record.buy_price) / packSize : 0,
-        department: database.getOrCreate('ItemDepartment', record.department_ID),
+        department: database.getOrCreate(
+          'ItemDepartment',
+          record.department_ID,
+        ),
         description: record.description,
         name: record.item_name,
-        crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
+        crossReferenceItem: database.getOrCreate(
+          'Item',
+          record.cross_ref_item_ID,
+        ),
       };
       database.update(recordType, internalRecord);
       break;
@@ -137,7 +153,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const item = database.getOrCreate('Item', record.item_ID);
       // Grabbing the masterList using list_master_name_join_ID as the join's id is used in mobile
       // to mimic the local list join with a MasterList.
-      const masterList = database.getOrCreate('MasterList', record.list_master_name_join_ID);
+      const masterList = database.getOrCreate(
+        'MasterList',
+        record.list_master_name_join_ID,
+      );
 
       internalRecord = {
         id: record.ID,
@@ -182,7 +201,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       break;
     }
     case 'MasterListItem': {
-      const masterList = database.getOrCreate('MasterList', record.item_master_ID);
+      const masterList = database.getOrCreate(
+        'MasterList',
+        record.item_master_ID,
+      );
       internalRecord = {
         id: record.ID,
         item: database.getOrCreate('Item', record.item_ID),
@@ -235,10 +257,16 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'NumberSequence': {
       const thisStoreId = settings.get(THIS_STORE_ID);
-      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      const sequenceKey = SEQUENCE_KEYS.translate(
+        record.name,
+        EXTERNAL_TO_INTERNAL,
+        thisStoreId,
+      );
       // Don't accept updates to number sequences
       if (
-        database.objects('NumberSequence').filtered('sequenceKey == $0', sequenceKey).length > 0
+        database
+          .objects('NumberSequence')
+          .filtered('sequenceKey == $0', sequenceKey).length > 0
       ) {
         break;
       }
@@ -253,9 +281,17 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     }
     case 'NumberToReuse': {
       const thisStoreId = settings.get(THIS_STORE_ID);
-      const sequenceKey = SEQUENCE_KEYS.translate(record.name, EXTERNAL_TO_INTERNAL, thisStoreId);
+      const sequenceKey = SEQUENCE_KEYS.translate(
+        record.name,
+        EXTERNAL_TO_INTERNAL,
+        thisStoreId,
+      );
       if (!sequenceKey) break; // If translator returns a null key, sequence is not for this store
-      const numberSequence = database.getOrCreate('NumberSequence', sequenceKey, 'sequenceKey');
+      const numberSequence = database.getOrCreate(
+        'NumberSequence',
+        sequenceKey,
+        'sequenceKey',
+      );
       internalRecord = {
         id: record.ID,
         numberSequence: numberSequence,
@@ -267,12 +303,20 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       break;
     }
     case 'Requisition': {
-      let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      let status = REQUISITION_STATUSES.translate(
+        record.status,
+        EXTERNAL_TO_INTERNAL,
+      );
       // If not a special wp or wf status, use the normal status translation
-      if (!status) status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      if (!status) {
+        status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      }
       internalRecord = {
         id: record.ID,
-        status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
+        status: REQUISITION_STATUSES.translate(
+          record.status,
+          EXTERNAL_TO_INTERNAL,
+        ),
         entryDate: parseDate(record.date_entered),
         daysToSupply: parseNumber(record.daysToSupply),
         serialNumber: record.serial_number,
@@ -286,7 +330,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       break;
     }
     case 'RequisitionItem': {
-      const requisition = database.getOrCreate('Requisition', record.requisition_ID);
+      const requisition = database.getOrCreate(
+        'Requisition',
+        record.requisition_ID,
+      );
       internalRecord = {
         id: record.ID,
         requisition: requisition,
@@ -299,7 +346,8 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         sortIndex: parseNumber(record.line_number),
       };
       const requisitionItem = database.update(recordType, internalRecord);
-      requisition.addItemIfUnique(requisitionItem); // requisitionItem will be an orphan record if it's not unique?
+      // requisitionItem will be an orphan record if it's not unique?
+      requisition.addItemIfUnique(requisitionItem);
       database.save('Requisition', requisition);
       break;
     }
@@ -308,14 +356,23 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         id: record.ID,
         name: record.Description,
         createdDate: parseDate(record.stock_take_created_date),
-        stocktakeDate: parseDate(record.stock_take_date, record.stock_take_time),
+        stocktakeDate: parseDate(
+          record.stock_take_date,
+          record.stock_take_time,
+        ),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         createdBy: database.getOrCreate('User', record.created_by_ID),
         finalisedBy: database.getOrCreate('User', record.finalised_by_ID),
         comment: record.comment,
         serialNumber: record.serial_number,
-        additions: database.getOrCreate('Transaction', record.invad_additions_ID),
-        reductions: database.getOrCreate('Transaction', record.invad_reductions_ID),
+        additions: database.getOrCreate(
+          'Transaction',
+          record.invad_additions_ID,
+        ),
+        reductions: database.getOrCreate(
+          'Transaction',
+          record.invad_reductions_ID,
+        ),
       };
       database.update(recordType, internalRecord);
       break;
@@ -352,7 +409,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const linkedRequisition = record.requisition_ID
         ? database.getOrCreate('Requisition', record.requisition_ID)
         : null;
-      const category = database.getOrCreate('TransactionCategory', record.category_ID);
+      const category = database.getOrCreate(
+        'TransactionCategory',
+        record.category_ID,
+      );
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
@@ -389,7 +449,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       break;
     }
     case 'TransactionBatch': {
-      const transaction = database.getOrCreate('Transaction', record.transaction_ID);
+      const transaction = database.getOrCreate(
+        'Transaction',
+        record.transaction_ID,
+      );
       const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
       const item = database.getOrCreate('Item', record.item_ID);
       itemBatch.item = item;
@@ -449,7 +512,13 @@ export function sanityCheckIncomingRecord(recordType, record) {
     },
     ItemBatch: {
       cannotBeBlank: ['item_ID', 'quantity'],
-      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price'],
+      canBeBlank: [
+        'pack_size',
+        'batch',
+        'expiry_date',
+        'cost_price',
+        'sell_price',
+      ],
     },
     ItemStoreJoin: {
       cannotBeBlank: ['item_ID', 'store_ID'],
@@ -526,7 +595,14 @@ export function sanityCheckIncomingRecord(recordType, record) {
         'cost_price',
         'sell_price',
       ],
-      canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
+      canBeBlank: [
+        'item_name',
+        'batch',
+        'expiry_date',
+        'pack_size',
+        'cost_price',
+        'sell_price',
+      ],
     },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -561,11 +637,21 @@ export function sanityCheckIncomingRecord(recordType, record) {
  */
 function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   let results = database.objects('Address');
-  if (typeof line1 === 'string') results = results.filtered('line1 == $0', line1);
-  if (typeof line2 === 'string') results = results.filtered('line2 == $0', line2);
-  if (typeof line3 === 'string') results = results.filtered('line3 == $0', line3);
-  if (typeof line4 === 'string') results = results.filtered('line4 == $0', line4);
-  if (typeof zipCode === 'string') results = results.filtered('zipCode == $0', zipCode);
+  if (typeof line1 === 'string') {
+    results = results.filtered('line1 == $0', line1);
+  }
+  if (typeof line2 === 'string') {
+    results = results.filtered('line2 == $0', line2);
+  }
+  if (typeof line3 === 'string') {
+    results = results.filtered('line3 == $0', line3);
+  }
+  if (typeof line4 === 'string') {
+    results = results.filtered('line4 == $0', line4);
+  }
+  if (typeof zipCode === 'string') {
+    results = results.filtered('zipCode == $0', zipCode);
+  }
   if (results.length > 0) return results[0];
   const address = { id: generateUUID() };
   if (typeof line1 === 'string') address.line1 = line1;
@@ -583,7 +669,9 @@ function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
  * @return {Date}           The Date object described by the params
  */
 function parseDate(ISODate, ISOTime) {
-  if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') return null;
+  if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
+    return null;
+  }
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 6) {
     const hours = ISOTime.substring(0, 2);
