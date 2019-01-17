@@ -22,8 +22,7 @@ export const toggleBarStyles = {
     fontSize: 12,
     color: 'white',
   },
-  toggleOption: {
-  },
+  toggleOption: {},
   toggleOptionSelected: {
     backgroundColor: SUSSOL_ORANGE,
   },

@@ -3,9 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import {
-  StyleSheet,
-} from 'react-native';
+import { StyleSheet } from 'react-native';
 import { appStyles, COMPONENT_HEIGHT } from './appStyles';
 import { authStyles } from './authStyles';
 import { buttonStyles } from './buttonStyles';

@@ -3,9 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import {
-  Dimensions,
-} from 'react-native';
+import { Dimensions } from 'react-native';
 
 import {
   BACKGROUND_COLOR,
