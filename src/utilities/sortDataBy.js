@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
- /**
+/**
  * Sorts the given data according sortBy, sortDataType and isAscending.
  * @param  {Realm.results}  data          The data to sort.
  * @param  {string}         sortBy        The property of the data to sort by.
@@ -20,12 +20,16 @@ export function sortDataBy(data, sortBy, sortDataType, isAscending = true) {
   let sortedData;
   switch (sortDataType) {
     case 'string':
-      sortedData = data.slice().sort((a, b) => a[sortBy].localeCompare(b[sortBy]));
+      sortedData = data
+        .slice()
+        .sort((a, b) => a[sortBy].localeCompare(b[sortBy]));
       if (!isAscending) sortedData.reverse();
       break;
     case 'number':
       // Casts to number to cover cases where the property is a string (serialNumber)
-      sortedData = data.slice().sort((a, b) => Number(a[sortBy]) - Number(b[sortBy]));
+      sortedData = data
+        .slice()
+        .sort((a, b) => Number(a[sortBy]) - Number(b[sortBy]));
       if (!isAscending) sortedData.reverse();
       break;
     case 'realm':
