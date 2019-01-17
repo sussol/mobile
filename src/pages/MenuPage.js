@@ -13,7 +13,12 @@ import { SETTINGS_KEYS } from '../settings';
 
 const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 
-import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
+import globalStyles, {
+  APP_FONT_FAMILY,
+  SHADOW_BORDER,
+  GREY,
+  WARMER_GREY,
+} from '../globalStyles';
 
 import { navStrings } from '../localization';
 
@@ -26,7 +31,8 @@ export class MenuPage extends React.Component {
   componentWillMount() {
     this.databaseListenerId = this.props.database.addListener(
       // Ensure that language changes in login modal are re-rendered onto the MenuPage
-      (changeType, recordType) => recordType === 'Setting' && this.forceUpdate(),
+      (changeType, recordType) =>
+        recordType === 'Setting' && this.forceUpdate(),
     );
   }
 
@@ -43,8 +49,18 @@ export class MenuPage extends React.Component {
   render() {
     const { isInAdminMode, logOut, navigateTo } = this.props;
     return (
-      <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
-        <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
+      <View
+        style={[
+          globalStyles.pageContentContainer,
+          localStyles.pageContentContainer,
+        ]}
+      >
+        <View
+          style={[
+            globalStyles.horizontalContainer,
+            localStyles.horizontalContainer,
+          ]}
+        >
           <View style={localStyles.container}>
             <Image
               style={localStyles.image}
@@ -55,13 +71,20 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_invoices}
-              onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
+              onPress={() =>
+                navigateTo('customerInvoices', navStrings.customer_invoices)
+              }
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_requisitions}
-              onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
+              onPress={() =>
+                navigateTo(
+                  'customerRequisitions',
+                  navStrings.customer_requisitions,
+                )
+              }
             />
           </View>
 
@@ -75,13 +98,20 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_invoices}
-              onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
+              onPress={() =>
+                navigateTo('supplierInvoices', navStrings.supplier_invoices)
+              }
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_requisitions}
-              onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
+              onPress={() =>
+                navigateTo(
+                  'supplierRequisitions',
+                  navStrings.supplier_requisitions,
+                )
+              }
             />
             {isInAdminMode && (
               <Button

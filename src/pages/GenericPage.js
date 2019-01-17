@@ -24,7 +24,9 @@ import { GenericTablePage } from 'react-native-generic-table-page';
 export class GenericPage extends React.Component {
   componentWillMount() {
     this.onDatabaseEvent = this.onDatabaseEvent.bind(this);
-    this.databaseListenerId = this.props.database.addListener(this.onDatabaseEvent);
+    this.databaseListenerId = this.props.database.addListener(
+      this.onDatabaseEvent,
+    );
   }
 
   /**
@@ -44,7 +46,9 @@ export class GenericPage extends React.Component {
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     // For sync we may want to listen to different data sources
     const dataTypesArray =
-      causedBy === 'sync' ? this.props.dataTypesSynchronised : this.props.dataTypesLinked;
+      causedBy === 'sync'
+        ? this.props.dataTypesSynchronised
+        : this.props.dataTypesLinked;
     // Below is a little hack to make sure that refreshData isn't triggered on every
     // database event in a given write I.e. finalising a big invoice would refresh and
     // re-render a table for every line saved/updated/deleted, slowing the app down

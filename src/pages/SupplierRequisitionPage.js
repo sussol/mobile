@@ -12,7 +12,12 @@ import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  pageInfoStrings,
+  tableStrings,
+} from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -48,22 +53,28 @@ export class SupplierRequisitionPage extends React.Component {
   onAddMasterItems = () => {
     this.props.runWithLoadingIndicator(() => {
       this.props.database.write(() => {
-        this.props.requisition.addItemsFromMasterList(this.props.database, this.getThisStore());
+        this.props.requisition.addItemsFromMasterList(
+          this.props.database,
+          this.getThisStore(),
+        );
         this.props.database.save('Requisition', this.props.requisition);
       });
       this.refreshData();
     });
-  }
+  };
 
   onCreateAutomaticOrder = () => {
     this.props.runWithLoadingIndicator(() => {
       this.props.database.write(() => {
-        this.props.requisition.createAutomaticOrder(this.props.database, this.getThisStore());
+        this.props.requisition.createAutomaticOrder(
+          this.props.database,
+          this.getThisStore(),
+        );
         this.props.database.save('Requisition', this.props.requisition);
       });
       this.refreshData();
     });
-  }
+  };
 
   /**
    * Respond to the user editing the number in the required quantity column
@@ -78,7 +89,7 @@ export class SupplierRequisitionPage extends React.Component {
       requisitionItem.requiredQuantity = parsePositiveInteger(newValue);
       this.props.database.save('RequisitionItem', requisitionItem);
     });
-  }
+  };
 
   onDeleteConfirm = () => {
     const { selection } = this.state;
@@ -89,12 +100,12 @@ export class SupplierRequisitionPage extends React.Component {
     });
     this.setState({ selection: [] });
     this.refreshData();
-  }
+  };
 
   onDeleteCancel = () => {
     this.setState({ selection: [] });
     this.refreshData();
-  }
+  };
 
   onUseSuggestedQuantities = () => {
     this.props.runWithLoadingIndicator(() => {
@@ -105,17 +116,21 @@ export class SupplierRequisitionPage extends React.Component {
       });
       this.refreshData();
     });
-  }
+  };
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection =>
+    this.setState({ selection: newSelection });
 
   getThisStore = () => {
-    const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
-    const nameResults = this.props.database.objects('Name')
-                                           .filtered('id == $0', thisStoreNameId);
-    if (!nameResults | nameResults.length <= 0) return null;
+    const thisStoreNameId = this.props.settings.get(
+      SETTINGS_KEYS.THIS_STORE_NAME_ID,
+    );
+    const nameResults = this.props.database
+      .objects('Name')
+      .filtered('id == $0', thisStoreNameId);
+    if (!nameResults | (nameResults.length <= 0)) return null;
     return nameResults[0];
-  }
+  };
 
   getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
@@ -128,14 +143,14 @@ export class SupplierRequisitionPage extends React.Component {
       case MONTHS_SELECT:
         return modalStrings.select_the_number_of_months_stock_required;
     }
-  }
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -143,8 +158,10 @@ export class SupplierRequisitionPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.props.requisition.items
-                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    const data = this.props.requisition.items.filtered(
+      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -159,10 +176,12 @@ export class SupplierRequisitionPage extends React.Component {
       default:
         sortDataType = 'realm';
     }
-    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
-  }
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
+  };
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -188,7 +207,9 @@ export class SupplierRequisitionPage extends React.Component {
       [
         {
           title: `${pageInfoStrings.supplier}:`,
-          info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
+          info: requisition.otherStoreName
+            ? requisition.otherStoreName.name
+            : '',
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
@@ -210,7 +231,7 @@ export class SupplierRequisitionPage extends React.Component {
         isEditingDisabled={requisition.isFinalised}
       />
     );
-  }
+  };
 
   renderCell = (key, requisitionItem) => {
     switch (key) {
@@ -231,7 +252,7 @@ export class SupplierRequisitionPage extends React.Component {
           isDisabled: this.props.requisition.isFinalised,
         };
     }
-  }
+  };
 
   renderModalContent = () => {
     const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
@@ -244,7 +265,7 @@ export class SupplierRequisitionPage extends React.Component {
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
-            onSelect={(item) => {
+            onSelect={item => {
               const { database, requisition } = this.props;
               database.write(() => {
                 if (!requisition.hasItem(item)) {
@@ -254,15 +275,15 @@ export class SupplierRequisitionPage extends React.Component {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case MONTHS_SELECT:
         return (
           <ToggleSelector
             options={[1, 2, 3, 4, 5, 6]}
-            onSelect={(number) => {
+            onSelect={number => {
               this.props.database.write(() => {
                 this.props.requisition.monthsToSupply = number;
                 this.props.database.save('Requisition', this.props.requisition);
@@ -272,24 +293,27 @@ export class SupplierRequisitionPage extends React.Component {
             }}
             selected={this.props.requisition.monthsToSupply}
           />
-          );
+        );
       case COMMENT_EDIT:
         return (
           <TextEditor
             text={this.props.requisition.comment}
-            onEndEditing={(newComment) => {
+            onEndEditing={newComment => {
               if (newComment !== this.props.requisition.comment) {
                 this.props.database.write(() => {
                   this.props.requisition.comment = newComment;
-                  this.props.database.save('Requisition', this.props.requisition);
+                  this.props.database.save(
+                    'Requisition',
+                    this.props.requisition,
+                  );
                 });
               }
               this.closeModal();
             }}
           />
-          );
+        );
     }
-  }
+  };
 
   renderButtons = () => (
     <View style={globalStyles.pageTopRightSectionContainer}>
@@ -323,7 +347,6 @@ export class SupplierRequisitionPage extends React.Component {
     </View>
   );
 
-
   render() {
     return (
       <GenericPage
@@ -335,7 +358,9 @@ export class SupplierRequisitionPage extends React.Component {
         onEndEditing={this.onEndEditing}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'itemCode',
@@ -392,7 +417,10 @@ export class SupplierRequisitionPage extends React.Component {
         topRoute={this.props.topRoute}
       >
         <BottomConfirmModal
-          isOpen={this.state.selection.length > 0 && !this.props.requisition.isFinalised}
+          isOpen={
+            this.state.selection.length > 0 &&
+            !this.props.requisition.isFinalised
+          }
           questionText={modalStrings.remove_these_items}
           onCancel={this.onDeleteCancel}
           onConfirm={this.onDeleteConfirm}

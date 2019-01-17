@@ -9,16 +9,21 @@ import PropTypes from 'prop-types';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  navStrings,
+  tableStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**
-* Renders the page for displaying SupplierInvoices.
-* @prop   {Realm}               database      App wide database.
-* @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
-*/
+ * Renders the page for displaying SupplierInvoices.
+ * @prop   {Realm}               database      App wide database.
+ * @prop   {func}                navigateTo    CallBack for navigation stack.
+ * @state  {Realm.Results}       transactions  Filtered to have only supplier_invoice.
+ */
 export class SupplierInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
@@ -40,8 +45,9 @@ export class SupplierInvoicesPage extends React.Component {
     database.write(() => {
       const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const transaction = transactions.find(currentTransaction =>
-          currentTransaction.id === selection[i]);
+        const transaction = transactions.find(
+          currentTransaction => currentTransaction.id === selection[i],
+        );
         if (transaction.isValid() && !transaction.isFinalised) {
           transactionsToDelete.push(transaction);
         }
@@ -49,27 +55,33 @@ export class SupplierInvoicesPage extends React.Component {
       database.delete('Transaction', transactionsToDelete);
     });
     this.setState({ selection: [] }, this.refreshData);
-  }
+  };
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection =>
+    this.setState({ selection: newSelection });
 
-  onRowPress = (invoice) => this.navigateToInvoice(invoice);
+  onRowPress = invoice => this.navigateToInvoice(invoice);
 
   /**
    * Create new Supplier Invoice and takes user to the editing SI page
    */
-  onNewSupplierInvoice = (otherParty) => {
+  onNewSupplierInvoice = otherParty => {
     const { database, currentUser } = this.props;
     let invoice;
     database.write(() => {
-      invoice = createRecord(database, 'SupplierInvoice', otherParty, currentUser);
+      invoice = createRecord(
+        database,
+        'SupplierInvoice',
+        otherParty,
+        currentUser,
+      );
     });
     this.navigateToInvoice(invoice);
-  }
+  };
 
-  navigateToInvoice = (invoice) => {
+  navigateToInvoice = invoice => {
     // For a supplier invoice to be opened for in the supplier invoice page, we need it to be
     // either new or finalised, but not confirmed - if someone were to reduce the amount of stock on
     // a confirmed supplier invoice, but it had already been issued in a customer invoice, we would
@@ -82,17 +94,21 @@ export class SupplierInvoicesPage extends React.Component {
       });
     }
     this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for delete
-    this.props.navigateTo('supplierInvoice', `${navStrings.invoice} ${invoice.serialNumber}`, {
-      transaction: invoice,
-    });
-  }
+    this.props.navigateTo(
+      'supplierInvoice',
+      `${navStrings.invoice} ${invoice.serialNumber}`,
+      {
+        transaction: invoice,
+      },
+    );
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -100,7 +116,10 @@ export class SupplierInvoicesPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.state.transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
+    const data = this.state.transactions.filtered(
+      'serialNumber BEGINSWITH[c] $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
@@ -112,7 +131,7 @@ export class SupplierInvoicesPage extends React.Component {
     this.setState({
       data: sortDataBy(data, sortBy, sortDataType, isAscending),
     });
-  }
+  };
 
   renderCell = (key, invoice) => {
     switch (key) {
@@ -129,14 +148,14 @@ export class SupplierInvoicesPage extends React.Component {
           isDisabled: invoice.isFinalised || !invoice.isExternalSupplierInvoice,
         };
     }
-  }
+  };
 
   renderNewInvoiceButton = () => (
     <PageButton
       text={buttonStrings.new_supplier_invoice}
       onPress={() => this.setState({ isCreatingInvoice: true })}
     />
-  )
+  );
 
   render() {
     return (
@@ -148,7 +167,9 @@ export class SupplierInvoicesPage extends React.Component {
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'serialNumber',

@@ -15,16 +15,18 @@ import { tableStrings } from '../localization';
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
 
 /**
-* Renders the page for all Items and their stock, with expansion of further details.
-* @prop   {Realm}               database    App wide database.
-* @prop   {func}                navigateTo  CallBack for navigation stack.
-* @state  {Realm.Results}       items       Contains all Items stored on the local database.
-*/
+ * Renders the page for all Items and their stock, with expansion of further details.
+ * @prop   {Realm}               database    App wide database.
+ * @prop   {func}                navigateTo  CallBack for navigation stack.
+ * @state  {Realm.Results}       items       Contains all Items stored on the local database.
+ */
 export class StockPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: props.database.objects('Item').filtered('crossReferenceItem == null'),
+      items: props.database
+        .objects('Item')
+        .filtered('crossReferenceItem == null'),
     };
     this.dataFilters = {
       searchTerm: '',
@@ -38,7 +40,7 @@ export class StockPage extends React.Component {
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -48,7 +50,7 @@ export class StockPage extends React.Component {
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.state.items.filtered(
       'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
-      searchTerm
+      searchTerm,
     );
     let sortDataType;
     switch (sortBy) {
@@ -61,15 +63,19 @@ export class StockPage extends React.Component {
     this.setState({
       data: sortDataBy(data, sortBy, sortDataType, isAscending),
     });
-  }
+  };
 
   renderCell = (key, item) => item[key];
 
-  renderExpansion = (item) => {
-    const batchInfo = item.batchesWithStock.map((ItemBatch) => {
-      const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
-      const expiryInfo = ItemBatch.expiryDate ?
-        `  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)},`
+  renderExpansion = item => {
+    const batchInfo = item.batchesWithStock.map(ItemBatch => {
+      const quantityInfo = `  ${tableStrings.quantity}: ${
+        ItemBatch.numberOfPacks
+      }`;
+      const expiryInfo = ItemBatch.expiryDate
+        ? `  ${tableStrings.batch_expiry}: ${formatExpiryDate(
+            ItemBatch.expiryDate,
+          )},`
         : '';
       const nameInfo = ItemBatch.batch ? `  ${ItemBatch.batch},` : '';
 
@@ -103,7 +109,7 @@ export class StockPage extends React.Component {
         <PageInfo columns={infoColumns} />
       </Expansion>
     );
-  }
+  };
 
   render() {
     return (
@@ -113,7 +119,9 @@ export class StockPage extends React.Component {
         renderCell={this.renderCell}
         renderExpansion={this.renderExpansion}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'code',

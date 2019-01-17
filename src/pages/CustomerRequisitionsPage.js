@@ -13,11 +13,11 @@ import { navStrings, tableStrings } from '../localization';
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
 /**
-* Renders the page for displaying Customer Requisitions, i.e. requests from a customer to this store
-* @prop   {Realm}               database      App wide database.
-* @prop   {func}                navigateTo    CallBack for navigation stack.
-* @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
-*/
+ * Renders the page for displaying Customer Requisitions (requests from a customer to this store)
+ * @prop   {Realm}               database      App wide database.
+ * @prop   {func}                navigateTo    CallBack for navigation stack.
+ * @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
+ */
 export class CustomerRequisitionsPage extends React.Component {
   constructor(props) {
     super(props);
@@ -30,22 +30,22 @@ export class CustomerRequisitionsPage extends React.Component {
     };
   }
 
-  onRowPress = (requisition) => this.navigateToRequisition(requisition);
+  onRowPress = requisition => this.navigateToRequisition(requisition);
 
-  navigateToRequisition = (requisition) => {
+  navigateToRequisition = requisition => {
     this.props.navigateTo(
       'customerRequisition',
       `${navStrings.requisition} ${requisition.serialNumber}`,
       { requisition: requisition },
     );
-  }
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -53,8 +53,10 @@ export class CustomerRequisitionsPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data =
-        this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
+    const data = this.requisitions.filtered(
+      'serialNumber BEGINSWITH $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
@@ -64,22 +66,25 @@ export class CustomerRequisitionsPage extends React.Component {
       default:
         sortDataType = 'realm';
     }
-    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
-  }
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
+  };
 
   renderCell = (key, requisition) => {
     switch (key) {
       case 'entryDate':
         return requisition.entryDate.toDateString();
       case 'customerName':
-        return requisition.otherStoreName ? requisition.otherStoreName.name : '';
+        return requisition.otherStoreName
+          ? requisition.otherStoreName.name
+          : '';
       case 'status':
         return formatStatus(requisition.status);
       default:
         return requisition[key];
     }
-  }
-
+  };
 
   render() {
     return (
@@ -89,7 +94,9 @@ export class CustomerRequisitionsPage extends React.Component {
         renderCell={this.renderCell}
         onRowPress={this.onRowPress}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'serialNumber',

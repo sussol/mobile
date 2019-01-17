@@ -14,11 +14,11 @@ import { parsePositiveInteger } from '../../utilities';
 import { tableStrings, buttonStrings } from '../../localization';
 
 /**
-* Renders page to be displayed in StocktakeEditPage -> expansion.
-* @prop   {Realm}               database        App wide database.
-* @prop   {Realm.object}        stocktakeItem   The stocktakeItem, a parent of
-*                                               StocktakeBatches in this expansion
-*/
+ * Renders page to be displayed in StocktakeEditPage -> expansion.
+ * @prop   {Realm}               database        App wide database.
+ * @prop   {Realm.object}        stocktakeItem   The stocktakeItem, a parent of
+ *                                               StocktakeBatches in this expansion
+ */
 export class StocktakeEditExpansion extends React.Component {
   constructor(props) {
     super(props);
@@ -36,8 +36,11 @@ export class StocktakeEditExpansion extends React.Component {
           break;
         }
         case 'batch': {
-          if (!newValue || newValue === '' ||
-              newValue === `(${tableStrings.no_batch_name})`) {
+          if (
+            !newValue ||
+            newValue === '' ||
+            newValue === `(${tableStrings.no_batch_name})`
+          ) {
             stocktakeBatch.batch = '';
           } else stocktakeBatch.batch = newValue;
           break;
@@ -50,7 +53,7 @@ export class StocktakeEditExpansion extends React.Component {
       }
       this.props.database.save('StocktakeBatch', stocktakeBatch);
     });
-  }
+  };
 
   refreshData = () => this.setState({ data: this.props.stocktakeItem.batches });
 
@@ -65,16 +68,19 @@ export class StocktakeEditExpansion extends React.Component {
       case 'batch':
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== '' ?
-                        stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
+          cellContents:
+            stocktakeBatch[key] && stocktakeBatch[key] !== ''
+              ? stocktakeBatch[key]
+              : `(${tableStrings.no_batch_name})`,
           keyboardType: 'default',
         };
       case 'countedTotalQuantity': {
         const emptyCellContents = isEditable ? '' : tableStrings.not_counted;
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch.hasBeenCounted ?
-                        stocktakeBatch.countedTotalQuantity : emptyCellContents,
+          cellContents: stocktakeBatch.hasBeenCounted
+            ? stocktakeBatch.countedTotalQuantity
+            : emptyCellContents,
           placeholder: tableStrings.not_counted,
         };
       }
@@ -83,7 +89,7 @@ export class StocktakeEditExpansion extends React.Component {
           <ExpiryTextInput
             key={stocktakeBatch.id}
             isEditable={isEditable}
-            onEndEditing={(newValue) => {
+            onEndEditing={newValue => {
               this.onEndEditing(key, stocktakeBatch, newValue);
               this.refreshData();
             }}
@@ -98,7 +104,7 @@ export class StocktakeEditExpansion extends React.Component {
         return { cellContents: `${prefix}${difference}` };
       }
     }
-  }
+  };
 
   renderAddBatchButton = () => {
     const { stocktakeItem } = this.props;
@@ -116,7 +122,7 @@ export class StocktakeEditExpansion extends React.Component {
         style={localStyles.addBatchButton}
       />
     );
-  }
+  };
 
   renderPageInfo = () => {
     const infoColumns = [
@@ -127,12 +133,8 @@ export class StocktakeEditExpansion extends React.Component {
         },
       ],
     ];
-    return (
-      <PageInfo
-        columns={infoColumns}
-      />
-    );
-  }
+    return <PageInfo columns={infoColumns} />;
+  };
 
   render() {
     return (
@@ -195,7 +197,7 @@ StocktakeEditExpansion.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
 };
 
-const unwrapText = (text) => text.replace(/\n/g, ' ');
+const unwrapText = text => text.replace(/\n/g, ' ');
 
 const localStyles = StyleSheet.create({
   addBatchButton: {

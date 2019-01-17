@@ -15,9 +15,7 @@ function mapStateToProps({ navigation }) {
   };
 }
 
-export const PageContainer = connect(
-  mapStateToProps,
-)(Page);
+export const PageContainer = connect(mapStateToProps)(Page);
 
 function Page(props) {
   const SpecificPage = props.page;
@@ -31,7 +29,11 @@ Page.propTypes = {
 function extractPropsForPage(props) {
   const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
   const { navigate, goBack, state } = navigation;
-  const { params, routeName: thisPageRouteName, ...restOfNavigationState } = state;
+  const {
+    params,
+    routeName: thisPageRouteName,
+    ...restOfNavigationState,
+  } = state;
   const isCurrentRoute = thisPageRouteName === currentRouteName;
   const navigateTo = (routeName, title, otherParams, type = 'push') => {
     Keyboard.dismiss(); // Dismiss keyboard before navigating to a different scene

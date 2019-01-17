@@ -5,20 +5,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
 import { SyncState, DemoUserModal } from '../widgets';
-import globalStyles, {
-  SUSSOL_ORANGE,
-  WARM_GREY,
-} from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 import { getAppVersion } from '../settings';
 
 export class FirstUsePage extends React.Component {
@@ -44,7 +35,8 @@ export class FirstUsePage extends React.Component {
       await this.props.synchroniser.initialise(
         this.state.serverURL,
         this.state.syncSiteName,
-        this.state.syncSitePassword);
+        this.state.syncSitePassword,
+      );
       this.setState({ status: 'initialised' });
       this.props.onInitialised();
     } catch (error) {
@@ -62,7 +54,8 @@ export class FirstUsePage extends React.Component {
 
   get canAttemptLogin() {
     return (
-      (this.state.status === 'uninitialised' || this.state.status === 'error') &&
+      (this.state.status === 'uninitialised' ||
+        this.state.status === 'error') &&
       this.state.serverURL.length > 0 &&
       this.state.syncSiteName.length > 0 &&
       this.state.syncSitePassword.length > 0
@@ -70,7 +63,12 @@ export class FirstUsePage extends React.Component {
   }
 
   get buttonText() {
-    const { progressMessage, errorMessage, progress, total } = this.props.syncState;
+    const {
+      progressMessage,
+      errorMessage,
+      progress,
+      total,
+    } = this.props.syncState;
     switch (this.state.status) {
       case 'initialising':
         return `${progressMessage}${total > 0 ? `\n${progress}/${total}` : ''}`;
@@ -85,7 +83,9 @@ export class FirstUsePage extends React.Component {
 
   render() {
     return (
-      <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
+      <View
+        style={[globalStyles.verticalContainer, localStyles.verticalContainer]}
+      >
         <View style={globalStyles.authFormContainer}>
           <Image
             resizeMode="contain"
@@ -102,7 +102,7 @@ export class FirstUsePage extends React.Component {
               editable={this.state.status !== 'initialising'}
               returnKeyType={'next'}
               selectTextOnFocus
-              onChangeText={(text) => {
+              onChangeText={text => {
                 this.setState({ serverURL: text, status: 'uninitialised' });
               }}
               onSubmitEditing={() => {
@@ -112,7 +112,7 @@ export class FirstUsePage extends React.Component {
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
-              ref={(reference) => (this.siteNameInputRef = reference)}
+              ref={reference => (this.siteNameInputRef = reference)}
               style={globalStyles.authFormTextInputStyle}
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
@@ -121,7 +121,7 @@ export class FirstUsePage extends React.Component {
               editable={this.state.status !== 'initialising'}
               returnKeyType={'next'}
               selectTextOnFocus
-              onChangeText={(text) => {
+              onChangeText={text => {
                 this.setState({ syncSiteName: text, status: 'uninitialised' });
               }}
               onSubmitEditing={() => {
@@ -131,7 +131,7 @@ export class FirstUsePage extends React.Component {
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
-              ref={(reference) => (this.passwordInputRef = reference)}
+              ref={reference => (this.passwordInputRef = reference)}
               style={globalStyles.authFormTextInputStyle}
               placeholder="Sync Site Password"
               placeholderTextColor={SUSSOL_ORANGE}
@@ -141,8 +141,11 @@ export class FirstUsePage extends React.Component {
               editable={this.state.status !== 'initialising'}
               returnKeyType={'done'}
               selectTextOnFocus
-              onChangeText={(text) => {
-                this.setState({ syncSitePassword: text, status: 'uninitialised' });
+              onChangeText={text => {
+                this.setState({
+                  syncSitePassword: text,
+                  status: 'uninitialised',
+                });
               }}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
@@ -174,11 +177,17 @@ export class FirstUsePage extends React.Component {
               text="Request a Demo Store"
               onPress={this.handleDemoModalOpen}
               disabledColor={WARM_GREY}
-              isDisabled={this.state.status !== 'uninitialised' && this.state.status !== 'error'}
+              isDisabled={
+                this.state.status !== 'uninitialised' &&
+                this.state.status !== 'error'
+              }
             />
           </View>
         </View>
-        <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
+        <Text style={globalStyles.authWindowButtonText}>
+          {' '}
+          v{this.state.appVersion}
+        </Text>
         <DemoUserModal
           isOpen={this.state.isDemoUserModalOpen}
           onClose={this.handleDemoModalClose}

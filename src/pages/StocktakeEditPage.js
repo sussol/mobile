@@ -6,7 +6,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
-import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
+import {
+  PageButton,
+  PageInfo,
+  TextEditor,
+  PageContentModal,
+  ConfirmModal,
+} from '../widgets';
 import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import {
@@ -17,7 +23,12 @@ import {
   pageInfoStrings,
 } from '../localization';
 
-const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
+const DATA_TYPES_SYNCHRONISED = [
+  'StocktakeItem',
+  'StocktakeBatch',
+  'ItemBatch',
+  'Item',
+];
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -127,7 +138,9 @@ export class StocktakeEditPage extends React.Component {
       default:
         sortDataType = 'realm';
     }
-    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
   };
 
   renderCell = (key, stocktakeItem) => {
@@ -241,7 +254,8 @@ export class StocktakeEditPage extends React.Component {
   render() {
     const { data, isResetModalOpen, isModalOpen } = this.state;
     const resetModalText = isResetModalOpen // small optimisation,
-      ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
+      ? modalStrings.stocktake_invalid_stock +
+        formatErrorItemNames(this.itemsOutdated)
       : '';
 
     return (
@@ -254,7 +268,9 @@ export class StocktakeEditPage extends React.Component {
         renderTopLeftComponent={this.renderPageInfo}
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'itemCode',
@@ -336,7 +352,9 @@ StocktakeEditPage.propTypes = {
  * @return {string}  An error message if not able to be finalised
  */
 export function checkForFinaliseError(stocktake) {
-  if (!stocktake.hasSomeCountedItems) return modalStrings.stocktake_no_counted_items;
+  if (!stocktake.hasSomeCountedItems) {
+    return modalStrings.stocktake_no_counted_items;
+  }
   const itemsBelowMinimum = stocktake.itemsBelowMinimum;
   if (itemsBelowMinimum.length > 0) {
     return (
@@ -354,7 +372,10 @@ function formatErrorItemNames(items) {
   items.forEach((item, index) => {
     if (!item) return; // re-render can cause crash here sometimes
     if (index >= MAX_ITEMS_IN_ERROR_MESSAGE) return;
-    itemsString += truncateString(`\n${item.itemCode} - ${item.itemName}`, MAX_ITEM_STRING_LENGTH);
+    itemsString += truncateString(
+      `\n${item.itemCode} - ${item.itemName}`,
+      MAX_ITEM_STRING_LENGTH,
+    );
   });
   if (items.length > MAX_ITEMS_IN_ERROR_MESSAGE) {
     itemsString +=

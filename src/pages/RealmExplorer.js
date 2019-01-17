@@ -5,9 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-} from 'react-native';
+import { View } from 'react-native';
 
 import { SearchBar } from 'react-native-ui-components';
 import {
@@ -51,12 +49,12 @@ const OBJECT_TYPES = [
 ];
 
 /**
-* A page to explore the contents of the local database. Allows searching for any
-* database object type, and will show the related data in a table.
-* @prop   {Realm}               database      App wide database.
-* @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
-* @state  {Realm.Results}       data          Holds the data that get put into the dataSource
-*/
+ * A page to explore the contents of the local database. Allows searching for any
+ * database object type, and will show the related data in a table.
+ * @prop   {Realm}               database      App wide database.
+ * @state  {ListView.DataSource} dataSource    DataTable input, used to update rows being rendered.
+ * @state  {Realm.Results}       data          Holds the data that get put into the dataSource
+ */
 export class RealmExplorer extends React.Component {
   constructor(props) {
     super(props);
@@ -85,11 +83,12 @@ export class RealmExplorer extends React.Component {
   onFilterChange(filterString) {
     if (!this.unfilteredData) return;
     let data = null;
-    if (filterString === '') { // if filter is emptied, clear filter
+    if (filterString === '') {
+      // if filter is emptied, clear filter
       data = this.unfilteredData;
     } else {
       try {
-          // using this.unfilteredData, so we don't stack filters
+        // using this.unfilteredData, so we don't stack filters
         data = this.unfilteredData.filtered(filterString);
       } catch (err) {
         // ignore error silently
@@ -103,7 +102,6 @@ export class RealmExplorer extends React.Component {
       });
     }
   }
-
 
   onSearchChange(searchTerm) {
     if (OBJECT_TYPES.indexOf(searchTerm) < 0) return;
@@ -127,15 +125,11 @@ export class RealmExplorer extends React.Component {
             textStyle={globalStyles.text}
             width={1}
             text={key}
-          />
+          />,
         );
       }
     }
-    return (
-      <Header style={globalStyles.header}>
-        {headerCells}
-      </Header>
-    );
+    return <Header style={globalStyles.header}>{headerCells}</Header>;
   }
 
   renderRow(item) {
@@ -143,13 +137,18 @@ export class RealmExplorer extends React.Component {
     if (this.state.data && this.state.data.length > 0) {
       const firstObject = this.state.data[0];
       for (const [key] of Object.entries(firstObject)) {
-        let itemString = item[key]
-          && ((typeof item[key] === 'string')
-          || (typeof item[key] === 'number')
-          || (typeof item[key].getMonth === 'function'))
-          && String(item[key]);
-        if (!itemString && item[key] && item[key].length) itemString = item[key].length;
-        if (typeof item[key] === 'boolean') itemString = item[key] ? 'True' : 'False';
+        let itemString =
+          item[key] &&
+          (typeof item[key] === 'string' ||
+            typeof item[key] === 'number' ||
+            typeof item[key].getMonth === 'function') &&
+          String(item[key]);
+        if (!itemString && item[key] && item[key].length) {
+          itemString = item[key].length;
+        }
+        if (typeof item[key] === 'boolean') {
+          itemString = item[key] ? 'True' : 'False';
+        }
         if (!itemString && item[key] && item[key].id) itemString = item[key].id;
         cells.push(
           <Cell
@@ -159,15 +158,11 @@ export class RealmExplorer extends React.Component {
             width={1}
           >
             {itemString}
-          </Cell>
+          </Cell>,
         );
       }
     }
-    return (
-      <Row style={globalStyles.row}>
-        {cells}
-      </Row>
-    );
+    return <Row style={globalStyles.row}>{cells}</Row>;
   }
 
   render() {

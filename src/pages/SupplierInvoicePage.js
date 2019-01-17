@@ -5,15 +5,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  formatDate,
-  parsePositiveInteger,
-  sortDataBy,
-} from '../utilities';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
 import globalStyles, { dataTableStyles } from '../globalStyles';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  pageInfoStrings,
+  tableStrings,
+} from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -24,7 +25,12 @@ import {
   ExpiryTextInput,
 } from '../widgets';
 
-const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
+const DATA_TYPES_SYNCHRONISED = [
+  'TransactionItem',
+  'TransactionBatch',
+  'Item',
+  'ItemBatch',
+];
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -64,11 +70,12 @@ export class SupplierInvoicePage extends React.Component {
       transaction.removeTransactionBatchesById(database, selection);
     });
     this.setState({ selection: [] }, this.refreshData);
-  }
+  };
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection =>
+    this.setState({ selection: newSelection });
 
   /**
    * Respond to the user editing fields
@@ -84,7 +91,10 @@ export class SupplierInvoicePage extends React.Component {
         case 'totalQuantity':
           // Should edit the numberOfPacks directly if packSize becomes an editable column
           // that represents the number of packs counted
-          transactionBatch.setTotalQuantity(database, parsePositiveInteger(newValue));
+          transactionBatch.setTotalQuantity(
+            database,
+            parsePositiveInteger(newValue),
+          );
           break;
         case 'expiryDate':
           transactionBatch.expiryDate = newValue;
@@ -94,7 +104,7 @@ export class SupplierInvoicePage extends React.Component {
       }
       database.save('TransactionBatch', transactionBatch);
     });
-  }
+  };
 
   getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -107,14 +117,14 @@ export class SupplierInvoicePage extends React.Component {
       case THEIR_REF_EDIT:
         return modalStrings.edit_their_reference;
     }
-  }
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -132,22 +142,27 @@ export class SupplierInvoicePage extends React.Component {
     this.setState({
       data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
     });
-  }
+  };
 
-  addNewLine = (item) => {
+  addNewLine = item => {
     const { database, transaction } = this.props;
     database.write(() => {
-      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
+      const transactionItem = createRecord(
+        database,
+        'TransactionItem',
+        transaction,
+        item,
+      );
       createRecord(
         database,
         'TransactionBatch',
         transactionItem,
-        createRecord(database, 'ItemBatch', item, '')
+        createRecord(database, 'ItemBatch', item, ''),
       );
     });
-  }
+  };
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -173,7 +188,9 @@ export class SupplierInvoicePage extends React.Component {
       [
         {
           title: `${pageInfoStrings.supplier}:`,
-          info: this.props.transaction.otherParty && this.props.transaction.otherParty.name,
+          info:
+            this.props.transaction.otherParty &&
+            this.props.transaction.otherParty.name,
         },
         {
           title: `${pageInfoStrings.their_ref}:`,
@@ -190,9 +207,12 @@ export class SupplierInvoicePage extends React.Component {
       ],
     ];
     return (
-      <PageInfo columns={infoColumns} isEditingDisabled={this.props.transaction.isFinalised} />
+      <PageInfo
+        columns={infoColumns}
+        isEditingDisabled={this.props.transaction.isFinalised}
+      />
     );
-  }
+  };
 
   renderCell = (key, transactionBatch) => {
     const isEditable = !this.props.transaction.isFinalised;
@@ -213,7 +233,9 @@ export class SupplierInvoicePage extends React.Component {
           <ExpiryTextInput
             key={transactionBatch.id}
             isEditable={isEditable}
-            onEndEditing={(newValue) => this.onEndEditing(key, transactionBatch, newValue)}
+            onEndEditing={newValue =>
+              this.onEndEditing(key, transactionBatch, newValue)
+            }
             text={transactionBatch[key]}
             style={dataTableStyles.text}
           />
@@ -226,7 +248,7 @@ export class SupplierInvoicePage extends React.Component {
           isDisabled: this.props.transaction.isFinalised,
         };
     }
-  }
+  };
 
   renderModalContent = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -280,7 +302,7 @@ export class SupplierInvoicePage extends React.Component {
           />
         );
     }
-  }
+  };
 
   renderAddBatchButton = () => (
     <PageButton
@@ -302,7 +324,9 @@ export class SupplierInvoicePage extends React.Component {
         onEndEditing={this.onEndEditing}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'itemCode',
@@ -343,7 +367,10 @@ export class SupplierInvoicePage extends React.Component {
         topRoute={this.props.topRoute}
       >
         <BottomConfirmModal
-          isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
+          isOpen={
+            this.state.selection.length > 0 &&
+            !this.props.transaction.isFinalised
+          }
           questionText={modalStrings.remove_these_items}
           onCancel={() => this.onDeleteCancel()}
           onConfirm={() => this.onDeleteConfirm()}
@@ -361,11 +388,14 @@ export class SupplierInvoicePage extends React.Component {
   }
 }
 
-
 export function checkForFinaliseError(transaction) {
   if (!transaction.isExternalSupplierInvoice) return null;
-  if (transaction.items.length === 0) return modalStrings.add_at_least_one_item_before_finalising;
-  if (transaction.totalQuantity === 0) return modalStrings.stock_quantity_greater_then_zero;
+  if (transaction.items.length === 0) {
+    return modalStrings.add_at_least_one_item_before_finalising;
+  }
+  if (transaction.totalQuantity === 0) {
+    return modalStrings.stock_quantity_greater_then_zero;
+  }
   return null;
 }
 

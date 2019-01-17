@@ -10,13 +10,13 @@ import { View } from 'react-native';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
-  PageButton,
-  PageInfo,
-  PageContentModal,
-  TextEditor,
-} from '../widgets';
+  buttonStrings,
+  modalStrings,
+  pageInfoStrings,
+  tableStrings,
+} from '../localization';
+import { PageButton, PageInfo, PageContentModal, TextEditor } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -55,31 +55,38 @@ export class CustomerRequisitionPage extends React.Component {
     database.write(() => {
       requisitionItem.setSuppliedQuantity(database, newValue);
     });
-  }
+  };
 
   onUseRequestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
       requisition.items.forEach(requisitionItem => {
-        requisitionItem.setSuppliedQuantity(database, requisitionItem.requiredQuantity);
+        requisitionItem.setSuppliedQuantity(
+          database,
+          requisitionItem.requiredQuantity,
+        );
       });
     });
 
     this.refreshData();
-  }
+  };
 
   onUseSuggestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
       requisition.items.forEach(requisitionItem => {
-        requisitionItem.setSuppliedQuantity(database, requisitionItem.suggestedQuantity);
+        requisitionItem.setSuppliedQuantity(
+          database,
+          requisitionItem.suggestedQuantity,
+        );
       });
     });
 
     this.refreshData();
-  }
+  };
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection =>
+    this.setState({ selection: newSelection });
 
   getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
@@ -90,14 +97,14 @@ export class CustomerRequisitionPage extends React.Component {
       case COMMENT_EDIT:
         return modalStrings.edit_the_requisition_comment;
     }
-  }
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -105,8 +112,10 @@ export class CustomerRequisitionPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.props.requisition.items
-                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    const data = this.props.requisition.items.filtered(
+      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -121,10 +130,12 @@ export class CustomerRequisitionPage extends React.Component {
       default:
         sortDataType = 'realm';
     }
-    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
-  }
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
+  };
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -146,7 +157,9 @@ export class CustomerRequisitionPage extends React.Component {
       [
         {
           title: `${pageInfoStrings.customer}:`,
-          info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
+          info: requisition.otherStoreName
+            ? requisition.otherStoreName.name
+            : '',
         },
         {
           title: `${pageInfoStrings.comment}:`,
@@ -162,7 +175,7 @@ export class CustomerRequisitionPage extends React.Component {
         isEditingDisabled={requisition.isFinalised}
       />
     );
-  }
+  };
 
   renderCell = (key, requisitionItem) => {
     const { requisition } = this.props;
@@ -186,7 +199,7 @@ export class CustomerRequisitionPage extends React.Component {
       default:
         return requisitionItem[key];
     }
-  }
+  };
 
   renderModalContent = () => {
     const { COMMENT_EDIT } = MODAL_KEYS;
@@ -196,18 +209,22 @@ export class CustomerRequisitionPage extends React.Component {
         return (
           <TextEditor
             text={this.props.requisition.comment}
-            onEndEditing={(newComment) => {
+            onEndEditing={newComment => {
               if (newComment !== this.props.requisition.comment) {
                 this.props.database.write(() => {
                   this.props.requisition.comment = newComment;
-                  this.props.database.save('Requisition', this.props.requisition);
+                  this.props.database.save(
+                    'Requisition',
+                    this.props.requisition,
+                  );
                 });
               }
               this.closeModal();
             }}
-          />);
+          />
+        );
     }
-  }
+  };
 
   renderButtons = () => (
     <View style={globalStyles.pageTopRightSectionContainer}>
@@ -228,7 +245,6 @@ export class CustomerRequisitionPage extends React.Component {
     </View>
   );
 
-
   render() {
     return (
       <GenericPage
@@ -240,7 +256,9 @@ export class CustomerRequisitionPage extends React.Component {
         onEndEditing={this.onEndEditing}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'itemCode',

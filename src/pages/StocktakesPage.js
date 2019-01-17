@@ -10,7 +10,12 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { formatStatus } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  navStrings,
+  tableStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -37,7 +42,9 @@ export class StocktakesPage extends React.Component {
 
   onRowPress = stocktake => {
     this.clearSelection();
-    this.props.navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake: stocktake });
+    this.props.navigateTo('stocktakeEditor', navStrings.stocktake, {
+      stocktake: stocktake,
+    });
   };
 
   onNewStockTake = () => {
@@ -52,19 +59,26 @@ export class StocktakesPage extends React.Component {
       const stocktakesToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const stocktake = this.stocktakes.find(s => s.id === selection[i]);
-        if (stocktake.isValid() && !stocktake.isFinalised) stocktakesToDelete.push(stocktake);
+        if (stocktake.isValid() && !stocktake.isFinalised) {
+          stocktakesToDelete.push(stocktake);
+        }
       }
       database.delete('Stocktake', stocktakesToDelete);
     });
     this.clearSelection(true);
   };
 
-  onToggleStatusFilter = isCurrent => this.setState({ showCurrent: isCurrent }, this.refreshData);
+  onToggleStatusFilter = isCurrent =>
+    this.setState({ showCurrent: isCurrent }, this.refreshData);
 
-  onSelectionChange = newSelection => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection =>
+    this.setState({ selection: newSelection });
 
   clearSelection = shouldRefreshData =>
-    this.setState({ selection: [] }, () => shouldRefreshData && this.refreshData());
+    this.setState(
+      { selection: [] },
+      () => shouldRefreshData && this.refreshData(),
+    );
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
@@ -79,10 +93,15 @@ export class StocktakesPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const toggleFilter = this.state.showCurrent ? 'status != "finalised"' : 'status == "finalised"';
+    const toggleFilter = this.state.showCurrent
+      ? 'status != "finalised"'
+      : 'status == "finalised"';
     const data = this.stocktakes
       .filtered(toggleFilter)
-      .filtered('name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0', searchTerm)
+      .filtered(
+        'name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
+        searchTerm,
+      )
       .sorted(sortBy, !isAscending); // 2nd arg: reverse sort order if true
     this.setState({ data: data });
   };
@@ -128,7 +147,10 @@ export class StocktakesPage extends React.Component {
   );
 
   renderNewStocktakeButton = () => (
-    <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />
+    <PageButton
+      text={buttonStrings.new_stocktake}
+      onPress={this.onNewStockTake}
+    />
   );
 
   render() {
@@ -142,7 +164,9 @@ export class StocktakesPage extends React.Component {
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'name',

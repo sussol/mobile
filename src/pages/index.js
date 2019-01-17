@@ -38,21 +38,41 @@ import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
-  customerInvoice: props => <PageContainer page={CustomerInvoicePage} {...props} />,
-  customerInvoices: props => <PageContainer page={CustomerInvoicesPage} {...props} />,
-  customerRequisition: props => <PageContainer page={CustomerRequisitionPage} {...props} />,
-  customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
+  customerInvoice: props => (
+    <PageContainer page={CustomerInvoicePage} {...props} />
+  ),
+  customerInvoices: props => (
+    <PageContainer page={CustomerInvoicesPage} {...props} />
+  ),
+  customerRequisition: props => (
+    <PageContainer page={CustomerRequisitionPage} {...props} />
+  ),
+  customerRequisitions: props => (
+    <PageContainer page={CustomerRequisitionsPage} {...props} />
+  ),
   menu: props => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
   root: props => <PageContainer page={MenuPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
-  stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
-  stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
+  stocktakeEditor: props => (
+    <PageContainer page={StocktakeEditPage} {...props} />
+  ),
+  stocktakeManager: props => (
+    <PageContainer page={StocktakeManagePage} {...props} />
+  ),
   stocktakes: props => <PageContainer page={StocktakesPage} {...props} />,
-  supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
-  supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
-  supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
-  supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
+  supplierInvoice: props => (
+    <PageContainer page={SupplierInvoicePage} {...props} />
+  ),
+  supplierInvoices: props => (
+    <PageContainer page={SupplierInvoicesPage} {...props} />
+  ),
+  supplierRequisition: props => (
+    <PageContainer page={SupplierRequisitionPage} {...props} />
+  ),
+  supplierRequisitions: props => (
+    <PageContainer page={SupplierRequisitionsPage} {...props} />
+  ),
 };
 
 export const FINALISABLE_PAGES = {

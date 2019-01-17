@@ -3,23 +3,27 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings,
+  modalStrings,
+  navStrings,
+  tableStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
 /**
-* Renders the page for displaying CustomerInvoices.
-* @prop   {Realm}               database      App wide database.
-* @prop   {func}                navigateTo    CallBack for navigation stack.
-* @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
-*/
+ * Renders the page for displaying CustomerInvoices.
+ * @prop   {Realm}               database      App wide database.
+ * @prop   {func}                navigateTo    CallBack for navigation stack.
+ * @state  {Realm.Results}       transactions  Filtered to have only customer_invoice.
+ */
 export class CustomerInvoicesPage extends React.Component {
   constructor(props) {
     super(props);
@@ -35,14 +39,19 @@ export class CustomerInvoicesPage extends React.Component {
     };
   }
 
-  onNewInvoice = (otherParty) => {
+  onNewInvoice = otherParty => {
     const { database, currentUser } = this.props;
     let invoice;
     database.write(() => {
-      invoice = createRecord(database, 'CustomerInvoice', otherParty, currentUser);
+      invoice = createRecord(
+        database,
+        'CustomerInvoice',
+        otherParty,
+        currentUser,
+      );
     });
     this.navigateToInvoice(invoice);
-  }
+  };
 
   onDeleteConfirm = () => {
     const { selection, transactions } = this.state;
@@ -50,8 +59,9 @@ export class CustomerInvoicesPage extends React.Component {
     database.write(() => {
       const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const transaction = transactions.find(currentTransaction =>
-                                                currentTransaction.id === selection[i]);
+        const transaction = transactions.find(
+          currentTransaction => currentTransaction.id === selection[i],
+        );
         if (transaction.isValid() && !transaction.isFinalised) {
           transactionsToDelete.push(transaction);
         }
@@ -60,18 +70,19 @@ export class CustomerInvoicesPage extends React.Component {
     });
     this.setState({ selection: [] });
     this.refreshData();
-  }
+  };
 
   onDeleteCancel = () => {
     this.setState({ selection: [] });
     this.refreshData();
-  }
+  };
 
-  onRowPress = (invoice) => this.navigateToInvoice(invoice);
+  onRowPress = invoice => this.navigateToInvoice(invoice);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection =>
+    this.setState({ selection: newSelection });
 
-  navigateToInvoice = (invoice) => {
+  navigateToInvoice = invoice => {
     // For a customer invoice to be opened for editing in the customer invoice page, we need it to
     // be confirmed, otherwise we could end up in with more of a paticular item being issued across
     // multiple invoices than is available. We generally create customer invoices with the status
@@ -88,14 +99,14 @@ export class CustomerInvoicesPage extends React.Component {
       `${navStrings.invoice} ${invoice.serialNumber}`,
       { transaction: invoice },
     );
-  }
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
    * Returns updated data according to searchTerm, sortBy and isAscending.
@@ -106,7 +117,7 @@ export class CustomerInvoicesPage extends React.Component {
 
     const data = this.state.transactions.filtered(
       'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
-      searchTerm
+      searchTerm,
     );
 
     let sortDataType;
@@ -123,7 +134,7 @@ export class CustomerInvoicesPage extends React.Component {
     this.setState({
       data: sortDataBy(data, sortBy, sortDataType, isAscending),
     });
-  }
+  };
 
   renderCell = (key, invoice) => {
     switch (key) {
@@ -140,14 +151,14 @@ export class CustomerInvoicesPage extends React.Component {
           isDisabled: invoice.isFinalised || invoice.isLinkedToRequisition,
         };
     }
-  }
+  };
 
   renderNewInvoiceButton = () => (
     <PageButton
       text={buttonStrings.new_invoice}
       onPress={() => this.setState({ isCreatingInvoice: true })}
     />
-  )
+  );
 
   render() {
     return (
@@ -159,7 +170,9 @@ export class CustomerInvoicesPage extends React.Component {
         onRowPress={this.onRowPress}
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        defaultSortDirection={
+          this.dataFilters.isAscending ? 'ascending' : 'descending'
+        }
         columns={[
           {
             key: 'serialNumber',
