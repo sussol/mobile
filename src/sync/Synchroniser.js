@@ -107,7 +107,7 @@ export class Synchroniser {
 
       if (isFresh) {
         // If a fresh initialisation, tell the server to prepare required sync records
-        await fetch(
+        const response = await fetch(
           `${this.serverURL}/sync/v3/initial_dump/` +
             `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
           {
@@ -116,11 +116,14 @@ export class Synchroniser {
               'msupply-site-uuid': uniqueId,
             },
           },
-        )
-          .then(response => response.json()
-            .then(responseJson => {
-              if (responseJson.error) throw new Error(responseJson.error);
-            }));
+        );
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error('Connection failure while attempting to sync.');
+        }
+        const responseJson = await response.json();
+        if (responseJson.error && responseJson.error.length > 0) {
+          throw new Error(responseJson.error);
+        }
         // If the initial_dump has been successful, serverURL is valid, and should now have all sync
         // records queued and ready to send. Safe to store as this.serverURL
         this.serverURL = serverURL;
@@ -375,7 +378,7 @@ export class Synchroniser {
     const requestBody = {
       SyncRecordIDs: syncIds,
     };
-    await fetch(
+    const response = await fetch(
       `${this.serverURL}/sync/v3/acknowledged_records` +
         `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
@@ -386,11 +389,16 @@ export class Synchroniser {
         },
         body: JSON.stringify(requestBody),
       },
-    )
-      .then(response => response.json()
-        .then(responseJson => {
-          if (responseJson.error) throw new Error(responseJson.error);
-        }));
+    );
+    let responseJson;
+    try {
+      responseJson = await response.json();
+    } catch (error) {
+      throw new Error('Unexpected response from sync server');
+    }
+    if (responseJson.error.length > 0) {
+      throw new Error(responseJson.error);
+    }
   };
 
   /**
