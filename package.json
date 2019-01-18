@@ -51,7 +51,7 @@
     "react-native-data-table": "^0.2.0",
     "react-native-database": "^0.3.1",
     "react-native-fs": "^2.10.14",
-    "react-native-generic-table-page": "^0.3.0",
+    "react-native-generic-table-page": "^0.4.0",
     "react-native-localization": "^0.1.30",
     "react-native-modalbox": "^1.4.1",
     "react-native-ui-components": "^0.5.0",
