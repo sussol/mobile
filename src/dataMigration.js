@@ -52,7 +52,9 @@ const dataMigrations = [
     migrate: (database, settings) => {
       // 1.0.30 added the setting 'SYNC_IS_INITIALISED', where it previously relied on 'SYNC_URL'
       const syncURL = settings.get(SETTINGS_KEYS.SYNC_URL);
-      if (syncURL && syncURL.length > 0) settings.set(SETTINGS_KEYS.SYNC_IS_INITIALISED, 'true');
+      if (syncURL && syncURL.length > 0) {
+        settings.set(SETTINGS_KEYS.SYNC_IS_INITIALISED, 'true');
+      }
     },
   },
   {
@@ -60,13 +62,20 @@ const dataMigrations = [
     migrate: (database, settings) => {
       // Changed SyncQueue to expect no more than one SyncOut record for every record in database.
       // Assume that last SyncOut record is correct.
-      const allRecords = database.objects('SyncOut').sorted('changeTime').snapshot();
+      const allRecords = database
+        .objects('SyncOut')
+        .sorted('changeTime')
+        .snapshot();
       database.write(() => {
         allRecords.forEach(record => {
-          const hasDuplicates = allRecords.filtered('recordId == $0', record.id).length > 1;
+          const hasDuplicates =
+            allRecords.filtered('recordId == $0', record.id).length > 1;
           if (hasDuplicates) {
             database.delete('SyncOut', record);
-          } else if (record.recordType === 'Transaction' || record.recordType === 'Requisition') {
+          } else if (
+            record.recordType === 'Transaction' ||
+            record.recordType === 'Requisition'
+          ) {
             // Transactions and Requisitions need to be synced after all their children records
             // for 2.0.0 interstore features
             record.changeTime = new Date().getTime();
@@ -76,31 +85,46 @@ const dataMigrations = [
       });
       // An ugly hack to change main supplying store from Adara to SAMES,
       // for stores that had Adara PS as Supplying Store during initial sync
-      if (settings.get(SETTINGS_KEYS.
-                       SUPPLYING_STORE_NAME_ID) === 'B1938F4FFDC2074DB5408B435ACEB198' ||
-          settings.get(SETTINGS_KEYS.
-                       SUPPLYING_STORE_ID) === '734CC3EC70283A4AABC4E645C8B1E11D') {
-        settings.set(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID, 'E5D7BB38571C1F428AF397240EEB285F');
-        settings.set(SETTINGS_KEYS.SUPPLYING_STORE_ID, '6CFDCD1916B098478422A489625AB9E7');
+      if (
+        settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID) ===
+          'B1938F4FFDC2074DB5408B435ACEB198' ||
+        settings.get(SETTINGS_KEYS.SUPPLYING_STORE_ID) ===
+          '734CC3EC70283A4AABC4E645C8B1E11D'
+      ) {
+        settings.set(
+          SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID,
+          'E5D7BB38571C1F428AF397240EEB285F',
+        );
+        settings.set(
+          SETTINGS_KEYS.SUPPLYING_STORE_ID,
+          '6CFDCD1916B098478422A489625AB9E7',
+        );
       }
       // Migration for v2 api request Requisitions, set otherStoreName to main supplying store name
       // for all existing requisition (shouldn't have any response requisition at this stage)
-      const supplyingStoreId = settings.get(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID);
+      const supplyingStoreId = settings.get(
+        SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID,
+      );
       if (!supplyingStoreId || supplyingStoreId === '') {
         throw new Error('Supplying Store Name ID missing from Settings');
       }
 
-      const requisitions = database.objects('Requisition')
-                                   .filtered('otherStoreName == null AND type == "request"')
-                                   .snapshot();
+      const requisitions = database
+        .objects('Requisition')
+        .filtered('otherStoreName == null AND type == "request"')
+        .snapshot();
       database.write(() => {
-        const mainSupplyingStoreName = database.getOrCreate('Name', supplyingStoreId);
+        const mainSupplyingStoreName = database.getOrCreate(
+          'Name',
+          supplyingStoreId,
+        );
 
         requisitions.forEach(requisition => {
           database.update('Requisition', {
             id: requisition.id,
             otherStoreName: mainSupplyingStoreName,
-            status: requisition.status === 'finalised' ? 'finalised' : 'suggested',
+            status:
+              requisition.status === 'finalised' ? 'finalised' : 'suggested',
           });
         });
       });
@@ -110,25 +134,34 @@ const dataMigrations = [
       // synced to the server in finalised form. Find all of them, and set them to resync
       database.write(() => {
         // Requisitions
-        const finalisedRequisitions = database.objects('Requisition')
+        const finalisedRequisitions = database
+          .objects('Requisition')
           .filtered('status == "finalised"');
-        finalisedRequisitions.forEach(requisition => database.save('Requisition', requisition));
+        finalisedRequisitions.forEach(requisition =>
+          database.save('Requisition', requisition),
+        );
 
         // Transactions
-        const finalisedTransactions = database.objects('Transaction')
+        const finalisedTransactions = database
+          .objects('Transaction')
           .filtered('status == "finalised"');
-        finalisedTransactions.forEach(transaction => database.save('Transaction', transaction));
+        finalisedTransactions.forEach(transaction =>
+          database.save('Transaction', transaction),
+        );
 
         // Stocktakes
-        const finalisedStocktakes = database.objects('Stocktake')
+        const finalisedStocktakes = database
+          .objects('Stocktake')
           .filtered('status == "finalised"');
-        finalisedStocktakes.forEach(stocktake => database.save('Stocktake', stocktake));
+        finalisedStocktakes.forEach(stocktake =>
+          database.save('Stocktake', stocktake),
+        );
       });
     },
   },
   {
     version: '2.1.0-rc10',
-    migrate: (database) => {
+    migrate: database => {
       const TEMP_STATUS = 'nw';
       const matchBatch = (batches, batchToMatch) =>
         batches.some(batch => batch.id === batchToMatch.id);
@@ -136,8 +169,9 @@ const dataMigrations = [
       // TransactionBatches in inventoryAdjustement, need to clean them up to avoid ledger
       // discrepancies. (note: ) this did not affect actual ItemBatch quantity
       // const lines = all inventoryAdjustment transactionItems
-      const lines = database.objects('TransactionItem')
-                            .filtered('transaction.otherParty.type == "inventory_adjustment"');
+      const lines = database
+        .objects('TransactionItem')
+        .filtered('transaction.otherParty.type == "inventory_adjustment"');
       lines.forEach(line => {
         let batchesToDelete = [];
         const { batches } = line;
@@ -146,12 +180,18 @@ const dataMigrations = [
           if (!matchBatch(batchesToDelete, batch)) {
             batchesToDelete = [
               ...batchesToDelete,
-              ...batches.filtered('itemBatch.id == $0 AND id != $1', batch.itemBatch.id, batch.id),
+              ...batches.filtered(
+                'itemBatch.id == $0 AND id != $1',
+                batch.itemBatch.id,
+                batch.id,
+              ),
             ];
           }
         });
         // Delete batches
-        if (batchesToDelete.length > 0) deleteBatches(line.transaction, batchesToDelete);
+        if (batchesToDelete.length > 0) {
+          deleteBatches(line.transaction, batchesToDelete);
+        }
       });
       // If we try to delete a transactionBatch whos parent transaction is 'confirmed'
       // then a transactionBatch destructor will try to revert stock on related ItemBatches
