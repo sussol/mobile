@@ -5,12 +5,13 @@
     "jest": true
   },
   "rules": {
+    "arrow-body-style": 0,
     "no-param-reassign": "off",
     "jsx-boolean-value": "off",
     "no-use-before-define": "off",
     "object-shorthand": "off",
     "strict": 0,
-    "no-confusing-arrow": ["error", { "allowParens": true }],
+    "no-confusing-arrow": 2,
     "global-require": "off",
     "react/jsx-boolean-value": "off"
   }
