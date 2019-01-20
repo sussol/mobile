@@ -19,11 +19,13 @@ export function BottomConfirmModal(props) {
     confirmText,
     cancelText,
     style,
-    ...modalProps
+    ...modalProps,
   } = props;
   return (
     <BottomModal {...modalProps} style={[localStyles.modal, style]}>
-      <Text style={[globalStyles.text, localStyles.questionText]}>{questionText}</Text>
+      <Text style={[globalStyles.text, localStyles.questionText]}>
+        {questionText}
+      </Text>
       <OnePressButton
         style={[globalStyles.button, localStyles.cancelButton]}
         textStyle={[globalStyles.buttonText, localStyles.buttonText]}

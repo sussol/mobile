@@ -5,12 +5,27 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import { DemoSiteRequest } from '../../authentication';
-import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
-import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
+import globalStyles, {
+  SUSSOL_ORANGE,
+  GREY,
+  WARM_GREY,
+} from '../../globalStyles';
+import {
+  authStrings,
+  generalStrings,
+  demoUserModalStrings,
+} from '../../localization';
 import { ConfirmModal } from '../../widgets';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -34,24 +49,25 @@ export class DemoUserModal extends React.Component {
   }
 
   onDemoRequestSubmit = async () => {
-    if (!this.canAttemptSubmit) return false;
-    this.setState({ status: 'submitting' });
-    try {
-      await this.demoSiteRequest.createActivationURL(
-        this.state.username,
-        this.state.email,
-        this.state.password,
-        this.state.repeatPassword,
-      );
-      this.setState({ status: 'submitted' });
-    } catch (error) {
-      this.setState({ status: 'error', error: error.message });
-      if (!error.message.startsWith('Invalid username or password')) {
-        // After ten seconds of displaying the error, re-enable the button
-        this.errorTimeoutId = setTimeout(() => {
-          this.setState({ status: 'submit' });
-          this.errorTimeoutId = null;
-        }, 10 * 1000);
+    if (this.canAttemptSubmit) {
+      this.setState({ status: 'submitting' });
+      try {
+        await this.demoSiteRequest.createActivationURL(
+          this.state.username,
+          this.state.email,
+          this.state.password,
+          this.state.repeatPassword,
+        );
+        this.setState({ status: 'submitted' });
+      } catch (error) {
+        this.setState({ status: 'error', error: error.message });
+        if (!error.message.startsWith('Invalid username or password')) {
+          // After ten seconds of displaying the error, re-enable the button
+          this.errorTimeoutId = setTimeout(() => {
+            this.setState({ status: 'submit' });
+            this.errorTimeoutId = null;
+          }, 10 * 1000);
+        }
       }
     }
   };
@@ -66,7 +82,7 @@ export class DemoUserModal extends React.Component {
       email: '',
     });
     this.props.onClose();
-  }
+  };
 
   get canAttemptSubmit() {
     return (
@@ -94,12 +110,15 @@ export class DemoUserModal extends React.Component {
   // Handlers to set state of form variables on input onChange trigger
   // Extracting into local methods because calling an anonymous function in onChange would
   // re-render the input fields each time render() is called, causing slight performance hit
-  handleOnChangeEmail = (text) => this.setState({ email: text, status: 'submit' });
-  handleOnChangeUsername = (text) => this.setState({ username: text, status: 'submit' });
-  handleOnChangePassword = (text) => this.setState({ password: text, status: 'submit' });
-  handleOnChangeRepeatPassword = (text) => {
+  handleOnChangeEmail = text =>
+    this.setState({ email: text, status: 'submit' });
+  handleOnChangeUsername = text =>
+    this.setState({ username: text, status: 'submit' });
+  handleOnChangePassword = text =>
+    this.setState({ password: text, status: 'submit' });
+  handleOnChangeRepeatPassword = text => {
     this.setState({ repeatPassword: text, status: 'submit' });
-  }
+  };
 
   render() {
     return (
@@ -113,7 +132,10 @@ export class DemoUserModal extends React.Component {
         <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
           <View style={[globalStyles.authFormContainer]}>
             <View style={localStyles.closeButtonContainer}>
-              <TouchableOpacity onPress={this.props.onClose} style={localStyles.closeButton}>
+              <TouchableOpacity
+                onPress={this.props.onClose}
+                style={localStyles.closeButton}
+              >
                 <Icon name="close" style={localStyles.closeIcon} />
               </TouchableOpacity>
             </View>
@@ -123,7 +145,12 @@ export class DemoUserModal extends React.Component {
               source={require('../../images/logo_large.png')}
             />
             <View style={globalStyles.horizontalContainer}>
-              <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
+              <Text
+                style={[
+                  globalStyles.authFormTextInputStyle,
+                  localStyles.syncSiteName,
+                ]}
+              >
                 {demoUserModalStrings.modalBodyText}
               </Text>
             </View>

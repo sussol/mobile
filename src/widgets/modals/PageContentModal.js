@@ -9,7 +9,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { BottomModal } from './BottomModal';
-import { APP_FONT_FAMILY, PAGE_CONTENT_PADDING_HORIZONTAL } from '../../globalStyles';
+import {
+  APP_FONT_FAMILY,
+  PAGE_CONTENT_PADDING_HORIZONTAL,
+} from '../../globalStyles';
 
 /**
  * A modal that can be displayed over the page content container, rendering any children

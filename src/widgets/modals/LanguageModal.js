@@ -21,12 +21,7 @@ import {
   APP_FONT_FAMILY,
   COMPONENT_HEIGHT,
 } from '../../globalStyles';
-import {
-  COUNTRY_FLAGS,
-  LANGUAGE_KEYS,
-  modalStrings,
-} from '../../localization';
-
+import { COUNTRY_FLAGS, LANGUAGE_KEYS, modalStrings } from '../../localization';
 
 /**
  * A Modal that covers the page content using PageContentModal, and renders a ListView for selecting
@@ -38,7 +33,9 @@ import {
 export class LanguageModal extends React.Component {
   constructor(props) {
     super(props);
-    const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    const dataSource = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2,
+    });
     this.state = {
       dataSource: dataSource.cloneWithRows(LANGUAGE_KEYS),
       currentLanguage: props.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE),
@@ -57,7 +54,11 @@ export class LanguageModal extends React.Component {
     let textStyle;
     if (this.state.currentLanguage === rowKey) {
       rowStyle = [localStyles.tableRow, { backgroundColor: '#e95c30' }];
-      textStyle = [dataTableStyles.text, localStyles.dataTableText, { color: 'white' }];
+      textStyle = [
+        dataTableStyles.text,
+        localStyles.dataTableText,
+        { color: 'white' },
+      ];
     } else {
       rowStyle = localStyles.tableRow;
       textStyle = [dataTableStyles.text, localStyles.dataTableText];
@@ -68,18 +69,18 @@ export class LanguageModal extends React.Component {
         onPress={() => this.onSelectLanguage(rowKey)}
         style={rowStyle}
       >
-        <Image style={localStyles.flagImage} source={COUNTRY_FLAGS[rowKey]} resizeMode="stretch" />
+        <Image
+          style={localStyles.flagImage}
+          source={COUNTRY_FLAGS[rowKey]}
+          resizeMode="stretch"
+        />
         <Text style={textStyle}>{rowValue}</Text>
       </TouchableOpacity>
     );
   }
 
   render() {
-    const {
-      isOpen,
-      onClose,
-      ...modalProps
-    } = this.props;
+    const { isOpen, onClose, ...modalProps } = this.props;
 
     const numberOfRows = Math.min(Object.keys(LANGUAGE_KEYS).length, 10);
     const listViewHeight = { height: numberOfRows * COMPONENT_HEIGHT };
@@ -100,7 +101,7 @@ export class LanguageModal extends React.Component {
           />
         </View>
       </PageContentModal>
-     );
+    );
   }
 }
 
@@ -124,7 +125,6 @@ const localStyles = StyleSheet.create({
   dataTableText: {
     fontSize: 20,
     marginLeft: 20,
-
   },
   tableRow: {
     flexDirection: 'row',

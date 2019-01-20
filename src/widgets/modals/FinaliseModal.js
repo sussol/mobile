@@ -29,7 +29,12 @@ const bugsnagClient = new BugsnagClient();
  */
 export function FinaliseModal(props) {
   if (!props.finaliseItem) return null;
-  const { record, recordType, checkForError, finaliseText } = props.finaliseItem;
+  const {
+    record,
+    recordType,
+    checkForError,
+    finaliseText,
+  } = props.finaliseItem;
   if (!record || !record.isValid()) return null; // Record may have been deleted
   let errorText = !record.isFinalised && checkForError && checkForError(record);
 
@@ -64,8 +69,11 @@ export function FinaliseModal(props) {
       confirmText={modalStrings.confirm}
       cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
       onConfirm={!errorText ? tryFinalise : null}
-      onCancel={() => { if (props.onClose) props.onClose(); }}
-    />);
+      onCancel={() => {
+        if (props.onClose) props.onClose();
+      }}
+    />
+  );
 }
 
 FinaliseModal.propTypes = {

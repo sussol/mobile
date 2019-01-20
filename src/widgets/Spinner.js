@@ -5,11 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Animated,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 
 export class Spinner extends React.Component {
   constructor(props) {
@@ -30,10 +26,11 @@ export class Spinner extends React.Component {
 
   startSpinning() {
     Animated.loop(
-      Animated.timing(
-        this.progressAnimation,
-        { toValue: 100, duration: 1000, useNativeDriver: true },
-      ),
+      Animated.timing(this.progressAnimation, {
+        toValue: 100,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
     ).start();
   }
 

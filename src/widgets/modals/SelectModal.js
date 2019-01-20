@@ -19,15 +19,11 @@ export function SelectModal(props) {
     queryString,
     queryStringSecondary,
     sortByString,
-    ...modalProps
+    ...modalProps,
   } = props;
 
   return (
-    <PageContentModal
-      isOpen={isOpen}
-      onClose={onClose}
-      {...modalProps}
-    >
+    <PageContentModal isOpen={isOpen} onClose={onClose} {...modalProps}>
       <AutocompleteSelector
         options={options}
         placeholderText={placeholderText}
@@ -37,7 +33,7 @@ export function SelectModal(props) {
         onSelect={onSelect}
       />
     </PageContentModal>
-   );
+  );
 }
 
 SelectModal.propTypes = {

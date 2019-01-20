@@ -19,7 +19,7 @@ export class ExpiryTextInput extends React.Component {
   // Remove all text on focus
   onFocus = () => this.setState({ text: '' });
 
-  onChangeText = (text) => {
+  onChangeText = text => {
     let newTextValue = text;
 
     if (text.length === 1) {
@@ -51,21 +51,22 @@ export class ExpiryTextInput extends React.Component {
 
     this.previousText = newTextValue;
     this.setState({ text: newTextValue });
-  }
+  };
 
-  onEndEditing = (event) => {
+  onEndEditing = event => {
     const expiryDate = parseExpiryDate(event.nativeEvent.text);
     if (expiryDate && this.props.onEndEditing) {
       this.props.onEndEditing(expiryDate);
     }
     this.setState({ text: this.getFormattedDate(expiryDate) });
-  }
+  };
 
-  getFormattedDate = (date) => {
+  getFormattedDate = date => {
     // Remember previous good date
-    this.previousFormattedDate = formatExpiryDate(date) || this.previousFormattedDate;
+    this.previousFormattedDate =
+      formatExpiryDate(date) || this.previousFormattedDate;
     return this.previousFormattedDate || 'mm/yy';
-  }
+  };
 
   render() {
     const { style, ...extraProps } = this.props;

@@ -5,7 +5,15 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, Keyboard, StyleSheet, Text, TouchableOpacity, View, ViewPropTypes } from 'react-native';
+import {
+  Dimensions,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewPropTypes,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { OnePressButton } from '../';
 import Modal from 'react-native-modalbox';
@@ -16,7 +24,15 @@ export function ConfirmModal(props) {
   // On opening, dismiss the keyboard to ensure editable cells lose their focus
   // and their values become fixed (so that they save correctly)
   if (props.isOpen) Keyboard.dismiss();
-  const { style, textStyle, onCancel, onConfirm, questionText, noCancel, ...modalProps } = props;
+  const {
+    style,
+    textStyle,
+    onCancel,
+    onConfirm,
+    questionText,
+    noCancel,
+    ...modalProps,
+  } = props;
   return (
     <Modal {...modalProps} style={style}>
       {!noCancel && onCancel && (
@@ -26,7 +42,9 @@ export function ConfirmModal(props) {
       )}
       <View style={defaultStyles.contentContainer}>
         <Text style={textStyle}>{questionText}</Text>
-        <View style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}>
+        <View
+          style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}
+        >
           {!noCancel && onCancel && (
             <OnePressButton
               style={[globalStyles.button, props.cancelButtonStyle]}
@@ -71,7 +89,10 @@ ConfirmModal.defaultProps = {
   textStyle: globalStyles.confirmModalText,
   buttonContainerStyle: globalStyles.confirmModalButtonContainer,
   cancelButtonStyle: globalStyles.confirmModalButton,
-  confirmButtonStyle: [globalStyles.confirmModalButton, globalStyles.confirmModalConfirmButton],
+  confirmButtonStyle: [
+    globalStyles.confirmModalButton,
+    globalStyles.confirmModalConfirmButton,
+  ],
   buttonTextStyle: globalStyles.confirmModalButtonText,
   cancelText: modalStrings.cancel,
   confirmText: modalStrings.confirm,

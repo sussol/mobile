@@ -6,21 +6,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  StyleSheet,
-  Text,
-  View,
-  ViewPropTypes,
-} from 'react-native';
+import { StyleSheet, Text, View, ViewPropTypes } from 'react-native';
 
 import { SyncIcon } from './SyncIcon';
 import { syncStrings } from '../localization';
 import { formatDate } from '../utilities';
 
-import globalStyles, {
-  GREY,
-  DARK_GREY,
-} from '../globalStyles';
+import globalStyles, { GREY, DARK_GREY } from '../globalStyles';
 
 const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
@@ -46,8 +38,14 @@ export function SyncState(props) {
 
   return (
     <View style={[globalStyles.navBarRightContainer, props.style]}>
-      {props.showText && <Text style={[globalStyles.navBarText, localStyles.text]}>{text}</Text>}
-      <SyncIcon cloudColor={cloudColor} arrowsColor={arrowsColor} wifiColor={wifiColor} />
+      {props.showText && (
+        <Text style={[globalStyles.navBarText, localStyles.text]}>{text}</Text>
+      )}
+      <SyncIcon
+        cloudColor={cloudColor}
+        arrowsColor={arrowsColor}
+        wifiColor={wifiColor}
+      />
     </View>
   );
 }

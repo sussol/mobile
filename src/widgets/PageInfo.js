@@ -15,11 +15,7 @@ import {
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {
-  APP_FONT_FAMILY,
-  DARK_GREY,
-  SUSSOL_ORANGE,
-} from '../globalStyles';
+import { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 /**
  * A component to display info in a generic way at the top of a page
@@ -37,25 +33,35 @@ import {
  */
 export function PageInfo(props) {
   return (
-    <View
-      style={[localStyles.horizontalContainer]}
-    >
+    <View style={[localStyles.horizontalContainer]}>
       {props.columns.map((columnData, columnIndex) => {
         const isRightMostColumn = columnIndex === props.columns.length - 1;
         return (
           <View
             key={`Column ${columnIndex}`}
-            style={isRightMostColumn ?
-                   localStyles.rightmostColumnContainer :
-                   localStyles.columnContainer}
+            style={
+              isRightMostColumn
+                ? localStyles.rightmostColumnContainer
+                : localStyles.columnContainer
+            }
           >
             <View>
               {columnData.map((...args) =>
-                renderTitleComponent(props.isEditingDisabled, columnIndex, ...args))}
+                renderTitleComponent(
+                  props.isEditingDisabled,
+                  columnIndex,
+                  ...args,
+                ),
+              )}
             </View>
             <View style={localStyles.infoContainer}>
               {columnData.map((...args) =>
-                renderInfoComponent(props.isEditingDisabled, columnIndex, ...args))}
+                renderInfoComponent(
+                  props.isEditingDisabled,
+                  columnIndex,
+                  ...args,
+                ),
+              )}
             </View>
           </View>
         );
@@ -64,7 +70,12 @@ export function PageInfo(props) {
   );
 }
 
-function renderTitleComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
+function renderTitleComponent(
+  isEditingDisabled,
+  columnIndex,
+  rowData,
+  rowIndex,
+) {
   // If null or empty string, use single space to avoid squishing row
   const titleString = rowData.title ? rowData.title : ' ';
   const titleComponent = (
@@ -84,16 +95,25 @@ function renderTitleComponent(isEditingDisabled, columnIndex, rowData, rowIndex)
         onPress={rowData.onPress}
       >
         {titleComponent}
-      </TouchableOpacity>);
+      </TouchableOpacity>
+    );
   }
   return (
-    <View style={localStyles.rowContainer} key={`ViewTitle ${columnIndex}-${rowIndex}`}>
+    <View
+      style={localStyles.rowContainer}
+      key={`ViewTitle ${columnIndex}-${rowIndex}`}
+    >
       {titleComponent}
     </View>
   );
 }
 
-function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
+function renderInfoComponent(
+  isEditingDisabled,
+  columnIndex,
+  rowData,
+  rowIndex,
+) {
   let editTextStyle;
   let containerStyle;
   let iconName;
@@ -119,7 +139,8 @@ function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) 
       numberOfLines={1}
     >
       {infoString}
-    </Text>);
+    </Text>
+  );
   if (rowData.onPress && !isEditingDisabled) {
     return (
       <TouchableOpacity
@@ -136,10 +157,14 @@ function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) 
             color={SUSSOL_ORANGE}
           />
         </View>
-      </TouchableOpacity>);
+      </TouchableOpacity>
+    );
   }
   return (
-    <View style={localStyles.rowContainer} key={`ViewInfo ${columnIndex}-${rowIndex}`}>
+    <View
+      style={localStyles.rowContainer}
+      key={`ViewInfo ${columnIndex}-${rowIndex}`}
+    >
       {infoComponent}
     </View>
   );

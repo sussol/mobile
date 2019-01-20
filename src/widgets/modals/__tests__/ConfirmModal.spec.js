@@ -19,12 +19,10 @@ describe('ConfirmModal', () => {
     wrapper = shallow(
       <ConfirmModal
         isOpen
-        questionText = {
-          'This is a test?'
-        }
-        onCancel={ cancelCallBack }
-        onConfirm={ confirmCallBack }
-      />
+        questionText={'This is a test?'}
+        onCancel={cancelCallBack}
+        onConfirm={confirmCallBack}
+      />,
     );
   });
 
@@ -35,7 +33,10 @@ describe('ConfirmModal', () => {
   it('triggers cancelCallBack when cancel pressed', () => {
     expect(cancelCallBack.calledOnce).toBe(false);
     expect(confirmCallBack.calledOnce).toBe(false);
-    wrapper.find(Button).first().simulate('press');
+    wrapper
+      .find(Button)
+      .first()
+      .simulate('press');
     expect(cancelCallBack.calledOnce).toBe(true);
     expect(confirmCallBack.calledOnce).toBe(false);
   });
@@ -43,7 +44,10 @@ describe('ConfirmModal', () => {
   it('triggers confirmCallBack when confirm pressed', () => {
     expect(cancelCallBack.calledOnce).toBe(false);
     expect(confirmCallBack.calledOnce).toBe(false);
-    wrapper.find(Button).last().simulate('press');
+    wrapper
+      .find(Button)
+      .last()
+      .simulate('press');
     expect(cancelCallBack.calledOnce).toBe(false);
     expect(confirmCallBack.calledOnce).toBe(true);
   });

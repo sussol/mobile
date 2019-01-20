@@ -5,16 +5,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  StyleSheet,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
 import { TextInput } from './index';
 import { buttonStrings } from '../localization';
 import globalStyles from '../globalStyles';
-
 
 /**
  * Renders a View containing a TextInput and confirm Button, to allow editing
@@ -39,7 +35,7 @@ export class TextEditor extends React.Component {
           textStyle={globalStyles.modalText}
           underlineColorAndroid="transparent"
           value={this.state.text}
-          onChangeText={(text) => this.setState({ text: text })}
+          onChangeText={text => this.setState({ text: text })}
           onSubmitEditing={() => this.props.onEndEditing(this.state.text)}
         />
         <Button

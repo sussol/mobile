@@ -22,14 +22,13 @@ import { navStrings } from '../localization';
 export function FinaliseButton(props) {
   if (props.isFinalised) {
     return (
-      <View style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}>
+      <View
+        style={[globalStyles.navBarRightContainer, localStyles.outerContainer]}
+      >
         <Text style={[globalStyles.navBarText, localStyles.text]}>
           {navStrings.finalised_cannot_be_edited}
         </Text>
-        <Icon
-          name="lock"
-          style={globalStyles.finalisedLock}
-        />
+        <Icon name="lock" style={globalStyles.finalisedLock} />
       </View>
     );
   }
@@ -41,10 +40,7 @@ export function FinaliseButton(props) {
       <Text style={[globalStyles.navBarText, localStyles.text]}>
         {navStrings.finalise}
       </Text>
-      <Icon
-        name="check-circle"
-        style={globalStyles.finaliseButton}
-      />
+      <Icon name="check-circle" style={globalStyles.finaliseButton} />
     </TouchableOpacity>
   );
 }

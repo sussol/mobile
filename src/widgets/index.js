@@ -1,7 +1,7 @@
 /**
-* mSupply Mobile
-* Sustainable Solutions (NZ) Ltd. 2016
-*/
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2016
+ */
 
 export { Button, ProgressBar } from 'react-native-ui-components';
 export {

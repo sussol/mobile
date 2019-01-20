@@ -15,7 +15,8 @@ import globalStyles from '../globalStyles';
  * @prop  {function}  onSelect  A function taking the option selected as a parameter
  */
 export function ToggleSelector(props) {
-  const toggles = props.options.map(option => { // eslint-disable-line arrow-body-style
+  // eslint-disable-next-line arrow-body-style
+  const toggles = props.options.map(option => {
     return {
       text: String(option),
       onPress: () => props.onSelect(option),

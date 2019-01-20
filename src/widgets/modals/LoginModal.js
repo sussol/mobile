@@ -9,7 +9,11 @@ import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import { LanguageModal } from './LanguageModal';
 import Modal from 'react-native-modalbox';
-import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
+import globalStyles, {
+  SUSSOL_ORANGE,
+  GREY,
+  WARM_GREY,
+} from '../../globalStyles';
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 import { authStrings, navStrings } from '../../localization';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -32,7 +36,10 @@ export class LoginModal extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.state.authStatus === 'authenticated' && !nextProps.isAuthenticated) {
+    if (
+      this.state.authStatus === 'authenticated' &&
+      !nextProps.isAuthenticated
+    ) {
       this.setState({
         authStatus: 'unauthenticated',
         password: '',
@@ -45,7 +52,10 @@ export class LoginModal extends React.Component {
   }
 
   onLogin = async () => {
-    this.props.settings.set(SETTINGS_KEYS.MOST_RECENT_USERNAME, this.state.username);
+    this.props.settings.set(
+      SETTINGS_KEYS.MOST_RECENT_USERNAME,
+      this.state.username,
+    );
     this.setState({ authStatus: 'authenticating' });
     try {
       const user = await this.props.authenticator.authenticate(
@@ -113,7 +123,12 @@ export class LoginModal extends React.Component {
                 source={require('../../images/logo_large.png')}
               />
               <View style={globalStyles.horizontalContainer}>
-                <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
+                <Text
+                  style={[
+                    globalStyles.authFormTextInputStyle,
+                    localStyles.syncSiteName,
+                  ]}
+                >
                   {this.props.settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
                 </Text>
               </View>
@@ -128,7 +143,10 @@ export class LoginModal extends React.Component {
                   returnKeyType={'next'}
                   selectTextOnFocus
                   onChangeText={text => {
-                    this.setState({ username: text, authStatus: 'unauthenticated' });
+                    this.setState({
+                      username: text,
+                      authStatus: 'unauthenticated',
+                    });
                   }}
                   onSubmitEditing={() => {
                     if (this.passwordInputRef) this.passwordInputRef.focus();
@@ -148,7 +166,10 @@ export class LoginModal extends React.Component {
                   returnKeyType={'done'}
                   selectTextOnFocus
                   onChangeText={text => {
-                    this.setState({ password: text, authStatus: 'unauthenticated' });
+                    this.setState({
+                      password: text,
+                      authStatus: 'unauthenticated',
+                    });
                   }}
                   onSubmitEditing={() => {
                     if (this.passwordInputRef) this.passwordInputRef.blur();
@@ -158,7 +179,10 @@ export class LoginModal extends React.Component {
               </View>
               <View style={globalStyles.authFormButtonContainer}>
                 <Button
-                  style={[globalStyles.authFormButton, globalStyles.loginButton]}
+                  style={[
+                    globalStyles.authFormButton,
+                    globalStyles.loginButton,
+                  ]}
                   textStyle={globalStyles.authFormButtonText}
                   text={this.buttonText}
                   onPress={this.onLogin}
@@ -178,9 +202,14 @@ export class LoginModal extends React.Component {
               backgroundColor="rgba(255,255,255,0)"
               onPress={() => this.setState({ isLanguageModalOpen: true })}
             >
-              <Text style={globalStyles.authWindowButtonText}>{navStrings.language}</Text>
+              <Text style={globalStyles.authWindowButtonText}>
+                {navStrings.language}
+              </Text>
             </Icon.Button>
-            <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
+            <Text style={globalStyles.authWindowButtonText}>
+              {' '}
+              v{this.state.appVersion}
+            </Text>
           </View>
           <LanguageModal
             isOpen={this.state.isLanguageModalOpen}

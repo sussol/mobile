@@ -5,11 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  Text,
-  ViewPropTypes,
-} from 'react-native';
+import { StyleSheet, Text, ViewPropTypes } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
 import globalStyles from '../globalStyles';

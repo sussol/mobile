@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 /**
  * Makes sure the onPress prop (which should be a function) of the wrapped component is
  * only called once.
@@ -10,11 +9,13 @@ import React from 'react';
 export default function withOnePress(WrappedComponent) {
   return class extends React.Component {
     state = { hasBeenPressed: false };
-    static propTypes = WrappedComponent.propTypes
+    static propTypes = WrappedComponent.propTypes;
 
     onPress = (...args) => {
       if (this.state.hasBeenPressed || !this.props.onPress) return;
-      this.setState({ hasBeenPressed: true }, () => this.props.onPress(...args));
+      this.setState({ hasBeenPressed: true }, () =>
+        this.props.onPress(...args),
+      );
     };
 
     render() {
