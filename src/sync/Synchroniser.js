@@ -8,7 +8,6 @@ import { SyncDatabase } from './SyncDatabase';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { integrateRecord } from './incomingSyncUtils';
 import { SETTINGS_KEYS } from '../settings';
-import DeviceInfo from 'react-native-device-info';
 import {
   incrementSyncProgress,
   setSyncProgress,
@@ -26,12 +25,12 @@ const {
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
+  HARDWARE_UUID,
 } = SETTINGS_KEYS;
 
 const MIN_SYNC_BATCH_SIZE = 10;
 const MAX_SYNC_BATCH_SIZE = 500;
 const OPTIMAL_BATCH_SPEED = 5;
-const uniqueId = DeviceInfo.getUniqueID();
 
 /**
  * Provides core synchronization functionality, initilising the database with an
@@ -48,6 +47,7 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
+    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }
@@ -113,7 +113,7 @@ export class Synchroniser {
           {
             headers: {
               Authorization: this.authHeader,
-              'msupply-site-uuid': uniqueId,
+              ...this.extraHeaders,
             },
           },
         );
@@ -243,7 +243,7 @@ export class Synchroniser {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
-          'msupply-site-uuid': uniqueId,
+          ...this.extraHeaders,
         },
         body: JSON.stringify(records),
       },
@@ -313,7 +313,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
-          'msupply-site-uuid': uniqueId,
+          ...this.extraHeaders,
         },
       },
     );
@@ -341,7 +341,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
-          'msupply-site-uuid': uniqueId,
+          ...this.extraHeaders,
         },
       },
     );
@@ -385,7 +385,7 @@ export class Synchroniser {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
-          'msupply-site-uuid': uniqueId,
+          ...this.extraHeaders,
         },
         body: JSON.stringify(requestBody),
       },

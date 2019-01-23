@@ -1,4 +1,5 @@
 import { Settings } from 'react-native-database';
+import DeviceInfo from 'react-native-device-info';
 import { SETTINGS_KEYS } from './index';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 
@@ -17,6 +18,19 @@ export class MobileAppSettings extends Settings {
       default:
         break;
     }
+  }
+
+  get(key) {
+    switch (key) {
+      case 'Hardware_UUID': return this.getHardwareUUID();
+      default: return super.get(key);
+    }
+  }
+
+  // Returns a device hardware UUID.
+  getHardwareUUID() {
+    const uniqueId = DeviceInfo.getUniqueID();
+    return uniqueId;
   }
 
   // Calls any functions that need to be called (each time the app is started). Checks database
