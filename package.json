@@ -50,7 +50,7 @@
     "react-native": "0.57.4",
     "react-native-data-table": "^0.2.0",
     "react-native-database": "^0.3.1",
-    "react-native-elements": "^0.19.1",
+    "react-native-elements": "1.0.0-beta7",
     "react-native-fs": "^2.10.14",
     "react-native-generic-table-page": "^0.3.0",
     "react-native-localization": "^0.1.30",
