@@ -21,3 +21,6 @@ export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
+export { ExpiryTextInput } from './ExpiryTextInput';
+export { OnePressButton } from './OnePressButton';
+export { BadgeSet } from './BadgeSet';
