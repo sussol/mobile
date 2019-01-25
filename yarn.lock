@@ -4101,6 +4101,11 @@ hoist-non-react-statics@^2.2.0, hoist-non-react-statics@^2.2.1:
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.3.0.tgz#ede16318c2ff1f9fe3a025396ba06fd4c44608bb"
   integrity sha1-7eFjGML/H5/joCU5a6Bv1MRGCLs=
 
+hoist-non-react-statics@^2.3.1:
+  version "2.5.5"
+  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
+  integrity sha512-rqcy4pJo55FTTLWt+bU8ukscqHeE/e9KWvsOW2b/a3afxQZhwkQdT1rPPCJ0rYXdj4vNcasY8zHTH+jF/qStxw==
+
 home-or-tmp@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/home-or-tmp/-/home-or-tmp-2.0.0.tgz#e36c3f2d2cae7d746a857e38d18d5f32a7882db8"
@@ -7062,6 +7067,20 @@ react-native-modalbox@^1.4.1:
   dependencies:
     create-react-class "^15.6.0"
     prop-types "^15.5.10"
+
+react-native-popover-view@^1.0.17:
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/react-native-popover-view/-/react-native-popover-view-1.0.17.tgz#72cbecd1f3a378e703fc7ac93f7f02c2990ca76e"
+  integrity sha512-7paPrbQ3IsWkfS8XfypVV9NZ7LdpfgzuqDE3KysvtkXx8qBEwKfm3/knJiGjjHPqs6eUcfudoBylL+bl5p1cww==
+  dependencies:
+    react-native-safe-area-view "^0.10.0"
+
+react-native-safe-area-view@^0.10.0:
+  version "0.10.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.10.0.tgz#e8e9228d22698c0f82ad1202d24a4e4977260489"
+  integrity sha512-Y70uGBxfB5E+ipf4QInBynSQbuWdCtC1roJqrW9HGwYCTMLy6+ZxyOxMTe07N9jXlPX+FKzxeoEK9k8U2Zi4Sw==
+  dependencies:
+    hoist-non-react-statics "^2.3.1"
 
 react-native-tab-view@^0.0.67:
   version "0.0.67"

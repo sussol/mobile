@@ -55,6 +55,7 @@
     "react-native-generic-table-page": "^0.3.0",
     "react-native-localization": "^0.1.30",
     "react-native-modalbox": "^1.4.1",
+    "react-native-popover-view": "^1.0.17",
     "react-native-ui-components": "^0.5.0",
     "react-native-vector-icons": "^6.2.0",
     "react-navigation": "^1.0.0-beta.11",
