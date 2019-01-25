@@ -1,29 +1,67 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, TouchableHighlight, Text } from 'react-native';
 import { Badge } from 'react-native-elements';
 import { SUSSOL_ORANGE } from '../globalStyles';
+import Popover from 'react-native-popover-view';
 
-export function BadgeSet(props) {
-  const {
-    MainElement,
-    finalizeValue,
-  } = props;
+export class BadgeSet extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isVisible: false,
+      buttonRect: {},
+    };
+  }
 
-  const finalizeTxt = (finalizeValue > 99) ? '99+' : finalizeValue;
-  return (
-    <View style={{ position: 'relative' }}>
-    {MainElement}
-    {(finalizeValue !== 0) && (
-      <Badge
-        value={finalizeTxt}
-        wrapperStyle={[localStyles.badgeWrapper, localStyles.finalize]}
-        containerStyle={localStyles.finalizeContainer}
-        textStyle={localStyles.badgeFont}
-      />
-    )}
-    </View>
-  );
+  showPopover() {
+    this.refs.button.measure((ox, oy, width, height, px, py) => {
+      this.setState({
+        isVisible: true,
+        buttonRect: { x: px, y: py, width: width, height: height },
+      });
+    });
+  }
+
+  closePopover() {
+    this.setState({ isVisible: false });
+  }
+
+  render() {
+    const {
+      MainElement,
+      finalizeValue,
+    } = this.props;
+
+    const finalizeTxt = (finalizeValue > 99) ? '99+' : finalizeValue;
+    return (
+      <View style={{ position: 'relative' }}>
+      {MainElement}
+      {(finalizeValue !== 0) && (
+        <View>
+          <TouchableHighlight ref="button" style={localStyles.touchPlaceholder} onPress={() => this.showPopover()}>
+            <Badge
+              value={finalizeTxt}
+              wrapperStyle={[localStyles.badgeWrapper, localStyles.finalize]}
+              containerStyle={localStyles.finalizeContainer}
+              textStyle={localStyles.badgeFont}
+            />
+          </TouchableHighlight>
+          <Popover
+            isVisible={this.state.isVisible}
+            fromRect={this.state.buttonRect}
+            onClose={() => this.closePopover()}
+            popoverStyle={{ padding: 10, backgroundColor: SUSSOL_ORANGE }}
+            arrowStyle={{ backgroundColor: SUSSOL_ORANGE }}
+            showBackground={false}
+          >
+            <Text style={{ color: '#FFF', fontSize: 10 }}>{finalizeTxt} Not Finalized</Text>
+          </Popover>
+        </View>
+      )}
+      </View>
+    );
+  }
 }
 
 BadgeSet.propTypes = {
@@ -38,10 +76,15 @@ BadgeSet.defaultProps = {
 
 const localStyles = StyleSheet.create({
   badgeWrapper: {
-    position: 'absolute',
-    top: 0,
-    right: 8,
     width: 45,
+  },
+  touchPlaceholder: {
+    borderRadius: 10,
+    position: 'absolute',
+    top: -80,
+    right: 8,
+    backgroundColor: '#FFF',
+    borderColor: '#FFF',
   },
   badgeFont: {
     fontSize: 10,
