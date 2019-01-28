@@ -9,6 +9,9 @@ import LocalizedStrings from 'react-native-localization';
 
 export const generalStrings = new LocalizedStrings({
   gb: {
+    submit: 'Submit',
+    submitting: 'Submitting...',
+    submitted: 'Submitted',
     stocktake: 'Stocktake',
     start_typing_to_search: 'Start typing to search',
   },

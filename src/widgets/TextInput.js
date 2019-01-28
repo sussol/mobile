@@ -9,6 +9,7 @@ import {
   View,
   StyleSheet,
   TextInput as RNTextInput,
+  ViewPropTypes,
 } from 'react-native';
 
 /**
@@ -31,7 +32,7 @@ export function TextInput(props) {
 
 TextInput.propTypes = {
   ...RNTextInput.propTypes,
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
   textStyle: RNTextInput.propTypes.style,
 };
 

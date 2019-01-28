@@ -31,7 +31,7 @@ As an open source software project, we welcome contributions from external devel
 5. Set up your development environment using [our instructions](https://github.com/sussol/mobile/wiki/Setup)
 6. Code
 7. Make a pull request ensuring you have
-  * Made it to the approach branch
+  * Made it to the appropriate branch
   * Adhered to our conventions/style
   * Respected module boundaries
   * Tested that your additions work and haven't caused regressions

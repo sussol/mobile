@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   View,
+  ViewPropTypes,
 } from 'react-native';
 
 import { SyncIcon } from './SyncIcon';
@@ -54,7 +55,7 @@ export function SyncState(props) {
 SyncState.propTypes = {
   state: PropTypes.object.isRequired,
   showText: PropTypes.bool,
-  style: View.propTypes.style,
+  style: ViewPropTypes.style,
 };
 SyncState.defaultProps = {
   showText: true,

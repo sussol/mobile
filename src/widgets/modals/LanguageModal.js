@@ -78,7 +78,7 @@ export class LanguageModal extends React.Component {
     const {
       isOpen,
       onClose,
-      ...modalProps,
+      ...modalProps
     } = this.props;
 
     const numberOfRows = Math.min(Object.keys(LANGUAGE_KEYS).length, 10);

@@ -5,7 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, Keyboard, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, Keyboard, StyleSheet, Text, TouchableOpacity, View, ViewPropTypes } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { OnePressButton } from '../';
 import Modal from 'react-native-modalbox';
@@ -50,12 +50,12 @@ export function ConfirmModal(props) {
 }
 
 ConfirmModal.propTypes = {
-  style: View.propTypes.style,
-  buttonContainerStyle: View.propTypes.style,
+  style: ViewPropTypes.style,
+  buttonContainerStyle: ViewPropTypes.style,
   buttonTextStyle: Text.propTypes.style,
-  cancelButtonStyle: View.propTypes.style,
+  cancelButtonStyle: ViewPropTypes.style,
   cancelText: PropTypes.string,
-  confirmButtonStyle: View.propTypes.style,
+  confirmButtonStyle: ViewPropTypes.style,
   confirmText: PropTypes.string,
   textStyle: Text.propTypes.style,
   isOpen: PropTypes.bool.isRequired,
