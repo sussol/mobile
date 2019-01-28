@@ -63,6 +63,12 @@ export class MenuPage extends React.Component {
               text={navStrings.customer_requisitions}
               onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
             />
+            <Button
+              style={globalStyles.menuButton}
+              textStyle={globalStyles.menuButtonText}
+              text={'Vaccine Module'}
+              onPress={() => navigateTo('vaccineModule', 'Vaccine Module')}
+            />
           </View>
 
           <View style={[localStyles.container, localStyles.centralContainer]}>
