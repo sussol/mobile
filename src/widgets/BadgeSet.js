@@ -31,6 +31,8 @@ export class BadgeSet extends React.PureComponent {
     const {
       MainElement,
       finalizeValue,
+      mainWrapper,
+      popPlacement,
     } = this.props;
 
     const finalizeTxt = (finalizeValue > 99) ? '99+' : finalizeValue;
@@ -38,7 +40,7 @@ export class BadgeSet extends React.PureComponent {
       <View style={{ position: 'relative' }}>
       {MainElement}
       {(finalizeValue !== 0) && (
-        <View>
+        <View style={[localStyles.mainWrapper, mainWrapper]}>
           <TouchableHighlight ref="button" style={localStyles.touchPlaceholder} onPress={() => this.showPopover()}>
             <Badge
               value={finalizeTxt}
@@ -54,6 +56,7 @@ export class BadgeSet extends React.PureComponent {
             popoverStyle={{ padding: 10, backgroundColor: SUSSOL_ORANGE }}
             arrowStyle={{ backgroundColor: SUSSOL_ORANGE }}
             showBackground={false}
+            placement={popPlacement}
           >
             <Text style={{ color: '#FFF', fontSize: 10 }}>{finalizeTxt} Not Finalized</Text>
           </Popover>
@@ -67,34 +70,39 @@ export class BadgeSet extends React.PureComponent {
 BadgeSet.propTypes = {
   MainElement: PropTypes.element.isRequired,
   finalizeValue: PropTypes.number,
+  popPlacement: PropTypes.string,
 };
 
 BadgeSet.defaultProps = {
-  MainViewStyle: {},
+  MainElement: {},
   finalizeValue: 0,
+  mainWrapper: {},
+  popPlacement: 'auto',
 };
 
 const localStyles = StyleSheet.create({
-  badgeWrapper: {
-    width: 45,
+  mainWrapper: {
+    position: 'absolute',
+    top: 0,
+    right: 8,
   },
   touchPlaceholder: {
     borderRadius: 10,
-    position: 'absolute',
-    top: -80,
-    right: 8,
     backgroundColor: '#FFF',
     borderColor: '#FFF',
+  },
+  badgeWrapper: {
+    width: 45,
+  },
+  finalizeContainer: {
+    backgroundColor: SUSSOL_ORANGE,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   badgeFont: {
     fontSize: 10,
     color: '#FFF',
   },
   finalize: {
-  },
-  finalizeContainer: {
-    backgroundColor: SUSSOL_ORANGE,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
