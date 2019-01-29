@@ -6,6 +6,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { Badge } from 'react-native-elements';
+import { SUSSOL_ORANGE, BACKGROUND_COLOR } from '../../globalStyles';
 import {
   StyleSheet,
   Text,
@@ -52,16 +54,32 @@ export function ToggleBar(props) {
     const renderOutput = [];
 
     buttons.forEach((button, i) => {
+      console.log(button.badgeValue, 'about to render');
       const currentTextStyle = button.isOn ?
         [localStyles.textOnStyle, textOnStyle] :
         [localStyles.textOffStyle, textOffStyle];
       const currentToggleStyle = button.isOn ?
         [localStyles.toggleOnStyle, toggleOnStyle] :
         [localStyles.toggleOffStyle, toggleOffStyle];
+      const currentTextColor = !button.isOn ?
+        { color: '#FFF' } :
+        { color: SUSSOL_ORANGE };
+      const currentBackgroudColor = button.isOn ?
+        { backgroundColor: 'rgb(236,243,252)' } :
+        { backgroundColor: SUSSOL_ORANGE };
 
       renderOutput.push(
         <TouchableOpacity key={i} style={currentToggleStyle} onPress={button.onPress}>
+
           <Text style={currentTextStyle}>{button.text}</Text>
+          { (!button.badgeValue || button.badgeValue === 0) ? null : (
+           <Badge
+            value={button.badgeValue}
+            wrapperStyle={{ width: 45 }}
+            containerStyle={{ ...currentBackgroudColor, bottom: 17, borderColor: SUSSOL_ORANGE, borderWidth: 1, left: 57, position: 'absolute', alignItems: 'center', justifyContent: 'center' }}
+            textStyle={{ ...currentTextColor, fontSize: 10 }}
+           />
+          )}
         </TouchableOpacity>
       );
     });

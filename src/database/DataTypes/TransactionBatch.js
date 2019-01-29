@@ -98,6 +98,8 @@ TransactionBatch.schema = {
     numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
+    vvnStatus: { type: 'bool', optional: true, default: null },
+    location: { type: 'Location', default: null },
     costPrice: 'double',
     sellPrice: 'double',
     sortIndex: { type: 'int', optional: true },

@@ -98,7 +98,6 @@ export class VaccineModuleExpansion extends React.Component {
     const data = this.props.database
       .objects('ItemBatch')
       .filtered('numberOfPacks > 0 and location.id = $0', this.props.location.id)
-      .filtered('item.locationType.id != null')
       .slice();
     this.setState({ data });
   };

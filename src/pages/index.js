@@ -12,6 +12,7 @@ import {
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
+import { Vm } from './Vm';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
 import {
   CustomerRequisitionPage,
@@ -39,14 +40,13 @@ import { VaccineModulePage } from './VaccineModulePage';
 import { VaccineBatchPage } from './VaccineBatchPage';
 export { FirstUsePage } from './FirstUsePage';
 
-
-
 export const PAGES = {
   customerInvoice: props => <PageContainer page={CustomerInvoicePage} {...props} />,
   customerInvoices: props => <PageContainer page={CustomerInvoicesPage} {...props} />,
   customerRequisition: props => <PageContainer page={CustomerRequisitionPage} {...props} />,
   customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
   menu: props => <PageContainer page={MenuPage} {...props} />,
+  vm: props => <PageContainer page={Vm} {...props} />,
   realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
   root: props => <PageContainer page={MenuPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,

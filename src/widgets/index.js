@@ -29,3 +29,5 @@ export { ToggleSelector } from './ToggleSelector';
 export { ExpiryTextInput } from './ExpiryTextInput';
 export { OnePressButton } from './OnePressButton';
 export { BadgeSet } from './BadgeSet';
+export { VVNToggle } from './VVNToggle';
+export { ReportChart } from './ReportChart';

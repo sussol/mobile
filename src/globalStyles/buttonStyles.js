@@ -36,6 +36,9 @@ export const buttonStyles = {
   leftButton: {
     marginRight: 10,
   },
+  bottomButton: {
+    marginTop: 10,
+  },
   menuButtonText: {
     fontFamily: APP_FONT_FAMILY,
     fontSize: 17,

@@ -92,7 +92,7 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={'Vaccine Module'}
-              onPress={() => navigateTo('vaccineModule', 'Vaccine Module')}
+              onPress={() => navigateTo('vm', 'Vaccine Module')}
             />
           </View>
 

@@ -5,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import {
   formatDate,
   parsePositiveInteger,
@@ -22,7 +23,10 @@ import {
   PageInfo,
   TextEditor,
   ExpiryTextInput,
+  ToggleBar,
+  VVNToggle,
 } from '../widgets';
+import { ItemBatch } from '../database/DataTypes/index';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 
@@ -49,11 +53,15 @@ export class SupplierInvoicePage extends React.Component {
       isAscending: true,
     };
     this.state = {
+      showOtherItems: true,
       modalKey: null,
       modalIsOpen: false,
       selection: [],
+      vaccineQuantity: 0,
+      otherItemQuantity: 0,
     };
   }
+  onToggleStatusFilter = showOtherItems => this.setState({ showOtherItems: showOtherItems }, this.refreshData);
 
   // Delete transaction batch then delete transactionItem if no more
   // transaction batches
@@ -90,6 +98,13 @@ export class SupplierInvoicePage extends React.Component {
           transactionBatch.expiryDate = newValue;
           break;
         default:
+        case 'vvnStatus':
+          transactionBatch.vvnStatus = newValue;
+          break;
+        case 'fridge':
+          transactionBatch.location = newValue;
+          transactionBatch.itemBatch.location = newValue;
+          this.closeModal(this.refreshData);
           break;
       }
       database.save('TransactionBatch', transactionBatch);
@@ -123,16 +138,23 @@ export class SupplierInvoicePage extends React.Component {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const { database, transaction } = this.props;
-    const transactionBatches = transaction
-      .getTransactionBatches(database)
-      .filtered('itemName BEGINSWITH[c] $0', searchTerm);
+    const allTransactionBatches = transaction.getTransactionBatches(database);
+
+    const transactionBatches = allTransactionBatches
+              .filtered(`itemBatch.item.category.name ${this.state.showOtherItems ? '!=' : '='} $0`, 'Vaccine')
+              .filtered('itemName BEGINSWITH[c] $0', searchTerm);
 
     const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
+    const vaccineQuantity = allTransactionBatches.filtered('itemBatch.item.category.name = $0', 'Vaccine').length;
+    const otherItemQuantity = allTransactionBatches.length - vaccineQuantity;
 
     this.setState({
       data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
+      otherItemQuantity,
+      vaccineQuantity,
     });
   }
+
 
   addNewLine = (item) => {
     const { database, transaction } = this.props;
@@ -146,12 +168,13 @@ export class SupplierInvoicePage extends React.Component {
       );
     });
   }
-
+  
   openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
 
-  closeModal = () => this.setState({ modalIsOpen: false });
+  closeModal = (method) => this.setState({ modalIsOpen: false }, () => method && method());
 
   openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
+  openFridgeSelection = () => this.openModal('fridgeSelector');
 
   openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
@@ -219,6 +242,30 @@ export class SupplierInvoicePage extends React.Component {
           />
         );
       }
+      case 'fridge': {
+        return (
+          <PageButton
+            key={transactionBatch.id}
+            style={{ margin: 3, padding: 6, width: 'auto', height: 'auto' }}
+            text={`» ${transactionBatch.location ? transactionBatch.location.name : 'Select'}`}
+            onPress={() => {
+              this.selectedBatch = transactionBatch;
+              this.openFridgeSelection();
+            }}
+            isDisabled={this.props.transaction.isFinalised}
+          />
+        );
+      }
+      case 'vvnStatus': {
+        return (
+          <VVNToggle
+            key={transactionBatch.id}
+            onEndEditing={(newValue) => this.onEndEditing(key, transactionBatch, newValue)}
+            status={transactionBatch[key]}
+            isDisabled={this.props.transaction.isFinalised}
+          />
+        );
+      }
       case 'remove':
         return {
           type: 'checkable',
@@ -236,7 +283,7 @@ export class SupplierInvoicePage extends React.Component {
       case ITEM_SELECT:
         return (
           <AutocompleteSelector
-            options={database.objects('Item')}
+            options={database.objects('Item').filtered(`category.name ${this.state.showOtherItems ? '!=' : '='} $0`, 'Vaccine')}
             queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
             queryStringSecondary={'name CONTAINS[c] $0'}
             sortByString={'name'}
@@ -249,6 +296,17 @@ export class SupplierInvoicePage extends React.Component {
             renderRightText={item => `${item.totalQuantity}`}
           />
         );
+      case 'fridgeSelector':
+        return (
+          <AutocompleteSelector
+              options={database.objects('Location')}
+              queryString={'name BEGINSWITH[c] $0'}
+              queryStringSecondary={'name CONTAINS[c] $0'}
+              sortByString={'name'}
+              onSelect={(fridge) => this.onEndEditing('fridge', this.selectedBatch, fridge)}
+              renderLeftText={fridge => `${fridge.name}`}
+          />
+          );
       case COMMENT_EDIT:
         return (
           <TextEditor
@@ -283,12 +341,38 @@ export class SupplierInvoicePage extends React.Component {
   }
 
   renderAddBatchButton = () => (
-    <PageButton
-      style={globalStyles.topButton}
-      text={buttonStrings.new_line}
-      onPress={this.openItemSelector}
-      isDisabled={this.props.transaction.isFinalised}
-    />
+
+    <View style={globalStyles.verticalContainer}>
+      <ToggleBar
+        style={globalStyles.toggleBar}
+        textOffStyle={globalStyles.toggleText}
+        textOnStyle={globalStyles.toggleTextSelected}
+        toggleOffStyle={globalStyles.toggleOption}
+        toggleOnStyle={globalStyles.toggleOptionSelected}
+        toggles={[
+          {
+            text: 'All Other Items',
+            onPress: () => this.onToggleStatusFilter(true),
+            isOn: this.state.showOtherItems,
+            badgeValue: this.state.otherItemQuantity,
+          },
+          {
+            text: 'Vaccines',
+            onPress: () => this.onToggleStatusFilter(false),
+            isOn: !this.state.showOtherItems,
+            badgeValue: this.state.vaccineQuantity,
+          },
+        ]}
+      />
+        <PageButton
+          style={{ marginLeft: 5, marginTop: 10 }}
+          text={buttonStrings.new_line}
+          onPress={this.openItemSelector}
+          isDisabled={this.props.transaction.isFinalised}
+        />
+
+    </View>
+
   );
 
   render() {
@@ -328,6 +412,20 @@ export class SupplierInvoicePage extends React.Component {
             title: tableStrings.batch_expiry,
             alignText: 'center',
           },
+          ...(this.state.showOtherItems ? [] : [
+            {
+              key: 'vvnStatus',
+              width: 1,
+              title: 'VVN Status',
+              alignText: 'center',
+            },
+            {
+              key: 'fridge',
+              width: 1,
+              title: 'Fridge',
+              alignText: 'center',
+            },
+          ]),
           {
             key: 'remove',
             width: 1,
@@ -361,8 +459,20 @@ export class SupplierInvoicePage extends React.Component {
   }
 }
 
-
 export function checkForFinaliseError(transaction) {
+  const allVaccineBatches = transaction.items.filtered('item.category.name == $0', 'Vaccine');
+
+  const checkVVMOnBatches = (transactionBatches) =>
+    transactionBatches.find(transactionBatch => transactionBatch.vvnStatus === null);
+
+  const hasVVMStoConfirm = allVaccineBatches.find((transactionItem) => checkVVMOnBatches(transactionItem.batches));
+  if (hasVVMStoConfirm) return 'Please confirm VVMs on all vaccines before finalising';
+
+  const checkLocationOnBatches = (transactionBatches) =>
+    transactionBatches.find(transactionBatch => transactionBatch.location === null && transactionBatch.vvnStatus);
+  const hasUnallocatedBatches = allVaccineBatches.find((transactionItem) => checkLocationOnBatches(transactionItem.batches));
+  if (hasUnallocatedBatches) return 'Please assign fridge to all vaccines';
+
   if (!transaction.isExternalSupplierInvoice) return null;
   if (transaction.items.length === 0) return modalStrings.add_at_least_one_item_before_finalising;
   if (transaction.totalQuantity === 0) return modalStrings.stock_quantity_greater_then_zero;

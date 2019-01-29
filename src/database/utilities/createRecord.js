@@ -110,12 +110,17 @@ function createInventoryAdjustment(database, user, date, isAddition) {
 function createItemBatch(database, item, batchString) {
   // Handle cross reference items
   const realItem = item.realItem;
+  let location = null;
+  if (item.category && item.category.name === 'Vaccine' && database.objects('Location').length > 0) {
+    location = database.objects('Location')[0];
+  }
   const itemBatch = database.create('ItemBatch', {
     id: generateUUID(),
     item: realItem,
     batch: batchString,
     packSize: 1,
     numberOfPacks: 0,
+    location,
     costPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
     sellPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
   });
@@ -235,6 +240,7 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
     itemId: item.id,
     itemName: item.name,
     itemBatch: itemBatch,
+    location: itemBatch.location,
     batch: batch,
     expiryDate: expiryDate,
     packSize: packSize,

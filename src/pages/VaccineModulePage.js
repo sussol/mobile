@@ -170,8 +170,8 @@ export class VaccineModulePage extends React.Component {
         const itemBatchSelection = this.props.database
           .objects('ItemBatch')
           .filtered(
-            'item.locationType.id != null and numberOfPacks > 0 and location.id != $0',
-            this.expandedLocation.id,
+            'item.category.name == $0',
+            'Vaccine',
           );
 
         return (

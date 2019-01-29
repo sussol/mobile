@@ -1,0 +1,68 @@
+<VictoryChart width={this.state.width} height={this.state.height}>
+                <VictoryLine 
+           
+                   domain={[2,10]}
+                    style={{
+                        
+                        data: {
+                          stroke: 'rgb(103, 172, 91)', 
+                        },
+                        labels: { fontSize: 6, stroke: 'rgb(103, 172, 91)' },
+                      }}
+                    interpolation={"cardinal"}
+                    data={[
+                    { x: '7', y: 5 },
+                    { x: '8', y: 4 },
+                    { x: '9', y: 4.5 },
+                    { x: '10', y: 4 },
+                    { x: '11', y: 5 },
+                    { x: '12', y: 6 },
+                    { x: '13', y: null },
+                    { x: '14', y: null },
+                    { x: '15', y: null },
+                    { x: '16', y: 6 },
+                    { x: '17', y: 5 },
+                    { x: '18', y: 4.5 },
+                    { x: '19', y: 5.5 },
+                    { x: '20', y: 5.5 },
+                    { x: '21', y: 4.5 },
+                    { x: '22', y: 5 },
+                    ]}
+            
+                />
+         
+                <VictoryLine
+                     domain={[2,10]}
+                    animate={{ duration: 1500 }}
+                    style={{
+                       
+                        data: {
+                          stroke: 'red',
+                          
+                        },
+                        labels: { fontSize: 6, stroke: 'rgb(103, 172, 91)' },
+                      }}
+                    interpolation={"cardinal"}
+                    data={[
+                    { x: '7', y: null },
+                    { x: '8', y: null },
+                    { x: '9', y: null },
+                    { x: '10', y: null },
+                    { x: '11', y: null },
+                    { x: '12', y: 6 },
+                    { x: '13', y: 7.5 },
+                    { x: '14', y: 8 },
+                    { x: '15', y: 9 },
+                    { x: '16', y: 6 },
+                    { x: '17', y: null },
+                    { x: '18', y: null },
+                    { x: '19', y: null },
+                    { x: '20', y: null },
+                    { x: '21', y: null },
+                    { x: '22', y: null },
+                    ]}
+                />
+         
+                {this.renderXAxis()}
+                {this.renderYAxis()}
+        </VictoryChart>
