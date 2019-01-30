@@ -114,7 +114,7 @@ export class Transaction extends Realm.Object {
       this.otherParty.masterLists.forEach(masterList => {
         const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
         itemsToAdd.forEach(masterListItem => {
-          if (!masterListItem.item.crossReferenceItem) {
+          if (!masterListItem.item.crossReferenceItem && masterListItem.item.isVisible) {
             // Don't add cross reference items or we'll get duplicates
             createRecord(database, 'TransactionItem', this, masterListItem.item);
           }
