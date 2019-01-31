@@ -47,6 +47,7 @@ export function integrateRecord(database, settings, syncRecord) {
       break;
     case 'merge':
       mergeRecords(database, settings, internalRecordType, syncRecord);
+      break;
     default:
   }
 }
