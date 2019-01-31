@@ -38,7 +38,7 @@ export class Item extends Realm.Object {
   get addedDate() {
     if (this.batches.length === 0) return undefined;
     let itemAddedDate = new Date();
-    this.batches.forEach(batch => {
+    this.batches.forEach((batch) => {
       const batchAddedDate = batch.addedDate;
       itemAddedDate = batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
     });
@@ -51,11 +51,11 @@ export class Item extends Realm.Object {
     // If no batches found with totalQuantity > 0, return null
     if (!earliestBatch) return null;
 
-    this.batches.forEach(batch => {
+    this.batches.forEach((batch) => {
       if (
-        batch.totalQuantity > 0 &&
-        batch.expiryDate &&
-        (!earliestBatch.expiryDate || batch.expiryDate < earliestBatch.expiryDate)
+        batch.totalQuantity > 0
+        && batch.expiryDate
+        && (!earliestBatch.expiryDate || batch.expiryDate < earliestBatch.expiryDate)
       ) {
         earliestBatch = batch;
       }
@@ -89,7 +89,7 @@ export class Item extends Realm.Object {
   totalUsageForPeriod(startDate, endDate) {
     return this.batches.reduce(
       (total, batch) => total + batch.totalUsageForPeriod(startDate, endDate),
-      0
+      0,
     );
   }
 

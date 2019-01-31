@@ -11,9 +11,7 @@ export class Stocktake extends Realm.Object {
 
   // Adds a StocktakeBatch, incorporating it into a matching StocktakeItem.
   addBatchIfUnique(database, stocktakeBatch) {
-    addBatchToParent(stocktakeBatch, this, () =>
-      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
-    );
+    addBatchToParent(stocktakeBatch, this, () => createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item));
   }
 
   /**
@@ -28,13 +26,13 @@ export class Stocktake extends Realm.Object {
 
     // Delete any stocktake items that aren't in the new array of ids
     const itemsToRemove = complement(this.items,
-      itemIds.map((itemId) => ({ itemId: itemId })),
-      (stocktakeItem) => stocktakeItem.itemId);
+      itemIds.map(itemId => ({ itemId: itemId })),
+      stocktakeItem => stocktakeItem.itemId);
     if (itemsToRemove && itemsToRemove.length > 0) database.delete('StocktakeItem', itemsToRemove);
 
     // Add a new StocktakeItem for each new item id not currently in the stocktake
     const itemIdsToAdd = complement(itemIds,
-      this.items.map((stocktakeItem) => stocktakeItem.itemId));
+      this.items.map(stocktakeItem => stocktakeItem.itemId));
     const items = database.objects('Item');
     itemIdsToAdd.forEach((itemId) => {
       // Find the matching database item and use it to create a stocktake item
@@ -42,8 +40,7 @@ export class Stocktake extends Realm.Object {
       const stocktakeItem = createRecord(database, 'StocktakeItem', this, item);
 
       // Add all item batches currently in stock to the stocktake item as stocktake batches
-      item.batchesWithStock.forEach((itemBatch) =>
-        createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch));
+      item.batchesWithStock.forEach(itemBatch => createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch));
     });
   }
 
@@ -89,7 +86,7 @@ export class Stocktake extends Realm.Object {
    */
   resetStocktakeItems(database, stocktakeItems) {
     database.write(() => {
-      stocktakeItems.forEach(stocktakeItem => {
+      stocktakeItems.forEach((stocktakeItem) => {
         stocktakeItem.reset(database);
       });
     });
@@ -132,8 +129,8 @@ export class Stocktake extends Realm.Object {
     if (this.isFinalised) throw Error('Cannot finalise as stocktake already finalised');
     if (this.itemsBelowMinimum.length > 0) {
       // Last stop before making ledger problems!
-      throw Error('Attempt to finalise stocktake with ' +
-        'adjustments that make item(s) stock negative');
+      throw Error('Attempt to finalise stocktake with '
+        + 'adjustments that make item(s) stock negative');
     }
     // Set the stocktake finalise details
     this.finalisedBy = user;
@@ -153,19 +150,17 @@ export class Stocktake extends Realm.Object {
    */
   adjustInventory(database) {
     // Prune all StocktakeItems with no quantity change
-    database.delete('StocktakeItem', this.items.filter(stocktakeItem =>
-      !stocktakeItem.hasCountedBatches));
+    database.delete('StocktakeItem', this.items.filter(stocktakeItem => !stocktakeItem.hasCountedBatches));
     // Get list of all StocktakeBatches associated with this stocktake
     const stocktakeBatches = database.objects('StocktakeBatch')
       .filtered('stocktake.id = $0', this.id);
     // Delete all 'fresh' StocktakeBatches that have been created by stocktake
     // but have not been changed
-    database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch =>
-      stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
+    database.delete('StocktakeBatch', stocktakeBatches.filter(stocktakeBatch => stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0));
 
     // stocktakeBatch.finalise handles optimisation based on what fields were entered
     // i.e. count/batch/expiry
-    stocktakeBatches.forEach((stocktakeBatch) => stocktakeBatch.finalise(database));
+    stocktakeBatches.forEach(stocktakeBatch => stocktakeBatch.finalise(database));
   }
 }
 

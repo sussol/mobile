@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
- /**
+/**
  * Sorts the given data according sortBy, sortDataType and isAscending.
  * @param  {Realm.results}  data          The data to sort.
  * @param  {string}         sortBy        The property of the data to sort by.

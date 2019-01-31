@@ -12,7 +12,9 @@ import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
 import { SETTINGS_KEYS } from '../settings';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, pageInfoStrings, tableStrings,
+} from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -107,12 +109,12 @@ export class SupplierRequisitionPage extends React.Component {
     });
   }
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   getThisStore = () => {
     const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
     const nameResults = this.props.database.objects('Name')
-                                           .filtered('id == $0', thisStoreNameId);
+      .filtered('id == $0', thisStoreNameId);
     if (!nameResults | nameResults.length <= 0) return null;
     return nameResults[0];
   }
@@ -144,7 +146,7 @@ export class SupplierRequisitionPage extends React.Component {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.requisition.items
-                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+      .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -162,7 +164,7 @@ export class SupplierRequisitionPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -241,9 +243,9 @@ export class SupplierRequisitionPage extends React.Component {
         return (
           <AutocompleteSelector
             options={this.props.database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            queryStringSecondary={'name CONTAINS[c] $0'}
-            sortByString={'name'}
+            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
+            queryStringSecondary="name CONTAINS[c] $0"
+            sortByString="name"
             onSelect={(item) => {
               const { database, requisition } = this.props;
               database.write(() => {
@@ -254,8 +256,8 @@ export class SupplierRequisitionPage extends React.Component {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case MONTHS_SELECT:
@@ -272,7 +274,7 @@ export class SupplierRequisitionPage extends React.Component {
             }}
             selected={this.props.requisition.monthsToSupply}
           />
-          );
+        );
       case COMMENT_EDIT:
         return (
           <TextEditor
@@ -287,7 +289,7 @@ export class SupplierRequisitionPage extends React.Component {
               this.closeModal();
             }}
           />
-          );
+        );
     }
   }
 
@@ -385,7 +387,7 @@ export class SupplierRequisitionPage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Requisition'}
+        finalisableDataType="Requisition"
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
@@ -428,7 +430,7 @@ SupplierRequisitionPage.propTypes = {
 export function checkForFinaliseError(requisition) {
   if (requisition.items.length === 0) {
     return modalStrings.add_at_least_one_item_before_finalising;
-  } else if (requisition.totalRequiredQuantity === 0) {
+  } if (requisition.totalRequiredQuantity === 0) {
     return modalStrings.record_stock_required_before_finalising;
   }
   return null;

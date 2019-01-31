@@ -4,6 +4,7 @@ export class MasterList extends Realm.Object {
   destructor(database) {
     database.delete('masterListItem', this.items);
   }
+
   addItem(masterListItem) {
     this.items.push(masterListItem);
   }

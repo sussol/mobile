@@ -34,8 +34,8 @@ export class RequisitionItem extends Realm.Object {
 
   get ourStockOnHand() {
     const linkedTransactionItem = this.linkedTransactionItem;
-    return linkedTransactionItem ?
-           linkedTransactionItem.availableQuantity : this.item.totalQuantity;
+    return linkedTransactionItem
+      ? linkedTransactionItem.availableQuantity : this.item.totalQuantity;
   }
 
   setSuppliedQuantity(database, newValue) {

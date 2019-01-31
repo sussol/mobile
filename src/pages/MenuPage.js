@@ -5,17 +5,21 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import {
+  Image, StyleSheet, Text, View,
+} from 'react-native';
 
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { SETTINGS_KEYS } from '../settings';
 
-const { SYNC_SITE_NAME } = SETTINGS_KEYS;
-
-import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
+import globalStyles, {
+  APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY,
+} from '../globalStyles';
 
 import { navStrings } from '../localization';
+
+const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 
 export class MenuPage extends React.Component {
   constructor(props) {

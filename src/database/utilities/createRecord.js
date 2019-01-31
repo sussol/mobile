@@ -191,7 +191,9 @@ function createStocktakeItem(database, stocktake, item) {
 
 // Creates a StocktakeBatch and adds it to the StocktakeItem
 function createStocktakeBatch(database, stocktakeItem, itemBatch) {
-  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+  const {
+    numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice,
+  } = itemBatch;
   const stocktakeBatch = database.create('StocktakeBatch', {
     id: generateUUID(),
     stocktake: stocktakeItem.stocktake,
@@ -229,7 +231,9 @@ function createSupplierInvoice(database, supplier, user) {
 
 // Creates a TransactionBatch and adds it to the TransactionItem
 function createTransactionBatch(database, transactionItem, itemBatch) {
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
+  const {
+    item, batch, expiryDate, packSize, costPrice, sellPrice,
+  } = itemBatch;
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
     itemId: item.id,

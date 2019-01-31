@@ -4,12 +4,14 @@
  */
 
 import React from 'react';
-import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
 import PropTypes from 'prop-types';
+import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, navStrings, tableStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -40,8 +42,7 @@ export class SupplierInvoicesPage extends React.Component {
     database.write(() => {
       const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const transaction = transactions.find(currentTransaction =>
-          currentTransaction.id === selection[i]);
+        const transaction = transactions.find(currentTransaction => currentTransaction.id === selection[i]);
         if (transaction.isValid() && !transaction.isFinalised) {
           transactionsToDelete.push(transaction);
         }
@@ -53,9 +54,9 @@ export class SupplierInvoicesPage extends React.Component {
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
-  onRowPress = (invoice) => this.navigateToInvoice(invoice);
+  onRowPress = invoice => this.navigateToInvoice(invoice);
 
   /**
    * Create new Supplier Invoice and takes user to the editing SI page
@@ -204,9 +205,9 @@ export class SupplierInvoicesPage extends React.Component {
           isOpen={this.state.isCreatingInvoice}
           options={this.props.database.objects('ExternalSupplier')}
           placeholderText={modalStrings.start_typing_to_select_supplier}
-          queryString={'name BEGINSWITH[c] $0'}
-          sortByString={'name'}
-          onSelect={name => {
+          queryString="name BEGINSWITH[c] $0"
+          sortByString="name"
+          onSelect={(name) => {
             this.onNewSupplierInvoice(name);
             this.setState({ isCreatingInvoice: false });
           }}

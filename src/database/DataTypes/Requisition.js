@@ -1,6 +1,6 @@
 import Realm from 'realm';
-import { createRecord, getTotal } from '../utilities';
 import { complement } from 'set-manipulator';
+import { createRecord, getTotal } from '../utilities';
 
 export class Requisition extends Realm.Object {
   constructor() {
@@ -70,11 +70,11 @@ export class Requisition extends Realm.Object {
     if (this.isRequest || this.isFinalised) {
       throw new Error('Cannot create invoice from Finalised or Request Requistion ');
     }
-    if (database.objects('Transaction').
-            filtered('linkedRequisition.id == $0', this.id).length > 0) return;
+    if (database.objects('Transaction')
+      .filtered('linkedRequisition.id == $0', this.id).length > 0) return;
     const transaction = createRecord(database, 'CustomerInvoice',
-                                  this.otherStoreName, user);
-    this.items.forEach(requisitionItem => {
+      this.otherStoreName, user);
+    this.items.forEach((requisitionItem) => {
       createRecord(database, 'TransactionItem', transaction, requisitionItem.item);
     });
     transaction.linkedRequisition = this;
@@ -91,9 +91,9 @@ export class Requisition extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot add items to a finalised requisition');
     thisStore.masterLists.forEach((masterList) => {
       const itemsToAdd = complement(masterList.items,
-                                    this.items,
-                                    (item) => item.itemId);
-      itemsToAdd.forEach(masterListItem => {
+        this.items,
+        item => item.itemId);
+      itemsToAdd.forEach((masterListItem) => {
         if (!masterListItem.item.crossReferenceItem) {
           // Don't add cross reference items or we'll get duplicates
           createRecord(database, 'RequisitionItem', this, masterListItem.item);
@@ -124,7 +124,7 @@ export class Requisition extends Realm.Object {
   }
 
   setRequestedToSuggested(database) {
-    this.items.forEach(requisitionItem => {
+    this.items.forEach((requisitionItem) => {
       requisitionItem.requiredQuantity = requisitionItem.suggestedQuantity;
       database.save('RequisitionItem', requisitionItem);
     });

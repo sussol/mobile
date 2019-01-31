@@ -5,10 +5,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, Keyboard, StyleSheet, Text, TouchableOpacity, View, ViewPropTypes } from 'react-native';
+import {
+  Dimensions, Keyboard, StyleSheet, Text, TouchableOpacity, View, ViewPropTypes,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { OnePressButton } from '../';
 import Modal from 'react-native-modalbox';
+import { OnePressButton } from '..';
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { modalStrings } from '../../localization';
 
@@ -16,7 +18,9 @@ export function ConfirmModal(props) {
   // On opening, dismiss the keyboard to ensure editable cells lose their focus
   // and their values become fixed (so that they save correctly)
   if (props.isOpen) Keyboard.dismiss();
-  const { style, textStyle, onCancel, onConfirm, questionText, noCancel, ...modalProps } = props;
+  const {
+    style, textStyle, onCancel, onConfirm, questionText, noCancel, ...modalProps
+  } = props;
   return (
     <Modal {...modalProps} style={style}>
       {!noCancel && onCancel && (

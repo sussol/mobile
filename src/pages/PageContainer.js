@@ -29,7 +29,9 @@ Page.propTypes = {
 };
 
 function extractPropsForPage(props) {
-  const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
+  const {
+    currentRouteName, screenProps, navigation, ...restOfProps
+  } = props;
   const { navigate, goBack, state } = navigation;
   const { params, routeName: thisPageRouteName, ...restOfNavigationState } = state;
   const isCurrentRoute = thisPageRouteName === currentRouteName;

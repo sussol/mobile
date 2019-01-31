@@ -10,7 +10,9 @@ import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, navStrings, tableStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 
@@ -50,8 +52,7 @@ export class CustomerInvoicesPage extends React.Component {
     database.write(() => {
       const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
-        const transaction = transactions.find(currentTransaction =>
-                                                currentTransaction.id === selection[i]);
+        const transaction = transactions.find(currentTransaction => currentTransaction.id === selection[i]);
         if (transaction.isValid() && !transaction.isFinalised) {
           transactionsToDelete.push(transaction);
         }
@@ -67,9 +68,9 @@ export class CustomerInvoicesPage extends React.Component {
     this.refreshData();
   }
 
-  onRowPress = (invoice) => this.navigateToInvoice(invoice);
+  onRowPress = invoice => this.navigateToInvoice(invoice);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   navigateToInvoice = (invoice) => {
     // For a customer invoice to be opened for editing in the customer invoice page, we need it to
@@ -106,7 +107,7 @@ export class CustomerInvoicesPage extends React.Component {
 
     const data = this.state.transactions.filtered(
       'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
-      searchTerm
+      searchTerm,
     );
 
     let sortDataType;
@@ -215,9 +216,9 @@ export class CustomerInvoicesPage extends React.Component {
           isOpen={this.state.isCreatingInvoice}
           options={this.props.database.objects('Customer')}
           placeholderText={modalStrings.start_typing_to_select_customer}
-          queryString={'name BEGINSWITH[c] $0'}
-          sortByString={'name'}
-          onSelect={name => {
+          queryString="name BEGINSWITH[c] $0"
+          sortByString="name"
+          onSelect={(name) => {
             this.onNewInvoice(name);
             this.setState({ isCreatingInvoice: false });
           }}

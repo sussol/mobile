@@ -92,7 +92,7 @@ export class StocktakeItem extends Realm.Object {
    */
   reset(database) {
     database.delete('StocktakeBatch', this.batches);
-    this.item.batchesWithStock.forEach(itemBatch => {
+    this.item.batchesWithStock.forEach((itemBatch) => {
       // createRecord will do save; notifying listeners
       createRecord(database, 'StocktakeBatch', this, itemBatch);
     });
@@ -120,7 +120,7 @@ export class StocktakeItem extends Realm.Object {
       // In case number is entered in Actual Quantity field, but it's the same as
       // snapshot quantity, we want to remove 'Not Counted' placeholder
       if (quantity === this.snapshotTotalQuantity) {
-        this.batches.forEach(stocktakeBatch => {
+        this.batches.forEach((stocktakeBatch) => {
           stocktakeBatch.countedTotalQuantity = stocktakeBatch.snapshotTotalQuantity;
           database.save('StocktakeBatch', stocktakeBatch);
         });
@@ -130,13 +130,13 @@ export class StocktakeItem extends Realm.Object {
       const isIncreasingQuantity = difference > 0;
       const sortedBatches = this.batches.sorted('expiryDate', isIncreasingQuantity);
 
-      sortedBatches.some(stocktakeBatch => {
+      sortedBatches.some((stocktakeBatch) => {
         const batchTotalQuantity = stocktakeBatch.countedTotalQuantity;
 
         let thisBatchChangeQuantity = 0;
         if (isIncreasingQuantity) {
-          thisBatchChangeQuantity = Math.min(stocktakeBatch.snapshotTotalQuantity -
-                                            batchTotalQuantity, difference);
+          thisBatchChangeQuantity = Math.min(stocktakeBatch.snapshotTotalQuantity
+                                            - batchTotalQuantity, difference);
 
           if (thisBatchChangeQuantity <= 0) return false;
         } else {

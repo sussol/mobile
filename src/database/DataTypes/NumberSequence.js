@@ -7,7 +7,6 @@ import { createRecord } from '../utilities';
  * used numbers back for reuse
  */
 export class NumberSequence extends Realm.Object {
-
   destructor(database) {
     database.delete('NumberToReuse', this.numbersToReuse);
   }
@@ -46,8 +45,7 @@ export class NumberSequence extends Realm.Object {
     if (numberToReuse.number > this.highestNumberUsed) {
       throw new Error(`Cannot reuse ${numberToReuse.number} as it has not been used yet`);
     }
-    if (this.numbersToReuse.find((testNumberToReuse) =>
-                                  testNumberToReuse.number === numberToReuse.number)) {
+    if (this.numbersToReuse.find(testNumberToReuse => testNumberToReuse.number === numberToReuse.number)) {
       throw new Error(`Sequence ${this.sequenceKey} already reusing ${numberToReuse.number}`);
     }
     this.numbersToReuse.push(numberToReuse);

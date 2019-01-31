@@ -10,7 +10,9 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import { BottomModal, OnePressButton, TextInput, ToggleBar } from '../widgets';
+import {
+  BottomModal, OnePressButton, TextInput, ToggleBar,
+} from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
@@ -62,7 +64,7 @@ export class StocktakeManagePage extends React.Component {
     }
   }
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   onConfirmPress = () => {
     this.props.runWithLoadingIndicator(() => {
@@ -77,9 +79,9 @@ export class StocktakeManagePage extends React.Component {
 
         stocktake.setItemsByID(database, selection);
 
-        stocktake.name = stocktakeName !== '' ?
-          stocktakeName :
-          `${generalStrings.stocktake} ${formatDateAndTime(new Date(), 'slashes')}`;
+        stocktake.name = stocktakeName !== ''
+          ? stocktakeName
+          : `${generalStrings.stocktake} ${formatDateAndTime(new Date(), 'slashes')}`;
 
         database.save('Stocktake', stocktake);
       });
@@ -141,11 +143,11 @@ export class StocktakeManagePage extends React.Component {
     data = this.items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
     data = data.sorted(sortBy, !isAscending);
     if (!showItemsWithNoStock) {
-      data = data.slice().filter((item) => item.totalQuantity !== 0);
+      data = data.slice().filter(item => item.totalQuantity !== 0);
     }
     // Populate visibleItemIds with the ids of the items in the filtered data
     this.setState({
-      visibleItemIds: data.map((item) => item.id),
+      visibleItemIds: data.map(item => item.id),
       data: data,
     });
   }
@@ -167,8 +169,8 @@ export class StocktakeManagePage extends React.Component {
       showItemsWithNoStock,
       selection,
     } = this.state;
-    const areAllItemsSelected = visibleItemIds.length > 0 &&
-                                visibleItemIds.every((id) => selection.includes(id));
+    const areAllItemsSelected = visibleItemIds.length > 0
+                                && visibleItemIds.every(id => selection.includes(id));
     return (
       <ToggleBar
         style={globalStyles.toggleBar}
@@ -241,7 +243,7 @@ export class StocktakeManagePage extends React.Component {
             placeholderTextColor="white"
             placeholder={modalStrings.give_your_stocktake_a_name}
             value={this.state.stocktakeName}
-            onChangeText={(text) => this.setState({ stocktakeName: text })}
+            onChangeText={text => this.setState({ stocktakeName: text })}
           />
           <OnePressButton
             style={[globalStyles.button, globalStyles.modalOrangeButton]}

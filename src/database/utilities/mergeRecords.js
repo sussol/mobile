@@ -73,7 +73,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
         .objects(tableToUpdate)
         .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
         .snapshot();
-      recordsToUpdate.forEach(record => {
+      recordsToUpdate.forEach((record) => {
         if (record) {
           if (typeof record[fieldSetter] === typeof Function) record[fieldSetter](recordToKeep);
           else record[fieldToUpdate] = recordToKeep;
@@ -89,7 +89,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     .objects(tableToUpdate)
     .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
     .snapshot()
-    .forEach(joinRecord => {
+    .forEach((joinRecord) => {
       const duplicateJoinRecord = database
         .objects(tableToUpdate)
         .filtered(
@@ -107,21 +107,21 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
 
   switch (internalRecordType) {
     case 'Item':
-      recordToMerge.batches.forEach(batch => {
+      recordToMerge.batches.forEach((batch) => {
         recordToKeep.addBatchIfUnique(batch);
       });
       const batch = database
         .objects('TransactionBatch')
         .filtered('itemId == $0', recordToMerge.id)
         .snapshot()
-        .forEach(batch => {
+        .forEach((batch) => {
           batch.itemId = recordToKeep.id;
         });
 
-      //createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
+      // createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
       break;
     case 'Name':
-      recordToMerge.masterLists.forEach(masterList => {
+      recordToMerge.masterLists.forEach((masterList) => {
         recordToKeep.addMasterListIfUnique(masterList);
       });
       break;

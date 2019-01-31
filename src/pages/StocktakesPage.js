@@ -10,7 +10,9 @@ import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import globalStyles from '../globalStyles';
 import { GenericPage } from './GenericPage';
 import { formatStatus } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, navStrings, tableStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -35,7 +37,7 @@ export class StocktakesPage extends React.Component {
     this.stocktakes = props.database.objects('Stocktake');
   }
 
-  onRowPress = stocktake => {
+  onRowPress = (stocktake) => {
     this.clearSelection();
     this.props.navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake: stocktake });
   };
@@ -63,8 +65,7 @@ export class StocktakesPage extends React.Component {
 
   onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
-  clearSelection = shouldRefreshData =>
-    this.setState({ selection: [] }, () => shouldRefreshData && this.refreshData());
+  clearSelection = shouldRefreshData => this.setState({ selection: [] }, () => shouldRefreshData && this.refreshData());
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // We use != null, which checks for both null or undefined (undefined coerces to null)

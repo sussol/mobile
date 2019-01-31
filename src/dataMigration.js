@@ -1,7 +1,7 @@
+import { AsyncStorage } from 'react-native';
 import packageJson from '../package.json';
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
-import { AsyncStorage } from 'react-native';
 
 const APP_VERSION_KEY = 'AppVersion';
 
@@ -32,8 +32,8 @@ export async function migrateDataToVersion(database, settings) {
     // Do any required version update data migrations
     for (const migration of dataMigrations) {
       if (
-        compareVersions(fromVersion, migration.version) < 0 &&
-        compareVersions(toVersion, migration.version) >= 0
+        compareVersions(fromVersion, migration.version) < 0
+        && compareVersions(toVersion, migration.version) >= 0
       ) {
         migration.migrate(database, settings);
       }
@@ -62,7 +62,7 @@ const dataMigrations = [
       // Assume that last SyncOut record is correct.
       const allRecords = database.objects('SyncOut').sorted('changeTime').snapshot();
       database.write(() => {
-        allRecords.forEach(record => {
+        allRecords.forEach((record) => {
           const hasDuplicates = allRecords.filtered('recordId == $0', record.id).length > 1;
           if (hasDuplicates) {
             database.delete('SyncOut', record);
@@ -76,10 +76,10 @@ const dataMigrations = [
       });
       // An ugly hack to change main supplying store from Adara to SAMES,
       // for stores that had Adara PS as Supplying Store during initial sync
-      if (settings.get(SETTINGS_KEYS.
-                       SUPPLYING_STORE_NAME_ID) === 'B1938F4FFDC2074DB5408B435ACEB198' ||
-          settings.get(SETTINGS_KEYS.
-                       SUPPLYING_STORE_ID) === '734CC3EC70283A4AABC4E645C8B1E11D') {
+      if (settings.get(SETTINGS_KEYS
+        .SUPPLYING_STORE_NAME_ID) === 'B1938F4FFDC2074DB5408B435ACEB198'
+          || settings.get(SETTINGS_KEYS
+            .SUPPLYING_STORE_ID) === '734CC3EC70283A4AABC4E645C8B1E11D') {
         settings.set(SETTINGS_KEYS.SUPPLYING_STORE_NAME_ID, 'E5D7BB38571C1F428AF397240EEB285F');
         settings.set(SETTINGS_KEYS.SUPPLYING_STORE_ID, '6CFDCD1916B098478422A489625AB9E7');
       }
@@ -91,12 +91,12 @@ const dataMigrations = [
       }
 
       const requisitions = database.objects('Requisition')
-                                   .filtered('otherStoreName == null AND type == "request"')
-                                   .snapshot();
+        .filtered('otherStoreName == null AND type == "request"')
+        .snapshot();
       database.write(() => {
         const mainSupplyingStoreName = database.getOrCreate('Name', supplyingStoreId);
 
-        requisitions.forEach(requisition => {
+        requisitions.forEach((requisition) => {
           database.update('Requisition', {
             id: requisition.id,
             otherStoreName: mainSupplyingStoreName,
@@ -130,19 +130,18 @@ const dataMigrations = [
     version: '2.1.0-rc10',
     migrate: (database) => {
       const TEMP_STATUS = 'nw';
-      const matchBatch = (batches, batchToMatch) =>
-        batches.some(batch => batch.id === batchToMatch.id);
+      const matchBatch = (batches, batchToMatch) => batches.some(batch => batch.id === batchToMatch.id);
       // It was possible to finalise stocktake twice, causing the creating of duplicate
       // TransactionBatches in inventoryAdjustement, need to clean them up to avoid ledger
       // discrepancies. (note: ) this did not affect actual ItemBatch quantity
       // const lines = all inventoryAdjustment transactionItems
       const lines = database.objects('TransactionItem')
-                            .filtered('transaction.otherParty.type == "inventory_adjustment"');
-      lines.forEach(line => {
+        .filtered('transaction.otherParty.type == "inventory_adjustment"');
+      lines.forEach((line) => {
         let batchesToDelete = [];
         const { batches } = line;
         // Add duplicated batch to batchesToDelete
-        batches.forEach(batch => {
+        batches.forEach((batch) => {
           if (!matchBatch(batchesToDelete, batch)) {
             batchesToDelete = [
               ...batchesToDelete,

@@ -1,6 +1,7 @@
 import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
+
 const {
   SUPPLYING_STORE_ID,
   SUPPLYING_STORE_NAME_ID,

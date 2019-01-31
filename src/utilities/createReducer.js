@@ -4,6 +4,7 @@
  */
 
 import { REHYDRATE } from 'redux-persist';
+
 export { REHYDRATE };
 
 /**
@@ -15,18 +16,17 @@ export { REHYDRATE };
 *                                   and returns the new state. Can opt in to rehydration by
 *                                   including an entry for the REHYDRATE action
 * @return {function} reducer        A redux reducer
-**/
-export const createReducer = (defaultState = {}, stateChanges = {}) =>
-    (state = defaultState, action) => {
-      const { type, payload, ...otherProps } = action;
-      // Whether passed through in 'payload' or as a series of extra props, all data for this action
-      // is passed through to state manipulator as one payload argument
-      const fullPayload = { ...payload, ...otherProps };
-      if (type && stateChanges && Object.prototype.hasOwnProperty.call(stateChanges, type)) {
-        return {
-          ...state,
-          ...stateChanges[type](fullPayload, state),
-        };
-      }
-      return state; // Action type didn't match a change or a manipulator, return original state
+* */
+export const createReducer = (defaultState = {}, stateChanges = {}) => (state = defaultState, action) => {
+  const { type, payload, ...otherProps } = action;
+  // Whether passed through in 'payload' or as a series of extra props, all data for this action
+  // is passed through to state manipulator as one payload argument
+  const fullPayload = { ...payload, ...otherProps };
+  if (type && stateChanges && Object.prototype.hasOwnProperty.call(stateChanges, type)) {
+    return {
+      ...state,
+      ...stateChanges[type](fullPayload, state),
     };
+  }
+  return state; // Action type didn't match a change or a manipulator, return original state
+};

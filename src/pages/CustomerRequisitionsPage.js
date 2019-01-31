@@ -30,7 +30,7 @@ export class CustomerRequisitionsPage extends React.Component {
     };
   }
 
-  onRowPress = (requisition) => this.navigateToRequisition(requisition);
+  onRowPress = requisition => this.navigateToRequisition(requisition);
 
   navigateToRequisition = (requisition) => {
     this.props.navigateTo(
@@ -53,8 +53,7 @@ export class CustomerRequisitionsPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data =
-        this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
+    const data = this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':

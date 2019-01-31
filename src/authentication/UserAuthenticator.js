@@ -5,12 +5,13 @@ import {
 } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
+
 const { SYNC_URL, THIS_STORE_ID } = SETTINGS_KEYS;
 
 const {
-   CONNECTION_FAILURE,
-   INVALID_PASSWORD,
- } = AUTH_ERROR_CODES;
+  CONNECTION_FAILURE,
+  INVALID_PASSWORD,
+} = AUTH_ERROR_CODES;
 
 const AUTH_ENDPOINT = '/sync/v3/user';
 const CONNECTION_TIMEOUT_PERIOD = 10 * 1000; // 10 second timeout for authenticating connection
@@ -23,7 +24,7 @@ export class UserAuthenticator {
     this.activePassword = '';
   }
 
-/**
+  /**
  * Check whether the username and password are valid, against the server
  * if internet is available, otherwise against the local cache. On successful
  * authentication, save the details in the database.
@@ -89,7 +90,7 @@ export class UserAuthenticator {
     return user;
   }
 
-/**
+  /**
  * Check that the user's details are still valid
  * @param  {function} onAuthentication A callback function expecting a user
  *                                     parameter that will be either the successfully

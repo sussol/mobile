@@ -23,6 +23,7 @@ import {
   PAGE_CONTENT_PADDING_HORIZONTAL,
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
+
 export { textStyles } from './textStyles';
 
 export { APP_FONT_FAMILY } from './fonts';

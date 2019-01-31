@@ -36,8 +36,8 @@ export class StocktakeEditExpansion extends React.Component {
           break;
         }
         case 'batch': {
-          if (!newValue || newValue === '' ||
-              newValue === `(${tableStrings.no_batch_name})`) {
+          if (!newValue || newValue === ''
+              || newValue === `(${tableStrings.no_batch_name})`) {
             stocktakeBatch.batch = '';
           } else stocktakeBatch.batch = newValue;
           break;
@@ -65,16 +65,16 @@ export class StocktakeEditExpansion extends React.Component {
       case 'batch':
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== '' ?
-                        stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
+          cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== ''
+            ? stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
           keyboardType: 'default',
         };
       case 'countedTotalQuantity': {
         const emptyCellContents = isEditable ? '' : tableStrings.not_counted;
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch.hasBeenCounted ?
-                        stocktakeBatch.countedTotalQuantity : emptyCellContents,
+          cellContents: stocktakeBatch.hasBeenCounted
+            ? stocktakeBatch.countedTotalQuantity : emptyCellContents,
           placeholder: tableStrings.not_counted,
         };
       }
@@ -195,7 +195,7 @@ StocktakeEditExpansion.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
 };
 
-const unwrapText = (text) => text.replace(/\n/g, ' ');
+const unwrapText = text => text.replace(/\n/g, ' ');
 
 const localStyles = StyleSheet.create({
   addBatchButton: {

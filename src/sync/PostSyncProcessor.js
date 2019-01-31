@@ -109,12 +109,12 @@ export class PostSyncProcessor {
     switch (recordType) {
       case 'Requisition':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForRequisition(record)
+          this.generateFunctionsForRequisition(record),
         );
         break;
       case 'Transaction':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForTransaction(record)
+          this.generateFunctionsForTransaction(record),
         );
         break;
       default:

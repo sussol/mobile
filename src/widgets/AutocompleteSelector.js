@@ -6,7 +6,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-ui-components';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  FlatList, StyleSheet, Text, TouchableOpacity, View,
+} from 'react-native';
 import { complement } from 'set-manipulator';
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { generalStrings } from '../localization';
@@ -63,10 +65,10 @@ export class AutocompleteSelector extends React.PureComponent {
           autoCapitalize="none"
           autoCorrect={false}
           autoFocus
-          color={'white'}
+          color="white"
           onChange={text => this.setState({ queryText: text })}
           placeholder={placeholderText}
-          placeholderTextColor={'white'}
+          placeholderTextColor="white"
           style={[localStyles.text, localStyles.searchBar]}
         />
         {data.length > 0 && (
@@ -106,7 +108,9 @@ AutocompleteSelector.defaultProps = {
 
 class ResultRow extends React.PureComponent {
   render() {
-    const { item, renderLeftText, renderRightText, onPress } = this.props;
+    const {
+      item, renderLeftText, renderRightText, onPress,
+    } = this.props;
     return (
       <TouchableOpacity style={localStyles.resultRow} onPress={() => onPress(item)}>
         <Text style={[localStyles.text, localStyles.itemText]}>

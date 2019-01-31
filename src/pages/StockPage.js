@@ -48,7 +48,7 @@ export class StockPage extends React.Component {
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.state.items.filtered(
       'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
-      searchTerm
+      searchTerm,
     );
     let sortDataType;
     switch (sortBy) {
@@ -68,8 +68,8 @@ export class StockPage extends React.Component {
   renderExpansion = (item) => {
     const batchInfo = item.batchesWithStock.map((ItemBatch) => {
       const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
-      const expiryInfo = ItemBatch.expiryDate ?
-        `  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)},`
+      const expiryInfo = ItemBatch.expiryDate
+        ? `  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)},`
         : '';
       const nameInfo = ItemBatch.batch ? `  ${ItemBatch.batch},` : '';
 

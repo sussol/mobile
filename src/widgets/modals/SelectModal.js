@@ -37,7 +37,7 @@ export function SelectModal(props) {
         onSelect={onSelect}
       />
     </PageContentModal>
-   );
+  );
 }
 
 SelectModal.propTypes = {

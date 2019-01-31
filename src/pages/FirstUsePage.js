@@ -44,7 +44,8 @@ export class FirstUsePage extends React.Component {
       await this.props.synchroniser.initialise(
         this.state.serverURL,
         this.state.syncSiteName,
-        this.state.syncSitePassword);
+        this.state.syncSitePassword,
+      );
       this.setState({ status: 'initialised' });
       this.props.onInitialised();
     } catch (error) {
@@ -58,19 +59,22 @@ export class FirstUsePage extends React.Component {
   }
 
   handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
+
   handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
 
   get canAttemptLogin() {
     return (
-      (this.state.status === 'uninitialised' || this.state.status === 'error') &&
-      this.state.serverURL.length > 0 &&
-      this.state.syncSiteName.length > 0 &&
-      this.state.syncSitePassword.length > 0
+      (this.state.status === 'uninitialised' || this.state.status === 'error')
+      && this.state.serverURL.length > 0
+      && this.state.syncSiteName.length > 0
+      && this.state.syncSitePassword.length > 0
     );
   }
 
   get buttonText() {
-    const { progressMessage, errorMessage, progress, total } = this.props.syncState;
+    const {
+      progressMessage, errorMessage, progress, total,
+    } = this.props.syncState;
     switch (this.state.status) {
       case 'initialising':
         return `${progressMessage}${total > 0 ? `\n${progress}/${total}` : ''}`;
@@ -100,7 +104,7 @@ export class FirstUsePage extends React.Component {
               placeholder="Primary Server URL"
               value={this.state.serverURL}
               editable={this.state.status !== 'initialising'}
-              returnKeyType={'next'}
+              returnKeyType="next"
               selectTextOnFocus
               onChangeText={(text) => {
                 this.setState({ serverURL: text, status: 'uninitialised' });
@@ -112,14 +116,14 @@ export class FirstUsePage extends React.Component {
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
-              ref={(reference) => (this.siteNameInputRef = reference)}
+              ref={reference => (this.siteNameInputRef = reference)}
               style={globalStyles.authFormTextInputStyle}
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Sync Site Name"
               value={this.state.syncSiteName}
               editable={this.state.status !== 'initialising'}
-              returnKeyType={'next'}
+              returnKeyType="next"
               selectTextOnFocus
               onChangeText={(text) => {
                 this.setState({ syncSiteName: text, status: 'uninitialised' });
@@ -131,7 +135,7 @@ export class FirstUsePage extends React.Component {
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
-              ref={(reference) => (this.passwordInputRef = reference)}
+              ref={reference => (this.passwordInputRef = reference)}
               style={globalStyles.authFormTextInputStyle}
               placeholder="Sync Site Password"
               placeholderTextColor={SUSSOL_ORANGE}
@@ -139,7 +143,7 @@ export class FirstUsePage extends React.Component {
               value={this.state.syncSitePassword}
               secureTextEntry
               editable={this.state.status !== 'initialising'}
-              returnKeyType={'done'}
+              returnKeyType="done"
               selectTextOnFocus
               onChangeText={(text) => {
                 this.setState({ syncSitePassword: text, status: 'uninitialised' });
@@ -178,7 +182,11 @@ export class FirstUsePage extends React.Component {
             />
           </View>
         </View>
-        <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
+        <Text style={globalStyles.authWindowButtonText}>
+          {' '}
+v
+          {this.state.appVersion}
+        </Text>
         <DemoUserModal
           isOpen={this.state.isDemoUserModalOpen}
           onClose={this.handleDemoModalClose}

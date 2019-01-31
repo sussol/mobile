@@ -6,7 +6,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
-import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
+import {
+  PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal,
+} from '../widgets';
 import { GenericPage } from './GenericPage';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import {
@@ -91,9 +93,13 @@ export class StocktakeEditPage extends React.Component {
         return modalStrings.edit_the_stocktake_comment;
     }
   };
+
   openModal = key => this.setState({ modalKey: key, isModalOpen: true });
+
   openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
+
   openNameEditor = () => this.openModal(MODAL_KEYS.NAME_EDIT);
+
   closeModal = () => this.setState({ isModalOpen: false });
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
@@ -162,10 +168,9 @@ export class StocktakeEditPage extends React.Component {
   renderManageStocktakeButton = () => (
     <PageButton
       text={buttonStrings.manage_stocktake}
-      onPress={() =>
-        this.props.navigateTo('stocktakeManager', navStrings.manage_stocktake, {
-          stocktake: this.props.stocktake,
-        })
+      onPress={() => this.props.navigateTo('stocktakeManager', navStrings.manage_stocktake, {
+        stocktake: this.props.stocktake,
+      })
       }
       isDisabled={this.props.stocktake.isFinalised}
     />
@@ -188,7 +193,7 @@ export class StocktakeEditPage extends React.Component {
         return (
           <TextEditor
             text={stocktake.comment}
-            onEndEditing={newComment => {
+            onEndEditing={(newComment) => {
               if (newComment !== stocktake.comment) {
                 database.write(() => {
                   stocktake.comment = newComment;
@@ -203,7 +208,7 @@ export class StocktakeEditPage extends React.Component {
         return (
           <TextEditor
             text={stocktake.name}
-            onEndEditing={newName => {
+            onEndEditing={(newName) => {
               if (newName !== stocktake.name) {
                 database.write(() => {
                   stocktake.name = newName;
@@ -293,7 +298,7 @@ export class StocktakeEditPage extends React.Component {
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         dataTypesLinked={['StocktakeBatch']}
-        finalisableDataType={'Stocktake'}
+        finalisableDataType="Stocktake"
         database={this.props.database}
         {...this.props.genericTablePageStyles}
         topRoute={this.props.topRoute}
@@ -340,8 +345,8 @@ export function checkForFinaliseError(stocktake) {
   const itemsBelowMinimum = stocktake.itemsBelowMinimum;
   if (itemsBelowMinimum.length > 0) {
     return (
-      modalStrings.following_items_reduced_more_than_available_stock +
-      formatErrorItemNames(itemsBelowMinimum)
+      modalStrings.following_items_reduced_more_than_available_stock
+      + formatErrorItemNames(itemsBelowMinimum)
     );
   }
   return null;
@@ -357,10 +362,10 @@ function formatErrorItemNames(items) {
     itemsString += truncateString(`\n${item.itemCode} - ${item.itemName}`, MAX_ITEM_STRING_LENGTH);
   });
   if (items.length > MAX_ITEMS_IN_ERROR_MESSAGE) {
-    itemsString +=
-      `\n${modalStrings.and} ` +
-      `${items.length - MAX_ITEMS_IN_ERROR_MESSAGE} ` +
-      `${modalStrings.more}.`;
+    itemsString
+      += `\n${modalStrings.and} `
+      + `${items.length - MAX_ITEMS_IN_ERROR_MESSAGE} `
+      + `${modalStrings.more}.`;
   }
   return itemsString;
 }

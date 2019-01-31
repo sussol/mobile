@@ -1,12 +1,12 @@
-jest.unmock('../ConfirmModal');
-jest.unmock('enzyme');
-jest.unmock('sinon');
-
-import { ConfirmModal } from '../ConfirmModal';
 import React from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 import { Button } from 'react-native-ui-components';
+import { ConfirmModal } from '../ConfirmModal';
+
+jest.unmock('../ConfirmModal');
+jest.unmock('enzyme');
+jest.unmock('sinon');
 
 describe('ConfirmModal', () => {
   let cancelCallBack;
@@ -19,12 +19,10 @@ describe('ConfirmModal', () => {
     wrapper = shallow(
       <ConfirmModal
         isOpen
-        questionText = {
-          'This is a test?'
-        }
-        onCancel={ cancelCallBack }
-        onConfirm={ confirmCallBack }
-      />
+        questionText="This is a test?"
+        onCancel={cancelCallBack}
+        onConfirm={confirmCallBack}
+      />,
     );
   });
 

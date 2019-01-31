@@ -5,14 +5,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  Image, StyleSheet, Text, TextInput, View,
+} from 'react-native';
 import { Button } from 'react-native-ui-components';
-import { LanguageModal } from './LanguageModal';
 import Modal from 'react-native-modalbox';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { LanguageModal } from './LanguageModal';
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 import { authStrings, navStrings } from '../../localization';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -74,9 +76,9 @@ export class LoginModal extends React.Component {
 
   get canAttemptLogin() {
     return (
-      this.state.authStatus === 'unauthenticated' &&
-      this.state.username.length > 0 &&
-      this.state.password.length > 0
+      this.state.authStatus === 'unauthenticated'
+      && this.state.username.length > 0
+      && this.state.password.length > 0
     );
   }
 
@@ -125,9 +127,9 @@ export class LoginModal extends React.Component {
                   underlineColorAndroid={SUSSOL_ORANGE}
                   value={this.state.username}
                   editable={this.state.authStatus !== 'authenticating'}
-                  returnKeyType={'next'}
+                  returnKeyType="next"
                   selectTextOnFocus
-                  onChangeText={text => {
+                  onChangeText={(text) => {
                     this.setState({ username: text, authStatus: 'unauthenticated' });
                   }}
                   onSubmitEditing={() => {
@@ -145,9 +147,9 @@ export class LoginModal extends React.Component {
                   value={this.state.password}
                   secureTextEntry
                   editable={this.state.authStatus !== 'authenticating'}
-                  returnKeyType={'done'}
+                  returnKeyType="done"
                   selectTextOnFocus
-                  onChangeText={text => {
+                  onChangeText={(text) => {
                     this.setState({ password: text, authStatus: 'unauthenticated' });
                   }}
                   onSubmitEditing={() => {
@@ -180,7 +182,11 @@ export class LoginModal extends React.Component {
             >
               <Text style={globalStyles.authWindowButtonText}>{navStrings.language}</Text>
             </Icon.Button>
-            <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
+            <Text style={globalStyles.authWindowButtonText}>
+              {' '}
+v
+              {this.state.appVersion}
+            </Text>
           </View>
           <LanguageModal
             isOpen={this.state.isLanguageModalOpen}

@@ -5,7 +5,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet, Text, TouchableOpacity, View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { BottomModal } from './BottomModal';
@@ -27,7 +29,9 @@ export class PageContentModal extends React.Component {
   }
 
   render() {
-    const { onClose, title, style, ...modalProps } = this.props;
+    const {
+      onClose, title, style, ...modalProps
+    } = this.props;
 
     // Title bar is a flex row that renders the title if available and the close
     // button. Title should be top center. A View to the left of it achieves

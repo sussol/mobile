@@ -43,8 +43,7 @@ export class GenericPage extends React.Component {
   // that a page subscribes to listen to or if record is finalised
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     // For sync we may want to listen to different data sources
-    const dataTypesArray =
-      causedBy === 'sync' ? this.props.dataTypesSynchronised : this.props.dataTypesLinked;
+    const dataTypesArray = causedBy === 'sync' ? this.props.dataTypesSynchronised : this.props.dataTypesLinked;
     // Below is a little hack to make sure that refreshData isn't triggered on every
     // database event in a given write I.e. finalising a big invoice would refresh and
     // re-render a table for every line saved/updated/deleted, slowing the app down
@@ -56,8 +55,8 @@ export class GenericPage extends React.Component {
     // So it'll ignore all the business in a big finalisation but notify at the end
     // When updating the parent (i.e. the finalised stocktake/transaction/requisition is updated)
     if (
-      (!isLoading && dataTypesArray && dataTypesArray.includes(recordType)) ||
-      (recordType === this.props.finalisableDataType && record.isFinalised)
+      (!isLoading && dataTypesArray && dataTypesArray.includes(recordType))
+      || (recordType === this.props.finalisableDataType && record.isFinalised)
     ) {
       this.props.refreshData();
     }

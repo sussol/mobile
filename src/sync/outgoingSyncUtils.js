@@ -13,8 +13,11 @@ import {
 } from './syncTranslators';
 
 import { SETTINGS_KEYS } from '../settings';
-const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
 import { CHANGE_TYPES } from '../database';
+
+const {
+  SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME,
+} = SETTINGS_KEYS;
 
 const bugsnagClient = new BugsnagClient();
 
@@ -72,10 +75,9 @@ export function generateSyncJson(database, settings, syncOutRecord) {
       const originalMessage = error.message;
 
       // Change error message to be helpful in bugsnag
-      error.message =
-        `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
-        `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, ` +
-        `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
+      error.message = `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, `
+        + `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, `
+        + `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
 
       // Ping the error off to bugsnag
       bugsnagClient.notify(error);
@@ -281,7 +283,7 @@ function safeGet(record, path) {
       error.canDeleteSyncOut = true; // safe to delete syncOut
       error.message = `Error on object getter on path "${currentPath}", original message: ${
         error.message
-        }`;
+      }`;
       throw error; // Pass error up to next handler
     }
   }

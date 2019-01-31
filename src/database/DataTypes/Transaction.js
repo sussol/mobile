@@ -1,4 +1,5 @@
 import Realm from 'realm';
+import { complement } from 'set-manipulator';
 import {
   addBatchToParent,
   createRecord,
@@ -6,7 +7,6 @@ import {
   reuseNumber as reuseSerialNumber,
 } from '../utilities';
 import { NUMBER_SEQUENCE_KEYS } from '../index';
-import { complement } from 'set-manipulator';
 
 export class Transaction extends Realm.Object {
   constructor() {
@@ -111,9 +111,9 @@ export class Transaction extends Realm.Object {
     if (!this.isCustomerInvoice) throw new Error(`Cannot add master lists to ${this.type}`);
     if (this.isFinalised) throw new Error('Cannot add items to a finalised transaction');
     if (this.otherParty) {
-      this.otherParty.masterLists.forEach(masterList => {
+      this.otherParty.masterLists.forEach((masterList) => {
         const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
-        itemsToAdd.forEach(masterListItem => {
+        itemsToAdd.forEach((masterListItem) => {
           if (!masterListItem.item.crossReferenceItem && masterListItem.item.isVisible) {
             // Don't add cross reference items or we'll get duplicates
             createRecord(database, 'TransactionItem', this, masterListItem.item);
@@ -151,7 +151,7 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot modify finalised transaction');
     const transactionBatches = this.getTransactionBatches(database);
     const transactionBatchesToDelete = [];
-    transactionBatchIds.forEach(transactionBatchId => {
+    transactionBatchIds.forEach((transactionBatchId) => {
       const transactionBatch = transactionBatches.find(
         matchTransactionBatch => matchTransactionBatch.id === transactionBatchId,
       );
@@ -178,9 +178,7 @@ export class Transaction extends Realm.Object {
    * @param {object} transactionBatch The TransactionBatch to add to this Transaction
    */
   addBatchIfUnique(database, transactionBatch) {
-    addBatchToParent(transactionBatch, this, () =>
-      createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item),
-    );
+    addBatchToParent(transactionBatch, this, () => createRecord(database, 'TransactionItem', this, transactionBatch.itemBatch.item));
   }
 
   /**
@@ -203,7 +201,7 @@ export class Transaction extends Realm.Object {
    */
   pruneBatchlessTransactionItems(database) {
     const itemsToRemove = [];
-    this.items.forEach(transactionItem => {
+    this.items.forEach((transactionItem) => {
       if (transactionItem.batches.length === 0) {
         itemsToRemove.push(transactionItem);
       }
@@ -232,7 +230,7 @@ export class Transaction extends Realm.Object {
     if (this.isFinalised) throw new Error('Cannot confirm as transaction is already finalised');
     const isIncomingInvoice = this.isIncoming;
 
-    this.getTransactionBatches(database).forEach(transactionBatch => {
+    this.getTransactionBatches(database).forEach((transactionBatch) => {
       const {
         itemBatch,
         batch,

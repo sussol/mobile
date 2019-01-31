@@ -13,7 +13,9 @@ import {
 import { createRecord } from '../database';
 import { GenericPage } from './GenericPage';
 import globalStyles, { dataTableStyles } from '../globalStyles';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, pageInfoStrings, tableStrings,
+} from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -68,7 +70,7 @@ export class SupplierInvoicePage extends React.Component {
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   /**
    * Respond to the user editing fields
@@ -142,12 +144,12 @@ export class SupplierInvoicePage extends React.Component {
         database,
         'TransactionBatch',
         transactionItem,
-        createRecord(database, 'ItemBatch', item, '')
+        createRecord(database, 'ItemBatch', item, ''),
       );
     });
   }
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -213,7 +215,7 @@ export class SupplierInvoicePage extends React.Component {
           <ExpiryTextInput
             key={transactionBatch.id}
             isEditable={isEditable}
-            onEndEditing={(newValue) => this.onEndEditing(key, transactionBatch, newValue)}
+            onEndEditing={newValue => this.onEndEditing(key, transactionBatch, newValue)}
             text={transactionBatch[key]}
             style={dataTableStyles.text}
           />
@@ -237,10 +239,10 @@ export class SupplierInvoicePage extends React.Component {
         return (
           <AutocompleteSelector
             options={database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            queryStringSecondary={'name CONTAINS[c] $0'}
-            sortByString={'name'}
-            onSelect={item => {
+            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
+            queryStringSecondary="name CONTAINS[c] $0"
+            sortByString="name"
+            onSelect={(item) => {
               this.addNewLine(item);
               this.refreshData();
               this.closeModal();
@@ -253,7 +255,7 @@ export class SupplierInvoicePage extends React.Component {
         return (
           <TextEditor
             text={transaction.comment}
-            onEndEditing={newComment => {
+            onEndEditing={(newComment) => {
               if (newComment !== transaction.comment) {
                 database.write(() => {
                   transaction.comment = newComment;
@@ -268,7 +270,7 @@ export class SupplierInvoicePage extends React.Component {
         return (
           <TextEditor
             text={transaction.theirRef}
-            onEndEditing={newTheirRef => {
+            onEndEditing={(newTheirRef) => {
               if (newTheirRef !== transaction.theirRef) {
                 database.write(() => {
                   transaction.theirRef = newTheirRef;
@@ -336,7 +338,7 @@ export class SupplierInvoicePage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Transaction'}
+        finalisableDataType="Transaction"
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}

@@ -100,7 +100,7 @@ export class LanguageModal extends React.Component {
           />
         </View>
       </PageContentModal>
-     );
+    );
   }
 }
 

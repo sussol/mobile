@@ -16,6 +16,7 @@ import {
 import { connect } from 'react-redux';
 import { addNavigationHelpers } from 'react-navigation';
 
+import { Scheduler } from 'sussol-utilities';
 import globalStyles, {
   dataTableColors,
   dataTableStyles,
@@ -40,7 +41,6 @@ import { migrateDataToVersion } from './dataMigration';
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
-import { Scheduler } from 'sussol-utilities';
 import { MobileAppSettings } from './settings';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -56,9 +56,9 @@ class MSupplyMobileAppContainer extends React.Component {
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
     this.synchroniser = new Synchroniser(database,
-                                         syncAuthenticator,
-                                         this.settings,
-                                         props.dispatch);
+      syncAuthenticator,
+      this.settings,
+      props.dispatch);
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
@@ -123,7 +123,7 @@ class MSupplyMobileAppContainer extends React.Component {
     // thread unblocks and allows our spinner animation to start up. We cannot simply
     // call the functionToRun inside a setTimeout as that relegates to a lower
     // priority and results in very slow performance.
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
     functionToRun();
@@ -210,7 +210,7 @@ class MSupplyMobileAppContainer extends React.Component {
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
         <Navigator
-          ref={navigator => {
+          ref={(navigator) => {
             this.navigator = navigator;
           }}
           navigation={addNavigationHelpers({

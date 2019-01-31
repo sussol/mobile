@@ -45,17 +45,15 @@ export function PageInfo(props) {
         return (
           <View
             key={`Column ${columnIndex}`}
-            style={isRightMostColumn ?
-                   localStyles.rightmostColumnContainer :
-                   localStyles.columnContainer}
+            style={isRightMostColumn
+              ? localStyles.rightmostColumnContainer
+              : localStyles.columnContainer}
           >
             <View>
-              {columnData.map((...args) =>
-                renderTitleComponent(props.isEditingDisabled, columnIndex, ...args))}
+              {columnData.map((...args) => renderTitleComponent(props.isEditingDisabled, columnIndex, ...args))}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((...args) =>
-                renderInfoComponent(props.isEditingDisabled, columnIndex, ...args))}
+              {columnData.map((...args) => renderInfoComponent(props.isEditingDisabled, columnIndex, ...args))}
             </View>
           </View>
         );
@@ -84,7 +82,8 @@ function renderTitleComponent(isEditingDisabled, columnIndex, rowData, rowIndex)
         onPress={rowData.onPress}
       >
         {titleComponent}
-      </TouchableOpacity>);
+      </TouchableOpacity>
+    );
   }
   return (
     <View style={localStyles.rowContainer} key={`ViewTitle ${columnIndex}-${rowIndex}`}>
@@ -119,7 +118,8 @@ function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) 
       numberOfLines={1}
     >
       {infoString}
-    </Text>);
+    </Text>
+  );
   if (rowData.onPress && !isEditingDisabled) {
     return (
       <TouchableOpacity
@@ -136,7 +136,8 @@ function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) 
             color={SUSSOL_ORANGE}
           />
         </View>
-      </TouchableOpacity>);
+      </TouchableOpacity>
+    );
   }
   return (
     <View style={localStyles.rowContainer} key={`ViewInfo ${columnIndex}-${rowIndex}`}>

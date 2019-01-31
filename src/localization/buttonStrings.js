@@ -46,7 +46,7 @@ export const buttonStrings = new LocalizedStrings({
     use_suggested_quantities: 'Utiliser les quantités suggérées',
     use_requested_quantities: 'Utiliser les quantités demandées',
   },
-  gil: {  // TODO: add_batch
+  gil: { // TODO: add_batch
     add_master_list_items: 'Rinea am list',
     all_items_selected: 'Aikai nikabane',
     create_automatic_order: 'Create Automatic Order',

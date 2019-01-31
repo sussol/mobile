@@ -10,7 +10,9 @@ import { createRecord } from '../database';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import { GenericPage } from './GenericPage';
 import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, navStrings, tableStrings,
+} from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -43,7 +45,7 @@ export class SupplierRequisitionsPage extends React.Component {
       const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i++) {
         const requisition = this.requisitions.find(
-          currentRequisition => currentRequisition.id === selection[i]
+          currentRequisition => currentRequisition.id === selection[i],
         );
         if (requisition.isValid() && !requisition.isFinalised) {
           requisitionsToDelete.push(requisition);
@@ -64,14 +66,14 @@ export class SupplierRequisitionsPage extends React.Component {
     let requisition;
     this.props.database.write(() => {
       requisition = createRecord(this.props.database,
-                                'Requisition', this.props.currentUser, otherStoreName);
+        'Requisition', this.props.currentUser, otherStoreName);
     });
     this.navigateToRequisition(requisition);
   }
 
-  onRowPress = (requisition) => this.navigateToRequisition(requisition);
+  onRowPress = requisition => this.navigateToRequisition(requisition);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   navigateToRequisition = (requisition) => {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
@@ -95,8 +97,7 @@ export class SupplierRequisitionsPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data =
-        this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
+    const data = this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
       case 'serialNumber':
@@ -205,9 +206,9 @@ export class SupplierRequisitionsPage extends React.Component {
           isOpen={this.state.isCreatingRequisition}
           options={this.props.database.objects('InternalSupplier')}
           placeholderText={modalStrings.start_typing_to_select_supplier}
-          queryString={'name BEGINSWITH[c] $0'}
-          sortByString={'name'}
-          onSelect={name => {
+          queryString="name BEGINSWITH[c] $0"
+          sortByString="name"
+          onSelect={(name) => {
             this.setState({ isCreatingRequisition: false }, () => {
               this.onNewRequisition(name);
             });

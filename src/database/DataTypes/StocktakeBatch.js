@@ -2,7 +2,6 @@ import Realm from 'realm';
 import { createRecord } from '../utilities';
 
 export class StocktakeBatch extends Realm.Object {
-
   destructor(database) {
     // Delete ItemBatch that was created as a result of creating this StocktakeBatch
     if (this.snapshotNumberOfPacks === 0 && this.itemBatch.numberOfPacks === 0) {

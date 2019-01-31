@@ -1,15 +1,15 @@
-jest.unmock('../LoginModal');
-jest.unmock('enzyme');
-jest.unmock('sinon');
-jest.unmock('promise-sync-es6');
-
-import { LoginModal } from '../LoginModal';
 import Promise from 'promise-sync-es6';
 import React from 'react';
 import { TextInput } from 'react-native';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
 import { Button } from 'react-native-ui-components';
+import { LoginModal } from '../LoginModal';
+
+jest.unmock('../LoginModal');
+jest.unmock('enzyme');
+jest.unmock('sinon');
+jest.unmock('promise-sync-es6');
 
 const VALID_USERNAME = 'valid';
 const VALID_PASSWORD = 'valid';
@@ -37,8 +37,8 @@ describe('LoginModal', () => {
       <LoginModal
         authenticator={authenticator}
         isAuthenticated={false}
-        onAuthentication={ onAuthentication }
-      />
+        onAuthentication={onAuthentication}
+      />,
     );
   });
 

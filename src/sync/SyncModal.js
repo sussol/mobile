@@ -5,7 +5,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  Dimensions, View, Text, StyleSheet, TouchableOpacity,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modalbox';
 import { Button, ProgressBar } from '../widgets';
@@ -13,10 +15,12 @@ import { formatPlural, formatDate } from '../utilities';
 import { syncStrings } from '../localization';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
 import {
-    PROGRESS_LOADING,
+  PROGRESS_LOADING,
 } from './constants';
 
-export function SyncModal({ database, isOpen, onClose, onPressManualSync, state }) {
+export function SyncModal({
+  database, isOpen, onClose, onPressManualSync, state,
+}) {
   const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
     let message = '';
 
@@ -67,12 +71,12 @@ export function SyncModal({ database, isOpen, onClose, onPressManualSync, state 
       <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
         <Icon name="md-close" style={localStyles.closeIcon} />
       </TouchableOpacity>
-      <View style={localStyles.contentContainer} >
+      <View style={localStyles.contentContainer}>
         <View style={localStyles.row}>
           <Text style={localStyles.progressDescription}>
             {getStatusMessage(progress, total, isSyncing, errorMessage, progressMessage)}
           </Text>
-          <View style={localStyles.progressBarContainer} >
+          <View style={localStyles.progressBarContainer}>
             <ProgressBar total={total} progress={progress} isComplete={!isSyncing} />
           </View>
         </View>

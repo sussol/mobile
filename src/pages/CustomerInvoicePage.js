@@ -13,7 +13,9 @@ import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, pageInfoStrings, tableStrings,
+} from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -59,7 +61,7 @@ export class CustomerInvoicePage extends GenericPage {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.transaction.items
-                .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+      .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -114,9 +116,9 @@ export class CustomerInvoicePage extends GenericPage {
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -209,9 +211,9 @@ export class CustomerInvoicePage extends GenericPage {
         return (
           <AutocompleteSelector
             options={database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            queryStringSecondary={'name CONTAINS[c] $0'}
-            sortByString={'name'}
+            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
+            queryStringSecondary="name CONTAINS[c] $0"
+            sortByString="name"
             onSelect={(item) => {
               database.write(() => {
                 if (!transaction.hasItem(item)) {
@@ -221,8 +223,8 @@ export class CustomerInvoicePage extends GenericPage {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:
@@ -322,7 +324,7 @@ export class CustomerInvoicePage extends GenericPage {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Transaction'}
+        finalisableDataType="Transaction"
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
@@ -363,7 +365,7 @@ CustomerInvoicePage.propTypes = {
 export function checkForFinaliseError(customerInvoice) {
   if (customerInvoice.items.length === 0) {
     return modalStrings.add_at_least_one_item_before_finalising;
-  } else if (customerInvoice.totalQuantity === 0) {
+  } if (customerInvoice.totalQuantity === 0) {
     return modalStrings.record_stock_to_issue_before_finalising;
   }
   return null;

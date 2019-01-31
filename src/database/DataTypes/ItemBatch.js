@@ -13,7 +13,7 @@ export class ItemBatch extends Realm.Object {
     if (this.transactionBatches.length === 0) return new Date();
     const transactionBatches = this.transactionBatches.slice();
     const sortedTransactionBatches = transactionBatches.sort(
-      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate
+      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate,
     );
     return sortedTransactionBatches[0].transaction.confirmDate;
   }
@@ -42,7 +42,7 @@ export class ItemBatch extends Realm.Object {
     const transactionBatches = this.transactionBatches.filtered(
       'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
       startDate,
-      endDate
+      endDate,
     );
 
     return getTotal(transactionBatches, 'usage');

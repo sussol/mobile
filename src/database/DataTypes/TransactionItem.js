@@ -4,7 +4,6 @@ import { complement } from 'set-manipulator';
 import { createRecord, getTotal } from '../utilities';
 
 export class TransactionItem extends Realm.Object {
-
   destructor(database) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot delete an item from a finalised transaction');
@@ -31,6 +30,7 @@ export class TransactionItem extends Realm.Object {
   get totalQuantitySent() {
     return getTotal(this.batches, 'totalQuantitySent');
   }
+
   get totalPrice() {
     return getTotal(this.batches, 'totalPrice');
   }
@@ -43,9 +43,9 @@ export class TransactionItem extends Realm.Object {
   // for the fact that any issued in a confirmed customer invoice has already
   // been taken off the total
   get availableQuantity() {
-    if (this.transaction.isOutgoing &&
-       (this.transaction.isConfirmed ||
-        this.transaction.isFinalised)) {
+    if (this.transaction.isOutgoing
+       && (this.transaction.isConfirmed
+        || this.transaction.isFinalised)) {
       return this.item.totalQuantity + this.totalQuantity;
     }
     return this.item.totalQuantity;
@@ -127,20 +127,19 @@ export class TransactionItem extends Realm.Object {
       // Unless there are no batches with stock, in which case start with the batch
       // that was most likely to be recently in stock, i.e. the one with the longest
       // expiry date.
-      const batchesToUse = batchesWithStock.length > 0 ?
-                           batchesWithStock :
-                           this.item.batches.sorted('expiryDate', true);
+      const batchesToUse = batchesWithStock.length > 0
+        ? batchesWithStock
+        : this.item.batches.sorted('expiryDate', true);
 
       // Use complement to only get batches not already in the transaction.
       // TODO may actually slow things if most batches not already in transaction item
       // or all batches already in
       const itemBatchesToAdd = complement(batchesToUse,
-                                          this.batches.map((transactionBatch) =>
-                                            ({ id: transactionBatch.itemBatchId })),
-                                          (batch) => batch.id);
+        this.batches.map(transactionBatch => ({ id: transactionBatch.itemBatchId })),
+        batch => batch.id);
       // Go through item batches, adding transaction batches and allocating remainder
       // until no remainder left
-      for (let index = 0; index < itemBatchesToAdd.length && remainder !== 0; index ++) {
+      for (let index = 0; index < itemBatchesToAdd.length && remainder !== 0; index++) {
         // Create the new transaction batch and attach it to this transaction item
         const newBatch = createRecord(database, 'TransactionBatch', this, itemBatchesToAdd[index]);
 
@@ -177,7 +176,7 @@ export class TransactionItem extends Realm.Object {
    */
   pruneEmptyBatches(database) {
     const batchesToDelete = [];
-    this.batches.forEach(batch => {
+    this.batches.forEach((batch) => {
       if (batch.totalQuantity === 0 && batch.totalQuantitySent === 0) batchesToDelete.push(batch);
     });
     database.delete('TransactionBatch', batchesToDelete);

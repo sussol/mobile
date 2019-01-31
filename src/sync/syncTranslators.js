@@ -60,7 +60,7 @@ export const SYNC_TYPES = new SyncTranslator({
   create: 'I', // For 'insert'
   update: 'U',
   delete: 'D',
-  merge:  'M',
+  merge: 'M',
 });
 
 export const TRANSACTION_TYPES = new SyncTranslator({

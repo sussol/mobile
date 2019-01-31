@@ -10,7 +10,9 @@ import { View } from 'react-native';
 import { GenericPage } from './GenericPage';
 import globalStyles from '../globalStyles';
 import { formatDate, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  buttonStrings, modalStrings, pageInfoStrings, tableStrings,
+} from '../localization';
 import {
   PageButton,
   PageInfo,
@@ -60,7 +62,7 @@ export class CustomerRequisitionPage extends React.Component {
   onUseRequestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
-      requisition.items.forEach(requisitionItem => {
+      requisition.items.forEach((requisitionItem) => {
         requisitionItem.setSuppliedQuantity(database, requisitionItem.requiredQuantity);
       });
     });
@@ -71,7 +73,7 @@ export class CustomerRequisitionPage extends React.Component {
   onUseSuggestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
-      requisition.items.forEach(requisitionItem => {
+      requisition.items.forEach((requisitionItem) => {
         requisitionItem.setSuppliedQuantity(database, requisitionItem.suggestedQuantity);
       });
     });
@@ -79,7 +81,7 @@ export class CustomerRequisitionPage extends React.Component {
     this.refreshData();
   }
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
@@ -106,7 +108,7 @@ export class CustomerRequisitionPage extends React.Component {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.requisition.items
-                 .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+      .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -124,7 +126,7 @@ export class CustomerRequisitionPage extends React.Component {
     this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
   }
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
   closeModal = () => this.setState({ modalIsOpen: false });
 
@@ -205,7 +207,8 @@ export class CustomerRequisitionPage extends React.Component {
               }
               this.closeModal();
             }}
-          />);
+          />
+        );
     }
   }
 
@@ -296,7 +299,7 @@ export class CustomerRequisitionPage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Requisition'}
+        finalisableDataType="Requisition"
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}

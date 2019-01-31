@@ -1,7 +1,6 @@
 import Realm from 'realm';
 
 export class TransactionBatch extends Realm.Object {
-
   destructor(database) {
     this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item batches
     // Can safely remove ItemBatch if transaction batch was created by an ExternalSupplierInvoice
@@ -80,7 +79,6 @@ export class TransactionBatch extends Realm.Object {
   toString() {
     return `${this.itemBatch} in a ${this.transaction.type}`;
   }
-
 }
 
 TransactionBatch.schema = {

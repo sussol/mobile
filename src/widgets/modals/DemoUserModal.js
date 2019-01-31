@@ -5,14 +5,16 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
+import {
+  Image, StyleSheet, Text, TextInput, View, TouchableOpacity,
+} from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { DemoSiteRequest } from '../../authentication';
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
-import { ConfirmModal } from '../../widgets';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { ConfirmModal } from '..';
 
 export class DemoUserModal extends React.Component {
   constructor(props) {
@@ -70,11 +72,11 @@ export class DemoUserModal extends React.Component {
 
   get canAttemptSubmit() {
     return (
-      this.state.status === 'submit' &&
-      this.state.username.length > 0 &&
-      this.state.password.length > 0 &&
-      this.state.email.length > 0 &&
-      this.state.repeatPassword.length > 0
+      this.state.status === 'submit'
+      && this.state.username.length > 0
+      && this.state.password.length > 0
+      && this.state.email.length > 0
+      && this.state.repeatPassword.length > 0
     );
   }
 
@@ -94,9 +96,12 @@ export class DemoUserModal extends React.Component {
   // Handlers to set state of form variables on input onChange trigger
   // Extracting into local methods because calling an anonymous function in onChange would
   // re-render the input fields each time render() is called, causing slight performance hit
-  handleOnChangeEmail = (text) => this.setState({ email: text, status: 'submit' });
-  handleOnChangeUsername = (text) => this.setState({ username: text, status: 'submit' });
-  handleOnChangePassword = (text) => this.setState({ password: text, status: 'submit' });
+  handleOnChangeEmail = text => this.setState({ email: text, status: 'submit' });
+
+  handleOnChangeUsername = text => this.setState({ username: text, status: 'submit' });
+
+  handleOnChangePassword = text => this.setState({ password: text, status: 'submit' });
+
   handleOnChangeRepeatPassword = (text) => {
     this.setState({ repeatPassword: text, status: 'submit' });
   }
@@ -135,7 +140,7 @@ export class DemoUserModal extends React.Component {
                 underlineColorAndroid={SUSSOL_ORANGE}
                 value={this.state.username}
                 editable={this.state.status !== 'submitting'}
-                returnKeyType={'next'}
+                returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={this.handleOnChangeUsername}
               />
@@ -149,7 +154,7 @@ export class DemoUserModal extends React.Component {
                 selectTextOnFocus
                 value={this.state.email}
                 editable={this.state.status !== 'submitting'}
-                returnKeyType={'next'}
+                returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={this.handleOnChangeEmail}
               />
@@ -163,7 +168,7 @@ export class DemoUserModal extends React.Component {
                 value={this.state.password}
                 secureTextEntry
                 editable={this.state.status !== 'submitting'}
-                returnKeyType={'next'}
+                returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={this.handleOnChangePassword}
               />
@@ -177,7 +182,7 @@ export class DemoUserModal extends React.Component {
                 value={this.state.repeatPassword}
                 secureTextEntry
                 editable={this.state.status !== 'submitting'}
-                returnKeyType={'next'}
+                returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={this.handleOnChangeRepeatPassword}
                 onSubmitEditing={this.onDemoRequestSubmit}

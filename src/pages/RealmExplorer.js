@@ -89,7 +89,7 @@ export class RealmExplorer extends React.Component {
       data = this.unfilteredData;
     } else {
       try {
-          // using this.unfilteredData, so we don't stack filters
+        // using this.unfilteredData, so we don't stack filters
         data = this.unfilteredData.filtered(filterString);
       } catch (err) {
         // ignore error silently
@@ -127,7 +127,7 @@ export class RealmExplorer extends React.Component {
             textStyle={globalStyles.text}
             width={1}
             text={key}
-          />
+          />,
         );
       }
     }
@@ -159,7 +159,7 @@ export class RealmExplorer extends React.Component {
             width={1}
           >
             {itemString}
-          </Cell>
+          </Cell>,
         );
       }
     }

@@ -52,17 +52,17 @@ export function ToggleBar(props) {
     const renderOutput = [];
 
     buttons.forEach((button, i) => {
-      const currentTextStyle = button.isOn ?
-        [localStyles.textOnStyle, textOnStyle] :
-        [localStyles.textOffStyle, textOffStyle];
-      const currentToggleStyle = button.isOn ?
-        [localStyles.toggleOnStyle, toggleOnStyle] :
-        [localStyles.toggleOffStyle, toggleOffStyle];
+      const currentTextStyle = button.isOn
+        ? [localStyles.textOnStyle, textOnStyle]
+        : [localStyles.textOffStyle, textOffStyle];
+      const currentToggleStyle = button.isOn
+        ? [localStyles.toggleOnStyle, toggleOnStyle]
+        : [localStyles.toggleOffStyle, toggleOffStyle];
 
       renderOutput.push(
         <TouchableOpacity key={i} style={currentToggleStyle} onPress={button.onPress}>
           <Text style={currentTextStyle}>{button.text}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>,
       );
     });
 

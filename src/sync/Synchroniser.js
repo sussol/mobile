@@ -54,11 +54,17 @@ export class Synchroniser {
    * Redux progress setting functions
    */
   setTotal = totalCount => this.dispatch(setSyncTotal(totalCount));
+
   incrementProgress = increment => this.dispatch(incrementSyncProgress(increment));
+
   setProgress = currentCount => this.dispatch(setSyncProgress(currentCount));
+
   setProgressMessage = message => this.dispatch(setSyncProgressMessage(message));
+
   setError = errorMessage => this.dispatch(setSyncError(errorMessage));
+
   setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
+
   setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
 
   refreshSyncParams = () => {
@@ -91,8 +97,7 @@ export class Synchroniser {
     // data from a site different to what initialisation was previously started with.
     const oldSyncURL = this.serverURL;
     const oldSyncSiteName = this.thisSiteName;
-    const isFresh =
-      !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
+    const isFresh = !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
 
     if (isFresh) {
       this.database.write(() => {
@@ -106,8 +111,8 @@ export class Synchroniser {
       if (isFresh) {
         // If a fresh initialisation, tell the server to prepare required sync records
         await fetch(
-          `${this.serverURL}/sync/v3/initial_dump/` +
-            `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+          `${this.serverURL}/sync/v3/initial_dump/`
+            + `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
           {
             headers: {
               Authorization: this.authHeader,
@@ -208,7 +213,7 @@ export class Synchroniser {
    * @param {object} record The outgoing record to be translated
    * @return {object} The translated record output
    */
-  translateRecord = record => {
+  translateRecord = (record) => {
     try {
       // Try translate the record
       return generateSyncJson(this.database, this.settings, record);
@@ -225,10 +230,10 @@ export class Synchroniser {
    * @param  {array}   records The records to push
    * @return {Promise}         Resolves if successful, or passes up any error thrown
    */
-  pushRecords = async records => {
+  pushRecords = async (records) => {
     const response = await fetch(
-      `${this.serverURL}/sync/v3/queued_records/` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+      `${this.serverURL}/sync/v3/queued_records/`
+        + `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         method: 'POST',
         headers: {
@@ -293,8 +298,8 @@ export class Synchroniser {
    */
   getWaitingRecordCount = async () => {
     const response = await fetch(
-      `${this.serverURL}/sync/v3/queued_records/count` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+      `${this.serverURL}/sync/v3/queued_records/count`
+        + `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         headers: {
           Authorization: this.authHeader,
@@ -320,8 +325,8 @@ export class Synchroniser {
    */
   getIncomingRecords = async () => {
     const response = await fetch(
-      `${this.serverURL}/sync/v3/queued_records` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${this.batchSize}`,
+      `${this.serverURL}/sync/v3/queued_records`
+        + `?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${this.batchSize}`,
       {
         headers: {
           Authorization: this.authHeader,
@@ -345,7 +350,7 @@ export class Synchroniser {
    */
   integrateRecords(syncJson) {
     this.database.write(() => {
-      syncJson.forEach(syncRecord => {
+      syncJson.forEach((syncRecord) => {
         integrateRecord(this.database, this.settings, syncRecord);
       });
     });
@@ -356,14 +361,14 @@ export class Synchroniser {
    * @param  {array}   records    Sync records that have been integrated
    * @return {none}
    */
-  acknowledgeRecords = async records => {
+  acknowledgeRecords = async (records) => {
     const syncIds = records.map(record => record.SyncID);
     const requestBody = {
       SyncRecordIDs: syncIds,
     };
     await fetch(
-      `${this.serverURL}/sync/v3/acknowledged_records` +
-        `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
+      `${this.serverURL}/sync/v3/acknowledged_records`
+        + `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         method: 'POST',
         headers: {

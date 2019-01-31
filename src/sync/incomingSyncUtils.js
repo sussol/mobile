@@ -11,10 +11,11 @@ import {
 } from './syncTranslators';
 
 import { SETTINGS_KEYS } from '../settings';
-const { THIS_STORE_ID } = SETTINGS_KEYS;
 import { CHANGE_TYPES, generateUUID } from '../database';
 
 import { deleteRecord, mergeRecords } from '../database/utilities';
+
+const { THIS_STORE_ID } = SETTINGS_KEYS;
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -47,7 +48,6 @@ export function integrateRecord(database, settings, syncRecord) {
     case 'merge':
       mergeRecords(database, settings, internalRecordType, syncRecord);
     default:
-      return;
   }
 }
 
@@ -531,18 +531,16 @@ export function sanityCheckIncomingRecord(recordType, record) {
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
-    (containsAllFieldsSoFar, fieldName) =>
-      containsAllFieldsSoFar &&
-      record[fieldName] !== null && // Key must exist
-      record[fieldName].length > 0, // And must not be blank
+    (containsAllFieldsSoFar, fieldName) => containsAllFieldsSoFar
+      && record[fieldName] !== null // Key must exist
+      && record[fieldName].length > 0, // And must not be blank
     true,
   );
   if (!hasAllNonBlankFields) return false; // Return early if record already not valid
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
-    (containsAllFieldsSoFar, fieldName) =>
-      containsAllFieldsSoFar &&
-      record[fieldName] !== null && // Key must exist
-      record[fieldName] !== undefined, // May be blank, i.e. just ''
+    (containsAllFieldsSoFar, fieldName) => containsAllFieldsSoFar
+      && record[fieldName] !== null // Key must exist
+      && record[fieldName] !== undefined, // May be blank, i.e. just ''
     hasAllNonBlankFields,
   ); // Start containsAllFieldsSoFar as result from hasAllNonBlankFields
   return hasRequiredFields;
