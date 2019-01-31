@@ -41,7 +41,7 @@ export class DemoSiteRequest {
   // Validation methods
   // TODO: Could be extracted to a helper file to be used elsewhere
   validateEmail(text) {
-    const reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    const reg = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
     return reg.test(text);
   }
 
