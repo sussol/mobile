@@ -163,7 +163,7 @@ class MSupplyMobileAppContainer extends React.Component {
   renderLogo = () => (
     <TouchableWithoutFeedback
       delayLongPress={3000}
-      onLongPress={() => this.setState({ isInAdminMode: !this.state.isInAdminMode })}
+      onLongPress={() => this.setState(prevState => ({ isInAdminMode: !prevState.isInAdminMode }))}
     >
       <Image resizeMode="contain" source={require('./images/logo.png')} />
     </TouchableWithoutFeedback>

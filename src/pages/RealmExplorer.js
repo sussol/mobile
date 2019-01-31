@@ -76,10 +76,10 @@ export class RealmExplorer extends React.Component {
 
   componentWillMount() {
     const data = this.props.database.objects('User');
-    this.setState({
+    this.setState(prevState => ({
       data: data,
-      dataSource: this.state.dataSource.cloneWithRows(data),
-    });
+      dataSource: prevState.dataSource.cloneWithRows(data),
+    }));
   }
 
   onFilterChange(filterString) {
@@ -97,10 +97,10 @@ export class RealmExplorer extends React.Component {
     }
 
     if (data) {
-      this.setState({
+      this.setState(prevState => ({
         data,
-        dataSource: this.state.dataSource.cloneWithRows(data),
-      });
+        dataSource: prevState.dataSource.cloneWithRows(data),
+      }));
     }
   }
 
@@ -109,10 +109,10 @@ export class RealmExplorer extends React.Component {
     if (OBJECT_TYPES.indexOf(searchTerm) < 0) return;
     const data = this.props.database.objects(searchTerm);
     this.unfilteredData = data;
-    this.setState({
+    this.setState(prevState => ({
       data: data,
-      dataSource: this.state.dataSource.cloneWithRows(data),
-    });
+      dataSource: prevState.dataSource.cloneWithRows(data),
+    }));
   }
 
   renderHeader() {

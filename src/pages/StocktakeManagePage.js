@@ -120,9 +120,9 @@ export class StocktakeManagePage extends React.Component {
   }
 
   toggleShowItemsWithNoStock = () => {
-    this.setState({
-      showItemsWithNoStock: !this.state.showItemsWithNoStock,
-    }, this.refreshData);
+    this.setState(prevState => ({
+      showItemsWithNoStock: !prevState.showItemsWithNoStock,
+    }), this.refreshData);
   }
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
