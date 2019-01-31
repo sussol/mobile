@@ -98,7 +98,7 @@ export class UserAuthenticator {
  * @return {none}
  */
   async reauthenticate(onAuthentication) {
-    if (!this.activeUsername | !this.activePassword) onAuthentication(false);
+    if (!this.activeUsername || !this.activePassword) onAuthentication(false);
     try {
       const user = await this.authenticate(this.activeUsername, this.activePassword);
       onAuthentication(user);

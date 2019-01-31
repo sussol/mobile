@@ -115,7 +115,7 @@ export class SupplierRequisitionPage extends React.Component {
     const thisStoreNameId = this.props.settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
     const nameResults = this.props.database.objects('Name')
       .filtered('id == $0', thisStoreNameId);
-    if (!nameResults | nameResults.length <= 0) return null;
+    if (!nameResults || nameResults.length <= 0) return null;
     return nameResults[0];
   }
 
