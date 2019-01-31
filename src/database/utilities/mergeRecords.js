@@ -85,7 +85,8 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
     RECORD_TYPE_TO_MASTERLIST[internalRecordType],
   );
-  const masterListJoinRecords = database
+
+  database
     .objects(tableToUpdate)
     .filtered(`${fieldToUpdate}.id == $0`, recordToMerge.id)
     .snapshot()
