@@ -324,3 +324,18 @@ CustomerRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,
 };
+
+/**
+ * Check whether a given customer requisition is safe to be finalised. Return null if it is,
+ * otherwise return an appropriate error message if not.
+ * @param  {object}  requisition  The requisition to check
+ * @return {string}  An error message if not able to be finalised
+ */
+export function checkForFinaliseError(requisition) {
+  if (requisition.items.length === 0) {
+    return modalStrings.add_at_least_one_item_before_finalising;
+  } if (requisition.totalRequiredQuantity === 0) {
+    return modalStrings.record_stock_required_before_finalising;
+  }
+  return null;
+}
