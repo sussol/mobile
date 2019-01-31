@@ -58,10 +58,6 @@ export class FirstUsePage extends React.Component {
     this.setState({ appVersion: appVersion });
   }
 
-  handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
-
-  handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
-
   get canAttemptLogin() {
     return (
       (this.state.status === 'uninitialised' || this.state.status === 'error')
@@ -86,6 +82,10 @@ export class FirstUsePage extends React.Component {
         return 'Connect';
     }
   }
+
+  handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
+
+  handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
 
   render() {
     return (
