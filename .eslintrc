@@ -12,7 +12,26 @@
     "strict": 0,
     "no-confusing-arrow": ["error", {"allowParens": true}],
     "global-require": "off",
-    "react/jsx-boolean-value": "off"
+    "react/jsx-boolean-value": "off",
+    "default-case": "off",
+    "prefer-destructuring": "off",
+    "react/destructuring-assignment": ["off", "always", { "ignoreClassFields": true }],
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
+    "class-methods-use-this": 0,
+    "no-return-assign": ["error", "except-parens"],
+    "import/prefer-default-export": 0,
+    "react/forbid-prop-types": 0,
+    "react/require-default-props": ["off", {"forbidDefaultForRequired": true }],
+    "react/default-props-match-prop-types": "off",
+    "no-plusplus": "off",
+    "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
+    "react/no-array-index-key": "off",
+    "consistent-return": "off",
+    "no-restricted-globals": "off",
+    "react/no-multi-comp": "off",
+    "max-len": "off",
+    "no-await-in-loop": "off",
+    "no-console": "off"
   },
   "globals": {
     "fetch": false
