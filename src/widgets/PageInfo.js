@@ -50,10 +50,14 @@ export function PageInfo(props) {
               : localStyles.columnContainer}
           >
             <View>
-              {columnData.map((...args) => renderTitleComponent(props.isEditingDisabled, columnIndex, ...args))}
+              {columnData.map((...args) => renderTitleComponent(
+                props.isEditingDisabled, columnIndex, ...args,
+              ))}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((...args) => renderInfoComponent(props.isEditingDisabled, columnIndex, ...args))}
+              {columnData.map((...args) => renderInfoComponent(
+                props.isEditingDisabled, columnIndex, ...args,
+              ))}
             </View>
           </View>
         );
