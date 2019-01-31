@@ -107,11 +107,11 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
     });
 
   switch (internalRecordType) {
-    case 'Item':
+    case 'Item': {
       recordToMerge.batches.forEach((batch) => {
         recordToKeep.addBatchIfUnique(batch);
       });
-      const batch = database
+      const TransactionBatch = database
         .objects('TransactionBatch')
         .filtered('itemId == $0', recordToMerge.id)
         .snapshot()
@@ -119,8 +119,9 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
           batch.itemId = recordToKeep.id;
         });
 
-      // createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
+      createOrUpdateRecord(database, settings, 'TransactionBatch', TransactionBatch);
       break;
+    }
     case 'Name':
       recordToMerge.masterLists.forEach((masterList) => {
         recordToKeep.addMasterListIfUnique(masterList);
