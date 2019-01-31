@@ -1,4 +1,5 @@
 import { Settings } from 'react-native-database';
+import DeviceInfo from 'react-native-device-info';
 import { SETTINGS_KEYS } from './index';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 
@@ -6,6 +7,7 @@ export class MobileAppSettings extends Settings {
   constructor(database) {
     super(database);
     this.load();
+    this.set(SETTINGS_KEYS.HARDWARE_UUID, DeviceInfo.getUniqueID());
   }
 
   set(key, value) {

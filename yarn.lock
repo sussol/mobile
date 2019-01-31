@@ -1024,10 +1024,10 @@ atob@^2.1.1:
   resolved "https://registry.yarnpkg.com/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-authentication-utilities@^0.1.0:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/authentication-utilities/-/authentication-utilities-0.1.3.tgz#6925b67da737214126abea7967ba0fe05d3c8b48"
-  integrity sha1-aSW2fac3IUEmq+p5Z7oP4F08i0g=
+authentication-utilities@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/authentication-utilities/-/authentication-utilities-0.1.4.tgz#1984ab12b707ef732bf3adaa27ac64daa02611c1"
+  integrity sha512-MFDad/dpsQdEymH5o7AqzyBhsFemmo+fKulHVokdbMqnb5sQ0Y9pHwHc2pSF8FtaZ/8G6I9GYOgy3anescB+0g==
   dependencies:
     babel-core "^6.22.1"
     base-64 "^0.1.0"
@@ -6651,6 +6651,11 @@ react-native-database@^0.3.1:
   dependencies:
     react-native-uuid "^1.4.8"
 
+react-native-device-info@^0.24.3:
+  version "0.24.3"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.24.3.tgz#f15eff8d09fe418eaf5e7c89ddaabbc5ed718fd7"
+  integrity sha512-usW00Wk6DoXH1eRSMt07j0uYvuka3SIEnJ9girlddAacyqwfa1QMVTN4eYmtaBzuMd/avhis8iHZQ3cLaR9CMA==
+
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-native-dismiss-keyboard/-/react-native-dismiss-keyboard-1.0.0.tgz#32886242b3f2317e121f3aeb9b0a585e2b879b49"
@@ -7841,12 +7846,12 @@ supports-color@^6.0.0, supports-color@^6.1.0:
   dependencies:
     has-flag "^3.0.0"
 
-sussol-utilities@^0.4.6:
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/sussol-utilities/-/sussol-utilities-0.4.6.tgz#5ff00a90d57c586c1c77d29d8a716003ceca8e64"
-  integrity sha512-a8/aAxR31iQNOrLYvO8XFCXetsVdgyfbbJzxKwd755OoyXf5KlPiYdUZYCzgfhZiOQ/MeD9pPSpIcpgu+pzn/g==
+sussol-utilities@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/sussol-utilities/-/sussol-utilities-0.5.1.tgz#0e65afdef728a2f7d703ac208670735dd563f9f4"
+  integrity sha512-v/nx/o3agmrsCd69JWk6h2kTASX7ccnFRFY418xuHW9VClNyy6yigjvrQZu2w/zt+2Gvt0wp+NRZYHzTCkQRlg==
   dependencies:
-    authentication-utilities "^0.1.0"
+    authentication-utilities "^0.1.4"
     base-64 "^0.1.0"
     exports-loader "^0.6.3"
     imports-loader "^0.6.5"

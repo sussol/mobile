@@ -157,6 +157,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-device-info')
     implementation project(':realm')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-localization')
