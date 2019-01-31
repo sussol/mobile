@@ -7,6 +7,7 @@ export class MobileAppSettings extends Settings {
   constructor(database) {
     super(database);
     this.load();
+    this.set(SETTINGS_KEYS.HARDWARE_UUID, DeviceInfo.getUniqueID());
   }
 
   set(key, value) {
@@ -18,19 +19,6 @@ export class MobileAppSettings extends Settings {
       default:
         break;
     }
-  }
-
-  get(key) {
-    switch (key) {
-      case 'Hardware_UUID': return this.getHardwareUUID();
-      default: return super.get(key);
-    }
-  }
-
-  // Returns a device hardware UUID.
-  getHardwareUUID() {
-    const uniqueId = DeviceInfo.getUniqueID();
-    return uniqueId;
   }
 
   // Calls any functions that need to be called (each time the app is started). Checks database
