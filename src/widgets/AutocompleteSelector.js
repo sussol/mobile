@@ -20,8 +20,8 @@ import withOnePress from './withOnePress';
  * @prop  {array}     options         The options to select from
  * @prop  {function}  onSelect        A function taking the selected option as a parameter
  * @prop  {string}    queryString     The query to filter the options by, where $0 will
- *        														be replaced by the user's current search
- *        														e.g. 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'
+ *                                    be replaced by the user's current search
+ *                                    e.g. 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'
  * @prop  {string}    placeholderText The text to initially display in the search bar
  */
 export class AutocompleteSelector extends React.PureComponent {

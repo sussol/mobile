@@ -24,16 +24,16 @@ import {
 /**
  * A component to display info in a generic way at the top of a page
  * @prop  {array} columns   An array containing columns of information to be displayed,
- *        									with an entry in the array representing a column, which in
- *        									turn is an array of info objects containing a title and info.
- *        									E.g.
- *        									[[{title: 'col1:', info: 'row1'}, {title: 'col1:', info: 'row2'}],
- *        									[{title: 'col2:', info: 'row1', editableType: 'selectable'},
+ *                          with an entry in the array representing a column, which in
+ *                          turn is an array of info objects containing a title and info.
+ *                          E.g.
+ *                          [[{title: 'col1:', info: 'row1'}, {title: 'col1:', info: 'row2'}],
+ *                          [{title: 'col2:', info: 'row1', editableType: 'selectable'},
  *                           {title: 'col2:', info: 'row2', editableType: 'text'}
  *                          ]]
- *        									would display
- *        									col1: row1   col2: row1
- *        									col1: row2   col2: row2
+ *                          would display
+ *                          col1: row1   col2: row1
+ *                          col1: row2   col2: row2
  */
 export function PageInfo(props) {
   return (

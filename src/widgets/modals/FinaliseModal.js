@@ -19,12 +19,12 @@ const bugsnagClient = new BugsnagClient();
  * @prop  {boolean}   isOpen        Whether the modal is open
  * @prop  {function}  onClose       Function to call when finalise is cancelled
  * @prop  {object}    finaliseItem  An object carrying details of the item being
- *        													finalised, with the following fields:
+ *                                  finalised, with the following fields:
  *                                  record        The record being finalised
  *                                  recordType    The type of database object being finalised
  *                                  checkForError A function returning an error message if the
- *        																				record cannot yet be finalised, or null otherwise
- *        													finaliseText  The text to display on the confirmation modal
+ *                                                record cannot yet be finalised, or null otherwise
+ *                                  finaliseText  The text to display on the confirmation modal
  * @prop  {object}    user          The user who is finalising the record
  */
 export function FinaliseModal(props) {
