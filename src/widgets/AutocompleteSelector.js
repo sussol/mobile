@@ -123,6 +123,14 @@ class ResultRow extends React.PureComponent {
     );
   }
 }
+
+ResultRow.propTypes = {
+  item: PropTypes.object,
+  renderLeftText: PropTypes.func,
+  renderRightText: PropTypes.func,
+  onPress: PropTypes.func,
+};
+
 const ResultRowWithOnePress = withOnePress(ResultRow);
 
 const localStyles = StyleSheet.create({
