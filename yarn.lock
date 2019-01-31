@@ -6971,6 +6971,11 @@ react-native-database@^0.3.1:
   dependencies:
     react-native-uuid "^1.4.8"
 
+react-native-device-info@^0.24.3:
+  version "0.24.3"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.24.3.tgz#f15eff8d09fe418eaf5e7c89ddaabbc5ed718fd7"
+  integrity sha512-usW00Wk6DoXH1eRSMt07j0uYvuka3SIEnJ9girlddAacyqwfa1QMVTN4eYmtaBzuMd/avhis8iHZQ3cLaR9CMA==
+
 react-native-dismiss-keyboard@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/react-native-dismiss-keyboard/-/react-native-dismiss-keyboard-1.0.0.tgz#32886242b3f2317e121f3aeb9b0a585e2b879b49"
@@ -8301,7 +8306,7 @@ supports-color@^4.0.0:
   dependencies:
     has-flag "^2.0.0"
 
-sussol-utilities@^0.4.6:
+sussol-utilities@^0.5.1:
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/sussol-utilities/-/sussol-utilities-0.4.6.tgz#5ff00a90d57c586c1c77d29d8a716003ceca8e64"
   integrity sha512-a8/aAxR31iQNOrLYvO8XFCXetsVdgyfbbJzxKwd755OoyXf5KlPiYdUZYCzgfhZiOQ/MeD9pPSpIcpgu+pzn/g==

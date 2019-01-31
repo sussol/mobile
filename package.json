@@ -50,6 +50,7 @@
     "react-native": "0.57.4",
     "react-native-data-table": "^0.2.0",
     "react-native-database": "^0.3.1",
+    "react-native-device-info": "^0.24.3",
     "react-native-fs": "^2.10.14",
     "react-native-generic-table-page": "^0.3.0",
     "react-native-localization": "^0.1.30",
@@ -64,7 +65,7 @@
     "redux-persist-error-handler": "^0.1.1",
     "redux-thunk": "^2.2.0",
     "set-manipulator": "0.3.1",
-    "sussol-utilities": "^0.4.6"
+    "sussol-utilities": "^0.5.1"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",
