@@ -1,4 +1,4 @@
-import { MILLISECONDS_PER_DAY } from './index.js';
+import { MILLISECONDS_PER_DAY } from './index';
 
 // Return the sum of the given key across the given records
 export function getTotal(records, key) {
