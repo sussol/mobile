@@ -3,6 +3,7 @@ package com.msupplymobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
+          new RNDeviceInfo(),
           new MainReactPackage(),
           new RealmReactPackage(),
           new VectorIconsPackage(),

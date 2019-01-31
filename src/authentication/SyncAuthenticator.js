@@ -12,6 +12,7 @@ const {
   SYNC_SITE_PASSWORD_HASH,
   THIS_STORE_ID,
   THIS_STORE_NAME_ID,
+  HARDWARE_UUID,
 } = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v3/site';
@@ -19,6 +20,7 @@ const AUTH_ENDPOINT = '/sync/v3/site';
 export class SyncAuthenticator {
   constructor(settings) {
     this.settings = settings;
+    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
   }
 
   /**
@@ -42,7 +44,12 @@ export class SyncAuthenticator {
     const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
     try {
-      const responseJson = await authenticateAsync(authURL, username, passwordHash);
+      const responseJson = await authenticateAsync(
+        authURL,
+        username,
+        passwordHash,
+        { ...this.extraHeaders },
+        );
       this.settings.set(SYNC_URL, serverURL);
       this.settings.set(SYNC_SITE_NAME, username);
       this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);

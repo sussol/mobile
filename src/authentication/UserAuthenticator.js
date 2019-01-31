@@ -6,7 +6,11 @@ import {
 
 import { SETTINGS_KEYS } from '../settings';
 
-const { SYNC_URL, THIS_STORE_ID } = SETTINGS_KEYS;
+const {
+  SYNC_URL,
+  THIS_STORE_ID,
+  HARDWARE_UUID,
+} = SETTINGS_KEYS;
 
 const {
   CONNECTION_FAILURE,
@@ -22,6 +26,7 @@ export class UserAuthenticator {
     this.settings = settings;
     this.activeUsername = '';
     this.activePassword = '';
+    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
   }
 
   /**
@@ -56,7 +61,7 @@ export class UserAuthenticator {
       // Race condition promise, if connection is taking to long will be rejected
       // with CONNECTION_FAILURE error
       const userJson = await Promise.race([
-        authenticateAsync(authURL, username, passwordHash),
+        authenticateAsync(authURL, username, passwordHash, { ...this.extraHeaders }),
         createConnectionTimeoutPromise()]);
       if (!userJson || !userJson.UserID) throw new Error('Unexpected response from server');
       else { // Success, save user to database
