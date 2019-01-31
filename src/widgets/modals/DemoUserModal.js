@@ -155,7 +155,6 @@ export class DemoUserModal extends React.Component {
                 value={this.state.email}
                 editable={this.state.status !== 'submitting'}
                 returnKeyType="next"
-                selectTextOnFocus
                 onChangeText={this.handleOnChangeEmail}
               />
             </View>

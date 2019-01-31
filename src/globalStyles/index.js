@@ -17,7 +17,6 @@ import { navigationStyles } from './navigationStyles';
 import {
   pageStyles,
   expansionPageStyles,
-  PAGE_TOP_LEFT_WIDTH,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
@@ -48,7 +47,6 @@ export {
   dataTableColors,
   pageStyles,
   expansionPageStyles,
-  PAGE_TOP_LEFT_WIDTH,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,

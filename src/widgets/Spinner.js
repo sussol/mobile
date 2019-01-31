@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import {
   Animated,
   StyleSheet,
-  View,
 } from 'react-native';
 
 export class Spinner extends React.Component {

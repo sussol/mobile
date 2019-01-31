@@ -24,7 +24,7 @@ export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
 export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
-export { ToggleBar, ToggleButton } from './ToggleBar';
+export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
 export { ExpiryTextInput } from './ExpiryTextInput';
 export { OnePressButton } from './OnePressButton';
