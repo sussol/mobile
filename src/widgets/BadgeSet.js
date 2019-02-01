@@ -15,7 +15,7 @@ export class BadgeSet extends React.PureComponent {
   }
 
   showPopover() {
-    this.refs.button.measure((ox, oy, width, height, px, py) => {
+    this.touchableContainer.measure((ox, oy, width, height, px, py) => {
       this.setState({
         isVisible: true,
         buttonRect: { x: px, y: py, width: width, height: height },
@@ -41,7 +41,11 @@ export class BadgeSet extends React.PureComponent {
       {MainElement}
       {(finalizeValue !== 0) && (
         <View style={[localStyles.mainWrapper, mainWrapper]}>
-          <TouchableHighlight ref="button" style={localStyles.touchPlaceholder} onPress={() => this.showPopover()}>
+          <TouchableHighlight
+            ref={(ref) => { this.touchableContainer = ref; }}
+            style={localStyles.touchPlaceholder}
+            onPress={() => this.showPopover()}
+          >
             <Badge
               value={finalizeTxt}
               wrapperStyle={[localStyles.badgeWrapper, localStyles.finalize]}
