@@ -18,19 +18,19 @@ export class NavigationBar extends React.Component {
   };
 
   componentWillReceiveProps(props) {
-    const dataType = this.getDataTypeFromTitle(props);
+    const dataType = this.getDataTypeFromRouteName(props);
     if (dataType) this.refreshData(dataType);
   }
 
-  getDataTypeFromTitle(props) {
-    switch (props.currentTitle) {
-      case 'Customer Requisitions':
+  getDataTypeFromRouteName(props) {
+    switch (props.routeName) {
+      case 'customerRequisitions':
         return 'ResponseRequisition';
-      case 'Supplier Requisitions':
+      case 'supplierRequisitions':
         return 'RequestRequisition';
-      case 'Supplier Invoices':
+      case 'supplierInvoices':
         return 'SupplierInvoice';
-      case 'Stocktakes':
+      case 'stocktakes':
         return 'Stocktake';
       default:
         return '';

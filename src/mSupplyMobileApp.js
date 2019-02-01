@@ -98,6 +98,17 @@ class MSupplyMobileAppContainer extends React.Component {
     return this.navigator && navigationState.index !== 0;
   };
 
+  getCurrentRouteName(navigationState) {
+    if (!navigationState) return null;
+
+    const route = navigationState.routes[navigationState.index];
+
+    // dive into nested navigators
+    if (route.routes) return getCurrentRouteName(route);
+
+    return route.routeName;
+  }
+
   handleBackEvent = () => {
     const { confirmFinalise, syncModalIsOpen } = this.state;
     // If finalise or sync modals are open, close them rather than navigating.
@@ -219,12 +230,13 @@ class MSupplyMobileAppContainer extends React.Component {
         />
       );
     }
+    const { finaliseItem, dispatch, navigationState } = this.props;
 
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
           database={this.database}
-          currentTitle={this.getCanNavigateBack() ? this.props.currentTitle : null}
+          routeName={this.getCurrentRouteName(navigationState)}
           onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
           LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
           CentreComponent={this.renderLogo}
