@@ -104,8 +104,8 @@ export class MenuPage extends React.Component {
                     )}
                 />
               }
-              finalizeValue={this.state.customerRequisitionUnfinalised}
-              mainWrapper={localStyles.badgeSetWrapper}
+              unfinalisedCount={this.state.customerRequisitionUnfinalised}
+              mainWrapperStyle={localStyles.badgeSetWrapper}
             />
           </View>
 
@@ -125,8 +125,8 @@ export class MenuPage extends React.Component {
                   onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
                 />
               }
-              finalizeValue={this.state.supplierRequisitionUnfinalised}
-              mainWrapper={localStyles.badgeSetWrapper}
+              unfinalisedCount={this.state.supplierRequisitionUnfinalised}
+              mainWrapperStyle={localStyles.badgeSetWrapper}
             />
             <BadgeSet
               MainElement={
@@ -139,8 +139,8 @@ export class MenuPage extends React.Component {
                     )}
                 />
               }
-              finalizeValue={this.state.supplierRequisitionUnfinalised}
-              mainWrapper={localStyles.badgeSetWrapper}
+              unfinalisedCount={this.state.supplierRequisitionUnfinalised}
+              mainWrapperStyle={localStyles.badgeSetWrapper}
             />
             {isInAdminMode && (
               <Button
@@ -174,8 +174,8 @@ export class MenuPage extends React.Component {
                   onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
                 />
               }
-              finalizeValue={this.state.stocktakesUnfinalised}
-              mainWrapper={localStyles.badgeSetWrapper}
+              unfinalisedCount={this.state.stocktakesUnfinalised}
+              mainWrapperStyle={localStyles.badgeSetWrapper}
             />
             {isInAdminMode && (
               <Button

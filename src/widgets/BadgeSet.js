@@ -27,27 +27,27 @@ export class BadgeSet extends React.PureComponent {
   render() {
     const {
       MainElement,
-      finalizeValue,
-      mainWrapper,
-      popPlacement,
+      unfinalisedCount,
+      mainWrapperStyle,
+      popoverPosition,
     } = this.props;
 
-    const finalizeTxt = (finalizeValue > 99) ? '99+' : finalizeValue;
+    const unfinalisedCountText = (unfinalisedCount > 99) ? '99+' : unfinalisedCount;
     return (
       <View style={{ position: 'relative' }}>
       {MainElement}
-      {(finalizeValue !== 0) && (
-        <View style={[localStyles.mainWrapper, mainWrapper]}>
+      {(unfinalisedCount !== 0) && (
+        <View style={[localStyles.mainWrapperStyle, mainWrapperStyle]}>
           <TouchableHighlight
             ref={(ref) => { this.touchableContainer = ref; }}
-            style={localStyles.touchPlaceholder}
+            style={localStyles.touchableContainerStyle}
             onPress={() => this.showPopover()}
           >
             <Badge
-              value={finalizeTxt}
-              wrapperStyle={[localStyles.badgeWrapper, localStyles.finalize]}
-              containerStyle={localStyles.finalizeContainer}
-              textStyle={localStyles.badgeFont}
+              value={unfinalisedCountText}
+              wrapperStyle={localStyles.badgeWrapperStyle}
+              containerStyle={localStyles.unfinalisedContainerStyle}
+              textStyle={localStyles.badgeFontStyle}
             />
           </TouchableHighlight>
           <Popover
@@ -57,9 +57,10 @@ export class BadgeSet extends React.PureComponent {
             popoverStyle={{ padding: 10, backgroundColor: SUSSOL_ORANGE }}
             arrowStyle={{ backgroundColor: SUSSOL_ORANGE }}
             showBackground={false}
-            placement={popPlacement}
+            placement={popoverPosition}
           >
-            <Text style={{ color: '#FFF', fontSize: 10 }}>{finalizeTxt} Not Finalized</Text>
+            <Text style={{ color: '#FFF', fontSize: 10 }}>
+              {unfinalisedCountText} Not Finalised</Text>
           </Popover>
         </View>
       )}
@@ -70,40 +71,38 @@ export class BadgeSet extends React.PureComponent {
 
 BadgeSet.propTypes = {
   MainElement: PropTypes.element.isRequired,
-  finalizeValue: PropTypes.number,
-  popPlacement: PropTypes.string,
+  unfinalisedCount: PropTypes.number,
+  popoverPosition: PropTypes.string,
 };
 
 BadgeSet.defaultProps = {
   MainElement: {},
-  finalizeValue: 0,
-  mainWrapper: {},
-  popPlacement: 'auto',
+  unfinalisedCount: 0,
+  mainWrapperStyle: {},
+  popoverPosition: 'auto',
 };
 
 const localStyles = StyleSheet.create({
-  mainWrapper: {
+  mainWrapperStyle: {
     position: 'absolute',
     top: 0,
     right: 8,
   },
-  touchPlaceholder: {
+  touchableContainerStyle: {
     borderRadius: 10,
     backgroundColor: '#FFF',
     borderColor: '#FFF',
   },
-  badgeWrapper: {
+  badgeWrapperStyle: {
     width: 45,
   },
-  finalizeContainer: {
+  unfinalisedContainerStyle: {
     backgroundColor: SUSSOL_ORANGE,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  badgeFont: {
+  badgeFontStyle: {
     fontSize: 10,
     color: '#FFF',
-  },
-  finalize: {
   },
 });

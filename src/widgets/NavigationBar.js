@@ -54,9 +54,9 @@ export class NavigationBar extends React.Component {
           </TouchableOpacity>
           {LeftComponent && <BadgeSet
             MainElement={<LeftComponent />}
-            finalizeValue={this.state.unfinalisedCount}
-            popPlacement={'bottom'}
-            mainWrapper={localStyles.badgeSetWrapper}
+            unfinalisedCount={this.state.unfinalisedCount}
+            popoverPosition={'bottom'}
+            mainWrapperStyle={localStyles.badgeSetWrapper}
           />}
         </View>
         <View style={localStyles.centreSection} >
