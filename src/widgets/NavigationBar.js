@@ -13,11 +13,9 @@ import { textStyles } from '../globalStyles';
 import { BadgeSet } from './BadgeSet';
 
 export class NavigationBar extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
+  state = {
+    unfinalisedCount: 0,
+  };
 
   componentWillReceiveProps(props) {
     const dataType = this.getDataTypeFromTitle(props);
@@ -41,7 +39,7 @@ export class NavigationBar extends React.Component {
 
   refreshData = (dataType) => {
     this.setState({
-      notFinalizedCount: this.props.database
+      unfinalisedCount: this.props.database
         .objects(dataType).filtered('status != "finalised"').length,
     });
   }
@@ -54,7 +52,12 @@ export class NavigationBar extends React.Component {
           <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
             {onPressBack && <Icon name={'chevron-left'} style={localStyles.backIcon} />}
           </TouchableOpacity>
-          {LeftComponent && <BadgeSet MainElement={<LeftComponent />} finalizeValue={this.state.notFinalizedCount} popPlacement={'bottom'} mainWrapper={localStyles.badgeSetWrapper} />}
+          {LeftComponent && <BadgeSet
+            MainElement={<LeftComponent />}
+            finalizeValue={this.state.unfinalisedCount}
+            popPlacement={'bottom'}
+            mainWrapper={localStyles.badgeSetWrapper}
+          />}
         </View>
         <View style={localStyles.centreSection} >
           {CentreComponent && <CentreComponent />}

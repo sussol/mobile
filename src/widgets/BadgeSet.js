@@ -6,25 +6,22 @@ import { SUSSOL_ORANGE } from '../globalStyles';
 import Popover from 'react-native-popover-view';
 
 export class BadgeSet extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isVisible: false,
-      buttonRect: {},
-    };
-  }
+  state = {
+    isPopOverVisible: false,
+    rect: {},
+  };
 
   showPopover() {
     this.touchableContainer.measure((ox, oy, width, height, px, py) => {
       this.setState({
-        isVisible: true,
-        buttonRect: { x: px, y: py, width: width, height: height },
+        isPopOverVisible: true,
+        rect: { x: px, y: py, width: width, height: height },
       });
     });
   }
 
   closePopover() {
-    this.setState({ isVisible: false });
+    this.setState({ isPopOverVisible: false });
   }
 
   render() {
@@ -54,8 +51,8 @@ export class BadgeSet extends React.PureComponent {
             />
           </TouchableHighlight>
           <Popover
-            isVisible={this.state.isVisible}
-            fromRect={this.state.buttonRect}
+            isVisible={this.state.isPopOverVisible}
+            fromRect={this.state.rect}
             onClose={() => this.closePopover()}
             popoverStyle={{ padding: 10, backgroundColor: SUSSOL_ORANGE }}
             arrowStyle={{ backgroundColor: SUSSOL_ORANGE }}
