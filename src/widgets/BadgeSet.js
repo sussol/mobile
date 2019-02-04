@@ -4,6 +4,7 @@ import { StyleSheet, View, TouchableHighlight, Text } from 'react-native';
 import { Badge } from 'react-native-elements';
 import { SUSSOL_ORANGE } from '../globalStyles';
 import Popover from 'react-native-popover-view';
+import { generalStrings } from '../localization';
 
 export class BadgeSet extends React.PureComponent {
   state = {
@@ -60,7 +61,7 @@ export class BadgeSet extends React.PureComponent {
             placement={popoverPosition}
           >
             <Text style={{ color: '#FFF', fontSize: 10 }}>
-              {unfinalisedCountText} Not Finalised</Text>
+              {unfinalisedCountText} {generalStrings.unfinalised}</Text>
           </Popover>
         </View>
       )}
