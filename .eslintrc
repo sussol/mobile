@@ -13,6 +13,7 @@
     "strict": 0,
     "no-confusing-arrow": 2,
     "global-require": "off",
-    "react/jsx-boolean-value": "off"
+    "react/jsx-boolean-value": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
   }
 }
