@@ -5,7 +5,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Animated, StyleSheet, View } from 'react-native';
+
+import { Animated, StyleSheet } from 'react-native';
 
 export class Spinner extends React.Component {
   constructor(props) {
@@ -39,6 +40,8 @@ export class Spinner extends React.Component {
   }
 
   render() {
+    const { color } = this.props;
+
     const interpolatedRotateAnimation = this.progressAnimation.interpolate({
       inputRange: [0, 100],
       outputRange: ['0deg', '360deg'],
@@ -48,7 +51,7 @@ export class Spinner extends React.Component {
         style={[
           localStyles.square,
           {
-            backgroundColor: this.props.color,
+            backgroundColor: color,
             transform: [{ rotate: interpolatedRotateAnimation }],
           },
         ]}
@@ -56,6 +59,8 @@ export class Spinner extends React.Component {
     );
   }
 }
+
+export default Spinner;
 
 Spinner.propTypes = {
   isSpinning: PropTypes.bool,

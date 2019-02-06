@@ -5,40 +5,36 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Platform, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { textStyles } from '../globalStyles';
 
-export function NavigationBar({
-  onPressBack,
-  LeftComponent,
-  CentreComponent,
-  RightComponent,
-}) {
+export function NavigationBar({ onPressBack, LeftComponent, CentreComponent, RightComponent }) {
   return (
     <View style={localStyles.container}>
       <View style={localStyles.leftSection}>
         <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
-          {onPressBack && (
-            <Icon name={'chevron-left'} style={localStyles.backIcon} />
-          )}
+          {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
         </TouchableOpacity>
         {LeftComponent && <LeftComponent />}
       </View>
-      <View style={localStyles.centreSection}>
-        {CentreComponent && <CentreComponent />}
-      </View>
-      <View style={localStyles.rightSection}>
-        {RightComponent && <RightComponent />}
-      </View>
+      <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
+      <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
     </View>
   );
 }
 
+export default NavigationBar;
+
 NavigationBar.propTypes = {
   onPressBack: PropTypes.func,
+  // eslint-disable-next-line react/forbid-prop-types
   LeftComponent: PropTypes.any,
+  // eslint-disable-next-line react/forbid-prop-types
   CentreComponent: PropTypes.any,
+  // eslint-disable-next-line react/forbid-prop-types
   RightComponent: PropTypes.any,
 };
 

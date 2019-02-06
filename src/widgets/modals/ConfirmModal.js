@@ -1,10 +1,11 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import {
   Dimensions,
   Keyboard,
@@ -14,25 +15,36 @@ import {
   View,
   ViewPropTypes,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { OnePressButton } from '../';
 import Modal from 'react-native-modalbox';
-import globalStyles, { DARK_GREY } from '../../globalStyles';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+import { OnePressButton } from '..';
 import { modalStrings } from '../../localization';
 
+import globalStyles, { DARK_GREY } from '../../globalStyles';
+
 export function ConfirmModal(props) {
-  // On opening, dismiss the keyboard to ensure editable cells lose their focus
-  // and their values become fixed (so that they save correctly)
-  if (props.isOpen) Keyboard.dismiss();
   const {
+    isOpen,
+    questionText,
+    confirmText,
+    cancelText,
     style,
     textStyle,
-    onCancel,
+    buttonTextStyle,
+    buttonContainerStyle,
+    confirmButtonStyle,
+    cancelButtonStyle,
     onConfirm,
-    questionText,
+    onCancel,
     noCancel,
-    ...modalProps,
+    ...modalProps
   } = props;
+
+  // On opening, dismiss the keyboard to ensure editable cells lose their focus
+  // and their values become fixed (so that they save correctly)
+  if (isOpen) Keyboard.dismiss();
+
   return (
     <Modal {...modalProps} style={style}>
       {!noCancel && onCancel && (
@@ -42,22 +54,20 @@ export function ConfirmModal(props) {
       )}
       <View style={defaultStyles.contentContainer}>
         <Text style={textStyle}>{questionText}</Text>
-        <View
-          style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}
-        >
+        <View style={[defaultStyles.buttonContainer, buttonContainerStyle]}>
           {!noCancel && onCancel && (
             <OnePressButton
-              style={[globalStyles.button, props.cancelButtonStyle]}
-              textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
-              text={props.cancelText}
+              style={[globalStyles.button, cancelButtonStyle]}
+              textStyle={[globalStyles.buttonText, buttonTextStyle]}
+              text={cancelText}
               onPress={onCancel}
             />
           )}
           {onConfirm && (
             <OnePressButton
-              style={[globalStyles.button, props.confirmButtonStyle]}
-              textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
-              text={props.confirmText}
+              style={[globalStyles.button, confirmButtonStyle]}
+              textStyle={[globalStyles.buttonText, buttonTextStyle]}
+              text={confirmText}
               onPress={onConfirm}
             />
           )}
@@ -66,6 +76,8 @@ export function ConfirmModal(props) {
     </Modal>
   );
 }
+
+export default ConfirmModal;
 
 ConfirmModal.propTypes = {
   style: ViewPropTypes.style,
@@ -78,25 +90,29 @@ ConfirmModal.propTypes = {
   textStyle: Text.propTypes.style,
   isOpen: PropTypes.bool.isRequired,
   questionText: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/require-default-props
   noCancel: PropTypes.bool,
+  // eslint-disable-next-line react/require-default-props
   onCancel: PropTypes.func,
+  // eslint-disable-next-line react/require-default-props
   onConfirm: PropTypes.func,
 };
 ConfirmModal.defaultProps = {
+  // eslint-disable-next-line react/default-props-match-prop-types
   backdropColor: DARK_GREY,
+  // eslint-disable-next-line react/default-props-match-prop-types
   backdropOpacity: 0.97,
   style: globalStyles.confirmModal,
   textStyle: globalStyles.confirmModalText,
   buttonContainerStyle: globalStyles.confirmModalButtonContainer,
   cancelButtonStyle: globalStyles.confirmModalButton,
-  confirmButtonStyle: [
-    globalStyles.confirmModalButton,
-    globalStyles.confirmModalConfirmButton,
-  ],
+  confirmButtonStyle: [globalStyles.confirmModalButton, globalStyles.confirmModalConfirmButton],
   buttonTextStyle: globalStyles.confirmModalButtonText,
   cancelText: modalStrings.cancel,
   confirmText: modalStrings.confirm,
+  // eslint-disable-next-line react/default-props-match-prop-types
   swipeToClose: false, // negating the default.
+  // eslint-disable-next-line react/default-props-match-prop-types
   backdropPressToClose: false, // negating the default.
 };
 

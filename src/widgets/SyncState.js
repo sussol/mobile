@@ -18,12 +18,14 @@ const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
 
 export function SyncState(props) {
+  const { state, style, showText } = props;
+
   let text = syncStrings.sync_enabled;
   let cloudColor = ACTIVE_COLOR;
   let arrowsColor = ACTIVE_COLOR;
   let wifiColor = ACTIVE_COLOR;
 
-  const { lastSyncTime, isSyncing, errorMessage } = props.state;
+  const { lastSyncTime, isSyncing, errorMessage } = state;
 
   if (isSyncing) {
     text = syncStrings.sync_in_progress;
@@ -37,22 +39,20 @@ export function SyncState(props) {
   }
 
   return (
-    <View style={[globalStyles.navBarRightContainer, props.style]}>
-      {props.showText && (
-        <Text style={[globalStyles.navBarText, localStyles.text]}>{text}</Text>
-      )}
-      <SyncIcon
-        cloudColor={cloudColor}
-        arrowsColor={arrowsColor}
-        wifiColor={wifiColor}
-      />
+    <View style={[globalStyles.navBarRightContainer, style]}>
+      {showText && <Text style={[globalStyles.navBarText, localStyles.text]}>{text}</Text>}
+      <SyncIcon cloudColor={cloudColor} arrowsColor={arrowsColor} wifiColor={wifiColor} />
     </View>
   );
 }
 
+export default SyncState;
+
 SyncState.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
   state: PropTypes.object.isRequired,
   showText: PropTypes.bool,
+  // eslint-disable-next-line react/require-default-props
   style: ViewPropTypes.style,
 };
 SyncState.defaultProps = {

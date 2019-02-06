@@ -19,7 +19,7 @@ export function SelectModal(props) {
     queryString,
     queryStringSecondary,
     sortByString,
-    ...modalProps,
+    ...modalProps
   } = props;
 
   return (
@@ -36,13 +36,19 @@ export function SelectModal(props) {
   );
 }
 
+export default SelectModal;
+
 SelectModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types
   options: PropTypes.object.isRequired,
   queryString: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/require-default-props
   queryStringSecondary: PropTypes.string,
   sortByString: PropTypes.string.isRequired,
+  // eslint-disable-next-line react/require-default-props
   placeholderText: PropTypes.string,
+  // eslint-disable-next-line react/require-default-props
   onClose: PropTypes.func,
   onSelect: PropTypes.func.isRequired,
 };

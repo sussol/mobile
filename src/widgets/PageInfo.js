@@ -5,63 +5,59 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
 
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 /**
- * A component to display info in a generic way at the top of a page
- * @prop  {array} columns   An array containing columns of information to be displayed,
- *        									with an entry in the array representing a column, which in
- *        									turn is an array of info objects containing a title and info.
- *        									E.g.
- *        									[[{title: 'col1:', info: 'row1'}, {title: 'col1:', info: 'row2'}],
- *        									[{title: 'col2:', info: 'row1', editableType: 'selectable'},
- *                           {title: 'col2:', info: 'row2', editableType: 'text'}
- *                          ]]
- *        									would display
- *        									col1: row1   col2: row1
- *        									col1: row2   col2: row2
+ * A component to display info in a generic way at the top of a page.
+ *
+ * @prop  {array} columns   An array containing columns of information to be
+ *                          displayed, with an entry in the array representing
+ *                          a column, which is an array of info objects
+ *                          containing a title and info.
+ *
+ *                          E.g.:
+ *
+ *                          [[{title: 'col1:', info: 'row1'},
+ *                            {title: 'col1:', info: 'row2'}]
+ *                           [{title: 'col2:', info: 'row1',
+ *                             editableType: 'selectable'},
+ *                            {title: 'col2:', info: 'row2',
+ *                             editableType: 'text'}]]
+ *
+ *                          would display:
+ *
+ *                            col1: row1 col2: row1
+ *                            col1: row2 col2: row2
  */
 export function PageInfo(props) {
+  const { columns, isEditingDisabled } = props;
+
   return (
     <View style={[localStyles.horizontalContainer]}>
-      {props.columns.map((columnData, columnIndex) => {
+      {columns.map((columnData, columnIndex) => {
         const isRightMostColumn = columnIndex === props.columns.length - 1;
         return (
           <View
+            // TODO: use key which is not index.
+            // eslint-disable-next-line react/no-array-index-key
             key={`Column ${columnIndex}`}
             style={
-              isRightMostColumn
-                ? localStyles.rightmostColumnContainer
-                : localStyles.columnContainer
+              isRightMostColumn ? localStyles.rightmostColumnContainer : localStyles.columnContainer
             }
           >
             <View>
-              {columnData.map((...args) =>
-                renderTitleComponent(
-                  props.isEditingDisabled,
-                  columnIndex,
-                  ...args,
-                ),
-              )}
+              {columnData.map((...args) => {
+                return renderTitleComponent(isEditingDisabled, columnIndex, ...args);
+              })}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((...args) =>
-                renderInfoComponent(
-                  props.isEditingDisabled,
-                  columnIndex,
-                  ...args,
-                ),
-              )}
+              {columnData.map((...args) => {
+                return renderInfoComponent(isEditingDisabled, columnIndex, ...args);
+              })}
             </View>
           </View>
         );
@@ -70,12 +66,9 @@ export function PageInfo(props) {
   );
 }
 
-function renderTitleComponent(
-  isEditingDisabled,
-  columnIndex,
-  rowData,
-  rowIndex,
-) {
+export default PageInfo;
+
+function renderTitleComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
   // If null or empty string, use single space to avoid squishing row
   const titleString = rowData.title ? rowData.title : ' ';
   const titleComponent = (
@@ -99,21 +92,13 @@ function renderTitleComponent(
     );
   }
   return (
-    <View
-      style={localStyles.rowContainer}
-      key={`ViewTitle ${columnIndex}-${rowIndex}`}
-    >
+    <View style={localStyles.rowContainer} key={`ViewTitle ${columnIndex}-${rowIndex}`}>
       {titleComponent}
     </View>
   );
 }
 
-function renderInfoComponent(
-  isEditingDisabled,
-  columnIndex,
-  rowData,
-  rowIndex,
-) {
+function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
   let editTextStyle;
   let containerStyle;
   let iconName;
@@ -150,28 +135,22 @@ function renderInfoComponent(
       >
         <View style={containerStyle}>
           {infoComponent}
-          <Icon
-            name={iconName}
-            size={14}
-            style={localStyles.editIcon}
-            color={SUSSOL_ORANGE}
-          />
+          <Icon name={iconName} size={14} style={localStyles.editIcon} color={SUSSOL_ORANGE} />
         </View>
       </TouchableOpacity>
     );
   }
   return (
-    <View
-      style={localStyles.rowContainer}
-      key={`ViewInfo ${columnIndex}-${rowIndex}`}
-    >
+    <View style={localStyles.rowContainer} key={`ViewInfo ${columnIndex}-${rowIndex}`}>
       {infoComponent}
     </View>
   );
 }
 
 PageInfo.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   columns: PropTypes.array,
+  // eslint-disable-next-line react/require-default-props
   isEditingDisabled: PropTypes.bool,
 };
 

@@ -6,13 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  ViewPropTypes,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, ViewPropTypes, View } from 'react-native';
 
 /**
  * Renders a bar of multiple toggling buttons, defined by the array 'toggles' passed in.
@@ -44,7 +38,7 @@ export function ToggleBar(props) {
     textOffStyle,
     textOnStyle,
     toggles,
-    ...containerProps,
+    ...containerProps
   } = props;
 
   function renderToggles(buttons) {
@@ -61,6 +55,8 @@ export function ToggleBar(props) {
 
       renderOutput.push(
         <TouchableOpacity
+          // TODO: use key which is not index.
+          // eslint-disable-next-line react/no-array-index-key
           key={i}
           style={currentToggleStyle}
           onPress={button.onPress}
@@ -80,8 +76,11 @@ export function ToggleBar(props) {
   );
 }
 
+export default ToggleBar;
+
 ToggleBar.propTypes = {
   style: ViewPropTypes.style,
+  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
   toggles: PropTypes.array,
   toggleOffStyle: ViewPropTypes.style,
   toggleOnStyle: ViewPropTypes.style,

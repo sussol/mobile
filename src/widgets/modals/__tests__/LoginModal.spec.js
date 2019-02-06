@@ -1,15 +1,23 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
+import React from 'react';
+
+import { TextInput } from 'react-native';
+import { Button } from 'react-native-ui-components';
+
+import Promise from 'promise-sync-es6';
+import { shallow } from 'enzyme';
+import sinon from 'sinon';
+
+import { LoginModal } from '../LoginModal';
+
 jest.unmock('../LoginModal');
 jest.unmock('enzyme');
 jest.unmock('sinon');
 jest.unmock('promise-sync-es6');
-
-import { LoginModal } from '../LoginModal';
-import Promise from 'promise-sync-es6';
-import React from 'react';
-import { TextInput } from 'react-native';
-import { shallow } from 'enzyme';
-import sinon from 'sinon';
-import { Button } from 'react-native-ui-components';
 
 const VALID_USERNAME = 'valid';
 const VALID_PASSWORD = 'valid';
@@ -17,6 +25,7 @@ const INVALID_PASSWORD = 'invalid';
 const ERROR_MESSAGE = 'Authentication failed';
 
 class MockAuthenticator {
+  // eslint-disable-next-line class-methods-use-this
   authenticate(username, password) {
     return new Promise((resolve, reject) => {
       if (username === VALID_USERNAME && password === VALID_PASSWORD) resolve();

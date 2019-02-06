@@ -1,17 +1,22 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Keyboard, StyleSheet, View, ViewPropTypes } from 'react-native';
 import Modal from 'react-native-modalbox';
+
 import { DARKER_GREY } from '../../globalStyles/index';
 
 export class BottomModal extends React.Component {
   componentWillReceiveProps(nextProps) {
-    if (!this.props.isOpen && nextProps.isOpen) {
+    const { isOpen } = this.props;
+    const { isOpen: willOpen } = nextProps;
+
+    if (!isOpen && willOpen) {
       // Opening modal, dismiss the keyboard
       Keyboard.dismiss();
     }
@@ -30,15 +35,22 @@ export class BottomModal extends React.Component {
 BottomModal.propTypes = {
   style: ViewPropTypes.style,
   isOpen: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   children: PropTypes.any,
 };
 BottomModal.defaultProps = {
   style: {},
+  // eslint-disable-next-line react/default-props-match-prop-types
   swipeToClose: false, // negating the default.
+  // eslint-disable-next-line react/default-props-match-prop-types
   backdropPressToClose: false, // negating the default.
+  // eslint-disable-next-line react/default-props-match-prop-types
   position: 'bottom',
+  // eslint-disable-next-line react/default-props-match-prop-types
   backdrop: false,
 };
+
+export default BottomModal;
 
 const localStyles = StyleSheet.create({
   container: {

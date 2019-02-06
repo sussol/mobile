@@ -1,1 +1,1 @@
-export { ToggleBar } from './ToggleBar';
+export { default, ToggleBar } from './ToggleBar';
