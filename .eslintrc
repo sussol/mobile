@@ -1,20 +1,33 @@
 {
   "extends": "airbnb",
   "parser": "babel-eslint",
+  "plugins": ["prettier"],
   "env": {
     "jest": true
   },
   "rules": {
-    "max-len": ["error", { "code": 80 }],
-    "arrow-body-style": 0,
-    "no-param-reassign": "off",
-    "jsx-boolean-value": "off",
-    "no-use-before-define": "off",
+    "prettier/prettier": "error",
+    "max-len": ["error", { "code": 100 }],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "quotes": ["error", "single"],
+
+    "strict": "off",
+
+    "operator-linebreak": "off",
+
+    "no-confusing-arrow": ["error", { "allowParens": true }],
+    "arrow-body-style": ["error", "always"],
+    "arrow-parens": ["error", "as-needed"],
+
+    "object-curly-newline": ["error", { "ObjectPattern": { "multiline": true } }],
     "object-shorthand": "off",
-    "strict": 0,
-    "no-confusing-arrow": 2,
-    "global-require": "off",
+
+    "no-param-reassign": "off",
+
+    "no-use-before-define": "off",
+
     "react/jsx-boolean-value": "off",
+    "react/jsx-one-expression-per-line": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
   }
 }
