@@ -5,6 +5,7 @@
     "jest": true
   },
   "rules": {
+    "max-len": ["error", { "code": 80 }],
     "arrow-body-style": 0,
     "no-param-reassign": "off",
     "jsx-boolean-value": "off",
