@@ -24,6 +24,7 @@ export function BottomConfirmModal(props) {
     style,
     ...modalProps
   } = props;
+
   return (
     <BottomModal {...modalProps} style={[localStyles.modal, style]}>
       <Text style={[globalStyles.text, localStyles.questionText]}>{questionText}</Text>

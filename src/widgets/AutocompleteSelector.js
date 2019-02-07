@@ -100,18 +100,15 @@ export class AutocompleteSelector extends React.PureComponent {
 
 export default AutocompleteSelector;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 AutocompleteSelector.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   options: PropTypes.object.isRequired,
   queryString: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/require-default-props
   queryStringSecondary: PropTypes.string,
   sortByString: PropTypes.string.isRequired,
   placeholderText: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/require-default-props
   renderLeftText: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
   renderRightText: PropTypes.func,
 };
 AutocompleteSelector.defaultProps = {

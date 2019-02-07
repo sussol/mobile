@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -38,17 +38,14 @@ export function SelectModal(props) {
 
 export default SelectModal;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 SelectModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   options: PropTypes.object.isRequired,
   queryString: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/require-default-props
   queryStringSecondary: PropTypes.string,
   sortByString: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/require-default-props
   placeholderText: PropTypes.string,
-  // eslint-disable-next-line react/require-default-props
   onClose: PropTypes.func,
   onSelect: PropTypes.func.isRequired,
 };

@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -39,14 +39,13 @@ export function FinaliseButton(props) {
 
 export default FinaliseButton;
 
+/* eslint-disable react/require-default-props, react/default-props-match-prop-types */
 FinaliseButton.propTypes = {
-  // eslint-disable-next-line react/require-default-props
   isFinalised: PropTypes.bool.isRequired,
-  // eslint-disable-next-line react/require-default-props
   onPress: PropTypes.func,
 };
+
 FinaliseButton.defaultProps = {
-  // eslint-disable-next-line react/default-props-match-prop-types
   isFinalised: false,
 };
 

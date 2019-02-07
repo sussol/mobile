@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -95,14 +95,11 @@ export class ExpiryTextInput extends React.Component {
 
 export default ExpiryTextInput;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 ExpiryTextInput.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   text: PropTypes.object,
-  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   style: PropTypes.object,
-  // eslint-disable-next-line react/require-default-props
   onEndEditing: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
   isEditable: PropTypes.bool,
 };
 

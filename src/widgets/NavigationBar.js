@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -28,13 +28,11 @@ export function NavigationBar({ onPressBack, LeftComponent, CentreComponent, Rig
 
 export default NavigationBar;
 
+/* eslint-disable react/forbid-prop-types */
 NavigationBar.propTypes = {
   onPressBack: PropTypes.func,
-  // eslint-disable-next-line react/forbid-prop-types
   LeftComponent: PropTypes.any,
-  // eslint-disable-next-line react/forbid-prop-types
   CentreComponent: PropTypes.any,
-  // eslint-disable-next-line react/forbid-prop-types
   RightComponent: PropTypes.any,
 };
 
@@ -47,6 +45,7 @@ NavigationBar.defaultProps = {
 
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
+
 const sectionStyle = {
   flex: 1,
   flexDirection: 'row',

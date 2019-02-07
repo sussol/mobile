@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -43,10 +43,9 @@ export function ToggleSelector(props) {
 
 export default ToggleSelector;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 ToggleSelector.propTypes = {
   selected: PropTypes.number.isRequired,
-  // eslint-disable-next-line react/require-default-props
   onSelect: PropTypes.func,
-  // eslint-disable-next-line react/forbid-prop-types
   options: PropTypes.array.isRequired,
 };

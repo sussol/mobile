@@ -79,6 +79,7 @@ export function ConfirmModal(props) {
 
 export default ConfirmModal;
 
+/* eslint-disable react/require-default-props */
 ConfirmModal.propTypes = {
   style: ViewPropTypes.style,
   buttonContainerStyle: ViewPropTypes.style,
@@ -90,17 +91,14 @@ ConfirmModal.propTypes = {
   textStyle: Text.propTypes.style,
   isOpen: PropTypes.bool.isRequired,
   questionText: PropTypes.string.isRequired,
-  // eslint-disable-next-line react/require-default-props
   noCancel: PropTypes.bool,
-  // eslint-disable-next-line react/require-default-props
   onCancel: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
   onConfirm: PropTypes.func,
 };
+
+/* eslint-disable react/default-props-match-prop-types */
 ConfirmModal.defaultProps = {
-  // eslint-disable-next-line react/default-props-match-prop-types
   backdropColor: DARK_GREY,
-  // eslint-disable-next-line react/default-props-match-prop-types
   backdropOpacity: 0.97,
   style: globalStyles.confirmModal,
   textStyle: globalStyles.confirmModalText,
@@ -110,9 +108,7 @@ ConfirmModal.defaultProps = {
   buttonTextStyle: globalStyles.confirmModalButtonText,
   cancelText: modalStrings.cancel,
   confirmText: modalStrings.confirm,
-  // eslint-disable-next-line react/default-props-match-prop-types
   swipeToClose: false, // negating the default.
-  // eslint-disable-next-line react/default-props-match-prop-types
   backdropPressToClose: false, // negating the default.
 };
 

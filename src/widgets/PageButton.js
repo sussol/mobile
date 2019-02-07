@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -30,16 +30,12 @@ export function PageButton(props) {
 
 export default PageButton;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 PageButton.propTypes = {
-  // eslint-disable-next-line react/require-default-props
   style: ViewPropTypes.style,
-  // eslint-disable-next-line react/require-default-props
   textStyle: Text.propTypes.style,
-  // eslint-disable-next-line react/require-default-props
   onPress: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
   text: PropTypes.string,
-  // eslint-disable-next-line react/require-default-props
   isDisabled: PropTypes.bool,
 };
 

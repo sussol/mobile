@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -25,11 +25,10 @@ export function TextInput(props) {
 
 export default TextInput;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 TextInput.propTypes = {
   ...RNTextInput.propTypes,
-  // eslint-disable-next-line react/require-default-props
   style: ViewPropTypes.style,
-  // eslint-disable-next-line react/require-default-props
   textStyle: RNTextInput.propTypes.style,
 };
 

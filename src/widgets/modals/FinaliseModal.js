@@ -77,15 +77,12 @@ export function FinaliseModal(props) {
 
 export default FinaliseModal;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 FinaliseModal.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   database: PropTypes.object.isRequired,
   isOpen: PropTypes.bool,
-  // eslint-disable-next-line react/require-default-props
   onClose: PropTypes.func,
-  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   finaliseItem: PropTypes.object,
-  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   user: PropTypes.any,
   runWithLoadingIndicator: PropTypes.func.isRequired,
 };

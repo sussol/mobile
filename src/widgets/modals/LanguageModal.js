@@ -95,11 +95,10 @@ export class LanguageModal extends React.Component {
 
 export default LanguageModal;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 LanguageModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
-  // eslint-disable-next-line react/require-default-props
   onClose: PropTypes.func,
-  // eslint-disable-next-line react/forbid-prop-types
   settings: PropTypes.object.isRequired,
 };
 

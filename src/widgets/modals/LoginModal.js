@@ -219,18 +219,17 @@ export class LoginModal extends React.Component {
 
 export default LoginModal;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 LoginModal.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   authenticator: PropTypes.object.isRequired,
   isAuthenticated: PropTypes.bool.isRequired,
   onAuthentication: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   settings: PropTypes.object.isRequired,
 };
+
+/* eslint-disable react/default-props-match-prop-types */
 LoginModal.defaultProps = {
-  // eslint-disable-next-line react/default-props-match-prop-types
   style: {},
-  // eslint-disable-next-line react/default-props-match-prop-types
   textStyle: {},
 };
 

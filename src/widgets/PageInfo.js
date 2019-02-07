@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -10,6 +10,85 @@ import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
+
+const renderTitleComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) => {
+  // If null or empty string, use single space to avoid squishing row
+  const titleString = rowData.title ? rowData.title : ' ';
+  const titleComponent = (
+    <Text
+      key={`Title ${columnIndex}-${rowIndex}`}
+      style={[localStyles.text, localStyles.titleText]}
+      numberOfLines={1}
+    >
+      {titleString}
+    </Text>
+  );
+  if (rowData.onPress && !isEditingDisabled) {
+    return (
+      <TouchableOpacity
+        style={localStyles.rowContainer}
+        key={`Touchable ${columnIndex}-${rowIndex}`}
+        onPress={rowData.onPress}
+      >
+        {titleComponent}
+      </TouchableOpacity>
+    );
+  }
+  return (
+    <View style={localStyles.rowContainer} key={`ViewTitle ${columnIndex}-${rowIndex}`}>
+      {titleComponent}
+    </View>
+  );
+};
+
+const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) => {
+  let editTextStyle;
+  let containerStyle;
+  let iconName;
+  switch (rowData.editableType) {
+    case 'selectable':
+      containerStyle = localStyles.selectContainer;
+      iconName = 'angle-down';
+      break;
+    case 'text':
+    default:
+      containerStyle = localStyles.editableTextContainer;
+      iconName = 'pencil';
+      editTextStyle = localStyles.infoText;
+      break;
+  }
+  // If null or empty string, use single space to avoid squishing row
+  let infoString = (rowData.info || rowData.info === 0) && String(rowData.info);
+  infoString = infoString && infoString.length > 0 ? infoString : ' ';
+  const infoComponent = (
+    <Text
+      key={`Info ${columnIndex}-${rowIndex}`}
+      style={[localStyles.text, editTextStyle]}
+      numberOfLines={1}
+    >
+      {infoString}
+    </Text>
+  );
+  if (rowData.onPress && !isEditingDisabled) {
+    return (
+      <TouchableOpacity
+        style={localStyles.rowContainer}
+        key={`Touchable ${columnIndex}-${rowIndex}`}
+        onPress={rowData.onPress}
+      >
+        <View style={containerStyle}>
+          {infoComponent}
+          <Icon name={iconName} size={14} style={localStyles.editIcon} color={SUSSOL_ORANGE} />
+        </View>
+      </TouchableOpacity>
+    );
+  }
+  return (
+    <View style={localStyles.rowContainer} key={`ViewInfo ${columnIndex}-${rowIndex}`}>
+      {infoComponent}
+    </View>
+  );
+};
 
 /**
  * A component to display info in a generic way at the top of a page.
@@ -68,89 +147,9 @@ export function PageInfo(props) {
 
 export default PageInfo;
 
-function renderTitleComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
-  // If null or empty string, use single space to avoid squishing row
-  const titleString = rowData.title ? rowData.title : ' ';
-  const titleComponent = (
-    <Text
-      key={`Title ${columnIndex}-${rowIndex}`}
-      style={[localStyles.text, localStyles.titleText]}
-      numberOfLines={1}
-    >
-      {titleString}
-    </Text>
-  );
-  if (rowData.onPress && !isEditingDisabled) {
-    return (
-      <TouchableOpacity
-        style={localStyles.rowContainer}
-        key={`Touchable ${columnIndex}-${rowIndex}`}
-        onPress={rowData.onPress}
-      >
-        {titleComponent}
-      </TouchableOpacity>
-    );
-  }
-  return (
-    <View style={localStyles.rowContainer} key={`ViewTitle ${columnIndex}-${rowIndex}`}>
-      {titleComponent}
-    </View>
-  );
-}
-
-function renderInfoComponent(isEditingDisabled, columnIndex, rowData, rowIndex) {
-  let editTextStyle;
-  let containerStyle;
-  let iconName;
-  switch (rowData.editableType) {
-    case 'selectable':
-      containerStyle = localStyles.selectContainer;
-      iconName = 'angle-down';
-      break;
-    case 'text':
-    default:
-      containerStyle = localStyles.editableTextContainer;
-      iconName = 'pencil';
-      editTextStyle = localStyles.infoText;
-      break;
-  }
-  // If null or empty string, use single space to avoid squishing row
-  let infoString = (rowData.info || rowData.info === 0) && String(rowData.info);
-  infoString = infoString && infoString.length > 0 ? infoString : ' ';
-  const infoComponent = (
-    <Text
-      key={`Info ${columnIndex}-${rowIndex}`}
-      style={[localStyles.text, editTextStyle]}
-      numberOfLines={1}
-    >
-      {infoString}
-    </Text>
-  );
-  if (rowData.onPress && !isEditingDisabled) {
-    return (
-      <TouchableOpacity
-        style={localStyles.rowContainer}
-        key={`Touchable ${columnIndex}-${rowIndex}`}
-        onPress={rowData.onPress}
-      >
-        <View style={containerStyle}>
-          {infoComponent}
-          <Icon name={iconName} size={14} style={localStyles.editIcon} color={SUSSOL_ORANGE} />
-        </View>
-      </TouchableOpacity>
-    );
-  }
-  return (
-    <View style={localStyles.rowContainer} key={`ViewInfo ${columnIndex}-${rowIndex}`}>
-      {infoComponent}
-    </View>
-  );
-}
-
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 PageInfo.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   columns: PropTypes.array,
-  // eslint-disable-next-line react/require-default-props
   isEditingDisabled: PropTypes.bool,
 };
 

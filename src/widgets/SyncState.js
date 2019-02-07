@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -48,11 +48,10 @@ export function SyncState(props) {
 
 export default SyncState;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 SyncState.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   state: PropTypes.object.isRequired,
   showText: PropTypes.bool,
-  // eslint-disable-next-line react/require-default-props
   style: ViewPropTypes.style,
 };
 SyncState.defaultProps = {

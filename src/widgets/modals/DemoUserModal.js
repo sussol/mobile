@@ -228,16 +228,16 @@ export class DemoUserModal extends React.Component {
 
 export default DemoUserModal;
 
+/* eslint-disable react/require-default-props */
 DemoUserModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   // eslint-disable-next-line react/require-default-props
   onClose: PropTypes.func,
 };
 
+/* eslint-disable react/default-props-match-prop-types */
 DemoUserModal.defaultProps = {
-  // eslint-disable-next-line react/default-props-match-prop-types
   style: {},
-  // eslint-disable-next-line react/default-props-match-prop-types
   textStyle: {},
 };
 

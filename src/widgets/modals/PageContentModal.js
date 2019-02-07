@@ -58,23 +58,19 @@ export class PageContentModal extends React.Component {
 
 export default PageContentModal;
 
+/* eslint-disable react/require-default-props */
 PageContentModal.propTypes = {
   ...BottomModal.propTypes,
-  // eslint-disable-next-line react/require-default-props
   onClose: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
   title: PropTypes.string,
 };
+
+/* eslint-disable react/default-props-match-prop-types */
 PageContentModal.defaultProps = {
-  // eslint-disable-next-line react/default-props-match-prop-types
   style: {},
-  // eslint-disable-next-line react/default-props-match-prop-types
   swipeToClose: false, // negating the default.
-  // eslint-disable-next-line react/default-props-match-prop-types
   backdropPressToClose: false, // negating the default.
-  // eslint-disable-next-line react/default-props-match-prop-types
   position: 'bottom',
-  // eslint-disable-next-line react/default-props-match-prop-types
   backdrop: false,
 };
 

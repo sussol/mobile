@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -66,10 +66,9 @@ export class TextEditor extends React.Component {
 
 export default TextEditor;
 
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 TextEditor.propTypes = {
-  // eslint-disable-next-line react/require-default-props
   text: PropTypes.string,
-  // eslint-disable-next-line react/require-default-props
   onEndEditing: PropTypes.func,
 };
 

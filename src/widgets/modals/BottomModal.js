@@ -38,15 +38,13 @@ BottomModal.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
   children: PropTypes.any,
 };
+
+/* eslint-disable react/default-props-match-prop-types */
 BottomModal.defaultProps = {
   style: {},
-  // eslint-disable-next-line react/default-props-match-prop-types
   swipeToClose: false, // negating the default.
-  // eslint-disable-next-line react/default-props-match-prop-types
   backdropPressToClose: false, // negating the default.
-  // eslint-disable-next-line react/default-props-match-prop-types
   position: 'bottom',
-  // eslint-disable-next-line react/default-props-match-prop-types
   backdrop: false,
 };
 
