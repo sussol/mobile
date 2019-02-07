@@ -21,7 +21,6 @@
     "arrow-parens": ["error", "as-needed"],
 
     "object-curly-newline": ["error", { "ObjectPattern": { "multiline": true } }],
-    "object-shorthand": "off",
 
     "no-param-reassign": "off",
 

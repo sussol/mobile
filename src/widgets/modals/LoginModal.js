@@ -76,7 +76,7 @@ export class LoginModal extends React.Component {
 
   async setAppVersion() {
     const appVersion = await getAppVersion();
-    this.setState({ appVersion: appVersion });
+    this.setState({ appVersion });
   }
 
   get canAttemptLogin() {
