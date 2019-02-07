@@ -14,7 +14,8 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { addNavigationHelpers } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
+import { reduxifyNavigator } from 'react-navigation-redux-helpers';
 
 import { Scheduler } from 'sussol-utilities';
 import globalStyles, {
@@ -110,8 +111,8 @@ class MSupplyMobileAppContainer extends React.Component {
     // If we are on base screen (e.g. home), back button should close app as we can't go back
     if (!this.getCanNavigateBack()) BackHandler.exitApp();
     else {
-      const { navigation } = this.navigator.props;
-      navigation.goBack();
+      const { dispatch } = this.props;
+      dispatch(NavigationActions.back());
     }
     return true;
   }
@@ -201,6 +202,7 @@ class MSupplyMobileAppContainer extends React.Component {
       );
     }
     const { finaliseItem, dispatch, navigationState } = this.props;
+    const ReduxNavigator = reduxifyNavigator(Navigator, "root");
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
@@ -209,14 +211,12 @@ class MSupplyMobileAppContainer extends React.Component {
           CentreComponent={this.renderLogo}
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
-        <Navigator
+        <ReduxNavigator
           ref={(navigator) => {
             this.navigator = navigator;
           }}
-          navigation={addNavigationHelpers({
-            dispatch,
-            state: navigationState,
-          })}
+          state={navigationState}
+          dispatch={dispatch}
           screenProps={{
             database: this.database,
             settings: this.settings,
@@ -283,4 +283,4 @@ function mapStateToProps({ navigation: navigationState, sync: syncState }) {
   };
 }
 
-export const MSupplyMobileApp = connect(mapStateToProps)(MSupplyMobileAppContainer);
+export default connect(mapStateToProps)(MSupplyMobileAppContainer);

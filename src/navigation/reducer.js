@@ -3,9 +3,11 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { Navigator } from './Navigator';
+import Navigator from './Navigator';
 
-export const reducer = (state, action) => {
+const initialState = Navigator.router.getStateForAction(Navigator.router.getActionForPathAndParams('root'));
+
+const reducer = (state = initialState, action) => {
   // Ensure we don't push the same route twice (quick double tap of button etc.)
   // Code from https://github.com/react-community/react-navigation/issues/135
   if (action.type === 'Navigation/NAVIGATE') {
@@ -13,7 +15,9 @@ export const reducer = (state, action) => {
     if (currentRoute.routeName === action.routeName
         && paramsEqual(currentRoute.params, action.params)) return state;
   }
-  return Navigator.router.getStateForAction(action, state) || state;
+
+  const nextState = Navigator.router.getStateForAction(action, state);
+  return nextState || state;
 };
 
 const paramsEqual = (params1, params2) => {
@@ -24,3 +28,5 @@ const paramsEqual = (params1, params2) => {
 
   return Object.entries(params1).every(([key, value]) => value === params2[key]);
 };
+
+export default reducer;

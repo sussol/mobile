@@ -9,12 +9,13 @@ import React from 'react';
 import { AppRegistry, AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';
 import { applyMiddleware, createStore } from 'redux';
+import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-helpers';
 import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import { ErrorHandler } from 'redux-persist-error-handler';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
-import { MSupplyMobileApp } from './mSupplyMobileApp';
+import MSupplyMobileApp from './mSupplyMobileApp';
 import { reducers } from './reducers';
 
 const bugsnagClient = new BugsnagClient();
@@ -28,10 +29,16 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
+// Create middleware and connect
+const appNavigatorMiddleware = createReactNavigationReduxMiddleware(
+  "root",
+  state => state.nav
+);
+
 const store = createStore(
   persistedReducer,
   {},
-  applyMiddleware(thunk),
+  applyMiddleware( thunk, appNavigatorMiddleware ),
 );
 
 const persistedStore = persistStore(store);

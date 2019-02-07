@@ -1,9 +1,4 @@
-/**
-* Tupaia MediTrak
-* Copyright (c) 2017 Beyond Essential Systems Pty Ltd
-* */
-
-import { StackNavigator as createStackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 
 import { PAGES } from '../pages';
 
@@ -16,4 +11,4 @@ const config = {
   headerMode: 'none',
 };
 
-export const Navigator = createStackNavigator(routes, config);
+export default createStackNavigator(routes, config);
