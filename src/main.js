@@ -31,14 +31,14 @@ const persistedReducer = persistReducer(persistConfig, reducers);
 
 // Create middleware and connect
 const appNavigatorMiddleware = createReactNavigationReduxMiddleware(
-  "root",
-  state => state.nav
+  state => state.navigation,
+  'root',
 );
 
 const store = createStore(
   persistedReducer,
   {},
-  applyMiddleware( thunk, appNavigatorMiddleware ),
+  applyMiddleware(thunk, appNavigatorMiddleware),
 );
 
 const persistedStore = persistStore(store);
