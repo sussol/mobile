@@ -1,21 +1,8 @@
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+
 const bugsnagClient = new BugsnagClient();
 
-export function compareVersions(versionOne, versionTwo) {
-  try {
-    const result = versionToInteger(versionOne) - versionToInteger(versionTwo);
-    if (result > 0) return 1;
-    if (result < 0) return -1;
-    return 0;
-  } catch (error) {
-    // Errors thrown in migration method in dataMigration.js do not trickle down to bugsnag
-    // so will need manually notify bug snag.
-    error.message = `error verifying versions, versionOne: ${versionOne}, versionTwo ${versionTwo}`;
-    bugsnagClient.notify(error);
-  }
-  return 0;
-}
-// versionToInteger logic is the same as ./android/app/build.gradle
+// versionToInteger logic is the same as ./android/app/build.gradle.
 function versionToInteger(version) {
   const [majorMinorPatch, provisional] = version.split('-');
   const [major, minor, patch] = majorMinorPatch.split('.');
@@ -25,20 +12,32 @@ function versionToInteger(version) {
     Number(patch) * 100 +
     Number(!provisional ? '99' : provisional.match(/[0-9]+/)[0])
   );
-  // Regex /[0-9]+/, '[0-9]' means match any digit
-  // '+' means match one or more of the preceding token
+  // Regex /[0-9]+/, '[0-9]' means match any digit.
+  // '+' means match one or more of the preceding token.
+}
+
+export function compareVersions(versionOne, versionTwo) {
+  try {
+    const result = versionToInteger(versionOne) - versionToInteger(versionTwo);
+    if (result > 0) return 1;
+    if (result < 0) return -1;
+    return 0;
+  } catch (error) {
+    // Errors thrown in migration method in dataMigration.js do not trickle down to bugsnag.
+    // so will need manually notify.
+    error.message = `error verifying versions, versionOne: ${versionOne}, versionTwo ${versionTwo}`;
+    bugsnagClient.notify(error);
+  }
+  return 0;
 }
 
 export function test() {
   const testHelper = (versionOne, versionTwo, expectedResult) => {
     const testResult = compareVersions(versionOne, versionTwo);
     const testMessage = testResult === expectedResult ? 'pass' : 'FAIL';
-    console.log(
-      `checking ${versionOne} vs ${versionTwo}, status: ${testMessage}`,
-    );
-    console.log(
-      `expected result: ${expectedResult}, actual result: ${testResult}`,
-    );
+    /* eslint-disable no-console */
+    console.log(`checking ${versionOne} vs ${versionTwo}, status: ${testMessage}`);
+    console.log(`expected result: ${expectedResult}, actual result: ${testResult}`);
   };
 
   testHelper('1.0.0', '1.0.1', -1);
