@@ -7,7 +7,7 @@
   },
   "rules": {
     "prettier/prettier": "error",
-    "max-len": ["error", { "code": 100 }],
+    "max-len": ["error", { "code": 100, "ignoreTemplateLiterals": true }],
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "quotes": ["error", "single"],
 

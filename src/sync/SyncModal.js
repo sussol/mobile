@@ -1,43 +1,24 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Dimensions,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+
+import { Dimensions, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modalbox';
-import { Button, ProgressBar } from '../widgets';
-import { formatPlural, formatDate } from '../utilities';
-import { syncStrings } from '../localization';
-import globalStyles, {
-  DARK_GREY,
-  WARM_GREY,
-  SUSSOL_ORANGE,
-} from '../globalStyles';
-import { PROGRESS_LOADING } from './constants';
 
-export function SyncModal({
-  database,
-  isOpen,
-  onClose,
-  onPressManualSync,
-  state,
-}) {
-  const getStatusMessage = (
-    progress,
-    total,
-    isSyncing,
-    errorMessage,
-    progressMessage,
-  ) => {
+import { PROGRESS_LOADING } from './constants';
+import { syncStrings } from '../localization';
+import { formatPlural, formatDate } from '../utilities';
+import { Button, ProgressBar } from '../widgets';
+
+import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
+
+export function SyncModal({ database, isOpen, onClose, onPressManualSync, state }) {
+  const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
     let message = '';
 
     if (errorMessage !== '') {
@@ -54,11 +35,7 @@ export function SyncModal({
       message = syncStrings.loading_change_count;
     } else {
       message = progressMessage ? `${progressMessage}\n` : '';
-      message += `${progress} of ${formatPlural(
-        '@count record',
-        '@count records',
-        total,
-      )} updated`;
+      message += `${progress} of ${formatPlural('@count record', '@count records', total)} updated`;
     }
 
     return message;
@@ -71,14 +48,7 @@ export function SyncModal({
     return '-';
   };
 
-  const {
-    progress,
-    total,
-    isSyncing,
-    lastSyncTime,
-    errorMessage,
-    progressMessage,
-  } = state;
+  const { progress, total, isSyncing, lastSyncTime, errorMessage, progressMessage } = state;
 
   return (
     <Modal
@@ -95,35 +65,20 @@ export function SyncModal({
       <View style={localStyles.contentContainer}>
         <View style={localStyles.row}>
           <Text style={localStyles.progressDescription}>
-            {getStatusMessage(
-              progress,
-              total,
-              isSyncing,
-              errorMessage,
-              progressMessage,
-            )}
+            {getStatusMessage(progress, total, isSyncing, errorMessage, progressMessage)}
           </Text>
           <View style={localStyles.progressBarContainer}>
-            <ProgressBar
-              total={total}
-              progress={progress}
-              isComplete={!isSyncing}
-            />
+            <ProgressBar total={total} progress={progress} isComplete={!isSyncing} />
           </View>
         </View>
         <View style={localStyles.row}>
           <Text style={localStyles.lastSyncText}>Last successful sync</Text>
-          <Text style={localStyles.lastSyncText}>
-            {getSyncDateLabel(lastSyncTime)}
-          </Text>
+          <Text style={localStyles.lastSyncText}>{getSyncDateLabel(lastSyncTime)}</Text>
         </View>
         <View style={localStyles.row}>
           <Button
             style={[globalStyles.button, localStyles.button]}
-            textStyle={[
-              globalStyles.authFormButtonText,
-              localStyles.buttonText,
-            ]}
+            textStyle={[globalStyles.authFormButtonText, localStyles.buttonText]}
             text={syncStrings.manual_sync}
             onPress={onPressManualSync}
             disabledColor={WARM_GREY}
@@ -134,6 +89,8 @@ export function SyncModal({
     </Modal>
   );
 }
+
+export default SyncModal;
 
 const localStyles = StyleSheet.create({
   modal: {
@@ -191,6 +148,7 @@ const localStyles = StyleSheet.create({
   },
 });
 
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
 SyncModal.propTypes = {
   database: PropTypes.object.isRequired,
   state: PropTypes.object.isRequired,
@@ -199,6 +157,7 @@ SyncModal.propTypes = {
   isOpen: PropTypes.bool,
 };
 
+/* eslint-disable react/default-props-match-prop-types */
 SyncModal.defaultProps = {
   progress: 0,
   total: 0,
