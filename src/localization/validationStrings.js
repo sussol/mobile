@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -31,3 +29,5 @@ export const validationStrings = new LocalizedStrings({
   gil: {},
   tl: {},
 });
+
+export default validationStrings;

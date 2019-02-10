@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -45,7 +43,7 @@ export const navStrings = new LocalizedStrings({
     supplier_requisitions: 'Factures réquisitions',
   },
   gil: {
-    // TODO: add - stocktake
+    // TODO: add |stocktake|
     current_stock: 'Mwaitin am bwai n\naoraki ke am supply',
     customer_invoices: 'Ana invoice am\nkiriniki ke am aoraki',
     customer_requisitions: 'Am oota n am clinic',
@@ -63,7 +61,7 @@ export const navStrings = new LocalizedStrings({
     supplier_requisitions: 'Am oota nakon\nte pharmacy',
   },
   tl: {
-    // TODO: add - stocktake
+    // TODO: add |stocktake|.
     current_stock: 'Sasán Atuál',
     customer_invoices: 'Kliente nia Konta',
     customer_requisitions: 'Kliente nia Rekuizasaun',
@@ -81,3 +79,5 @@ export const navStrings = new LocalizedStrings({
     supplier_requisitions: 'Rekuizasaun\nba Distribuidor',
   },
 });
+
+export default navStrings;

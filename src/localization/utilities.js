@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { authStrings } from './authStrings';
 import { buttonStrings } from './buttonStrings';
 import { generalStrings } from './generalStrings';
@@ -17,3 +22,5 @@ export function setCurrentLanguage(language) {
   tableStrings.setLanguage(language);
   syncStrings.setLanguage(language);
 }
+
+export default setCurrentLanguage;

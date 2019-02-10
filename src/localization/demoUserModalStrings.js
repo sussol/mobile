@@ -1,20 +1,25 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
 export const demoUserModalStrings = new LocalizedStrings({
   gb: {
     confirmModalBody:
-      'One step closer to creating your Demo Store. We need to verify the email address you have provided so that we could generate your store and send you the credentials to it. We have sent you an e-mail with a verification link. Please check your provided email address and click on the verification link.',
+      // eslint-disable-next-line no-multi-str
+      'One step closer to creating your Demo Store. Before generating your demo store,\
+       we first need to verify your email address. We have sent a verification link to \
+       the email you have provided. Please check your inbox and follow the verification link.',
     modalBodyText:
-      'Request a demo store:\nEmail will be used for verification purposes and for notification of demo store expiry',
+      // eslint-disable-next-line no-multi-str
+      'Request a demo store.\n Your email will be used for verification purposes and for \
+       notification when your demo store expires',
   },
   fr: {},
   gil: {},
   tl: {},
 });
+
+export default demoUserModalStrings;

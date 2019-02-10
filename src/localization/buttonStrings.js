@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -85,3 +83,5 @@ export const buttonStrings = new LocalizedStrings({
     use_requested_quantities: 'Kuantidade Ezije',
   },
 });
+
+export default buttonStrings;
