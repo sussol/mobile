@@ -14,9 +14,10 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { createReduxContainer } from 'react-navigation-redux-helpers';
+
 
 import { Scheduler } from 'sussol-utilities';
+import { NavigationActions } from 'react-navigation';
 import globalStyles, {
   dataTableColors,
   dataTableStyles,
@@ -25,7 +26,6 @@ import globalStyles, {
   SUSSOL_ORANGE,
 } from './globalStyles';
 
-import { Navigator, getCurrentParams, getCurrentRouteName } from './navigation';
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
 
 import {
@@ -36,12 +36,13 @@ import {
   SyncState,
   Spinner,
 } from './widgets';
-
+import { getCurrentParams, getCurrentRouteName } from './navigation';
 import { migrateDataToVersion } from './dataMigration';
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { MobileAppSettings } from './settings';
+import ReduxNavigator from './navigation/ReduxNavigation';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
@@ -110,8 +111,8 @@ class MSupplyMobileAppContainer extends React.Component {
     // If we are on base screen (e.g. home), back button should close app as we can't go back
     if (!this.getCanNavigateBack()) BackHandler.exitApp();
     else {
-      const { navigation } = this.navigator.props;
-      navigation.goBack();
+      const { dispatch } = this.navigator.props;
+      dispatch(NavigationActions.back());
     }
     return true;
   }
@@ -201,7 +202,7 @@ class MSupplyMobileAppContainer extends React.Component {
       );
     }
     const { finaliseItem, dispatch, navigationState } = this.props;
-    const ReduxNavigator = createReduxContainer(Navigator, 'root');
+
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
@@ -214,12 +215,8 @@ class MSupplyMobileAppContainer extends React.Component {
           ref={(navigator) => {
             this.navigator = navigator;
           }}
-          navigation={{
-            state: navigationState,
-            dispatch: dispatch,
-          }}
-          // state={navigationState}
-          // dispatch={dispatch}
+          state={navigationState}
+          dispatch={dispatch}
           screenProps={{
             database: this.database,
             settings: this.settings,
