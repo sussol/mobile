@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import { FINALISE_GREEN, FINALISED_RED, GREY } from './colors';
@@ -31,3 +31,5 @@ export const navigationStyles = {
     bottom: 6,
   },
 };
+
+export default navigationStyles;
