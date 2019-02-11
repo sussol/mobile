@@ -9,9 +9,9 @@ import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { getCurrentRouteName } from '../navigation';
 
-function mapStateToProps({ navigation }) {
+function mapStateToProps({ nav }) {
   return {
-    currentRouteName: getCurrentRouteName(navigation),
+    currentRouteName: getCurrentRouteName(nav),
   };
 }
 

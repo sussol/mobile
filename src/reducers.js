@@ -5,10 +5,11 @@
 
 import { combineReducers } from 'redux';
 
-import { reducer as navigation } from './navigation';
-import { reducer as sync } from './sync';
+import { reducer as appReducer } from './navigation';
+import { reducer as syncReducer } from './sync';
 
-export const reducers = combineReducers({
-  navigation,
-  sync,
+export default combineReducers({
+  nav: appReducer,
+  sync: syncReducer,
 });
+

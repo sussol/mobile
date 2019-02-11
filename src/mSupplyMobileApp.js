@@ -270,7 +270,8 @@ MSupplyMobileAppContainer.propTypes = {
   syncState: PropTypes.object.isRequired,
 };
 
-function mapStateToProps({ navigation: navigationState, sync: syncState }) {
+function mapStateToProps(state) {
+  const { nav: navigationState, sync: syncState } = state;
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
   const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
