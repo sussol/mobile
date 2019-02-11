@@ -1,4 +1,5 @@
 import Realm from 'realm';
+
 import { complement } from 'set-manipulator';
 
 import { NUMBER_SEQUENCE_KEYS } from '../index';
@@ -123,7 +124,7 @@ export class Transaction extends Realm.Object {
           return item.itemId;
         });
         itemsToAdd.forEach(masterListItem => {
-          if (!masterListItem.item.crossReferenceItem) {
+          if (!masterListItem.item.crossReferenceItem && masterListItem.item.isVisible) {
             // Do not add cross reference items as will cause duplicates.
             createRecord(database, 'TransactionItem', this, masterListItem.item);
           }

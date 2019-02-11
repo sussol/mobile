@@ -27,6 +27,7 @@ const {
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
+  HARDWARE_UUID,
 } = SETTINGS_KEYS;
 
 const MIN_SYNC_BATCH_SIZE = 10;
@@ -49,6 +50,7 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
+    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }
@@ -131,19 +133,30 @@ export class Synchroniser {
       this.refreshSyncParams(); // Authenticate sets all the sync settings in database, so refresh.
 
       if (isFresh) {
-        // If a fresh initialisation, tell the server to prepare required sync records.
+        // If a fresh initialisation, send request to server to prepare required sync records.
         // eslint-disable-next-line no-undef
-        await fetch(
+        const response = await fetch(
           `${this.serverURL}/sync/v3/initial_dump/` +
             `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
           {
             headers: {
               Authorization: this.authHeader,
+              ...this.extraHeaders,
             },
           },
         );
-        // If initial_dump has been successful, |serverURL| is valid, and should now have all sync
-        // records queued and ready to send. Safe to store as |this.serverURL|.
+
+        if (response.status < 200 || response.status >= 300) {
+          throw new Error('Connection failure while attempting to sync.');
+        }
+
+        const responseJson = await response.json();
+        if (responseJson.error && responseJson.error.length > 0) {
+          throw new Error(responseJson.error);
+        }
+
+        // If the initial_dump has been successful, serverURL is valid, and should now have all sync
+        // records queued and ready to send. Safe to store as this.serverURL
         this.serverURL = serverURL;
       }
       await this.pull();
@@ -269,6 +282,7 @@ export class Synchroniser {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
+          ...this.extraHeaders,
         },
         body: JSON.stringify(records),
       },
@@ -280,7 +294,11 @@ export class Synchroniser {
       throw new Error('Unexpected response from sync server');
     }
     if (responseJson.error.length > 0) {
-      throw new Error('Server rejected pushed records');
+      if (responseJson.error.startsWith("Site registration doesn't match.")) {
+        throw new Error(responseJson.error);
+      } else {
+        throw new Error('Server rejected pushed records');
+      }
     }
   };
 
@@ -337,6 +355,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
+          ...this.extraHeaders,
         },
       },
     );
@@ -366,6 +385,7 @@ export class Synchroniser {
       {
         headers: {
           Authorization: this.authHeader,
+          ...this.extraHeaders,
         },
       },
     );
@@ -406,18 +426,29 @@ export class Synchroniser {
     const requestBody = {
       SyncRecordIDs: syncIds,
     };
+
     // eslint-disable-next-line no-undef
-    await fetch(
+    const response = await fetch(
       `${this.serverURL}/sync/v3/acknowledged_records` +
         `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
         method: 'POST',
         headers: {
           Authorization: this.authHeader,
+          ...this.extraHeaders,
         },
         body: JSON.stringify(requestBody),
       },
     );
+    let responseJson;
+    try {
+      responseJson = await response.json();
+    } catch (error) {
+      throw new Error('Unexpected response from sync server');
+    }
+    if (responseJson.error.length > 0) {
+      throw new Error(responseJson.error);
+    }
   };
 
   /**
