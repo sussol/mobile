@@ -1,8 +1,13 @@
-import { createOrUpdateRecord } from '../../sync/incomingSyncUtils';
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { deleteRecord } from './deleteRecord';
+import { createOrUpdateRecord } from '../../sync/incomingSyncUtils';
 
 // Translations for merge logic.
-// TODO: bind translations to DataType constants to avoid breakage on schema update.
+// TODO: bind translations to |DataType| constants to avoid breakage on schema update.
 const RECORD_TYPE_TO_TABLE = {
   Item: {
     StocktakeItem: {
@@ -50,17 +55,12 @@ const RECORD_TYPE_TO_MASTERLIST = {
  * are merged, the merged object is deleted from the database. The merge operation updates the
  * fields of the retained record to reference the same data as the merged object.
  *
- * @param {Realm}  database           The local database
- * @param {object} settings           Access to app settings
- * @param {string} internalRecordType Internal record type for merge operation
- * @param {object} syncRecord         Data representing the sync record
+ * @param  {Realm}   database            The local database.
+ * @param  {object}  settings            Access to app settings.
+ * @param  {string}  internalRecordType  Internal record type for merge operation.
+ * @param  {object}  syncRecord          Data representing the sync record.
  */
-export function mergeRecords(
-  database,
-  settings,
-  internalRecordType,
-  syncRecord,
-) {
+export function mergeRecords(database, settings, internalRecordType, syncRecord) {
   const recordToKeep = database
     .objects(internalRecordType)
     .filtered('id == $0', syncRecord.mergeIDtokeep)[0];
@@ -70,7 +70,7 @@ export function mergeRecords(
   const recordsExist = recordToKeep && recordToMerge;
   if (!recordsExist) return;
   const tablesToUpdate = RECORD_TYPE_TO_TABLE[internalRecordType];
-  // TODO: log to bugsnag if merging not implemented for a certain recordType.
+  // TODO: log to bugsnag if merging not implemented for a certain |recordType|.
   if (!tablesToUpdate) return;
 
   Object.entries(tablesToUpdate).forEach(
@@ -142,3 +142,5 @@ export function mergeRecords(
 
   deleteRecord(database, internalRecordType, recordToMerge.id);
 }
+
+export default mergeRecords;

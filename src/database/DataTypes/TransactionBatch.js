@@ -2,8 +2,9 @@ import Realm from 'realm';
 
 export class TransactionBatch extends Realm.Object {
   destructor(database) {
-    this.setTotalQuantity(database, 0); // Ensure it reverts any stock changes to item batches
-    // Can safely remove ItemBatch if transaction batch was created by an ExternalSupplierInvoice
+    this.setTotalQuantity(database, 0); // Ensure reverting of any stock changes to item batches.
+    // Can safely remove |this.itemBatch| if transaction batch was created by an external supplier
+    // invoice.
     if (this.transaction.isExternalSupplierInvoice) {
       database.delete('ItemBatch', this.itemBatch);
     }
@@ -18,13 +19,12 @@ export class TransactionBatch extends Realm.Object {
   }
 
   get usage() {
-    if (!this.transaction.isConfirmed && !this.transaction.isFinalised)
-      return 0;
+    if (!this.transaction.isConfirmed && !this.transaction.isFinalised) return 0;
     switch (this.transaction.type) {
       case 'customer_invoice':
         return this.totalQuantity;
       case 'supplier_invoice':
-      case 'supplier_credit': // Don't include supplier credits as usage, may be discarding stock
+      case 'supplier_credit': // Do not include supplier credits as usage, may be discarding stock.
       default:
         return 0;
     }
@@ -36,18 +36,14 @@ export class TransactionBatch extends Realm.Object {
 
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
-      throw new Error(
-        'Cannot change quantity of batches in a finalised transaction',
-      );
+      throw new Error('Cannot change quantity of batches in a finalised transaction');
     }
 
     const difference = quantity - this.totalQuantity;
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
 
     if (this.transaction.isConfirmed) {
-      const inventoryDifference = this.transaction.isIncoming
-        ? difference
-        : -difference;
+      const inventoryDifference = this.transaction.isIncoming ? difference : -difference;
       this.itemBatch.totalQuantity += inventoryDifference;
       database.save('ItemBatch', this.itemBatch);
     }
@@ -63,25 +59,25 @@ export class TransactionBatch extends Realm.Object {
       if (!this.sellPrice) return 0;
       return this.sellPrice * this.numberOfPacks;
     }
-    // Must be a supplier invoice
+    // Must be a supplier invoice.
     if (!this.costPrice) return 0;
     return this.costPrice * this.numberOfPacks;
   }
 
   /**
    * Returns the maximum amount of the given quantity that can be allocated to this batch.
-   * N.B. quantity may be positive or negative.
-   * @param  {double} quantity Quantity to allocate (can be positive or negative)
-   * @return {double}          The maximum that can be allocated
+   *
+   * @param   {double}  quantity  Quantity to allocate (can be positive or negative).
+   * @return  {double}            The maximum that can be allocated.
    */
   getAmountToAllocate(quantity) {
-    // Max that can be removed is the total quantity currently in the transaction batch
+    // Max that can be removed is the total quantity currently in the transaction batch.
     if (quantity < 0) return Math.max(quantity, -this.totalQuantity);
-    // For outgoing transactions, max that can be added is amount in item batch
+    // For outgoing transactions, max that can be added is amount in item batch.
     if (this.transaction.isOutgoing) {
       return Math.min(quantity, this.itemBatch.totalQuantity);
     }
-    // For supplier invoice, there is no maximum amount that can be added
+    // For supplier invoice, there is no maximum amount that can be added.
     return quantity;
   }
 
@@ -89,6 +85,8 @@ export class TransactionBatch extends Realm.Object {
     return `${this.itemBatch} in a ${this.transaction.type}`;
   }
 }
+
+export default TransactionBatch;
 
 TransactionBatch.schema = {
   name: 'TransactionBatch',
@@ -102,7 +100,7 @@ TransactionBatch.schema = {
     expiryDate: { type: 'date', optional: true },
     packSize: 'double',
     numberOfPacks: 'double',
-    numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices
+    numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices.
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
     costPrice: 'double',

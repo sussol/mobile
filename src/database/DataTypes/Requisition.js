@@ -1,6 +1,12 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
-import { createRecord, getTotal } from '../utilities';
 import { complement } from 'set-manipulator';
+
+import { createRecord, getTotal } from '../utilities';
 
 export class Requisition extends Realm.Object {
   constructor() {
@@ -56,7 +62,6 @@ export class Requisition extends Realm.Object {
     return this.items.filtered('item.id == $0', itemId).length > 0;
   }
 
-  // Adds a RequisitionItem to this Requisition
   addItem(requisitionItem) {
     this.items.push(requisitionItem);
   }
@@ -68,30 +73,16 @@ export class Requisition extends Realm.Object {
 
   createCustomerInvoice(database, user) {
     if (this.isRequest || this.isFinalised) {
-      throw new Error(
-        'Cannot create invoice from Finalised or Request Requistion ',
-      );
+      throw new Error('Cannot create invoice from Finalised or Request Requistion ');
     }
     if (
-      database
-        .objects('Transaction')
-        .filtered('linkedRequisition.id == $0', this.id).length > 0
+      database.objects('Transaction').filtered('linkedRequisition.id == $0', this.id).length > 0
     ) {
       return;
     }
-    const transaction = createRecord(
-      database,
-      'CustomerInvoice',
-      this.otherStoreName,
-      user,
-    );
+    const transaction = createRecord(database, 'CustomerInvoice', this.otherStoreName, user);
     this.items.forEach(requisitionItem => {
-      createRecord(
-        database,
-        'TransactionItem',
-        transaction,
-        requisitionItem.item,
-      );
+      createRecord(database, 'TransactionItem', transaction, requisitionItem.item);
     });
     transaction.linkedRequisition = this;
     this.linkedTransaction = transaction;
@@ -100,21 +91,22 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Add all items from the mobile store's master list to this requisition
+   * Add all items from the mobile store master list to this requisition.
+   *
+   * @param  {Realm}  database   App database.
+   * @param  {Name}   thisStore  Current store.
    */
   addItemsFromMasterList(database, thisStore) {
     if (this.isFinalised) {
       throw new Error('Cannot add items to a finalised requisition');
     }
     thisStore.masterLists.forEach(masterList => {
-      const itemsToAdd = complement(
-        masterList.items,
-        this.items,
-        item => item.itemId,
-      );
+      const itemsToAdd = complement(masterList.items, this.items, item => {
+        return item.itemId;
+      });
       itemsToAdd.forEach(masterListItem => {
         if (!masterListItem.item.crossReferenceItem) {
-          // Don't add cross reference items or we'll get duplicates
+          // Don't add cross reference items as causes duplicates.
           createRecord(database, 'RequisitionItem', this, masterListItem.item);
         }
       });
@@ -122,7 +114,10 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Add all items from the mobile store's master list that require more stock
+   * Add all items from the mobile store master list that require more stock.
+   *
+   * @param  {Realm}  database   App database.
+   * @param  {Name}   thisStore  Current store.
    */
   createAutomaticOrder(database, thisStore) {
     if (this.isFinalised) {
@@ -135,8 +130,10 @@ export class Requisition extends Realm.Object {
 
   removeItemsById(database, itemIds) {
     const itemsToDelete = [];
-    for (let i = 0; i < itemIds.length; i++) {
-      const requisitionItem = this.items.find(item => item.id === itemIds[i]);
+    for (let i = 0; i < itemIds.length; i += 1) {
+      const requisitionItem = this.items.find(item => {
+        return item.id === itemIds[i];
+      });
       if (requisitionItem.isValid()) {
         itemsToDelete.push(requisitionItem);
       }
@@ -152,10 +149,9 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Delete any items that aren't contributing to this requisition, in order to
-   * remove clutter
-   * @param  {Realm} database   App wide local database
-   * @return {none}
+   * Delete any items not associated with this requisition.
+   *
+   * @param  {Realm}  database  App database.
    */
   pruneRedundantItems(database) {
     const itemsToPrune = [];
@@ -176,6 +172,8 @@ export class Requisition extends Realm.Object {
   }
 }
 
+export default Requisition;
+
 Requisition.schema = {
   name: 'Requisition',
   primaryKey: 'id',
@@ -183,7 +181,7 @@ Requisition.schema = {
     id: 'string',
     status: { type: 'string', default: 'new' },
     otherStoreName: { type: 'Name', optional: true },
-    type: { type: 'string', default: 'request' }, // imprest, forecast, request or response
+    type: { type: 'string', default: 'request' }, // imprest, forecast, request or response.
     entryDate: { type: 'date', default: new Date() },
     daysToSupply: { type: 'double', default: 30 },
     serialNumber: { type: 'string', default: '0' },

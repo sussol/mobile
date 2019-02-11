@@ -1,4 +1,11 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
+
+import { Requisition } from './Requisition';
 import { parsePositiveInteger } from '../../utilities';
 
 export class RequisitionItem extends Realm.Object {
@@ -24,31 +31,24 @@ export class RequisitionItem extends Realm.Object {
 
   get suggestedQuantity() {
     const daysToSupply = this.requisition ? this.requisition.daysToSupply : 0;
-    return Math.ceil(
-      Math.max(this.dailyUsage * daysToSupply - this.stockOnHand, 0),
-    );
+    return Math.ceil(Math.max(this.dailyUsage * daysToSupply - this.stockOnHand, 0));
   }
 
   get linkedTransactionItem() {
     if (this.isRequest || !this.requisition.linkedTransaction) return null;
-    return this.requisition.linkedTransaction.items.filtered(
-      'item.id == $0',
-      this.item.id,
-    )[0];
+    return this.requisition.linkedTransaction.items.filtered('item.id == $0', this.item.id)[0];
   }
 
   get ourStockOnHand() {
-    const linkedTransactionItem = this.linkedTransactionItem;
-    return linkedTransactionItem
-      ? linkedTransactionItem.availableQuantity
-      : this.item.totalQuantity;
+    const { availableQuantity } = this.linkedTransactionItem;
+    const { totalQuantity } = this.item;
+
+    return this.linkedTransactionItem ? availableQuantity : totalQuantity;
   }
 
   setSuppliedQuantity(database, newValue) {
     if (this.requisition.isFinalised || this.requisition.isRequest) {
-      throw new Error(
-        'Cannot set supplied quantity for Finalised or Request Requisition',
-      );
+      throw new Error('Cannot set supplied quantity for Finalised or Request Requisition');
     }
 
     const transactionItem = this.linkedTransactionItem;
@@ -59,6 +59,8 @@ export class RequisitionItem extends Realm.Object {
     database.save('RequisitionItem', this);
   }
 }
+
+export default Requisition;
 
 RequisitionItem.schema = {
   name: 'RequisitionItem',
