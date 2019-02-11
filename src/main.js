@@ -15,6 +15,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import { ErrorHandler } from 'redux-persist-error-handler';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
+import { name as appName } from '../app.json';
 import MSupplyMobileApp from './mSupplyMobileApp';
 import { reducers } from './reducers';
 
@@ -53,4 +54,4 @@ function App() {
   );
 }
 
-AppRegistry.registerComponent('mSupplyMobile', () => App);
+AppRegistry.registerComponent(appName, () => App);
