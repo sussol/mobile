@@ -1,5 +1,20 @@
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+
 const bugsnagClient = new BugsnagClient();
+
+// versionToInteger logic is the same as ./android/app/build.gradle.
+function versionToInteger(version) {
+  const [majorMinorPatch, provisional] = version.split('-');
+  const [major, minor, patch] = majorMinorPatch.split('.');
+  return (
+    Number(major) * 10000000 +
+    Number(minor) * 100000 +
+    Number(patch) * 100 +
+    Number(!provisional ? '99' : provisional.match(/[0-9]+/)[0])
+  );
+  // Regex /[0-9]+/, '[0-9]' means match any digit.
+  // '+' means match one or more of the preceding token.
+}
 
 export function compareVersions(versionOne, versionTwo) {
   try {
@@ -8,29 +23,19 @@ export function compareVersions(versionOne, versionTwo) {
     if (result < 0) return -1;
     return 0;
   } catch (error) {
-      // Errors thrown in migration method in dataMigration.js do not trickle down to bugsnag
-      // so will need manually notify bug snag.
+    // Errors thrown in migration method in dataMigration.js do not trickle down to bugsnag.
+    // so will need manually notify.
     error.message = `error verifying versions, versionOne: ${versionOne}, versionTwo ${versionTwo}`;
     bugsnagClient.notify(error);
   }
   return 0;
-}
-// versionToInteger logic is the same as ./android/app/build.gradle
-function versionToInteger(version) {
-  const [majorMinorPatch, provisional] = version.split('-');
-  const [major, minor, patch] = majorMinorPatch.split('.');
-  return Number(major) * 10000000 +
-         Number(minor) * 100000 +
-         Number(patch) * 100 +
-         Number(!provisional ? '99' : provisional.match(/[0-9]+/)[0]);
-        // Regex /[0-9]+/, '[0-9]' means match any digit
-        // '+' means match one or more of the preceding token
 }
 
 export function test() {
   const testHelper = (versionOne, versionTwo, expectedResult) => {
     const testResult = compareVersions(versionOne, versionTwo);
     const testMessage = testResult === expectedResult ? 'pass' : 'FAIL';
+    /* eslint-disable no-console */
     console.log(`checking ${versionOne} vs ${versionTwo}, status: ${testMessage}`);
     console.log(`expected result: ${expectedResult}, actual result: ${testResult}`);
   };
@@ -70,4 +75,3 @@ expected result: -1, actual result: -1
 checking 2.10.11-RC10 vs 3.10.11, status: pass
 expected result: -1, actual result: -1
 */
-

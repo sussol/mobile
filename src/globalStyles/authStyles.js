@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import { BACKGROUND_COLOR, SUSSOL_ORANGE, WARMER_GREY } from './colors';
@@ -53,3 +53,5 @@ export const authStyles = {
     marginTop: 60,
   },
 };
+
+export default authStyles;

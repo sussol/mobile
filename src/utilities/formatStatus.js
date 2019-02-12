@@ -8,3 +8,5 @@ export function formatStatus(status) {
       return tableStrings.in_progress;
   }
 }
+
+export default formatStatus;

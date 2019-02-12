@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import {
   Address,
   Item,
@@ -63,7 +68,7 @@ Setting.schema = {
   name: 'Setting',
   primaryKey: 'key',
   properties: {
-    key: 'string', // Includes the user's UUID if it is per-user
+    key: 'string', // Includes the user's UUID if it is per-user.
     value: 'string',
     user: { type: 'User', optional: true },
   },
@@ -74,13 +79,12 @@ SyncOut.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    changeTime: 'int', // In seconds since the epoch
-    changeType: 'string', // create, update, or delete
-    recordType: 'string', // i.e. Table name
+    changeTime: 'int', // UNIX epoch format.
+    changeType: 'string', // 'create', 'update', or 'delete'.
+    recordType: 'string', // table name.
     recordId: 'string',
   },
 };
-
 
 TransactionCategory.schema = {
   name: 'TransactionCategory',
@@ -112,34 +116,35 @@ User.schema = {
   },
 };
 
-export const schema =
-  {
-    schema: [
-      Address,
-      Item,
-      ItemBatch,
-      ItemDepartment,
-      ItemCategory,
-      ItemStoreJoin,
-      Transaction,
-      TransactionItem,
-      TransactionBatch,
-      TransactionCategory,
-      MasterList,
-      MasterListItem,
-      MasterListNameJoin,
-      Name,
-      NameStoreJoin,
-      NumberSequence,
-      NumberToReuse,
-      Requisition,
-      RequisitionItem,
-      Setting,
-      SyncOut,
-      Stocktake,
-      StocktakeItem,
-      StocktakeBatch,
-      User,
-    ],
-    schemaVersion: 5,
-  };
+export const schema = {
+  schema: [
+    Address,
+    Item,
+    ItemBatch,
+    ItemDepartment,
+    ItemCategory,
+    ItemStoreJoin,
+    Transaction,
+    TransactionItem,
+    TransactionBatch,
+    TransactionCategory,
+    MasterList,
+    MasterListItem,
+    MasterListNameJoin,
+    Name,
+    NameStoreJoin,
+    NumberSequence,
+    NumberToReuse,
+    Requisition,
+    RequisitionItem,
+    Setting,
+    SyncOut,
+    Stocktake,
+    StocktakeItem,
+    StocktakeBatch,
+    User,
+  ],
+  schemaVersion: 5,
+};
+
+export default schema;

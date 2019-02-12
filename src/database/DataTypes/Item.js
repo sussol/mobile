@@ -1,7 +1,13 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
+
 import { getTotal, millisecondsToDays, MILLISECONDS_PER_DAY } from '../utilities';
 
-const USAGE_PERIOD_MILLISECONDS = 3 * 30 * MILLISECONDS_PER_DAY; // Three months in milliseconds
+const USAGE_PERIOD_MILLISECONDS = 3 * 30 * MILLISECONDS_PER_DAY; // Three months.
 
 export class Item extends Realm.Object {
   destructor(database) {
@@ -15,9 +21,7 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * A useful getter to ensure that if the item is a cross reference item,
-   * we use the item it references (the real item) rather than the cross
-   * reference item
+   * A getter for cross-reference items. Returns the referenced item.
    */
   get realItem() {
     return this.crossReferenceItem ? this.crossReferenceItem : this;
@@ -29,12 +33,12 @@ export class Item extends Realm.Object {
 
   get dailyUsage() {
     const endDate = new Date();
-    const startDate = new Date(endDate - USAGE_PERIOD_MILLISECONDS); // 90 Days ago
+    const startDate = new Date(endDate - USAGE_PERIOD_MILLISECONDS); // 90 days ago.
     return this.dailyUsageForPeriod(startDate, endDate);
   }
 
-  // Based on the earliest added ItemBatch associated with this Item
-  // Will return undefined if there are no batches.
+  // Returns the earliest added batch associated with this item. Will return
+  // undefined if there are no batches.
   get addedDate() {
     if (this.batches.length === 0) return undefined;
     let itemAddedDate = new Date();
@@ -46,12 +50,17 @@ export class Item extends Realm.Object {
   }
 
   get earliestExpiringBatch() {
-    if (this.batches.length === 0) return null;
-    let earliestBatch = this.batches.find(batch => batch.totalQuantity > 0);
-    // If no batches found with totalQuantity > 0, return null
+    const { batches } = this;
+
+    if (batches.length === 0) return null;
+    let earliestBatch = batches.find(batch => {
+      return batch.totalQuantity > 0;
+    });
+
+    // If no batches found with |totalQuantity > 0|, return null.
     if (!earliestBatch) return null;
 
-    this.batches.forEach(batch => {
+    batches.forEach(batch => {
       if (
         batch.totalQuantity > 0 &&
         batch.expiryDate &&
@@ -60,6 +69,7 @@ export class Item extends Realm.Object {
         earliestBatch = batch;
       }
     });
+
     return earliestBatch;
   }
 
@@ -80,35 +90,41 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * Returns the sum of all usage in TransactionBatches related to ItemBatches for
-   * this Item within period defined by a starting and ending date.
-   * @param   {Date} startDate  Starting Date (e.g. From 25/4/2017)
-   * @param   {Date} endDate    Starting Date (e.g. to 25/7/2017)
-   * @return  {number}          The total transaction usage for this batch
+   * Get the sum of all transaction batch usage related to batches for
+   * this item within a start and end date.
+   *
+   * @param   {Date}    startDate  Start date.
+   * @param   {Date}    endDate    End date.
+   * @return  {number}             The total transaction usage for this batch
+   *                               over the specified period.
    */
   totalUsageForPeriod(startDate, endDate) {
-    return this.batches.reduce(
-      (total, batch) => total + batch.totalUsageForPeriod(startDate, endDate),
-      0
-    );
+    return this.batches.reduce((total, batch) => {
+      return total + batch.totalUsageForPeriod(startDate, endDate);
+    }, 0);
   }
 
   /**
-   * Returns the sum of all usage in TransactionBatches related to ItemBatches for
-   * this Item within period defined by a starting and ending date. If the oldest
-   * TransactionBatch is later than the startDate, then that will be used instead
-   * @param   {Date} startDate  Starting Date (e.g. From 25/4/2017)
-   * @param   {Date} endDate    Starting Date (e.g. to 25/7/2017)
-   * @return  {number}          The average daily usage over period for this item. Note: LIKELY A
-   *                            DECIMAL. Avoid use in quantities without rounding (or ceiling).
+   * Get the sum of all transaction batch usage related to batches for this
+   * item within a start and end date. If the oldest batch is later than
+   * |startDate|, use that.
+   *
+   * @param   {Date}    startDate  Start date.
+   * @param   {Date}    endDate    End date.
+   * @return  {number}             The average daily usage for this item over the specified
+   *                               period (often a decimal, should be rounded or ceiling taken
+   *                               if used as quantity.
    */
   dailyUsageForPeriod(startDate, endDate) {
-    if (this.batches.length === 0) return 0;
-    const addedDate = this.addedDate;
+    const { addedDate, batches } = this;
+
+    if (batches.length === 0) return 0;
+
     const fromDate = addedDate > startDate ? addedDate : startDate;
     const periodInDays = millisecondsToDays(endDate - fromDate);
     const usage = this.totalUsageForPeriod(fromDate, endDate);
-    return usage / (periodInDays || 1); // Avoid divide by zero
+
+    return usage / (periodInDays || 1); // Avoid divide by zero.
   }
 
   addBatch(itemBatch) {
@@ -124,6 +140,8 @@ export class Item extends Realm.Object {
     return `${this.code} - ${this.name}`;
   }
 }
+
+export default Item;
 
 Item.schema = {
   name: 'Item',

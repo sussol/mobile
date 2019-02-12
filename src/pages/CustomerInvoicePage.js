@@ -1,18 +1,17 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-} from 'react-native';
+
+import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
-import globalStyles from '../globalStyles';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
+
 import { createRecord } from '../database';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
@@ -22,6 +21,8 @@ import {
   PageInfo,
   TextEditor,
 } from '../widgets';
+
+import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -46,20 +47,22 @@ export class CustomerInvoicePage extends GenericPage {
   }
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    // (... != null) checks for null or undefined (implicitly type coerced to null).
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending.
+   * Returns updated data fitlered by |searchTerm| and ordered by |sortBy| and |isAscending|.
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.props.transaction.items
-                .filtered('item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0', searchTerm);
+    const data = this.props.transaction.items.filtered(
+      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
+      searchTerm,
+    );
     let sortDataType;
     switch (sortBy) {
       case 'itemCode':
@@ -73,8 +76,10 @@ export class CustomerInvoicePage extends GenericPage {
       default:
         sortDataType = 'realm';
     }
-    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
-  }
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
+  };
 
   onAddMasterItems = () => {
     this.props.runWithLoadingIndicator(() => {
@@ -84,14 +89,15 @@ export class CustomerInvoicePage extends GenericPage {
       });
       this.refreshData();
     });
-  }
+  };
 
   /**
-   * Respond to the user editing the number in the number received column
-   * @param  {string} key             Should always be 'totalQuantity'
-   * @param  {object} transactionItem The transaction item from the row being edited
-   * @param  {string} newValue        The value the user entered in the cell
-   * @return {none}
+   * Respond to the user editing the number in the number received column.
+   *
+   * @param   {string}  key              Should always be |totalQuantity|.
+   * @param   {object}  transactionItem  The transaction item from the row being edited.
+   * @param   {string}  newValue         The value the user entered in the cell.
+   * @return  {none}
    */
   onEndEditing = (key, transactionItem, newValue) => {
     if (key !== 'totalQuantity') return;
@@ -100,31 +106,46 @@ export class CustomerInvoicePage extends GenericPage {
       transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
       database.save('TransactionItem', transactionItem);
     });
-  }
+  };
 
   onDeleteConfirm = () => {
     const { selection } = this.state;
     const { transaction, database } = this.props;
+
     database.write(() => {
       transaction.removeItemsById(database, selection);
       database.save('Transaction', transaction);
     });
     this.setState({ selection: [] }, this.refreshData);
-  }
+  };
 
-  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
+  onDeleteCancel = () => {
+    this.setState({ selection: [] }, this.refreshData);
+  };
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => {
+    this.setState({ selection: newSelection });
+  };
 
-  openModal = (key) => this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = key => {
+    this.setState({ modalKey: key, modalIsOpen: true });
+  };
 
-  closeModal = () => this.setState({ modalIsOpen: false });
+  closeModal = () => {
+    this.setState({ modalIsOpen: false });
+  };
 
-  openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
+  openItemSelector = () => {
+    this.openModal(MODAL_KEYS.ITEM_SELECT);
+  };
 
-  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
+  openCommentEditor = () => {
+    this.openModal(MODAL_KEYS.COMMENT_EDIT);
+  };
 
-  openTheirRefEditor = () => this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
+  openTheirRefEditor = () => {
+    this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
+  };
 
   getModalTitle = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -137,7 +158,7 @@ export class CustomerInvoicePage extends GenericPage {
       case THEIR_REF_EDIT:
         return modalStrings.edit_their_reference;
     }
-  }
+  };
 
   renderPageInfo = () => {
     const infoColumns = [
@@ -175,12 +196,9 @@ export class CustomerInvoicePage extends GenericPage {
       ],
     ];
     return (
-      <PageInfo
-        columns={infoColumns}
-        isEditingDisabled={this.props.transaction.isFinalised}
-      />
+      <PageInfo columns={infoColumns} isEditingDisabled={this.props.transaction.isFinalised} />
     );
-  }
+  };
 
   renderCell = (key, transactionItem) => {
     switch (key) {
@@ -198,7 +216,7 @@ export class CustomerInvoicePage extends GenericPage {
           isDisabled: this.props.transaction.isFinalised,
         };
     }
-  }
+  };
 
   renderModalContent = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -209,10 +227,10 @@ export class CustomerInvoicePage extends GenericPage {
         return (
           <AutocompleteSelector
             options={database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            queryStringSecondary={'name CONTAINS[c] $0'}
-            sortByString={'name'}
-            onSelect={(item) => {
+            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
+            queryStringSecondary="name CONTAINS[c] $0"
+            sortByString="name"
+            onSelect={item => {
               database.write(() => {
                 if (!transaction.hasItem(item)) {
                   createRecord(database, 'TransactionItem', transaction, item);
@@ -221,15 +239,19 @@ export class CustomerInvoicePage extends GenericPage {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
+            renderLeftText={item => {
+              return `${item.name}`;
+            }}
+            renderRightText={item => {
+              return `${item.totalQuantity}`;
+            }}
           />
         );
       case COMMENT_EDIT:
         return (
           <TextEditor
             text={transaction.comment}
-            onEndEditing={(newComment) => {
+            onEndEditing={newComment => {
               if (newComment !== transaction.comment) {
                 database.write(() => {
                   transaction.comment = newComment;
@@ -244,7 +266,7 @@ export class CustomerInvoicePage extends GenericPage {
         return (
           <TextEditor
             text={transaction.theirRef}
-            onEndEditing={(newTheirRef) => {
+            onEndEditing={newTheirRef => {
               if (newTheirRef !== transaction.theirRef) {
                 database.write(() => {
                   transaction.theirRef = newTheirRef;
@@ -256,23 +278,25 @@ export class CustomerInvoicePage extends GenericPage {
           />
         );
     }
-  }
+  };
 
-  renderButtons = () => (
-    <View style={globalStyles.verticalContainer}>
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_item}
-        onPress={this.openItemSelector}
-        isDisabled={this.props.transaction.isFinalised}
-      />
-      <PageButton
-        text={buttonStrings.add_master_list_items}
-        onPress={this.onAddMasterItems}
-        isDisabled={this.props.transaction.isFinalised}
-      />
-    </View>
-  );
+  renderButtons = () => {
+    return (
+      <View style={globalStyles.verticalContainer}>
+        <PageButton
+          style={globalStyles.topButton}
+          text={buttonStrings.new_item}
+          onPress={this.openItemSelector}
+          isDisabled={this.props.transaction.isFinalised}
+        />
+        <PageButton
+          text={buttonStrings.add_master_list_items}
+          onPress={this.onAddMasterItems}
+          isDisabled={this.props.transaction.isFinalised}
+        />
+      </View>
+    );
+  };
 
   render() {
     return (
@@ -322,7 +346,7 @@ export class CustomerInvoicePage extends GenericPage {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType={'Transaction'}
+        finalisableDataType="Transaction"
         database={this.props.database}
         selection={this.state.selection}
         {...this.props.genericTablePageStyles}
@@ -331,8 +355,12 @@ export class CustomerInvoicePage extends GenericPage {
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
           questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
+          onCancel={() => {
+            this.onDeleteCancel();
+          }}
+          onConfirm={() => {
+            this.onDeleteConfirm();
+          }}
           confirmText={modalStrings.remove}
         />
         <PageContentModal
@@ -347,6 +375,7 @@ export class CustomerInvoicePage extends GenericPage {
   }
 }
 
+/* eslint-disable react/forbid-prop-types */
 CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
@@ -355,16 +384,20 @@ CustomerInvoicePage.propTypes = {
 };
 
 /**
- * Check whether a given customer invoice is safe to be finalised. Return null if it is,
- * otherwise return an appropriate error message if not.
- * @param  {object}  customerInvoice  The customer invoice to check
- * @return {string}  An error message if not able to be finalised
+ * Check whether a given customer invoice is safe to be finalised. If safe to finalise,
+ * return null, else return an appropriate error message.
+ *
+ * @param   {object}  customerInvoice  The customer invoice to check.
+ * @return  {string}                   Error message if unsafe to finalise, else null.
  */
 export function checkForFinaliseError(customerInvoice) {
   if (customerInvoice.items.length === 0) {
     return modalStrings.add_at_least_one_item_before_finalising;
-  } else if (customerInvoice.totalQuantity === 0) {
+  }
+
+  if (customerInvoice.totalQuantity === 0) {
     return modalStrings.record_stock_to_issue_before_finalising;
   }
+
   return null;
 }

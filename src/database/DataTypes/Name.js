@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
 
 export class Name extends Realm.Object {
@@ -29,7 +34,9 @@ export class Name extends Realm.Object {
   }
 
   addTransactionIfUnique(transaction) {
-    if (this.transactions.filtered('id == $0', transaction.id).length > 0) return;
+    if (this.transactions.filtered('id == $0', transaction.id).length > 0) {
+      return;
+    }
     this.addTransaction(transaction);
   }
 
@@ -37,6 +44,8 @@ export class Name extends Realm.Object {
     return this.name;
   }
 }
+
+export default Name;
 
 Name.schema = {
   name: 'Name',

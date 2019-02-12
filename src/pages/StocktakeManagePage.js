@@ -1,18 +1,15 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-} from 'react-native';
 
-import { BottomModal, OnePressButton, TextInput, ToggleBar } from '../widgets';
-import globalStyles from '../globalStyles';
+import { StyleSheet } from 'react-native';
+
 import { GenericPage } from './GenericPage';
+
 import { createRecord } from '../database';
 import {
   buttonStrings,
@@ -22,15 +19,19 @@ import {
   navStrings,
 } from '../localization';
 import { formatDateAndTime } from '../utilities';
+import { BottomModal, OnePressButton, TextInput, ToggleBar } from '../widgets';
+
+import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 
 /**
-* Renders the page for managing a stocktake.
-* @prop   {Realm}               database    App wide database.
-* @prop   {func}                navigateTo  CallBack for navigation stack.
-* @state  {Realm.Results}       items       Realm.Result object containing all Items.
-*/
+ * Renders the page for managing a stocktake.
+ *
+ * @prop  {Realm}         database   App wide database.
+ * @prop  {func}          navigateTo CallBack for navigation stack.
+ * @state {Realm.Results} items      Realm.Result object containing all items.
+ */
 export class StocktakeManagePage extends React.Component {
   constructor(props) {
     super(props);
@@ -49,37 +50,49 @@ export class StocktakeManagePage extends React.Component {
   }
 
   componentWillMount = () => {
-    if (this.props.stocktake) {
+    const { stocktake } = this.props;
+
+    if (stocktake) {
       const selected = [];
-      this.props.stocktake.items.forEach((stocktakeItem) => {
-        const itemId = stocktakeItem.itemId;
+      stocktake.items.forEach(stocktakeItem => {
+        const { itemId } = stocktakeItem;
         if (itemId !== '') selected.push(itemId);
       });
-      this.setState({
-        selection: selected,
-        stocktakeName: this.props.stocktake.name,
-      }, this.refreshData);
-    }
-  }
 
-  onSelectionChange = (newSelection) => this.setState({ selection: newSelection });
+      this.setState(
+        {
+          selection: selected,
+          stocktakeName: stocktake.name,
+        },
+        this.refreshData,
+      );
+    }
+  };
+
+  onSelectionChange = newSelection => {
+    this.setState({ selection: newSelection });
+  };
 
   onConfirmPress = () => {
-    this.props.runWithLoadingIndicator(() => {
-      const { selection } = this.state;
-      const { database, navigateTo, currentUser } = this.props;
-      let { stocktake } = this.props;
-      const { stocktakeName } = this.state;
+    const { runWithLoadingIndicator } = this.props;
 
+    runWithLoadingIndicator(() => {
+      const { currentUser, database, navigateTo } = this.props;
+      const { selection, stocktakeName } = this.state;
+
+      let { stocktake } = this.props;
       database.write(() => {
-        // If no stocktake came in props, make a new one
-        if (!stocktake) stocktake = createRecord(database, 'Stocktake', currentUser);
+        // If no |stocktake| came in props, make a new one.
+        if (!stocktake) {
+          stocktake = createRecord(database, 'Stocktake', currentUser);
+        }
 
         stocktake.setItemsByID(database, selection);
 
-        stocktake.name = stocktakeName !== '' ?
-          stocktakeName :
-          `${generalStrings.stocktake} ${formatDateAndTime(new Date(), 'slashes')}`;
+        stocktake.name =
+          stocktakeName !== ''
+            ? stocktakeName
+            : `${generalStrings.stocktake} ${formatDateAndTime(new Date(), 'slashes')}`;
 
         database.save('Stocktake', stocktake);
       });
@@ -87,51 +100,61 @@ export class StocktakeManagePage extends React.Component {
       navigateTo(
         'stocktakeEditor',
         navStrings.stocktake,
-        { stocktake: stocktake },
-        // Coming from StocktakesPage : coming from StocktakeEditPage.
-        !this.props.stocktake ? 'replace' : 'goBack',
+        { stocktake },
+        // Coming from |StocktakesPage| : coming from |StocktakeEditPage|.
+        !stocktake ? 'replace' : 'goBack',
       );
     });
-  }
+  };
 
-  toggleSelectAllItems = (isAllItemsSelected) => {
+  toggleSelectAllItems = isAllItemsSelected => {
     const { visibleItemIds, selection } = this.state;
 
-    if (isAllItemsSelected) { // Deselect all visible items
-      visibleItemIds.forEach((id) => {
+    if (isAllItemsSelected) {
+      // Deselect all visible items.
+      visibleItemIds.forEach(id => {
         const idIndex = selection.indexOf(id);
         if (idIndex >= 0) {
           selection.splice(idIndex, 1);
         }
       });
-    } else { // Add all ids in visibleItemIds that aren't already in selection
-      visibleItemIds.forEach((id) => {
+    } else {
+      // Add all |id|s in |visibleItemIds| that aren't already in selection.
+      visibleItemIds.forEach(id => {
         if (!selection.includes(id)) {
           selection.push(id);
         }
       });
     }
 
-    this.setState({
-      selection: [...selection],
-    }, this.refreshData);
-  }
+    this.setState(
+      {
+        selection: [...selection],
+      },
+      this.refreshData,
+    );
+  };
 
   toggleShowItemsWithNoStock = () => {
-    this.setState({
-      showItemsWithNoStock: !this.state.showItemsWithNoStock,
-    }, this.refreshData);
-  }
+    const { showItemsWithNoStock } = this.state;
+
+    this.setState(
+      {
+        showItemsWithNoStock: !showItemsWithNoStock,
+      },
+      this.refreshData,
+    );
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    // (... != null) checks for null or undefined (implicitly type coerced to null).
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending.
+   * Returns updated data filtered by |searchTerm| and ordered by |sortBy| and |isAscending|.
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
@@ -141,14 +164,18 @@ export class StocktakeManagePage extends React.Component {
     data = this.items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
     data = data.sorted(sortBy, !isAscending);
     if (!showItemsWithNoStock) {
-      data = data.slice().filter((item) => item.totalQuantity !== 0);
+      data = data.slice().filter(item => {
+        return item.totalQuantity !== 0;
+      });
     }
-    // Populate visibleItemIds with the ids of the items in the filtered data
+    // Populate |visibleItemIds| with the ids of the items in the filtered data.
     this.setState({
-      visibleItemIds: data.map((item) => item.id),
-      data: data,
+      visibleItemIds: data.map(item => {
+        return item.id;
+      }),
+      data,
     });
-  }
+  };
 
   renderCell = (key, item) => {
     switch (key) {
@@ -159,16 +186,15 @@ export class StocktakeManagePage extends React.Component {
           type: 'checkable',
         };
     }
-  }
+  };
 
   renderToggleBar = () => {
-    const {
-      visibleItemIds,
-      showItemsWithNoStock,
-      selection,
-    } = this.state;
-    const areAllItemsSelected = visibleItemIds.length > 0 &&
-                                visibleItemIds.every((id) => selection.includes(id));
+    const { visibleItemIds, showItemsWithNoStock, selection } = this.state;
+    const areAllItemsSelected =
+      visibleItemIds.length > 0 &&
+      visibleItemIds.every(id => {
+        return selection.includes(id);
+      });
     return (
       <ToggleBar
         style={globalStyles.toggleBar}
@@ -179,23 +205,30 @@ export class StocktakeManagePage extends React.Component {
         toggles={[
           {
             text: buttonStrings.hide_stockouts,
-            onPress: () => this.toggleShowItemsWithNoStock(),
+            onPress: () => {
+              return this.toggleShowItemsWithNoStock();
+            },
             isOn: !showItemsWithNoStock,
           },
           {
             text: buttonStrings.all_items_selected,
-            onPress: () => this.toggleSelectAllItems(areAllItemsSelected),
+            onPress: () => {
+              return this.toggleSelectAllItems(areAllItemsSelected);
+            },
             isOn: areAllItemsSelected,
           },
         ]}
       />
     );
-  }
+  };
 
   render() {
+    const { database, genericTablePageStyles, stocktake, topRoute } = this.props;
+    const { data, selection, stocktakeName } = this.state;
+
     return (
       <GenericPage
-        data={this.state.data}
+        data={data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderTopRightComponent={this.renderToggleBar}
@@ -224,14 +257,13 @@ export class StocktakeManagePage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={this.props.database}
-        selection={this.state.selection}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
+        database={database}
+        selection={selection}
+        {...genericTablePageStyles}
+        topRoute={topRoute}
       >
         <BottomModal
-          isOpen={!(this.props.stocktake && this.props.stocktake.isFinalised)
-                                         && (this.state.selection.length > 0)}
+          isOpen={!(stocktake && stocktake.isFinalised) && selection.length > 0}
           style={localStyles.bottomModal}
         >
           <TextInput
@@ -240,13 +272,15 @@ export class StocktakeManagePage extends React.Component {
             underlineColorAndroid="transparent"
             placeholderTextColor="white"
             placeholder={modalStrings.give_your_stocktake_a_name}
-            value={this.state.stocktakeName}
-            onChangeText={(text) => this.setState({ stocktakeName: text })}
+            value={stocktakeName}
+            onChangeText={text => {
+              this.setState({ stocktakeName: text });
+            }}
           />
           <OnePressButton
             style={[globalStyles.button, globalStyles.modalOrangeButton]}
             textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-            text={!this.props.stocktake ? modalStrings.create : modalStrings.confirm}
+            text={!stocktake ? modalStrings.create : modalStrings.confirm}
             onPress={this.onConfirmPress}
           />
         </BottomModal>
@@ -255,6 +289,9 @@ export class StocktakeManagePage extends React.Component {
   }
 }
 
+export default StocktakeManagePage;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 StocktakeManagePage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,

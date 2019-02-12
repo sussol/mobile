@@ -2,14 +2,6 @@ import Realm from 'realm';
 import { createRecord } from '../utilities';
 
 export class StocktakeBatch extends Realm.Object {
-
-  destructor(database) {
-    // Delete ItemBatch that was created as a result of creating this StocktakeBatch
-    if (this.snapshotNumberOfPacks === 0 && this.itemBatch.numberOfPacks === 0) {
-      database.delete('ItemBatch', this.itemBatch);
-    }
-  }
-
   get snapshotTotalQuantity() {
     return this.snapshotNumberOfPacks * this.packSize;
   }
@@ -20,23 +12,25 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * Stock on hand should never be made negative. If the difference applied to the
-   * stock on hand for this batch would result in a negative, return true. Can occur
-   * when stock has been issued in a customer invoice for this batch before the parent
-   * stocktake was finalised.
-   * @return {boolean} True if (stock on hand + stocktakebatch.difference) is negative
+   * Stock on hand should never be negative. This can occur when stock has been issued
+   * in a customer invoice for this batch before the parent stocktake was finalised.
+   * If the difference applied to the |stockOnHand| for this batch would result in a
+   * negative, return true.
+   *
+   * @return {boolean} True if |stockOnHand + stocktakebatch.difference| is negative.
    */
   get isReducedBelowMinimum() {
     const stockOnHand = this.itemBatch.totalQuantity;
-    return (stockOnHand + this.difference) < 0;
+    return stockOnHand + this.difference < 0;
   }
 
   /**
-   * Returns true if the snapshotTotalQuantity doesn't match the totalQuantity of the
-   * itemBatch this stocktakeBatch is associated with. Will occur if inventory has
-   * changed since this stocktakeBatch was created. If the net change on this batch
-   * is 0, then this should return false.
-   * @return {boolean} True if snapshotTotalQuantity !== this.itemBatch.totalQuantity
+   * Returns true if the |snapshotTotalQuantity| does not match the |totalQuantity| of the
+   * |itemBatch| this |stocktakeBatch| is associated with. Will occur if inventory has changed
+   * since this |stocktakeBatch| was created. If the net change on this batch is 0, then return
+   * false.
+   *
+   * @return {boolean} True if |snapshotTotalQuantity !== this.itemBatch.totalQuantity|
    */
   get isSnapshotOutdated() {
     return this.snapshotTotalQuantity !== this.itemBatch.totalQuantity;
@@ -60,36 +54,47 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   set countedTotalQuantity(quantity) {
-    // Handle packsize being 0
+    // Handle packsize of 0.
     this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
   /**
-   * Finalising StocktakeBatch will adjust inventory appropriately and will add
-   * new TransactionBatch in reducing or increasing Transaction for this Stocktake
-   * @param  {Realm}  database   App wide local database
+   * Finalising stocktake batch will adjust inventory appropriately and will add a
+   * new transaction batch in reducing or increasing transaction for this stocktake.
+   *
+   * @param  {Realm}  database  App database.
    */
   finalise(database) {
-    // Update the itemBatch details
+    // Update the item batch details.
     this.itemBatch.batch = this.batch;
     this.itemBatch.expiryDate = this.expiryDate;
 
-    // Make inventory adjustments if there is a difference to apply
+    // Make inventory adjustments if there is a difference to apply.
     if (this.difference !== 0) {
       const isAddition = this.countedTotalQuantity > this.snapshotTotalQuantity;
       const inventoryAdjustment = isAddition
         ? this.stocktake.getAdditions(database)
         : this.stocktake.getReductions(database);
 
-      // Create TransactionItem, TransactionBatch to store inventory adjustment in this Stocktake
-      const transactionItem = createRecord(database, 'TransactionItem',
-        inventoryAdjustment, this.itemBatch.item);
-      const transactionBatch = createRecord(database, 'TransactionBatch',
-        transactionItem, this.itemBatch);
+      // Create transaction item and transaction batch to store inventory adjustments in this
+      // stocktake.
+      const transactionItem = createRecord(
+        database,
+        'TransactionItem',
+        inventoryAdjustment,
+        this.itemBatch.item,
+      );
 
-      // Apply difference from stocktake to actual stock on hand levels.
-      // Whether stock is increased or decreased is determined by the transaction
-      // so we need to use the absolute value of difference (i.e. always treat as positive)
+      const transactionBatch = createRecord(
+        database,
+        'TransactionBatch',
+        transactionItem,
+        this.itemBatch,
+      );
+
+      // Apply difference from stocktake to actual stock on hand levels. Whether stock is increased
+      // or decreased is determined by the transaction, so we need to use the absolute value of
+      // difference (i.e. always treat as positive).
       const snapshotDifference = Math.abs(this.difference);
       transactionBatch.setTotalQuantity(database, snapshotDifference);
       database.save('TransactionBatch', transactionBatch);
@@ -100,7 +105,16 @@ export class StocktakeBatch extends Realm.Object {
   toString() {
     return `Stocktake batch representing ${this.itemBatch}`;
   }
+
+  destructor(database) {
+    // Delete item batch that was created as a result of creating this stocktake batch.
+    if (this.snapshotNumberOfPacks === 0 && this.itemBatch.numberOfPacks === 0) {
+      database.delete('ItemBatch', this.itemBatch);
+    }
+  }
 }
+
+export default StocktakeBatch;
 
 StocktakeBatch.schema = {
   name: 'StocktakeBatch',

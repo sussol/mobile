@@ -1,8 +1,34 @@
-import RNFS from 'react-native-fs';
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
+
+import RNFS from 'react-native-fs';
+
 import { schema } from './schema';
 import { SETTINGS_KEYS } from '../settings';
+
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
+
+const translateToCoreDatabaseType = type => {
+  switch (type) {
+    case 'CustomerInvoice':
+    case 'SupplierInvoice':
+      return 'Transaction';
+    case 'Customer':
+    case 'Supplier':
+    case 'InternalSupplier':
+    case 'ExternalSupplier':
+      return 'Name';
+    case 'RequestRequisition':
+    case 'ResponseRequisition':
+      return 'Requisition';
+    default:
+      return type;
+  }
+};
 
 export class UIDatabase {
   constructor(database) {
@@ -10,30 +36,35 @@ export class UIDatabase {
   }
 
   /**
-   * Closes the database, exports the .realm file to android 'Download/mSupplyMobile data'
-   * The app will cease to function (crash) if anything tries to access the database while
-   * it is closed.
-   *
-   * This method should perhaps be added to react-native-databse
+   * Closes the database, exports the realm file to '/Download/mSupplyMobile\ data' on device
+   * file system. The app will crash if anything tries to access the database while it is closed.
    */
   exportData(filename = 'msupply-mobile-data') {
-    const realm = this.database.realm; // TODO: refactor away from 'database.database.realm'
+    // TO DO: add method to react-native-database.
+
+    const { realm } = this.database;
     const realmPath = realm.path;
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
 
     const date = new Date();
-    const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`; // eslint-disable-line max-len
+    const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
     const copyFileName = `${filename} ${dateString}`;
 
-    // If the database is not closed, there is a small chance of corrupting the data
-    // if it's currently in a transaction
+    // If the database is not closed, there is a small chance of corrupting the data if currently in
+    // a transaction.
     realm.close();
+
     RNFS.mkdir(exportFolder)
-      .then(() => RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`)
-        // copyFileName, derived from store name, might have invalid characters for filesystem
-        .catch(() => RNFS.copyFile(realmPath, `${exportFolder}/msupply-mobile-data.realm`))
-      )
-      .finally(() => { this.database.realm = new Realm(schema); }); // reopen the realm
+      .then(() => {
+        RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
+        // |copyFileName| is derived from store name. May have invalid characters for filesystem.
+      })
+      .catch(() => {
+        RNFS.copyFile(realmPath, `${exportFolder}/msupply-mobile-data.realm`);
+      })
+      .finally(() => {
+        this.database.realm = new Realm(schema);
+      }); // Reopen the realm.
   }
 
   objects(type) {
@@ -41,12 +72,12 @@ export class UIDatabase {
     const thisStoreNameIdSetting = this.database
       .objects('Setting')
       .filtered('key == $0', THIS_STORE_NAME_ID)[0];
-    // Check ownStoreIdSetting exists, won't if not initialised
+    // |ownStoreIdSetting| will not exist if not initialised.
     const thisStoreNameId = thisStoreNameIdSetting && thisStoreNameIdSetting.value;
 
     switch (type) {
       case 'CustomerInvoice':
-        // Only show invoices generated from requisitions once finalised
+        // Only show invoices generated from requisitions once finalised.
         return results.filtered(
           'type == "customer_invoice" AND (linkedRequisition == null OR status == "finalised")',
         );
@@ -85,49 +116,42 @@ export class UIDatabase {
   addListener(...args) {
     return this.database.addListener(...args);
   }
+
   removeListener(...args) {
     return this.database.removeListener(...args);
   }
+
   alertListeners(...args) {
     return this.database.alertListeners(...args);
   }
+
   create(...args) {
     return this.database.create(...args);
   }
+
   getOrCreate(...args) {
     return this.database.getOrCreate(...args);
   }
+
   delete(...args) {
     return this.database.delete(...args);
   }
+
   deleteAll(...args) {
     return this.database.deleteAll(...args);
   }
+
   save(...args) {
     return this.database.save(...args);
   }
+
   update(...args) {
     return this.database.update(...args);
   }
+
   write(...args) {
     return this.database.write(...args);
   }
 }
 
-function translateToCoreDatabaseType(type) {
-  switch (type) {
-    case 'CustomerInvoice':
-    case 'SupplierInvoice':
-      return 'Transaction';
-    case 'Customer':
-    case 'Supplier':
-    case 'InternalSupplier':
-    case 'ExternalSupplier':
-      return 'Name';
-    case 'RequestRequisition':
-    case 'ResponseRequisition':
-      return 'Requisition';
-    default:
-      return type;
-  }
-}
+export default UIDatabase;

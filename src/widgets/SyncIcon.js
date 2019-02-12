@@ -1,38 +1,33 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {
-  StyleSheet,
-  View,
-} from 'react-native';
-
+import { StyleSheet, View } from 'react-native';
 import IoniconIcon from 'react-native-vector-icons/Ionicons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 export function SyncIcon(props) {
+  const { size, cloudColor, arrowsColor, wifiColor } = props;
+
   return (
     <View style={localStyles.horizontalContainer}>
-      <IoniconIcon
-        name="md-cloud"
-        size={props.size * 30}
-        style={{ top: props.size * 4 }}
-        color={props.cloudColor}
-      />
+      <IoniconIcon name="md-cloud" size={size * 30} style={{ top: size * 4 }} color={cloudColor} />
       <FontAwesomeIcon
         name="exchange"
-        size={props.size * 16}
+        size={size * 16}
         style={localStyles.icon}
-        color={props.arrowsColor}
+        color={arrowsColor}
       />
-      <IoniconIcon
-        name="logo-rss"
-        size={props.size * 22}
-        style={localStyles.icon}
-        color={props.wifiColor}
-      />
+      <IoniconIcon name="logo-rss" size={size * 22} style={localStyles.icon} color={wifiColor} />
     </View>
   );
 }
+
+export default SyncIcon;
 
 SyncIcon.propTypes = {
   cloudColor: PropTypes.string,

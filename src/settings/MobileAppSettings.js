@@ -1,5 +1,7 @@
 import { Settings } from 'react-native-database';
+
 import DeviceInfo from 'react-native-device-info';
+
 import { SETTINGS_KEYS } from './index';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 
@@ -21,8 +23,8 @@ export class MobileAppSettings extends Settings {
     }
   }
 
-  // Calls any functions that need to be called (each time the app is started). Checks database
-  // to see if there are any settings, if not calls setDefaults.
+  // Call functions for initialising the app on start. Checks database for any
+  // settings. If no settings found, calls |setDefaults()|.
   load() {
     if (this.database.objects('Setting').length <= 0) this.setDefaults();
     setCurrentLanguage(this.get(SETTINGS_KEYS.CURRENT_LANGUAGE));
@@ -32,3 +34,5 @@ export class MobileAppSettings extends Settings {
     this.set(SETTINGS_KEYS.CURRENT_LANGUAGE, DEFAULT_LANGUAGE);
   }
 }
+
+export default MobileAppSettings;
