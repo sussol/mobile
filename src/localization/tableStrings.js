@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -189,3 +187,5 @@ export const tableStrings = new LocalizedStrings({
     their_stock: 'SIRA NIA\nSTOCK',
   },
 });
+
+export default tableStrings;

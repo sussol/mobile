@@ -1,16 +1,16 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet, Text, TouchableOpacity, View,
-} from 'react-native';
+
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { BottomModal } from './BottomModal';
+
 import { APP_FONT_FAMILY, PAGE_CONTENT_PADDING_HORIZONTAL } from '../../globalStyles';
 
 /**
@@ -23,14 +23,14 @@ import { APP_FONT_FAMILY, PAGE_CONTENT_PADDING_HORIZONTAL } from '../../globalSt
 export class PageContentModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+
+    // TODO: remove unused state.
+    // eslint-disable-next-line react/no-unused-state
+    this.state = { queryText: '' };
   }
 
   render() {
-    const {
-      onClose, title, style, ...modalProps
-    } = this.props;
+    const { onClose, children, title, style, ...modalProps } = this.props;
 
     // Title bar is a flex row that renders the title if available and the close
     // button. Title should be top center. A View to the left of it achieves
@@ -50,17 +50,22 @@ export class PageContentModal extends React.Component {
     return (
       <BottomModal {...modalProps} style={[localStyles.modal, style]}>
         {titleBar}
-        <View style={localStyles.childrenContainer}>{this.props.children}</View>
+        <View style={localStyles.childrenContainer}>{children}</View>
       </BottomModal>
     );
   }
 }
 
+export default PageContentModal;
+
+/* eslint-disable react/require-default-props */
 PageContentModal.propTypes = {
   ...BottomModal.propTypes,
   onClose: PropTypes.func,
   title: PropTypes.string,
 };
+
+/* eslint-disable react/default-props-match-prop-types */
 PageContentModal.defaultProps = {
   style: {},
   swipeToClose: false, // negating the default.

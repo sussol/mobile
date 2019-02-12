@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import { SUSSOL_ORANGE, BACKGROUND_COLOR } from './colors';
@@ -29,6 +29,8 @@ export const modalStyles = {
   },
   modalText: {
     color: 'white',
-    fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text - RN 0.27
+    fontFamily: APP_FONT_FAMILY, // Doesn't affect the placeholder text - RN 0.27.
   },
 };
+
+export default modalStyles;

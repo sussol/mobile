@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
 
 export class MasterListItem extends Realm.Object {
@@ -5,6 +10,8 @@ export class MasterListItem extends Realm.Object {
     return this.item ? this.item.id : '';
   }
 }
+
+export default MasterListItem;
 
 MasterListItem.schema = {
   name: 'MasterListItem',

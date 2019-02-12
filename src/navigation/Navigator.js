@@ -3,8 +3,10 @@ import { createStackNavigator } from 'react-navigation';
 import { PAGES } from '../pages';
 
 const routes = {};
-// Add all pages to the navigation routes
-Object.entries(PAGES).forEach(([routeName, page]) => { routes[routeName] = { screen: page }; });
+// Add all pages to navigation routes.
+Object.entries(PAGES).forEach(([routeName, page]) => {
+  routes[routeName] = { screen: page };
+});
 
 const config = {
   initialRouteName: 'root',

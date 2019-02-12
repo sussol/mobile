@@ -1,28 +1,28 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { createRecord } from '../database';
-import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 import { GenericPage } from './GenericPage';
+
+import { createRecord } from '../database';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy } from '../utilities';
-import {
-  buttonStrings, modalStrings, navStrings, tableStrings,
-} from '../localization';
+import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
 /**
-* Renders the page for displaying Supplier Requisitions, i.e. requests from this store to a
-* supplying store
-* @prop   {Realm}               database      App wide database.
-* @prop   {func}                navigateTo    CallBack for navigation stack.
-* @prop   {Realm.Object}        currentUser   User object representing the current user logged in.
-*/
+ * Renders the page for displaying supplier requisitions (requests from this store to a
+ * supplying store).
+ *
+ * @prop {Realm}         database     App database.
+ * @prop {func}          navigateTo   CallBack for navigation stack.
+ * @prop {Realm.Object}  currentUser  User object representing the current user logged in.
+ */
 export class SupplierRequisitionsPage extends React.Component {
   constructor(props) {
     super(props);
@@ -43,10 +43,10 @@ export class SupplierRequisitionsPage extends React.Component {
     const { database } = this.props;
     database.write(() => {
       const requisitionsToDelete = [];
-      for (let i = 0; i < selection.length; i++) {
-        const requisition = this.requisitions.find(
-          currentRequisition => currentRequisition.id === selection[i],
-        );
+      for (let i = 0; i < selection.length; i += 1) {
+        const requisition = this.requisitions.find(currentRequisition => {
+          return currentRequisition.id === selection[i];
+        });
         if (requisition.isValid() && !requisition.isFinalised) {
           requisitionsToDelete.push(requisition);
         }
@@ -55,44 +55,50 @@ export class SupplierRequisitionsPage extends React.Component {
     });
     this.setState({ selection: [] });
     this.refreshData();
-  }
+  };
 
   onDeleteCancel = () => {
     this.setState({ selection: [] });
     this.refreshData();
-  }
+  };
 
-  onNewRequisition = (otherStoreName) => {
+  onNewRequisition = otherStoreName => {
+    const { database, currentUser } = this.props;
+
     let requisition;
-    this.props.database.write(() => {
-      requisition = createRecord(this.props.database,
-        'Requisition', this.props.currentUser, otherStoreName);
+    database.write(() => {
+      requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
     });
     this.navigateToRequisition(requisition);
-  }
+  };
 
-  onRowPress = requisition => this.navigateToRequisition(requisition);
+  onRowPress = requisition => {
+    this.navigateToRequisition(requisition);
+  };
 
-  onSelectionChange = newSelection => this.setState({ selection: newSelection });
+  onSelectionChange = newSelection => {
+    this.setState({ selection: newSelection });
+  };
 
-  navigateToRequisition = (requisition) => {
-    this.setState({ selection: [] }); // Clear any requsitions selected for delete
-    this.props.navigateTo(
-      'supplierRequisition',
-      `${navStrings.requisition} ${requisition.serialNumber}`,
-      { requisition: requisition },
-    );
-  }
+  navigateToRequisition = requisition => {
+    const { navigateTo } = this.props;
+
+    this.setState({ selection: [] }); // Clear any requsitions selected for deletion.
+
+    navigateTo('supplierRequisition', `${navStrings.requisition} ${requisition.serialNumber}`, {
+      requisition,
+    });
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // We use != null, which checks for both null or undefined (undefined coerces to null)
+    // (... != null) checks for null or undefined (implicitly type coerced to null).
     if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
     if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
     if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  }
+  };
 
   /**
-   * Returns updated data according to searchTerm, sortBy and isAscending.
+   * Returns updated data filtered by |searchTerm| and ordered by |sortBy| and |isAscending|.
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
@@ -107,8 +113,10 @@ export class SupplierRequisitionsPage extends React.Component {
       default:
         sortDataType = 'realm';
     }
-    this.setState({ data: sortDataBy(data, sortBy, sortDataType, isAscending) });
-  }
+    this.setState({
+      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+    });
+  };
 
   renderCell = (key, requisition) => {
     switch (key) {
@@ -127,22 +135,26 @@ export class SupplierRequisitionsPage extends React.Component {
       default:
         return requisition[key];
     }
-  }
+  };
 
-  renderNewRequisitionButton = () => (
-    <PageButton
-      text={buttonStrings.new_requisition}
-      onPress={() => {
-        this.setState({ isCreatingRequisition: true });
-      }}
-    />
-  )
-
+  renderNewRequisitionButton = () => {
+    return (
+      <PageButton
+        text={buttonStrings.new_requisition}
+        onPress={() => {
+          this.setState({ isCreatingRequisition: true });
+        }}
+      />
+    );
+  };
 
   render() {
+    const { database, genericTablePageStyles, topRoute } = this.props;
+    const { data, isCreatingRequisition, selection } = this.state;
+
     return (
       <GenericPage
-        data={this.state.data}
+        data={data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderTopRightComponent={this.renderNewRequisitionButton}
@@ -190,30 +202,36 @@ export class SupplierRequisitionsPage extends React.Component {
           },
         ]}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={this.props.database}
-        selection={this.state.selection}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
+        database={database}
+        selection={selection}
+        {...genericTablePageStyles}
+        topRoute={topRoute}
       >
         <BottomConfirmModal
-          isOpen={this.state.selection.length > 0}
+          isOpen={selection.length > 0}
           questionText={modalStrings.delete_these_invoices}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
+          onCancel={() => {
+            this.onDeleteCancel();
+          }}
+          onConfirm={() => {
+            this.onDeleteConfirm();
+          }}
           confirmText={modalStrings.delete}
         />
         <SelectModal
-          isOpen={this.state.isCreatingRequisition}
-          options={this.props.database.objects('InternalSupplier')}
+          isOpen={isCreatingRequisition}
+          options={database.objects('InternalSupplier')}
           placeholderText={modalStrings.start_typing_to_select_supplier}
           queryString="name BEGINSWITH[c] $0"
           sortByString="name"
-          onSelect={(name) => {
+          onSelect={name => {
             this.setState({ isCreatingRequisition: false }, () => {
               this.onNewRequisition(name);
             });
           }}
-          onClose={() => this.setState({ isCreatingRequisition: false })}
+          onClose={() => {
+            this.setState({ isCreatingRequisition: false });
+          }}
           title={modalStrings.search_for_the_supplier}
         />
       </GenericPage>
@@ -221,6 +239,9 @@ export class SupplierRequisitionsPage extends React.Component {
   }
 }
 
+export default SupplierRequisitionsPage;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 SupplierRequisitionsPage.propTypes = {
   database: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,

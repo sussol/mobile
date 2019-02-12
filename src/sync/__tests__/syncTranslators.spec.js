@@ -1,8 +1,4 @@
-import {
-  INTERNAL_TO_EXTERNAL,
-  EXTERNAL_TO_INTERNAL,
-  RECORD_TYPES,
-} from '../syncTranslators';
+import { INTERNAL_TO_EXTERNAL, EXTERNAL_TO_INTERNAL, RECORD_TYPES } from '../syncTranslators';
 
 jest.unmock('../syncTranslators');
 

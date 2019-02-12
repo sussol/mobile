@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -39,21 +39,51 @@ import { RealmExplorer } from './RealmExplorer';
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
-  customerInvoice: props => <PageContainer page={CustomerInvoicePage} {...props} />,
-  customerInvoices: props => <PageContainer page={CustomerInvoicesPage} {...props} />,
-  customerRequisition: props => <PageContainer page={CustomerRequisitionPage} {...props} />,
-  customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
-  menu: props => <PageContainer page={MenuPage} {...props} />,
-  realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
-  root: props => <PageContainer page={MenuPage} {...props} />,
-  stock: props => <PageContainer page={StockPage} {...props} />,
-  stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
-  stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
-  stocktakes: props => <PageContainer page={StocktakesPage} {...props} />,
-  supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
-  supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
-  supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
-  supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
+  customerInvoice: props => {
+    return <PageContainer page={CustomerInvoicePage} {...props} />;
+  },
+  customerInvoices: props => {
+    return <PageContainer page={CustomerInvoicesPage} {...props} />;
+  },
+  customerRequisition: props => {
+    return <PageContainer page={CustomerRequisitionPage} {...props} />;
+  },
+  customerRequisitions: props => {
+    return <PageContainer page={CustomerRequisitionsPage} {...props} />;
+  },
+  menu: props => {
+    return <PageContainer page={MenuPage} {...props} />;
+  },
+  realmExplorer: props => {
+    return <PageContainer page={RealmExplorer} {...props} />;
+  },
+  root: props => {
+    return <PageContainer page={MenuPage} {...props} />;
+  },
+  stock: props => {
+    return <PageContainer page={StockPage} {...props} />;
+  },
+  stocktakeEditor: props => {
+    return <PageContainer page={StocktakeEditPage} {...props} />;
+  },
+  stocktakeManager: props => {
+    return <PageContainer page={StocktakeManagePage} {...props} />;
+  },
+  stocktakes: props => {
+    return <PageContainer page={StocktakesPage} {...props} />;
+  },
+  supplierInvoice: props => {
+    return <PageContainer page={SupplierInvoicePage} {...props} />;
+  },
+  supplierInvoices: props => {
+    return <PageContainer page={SupplierInvoicesPage} {...props} />;
+  },
+  supplierRequisition: props => {
+    return <PageContainer page={SupplierRequisitionPage} {...props} />;
+  },
+  supplierRequisitions: props => {
+    return <PageContainer page={SupplierRequisitionsPage} {...props} />;
+  },
 };
 
 export const FINALISABLE_PAGES = {

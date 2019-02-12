@@ -1,39 +1,35 @@
 {
   "extends": "airbnb",
   "parser": "babel-eslint",
+  "plugins": ["prettier"],
   "env": {
     "jest": true
   },
   "rules": {
+    "prettier/prettier": "error",
+    "max-len": ["error", { "code": 100, "ignoreTemplateLiterals": true }],
+    "indent": ["error", 2, { "SwitchCase": 1 }],
+    "quotes": ["error", "single", { "avoidEscape": true }],
+
+    "strict": "off",
+
+    "operator-linebreak": "off",
+
+    "no-confusing-arrow": ["error", { "allowParens": true }],
+
+    "arrow-body-style": ["error", "always"],
+    "arrow-parens": ["error", "as-needed"],
+
+    "object-curly-newline": ["error", { "ObjectPattern": { "multiline": true } }],
+
     "no-param-reassign": "off",
-    "jsx-boolean-value": "off",
-    "no-use-before-define": "off",
-    "object-shorthand": "off",
-    "strict": 0,
-    "no-confusing-arrow": ["error", {"allowParens": true}],
-    "global-require": "off",
+
+    "no-use-before-define": ["error", { "variables": false }],
+
     "react/jsx-boolean-value": "off",
-    "default-case": "off",
-    "prefer-destructuring": "off",
-    "react/destructuring-assignment": ["off", "always", { "ignoreClassFields": true }],
-    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
-    "class-methods-use-this": 0,
-    "no-return-assign": ["error", "except-parens"],
-    "import/prefer-default-export": 0,
-    "react/forbid-prop-types": 0,
-    "react/require-default-props": ["off", {"forbidDefaultForRequired": true }],
-    "react/default-props-match-prop-types": "off",
-    "no-plusplus": "off",
-    "no-restricted-syntax": ["error", "LabeledStatement", "WithStatement"],
-    "react/no-array-index-key": "off",
-    "consistent-return": "off",
-    "no-restricted-globals": "off",
-    "react/no-multi-comp": "off",
-    "max-len": "off",
-    "no-await-in-loop": "off",
-    "no-console": "off"
-  },
-  "globals": {
-    "fetch": false
+    "react/jsx-one-expression-per-line": "off",
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+
+    "//": "TODO: allow inline arrow without prettier conflict"
   }
 }

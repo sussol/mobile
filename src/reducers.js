@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import { combineReducers } from 'redux';
@@ -12,4 +12,3 @@ export default combineReducers({
   nav: appReducer,
   sync: syncReducer,
 });
-

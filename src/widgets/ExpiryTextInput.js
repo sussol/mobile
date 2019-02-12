@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -12,19 +12,24 @@ import { formatExpiryDate, parseExpiryDate } from '../utilities';
 export class ExpiryTextInput extends React.Component {
   constructor(props) {
     super(props);
+
+    const { text } = props;
+
     this.previousText = '';
-    this.state = { text: this.getFormattedDate(this.props.text) };
+    this.state = { text: this.getFormattedDate(text) };
   }
 
   // Remove all text on focus
-  onFocus = () => this.setState({ text: '' });
+  onFocus = () => {
+    this.setState({ text: '' });
+  };
 
-  onChangeText = (text) => {
+  onChangeText = text => {
     let newTextValue = text;
 
     if (text.length === 1) {
       const monthValue = parseInt(text, 10);
-      if (isNaN(monthValue)) return;
+      if (Number.isNaN(monthValue)) return;
       // If first digit > 1, then consider first digit as the month number
       if (monthValue > 1) newTextValue = `0${text}/`;
     } else if (this.previousText.length === 3 && text.length === 2) {
@@ -38,7 +43,7 @@ export class ExpiryTextInput extends React.Component {
       } else {
         // If two digits are entered append '/''
         const monthValue = parseInt(text, 10);
-        if (isNaN(monthValue) || monthValue > 12) return;
+        if (Number.isNaN(monthValue) || monthValue > 12) return;
         newTextValue = `${text}/`;
       }
     } else if (text.length > 3 && text.length < 8) {
@@ -46,44 +51,51 @@ export class ExpiryTextInput extends React.Component {
       if (text.slice(2, 3) !== '/') return;
       // Make sure everything after '/' is a number
       const yearValue = parseInt(text.slice(3), 10);
-      if (isNaN(yearValue)) return;
+      if (Number.isNaN(yearValue)) return;
     } else if (text.length !== 0 && text.length !== 3) return; // Allow MM/ value and empty value
 
     this.previousText = newTextValue;
     this.setState({ text: newTextValue });
-  }
+  };
 
-  onEndEditing = (event) => {
+  onEndEditing = event => {
+    const { onEndEditing } = this.props;
+
     const expiryDate = parseExpiryDate(event.nativeEvent.text);
-    if (expiryDate && this.props.onEndEditing) {
-      this.props.onEndEditing(expiryDate);
+    if (expiryDate && onEndEditing) {
+      onEndEditing(expiryDate);
     }
     this.setState({ text: this.getFormattedDate(expiryDate) });
-  }
+  };
 
-  getFormattedDate = (date) => {
+  getFormattedDate = date => {
     // Remember previous good date
     this.previousFormattedDate = formatExpiryDate(date) || this.previousFormattedDate;
     return this.previousFormattedDate || 'mm/yy';
-  }
+  };
 
   render() {
-    const { style, ...extraProps } = this.props;
+    const { style, isEditable, ...extraProps } = this.props;
+    const { text } = this.state;
+
     return (
       <TextInput
         {...extraProps}
         keyboardType="numeric"
         onEndEditing={this.onEndEditing}
-        editable={this.props.isEditable}
+        editable={isEditable}
         onChangeText={this.onChangeText}
         onFocus={this.onFocus}
-        value={this.state.text}
+        value={text}
         style={[style, localStyles.middleAlignText]}
       />
     );
   }
 }
 
+export default ExpiryTextInput;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 ExpiryTextInput.propTypes = {
   text: PropTypes.object,
   style: PropTypes.object,

@@ -1,26 +1,50 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import {
-  Dimensions, Keyboard, StyleSheet, Text, TouchableOpacity, View, ViewPropTypes,
+  Dimensions,
+  Keyboard,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewPropTypes,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
 import Modal from 'react-native-modalbox';
+import Icon from 'react-native-vector-icons/Ionicons';
+
 import { OnePressButton } from '..';
-import globalStyles, { DARK_GREY } from '../../globalStyles';
 import { modalStrings } from '../../localization';
 
+import globalStyles, { DARK_GREY } from '../../globalStyles';
+
 export function ConfirmModal(props) {
+  const {
+    isOpen,
+    questionText,
+    confirmText,
+    cancelText,
+    style,
+    textStyle,
+    buttonTextStyle,
+    buttonContainerStyle,
+    confirmButtonStyle,
+    cancelButtonStyle,
+    onConfirm,
+    onCancel,
+    noCancel,
+    ...modalProps
+  } = props;
+
   // On opening, dismiss the keyboard to ensure editable cells lose their focus
   // and their values become fixed (so that they save correctly)
-  if (props.isOpen) Keyboard.dismiss();
-  const {
-    style, textStyle, onCancel, onConfirm, questionText, noCancel, ...modalProps
-  } = props;
+  if (isOpen) Keyboard.dismiss();
+
   return (
     <Modal {...modalProps} style={style}>
       {!noCancel && onCancel && (
@@ -30,20 +54,20 @@ export function ConfirmModal(props) {
       )}
       <View style={defaultStyles.contentContainer}>
         <Text style={textStyle}>{questionText}</Text>
-        <View style={[defaultStyles.buttonContainer, props.buttonContainerStyle]}>
+        <View style={[defaultStyles.buttonContainer, buttonContainerStyle]}>
           {!noCancel && onCancel && (
             <OnePressButton
-              style={[globalStyles.button, props.cancelButtonStyle]}
-              textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
-              text={props.cancelText}
+              style={[globalStyles.button, cancelButtonStyle]}
+              textStyle={[globalStyles.buttonText, buttonTextStyle]}
+              text={cancelText}
               onPress={onCancel}
             />
           )}
           {onConfirm && (
             <OnePressButton
-              style={[globalStyles.button, props.confirmButtonStyle]}
-              textStyle={[globalStyles.buttonText, props.buttonTextStyle]}
-              text={props.confirmText}
+              style={[globalStyles.button, confirmButtonStyle]}
+              textStyle={[globalStyles.buttonText, buttonTextStyle]}
+              text={confirmText}
               onPress={onConfirm}
             />
           )}
@@ -53,6 +77,9 @@ export function ConfirmModal(props) {
   );
 }
 
+export default ConfirmModal;
+
+/* eslint-disable react/require-default-props */
 ConfirmModal.propTypes = {
   style: ViewPropTypes.style,
   buttonContainerStyle: ViewPropTypes.style,
@@ -68,6 +95,8 @@ ConfirmModal.propTypes = {
   onCancel: PropTypes.func,
   onConfirm: PropTypes.func,
 };
+
+/* eslint-disable react/default-props-match-prop-types */
 ConfirmModal.defaultProps = {
   backdropColor: DARK_GREY,
   backdropOpacity: 0.97,

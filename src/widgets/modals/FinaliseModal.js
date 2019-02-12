@@ -1,11 +1,13 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+
 import { ConfirmModal } from './ConfirmModal';
 import { modalStrings } from '../../localization';
 
@@ -28,29 +30,29 @@ const bugsnagClient = new BugsnagClient();
  * @prop  {object}    user          The user who is finalising the record
  */
 export function FinaliseModal(props) {
-  if (!props.finaliseItem) return null;
-  const {
-    record, recordType, checkForError, finaliseText,
-  } = props.finaliseItem;
+  const { finaliseItem, isOpen, runWithLoadingIndicator, database, user, onClose } = props;
+
+  if (!finaliseItem) return null;
+  const { record, recordType, checkForError, finaliseText } = finaliseItem;
   if (!record || !record.isValid()) return null; // Record may have been deleted
   let errorText = !record.isFinalised && checkForError && checkForError(record);
 
   // Wrapped in try-catch block so that finalise methods in schema can throw an error
   // as last line of defence
   const tryFinalise = () => {
-    props.runWithLoadingIndicator(() => {
+    runWithLoadingIndicator(() => {
       try {
         if (record) {
           // Check for error again to cleaning show user warning
           // If the first attempt didn't catch it (was still writing changes)
           errorText = checkForError && checkForError(record);
           if (errorText) return;
-          props.database.write(() => {
-            record.finalise(props.database, props.user);
-            props.database.save(recordType, record);
+          database.write(() => {
+            record.finalise(database, user);
+            database.save(recordType, record);
           });
         }
-        if (props.onClose) props.onClose();
+        if (onClose) onClose();
       } catch (error) {
         // Fling off to bugsnag so we can be notified finalise isn't
         // behaving
@@ -61,16 +63,21 @@ export function FinaliseModal(props) {
 
   return (
     <ConfirmModal
-      isOpen={props.isOpen}
+      isOpen={isOpen}
       questionText={errorText || modalStrings[finaliseText]}
       confirmText={modalStrings.confirm}
       cancelText={errorText ? modalStrings.got_it : modalStrings.cancel}
       onConfirm={!errorText ? tryFinalise : null}
-      onCancel={() => { if (props.onClose) props.onClose(); }}
+      onCancel={() => {
+        if (onClose) onClose();
+      }}
     />
   );
 }
 
+export default FinaliseModal;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 FinaliseModal.propTypes = {
   database: PropTypes.object.isRequired,
   isOpen: PropTypes.bool,
