@@ -1,11 +1,9 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import {
-  Dimensions,
-} from 'react-native';
+import { Dimensions } from 'react-native';
 
 import {
   BACKGROUND_COLOR,

@@ -1,10 +1,16 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
+
+/* eslint-disable global-require */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import { addNavigationHelpers } from 'react-navigation';
+import { connect } from 'react-redux';
+
 import {
   BackHandler,
   Image,
@@ -13,21 +19,16 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { connect } from 'react-redux';
-import { addNavigationHelpers } from 'react-navigation';
 
 import { Scheduler } from 'sussol-utilities';
-import globalStyles, {
-  dataTableColors,
-  dataTableStyles,
-  pageStyles,
-  textStyles,
-  SUSSOL_ORANGE,
-} from './globalStyles';
 
+import { SyncAuthenticator, UserAuthenticator } from './authentication';
+import { Database, schema, UIDatabase } from './database';
+import { migrateDataToVersion } from './dataMigration';
 import { Navigator, getCurrentParams, getCurrentRouteName } from './navigation';
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
-
+import { MobileAppSettings } from './settings';
+import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import {
   FinaliseButton,
   FinaliseModal,
@@ -37,14 +38,16 @@ import {
   Spinner,
 } from './widgets';
 
-import { migrateDataToVersion } from './dataMigration';
-import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
-import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema, UIDatabase } from './database';
-import { MobileAppSettings } from './settings';
+import globalStyles, {
+  dataTableColors,
+  dataTableStyles,
+  pageStyles,
+  textStyles,
+  SUSSOL_ORANGE,
+} from './globalStyles';
 
-const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
-const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
+const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
+const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
@@ -55,152 +58,187 @@ class MSupplyMobileAppContainer extends React.Component {
     migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
-    this.synchroniser = new Synchroniser(database,
+    this.synchroniser = new Synchroniser(
+      database,
       syncAuthenticator,
       this.settings,
-      props.dispatch);
+      props.dispatch,
+    );
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
-      if (this.state.currentUser !== null) {
-        // Only reauthenticate if currently logged in
+      const { currentUser } = this.state;
+      if (currentUser !== null) {
+        // Only reauthenticate if currently logged in.
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
     this.state = {
       confirmFinalise: false,
       currentUser: null,
-      isInitialised: isInitialised,
+      isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
     };
   }
 
-  componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  componentDidMount = () => {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  };
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
     this.scheduler.clearAll();
-  }
+  };
 
-  onAuthentication = (user) => {
+  onAuthentication = user => {
     this.setState({ currentUser: user });
     this.postSyncProcessor.setUser(user);
-  }
+  };
 
   onInitialised = () => {
     this.setState({ isInitialised: true });
     this.postSyncProcessor.processAnyUnprocessedRecords();
-  }
+  };
 
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
     return this.navigator && navigationState.index !== 0;
-  }
+  };
 
   handleBackEvent = () => {
     const { confirmFinalise, syncModalIsOpen } = this.state;
-    // If finalise or sync modals are open, close them rather than navigating
+    // If finalise or sync modals are open, close them rather than navigating.
     if (confirmFinalise || syncModalIsOpen) {
       this.setState({ confirmFinalise: false, syncModalIsOpen: false });
       return true;
     }
-    // If we are on base screen (e.g. home), back button should close app as we can't go back
+    // If we are on base screen (e.g. home), back button should close app as we can't go back.
     if (!this.getCanNavigateBack()) BackHandler.exitApp();
     else {
       const { navigation } = this.navigator.props;
       navigation.goBack();
     }
     return true;
-  }
+  };
 
-  runWithLoadingIndicator = async (functionToRun) => {
+  runWithLoadingIndicator = async functionToRun => {
     this.database.isLoading = true;
     // We here set up an asyncronous promise that will be resolved after a timeout
-    // of 1 millisecond. This allows a fraction of a delay during which the javascript
-    // thread unblocks and allows our spinner animation to start up. We cannot simply
-    // call the functionToRun inside a setTimeout as that relegates to a lower
-    // priority and results in very slow performance.
-    await new Promise((resolve) => {
-      this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
+    // of 1 millisecond. This allows a fraction of a delay for the javascript thread
+    // to unblock and allow the spinner animation to start up. The |functionToRun| should
+    // not be run inside a |setTimeout| as that relegates to a lower priority, resulting
+    // in very slow performance.
+    await new Promise(resolve => {
+      this.setState({ isLoading: true }, () => {
+        setTimeout(resolve, 1);
+      });
     });
     functionToRun();
     this.setState({ isLoading: false });
     this.database.isLoading = false;
-  }
+  };
 
   synchronise = async () => {
-    if (!this.state.isInitialised || this.props.syncState.isSyncing) return; // Ignore if syncing
-    // True if last this.synchroniser.synchronise() call failed
+    const { syncState } = this.props;
+    const { isInitialised } = this.state;
+    if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
+    // True if most recent call to |this.synchroniser.synchronise()| failed.
     const lastSyncFailed = this.synchroniser.lastSyncFailed();
     const lastPostSyncProcessingFailed = this.postSyncProcessor.lastPostSyncProcessingFailed();
     await this.synchroniser.synchronise();
     if (lastSyncFailed || lastPostSyncProcessingFailed) {
-      // Last sync was interrupted so would not have entered this if block.
-      // If the app was closed, it would have forgotten the records left in the
-      // record queue, so we need to check tables for unprocessed records.
-      // If the last processing of the record queue was interrupted by app crash
-      // then we again need to check all records.
+      // If last sync was interrupted, it did not enter this block. If the app was closed, it did
+      // not store the records left in the record queue, so tables should be checked for unprocessed
+      // records. If the last processing of the record queue was interrupted by app crash then all
+      // records need to be checked.
       this.postSyncProcessor.processAnyUnprocessedRecords();
     } else {
       this.postSyncProcessor.processRecordQueue();
     }
-  }
+  };
 
   logOut = () => {
     this.setState({ currentUser: null });
-  }
+  };
 
-  renderFinaliseButton = () => (
-    <FinaliseButton
-      isFinalised={this.props.finaliseItem.record.isFinalised}
-      onPress={() => this.setState({ confirmFinalise: true })}
-    />
-  )
+  renderFinaliseButton = () => {
+    const { finaliseItem } = this.props;
+    return (
+      <FinaliseButton
+        isFinalised={finaliseItem.record.isFinalised}
+        onPress={() => {
+          this.setState({ confirmFinalise: true });
+        }}
+      />
+    );
+  };
 
-  renderLogo = () => (
-    <TouchableWithoutFeedback
-      delayLongPress={3000}
-      onLongPress={() => this.setState(prevState => ({ isInAdminMode: !prevState.isInAdminMode }))}
-    >
-      <Image resizeMode="contain" source={require('./images/logo.png')} />
-    </TouchableWithoutFeedback>
-  )
+  renderLogo = () => {
+    const { isInAdminMode } = this.state;
 
-  renderLoadingIndicator = () => (
-    <View style={globalStyles.loadingIndicatorContainer}>
-      <Spinner isSpinning={this.state.isLoading} color={SUSSOL_ORANGE} />
-    </View>
-  )
+    return (
+      <TouchableWithoutFeedback
+        delayLongPress={3000}
+        onLongPress={() => {
+          this.setState({ isInAdminMode: !isInAdminMode });
+        }}
+      >
+        <Image resizeMode="contain" source={require('./images/logo.png')} />
+      </TouchableWithoutFeedback>
+    );
+  };
 
-  renderPageTitle = () => (
-    <Text style={textStyles}>
-      {this.props.currentTitle}
-    </Text>
-  )
+  renderLoadingIndicator = () => {
+    const { isLoading } = this.state;
+    return (
+      <View style={globalStyles.loadingIndicatorContainer}>
+        <Spinner isSpinning={isLoading} color={SUSSOL_ORANGE} />
+      </View>
+    );
+  };
 
-  renderSyncState = () => (
-    <TouchableOpacity
-      style={{ flexDirection: 'row' }}
-      onPress={() => this.setState({ syncModalIsOpen: true })}
-    >
-      <SyncState state={this.props.syncState} />
-    </TouchableOpacity>
-  )
+  renderPageTitle = () => {
+    const { currentTitle } = this.props;
+    return <Text style={textStyles}>{currentTitle}</Text>;
+  };
+
+  renderSyncState = () => {
+    const { syncState } = this.props;
+    return (
+      <TouchableOpacity
+        style={{ flexDirection: 'row' }}
+        onPress={() => {
+          this.setState({ syncModalIsOpen: true });
+        }}
+      >
+        <SyncState state={syncState} />
+      </TouchableOpacity>
+    );
+  };
 
   render() {
-    if (!this.state.isInitialised) {
+    const { dispatch, finaliseItem, navigationState, syncState } = this.props;
+    const {
+      confirmFinalise,
+      currentUser,
+      isInAdminMode,
+      isInitialised,
+      isLoading,
+      syncModalIsOpen,
+    } = this.state;
+
+    if (!isInitialised) {
       return (
         <FirstUsePage
           synchroniser={this.synchroniser}
           onInitialised={this.onInitialised}
-          syncState={this.props.syncState}
+          syncState={syncState}
         />
       );
     }
-    const { finaliseItem, dispatch, navigationState } = this.props;
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
@@ -210,7 +248,7 @@ class MSupplyMobileAppContainer extends React.Component {
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
         <Navigator
-          ref={(navigator) => {
+          ref={navigator => {
             this.navigator = navigator;
           }}
           navigation={addNavigationHelpers({
@@ -221,9 +259,9 @@ class MSupplyMobileAppContainer extends React.Component {
             database: this.database,
             settings: this.settings,
             logOut: this.logOut,
-            currentUser: this.state.currentUser,
+            currentUser,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
-            isInAdminMode: this.state.isInAdminMode,
+            isInAdminMode,
             genericTablePageStyles: {
               searchBarColor: SUSSOL_ORANGE,
               dataTableStyles,
@@ -234,31 +272,36 @@ class MSupplyMobileAppContainer extends React.Component {
         />
         <FinaliseModal
           database={this.database}
-          isOpen={this.state.confirmFinalise}
-          onClose={() => this.setState({ confirmFinalise: false })}
+          isOpen={confirmFinalise}
+          onClose={() => {
+            this.setState({ confirmFinalise: false });
+          }}
           finaliseItem={finaliseItem}
-          user={this.state.currentUser}
+          user={currentUser}
           runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
         <SyncModal
           database={this.database}
-          isOpen={this.state.syncModalIsOpen}
-          state={this.props.syncState}
+          isOpen={syncModalIsOpen}
+          state={syncState}
           onPressManualSync={this.synchronise}
-          onClose={() => this.setState({ syncModalIsOpen: false })}
+          onClose={() => {
+            this.setState({ syncModalIsOpen: false });
+          }}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
           settings={this.settings}
-          isAuthenticated={this.state.currentUser !== null}
+          isAuthenticated={currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
-        {this.state.isLoading && this.renderLoadingIndicator()}
+        {isLoading && this.renderLoadingIndicator()}
       </View>
     );
   }
 }
 
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
 MSupplyMobileAppContainer.propTypes = {
   currentTitle: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
@@ -284,3 +327,5 @@ function mapStateToProps({ navigation: navigationState, sync: syncState }) {
 }
 
 export const MSupplyMobileApp = connect(mapStateToProps)(MSupplyMobileAppContainer);
+
+export default MSupplyMobileApp;

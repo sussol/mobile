@@ -1,11 +1,9 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import {
-  SHADOW_BORDER, BLUE_WHITE, BACKGROUND_COLOR, TRANSPARENT,
-} from './colors';
+import { SHADOW_BORDER, BLUE_WHITE, BACKGROUND_COLOR, TRANSPARENT } from './colors';
 import { APP_FONT_FAMILY } from './fonts';
 
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;

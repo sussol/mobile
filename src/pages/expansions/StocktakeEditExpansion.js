@@ -1,24 +1,29 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
-import { StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+
+import { StyleSheet } from 'react-native';
 import { Expansion } from 'react-native-data-table';
-import { dataTableStyles, expansionPageStyles } from '../../globalStyles';
-import { PageButton, ExpiryTextInput, PageInfo } from '../../widgets';
+
 import { GenericPage } from '../GenericPage';
-import { parsePositiveInteger } from '../../utilities';
+
 import { tableStrings, buttonStrings } from '../../localization';
+import { parsePositiveInteger } from '../../utilities';
+import { PageButton, ExpiryTextInput, PageInfo } from '../../widgets';
+
+import { dataTableStyles, expansionPageStyles } from '../../globalStyles';
 
 /**
-* Renders page to be displayed in StocktakeEditPage -> expansion.
-* @prop   {Realm}               database        App wide database.
-* @prop   {Realm.object}        stocktakeItem   The stocktakeItem, a parent of
-*                                               StocktakeBatches in this expansion
-*/
+ * Renders page to be displayed in StocktakeEditPage -> expansion.
+ *
+ * @prop  {Realm}         database       App wide database.
+ * @prop  {Realm.object}  stocktakeItem  The stocktakeItem, a parent of
+ *                                       StocktakeBatches in this expansion
+ */
 export class StocktakeEditExpansion extends React.Component {
   constructor(props) {
     super(props);
@@ -26,7 +31,9 @@ export class StocktakeEditExpansion extends React.Component {
   }
 
   onEndEditing = (key, stocktakeBatch, newValue) => {
-    this.props.database.write(() => {
+    const { database } = this.props;
+
+    database.write(() => {
       switch (key) {
         case 'countedTotalQuantity': {
           const newCountedQuantity = parsePositiveInteger(newValue);
@@ -36,8 +43,7 @@ export class StocktakeEditExpansion extends React.Component {
           break;
         }
         case 'batch': {
-          if (!newValue || newValue === ''
-              || newValue === `(${tableStrings.no_batch_name})`) {
+          if (!newValue || newValue === '' || newValue === `(${tableStrings.no_batch_name})`) {
             stocktakeBatch.batch = '';
           } else stocktakeBatch.batch = newValue;
           break;
@@ -48,14 +54,18 @@ export class StocktakeEditExpansion extends React.Component {
         default:
           break;
       }
-      this.props.database.save('StocktakeBatch', stocktakeBatch);
+      database.save('StocktakeBatch', stocktakeBatch);
     });
-  }
+  };
 
-  refreshData = () => this.setState({ data: this.props.stocktakeItem.batches });
+  refreshData = () => {
+    const { stocktakeItem } = this.props;
+    this.setState({ data: stocktakeItem.batches });
+  };
 
   renderCell = (key, stocktakeBatch) => {
-    const { stocktake } = this.props.stocktakeItem;
+    const { stocktakeItem } = this.props;
+    const { stocktake } = stocktakeItem;
     const isEditable = !stocktake.isFinalised;
     switch (key) {
       default:
@@ -65,8 +75,10 @@ export class StocktakeEditExpansion extends React.Component {
       case 'batch':
         return {
           type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch[key] && stocktakeBatch[key] !== ''
-            ? stocktakeBatch[key] : `(${tableStrings.no_batch_name})`,
+          cellContents:
+            stocktakeBatch[key] && stocktakeBatch[key] !== ''
+              ? stocktakeBatch[key]
+              : `(${tableStrings.no_batch_name})`,
           keyboardType: 'default',
         };
       case 'countedTotalQuantity': {
@@ -74,7 +86,8 @@ export class StocktakeEditExpansion extends React.Component {
         return {
           type: isEditable ? 'editable' : 'text',
           cellContents: stocktakeBatch.hasBeenCounted
-            ? stocktakeBatch.countedTotalQuantity : emptyCellContents,
+            ? stocktakeBatch.countedTotalQuantity
+            : emptyCellContents,
           placeholder: tableStrings.not_counted,
         };
       }
@@ -83,7 +96,7 @@ export class StocktakeEditExpansion extends React.Component {
           <ExpiryTextInput
             key={stocktakeBatch.id}
             isEditable={isEditable}
-            onEndEditing={(newValue) => {
+            onEndEditing={newValue => {
               this.onEndEditing(key, stocktakeBatch, newValue);
               this.refreshData();
             }}
@@ -93,21 +106,23 @@ export class StocktakeEditExpansion extends React.Component {
         );
       }
       case 'difference': {
-        const difference = stocktakeBatch.difference;
+        const { difference } = stocktakeBatch;
         const prefix = difference > 0 ? '+' : '';
         return { cellContents: `${prefix}${difference}` };
       }
     }
-  }
+  };
 
   renderAddBatchButton = () => {
-    const { stocktakeItem } = this.props;
+    const { database, stocktakeItem } = this.props;
+
     const addNewBatch = () => {
-      this.props.database.write(() => {
-        stocktakeItem.createNewBatch(this.props.database);
+      database.write(() => {
+        stocktakeItem.createNewBatch(database);
       });
       this.refreshData();
     };
+
     return (
       <PageButton
         text={buttonStrings.add_batch}
@@ -116,33 +131,37 @@ export class StocktakeEditExpansion extends React.Component {
         style={localStyles.addBatchButton}
       />
     );
-  }
+  };
 
   renderPageInfo = () => {
+    const { stocktakeItem } = this.props;
+    const { itemName } = stocktakeItem;
+
     const infoColumns = [
       [
         {
           title: 'By Batch:',
-          info: this.props.stocktakeItem.itemName,
+          info: itemName,
         },
       ],
     ];
-    return (
-      <PageInfo
-        columns={infoColumns}
-      />
-    );
-  }
+    return <PageInfo columns={infoColumns} />;
+  };
 
   render() {
+    const { database, genericTablePageStyles } = this.props;
+    const { data } = this.state;
+
     return (
       <Expansion style={dataTableStyles.expansionWithInnerPage}>
         <GenericPage
-          data={this.state.data}
+          data={data}
           renderCell={this.renderCell}
           refreshData={this.refreshData}
           hideSearchBar={true}
-          renderDataTableFooter={() => null} // overrides default generc pages footer
+          renderDataTableFooter={() => {
+            return null; // Overrides default generc pages footer.
+          }}
           dontRenderSearchBar={true}
           onEndEditing={this.onEndEditing}
           renderTopLeftComponent={this.renderPageInfo}
@@ -180,8 +199,8 @@ export class StocktakeEditExpansion extends React.Component {
             },
           ]}
           dataTypesLinked={['StocktakeBatch', 'Stocktake']}
-          database={this.props.database}
-          {...this.props.genericTablePageStyles}
+          database={database}
+          {...genericTablePageStyles}
           pageStyles={expansionPageStyles}
         />
       </Expansion>
@@ -189,13 +208,18 @@ export class StocktakeEditExpansion extends React.Component {
   }
 }
 
+export default StocktakeEditExpansion;
+
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
 StocktakeEditExpansion.propTypes = {
   database: PropTypes.object,
   genericTablePageStyles: PropTypes.object,
   stocktakeItem: PropTypes.object.isRequired,
 };
 
-const unwrapText = text => text.replace(/\n/g, ' ');
+const unwrapText = text => {
+  return text.replace(/\n/g, ' ');
+};
 
 const localStyles = StyleSheet.create({
   addBatchButton: {

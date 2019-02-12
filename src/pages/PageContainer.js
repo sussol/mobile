@@ -1,43 +1,33 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Keyboard } from 'react-native';
+
 import { connect } from 'react-redux';
+
+import { Keyboard } from 'react-native';
+
 import { getCurrentRouteName } from '../navigation';
 
-function mapStateToProps({ navigation }) {
+const mapStateToProps = ({ navigation }) => {
   return {
     currentRouteName: getCurrentRouteName(navigation),
   };
-}
-
-export const PageContainer = connect(
-  mapStateToProps,
-)(Page);
-
-function Page(props) {
-  const SpecificPage = props.page;
-  return <SpecificPage {...extractPropsForPage(props)} />;
-}
-
-Page.propTypes = {
-  page: PropTypes.any,
 };
 
-function extractPropsForPage(props) {
-  const {
-    currentRouteName, screenProps, navigation, ...restOfProps
-  } = props;
+const extractPropsForPage = props => {
+  const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
   const { navigate, goBack, state } = navigation;
   const { params, routeName: thisPageRouteName, ...restOfNavigationState } = state;
   const isCurrentRoute = thisPageRouteName === currentRouteName;
   const navigateTo = (routeName, title, otherParams, type = 'push') => {
-    Keyboard.dismiss(); // Dismiss keyboard before navigating to a different scene
-    const push = () => navigate(routeName, { title, ...otherParams });
+    Keyboard.dismiss(); // Dismiss keyboard before navigating to a different scene.
+    const push = () => {
+      navigate(routeName, { title, ...otherParams });
+    };
     const navigationFunctions = {
       push,
       replace: () => {
@@ -57,4 +47,18 @@ function extractPropsForPage(props) {
     navigateTo,
     ...restOfProps,
   };
+};
+
+function Page(props) {
+  const { page: SpecificPage } = props;
+  return <SpecificPage {...extractPropsForPage(props)} />;
 }
+
+export const PageContainer = connect(mapStateToProps)(Page);
+
+export default PageContainer;
+
+Page.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types, react/require-default-props
+  page: PropTypes.any,
+};

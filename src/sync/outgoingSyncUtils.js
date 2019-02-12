@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import {
@@ -11,95 +16,62 @@ import {
   TRANSACTION_BATCH_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
-
-import { SETTINGS_KEYS } from '../settings';
 import { CHANGE_TYPES } from '../database';
+import { SETTINGS_KEYS } from '../settings';
 
-const {
-  SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME,
-} = SETTINGS_KEYS;
+const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
 
 const bugsnagClient = new BugsnagClient();
 
+function getDateString(date) {
+  let returnDate = '0000-00-00';
+  if (date && typeof date === 'object') returnDate = date.toISOString().slice(0, 10);
+
+  return `${returnDate}T00:00:00`;
+}
+
+function getTimeString(date) {
+  if (!date || typeof date !== 'object') return '00:00:00';
+  return date.toTimeString().substring(0, 8);
+}
+
 /**
- * Returns a json object fulfilling the requirements of the mSupply primary sync
- * server, based on a given syncOutRecord
- * @param  {Realm}        database      The local database
- * @param  {Settings}     settings      Access to local settings
- * @param  {Realm.object} syncOutRecord The sync out record to be translated
- * @return {object}                     The generated json object, ready to sync
+ * Tries to get a value that is known to potentially lead to crash.
+ * If path on the record returns null, throw an error with prototype extended with
+ * |canDeleteSyncOut| set to true to indicates that sync should continue.
+ *
+ * @param {object}  record  The object to get properties from.
+ * @param {string}  path    The path on that object safely try.
+ * @return {any}            Whatever variable was stored at path, if no error thrown.
  */
-export function generateSyncJson(database, settings, syncOutRecord) {
-  if (!syncOutRecord || !syncOutRecord.isValid()) throw new Error('Missing sync out record');
-  if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
-    throw new Error('Malformed sync out record');
-  }
-  const { recordType, recordId, changeType } = syncOutRecord;
-  const storeId = settings.get(THIS_STORE_ID);
-  // Create the JSON object to sync
-  const syncJson = {
-    SyncID: syncOutRecord.id,
-    RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
-    RecordID: recordId,
-    SyncType: SYNC_TYPES.translate(changeType, INTERNAL_TO_EXTERNAL),
-    StoreID: storeId,
-  };
-  if (changeType === CHANGE_TYPES.DELETE) {
-    return syncJson; // Don't need record data for deletes
-  }
-
-  let syncData;
-  if (syncOutRecord.changeType === 'delete') {
-    // If record has been deleted, just sync up the ID
-    syncData = { ID: recordId };
-  } else {
-    // Get the record the syncOutRecord refers to from the database
-    const recordResults = database.objects(recordType).filtered('id == $0', recordId);
-    if (!recordResults || recordResults.length === 0) {
-      // No such record
-      throw new Error(`${recordType} with id = ${recordId} missing`);
-    } else if (recordResults.length > 1) {
-      // Duplicate records
-      throw new Error(`Multiple ${recordType} records with id = ${recordId}`);
-    }
-    const record = recordResults[0];
-
-    // Generate the appropriate data for the sync object to carry, representing the
-    // record in its upstream form
+function safeGet(record, path) {
+  const pathSegments = path.split('.');
+  let currentPath = 'record';
+  let nestedProp = record;
+  for (let i = 0; i < pathSegments.length; i += 1) {
+    const segment = pathSegments[i];
+    currentPath += `.${segment}`; // Build up path to know at what point potential errors occur.
     try {
-      syncData = generateSyncData(settings, recordType, record);
+      nestedProp = nestedProp[segment];
     } catch (error) {
-      // There was an error with data, often a null object
-      const siteName = settings.get(SYNC_SITE_NAME);
-      const syncUrl = settings.get(SYNC_URL);
-      const originalMessage = error.message;
-
-      // Change error message to be helpful in bugsnag
-      error.message = `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, `
-        + `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, `
-        + `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
-
-      // Ping the error off to bugsnag
-      bugsnagClient.notify(error);
-
-      // Make a nicer message for users and throw it again.
-      error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
-      throw error;
+      error.canDeleteSyncOut = true; // Safe to delete |syncOut|.
+      error.message = `Error on object getter on path "${currentPath}", original message: ${
+        error.message
+      }`;
+      throw error; // Bubble error to next handler.
     }
   }
-
-  // Attach the record data to the json object
-  syncJson.Data = syncData;
-  return syncJson;
+  return nestedProp;
 }
 
 /**
  * Turn an internal database object into data representing a record in the
- * mSupply primary server, ready for sync
- * @param  {Settings}     settings   Access to local settings
- * @param  {string}       recordType Internal type of record being synced
- * @param  {Realm.object} record     The record being synced
- * @return {object}                  The data to sync (in the form of upstream record)
+ * mSupply primary server, ready for sync.
+ *
+ * @param   {Settings}      settings    Access to local settings.
+ * @param   {string}        recordType  Internal type of record being synced.
+ * @param   {Realm.object}  record      The record being synced.
+ * @return  {object}                    The data to sync (in the form of upstream record).
  */
 function generateSyncData(settings, recordType, record) {
   switch (recordType) {
@@ -223,7 +195,7 @@ function generateSyncData(settings, recordType, record) {
       };
     }
     case 'TransactionBatch': {
-      const transaction = record.transaction;
+      const { transaction } = record;
       return {
         ID: record.id,
         transaction_ID: record.transaction.id,
@@ -236,8 +208,7 @@ function generateSyncData(settings, recordType, record) {
         expiry_date: getDateString(record.expiryDate),
         pack_size: String(record.packSize),
         quantity: String(record.numberOfPacks),
-        // item_line_ID Should never be null. Can become null if merge
-        // deleted it (old server bug, v3.83).
+        // |item_line_ID| can be null due to server merge bug in v3.83.
         item_line_ID: safeGet(record, 'itemBatch.id'),
         line_number: String(record.sortIndex),
         item_name: record.itemName,
@@ -250,42 +221,80 @@ function generateSyncData(settings, recordType, record) {
   }
 }
 
-function getDateString(date) {
-  let returnDate = '0000-00-00';
-  if (date && typeof date === 'object') returnDate = date.toISOString().slice(0, 10);
-
-  return `${returnDate}T00:00:00`;
-}
-
-function getTimeString(date) {
-  if (!date || typeof date !== 'object') return '00:00:00';
-  return date.toTimeString().substring(0, 8);
-}
-
 /**
- * Tries to get a value that is known to potentially lead to crash
- * If path on the record returns null, throw an error with prototype
- * extended with 'canDeleteSyncOut' set to true so sync knows to continue
- * @param {object} record The object to get properties from
- * @param {string} path   The path on that object safely try
- * @return {any}          Whatever variable was stored at path, if no error thrown
+ * Returns a json object fulfilling the requirements of the mSupply primary sync
+ * server, based on a given |syncOutRecord|.
+ *
+ * @param   {Realm}         database       The local database.
+ * @param   {Settings}      settings       Access to local settings.
+ * @param   {Realm.object}  syncOutRecord  The sync out record to be translated.
+ * @return  {object}                       The generated json object, ready to sync.
  */
-function safeGet(record, path) {
-  const pathSegments = path.split('.');
-  let currentPath = 'record';
-  let nestedProp = record;
-  for (let i = 0; i < pathSegments.length; i++) {
-    const segment = pathSegments[i];
-    currentPath += `.${segment}`; // build up path so we know at what point potential errors occur
+export function generateSyncJson(database, settings, syncOutRecord) {
+  if (!syncOutRecord || !syncOutRecord.isValid()) {
+    throw new Error('Missing sync out record');
+  }
+  if (!syncOutRecord.recordType || !syncOutRecord.id || !syncOutRecord.recordId) {
+    throw new Error('Malformed sync out record');
+  }
+  const { recordType, recordId, changeType } = syncOutRecord;
+  const storeId = settings.get(THIS_STORE_ID);
+  // Create the JSON object to sync.
+  const syncJson = {
+    SyncID: syncOutRecord.id,
+    RecordType: RECORD_TYPES.translate(recordType, INTERNAL_TO_EXTERNAL),
+    RecordID: recordId,
+    SyncType: SYNC_TYPES.translate(changeType, INTERNAL_TO_EXTERNAL),
+    StoreID: storeId,
+  };
+  if (changeType === CHANGE_TYPES.DELETE) {
+    return syncJson; // Don't need record data for deletions.
+  }
+
+  let syncData;
+  if (syncOutRecord.changeType === 'delete') {
+    // If record has been deleted, only sync the ID.
+    syncData = { ID: recordId };
+  } else {
+    // Get the record the |syncOutRecord| refers to from the database.
+    const recordResults = database.objects(recordType).filtered('id == $0', recordId);
+    if (!recordResults || recordResults.length === 0) {
+      // No such record
+      throw new Error(`${recordType} with id = ${recordId} missing`);
+    } else if (recordResults.length > 1) {
+      // Duplicate records
+      throw new Error(`Multiple ${recordType} records with id = ${recordId}`);
+    }
+    const record = recordResults[0];
+
+    // Generate the appropriate data for the sync object to carry, representing the
+    // record in its upstream form.
     try {
-      nestedProp = nestedProp[segment];
+      syncData = generateSyncData(settings, recordType, record);
     } catch (error) {
-      error.canDeleteSyncOut = true; // safe to delete syncOut
-      error.message = `Error on object getter on path "${currentPath}", original message: ${
-        error.message
-      }`;
-      throw error; // Pass error up to next handler
+      // There was an error with data (e.g. caused by null object).
+      const siteName = settings.get(SYNC_SITE_NAME);
+      const syncUrl = settings.get(SYNC_URL);
+      const originalMessage = error.message;
+
+      // Change error message to be helpful in bugsnag.
+      error.message =
+        `SYNC OUT ERROR. siteName: ${siteName}, serverUrl: ${syncUrl}, ` +
+        `syncOutRecord.id: ${syncOutRecord.id}, storeId: ${storeId} changeType: ${changeType}, ` +
+        `recordType: ${recordType}, recordId: ${recordId}, message: ${originalMessage}`;
+
+      // Ping the error off to bugsnag.
+      bugsnagClient.notify(error);
+
+      // Make a nicer message for users and throw it again.
+      error.message = `There was an error syncing. Contact mSupply mobile support. ${originalMessage}`;
+      throw error;
     }
   }
-  return nestedProp;
+
+  // Attach the record data to the json object.
+  syncJson.Data = syncData;
+  return syncJson;
 }
+
+export default generateSyncJson;

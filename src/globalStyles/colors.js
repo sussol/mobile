@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 export const SUSSOL_ORANGE = '#e95c30';
 export const BLUE_WHITE = '#ecf3fc';
 export const BACKGROUND_COLOR = '#f8fbfe';

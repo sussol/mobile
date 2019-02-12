@@ -1,20 +1,21 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Image, StyleSheet, Text, TextInput, View, TouchableOpacity,
-} from 'react-native';
+
+import { Image, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { DemoSiteRequest } from '../../authentication';
-import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
 import { ConfirmModal } from '..';
+
+import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 
 export class DemoUserModal extends React.Component {
   constructor(props) {
@@ -36,29 +37,29 @@ export class DemoUserModal extends React.Component {
   }
 
   onDemoRequestSubmit = async () => {
-    if (!this.canAttemptSubmit) return false;
-    this.setState({ status: 'submitting' });
-    try {
-      await this.demoSiteRequest.createActivationURL(
-        this.state.username,
-        this.state.email,
-        this.state.password,
-        this.state.repeatPassword,
-      );
-      this.setState({ status: 'submitted' });
-    } catch (error) {
-      this.setState({ status: 'error', error: error.message });
-      if (!error.message.startsWith('Invalid username or password')) {
-        // After ten seconds of displaying the error, re-enable the button
-        this.errorTimeoutId = setTimeout(() => {
-          this.setState({ status: 'submit' });
-          this.errorTimeoutId = null;
-        }, 10 * 1000);
+    const { username, email, password, repeatPassword } = this.state;
+
+    if (this.canAttemptSubmit) {
+      this.setState({ status: 'submitting' });
+      try {
+        await this.demoSiteRequest.createActivationURL(username, email, password, repeatPassword);
+        this.setState({ status: 'submitted' });
+      } catch (error) {
+        this.setState({ status: 'error', error: error.message });
+        if (!error.message.startsWith('Invalid username or password')) {
+          // After ten seconds of displaying the error, re-enable the button
+          this.errorTimeoutId = setTimeout(() => {
+            this.setState({ status: 'submit' });
+            this.errorTimeoutId = null;
+          }, 10 * 1000);
+        }
       }
     }
   };
 
   onDemoSubmittedModalClose = () => {
+    const { onClose } = this.props;
+
     // Reset state, close modals and go back to FirstUsePage
     this.setState({
       status: 'submit',
@@ -67,27 +68,31 @@ export class DemoUserModal extends React.Component {
       repeatPassword: '',
       email: '',
     });
-    this.props.onClose();
-  }
+    onClose();
+  };
 
   get canAttemptSubmit() {
+    const { status, username, password, email, repeatPassword } = this.state;
+
     return (
-      this.state.status === 'submit'
-      && this.state.username.length > 0
-      && this.state.password.length > 0
-      && this.state.email.length > 0
-      && this.state.repeatPassword.length > 0
+      status === 'submit' &&
+      username.length > 0 &&
+      password.length > 0 &&
+      email.length > 0 &&
+      repeatPassword.length > 0
     );
   }
 
   get buttonText() {
-    switch (this.state.status) {
+    const { status, error } = this.state;
+
+    switch (status) {
       case 'submitting':
         return generalStrings.submitting;
       case 'submitted':
         return generalStrings.submitted;
       case 'error':
-        return this.state.error;
+        return error;
       default:
         return generalStrings.submit;
     }
@@ -96,21 +101,30 @@ export class DemoUserModal extends React.Component {
   // Handlers to set state of form variables on input onChange trigger
   // Extracting into local methods because calling an anonymous function in onChange would
   // re-render the input fields each time render() is called, causing slight performance hit
-  handleOnChangeEmail = text => this.setState({ email: text, status: 'submit' });
+  handleOnChangeEmail = text => {
+    this.setState({ email: text, status: 'submit' });
+  };
 
-  handleOnChangeUsername = text => this.setState({ username: text, status: 'submit' });
+  handleOnChangeUsername = text => {
+    this.setState({ username: text, status: 'submit' });
+  };
 
-  handleOnChangePassword = text => this.setState({ password: text, status: 'submit' });
+  handleOnChangePassword = text => {
+    this.setState({ password: text, status: 'submit' });
+  };
 
-  handleOnChangeRepeatPassword = (text) => {
+  handleOnChangeRepeatPassword = text => {
     this.setState({ repeatPassword: text, status: 'submit' });
-  }
+  };
 
   render() {
+    const { isOpen, onClose } = this.props;
+    const { username, email, password, repeatPassword, status } = this.state;
+
     return (
       <Modal
-        isOpen={this.props.isOpen}
-        onClose={this.props.onClose}
+        isOpen={isOpen}
+        onClose={onClose}
         style={[globalStyles.modal, globalStyles.authFormModal]}
         backdropPressToClose={false}
         swipeToClose={true}
@@ -118,13 +132,15 @@ export class DemoUserModal extends React.Component {
         <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
           <View style={[globalStyles.authFormContainer]}>
             <View style={localStyles.closeButtonContainer}>
-              <TouchableOpacity onPress={this.props.onClose} style={localStyles.closeButton}>
+              <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
                 <Icon name="close" style={localStyles.closeIcon} />
               </TouchableOpacity>
             </View>
             <Image
               resizeMode="contain"
               style={globalStyles.authFormLogo}
+              // TODO: require assets at top of file
+              // eslint-disable-next-line global-require
               source={require('../../images/logo_large.png')}
             />
             <View style={globalStyles.horizontalContainer}>
@@ -138,8 +154,8 @@ export class DemoUserModal extends React.Component {
                 placeholder={authStrings.user_name}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
-                value={this.state.username}
-                editable={this.state.status !== 'submitting'}
+                value={username}
+                editable={status !== 'submitting'}
                 returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={this.handleOnChangeUsername}
@@ -151,10 +167,10 @@ export class DemoUserModal extends React.Component {
                 placeholder={authStrings.email}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
-                selectTextOnFocus
-                value={this.state.email}
-                editable={this.state.status !== 'submitting'}
+                value={email}
+                editable={status !== 'submitting'}
                 returnKeyType="next"
+                selectTextOnFocus
                 onChangeText={this.handleOnChangeEmail}
               />
             </View>
@@ -164,9 +180,9 @@ export class DemoUserModal extends React.Component {
                 placeholder={authStrings.password}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
-                value={this.state.password}
+                value={password}
                 secureTextEntry
-                editable={this.state.status !== 'submitting'}
+                editable={status !== 'submitting'}
                 returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={this.handleOnChangePassword}
@@ -178,9 +194,9 @@ export class DemoUserModal extends React.Component {
                 placeholder={authStrings.repeat_password}
                 placeholderTextColor={SUSSOL_ORANGE}
                 underlineColorAndroid={SUSSOL_ORANGE}
-                value={this.state.repeatPassword}
+                value={repeatPassword}
                 secureTextEntry
-                editable={this.state.status !== 'submitting'}
+                editable={status !== 'submitting'}
                 returnKeyType="next"
                 selectTextOnFocus
                 onChangeText={this.handleOnChangeRepeatPassword}
@@ -199,7 +215,7 @@ export class DemoUserModal extends React.Component {
             </View>
           </View>
           <ConfirmModal
-            isOpen={this.state.status === 'submitted'}
+            isOpen={status === 'submitted'}
             questionText={demoUserModalStrings.confirmModalBody}
             onConfirm={this.onDemoSubmittedModalClose}
             confirmText="Close"
@@ -210,11 +226,16 @@ export class DemoUserModal extends React.Component {
   }
 }
 
+export default DemoUserModal;
+
+/* eslint-disable react/require-default-props */
 DemoUserModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
+  // eslint-disable-next-line react/require-default-props
   onClose: PropTypes.func,
 };
 
+/* eslint-disable react/default-props-match-prop-types */
 DemoUserModal.defaultProps = {
   style: {},
   textStyle: {},

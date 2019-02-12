@@ -1,10 +1,8 @@
 {
-    "compilerOptions": {
-        "target": "es2015",
-        "jsx": "react",
-        "allowSyntheticDefaultImports": true
-    },
-    "include": [
-        "src"
-    ]
+  "compilerOptions": {
+    "target": "es2015",
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["src"]
 }

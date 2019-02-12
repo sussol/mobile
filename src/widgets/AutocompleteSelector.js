@@ -6,9 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-ui-components';
-import {
-  FlatList, StyleSheet, Text, TouchableOpacity, View,
-} from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { complement } from 'set-manipulator';
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { generalStrings } from '../localization';
@@ -44,13 +42,15 @@ export class AutocompleteSelector extends React.PureComponent {
       renderRightText,
     } = this.props;
 
+    const { queryText } = this.state;
+
     let data = options
-      .filtered(queryString, this.state.queryText)
+      .filtered(queryString, queryText)
       .sorted(sortByString)
       .slice();
     if (queryStringSecondary) {
       const secondQueryResult = options
-        .filtered(queryStringSecondary, this.state.queryText)
+        .filtered(queryStringSecondary, queryText)
         .sorted(sortByString);
       // Remove duplicates from secondQueryResult
       const secondaryData = complement(secondQueryResult, data);
@@ -66,7 +66,9 @@ export class AutocompleteSelector extends React.PureComponent {
           autoCorrect={false}
           autoFocus
           color="white"
-          onChange={text => this.setState({ queryText: text })}
+          onChange={text => {
+            this.setState({ queryText: text });
+          }}
           placeholder={placeholderText}
           placeholderTextColor="white"
           style={[localStyles.text, localStyles.searchBar]}
@@ -74,15 +76,19 @@ export class AutocompleteSelector extends React.PureComponent {
         {data.length > 0 && (
           <FlatList
             data={data}
-            keyExtractor={item => item.id}
-            renderItem={({ item }) => (
-              <ResultRowWithOnePress
-                item={item}
-                onPress={onSelect}
-                renderLeftText={renderLeftText}
-                renderRightText={renderRightText}
-              />
-            )}
+            keyExtractor={item => {
+              return item.id;
+            }}
+            renderItem={({ item }) => {
+              return (
+                <ResultRowWithOnePress
+                  item={item}
+                  onPress={onSelect}
+                  renderLeftText={renderLeftText}
+                  renderRightText={renderRightText}
+                />
+              );
+            }}
             keyboardShouldPersistTaps="always"
             style={localStyles.resultList}
           />
@@ -92,6 +98,9 @@ export class AutocompleteSelector extends React.PureComponent {
   }
 }
 
+export default AutocompleteSelector;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 AutocompleteSelector.propTypes = {
   options: PropTypes.object.isRequired,
   queryString: PropTypes.string.isRequired,
@@ -106,13 +115,20 @@ AutocompleteSelector.defaultProps = {
   placeholderText: generalStrings.start_typing_to_search,
 };
 
+// TODO: move ResultRow to dedicated file
+// eslint-disable-next-line react/no-multi-comp
 class ResultRow extends React.PureComponent {
   render() {
-    const {
-      item, renderLeftText, renderRightText, onPress,
-    } = this.props;
+    // TODO: add ResultRow.propTypes
+    // eslint-disable-next-line react/prop-types
+    const { item, renderLeftText, renderRightText, onPress } = this.props;
     return (
-      <TouchableOpacity style={localStyles.resultRow} onPress={() => onPress(item)}>
+      <TouchableOpacity
+        style={localStyles.resultRow}
+        onPress={() => {
+          return onPress(item);
+        }}
+      >
         <Text style={[localStyles.text, localStyles.itemText]}>
           {renderLeftText ? renderLeftText(item) : item.toString()}
         </Text>
@@ -123,14 +139,6 @@ class ResultRow extends React.PureComponent {
     );
   }
 }
-
-ResultRow.propTypes = {
-  item: PropTypes.object,
-  renderLeftText: PropTypes.func,
-  renderRightText: PropTypes.func,
-  onPress: PropTypes.func,
-};
-
 const ResultRowWithOnePress = withOnePress(ResultRow);
 
 const localStyles = StyleSheet.create({

@@ -1,16 +1,13 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
 export const validationStrings = new LocalizedStrings({
   gb: {
-    general: {
-    },
+    general: {},
     username: {
       required: 'Enter the username',
     },
@@ -28,10 +25,9 @@ export const validationStrings = new LocalizedStrings({
       required: 'Enter the repeat password',
     },
   },
-  fr: {
-  },
-  gil: {
-  },
-  tl: {
-  },
+  fr: {},
+  gil: {},
+  tl: {},
 });
+
+export default validationStrings;

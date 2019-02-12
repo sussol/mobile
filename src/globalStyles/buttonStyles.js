@@ -1,13 +1,11 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import {
-  SUSSOL_ORANGE, WARM_GREY, WARMER_GREY, DARKER_GREY, DARK_GREY,
-} from './colors';
-import { APP_FONT_FAMILY } from './fonts';
 import { COMPONENT_HEIGHT } from './appStyles';
+import { SUSSOL_ORANGE, WARM_GREY, WARMER_GREY, DARKER_GREY, DARK_GREY } from './colors';
+import { APP_FONT_FAMILY } from './fonts';
 
 export const buttonStyles = {
   buttonText: {
@@ -57,3 +55,5 @@ export const buttonStyles = {
     borderColor: DARK_GREY,
   },
 };
+
+export default buttonStyles;

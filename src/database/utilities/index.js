@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 export { createRecord } from './createRecord';
 export { deleteRecord } from './deleteRecord';
 export { mergeRecords } from './mergeRecords';

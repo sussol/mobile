@@ -1,7 +1,15 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import React from 'react-native';
+
+import { Button } from 'react-native-ui-components';
+
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import { Button } from 'react-native-ui-components';
+
 import { ConfirmModal } from '../ConfirmModal';
 
 jest.unmock('../ConfirmModal');
@@ -33,7 +41,10 @@ describe('ConfirmModal', () => {
   it('triggers cancelCallBack when cancel pressed', () => {
     expect(cancelCallBack.calledOnce).toBe(false);
     expect(confirmCallBack.calledOnce).toBe(false);
-    wrapper.find(Button).first().simulate('press');
+    wrapper
+      .find(Button)
+      .first()
+      .simulate('press');
     expect(cancelCallBack.calledOnce).toBe(true);
     expect(confirmCallBack.calledOnce).toBe(false);
   });
@@ -41,7 +52,10 @@ describe('ConfirmModal', () => {
   it('triggers confirmCallBack when confirm pressed', () => {
     expect(cancelCallBack.calledOnce).toBe(false);
     expect(confirmCallBack.calledOnce).toBe(false);
-    wrapper.find(Button).last().simulate('press');
+    wrapper
+      .find(Button)
+      .last()
+      .simulate('press');
     expect(cancelCallBack.calledOnce).toBe(false);
     expect(confirmCallBack.calledOnce).toBe(true);
   });

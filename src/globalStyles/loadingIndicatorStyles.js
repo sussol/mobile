@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { DARK_GREY } from './colors';
 
 export const loadingIndicatorStyles = {
@@ -14,3 +19,5 @@ export const loadingIndicatorStyles = {
     zIndex: 2,
   },
 };
+
+export default loadingIndicatorStyles;

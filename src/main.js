@@ -1,23 +1,24 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/* eslint-disable no-unused-vars */
-
 import React from 'react';
-import { AppRegistry, AsyncStorage } from 'react-native';
-import { Provider } from 'react-redux';
+
 import { applyMiddleware, createStore } from 'redux';
+import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
 import { ErrorHandler } from 'redux-persist-error-handler';
-import { Client as BugsnagClient } from 'bugsnag-react-native';
+
+import { AppRegistry, AsyncStorage } from 'react-native';
+
+// import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import { MSupplyMobileApp } from './mSupplyMobileApp';
 import { reducers } from './reducers';
 
-const bugsnagClient = new BugsnagClient();
+// const bugsnagClient = new BugsnagClient();
 
 const persistConfig = {
   keyPrefix: '',
@@ -28,11 +29,7 @@ const persistConfig = {
 
 const persistedReducer = persistReducer(persistConfig, reducers);
 
-const store = createStore(
-  persistedReducer,
-  {},
-  applyMiddleware(thunk),
-);
+const store = createStore(persistedReducer, {}, applyMiddleware(thunk));
 
 const persistedStore = persistStore(store);
 
@@ -46,4 +43,6 @@ function App() {
   );
 }
 
-AppRegistry.registerComponent('mSupplyMobile', () => App);
+AppRegistry.registerComponent('mSupplyMobile', () => {
+  return App;
+});

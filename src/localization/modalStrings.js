@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -26,7 +24,9 @@ export const modalStrings = new LocalizedStrings({
     finalise_customer_invoice: 'Finalise will lock this invoice permanently.',
     finalise_supplier_requisition: 'Finalise will send this requisition and lock it permanently.',
     finalise_customer_requisition:
-      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this requisition permanently.',
+      // eslint-disable-next-line no-multi-str
+      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this\
+       requisition permanently.',
     finalise_stocktake: 'Finalise will adjust inventory and lock this stocktake permanently.',
     finalise_supplier_invoice: 'Finalise will adjust inventory and lock this invoice permanently.',
     following_items_reduced_more_than_available_stock:
@@ -49,10 +49,15 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_supplier: 'Start typing to select supplier',
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
-    stocktake_invalid_stock: 'Stock on hand for these item(s) have changed since this stocktake was last opened (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" and "Actual Quantity" will be reset:',
+    stocktake_invalid_stock:
+      // eslint-disable-next-line no-multi-str
+      'Stock on hand for these item(s) have changed since this stocktake was last opened \
+       (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" \
+       and "Actual Quantity" will be reset',
   },
   fr: {
-    add_at_least_one_item_before_finalising: 'Vous devez ajouter au moins un article avant de finaliser',
+    add_at_least_one_item_before_finalising:
+      'Vous devez ajouter au moins un article avant de finaliser',
     and: 'et',
     cancel: 'Annuler',
     confirm: 'Confirmer',
@@ -67,13 +72,17 @@ export const modalStrings = new LocalizedStrings({
     edit_the_stocktake_comment: "Modifier le commmentaire de ce relevé d'inventaire",
     edit_the_stocktake_name: "Modifier le nom de ce relevé d'inventaire:",
     finalise_customer_invoice: 'Finaliser verrouillera cette facture de façon permanente.',
-    finalise_supplier_requisition: 'Finaliser enverra cette réquisition et la verrouillera de façon permanente',
+    finalise_supplier_requisition:
+      'Finaliser enverra cette réquisition et la verrouillera de façon permanente',
     finalise_customer_requisition:
-      "Finaliser va générer une facture client finalisé, ajuster l'inventaire et verrouiller cette réquisition de façon permanente.",
-    finalise_stocktake: "Finaliser ajustera l'inventaire et verrouillera ce relevé d'inventaire de façon permanente.",
-    finalise_supplier_invoice: "Finaliser ajustera l'inventaire and verrouillera cette facture de façon permanente.",
-    following_items_reduced_more_than_available_stock:
-      'Les articles suivants:',
+      // eslint-disable-next-line no-multi-str
+      "Finaliser va générer une facture client finalisé, ajuster l'inventaire et verrouiller\
+       cette réquisition de façon permanente.",
+    finalise_stocktake:
+      "Finaliser ajustera l'inventaire et verrouillera ce relevé d'inventaire de façon permanente.",
+    finalise_supplier_invoice:
+      "Finaliser ajustera l'inventaire and verrouillera cette facture de façon permanente.",
+    following_items_reduced_more_than_available_stock: 'Les articles suivants:',
     give_your_stocktake_a_name: "Nommer votre relevé d'inventaire",
     got_it: 'Je comprends',
     more: 'plus',
@@ -90,11 +99,18 @@ export const modalStrings = new LocalizedStrings({
     select_the_number_of_months_stock_required: 'Sélectionner le nombre de mois de stock requis',
     start_typing_to_select_customer: 'Tapez pour rechercher un client',
     start_typing_to_select_supplier: 'Tapez pour rechercher un fournisseur',
-    stock_quantity_greater_then_zero: 'La quantité de stock doit être plus grande que zéro avant de finaliser',
+    stock_quantity_greater_then_zero:
+      'La quantité de stock doit être plus grande que zéro avant de finaliser',
     stocktake_no_counted_items: "Ne peut finaliser un relevé d'inventaire sans articles dénombrés",
-    stocktake_invalid_stock: "Le stock disponible pour ces article(s) a changé depuis que ce relevé d'inventaire a été ouvert pour la dernière fois ( à cause de factures clients, factures de fournisseurs ou d'autres relevé d'inventaire). La quantité actuelle et celle de l'instantané seront réinitialisées.",
+    stocktake_invalid_stock:
+      // eslint-disable-next-line no-multi-str
+      "Le stock disponible pour ces article(s) a changé depuis que ce relevé d'inventaire a été \
+       ouvert pour la dernière fois ( à cause de factures clients, factures de fournisseurs ou \
+       d'autres relevé d'inventaire). La quantité actuelle et celle de l'instantané seront \
+       réinitialisées.",
   },
-  gil: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
+  gil: {
+    // TODO: add |edit_the_stocktake_comment|, |edit_the_stocktake_name|, |stocktake_invalid_stock|
     add_at_least_one_item_before_finalising: 'E riai n iai kanoana imwain ae ko finalise',
     and: 'ao',
     cancel: 'kamauna',
@@ -109,7 +125,9 @@ export const modalStrings = new LocalizedStrings({
     edit_their_reference: 'Bita ana reference number',
     finalise_customer_invoice: 'Ko aki kona n manga bita te invoice ae a tia n Finalise',
     finalise_customer_requisition:
-      'Kamatoakin raoi te katitama inwoiti ma mwaitin bwaain aoraki ni ikotaki ma bubuti ke oota ena tia raoi ao man aki kona ni bibitaki imwin te kamatoa ke te bainaraiti',
+      // eslint-disable-next-line no-multi-str
+      'Kamatoakin raoi te katitama inwoiti ma mwaitin bwaain aoraki ni ikotaki ma bubuti\
+       ke oota ena tia raoi ao man aki kona ni bibitaki imwin te kamatoa ke te bainaraiti',
     finalise_supplier_requisition: 'Am order ae Finalise, e nako, ao ko aki kona n bitia',
     finalise_stocktake: 'Am warebwai ae Finalise, ko aki manga kona n bitia',
     finalise_supplier_invoice: 'Am karao-oota ae Finalise, ko aki manga kona n bitia',
@@ -136,7 +154,8 @@ export const modalStrings = new LocalizedStrings({
       'Te maiti are e warekaki e na maiti riki nakon AKEA imain kamatoana',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
   },
-  tl: { // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
+  tl: {
+    // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
     add_at_least_one_item_before_finalising: 'Tenke hatama sasán ida antes finaliza',
     and: 'no',
     cancel: 'Kansela',
@@ -178,3 +197,5 @@ export const modalStrings = new LocalizedStrings({
     stocktake_no_counted_items: 'La bele finaliza ajustamentu se laiha item ida priense',
   },
 });
+
+export default modalStrings;

@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 export { BottomConfirmModal } from './BottomConfirmModal';
 export { BottomModal } from './BottomModal';
 export { ConfirmModal } from './ConfirmModal';

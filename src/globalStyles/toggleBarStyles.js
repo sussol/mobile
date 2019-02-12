@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import { SUSSOL_ORANGE } from './colors';
@@ -22,9 +22,10 @@ export const toggleBarStyles = {
     fontSize: 12,
     color: 'white',
   },
-  toggleOption: {
-  },
+  toggleOption: {},
   toggleOptionSelected: {
     backgroundColor: SUSSOL_ORANGE,
   },
 };
+
+export default toggleBarStyles;

@@ -1,9 +1,10 @@
 /**
-* mSupply Mobile
-* Sustainable Solutions (NZ) Ltd. 2016
-*/
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
 
 export { Button, ProgressBar } from 'react-native-ui-components';
+
 export {
   BottomConfirmModal,
   BottomModal,
@@ -15,6 +16,7 @@ export {
   PageContentModal,
   SelectModal,
 } from './modals';
+
 export { AutocompleteSelector } from './AutocompleteSelector';
 export { FinaliseButton } from './FinaliseButton';
 export { NavigationBar } from './NavigationBar';

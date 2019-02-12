@@ -1,9 +1,17 @@
-import Promise from 'promise-sync-es6';
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import React from 'react';
+
 import { TextInput } from 'react-native';
+import { Button } from 'react-native-ui-components';
+
+import Promise from 'promise-sync-es6';
 import { shallow } from 'enzyme';
 import sinon from 'sinon';
-import { Button } from 'react-native-ui-components';
+
 import { LoginModal } from '../LoginModal';
 
 jest.unmock('../LoginModal');
@@ -17,6 +25,7 @@ const INVALID_PASSWORD = 'invalid';
 const ERROR_MESSAGE = 'Authentication failed';
 
 class MockAuthenticator {
+  // eslint-disable-next-line class-methods-use-this
   authenticate(username, password) {
     return new Promise((resolve, reject) => {
       if (username === VALID_USERNAME && password === VALID_PASSWORD) resolve();
@@ -44,43 +53,88 @@ describe('LoginModal', () => {
 
   it('triggers onAuthentication when login pressed', () => {
     expect(onAuthentication.calledOnce).toBe(false);
-    wrapper.find(TextInput).at(0).simulate('changeText', VALID_USERNAME);
-    wrapper.find(TextInput).at(1).simulate('changeText', VALID_PASSWORD);
-    wrapper.find(Button).first().simulate('press');
+    wrapper
+      .find(TextInput)
+      .at(0)
+      .simulate('changeText', VALID_USERNAME);
+    wrapper
+      .find(TextInput)
+      .at(1)
+      .simulate('changeText', VALID_PASSWORD);
+    wrapper
+      .find(Button)
+      .first()
+      .simulate('press');
     expect(onAuthentication.calledOnce).toBe(true);
   });
 
   it('calls onAuthentication with true when username and password valid', () => {
     expect(onAuthentication.calledOnce).toBe(false);
-    wrapper.find(TextInput).at(0).simulate('changeText', VALID_USERNAME);
-    wrapper.find(TextInput).at(1).simulate('changeText', VALID_PASSWORD);
-    wrapper.find(Button).first().simulate('press');
+    wrapper
+      .find(TextInput)
+      .at(0)
+      .simulate('changeText', VALID_USERNAME);
+    wrapper
+      .find(TextInput)
+      .at(1)
+      .simulate('changeText', VALID_PASSWORD);
+    wrapper
+      .find(Button)
+      .first()
+      .simulate('press');
     expect(onAuthentication.calledOnce).toBe(true);
     expect(onAuthentication.calledWith(true)).toBe(true);
   });
 
   it('calls onAuthentication with false when password invalid', () => {
     expect(onAuthentication.calledOnce).toBe(false);
-    wrapper.find(TextInput).at(0).simulate('changeText', VALID_USERNAME);
-    wrapper.find(TextInput).at(1).simulate('changeText', INVALID_PASSWORD);
-    wrapper.find(Button).first().simulate('press');
+    wrapper
+      .find(TextInput)
+      .at(0)
+      .simulate('changeText', VALID_USERNAME);
+    wrapper
+      .find(TextInput)
+      .at(1)
+      .simulate('changeText', INVALID_PASSWORD);
+    wrapper
+      .find(Button)
+      .first()
+      .simulate('press');
     expect(onAuthentication.calledOnce).toBe(true);
     expect(onAuthentication.calledWith(false)).toBe(true);
   });
 
   it('displays an error when authentication fails', () => {
     expect(wrapper.contains(ERROR_MESSAGE)).toBe(false);
-    wrapper.find(TextInput).at(0).simulate('changeText', VALID_USERNAME);
-    wrapper.find(TextInput).at(1).simulate('changeText', INVALID_PASSWORD);
-    wrapper.find(Button).first().simulate('press');
+    wrapper
+      .find(TextInput)
+      .at(0)
+      .simulate('changeText', VALID_USERNAME);
+    wrapper
+      .find(TextInput)
+      .at(1)
+      .simulate('changeText', INVALID_PASSWORD);
+    wrapper
+      .find(Button)
+      .first()
+      .simulate('press');
     expect(wrapper.contains(ERROR_MESSAGE)).toBe(true);
   });
 
   it('does not display an error when authentication succeeds', () => {
     expect(wrapper.contains(ERROR_MESSAGE)).toBe(false);
-    wrapper.find(TextInput).at(0).simulate('changeText', VALID_USERNAME);
-    wrapper.find(TextInput).at(1).simulate('changeText', VALID_PASSWORD);
-    wrapper.find(Button).first().simulate('press');
+    wrapper
+      .find(TextInput)
+      .at(0)
+      .simulate('changeText', VALID_USERNAME);
+    wrapper
+      .find(TextInput)
+      .at(1)
+      .simulate('changeText', VALID_PASSWORD);
+    wrapper
+      .find(Button)
+      .first()
+      .simulate('press');
     expect(wrapper.contains(ERROR_MESSAGE)).toBe(false);
   });
 });

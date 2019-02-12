@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
 
 import { getTotal } from '../utilities';
@@ -7,14 +12,18 @@ export class ItemBatch extends Realm.Object {
     return this.numberOfPacks * this.packSize;
   }
 
-  // Return the date this batch was added, assuming that was in the earliest transaction batch
-  // connected to this item batch
+  /**
+   * Get the date this batch was added, assuming that was in the earliest transaction batch
+   * connected to this item batch.
+   *
+   * @return  {Date}
+   */
   get addedDate() {
     if (this.transactionBatches.length === 0) return new Date();
     const transactionBatches = this.transactionBatches.slice();
-    const sortedTransactionBatches = transactionBatches.sort(
-      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate,
-    );
+    const sortedTransactionBatches = transactionBatches.sort((a, b) => {
+      return a.transaction.confirmDate < b.transaction.confirmDate;
+    });
     return sortedTransactionBatches[0].transaction.confirmDate;
   }
 
@@ -27,16 +36,20 @@ export class ItemBatch extends Realm.Object {
   }
 
   set totalQuantity(quantity) {
-    if (quantity < 0) throw new Error('Cannot set a negative item batch quantity');
+    if (quantity < 0) {
+      throw new Error('Cannot set a negative item batch quantity');
+    }
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
   /**
-   * Returns the sum of all usage in TransactionBatches related to this ItemBatch within
-   * period defined by a starting and ending date.
-   * @param   {Date} startDate  Starting Date (e.g. From 25/4/2017)
-   * @param   {Date} endDate    Starting Date (e.g. to 25/7/2017)
-   * @return  {number}          The total transaction usage for this batch
+   * Get the sum of all usage in each transaction batch related to this item batch within
+   * a starting and ending date.
+   *
+   * @param   {Date}    startDate  Start date.
+   * @param   {Date}    endDate    End date.
+   * @return  {number}             The total transaction usage for this batch over the specified
+   *                               period.
    */
   totalUsageForPeriod(startDate, endDate) {
     const transactionBatches = this.transactionBatches.filtered(
@@ -53,7 +66,9 @@ export class ItemBatch extends Realm.Object {
   }
 
   addTransactionBatchIfUnique(transactionBatch) {
-    if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) return;
+    if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) {
+      return;
+    }
     this.addTransactionBatch(transactionBatch);
   }
 
@@ -61,6 +76,8 @@ export class ItemBatch extends Realm.Object {
     return `${this.itemName} - Batch ${this.batch}`;
   }
 }
+
+export default ItemBatch;
 
 ItemBatch.schema = {
   name: 'ItemBatch',

@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import { SUSSOL_ORANGE } from './colors';
@@ -33,3 +33,5 @@ export const confirmModalStyles = {
     marginHorizontal: 190,
   },
 };
+
+export default confirmModalStyles;

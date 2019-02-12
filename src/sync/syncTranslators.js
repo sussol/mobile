@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 /* eslint-disable quote-props */
 
 export const INTERNAL_TO_EXTERNAL = 0;
@@ -7,6 +12,8 @@ class SyncTranslator {
   constructor(internalToExternal) {
     this.internalToExternal = internalToExternal;
     this.externalToInternal = {};
+    // TODO: replace generators with explicit loops.
+    // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(internalToExternal)) {
       this.externalToInternal[value] = key;
     }
@@ -23,7 +30,7 @@ class SyncTranslator {
   }
 }
 
-// Map of internal database object types to external record types
+// Map of internal database object types to external record types.
 export const RECORD_TYPES = new SyncTranslator({
   Item: 'item',
   ItemStoreJoin: 'item_store_join',
@@ -49,13 +56,13 @@ export const RECORD_TYPES = new SyncTranslator({
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
-  'imprest': 'im',
-  'forecast': 'sh',
-  'request': 'request',
-  'response': 'response',
+  imprest: 'im',
+  forecast: 'sh',
+  request: 'request',
+  response: 'response',
 });
 
-// Map of internal database change types to external sync types
+// Map of internal database change types to external sync types.
 export const SYNC_TYPES = new SyncTranslator({
   create: 'I', // For 'insert'
   update: 'U',
@@ -69,7 +76,7 @@ export const TRANSACTION_TYPES = new SyncTranslator({
   supplier_invoice: 'si',
   supplier_credit: 'sc',
   inventory_adjustment: 'in',
-  prescription: 'pi', // From here down just provided for sync purposes, not actually used in mobile
+  prescription: 'pi', // Following types provided for sync purposes, not actually used by mobile.
   build: 'bu',
   repack: 'sr',
   receipt: 'rc',
@@ -95,8 +102,8 @@ export const NAME_TYPES = new SyncTranslator({
 /**
  * Translates requisition statuses, which will be changed by the supplying store
  * once finalised in the mobile store. Despite the supplying store's requisition
- * going through sg, cn, and fn statuses, it should remain finalised in the mobile
- * store
+ * going through 'sg', 'cn', and 'fn' statuses, it should remain finalised in the
+ * mobile store.
  */
 class RequisitionStatusTranslator extends SyncTranslator {
   translate(status, direction) {
@@ -105,7 +112,7 @@ class RequisitionStatusTranslator extends SyncTranslator {
   }
 }
 export const REQUISITION_STATUSES = new RequisitionStatusTranslator({
-  new: 'wp', // wp, wf, cn should never be returned in api/v3
+  new: 'wp', // 'wp', 'wf', 'cn' should never be returned in api/v3.
   suggested: 'sg',
   finalised: 'fn',
 });
@@ -126,7 +133,7 @@ class StatusTranslator extends SyncTranslator {
     }
   }
 }
-// Map of internal statuses to external statuses (of transactions, stocktakes, etc.)
+// Map of internal statuses to external statuses (of transactions, stocktakes, etc.).
 export const STATUSES = new StatusTranslator({
   confirmed: 'cn',
   finalised: 'fn',
@@ -143,10 +150,10 @@ class SequenceKeyTranslator extends SyncTranslator {
   translate(sequenceKey, direction, thisStoreId) {
     let key = sequenceKey;
     if (direction === EXTERNAL_TO_INTERNAL) {
-      if (key.length < thisStoreId.length) return null; // Definitely not a key we use
-      // The mSupply sequence keys we care about end with the store id they relate to
+      if (key.length < thisStoreId.length) return null; // Not a key used here.
+      // Relevamt mSupply sequence keys end with the store id they relate to.
       const storeId = key.substring(key.length - thisStoreId.length);
-      // If the sequence doesn't relate to this store, we will ignore it
+      // If the sequence doesn't relate to this store, ignore.
       if (storeId !== thisStoreId) return null;
       key = key.substring(0, key.length - thisStoreId.length);
     }

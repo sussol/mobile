@@ -1,24 +1,30 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { ToggleBar } from './ToggleBar';
+
 import globalStyles from '../globalStyles';
 
 /**
  * A selector based on the ToggleBar, will highlight currently selected
  * @prop  {array}     options   The options to display in the selector
  * @prop  {any}       selected  The option that is currently selected
- * @prop  {function}  onSelect  A function taking the option selected as a parameter
+ * @prop  {function}  onSelect  A function taking the option selected
+ *                              as a parameter
  */
 export function ToggleSelector(props) {
-  const toggles = props.options.map((option) => { // eslint-disable-line arrow-body-style
+  const { options, onSelect } = props;
+  const toggles = options.map(option => {
     return {
       text: String(option),
-      onPress: () => props.onSelect(option),
+      onPress: () => {
+        onSelect(option);
+      },
       isOn: props.selected === option,
     };
   });
@@ -35,6 +41,9 @@ export function ToggleSelector(props) {
   );
 }
 
+export default ToggleSelector;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 ToggleSelector.propTypes = {
   selected: PropTypes.number.isRequired,
   onSelect: PropTypes.func,
