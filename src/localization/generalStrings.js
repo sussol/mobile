@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -28,3 +26,5 @@ export const generalStrings = new LocalizedStrings({
     start_typing_to_search: "Hakerek iha ne'e hodi buka-hetan",
   },
 });
+
+export default generalStrings;

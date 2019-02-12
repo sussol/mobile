@@ -1,14 +1,17 @@
 /**
-* Tupaia MediTrak
-* Copyright (c) 2017 Beyond Essential Systems Pty Ltd
-**/
+ * Tupaia MediTrak
+ * Copyright (c) 2017 Beyond Essential Systems Pty Ltd
+ */
 
 import { StackNavigator as createStackNavigator } from 'react-navigation';
 
 import { PAGES } from '../pages';
+
 const routes = {};
-// Add all pages to the navigation routes
-Object.entries(PAGES).forEach(([routeName, page]) => { routes[routeName] = { screen: page }; });
+// Add all pages to navigation routes.
+Object.entries(PAGES).forEach(([routeName, page]) => {
+  routes[routeName] = { screen: page };
+});
 
 const config = {
   initialRouteName: 'root',
@@ -16,3 +19,5 @@ const config = {
 };
 
 export const Navigator = createStackNavigator(routes, config);
+
+export default Navigator;

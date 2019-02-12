@@ -1,32 +1,18 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Image,
-  ListView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+
+import { Image, ListView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
 import { SETTINGS_KEYS } from '../../settings';
-import {
-  dataTableStyles,
-  APP_FONT_FAMILY,
-  COMPONENT_HEIGHT,
-} from '../../globalStyles';
-import {
-  COUNTRY_FLAGS,
-  LANGUAGE_KEYS,
-  modalStrings,
-} from '../../localization';
+import { COUNTRY_FLAGS, LANGUAGE_KEYS, modalStrings } from '../../localization';
 
+import { dataTableStyles, APP_FONT_FAMILY, COMPONENT_HEIGHT } from '../../globalStyles';
 
 /**
  * A Modal that covers the page content using PageContentModal, and renders a ListView for selecting
@@ -38,7 +24,11 @@ import {
 export class LanguageModal extends React.Component {
   constructor(props) {
     super(props);
-    const dataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
+    const dataSource = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => {
+        return r1 !== r2;
+      },
+    });
     this.state = {
       dataSource: dataSource.cloneWithRows(LANGUAGE_KEYS),
       currentLanguage: props.settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE),
@@ -48,14 +38,18 @@ export class LanguageModal extends React.Component {
   }
 
   onSelectLanguage(rowKey) {
-    this.props.settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, rowKey);
-    this.setState({ currentLanguage: rowKey }, this.props.onClose);
+    const { settings, onClose } = this.props;
+
+    settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, rowKey);
+    this.setState({ currentLanguage: rowKey }, onClose);
   }
 
   renderRow(rowValue, sectionId, rowKey) {
+    const { currentLanguage } = this.state;
+
     let rowStyle;
     let textStyle;
-    if (this.state.currentLanguage === rowKey) {
+    if (currentLanguage === rowKey) {
       rowStyle = [localStyles.tableRow, { backgroundColor: '#e95c30' }];
       textStyle = [dataTableStyles.text, localStyles.dataTableText, { color: 'white' }];
     } else {
@@ -65,7 +59,9 @@ export class LanguageModal extends React.Component {
 
     return (
       <TouchableOpacity
-        onPress={() => this.onSelectLanguage(rowKey)}
+        onPress={() => {
+          this.onSelectLanguage(rowKey);
+        }}
         style={rowStyle}
       >
         <Image style={localStyles.flagImage} source={COUNTRY_FLAGS[rowKey]} resizeMode="stretch" />
@@ -75,11 +71,8 @@ export class LanguageModal extends React.Component {
   }
 
   render() {
-    const {
-      isOpen,
-      onClose,
-      ...modalProps
-    } = this.props;
+    const { isOpen, onClose, ...modalProps } = this.props;
+    const { dataSource } = this.state;
 
     const numberOfRows = Math.min(Object.keys(LANGUAGE_KEYS).length, 10);
     const listViewHeight = { height: numberOfRows * COMPONENT_HEIGHT };
@@ -93,17 +86,16 @@ export class LanguageModal extends React.Component {
         {...modalProps}
       >
         <View>
-          <ListView
-            style={listViewStyle}
-            dataSource={this.state.dataSource}
-            renderRow={this.renderRow}
-          />
+          <ListView style={listViewStyle} dataSource={dataSource} renderRow={this.renderRow} />
         </View>
       </PageContentModal>
-     );
+    );
   }
 }
 
+export default LanguageModal;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 LanguageModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func,
@@ -124,7 +116,6 @@ const localStyles = StyleSheet.create({
   dataTableText: {
     fontSize: 20,
     marginLeft: 20,
-
   },
   tableRow: {
     flexDirection: 'row',

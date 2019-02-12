@@ -1,33 +1,34 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Platform, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { textStyles } from '../globalStyles';
 
 export function NavigationBar({ onPressBack, LeftComponent, CentreComponent, RightComponent }) {
   return (
-    <View style={localStyles.container} >
+    <View style={localStyles.container}>
       <View style={localStyles.leftSection}>
         <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
-          {onPressBack && <Icon name={'chevron-left'} style={localStyles.backIcon} />}
+          {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
         </TouchableOpacity>
         {LeftComponent && <LeftComponent />}
       </View>
-      <View style={localStyles.centreSection} >
-        {CentreComponent && <CentreComponent />}
-      </View>
-      <View style={localStyles.rightSection}>
-        {RightComponent && <RightComponent />}
-      </View>
+      <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
+      <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
     </View>
   );
 }
 
+export default NavigationBar;
+
+/* eslint-disable react/forbid-prop-types */
 NavigationBar.propTypes = {
   onPressBack: PropTypes.func,
   LeftComponent: PropTypes.any,
@@ -44,6 +45,7 @@ NavigationBar.defaultProps = {
 
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : 0;
 const HEADER_HEIGHT = Platform.OS === 'ios' ? 44 : 56;
+
 const sectionStyle = {
   flex: 1,
   flexDirection: 'row',

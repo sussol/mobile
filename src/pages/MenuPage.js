@@ -1,21 +1,21 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Image, StyleSheet, Text, View } from 'react-native';
 
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { SETTINGS_KEYS } from '../settings';
 
-const { SYNC_SITE_NAME } = SETTINGS_KEYS;
+import { navStrings } from '../localization';
+import { SETTINGS_KEYS } from '../settings';
 
 import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
 
-import { navStrings } from '../localization';
+const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 
 export class MenuPage extends React.Component {
   constructor(props) {
@@ -24,14 +24,20 @@ export class MenuPage extends React.Component {
   }
 
   componentWillMount() {
-    this.databaseListenerId = this.props.database.addListener(
-      // Ensure that language changes in login modal are re-rendered onto the MenuPage
-      (changeType, recordType) => recordType === 'Setting' && this.forceUpdate(),
+    const { database } = this.props;
+
+    this.databaseListenerId = database.addListener(
+      // Ensure that language changes in login modal are re-rendered onto the MenuPage.
+      (_, recordType) => {
+        return recordType === 'Setting' && this.forceUpdate();
+      },
     );
   }
 
   componentWillUnmount() {
-    this.props.database.removeListener(this.databaseListenerId);
+    const { database } = this.props;
+
+    database.removeListener(this.databaseListenerId);
   }
 
   exportData = () => {
@@ -49,19 +55,24 @@ export class MenuPage extends React.Component {
             <Image
               style={localStyles.image}
               resizeMode="contain"
+              // eslint-disable-next-line global-require
               source={require('../images/menu_people.png')}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_invoices}
-              onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
+              onPress={() => {
+                navigateTo('customerInvoices', navStrings.customer_invoices);
+              }}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_requisitions}
-              onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
+              onPress={() => {
+                navigateTo('customerRequisitions', navStrings.customer_requisitions);
+              }}
             />
           </View>
 
@@ -69,19 +80,24 @@ export class MenuPage extends React.Component {
             <Image
               style={localStyles.image}
               resizeMode="contain"
+              // eslint-disable-next-line global-require
               source={require('../images/menu_truck.png')}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_invoices}
-              onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
+              onPress={() => {
+                navigateTo('supplierInvoices', navStrings.supplier_invoices);
+              }}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_requisitions}
-              onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
+              onPress={() => {
+                navigateTo('supplierRequisitions', navStrings.supplier_requisitions);
+              }}
             />
             {isInAdminMode && (
               <Button
@@ -97,26 +113,33 @@ export class MenuPage extends React.Component {
             <Image
               style={localStyles.image}
               resizeMode="contain"
+              // eslint-disable-next-line global-require
               source={require('../images/menu_pc_clipboard.png')}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.current_stock}
-              onPress={() => navigateTo('stock', navStrings.current_stock)}
+              onPress={() => {
+                navigateTo('stock', navStrings.current_stock);
+              }}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.stocktakes}
-              onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
+              onPress={() => {
+                navigateTo('stocktakes', navStrings.stocktakes);
+              }}
             />
             {isInAdminMode && (
               <Button
                 style={globalStyles.menuButton}
                 textStyle={globalStyles.menuButtonText}
                 text="Realm Explorer"
-                onPress={() => navigateTo('realmExplorer', 'Database Contents')}
+                onPress={() => {
+                  navigateTo('realmExplorer', 'Database Contents');
+                }}
               />
             )}
           </View>
@@ -138,6 +161,9 @@ export class MenuPage extends React.Component {
   }
 }
 
+export default MenuPage;
+
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
 MenuPage.propTypes = {
   database: PropTypes.object.isRequired,
   isInAdminMode: PropTypes.bool,

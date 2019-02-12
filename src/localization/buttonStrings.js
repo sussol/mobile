@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -46,7 +44,8 @@ export const buttonStrings = new LocalizedStrings({
     use_suggested_quantities: 'Utiliser les quantités suggérées',
     use_requested_quantities: 'Utiliser les quantités demandées',
   },
-  gil: {  // TODO: add_batch
+  gil: {
+    // TODO: add_batch
     add_master_list_items: 'Rinea am list',
     all_items_selected: 'Aikai nikabane',
     create_automatic_order: 'Create Automatic Order',
@@ -64,7 +63,8 @@ export const buttonStrings = new LocalizedStrings({
     use_requested_quantities: 'Kabongana maitina\nae kainnanoaki',
     use_suggested_quantities: 'Kabongana te\nmwaiti are e katauaki',
   },
-  tl: { // TODO: add_batch
+  tl: {
+    // TODO: add_batch
     add_master_list_items: 'Utiliza Lista Master',
     all_items_selected: 'Hili Item Hotu',
     create_automatic_order: 'Kria Orden Automátiku',
@@ -83,3 +83,5 @@ export const buttonStrings = new LocalizedStrings({
     use_requested_quantities: 'Kuantidade Ezije',
   },
 });
+
+export default buttonStrings;
