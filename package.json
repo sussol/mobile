@@ -18,7 +18,8 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest --coverage",
-    "build": "cd android && ./gradlew assembleRelease"
+    "build": "cd android && ./gradlew assembleRelease",
+    "lint": "eslint src"
   },
   "jest": {
     "preset": "react-native"
@@ -48,6 +49,7 @@
     "react-native": "^0.58.3",
     "react-native-data-table": "^0.2.1",
     "react-native-database": "^0.3.1",
+    "react-native-device-info": "^0.24.3",
     "react-native-fs": "^2.13.3",
     "react-native-generic-table-page": "^0.4.0",
     "react-native-localization": "^2.0.3",
@@ -86,6 +88,8 @@
     "lint-staged": "^8.1.0",
     "prettier": "^1.16.0",
     "metro-react-native-babel-preset": "^0.51.1",
+    "lint-staged": "^8.1.0",
+    "prettier": "^1.16.0",
     "promise-sync-es6": "^0.1.4",
     "react-addons-test-utils": "^15.6.2",
     "react-native-mock": "^0.3.1",
