@@ -5,8 +5,9 @@
 
 import Navigator from './Navigator';
 
-
-const initialState = Navigator.router.getStateForAction(Navigator.router.getActionForPathAndParams('root'));
+const initialState = Navigator.router.getStateForAction(
+  Navigator.router.getActionForPathAndParams('root'),
+);
 
 const navReducer = (state = initialState, action) => {
   // Ensure we don't push the same route twice (quick double tap of button etc.)
@@ -25,14 +26,16 @@ const navReducer = (state = initialState, action) => {
   return nextState || state;
 };
 
-
 const paramsEqual = (params1, params2) => {
   if (params1 === params2) return true;
 
-  if (!params1 || !params2
-      || Object.keys(params1).length !== Object.keys(params2).length) return false;
+  if (!params1 || !params2 || Object.keys(params1).length !== Object.keys(params2).length) {
+    return false;
+  }
 
-  return Object.entries(params1).every(([key, value]) => value === params2[key]);
+  return Object.entries(params1).every(([key, value]) => {
+    return value === params2[key];
+  });
 };
 
 export default navReducer;

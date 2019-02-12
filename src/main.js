@@ -12,7 +12,7 @@ import { name as appName } from '../app.json';
 import { store, persistedStore } from './Store';
 import MSupplyMobileApp from './mSupplyMobileApp';
 
-
+// eslint-disable-next-line no-unused-vars
 const bugsnagClient = new BugsnagClient();
 
 function App() {
@@ -25,4 +25,6 @@ function App() {
   );
 }
 
-AppRegistry.registerComponent(appName, () => App);
+AppRegistry.registerComponent(appName, () => {
+  return App;
+});

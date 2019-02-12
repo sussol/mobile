@@ -8,7 +8,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { addNavigationHelpers } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import {
@@ -19,8 +18,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-
-import { connect } from 'react-redux';
 
 import { Scheduler } from 'sussol-utilities';
 import { NavigationActions } from 'react-navigation';
@@ -46,10 +43,8 @@ import {
 
 import { getCurrentParams, getCurrentRouteName } from './navigation';
 import { migrateDataToVersion } from './dataMigration';
-import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
-import { MobileAppSettings } from './settings';
 import ReduxNavigator from './navigation/ReduxNavigation';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -227,6 +222,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     const { dispatch, finaliseItem, navigationState, syncState } = this.props;
+
     const {
       confirmFinalise,
       currentUser,
@@ -246,8 +242,6 @@ class MSupplyMobileAppContainer extends React.Component {
       );
     }
 
-    const { finaliseItem, dispatch, navigationState } = this.props;
-
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
@@ -258,7 +252,7 @@ class MSupplyMobileAppContainer extends React.Component {
         />
 
         <ReduxNavigator
-          ref={(navigator) => {
+          ref={navigator => {
             this.navigator = navigator;
           }}
           state={navigationState}

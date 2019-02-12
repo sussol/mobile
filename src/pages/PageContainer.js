@@ -16,7 +16,7 @@ function mapStateToProps({ nav }) {
   return {
     currentRouteName: getCurrentRouteName(nav),
   };
-};
+}
 
 const extractPropsForPage = props => {
   const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
