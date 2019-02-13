@@ -19,7 +19,7 @@ export class NavigationBar extends React.Component {
 
   componentWillReceiveProps(props) {
     const dataType = this.getDataTypeFromRouteName(props);
-    if (dataType) this.refreshData(dataType);
+    this.refreshData(dataType);
   }
 
   getDataTypeFromRouteName(props) {
@@ -40,9 +40,12 @@ export class NavigationBar extends React.Component {
   }
 
   refreshData = (dataType) => {
+    const unfinalisedCount = dataType != '' ? 
+      this.props.database.objects(dataType).filtered('status != "finalised"').length :
+      0;
+
     this.setState({
-      unfinalisedCount: this.props.database
-        .objects(dataType).filtered('status != "finalised"').length,
+      unfinalisedCount: unfinalisedCount,
     });
   }
 
