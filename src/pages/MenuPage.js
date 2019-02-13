@@ -136,7 +136,7 @@ export class MenuPage extends React.Component {
                   onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
                 />
               }
-              unfinalisedCount={this.state.supplierRequisitionUnfinalised}
+              unfinalisedCount={this.state.supplierInvoiceUnfinalised}
               mainWrapperStyle={localStyles.badgeSetWrapper}
             />
             <BadgeSet
