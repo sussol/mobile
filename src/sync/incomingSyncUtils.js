@@ -284,7 +284,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         numberOfPacks: parseNumber(record.quantity) * packSize,
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
-        costPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: database.getOrCreate('Name', record.name_ID),
       };
