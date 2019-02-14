@@ -61,7 +61,7 @@ export class CustomerInvoicePage extends GenericPage {
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.props.transaction.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
-      searchTerm,
+      searchTerm
     );
     let sortDataType;
     switch (sortBy) {
@@ -239,12 +239,8 @@ export class CustomerInvoicePage extends GenericPage {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={item => {
-              return `${item.name}`;
-            }}
-            renderRightText={item => {
-              return `${item.totalQuantity}`;
-            }}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:
@@ -280,23 +276,21 @@ export class CustomerInvoicePage extends GenericPage {
     }
   };
 
-  renderButtons = () => {
-    return (
-      <View style={globalStyles.verticalContainer}>
-        <PageButton
-          style={globalStyles.topButton}
-          text={buttonStrings.new_item}
-          onPress={this.openItemSelector}
-          isDisabled={this.props.transaction.isFinalised}
-        />
-        <PageButton
-          text={buttonStrings.add_master_list_items}
-          onPress={this.onAddMasterItems}
-          isDisabled={this.props.transaction.isFinalised}
-        />
-      </View>
-    );
-  };
+  renderButtons = () => (
+    <View style={globalStyles.verticalContainer}>
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.new_item}
+        onPress={this.openItemSelector}
+        isDisabled={this.props.transaction.isFinalised}
+      />
+      <PageButton
+        text={buttonStrings.add_master_list_items}
+        onPress={this.onAddMasterItems}
+        isDisabled={this.props.transaction.isFinalised}
+      />
+    </View>
+  );
 
   render() {
     return (

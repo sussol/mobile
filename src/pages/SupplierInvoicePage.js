@@ -147,7 +147,7 @@ export class SupplierInvoicePage extends React.Component {
         database,
         'TransactionBatch',
         transactionItem,
-        createRecord(database, 'ItemBatch', item, ''),
+        createRecord(database, 'ItemBatch', item, '')
       );
     });
   };
@@ -266,12 +266,8 @@ export class SupplierInvoicePage extends React.Component {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={item => {
-              return `${item.name}`;
-            }}
-            renderRightText={item => {
-              return `${item.totalQuantity}`;
-            }}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:

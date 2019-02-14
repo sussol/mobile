@@ -41,10 +41,12 @@ export class PostSyncProcessor {
   onDatabaseEvent = (changeType, recordType, record, causedBy) => {
     // Exit if not a change caused by incoming sync.
     if (causedBy !== 'sync' || recordType === 'SyncOut') return;
+
     if (this.recordQueue.has(record.id)) {
       // Check if already in queue, remove old.
       this.recordQueue.delete(record.id);
     }
+
     // Add new entry at end of Map.
     this.recordQueue.set(record.id, recordType);
   };
@@ -123,12 +125,12 @@ export class PostSyncProcessor {
     switch (recordType) {
       case 'Requisition':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForRequisition(record),
+          this.generateFunctionsForRequisition(record)
         );
         break;
       case 'Transaction':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForTransaction(record),
+          this.generateFunctionsForTransaction(record)
         );
         break;
       default:

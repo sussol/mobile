@@ -31,7 +31,7 @@ export class Spinner extends React.Component {
         toValue: 100,
         duration: 1000,
         useNativeDriver: true,
-      }),
+      })
     ).start();
   }
 

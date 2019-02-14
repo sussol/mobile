@@ -23,16 +23,12 @@ export function sortDataBy(data, sortBy, sortDataType, isAscending = true) {
   let sortedData;
   switch (sortDataType) {
     case 'string':
-      sortedData = data.slice().sort((a, b) => {
-        return a[sortBy].localeCompare(b[sortBy]);
-      });
+      sortedData = data.slice().sort((a, b) => a[sortBy].localeCompare(b[sortBy]));
       if (!isAscending) sortedData.reverse();
       break;
     case 'number':
       // Casts to number to cover cases where the property is a string (e.g. |serialNumber|).
-      sortedData = data.slice().sort((a, b) => {
-        return Number(a[sortBy]) - Number(b[sortBy]);
-      });
+      sortedData = data.slice().sort((a, b) => Number(a[sortBy]) - Number(b[sortBy]));
       if (!isAscending) sortedData.reverse();
       break;
     case 'realm':

@@ -71,9 +71,7 @@ export class StockPage extends React.Component {
     });
   };
 
-  renderCell = (key, item) => {
-    return item[key];
-  };
+  renderCell = (key, item) => item[key];
 
   renderExpansion = item => {
     const batchInfo = item.batchesWithStock.map(ItemBatch => {

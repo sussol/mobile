@@ -206,25 +206,20 @@ export function sanityCheckIncomingRecord(recordType, record) {
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
-    (containsAllFieldsSoFar, fieldName) => {
-      return (
-        containsAllFieldsSoFar &&
-        record[fieldName] !== null && // Key must exist.
-        record[fieldName].length > 0 // Key must not be empty string.
-      );
-    },
-    true,
+    (containsAllFieldsSoFar, fieldName) =>
+      containsAllFieldsSoFar &&
+      record[fieldName] !== null && // Key must exist.
+      record[fieldName].length > 0, // Key must not be empty string.
+    true
   );
+
   if (!hasAllNonBlankFields) return false; // Return early if record invalid.
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
-    (containsAllFieldsSoFar, fieldName) => {
-      return (
-        containsAllFieldsSoFar &&
-        record[fieldName] !== null && // Key must exist.
-        record[fieldName] !== undefined
-      );
-    }, // Field may be empty string.
-    hasAllNonBlankFields,
+    (containsAllFieldsSoFar, fieldName) =>
+      containsAllFieldsSoFar &&
+      record[fieldName] !== null && // Key must exist.
+      record[fieldName] !== undefined, // Field may be empty string.
+    hasAllNonBlankFields
   ); // Initialise |containsAllFieldsSoFar| as result from |hasAllNonBlankFields|.
   return hasRequiredFields;
 }
@@ -384,7 +379,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
           record.bill_address2,
           record.bill_address3,
           record.bill_address4,
-          record.bill_postal_zip_code,
+          record.bill_postal_zip_code
         ),
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),

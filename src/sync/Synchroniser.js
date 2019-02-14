@@ -58,33 +58,19 @@ export class Synchroniser {
   /**
    * Redux progress setting functions.
    */
-  setTotal = totalCount => {
-    this.dispatch(setSyncTotal(totalCount));
-  };
+  setTotal = totalCount => this.dispatch(setSyncTotal(totalCount));
 
-  incrementProgress = increment => {
-    this.dispatch(incrementSyncProgress(increment));
-  };
+  incrementProgress = increment => this.dispatch(incrementSyncProgress(increment));
 
-  setProgress = currentCount => {
-    this.dispatch(setSyncProgress(currentCount));
-  };
+  setProgress = currentCount => this.dispatch(setSyncProgress(currentCount));
 
-  setProgressMessage = message => {
-    this.dispatch(setSyncProgressMessage(message));
-  };
+  setProgressMessage = message => this.dispatch(setSyncProgressMessage(message));
 
-  setError = errorMessage => {
-    this.dispatch(setSyncError(errorMessage));
-  };
+  setError = errorMessage => this.dispatch(setSyncError(errorMessage));
 
-  setIsSyncing = isSyncing => {
-    this.dispatch(setSyncIsSyncing(isSyncing));
-  };
+  setIsSyncing = isSyncing => this.dispatch(setSyncIsSyncing(isSyncing));
 
-  setCompletionTime = time => {
-    this.dispatch(setSyncCompletionTime(time));
-  };
+  setCompletionTime = time => this.dispatch(setSyncCompletionTime(time));
 
   refreshSyncParams = () => {
     this.serverURL = this.settings.get(SYNC_URL);
@@ -123,11 +109,8 @@ export class Synchroniser {
     const isFresh =
       !oldSyncURL || serverURL !== oldSyncURL || !syncSiteName || syncSiteName !== oldSyncSiteName;
 
-    if (isFresh) {
-      this.database.write(() => {
-        this.database.deleteAll();
-      });
-    }
+    if (isFresh) this.database.write(() => this.database.deleteAll());
+
     try {
       await this.authenticator.authenticate(serverURL, syncSiteName, syncSitePassword);
       this.refreshSyncParams(); // Authenticate sets all the sync settings in database, so refresh.
@@ -143,7 +126,7 @@ export class Synchroniser {
               Authorization: this.authHeader,
               ...this.extraHeaders,
             },
-          },
+          }
         );
 
         if (response.status < 200 || response.status >= 300) {
@@ -237,11 +220,11 @@ export class Synchroniser {
     while (this.syncQueue.length > 0) {
       const batchComplete = this.batchSizeAdjustor();
       const recordsToSync = this.syncQueue.next(this.batchSize);
+
       const translatedRecords = recordsToSync
         .map(this.translateRecord) // Get translated records.
-        .filter(record => {
-          return !!record; // If error thrown, may be null so filter falsy values out.
-        });
+        .filter(record => !!record); // If error thrown, may be null so filter falsy values out.
+
       await this.pushRecords(translatedRecords);
       // Records that threw errors in |translateRecord()| are still removed.
       this.syncQueue.use(recordsToSync);
@@ -285,7 +268,7 @@ export class Synchroniser {
           ...this.extraHeaders,
         },
         body: JSON.stringify(records),
-      },
+      }
     );
     let responseJson;
     try {
@@ -357,7 +340,7 @@ export class Synchroniser {
           Authorization: this.authHeader,
           ...this.extraHeaders,
         },
-      },
+      }
     );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to sync.');
@@ -387,7 +370,7 @@ export class Synchroniser {
           Authorization: this.authHeader,
           ...this.extraHeaders,
         },
-      },
+      }
     );
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while pulling sync records.');
@@ -420,9 +403,8 @@ export class Synchroniser {
    * @return  {none}
    */
   acknowledgeRecords = async records => {
-    const syncIds = records.map(record => {
-      return record.SyncID;
-    });
+    const syncIds = records.map(record => record.SyncID);
+
     const requestBody = {
       SyncRecordIDs: syncIds,
     };
@@ -438,7 +420,7 @@ export class Synchroniser {
           ...this.extraHeaders,
         },
         body: JSON.stringify(requestBody),
-      },
+      }
     );
     let responseJson;
     try {

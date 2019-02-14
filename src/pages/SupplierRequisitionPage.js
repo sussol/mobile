@@ -171,7 +171,7 @@ export class SupplierRequisitionPage extends React.Component {
 
     const data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
-      searchTerm,
+      searchTerm
     );
 
     let sortDataType;
@@ -295,12 +295,8 @@ export class SupplierRequisitionPage extends React.Component {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={item => {
-              return `${item.name}`;
-            }}
-            renderRightText={item => {
-              return `${item.totalQuantity}`;
-            }}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case MONTHS_SELECT:

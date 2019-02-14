@@ -53,9 +53,9 @@ export class CustomerInvoicesPage extends React.Component {
     database.write(() => {
       const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i += 1) {
-        const transaction = transactions.find(currentTransaction => {
-          return currentTransaction.id === selection[i];
-        });
+        const transaction = transactions.find(
+          currentTransaction => currentTransaction.id === selection[i]
+        );
         if (transaction.isValid() && !transaction.isFinalised) {
           transactionsToDelete.push(transaction);
         }
@@ -118,7 +118,7 @@ export class CustomerInvoicesPage extends React.Component {
 
     const data = transactions.filtered(
       'otherParty.name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0',
-      searchTerm,
+      searchTerm
     );
 
     let sortDataType;
@@ -154,16 +154,12 @@ export class CustomerInvoicesPage extends React.Component {
     }
   };
 
-  renderNewInvoiceButton = () => {
-    return (
-      <PageButton
-        text={buttonStrings.new_invoice}
-        onPress={() => {
-          this.setState({ isCreatingInvoice: true });
-        }}
-      />
-    );
-  };
+  renderNewInvoiceButton = () => (
+    <PageButton
+      text={buttonStrings.new_invoice}
+      onPress={() => this.setState({ isCreatingInvoice: true })}
+    />
+  );
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;

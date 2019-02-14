@@ -32,13 +32,10 @@ const MODAL_KEYS = {
  * @param   {object}  requisition  The requisition to check
  * @return  {string}               An error message if not able
  *                                 to be finalised
+ *
+ * TODO: implement method body.
  */
-
-// eslint-disable-next-line no-unused-vars
-export const checkForFinaliseError = requisition => {
-  // TODO: implement method body.
-  return null;
-};
+export const checkForFinaliseError = requisition => null; // eslint-disable-line no-unused-vars
 
 export class CustomerRequisitionPage extends React.Component {
   constructor(props) {
@@ -129,7 +126,7 @@ export class CustomerRequisitionPage extends React.Component {
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
-      searchTerm,
+      searchTerm
     );
     let sortDataType;
     switch (sortBy) {

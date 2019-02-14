@@ -179,7 +179,7 @@ export class StocktakeEditPage extends React.Component {
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     const data = this.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
-      searchTerm,
+      searchTerm
     );
     let sortDataType;
     switch (sortBy) {

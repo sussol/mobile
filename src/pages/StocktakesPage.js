@@ -60,9 +60,7 @@ export class StocktakesPage extends React.Component {
     database.write(() => {
       const stocktakesToDelete = [];
       for (let i = 0; i < selection.length; i += 1) {
-        const stocktake = this.stocktakes.find(s => {
-          return s.id === selection[i];
-        });
+        const stocktake = this.stocktakes.find(s => s.id === selection[i]);
         if (stocktake.isValid() && !stocktake.isFinalised) {
           stocktakesToDelete.push(stocktake);
         }
@@ -81,9 +79,7 @@ export class StocktakesPage extends React.Component {
   };
 
   clearSelection = shouldRefreshData => {
-    this.setState({ selection: [] }, () => {
-      return shouldRefreshData && this.refreshData();
-    });
+    this.setState({ selection: [] }, () => shouldRefreshData && this.refreshData());
   };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
@@ -157,9 +153,9 @@ export class StocktakesPage extends React.Component {
     );
   };
 
-  renderNewStocktakeButton = () => {
-    return <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />;
-  };
+  renderNewStocktakeButton = () => (
+    <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />
+  );
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;

@@ -44,9 +44,9 @@ export class SupplierRequisitionsPage extends React.Component {
     database.write(() => {
       const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i += 1) {
-        const requisition = this.requisitions.find(currentRequisition => {
-          return currentRequisition.id === selection[i];
-        });
+        const requisition = this.requisitions.find(
+          currentRequisition => currentRequisition.id === selection[i]
+        );
         if (requisition.isValid() && !requisition.isFinalised) {
           requisitionsToDelete.push(requisition);
         }
@@ -137,16 +137,12 @@ export class SupplierRequisitionsPage extends React.Component {
     }
   };
 
-  renderNewRequisitionButton = () => {
-    return (
-      <PageButton
-        text={buttonStrings.new_requisition}
-        onPress={() => {
-          this.setState({ isCreatingRequisition: true });
-        }}
-      />
-    );
-  };
+  renderNewRequisitionButton = () => (
+    <PageButton
+      text={buttonStrings.new_requisition}
+      onPress={() => this.setState({ isCreatingRequisition: true })}
+    />
+  );
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;

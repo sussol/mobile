@@ -129,14 +129,14 @@ export function PageInfo(props) {
             }
           >
             <View>
-              {columnData.map((...args) => {
-                return renderTitleComponent(isEditingDisabled, columnIndex, ...args);
-              })}
+              {columnData.map((...args) =>
+                renderTitleComponent(isEditingDisabled, columnIndex, ...args)
+              )}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((...args) => {
-                return renderInfoComponent(isEditingDisabled, columnIndex, ...args);
-              })}
+              {columnData.map((...args) =>
+                renderInfoComponent(isEditingDisabled, columnIndex, ...args)
+              )}
             </View>
           </View>
         );
