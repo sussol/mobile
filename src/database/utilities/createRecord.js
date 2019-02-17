@@ -19,9 +19,9 @@ const {
 /**
  * Create a customer invoice associated with a given customer.
  *
- * @param   {Realm}        database  App database.
+ * @param   {Realm}        database
  * @param   {Name}         customer  Customer associated with invoice.
- * @return  {Transaction}            New customer invoice.
+ * @return  {Transaction}
  */
 const createCustomerInvoice = (database, customer, user) => {
   const currentDate = new Date();
@@ -48,9 +48,9 @@ const createCustomerInvoice = (database, customer, user) => {
 /**
  * Create a new number sequence.
  *
- * @param  {Realm}          database     App database.
- * @param  {string}         sequenceKey
- * @return {NumberSequence}              New number sequence.
+ * @param   {Realm}           database
+ * @param   {string}          sequenceKey
+ * @return  {NumberSequence}
  */
 const createNumberSequence = (database, sequenceKey) =>
   database.create('NumberSequence', {
@@ -61,9 +61,9 @@ const createNumberSequence = (database, sequenceKey) =>
 /**
  * Create a number attached to a sequence.
  *
- * @param  {Realm}           database        App database.
+ * @param  {Realm}           database
  * @param  {NumberSequence}  numberSequence  Sequence to attach the number to.
- * @param  {int}             number          Number to attach to |numberSequence|.
+ * @param  {number}          number
  */
 const createNumberToReuse = (database, numberSequence, number) => {
   const numberToReuse = database.create('NumberToReuse', {
@@ -78,12 +78,12 @@ const createNumberToReuse = (database, numberSequence, number) => {
 /**
  * Create a transaction representing an inventory adjustment.
  *
- * @param   {Realm}        database    App database.
+ * @param   {Realm}        database    Local database.
  * @param   {Name}         user        Currently logged in user.
  * @param   {Date}         date        Current date.
  * @param   {bool}         isAddition  If true, adjustment is an increase,
  *                                     else, adjustment is a decrease.
- * @return  {Transaction}              New transaction.
+ * @return  {Transaction}
  */
 const createInventoryAdjustment = (database, user, date, isAddition) =>
   database.create('Transaction', {
@@ -101,10 +101,10 @@ const createInventoryAdjustment = (database, user, date, isAddition) =>
 /**
  * Create a new empty batch for a given item.
  *
- * @param  {Realm}      database     App database.
+ * @param  {Realm}      database
  * @param  {Item}       item         Item assocated with new batch.
  * @param  {string}     batchString
- * @return {ItemBatch}               New batch.
+ * @return {ItemBatch}
  */
 const createItemBatch = (database, item, batchString) => {
   // Handle cross-reference items.
@@ -129,10 +129,10 @@ const createItemBatch = (database, item, batchString) => {
 /**
  * Create a new requisition.
  *
- * @param   {Realm}        database        App database.
+ * @param   {Realm}        database
  * @param   {User}         user            User creating requisition.
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
- * @return  {Requisition}                  New requisition.
+ * @return  {Requisition}
  */
 const createRequisition = (database, user, otherStoreName) =>
   database.create('Requisition', {
@@ -150,11 +150,11 @@ const createRequisition = (database, user, otherStoreName) =>
 /**
  * Create a new requisition item.
  *
- * @param   {Database}        database     App database.
+ * @param   {Database}        database
  * @param   {Requisition}     requisition  Parent requisition.
  * @param   {Item}            item         Item to add to requisition.
  * @param   {double}          dailyUsage   Daily usage of item.
- * @return  {RequisitionItem}              New requisition item.
+ * @return  {RequisitionItem}
  */
 const createRequisitionItem = (database, requisition, item, dailyUsage) => {
   // Handle cross reference items.
@@ -177,11 +177,12 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
   return requisitionItem;
 };
 
-/** Create a new stocktake.
+/**
+ * Create a new stocktake.
  *
- * @param   {Realm}      database  App database.
+ * @param   {Realm}      database
  * @param   {User}       user      User creating stocktake.
- * @return  {Stocktake}            New stocktake.
+ * @return  {Stocktake}
  */
 const createStocktake = (database, user) => {
   const date = new Date();
@@ -203,10 +204,10 @@ const createStocktake = (database, user) => {
 /**
  * Create a new stocktake item.
  *
- * @param   {Realm}          database   App database.
+ * @param   {Realm}          database
  * @param   {Stocktake}      stocktake  Parent stocktake.
  * @param   {Item}           item       Real item to create stocktake item from.
- * @return  {StocktakeItem}             New stocktake item.
+ * @return  {StocktakeItem}
  */
 const createStocktakeItem = (database, stocktake, item) => {
   // Handle cross reference items.
@@ -227,10 +228,10 @@ const createStocktakeItem = (database, stocktake, item) => {
 /**
  * Create a new stocktake batch.
  *
- * @param   {Realm}          database       App database.
+ * @param   {Realm}          database
  * @param   {Item}           stocktakeItem  Batch item.
  * @param   {ItemBatch}      itemBatch      Item batch to associate with stocktake batch.
- * @return  {StocktakeBatch}                New stocktake batch.
+ * @return  {StocktakeBatch}
  */
 const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
   const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
@@ -257,10 +258,10 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
 /**
  * Create a new supplier invoice.
  *
- * @param   {Realm}       database   App database.
+ * @param   {Realm}       database
  * @param   {Name}        supplier   Name of supplier being invoiced.
  * @param   {User}        enteredBy  User who creating invoice.
- * @return  {Transaction}            New supplier invoice.
+ * @return  {Transaction}
  */
 const createSupplierInvoice = (database, supplier, user) => {
   const currentDate = new Date();
@@ -285,10 +286,10 @@ const createSupplierInvoice = (database, supplier, user) => {
 /**
  * Create a new transaction batch.
  *
- * @param   {Realm}             database         App database.
+ * @param   {Realm}             database
  * @param   {TransactionItem}   transactionItem  Batch item.
  * @param   {ItemBatch}         itemBatch        Item batch to associate with transaction batch.
- * @return  {TransactionBatch}                   New transaction batch.
+ * @return  {TransactionBatch}
  */
 const createTransactionBatch = (database, transactionItem, itemBatch) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
@@ -319,10 +320,10 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
 /**
  * Create a new transaction item.
  *
- * @param   {Realm}            database     App database
+ * @param   {Realm}            database
  * @param   {Transaction}      transaction  Parent transaction.
  * @param   {Item}             item         Real item to create transaction item from.
- * @return  {TransactionItem}               New transaction item.
+ * @return  {TransactionItem}
  */
 const createTransactionItem = (database, transaction, item) => {
   // Handle cross reference items.
@@ -344,10 +345,10 @@ const createTransactionItem = (database, transaction, item) => {
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
  *
- * @param   {Realm}   database  App wide local database.
- * @param   {string}  type      The type of record to create (not 1:1 with schema types).
- * @param   {args}    ...args   Any specific arguments the record type will need.
- * @return  {object}            The new database record.
+ * @param   {Realm}         database
+ * @param   {string}        type      The type of record to create (not 1:1 with schema types).
+ * @param   {args}          ...args   Any specific arguments the record type will need.
+ * @return  {Realm.Object}            The new database record.
  */
 export const createRecord = (database, type, ...args) => {
   switch (type) {

@@ -2,7 +2,20 @@ import Realm from 'realm';
 
 import { getTotal, createRecord } from '../utilities';
 
+/**
+ * A stocktake item.
+ *
+ * @property  {string}                 id
+ * @property  {Item}                   item
+ * @property  {Stocktake}              stocktake
+ * @property  {List.<StocktakeBatch>}  batches
+ */
 export class StocktakeItem extends Realm.Object {
+  /**
+   * Delete stocktake item. Throw error is associated stocktake is finalised.
+   *
+   * @param  {Realm}  database
+   */
   destructor(database) {
     if (this.stocktake && this.stocktake.isFinalised) {
       throw new Error('Cannot delete a StocktakeItem belonging to a finalised stocktake');
@@ -10,36 +23,59 @@ export class StocktakeItem extends Realm.Object {
     database.delete('StocktakeBatch', this.batches);
   }
 
+  /**
+   * Get snapshot of total quantity of item.
+   *
+   * @return  {number}
+   */
   get snapshotTotalQuantity() {
     return getTotal(this.batches, 'snapshotTotalQuantity');
   }
 
+  /**
+   * Get total quantity of item.
+   *
+   * @return  {number}
+   */
   get countedTotalQuantity() {
     return getTotal(this.batches, 'countedTotalQuantity');
   }
 
+  /**
+   * Get total difference of all batches of this stocktake item.
+   */
   get difference() {
     return getTotal(this.batches, 'difference');
   }
 
+  /**
+   * Get id of stocktake item.
+   */
   get itemId() {
     return this.item ? this.item.id : '';
   }
 
+  /**
+   * Get name of stocktake item.
+   */
   get itemName() {
     return this.item ? this.item.name : '';
   }
 
+  /**
+   * Get code of stocktake item.
+   */
   get itemCode() {
     return this.item ? this.item.code : '';
   }
 
   /**
-   * Check to see if any |StocktakeBatches| have been adjusted for this |StocktakeItem|.
-   * Will return true if any |StocktakeBatches| were changed, even if net quantity change
-   * for StocktakeItem is 0.
+   * Get if any stocktake batches have been adjusted for this stocktake item.
    *
-   * @return  {boolean}  True if |StocktakeBatches| have adjustments.
+   * Will return true if any stocktake bathces were changed, even if net quantity
+   * change for stocktake item is 0.
+   *
+   * @return  {boolean}
    */
   get hasCountedBatches() {
     // Return true if any batches of this stocktake item have adjustments.
@@ -48,20 +84,25 @@ export class StocktakeItem extends Realm.Object {
     );
   }
 
+  /**
+   * Get number of batches associated with this stocktake item.
+   *
+   * @return  {number}
+   */
   get numberOfBatches() {
     return this.batches.length;
   }
 
   /**
-   * Returns true if this item quantity would reduce the amount of any batch's stock
-   * in inventory to negative levels, if it were finalised.
+   * Get if this item quantity would reduce the amount of any batch's stock in inventory to
+   * negative levels if it were finalised.
    *
    * E.g. an item is added to a stocktake with a snapshot quantity of x, then is counted
    * to have a quantity of y < x, but concurrently there has been a reduction in the stock
    * in inventory, e.g. a customer invoice. The reduction caused by this stocktake item
    * item would then result in negative inventory.
    *
-   * @return  {Boolean}  True is the counted quantity is below the minimum for this item.
+   * @return  {Boolean}
    */
   get isReducedBelowMinimum() {
     // Return true if the counted quantity is below the minimum for this item.
@@ -69,15 +110,12 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Check if item is out of date.
+   * Get if item is out of date.
    *
-   * An item is out of date if:
+   * An stocktake item is out of date if any batch has a snapshot total quantity inconsistent
+   * with the corresponding item batch or has different batches to the corresponding item.
    *
-   * - Any batch has a snapshot total quantity inconsistent with the corresponding 'ItemBatch'
-   *   total quantity.
-   * - The corresponding 'Item' has different batches to 'StocktakeItem'.
-   *
-   * @return  {boolean}  True if any batch is out of date.
+   * @return  {boolean}
    */
   get isOutdated() {
     // Return true if any batch is out of date.
@@ -97,26 +135,26 @@ export class StocktakeItem extends Realm.Object {
       return true;
     }
 
-    // This stocktake item is not out of date.
     return false;
   }
 
   /**
-   * Will reset this stocktake item, deleting all batches and
-   * recreating them for each corresponding item batch currently
-   * in inventory.
+   * Reset this stocktake item, deleting all batches and recreating them for each corresponding item
+   * batch in inventory.
    *
-   * @param  {Realm}  database  App database.
+   * @param  {Realm}  database
    */
   reset(database) {
     database.delete('StocktakeBatch', this.batches);
     this.item.batchesWithStock.forEach(itemBatch => {
-      // createRecord will save; notifying listeners.
+      // |createRecord()| will save; notifying listeners.
       createRecord(database, 'StocktakeBatch', this, itemBatch);
     });
   }
 
   /**
+   * Set counted total quantity for stocktake item.
+   *
    * Helper for adjusting inventory for stocktake items rather then individual
    * stocktake batches. By increasing from last expiry to first expiry, the batch
    * increases to the maximum of snapshot quantity.
@@ -126,7 +164,7 @@ export class StocktakeItem extends Realm.Object {
    * Reducing is done from first batch expiry to last batch expiry, decreasing
    * quantity by maximum of current counted quantity.
    *
-   * @param  {Realm}   database  App database.
+   * @param  {Realm}   database
    * @param  {number}  quantity  Change in counted item quantity.
    */
   setCountedTotalQuantity(database, quantity) {
@@ -175,8 +213,8 @@ export class StocktakeItem extends Realm.Object {
         return difference === 0;
       });
 
-      // If increasing and we still have difference to add to a batch, add it to the
-      // earliest expiry batch.
+      // If increasing and still have difference to add to a batch, add it to the earliest expiry
+      // batch.
       if (difference > 0) {
         const earliestExpiryBatch = sortedBatches[sortedBatches.length - 1];
 
@@ -186,18 +224,26 @@ export class StocktakeItem extends Realm.Object {
     });
   }
 
+  /**
+   * Add a batch to this stocktake item.
+   *
+   * @param  {StocktakeBatch}  stocktakeBatch
+   */
   addBatch(stocktakeBatch) {
     this.batches.push(stocktakeBatch);
   }
 
+  /**
+   * Create a stocktake batch and associated item batch for this stocktake item.
+   *
+   * @param  {Realm}  database
+   */
   createNewBatch(database) {
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
     createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 }
-
-export default StocktakeItem;
 
 StocktakeItem.schema = {
   name: 'StocktakeItem',
@@ -209,3 +255,5 @@ StocktakeItem.schema = {
     batches: { type: 'list', objectType: 'StocktakeBatch' },
   },
 };
+
+export default StocktakeItem;

@@ -7,9 +7,30 @@ import Realm from 'realm';
 
 import { getTotal, millisecondsToDays, MILLISECONDS_PER_DAY } from '../utilities';
 
+// TODO: move USAGE_PERIOD_MILLISECONDS to Item.dailyUsage
 const USAGE_PERIOD_MILLISECONDS = 3 * 30 * MILLISECONDS_PER_DAY; // Three months.
 
+/**
+ * An item.
+ *
+ * @property  {string}            id
+ * @property  {string}            code
+ * @property  {string}            name
+ * @property  {number}            defaultPackSize
+ * @property  {List.<ItemBatch>}  batches
+ * @property  {ItemDepartment}    department
+ * @property  {string}            description
+ * @property  {ItemCategory}      category
+ * @property  {number}            defaultPrice
+ * @property  {boolean}           isVisible
+ * @property  {Item}              crossReferenceItem
+ */
 export class Item extends Realm.Object {
+  /**
+   * Delete all item store joins and item batches associated with this master list.
+   *
+   * @param  {Realm}  database
+   */
   destructor(database) {
     // Clean up item store joins referencing deleted item.
     const itemStoreJoins = database.objects('ItemStoreJoin').filtered('itemId == $0', this.id);
@@ -21,24 +42,40 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * A getter for cross-reference items. Returns the referenced item.
+   * If item is cross-referenced item, return the referenced item, else return this item.
+   *
+   * @return  {Item}
    */
   get realItem() {
     return this.crossReferenceItem ? this.crossReferenceItem : this;
   }
 
+  /**
+   * Get total amount of item.
+   *
+   * @return  {number}
+   */
   get totalQuantity() {
     return getTotal(this.realItem.batches, 'totalQuantity');
   }
 
+  /**
+   * Get daily usage of item.
+   *
+   * @return  {number}
+   */
   get dailyUsage() {
     const endDate = new Date();
     const startDate = new Date(endDate - USAGE_PERIOD_MILLISECONDS); // 90 days ago.
     return this.dailyUsageForPeriod(startDate, endDate);
   }
 
-  // Returns the earliest added batch associated with this item. Will return
-  // undefined if there are no batches.
+  /**
+   * Get the date the item was added, defined as date of he earliest added batch associated
+   * with this item, or undefined if no batches exist.
+   *
+   * @return  {Date}
+   */
   get addedDate() {
     if (this.batches.length === 0) return undefined;
     let itemAddedDate = new Date();
@@ -49,13 +86,18 @@ export class Item extends Realm.Object {
     return itemAddedDate;
   }
 
+  /**
+   * Get the batch associated with this item with the earliest expiration date.
+   *
+   * @return  {ItemBatch}
+   */
   get earliestExpiringBatch() {
     // If no batches associated with this item, return null.
     if (this.batches.length === 0) return null;
 
     let earliestBatch = this.batches.find(batch => batch.totalQuantity > 0);
 
-    // If no batches found with |totalQuantity > 0|, return null.
+    // If no batches found with any items, return null.
     if (!earliestBatch) return null;
 
     this.batches.forEach(batch => {
@@ -71,25 +113,45 @@ export class Item extends Realm.Object {
     return earliestBatch;
   }
 
+  /**
+   * Get category of item, or empty string if no category exists.
+   *
+   * @return  {string}
+   */
   get categoryName() {
     return this.category ? this.category.name : '';
   }
 
+  /**
+   * Get name of department associated with item, or empty string if no department exists.
+   *
+   * @return  {string}
+   */
   get departmentName() {
     return this.department ? this.department.name : '';
   }
 
+  /**
+   * Get batches associated with item that have stock.
+   *
+   * @return  {List}
+   */
   get batchesWithStock() {
     return this.batches.filtered('numberOfPacks > 0');
   }
 
+  /**
+   * Get number of batches associated with item that have stock.
+   *
+   * @return  {number}
+   */
   get totalBatchesInStock() {
     return this.batchesWithStock.length;
   }
 
   /**
-   * Get the sum of all transaction batch usage related to batches for
-   * this item within a start and end date.
+   * Get the sum of all transaction batch usage related to batches for this item within a start
+   * and end date.
    *
    * @param   {Date}    startDate  Start date.
    * @param   {Date}    endDate    End date.
@@ -104,9 +166,8 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * Get the sum of all transaction batch usage related to batches for this
-   * item within a start and end date. If the oldest batch is later than
-   * |startDate|, use that.
+   * Get the sum of all transaction batch usage related to batches for this item within a start and
+   * end date. If the oldest batch is later than |startDate|, use that.
    *
    * @param   {Date}    startDate  Start date.
    * @param   {Date}    endDate    End date.
@@ -124,21 +185,34 @@ export class Item extends Realm.Object {
     return usage / (periodInDays || 1); // Avoid divide by zero.
   }
 
+  /**
+   * Add batch to item.
+   *
+   * @param  {ItemBatch}  itemBatch
+   */
   addBatch(itemBatch) {
     this.batches.push(itemBatch);
   }
 
+  /**
+   * Add batch to item if not already added.
+   *
+   * @param  {ItemBatch}  itemBatch
+   */
   addBatchIfUnique(itemBatch) {
     if (this.batches.filtered('id == $0', itemBatch.id).length > 0) return;
     this.addBatch(itemBatch);
   }
 
+  /**
+   * Get string representation of item.
+   *
+   * @returns  {string}
+   */
   toString() {
     return `${this.code} - ${this.name}`;
   }
 }
-
-export default Item;
 
 Item.schema = {
   name: 'Item',
@@ -157,3 +231,5 @@ Item.schema = {
     crossReferenceItem: { type: 'Item', optional: true },
   },
 };
+
+export default Item;

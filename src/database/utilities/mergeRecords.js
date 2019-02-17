@@ -55,10 +55,10 @@ const RECORD_TYPE_TO_MASTERLIST = {
  * are merged, the merged object is deleted from the database. The merge operation updates the
  * fields of the retained record to reference the same data as the merged object.
  *
- * @param  {Realm}   database            The local database.
- * @param  {object}  settings            Access to app settings.
+ * @param  {Realm}   database            Local database.
+ * @param  {Object}  settings            Local settings.
  * @param  {string}  internalRecordType  Internal record type for merge operation.
- * @param  {object}  syncRecord          Data representing the sync record.
+ * @param  {Object}  syncRecord          Data representing the sync record.
  */
 export const mergeRecords = (database, settings, internalRecordType, syncRecord) => {
   const recordToKeep = database
