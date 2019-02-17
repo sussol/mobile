@@ -19,7 +19,7 @@
  * @param   {boolean}        isAscending  If false, the sort order will be reversed.
  * @return  {object}                      The final sorted data.
  */
-export function sortDataBy(data, sortBy, sortDataType, isAscending = true) {
+export const sortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
   let sortedData;
   switch (sortDataType) {
     case 'string':
@@ -36,6 +36,6 @@ export function sortDataBy(data, sortBy, sortDataType, isAscending = true) {
       sortedData = data.sorted(sortBy, !isAscending);
   }
   return sortedData;
-}
+};
 
 export default sortDataBy;
