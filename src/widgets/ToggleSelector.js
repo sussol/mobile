@@ -18,7 +18,7 @@ import globalStyles from '../globalStyles';
  * @prop  {function}  onSelect  A function taking the option selected
  *                              as a parameter.
  */
-export function ToggleSelector(props) {
+export const ToggleSelector = props => {
   const { options, onSelect } = props;
   const toggles = options.map(option => ({
     text: String(option),
@@ -36,7 +36,7 @@ export function ToggleSelector(props) {
       toggles={toggles}
     />
   );
-}
+};
 
 export default ToggleSelector;
 
