@@ -11,7 +11,7 @@ import packageJson from '../package.json';
 
 const APP_VERSION_KEY = 'AppVersion';
 
-export async function migrateDataToVersion(database, settings) {
+export const migrateDataToVersion = async (database, settings) => {
   // Get current app version.
   let fromVersion;
   try {
@@ -49,7 +49,7 @@ export async function migrateDataToVersion(database, settings) {
   }
   // Record the new app version.
   AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
-}
+};
 
 // All data migration functions should be kept in this array, in sequential order. Each migration
 // needs a 'version' key, denoting the version that migration will migrate to, and a 'migrate' key,
@@ -113,13 +113,13 @@ const dataMigrations = [
       database.write(() => {
         const mainSupplyingStoreName = database.getOrCreate('Name', supplyingStoreId);
 
-        requisitions.forEach(requisition => {
+        requisitions.forEach(requisition =>
           database.update('Requisition', {
             id: requisition.id,
             otherStoreName: mainSupplyingStoreName,
             status: requisition.status === 'finalised' ? 'finalised' : 'suggested',
-          });
-        });
+          })
+        );
       });
 
       // Previous versions did not add requisitions, transactions, or stocktakes to the sync queue
@@ -130,23 +130,17 @@ const dataMigrations = [
         const finalisedRequisitions = database
           .objects('Requisition')
           .filtered('status == "finalised"');
-        finalisedRequisitions.forEach(requisition => {
-          database.save('Requisition', requisition);
-        });
+        finalisedRequisitions.forEach(requisition => database.save('Requisition', requisition));
 
         // Transactions.
         const finalisedTransactions = database
           .objects('Transaction')
           .filtered('status == "finalised"');
-        finalisedTransactions.forEach(transaction => {
-          database.save('Transaction', transaction);
-        });
+        finalisedTransactions.forEach(transaction => database.save('Transaction', transaction));
 
         // Stocktakes.
         const finalisedStocktakes = database.objects('Stocktake').filtered('status == "finalised"');
-        finalisedStocktakes.forEach(stocktake => {
-          database.save('Stocktake', stocktake);
-        });
+        finalisedStocktakes.forEach(stocktake => database.save('Stocktake', stocktake));
       });
     },
   },
@@ -156,7 +150,7 @@ const dataMigrations = [
       // If we try to delete a 'TransactionBatch' with a parent transaction with 'confirmed' status,
       // then a 'TransactionBatch' destructor will try to revert stock on related 'ItemBatch'
       // objects. To prevent this, the status of these transactions is temporarily changed.
-      function deleteBatches(inventoryAdjustment, batchesToDelete) {
+      const deleteBatches = (inventoryAdjustment, batchesToDelete) => {
         const currentStatus = inventoryAdjustment.status;
         database.write(() => {
           // Dot notation assignment won't fire sync events.
@@ -164,14 +158,11 @@ const dataMigrations = [
           database.delete('TransactionBatch', batchesToDelete);
           inventoryAdjustment.status = currentStatus;
         });
-      }
+      };
 
       const TEMP_STATUS = 'nw';
-      const matchBatch = (batches, batchToMatch) => {
-        return batches.some(batch => {
-          return batch.id === batchToMatch.id;
-        });
-      };
+      const matchBatch = (batches, batchToMatch) =>
+        batches.some(batch => batch.id === batchToMatch.id);
       // It was possible to finalise stocktakes twice, creating duplicate batches in
       // 'inventory_adjustment' transactions. This need to cleaned up to avoid discrepancies.
       // This did not affect actual 'ItemBatch' quantity.

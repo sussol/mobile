@@ -62,7 +62,7 @@ class MSupplyMobileAppContainer extends React.Component {
       database,
       syncAuthenticator,
       this.settings,
-      props.dispatch,
+      props.dispatch
     );
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
@@ -84,9 +84,7 @@ class MSupplyMobileAppContainer extends React.Component {
     };
   }
 
-  componentDidMount = () => {
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
-  };
+  componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
@@ -132,9 +130,7 @@ class MSupplyMobileAppContainer extends React.Component {
     // not be run inside a |setTimeout| as that relegates to a lower priority, resulting
     // in very slow performance.
     await new Promise(resolve => {
-      this.setState({ isLoading: true }, () => {
-        setTimeout(resolve, 1);
-      });
+      this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
     functionToRun();
     this.setState({ isLoading: false });
@@ -160,18 +156,14 @@ class MSupplyMobileAppContainer extends React.Component {
     }
   };
 
-  logOut = () => {
-    this.setState({ currentUser: null });
-  };
+  logOut = () => this.setState({ currentUser: null });
 
   renderFinaliseButton = () => {
     const { finaliseItem } = this.props;
     return (
       <FinaliseButton
         isFinalised={finaliseItem.record.isFinalised}
-        onPress={() => {
-          this.setState({ confirmFinalise: true });
-        }}
+        onPress={() => this.setState({ confirmFinalise: true })}
       />
     );
   };
@@ -182,9 +174,7 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <TouchableWithoutFeedback
         delayLongPress={3000}
-        onLongPress={() => {
-          this.setState({ isInAdminMode: !isInAdminMode });
-        }}
+        onLongPress={() => this.setState({ isInAdminMode: !isInAdminMode })}
       >
         <Image resizeMode="contain" source={require('./images/logo.png')} />
       </TouchableWithoutFeedback>
@@ -210,9 +200,7 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <TouchableOpacity
         style={{ flexDirection: 'row' }}
-        onPress={() => {
-          this.setState({ syncModalIsOpen: true });
-        }}
+        onPress={() => this.setState({ syncModalIsOpen: true })}
       >
         <SyncState state={syncState} />
       </TouchableOpacity>
@@ -273,9 +261,7 @@ class MSupplyMobileAppContainer extends React.Component {
         <FinaliseModal
           database={this.database}
           isOpen={confirmFinalise}
-          onClose={() => {
-            this.setState({ confirmFinalise: false });
-          }}
+          onClose={() => this.setState({ confirmFinalise: false })}
           finaliseItem={finaliseItem}
           user={currentUser}
           runWithLoadingIndicator={this.runWithLoadingIndicator}
@@ -285,9 +271,7 @@ class MSupplyMobileAppContainer extends React.Component {
           isOpen={syncModalIsOpen}
           state={syncState}
           onPressManualSync={this.synchronise}
-          onClose={() => {
-            this.setState({ syncModalIsOpen: false });
-          }}
+          onClose={() => this.setState({ syncModalIsOpen: false })}
         />
         <LoginModal
           authenticator={this.userAuthenticator}
