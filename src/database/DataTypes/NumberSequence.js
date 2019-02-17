@@ -55,9 +55,9 @@ export class NumberSequence extends Realm.Object {
       throw new Error(`Cannot reuse ${numberToReuse.number} as it has not been used yet`);
     }
     if (
-      this.numbersToReuse.find(testNumberToReuse => {
-        return testNumberToReuse.number === numberToReuse.number;
-      })
+      this.numbersToReuse.find(
+        testNumberToReuse => testNumberToReuse.number === numberToReuse.number
+      )
     ) {
       throw new Error(`Sequence ${this.sequenceKey} already reusing ${numberToReuse.number}`);
     }

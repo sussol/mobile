@@ -20,7 +20,8 @@ export class StocktakeBatch extends Realm.Object {
    * @return {boolean} True if |stockOnHand + stocktakebatch.difference| is negative.
    */
   get isReducedBelowMinimum() {
-    const stockOnHand = this.itemBatch.totalQuantity;
+    const { itemBatch } = this;
+    const { totalQuantity: stockOnHand } = itemBatch;
     return stockOnHand + this.difference < 0;
   }
 
@@ -82,14 +83,13 @@ export class StocktakeBatch extends Realm.Object {
         database,
         'TransactionItem',
         inventoryAdjustment,
-        this.itemBatch.item,
+        this.itemBatch.item
       );
-
       const transactionBatch = createRecord(
         database,
         'TransactionBatch',
         transactionItem,
-        this.itemBatch,
+        this.itemBatch
       );
 
       // Apply difference from stocktake to actual stock on hand levels. Whether stock is increased

@@ -10,9 +10,9 @@ export class MasterListNameJoin extends Realm.Object {
   destructor(database) {
     if (!this.name || !this.masterList) return; // Not a full join record.
 
-    const indexInMasterLists = this.name.masterLists.findIndex(masterList => {
-      return masterList.id === this.masterList.id;
-    });
+    const indexInMasterLists = this.name.masterLists.findIndex(
+      masterList => masterList.id === this.masterList.id
+    );
 
     // If the master list and name are not joined, do nothing.
     if (!indexInMasterLists >= 0) return;

@@ -50,17 +50,15 @@ export class Item extends Realm.Object {
   }
 
   get earliestExpiringBatch() {
-    const { batches } = this;
+    // If no batches associated with this item, return null.
+    if (this.batches.length === 0) return null;
 
-    if (batches.length === 0) return null;
-    let earliestBatch = batches.find(batch => {
-      return batch.totalQuantity > 0;
-    });
+    let earliestBatch = this.batches.find(batch => batch.totalQuantity > 0);
 
     // If no batches found with |totalQuantity > 0|, return null.
     if (!earliestBatch) return null;
 
-    batches.forEach(batch => {
+    this.batches.forEach(batch => {
       if (
         batch.totalQuantity > 0 &&
         batch.expiryDate &&
@@ -99,9 +97,10 @@ export class Item extends Realm.Object {
    *                               over the specified period.
    */
   totalUsageForPeriod(startDate, endDate) {
-    return this.batches.reduce((total, batch) => {
-      return total + batch.totalUsageForPeriod(startDate, endDate);
-    }, 0);
+    return this.batches.reduce(
+      (total, batch) => total + batch.totalUsageForPeriod(startDate, endDate),
+      0
+    );
   }
 
   /**
@@ -116,11 +115,9 @@ export class Item extends Realm.Object {
    *                               if used as quantity.
    */
   dailyUsageForPeriod(startDate, endDate) {
-    const { addedDate, batches } = this;
+    if (this.batches.length === 0) return 0;
 
-    if (batches.length === 0) return 0;
-
-    const fromDate = addedDate > startDate ? addedDate : startDate;
+    const fromDate = this.addedDate > startDate ? this.addedDate : startDate;
     const periodInDays = millisecondsToDays(endDate - fromDate);
     const usage = this.totalUsageForPeriod(fromDate, endDate);
 

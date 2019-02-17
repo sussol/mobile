@@ -81,9 +81,9 @@ export class Requisition extends Realm.Object {
       return;
     }
     const transaction = createRecord(database, 'CustomerInvoice', this.otherStoreName, user);
-    this.items.forEach(requisitionItem => {
-      createRecord(database, 'TransactionItem', transaction, requisitionItem.item);
-    });
+    this.items.forEach(requisitionItem =>
+      createRecord(database, 'TransactionItem', transaction, requisitionItem.item)
+    );
     transaction.linkedRequisition = this;
     this.linkedTransaction = transaction;
     transaction.comment = `From customer requisition ${this.serialNumber}`;
@@ -101,9 +101,7 @@ export class Requisition extends Realm.Object {
       throw new Error('Cannot add items to a finalised requisition');
     }
     thisStore.masterLists.forEach(masterList => {
-      const itemsToAdd = complement(masterList.items, this.items, item => {
-        return item.itemId;
-      });
+      const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
       itemsToAdd.forEach(masterListItem => {
         if (!masterListItem.item.crossReferenceItem) {
           // Don't add cross reference items as causes duplicates.
@@ -131,9 +129,7 @@ export class Requisition extends Realm.Object {
   removeItemsById(database, itemIds) {
     const itemsToDelete = [];
     for (let i = 0; i < itemIds.length; i += 1) {
-      const requisitionItem = this.items.find(item => {
-        return item.id === itemIds[i];
-      });
+      const requisitionItem = this.items.find(item => item.id === itemIds[i]);
       if (requisitionItem.isValid()) {
         itemsToDelete.push(requisitionItem);
       }
