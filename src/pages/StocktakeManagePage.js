@@ -260,9 +260,7 @@ export class StocktakeManagePage extends React.Component {
             placeholderTextColor="white"
             placeholder={modalStrings.give_your_stocktake_a_name}
             value={stocktakeName}
-            onChangeText={text => {
-              this.setState({ stocktakeName: text });
-            }}
+            onChangeText={text => this.setState({ stocktakeName: text })}
           />
           <OnePressButton
             style={[globalStyles.button, globalStyles.modalOrangeButton]}

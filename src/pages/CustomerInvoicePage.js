@@ -349,12 +349,8 @@ export class CustomerInvoicePage extends GenericPage {
         <BottomConfirmModal
           isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
           questionText={modalStrings.remove_these_items}
-          onCancel={() => {
-            this.onDeleteCancel();
-          }}
-          onConfirm={() => {
-            this.onDeleteConfirm();
-          }}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.remove}
         />
         <PageContentModal

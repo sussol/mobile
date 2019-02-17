@@ -60,17 +60,13 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_invoices}
-              onPress={() => {
-                navigateTo('customerInvoices', navStrings.customer_invoices);
-              }}
+              onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_requisitions}
-              onPress={() => {
-                navigateTo('customerRequisitions', navStrings.customer_requisitions);
-              }}
+              onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
             />
           </View>
 
@@ -85,17 +81,13 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_invoices}
-              onPress={() => {
-                navigateTo('supplierInvoices', navStrings.supplier_invoices);
-              }}
+              onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_requisitions}
-              onPress={() => {
-                navigateTo('supplierRequisitions', navStrings.supplier_requisitions);
-              }}
+              onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
             />
             {isInAdminMode && (
               <Button
@@ -118,26 +110,20 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.current_stock}
-              onPress={() => {
-                navigateTo('stock', navStrings.current_stock);
-              }}
+              onPress={() => navigateTo('stock', navStrings.current_stock)}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.stocktakes}
-              onPress={() => {
-                navigateTo('stocktakes', navStrings.stocktakes);
-              }}
+              onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
             />
             {isInAdminMode && (
               <Button
                 style={globalStyles.menuButton}
                 textStyle={globalStyles.menuButtonText}
                 text="Realm Explorer"
-                onPress={() => {
-                  navigateTo('realmExplorer', 'Database Contents');
-                }}
+                onPress={() => navigateTo('realmExplorer', 'Database Contents')}
               />
             )}
           </View>
