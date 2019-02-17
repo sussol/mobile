@@ -71,13 +71,13 @@ export class PostSyncProcessor {
     this.functionQueue = [];
     this.recordQueue.clear(); // Reset the |recordQueue| to avoid unnessary runs.
 
-    this.database.objects('Requisition').forEach(record => {
-      this.enqueueFunctionsForRecordType('Requisition', record);
-    });
+    this.database
+      .objects('Requisition')
+      .forEach(record => this.enqueueFunctionsForRecordType('Requisition', record));
 
-    this.database.objects('Transaction').forEach(record => {
-      this.enqueueFunctionsForRecordType('Transaction', record);
-    });
+    this.database
+      .objects('Transaction')
+      .forEach(record => this.enqueueFunctionsForRecordType('Transaction', record));
 
     this.processFunctionQueue();
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
