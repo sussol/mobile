@@ -23,7 +23,7 @@ const {
  * @param   {Name}         customer  Customer associated with invoice.
  * @return  {Transaction}            New customer invoice.
  */
-function createCustomerInvoice(database, customer, user) {
+const createCustomerInvoice = (database, customer, user) => {
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
@@ -43,7 +43,7 @@ function createCustomerInvoice(database, customer, user) {
   database.save('Name', customer);
 
   return invoice;
-}
+};
 
 /**
  * Create a new number sequence.
@@ -52,12 +52,11 @@ function createCustomerInvoice(database, customer, user) {
  * @param  {string}         sequenceKey
  * @return {NumberSequence}              New number sequence.
  */
-function createNumberSequence(database, sequenceKey) {
-  return database.create('NumberSequence', {
+const createNumberSequence = (database, sequenceKey) =>
+  database.create('NumberSequence', {
     id: generateUUID(),
     sequenceKey,
   });
-}
 
 /**
  * Create a number attached to a sequence.
@@ -86,8 +85,8 @@ const createNumberToReuse = (database, numberSequence, number) => {
  *                                     else, adjustment is a decrease.
  * @return  {Transaction}              New transaction.
  */
-const createInventoryAdjustment = (database, user, date, isAddition) => {
-  return database.create('Transaction', {
+const createInventoryAdjustment = (database, user, date, isAddition) =>
+  database.create('Transaction', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, INVENTORY_ADJUSTMENT_SERIAL_NUMBER),
     entryDate: date,
@@ -96,11 +95,8 @@ const createInventoryAdjustment = (database, user, date, isAddition) => {
     status: 'confirmed',
     comment: '',
     enteredBy: user,
-    otherParty: database.objects('Name').find(name => {
-      return name.type === 'inventory_adjustment';
-    }),
+    otherParty: database.objects('Name').find(name => name.type === 'inventory_adjustment'),
   });
-};
 
 /**
  * Create a new empty batch for a given item.
@@ -138,8 +134,8 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
  * @return  {Requisition}                  New requisition.
  */
-const createRequisition = (database, user, otherStoreName) => {
-  return database.create('Requisition', {
+const createRequisition = (database, user, otherStoreName) =>
+  database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
     requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
@@ -150,7 +146,6 @@ const createRequisition = (database, user, otherStoreName) => {
     enteredBy: user,
     otherStoreName,
   });
-};
 
 /**
  * Create a new requisition item.
@@ -188,7 +183,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
  * @param   {User}       user      User creating stocktake.
  * @return  {Stocktake}            New stocktake.
  */
-function createStocktake(database, user) {
+const createStocktake = (database, user) => {
   const date = new Date();
 
   const stocktake = database.create('Stocktake', {
@@ -203,7 +198,7 @@ function createStocktake(database, user) {
   });
 
   return stocktake;
-}
+};
 
 /**
  * Create a new stocktake item.
@@ -213,7 +208,7 @@ function createStocktake(database, user) {
  * @param   {Item}           item       Real item to create stocktake item from.
  * @return  {StocktakeItem}             New stocktake item.
  */
-function createStocktakeItem(database, stocktake, item) {
+const createStocktakeItem = (database, stocktake, item) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -227,7 +222,7 @@ function createStocktakeItem(database, stocktake, item) {
   database.save('Stocktake', stocktake);
 
   return stocktakeItem;
-}
+};
 
 /**
  * Create a new stocktake batch.
@@ -237,7 +232,7 @@ function createStocktakeItem(database, stocktake, item) {
  * @param   {ItemBatch}      itemBatch      Item batch to associate with stocktake batch.
  * @return  {StocktakeBatch}                New stocktake batch.
  */
-function createStocktakeBatch(database, stocktakeItem, itemBatch) {
+const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
   const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
 
   const stocktakeBatch = database.create('StocktakeBatch', {
@@ -257,7 +252,7 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
   database.save('StocktakeItem', stocktakeItem);
 
   return stocktakeBatch;
-}
+};
 
 /**
  * Create a new supplier invoice.
@@ -267,7 +262,7 @@ function createStocktakeBatch(database, stocktakeItem, itemBatch) {
  * @param   {User}        enteredBy  User who creating invoice.
  * @return  {Transaction}            New supplier invoice.
  */
-function createSupplierInvoice(database, supplier, user) {
+const createSupplierInvoice = (database, supplier, user) => {
   const currentDate = new Date();
 
   const invoice = database.create('Transaction', {
@@ -285,7 +280,7 @@ function createSupplierInvoice(database, supplier, user) {
   supplier.addTransaction(invoice);
 
   return invoice;
-}
+};
 
 /**
  * Create a new transaction batch.
@@ -295,7 +290,7 @@ function createSupplierInvoice(database, supplier, user) {
  * @param   {ItemBatch}         itemBatch        Item batch to associate with transaction batch.
  * @return  {TransactionBatch}                   New transaction batch.
  */
-function createTransactionBatch(database, transactionItem, itemBatch) {
+const createTransactionBatch = (database, transactionItem, itemBatch) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
 
   const transactionBatch = database.create('TransactionBatch', {
@@ -319,7 +314,7 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
   database.save('ItemBatch', itemBatch);
 
   return transactionBatch;
-}
+};
 
 /**
  * Create a new transaction item.
@@ -329,7 +324,7 @@ function createTransactionBatch(database, transactionItem, itemBatch) {
  * @param   {Item}             item         Real item to create transaction item from.
  * @return  {TransactionItem}               New transaction item.
  */
-function createTransactionItem(database, transaction, item) {
+const createTransactionItem = (database, transaction, item) => {
   // Handle cross reference items.
   const { realItem } = item;
 
@@ -343,7 +338,7 @@ function createTransactionItem(database, transaction, item) {
   database.save('Transaction', transaction);
 
   return transactionItem;
-}
+};
 
 /**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
@@ -354,7 +349,7 @@ function createTransactionItem(database, transaction, item) {
  * @param   {args}    ...args   Any specific arguments the record type will need.
  * @return  {object}            The new database record.
  */
-export function createRecord(database, type, ...args) {
+export const createRecord = (database, type, ...args) => {
   switch (type) {
     case 'CustomerInvoice':
       return createCustomerInvoice(database, ...args);
@@ -385,6 +380,6 @@ export function createRecord(database, type, ...args) {
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
-}
+};
 
 export default createRecord;
