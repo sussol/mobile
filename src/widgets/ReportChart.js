@@ -17,8 +17,6 @@ import {
 } from 'victory-native';
 import globalStyles, {
   APP_FONT_FAMILY,
-  DARK_GREY,
-  LIGHT_GREY,
   GREY,
   SUSSOL_ORANGE,
 } from '../globalStyles';
@@ -182,113 +180,66 @@ export class ReportChart extends React.Component {
         return null;
     }
   }
-  renderTempLine = (data) => {
-    const { maxTemp } = this.props;
-    const breaches = data.map(({ x, y }) => {
-        if(y < maxTemp) return {x, y: null};
-        return {x, y};
-    });
-    const noBreaches = data.map(({x, y}) => {
-        if(y >= maxTemp) return {x, y: null};
-        return {x, y};
-    });
-
-    const result = [];
-    result.push(
-
+  renderTempLine = ({ data, color, domain, style = {} }) => (
     <VictoryLine
-            domain={[2, 10]}
-            style={{
-              data: {
-                stroke: 'rgb(255, 215, 0)',
-              },
-            }}
-            interpolation={'cardinal'}
-            data={noBreaches}
-        />
+      domain={domain}
+      style={{
+        data: {
+          stroke: color,
+          ...style,
+        },
+      }}
+      interpolation={'cardinal'}
+      data={data}
+    />
+  );
+
+  renderLines = ({ lines, minTemp, maxTemp, currentTemp }) => {
+    let minLine = minTemp;
+    let maxLine = maxTemp;
+
+    if (currentTemp > maxLine) maxLine = currentTemp;
+    if (currentTemp < minLine) minLine = currentTemp;
+
+    lines.forEach((line) => {
+      line.data.forEach((data) => {
+        if (data.y > maxLine) maxLine = data.y;
+        if (data.y < minLine) minLine = data.y;
+      });
+    });
+
+    const domain = [minLine - 2, maxLine + 2];
+
+
+    const result = lines.map(line => this.renderTempLine({ ...line, domain }));
+
+    result.push(
+      this.renderTempLine({
+        color: 'red',
+        domain,
+        data: lines[0].data.map(({ x }) => ({ x, y: minTemp })),
+        style: { strokeWidth: 0.3 },
+      }),
     );
     result.push(
+      this.renderTempLine({
+        color: 'red',
+        domain,
+        data: lines[0].data.map(({ x }) => ({ x, y: maxTemp })),
+        style: { strokeWidth: 0.3 },
+      }),
+    );
 
-        <VictoryLine
-                domain={[2, 10]}
-                style={{
-                  data: {
-                    stroke: 'red',
-                  },
-                }}
-                interpolation={'cardinal'}
-                data={breaches}
-            />
-        );
-        return result;
-  }
+    return result;
+  };
 
   render() {
-    const { minTemp, maxTemp, data } = this.props;
-    const { height, width } = this.state;
-    const padding = {
-      top: height * padTop,
-      bottom: height * padBottom,
-      left: width * padLeft,
-      right: width * padRight,
-    };
-    const {
-      padTop,
-      padBottom,
-      padLeft,
-      padRight,
-    } = victoryStyles.lineChart;
+    const { minTemp, maxTemp, lines, currentTemp } = this.props;
     return (
       <View style={localStyles.ChartContainer} onLayout={this.onLayout}>
         <VictoryChart width={this.state.width} height={this.state.height}>
-          <VictoryLine
-            style={{
-              data: {
-                stroke: 'red',
-                strokeWidth: 1,
-              },
-            }}
-            y={() => maxTemp}
-          />
-          <VictoryLine
-            style={{
-              data: {
-                stroke: 'red',
-                strokeWidth: 1,
-              },
-            }}
-            y={() => minTemp}
-          />
 
-          {this.renderTempLine(data)}
-
-          <VictoryLine
-            domain={[2, 10]}
-            animate={{ duration: 1500 }}
-            style={{
-              data: {
-                stroke: 'rgb(135, 206, 235)',
-              },
-            }}
-            interpolation={'cardinal'}
-            data={[
-              { x: '23-01 8am', y: 4 },
-              { x: '23-01 8pm', y: 4.3 },
-              { x: '24-01 8am', y: 3 },
-              { x: '24-01 8pm', y: 6 },
-              { x: '25-01 8am', y: 8 },
-              { x: '25-01 8pm', y: 3 },
-              { x: '26-01 8am', y: 3.4 },
-              { x: '26-01 8pm', y: 3.2 },
-              { x: '27-01 8am', y: 4 },
-              { x: '27-01 8pm', y: 3.5 },
-              { x: '28-01 8am', y: 2.9 },
-              { x: '28-01 8pm', y: 2.8 },
-              { x: '29-01 8am', y: 3.5 },
-              { x: '29-01 8pm', y: 3.3 },
-            ]}
-          />
-
+          {this.renderLines({ lines, minTemp, maxTemp, currentTemp })}
           {this.renderXAxis()}
           {this.renderYAxis()}
         </VictoryChart>

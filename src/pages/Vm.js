@@ -14,7 +14,13 @@ import { SETTINGS_KEYS } from '../settings';
 
 const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 
-import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY, SUSSOL_ORANGE } from '../globalStyles';
+import globalStyles, {
+  APP_FONT_FAMILY,
+  SHADOW_BORDER,
+  GREY,
+  WARMER_GREY,
+  SUSSOL_ORANGE,
+} from '../globalStyles';
 
 import { navStrings } from '../localization';
 
@@ -65,23 +71,19 @@ export class Vm extends React.Component {
 
   fridges = () =>
     this.props.database.objects('Location').map(fridge => {
-      console.log('yow');
-      const data = [
-        { x: '23-01 8am', y: 6 },
-        { x: '23-01 8pm', y: 7 },
-        { x: '24-01 8am', y: 5 },
-        { x: '24-01 8pm', y: 8 },
-        { x: '25-01 8am', y: 9 },
-        { x: '25-01 8pm', y: 5 },
-        { x: '26-01 8am', y: 5.5 },
-        { x: '26-01 8pm', y: 4.5 },
-        { x: '27-01 8am', y: 6 },
-        { x: '27-01 8pm', y: 7 },
-        { x: '28-01 8am', y: 5.5 },
-        { x: '28-01 8pm', y: 4.5 },
-        { x: '29-01 8am', y: 5 },
-        { x: '29-01 8pm', y: 5.5 },
+      const { minTemp, maxTemp, currentTemp } = fridge;
+      console.log('fridge current temperature', currentTemp);
+      const lines = [
+        {
+          data: fridge.getAggregatedTemps({ type: 'max', hourPeriod: 8, lookBackDays: 7 }),
+          color: 'rgb(255, 215, 0)',
+        },
+        {
+          data: fridge.getAggregatedTemps({ type: 'min', hourPeriod: 8, lookBackDays: 7 }),
+          color: 'rgb(135, 206, 235)',
+        },
       ];
+
       // backgroundColor: 'rgb(33, 157, 27)'
       return (
         <View
@@ -101,35 +103,70 @@ export class Vm extends React.Component {
           }}
         >
           <View style={{ flexDirection: 'column', alignItems: 'center' }}>
-            <Text style={{ ...globalStyles.memenuButtonText, fontSize: 18, color: SUSSOL_ORANGE }}>{fridge.name}</Text>
+            <Text style={{ ...globalStyles.memenuButtonText, fontSize: 18, color: SUSSOL_ORANGE }}>
+              {fridge.name}
+            </Text>
           </View>
           <View style={{ flexGrow: 1, flexDirection: 'row' }}>
-            <View style={{ flex: 1, flexDirection: 'column', alignItems: 'stretch', alignContent: 'stretch' }}>
-              <View style={{ flex: 1, borderRadius: 4, margin: 3, alignItems: 'center', alignContent: 'center', justifyContent: 'center', borderWidth: 0, flexGrow: 1, backgroundColor: 'rgb(103, 172, 91)' }}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                alignItems: 'stretch',
+                alignContent: 'stretch',
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  borderRadius: 4,
+                  margin: 3,
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                  borderWidth: 0,
+                  flexGrow: 1,
+                  backgroundColor: currentTemp <= maxTemp && currentTemp >= minTemp ? 'rgb(103, 172, 91)' : 'red',
+                }}
+              >
                 <Text style={{ ...globalStyles.memenuButtonText, fontSize: 30, color: 'white' }}>
-                  {'5.0' + '°'}
+                  { currentTemp + '°' }
                 </Text>
               </View>
-              <View style={{ flex: 1, borderRadius: 4, margin: 3, borderWidth: 1, borderColor: 'rgb(103, 172, 91)', flexGrow: 1, alignItems: 'center', alignContent: 'center', justifyContent: 'center' }}>
-                <Text style={{ color: 'rgb(103, 172, 91)' }}>Stock Value</Text>
-                <Text style={{ color: 'rgb(103, 172, 91)' }}>$200</Text>
+              <View
+                style={{
+                  flex: 1,
+                  borderRadius: 4,
+                  margin: 3,
+                  borderWidth: 1,
+                  borderColor: currentTemp <= maxTemp && currentTemp >= minTemp ? 'rgb(103, 172, 91)' : 'red',
+                  flexGrow: 1,
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Text style={{ color: currentTemp <= maxTemp && currentTemp >= minTemp ? 'rgb(103, 172, 91)' : 'red' }}>Stock Value</Text>
+                <Text style={{ color: currentTemp <= maxTemp && currentTemp >= minTemp ? 'rgb(103, 172, 91)' : 'red' }}>{fridge.soh}</Text>
               </View>
             </View>
-            <View style={{ flex: 4, flexDirection: 'row', justifyContent: 'center', alignItems: 'stretch', alignContent: 'stretch' }}>
+            <View
+              style={{
+                flex: 4,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'stretch',
+                alignContent: 'stretch',
+              }}
+            >
               <View style={{ width: '90%', height: '90%' }}>
-                <ReportChart
-                  minTemp={3}
-                  maxTemp={7.5}
-                  data={data}
-                />
+                <ReportChart minTemp={minTemp} maxTemp={maxTemp} lines={lines} currentTemp={currentTemp} />
               </View>
             </View>
           </View>
         </View>
       );
     });
-
-    
 
   render() {
     const { logOut, navigateTo } = this.props;

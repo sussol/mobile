@@ -45,6 +45,118 @@ import { Scheduler } from 'sussol-utilities';
 import { MobileAppSettings } from './settings';
 import { generateUUID } from 'react-native-database';
 
+const sensorData = [
+  { x: '23-01 8am', y: 5 },
+  { x: '23-01 8pm', y: 5.5 },
+  { x: '24-01 8am', y: 5.3 },
+  { x: '24-01 8pm', y: 5.7 },
+  { x: '25-01 8am', y: 6.5 },
+  { x: '25-01 8pm', y: 8 },
+  { x: '26-01 8am', y: 6 },
+  { x: '26-01 8pm', y: 5.5 },
+  { x: '24-01 8pm', y: 4 },
+  { x: '25-01 8am', y: 3 },
+  { x: '25-01 8pm', y: 5 },
+  { x: '26-01 8am', y: 4.3 },
+  { x: '26-01 8pm', y: 4.6 },
+  { x: '25-01 8am', y: 6 },
+  { x: '25-01 8pm', y: 3 },
+  { x: '26-01 8am', y: 6 },
+  { x: '26-01 8pm', y: 6.5 },
+  { x: '27-01 8am', y: 4 },
+  { x: '27-01 8pm', y: 3.9 },
+  { x: '26-01 8am', y: 2 },
+  { x: '26-01 8am', y: 1 },
+  { x: '26-01 8pm', y: 2 },
+  { x: '25-01 8am', y: 4.6 },
+  { x: '25-01 8pm', y: 5.7 },
+  { x: '26-01 8am', y: 6.4 },
+  { x: '26-01 8pm', y: 4 },
+  { x: '27-01 8am', y: 3.9 },
+  { x: '27-01 8pm', y: 5.6 },
+  { x: '26-01 8am', y: 5.4 },
+  { x: '26-01 8pm', y: 4.4 },
+  { x: '27-01 8am', y: 6.4 },
+  { x: '27-01 8pm', y: 7.5 },
+  { x: '28-01 8am', y: 5 },
+  { x: '28-01 8pm', y: 4 },
+  { x: '26-01 8am', y: 3.4 },
+  { x: '26-01 8pm', y: 6 },
+  { x: '27-01 8am', y: 3 },
+  { x: '27-01 8pm', y: 7.8 },
+  { x: '28-01 8am', y: 4.5 },
+  { x: '28-01 8pm', y: 5 },
+  { x: '26-01 8am', y: 7 },
+  { x: '26-01 8pm', y: 5.4 },
+  { x: '27-01 8am', y: 3 },
+  { x: '27-01 8pm', y: 3.5 },
+  { x: '28-01 8am', y: 4.6 },
+  { x: '28-01 8pm', y: 5 },
+  { x: '28-01 8am', y: 5.2 },
+  { x: '28-01 8pm', y: 4.9 },
+  { x: '29-01 8am', y: 4.3 },
+  { x: '29-01 8pm', y: 5 },
+];
+const sensorData2 = [
+  { x: '23-01 8am', y: 8 },
+  { x: '23-01 8pm', y: 5 },
+  { x: '24-01 8am', y: 6 },
+  { x: '24-01 8pm', y: 7 },
+  { x: '25-01 8am', y: 5 },
+  { x: '25-01 8pm', y: 8 },
+  { x: '26-01 8am', y: 10 },
+  { x: '26-01 8pm', y: 10.5 },
+  { x: '24-01 8pm', y: 8 },
+  { x: '25-01 8am', y: 7 },
+  { x: '25-01 8pm', y: 5 },
+  { x: '26-01 8am', y: 6 },
+  { x: '26-01 8pm', y: 4.5 },
+  { x: '25-01 8am', y: 5 },
+  { x: '25-01 8pm', y: 7 },
+  { x: '26-01 8am', y: 4.5 },
+  { x: '26-01 8pm', y: 8 },
+  { x: '27-01 8am', y: 9 },
+  { x: '27-01 8pm', y: 10 },
+  { x: '26-01 8am', y: 8 },
+  { x: '26-01 8am', y: 7 },
+  { x: '26-01 8pm', y: 6 },
+  { x: '25-01 8am', y: 5.6 },
+  { x: '25-01 8pm', y: 6.7 },
+  { x: '26-01 8am', y: 5.4 },
+  { x: '26-01 8pm', y: 4 },
+  { x: '27-01 8am', y: 4.9 },
+  { x: '27-01 8pm', y: 4.6 },
+  { x: '26-01 8am', y: 4.4 },
+  { x: '26-01 8pm', y: 6.4 },
+  { x: '27-01 8am', y: 5.4 },
+  { x: '27-01 8pm', y: 7 },
+  { x: '28-01 8am', y: 8 },
+  { x: '28-01 8pm', y: 7.5 },
+  { x: '26-01 8am', y: 7.7 },
+  { x: '26-01 8pm', y: 6 },
+  { x: '27-01 8am', y: 7 },
+  { x: '27-01 8pm', y: 5 },
+  { x: '28-01 8am', y: 4 },
+  { x: '28-01 8pm', y: 5.1 },
+  { x: '26-01 8am', y: 5 },
+  { x: '26-01 8pm', y: 6 },
+  { x: '27-01 8am', y: 7 },
+  { x: '27-01 8pm', y: 8 },
+  { x: '28-01 8am', y: 7 },
+  { x: '28-01 8pm', y: 6 },
+  { x: '28-01 8am', y: 7 },
+  { x: '28-01 8pm', y: 8 },
+  { x: '29-01 8am', y: 9 },
+  { x: '29-01 8pm', y: 8.6 },
+  { x: '28-01 8am', y: 7 },
+  { x: '28-01 8pm', y: 6 },
+  { x: '28-01 8am', y: 7.6 },
+  { x: '28-01 8pm', y: 7.9 },
+  { x: '29-01 8am', y: 8 },
+  { x: '29-01 8pm', y: 9 },
+  { x: '28-01 8am', y: 10 },
+  { x: '28-01 8am', y: 8 },
+];
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds
 
@@ -81,6 +193,75 @@ class MSupplyMobileAppContainer extends React.Component {
       syncModalIsOpen: false,
     };
 
+    const addHours = (hours, datetime) => {
+      const newDatetime = new Date(datetime);
+      newDatetime.setTime(newDatetime.getTime() + hours * 60 * 60 * 1000);
+      return newDatetime;
+    };
+
+    this.database.write(() => {
+      const allSensorLogs = this.database.objects('SensorLog');
+
+      if (allSensorLogs && allSensorLogs.length > 0) this.database.delete('SensorLog', allSensorLogs);
+
+      const allSensors = this.database.objects('Sensor');
+      if (allSensors && allSensors.length > 0) this.database.delete('Sensor', allSensors);
+
+      const sensor1 = this.database.create('Sensor', {
+        id: generateUUID(),
+        name: 'checkSensor1',
+        address: 'checkSensor1Address',
+        latestValue: 5.0,
+        latestValueTimestamp: new Date(),
+        latestBatteryLevel: 99,
+        logInterval: 20,
+      });
+
+      const sensor2 = this.database.create('Sensor', {
+        id: generateUUID(),
+        name: 'checkSensor2',
+        address: 'checkSensor2Address',
+        latestValue: 9,
+        latestValueTimestamp: new Date(),
+        latestBatteryLevel: 99,
+        logInterval: 20,
+      });
+
+      const fridges = this.database.objects('Location');
+      fridges[1].sensor = sensor2;
+      fridges[0].sensor = sensor1;
+      fridges[0].soh = '$5120';
+      fridges[1].soh = '$140';
+ 
+      const sensor1Data = sensorData;
+      let dateNow = addHours(24*8*-1, new Date());
+
+      for (let i = 0; i < sensor1Data.length; i++) {
+        dateNow = addHours(3, dateNow);
+        const sensorLog = this.database.create('SensorLog', {
+          id: generateUUID(),
+          timestamp: dateNow,
+          logCounter: i,
+          logInterval: 20,
+          value: sensor1Data[i].y,
+        });
+        sensor1.sensorLogs.push(sensorLog);
+      }
+
+      const sensor2Data = sensorData2;
+      dateNow = addHours(24*8*-1, new Date());
+      for (let i = 0; i < sensor2Data.length; i++) {
+        dateNow = addHours(3, dateNow);
+        const sensorLog = this.database.create('SensorLog', {
+          id: generateUUID(),
+          timestamp: dateNow,
+          logCounter: i,
+          logInterval: 20,
+          value: sensor2Data[i].y,
+        });
+        sensor2.sensorLogs.push(sensorLog);
+      }
+    });
     // this.logTesting();
   }
   /// TO BE REMOVED
@@ -218,7 +399,7 @@ class MSupplyMobileAppContainer extends React.Component {
   //   console.log('params:', data);
   //   console.log('result:', this.calculateNewLogs(data));
 
-  //   breakhere;
+    // breakhere;
   // }
 
   /// END OF - TO BE REMOVED

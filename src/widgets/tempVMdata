@@ -1,16 +1,12 @@
-{ x: '7:00', y: null },
-                    { x: '8:00', y: null },
-                    { x: '9:00', y: null },
-                    { x: '10:00', y: null },
-                    { x: '11:00', y: null },
-                    { x: '12:00', y: 6 },
-                    { x: '13:00', y: 7.5 },
-                    { x: '14:00', y: 8 },
-                    { x: '15:00', y: 9 },
-                    { x: '16:00', y: 6 },
-                    { x: '17:00', y: null },
-                    { x: '18:00', y: null },
-                    { x: '19:00', y: null },
-                    { x: '20:00', y: null },
-                    { x: '21:00', y: null },
-                    { x: '22:00', y: null },
+
+$option:=New object("filter";New object)
+$option.filter.forms:=True
+$option.filter.catalog:=True
+$option.filter.menus:=True
+$option.withLog:="always"
+$result:=Export structure file("structureExport";$option)
+
+diff <(git show COMMIT1SHA) <(git show COMMIT2SHA)
+ git diff struct-mSupplyV4-01-00 struct-mSupplyV4-01-16 ':(exclude)*.4dm' ':(exclude)*.4DCatalog' ':(exclude)*.json'
+
+Hardware:\n\n    Hardware Overview:\n\n      Model Name: MacBook Pro\n      Model Identifier: MacBookPro13,1\n      Processor Name: Intel Core i5\n      Processor Speed: 2 GHz\n      Number of Processors: 1\n      Total Number of Cores: 2\n      L2 Cache (per Core): 256 KB\n      L3 Cache: 4 MB\n      Memory: 8 GB\n      Boot ROM Version: MBP131.0205.B22\n      SMC Version (system): 2.36f97\n      Serial Number (system): C02SNCCNGVC1\n      Hardware UUID: 71CDA8A6-834A-567E-847E-477B4A3182CE\n\n
