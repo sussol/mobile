@@ -164,12 +164,12 @@ export class LoginModal extends React.Component {
                   editable={authStatus !== 'authenticating'}
                   returnKeyType="done"
                   selectTextOnFocus
-                  onChangeText={text => {
+                  onChangeText={text =>
                     this.setState({
                       password: text,
                       authStatus: 'unauthenticated',
-                    });
-                  }}
+                    })
+                  }
                   onSubmitEditing={() => {
                     if (this.passwordInputRef) this.passwordInputRef.blur();
                     if (this.canAttemptLogin) this.onLogin();
@@ -206,9 +206,7 @@ export class LoginModal extends React.Component {
           </View>
           <LanguageModal
             isOpen={isLanguageModalOpen}
-            onClose={() => {
-              this.setState({ isLanguageModalOpen: false });
-            }}
+            onClose={() => this.setState({ isLanguageModalOpen: false })}
             settings={settings}
           />
         </Modal>

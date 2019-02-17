@@ -101,21 +101,13 @@ export class DemoUserModal extends React.Component {
   // Handlers to set state of form variables on input onChange trigger
   // Extracting into local methods because calling an anonymous function in onChange would
   // re-render the input fields each time render() is called, causing slight performance hit
-  handleOnChangeEmail = text => {
-    this.setState({ email: text, status: 'submit' });
-  };
+  handleOnChangeEmail = text => this.setState({ email: text, status: 'submit' });
 
-  handleOnChangeUsername = text => {
-    this.setState({ username: text, status: 'submit' });
-  };
+  handleOnChangeUsername = text => this.setState({ username: text, status: 'submit' });
 
-  handleOnChangePassword = text => {
-    this.setState({ password: text, status: 'submit' });
-  };
+  handleOnChangePassword = text => this.setState({ password: text, status: 'submit' });
 
-  handleOnChangeRepeatPassword = text => {
-    this.setState({ repeatPassword: text, status: 'submit' });
-  };
+  handleOnChangeRepeatPassword = text => this.setState({ repeatPassword: text, status: 'submit' });
 
   render() {
     const { isOpen, onClose } = this.props;

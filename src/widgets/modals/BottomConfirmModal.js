@@ -14,7 +14,7 @@ import { modalStrings } from '../../localization';
 
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 
-export function BottomConfirmModal(props) {
+export const BottomConfirmModal = props => {
   const {
     onCancel,
     onConfirm,
@@ -42,7 +42,7 @@ export function BottomConfirmModal(props) {
       />
     </BottomModal>
   );
-}
+};
 
 export default BottomConfirmModal;
 
