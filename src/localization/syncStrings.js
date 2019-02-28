@@ -48,6 +48,18 @@ export const syncStrings = new LocalizedStrings({
     sync_error: 'SYNC SALA',
     sync_in_progress: "SYNC LA'O HELA",
   },
+  la: {
+    last_sync: 'ເຊື່ອມ​ຕໍ່​ຄັ້ງຫຼ້າ​ສຸດ',
+    manual_sync: 'ເຊື່ອມ​ຕໍ່​ຄູ່​ມື​ການ​ໃຊ້​ງານ',
+    sync_enabled: 'ສາ​ມາດ​ເຊື່ອມ​ຕໍ່​ໄດ້',
+    sync_error: 'ການ​ເຊື່ອມ​ຕ​ໍ່​ຜິດ​ພາດ',
+    sync_in_progress: 'ການ​ເຊື່ອມ​ຕໍ່​ກຳ​ລັງ​ດຳ​ເນີນ​ການ',
+    checking_server_for_records: 'ກວດ​ເບິ່ງສັນ​ຍານ​ເນັດ​ເພື່ອ​ເຮັດ​ການ​ບັນ​ທຶກ',
+    records_waiting: 'ລໍ​ຖ້າ ​ເຊື່ອມ​ຕໍ່​ເພື່ອ ການ​ບັນ​ທຶກ',
+    sync_complete: 'ການ​ເຊື່ອມ​ຕໍ່​ສຳ​ເລັດ',
+    all_records_updated: 'ລາຍ​ການ​ທັງ​ໝົດ​ຖື​ກ​ອັບ​ເດດ​ແລ້ວ',
+    loading_change_count: 'ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ',
+  },
 });
 
 export default syncStrings;
