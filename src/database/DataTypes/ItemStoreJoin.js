@@ -9,6 +9,7 @@ export class ItemStoreJoin extends Realm.Object {
     // Make the item no longer visible in this store
     const item = itemResults[0];
     item.isVisible = false;
+    item.defaultPrice = 0;
     database.save('Item', item);
   }
 
