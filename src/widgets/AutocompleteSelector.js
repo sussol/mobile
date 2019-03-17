@@ -66,9 +66,7 @@ export class AutocompleteSelector extends React.PureComponent {
           autoCorrect={false}
           autoFocus
           color="white"
-          onChange={text => {
-            this.setState({ queryText: text });
-          }}
+          onChange={text => this.setState({ queryText: text })}
           placeholder={placeholderText}
           placeholderTextColor="white"
           style={[localStyles.text, localStyles.searchBar]}
@@ -76,19 +74,15 @@ export class AutocompleteSelector extends React.PureComponent {
         {data.length > 0 && (
           <FlatList
             data={data}
-            keyExtractor={item => {
-              return item.id;
-            }}
-            renderItem={({ item }) => {
-              return (
-                <ResultRowWithOnePress
-                  item={item}
-                  onPress={onSelect}
-                  renderLeftText={renderLeftText}
-                  renderRightText={renderRightText}
-                />
-              );
-            }}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <ResultRowWithOnePress
+                item={item}
+                onPress={onSelect}
+                renderLeftText={renderLeftText}
+                renderRightText={renderRightText}
+              />
+            )}
             keyboardShouldPersistTaps="always"
             style={localStyles.resultList}
           />
@@ -123,12 +117,7 @@ class ResultRow extends React.PureComponent {
     // eslint-disable-next-line react/prop-types
     const { item, renderLeftText, renderRightText, onPress } = this.props;
     return (
-      <TouchableOpacity
-        style={localStyles.resultRow}
-        onPress={() => {
-          return onPress(item);
-        }}
-      >
+      <TouchableOpacity style={localStyles.resultRow} onPress={() => onPress(item)}>
         <Text style={[localStyles.text, localStyles.itemText]}>
           {renderLeftText ? renderLeftText(item) : item.toString()}
         </Text>

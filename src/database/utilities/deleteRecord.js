@@ -13,7 +13,7 @@
  * @param   {string}  primaryKeyField  The field used as the primary key, defaults to 'id'.
  * @return  {none}
  */
-export function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') {
+export const deleteRecord = (database, recordType, primaryKey, primaryKeyField = 'id') => {
   // 'delete' is a reserved word, |deleteRecord| is in the upper scope.
   const obliterate = () => {
     const deleteResults = database
@@ -66,6 +66,6 @@ export function deleteRecord(database, recordType, primaryKey, primaryKeyField =
     default:
       break; // Silently ignore record types which should not be synced to mobile.
   }
-}
+};
 
 export default deleteRecord;

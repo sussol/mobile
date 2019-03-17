@@ -44,9 +44,9 @@ export class SupplierRequisitionsPage extends React.Component {
     database.write(() => {
       const requisitionsToDelete = [];
       for (let i = 0; i < selection.length; i += 1) {
-        const requisition = this.requisitions.find(currentRequisition => {
-          return currentRequisition.id === selection[i];
-        });
+        const requisition = this.requisitions.find(
+          currentRequisition => currentRequisition.id === selection[i]
+        );
         if (requisition.isValid() && !requisition.isFinalised) {
           requisitionsToDelete.push(requisition);
         }
@@ -72,13 +72,9 @@ export class SupplierRequisitionsPage extends React.Component {
     this.navigateToRequisition(requisition);
   };
 
-  onRowPress = requisition => {
-    this.navigateToRequisition(requisition);
-  };
+  onRowPress = requisition => this.navigateToRequisition(requisition);
 
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   navigateToRequisition = requisition => {
     const { navigateTo } = this.props;
@@ -137,16 +133,12 @@ export class SupplierRequisitionsPage extends React.Component {
     }
   };
 
-  renderNewRequisitionButton = () => {
-    return (
-      <PageButton
-        text={buttonStrings.new_requisition}
-        onPress={() => {
-          this.setState({ isCreatingRequisition: true });
-        }}
-      />
-    );
-  };
+  renderNewRequisitionButton = () => (
+    <PageButton
+      text={buttonStrings.new_requisition}
+      onPress={() => this.setState({ isCreatingRequisition: true })}
+    />
+  );
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
@@ -210,12 +202,8 @@ export class SupplierRequisitionsPage extends React.Component {
         <BottomConfirmModal
           isOpen={selection.length > 0}
           questionText={modalStrings.delete_these_invoices}
-          onCancel={() => {
-            this.onDeleteCancel();
-          }}
-          onConfirm={() => {
-            this.onDeleteConfirm();
-          }}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.delete}
         />
         <SelectModal
@@ -224,14 +212,10 @@ export class SupplierRequisitionsPage extends React.Component {
           placeholderText={modalStrings.start_typing_to_select_supplier}
           queryString="name BEGINSWITH[c] $0"
           sortByString="name"
-          onSelect={name => {
-            this.setState({ isCreatingRequisition: false }, () => {
-              this.onNewRequisition(name);
-            });
-          }}
-          onClose={() => {
-            this.setState({ isCreatingRequisition: false });
-          }}
+          onSelect={name =>
+            this.setState({ isCreatingRequisition: false }, () => this.onNewRequisition(name))
+          }
+          onClose={() => this.setState({ isCreatingRequisition: false })}
           title={modalStrings.search_for_the_supplier}
         />
       </GenericPage>

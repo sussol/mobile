@@ -60,7 +60,7 @@ const RECORD_TYPE_TO_MASTERLIST = {
  * @param  {string}  internalRecordType  Internal record type for merge operation.
  * @param  {object}  syncRecord          Data representing the sync record.
  */
-export function mergeRecords(database, settings, internalRecordType, syncRecord) {
+export const mergeRecords = (database, settings, internalRecordType, syncRecord) => {
   const recordToKeep = database
     .objects(internalRecordType)
     .filtered('id == $0', syncRecord.mergeIDtokeep)[0];
@@ -88,11 +88,11 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
           }
         }
       });
-    },
+    }
   );
 
   const [[tableToUpdate, { field: fieldToUpdate }]] = Object.entries(
-    RECORD_TYPE_TO_MASTERLIST[internalRecordType],
+    RECORD_TYPE_TO_MASTERLIST[internalRecordType]
   );
   database
     .objects(tableToUpdate)
@@ -104,7 +104,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
         .filtered(
           `(${fieldToUpdate}.id == $0) && (masterList.id == $0)`,
           recordToKeep.id,
-          joinRecord.masterList.id,
+          joinRecord.masterList.id
         )[0];
       if (duplicateJoinRecord) {
         deleteRecord(database, tableToUpdate, joinRecord.id);
@@ -116,9 +116,7 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
 
   switch (internalRecordType) {
     case 'Item':
-      recordToMerge.batches.forEach(batch => {
-        recordToKeep.addBatchIfUnique(batch);
-      });
+      recordToMerge.batches.forEach(batch => recordToKeep.addBatchIfUnique(batch));
       database
         .objects('TransactionBatch')
         .filtered('itemId == $0', recordToMerge.id)
@@ -130,9 +128,9 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
       // createOrUpdateRecord(database, settings, 'TransactionBatch', batch);
       break;
     case 'Name':
-      recordToMerge.masterLists.forEach(masterList => {
-        recordToKeep.addMasterListIfUnique(masterList);
-      });
+      recordToMerge.masterLists.forEach(masterList =>
+        recordToKeep.addMasterListIfUnique(masterList)
+      );
       break;
     default:
       break;
@@ -141,6 +139,6 @@ export function mergeRecords(database, settings, internalRecordType, syncRecord)
   recordToKeep.isVisible = recordToKeep.isVisible || recordToMerge.isVisible;
 
   deleteRecord(database, internalRecordType, recordToMerge.id);
-}
+};
 
 export default mergeRecords;

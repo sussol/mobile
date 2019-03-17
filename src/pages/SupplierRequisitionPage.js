@@ -122,9 +122,7 @@ export class SupplierRequisitionPage extends React.Component {
     });
   };
 
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   getThisStore = () => {
     const { database, settings } = this.props;
@@ -171,7 +169,7 @@ export class SupplierRequisitionPage extends React.Component {
 
     const data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
-      searchTerm,
+      searchTerm
     );
 
     let sortDataType;
@@ -193,25 +191,15 @@ export class SupplierRequisitionPage extends React.Component {
     });
   };
 
-  openModal = key => {
-    this.setState({ modalKey: key, modalIsOpen: true });
-  };
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
-  closeModal = () => {
-    this.setState({ modalIsOpen: false });
-  };
+  closeModal = () => this.setState({ modalIsOpen: false });
 
-  openItemSelector = () => {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
-  };
+  openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
 
-  openMonthsSelector = () => {
-    this.openModal(MODAL_KEYS.MONTHS_SELECT);
-  };
+  openMonthsSelector = () => this.openModal(MODAL_KEYS.MONTHS_SELECT);
 
-  openCommentEditor = () => {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  };
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
   renderPageInfo = () => {
     const { requisition } = this.props;
@@ -295,12 +283,8 @@ export class SupplierRequisitionPage extends React.Component {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={item => {
-              return `${item.name}`;
-            }}
-            renderRightText={item => {
-              return `${item.totalQuantity}`;
-            }}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case MONTHS_SELECT:
@@ -359,9 +343,7 @@ export class SupplierRequisitionPage extends React.Component {
           <PageButton
             style={globalStyles.topButton}
             text={buttonStrings.new_item}
-            onPress={() => {
-              this.openModal(MODAL_KEYS.ITEM_SELECT);
-            }}
+            onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
             isDisabled={requisition.isFinalised}
           />
           <PageButton

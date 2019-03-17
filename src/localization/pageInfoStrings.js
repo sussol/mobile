@@ -58,6 +58,19 @@ export const pageInfoStrings = new LocalizedStrings({
     supplier: 'Distribuidor',
     their_ref: 'Referensia',
   },
+  la: {
+    address: 'ທີ່ຢູ່',
+    code: 'ລະຫັດ',
+    comment: 'ຄໍາເຫັນ',
+    confirm_date: 'ຢືນຢັນ ວັນທີ',
+    customer: 'ລາຍຊື່ຜູ້ຮັບສິນຄ້າ',
+    entered_by: 'ປ້ອນ​ຂໍ​້​ມູນໂດຍ',
+    entry_date: 'ວັນທີປ້ອນ',
+    months_stock_required: 'ສິນ​ຄ້າພາຍໃນເດືອນ',
+    stocktake_name: 'ຊື່​ຂອງ​ໃບກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
+    supplier: 'ຜູ້ສະໜອງ',
+    their_ref: 'ຂໍ້ມູນອ້າງອີງ',
+  },
 });
 
 export default pageInfoStrings;

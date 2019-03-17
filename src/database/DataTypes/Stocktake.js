@@ -18,9 +18,9 @@ export class Stocktake extends Realm.Object {
 
   // Add a stocktake batch and incorporate into a matching stocktake item.
   addBatchIfUnique(database, stocktakeBatch) {
-    addBatchToParent(stocktakeBatch, this, () => {
-      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item);
-    });
+    addBatchToParent(stocktakeBatch, this, () =>
+      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
+    );
   }
 
   /**
@@ -38,24 +38,15 @@ export class Stocktake extends Realm.Object {
     // Delete any stocktake items not in the new array of ids.
     const itemsToRemove = complement(
       this.items,
-      itemIds.map(itemId => {
-        return { itemId };
-      }),
-      stocktakeItem => {
-        return stocktakeItem.itemId;
-      },
+      itemIds.map(itemId => ({ itemId })),
+      stocktakeItem => stocktakeItem.itemId
     );
     if (itemsToRemove && itemsToRemove.length > 0) {
       database.delete('StocktakeItem', itemsToRemove);
     }
 
     // Add a new stocktake item for each new item id not currently in the stocktake.
-    const itemIdsToAdd = complement(
-      itemIds,
-      this.items.map(stocktakeItem => {
-        return stocktakeItem.itemId;
-      }),
-    );
+    const itemIdsToAdd = complement(itemIds, this.items.map(stocktakeItem => stocktakeItem.itemId));
 
     const items = database.objects('Item');
     itemIdsToAdd.forEach(itemId => {
@@ -85,9 +76,7 @@ export class Stocktake extends Realm.Object {
    * @return  {array}  All stocktake items that have been reduced below minimum level.
    */
   get itemsBelowMinimum() {
-    return this.items.filter(stocktakeItem => {
-      return stocktakeItem.isReducedBelowMinimum;
-    });
+    return this.items.filter(stocktakeItem => stocktakeItem.isReducedBelowMinimum);
   }
 
   /**
@@ -97,15 +86,11 @@ export class Stocktake extends Realm.Object {
    * @return  {array}  Array of |StocktakeItem| representing all outdated stocktake items.
    */
   get itemsOutdated() {
-    return this.items.filter(stocktakeItem => {
-      return stocktakeItem.isOutdated;
-    });
+    return this.items.filter(stocktakeItem => stocktakeItem.isOutdated);
   }
 
   get hasSomeCountedItems() {
-    return this.items.some(item => {
-      return item.hasCountedBatches;
-    });
+    return this.items.some(item => item.hasCountedBatches);
   }
 
   get numberOfBatches() {
@@ -141,7 +126,7 @@ export class Stocktake extends Realm.Object {
         'InventoryAdjustment',
         this.finalisedBy,
         this.stocktakeDate,
-        false,
+        false
       );
     }
     return this.reductions;
@@ -161,7 +146,7 @@ export class Stocktake extends Realm.Object {
         'InventoryAdjustment',
         this.finalisedBy,
         this.stocktakeDate,
-        true,
+        true
       );
     }
     return this.additions;
@@ -205,9 +190,7 @@ export class Stocktake extends Realm.Object {
     // Prune any stocktake item that has not had a quantity change.
     database.delete(
       'StocktakeItem',
-      this.items.filter(stocktakeItem => {
-        return !stocktakeItem.hasCountedBatches;
-      }),
+      this.items.filter(stocktakeItem => !stocktakeItem.hasCountedBatches)
     );
 
     // Get every batch associated with this stocktake.
@@ -218,16 +201,15 @@ export class Stocktake extends Realm.Object {
     // Delete each new stocktake batch that has been created by stocktake but has not been changed.
     database.delete(
       'StocktakeBatch',
-      stocktakeBatches.filter(stocktakeBatch => {
-        return stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0;
-      }),
+      stocktakeBatches.filter(
+        stocktakeBatch =>
+          stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0
+      )
     );
 
     // |stocktakeBatch.finalise()| handles optimisation based on what fields were entered
     // (i.e. count/batch/expiry).
-    stocktakeBatches.forEach(stocktakeBatch => {
-      return stocktakeBatch.finalise(database);
-    });
+    stocktakeBatches.forEach(stocktakeBatch => stocktakeBatch.finalise(database));
   }
 }
 

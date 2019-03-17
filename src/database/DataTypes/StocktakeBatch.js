@@ -82,14 +82,13 @@ export class StocktakeBatch extends Realm.Object {
         database,
         'TransactionItem',
         inventoryAdjustment,
-        this.itemBatch.item,
+        this.itemBatch.item
       );
-
       const transactionBatch = createRecord(
         database,
         'TransactionBatch',
         transactionItem,
-        this.itemBatch,
+        this.itemBatch
       );
 
       // Apply difference from stocktake to actual stock on hand levels. Whether stock is increased

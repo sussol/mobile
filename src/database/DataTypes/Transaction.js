@@ -120,9 +120,7 @@ export class Transaction extends Realm.Object {
     }
     if (this.otherParty) {
       this.otherParty.masterLists.forEach(masterList => {
-        const itemsToAdd = complement(masterList.items, this.items, item => {
-          return item.itemId;
-        });
+        const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
         itemsToAdd.forEach(masterListItem => {
           if (!masterListItem.item.crossReferenceItem && masterListItem.item.isVisible) {
             // Do not add cross reference items as will cause duplicates.
@@ -143,9 +141,7 @@ export class Transaction extends Realm.Object {
   removeItemsById(database, itemIds) {
     const itemsToDelete = [];
     for (let i = 0; i < itemIds.length; i += 1) {
-      const transactionItem = this.items.find(testItem => {
-        return testItem.id === itemIds[i];
-      });
+      const transactionItem = this.items.find(testItem => testItem.id === itemIds[i]);
       if (transactionItem.isValid()) {
         itemsToDelete.push(transactionItem);
       }
@@ -167,9 +163,9 @@ export class Transaction extends Realm.Object {
     const transactionBatches = this.getTransactionBatches(database);
     const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
-      const transactionBatch = transactionBatches.find(matchTransactionBatch => {
-        return matchTransactionBatch.id === transactionBatchId;
-      });
+      const transactionBatch = transactionBatches.find(
+        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId
+      );
       transactionBatchesToDelete.push(transactionBatch);
     });
     database.delete('TransactionBatch', transactionBatchesToDelete);

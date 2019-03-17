@@ -42,9 +42,10 @@ export class StocktakeItem extends Realm.Object {
    * @return  {boolean}  True if |StocktakeBatches| have adjustments.
    */
   get hasCountedBatches() {
-    return this.batches.some(stocktakeBatch => {
-      return stocktakeBatch.isValid() && stocktakeBatch.hasBeenCounted;
-    });
+    // Return true if any batches of this stocktake item have adjustments.
+    return this.batches.some(
+      stocktakeBatch => stocktakeBatch.isValid() && stocktakeBatch.hasBeenCounted
+    );
   }
 
   get numberOfBatches() {
@@ -63,9 +64,8 @@ export class StocktakeItem extends Realm.Object {
    * @return  {Boolean}  True is the counted quantity is below the minimum for this item.
    */
   get isReducedBelowMinimum() {
-    return this.batches.some(batch => {
-      return batch.isReducedBelowMinimum;
-    });
+    // Return true if the counted quantity is below the minimum for this item.
+    return this.batches.some(batch => batch.isReducedBelowMinimum);
   }
 
   /**
@@ -80,11 +80,8 @@ export class StocktakeItem extends Realm.Object {
    * @return  {boolean}  True if any batch is out of date.
    */
   get isOutdated() {
-    if (
-      this.batches.some(batch => {
-        return batch.isSnapshotOutdated;
-      })
-    ) {
+    // Return true if any batch is out of date.
+    if (this.batches.some(batch => batch.isSnapshotOutdated)) {
       return true;
     }
 
@@ -92,11 +89,10 @@ export class StocktakeItem extends Realm.Object {
     // for this stocktake item.
     const itemBatchesWithStock = this.item.batchesWithStock;
     if (
-      itemBatchesWithStock.some(itemBatch => {
-        return !this.batches.some(stocktakeBatch => {
-          return stocktakeBatch.itemBatch.id === itemBatch.id;
-        });
-      })
+      itemBatchesWithStock.some(
+        itemBatch =>
+          !this.batches.some(stocktakeBatch => stocktakeBatch.itemBatch.id === itemBatch.id)
+      )
     ) {
       return true;
     }
@@ -162,7 +158,7 @@ export class StocktakeItem extends Realm.Object {
         if (isIncreasingQuantity) {
           thisBatchChangeQuantity = Math.min(
             stocktakeBatch.snapshotTotalQuantity - batchTotalQuantity,
-            difference,
+            difference
           );
 
           if (thisBatchChangeQuantity <= 0) return false;

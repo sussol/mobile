@@ -29,7 +29,7 @@ const bugsnagClient = new BugsnagClient();
  *                                  finaliseText  The text to display on the confirmation modal
  * @prop  {object}    user          The user who is finalising the record
  */
-export function FinaliseModal(props) {
+export const FinaliseModal = props => {
   const { finaliseItem, isOpen, runWithLoadingIndicator, database, user, onClose } = props;
 
   if (!finaliseItem) return null;
@@ -73,7 +73,7 @@ export function FinaliseModal(props) {
       }}
     />
   );
-}
+};
 
 export default FinaliseModal;
 

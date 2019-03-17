@@ -80,13 +80,9 @@ export class FirstUsePage extends React.Component {
     }
   }
 
-  handleDemoModalOpen = () => {
-    this.setState({ isDemoUserModalOpen: true });
-  };
+  handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
 
-  handleDemoModalClose = () => {
-    this.setState({ isDemoUserModalOpen: false });
-  };
+  handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
 
   render() {
     const { syncState } = this.props;
@@ -118,9 +114,7 @@ export class FirstUsePage extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="next"
               selectTextOnFocus
-              onChangeText={text => {
-                this.setState({ serverURL: text, status: 'uninitialised' });
-              }}
+              onChangeText={text => this.setState({ serverURL: text, status: 'uninitialised' })}
               onSubmitEditing={() => {
                 if (this.siteNameInputRef) this.siteNameInputRef.focus();
               }}
@@ -139,9 +133,7 @@ export class FirstUsePage extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="next"
               selectTextOnFocus
-              onChangeText={text => {
-                this.setState({ syncSiteName: text, status: 'uninitialised' });
-              }}
+              onChangeText={text => this.setState({ syncSiteName: text, status: 'uninitialised' })}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.focus();
               }}
@@ -161,12 +153,12 @@ export class FirstUsePage extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="done"
               selectTextOnFocus
-              onChangeText={text => {
+              onChangeText={text =>
                 this.setState({
                   syncSitePassword: text,
                   status: 'uninitialised',
-                });
-              }}
+                })
+              }
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
                 if (this.canAttemptLogin) this.onPressConnect();

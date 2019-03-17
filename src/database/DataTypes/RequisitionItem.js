@@ -43,6 +43,7 @@ export class RequisitionItem extends Realm.Object {
     const { availableQuantity } = this.linkedTransactionItem;
     const { totalQuantity } = this.item;
 
+    // TODO: this.linkedTransactionItem and this.item can both be falsey, unhandled possible return
     return this.linkedTransactionItem ? availableQuantity : totalQuantity;
   }
 
@@ -54,8 +55,8 @@ export class RequisitionItem extends Realm.Object {
     const transactionItem = this.linkedTransactionItem;
     if (!transactionItem) return;
     transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
-    this.suppliedQuantity = transactionItem.totalQuantity;
     database.save('TransactionItem', transactionItem);
+    this.suppliedQuantity = transactionItem.totalQuantity;
     database.save('RequisitionItem', this);
   }
 }

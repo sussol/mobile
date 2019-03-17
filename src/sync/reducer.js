@@ -24,45 +24,31 @@ const defaultState = {
 };
 
 const stateChanges = {
-  [INCREMENT_SYNC_PROGRESS]: ({ increment }, { progress }) => {
-    return {
-      progress: progress + increment,
-    };
-  },
-  [SET_SYNC_MESSAGE]: ({ progressMessage }) => {
-    return {
-      progressMessage,
-      errorMessage: '',
-    };
-  },
-  [SET_SYNC_PROGRESS]: ({ progress }) => {
-    return {
-      progress,
-      errorMessage: '',
-    };
-  },
-  [SET_SYNC_ERROR]: ({ errorMessage }) => {
-    return {
-      errorMessage,
-      progressMessage: '',
-    };
-  },
-  [SET_SYNC_TOTAL]: ({ total }) => {
-    return {
-      total,
-      errorMesssage: '',
-    };
-  },
-  [SET_SYNC_IS_SYNCING]: ({ isSyncing }) => {
-    return {
-      isSyncing,
-    };
-  },
-  [SET_SYNC_COMPLETION_TIME]: ({ lastSyncTime }) => {
-    return {
-      lastSyncTime,
-    };
-  },
+  [INCREMENT_SYNC_PROGRESS]: ({ increment }, { progress }) => ({
+    progress: progress + increment,
+  }),
+  [SET_SYNC_MESSAGE]: ({ progressMessage }) => ({
+    progressMessage,
+    errorMessage: '',
+  }),
+  [SET_SYNC_PROGRESS]: ({ progress }) => ({
+    progress,
+    errorMessage: '',
+  }),
+  [SET_SYNC_ERROR]: ({ errorMessage }) => ({
+    errorMessage,
+    progressMessage: '',
+  }),
+  [SET_SYNC_TOTAL]: ({ total }) => ({
+    total,
+    errorMesssage: '',
+  }),
+  [SET_SYNC_IS_SYNCING]: ({ isSyncing }) => ({
+    isSyncing,
+  }),
+  [SET_SYNC_COMPLETION_TIME]: ({ lastSyncTime }) => ({
+    lastSyncTime,
+  }),
   [REHYDRATE]: ({ sync: persistedSyncState = defaultState }) => {
     // Keep any error message and last sync time persistent across sessions.
     const { errorMessage, lastSyncTime } = persistedSyncState;

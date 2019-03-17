@@ -59,9 +59,7 @@ export class TransactionItem extends Realm.Object {
    * @return  {TransactionBatch}          The batch with the matching item id.
    */
   getBatch(itemBatchId) {
-    return this.batches.find(transactionBatch => {
-      return transactionBatch.itemBatchId === itemBatchId;
-    });
+    return this.batches.find(transactionBatch => transactionBatch.itemBatchId === itemBatchId);
   }
 
   addBatch(transactionBatch) {
@@ -143,14 +141,10 @@ export class TransactionItem extends Realm.Object {
       //       item or all batches already in.
       const itemBatchesToAdd = complement(
         batchesToUse,
-        this.batches.map(transactionBatch => {
-          return {
-            id: transactionBatch.itemBatchId,
-          };
-        }),
-        batch => {
-          return batch.id;
-        },
+        this.batches.map(transactionBatch => ({
+          id: transactionBatch.itemBatchId,
+        })),
+        batch => batch.id
       );
 
       // Go through item batches, adding transaction batches and allocating remainder

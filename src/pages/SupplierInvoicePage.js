@@ -58,19 +58,13 @@ export class SupplierInvoicePage extends React.Component {
   onDeleteConfirm = () => {
     const { selection } = this.state;
     const { transaction, database } = this.props;
-    database.write(() => {
-      transaction.removeTransactionBatchesById(database, selection);
-    });
+    database.write(() => transaction.removeTransactionBatchesById(database, selection));
     this.setState({ selection: [] }, this.refreshData);
   };
 
-  onDeleteCancel = () => {
-    this.setState({ selection: [] }, this.refreshData);
-  };
+  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   /**
    * Respond to the user editing fields.
@@ -147,30 +141,20 @@ export class SupplierInvoicePage extends React.Component {
         database,
         'TransactionBatch',
         transactionItem,
-        createRecord(database, 'ItemBatch', item, ''),
+        createRecord(database, 'ItemBatch', item, '')
       );
     });
   };
 
-  openModal = key => {
-    this.setState({ modalKey: key, modalIsOpen: true });
-  };
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
-  closeModal = () => {
-    this.setState({ modalIsOpen: false });
-  };
+  closeModal = () => this.setState({ modalIsOpen: false });
 
-  openItemSelector = () => {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
-  };
+  openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
 
-  openCommentEditor = () => {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  };
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
-  openTheirRefEditor = () => {
-    this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-  };
+  openTheirRefEditor = () => this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
 
   renderPageInfo = () => {
     const { transaction } = this.props;
@@ -229,9 +213,7 @@ export class SupplierInvoicePage extends React.Component {
           <ExpiryTextInput
             key={transactionBatch.id}
             isEditable={isEditable}
-            onEndEditing={newValue => {
-              this.onEndEditing(key, transactionBatch, newValue);
-            }}
+            onEndEditing={newValue => this.onEndEditing(key, transactionBatch, newValue)}
             text={transactionBatch[key]}
             style={dataTableStyles.text}
           />
@@ -266,12 +248,8 @@ export class SupplierInvoicePage extends React.Component {
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={item => {
-              return `${item.name}`;
-            }}
-            renderRightText={item => {
-              return `${item.totalQuantity}`;
-            }}
+            renderLeftText={item => `${item.name}`}
+            renderRightText={item => `${item.totalQuantity}`}
           />
         );
       case COMMENT_EDIT:
@@ -377,12 +355,8 @@ export class SupplierInvoicePage extends React.Component {
         <BottomConfirmModal
           isOpen={selection.length > 0 && !transaction.isFinalised}
           questionText={modalStrings.remove_these_items}
-          onCancel={() => {
-            this.onDeleteCancel();
-          }}
-          onConfirm={() => {
-            this.onDeleteConfirm();
-          }}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.remove}
         />
         <PageContentModal

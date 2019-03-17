@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/* eslint-disable class-methods-use-this */
+
 import { validationStrings } from '../localization';
 
 const DEMO_SITE_URL = 'https://demo.msupply.org/api/v4/mobile/requestDemo';

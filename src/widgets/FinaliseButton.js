@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import globalStyles from '../globalStyles';
 import { navStrings } from '../localization';
 
-export function FinaliseButton(props) {
+export const FinaliseButton = props => {
   const { isFinalised, onPress } = props;
 
   if (isFinalised) {
@@ -35,7 +35,7 @@ export function FinaliseButton(props) {
       <Icon name="check-circle" style={globalStyles.finaliseButton} />
     </TouchableOpacity>
   );
-}
+};
 
 export default FinaliseButton;
 

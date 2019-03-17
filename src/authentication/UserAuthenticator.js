@@ -115,13 +115,12 @@ export class UserAuthenticator {
 }
 
 // Promise will be called parallel to authenticating connection.
-const createConnectionTimeoutPromise = () => {
-  return new Promise((resolve, reject) => {
+const createConnectionTimeoutPromise = () =>
+  new Promise((resolve, reject) => {
     const id = setTimeout(() => {
       clearTimeout(id);
       reject(new Error(CONNECTION_FAILURE));
     }, CONNECTION_TIMEOUT_PERIOD);
   });
-};
 
 export default UserAuthenticator;

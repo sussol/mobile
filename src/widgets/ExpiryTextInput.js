@@ -20,9 +20,7 @@ export class ExpiryTextInput extends React.Component {
   }
 
   // Remove all text on focus
-  onFocus = () => {
-    this.setState({ text: '' });
-  };
+  onFocus = () => this.setState({ text: '' });
 
   onChangeText = text => {
     let newTextValue = text;

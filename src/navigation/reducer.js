@@ -12,9 +12,7 @@ const paramsEqual = (params1, params2) => {
     return false;
   }
 
-  return Object.entries(params1).every(([key, value]) => {
-    return value === params2[key];
-  });
+  return Object.entries(params1).every(([key, value]) => value === params2[key]);
 };
 
 export const reducer = (state, action) => {
