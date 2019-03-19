@@ -30,5 +30,7 @@ MasterList.schema = {
     name: { type: 'string', default: 'placeholderName' },
     note: { type: 'string', optional: true },
     items: { type: 'list', objectType: 'MasterListItem' },
+    programSettings: { type: 'string', optional: true },
+    isProgram: { type: 'bool', optional: true },
   },
 };
