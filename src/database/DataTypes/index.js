@@ -22,6 +22,9 @@ export { Name } from './Name';
 export { NameStoreJoin } from './NameStoreJoin';
 export { NumberSequence } from './NumberSequence';
 export { NumberToReuse } from './NumberToReuse';
+export { Options } from './Options';
+export { Period } from './Period';
+export { PeriodSchedule } from './PeriodSchedule';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
 export class Setting extends Realm.Object {}
@@ -29,7 +32,4 @@ export class SyncOut extends Realm.Object {}
 export { Stocktake } from './Stocktake';
 export { StocktakeItem } from './StocktakeItem';
 export { StocktakeBatch } from './StocktakeBatch';
-export { Period } from './Period';
-export { PeriodSchedule } from './PeriodSchedule';
-export { Options } from './Options';
 export class User extends Realm.Object {}
