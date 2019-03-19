@@ -140,7 +140,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     MasterList: {
       cannotBeBlank: [],
-      canBeBlank: ['description'],
+      canBeBlank: ['description', 'programSettings', 'isProgram'],
     },
     MasterListItem: {
       cannotBeBlank: ['item_ID'],
@@ -164,15 +164,15 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
-      canBeBlank: ['date_entered', 'serial_number', 'requester_reference'],
+      canBeBlank: ['date_entered', 'serial_number', 'requester_reference', 'programID', 'periodID'],
     },
     RequisitionItem: {
       cannotBeBlank: ['requisition_ID', 'item_ID'],
-      canBeBlank: ['stock_on_hand', 'Cust_stock_order'],
+      canBeBlank: ['stock_on_hand', 'Cust_stock_order', 'optionID'],
     },
     Stocktake: {
       cannotBeBlank: ['status'],
-      canBeBlank: ['Description', 'stock_take_created_date', 'serial_number'],
+      canBeBlank: ['Description', 'stock_take_created_date', 'serial_number', 'program'],
     },
     StocktakeBatch: {
       cannotBeBlank: [
@@ -182,7 +182,11 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'snapshot_qty',
         'snapshot_packsize',
       ],
-      canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price'],
+      canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price', 'optionID'],
+    },
+    Store: {
+      cannotBeBlank: [],
+      canBeBlank: [],
     },
     Transaction: {
       cannotBeBlank: ['name_ID', 'type', 'status', 'store_ID'],
@@ -202,6 +206,18 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'sell_price',
       ],
       canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
+    },
+    Options: {
+      cannotBeBlank: ['name', 'type', 'isActive'],
+      canBeBlank: [],
+    },
+    PeriodSchedule: {
+      cannotBeBlank: ['name'],
+      canBeBlank: [],
+    },
+    Period: {
+      cannotBeBlank: ['name', 'startDate', 'endDate', 'periodScheduleID'],
+      canBeBlank: [],
     },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -351,6 +367,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         name: record.description,
         note: record.note,
+        isProgram: parseBoolean(record.isProgram),
+        programSettings: JSON.stringify(record.programSettings),
       };
       database.update(recordType, internalRecord);
       break;
@@ -457,6 +475,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         enteredBy: database.getOrCreate('User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         otherStoreName: database.getOrCreate('Name', record.name_ID),
+        program: database.getOrCreate('MasterList', record.programID),
+        period: database.getOrCreate('Period', record.periodID),
       };
       database.update(recordType, internalRecord);
       break;
@@ -473,6 +493,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         suppliedQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
+        period: database.getOrCreate('Option', record.optionID),
       };
       const requisitionItem = database.update(recordType, internalRecord);
       // requisitionItem will be an orphan record if it's not unique?
@@ -493,6 +514,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         serialNumber: record.serial_number,
         additions: database.getOrCreate('Transaction', record.invad_additions_ID),
         reductions: database.getOrCreate('Transaction', record.invad_reductions_ID),
+        program: database.getOrCreate('MasterList', record.programID),
       };
       database.update(recordType, internalRecord);
       break;
@@ -516,6 +538,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
+        option: database.getOrCreate('Option', record.optionID),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
