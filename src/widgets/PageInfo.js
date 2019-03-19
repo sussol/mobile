@@ -112,7 +112,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
  *                            col1: row1 col2: row1
  *                            col1: row2 col2: row2
  */
-export function PageInfo(props) {
+export const PageInfo = props => {
   const { columns, isEditingDisabled } = props;
 
   return (
@@ -143,7 +143,7 @@ export function PageInfo(props) {
       })}
     </View>
   );
-}
+};
 
 export default PageInfo;
 

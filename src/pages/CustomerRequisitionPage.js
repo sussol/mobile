@@ -65,17 +65,15 @@ export class CustomerRequisitionPage extends React.Component {
     // CustomerInvoice does not exist, suppliedQuantity will not be updated
     if (key !== 'suppliedQuantity') return;
     const { database } = this.props;
-    database.write(() => {
-      requisitionItem.setSuppliedQuantity(database, newValue);
-    });
+    database.write(() => requisitionItem.setSuppliedQuantity(database, newValue));
   };
 
   onUseRequestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
-      requisition.items.forEach(requisitionItem => {
-        requisitionItem.setSuppliedQuantity(database, requisitionItem.requiredQuantity);
-      });
+      requisition.items.forEach(requisitionItem =>
+        requisitionItem.setSuppliedQuantity(database, requisitionItem.requiredQuantity)
+      );
     });
 
     this.refreshData();
@@ -84,17 +82,15 @@ export class CustomerRequisitionPage extends React.Component {
   onUseSuggestedQuantities = () => {
     const { database, requisition } = this.props;
     database.write(() => {
-      requisition.items.forEach(requisitionItem => {
-        requisitionItem.setSuppliedQuantity(database, requisitionItem.suggestedQuantity);
-      });
+      requisition.items.forEach(requisitionItem =>
+        requisitionItem.setSuppliedQuantity(database, requisitionItem.suggestedQuantity)
+      );
     });
 
     this.refreshData();
   };
 
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   getModalTitle = () => {
     const { modalKey } = this.state;
@@ -147,17 +143,11 @@ export class CustomerRequisitionPage extends React.Component {
     });
   };
 
-  openModal = key => {
-    this.setState({ modalKey: key, modalIsOpen: true });
-  };
+  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
 
-  closeModal = () => {
-    this.setState({ modalIsOpen: false });
-  };
+  closeModal = () => this.setState({ modalIsOpen: false });
 
-  openCommentEditor = () => {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  };
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
   renderPageInfo = () => {
     const { requisition } = this.props;

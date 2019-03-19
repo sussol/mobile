@@ -99,7 +99,7 @@ export class StockPage extends React.Component {
           info: item.departmentName,
         },
         dailyUsage && {
-          title: 'Montly Usage : ',
+          title: `${tableStrings.monthly_usage_s}`,
           info: Math.round(dailyUsage * 30),
         },
       ],

@@ -311,9 +311,9 @@ export class Transaction extends Realm.Object {
     const { itemBatch } = transactionBatch;
     const { item } = itemBatch;
 
-    addBatchToParent(transactionBatch, this, () => {
-      createRecord(database, 'TransactionItem', this, item);
-    });
+    addBatchToParent(transactionBatch, this, () =>
+      createRecord(database, 'TransactionItem', this, item)
+    );
   }
 
   /**

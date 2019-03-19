@@ -56,8 +56,7 @@ export class StocktakeBatch extends Realm.Object {
    * @return  {boolean}
    */
   get isReducedBelowMinimum() {
-    const { itemBatch } = this;
-    const { totalQuantity: stockOnHand } = itemBatch;
+    const { totalQuantity: stockOnHand } = this.itemBatch;
 
     // Return true if |stockOnHand + stocktakebatch.difference| is negative.
     return stockOnHand + this.difference < 0;

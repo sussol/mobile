@@ -30,7 +30,7 @@ import { StyleSheet, Text, TouchableOpacity, ViewPropTypes, View } from 'react-n
  *
  */
 
-export function ToggleBar(props) {
+export const ToggleBar = props => {
   const {
     style,
     toggleOffStyle,
@@ -41,7 +41,7 @@ export function ToggleBar(props) {
     ...containerProps
   } = props;
 
-  function renderToggles(buttons) {
+  const renderToggles = buttons => {
     if (buttons.length === 0) return [];
     const renderOutput = [];
 
@@ -62,19 +62,19 @@ export function ToggleBar(props) {
           onPress={button.onPress}
         >
           <Text style={currentTextStyle}>{button.text}</Text>
-        </TouchableOpacity>,
+        </TouchableOpacity>
       );
     });
 
     return renderOutput;
-  }
+  };
 
   return (
     <View style={[localStyles.container, style]} {...containerProps}>
       {renderToggles(toggles)}
     </View>
   );
-}
+};
 
 export default ToggleBar;
 

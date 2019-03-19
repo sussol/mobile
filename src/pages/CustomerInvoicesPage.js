@@ -71,13 +71,9 @@ export class CustomerInvoicesPage extends React.Component {
     this.refreshData();
   };
 
-  onRowPress = invoice => {
-    this.navigateToInvoice(invoice);
-  };
+  onRowPress = invoice => this.navigateToInvoice(invoice);
 
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   navigateToInvoice = invoice => {
     const { database, navigateTo } = this.props;
@@ -236,9 +232,7 @@ export class CustomerInvoicesPage extends React.Component {
             this.onNewInvoice(name);
             this.setState({ isCreatingInvoice: false });
           }}
-          onClose={() => {
-            this.setState({ isCreatingInvoice: false });
-          }}
+          onClose={() => this.setState({ isCreatingInvoice: false })}
           title={modalStrings.search_for_the_customer}
         />
       </GenericPage>

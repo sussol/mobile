@@ -1,12 +1,12 @@
 import { tableStrings } from '../localization';
 
-export function formatStatus(status) {
+export const formatStatus = status => {
   switch (status) {
     case 'finalised':
       return tableStrings.finalised;
     default:
       return tableStrings.in_progress;
   }
-}
+};
 
 export default formatStatus;

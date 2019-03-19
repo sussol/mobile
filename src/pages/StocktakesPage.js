@@ -136,16 +136,12 @@ export class StocktakesPage extends React.Component {
         toggles={[
           {
             text: buttonStrings.current,
-            onPress: () => {
-              this.onToggleStatusFilter(true);
-            },
+            onPress: () => this.onToggleStatusFilter(true),
             isOn: showCurrent,
           },
           {
             text: buttonStrings.past,
-            onPress: () => {
-              this.onToggleStatusFilter(false);
-            },
+            onPress: () => this.onToggleStatusFilter(false),
             isOn: !showCurrent,
           },
         ]}
@@ -206,12 +202,8 @@ export class StocktakesPage extends React.Component {
         <BottomConfirmModal
           isOpen={selection.length > 0 && showCurrent}
           questionText={modalStrings.delete_these_stocktakes}
-          onCancel={() => {
-            this.clearSelection(true);
-          }}
-          onConfirm={() => {
-            this.onDeleteConfirm();
-          }}
+          onCancel={() => this.clearSelection(true)}
+          onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.delete}
         />
       </GenericPage>

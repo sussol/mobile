@@ -7,8 +7,8 @@ import React from 'react';
  * @param   {React.Component}  WrappedComponent  The component to be wrapped.
  * @return  {React.Component}                    The wrapped component.
  */
-export default function withOnePress(WrappedComponent) {
-  return class extends React.Component {
+export const withOnePress = WrappedComponent =>
+  class extends React.Component {
     state = { hasBeenPressed: false };
 
     static propTypes = WrappedComponent.propTypes;
@@ -28,4 +28,5 @@ export default function withOnePress(WrappedComponent) {
       return <WrappedComponent {...this.props} onPress={this.onPress} />;
     }
   };
-}
+
+export default withOnePress;

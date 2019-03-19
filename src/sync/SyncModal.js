@@ -17,7 +17,7 @@ import { Button, ProgressBar } from '../widgets';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
-export function SyncModal({ database, isOpen, onClose, onPressManualSync, state }) {
+export const SyncModal = ({ database, isOpen, onClose, onPressManualSync, state }) => {
   const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
     let message = '';
 
@@ -88,7 +88,7 @@ export function SyncModal({ database, isOpen, onClose, onPressManualSync, state 
       </View>
     </Modal>
   );
-}
+};
 
 export default SyncModal;
 

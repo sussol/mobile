@@ -148,21 +148,13 @@ export class StocktakeEditPage extends React.Component {
     }
   };
 
-  openModal = key => {
-    this.setState({ modalKey: key, isModalOpen: true });
-  };
+  openModal = key => this.setState({ modalKey: key, isModalOpen: true });
 
-  openCommentEditor = () => {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  };
+  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
-  openNameEditor = () => {
-    this.openModal(MODAL_KEYS.NAME_EDIT);
-  };
+  openNameEditor = () => this.openModal(MODAL_KEYS.NAME_EDIT);
 
-  closeModal = () => {
-    this.setState({ isModalOpen: false });
-  };
+  closeModal = () => this.setState({ isModalOpen: false });
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // (... != null) checks for null or undefined (implicitly type coerced to null).
@@ -236,11 +228,11 @@ export class StocktakeEditPage extends React.Component {
     return (
       <PageButton
         text={buttonStrings.manage_stocktake}
-        onPress={() => {
+        onPress={() =>
           navigateTo('stocktakeManager', navStrings.manage_stocktake, {
             stocktake,
-          });
-        }}
+          })
+        }
         isDisabled={stocktake.isFinalised}
       />
     );
