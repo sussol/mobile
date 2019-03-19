@@ -5,6 +5,8 @@
 
 import LocalizedStrings from 'react-native-localization';
 
+/* eslint-disable max-len */
+
 export const modalStrings = new LocalizedStrings({
   gb: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',
@@ -197,13 +199,15 @@ export const modalStrings = new LocalizedStrings({
     stocktake_no_counted_items: 'La bele finaliza ajustamentu se laiha item ida priense',
   },
   la: {
-    add_at_least_one_item_before_finalising: 'ທ່ານ​ຕ້ອງ ເພີ່ມ​ຢ່າງ​ໜ້ອຍໜຶ່ງ​ລາຍ​ການກ່ອນ​ເຮັດ​ການກົດ​ສະຫຼຸບ',
+    add_at_least_one_item_before_finalising:
+      'ທ່ານ​ຕ້ອງ ເພີ່ມ​ຢ່າງ​ໜ້ອຍໜຶ່ງ​ລາຍ​ການກ່ອນ​ເຮັດ​ການກົດ​ສະຫຼຸບ',
     and: 'ແລະ',
     cancel: 'ຍົກເລີກ',
     confirm: 'ຢືນຢັນ',
     create: 'ສ້າງ',
     delete_these_invoices: 'ທ່ານ​ແນ່​ໃຈ​ບໍ​ວ່າ ທ່ານ​ຕ້ອງ​ການ​ລຶບ​ບັນ​ດາ​ໃບ​ຈ່າຍ​ສິນ​ຄ້າ​ນີ້​ອອກ?',
-    delete_these_requisitions: 'ທ່ານ​ແນ່​ໃຈ​ບໍ​ວ່າ ທ່ານ​ຕ້ອງ​ການ​ລຶບ​ບັນ​ດາ​ໃບ​ສະ​ເໜີ​ຂໍ​ສິນ​ຄ້າ​ນີ້​ອອກ?',
+    delete_these_requisitions:
+      'ທ່ານ​ແນ່​ໃຈ​ບໍ​ວ່າ ທ່ານ​ຕ້ອງ​ການ​ລຶບ​ບັນ​ດາ​ໃບ​ສະ​ເໜີ​ຂໍ​ສິນ​ຄ້າ​ນີ້​ອອກ?',
     delete_these_stocktakes: 'ທ່ານ​ແນ່​ໃຈ​ບໍ​ວ່າ ທ່ານ​ຕ້ອງ​ການ​ລຶບ​ບັນ​ດາ​ໃບ​ກວດ​ກາ​ສາງ​ນີ້​ຖິ້ມ?',
     delete: 'ລຶບອອກ',
     edit_the_invoice_comment: 'ແກ້​ໄຂ ຄຳ​ເຫັນ​ໃນ​ໃບ​ຮັບ​\nຈ່າ​ຍ ສິນ​ຄ້າ',
@@ -212,11 +216,14 @@ export const modalStrings = new LocalizedStrings({
     edit_the_stocktake_comment: 'ແກ້​ໄຂ ​ຄຳ​ເຫັນ​ໃນ​ໃບ​ກວດ​ກາ​ສາງ',
     edit_the_stocktake_name: 'ແກ້​ໄຂ ຊື່​ໃນ​ໃບ​ກວດ​ກາ​ສາງ',
     finalise_customer_invoice: 'ການ​ສະ​ຫຼຸບ ຈະ​ລ໋ອກ​ໃບ​ຈ່າຍ​ສິນ​ຄ້າ​ນີ້​ຖາ​ວອນ',
-    finalise_supplier_requisition: 'ການກ​ກົດ​ສະ​ຫຼຸບ ຈະ​ສົ່ງ​ຄຳ​ຮ້ອງ​ຂໍ ແລະ ຈະ​ລ໋ອກ​ໃບ​ນຳ​ສົ່ງ​ນີ້ເປັນ​ການ​ຖາ​ວອນ',
+    finalise_supplier_requisition:
+      'ການກ​ກົດ​ສະ​ຫຼຸບ ຈະ​ສົ່ງ​ຄຳ​ຮ້ອງ​ຂໍ ແລະ ຈະ​ລ໋ອກ​ໃບ​ນຳ​ສົ່ງ​ນີ້ເປັນ​ການ​ຖາ​ວອນ',
     finalise_customer_requisition:
       '​ກົດສະ​ຫຼຸບ ແມ່ນ​ເປັນ​ການ​ເຮັດ​ໃຫ້ ໃບ​ຈ່າຍ​ສິນ​ຄ້າ​, ການ​ດັດ​ປັບ​ສາງ ຖືກ​ສະຫຼຸບ ແລະ​ລ໋ອກ​ການ​ຮ້ອງ​ຂໍ​ນີ້ເປັນ​ການຖາ​ວອນ',
-    finalise_stocktake: 'ກົດ​ສະ​ຫຼຸບ ຈະ​ເປັນ​ການ​ເຮັດ​ການ​ດັດ​ປັບ ແລະ​ລ໋ອກ​ໃບ​ກວດ​ກາ​ສາງ​ນີ້​ໄວ້​ຖາ​ວອນ',
-    finalise_supplier_invoice: 'ການກົດ​ສະ​ຫຼຸບ ຈະ​ເຮັດ​ໃຫ້​ຈຳ​ນວນ​ທີ່​ມີ​ຢູ່​ໃນ​ສາງ​ມີ​ການ​ປັບ​ປ່ຽນ ແລະ​​ໃບ​ຮັບ​ສິນ​ຄ້າ​ຈາກ​ຜູ້​ສະ​ໝອງ ຈະ​ບໍ່​ປັບ​ປ່ຽນ​ໄດ້​ອີກ',
+    finalise_stocktake:
+      'ກົດ​ສະ​ຫຼຸບ ຈະ​ເປັນ​ການ​ເຮັດ​ການ​ດັດ​ປັບ ແລະ​ລ໋ອກ​ໃບ​ກວດ​ກາ​ສາງ​ນີ້​ໄວ້​ຖາ​ວອນ',
+    finalise_supplier_invoice:
+      'ການກົດ​ສະ​ຫຼຸບ ຈະ​ເຮັດ​ໃຫ້​ຈຳ​ນວນ​ທີ່​ມີ​ຢູ່​ໃນ​ສາງ​ມີ​ການ​ປັບ​ປ່ຽນ ແລະ​​ໃບ​ຮັບ​ສິນ​ຄ້າ​ຈາກ​ຜູ້​ສະ​ໝອງ ຈະ​ບໍ່​ປັບ​ປ່ຽນ​ໄດ້​ອີກ',
     following_items_reduced_more_than_available_stock:
       'ບັນ​ດາ​ລາຍ​ການ​ຕ​ໍ່​ໄປ​ນີ້​ແມ່ນ​ຖືກ​ປັບ​ລົງ ຫຼາຍກວ່າ​ ຈຳ​ນວນ​ທີ່​ມີ​ຢູ່​ໃນ​ສາງຕົວ​ຈິງ',
     give_your_stocktake_a_name: 'ໃສ່​ຊື່​ໃນ​ໃບ​ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
@@ -235,10 +242,15 @@ export const modalStrings = new LocalizedStrings({
     select_the_number_of_months_stock_required: 'ເລືອກ​ຈຳ​ນວນ​ເດືອນທີ່​ຕ້ອງ​ການ',
     start_typing_to_select_customer: 'ພິມ ເພື່ອ​ເລືອກ​ລູກ​ຄ້າ',
     start_typing_to_select_supplier: 'ພິມ ເພື່ອ​ຄົ້ນ​ຫາ​ແລະ​ເລືອກ​ຜູ້​ສະ​ໜອງ',
-    stock_quantity_greater_then_zero: 'ຈຳ​ນວນ​ສິນ​ຄ້າ​ໃນ​ສາງ​ຄວນ​ມີ​ຫຼາຍກວ່າສູນ(0) ກ່ອນ​ເຮັດ​ການ​ກົດ​ສະຫຼຸບ',
-    stocktake_no_counted_items: 'ບໍ່​ສາ​ມາດ​ກົດ​ສະຫຼຸບ​ໃບ​ກວດ​ກາ​ສາງ​ໄດ້​ໂດຍ​ທີ່​ບໍ່​ມີ​ການກວດ​ນັບ​ລາຍ​ການ​ສິນ​ຄ້າ​ໃນ​ສາງ​ກ່ອນ',
-    stocktake_invalid_stock: 'ສິນ​ຄ້າ​ໃນ​ສາງ​ໄດ້​ມີ​ການ​ປ່ຽນ​ແປງ​ຕັ້ງ​ແຕ່ ໄດ້​ມີ​ການ​ເຮັດ​ການ​ດັດ​ປັບ​ສາງ​ຄັ້ງ​ສຸດ​ທ້າຍ​ຂອງ​ການ ການ​ກວດ​ການ​ສິນ​ຄ້າ​ໃນ​ສາງ (ຜ່ານ ໃບ​ສັ່ງ​ຈ່າຍ, ໃບ​ຮັບ​ສິນ​ຄ້າ, ຫຼື​ໃບ​ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ), ບໍ່​ວ່າ​ຈະ​ເປັນ ສ​ະ​ພາບ​ລວມ​ ແລະ ຈຳ​ນວນ​ຕົວ​ຈິ່ງ​ຂອງ​ສິນ​ຄ້າ "ຈະ​ຖືກ​ດັດ​ປັບ​ໃຫມ່',
+    stock_quantity_greater_then_zero:
+      'ຈຳ​ນວນ​ສິນ​ຄ້າ​ໃນ​ສາງ​ຄວນ​ມີ​ຫຼາຍກວ່າສູນ(0) ກ່ອນ​ເຮັດ​ການ​ກົດ​ສະຫຼຸບ',
+    stocktake_no_counted_items:
+      'ບໍ່​ສາ​ມາດ​ກົດ​ສະຫຼຸບ​ໃບ​ກວດ​ກາ​ສາງ​ໄດ້​ໂດຍ​ທີ່​ບໍ່​ມີ​ການກວດ​ນັບ​ລາຍ​ການ​ສິນ​ຄ້າ​ໃນ​ສາງ​ກ່ອນ',
+    stocktake_invalid_stock:
+      'ສິນ​ຄ້າ​ໃນ​ສາງ​ໄດ້​ມີ​ການ​ປ່ຽນ​ແປງ​ຕັ້ງ​ແຕ່ ໄດ້​ມີ​ການ​ເຮັດ​ການ​ດັດ​ປັບ​ສາງ​ຄັ້ງ​ສຸດ​ທ້າຍ​ຂອງ​ການ ການ​ກວດ​ການ​ສິນ​ຄ້າ​ໃນ​ສາງ (ຜ່ານ ໃບ​ສັ່ງ​ຈ່າຍ, ໃບ​ຮັບ​ສິນ​ຄ້າ, ຫຼື​ໃບ​ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ), ບໍ່​ວ່າ​ຈະ​ເປັນ ສ​ະ​ພາບ​ລວມ​ ແລະ ຈຳ​ນວນ​ຕົວ​ຈິ່ງ​ຂອງ​ສິນ​ຄ້າ "ຈະ​ຖືກ​ດັດ​ປັບ​ໃຫມ່',
   },
 });
+
+/* eslint-enable max-len */
 
 export default modalStrings;

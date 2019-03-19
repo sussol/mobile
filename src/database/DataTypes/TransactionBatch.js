@@ -1,26 +1,67 @@
 import Realm from 'realm';
 
+/**
+ * A transaction batch.
+ *
+ * @property  {string}       id
+ * @property  {string}       itemId
+ * @property  {string}       itemName
+ * @property  {ItemBatch}    itemBatch
+ * @property  {string}       batch
+ * @property  {Date}         expiryDate
+ * @property  {number}       packSize
+ * @property  {number}       numberOfPacks
+ * @property  {number}       numberOfPacksSent  For supplier invoices.
+ * @property  {Transaction}  transaction
+ * @property  {string}       note
+ * @property  {number}       costPrice
+ * @property  {number}       sellPrice
+ * @property  {number}       sortIndex
+ */
 export class TransactionBatch extends Realm.Object {
+  /**
+   * Delete transaction batch and associated item batch if can be safely removed.
+   *
+   * @param  {Realm}  database
+   */
   destructor(database) {
     this.setTotalQuantity(database, 0); // Ensure reverting of any stock changes to item batches.
-    // Can safely remove |this.itemBatch| if transaction batch was created by an external supplier
-    // invoice.
+
+    // Can safely remove associated item batch if transaction batch was created by an external
+    // supplier invoice.
     if (this.transaction.isExternalSupplierInvoice) {
       database.delete('ItemBatch', this.itemBatch);
     }
   }
 
+  /**
+   * Get total quantity of this batch.
+   *
+   * @return  {number}
+   */
   get totalQuantity() {
     return this.numberOfPacks * this.packSize;
   }
 
+  /**
+   * Get item code associated with this transaction batch.
+   *
+   * @return  {string}
+   */
   get itemCode() {
     return this.itemBatch.item.code;
   }
 
+  /**
+   * Get usage of this transaction batch.
+   *
+   * @return  {number}
+   */
   get usage() {
+    // Usage is zero if batch is for transaction which is unconfirmed and unfinalised.
     if (!this.transaction.isConfirmed && !this.transaction.isFinalised) return 0;
     switch (this.transaction.type) {
+      // Usage is |this.totalQuantity| if batch is for customer invoice.
       case 'customer_invoice':
         return this.totalQuantity;
       case 'supplier_invoice':
@@ -30,10 +71,21 @@ export class TransactionBatch extends Realm.Object {
     }
   }
 
+  /**
+   * Get id of associated item batch.
+   *
+   * @return  {string}
+   */
   get itemBatchId() {
     return this.itemBatch ? this.itemBatch.id : '';
   }
 
+  /**
+   * Set total quantity of this transaction batch.
+   *
+   * @param  {Realm}   database
+   * @param  {number}  quantity
+   */
   setTotalQuantity(database, quantity) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot change quantity of batches in a finalised transaction');
@@ -49,10 +101,21 @@ export class TransactionBatch extends Realm.Object {
     }
   }
 
+  /**
+   * Get total quantity of this transaction batch.
+   *
+   * @return  {number}
+   */
   get totalQuantitySent() {
+    // Calculate quantity as product of number of packs sent and pack size.
     return this.numberOfPacksSent * this.packSize;
   }
 
+  /**
+   * Get total price of this transaction batch.
+   *
+   * @return  {number}
+   */
   get totalPrice() {
     if (!this.numberOfPacks) return 0;
     if (this.type === 'customer_invoice') {
@@ -65,10 +128,10 @@ export class TransactionBatch extends Realm.Object {
   }
 
   /**
-   * Returns the maximum amount of the given quantity that can be allocated to this batch.
+   * Get the maximum amount of the given quantity that can be allocated to this batch.
    *
-   * @param   {double}  quantity  Quantity to allocate (can be positive or negative).
-   * @return  {double}            The maximum that can be allocated.
+   * @param   {number}  quantity  Quantity to allocate (can be positive or negative).
+   * @return  {number}
    */
   getAmountToAllocate(quantity) {
     // Max that can be removed is the total quantity currently in the transaction batch.
@@ -81,12 +144,15 @@ export class TransactionBatch extends Realm.Object {
     return quantity;
   }
 
+  /**
+   * Get string representation of transaction batch.
+   *
+   * @return  {string}
+   */
   toString() {
     return `${this.itemBatch} in a ${this.transaction.type}`;
   }
 }
-
-export default TransactionBatch;
 
 TransactionBatch.schema = {
   name: 'TransactionBatch',
@@ -100,7 +166,7 @@ TransactionBatch.schema = {
     expiryDate: { type: 'date', optional: true },
     packSize: 'double',
     numberOfPacks: 'double',
-    numberOfPacksSent: { type: 'double', optional: true }, // For supplier invoices.
+    numberOfPacksSent: { type: 'double', optional: true },
     transaction: 'Transaction',
     note: { type: 'string', optional: true },
     costPrice: 'double',
@@ -108,3 +174,5 @@ TransactionBatch.schema = {
     sortIndex: { type: 'int', optional: true },
   },
 };
+
+export default TransactionBatch;

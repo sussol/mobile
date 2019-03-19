@@ -25,6 +25,7 @@ export const addBatchToParent = (batch, parent, createItem) => {
   if (!item) {
     item = createItem();
   }
+
   // If the batch is already in the item, we don't want to add it again.
   if (item.batches && item.batches.find(currentBatch => currentBatch.id === batch.id)) return;
 
