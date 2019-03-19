@@ -12,6 +12,11 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord, mergeRecords } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
+import {
+  createOptionsInternalRecord,
+  createPeriodInternalRecord,
+  createPeriodScheduleInternalRecord,
+} from './createInternalRecord';
 
 const { THIS_STORE_ID } = SETTINGS_KEYS;
 
@@ -53,7 +58,7 @@ const parseDate = (ISODate, ISOTime) => {
  * @param  {string} numberString The string to convert to a boolean
  * @return {boolean}               The boolean representation of the string
  */
-const parseBoolean = booleanString => {
+export const parseBoolean = booleanString => {
   const trueStrings = ['true', 'True', 'TRUE'];
   return booleanString && trueStrings.indexOf(booleanString) >= 0;
 };
@@ -545,6 +550,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.save('Stocktake', stocktake);
       break;
     }
+    case 'Store': {
+      if (settings.get(THIS_STORE_ID) === record.ID) {
+        settings.set(THIS_STORE_ID, record.StoreID);
+      }
+      break;
+    }
     case 'Transaction': {
       if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
       const otherParty = database.getOrCreate('Name', record.name_ID);
@@ -616,6 +627,18 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.save('Transaction', transaction);
       itemBatch.addTransactionBatchIfUnique(transactionBatch);
       database.save('ItemBatch', itemBatch);
+      break;
+    }
+    case 'Period': {
+      database.save('Period', createPeriodInternalRecord(record, database));
+      break;
+    }
+    case 'PeriodSchedule': {
+      database.save(recordType, createPeriodScheduleInternalRecord(record));
+      break;
+    }
+    case 'Options': {
+      database.save(recordType, createOptionsInternalRecord(record));
       break;
     }
     default:
