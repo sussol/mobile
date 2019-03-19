@@ -77,5 +77,6 @@ RequisitionItem.schema = {
     suppliedQuantity: { type: 'double', optional: true },
     comment: { type: 'string', optional: true },
     sortIndex: { type: 'int', optional: true },
+    option: { type: 'Option', optional: true },
   },
 };
