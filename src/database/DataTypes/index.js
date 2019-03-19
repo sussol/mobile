@@ -29,4 +29,7 @@ export class SyncOut extends Realm.Object {}
 export { Stocktake } from './Stocktake';
 export { StocktakeItem } from './StocktakeItem';
 export { StocktakeBatch } from './StocktakeBatch';
+export { Period } from './Period';
+export { PeriodSchedule } from './PeriodSchedule';
+export { Options } from './Options';
 export class User extends Realm.Object {}
