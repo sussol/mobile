@@ -186,5 +186,7 @@ Requisition.schema = {
     enteredBy: { type: 'User', optional: true },
     items: { type: 'list', objectType: 'RequisitionItem' },
     linkedTransaction: { type: 'Transaction', optional: true },
+    program: { type: 'MasterList', optional: true },
+    period: { type: 'Period', optional: true },
   },
 };
