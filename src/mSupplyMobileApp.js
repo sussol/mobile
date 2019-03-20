@@ -45,6 +45,7 @@ import globalStyles, {
   textStyles,
   SUSSOL_ORANGE,
 } from './globalStyles';
+import { ByProgramModal } from './widgets/modals/index';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -81,6 +82,7 @@ class MSupplyMobileAppContainer extends React.Component {
       isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
+      isOpen: true,
     };
   }
 
@@ -207,6 +209,12 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
+  //   <FirstUsePage
+  //   synchroniser={this.synchroniser}
+  //   onInitialised={this.onInitialised}
+  //   syncState={syncState}
+  // />
+  // return <ByProgramModal isOpen={isOpen} db={this.database} />;
   render() {
     const { dispatch, finaliseItem, navigationState, syncState } = this.props;
     const {
@@ -216,6 +224,7 @@ class MSupplyMobileAppContainer extends React.Component {
       isInitialised,
       isLoading,
       syncModalIsOpen,
+      isOpen,
     } = this.state;
 
     if (!isInitialised) {

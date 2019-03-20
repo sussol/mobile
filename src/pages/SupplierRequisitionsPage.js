@@ -12,6 +12,7 @@ import { createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy } from '../utilities';
 import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
+import { ByProgramModal } from '../widgets/modals/index';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -29,6 +30,7 @@ export class SupplierRequisitionsPage extends React.Component {
     this.state = {
       selection: [],
       isCreatingRequisition: false,
+      byProgramModalOpen: false,
     };
     this.requisitions = props.database.objects('RequestRequisition');
     this.dataFilters = {
@@ -62,14 +64,25 @@ export class SupplierRequisitionsPage extends React.Component {
     this.refreshData();
   };
 
-  onNewRequisition = otherStoreName => {
-    const { database, currentUser } = this.props;
+  onCancelByProgram = () => {
+    this.setState({ byProgramModalOpen: false });
+  };
 
-    let requisition;
-    database.write(() => {
-      requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
-    });
-    this.navigateToRequisition(requisition);
+  onConfirmByProgram = ({ programId, supplierId, orderType, periodId }) => {
+    console.log('***********************************');
+    console.log(programId, supplierId, orderType, periodId);
+    console.log('***********************************');
+  };
+
+  onNewRequisition = otherStoreName => {
+    this.setState({ byProgramModalOpen: true });
+    // const { database, currentUser } = this.props;
+
+    // let requisition;
+    // database.write(() => {
+    //   requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
+    // });
+    // this.navigateToRequisition(requisition);
   };
 
   onRowPress = requisition => this.navigateToRequisition(requisition);
@@ -136,89 +149,97 @@ export class SupplierRequisitionsPage extends React.Component {
   renderNewRequisitionButton = () => (
     <PageButton
       text={buttonStrings.new_requisition}
-      onPress={() => this.setState({ isCreatingRequisition: true })}
+      onPress={() => this.setState({ byProgramModalOpen: true })}
     />
   );
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data, isCreatingRequisition, selection } = this.state;
+    const { data, isCreatingRequisition, selection, byProgramModalOpen } = this.state;
 
     return (
-      <GenericPage
-        data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopRightComponent={this.renderNewRequisitionButton}
-        onRowPress={this.onRowPress}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'serialNumber',
-            width: 1.5,
-            title: tableStrings.requisition_number,
-            sortable: true,
-          },
-          {
-            key: 'supplierName',
-            width: 2,
-            title: tableStrings.supplier,
-            sortable: false,
-          },
-          {
-            key: 'entryDate',
-            width: 1,
-            title: tableStrings.entered_date,
-            sortable: true,
-          },
-          {
-            key: 'numberOfItems',
-            width: 1,
-            title: tableStrings.items,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'status',
-            width: 1,
-            title: tableStrings.status,
-            sortable: true,
-          },
-          {
-            key: 'delete',
-            width: 1,
-            title: tableStrings.delete,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={database}
-        selection={selection}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
-      >
-        <BottomConfirmModal
-          isOpen={selection.length > 0}
-          questionText={modalStrings.delete_these_invoices}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.delete}
+      <>
+        <ByProgramModal
+          isOpen={byProgramModalOpen}
+          onConfirm={this.onConfirmByProgram}
+          onCancel={this.onCancelByProgram}
+          database={database}
         />
-        <SelectModal
-          isOpen={isCreatingRequisition}
-          options={database.objects('InternalSupplier')}
-          placeholderText={modalStrings.start_typing_to_select_supplier}
-          queryString="name BEGINSWITH[c] $0"
-          sortByString="name"
-          onSelect={name =>
-            this.setState({ isCreatingRequisition: false }, () => this.onNewRequisition(name))
-          }
-          onClose={() => this.setState({ isCreatingRequisition: false })}
-          title={modalStrings.search_for_the_supplier}
-        />
-      </GenericPage>
+        <GenericPage
+          data={data}
+          refreshData={this.refreshData}
+          renderCell={this.renderCell}
+          renderTopRightComponent={this.renderNewRequisitionButton}
+          onRowPress={this.onRowPress}
+          onSelectionChange={this.onSelectionChange}
+          defaultSortKey={this.dataFilters.sortBy}
+          defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+          columns={[
+            {
+              key: 'serialNumber',
+              width: 1.5,
+              title: tableStrings.requisition_number,
+              sortable: true,
+            },
+            {
+              key: 'supplierName',
+              width: 2,
+              title: tableStrings.supplier,
+              sortable: false,
+            },
+            {
+              key: 'entryDate',
+              width: 1,
+              title: tableStrings.entered_date,
+              sortable: true,
+            },
+            {
+              key: 'numberOfItems',
+              width: 1,
+              title: tableStrings.items,
+              sortable: true,
+              alignText: 'right',
+            },
+            {
+              key: 'status',
+              width: 1,
+              title: tableStrings.status,
+              sortable: true,
+            },
+            {
+              key: 'delete',
+              width: 1,
+              title: tableStrings.delete,
+              alignText: 'center',
+            },
+          ]}
+          dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+          database={database}
+          selection={selection}
+          {...genericTablePageStyles}
+          topRoute={topRoute}
+        >
+          <BottomConfirmModal
+            isOpen={selection.length > 0}
+            questionText={modalStrings.delete_these_invoices}
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.delete}
+          />
+          <SelectModal
+            isOpen={isCreatingRequisition}
+            options={database.objects('InternalSupplier')}
+            placeholderText={modalStrings.start_typing_to_select_supplier}
+            queryString="name BEGINSWITH[c] $0"
+            sortByString="name"
+            onSelect={name =>
+              this.setState({ isCreatingRequisition: false }, () => this.onNewRequisition(name))
+            }
+            onClose={() => this.setState({ isCreatingRequisition: false })}
+            title={modalStrings.search_for_the_supplier}
+          />
+        </GenericPage>
+      </>
     );
   }
 }
