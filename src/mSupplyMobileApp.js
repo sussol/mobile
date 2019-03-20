@@ -193,75 +193,85 @@ class MSupplyMobileAppContainer extends React.Component {
       syncModalIsOpen: false,
     };
 
-    const addHours = (hours, datetime) => {
-      const newDatetime = new Date(datetime);
-      newDatetime.setTime(newDatetime.getTime() + hours * 60 * 60 * 1000);
-      return newDatetime;
-    };
-
+    const vaccineCategory = this.database.objects('ItemCategory').filtered('name == "Vaccine"');
+    console.log('found item category = "Vaccine" ' + vaccineCategory[0].id);
+    const items = this.database.objects('Item').filtered('name CONTAINS "vial"');
+    console.log('found items name CONTAINS "vial"' + items.length);
     this.database.write(() => {
-      const allSensorLogs = this.database.objects('SensorLog');
-
-      if (allSensorLogs && allSensorLogs.length > 0) this.database.delete('SensorLog', allSensorLogs);
-
-      const allSensors = this.database.objects('Sensor');
-      if (allSensors && allSensors.length > 0) this.database.delete('Sensor', allSensors);
-
-      const sensor1 = this.database.create('Sensor', {
-        id: generateUUID(),
-        name: 'checkSensor1',
-        address: 'checkSensor1Address',
-        latestValue: 5.0,
-        latestValueTimestamp: new Date(),
-        latestBatteryLevel: 99,
-        logInterval: 20,
-      });
-
-      const sensor2 = this.database.create('Sensor', {
-        id: generateUUID(),
-        name: 'checkSensor2',
-        address: 'checkSensor2Address',
-        latestValue: 9,
-        latestValueTimestamp: new Date(),
-        latestBatteryLevel: 99,
-        logInterval: 20,
-      });
-
-      const fridges = this.database.objects('Location');
-      fridges[1].sensor = sensor2;
-      fridges[0].sensor = sensor1;
-      fridges[0].soh = '$5120';
-      fridges[1].soh = '$140';
- 
-      const sensor1Data = sensorData;
-      let dateNow = addHours(24*8*-1, new Date());
-
-      for (let i = 0; i < sensor1Data.length; i++) {
-        dateNow = addHours(3, dateNow);
-        const sensorLog = this.database.create('SensorLog', {
-          id: generateUUID(),
-          timestamp: dateNow,
-          logCounter: i,
-          logInterval: 20,
-          value: sensor1Data[i].y,
-        });
-        sensor1.sensorLogs.push(sensorLog);
-      }
-
-      const sensor2Data = sensorData2;
-      dateNow = addHours(24*8*-1, new Date());
-      for (let i = 0; i < sensor2Data.length; i++) {
-        dateNow = addHours(3, dateNow);
-        const sensorLog = this.database.create('SensorLog', {
-          id: generateUUID(),
-          timestamp: dateNow,
-          logCounter: i,
-          logInterval: 20,
-          value: sensor2Data[i].y,
-        });
-        sensor2.sensorLogs.push(sensorLog);
-      }
+      items.forEach(item => item.category = vaccineCategory[0]);
     });
+
+
+
+    // const addHours = (hours, datetime) => {
+    //   const newDatetime = new Date(datetime);
+    //   newDatetime.setTime(newDatetime.getTime() + hours * 60 * 60 * 1000);
+    //   return newDatetime;
+    // };
+
+    // this.database.write(() => {
+    //   const allSensorLogs = this.database.objects('SensorLog');
+
+    //   if (allSensorLogs && allSensorLogs.length > 0) this.database.delete('SensorLog', allSensorLogs);
+
+    //   const allSensors = this.database.objects('Sensor');
+    //   if (allSensors && allSensors.length > 0) this.database.delete('Sensor', allSensors);
+
+    //   const sensor1 = this.database.create('Sensor', {
+    //     id: generateUUID(),
+    //     name: 'checkSensor1',
+    //     address: 'checkSensor1Address',
+    //     latestValue: 5.0,
+    //     latestValueTimestamp: new Date(),
+    //     latestBatteryLevel: 99,
+    //     logInterval: 20,
+    //   });
+
+    //   const sensor2 = this.database.create('Sensor', {
+    //     id: generateUUID(),
+    //     name: 'checkSensor2',
+    //     address: 'checkSensor2Address',
+    //     latestValue: 9,
+    //     latestValueTimestamp: new Date(),
+    //     latestBatteryLevel: 99,
+    //     logInterval: 20,
+    //   });
+
+    //   const fridges = this.database.objects('Location');
+    //   fridges[1].sensor = sensor2;
+    //   fridges[0].sensor = sensor1;
+    //   fridges[0].soh = '$5120';
+    //   fridges[1].soh = '$140';
+ 
+    //   const sensor1Data = sensorData;
+    //   let dateNow = addHours(24*8*-1, new Date());
+
+    //   for (let i = 0; i < sensor1Data.length; i++) {
+    //     dateNow = addHours(3, dateNow);
+    //     const sensorLog = this.database.create('SensorLog', {
+    //       id: generateUUID(),
+    //       timestamp: dateNow,
+    //       logCounter: i,
+    //       logInterval: 20,
+    //       value: sensor1Data[i].y,
+    //     });
+    //     sensor1.sensorLogs.push(sensorLog);
+    //   }
+
+    //   const sensor2Data = sensorData2;
+    //   dateNow = addHours(24*8*-1, new Date());
+    //   for (let i = 0; i < sensor2Data.length; i++) {
+    //     dateNow = addHours(3, dateNow);
+    //     const sensorLog = this.database.create('SensorLog', {
+    //       id: generateUUID(),
+    //       timestamp: dateNow,
+    //       logCounter: i,
+    //       logInterval: 20,
+    //       value: sensor2Data[i].y,
+    //     });
+    //     sensor2.sensorLogs.push(sensorLog);
+    //   }
+    // });
     // this.logTesting();
   }
   /// TO BE REMOVED

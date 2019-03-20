@@ -243,18 +243,21 @@ export class SupplierInvoicePage extends React.Component {
         );
       }
       case 'fridge': {
-        return (
-          <PageButton
-            key={transactionBatch.id}
-            style={{ margin: 3, padding: 6, width: 'auto', height: 'auto' }}
-            text={`» ${transactionBatch.location ? transactionBatch.location.name : 'Select'}`}
-            onPress={() => {
-              this.selectedBatch = transactionBatch;
-              this.openFridgeSelection();
-            }}
-            isDisabled={this.props.transaction.isFinalised}
-          />
-        );
+        return {
+          cellContents: transactionBatch.location.name,
+        };
+        // return (
+        //   <PageButton
+        //     key={transactionBatch.id}
+        //     style={{ margin: 3, padding: 6, width: 'auto', height: 'auto' }}
+        //     text={`» ${transactionBatch.location ? transactionBatch.location.name : 'Select'}`}
+        //     onPress={() => {
+        //       this.selectedBatch = transactionBatch;
+        //       this.openFridgeSelection();
+        //     }}
+        //     isDisabled={this.props.transaction.isFinalised}
+        //   />
+        // );
       }
       case 'vvnStatus': {
         return (
@@ -351,16 +354,15 @@ export class SupplierInvoicePage extends React.Component {
         toggleOnStyle={globalStyles.toggleOptionSelected}
         toggles={[
           {
-            text: 'All Other Items',
+            text: `Non Cold Chain ${this.state.otherItemQuantity === 0 ? '' : '(' + this.state.otherItemQuantity + ')'}`,
             onPress: () => this.onToggleStatusFilter(true),
             isOn: this.state.showOtherItems,
-            badgeValue: this.state.otherItemQuantity,
           },
           {
-            text: 'Vaccines',
+            text: `Cold Chain ${this.state.vaccineQuantity === 0 ? '' : '(' + this.state.vaccineQuantity + ')'}`,
             onPress: () => this.onToggleStatusFilter(false),
             isOn: !this.state.showOtherItems,
-            badgeValue: this.state.vaccineQuantity,
+            badgeValue: 1,
           },
         ]}
       />
@@ -416,7 +418,7 @@ export class SupplierInvoicePage extends React.Component {
             {
               key: 'vvnStatus',
               width: 1,
-              title: 'VVN Status',
+              title: 'VVM Status',
               alignText: 'center',
             },
             {
