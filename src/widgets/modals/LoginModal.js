@@ -14,7 +14,7 @@ import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LanguageModal } from './LanguageModal';
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 import { authStrings, navStrings } from '../../localization';
-
+import { ByProgramModal } from './ByProgramModal';
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 
 export class LoginModal extends React.Component {
@@ -28,6 +28,7 @@ export class LoginModal extends React.Component {
       password: '',
       isLanguageModalOpen: false,
       appVersion: '',
+      byProgramOpen: false,
     };
     this.setAppVersion();
     this.passwordInputRef = null;
@@ -50,28 +51,29 @@ export class LoginModal extends React.Component {
   }
 
   onLogin = async () => {
-    const { authenticator, onAuthentication, settings } = this.props;
-    const { username, password } = this.state;
+    this.setState({ byProgramOpen: true });
+    // const { authenticator, onAuthentication, settings } = this.props;
+    // const { username, password } = this.state;
 
-    settings.set(SETTINGS_KEYS.MOST_RECENT_USERNAME, username);
+    // settings.set(SETTINGS_KEYS.MOST_RECENT_USERNAME, username);
 
-    this.setState({ authStatus: 'authenticating' });
+    // this.setState({ authStatus: 'authenticating' });
 
-    try {
-      const user = await authenticator.authenticate(username, password);
-      this.setState({ authStatus: 'authenticated' });
-      onAuthentication(user);
-    } catch (error) {
-      this.setState({ authStatus: 'error', error: error.message });
-      onAuthentication(null);
-      if (!error.message.startsWith('Invalid username or password')) {
-        // After ten seconds of displaying the error, re-enable the button
-        this.errorTimeoutId = setTimeout(() => {
-          this.setState({ authStatus: 'unauthenticated' });
-          this.errorTimeoutId = null;
-        }, 10 * 1000);
-      }
-    }
+    // try {
+    //   const user = await authenticator.authenticate(username, password);
+    //   this.setState({ authStatus: 'authenticated' });
+    //   onAuthentication(user);
+    // } catch (error) {
+    //   this.setState({ authStatus: 'error', error: error.message });
+    //   onAuthentication(null);
+    //   if (!error.message.startsWith('Invalid username or password')) {
+    //     // After ten seconds of displaying the error, re-enable the button
+    //     this.errorTimeoutId = setTimeout(() => {
+    //       this.setState({ authStatus: 'unauthenticated' });
+    //       this.errorTimeoutId = null;
+    //     }, 10 * 1000);
+    //   }
+    // }
   };
 
   async setAppVersion() {
@@ -101,7 +103,14 @@ export class LoginModal extends React.Component {
 
   render() {
     const { isAuthenticated, settings } = this.props;
-    const { authStatus, username, password, appVersion, isLanguageModalOpen } = this.state;
+    const {
+      authStatus,
+      username,
+      password,
+      appVersion,
+      isLanguageModalOpen,
+      byProgramOpen,
+    } = this.state;
 
     return (
       // android:windowSoftInputMode="adjustResize|stateUnchanged">
@@ -117,6 +126,7 @@ export class LoginModal extends React.Component {
         >
           <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
             <View style={[globalStyles.authFormContainer]}>
+              <ByProgramModal isOpen={byProgramOpen} />
               <Image
                 resizeMode="contain"
                 style={globalStyles.authFormLogo}
