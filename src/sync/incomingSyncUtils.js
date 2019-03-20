@@ -213,7 +213,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
     },
     Options: {
-      cannotBeBlank: ['name', 'type', 'isActive'],
+      cannotBeBlank: ['title', 'type', 'isActive'],
       canBeBlank: [],
     },
     PeriodSchedule: {

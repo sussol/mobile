@@ -15,6 +15,6 @@ PeriodSchedule.schema = {
   properties: {
     id: 'string',
     name: { type: 'string', default: 'Placeholder Name' },
-    periods: { type: 'list', objectType: 'Period', optional: 'true' },
+    periods: { type: 'list', objectType: 'Period' },
   },
 };

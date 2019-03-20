@@ -21,7 +21,7 @@ export const createPeriodInternalRecord = (record, database) => ({
 
 export const createOptionsInternalRecord = record => ({
   id: record.ID,
-  name: record.name,
+  title: record.title,
   type: record.type,
   isActive: parseBoolean(record.isActive),
 });
