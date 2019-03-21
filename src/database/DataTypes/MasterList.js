@@ -19,13 +19,15 @@ export class MasterList extends Realm.Object {
     this.addItem(masterListItem);
   }
 
-  canUseProgram(tags) {
+  getStoreTagObject(tags) {
     const storeTags = tags.split(/[\s,]+/);
-    return (
-      Object.keys(JSON.parse(this.programSettings)).filter(
-        programsStoreTags => storeTags.indexOf(programsStoreTags) >= 0
-      ).length > 0
-    );
+    return Object.keys(JSON.parse(this.programSettings)).filter(
+      programsStoreTags => storeTags.indexOf(programsStoreTags) >= 0
+    )[0];
+  }
+
+  canUseProgram(tags) {
+    return !!this.getStoreTagObject(tags);
   }
 
   getOrderTypes(tags) {
