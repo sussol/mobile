@@ -21,30 +21,22 @@ export class MasterList extends Realm.Object {
 
   getStoreTagObject(tags) {
     const storeTags = tags.split(/[\s,]+/);
-    return Object.keys(JSON.parse(this.programSettings)).filter(
-      programsStoreTags => storeTags.indexOf(programsStoreTags) >= 0
-    )[0];
+    return Object.entries(JSON.parse(this.programSettings).storeTags).reduce(
+      ([programStoreTag, storeTagObject]) => {
+        if (!(storeTags.indexOf(programStoreTag) >= 0)) return null;
+        return storeTagObject;
+      }
+    );
   }
 
   canUseProgram(tags) {
     return !!this.getStoreTagObject(tags);
   }
 
-  getOrderTypes(tags) {
-    const storeTags = tags.split(/[\s,]+/);
-    return Object.entries(JSON.parse(this.programSettings).storeTags).reduce(
-      ([programsStoreTags, value]) => {
-        if (!(storeTags.indexOf(programsStoreTags) >= 0)) return null;
-        return value.orderTypes;
-      }
-    );
-  }
-
   getOrderType(tags, orderTypeName) {
-    const orderTypes = this.getOrderTypes(tags);
-    return orderTypes.find(orderType => {
-      if (orderType.name === orderTypeName) return true;
-      return false;
+    this.getStoreTagObject(tags).orderTypes.reduce(orderType => {
+      if (!(orderType.name === orderTypeName)) return null;
+      return orderType;
     });
   }
 }
