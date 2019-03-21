@@ -41,6 +41,7 @@ export class SupplierRequisitionPage extends React.Component {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
+      isProgramOrder: false,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -49,12 +50,24 @@ export class SupplierRequisitionPage extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const { requisition, settings } = this.props;
+    if (requisition.program) {
+      const isProgramOrder = requisition.program.canUseProgram(
+        settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)
+      );
+      this.setState({ isProgramOrder });
+      this.onAddMasterItems();
+    }
+  }
+
   onAddMasterItems = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
-
+    const { isProgramOrder } = this.state;
     runWithLoadingIndicator(() => {
       database.write(() => {
-        requisition.addItemsFromMasterList(database, this.getThisStore());
+        if (isProgramOrder) requisition.addItemsFromProgram(database);
+        else requisition.addItemsFromMasterList(database, this.getThisStore());
         database.save('Requisition', requisition);
       });
       this.refreshData();
