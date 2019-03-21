@@ -14,7 +14,6 @@ import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LanguageModal } from './LanguageModal';
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 import { authStrings, navStrings } from '../../localization';
-import { ByProgramModal } from './ByProgramModal';
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 
 export class LoginModal extends React.Component {
@@ -28,7 +27,6 @@ export class LoginModal extends React.Component {
       password: '',
       isLanguageModalOpen: false,
       appVersion: '',
-      byProgramOpen: false,
     };
     this.setAppVersion();
     this.passwordInputRef = null;
@@ -102,14 +100,7 @@ export class LoginModal extends React.Component {
 
   render() {
     const { isAuthenticated, settings } = this.props;
-    const {
-      authStatus,
-      username,
-      password,
-      appVersion,
-      isLanguageModalOpen,
-      byProgramOpen,
-    } = this.state;
+    const { authStatus, username, password, appVersion, isLanguageModalOpen } = this.state;
 
     return (
       // android:windowSoftInputMode="adjustResize|stateUnchanged">

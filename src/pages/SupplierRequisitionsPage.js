@@ -31,6 +31,7 @@ export class SupplierRequisitionsPage extends React.Component {
       selection: [],
       isCreatingRequisition: false,
       byProgramModalOpen: false,
+      programValues: { program: {}, period: {}, supplier: {}, orderType: {} },
     };
     this.requisitions = props.database.objects('RequestRequisition');
     this.dataFilters = {
@@ -39,6 +40,15 @@ export class SupplierRequisitionsPage extends React.Component {
       isAscending: false,
     };
   }
+
+  programValuesSetter = ({ key, item }) => {
+    const { programValues } = this.state;
+    const newProgramValues = {
+      ...programValues,
+      [key]: item,
+    };
+    this.setState({ programValues: newProgramValues });
+  };
 
   onDeleteConfirm = () => {
     const { selection } = this.state;
@@ -68,11 +78,7 @@ export class SupplierRequisitionsPage extends React.Component {
     this.setState({ byProgramModalOpen: false });
   };
 
-  onConfirmByProgram = ({ programId, supplierId, orderType, periodId }) => {
-    console.log('***********************************');
-    console.log(programId, supplierId, orderType, periodId);
-    console.log('***********************************');
-  };
+  onConfirmByProgram = () => {};
 
   onNewRequisition = otherStoreName => {
     this.setState({ byProgramModalOpen: true });
@@ -155,7 +161,13 @@ export class SupplierRequisitionsPage extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data, isCreatingRequisition, selection, byProgramModalOpen } = this.state;
+    const {
+      data,
+      isCreatingRequisition,
+      selection,
+      byProgramModalOpen,
+      programValues,
+    } = this.state;
 
     return (
       <>
@@ -164,6 +176,9 @@ export class SupplierRequisitionsPage extends React.Component {
           onConfirm={this.onConfirmByProgram}
           onCancel={this.onCancelByProgram}
           database={database}
+          valueSetter={this.programValuesSetter}
+          values={programValues}
+          type="requisition"
         />
         <GenericPage
           data={data}
