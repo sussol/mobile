@@ -7,7 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
-
+import { ByProgramModal } from '../widgets/modals/index';
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy } from '../utilities';
@@ -29,6 +29,9 @@ export class SupplierRequisitionsPage extends React.Component {
     this.state = {
       selection: [],
       isCreatingRequisition: false,
+      byProgramModalOpen: false,
+      programValues: { program: {}, period: {}, supplier: {}, orderType: {} },
+      usesPrograms: false,
     };
     this.requisitions = props.database.objects('RequestRequisition');
     this.dataFilters = {
@@ -37,6 +40,38 @@ export class SupplierRequisitionsPage extends React.Component {
       isAscending: false,
     };
   }
+
+  // Need to add filter to find if there are programs [Not in the schema of this branch]
+  componentDidMount() {
+    const { database } = this.props;
+    const usesPrograms = database.objects('MasterList');
+    this.setState({ usesPrograms });
+  }
+
+  onConfirmByProgram = () => {
+    const { database, currentUser } = this.props;
+    const { programValues } = this.setState;
+    const requisitionValues = { ...programValues, currentUser };
+    let requisition;
+    database.write(() => {
+      requisition = createRecord(database, 'ProgramRequisition', requisitionValues);
+    });
+    this.setState({ byProgramModalOpen: false });
+    this.navigateToRequisition(requisition);
+  };
+
+  onCancelByProgram = () => {
+    this.setState({ byProgramModalOpen: false });
+  };
+
+  programValuesSetter = ({ key, item }) => {
+    const { programValues } = this.state;
+    const newProgramValues = {
+      ...programValues,
+      [key]: item,
+    };
+    this.setState({ programValues: newProgramValues });
+  };
 
   onDeleteConfirm = () => {
     const { selection } = this.state;
@@ -64,7 +99,6 @@ export class SupplierRequisitionsPage extends React.Component {
 
   onNewRequisition = otherStoreName => {
     const { database, currentUser } = this.props;
-
     let requisition;
     database.write(() => {
       requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
@@ -133,16 +167,28 @@ export class SupplierRequisitionsPage extends React.Component {
     }
   };
 
-  renderNewRequisitionButton = () => (
-    <PageButton
-      text={buttonStrings.new_requisition}
-      onPress={() => this.setState({ isCreatingRequisition: true })}
-    />
-  );
+  renderNewRequisitionButton = () => {
+    const { usesPrograms } = this.state;
+    const newStateObject = usesPrograms
+      ? { byProgramModalOpen: true }
+      : { isCreatingRequisition: true };
+    return (
+      <PageButton
+        text={buttonStrings.new_requisition}
+        onPress={() => this.setState(newStateObject)}
+      />
+    );
+  };
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data, isCreatingRequisition, selection } = this.state;
+    const {
+      data,
+      isCreatingRequisition,
+      selection,
+      byProgramModalOpen,
+      programValues,
+    } = this.state;
 
     return (
       <GenericPage
@@ -217,6 +263,15 @@ export class SupplierRequisitionsPage extends React.Component {
           }
           onClose={() => this.setState({ isCreatingRequisition: false })}
           title={modalStrings.search_for_the_supplier}
+        />
+        <ByProgramModal
+          isOpen={byProgramModalOpen}
+          onConfirm={this.onConfirmByProgram}
+          onCancel={this.onCancelByProgram}
+          database={database}
+          valueSetter={this.programValuesSetter}
+          values={programValues}
+          type="requisition"
         />
       </GenericPage>
     );
