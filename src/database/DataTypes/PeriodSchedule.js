@@ -6,21 +6,17 @@
 import Realm from 'realm';
 
 export class PeriodSchedule extends Realm.Object {
-  getUseablePeriodsForProgram(program, maxMOS) {
+  getUseablePeriodsForProgram(program, maxOrdersPerPeriod) {
     const periods = this.periods.reduce(period => {
-      if (period.numberOfRequisitionsForProgram(program) >= maxMOS) return null;
+      if (period.numberOfRequisitionsForProgram(program) >= maxOrdersPerPeriod) return null;
       return period;
     });
     return periods;
   }
 
-  addPeriod(period) {
-    this.periods.push(period);
-  }
-
   addPeriodIfUnique(period) {
     if (this.periods.filtered('id == $0', period.id).length > 0) return;
-    this.addPeriod(period);
+    this.periods.push(period);
   }
 }
 
