@@ -5,7 +5,24 @@
 
 import Realm from 'realm';
 
-export class PeriodSchedule extends Realm.Object {}
+export class PeriodSchedule extends Realm.Object {
+  getUseablePeriods(maxMOS) {
+    const periods = this.periods.reduce(period => {
+      if (period.numberOfRequisitions() >= maxMOS) return null;
+      return period;
+    });
+    return periods;
+  }
+
+  addPeriod(period) {
+    this.periods.push(period);
+  }
+
+  addPeriodIfUnique(period) {
+    if (this.periods.filtered('id == $0', period.id).length > 0) return;
+    this.addPeriod(period);
+  }
+}
 
 export default PeriodSchedule;
 
