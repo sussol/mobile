@@ -18,6 +18,15 @@ export class MasterList extends Realm.Object {
     if (this.items.filtered('id == $0', masterListItem.id).length > 0) return;
     this.addItem(masterListItem);
   }
+
+  canUseProgram(tags) {
+    const storeTags = tags.split(/[\s,]+/);
+    return (
+      Object.keys(JSON.parse(this.programSettings)).filter(
+        programsStoreTags => storeTags.indexOf(programsStoreTags) >= 0
+      ).length > 0
+    );
+  }
 }
 
 export default MasterList;
