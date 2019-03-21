@@ -10,6 +10,10 @@ export class Period extends Realm.Object {
     return this.requisitions.length;
   }
 
+  numberOfRequisitionsForProgram(program) {
+    return this.requisitions.filtered('program.id = $0', program.id).length;
+  }
+
   addRequisition(requisition) {
     this.requisitions.push(requisition);
   }
