@@ -6,7 +6,7 @@
 import Realm from 'realm';
 
 export class PeriodSchedule extends Realm.Object {
-  getUseablePeriods(program, maxMOS) {
+  getUseablePeriodsForProgram(program, maxMOS) {
     const periods = this.periods.reduce(period => {
       if (period.numberOfRequisitionsForProgram(program) >= maxMOS) return null;
       return period;
