@@ -18,7 +18,7 @@ import {
   createPeriodScheduleInternalRecord,
 } from './createInternalRecord';
 
-const { THIS_STORE_ID } = SETTINGS_KEYS;
+const { THIS_STORE_TAGS, THIS_STORE_ID } = SETTINGS_KEYS;
 
 /**
  * Returns the number string as a float, or null if none passed.
@@ -469,6 +469,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       if (!status) {
         status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       }
+      const period = database.getOrCreate('Period', record.periodID);
       internalRecord = {
         id: record.ID,
         status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
@@ -481,9 +482,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         otherStoreName: database.getOrCreate('Name', record.name_ID),
         program: database.getOrCreate('MasterList', record.programID),
-        period: database.getOrCreate('Period', record.periodID),
+        period,
       };
-      database.update(recordType, internalRecord);
+
+      const requisition = database.update(recordType, internalRecord);
+      period.addRequisitionIfUnique(requisition);
       break;
     }
     case 'RequisitionItem': {
@@ -552,7 +555,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Store': {
       if (settings.get(THIS_STORE_ID) === record.ID) {
-        settings.set(THIS_STORE_ID, record.StoreID);
+        settings.set(THIS_STORE_TAGS, record.tags);
       }
       break;
     }
@@ -630,15 +633,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Period': {
-      database.save('Period', createPeriodInternalRecord(record, database));
+      const period = database.update(recordType, createPeriodInternalRecord(record, database));
+      period.periodSchedule.addPeriodIfUnique(period);
       break;
     }
     case 'PeriodSchedule': {
-      database.save(recordType, createPeriodScheduleInternalRecord(record));
+      database.update(recordType, createPeriodScheduleInternalRecord(record));
       break;
     }
     case 'Options': {
-      database.save(recordType, createOptionsInternalRecord(record));
+      database.update(recordType, createOptionsInternalRecord(record));
       break;
     }
     default:
