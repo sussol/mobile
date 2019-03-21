@@ -9,13 +9,11 @@ import PropTypes from 'prop-types';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
-// import { SETTINGS_KEYS } from '../../settings';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 import { AutocompleteSelector, PageInfo, Button, ToggleBar } from '..';
 import { PageContentModal } from './PageContentModal';
 
 export class ByProgramModal extends React.Component {
-  // Page info props
   constructor(props) {
     super(props);
 
