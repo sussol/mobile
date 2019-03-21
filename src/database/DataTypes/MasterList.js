@@ -39,6 +39,14 @@ export class MasterList extends Realm.Object {
       }
     );
   }
+
+  getOrderType(tags, orderTypeName) {
+    const orderTypes = this.getOrderTypes(tags);
+    return orderTypes.find(orderType => {
+      if (orderType.name === orderTypeName) return true;
+      return false;
+    });
+  }
 }
 
 export default MasterList;
