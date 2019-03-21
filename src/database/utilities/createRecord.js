@@ -341,6 +341,16 @@ const createTransactionItem = (database, transaction, item) => {
   return transactionItem;
 };
 
+const createProgramRequisition = (database, requisitionValues) => {
+  const requisition = database.create('Requisition', {
+    id: generateUUID(),
+    otherStoreName: requisitionValues.supplier,
+    ...requisitionValues,
+  });
+  database.save('Requisition', requisition);
+  return requisition;
+};
+
 /**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
@@ -378,6 +388,8 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
+    case 'ProgramRequisition':
+      return createProgramRequisition(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
