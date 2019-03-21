@@ -17,7 +17,6 @@ import { SETTINGS_KEYS } from '../../settings';
 export class ByProgramModal extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       searchIsOpen: false,
       searchModalKey: 'supplier',
