@@ -27,6 +27,16 @@ export class MasterList extends Realm.Object {
       ).length > 0
     );
   }
+
+  getOrderTypes(tags) {
+    const storeTags = tags.split(/[\s,]+/);
+    return Object.entries(JSON.parse(this.programSettings).storeTags).reduce(
+      ([programsStoreTags, value]) => {
+        if (!(storeTags.indexOf(programsStoreTags) >= 0)) return null;
+        return value.orderTypes;
+      }
+    );
+  }
 }
 
 export default MasterList;
