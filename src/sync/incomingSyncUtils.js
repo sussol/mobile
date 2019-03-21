@@ -39,7 +39,7 @@ const parseNumber = numberString => {
  * @param   {string}  ISOTime  The time in ISO 8601 format. Optional.
  * @return  {Date}             The Date representing |ISODate| (and |ISOTime|).
  */
-const parseDate = (ISODate, ISOTime) => {
+export const parseDate = (ISODate, ISOTime) => {
   if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
     return null;
   }
@@ -465,11 +465,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      let period;
       // If not a special 'wp' or 'wf' status, use the normal status translation.
       if (!status) {
         status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       }
-      const period = database.getOrCreate('Period', record.periodID);
+      if (record.periodID) {
+        period = database.getOrCreate('Period', record.periodID);
+      }
+
       internalRecord = {
         id: record.ID,
         status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
@@ -484,9 +488,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         program: database.getOrCreate('MasterList', record.programID),
         period,
       };
-
       const requisition = database.update(recordType, internalRecord);
-      period.addRequisitionIfUnique(requisition);
+      if (period) period.addRequisitionIfUnique(requisition);
       break;
     }
     case 'RequisitionItem': {
@@ -546,7 +549,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
-        option: database.getOrCreate('Option', record.optionID),
+        option: database.getOrCreate('Options', record.optionID),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
