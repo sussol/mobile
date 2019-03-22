@@ -44,7 +44,7 @@ export class MasterList extends Realm.Object {
   }
 
   /**
-   * Find a specificly named order type in the store tag object for this store and masterlist
+   * Find a specifically named order type in the store tag object for this store and masterlist
    * @param  {string}  tags            Current stores tags field
    * @param  {string}  orderTypeName   Name of the orderType to search for
    * @return {object} The matching orderType object
