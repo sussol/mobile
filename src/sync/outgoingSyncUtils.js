@@ -123,6 +123,7 @@ const generateSyncData = (settings, recordType, record) => {
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
         programID: record.program.id,
         periodID: record.period.id,
+        orderType: record.orderType,
       };
     }
     case 'RequisitionItem': {

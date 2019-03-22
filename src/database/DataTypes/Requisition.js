@@ -198,5 +198,6 @@ Requisition.schema = {
     linkedTransaction: { type: 'Transaction', optional: true },
     program: { type: 'MasterList', optional: true },
     period: { type: 'Period', optional: true },
+    orderType: { type: 'string', optional: true },
   },
 };

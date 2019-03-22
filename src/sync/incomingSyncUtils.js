@@ -487,6 +487,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         otherStoreName: database.getOrCreate('Name', record.name_ID),
         program: database.getOrCreate('MasterList', record.programID),
         period,
+        orderType: record.orderType,
       };
       const requisition = database.update(recordType, internalRecord);
       if (period) period.addRequisitionIfUnique(requisition);
