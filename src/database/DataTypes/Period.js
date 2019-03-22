@@ -16,7 +16,7 @@ export class Period extends Realm.Object {
 
   addRequisitionIfUnique(requisition) {
     if (this.requisitions.filtered('id == $0', requisition.id).length > 0) return;
-    this.addBatch(requisition);
+    this.requisitions.push(requisition);
   }
 }
 
