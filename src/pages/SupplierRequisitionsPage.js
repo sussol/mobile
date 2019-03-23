@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -30,6 +31,7 @@ export class SupplierRequisitionsPage extends React.Component {
       selection: [],
       isCreatingRequisition: false,
       byProgramModalOpen: false,
+      isProgramOrder: true,
       programValues: { program: {}, period: {}, supplier: {}, orderType: {} },
       usesPrograms: false,
     };
@@ -50,27 +52,54 @@ export class SupplierRequisitionsPage extends React.Component {
 
   onConfirmByProgram = () => {
     const { database, currentUser } = this.props;
-    const { programValues } = this.setState;
+    const { programValues } = this.state;
     const requisitionValues = { ...programValues, currentUser };
     let requisition;
     database.write(() => {
       requisition = createRecord(database, 'ProgramRequisition', requisitionValues);
+      requisition.addItemsFromProgram(database);
     });
-    this.setState({ byProgramModalOpen: false });
+    this.setState({
+      byProgramModalOpen: false,
+      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
+    });
     this.navigateToRequisition(requisition);
   };
 
   onCancelByProgram = () => {
-    this.setState({ byProgramModalOpen: false });
+    this.setState({
+      byProgramModalOpen: false,
+      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
+    });
   };
 
+  // When setting a value, ensure the fields later in the
+  // sequential process have been cleared.
   programValuesSetter = ({ key, item }) => {
     const { programValues } = this.state;
-    const newProgramValues = {
-      ...programValues,
-      [key]: item,
-    };
+    let newProgramValues;
+    if (key === 'program') {
+      newProgramValues = {
+        supplier: {},
+        period: {},
+        orderType: {},
+        program: item,
+      };
+    } else if (key === 'supplier') {
+      newProgramValues = { ...programValues, period: {}, orderType: {}, supplier: item };
+    } else if (key === 'orderType') {
+      newProgramValues = { ...programValues, period: {}, orderType: item };
+    } else newProgramValues = { ...programValues, period: item };
+
     this.setState({ programValues: newProgramValues });
+  };
+
+  onOrderToggle = () => {
+    const { isProgramOrder } = this.state;
+    this.setState({
+      isProgramOrder: !isProgramOrder,
+      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
+    });
   };
 
   onDeleteConfirm = () => {
@@ -181,15 +210,15 @@ export class SupplierRequisitionsPage extends React.Component {
   };
 
   render() {
-    const { database, genericTablePageStyles, topRoute } = this.props;
+    const { database, genericTablePageStyles, topRoute, settings } = this.props;
     const {
       data,
       isCreatingRequisition,
       selection,
       byProgramModalOpen,
       programValues,
+      isProgramOrder,
     } = this.state;
-
     return (
       <GenericPage
         data={data}
@@ -266,12 +295,23 @@ export class SupplierRequisitionsPage extends React.Component {
         />
         <ByProgramModal
           isOpen={byProgramModalOpen}
-          onConfirm={this.onConfirmByProgram}
+          onConfirm={
+            isProgramOrder
+              ? this.onConfirmByProgram
+              : () =>
+                  this.setState(
+                    { byProgramModalOpen: false },
+                    this.onNewRequisition(programValues.supplier)
+                  )
+          }
           onCancel={this.onCancelByProgram}
+          onToggleChange={this.onOrderToggle}
           database={database}
           valueSetter={this.programValuesSetter}
-          values={programValues}
+          programValues={programValues}
           type="requisition"
+          settings={settings}
+          isProgramOrder={isProgramOrder}
         />
       </GenericPage>
     );
@@ -287,4 +327,5 @@ SupplierRequisitionsPage.propTypes = {
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
 };
