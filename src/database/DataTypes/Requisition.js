@@ -44,6 +44,7 @@ export class Requisition extends Realm.Object {
    * @param {Realm} database
    */
   destructor(database) {
+    this.period.removeRequisition(this, database);
     database.delete('RequisitionItem', this.items);
   }
 
