@@ -10,7 +10,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { complement } from 'set-manipulator';
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { generalStrings } from '../localization';
-import withOnePress from './withOnePress';
+import { withOnePress } from './withOnePress';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
@@ -43,21 +43,23 @@ export class AutocompleteSelector extends React.PureComponent {
     } = this.props;
 
     const { queryText } = this.state;
+    let data;
+    if (options && options.filtered) {
+      data = options
+        .filtered(queryString, queryText)
+        .sorted(sortByString)
+        .slice();
+      if (queryStringSecondary) {
+        const secondQueryResult = options
+          .filtered(queryStringSecondary, queryText)
+          .sorted(sortByString);
+        // Remove duplicates from secondQueryResult
+        const secondaryData = complement(secondQueryResult, data);
 
-    let data = options
-      .filtered(queryString, queryText)
-      .sorted(sortByString)
-      .slice();
-    if (queryStringSecondary) {
-      const secondQueryResult = options
-        .filtered(queryStringSecondary, queryText)
-        .sorted(sortByString);
-      // Remove duplicates from secondQueryResult
-      const secondaryData = complement(secondQueryResult, data);
-
-      // Append secondary results to the first query results
-      data = data.concat(secondaryData);
-    }
+        // Append secondary results to the first query results
+        data = data.concat(secondaryData);
+      }
+    } else data = options;
 
     return (
       <View style={localStyles.container}>
@@ -74,7 +76,7 @@ export class AutocompleteSelector extends React.PureComponent {
         {data.length > 0 && (
           <FlatList
             data={data}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id || item.name}
             renderItem={({ item }) => (
               <ResultRowWithOnePress
                 item={item}
