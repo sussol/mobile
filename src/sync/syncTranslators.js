@@ -45,6 +45,9 @@ export const RECORD_TYPES = new SyncTranslator({
   NameStoreJoin: 'name_store_join',
   NumberSequence: 'number',
   NumberToReuse: 'number_reuse',
+  Options: 'options',
+  Period: 'period',
+  PeriodSchedule: 'periodSchedule',
   Requisition: 'requisition',
   RequisitionItem: 'requisition_line',
   Stocktake: 'Stock_take',
@@ -53,6 +56,7 @@ export const RECORD_TYPES = new SyncTranslator({
   TransactionCategory: 'transaction_category',
   TransactionBatch: 'trans_line',
   User: 'user',
+  Store: 'store',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({

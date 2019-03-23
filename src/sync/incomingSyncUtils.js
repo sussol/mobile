@@ -12,6 +12,11 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord, mergeRecords } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
+import {
+  createOptionsInternalRecord,
+  createPeriodInternalRecord,
+  createPeriodScheduleInternalRecord,
+} from './createInternalRecord';
 
 const { THIS_STORE_ID } = SETTINGS_KEYS;
 
@@ -34,7 +39,7 @@ const parseNumber = numberString => {
  * @param   {string}  ISOTime  The time in ISO 8601 format. Optional.
  * @return  {Date}             The Date representing |ISODate| (and |ISOTime|).
  */
-const parseDate = (ISODate, ISOTime) => {
+export const parseDate = (ISODate, ISOTime) => {
   if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
     return null;
   }
@@ -53,7 +58,7 @@ const parseDate = (ISODate, ISOTime) => {
  * @param  {string} numberString The string to convert to a boolean
  * @return {boolean}               The boolean representation of the string
  */
-const parseBoolean = booleanString => {
+export const parseBoolean = booleanString => {
   const trueStrings = ['true', 'True', 'TRUE'];
   return booleanString && trueStrings.indexOf(booleanString) >= 0;
 };
@@ -140,7 +145,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     MasterList: {
       cannotBeBlank: [],
-      canBeBlank: ['description'],
+      canBeBlank: ['description', 'programSettings', 'isProgram'],
     },
     MasterListItem: {
       cannotBeBlank: ['item_ID'],
@@ -164,15 +169,15 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
-      canBeBlank: ['date_entered', 'serial_number', 'requester_reference'],
+      canBeBlank: ['date_entered', 'serial_number', 'requester_reference', 'programID', 'periodID'],
     },
     RequisitionItem: {
       cannotBeBlank: ['requisition_ID', 'item_ID'],
-      canBeBlank: ['stock_on_hand', 'Cust_stock_order'],
+      canBeBlank: ['stock_on_hand', 'Cust_stock_order', 'optionID'],
     },
     Stocktake: {
       cannotBeBlank: ['status'],
-      canBeBlank: ['Description', 'stock_take_created_date', 'serial_number'],
+      canBeBlank: ['Description', 'stock_take_created_date', 'serial_number', 'program'],
     },
     StocktakeBatch: {
       cannotBeBlank: [
@@ -182,7 +187,11 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'snapshot_qty',
         'snapshot_packsize',
       ],
-      canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price'],
+      canBeBlank: ['expiry', 'Batch', 'cost_price', 'sell_price', 'optionID'],
+    },
+    Store: {
+      cannotBeBlank: [],
+      canBeBlank: [],
     },
     Transaction: {
       cannotBeBlank: ['name_ID', 'type', 'status', 'store_ID'],
@@ -202,6 +211,18 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'sell_price',
       ],
       canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
+    },
+    Options: {
+      cannotBeBlank: ['title', 'type', 'isActive'],
+      canBeBlank: [],
+    },
+    PeriodSchedule: {
+      cannotBeBlank: ['name'],
+      canBeBlank: [],
+    },
+    Period: {
+      cannotBeBlank: ['name', 'startDate', 'endDate', 'periodScheduleID'],
+      canBeBlank: [],
     },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
@@ -351,6 +372,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         name: record.description,
         note: record.note,
+        isProgram: parseBoolean(record.isProgram),
+        programSettings: JSON.stringify(record.programSettings),
       };
       database.update(recordType, internalRecord);
       break;
@@ -442,10 +465,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      let period;
       // If not a special 'wp' or 'wf' status, use the normal status translation.
       if (!status) {
         status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       }
+      if (record.periodID) {
+        period = database.getOrCreate('Period', record.periodID);
+      }
+
       internalRecord = {
         id: record.ID,
         status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
@@ -457,8 +485,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         enteredBy: database.getOrCreate('User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         otherStoreName: database.getOrCreate('Name', record.name_ID),
+        program: database.getOrCreate('MasterList', record.programID),
+        period,
+        orderType: record.orderType,
       };
-      database.update(recordType, internalRecord);
+      const requisition = database.update(recordType, internalRecord);
+      if (period) period.addRequisitionIfUnique(requisition);
       break;
     }
     case 'RequisitionItem': {
@@ -473,6 +505,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         suppliedQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
+        period: database.getOrCreate('Option', record.optionID),
       };
       const requisitionItem = database.update(recordType, internalRecord);
       // requisitionItem will be an orphan record if it's not unique?
@@ -493,6 +526,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         serialNumber: record.serial_number,
         additions: database.getOrCreate('Transaction', record.invad_additions_ID),
         reductions: database.getOrCreate('Transaction', record.invad_reductions_ID),
+        program: database.getOrCreate('MasterList', record.programID),
       };
       database.update(recordType, internalRecord);
       break;
@@ -516,10 +550,17 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
+        option: database.getOrCreate('Options', record.optionID),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
       database.save('Stocktake', stocktake);
+      break;
+    }
+    case 'Store': {
+      if (settings.get(THIS_STORE_ID) === record.ID) {
+        database.update('Setting', { key: 'ThisStoreTags', value: record.tags });
+      }
       break;
     }
     case 'Transaction': {
@@ -593,6 +634,19 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.save('Transaction', transaction);
       itemBatch.addTransactionBatchIfUnique(transactionBatch);
       database.save('ItemBatch', itemBatch);
+      break;
+    }
+    case 'Period': {
+      const period = database.update(recordType, createPeriodInternalRecord(record, database));
+      period.periodSchedule.addPeriodIfUnique(period);
+      break;
+    }
+    case 'PeriodSchedule': {
+      database.update(recordType, createPeriodScheduleInternalRecord(record));
+      break;
+    }
+    case 'Options': {
+      database.update(recordType, createOptionsInternalRecord(record));
       break;
     }
     default:

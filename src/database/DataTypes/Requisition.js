@@ -207,6 +207,16 @@ export class Requisition extends Realm.Object {
     });
   }
 
+  addItemsFromProgram(database) {
+    if (this.isFinalized) {
+      throw new Error('Cannot add items to a finalised requisition');
+    }
+
+    this.program.items.forEach(masterListItem => {
+      createRecord(database, 'RequisitionItem', this, masterListItem.item);
+    });
+  }
+
   /**
    * Add all items from the mobile store master list that require more stock.
    *
@@ -292,6 +302,9 @@ Requisition.schema = {
     enteredBy: { type: 'User', optional: true },
     items: { type: 'list', objectType: 'RequisitionItem' },
     linkedTransaction: { type: 'Transaction', optional: true },
+    program: { type: 'MasterList', optional: true },
+    period: { type: 'Period', optional: true },
+    orderType: { type: 'string', optional: true },
   },
 };
 
