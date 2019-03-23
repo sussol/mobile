@@ -39,7 +39,7 @@ const parseNumber = numberString => {
  * @param   {string}  ISOTime  The time in ISO 8601 format. Optional.
  * @return  {Date}             The Date representing |ISODate| (and |ISOTime|).
  */
-const parseDate = (ISODate, ISOTime) => {
+export const parseDate = (ISODate, ISOTime) => {
   if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
     return null;
   }
@@ -465,10 +465,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
+      let period;
       // If not a special 'wp' or 'wf' status, use the normal status translation.
       if (!status) {
         status = STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       }
+      if (record.periodID) {
+        period = database.getOrCreate('Period', record.periodID);
+      }
+
       internalRecord = {
         id: record.ID,
         status: REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
@@ -481,9 +486,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         otherStoreName: database.getOrCreate('Name', record.name_ID),
         program: database.getOrCreate('MasterList', record.programID),
-        period: database.getOrCreate('Period', record.periodID),
+        period,
+        orderType: record.orderType,
       };
-      database.update(recordType, internalRecord);
+      const requisition = database.update(recordType, internalRecord);
+      if (period) period.addRequisitionIfUnique(requisition);
       break;
     }
     case 'RequisitionItem': {
@@ -543,7 +550,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         countedNumberOfPacks: parseNumber(record.stock_take_qty) * packSize,
         sortIndex: parseNumber(record.line_number),
-        option: database.getOrCreate('Option', record.optionID),
+        option: database.getOrCreate('Options', record.optionID),
       };
       const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
@@ -552,7 +559,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Store': {
       if (settings.get(THIS_STORE_ID) === record.ID) {
-        settings.set(THIS_STORE_ID, record.StoreID);
+        database.update('Setting', { key: 'ThisStoreTags', value: record.tags });
       }
       break;
     }
@@ -630,15 +637,16 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Period': {
-      database.save('Period', createPeriodInternalRecord(record, database));
+      const period = database.update(recordType, createPeriodInternalRecord(record, database));
+      period.periodSchedule.addPeriodIfUnique(period);
       break;
     }
     case 'PeriodSchedule': {
-      database.save(recordType, createPeriodScheduleInternalRecord(record));
+      database.update(recordType, createPeriodScheduleInternalRecord(record));
       break;
     }
     case 'Options': {
-      database.save(recordType, createOptionsInternalRecord(record));
+      database.update(recordType, createOptionsInternalRecord(record));
       break;
     }
     default:

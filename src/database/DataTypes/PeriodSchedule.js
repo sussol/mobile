@@ -5,7 +5,20 @@
 
 import Realm from 'realm';
 
-export class PeriodSchedule extends Realm.Object {}
+export class PeriodSchedule extends Realm.Object {
+  getUseablePeriodsForProgram(program, maxOrdersPerPeriod) {
+    const periods = this.periods.reduce(period => {
+      if (period.numberOfRequisitionsForProgram(program) >= maxOrdersPerPeriod) return null;
+      return period;
+    });
+    return periods;
+  }
+
+  addPeriodIfUnique(period) {
+    if (this.periods.filtered('id == $0', period.id).length > 0) return;
+    this.periods.push(period);
+  }
+}
 
 export default PeriodSchedule;
 
