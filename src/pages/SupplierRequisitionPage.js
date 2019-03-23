@@ -42,6 +42,7 @@ export class SupplierRequisitionPage extends React.Component {
       modalIsOpen: false,
       selection: [],
       isProgramOrder: false,
+      orderType: null,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -50,24 +51,20 @@ export class SupplierRequisitionPage extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     const { requisition, settings } = this.props;
     if (requisition.program) {
-      const isProgramOrder = requisition.program.canUseProgram(
-        settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)
-      );
-      this.setState({ isProgramOrder });
-      this.onAddMasterItems();
+      const tags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
+      const orderType = requisition.program.getOrderType(tags, requisition.orderType);
+      this.setState({ isProgramOrder: !!requisition.program, orderType });
     }
-  }
+  };
 
   onAddMasterItems = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
-    const { isProgramOrder } = this.state;
     runWithLoadingIndicator(() => {
       database.write(() => {
-        if (isProgramOrder) requisition.addItemsFromProgram(database);
-        else requisition.addItemsFromMasterList(database, this.getThisStore());
+        requisition.addItemsFromMasterList(database, this.getThisStore());
         database.save('Requisition', requisition);
       });
       this.refreshData();
@@ -216,6 +213,7 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderPageInfo = () => {
     const { requisition } = this.props;
+    const { isProgramOrder } = this.state;
     const infoColumns = [
       [
         {
@@ -246,6 +244,22 @@ export class SupplierRequisitionPage extends React.Component {
         },
       ],
     ];
+    if (isProgramOrder) {
+      const { period, program } = requisition;
+      const { orderType } = this.state;
+      const programInfo = { title: 'Program:', info: program.name };
+      const orderTypeInfo = { title: 'Order Type:', info: orderType.name };
+      const periodInfo = {
+        title: 'Period:',
+        info: `${period.name} -- ${period.startDate.toLocaleDateString(
+          'en-US'
+        )} - ${period.endDate.toLocaleDateString('en-US')}`,
+      };
+
+      infoColumns[0].unshift(orderTypeInfo);
+      infoColumns[0].unshift(programInfo);
+      infoColumns[1].unshift(periodInfo);
+    }
     return <PageInfo columns={infoColumns} isEditingDisabled={requisition.isFinalised} />;
   };
 
@@ -335,7 +349,7 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderButtons = () => {
     const { requisition } = this.props;
-
+    const { isProgramOrder } = this.state;
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
@@ -352,19 +366,22 @@ export class SupplierRequisitionPage extends React.Component {
             isDisabled={requisition.isFinalised}
           />
         </View>
-        <View style={globalStyles.verticalContainer}>
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.new_item}
-            onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
-            isDisabled={requisition.isFinalised}
-          />
-          <PageButton
-            text={buttonStrings.add_master_list_items}
-            onPress={this.onAddMasterItems}
-            isDisabled={requisition.isFinalised}
-          />
-        </View>
+
+        {!isProgramOrder && (
+          <View style={globalStyles.verticalContainer}>
+            <PageButton
+              style={globalStyles.topButton}
+              text={buttonStrings.new_item}
+              onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
+              isDisabled={requisition.isFinalised}
+            />
+            <PageButton
+              text={buttonStrings.add_master_list_items}
+              onPress={this.onAddMasterItems}
+              isDisabled={requisition.isFinalised}
+            />
+          </View>
+        )}
       </View>
     );
   };
