@@ -121,6 +121,9 @@ const generateSyncData = (settings, recordType, record) => {
         requester_reference: record.requesterReference,
         comment: record.comment,
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
+        programID: record.program.id,
+        periodID: record.period.id,
+        orderType: record.orderType,
       };
     }
     case 'RequisitionItem': {
@@ -135,6 +138,7 @@ const generateSyncData = (settings, recordType, record) => {
         line_number: String(record.sortIndex),
         Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
+        optionID: record.option.id,
       };
     }
     case 'Stocktake': {
@@ -152,6 +156,7 @@ const generateSyncData = (settings, recordType, record) => {
         comment: record.comment,
         stock_take_created_date: getDateString(record.createdDate),
         serial_number: record.serialNumber,
+        programID: record.program.id,
       };
     }
     case 'StocktakeBatch': {
@@ -168,6 +173,7 @@ const generateSyncData = (settings, recordType, record) => {
         sell_price: String(record.sellPrice),
         Batch: record.batch,
         item_ID: record.itemId,
+        optionID: record.option.id,
       };
     }
     case 'Transaction': {

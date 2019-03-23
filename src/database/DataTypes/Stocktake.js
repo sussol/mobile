@@ -272,6 +272,7 @@ Stocktake.schema = {
     items: { type: 'list', objectType: 'StocktakeItem' },
     additions: { type: 'Transaction', optional: true },
     reductions: { type: 'Transaction', optional: true },
+    program: { type: 'MasterList', optional: true },
   },
 };
 
