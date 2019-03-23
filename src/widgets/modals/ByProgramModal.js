@@ -12,6 +12,7 @@ import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 import { AutocompleteSelector, PageInfo, Button, ToggleBar } from '..';
 import { PageContentModal } from './PageContentModal';
+import { SETTINGS_KEYS } from '../../settings';
 
 export class ByProgramModal extends React.Component {
   constructor(props) {
@@ -98,36 +99,64 @@ export class ByProgramModal extends React.Component {
     valueSetter(valueSetterParams);
   };
 
-  getSearchModalProps = database => ({
-    program: {
-      options: database.objects('MasterList'),
-      queryString: 'name BEGINSWITH[c] $0 ',
-      sortByString: 'name',
-      onSelect: item => this.selectSearchValue({ key: 'program', item }),
-      renderLeftText: item => `${item.name}`,
-    },
-    supplier: {
-      options: database.objects('Name').filtered('isSupplier == $0', true),
-      queryString: 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
-      sortByString: 'name',
-      onSelect: item => this.selectSearchValue({ key: 'supplier', item }),
-      renderLeftText: item => `${item.name}`,
-    },
-    orderType: {
-      options: database.objects('Item'),
-      queryString: 'name BEGINSWITH[c] $0',
-      sortByString: 'name',
-      onSelect: item => this.selectSearchValue({ key: 'orderType', item }),
-      renderLeftText: item => `${item.name}`,
-    },
-    period: {
-      options: database.objects('Item'),
-      queryString: 'name BEGINSWITH[c] $0',
-      sortByString: 'name',
-      onSelect: item => this.selectSearchValue({ key: 'period', item }),
-      renderLeftText: item => `${item.name}`,
-    },
-  });
+  getSearchModalOptions = () => {
+    const { program, orderType, database, settings } = this.props;
+    const tags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
+    const { periodScheduleName, orderTypes } = program.getStoreTagObject(tags);
+
+    return {
+      program: database.objects('MasterList').filter(masterList => {
+        if (!masterList.canUseProgram()) return null;
+        return masterList;
+      }),
+      supplier: database.objects('Name').filtered('isSupplier = $0', true),
+      orderType: orderTypes,
+      period: database
+        .objects('PeriodSchedule')
+        .filtered('name = $0', periodScheduleName)[0]
+        .getUsablePeriodsForProgram(orderType.maxOrdersPerPeriod),
+    };
+  };
+
+  getSearchModalProps = () => {
+    const { program, supplier, orderType } = this.props;
+    return {
+      program: {
+        options: this.getSearchModalOptions().program,
+        queryString: 'name BEGINSWITH[c] $0 ',
+        sortByString: 'name',
+        onSelect: item => this.selectSearchValue({ key: 'program', item }),
+        renderLeftText: item => `${item.name}`,
+      },
+      supplier: {
+        options: program.name ? this.getSearchModalOptions().supplier : [],
+        queryString: 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
+        sortByString: 'name',
+        onSelect: item => this.selectSearchValue({ key: 'supplier', item }),
+        renderLeftText: item => `${item.name}`,
+        renderRightText: item => `(${item.code})`,
+      },
+      orderType: {
+        options: supplier.name ? this.getSearchModalOptions().orderType : [],
+        queryString: 'name BEGINSWITH[c] $0',
+        sortByString: 'name',
+        onSelect: item => this.selectSearchValue({ key: 'orderType', item }),
+        renderLeftText: item => `${item.name}`,
+        rightRightText: item => `${item.maxMOS} ${item.thresholdMOS}`,
+      },
+      period: {
+        options: orderType.name ? this.getSearchModalOptions().period : [],
+        queryString: 'name BEGINSWITH[c] $0',
+        sortByString: 'name',
+        onSelect: item => this.selectSearchValue({ key: 'period', item }),
+        renderLeftText: item => `${item.name}`,
+        renderRightText: item =>
+          `${item.startDate} - ${item.endDate} -- (${item.numberOfRequisitionsForProgram(
+            program
+          )}) requisitions`,
+      },
+    };
+  };
 
   onSearchModalConfirm = ({ key, item }) => {
     this.setState({ searchIsOpen: false, [key]: item });
@@ -155,18 +184,22 @@ export class ByProgramModal extends React.Component {
 
   renderPageInfo = () => {
     const { isProgramOrder } = this.state;
-    const { type } = this.props;
+    const { type, program, supplier } = this.props;
     return (
       <>
         {isProgramOrder && (
-          <>
-            <PageInfo columns={[[this.getPageInfoProps().program]]} isEditingDisabled={false} />
-            <PageInfo columns={[[this.getPageInfoProps().supplier]]} isEditingDisabled={false} />
-          </>
+          <PageInfo columns={[[this.getPageInfoProps().program]]} isEditingDisabled={false} />
         )}
+        <PageInfo
+          columns={[[this.getPageInfoProps().supplier]]}
+          isEditingDisabled={program || !isProgramOrder}
+        />
         {type === 'requisition' && isProgramOrder && (
           <>
-            <PageInfo columns={[[this.getPageInfoProps().orderTypes]]} isEditingDisabled={false} />
+            <PageInfo
+              columns={[[this.getPageInfoProps().orderTypes]]}
+              isEditingDisabled={program && supplier}
+            />
             <PageInfo columns={[[this.getPageInfoProps().period]]} isEditingDisabled={false} />
           </>
         )}
@@ -175,7 +208,7 @@ export class ByProgramModal extends React.Component {
   };
 
   render() {
-    const { onConfirm, onCancel, isOpen, type } = this.props;
+    const { onConfirm, onCancel, isOpen, type, program, supplier, period, orderType } = this.props;
     const { searchIsOpen } = this.state;
 
     return (
@@ -220,7 +253,7 @@ export class ByProgramModal extends React.Component {
             text="OK"
             onPress={onConfirm}
             disabledColor={WARM_GREY}
-            isDisabled={false}
+            isDisabled={!(program.name && supplier.name && period.name && orderType.name)}
             style={[globalStyles.button, localStyles.OKButton]}
             textStyle={[globalStyles.buttonText, localStyles.OKButtonText]}
           />
@@ -309,4 +342,9 @@ ByProgramModal.propTypes = {
   type: PropTypes.string.isRequired,
   valueSetter: PropTypes.func.isRequired,
   values: PropTypes.object.isRequired,
+  settings: PropTypes.object.isRequired,
+  program: PropTypes.object.isRequired,
+  orderType: PropTypes.object.isRequired,
+  supplier: PropTypes.object.isRequired,
+  period: PropTypes.object.isRequired,
 };
