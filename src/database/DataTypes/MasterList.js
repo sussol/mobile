@@ -79,7 +79,7 @@ export class MasterList extends Realm.Object {
    */
   getOrderType(tags, orderTypeName) {
     return this.getStoreTagObject(tags).orderTypes.filter(
-      orderType => !orderType.name === orderTypeName
+      orderType => orderType.name === orderTypeName
     )[0];
   }
 }
