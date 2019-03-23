@@ -44,18 +44,22 @@ export class MasterList extends Realm.Object {
   }
 
   /**
-   * Find the current stores matching store tag object in this master lists program settings
+   * Find the current stores matching store tag object in this master lists program settings.
+   * Program settings is a JSON object from 4D, which requires two parses.
    * @param  {string}  tags   Current stores tags field
    * @return {object} The matching storeTag programsettings field for the current store
    */
   getStoreTagObject(tags) {
     const storeTags = tags.split(/[\s,]+/);
-    return Object.entries(JSON.parse(this.programSettings).storeTags).reduce(
+    const firstParse = JSON.parse(this.programSettings);
+    if (!firstParse) return null;
+
+    return Object.entries(JSON.parse(firstParse).storeTags).reduce(
       ([programStoreTag, storeTagObject]) => {
         if (!(storeTags.indexOf(programStoreTag) >= 0)) return null;
         return storeTagObject;
       }
-    );
+    )[1];
   }
 
   /**
@@ -74,10 +78,9 @@ export class MasterList extends Realm.Object {
    * @return {object} The matching orderType object
    */
   getOrderType(tags, orderTypeName) {
-    this.getStoreTagObject(tags).orderTypes.reduce(orderType => {
-      if (!(orderType.name === orderTypeName)) return null;
-      return orderType;
-    });
+    return this.getStoreTagObject(tags).orderTypes.filter(
+      orderType => !orderType.name === orderTypeName
+    )[0];
   }
 }
 
