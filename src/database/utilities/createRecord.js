@@ -342,12 +342,16 @@ const createTransactionItem = (database, transaction, item) => {
 };
 
 const createProgramRequisition = (database, requisitionValues) => {
+  const { period } = requisitionValues;
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     otherStoreName: requisitionValues.supplier,
     ...requisitionValues,
+    orderType: requisitionValues.orderType.name,
   });
   database.save('Requisition', requisition);
+  period.addRequisitionIfUnique(requisition);
+  database.save('Period', period);
   return requisition;
 };
 
