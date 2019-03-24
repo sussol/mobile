@@ -355,6 +355,20 @@ const createProgramRequisition = (database, requisitionValues) => {
   return requisition;
 };
 
+const createProgramStocktake = (database, stocktakeValues) => {
+  const date = new Date();
+  database.create('Stocktake', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
+    name: '',
+    createdDate: date,
+    stocktakeDate: date,
+    status: 'suggested',
+    comment: '',
+    createdBy: stocktakeValues.user,
+  });
+};
+
 /**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
@@ -394,6 +408,8 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionBatch(database, ...args);
     case 'ProgramRequisition':
       return createProgramRequisition(database, ...args);
+    case 'ProgramStockTake':
+      return createProgramStocktake(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
