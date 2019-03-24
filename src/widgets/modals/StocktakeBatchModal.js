@@ -21,12 +21,21 @@ import globalStyles, {
   dataTableStyles,
   expansionPageStyles,
 } from '../../globalStyles';
+import { ReasonModal } from './ReasonModal';
 
 export default class StocktakeBatchModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      reasonModalOpen: false,
+      currentBatch: null,
+    };
   }
+
+  componentDidMount = () => {
+    const { database } = this.props;
+    this.setState({ usesReasons: database.objects('Options').length !== 0 });
+  };
 
   onEndEditing = (key, stocktakeBatch, newValue) => {
     const { database } = this.props;
@@ -110,7 +119,11 @@ export default class StocktakeBatchModal extends React.Component {
       }
       case 'reason': {
         return (
-          <TouchableOpacity key={stocktakeBatch.id} onPress={this.onChangeReason}>
+          <TouchableOpacity
+            key={stocktakeBatch.id}
+            onPress={() => this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch })}
+            style={localStyles.reasonCell}
+          >
             <Text>{stocktakeBatch.option ? stocktakeBatch.option.title : ''}</Text>
             <Icon name="pencil" size={14} style={localStyles.editIcon} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
@@ -169,9 +182,64 @@ export default class StocktakeBatchModal extends React.Component {
     );
   };
 
+  reasonModalConfirm = option => {
+    const { currentBatch } = this.state;
+    const { database } = this.props;
+
+    database.write(() => {
+      database.update('StocktakeBatch', { id: currentBatch.id, option });
+    });
+    this.setState({ reasonModalOpen: false });
+  };
+
+  getColumns = () => {
+    const { usesReasons } = this.state;
+    const columns = [
+      {
+        key: 'batch',
+        width: 2,
+        title: 'BATCH NAME',
+        alignText: 'center',
+      },
+      {
+        key: 'expiryDate',
+        width: 1,
+        title: 'EXPIRY',
+        alignText: 'center',
+      },
+      {
+        key: 'snapshotTotalQuantity',
+        width: 1,
+        title: unwrapText(tableStrings.snapshot_quantity),
+        alignText: 'right',
+      },
+      {
+        key: 'countedTotalQuantity',
+        width: 1,
+        title: unwrapText(tableStrings.actual_quantity),
+        alignText: 'right',
+      },
+      {
+        key: 'difference',
+        width: 1,
+        title: tableStrings.difference,
+        alignText: 'right',
+      },
+    ];
+    if (usesReasons) {
+      columns.push({
+        key: 'reason',
+        width: 1,
+        title: 'Reason',
+        alignText: 'right',
+      });
+    }
+    return columns;
+  };
+
   render() {
     const { database, genericTablePageStyles, isOpen } = this.props;
-    const { data } = this.state;
+    const { data, reasonModalOpen, currentBatch } = this.state;
 
     return (
       <Modal
@@ -191,50 +259,20 @@ export default class StocktakeBatchModal extends React.Component {
           onEndEditing={this.onEndEditing}
           renderTopLeftComponent={this.renderPageInfo}
           renderTopRightComponent={this.renderAddBatchButton}
-          columns={[
-            {
-              key: 'batch',
-              width: 2,
-              title: 'BATCH NAME',
-              alignText: 'center',
-            },
-            {
-              key: 'expiryDate',
-              width: 1,
-              title: 'EXPIRY',
-              alignText: 'center',
-            },
-            {
-              key: 'snapshotTotalQuantity',
-              width: 1,
-              title: unwrapText(tableStrings.snapshot_quantity),
-              alignText: 'right',
-            },
-            {
-              key: 'countedTotalQuantity',
-              width: 1,
-              title: unwrapText(tableStrings.actual_quantity),
-              alignText: 'right',
-            },
-            {
-              key: 'difference',
-              width: 1,
-              title: tableStrings.difference,
-              alignText: 'right',
-            },
-            {
-              key: 'reason',
-              width: 1,
-              title: 'Reason',
-              alignText: 'right',
-            },
-          ]}
+          columns={this.getColumns()}
           dataTypesLinked={['StocktakeBatch', 'Stocktake']}
           database={database}
           pageStyles={expansionPageStyles}
           {...genericTablePageStyles}
         />
         {this.renderFooter()}
+        <ReasonModal
+          database={database}
+          isOpen={reasonModalOpen}
+          onClose={this.reasonModalConfirm}
+          item={currentBatch}
+          type="StocktakeBatch"
+        />
       </Modal>
     );
   }
@@ -270,5 +308,11 @@ const localStyles = StyleSheet.create({
   OKButtonText: {
     color: 'white',
     fontSize: 16,
+  },
+  reasonCell: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
   },
 });
