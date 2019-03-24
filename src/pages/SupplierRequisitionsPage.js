@@ -31,7 +31,7 @@ export class SupplierRequisitionsPage extends React.Component {
       selection: [],
       isCreatingRequisition: false,
       byProgramModalOpen: false,
-      isProgramOrder: true,
+      isProgramBased: true,
       programValues: { program: {}, period: {}, supplier: {}, orderType: {} },
       usesPrograms: false,
     };
@@ -95,9 +95,9 @@ export class SupplierRequisitionsPage extends React.Component {
   };
 
   onOrderToggle = () => {
-    const { isProgramOrder } = this.state;
+    const { isProgramBased } = this.state;
     this.setState({
-      isProgramOrder: !isProgramOrder,
+      isProgramBased: !isProgramBased,
       programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
     });
   };
@@ -217,7 +217,7 @@ export class SupplierRequisitionsPage extends React.Component {
       selection,
       byProgramModalOpen,
       programValues,
-      isProgramOrder,
+      isProgramBased,
     } = this.state;
     return (
       <GenericPage
@@ -296,7 +296,7 @@ export class SupplierRequisitionsPage extends React.Component {
         <ByProgramModal
           isOpen={byProgramModalOpen}
           onConfirm={
-            isProgramOrder
+            isProgramBased
               ? this.onConfirmByProgram
               : () =>
                   this.setState(
@@ -311,7 +311,7 @@ export class SupplierRequisitionsPage extends React.Component {
           programValues={programValues}
           type="requisition"
           settings={settings}
-          isProgramOrder={isProgramOrder}
+          isProgramBased={isProgramBased}
         />
       </GenericPage>
     );
