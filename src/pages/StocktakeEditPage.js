@@ -310,6 +310,13 @@ export class StocktakeEditPage extends React.Component {
         },
       ],
     ];
+    if (stocktake.program) {
+      infoColumns[0].unshift({
+        title: 'Program: ',
+        info: stocktake.program.name,
+      });
+    }
+
     return <PageInfo columns={infoColumns} isEditingDisabled={isFinalised} />;
   };
 
@@ -327,7 +334,7 @@ export class StocktakeEditPage extends React.Component {
         refreshData={this.refreshData}
         renderCell={this.renderCell}
         renderExpansion={this.renderExpansion}
-        renderTopRightComponent={this.renderManageStocktakeButton}
+        renderTopRightComponent={stocktake.program ? null : this.renderManageStocktakeButton}
         renderTopLeftComponent={this.renderPageInfo}
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
