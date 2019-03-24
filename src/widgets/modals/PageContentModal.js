@@ -39,10 +39,13 @@ export class PageContentModal extends React.Component {
       <View style={localStyles.titleBar}>
         {title && <View style={localStyles.flexSpacer} />}
         {title && <Text style={localStyles.title}>{title}</Text>}
+
         <View style={localStyles.closeButtonContainer}>
-          <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
-            <Icon name="md-close" style={localStyles.closeIcon} />
-          </TouchableOpacity>
+          {onClose && (
+            <TouchableOpacity onPress={onClose} style={localStyles.closeButton}>
+              <Icon name="md-close" style={localStyles.closeIcon} />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     );
