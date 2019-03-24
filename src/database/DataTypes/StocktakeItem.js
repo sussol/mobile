@@ -243,6 +243,23 @@ export class StocktakeItem extends Realm.Object {
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
     createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
+
+  applyReasonToBatches(database, option) {
+    this.batches.forEach(batch => {
+      if (batch.countedTotalQuantity !== batch.snapshotTotalQuantity) {
+        database.write(() => {
+          database.update('StocktakeBatch', { id: batch.id, option });
+        });
+      }
+    });
+  }
+
+  get mostUsedReason() {
+    if (!this.batches) return false;
+    if (!this.batches[0]) return false;
+    if (!this.batches[0].option) return false;
+    return this.batches[0].option.title;
+  }
 }
 
 StocktakeItem.schema = {
