@@ -121,15 +121,19 @@ export class StocktakeEditPage extends React.Component {
   };
 
   reasonModalConfirm = option => {
-    const { currentStocktakeItem } = this.state;
-    const { database } = this.props;
-    currentStocktakeItem.applyReasonToBatches(database, option);
+    if (option) {
+      const { currentStocktakeItem } = this.state;
+      const { database } = this.props;
+      currentStocktakeItem.applyReasonToBatches(database, option);
+    }
 
     this.setState({ isReasonsModalOpen: false });
   };
 
   /**
-   * Respond to the user editing the 'Actual Quantity' column.
+   * Respond to the user editing the 'Actual Quantity' column. If the current user has
+   * a Options object defined, enforce that an option must be chosen if the snapshot
+   * quantity does not match the actual quantity.
    *
    * @param   {string}  key            Should always be |countedTotalQuantity|.
    * @param   {object}  stocktakeItem  The stocktake item from the row being edited.
@@ -138,15 +142,21 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing = (key, stocktakeItem, newValue) => {
     const { database } = this.props;
-    this.setState({ currentStocktakeItem: stocktakeItem });
+    const { usesReasons } = this.state;
+
     if (key !== 'countedTotalQuantity' || newValue === '') return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
 
     stocktakeItem.setCountedTotalQuantity(database, quantity);
-    if (stocktakeItem.countedTotalQuantity !== stocktakeItem.snapshotTotalQuantity) {
-      this.setState({ isReasonsModalOpen: true, currentStocktakeItem: stocktakeItem });
-    }
+    this.setState({ currentStocktakeItem: stocktakeItem }, () => {
+      if (
+        stocktakeItem.countedTotalQuantity !== stocktakeItem.snapshotTotalQuantity &&
+        usesReasons
+      ) {
+        this.onOpenReasonModal();
+      }
+    });
   };
 
   /**
@@ -220,6 +230,10 @@ export class StocktakeEditPage extends React.Component {
     });
   };
 
+  onOpenReasonModal = () => {
+    this.setState({ isReasonsModalOpen: true });
+  };
+
   renderCell = (key, stocktakeItem) => {
     const { stocktake } = this.props;
 
@@ -252,11 +266,13 @@ export class StocktakeEditPage extends React.Component {
           <TouchableOpacity
             key={stocktakeItem.id}
             onPress={() =>
-              this.setState({ isReasonsModalOpen: true, currentStocktakeItem: stocktakeItem })
+              this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
             }
             style={localStyles.reasonCell}
           >
-            <Text>{stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason : ''}</Text>
+            <Text>
+              {stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason : 'Not applicable'}
+            </Text>
             <Icon name="pencil" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
         );
