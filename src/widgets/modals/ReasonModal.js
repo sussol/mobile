@@ -15,40 +15,28 @@ import { dataTableStyles, APP_FONT_FAMILY, COMPONENT_HEIGHT } from '../../global
 
 /**
  * A Modal that covers the page content using PageContentModal, and renders a ListView for selecting
- * from a list of available languages. This is persisted in the settings/realm.
+ * from a list of available reasons/Options objects. Will display when a user clicks, or when
+ * editing the actual quantity for a stocktake, where the modal will appear prompting
+ * the user for discrepency/adjustment reason.
+ * Modal will return an Options object in the on the onClose method - either the selected reason
+ * or a default.
  * @prop {boolean}    isOpen    Whether the modal is open
  * @prop {function}   onClose   A function to call if the close x is pressed
  * @prop {function}   settings  App settings object for storing the selected language
  */
-export class ReasonModal extends React.Component {
-  constructor(props) {
-    super(props);
-    const { database } = props;
-    const dataSource = new ListView.DataSource({
-      rowHasChanged: (r1, r2) => r1 !== r2,
-    });
-    const reasons = database.objects('Options');
-    this.state = {
-      dataSource: dataSource.cloneWithRows(reasons),
-    };
-  }
-
+export class ReasonModal extends React.PureComponent {
   onSelectReason = rowValue => {
-    const { onClose, database, item } = this.props;
-    if (!rowValue) {
-      item.option ? onClose(item.option) : onClose(database.objects('Options')[0]);
-    } else {
-      onClose(rowValue);
-    }
+    const { onClose } = this.props;
+    onClose(rowValue);
   };
 
-  renderRow = rowValue => {
+  renderRow = (rowValue, _, index) => {
     const { item } = this.props;
     const { option } = item;
-
     let rowStyle;
     let textStyle;
-    if (option && rowValue.id === option.id) {
+    // eslint-disable-next-line eqeqeq
+    if ((option && rowValue.id === option.id) || (!option && index == 0)) {
       rowStyle = [localStyles.tableRow, { backgroundColor: '#e95c30' }];
       textStyle = [dataTableStyles.text, localStyles.dataTableText, { color: 'white' }];
     } else {
@@ -61,29 +49,33 @@ export class ReasonModal extends React.Component {
         onPress={() => {
           this.onSelectReason(rowValue);
         }}
-        style={rowStyle}
       >
-        <Text style={textStyle}>{rowValue.title}</Text>
+        <View style={rowStyle}>
+          <Text style={textStyle}>{rowValue.title}</Text>
+        </View>
       </TouchableOpacity>
     );
   };
 
   render() {
-    const { isOpen } = this.props;
-    const { dataSource } = this.state;
+    const { isOpen, database } = this.props;
+
+    const dataSource = new ListView.DataSource({
+      rowHasChanged: (r1, r2) => r1 !== r2,
+    });
 
     const numberOfRows = dataSource.length;
     const listViewHeight = { height: numberOfRows * COMPONENT_HEIGHT };
     const listViewStyle = [localStyles.listView, listViewHeight];
 
     return (
-      <PageContentModal
-        isOpen={isOpen}
-        onClose={() => this.onSelectReason(null)}
-        title="Select a reason"
-      >
+      <PageContentModal isOpen={isOpen} title="Select a reason">
         <View>
-          <ListView style={listViewStyle} dataSource={dataSource} renderRow={this.renderRow} />
+          <ListView
+            style={listViewStyle}
+            dataSource={dataSource.cloneWithRows(database.objects('Options'))}
+            renderRow={this.renderRow}
+          />
         </View>
       </PageContentModal>
     );
