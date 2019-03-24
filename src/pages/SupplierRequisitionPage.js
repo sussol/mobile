@@ -22,6 +22,7 @@ import {
   PageContentModal,
   TextEditor,
   ToggleSelector,
+  ToggleBar,
 } from '../widgets';
 
 import globalStyles from '../globalStyles';
@@ -43,6 +44,7 @@ export class SupplierRequisitionPage extends React.Component {
       selection: [],
       isProgramOrder: false,
       orderType: null,
+      useThresholdMOS: false,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -173,14 +175,25 @@ export class SupplierRequisitionPage extends React.Component {
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     const { requisition } = this.props;
+    const { useThresholdMOS, orderType } = this.state;
 
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    if (newSearchTerm && newSortBy && newIsAscending) {
+      this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    }
+
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-
-    const data = requisition.items.filtered(
+    let data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
+    if (useThresholdMOS) {
+      data = data.filter(requisitionItem =>
+        requisitionItem.item.isLessThanThresholdMOS(
+          requisition.monthsToSupply,
+          orderType.thresholdMOS
+        )
+      );
+    }
 
     let sortDataType;
     switch (sortBy) {
@@ -287,7 +300,7 @@ export class SupplierRequisitionPage extends React.Component {
   };
 
   renderModalContent = () => {
-    const { modalKey } = this.state;
+    const { modalKey, orderType } = this.state;
     const { database, requisition } = this.props;
 
     const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
@@ -317,7 +330,7 @@ export class SupplierRequisitionPage extends React.Component {
       case MONTHS_SELECT:
         return (
           <ToggleSelector
-            options={[1, 2, 3, 4, 5, 6]}
+            options={Array.from({ length: orderType.maxMOS || 6 }, (_, k) => k + 1)}
             onSelect={number => {
               database.write(() => {
                 requisition.monthsToSupply = number;
@@ -347,24 +360,54 @@ export class SupplierRequisitionPage extends React.Component {
     }
   };
 
+  getToggleBarProps = () => {
+    const { useThresholdMOS } = this.state;
+    return [
+      {
+        text: 'Hide over stocked',
+        onPress: () => this.setState({ useThresholdMOS: true }, this.refreshData),
+        isOn: useThresholdMOS,
+      },
+      {
+        text: 'Show over stocked',
+        onPress: () => this.setState({ useThresholdMOS: false }, this.refreshData),
+        isOn: !useThresholdMOS,
+      },
+    ];
+  };
+
   renderButtons = () => {
     const { requisition } = this.props;
     const { isProgramOrder } = this.state;
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.create_automatic_order}
-            onPress={this.onCreateAutomaticOrder}
-            isDisabled={requisition.isFinalised}
-          />
-          <PageButton
-            style={globalStyles.leftButton}
-            text={buttonStrings.use_suggested_quantities}
-            onPress={this.onUseSuggestedQuantities}
-            isDisabled={requisition.isFinalised}
-          />
+          {isProgramOrder && (
+            <ToggleBar
+              style={globalStyles.toggleBar}
+              textOffStyle={globalStyles.toggleText}
+              textOnStyle={globalStyles.toggleTextSelected}
+              toggleOffStyle={globalStyles.toggleOption}
+              toggleOnStyle={globalStyles.toggleOptionSelected}
+              toggles={this.getToggleBarProps()}
+            />
+          )}
+          {!isProgramOrder && (
+            <>
+              <PageButton
+                style={globalStyles.topButton}
+                text={buttonStrings.create_automatic_order}
+                onPress={this.onCreateAutomaticOrder}
+                isDisabled={requisition.isFinalised}
+              />
+              <PageButton
+                style={globalStyles.leftButton}
+                text={buttonStrings.use_suggested_quantities}
+                onPress={this.onUseSuggestedQuantities}
+                isDisabled={requisition.isFinalised}
+              />
+            </>
+          )}
         </View>
 
         {!isProgramOrder && (
