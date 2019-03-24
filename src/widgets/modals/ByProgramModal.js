@@ -15,6 +15,8 @@ import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalS
 import { AutocompleteSelector, PageInfo, Button, ToggleBar } from '..';
 import { PageContentModal } from './PageContentModal';
 import { SETTINGS_KEYS } from '../../settings';
+import { modalStrings } from '../../localization';
+import { TextInput } from '../TextInput';
 
 export class ByProgramModal extends React.Component {
   constructor(props) {
@@ -26,18 +28,18 @@ export class ByProgramModal extends React.Component {
   }
 
   getToggleBarProps = () => {
-    const { onToggleChange, isProgramOrder, type } = this.props;
+    const { onToggleChange, isProgramBased, type } = this.props;
     const buttonText = type === 'requisition' ? 'order' : 'stocktake';
     return [
       {
         text: `Program ${buttonText}`,
         onPress: onToggleChange,
-        isOn: isProgramOrder,
+        isOn: isProgramBased,
       },
       {
         text: `General ${buttonText}`,
         onPress: onToggleChange,
-        isOn: !isProgramOrder,
+        isOn: !isProgramBased,
       },
     ];
   };
@@ -196,21 +198,24 @@ export class ByProgramModal extends React.Component {
   };
 
   getProgress = () => {
-    const { programValues, isProgramOrder, type } = this.props;
+    const { programValues, isProgramBased, type } = this.props;
     const { program, supplier, period, orderType } = programValues;
     const complete =
-      isProgramOrder && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
+      isProgramBased && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
     return {
-      canConfirm: complete || (!isProgramOrder && supplier.name),
-      canSelectSupplier: !(isProgramOrder && !program.name),
+      canConfirm:
+        complete ||
+        (!isProgramBased && supplier.name) ||
+        ((type === 'stocktake' && program.name) || (type === 'stocktake' && !isProgramBased)),
+      canSelectSupplier: !(isProgramBased && !program.name),
       canSelectOrderType: !!supplier.name,
       canSelectPeriod: !!orderType.name,
-      isRequisitionProgramOrder: type === 'requisition' && isProgramOrder,
+      isRequisitionProgramOrder: type === 'requisition' && isProgramBased,
     };
   };
 
   renderPageInfo = () => {
-    const { isProgramOrder } = this.props;
+    const { isProgramBased, name, valueSetter, type } = this.props;
     const {
       canSelectSupplier,
       canSelectOrderType,
@@ -219,15 +224,29 @@ export class ByProgramModal extends React.Component {
     } = this.getProgress();
     return (
       <>
-        {isProgramOrder && (
+        {isProgramBased && (
           <PageInfo columns={[[this.getPageInfoProps().program]]} isEditingDisabled={false} />
         )}
-        <PageInfo
-          columns={[[this.getPageInfoProps().supplier]]}
-          isEditingDisabled={!canSelectSupplier}
-        />
+        {isProgramBased && type === 'stocktake' && (
+          <View style={localStyles.textInput}>
+            <TextInput
+              style={globalStyles.modalTextInput}
+              textStyle={globalStyles.modalText}
+              underlineColorAndroid="transparent"
+              placeholderTextColor="white"
+              placeholder={modalStrings.give_your_stocktake_a_name}
+              value={name}
+              onChangeText={text => valueSetter({ key: 'name', item: text })}
+            />
+          </View>
+        )}
         {isRequisitionProgramOrder && (
           <>
+            <PageInfo
+              columns={[[this.getPageInfoProps().supplier]]}
+              isEditingDisabled={!canSelectSupplier}
+            />
+
             <PageInfo
               columns={[[this.getPageInfoProps().orderTypes]]}
               isEditingDisabled={!canSelectOrderType}
@@ -366,7 +385,17 @@ const localStyles = StyleSheet.create({
   grow: {
     flexGrow: 2,
   },
+  textInput: {
+    justifyContent: 'space-between',
+    paddingLeft: 20,
+    maxHeight: 35,
+    minWidth: 500,
+  },
 });
+
+ByProgramModal.defaultProps = {
+  name: '',
+};
 
 ByProgramModal.propTypes = {
   database: PropTypes.object.isRequired,
@@ -377,6 +406,7 @@ ByProgramModal.propTypes = {
   valueSetter: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   programValues: PropTypes.object.isRequired,
-  isProgramOrder: PropTypes.bool.isRequired,
+  isProgramBased: PropTypes.bool.isRequired,
   onToggleChange: PropTypes.func.isRequired,
+  name: PropTypes.string,
 };
