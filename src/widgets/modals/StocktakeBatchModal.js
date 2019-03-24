@@ -47,6 +47,10 @@ export default class StocktakeBatchModal extends React.Component {
           if (newCountedQuantity === null) return;
 
           stocktakeBatch.countedTotalQuantity = parsePositiveInteger(newValue);
+
+          if (newCountedQuantity !== stocktakeBatch.snapshotTotalQuantity) {
+            this.setState({ currentBatch: stocktakeBatch, reasonModalOpen: true });
+          }
           break;
         }
         case 'batch': {
@@ -125,7 +129,7 @@ export default class StocktakeBatchModal extends React.Component {
             style={localStyles.reasonCell}
           >
             <Text>{stocktakeBatch.option ? stocktakeBatch.option.title : ''}</Text>
-            <Icon name="pencil" size={14} style={localStyles.editIcon} color={SUSSOL_ORANGE} />
+            <Icon name="pencil" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
         );
       }
@@ -312,7 +316,9 @@ const localStyles = StyleSheet.create({
   reasonCell: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
   },
 });
