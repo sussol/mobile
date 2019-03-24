@@ -19,6 +19,7 @@ import {
   pageInfoStrings,
 } from '../localization';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
+import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -90,6 +91,8 @@ export class StocktakeEditPage extends React.Component {
       modalKey: null,
       isModalOpen: false,
       isResetModalOpen: false,
+      stocktakeItem: null,
+      isStocktakeEditModalOpen: false,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -320,9 +323,23 @@ export class StocktakeEditPage extends React.Component {
     return <PageInfo columns={infoColumns} isEditingDisabled={isFinalised} />;
   };
 
+  onConfirmBatchModal = () => {
+    this.setState({ isStocktakeEditModalOpen: false });
+  };
+
+  openBatchModal = item => {
+    this.setState({ stocktakeItem: item, isStocktakeEditModalOpen: true });
+  };
+
   render() {
     const { database, genericTablePageStyles, stocktake, topRoute } = this.props;
-    const { data, isResetModalOpen, isModalOpen } = this.state;
+    const {
+      data,
+      isResetModalOpen,
+      isModalOpen,
+      stocktakeItem,
+      isStocktakeEditModalOpen,
+    } = this.state;
 
     const resetModalText = isResetModalOpen // Small optimisation.
       ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
@@ -333,7 +350,6 @@ export class StocktakeEditPage extends React.Component {
         data={data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
-        renderExpansion={this.renderExpansion}
         renderTopRightComponent={stocktake.program ? null : this.renderManageStocktakeButton}
         renderTopLeftComponent={this.renderPageInfo}
         onEndEditing={this.onEndEditing}
@@ -381,6 +397,9 @@ export class StocktakeEditPage extends React.Component {
         database={database}
         {...genericTablePageStyles}
         topRoute={topRoute}
+        onRowPress={item => {
+          this.openBatchModal(item);
+        }}
       >
         <PageContentModal
           isOpen={isModalOpen && !stocktake.isFinalised}
@@ -396,6 +415,15 @@ export class StocktakeEditPage extends React.Component {
           questionText={resetModalText}
           onConfirm={this.onResetItemsConfirm}
         />
+        {isStocktakeEditModalOpen && (
+          <StocktakeBatchModal
+            isOpen={isStocktakeEditModalOpen}
+            stocktakeItem={stocktakeItem}
+            database={database}
+            genericTablePageStyles={genericTablePageStyles}
+            onConfirm={this.onConfirmBatchModal}
+          />
+        )}
       </GenericPage>
     );
   }
