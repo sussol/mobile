@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,6 +7,9 @@
 import { generateUUID } from 'react-native-database';
 
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from './numberSequenceUtilities';
+import { formatDateAndTime } from '../../utilities';
+
+import { generalStrings } from '../../localization';
 
 const {
   CUSTOMER_INVOICE_NUMBER,
@@ -357,15 +361,22 @@ const createProgramRequisition = (database, requisitionValues) => {
 
 const createProgramStocktake = (database, stocktakeValues) => {
   const date = new Date();
-  database.create('Stocktake', {
+  const { program, name } = stocktakeValues;
+  return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: '',
+    name:
+      !name || name === ''
+        ? `${generalStrings.stocktake} - ${program.name} - ${formatDateAndTime(
+            new Date(),
+            'slashes'
+          )}`
+        : name,
     createdDate: date,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
-    createdBy: stocktakeValues.user,
+    program: stocktakeValues.program,
   });
 };
 
@@ -408,7 +419,7 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionBatch(database, ...args);
     case 'ProgramRequisition':
       return createProgramRequisition(database, ...args);
-    case 'ProgramStockTake':
+    case 'ProgramStocktake':
       return createProgramStocktake(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
