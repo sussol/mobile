@@ -6,10 +6,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { GenericPage } from './GenericPage';
 
 import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
+import { SUSSOL_ORANGE } from '../globalStyles';
 
 import {
   buttonStrings,
@@ -20,6 +24,7 @@ import {
 } from '../localization';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
+import { ReasonModal } from '../widgets/modals/ReasonModal';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -93,6 +98,9 @@ export class StocktakeEditPage extends React.Component {
       isResetModalOpen: false,
       stocktakeItem: null,
       isStocktakeEditModalOpen: false,
+      usesReasons: false,
+      isReasonsModalOpen: false,
+      currentStocktakeItem: null,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -107,6 +115,19 @@ export class StocktakeEditPage extends React.Component {
     }
   }
 
+  componentDidMount = () => {
+    const { database } = this.props;
+    this.setState({ usesReasons: database.objects('Options').length !== 0 });
+  };
+
+  reasonModalConfirm = option => {
+    const { currentStocktakeItem } = this.state;
+    const { database } = this.props;
+    currentStocktakeItem.applyReasonToBatches(database, option);
+
+    this.setState({ isReasonsModalOpen: false });
+  };
+
   /**
    * Respond to the user editing the 'Actual Quantity' column.
    *
@@ -117,12 +138,15 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing = (key, stocktakeItem, newValue) => {
     const { database } = this.props;
-
+    this.setState({ currentStocktakeItem: stocktakeItem });
     if (key !== 'countedTotalQuantity' || newValue === '') return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
 
     stocktakeItem.setCountedTotalQuantity(database, quantity);
+    if (stocktakeItem.countedTotalQuantity !== stocktakeItem.snapshotTotalQuantity) {
+      this.setState({ isReasonsModalOpen: true, currentStocktakeItem: stocktakeItem });
+    }
   };
 
   /**
@@ -178,6 +202,7 @@ export class StocktakeEditPage extends React.Component {
     );
     let sortDataType;
     switch (sortBy) {
+      case 'reason':
       case 'itemCode':
       case 'itemName':
         sortDataType = 'string';
@@ -221,6 +246,20 @@ export class StocktakeEditPage extends React.Component {
         const { difference } = stocktakeItem;
         const prefix = difference > 0 ? '+' : '';
         return { cellContents: `${prefix}${difference}` };
+      }
+      case 'reason': {
+        return (
+          <TouchableOpacity
+            key={stocktakeItem.id}
+            onPress={() =>
+              this.setState({ isReasonsModalOpen: true, currentStocktakeItem: stocktakeItem })
+            }
+            style={localStyles.reasonCell}
+          >
+            <Text>{stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason : ''}</Text>
+            <Icon name="pencil" size={14} color={SUSSOL_ORANGE} />
+          </TouchableOpacity>
+        );
       }
     }
   };
@@ -331,6 +370,56 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ stocktakeItem: item, isStocktakeEditModalOpen: true });
   };
 
+  getColumns = () => {
+    const { usesReasons } = this.state;
+    const columns = [
+      {
+        key: 'itemCode',
+        width: 1,
+        title: tableStrings.item_code,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'itemName',
+        width: 3.2,
+        title: tableStrings.item_name,
+        sortable: true,
+      },
+      {
+        key: 'snapshotTotalQuantity',
+        width: 1.2,
+        title: tableStrings.snapshot_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'countedTotalQuantity',
+        width: 1.2,
+        title: tableStrings.actual_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'difference',
+        width: 1,
+        title: tableStrings.difference,
+        sortable: true,
+        alignText: 'right',
+      },
+    ];
+    if (usesReasons) {
+      columns.push({
+        key: 'reason',
+        width: 1.2,
+        title: 'REASON',
+        sortable: true,
+        alignText: 'right',
+      });
+    }
+    return columns;
+  };
+
   render() {
     const { database, genericTablePageStyles, stocktake, topRoute } = this.props;
     const {
@@ -339,6 +428,9 @@ export class StocktakeEditPage extends React.Component {
       isModalOpen,
       stocktakeItem,
       isStocktakeEditModalOpen,
+      isReasonsModalOpen,
+      usesReasons,
+      currentStocktakeItem,
     } = this.state;
 
     const resetModalText = isResetModalOpen // Small optimisation.
@@ -355,42 +447,7 @@ export class StocktakeEditPage extends React.Component {
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'itemName',
-            width: 3.2,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'snapshotTotalQuantity',
-            width: 1.2,
-            title: tableStrings.snapshot_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'countedTotalQuantity',
-            width: 1.2,
-            title: tableStrings.actual_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'difference',
-            width: 1,
-            title: tableStrings.difference,
-            sortable: true,
-            alignText: 'right',
-          },
-        ]}
+        columns={this.getColumns()}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         dataTypesLinked={['StocktakeBatch']}
         finalisableDataType="Stocktake"
@@ -424,6 +481,15 @@ export class StocktakeEditPage extends React.Component {
             onConfirm={this.onConfirmBatchModal}
           />
         )}
+        {isReasonsModalOpen && usesReasons && (
+          <ReasonModal
+            database={database}
+            isOpen={isReasonsModalOpen}
+            onClose={this.reasonModalConfirm}
+            item={currentStocktakeItem}
+            type="StocktakeItem"
+          />
+        )}
       </GenericPage>
     );
   }
@@ -438,3 +504,12 @@ StocktakeEditPage.propTypes = {
   stocktake: PropTypes.object.isRequired,
   topRoute: PropTypes.bool,
 };
+
+const localStyles = StyleSheet.create({
+  reasonCell: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+});
