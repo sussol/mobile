@@ -74,11 +74,15 @@ export class SupplierRequisitionPage extends React.Component {
   };
 
   onCreateAutomaticOrder = () => {
-    const { database, requisition, runWithLoadingIndicator } = this.props;
-
+    const { database, requisition, runWithLoadingIndicator, settings } = this.props;
+    const { isProgramOrder } = this.state;
     runWithLoadingIndicator(() => {
       database.write(() => {
-        requisition.createAutomaticOrder(database, this.getThisStore());
+        if (isProgramOrder) {
+          requisition.createAutomaticProgramOrder(database, settings.get('ThisStoreTags'));
+        } else {
+          requisition.createAutomaticOrder(database, this.getThisStore());
+        }
         database.save('Requisition', requisition);
       });
       this.refreshData();
@@ -246,8 +250,6 @@ export class SupplierRequisitionPage extends React.Component {
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
-          onPress: this.openMonthsSelector,
-          editableType: 'selectable',
         },
         {
           title: `${pageInfoStrings.comment}:`,
@@ -272,6 +274,9 @@ export class SupplierRequisitionPage extends React.Component {
       infoColumns[0].unshift(orderTypeInfo);
       infoColumns[0].unshift(programInfo);
       infoColumns[1].unshift(periodInfo);
+    } else {
+      infoColumns[1][1].onPress = this.openMonthsSelector;
+      infoColumns[1][1].editableType = 'selectable';
     }
     return <PageInfo columns={infoColumns} isEditingDisabled={requisition.isFinalised} />;
   };
@@ -382,6 +387,12 @@ export class SupplierRequisitionPage extends React.Component {
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.create_automatic_order}
+            onPress={this.onCreateAutomaticOrder}
+            isDisabled={requisition.isFinalised}
+          />
           {isProgramOrder && (
             <ToggleBar
               style={globalStyles.toggleBar}
@@ -392,21 +403,14 @@ export class SupplierRequisitionPage extends React.Component {
               toggles={this.getToggleBarProps()}
             />
           )}
+
           {!isProgramOrder && (
-            <>
-              <PageButton
-                style={globalStyles.topButton}
-                text={buttonStrings.create_automatic_order}
-                onPress={this.onCreateAutomaticOrder}
-                isDisabled={requisition.isFinalised}
-              />
-              <PageButton
-                style={globalStyles.leftButton}
-                text={buttonStrings.use_suggested_quantities}
-                onPress={this.onUseSuggestedQuantities}
-                isDisabled={requisition.isFinalised}
-              />
-            </>
+            <PageButton
+              style={globalStyles.leftButton}
+              text={buttonStrings.use_suggested_quantities}
+              onPress={this.onUseSuggestedQuantities}
+              isDisabled={requisition.isFinalised}
+            />
           )}
         </View>
 
