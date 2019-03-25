@@ -18,6 +18,7 @@ import { Button, PageButton, ExpiryTextInput, PageInfo } from '..';
 import globalStyles, {
   WARM_GREY,
   SUSSOL_ORANGE,
+  DARK_GREY,
   dataTableStyles,
   expansionPageStyles,
 } from '../../globalStyles';
@@ -249,10 +250,11 @@ export default class StocktakeBatchModal extends React.Component {
       <Modal
         isOpen={isOpen}
         style={[localStyles.modal]}
-        backdropPressToClose={false}
-        backdropOpacity={0.88}
+        backdropPressToClose={true}
+        backdropOpacity={0.33}
         swipeToClose={false}
         position="top"
+        coverScreen
       >
         <GenericPage
           data={data}
@@ -269,6 +271,7 @@ export default class StocktakeBatchModal extends React.Component {
           pageStyles={expansionPageStyles}
           {...genericTablePageStyles}
         />
+
         {this.renderFooter()}
         <ReasonModal
           database={database}
@@ -299,6 +302,8 @@ const localStyles = StyleSheet.create({
   modal: {
     height: '100%',
     width: '100%',
+    padding: 50,
+    backgroundColor: DARK_GREY,
   },
   footer: {
     flex: 1,

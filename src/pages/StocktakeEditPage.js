@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
@@ -277,6 +277,20 @@ export class StocktakeEditPage extends React.Component {
           </TouchableOpacity>
         );
       }
+      case 'modalControl': {
+        return (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <TouchableOpacity
+              onPress={() => {
+                console.log('?');
+                this.openBatchModal(stocktakeItem);
+              }}
+            >
+              <Icon name="bars" size={14} color={SUSSOL_ORANGE} />
+            </TouchableOpacity>
+          </View>
+        );
+      }
     }
   };
 
@@ -433,6 +447,12 @@ export class StocktakeEditPage extends React.Component {
         alignText: 'right',
       });
     }
+    columns.push({
+      key: 'modalControl',
+      width: 0.6,
+      title: '',
+      sortable: false,
+    });
     return columns;
   };
 
@@ -470,9 +490,6 @@ export class StocktakeEditPage extends React.Component {
         database={database}
         {...genericTablePageStyles}
         topRoute={topRoute}
-        onRowPress={item => {
-          this.openBatchModal(item);
-        }}
       >
         <PageContentModal
           isOpen={isModalOpen && !stocktake.isFinalised}
