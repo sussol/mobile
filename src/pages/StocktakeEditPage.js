@@ -279,15 +279,21 @@ export class StocktakeEditPage extends React.Component {
       }
       case 'modalControl': {
         return (
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <TouchableOpacity
-              onPress={() => {
-                this.openBatchModal(stocktakeItem);
+          <TouchableOpacity
+            onPress={() => {
+              this.openBatchModal(stocktakeItem);
+            }}
+          >
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'row',
               }}
             >
-              <Icon name="bars" size={14} color={SUSSOL_ORANGE} />
-            </TouchableOpacity>
-          </View>
+              <Icon name="bars" size={20} color={SUSSOL_ORANGE} />
+            </View>
+          </TouchableOpacity>
         );
       }
     }
