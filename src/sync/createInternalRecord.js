@@ -14,7 +14,7 @@ import { parseBoolean, parseDate } from './incomingSyncUtils';
 export const createPeriodInternalRecord = (record, database) => ({
   id: record.ID,
   startDate: record.startDate ? parseDate(record.startDate) : new Date(),
-  endDate: record.endDate ? parseDate(record.startDate) : new Date(),
+  endDate: record.endDate ? parseDate(record.endDate) : new Date(),
   name: record.name,
   periodSchedule: database.getOrCreate('PeriodSchedule', record.periodScheduleID),
 });
