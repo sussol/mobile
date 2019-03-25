@@ -192,10 +192,7 @@ export class SupplierRequisitionPage extends React.Component {
     );
     if (useThresholdMOS) {
       data = data.filter(requisitionItem =>
-        requisitionItem.item.isLessThanThresholdMOS(
-          requisition.monthsToSupply,
-          orderType.thresholdMOS
-        )
+        requisitionItem.item.isLessThanThresholdMOS(orderType.thresholdMOS)
       );
     }
 
