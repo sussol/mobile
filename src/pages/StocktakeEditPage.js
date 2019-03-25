@@ -282,7 +282,6 @@ export class StocktakeEditPage extends React.Component {
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <TouchableOpacity
               onPress={() => {
-                console.log('?');
                 this.openBatchModal(stocktakeItem);
               }}
             >
