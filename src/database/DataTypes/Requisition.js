@@ -218,6 +218,21 @@ export class Requisition extends Realm.Object {
     });
   }
 
+  createAutomaticProgramOrder(database, tags) {
+    const orderType = this.program.getOrderType(tags, this.orderType);
+    console.log(orderType);
+    this.items.forEach(requisitionItem => {
+      if (
+        requisitionItem.suggestedQuantity <=
+        requisitionItem.monthlyUsage * orderType.thresholdMOS
+      ) {
+        requisitionItem.requiredQuantity = requisitionItem.suggestedQuantity;
+      }
+
+      database.save('RequisitionItem', requisitionItem);
+    });
+  }
+
   /**
    * Add all items from the mobile store master list that require more stock.
    *
