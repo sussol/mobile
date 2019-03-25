@@ -122,7 +122,7 @@ export class SupplierRequisitionPage extends React.Component {
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
-        return modalStrings.search_for_an_item_to_add;
+        return 'Temperature breaches for Fridge 1 (07-03 03:20)';
       case COMMENT_EDIT:
         return modalStrings.edit_the_requisition_comment;
       case MONTHS_SELECT:
@@ -213,12 +213,16 @@ export class SupplierRequisitionPage extends React.Component {
   }
 
   renderCell = (key, requisitionItem) => {
+    this.first = !this.first;
     switch (key) {
       default:
         return requisitionItem[key];
+      case 'stockOnHand':
+        return this.first ? 5 : 10
       case 'monthlyUsage':
+        return this.first ? 20 : 30
       case 'suggestedQuantity':
-        return Math.round(requisitionItem[key]);
+        return this.first ? 55 : 30
       case 'requiredQuantity':
         return {
           type: this.props.requisition.isFinalised ? 'text' : 'editable',
@@ -238,26 +242,27 @@ export class SupplierRequisitionPage extends React.Component {
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
-        return (
-          <AutocompleteSelector
-            options={this.props.database.objects('Item')}
-            queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
-            queryStringSecondary={'name CONTAINS[c] $0'}
-            sortByString={'name'}
-            onSelect={(item) => {
-              const { database, requisition } = this.props;
-              database.write(() => {
-                if (!requisition.hasItem(item)) {
-                  createRecord(database, 'RequisitionItem', requisition, item);
-                }
-              });
-              this.refreshData();
-              this.closeModal();
-            }}
-            renderLeftText={(item) => `${item.name}`}
-            renderRightText={(item) => `${item.totalQuantity}`}
-          />
-        );
+      return null;
+        // return (
+        //   <AutocompleteSelector
+        //     options={this.props.database.objects('Item')}
+        //     queryString={'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'}
+        //     queryStringSecondary={'name CONTAINS[c] $0'}
+        //     sortByString={'name'}
+        //     onSelect={(item) => {
+        //       const { database, requisition } = this.props;
+        //       database.write(() => {
+        //         if (!requisition.hasItem(item)) {
+        //           createRecord(database, 'RequisitionItem', requisition, item);
+        //         }
+        //       });
+        //       this.refreshData();
+        //       this.closeModal();
+        //     }}
+        //     renderLeftText={(item) => `${item.name}`}
+        //     renderRightText={(item) => `${item.totalQuantity}`}
+        //   />
+        // );
       case MONTHS_SELECT:
         return (
           <ToggleSelector
@@ -433,3 +438,8 @@ export function checkForFinaliseError(requisition) {
   }
   return null;
 }
+
+
+
+
+

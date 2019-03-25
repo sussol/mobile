@@ -107,7 +107,7 @@ export class MenuPage extends React.Component {
                 <Button
                   style={globalStyles.menuButton}
                   textStyle={globalStyles.menuButtonText}
-                  text={navStrings.supplier_invoices}
+                  text='APPLY CHANGES'
                   onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
                 />
               }
@@ -143,8 +143,8 @@ export class MenuPage extends React.Component {
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
-              text={navStrings.current_stock}
-              onPress={() => navigateTo('stock', navStrings.current_stock)}
+              text='Apply Changes'
+              onPress={() => navigateTo('stock', 'Manage Vaccine Stock')}
             />
             <BadgeSet
               MainElement={

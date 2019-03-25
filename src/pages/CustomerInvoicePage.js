@@ -21,6 +21,7 @@ import {
   PageContentModal,
   PageInfo,
   TextEditor,
+  ToggleBar,
 } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
@@ -43,6 +44,8 @@ export class CustomerInvoicePage extends GenericPage {
       sortBy: 'itemName',
       isAscending: true,
     };
+
+    this.first = true;
   }
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
@@ -186,6 +189,14 @@ export class CustomerInvoicePage extends GenericPage {
     switch (key) {
       default:
         return transactionItem[key];
+      case 'breaches':
+        return '';
+      case 'doses':
+      this.first=!this.first;
+      return {
+        type: this.props.transaction.isFinalised ? 'text' : 'editable',
+        cellContents: !this.first ? '9' : 0,
+      };
       case 'totalQuantity':
         return {
           type: this.props.transaction.isFinalised ? 'text' : 'editable',
@@ -260,17 +271,39 @@ export class CustomerInvoicePage extends GenericPage {
 
   renderButtons = () => (
     <View style={globalStyles.verticalContainer}>
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_item}
-        onPress={this.openItemSelector}
-        isDisabled={this.props.transaction.isFinalised}
-      />
-      <PageButton
-        text={buttonStrings.add_master_list_items}
-        onPress={this.onAddMasterItems}
-        isDisabled={this.props.transaction.isFinalised}
-      />
+      <ToggleBar
+          style={globalStyles.toggleBar}
+          textOffStyle={globalStyles.toggleText}
+          textOnStyle={globalStyles.toggleTextSelected}
+          toggleOffStyle={globalStyles.toggleOption}
+          toggleOnStyle={globalStyles.toggleOptionSelected}
+          toggles={[
+            {
+              text: `Non Cold Chain`,
+              onPress: () => this.onToggleStatusFilter(true),
+              isOn: false,
+            },
+            {
+              text: `Cold Chain (2)`,
+              onPress: () => this.onToggleStatusFilter(false),
+              isOn: true,
+            },
+          ]}
+        />
+      <View style={globalStyles.horizontalContainer}>
+        <PageButton
+          style={{ marginLeft: 5, marginTop: 10 }}
+          text={buttonStrings.new_item}
+          onPress={this.openItemSelector}
+          isDisabled={this.props.transaction.isFinalised}
+        />
+        <PageButton
+               style={{ marginLeft: 5, marginTop: 10 }}
+          text={buttonStrings.add_master_list_items}
+          onPress={this.onAddMasterItems}
+          isDisabled={this.props.transaction.isFinalised}
+        />
+        </View>
     </View>
   );
 
@@ -311,7 +344,18 @@ export class CustomerInvoicePage extends GenericPage {
             key: 'totalQuantity',
             width: 2,
             title: tableStrings.quantity,
-            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'doses',
+            width: 1,
+            title: 'DOSES GIVEN',
+            alignText: 'right',
+          },
+          {
+            key: 'breaches',
+            width: 1,
+            title: 'BREACH',
             alignText: 'right',
           },
           {

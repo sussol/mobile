@@ -114,12 +114,12 @@ export class StocktakesPage extends React.Component {
       toggleOnStyle={globalStyles.toggleOptionSelected}
       toggles={[
         {
-          text: buttonStrings.current,
+          text: 'CURRENT',
           onPress: () => this.onToggleStatusFilter(true),
           isOn: this.state.showCurrent,
         },
         {
-          text: buttonStrings.past,
+          text: 'HISTORIC',
           onPress: () => this.onToggleStatusFilter(false),
           isOn: !this.state.showCurrent,
         },

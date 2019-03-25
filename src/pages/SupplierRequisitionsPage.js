@@ -77,7 +77,7 @@ export class SupplierRequisitionsPage extends React.Component {
     this.setState({ selection: [] }); // Clear any requsitions selected for delete
     this.props.navigateTo(
       'supplierRequisition',
-      `${navStrings.requisition} ${requisition.serialNumber}`,
+      'Manage Vaccine Stock',
       { requisition: requisition },
     );
   }

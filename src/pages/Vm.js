@@ -72,7 +72,8 @@ export class Vm extends React.Component {
   fridges = () =>
     this.props.database.objects('Location').map(fridge => {
       const { minTemp, maxTemp, currentTemp } = fridge;
-      console.log('fridge current temperature', currentTemp);
+      console.log('fridge current temperature **', currentTemp);
+      console.log(fridge.getAggregatedTemps({ type: 'max', hourPeriod: 8, lookBackDays: 7 }));
       const lines = [
         {
           data: fridge.getAggregatedTemps({ type: 'max', hourPeriod: 8, lookBackDays: 7 }),
@@ -182,14 +183,14 @@ export class Vm extends React.Component {
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
-              text={'Give Vaccine'}
+              text={'Outgoing Stock'}
               onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
             />
 
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
-              text={'Order Vaccine'}
+              text={'Incoming Stock'}
               onPress={() => navigateTo('requestRequisition', navStrings.request_requisition)}
             />
             <Button
@@ -201,7 +202,7 @@ export class Vm extends React.Component {
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
-              text={'Extras'}
+              text={'Admin'}
               onPress={() => navigateTo('vaccineModule', 'VaccindeModule Strea')}
             />
           </View>
