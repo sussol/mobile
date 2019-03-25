@@ -57,14 +57,13 @@ export class StocktakesPage extends React.Component {
 
   onConfirmProgramStocktake = () => {
     const { runWithLoadingIndicator } = this.props;
+    const { currentUser, database, navigateTo } = this.props;
+    const { programValues } = this.state;
+    const { program } = programValues;
+    let stocktake;
 
     runWithLoadingIndicator(() => {
-      const { currentUser, database, navigateTo } = this.props;
-      const { programValues } = this.state;
-      const { program } = programValues;
-
       programValues.createdBy = currentUser;
-      let stocktake;
       database.write(() => {
         stocktake = createRecord(database, 'ProgramStocktake', programValues);
         stocktake.setItemsByID(
@@ -72,15 +71,14 @@ export class StocktakesPage extends React.Component {
           program.items.map(masterListItem => masterListItem.item.id)
         );
       });
-
-      this.setState(
-        {
-          byProgramModalOpen: false,
-          programValues: { program: {}, supplier: {}, orderType: {}, period: {}, name: '' },
-        },
-        () => navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake })
-      );
     });
+    this.setState(
+      {
+        byProgramModalOpen: false,
+        programValues: { program: {}, supplier: {}, orderType: {}, period: {}, name: '' },
+      },
+      () => navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake })
+    );
   };
 
   onRowPress = stocktake => {

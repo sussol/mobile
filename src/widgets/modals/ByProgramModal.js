@@ -44,9 +44,6 @@ export class ByProgramModal extends React.Component {
     ];
   };
 
-  // Should capitalize, can be multiple words. Split on
-  // white space, map returning word with capitalized first
-  // letter, return joined. Same with main modal title
   getSearchModalTitle = () => {
     const { searchModalKey } = this.state;
     return `Select a ${searchModalKey} to use`;
@@ -160,10 +157,15 @@ export class ByProgramModal extends React.Component {
   };
 
   getPageInfoProps = () => {
-    const { programValues } = this.props;
+    const { programValues, type } = this.props;
     const { program, supplier, orderType, period } = programValues;
     return {
       program: {
+        title: program.name ? (
+          <Icon name="md-checkmark" style={{ color: 'green' }} size={16} />
+        ) : (
+          <Text style={{ color: 'white' }}>1</Text>
+        ),
         info: `${program.name || 'Select the program to use'}`,
         onPress: () => {
           this.setState({ searchIsOpen: true, searchModalKey: 'program' });
@@ -171,7 +173,11 @@ export class ByProgramModal extends React.Component {
         editableType: 'selectable',
       },
       supplier: {
-        title: '',
+        title: supplier.name ? (
+          <Icon name="md-checkmark" style={{ color: 'green' }} size={16} />
+        ) : (
+          <Text style={{ color: 'white' }}>{type === 'requisition' ? 2 : 1}</Text>
+        ),
         info: `${supplier.name || 'Select the supplier to use'}`,
         onPress: () => {
           this.setState({ searchIsOpen: true, searchModalKey: 'supplier' });
@@ -179,7 +185,11 @@ export class ByProgramModal extends React.Component {
         editableType: 'selectable',
       },
       orderTypes: {
-        title: '',
+        title: orderType.name ? (
+          <Icon name="md-checkmark" style={{ color: 'green' }} size={16} />
+        ) : (
+          <Text style={{ color: 'white' }}>3</Text>
+        ),
         info: `${orderType.name || 'Select the order type to use'}`,
         onPress: () => {
           this.setState({ searchIsOpen: true, searchModalKey: 'orderType' });
@@ -187,7 +197,11 @@ export class ByProgramModal extends React.Component {
         editableType: 'selectable',
       },
       period: {
-        title: '',
+        title: period.name ? (
+          <Icon name="md-checkmark" style={{ color: 'green' }} size={16} />
+        ) : (
+          <Text style={{ color: 'white' }}>4</Text>
+        ),
         info: `${period.name || 'Select the Period to use'}`,
         onPress: () => {
           this.setState({ searchIsOpen: true, searchModalKey: 'period' });
@@ -215,7 +229,7 @@ export class ByProgramModal extends React.Component {
   };
 
   renderPageInfo = () => {
-    const { isProgramBased, name, valueSetter, type } = this.props;
+    const { isProgramBased, onConfirm, type } = this.props;
     const {
       canSelectSupplier,
       canSelectOrderType,
@@ -227,26 +241,14 @@ export class ByProgramModal extends React.Component {
         {isProgramBased && (
           <PageInfo columns={[[this.getPageInfoProps().program]]} isEditingDisabled={false} />
         )}
-        {isProgramBased && type === 'stocktake' && (
-          <View style={localStyles.textInput}>
-            <TextInput
-              style={globalStyles.modalTextInput}
-              textStyle={globalStyles.modalText}
-              underlineColorAndroid="transparent"
-              placeholderTextColor="white"
-              placeholder={modalStrings.give_your_stocktake_a_name}
-              value={name}
-              onChangeText={text => valueSetter({ key: 'name', item: text })}
-            />
-          </View>
+        {type === 'requisition' && (
+          <PageInfo
+            columns={[[this.getPageInfoProps().supplier]]}
+            isEditingDisabled={!canSelectSupplier}
+          />
         )}
         {isRequisitionProgramOrder && (
           <>
-            <PageInfo
-              columns={[[this.getPageInfoProps().supplier]]}
-              isEditingDisabled={!canSelectSupplier}
-            />
-
             <PageInfo
               columns={[[this.getPageInfoProps().orderTypes]]}
               isEditingDisabled={!canSelectOrderType}
@@ -257,12 +259,20 @@ export class ByProgramModal extends React.Component {
             />
           </>
         )}
+        <Button
+          text="OK"
+          onPress={onConfirm}
+          disabledColor={WARM_GREY}
+          isDisabled={!this.getProgress().canConfirm}
+          style={[globalStyles.button, localStyles.OKButton]}
+          textStyle={[globalStyles.buttonText, localStyles.OKButtonText]}
+        />
       </>
     );
   };
 
   render() {
-    const { onConfirm, onCancel, isOpen, type } = this.props;
+    const { onCancel, isOpen, type, valueSetter, isProgramBased, name } = this.props;
     const { searchIsOpen } = this.state;
     return (
       <Modal
@@ -278,7 +288,7 @@ export class ByProgramModal extends React.Component {
           <Icon name="md-close" style={localStyles.closeIcon} />
         </TouchableOpacity>
 
-        <Text style={localStyles.title}>{`${type} details`}</Text>
+        <Text style={localStyles.title}>{`Create a ${type}`}</Text>
 
         <View style={localStyles.toggleContainer}>
           <ToggleBar
@@ -290,28 +300,21 @@ export class ByProgramModal extends React.Component {
             toggles={this.getToggleBarProps()}
           />
         </View>
-
+        {isProgramBased && type === 'stocktake' && (
+          <View style={localStyles.textInput}>
+            <TextInput
+              style={globalStyles.modalTextInput}
+              textStyle={globalStyles.modalText}
+              underlineColorAndroid="transparent"
+              placeholderTextColor="white"
+              placeholder={modalStrings.give_your_stocktake_a_name}
+              value={name}
+              onChangeText={text => valueSetter({ key: 'name', item: text })}
+            />
+          </View>
+        )}
         <View style={localStyles.contentContainer}>{this.renderPageInfo()}</View>
         <View style={localStyles.grow} />
-        <View style={localStyles.bottomContainer}>
-          <Button
-            text="CANCEL"
-            onPress={onCancel}
-            disabledColor={WARM_GREY}
-            isDisabled={false}
-            style={globalStyles.button}
-            textStyle={globalStyles.buttonText}
-          />
-          <Button
-            text="OK"
-            onPress={onConfirm}
-            disabledColor={WARM_GREY}
-            isDisabled={!this.getProgress().canConfirm}
-            style={[globalStyles.button, localStyles.OKButton]}
-            textStyle={[globalStyles.buttonText, localStyles.OKButtonText]}
-          />
-        </View>
-
         <PageContentModal
           isOpen={searchIsOpen}
           onClose={this.onSearchModalCancel}
@@ -337,6 +340,7 @@ const localStyles = StyleSheet.create({
     position: 'absolute',
     overflow: 'hidden',
     flexGrow: 1,
+    justifyContent: 'center',
   },
   toggleContainer: {
     width: 292,
@@ -351,13 +355,13 @@ const localStyles = StyleSheet.create({
     marginTop: 10,
   },
   contentContainer: {
-    width: '50%',
+    width: '30%',
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+
+    marginTop: '2%',
     maxHeight: '30%',
-    marginTop: '5%',
   },
   closeIcon: {
     fontSize: 36,
@@ -370,6 +374,7 @@ const localStyles = StyleSheet.create({
   },
   OKButton: {
     backgroundColor: SUSSOL_ORANGE,
+    marginTop: 100,
   },
   OKButtonText: {
     color: 'white',
@@ -390,6 +395,7 @@ const localStyles = StyleSheet.create({
     paddingLeft: 20,
     maxHeight: 35,
     minWidth: 500,
+    marginTop: '2%',
   },
 });
 
