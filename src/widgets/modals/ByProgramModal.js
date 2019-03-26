@@ -8,13 +8,44 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+
+import { PageContentModal } from './PageContentModal';
+
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 import { AutocompleteSelector, PageInfo, Button, ToggleBar } from '..';
-import { PageContentModal } from './PageContentModal';
+
 import { SETTINGS_KEYS } from '../../settings';
+import { getAllPrograms } from '../../utilities/byProgram';
+
+const updateState = (command, additionalState) => {
+  let newState;
+  switch (command) {
+    case 'RESET_ALL':
+      newState = {
+        program: {},
+        supplier: {},
+        period: {},
+        periods: null,
+        orderType: {},
+        orderTypes: null,
+      };
+      break;
+    case 'SELECT_PROGRAM':
+      newState = { period: {}, orderType: {}, orderTypes: null, periods: null };
+      break;
+    case 'SELECT_ORDER_TYPE':
+      newState = { period: {}, periods: null };
+      break;
+    default:
+      break;
+  }
+  if (additionalState) return newState;
+  return newState;
+};
 
 export class ByProgramModal extends React.Component {
   constructor(props) {
@@ -22,29 +53,48 @@ export class ByProgramModal extends React.Component {
     this.state = {
       searchIsOpen: false,
       searchModalKey: 'supplier',
+      isProgramBased: true,
+      canConfirm: false,
+      program: {},
+      supplier: {},
+      orderType: {},
+      period: {},
+      programs: null,
+      suppliers: null,
+      orderTypes: null,
+      periods: null,
     };
   }
 
+  componentDidMount = () => {
+    const { settings, database } = this.props;
+    const programs = getAllPrograms(settings, database);
+    this.setState({ programs });
+  };
+
+  toggleChange = () => {
+    const { isProgramBased } = this.state;
+    this.setState({ ...updateState('RESET_ALL'), isProgramBased: !isProgramBased });
+  };
+
   getToggleBarProps = () => {
-    const { onToggleChange, isProgramOrder, type } = this.props;
+    const { onToggleChange, type } = this.props;
+    const { isProgramBased } = this.state;
     const buttonText = type === 'requisition' ? 'order' : 'stocktake';
     return [
       {
         text: `Program ${buttonText}`,
-        onPress: onToggleChange,
-        isOn: isProgramOrder,
+        onPress: this.toggleChange,
+        isOn: isProgramBased,
       },
       {
         text: `General ${buttonText}`,
-        onPress: onToggleChange,
-        isOn: !isProgramOrder,
+        onPress: this.toggleChange,
+        isOn: !isProgramBased,
       },
     ];
   };
 
-  // Should capitalize, can be multiple words. Split on
-  // white space, map returning word with capitalized first
-  // letter, return joined. Same with main modal title
   getSearchModalTitle = () => {
     const { searchModalKey } = this.state;
     return `Select a ${searchModalKey} to use`;
@@ -196,21 +246,22 @@ export class ByProgramModal extends React.Component {
   };
 
   getProgress = () => {
-    const { programValues, isProgramOrder, type } = this.props;
+    const { programValues, type } = this.props;
+    const { isProgramBased } = this.state;
     const { program, supplier, period, orderType } = programValues;
     const complete =
-      isProgramOrder && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
+      isProgramBased && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
     return {
-      canConfirm: complete || (!isProgramOrder && supplier.name),
-      canSelectSupplier: !(isProgramOrder && !program.name),
+      canConfirm: complete || (!isProgramBased && supplier.name),
+      canSelectSupplier: !(isProgramBased && !program.name),
       canSelectOrderType: !!supplier.name,
       canSelectPeriod: !!orderType.name,
-      isRequisitionProgramOrder: type === 'requisition' && isProgramOrder,
+      isRequisitionProgramOrder: type === 'requisition' && isProgramBased,
     };
   };
 
   renderPageInfo = () => {
-    const { isProgramOrder } = this.props;
+    const { isProgramBased } = this.state;
     const {
       canSelectSupplier,
       canSelectOrderType,
@@ -219,7 +270,7 @@ export class ByProgramModal extends React.Component {
     } = this.getProgress();
     return (
       <>
-        {isProgramOrder && (
+        {isProgramBased && (
           <PageInfo columns={[[this.getPageInfoProps().program]]} isEditingDisabled={false} />
         )}
         <PageInfo
@@ -377,6 +428,6 @@ ByProgramModal.propTypes = {
   valueSetter: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   programValues: PropTypes.object.isRequired,
-  isProgramOrder: PropTypes.bool.isRequired,
+  isProgramBased: PropTypes.bool.isRequired,
   onToggleChange: PropTypes.func.isRequired,
 };
