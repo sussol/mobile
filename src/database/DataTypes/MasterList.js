@@ -50,16 +50,14 @@ export class MasterList extends Realm.Object {
    * @return {object} The matching storeTag programsettings field for the current store
    */
   getStoreTagObject(tags) {
+    if (!this.programSettings) return null;
     const storeTags = tags.split(/[\s,]+/);
     const firstParse = JSON.parse(this.programSettings);
     if (!firstParse) return null;
 
-    return Object.entries(JSON.parse(firstParse).storeTags).reduce(
-      ([programStoreTag, storeTagObject]) => {
-        if (!(storeTags.indexOf(programStoreTag) >= 0)) return null;
-        return storeTagObject;
-      }
-    )[1];
+    return Object.entries(JSON.parse(firstParse).storeTags).filter(
+      ([programStoreTag]) => storeTags.indexOf(programStoreTag) >= 0
+    )[0][1];
   }
 
   /**
