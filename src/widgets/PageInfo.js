@@ -45,7 +45,8 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
   let editTextStyle;
   let containerStyle;
   let iconName;
-  switch (rowData.editableType) {
+  const { editableType, canEdit } = rowData;
+  switch (editableType) {
     case 'selectable':
       containerStyle = localStyles.selectContainer;
       iconName = 'angle-down';
@@ -69,7 +70,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       {infoString}
     </Text>
   );
-  if (rowData.onPress && !isEditingDisabled) {
+  if (rowData.onPress && (!isEditingDisabled && canEdit)) {
     return (
       <TouchableOpacity
         style={localStyles.rowContainer}
@@ -129,14 +130,14 @@ export const PageInfo = props => {
             }
           >
             <View>
-              {columnData.map((...args) =>
-                renderTitleComponent(isEditingDisabled, columnIndex, ...args)
-              )}
+              {columnData
+                .filter(data => data.shouldShow !== false)
+                .map((...args) => renderTitleComponent(isEditingDisabled, columnIndex, ...args))}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((...args) =>
-                renderInfoComponent(isEditingDisabled, columnIndex, ...args)
-              )}
+              {columnData
+                .filter(data => data.shouldShow !== false)
+                .map((...args) => renderInfoComponent(isEditingDisabled, columnIndex, ...args))}
             </View>
           </View>
         );
