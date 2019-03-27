@@ -16,7 +16,7 @@ export class Period extends Realm.Object {
     database.save('Period', this);
   }
 
-  numberOfRequisitionsForProgram(program) {
+  requisitionsForProgram(program) {
     return this.requisitions.filtered('program.id = $0', program.id).length;
   }
 
@@ -26,6 +26,12 @@ export class Period extends Realm.Object {
   }
 
   getFormattedPeriod() {
+    return `${this.startDate.toLocaleDateString('en-US')} - ${this.endDate.toLocaleDateString(
+      'en-US'
+    )} `;
+  }
+
+  toString() {
     return `${this.startDate.toLocaleDateString('en-US')} - ${this.endDate.toLocaleDateString(
       'en-US'
     )} `;
