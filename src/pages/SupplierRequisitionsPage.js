@@ -50,19 +50,15 @@ export class SupplierRequisitionsPage extends React.Component {
     this.setState({ usesPrograms });
   }
 
-  onConfirmByProgram = () => {
+  onConfirmByProgram = programValues => {
     const { database, currentUser } = this.props;
-    const { programValues } = this.state;
     const requisitionValues = { ...programValues, currentUser };
     let requisition;
     database.write(() => {
       requisition = createRecord(database, 'ProgramRequisition', requisitionValues);
       requisition.addItemsFromProgram(database);
     });
-    this.setState({
-      byProgramModalOpen: false,
-      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
-    });
+    this.setState({ byProgramModalOpen: false });
     this.navigateToRequisition(requisition);
   };
 
