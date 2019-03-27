@@ -19,7 +19,31 @@ import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalS
 import { AutocompleteSelector, PageInfo, Button, ToggleBar } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
-import { getAllPrograms } from '../../utilities/byProgram';
+import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities/byProgram';
+
+const queryString = 'name BEGINSWITH[c] $0';
+const sortByString = 'name';
+
+const searchModalTitles = {
+  program: 'Select a Program to use',
+  supplier: 'Select a Supplier to use',
+  orderType: 'Select a Order Type to use',
+  period: 'Select a Period to use',
+};
+
+const progressSteps = {
+  program: 1,
+  supplier: 2,
+  orderType: 3,
+  period: 4,
+};
+
+const localization = {
+  program: 'program',
+  supplier: 'supplier',
+  orderType: 'order type',
+  period: 'period',
+};
 
 const updateState = (command, additionalState) => {
   let newState;
@@ -35,10 +59,28 @@ const updateState = (command, additionalState) => {
       };
       break;
     case 'SELECT_PROGRAM':
-      newState = { period: {}, orderType: {}, orderTypes: null, periods: null };
+      newState = {
+        period: {},
+        orderType: {},
+        orderTypes: null,
+        periods: null,
+        searchIsOpen: false,
+      };
+      break;
+    case 'SELECT_SUPPLIER':
+      newState = { searchIsOpen: false };
       break;
     case 'SELECT_ORDER_TYPE':
-      newState = { period: {}, periods: null };
+      newState = { period: {}, periods: null, searchIsOpen: false };
+      break;
+    case 'CLOSE_SEARCH_MODAL':
+      newState = { searchIsOpen: false };
+      break;
+    case 'OPEN_SEARCH_MODAL':
+      newState = { searchIsOpen: true };
+      break;
+    case 'SELECT_PERIOD':
+      newState = { searchIsOpen: false };
       break;
     default:
       break;
@@ -54,7 +96,6 @@ export class ByProgramModal extends React.Component {
       searchIsOpen: false,
       searchModalKey: 'supplier',
       isProgramBased: true,
-      canConfirm: false,
       program: {},
       supplier: {},
       orderType: {},
@@ -69,7 +110,13 @@ export class ByProgramModal extends React.Component {
   componentDidMount = () => {
     const { settings, database } = this.props;
     const programs = getAllPrograms(settings, database);
-    this.setState({ programs });
+    const suppliers = database.objects('Name').filtered('isSupplier = $0', true);
+    this.setState({ programs, suppliers });
+  };
+
+  getProgramValues = () => {
+    const { program, supplier, orderType, period } = this.state;
+    return { program, supplier, orderType, period };
   };
 
   toggleChange = () => {
@@ -77,225 +124,148 @@ export class ByProgramModal extends React.Component {
     this.setState({ ...updateState('RESET_ALL'), isProgramBased: !isProgramBased });
   };
 
-  getToggleBarProps = () => {
-    const { onToggleChange, type } = this.props;
-    const { isProgramBased } = this.state;
-    const buttonText = type === 'requisition' ? 'order' : 'stocktake';
-    return [
-      {
-        text: `Program ${buttonText}`,
-        onPress: this.toggleChange,
-        isOn: isProgramBased,
-      },
-      {
-        text: `General ${buttonText}`,
-        onPress: this.toggleChange,
-        isOn: !isProgramBased,
-      },
-    ];
-  };
-
-  getSearchModalTitle = () => {
-    const { searchModalKey } = this.state;
-    return `Select a ${searchModalKey} to use`;
-  };
-
-  selectSearchValue = ({ key, item }) => {
-    const { valueSetter } = this.props;
-    this.setState({ searchIsOpen: false });
-    valueSetter({ key, item });
-  };
-
-  getSearchModalOptions = () => {
-    const { programValues, settings, database } = this.props;
-    const { program, orderType } = programValues;
-    const tags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
-    let orderTypes;
-    let periodScheduleName;
-    if (program.name) {
-      const storeTagObject = program.getStoreTagObject(tags);
-      orderTypes = storeTagObject.orderTypes;
-      periodScheduleName = storeTagObject.periodScheduleName;
-    }
-
-    return {
-      programOptions: database
-        .objects('MasterList')
-        .filtered('isProgram = $0', true)
-        .filter(masterList => masterList.canUseProgram(tags)),
-      supplierOptions: database.objects('Name').filtered('isSupplier = $0', true),
-      orderTypeOptions: orderTypes,
-      periodOptions: periodScheduleName
-        ? database
-            .objects('PeriodSchedule')
-            .filtered('name = $0', periodScheduleName)[0]
-            .getUseablePeriodsForProgram(program, orderType.maxOrdersPerPeriod)
-        : database.objects('Period'),
-    };
-  };
-
-  getSearchModalProps = () => {
-    const { programValues } = this.props;
-    const { program } = programValues;
-    const {
-      programOptions,
-      supplierOptions,
-      orderTypeOptions,
-      periodOptions,
-    } = this.getSearchModalOptions();
-
-    return {
-      program: {
-        options: programOptions,
-        queryString: 'name BEGINSWITH[c] $0 ',
-        sortByString: 'name',
-        onSelect: item => this.selectSearchValue({ key: 'program', item }),
-        renderLeftText: item => `${item.name}`,
-      },
-      supplier: {
-        options: supplierOptions,
-        queryString: 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0',
-        sortByString: 'name',
-        onSelect: item => this.selectSearchValue({ key: 'supplier', item }),
-        renderLeftText: item => `${item.name}`,
-        renderRightText: item => `(${item.code})`,
-      },
-      orderType: {
-        options: orderTypeOptions,
-        queryString: 'name BEGINSWITH[c] $0',
-        sortByString: 'name',
-        onSelect: item => this.selectSearchValue({ key: 'orderType', item }),
-        renderLeftText: item => `${item.name}`,
-        renderRightText: item =>
-          `Max Months of stock: ${item.maxMOS} - Threshold Months of stock: ${item.thresholdMOS}`,
-      },
-      period: {
-        options: periodOptions,
-        queryString: 'name BEGINSWITH[c] $0',
-        sortByString: 'name',
-        onSelect: item => this.selectSearchValue({ key: 'period', item }),
-        renderLeftText: item => `${item.name}`,
-        renderRightText: item =>
-          `${item.getFormattedPeriod()} -- [${item.numberOfRequisitionsForProgram(
-            program
-          )}] Requisition(s)`,
-      },
-    };
+  openSearchModal = searchModalKey => () => {
+    this.setState({ ...updateState('OPEN_SEARCH_MODAL'), searchModalKey });
   };
 
   onSearchModalConfirm = ({ key, item }) => {
-    this.setState({ searchIsOpen: false, [key]: item });
+    this.setState({ ...updateState('CLOSE_SEARCH_MODAL'), [key]: item });
   };
 
-  onSearchModalCancel = () => {
-    this.setState({ searchIsOpen: false });
+  getProgress = () => {
+    const { type } = this.props;
+    const { program, supplier, period, orderType, isProgramBased } = this.state;
+    const complete =
+      isProgramBased && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
+    return {
+      canConfirm: complete || (!isProgramBased && supplier.name),
+      isRequisitionProgramOrder: type === 'requisition' && isProgramBased,
+      program: true,
+      supplier: !(isProgramBased && !program.name),
+      orderType: !!supplier.name,
+      period: !!orderType.name,
+      programShow: isProgramBased,
+      supplierShow: true,
+      orderTypeShow: isProgramBased && type === 'requisition',
+      periodShow: isProgramBased && type === 'requisition',
+    };
+  };
+
+  selectSearchValue = ({ key, selectedItem }) => {
+    const { settings, database } = this.props;
+    const { program, storeTag } = this.state;
+
+    switch (key) {
+      case 'program':
+        this.setState({
+          ...updateState('SELECT_PROGRAM'),
+          storeTag: selectedItem.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)),
+          orderTypes: selectedItem.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS))
+            .orderTypes,
+          program: selectedItem,
+        });
+        break;
+      case 'supplier':
+        this.setState({ ...updateState('SELECT_SUPPLIER'), supplier: selectedItem });
+        break;
+      case 'orderType':
+        this.setState({
+          ...updateState('SELECT_ORDER_TYPE'),
+          periods: getAllPeriodsForProgram(database, program, storeTag, selectedItem),
+          orderType: selectedItem,
+        });
+        break;
+      case 'period':
+        this.setState({
+          ...updateState('SELECT_PERIOD'),
+          period: selectedItem,
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
+  getBaseSearchModalProps = key => ({
+    queryString,
+    sortByString,
+    primaryFilterProperty: 'name',
+    renderLeftText: item => `${item.name}`,
+    onSelect: selectedItem => this.selectSearchValue({ key, selectedItem }),
+  });
+
+  getSearchModalProps = () => {
+    const { programs, suppliers, orderTypes, periods, program } = this.state;
+
+    return {
+      program: {
+        ...this.getBaseSearchModalProps('program'),
+        options: programs,
+      },
+      supplier: {
+        ...this.getBaseSearchModalProps('supplier'),
+        options: suppliers,
+        renderRightText: item => `(${item.code})`,
+      },
+      orderType: {
+        ...this.getBaseSearchModalProps('orderType'),
+        options: orderTypes,
+        renderRightText: item =>
+          `Max MOS: ${item.maxMOS} - Threshold MOS: ${item.thresholdMOS} - Max order per period ${
+            item.maxOrdersPerPeriod
+          }`,
+      },
+      period: {
+        ...this.getBaseSearchModalProps('period'),
+        options: periods,
+        renderRightText: item =>
+          `${item.toString()} - ${item.requisitionsForProgram(program)} Requisition(s)`,
+      },
+    };
   };
 
   renderSearchModal = () => {
     const { searchModalKey } = this.state;
     const { database } = this.props;
     const { [searchModalKey]: modalProps } = this.getSearchModalProps(database);
-    return (
-      <AutocompleteSelector
-        options={modalProps.options}
-        queryString={modalProps.queryString}
-        sortByString={modalProps.sortByString}
-        onSelect={modalProps.onSelect}
-        renderLeftText={modalProps.renderLeftText}
-        renderRightText={modalProps.renderRightText}
-      />
-    );
+    return <AutocompleteSelector {...modalProps} />;
   };
 
-  getPageInfoProps = () => {
-    const { programValues } = this.props;
-    const { program, supplier, orderType, period } = programValues;
+  getPageInfoBaseProps = key => {
+    const programValues = this.getProgramValues();
+    const { isRequisitionProgramOrder, ...progress } = this.getProgress();
+
     return {
-      program: {
-        info: `${program.name || 'Select the program to use'}`,
-        onPress: () => {
-          this.setState({ searchIsOpen: true, searchModalKey: 'program' });
-        },
-        editableType: 'selectable',
-      },
-      supplier: {
-        title: '',
-        info: `${supplier.name || 'Select the supplier to use'}`,
-        onPress: () => {
-          this.setState({ searchIsOpen: true, searchModalKey: 'supplier' });
-        },
-        editableType: 'selectable',
-      },
-      orderTypes: {
-        title: '',
-        info: `${orderType.name || 'Select the order type to use'}`,
-        onPress: () => {
-          this.setState({ searchIsOpen: true, searchModalKey: 'orderType' });
-        },
-        editableType: 'selectable',
-      },
-      period: {
-        title: '',
-        info: `${period.name || 'Select the Period to use'}`,
-        onPress: () => {
-          this.setState({ searchIsOpen: true, searchModalKey: 'period' });
-        },
-        editableType: 'selectable',
-      },
+      title: programValues[key].name ? (
+        <Icon name="md-checkmark" style={{ color: 'green' }} size={20} />
+      ) : (
+        <Text style={{ color: 'white' }}>{isRequisitionProgramOrder ? progressSteps[key] : 1}</Text>
+      ),
+      info: programValues[key].name || `Select the ${localization[key]} to use`,
+      onPress: this.openSearchModal(key),
+      shouldShow: progress[`${key}Show`],
+      canEdit: progress[key],
+      editableType: 'selectable',
     };
   };
 
-  getProgress = () => {
-    const { programValues, type } = this.props;
-    const { isProgramBased } = this.state;
-    const { program, supplier, period, orderType } = programValues;
-    const complete =
-      isProgramBased && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
-    return {
-      canConfirm: complete || (!isProgramBased && supplier.name),
-      canSelectSupplier: !(isProgramBased && !program.name),
-      canSelectOrderType: !!supplier.name,
-      canSelectPeriod: !!orderType.name,
-      isRequisitionProgramOrder: type === 'requisition' && isProgramBased,
-    };
-  };
+  getPageInfoProps = () =>
+    Array.from(Object.keys(this.getProgramValues())).map(key => this.getPageInfoBaseProps(key));
 
-  renderPageInfo = () => {
+  getToggleBarProps = () => {
+    const { type } = this.props;
     const { isProgramBased } = this.state;
-    const {
-      canSelectSupplier,
-      canSelectOrderType,
-      canSelectPeriod,
-      isRequisitionProgramOrder,
-    } = this.getProgress();
-    return (
-      <>
-        {isProgramBased && (
-          <PageInfo columns={[[this.getPageInfoProps().program]]} isEditingDisabled={false} />
-        )}
-        <PageInfo
-          columns={[[this.getPageInfoProps().supplier]]}
-          isEditingDisabled={!canSelectSupplier}
-        />
-        {isRequisitionProgramOrder && (
-          <>
-            <PageInfo
-              columns={[[this.getPageInfoProps().orderTypes]]}
-              isEditingDisabled={!canSelectOrderType}
-            />
-            <PageInfo
-              columns={[[this.getPageInfoProps().period]]}
-              isEditingDisabled={!canSelectPeriod}
-            />
-          </>
-        )}
-      </>
-    );
+    const buttonText = type === 'requisition' ? 'order' : 'stocktake';
+    return [
+      { text: `Program ${buttonText}`, onPress: this.toggleChange, isOn: isProgramBased },
+      { text: `General ${buttonText}`, onPress: this.toggleChange, isOn: !isProgramBased },
+    ];
   };
 
   render() {
     const { onConfirm, onCancel, isOpen, type } = this.props;
-    const { searchIsOpen } = this.state;
+    const { searchIsOpen, searchModalKey } = this.state;
+
     return (
       <Modal
         isOpen={isOpen}
@@ -310,7 +280,9 @@ export class ByProgramModal extends React.Component {
           <Icon name="md-close" style={localStyles.closeIcon} />
         </TouchableOpacity>
 
-        <Text style={localStyles.title}>{`${type} details`}</Text>
+        <Text style={localStyles.title}>
+          {`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
+        </Text>
 
         <View style={localStyles.toggleContainer}>
           <ToggleBar
@@ -323,7 +295,10 @@ export class ByProgramModal extends React.Component {
           />
         </View>
 
-        <View style={localStyles.contentContainer}>{this.renderPageInfo()}</View>
+        <View style={localStyles.contentContainer}>
+          <PageInfo columns={[this.getPageInfoProps()]} />
+        </View>
+
         <View style={localStyles.grow} />
         <View style={localStyles.bottomContainer}>
           <Button
@@ -336,7 +311,7 @@ export class ByProgramModal extends React.Component {
           />
           <Button
             text="OK"
-            onPress={onConfirm}
+            onPress={() => onConfirm(this.getProgramValues())}
             disabledColor={WARM_GREY}
             isDisabled={!this.getProgress().canConfirm}
             style={[globalStyles.button, localStyles.OKButton]}
@@ -346,8 +321,8 @@ export class ByProgramModal extends React.Component {
 
         <PageContentModal
           isOpen={searchIsOpen}
-          onClose={this.onSearchModalCancel}
-          title={this.getSearchModalTitle()}
+          onClose={this.onSearchModalConfirm}
+          title={searchModalTitles[searchModalKey]}
           coverScreen
         >
           {this.renderSearchModal()}
