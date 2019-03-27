@@ -214,7 +214,7 @@ const generateSyncData = (settings, recordType, record) => {
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
-        donor_id: record.donor && record.donorId,
+        donor_id: record.donor && record.donor.id,
         type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
       };
     }
