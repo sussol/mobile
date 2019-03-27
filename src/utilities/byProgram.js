@@ -12,4 +12,13 @@ const getAllPrograms = (settings, database) => {
   return programs.filter(program => program.canUseProgram(thisStoresTags));
 };
 
-export { thisStoreUsesPrograms, getAllPrograms };
+const getAllPeriodsForProgram = (database, program, storeTag, orderType) => {
+  const { periodScheduleName } = storeTag;
+
+  return database
+    .objects('PeriodSchedule')
+    .filtered('name = $0', periodScheduleName)[0]
+    .getUseablePeriodsForProgram(program, orderType.maxOrdersPerPeriod);
+};
+
+export { thisStoreUsesPrograms, getAllPrograms, getAllPeriodsForProgram };
