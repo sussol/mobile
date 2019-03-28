@@ -1,5 +1,3 @@
-/* eslint-disable indent */
-/* eslint-disable prefer-destructuring */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -323,9 +321,5 @@ ByProgramModal.propTypes = {
   onCancel: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,
   type: PropTypes.string.isRequired,
-  valueSetter: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
-  programValues: PropTypes.object.isRequired,
-  isProgramBased: PropTypes.bool.isRequired,
-  onToggleChange: PropTypes.func.isRequired,
 };
