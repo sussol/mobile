@@ -9,27 +9,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
-import { AutocompleteSelector, PageInfo, Button, ToggleBar } from '..';
+import { AutocompleteSelector, PageInfo, ToggleBar, PageButton } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities/byProgram';
-
-const queryString = 'name BEGINSWITH[c] $0';
-const sortByString = 'name';
-
-const searchModalTitles = {
-  program: 'Select a Program to use',
-  supplier: 'Select a Supplier to use',
-  orderType: 'Select a Order Type to use',
-  period: 'Select a Period to use',
-};
 
 const progressSteps = {
   program: 1,
@@ -43,9 +32,13 @@ const localization = {
   supplier: 'supplier',
   orderType: 'order type',
   period: 'period',
+  programTitle: 'Select a Program to use',
+  supplierTitle: 'Select a Supplier to use',
+  orderTypeTitle: 'Select a Order Type to use',
+  periodTitle: 'Select a Period to use',
 };
 
-const updateState = (command, additionalState) => {
+const updateState = command => {
   let newState;
   switch (command) {
     case 'RESET_ALL':
@@ -61,31 +54,27 @@ const updateState = (command, additionalState) => {
     case 'SELECT_PROGRAM':
       newState = {
         period: {},
+        periods: null,
         orderType: {},
         orderTypes: null,
-        periods: null,
         searchIsOpen: false,
       };
-      break;
-    case 'SELECT_SUPPLIER':
-      newState = { searchIsOpen: false };
       break;
     case 'SELECT_ORDER_TYPE':
       newState = { period: {}, periods: null, searchIsOpen: false };
       break;
+    case 'SELECT_PERIOD':
+    case 'SELECT_SUPPLIER':
     case 'CLOSE_SEARCH_MODAL':
       newState = { searchIsOpen: false };
       break;
     case 'OPEN_SEARCH_MODAL':
       newState = { searchIsOpen: true };
       break;
-    case 'SELECT_PERIOD':
-      newState = { searchIsOpen: false };
-      break;
     default:
       break;
   }
-  if (additionalState) return newState;
+
   return newState;
 };
 
@@ -187,8 +176,8 @@ export class ByProgramModal extends React.Component {
   };
 
   getBaseSearchModalProps = key => ({
-    queryString,
-    sortByString,
+    queryString: 'name BEGINSWITH[c] $0',
+    sortByString: 'name',
     primaryFilterProperty: 'name',
     renderLeftText: item => `${item.name}`,
     onSelect: selectedItem => this.selectSearchValue({ key, selectedItem }),
@@ -239,18 +228,22 @@ export class ByProgramModal extends React.Component {
       title: programValues[key].name ? (
         <Icon name="md-checkmark" style={{ color: 'green' }} size={20} />
       ) : (
-        <Text style={{ color: 'white' }}>{isRequisitionProgramOrder ? progressSteps[key] : 1}</Text>
+        <Text style={{ color: 'white', fontSize: 20 }}>
+          {isRequisitionProgramOrder ? progressSteps[key] : 1}
+        </Text>
       ),
       info: programValues[key].name || `Select the ${localization[key]} to use`,
       onPress: this.openSearchModal(key),
       shouldShow: progress[`${key}Show`],
       canEdit: progress[key],
       editableType: 'selectable',
+      infoSize: 20,
+      infoColor: 'white',
     };
   };
 
   getPageInfoProps = () =>
-    Array.from(Object.keys(this.getProgramValues())).map(key => this.getPageInfoBaseProps(key));
+    Array.from(Object.keys(progressSteps)).map(key => this.getPageInfoBaseProps(key));
 
   getToggleBarProps = () => {
     const { type } = this.props;
@@ -267,67 +260,43 @@ export class ByProgramModal extends React.Component {
     const { searchIsOpen, searchModalKey } = this.state;
 
     return (
-      <Modal
+      <PageContentModal
         isOpen={isOpen}
-        style={[globalStyles.modal, localStyles.modal]}
-        backdropPressToClose={false}
-        backdropOpacity={0.88}
+        style={{ ...globalStyles.modal, backgroundColor: DARK_GREY }}
         swipeToClose={false}
-        position="top"
+        onClose={() => {
+          this.setState({ ...updateState('RESET_ALL') }, onCancel);
+        }}
         coverScreen
+        title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
       >
-        <TouchableOpacity onPress={onCancel} style={localStyles.closeButton}>
-          <Icon name="md-close" style={localStyles.closeIcon} />
-        </TouchableOpacity>
-
-        <Text style={localStyles.title}>
-          {`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
-        </Text>
-
         <View style={localStyles.toggleContainer}>
-          <ToggleBar
-            style={globalStyles.toggleBar}
-            textOffStyle={globalStyles.toggleText}
-            textOnStyle={globalStyles.toggleTextSelected}
-            toggleOffStyle={globalStyles.toggleOption}
-            toggleOnStyle={globalStyles.toggleOptionSelected}
-            toggles={this.getToggleBarProps()}
-          />
+          <ToggleBar toggles={this.getToggleBarProps()} />
         </View>
 
         <View style={localStyles.contentContainer}>
           <PageInfo columns={[this.getPageInfoProps()]} />
-        </View>
-
-        <View style={localStyles.grow} />
-        <View style={localStyles.bottomContainer}>
-          <Button
-            text="CANCEL"
-            onPress={onCancel}
-            disabledColor={WARM_GREY}
-            isDisabled={false}
-            style={globalStyles.button}
-            textStyle={globalStyles.buttonText}
-          />
-          <Button
-            text="OK"
-            onPress={() => onConfirm(this.getProgramValues())}
-            disabledColor={WARM_GREY}
-            isDisabled={!this.getProgress().canConfirm}
-            style={[globalStyles.button, localStyles.OKButton]}
-            textStyle={[globalStyles.buttonText, localStyles.OKButtonText]}
-          />
+          <View style={{ marginLeft: '18%', marginTop: 20 }}>
+            <PageButton
+              text="OK"
+              onPress={() => onConfirm(this.getProgramValues())}
+              isDisabled={!this.getProgress().canConfirm}
+              disabledColor={WARM_GREY}
+              style={{ ...globalStyles.button, backgroundColor: SUSSOL_ORANGE }}
+              textStyle={{ ...globalStyles.buttonText, color: 'white' }}
+            />
+          </View>
         </View>
 
         <PageContentModal
           isOpen={searchIsOpen}
           onClose={this.onSearchModalConfirm}
-          title={searchModalTitles[searchModalKey]}
+          title={localization[`${searchModalKey}Title`]}
           coverScreen
         >
           {this.renderSearchModal()}
         </PageContentModal>
-      </Modal>
+      </PageContentModal>
     );
   }
 }
@@ -335,62 +304,16 @@ export class ByProgramModal extends React.Component {
 export default ByProgramModal;
 
 const localStyles = StyleSheet.create({
-  modal: {
-    flex: 1,
-    flexDirection: 'column',
-    backgroundColor: DARK_GREY,
-    opacity: 1,
-    zIndex: 1,
-    position: 'absolute',
-    overflow: 'hidden',
-    flexGrow: 1,
-  },
   toggleContainer: {
     width: 292,
     alignSelf: 'center',
-    marginTop: 20,
-  },
-  title: {
-    fontSize: 18,
-    color: 'white',
-    textAlign: 'center',
-    marginBottom: 10,
     marginTop: 10,
   },
   contentContainer: {
-    width: '50%',
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    maxHeight: '30%',
-    marginTop: '5%',
-  },
-  closeIcon: {
-    fontSize: 36,
-    color: 'white',
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 10,
-    right: 20,
-  },
-  OKButton: {
-    backgroundColor: SUSSOL_ORANGE,
-  },
-  OKButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  bottomContainer: {
-    bottom: 0,
-    right: 0,
-    position: 'absolute',
-    flex: 1,
-    flexDirection: 'row',
-  },
-  grow: {
-    flexGrow: 2,
+    minWidth: '100%',
+    paddingLeft: '32%',
+    height: '30%',
+    marginTop: 50,
   },
 });
 
