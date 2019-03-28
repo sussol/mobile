@@ -19,6 +19,7 @@ import { getTotal } from '../utilities';
  * @property  {number}                   costPrice
  * @property  {number}                   sellPrice
  * @property  {Name}                     supplier
+ * @property  {Name}                     donor
  * @property  {List.<TransactionBatch>}  transactionBatches
  */
 export class ItemBatch extends Realm.Object {
@@ -139,6 +140,7 @@ ItemBatch.schema = {
     costPrice: { type: 'double', default: 0 },
     sellPrice: { type: 'double', default: 0 },
     supplier: { type: 'Name', optional: true },
+    donor: { type: 'Name', optional: true },
     transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
   },
 };
