@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -9,10 +8,11 @@ import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
 import { ByProgramModal } from '../widgets/modals/index';
+import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
+
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy } from '../utilities';
-import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 

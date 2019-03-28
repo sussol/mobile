@@ -74,7 +74,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       {infoString}
     </Text>
   );
-  if (rowData.onPress && (!isEditingDisabled || canEdit === true)) {
+  if (rowData.onPress && ((!isEditingDisabled || canEdit === true) && canEdit === true)) {
     return (
       <TouchableOpacity
         style={localStyles.rowContainer}

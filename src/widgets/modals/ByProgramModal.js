@@ -141,7 +141,7 @@ export class ByProgramModal extends React.Component {
   selectSearchValue = ({ key, selectedItem }) => {
     const { settings, database } = this.props;
     const { program, storeTag } = this.state;
-
+    const { periodScheduleName } = storeTag;
     switch (key) {
       case 'program':
         this.setState({
@@ -158,7 +158,7 @@ export class ByProgramModal extends React.Component {
       case 'orderType':
         this.setState({
           ...updateState('SELECT_ORDER_TYPE'),
-          periods: getAllPeriodsForProgram(database, program, storeTag, selectedItem),
+          periods: getAllPeriodsForProgram(database, program, periodScheduleName, selectedItem),
           orderType: selectedItem,
         });
         break;
@@ -182,7 +182,7 @@ export class ByProgramModal extends React.Component {
   });
 
   getSearchModalProps = () => {
-    const { programs, suppliers, orderTypes, periods, program } = this.state;
+    const { programs, suppliers, orderTypes, periods, program, orderType } = this.state;
 
     return {
       program: {
@@ -206,7 +206,10 @@ export class ByProgramModal extends React.Component {
         ...this.getBaseSearchModalProps('period'),
         options: periods,
         renderRightText: item =>
-          `${item.toString()} - ${item.requisitionsForProgram(program)} Requisition(s)`,
+          `${item.toString()} - ${item.requisitionsForOrderType(
+            program,
+            orderType
+          )} Requisition(s)`,
       },
     };
   };
@@ -265,7 +268,6 @@ export class ByProgramModal extends React.Component {
         onClose={() => {
           this.setState({ ...updateState('RESET_ALL') }, onCancel);
         }}
-        coverScreen
         title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
       >
         <View style={localStyles.toggleContainer}>
@@ -277,7 +279,9 @@ export class ByProgramModal extends React.Component {
           <View style={{ marginLeft: '18%', marginTop: 20 }}>
             <PageButton
               text="OK"
-              onPress={() => onConfirm(this.getProgramValues())}
+              onPress={() =>
+                this.setState({ ...updateState('RESET_ALL') }, onConfirm(this.getProgramValues()))
+              }
               isDisabled={!this.getProgress().canConfirm}
               disabledColor={WARM_GREY}
               style={{ ...globalStyles.button, backgroundColor: SUSSOL_ORANGE }}

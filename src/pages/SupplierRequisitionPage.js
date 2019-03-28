@@ -391,20 +391,13 @@ export class SupplierRequisitionPage extends React.Component {
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
           <PageButton
-            style={globalStyles.topButton}
+            style={{ ...globalStyles.topButton, marginLeft: isProgramOrder ? 5 : 0 }}
             text={buttonStrings.create_automatic_order}
             onPress={this.onCreateAutomaticOrder}
             isDisabled={requisition.isFinalised}
           />
           {isProgramOrder && (
-            <ToggleBar
-              style={globalStyles.toggleBar}
-              textOffStyle={globalStyles.toggleText}
-              textOnStyle={globalStyles.toggleTextSelected}
-              toggleOffStyle={globalStyles.toggleOption}
-              toggleOnStyle={globalStyles.toggleOptionSelected}
-              toggles={this.getToggleBarProps()}
-            />
+            <ToggleBar style={globalStyles.toggleBar} toggles={this.getToggleBarProps()} />
           )}
 
           {!isProgramOrder && (
