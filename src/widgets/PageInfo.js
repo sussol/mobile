@@ -74,7 +74,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       {infoString}
     </Text>
   );
-  if (rowData.onPress && (!isEditingDisabled && canEdit)) {
+  if (rowData.onPress && (!isEditingDisabled || canEdit === true)) {
     return (
       <TouchableOpacity
         style={localStyles.rowContainer}
@@ -86,8 +86,8 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
           <Icon
             name={iconName}
             size={infoSize || 14}
-            style={localStyles.editIcon}
             color={infoColor || SUSSOL_ORANGE}
+            style={localStyles.editIcon}
           />
         </View>
       </TouchableOpacity>

@@ -227,9 +227,20 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderPageInfo = () => {
     const { requisition } = this.props;
-    const { isProgramOrder } = this.state;
+    const { isProgramOrder, orderType } = this.state;
+    const { period, program } = requisition;
     const infoColumns = [
       [
+        {
+          title: 'Program:',
+          info: program && program.name,
+          shouldShow: isProgramOrder,
+        },
+        {
+          title: 'Order Type:',
+          info: orderType && orderType.name,
+          shouldShow: isProgramOrder,
+        },
         {
           title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(requisition.entryDate),
@@ -241,41 +252,36 @@ export class SupplierRequisitionPage extends React.Component {
       ],
       [
         {
+          title: 'Period:',
+          info: period && `${period.name} -- ${period.toString()}`,
+          shouldShow: isProgramOrder,
+        },
+        {
           title: `${pageInfoStrings.supplier}:`,
           info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
+          onPress: this.openMonthsSelector,
+          editableType: 'selectable',
         },
         {
           title: `${pageInfoStrings.comment}:`,
           info: requisition.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
+          canEdit: true,
         },
       ],
     ];
-    if (isProgramOrder) {
-      const { period, program } = requisition;
-      const { orderType } = this.state;
-      const programInfo = { title: 'Program:', info: program.name };
-      const orderTypeInfo = { title: 'Order Type:', info: orderType.name };
-      const periodInfo = {
-        title: 'Period:',
-        info: `${period.name} -- ${period.startDate.toLocaleDateString(
-          'en-US'
-        )} - ${period.endDate.toLocaleDateString('en-US')}`,
-      };
 
-      infoColumns[0].unshift(orderTypeInfo);
-      infoColumns[0].unshift(programInfo);
-      infoColumns[1].unshift(periodInfo);
-    } else {
-      infoColumns[1][1].onPress = this.openMonthsSelector;
-      infoColumns[1][1].editableType = 'selectable';
-    }
-    return <PageInfo columns={infoColumns} isEditingDisabled={requisition.isFinalised} />;
+    return (
+      <PageInfo
+        columns={infoColumns}
+        isEditingDisabled={requisition.isFinalised || isProgramOrder}
+      />
+    );
   };
 
   renderCell = (key, requisitionItem) => {
@@ -302,7 +308,7 @@ export class SupplierRequisitionPage extends React.Component {
   };
 
   renderModalContent = () => {
-    const { modalKey, orderType } = this.state;
+    const { modalKey } = this.state;
     const { database, requisition } = this.props;
 
     const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
@@ -332,7 +338,7 @@ export class SupplierRequisitionPage extends React.Component {
       case MONTHS_SELECT:
         return (
           <ToggleSelector
-            options={Array.from({ length: orderType.maxMOS || 6 }, (_, k) => k + 1)}
+            options={[1, 2, 3, 4, 5, 6]}
             onSelect={number => {
               database.write(() => {
                 requisition.monthsToSupply = number;
