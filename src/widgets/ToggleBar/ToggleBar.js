@@ -7,6 +7,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, Text, TouchableOpacity, ViewPropTypes, View } from 'react-native';
+import globalStyles from '../../globalStyles';
 
 /**
  * Renders a bar of multiple toggling buttons, defined by the array 'toggles' passed in.
@@ -89,11 +90,11 @@ ToggleBar.propTypes = {
 };
 
 ToggleBar.defaultProps = {
-  style: {},
-  toggleOffStyle: {},
-  toggleOnStyle: {},
-  textOffStyle: {},
-  textOnStyle: {},
+  style: globalStyles.toggleBar,
+  toggleOffStyle: globalStyles.toggleOption,
+  toggleOnStyle: globalStyles.toggleOptionSelected,
+  textOffStyle: globalStyles.toggleText,
+  textOnStyle: globalStyles.toggleTextSelected,
 };
 
 const localStyles = StyleSheet.create({
