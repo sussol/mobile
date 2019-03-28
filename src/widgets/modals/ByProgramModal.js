@@ -141,7 +141,7 @@ export class ByProgramModal extends React.Component {
   selectSearchValue = ({ key, selectedItem }) => {
     const { settings, database } = this.props;
     const { program, storeTag } = this.state;
-    const { periodScheduleName } = storeTag;
+    const periodScheduleName = storeTag && storeTag.periodScheduleName;
     switch (key) {
       case 'program':
         this.setState({
