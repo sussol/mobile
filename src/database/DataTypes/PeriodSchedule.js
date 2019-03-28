@@ -8,7 +8,7 @@ import Realm from 'realm';
 export class PeriodSchedule extends Realm.Object {
   getUseablePeriodsForProgram(program, maxOrdersPerPeriod) {
     const periods = this.periods.filter(
-      period => period.numberOfRequisitionsForProgram(program) < maxOrdersPerPeriod
+      period => period.requisitionsForProgram(program) < maxOrdersPerPeriod
     );
     return periods;
   }
