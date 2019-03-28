@@ -22,6 +22,7 @@ import {
   PageContentModal,
   TextEditor,
   ToggleSelector,
+  ToggleBar,
 } from '../widgets';
 
 import globalStyles from '../globalStyles';
@@ -43,6 +44,7 @@ export class SupplierRequisitionPage extends React.Component {
       selection: [],
       isProgramOrder: false,
       orderType: null,
+      useThresholdMOS: false,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -72,11 +74,15 @@ export class SupplierRequisitionPage extends React.Component {
   };
 
   onCreateAutomaticOrder = () => {
-    const { database, requisition, runWithLoadingIndicator } = this.props;
-
+    const { database, requisition, runWithLoadingIndicator, settings } = this.props;
+    const { isProgramOrder } = this.state;
     runWithLoadingIndicator(() => {
       database.write(() => {
-        requisition.createAutomaticOrder(database, this.getThisStore());
+        if (isProgramOrder) {
+          requisition.createAutomaticProgramOrder(database, settings.get('ThisStoreTags'));
+        } else {
+          requisition.createAutomaticOrder(database, this.getThisStore());
+        }
         database.save('Requisition', requisition);
       });
       this.refreshData();
@@ -173,14 +179,22 @@ export class SupplierRequisitionPage extends React.Component {
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     const { requisition } = this.props;
+    const { useThresholdMOS, orderType } = this.state;
 
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    if (newSearchTerm && newSortBy && newIsAscending) {
+      this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
+    }
+
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
-
-    const data = requisition.items.filtered(
+    let data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
+    if (useThresholdMOS) {
+      data = data.filter(requisitionItem =>
+        requisitionItem.item.isLessThanThresholdMOS(orderType.thresholdMOS)
+      );
+    }
 
     let sortDataType;
     switch (sortBy) {
@@ -213,9 +227,20 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderPageInfo = () => {
     const { requisition } = this.props;
-    const { isProgramOrder } = this.state;
+    const { isProgramOrder, orderType } = this.state;
+    const { period, program } = requisition;
     const infoColumns = [
       [
+        {
+          title: 'Program:',
+          info: program && program.name,
+          shouldShow: isProgramOrder,
+        },
+        {
+          title: 'Order Type:',
+          info: orderType && orderType.name,
+          shouldShow: isProgramOrder,
+        },
         {
           title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(requisition.entryDate),
@@ -226,6 +251,11 @@ export class SupplierRequisitionPage extends React.Component {
         },
       ],
       [
+        {
+          title: 'Period:',
+          info: period && `${period.name} -- ${period.toString()}`,
+          shouldShow: isProgramOrder,
+        },
         {
           title: `${pageInfoStrings.supplier}:`,
           info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
@@ -241,26 +271,17 @@ export class SupplierRequisitionPage extends React.Component {
           info: requisition.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
+          canEdit: true,
         },
       ],
     ];
-    if (isProgramOrder) {
-      const { period, program } = requisition;
-      const { orderType } = this.state;
-      const programInfo = { title: 'Program:', info: program.name };
-      const orderTypeInfo = { title: 'Order Type:', info: orderType.name };
-      const periodInfo = {
-        title: 'Period:',
-        info: `${period.name} -- ${period.startDate.toLocaleDateString(
-          'en-US'
-        )} - ${period.endDate.toLocaleDateString('en-US')}`,
-      };
 
-      infoColumns[0].unshift(orderTypeInfo);
-      infoColumns[0].unshift(programInfo);
-      infoColumns[1].unshift(periodInfo);
-    }
-    return <PageInfo columns={infoColumns} isEditingDisabled={requisition.isFinalised} />;
+    return (
+      <PageInfo
+        columns={infoColumns}
+        isEditingDisabled={requisition.isFinalised || isProgramOrder}
+      />
+    );
   };
 
   renderCell = (key, requisitionItem) => {
@@ -347,6 +368,22 @@ export class SupplierRequisitionPage extends React.Component {
     }
   };
 
+  getToggleBarProps = () => {
+    const { useThresholdMOS } = this.state;
+    return [
+      {
+        text: 'Hide over stocked',
+        onPress: () => this.setState({ useThresholdMOS: true }, this.refreshData),
+        isOn: useThresholdMOS,
+      },
+      {
+        text: 'Show over stocked',
+        onPress: () => this.setState({ useThresholdMOS: false }, this.refreshData),
+        isOn: !useThresholdMOS,
+      },
+    ];
+  };
+
   renderButtons = () => {
     const { requisition } = this.props;
     const { isProgramOrder } = this.state;
@@ -354,17 +391,23 @@ export class SupplierRequisitionPage extends React.Component {
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
           <PageButton
-            style={globalStyles.topButton}
+            style={{ ...globalStyles.topButton, marginLeft: isProgramOrder ? 5 : 0 }}
             text={buttonStrings.create_automatic_order}
             onPress={this.onCreateAutomaticOrder}
             isDisabled={requisition.isFinalised}
           />
-          <PageButton
-            style={globalStyles.leftButton}
-            text={buttonStrings.use_suggested_quantities}
-            onPress={this.onUseSuggestedQuantities}
-            isDisabled={requisition.isFinalised}
-          />
+          {isProgramOrder && (
+            <ToggleBar style={globalStyles.toggleBar} toggles={this.getToggleBarProps()} />
+          )}
+
+          {!isProgramOrder && (
+            <PageButton
+              style={globalStyles.leftButton}
+              text={buttonStrings.use_suggested_quantities}
+              onPress={this.onUseSuggestedQuantities}
+              isDisabled={requisition.isFinalised}
+            />
+          )}
         </View>
 
         {!isProgramOrder && (

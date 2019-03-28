@@ -12,6 +12,8 @@ import Realm from 'realm';
  * @property  {string}                 name
  * @property  {string}                 note
  * @property  {List.<MasterListItem>}  items
+ * @property  {string}                 programSettings *See below for example
+ * @property  {boolean}                isProgram
  *
  */
 export class MasterList extends Realm.Object {
@@ -50,16 +52,14 @@ export class MasterList extends Realm.Object {
    * @return {object} The matching storeTag programsettings field for the current store
    */
   getStoreTagObject(tags) {
+    if (!this.programSettings) return null;
     const storeTags = tags.split(/[\s,]+/);
     const firstParse = JSON.parse(this.programSettings);
     if (!firstParse) return null;
 
-    return Object.entries(JSON.parse(firstParse).storeTags).reduce(
-      ([programStoreTag, storeTagObject]) => {
-        if (!(storeTags.indexOf(programStoreTag) >= 0)) return null;
-        return storeTagObject;
-      }
-    )[1];
+    return Object.entries(JSON.parse(firstParse).storeTags).filter(
+      ([programStoreTag]) => storeTags.indexOf(programStoreTag) >= 0
+    )[0][1];
   }
 
   /**
@@ -72,7 +72,9 @@ export class MasterList extends Realm.Object {
   }
 
   /**
-   * Find a specifically named order type in the store tag object for this store and masterlist
+   * Find a specifically named order type in the store tag object for this store
+   * and masterlist.
+   *
    * @param  {string}  tags            Current stores tags field
    * @param  {string}  orderTypeName   Name of the orderType to search for
    * @return {object} The matching orderType object
@@ -98,3 +100,24 @@ MasterList.schema = {
 };
 
 export default MasterList;
+
+/**
+ * programSettings example
+ *
+ * programSettings: {
+ *  elmisCode: "CHR-1000",
+ *  storeTags: {
+ *    CHR1000: {
+ *      periodScheduleName: "Period Schedule 1"
+ *      orderTypes: [{
+ *        name: "normal",
+ *        type: "emergency",
+ *        maxOrdersPerPeriod: 1,
+ *        maxMOS: 2,
+ *        threshodMOS: 1,
+ *      }]
+ *    }
+ *  }
+ * }
+ *
+ */

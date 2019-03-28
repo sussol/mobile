@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -8,11 +7,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
-import { ByProgramModal } from '../widgets/modals/index';
+import { ByProgramModal } from '../widgets/modals';
+import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
+
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy } from '../utilities';
-import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -31,8 +31,6 @@ export class SupplierRequisitionsPage extends React.Component {
       selection: [],
       isCreatingRequisition: false,
       byProgramModalOpen: false,
-      isProgramBased: true,
-      programValues: { program: {}, period: {}, supplier: {}, orderType: {} },
       usesPrograms: false,
     };
     this.requisitions = props.database.objects('RequestRequisition');
@@ -50,56 +48,8 @@ export class SupplierRequisitionsPage extends React.Component {
     this.setState({ usesPrograms });
   }
 
-  onConfirmByProgram = () => {
-    const { database, currentUser } = this.props;
-    const { programValues } = this.state;
-    const requisitionValues = { ...programValues, currentUser };
-    let requisition;
-    database.write(() => {
-      requisition = createRecord(database, 'ProgramRequisition', requisitionValues);
-      requisition.addItemsFromProgram(database);
-    });
-    this.setState({
-      byProgramModalOpen: false,
-      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
-    });
-    this.navigateToRequisition(requisition);
-  };
-
   onCancelByProgram = () => {
-    this.setState({
-      byProgramModalOpen: false,
-      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
-    });
-  };
-
-  // When setting a value, ensure the fields later in the
-  // sequential process have been cleared.
-  programValuesSetter = ({ key, item }) => {
-    const { programValues } = this.state;
-    let newProgramValues;
-    if (key === 'program') {
-      newProgramValues = {
-        supplier: {},
-        period: {},
-        orderType: {},
-        program: item,
-      };
-    } else if (key === 'supplier') {
-      newProgramValues = { ...programValues, period: {}, orderType: {}, supplier: item };
-    } else if (key === 'orderType') {
-      newProgramValues = { ...programValues, period: {}, orderType: item };
-    } else newProgramValues = { ...programValues, period: item };
-
-    this.setState({ programValues: newProgramValues });
-  };
-
-  onOrderToggle = () => {
-    const { isProgramBased } = this.state;
-    this.setState({
-      isProgramBased: !isProgramBased,
-      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
-    });
+    this.setState({ byProgramModalOpen: false });
   };
 
   onDeleteConfirm = () => {
@@ -126,12 +76,29 @@ export class SupplierRequisitionsPage extends React.Component {
     this.refreshData();
   };
 
-  onNewRequisition = otherStoreName => {
+  onNewRequisition = requisitionValues => {
     const { database, currentUser } = this.props;
+
+    if (!requisitionValues) {
+      this.setState({ byProgramModalOpen: false });
+      return;
+    }
+
     let requisition;
-    database.write(() => {
-      requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
-    });
+    if (!(requisitionValues.program && requisitionValues.program.name)) {
+      const otherStoreName = requisitionValues.supplier || requisitionValues;
+      database.write(() => {
+        requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
+      });
+    } else {
+      const programValues = { ...requisitionValues, currentUser };
+
+      database.write(() => {
+        requisition = createRecord(database, 'ProgramRequisition', programValues);
+        requisition.addItemsFromProgram(database);
+      });
+    }
+    this.setState({ byProgramModalOpen: false });
     this.navigateToRequisition(requisition);
   };
 
@@ -141,9 +108,7 @@ export class SupplierRequisitionsPage extends React.Component {
 
   navigateToRequisition = requisition => {
     const { navigateTo } = this.props;
-
     this.setState({ selection: [] }); // Clear any requsitions selected for deletion.
-
     navigateTo('supplierRequisition', `${navStrings.requisition} ${requisition.serialNumber}`, {
       requisition,
     });
@@ -211,14 +176,7 @@ export class SupplierRequisitionsPage extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, topRoute, settings } = this.props;
-    const {
-      data,
-      isCreatingRequisition,
-      selection,
-      byProgramModalOpen,
-      programValues,
-      isProgramBased,
-    } = this.state;
+    const { data, isCreatingRequisition, selection, byProgramModalOpen } = this.state;
     return (
       <GenericPage
         data={data}
@@ -295,23 +253,11 @@ export class SupplierRequisitionsPage extends React.Component {
         />
         <ByProgramModal
           isOpen={byProgramModalOpen}
-          onConfirm={
-            isProgramBased
-              ? this.onConfirmByProgram
-              : () =>
-                  this.setState(
-                    { byProgramModalOpen: false },
-                    this.onNewRequisition(programValues.supplier)
-                  )
-          }
+          onConfirm={this.onNewRequisition}
           onCancel={this.onCancelByProgram}
-          onToggleChange={this.onOrderToggle}
           database={database}
-          valueSetter={this.programValuesSetter}
-          programValues={programValues}
           type="requisition"
           settings={settings}
-          isProgramBased={isProgramBased}
         />
       </GenericPage>
     );

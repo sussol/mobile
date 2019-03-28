@@ -255,78 +255,77 @@ export class CustomerRequisitionPage extends React.Component {
     const { data, modalIsOpen, selection } = this.state;
 
     return (
-      <>
-        <GenericPage
-          data={data}
-          refreshData={this.refreshData}
-          renderCell={this.renderCell}
-          renderTopLeftComponent={this.renderPageInfo}
-          renderTopRightComponent={this.renderButtons}
-          onEndEditing={this.onEndEditing}
-          onSelectionChange={this.onSelectionChange}
-          defaultSortKey={this.dataFilters.sortBy}
-          defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-          columns={[
-            {
-              key: 'itemCode',
-              width: 1.5,
-              title: tableStrings.code,
-              sortable: true,
-            },
-            {
-              key: 'itemName',
-              width: 4,
-              title: tableStrings.item_name,
-              sortable: true,
-            },
-            {
-              key: 'ourStockOnHand',
-              width: 1.5,
-              title: tableStrings.our_stock,
-              alignText: 'center',
-            },
-            {
-              key: 'stockOnHand',
-              width: 1.5,
-              title: tableStrings.their_stock,
-              alignText: 'center',
-            },
-            {
-              key: 'monthlyUsage',
-              width: 2,
-              title: tableStrings.monthly_usage,
-              sortable: true,
-              alignText: 'right',
-            },
-            {
-              key: 'suggestedQuantity',
-              width: 2,
-              title: tableStrings.suggested_quantity,
-              sortable: true,
-              alignText: 'right',
-            },
-            {
-              key: 'requiredQuantity',
-              width: 2,
-              title: tableStrings.required_quantity,
-              sortable: true,
-              alignText: 'right',
-            },
-            {
-              key: 'suppliedQuantity',
-              width: 2,
-              title: tableStrings.supply_quantity,
-              sortable: true,
-              alignText: 'right',
-            },
-          ]}
-          dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-          finalisableDataType="Requisition"
-          database={database}
-          selection={selection}
-          {...genericTablePageStyles}
-          topRoute={topRoute}
-        />
+      <GenericPage
+        data={data}
+        refreshData={this.refreshData}
+        renderCell={this.renderCell}
+        renderTopLeftComponent={this.renderPageInfo}
+        renderTopRightComponent={this.renderButtons}
+        onEndEditing={this.onEndEditing}
+        onSelectionChange={this.onSelectionChange}
+        defaultSortKey={this.dataFilters.sortBy}
+        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
+        columns={[
+          {
+            key: 'itemCode',
+            width: 1.5,
+            title: tableStrings.code,
+            sortable: true,
+          },
+          {
+            key: 'itemName',
+            width: 4,
+            title: tableStrings.item_name,
+            sortable: true,
+          },
+          {
+            key: 'ourStockOnHand',
+            width: 1.5,
+            title: tableStrings.our_stock,
+            alignText: 'center',
+          },
+          {
+            key: 'stockOnHand',
+            width: 1.5,
+            title: tableStrings.their_stock,
+            alignText: 'center',
+          },
+          {
+            key: 'monthlyUsage',
+            width: 2,
+            title: tableStrings.monthly_usage,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'suggestedQuantity',
+            width: 2,
+            title: tableStrings.suggested_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'requiredQuantity',
+            width: 2,
+            title: tableStrings.required_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+          {
+            key: 'suppliedQuantity',
+            width: 2,
+            title: tableStrings.supply_quantity,
+            sortable: true,
+            alignText: 'right',
+          },
+        ]}
+        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
+        finalisableDataType="Requisition"
+        database={database}
+        selection={selection}
+        {...genericTablePageStyles}
+        topRoute={topRoute}
+      >
         <PageContentModal
           isOpen={modalIsOpen && !requisition.isFinalised}
           onClose={this.closeModal}
@@ -334,7 +333,7 @@ export class CustomerRequisitionPage extends React.Component {
         >
           {this.renderModalContent()}
         </PageContentModal>
-      </>
+      </GenericPage>
     );
   }
 }

@@ -505,7 +505,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         suppliedQuantity: parseNumber(record.actualQuan),
         comment: record.comment,
         sortIndex: parseNumber(record.line_number),
-        period: database.getOrCreate('Option', record.optionID),
       };
       const requisitionItem = database.update(recordType, internalRecord);
       // requisitionItem will be an orphan record if it's not unique?

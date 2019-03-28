@@ -45,7 +45,8 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
   let editTextStyle;
   let containerStyle;
   let iconName;
-  switch (rowData.editableType) {
+  const { editableType, canEdit, infoColor, infoSize } = rowData;
+  switch (editableType) {
     case 'selectable':
       containerStyle = localStyles.selectContainer;
       iconName = 'angle-down';
@@ -57,6 +58,10 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       editTextStyle = localStyles.infoText;
       break;
   }
+
+  if (infoColor) editTextStyle = { ...editTextStyle, color: infoColor };
+  if (infoSize) editTextStyle = { ...editTextStyle, fontSize: infoSize };
+
   // If null or empty string, use single space to avoid squishing row
   let infoString = (rowData.info || rowData.info === 0) && String(rowData.info);
   infoString = infoString && infoString.length > 0 ? infoString : ' ';
@@ -69,7 +74,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       {infoString}
     </Text>
   );
-  if (rowData.onPress && !isEditingDisabled) {
+  if (rowData.onPress && ((!isEditingDisabled || canEdit === true) && canEdit === true)) {
     return (
       <TouchableOpacity
         style={localStyles.rowContainer}
@@ -78,7 +83,12 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       >
         <View style={containerStyle}>
           {infoComponent}
-          <Icon name={iconName} size={14} style={localStyles.editIcon} color={SUSSOL_ORANGE} />
+          <Icon
+            name={iconName}
+            size={infoSize || 14}
+            color={infoColor || SUSSOL_ORANGE}
+            style={localStyles.editIcon}
+          />
         </View>
       </TouchableOpacity>
     );
@@ -129,14 +139,14 @@ export const PageInfo = props => {
             }
           >
             <View>
-              {columnData.map((...args) =>
-                renderTitleComponent(isEditingDisabled, columnIndex, ...args)
-              )}
+              {columnData
+                .filter(data => data.shouldShow !== false)
+                .map((...args) => renderTitleComponent(isEditingDisabled, columnIndex, ...args))}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((...args) =>
-                renderInfoComponent(isEditingDisabled, columnIndex, ...args)
-              )}
+              {columnData
+                .filter(data => data.shouldShow !== false)
+                .map((...args) => renderInfoComponent(isEditingDisabled, columnIndex, ...args))}
             </View>
           </View>
         );

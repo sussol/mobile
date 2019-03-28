@@ -346,13 +346,21 @@ const createTransactionItem = (database, transaction, item) => {
 };
 
 const createProgramRequisition = (database, requisitionValues) => {
-  const { period } = requisitionValues;
+  const { period, currentUser } = requisitionValues;
   const requisition = database.create('Requisition', {
     id: generateUUID(),
+    serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
+    requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
+    status: 'suggested',
+    type: 'request',
+    entryDate: new Date(),
+    enteredBy: currentUser,
     otherStoreName: requisitionValues.supplier,
+    daysToSupply: requisitionValues.orderType.maxMOS * 30,
     ...requisitionValues,
     orderType: requisitionValues.orderType.name,
   });
+
   database.save('Requisition', requisition);
   period.addRequisitionIfUnique(requisition);
   database.save('Period', period);

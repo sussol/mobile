@@ -25,6 +25,9 @@ import { createRecord, getTotal } from '../utilities';
  * @property  {User}                    enteredBy
  * @property  {List.<RequisitionItem>}  items
  * @property  {Transaction}             linkedTransaction
+ * @property  {MasterList}              program
+ * @property  {Period}                  period
+ * @property  {String}                  orderType
  */
 export class Requisition extends Realm.Object {
   /**
@@ -39,12 +42,14 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Delete requisition and associated requisition items.
+   * Delete requisition and associated requisition items/period.
    *
    * @param {Realm} database
    */
   destructor(database) {
-    this.period.removeRequisition(this, database);
+    if (this.period) {
+      this.period.removeRequisition(this, database);
+    }
     database.delete('RequisitionItem', this.items);
   }
 
@@ -208,6 +213,10 @@ export class Requisition extends Realm.Object {
     });
   }
 
+  /**
+   * Add all items for the assosciated program.
+   * @param {Realm} database
+   */
   addItemsFromProgram(database) {
     if (this.isFinalized) {
       throw new Error('Cannot add items to a finalised requisition');
@@ -215,6 +224,21 @@ export class Requisition extends Realm.Object {
 
     this.program.items.forEach(masterListItem => {
       createRecord(database, 'RequisitionItem', this, masterListItem.item);
+    });
+  }
+
+  /**
+   * Sets the required quantity of each item to the suggested quantity.
+   * Does not add or remove items at all.
+   * @param {Realm} database
+   * @param {string} tags this stores store tags
+   */
+  createAutomaticProgramOrder(database, tags) {
+    const { thresholdMOS } = this.program.getOrderType(tags, this.orderType);
+    this.items.forEach(item => {
+      const shouldSet = item.suggestedQuantity <= item.monthlyUsage * thresholdMOS;
+      if (shouldSet) item.requiredQuantity = item.suggestedQuantity;
+      database.save('RequisitionItem', item);
     });
   }
 

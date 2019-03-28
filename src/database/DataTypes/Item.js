@@ -42,6 +42,16 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * Calculates if this items current stock is less then the supplied
+   * threshold
+   * @param {number} thresholdMOS The limit of months of supply to have on stock
+   * @return {bool} true if this item has total quantity of stock less than the threshold
+   */
+  isLessThanThresholdMOS(thresholdMOS) {
+    return this.totalQuantity < this.dailyUsage * 30 * thresholdMOS;
+  }
+
+  /**
    * If item is cross-referenced item, return the referenced item, else return this item.
    *
    * @return  {Item}
