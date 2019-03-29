@@ -41,6 +41,7 @@ public class bleDeviceScanner {
     private ReactContext reactContext;
     private BluetoothLeScanner leScanner;
     private String deviceAddress;
+    BluetoothAdapter btAdapter;
 
     public bleDeviceScanner(ReactContext reactContext, int timeout) {
         this.timeout = timeout;
@@ -67,7 +68,7 @@ public class bleDeviceScanner {
 
     private void restartScan() {
 
-        BluetoothAdapter btAdapter = null;
+        btAdapter = null;
         try {
             btAdapter = ((BluetoothManager) reactContext.getSystemService(Context.BLUETOOTH_SERVICE))
                     .getAdapter();
@@ -91,7 +92,7 @@ public class bleDeviceScanner {
             leScanner = btAdapter.getBluetoothLeScanner();
             isScanEnabled = true;
 
-            leScanner.stopScan(mScanCallback);
+            //leScanner.stopScan(mScanCallback);
             leScanner.startScan(mScanCallback);
         } catch (Exception e) {
             reject("error", "Issues while initiating ble scan", e.toString());
@@ -142,7 +143,8 @@ public class bleDeviceScanner {
             if (!isScanEnabled) return;
             try {
                 byte advertismentInfo[] = scanResult.getScanRecord().getBytes();
-
+                Log.e(TAG, "found some device");
+         
                 if (bleUtil.toInt(advertismentInfo[MANUFACTURER_LOCATION]) != manufacturerID)
                     return;
                 Log.e(TAG, "found device: " + scanResult.getDevice().getAddress() + " match to: " + deviceAddress);
@@ -159,6 +161,13 @@ public class bleDeviceScanner {
             } catch (Exception e) {
                 reject("error", "Something went wrong while reading device advertisement", e.toString());
             }
+        }
+
+        @Override
+        public void onScanFailed(int errorCode) {
+            Log.e(TAG, "scan fail to start, error code: " + errorCode);
+            Log.e(TAG, "bt adapter isEnabled" + btAdapter.isEnabled());
+            
         }
     };
 

@@ -11,7 +11,15 @@ import {
   Text,
   TextInput,
   View,
+  NativeModules,
 } from 'react-native';
+
+import {
+  getFormatedPeriod,
+  parseDownloadedData,
+  calculateNewLogs,
+  updateSensors,
+} from '../utilities';
 
 import { Button } from 'react-native-ui-components';
 import { SyncState, DemoUserModal } from '../widgets';
@@ -39,16 +47,19 @@ export class FirstUsePage extends React.Component {
   }
 
   async onPressConnect() {
-    try {
-      this.setState({ status: 'initialising' });
-      await this.props.synchroniser.initialise(
-        this.state.serverURL,
-        this.state.syncSiteName,
-        this.state.syncSitePassword);
-      this.setState({ status: 'initialised' });
-      this.props.onInitialised();
-    } catch (error) {
-      this.setState({ status: 'error' });
+    // sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, '');
+    // console.log('recevied results ', sensors);
+    const sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, 'D3:C1:5D:35:37:6E');
+    let downloadedData;
+    foundSensors = Object.entries(sensors).length > 0;
+    console.log('sensorsFound', foundSensors);
+    if (foundSensors) {
+       downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
+        'D3:C1:5D:35:37:6E',
+        '*logprt' + this.state.serverURL
+      );
+      console.log('*logprt' + this.state.serverURL);
+      console.log('downloadedData',  parseDownloadedData(downloadedData));
     }
   }
 
@@ -162,7 +173,7 @@ export class FirstUsePage extends React.Component {
               text={this.buttonText}
               onPress={this.onPressConnect}
               disabledColor={WARM_GREY}
-              isDisabled={!this.canAttemptLogin}
+              isDisabled={false}
             />
           </View>
         </View>

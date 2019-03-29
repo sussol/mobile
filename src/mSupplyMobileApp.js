@@ -192,20 +192,21 @@ class MSupplyMobileAppContainer extends React.Component {
       isLoading: false,
       syncModalIsOpen: false,
     };
-
-    const vaccineCategory = this.database.objects('ItemCategory').filtered('name == "Vaccine"');
-    console.log('found item category = "Vaccine" ' + vaccineCategory[0].id);
-    const items = this.database.objects('Item').filtered('name CONTAINS "Vaccine"');
-    console.log('found items name CONTAINS "vial"' + items.length);
-    const itemNameToChange = this.database.objects('Item').filtered('id CONTAINS "0B9B6A41369F3A449E69FDCE68B25F9E"');
-    console.log('found items to change name: ' + itemNameToChange.length)
-    const customerNameToChange = this.database.objects('Name').filtered('id CONTAINS "DC2A3E4642351046B8E33601575FC287"');
-    console.log('fond name to change name: ' + customerNameToChange.length)
-    this.database.write(() => {
-     items.forEach(item => item.category = vaccineCategory[0]);
-      //itemNameToChange[0].name = 'Hepatitis B Vaccine Vial';
-     //  customerNameToChange[0].name = 'Central EPI Store';
-    });
+    // sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, '');
+    // console.log('recevied results ', sensors);
+    // const vaccineCategory = this.database.objects('ItemCategory').filtered('name == "Vaccine"');
+    // console.log('found item category = "Vaccine" ' + vaccineCategory[0].id);
+    // const items = this.database.objects('Item').filtered('name CONTAINS "Vaccine"');
+    // console.log('found items name CONTAINS "vial"' + items.length);
+    // const itemNameToChange = this.database.objects('Item').filtered('id CONTAINS "0B9B6A41369F3A449E69FDCE68B25F9E"');
+    // console.log('found items to change name: ' + itemNameToChange.length)
+    // const customerNameToChange = this.database.objects('Name').filtered('id CONTAINS "DC2A3E4642351046B8E33601575FC287"');
+    // console.log('fond name to change name: ' + customerNameToChange.length)
+    // this.database.write(() => {
+    //  items.forEach(item => item.category = vaccineCategory[0]);
+    //   //itemNameToChange[0].name = 'Hepatitis B Vaccine Vial';
+    //  //  customerNameToChange[0].name = 'Central EPI Store';
+    // });
 
 
 
