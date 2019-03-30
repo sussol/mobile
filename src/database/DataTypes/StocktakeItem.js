@@ -254,6 +254,16 @@ export class StocktakeItem extends Realm.Object {
     });
   }
 
+  removeReason(database) {
+    this.batches.forEach(batch => {
+      if (batch.option) {
+        database.write(() => {
+          database.update('StocktakeBatch', { ...batch, option: null });
+        });
+      }
+    });
+  }
+
   get mostUsedReason() {
     if (!this.batches) return false;
     if (!this.batches[0]) return false;
