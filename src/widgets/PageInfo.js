@@ -45,7 +45,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
   let editTextStyle;
   let containerStyle;
   let iconName;
-  const { editableType, canEdit, infoColor, infoSize } = rowData;
+  const { editableType, canEdit, infoColor, infoSize, editableColor } = rowData;
   switch (editableType) {
     case 'selectable':
       containerStyle = localStyles.selectContainer;
@@ -59,6 +59,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       break;
   }
 
+  if (editableColor) containerStyle = { ...containerStyle, borderColor: editableColor };
   if (infoColor) editTextStyle = { ...editTextStyle, color: infoColor };
   if (infoSize) editTextStyle = { ...editTextStyle, fontSize: infoSize };
 
@@ -82,13 +83,15 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
         onPress={rowData.onPress}
       >
         <View style={containerStyle}>
-          {infoComponent}
-          <Icon
-            name={iconName}
-            size={infoSize || 14}
-            color={infoColor || SUSSOL_ORANGE}
-            style={localStyles.editIcon}
-          />
+          <View style={{ maxWidth: '85%' }}>{infoComponent}</View>
+          <View style={{ maxWidth: '10%' }}>
+            <Icon
+              name={iconName}
+              size={infoSize || 14}
+              color={infoColor || SUSSOL_ORANGE}
+              style={localStyles.editIcon}
+            />
+          </View>
         </View>
       </TouchableOpacity>
     );
