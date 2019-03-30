@@ -369,7 +369,7 @@ const createProgramRequisition = (database, requisitionValues) => {
 
 const createProgramStocktake = (database, stocktakeValues) => {
   const date = new Date();
-  const { program, name } = stocktakeValues;
+  const { program, name, user } = stocktakeValues;
   return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
@@ -381,6 +381,7 @@ const createProgramStocktake = (database, stocktakeValues) => {
           )}`
         : name,
     createdDate: date,
+    createdBy: user,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
