@@ -254,6 +254,12 @@ export class Stocktake extends Realm.Object {
     // (i.e. count/batch/expiry).
     stocktakeBatches.forEach(stocktakeBatch => stocktakeBatch.finalise(database));
   }
+
+  addItemsFromProgram(database) {
+    if (!this.program) return false;
+    this.setItemsByID(database, this.program.items.map(masterListItem => masterListItem.item.id));
+    return true;
+  }
 }
 
 Stocktake.schema = {
