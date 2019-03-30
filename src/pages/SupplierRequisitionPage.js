@@ -265,6 +265,7 @@ export class SupplierRequisitionPage extends React.Component {
           info: requisition.monthsToSupply,
           onPress: this.openMonthsSelector,
           editableType: 'selectable',
+          canEdit: !isProgramOrder,
         },
         {
           title: `${pageInfoStrings.comment}:`,

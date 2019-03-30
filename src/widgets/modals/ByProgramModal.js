@@ -13,17 +13,18 @@ import { StyleSheet, View, Text } from 'react-native';
 import { PageContentModal } from './PageContentModal';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
-import { AutocompleteSelector, PageInfo, ToggleBar, PageButton } from '..';
+import { AutocompleteSelector, PageInfo, ToggleBar, PageButton, TextEditor } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities/byProgram';
 
-const progressSteps = {
+const getProgressStep = isProgram => ({
   program: 1,
-  supplier: 2,
+  supplier: isProgram ? 2 : 1,
   orderType: 3,
   period: 4,
-};
+  name: null,
+});
 
 const localization = {
   program: 'program',
@@ -34,6 +35,7 @@ const localization = {
   supplierTitle: 'Select a Supplier to use',
   orderTypeTitle: 'Select a Order Type to use',
   periodTitle: 'Select a Period to use',
+  nameTitle: 'Give your stock take a name',
 };
 
 const updateState = command => {
@@ -47,6 +49,7 @@ const updateState = command => {
         periods: null,
         orderType: {},
         orderTypes: null,
+        name: '',
       };
       break;
     case 'SELECT_PROGRAM':
@@ -61,14 +64,19 @@ const updateState = command => {
     case 'SELECT_ORDER_TYPE':
       newState = { period: {}, periods: null, searchIsOpen: false };
       break;
+    case 'SELECT_NAME':
     case 'SELECT_PERIOD':
     case 'SELECT_SUPPLIER':
     case 'CLOSE_SEARCH_MODAL':
-      newState = { searchIsOpen: false };
+      newState = { searchIsOpen: false, textEditIsOpen: false };
       break;
     case 'OPEN_SEARCH_MODAL':
       newState = { searchIsOpen: true };
       break;
+    case 'OPEN_COMMENT_MODAL':
+      newState = { textEditIsOpen: true };
+      break;
+
     default:
       break;
   }
@@ -81,8 +89,9 @@ export class ByProgramModal extends React.Component {
     super(props);
     this.state = {
       searchIsOpen: false,
-      searchModalKey: 'supplier',
+      textEditIsOpen: false,
       isProgramBased: true,
+      searchModalKey: 'supplier',
       program: {},
       supplier: {},
       orderType: {},
@@ -91,6 +100,7 @@ export class ByProgramModal extends React.Component {
       suppliers: null,
       orderTypes: null,
       periods: null,
+      name: '',
     };
   }
 
@@ -102,8 +112,8 @@ export class ByProgramModal extends React.Component {
   };
 
   getProgramValues = () => {
-    const { program, supplier, orderType, period } = this.state;
-    return { program, supplier, orderType, period };
+    const { program, supplier, orderType, period, name } = this.state;
+    return { program, supplier, orderType, period, name };
   };
 
   toggleChange = () => {
@@ -112,7 +122,8 @@ export class ByProgramModal extends React.Component {
   };
 
   openSearchModal = searchModalKey => () => {
-    this.setState({ ...updateState('OPEN_SEARCH_MODAL'), searchModalKey });
+    const stateEvent = searchModalKey === 'name' ? 'OPEN_COMMENT_MODAL' : 'OPEN_SEARCH_MODAL';
+    this.setState({ ...updateState(stateEvent), searchModalKey });
   };
 
   onSearchModalConfirm = ({ key, item }) => {
@@ -122,26 +133,35 @@ export class ByProgramModal extends React.Component {
   getProgress = () => {
     const { type } = this.props;
     const { program, supplier, period, orderType, isProgramBased } = this.state;
+    const isRequisition = type === 'requisition';
+    const isProgramRequisition = isRequisition && isProgramBased;
     const complete =
       isProgramBased && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
     return {
-      canConfirm: complete || (!isProgramBased && supplier.name),
-      isRequisitionProgramOrder: type === 'requisition' && isProgramBased,
+      canConfirm:
+        (complete && isProgramRequisition) ||
+        (isRequisition && !isProgramBased && supplier.name) ||
+        (!isRequisition && isProgramBased && program.name) ||
+        (!isRequisition && !isProgramBased),
+      isProgramRequisition,
       program: true,
+      name: true,
       supplier: !(isProgramBased && !program.name),
       orderType: !!supplier.name,
       period: !!orderType.name,
       programShow: isProgramBased,
-      supplierShow: true,
-      orderTypeShow: isProgramBased && type === 'requisition',
-      periodShow: isProgramBased && type === 'requisition',
+      supplierShow: isRequisition,
+      orderTypeShow: isProgramRequisition,
+      periodShow: isProgramRequisition,
+      nameShow: !isRequisition,
     };
   };
 
   selectSearchValue = ({ key, selectedItem }) => {
     const { settings, database } = this.props;
     const { program, storeTag } = this.state;
-    const { periodScheduleName } = storeTag;
+    const periodScheduleName = storeTag && storeTag.periodScheduleName;
+
     switch (key) {
       case 'program':
         this.setState({
@@ -166,6 +186,12 @@ export class ByProgramModal extends React.Component {
         this.setState({
           ...updateState('SELECT_PERIOD'),
           period: selectedItem,
+        });
+        break;
+      case 'name':
+        this.setState({
+          ...updateState('SELECT_NAME'),
+          name: selectedItem,
         });
         break;
       default:
@@ -214,37 +240,58 @@ export class ByProgramModal extends React.Component {
     };
   };
 
+  renderTextEditorModal = () => {
+    const { name } = this.state;
+    return (
+      <TextEditor
+        text={name}
+        onEndEditing={selectedItem => this.selectSearchValue({ key: 'name', selectedItem })}
+      />
+    );
+  };
+
   renderSearchModal = () => {
-    const { searchModalKey } = this.state;
+    const { searchModalKey, textEditIsOpen } = this.state;
     const { database } = this.props;
     const { [searchModalKey]: modalProps } = this.getSearchModalProps(database);
+
+    if (textEditIsOpen) {
+      return this.renderTextEditorModal();
+    }
     return <AutocompleteSelector {...modalProps} />;
   };
 
   getPageInfoBaseProps = key => {
+    const { name, isProgramBased } = this.state;
     const programValues = this.getProgramValues();
-    const { isRequisitionProgramOrder, ...progress } = this.getProgress();
+    const { isProgramRequisition, ...progress } = this.getProgress();
+
+    let info;
+    if ((programValues[key] && programValues[key].name) || (key === 'name' && name)) {
+      info = programValues[key].name || name;
+    } else {
+      info = localization[`${key}Title`];
+    }
 
     return {
       title: programValues[key].name ? (
         <Icon name="md-checkmark" style={{ color: 'green' }} size={20} />
       ) : (
-        <Text style={{ color: 'white', fontSize: 20 }}>
-          {isRequisitionProgramOrder ? progressSteps[key] : 1}
-        </Text>
+        <Text style={{ color: 'white', fontSize: 20 }}>{getProgressStep(isProgramBased)[key]}</Text>
       ),
-      info: programValues[key].name || `Select the ${localization[key]} to use`,
+      info,
       onPress: this.openSearchModal(key),
       shouldShow: progress[`${key}Show`],
       canEdit: progress[key],
-      editableType: 'selectable',
+      editableType: key === 'name' ? 'text' : 'selectable',
       infoSize: 20,
       infoColor: 'white',
+      editableColor: 'white',
     };
   };
 
   getPageInfoProps = () =>
-    Array.from(Object.keys(progressSteps)).map(key => this.getPageInfoBaseProps(key));
+    Array.from(Object.keys(getProgressStep())).map(key => this.getPageInfoBaseProps(key));
 
   getToggleBarProps = () => {
     const { type } = this.props;
@@ -258,7 +305,7 @@ export class ByProgramModal extends React.Component {
 
   render() {
     const { onConfirm, onCancel, isOpen, type } = this.props;
-    const { searchIsOpen, searchModalKey } = this.state;
+    const { searchIsOpen, searchModalKey, textEditIsOpen } = this.state;
 
     return (
       <PageContentModal
@@ -290,14 +337,16 @@ export class ByProgramModal extends React.Component {
           </View>
         </View>
 
-        <PageContentModal
-          isOpen={searchIsOpen}
-          onClose={this.onSearchModalConfirm}
-          title={localization[`${searchModalKey}Title`]}
-          coverScreen
-        >
-          {this.renderSearchModal()}
-        </PageContentModal>
+        {(searchIsOpen || textEditIsOpen) && (
+          <PageContentModal
+            isOpen={searchIsOpen || textEditIsOpen}
+            onClose={this.onSearchModalConfirm}
+            title={localization[`${searchModalKey}Title`]}
+            coverScreen
+          >
+            {this.renderSearchModal()}
+          </PageContentModal>
+        )}
       </PageContentModal>
     );
   }
@@ -313,7 +362,8 @@ const localStyles = StyleSheet.create({
   },
   contentContainer: {
     minWidth: '100%',
-    paddingLeft: '32%',
+    paddingLeft: '38%',
+    paddingRight: '30%',
     height: '30%',
     marginTop: 50,
   },
