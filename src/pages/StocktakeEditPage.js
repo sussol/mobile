@@ -130,6 +130,24 @@ export class StocktakeEditPage extends React.Component {
   };
 
   /**
+   * Opens the reason modal for applying a reason to a stocktakeItem
+   * if the snapshot quantity and counted total quantity differ.
+   * Otherwise, removes the reason from the stocktake items batches.
+   * @param {Object} stocktakeItem
+   */
+  assignReason = stocktakeItem => {
+    const { database } = this.props;
+    const { snapshotTotalQuantity, countedTotalQuantity } = stocktakeItem;
+    const equalQuantities = snapshotTotalQuantity === countedTotalQuantity;
+
+    if (!equalQuantities) {
+      this.onOpenReasonModal();
+    } else {
+      stocktakeItem.removeReason(database);
+    }
+  };
+
+  /**
    * Respond to the user editing the 'Actual Quantity' column. If the current user has
    * an Options object defined, enforce that an option must be chosen if the snapshot
    * quantity does not match the actual quantity.
@@ -142,23 +160,15 @@ export class StocktakeEditPage extends React.Component {
   onEndEditing = (key, stocktakeItem, newValue) => {
     const { database } = this.props;
     const { usesReasons } = this.state;
-    const { snapshotTotalQuantity } = stocktakeItem;
 
     if (key !== 'countedTotalQuantity' || newValue === '') return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
 
-    stocktakeItem.setCountedTotalQuantity(database, quantity);
-    this.setState({ currentStocktakeItem: stocktakeItem }, () => {
-      const equalQuantities = quantity === snapshotTotalQuantity;
+    if (usesReasons) this.assignReason(stocktakeItem);
 
-      if (!equalQuantities && usesReasons) {
-        this.onOpenReasonModal();
-      }
-      if (equalQuantities && stocktakeItem.mostUsedReason) {
-        stocktakeItem.removeReason(database);
-      }
-    });
+    stocktakeItem.setCountedTotalQuantity(database, quantity);
+    this.setState({ currentStocktakeItem: stocktakeItem });
   };
 
   /**
@@ -286,15 +296,7 @@ export class StocktakeEditPage extends React.Component {
               this.openBatchModal(stocktakeItem);
             }}
           >
-            <View
-              style={{
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'row',
-                minWidth: '100%',
-                minHeight: '100%',
-              }}
-            >
+            <View style={localStyles.modalControl}>
               <Icon name="bars" size={20} color={SUSSOL_ORANGE} />
             </View>
           </TouchableOpacity>
@@ -557,5 +559,12 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     paddingLeft: 10,
     paddingRight: 10,
+  },
+  modalControl: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    minWidth: '100%',
+    minHeight: '100%',
   },
 });

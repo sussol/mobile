@@ -255,6 +255,10 @@ export class Stocktake extends Realm.Object {
     stocktakeBatches.forEach(stocktakeBatch => stocktakeBatch.finalise(database));
   }
 
+  /**
+   * Adds all items assosciated to this stocktakes program.
+   * @param {Realm} database
+   */
   addItemsFromProgram(database) {
     if (!this.program) return false;
     this.setItemsByID(database, this.program.items.map(masterListItem => masterListItem.item.id));

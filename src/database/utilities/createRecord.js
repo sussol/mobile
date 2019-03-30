@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -370,22 +369,19 @@ const createProgramRequisition = (database, requisitionValues) => {
 const createProgramStocktake = (database, stocktakeValues) => {
   const date = new Date();
   const { program, name, user } = stocktakeValues;
+  const { stocktake } = generalStrings;
+
+  const defaultName = `${stocktake} - ${name} - ${formatDateAndTime(new Date(), 'slashes')}`;
   return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name:
-      !name || name === ''
-        ? `${generalStrings.stocktake} - ${program.name} - ${formatDateAndTime(
-            new Date(),
-            'slashes'
-          )}`
-        : name,
+    name: !name || name === '' ? defaultName : name,
     createdDate: date,
     createdBy: user,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
-    program: stocktakeValues.program,
+    program,
   });
 };
 

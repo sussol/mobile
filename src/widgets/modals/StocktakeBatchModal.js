@@ -22,7 +22,7 @@ import globalStyles, {
   dataTableStyles,
   expansionPageStyles,
 } from '../../globalStyles';
-import { ReasonModal } from './ReasonModal';
+import GenericChooseModal from './GenericChooseModal';
 
 export default class StocktakeBatchModal extends React.Component {
   constructor(props) {
@@ -187,12 +187,12 @@ export default class StocktakeBatchModal extends React.Component {
     );
   };
 
-  reasonModalConfirm = option => {
+  reasonModalConfirm = ({ item }) => {
     const { currentBatch } = this.state;
     const { database } = this.props;
 
     database.write(() => {
-      database.update('StocktakeBatch', { id: currentBatch.id, option });
+      database.update('StocktakeBatch', { id: currentBatch.id, option: item });
     });
     this.setState({ reasonModalOpen: false });
   };
@@ -244,7 +244,7 @@ export default class StocktakeBatchModal extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, isOpen } = this.props;
-    const { data, reasonModalOpen, currentBatch } = this.state;
+    const { data, reasonModalOpen } = this.state;
 
     return (
       <Modal
@@ -272,14 +272,15 @@ export default class StocktakeBatchModal extends React.Component {
           {...genericTablePageStyles}
         />
 
-        {this.renderFooter()}
-        <ReasonModal
-          database={database}
+        <GenericChooseModal
           isOpen={reasonModalOpen}
-          onClose={this.reasonModalConfirm}
-          item={currentBatch}
-          type="StocktakeBatch"
+          data={database.objects('Options')}
+          onPress={this.reasonModalConfirm}
+          field="title"
+          title="Select a reason"
         />
+
+        {this.renderFooter()}
       </Modal>
     );
   }

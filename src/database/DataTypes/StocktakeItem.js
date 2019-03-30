@@ -244,6 +244,13 @@ export class StocktakeItem extends Realm.Object {
     createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 
+  /**
+   * Applies the given Options object to all stocktake batches assosciated to
+   * this stocktake item, if there is a difference between countedTotalQuantity
+   * and snapshotTotalQuantity.
+   * @param {Realm}   database
+   * @param {Options} option
+   */
   applyReasonToBatches(database, option) {
     this.batches.forEach(batch => {
       if (batch.countedTotalQuantity !== batch.snapshotTotalQuantity) {
@@ -254,6 +261,11 @@ export class StocktakeItem extends Realm.Object {
     });
   }
 
+  /**
+   * Removes all Options objects from the stocktake batches assosciated
+   * with this stocktake item.
+   * @param {Realm} database
+   */
   removeReason(database) {
     this.batches.forEach(batch => {
       if (batch.option) {
@@ -264,11 +276,42 @@ export class StocktakeItem extends Realm.Object {
     });
   }
 
+  /**
+   * Finds the mode option within this stocktake items batches
+   * @return {string} The title of the reason with the highest frequency
+   */
   get mostUsedReason() {
     if (!this.batches) return false;
     if (!this.batches[0]) return false;
-    if (!this.batches[0].option) return false;
-    return this.batches[0].option.title;
+
+    const optionsCounts = {};
+    const options = {};
+    this.batches.forEach(batch => {
+      const { option } = batch;
+      if (option) {
+        optionsCounts[option.id] = optionsCounts[option.id] ? optionsCounts[option.id] + 1 : 1;
+        options[option.id] = option;
+      }
+    });
+
+    const modeEntries = Object.entries(optionsCounts);
+    if (modeEntries.length === 0) return null;
+
+    return options[
+      modeEntries.sort(
+        ([, valueA], [, valueB]) => parseInt(valueB, 10) - parseInt(valueA, 10)
+      )[0][0]
+    ].title;
+  }
+
+  /**
+   * Returns true/false dependent on if there exists a stock take batch
+   * assosciated with this stock take item that has an option assosciated with it
+   * @return {bool}
+   */
+  get hasReason() {
+    if (!this.batches) return false;
+    return this.batches.find(batch => batch.option) >= 0;
   }
 }
 

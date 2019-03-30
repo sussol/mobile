@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-console */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -48,6 +50,8 @@ import globalStyles, {
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
+
+if (__DEV__ === true) console.disableYellowBox = true;
 
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
