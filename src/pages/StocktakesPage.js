@@ -39,8 +39,6 @@ export class StocktakesPage extends React.Component {
       selection: [],
       usesPrograms: false,
       byProgramModalOpen: false,
-      isProgramStocktake: true,
-      programValues: { program: {}, supplier: {}, orderType: {}, period: {}, name: '' },
     };
     this.stocktakes = props.database.objects('Stocktake');
   }
@@ -55,30 +53,30 @@ export class StocktakesPage extends React.Component {
     this.setState({ usesPrograms: !!usesPrograms });
   }
 
-  onConfirmProgramStocktake = () => {
-    const { runWithLoadingIndicator } = this.props;
-    const { currentUser, database, navigateTo } = this.props;
-    const { programValues } = this.state;
-    const { program } = programValues;
-    let stocktake;
+  createNewStocktake = properties => {
+    const { currentUser, database } = this.props;
 
+    let stocktake;
+    database.write(() => {
+      stocktake = createRecord(database, 'ProgramStocktake', { ...properties, user: currentUser });
+      stocktake.addItemsFromProgram(database);
+    });
+    return stocktake;
+  };
+
+  onConfirmProgramStocktake = programValues => {
+    const { runWithLoadingIndicator, navigateTo } = this.props;
+    const { program, name: stocktakeName } = programValues;
     runWithLoadingIndicator(() => {
-      programValues.createdBy = currentUser;
-      database.write(() => {
-        stocktake = createRecord(database, 'ProgramStocktake', programValues);
-        stocktake.setItemsByID(
-          database,
-          program.items.map(masterListItem => masterListItem.item.id)
-        );
+      this.setState({ byProgramModalOpen: false }, () => {
+        if (program && program.name) {
+          const stocktake = this.createNewStocktake(programValues);
+          navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake });
+        } else {
+          navigateTo('stocktakeManager', navStrings.new_stocktake, { stocktakeName });
+        }
       });
     });
-    this.setState(
-      {
-        byProgramModalOpen: false,
-        programValues: { program: {}, supplier: {}, orderType: {}, period: {}, name: '' },
-      },
-      () => navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake })
-    );
   };
 
   onRowPress = stocktake => {
@@ -92,10 +90,10 @@ export class StocktakesPage extends React.Component {
 
   onNewStockTake = () => {
     const { navigateTo } = this.props;
-    const { usesPrograms, isProgramStocktake } = this.state;
+    const { usesPrograms } = this.state;
     this.clearSelection();
 
-    if (!usesPrograms || (usesPrograms && !isProgramStocktake)) {
+    if (!usesPrograms) {
       navigateTo('stocktakeManager', navStrings.new_stocktake);
     } else {
       this.setState({ byProgramModalOpen: true });
@@ -197,40 +195,8 @@ export class StocktakesPage extends React.Component {
     );
   };
 
-  programValuesSetter = ({ key, item }) => {
-    const { programValues } = this.state;
-    let newProgramValues;
-    if (key === 'name') {
-      newProgramValues = {
-        ...programValues,
-        name: item,
-      };
-    }
-    if (key === 'program') {
-      newProgramValues = {
-        supplier: {},
-        period: {},
-        orderType: {},
-        program: item,
-      };
-    }
-
-    this.setState({ programValues: newProgramValues });
-  };
-
-  onOrderToggle = () => {
-    const { isProgramStocktake } = this.state;
-    this.setState({
-      isProgramStocktake: !isProgramStocktake,
-      programValues: { program: {}, supplier: {}, orderType: {}, period: {} },
-    });
-  };
-
   onCancelByProgram = () => {
-    this.setState({
-      byProgramModalOpen: false,
-      programValues: { program: {}, supplier: {}, orderType: {}, period: {}, name: '' },
-    });
+    this.setState({ byProgramModalOpen: false });
   };
 
   renderNewStocktakeButton = () => (
@@ -239,14 +205,7 @@ export class StocktakesPage extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, topRoute, settings } = this.props;
-    const {
-      data,
-      selection,
-      showCurrent,
-      byProgramModalOpen,
-      programValues,
-      isProgramStocktake,
-    } = this.state;
+    const { data, selection, showCurrent, byProgramModalOpen } = this.state;
     return (
       <GenericPage
         data={data}
@@ -298,20 +257,11 @@ export class StocktakesPage extends React.Component {
         />
         <ByProgramModal
           isOpen={byProgramModalOpen}
-          onConfirm={
-            isProgramStocktake
-              ? this.onConfirmProgramStocktake
-              : () => this.setState({ byProgramModalOpen: false }, this.onNewStockTake())
-          }
+          onConfirm={this.onConfirmProgramStocktake}
           onCancel={this.onCancelByProgram}
-          onToggleChange={this.onOrderToggle}
           database={database}
-          valueSetter={this.programValuesSetter}
-          programValues={programValues}
           type="stocktake"
           settings={settings}
-          isProgramBased={isProgramStocktake}
-          name={programValues.name}
         />
       </GenericPage>
     );

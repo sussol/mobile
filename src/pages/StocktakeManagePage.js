@@ -50,7 +50,11 @@ export class StocktakeManagePage extends React.Component {
   }
 
   componentWillMount = () => {
-    const { stocktake } = this.props;
+    const { stocktake, stocktakeName } = this.props;
+
+    if (stocktakeName) {
+      this.setState({ stocktakeName });
+    }
 
     if (stocktake) {
       const selected = [];
@@ -285,6 +289,7 @@ StocktakeManagePage.propTypes = {
   database: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
+  stocktakeName: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({
