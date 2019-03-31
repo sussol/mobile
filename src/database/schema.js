@@ -150,7 +150,7 @@ export const schema = {
     StocktakeBatch,
     User,
   ],
-  schemaVersion: 16,
+  schemaVersion: 18,
 };
 
 export default schema;

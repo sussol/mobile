@@ -228,21 +228,6 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Sets the required quantity of each item to the suggested quantity.
-   * Does not add or remove items at all.
-   * @param {Realm} database
-   * @param {string} tags this stores store tags
-   */
-  createAutomaticProgramOrder(database, tags) {
-    const { thresholdMOS } = this.program.getOrderType(tags, this.orderType);
-    this.items.forEach(item => {
-      const shouldSet = item.suggestedQuantity <= item.monthlyUsage * thresholdMOS;
-      if (shouldSet) item.requiredQuantity = item.suggestedQuantity;
-      database.save('RequisitionItem', item);
-    });
-  }
-
-  /**
    * Add all items from the mobile store master list that require more stock.
    *
    * @param  {Realm}  database
