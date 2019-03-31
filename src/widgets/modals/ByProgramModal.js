@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -7,23 +8,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import Icon from 'react-native-vector-icons/Ionicons';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
-import { AutocompleteSelector, PageInfo, ToggleBar, PageButton } from '..';
+import { AutocompleteSelector, ToggleBar, PageButton, TextEditor } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities/byProgram';
-
-const progressSteps = {
-  program: 1,
-  supplier: 2,
-  orderType: 3,
-  period: 4,
-};
+import SequentialSteps from '../SequentialSteps';
 
 const localization = {
   program: 'program',
@@ -34,9 +28,14 @@ const localization = {
   supplierTitle: 'Select a Supplier to use',
   orderTypeTitle: 'Select a Order Type to use',
   periodTitle: 'Select a Period to use',
+  nameTitle: 'Give your stocktake a name',
+  programError: 'No programs available',
+  supplierError: 'No suppliers available',
+  orderTypeError: 'No order types available',
+  periodError: 'No periods available',
 };
 
-const updateState = command => {
+const getNewState = command => {
   let newState;
   switch (command) {
     case 'RESET_ALL':
@@ -47,27 +46,28 @@ const updateState = command => {
         periods: null,
         orderType: {},
         orderTypes: null,
+        name: null,
+        currentStep: 0,
       };
       break;
     case 'SELECT_PROGRAM':
       newState = {
         period: {},
         periods: null,
+        supplier: {},
         orderType: {},
         orderTypes: null,
-        searchIsOpen: false,
+        modalIsOpen: false,
+        currentStep: 1,
       };
       break;
     case 'SELECT_ORDER_TYPE':
-      newState = { period: {}, periods: null, searchIsOpen: false };
+      newState = { period: {}, periods: null, modalIsOpen: false };
       break;
+    case 'SELECT_NAME':
     case 'SELECT_PERIOD':
     case 'SELECT_SUPPLIER':
-    case 'CLOSE_SEARCH_MODAL':
-      newState = { searchIsOpen: false };
-      break;
-    case 'OPEN_SEARCH_MODAL':
-      newState = { searchIsOpen: true };
+      newState = { modalIsOpen: false };
       break;
     default:
       break;
@@ -80,13 +80,19 @@ export class ByProgramModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      searchIsOpen: false,
-      searchModalKey: 'supplier',
+      // Values used for deriving current UI state
+      currentStep: 0,
+      steps: null,
+      modalIsOpen: false,
       isProgramBased: true,
+      // New requisition or stocktake values
       program: {},
       supplier: {},
       orderType: {},
       period: {},
+      name: null,
+      // Data stored for performance
+      storeTag: null,
       programs: null,
       suppliers: null,
       orderTypes: null,
@@ -94,91 +100,159 @@ export class ByProgramModal extends React.Component {
     };
   }
 
+  // Store unchanging select modal options and set the default
+  // steps array.
   componentDidMount = () => {
     const { settings, database } = this.props;
     const programs = getAllPrograms(settings, database);
     const suppliers = database.objects('Name').filtered('isSupplier = $0', true);
+    this.setCurrentSteps();
     this.setState({ programs, suppliers });
   };
 
   getProgramValues = () => {
-    const { program, supplier, orderType, period } = this.state;
-    return { program, supplier, orderType, period };
+    const { program, supplier, orderType, period, name } = this.state;
+    return { program, supplier, orderType, period, name };
   };
 
-  toggleChange = () => {
+  getStepNumbers = () => {
     const { isProgramBased } = this.state;
-    this.setState({ ...updateState('RESET_ALL'), isProgramBased: !isProgramBased });
-  };
-
-  openSearchModal = searchModalKey => () => {
-    this.setState({ ...updateState('OPEN_SEARCH_MODAL'), searchModalKey });
-  };
-
-  onSearchModalConfirm = ({ key, item }) => {
-    this.setState({ ...updateState('CLOSE_SEARCH_MODAL'), [key]: item });
-  };
-
-  getProgress = () => {
-    const { type } = this.props;
-    const { program, supplier, period, orderType, isProgramBased } = this.state;
-    const complete =
-      isProgramBased && !!program.name && !!supplier.name && !!period.name && !!orderType.name;
     return {
-      canConfirm: complete || (!isProgramBased && supplier.name),
-      isRequisitionProgramOrder: type === 'requisition' && isProgramBased,
-      program: true,
-      supplier: !(isProgramBased && !program.name),
-      orderType: !!supplier.name,
-      period: !!orderType.name,
-      programShow: isProgramBased,
-      supplierShow: true,
-      orderTypeShow: isProgramBased && type === 'requisition',
-      periodShow: isProgramBased && type === 'requisition',
+      program: 0,
+      supplier: isProgramBased ? 1 : 0,
+      orderType: 2,
+      period: 3,
+      name: isProgramBased ? 1 : 0,
     };
   };
 
-  selectSearchValue = ({ key, selectedItem }) => {
-    const { settings, database } = this.props;
-    const { program, storeTag } = this.state;
-    const periodScheduleName = storeTag && storeTag.periodScheduleName;
-    switch (key) {
-      case 'program':
-        this.setState({
-          ...updateState('SELECT_PROGRAM'),
-          storeTag: selectedItem.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)),
-          orderTypes: selectedItem.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS))
-            .orderTypes,
-          program: selectedItem,
-        });
+  // Open a modal - in case it is an earlier step in the process,
+  // set the current step to the step number corresponding with
+  // the onPress event.
+  openModal = ({ stepNumber }) => {
+    this.setState({ modalIsOpen: true, currentStep: stepNumber });
+  };
+
+  closeModal = () => {
+    this.setState({ modalIsOpen: false });
+  };
+
+  // Initial set up or update the current steps property to reflect the current state
+  setCurrentSteps = () => {
+    const sequentialSteps = this.getSequentialStepsProps();
+    const steps = this.getSteps().map(step => sequentialSteps[step]);
+    this.setState({ steps });
+  };
+
+  // Gets the available steps this modal can handle
+  getSteps = () => {
+    const { isProgramBased } = this.state;
+    const { type } = this.props;
+    let steps;
+    switch (type) {
+      case 'requisition':
+        if (isProgramBased) steps = ['program', 'supplier', 'orderType', 'period'];
+        else steps = ['supplier'];
         break;
-      case 'supplier':
-        this.setState({ ...updateState('SELECT_SUPPLIER'), supplier: selectedItem });
-        break;
-      case 'orderType':
-        this.setState({
-          ...updateState('SELECT_ORDER_TYPE'),
-          periods: getAllPeriodsForProgram(database, program, periodScheduleName, selectedItem),
-          orderType: selectedItem,
-        });
-        break;
-      case 'period':
-        this.setState({
-          ...updateState('SELECT_PERIOD'),
-          period: selectedItem,
-        });
+      case 'stocktake':
+        if (isProgramBased) steps = ['program', 'name'];
+        else steps = ['name'];
         break;
       default:
         break;
     }
+    return steps;
+  };
+
+  getSequentialStepsProps = () => {
+    const { name } = this.state;
+    const stepNumbers = this.getStepNumbers();
+    const programValues = this.getProgramValues();
+
+    const baseProps = key => ({
+      name: programValues[key] && programValues[key].name,
+      placeholder: localization[`${key}Title`],
+      stepNumber: stepNumbers[key],
+      key,
+      error: this.state[`${key}s`] ? this.state[`${key}s`].length === 0 : false,
+      errorText: localization[`${key}Error`],
+    });
+
+    return {
+      program: baseProps('program'),
+      supplier: baseProps('supplier'),
+      name: { name, placeholder: localization.nameTitle, key: name, type: 'input' },
+      orderType: baseProps('orderType'),
+      period: baseProps('period'),
+    };
+  };
+
+  toggleChange = () => {
+    const { isProgramBased } = this.state;
+    this.setState({ ...getNewState('RESET_ALL'), isProgramBased: !isProgramBased }, () =>
+      this.setCurrentSteps()
+    );
+  };
+
+  setNewValue = ({ key, selectedItem }) => {
+    const { settings, database } = this.props;
+    const { program, storeTag, isProgramBased } = this.state;
+    const periodScheduleName = storeTag && storeTag.periodScheduleName;
+
+    let newState;
+    switch (key) {
+      case 'program':
+        newState = {
+          ...getNewState('SELECT_PROGRAM'),
+          storeTag: selectedItem.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)),
+          program: selectedItem,
+          currentStep: 1,
+        };
+        break;
+      case 'supplier':
+        newState = {
+          ...getNewState('SELECT_SUPPLIER'),
+          supplier: selectedItem,
+          orderTypes:
+            program.name &&
+            program.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)).orderTypes,
+          currentStep: isProgramBased ? 2 : 1,
+        };
+        break;
+      case 'orderType':
+        newState = {
+          ...getNewState('SELECT_ORDER_TYPE'),
+          periods: getAllPeriodsForProgram(database, program, periodScheduleName, selectedItem),
+          orderType: selectedItem,
+          currentStep: 3,
+        };
+        break;
+      case 'period':
+        newState = {
+          ...getNewState('SELECT_PERIOD'),
+          period: selectedItem,
+          currentStep: 4,
+        };
+        break;
+      case 'name':
+        newState = {
+          ...getNewState('SELECT_NAME'),
+          name: selectedItem,
+          currentStep: 3,
+        };
+        break;
+      default:
+        break;
+    }
+    this.setState(newState, () => this.setCurrentSteps());
   };
 
   getBaseSearchModalProps = key => ({
-    queryString: 'name BEGINSWITH[c] $0',
+    queryString: 'code BEGINSWITH[c] $0',
     sortByString: 'name',
     primaryFilterProperty: 'name',
     renderLeftText: item => `${item.name}`,
-    onSelect: selectedItem => this.selectSearchValue({ key, selectedItem }),
+    onSelect: selectedItem => this.setNewValue({ key, selectedItem }),
   });
 
   getSearchModalProps = () => {
@@ -188,17 +262,21 @@ export class ByProgramModal extends React.Component {
       program: {
         ...this.getBaseSearchModalProps('program'),
         options: programs,
+        queryStringSecondary: 'name BEGINSWITH[c] $0',
+        renderRightText: item =>
+          item.parsedProgramSettings ? item.parsedProgramSettings.elmisCode : '',
       },
       supplier: {
         ...this.getBaseSearchModalProps('supplier'),
         options: suppliers,
+        secondaryFilterProperty: 'code',
         renderRightText: item => `(${item.code})`,
       },
       orderType: {
         ...this.getBaseSearchModalProps('orderType'),
         options: orderTypes,
         renderRightText: item =>
-          `Max MOS: ${item.maxMOS} - Threshold MOS: ${item.thresholdMOS} - Max order per period ${
+          `Max MOS: ${item.maxMOS} - Threshold MOS: ${item.thresholdMOS} - Max orders per period: ${
             item.maxOrdersPerPeriod
           }`,
       },
@@ -206,45 +284,36 @@ export class ByProgramModal extends React.Component {
         ...this.getBaseSearchModalProps('period'),
         options: periods,
         renderRightText: item =>
-          `${item.toString()} - ${item.requisitionsForOrderType(
-            program,
-            orderType
-          )} Requisition(s)`,
+          `${item.toString()} - ${item.requisitionsForOrderType(program, orderType)}/${
+            orderType.maxOrdersPerPeriod
+          } Requisition(s)`,
       },
     };
   };
 
+  renderTextEditor = () => {
+    const { name } = this.state;
+    return (
+      <TextEditor
+        text={name}
+        onEndEditing={selectedItem => this.setNewValue({ key: 'name', selectedItem })}
+      />
+    );
+  };
+
   renderSearchModal = () => {
-    const { searchModalKey } = this.state;
-    const { database } = this.props;
-    const { [searchModalKey]: modalProps } = this.getSearchModalProps(database);
+    const { steps, currentStep } = this.state;
+    if (!steps || currentStep >= steps.length) return null;
+    const { [steps[currentStep].key]: modalProps } = this.getSearchModalProps();
     return <AutocompleteSelector {...modalProps} />;
   };
 
-  getPageInfoBaseProps = key => {
-    const programValues = this.getProgramValues();
-    const { isRequisitionProgramOrder, ...progress } = this.getProgress();
-
-    return {
-      title: programValues[key].name ? (
-        <Icon name="md-checkmark" style={{ color: 'green' }} size={20} />
-      ) : (
-        <Text style={{ color: 'white', fontSize: 20 }}>
-          {isRequisitionProgramOrder ? progressSteps[key] : 1}
-        </Text>
-      ),
-      info: programValues[key].name || `Select the ${localization[key]} to use`,
-      onPress: this.openSearchModal(key),
-      shouldShow: progress[`${key}Show`],
-      canEdit: progress[key],
-      editableType: 'selectable',
-      infoSize: 20,
-      infoColor: 'white',
-    };
+  renderModal = () => {
+    const { currentStep, steps } = this.state;
+    const { key } = steps[currentStep];
+    if (key === 'name') return this.renderTextEditor();
+    return this.renderSearchModal();
   };
-
-  getPageInfoProps = () =>
-    Array.from(Object.keys(progressSteps)).map(key => this.getPageInfoBaseProps(key));
 
   getToggleBarProps = () => {
     const { type } = this.props;
@@ -256,17 +325,23 @@ export class ByProgramModal extends React.Component {
     ];
   };
 
-  render() {
-    const { onConfirm, onCancel, isOpen, type } = this.props;
-    const { searchIsOpen, searchModalKey } = this.state;
+  onConfirmRequisition = () => {
+    const { onConfirm } = this.props;
+    onConfirm(this.getProgramValues());
+    this.setState({ ...getNewState('RESET_ALL') }, () => this.setCurrentSteps());
+  };
 
+  render() {
+    const { onCancel, isOpen, type, database } = this.props;
+    const { modalIsOpen, currentStep, steps } = this.state;
+    if (!steps) return null;
     return (
       <PageContentModal
         isOpen={isOpen}
         style={{ ...globalStyles.modal, backgroundColor: DARK_GREY }}
         swipeToClose={false}
         onClose={() => {
-          this.setState({ ...updateState('RESET_ALL') }, onCancel);
+          this.setState({ ...getNewState('RESET_ALL') }, () => onCancel());
         }}
         title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
       >
@@ -274,30 +349,32 @@ export class ByProgramModal extends React.Component {
           <ToggleBar toggles={this.getToggleBarProps()} />
         </View>
 
-        <View style={localStyles.contentContainer}>
-          <PageInfo columns={[this.getPageInfoProps()]} />
-          <View style={{ marginLeft: '18%', marginTop: 20 }}>
-            <PageButton
-              text="OK"
-              onPress={() =>
-                this.setState({ ...updateState('RESET_ALL') }, onConfirm(this.getProgramValues()))
-              }
-              isDisabled={!this.getProgress().canConfirm}
-              disabledColor={WARM_GREY}
-              style={{ ...globalStyles.button, backgroundColor: SUSSOL_ORANGE }}
-              textStyle={{ ...globalStyles.buttonText, color: 'white' }}
-            />
-          </View>
-        </View>
+        <SequentialSteps
+          database={database}
+          currentStep={currentStep}
+          steps={steps}
+          onPress={this.openModal}
+        />
 
-        <PageContentModal
-          isOpen={searchIsOpen}
-          onClose={this.onSearchModalConfirm}
-          title={localization[`${searchModalKey}Title`]}
-          coverScreen
-        >
-          {this.renderSearchModal()}
-        </PageContentModal>
+        <PageButton
+          text="OK"
+          onPress={this.onConfirmRequisition}
+          isDisabled={!(currentStep >= steps.length)}
+          disabledColor={WARM_GREY}
+          style={localStyles.okButton}
+          textStyle={{ ...globalStyles.buttonText, color: 'white' }}
+        />
+
+        {modalIsOpen && (
+          <PageContentModal
+            isOpen={modalIsOpen}
+            onClose={this.closeModal}
+            title={localization[`${steps[currentStep].key}Title`]}
+            coverScreen
+          >
+            {this.renderModal()}
+          </PageContentModal>
+        )}
       </PageContentModal>
     );
   }
@@ -309,13 +386,13 @@ const localStyles = StyleSheet.create({
   toggleContainer: {
     width: 292,
     alignSelf: 'center',
-    marginTop: 10,
+    marginVertical: 20,
   },
-  contentContainer: {
-    minWidth: '100%',
-    paddingLeft: '32%',
-    height: '30%',
-    marginTop: 50,
+  okButton: {
+    ...globalStyles.button,
+    backgroundColor: SUSSOL_ORANGE,
+    alignSelf: 'center',
+    marginTop: 60,
   },
 });
 
