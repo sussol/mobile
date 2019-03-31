@@ -74,12 +74,12 @@ export class SupplierRequisitionPage extends React.Component {
   };
 
   onCreateAutomaticOrder = () => {
-    const { database, requisition, runWithLoadingIndicator, settings } = this.props;
+    const { database, requisition, runWithLoadingIndicator } = this.props;
     const { isProgramOrder } = this.state;
     runWithLoadingIndicator(() => {
       database.write(() => {
         if (isProgramOrder) {
-          requisition.createAutomaticProgramOrder(database, settings.get('ThisStoreTags'));
+          requisition.setRequestedToSuggested(database);
         } else {
           requisition.createAutomaticOrder(database, this.getThisStore());
         }
@@ -277,12 +277,7 @@ export class SupplierRequisitionPage extends React.Component {
       ],
     ];
 
-    return (
-      <PageInfo
-        columns={infoColumns}
-        isEditingDisabled={requisition.isFinalised || isProgramOrder}
-      />
-    );
+    return <PageInfo columns={infoColumns} isEditingDisabled={requisition.isFinalised} />;
   };
 
   renderCell = (key, requisitionItem) => {

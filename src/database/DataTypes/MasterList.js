@@ -84,6 +84,13 @@ export class MasterList extends Realm.Object {
       orderType => orderType.name === orderTypeName
     )[0];
   }
+
+  get parsedProgramSettings() {
+    if (!this.programSettings) return null;
+    const firstParse = JSON.parse(this.programSettings);
+    if (!firstParse) return null;
+    return JSON.parse(firstParse);
+  }
 }
 
 MasterList.schema = {

@@ -51,8 +51,7 @@ import globalStyles, {
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
-if (__DEV__ === true) console.disableYellowBox = true;
-
+console.disableYellowBox = true;
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);

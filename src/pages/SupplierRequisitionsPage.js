@@ -251,14 +251,16 @@ export class SupplierRequisitionsPage extends React.Component {
           onClose={() => this.setState({ isCreatingRequisition: false })}
           title={modalStrings.search_for_the_supplier}
         />
-        <ByProgramModal
-          isOpen={byProgramModalOpen}
-          onConfirm={this.onNewRequisition}
-          onCancel={this.onCancelByProgram}
-          database={database}
-          type="requisition"
-          settings={settings}
-        />
+        {byProgramModalOpen && (
+          <ByProgramModal
+            isOpen={byProgramModalOpen}
+            onConfirm={this.onNewRequisition}
+            onCancel={this.onCancelByProgram}
+            database={database}
+            type="requisition"
+            settings={settings}
+          />
+        )}
       </GenericPage>
     );
   }
