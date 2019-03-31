@@ -282,10 +282,10 @@ export class StocktakeEditPage extends React.Component {
             }
             style={localStyles.reasonCell}
           >
-            <Text>
+            <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
               {stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason : 'Not applicable'}
             </Text>
-            <Icon name="pencil" size={14} color={SUSSOL_ORANGE} />
+            <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
         );
       }
@@ -297,7 +297,7 @@ export class StocktakeEditPage extends React.Component {
             }}
           >
             <View style={localStyles.modalControl}>
-              <Icon name="bars" size={20} color={SUSSOL_ORANGE} />
+              <Icon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />
             </View>
           </TouchableOpacity>
         );
