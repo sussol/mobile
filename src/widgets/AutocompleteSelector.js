@@ -39,13 +39,13 @@ export class AutocompleteSelector extends React.PureComponent {
     const { sortByString, queryString, queryStringSecondary } = this.props;
     const { queryText } = this.state;
 
-    const data = options
+    let data = options
       .filtered(queryString, queryText)
       .sorted(sortByString)
       .slice();
 
     if (queryStringSecondary) {
-      data.concat(
+      data = data.concat(
         complement(options.filtered(queryStringSecondary, queryText).sorted(sortByString), data)
       );
     }

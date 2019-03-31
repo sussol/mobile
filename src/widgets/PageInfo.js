@@ -13,6 +13,7 @@ import { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
 const renderTitleComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) => {
   // If null or empty string, use single space to avoid squishing row
+  const { canEdit } = rowData;
   const titleString = rowData.title ? rowData.title : ' ';
   const titleComponent = (
     <Text
@@ -23,7 +24,7 @@ const renderTitleComponent = (isEditingDisabled, columnIndex, rowData, rowIndex)
       {titleString}
     </Text>
   );
-  if (rowData.onPress && !isEditingDisabled) {
+  if (rowData.onPress && !isEditingDisabled && (!isEditingDisabled && canEdit !== false)) {
     return (
       <TouchableOpacity
         style={localStyles.rowContainer}
@@ -59,9 +60,6 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       break;
   }
 
-  if (infoColor) editTextStyle = { ...editTextStyle, color: infoColor };
-  if (infoSize) editTextStyle = { ...editTextStyle, fontSize: infoSize };
-
   // If null or empty string, use single space to avoid squishing row
   let infoString = (rowData.info || rowData.info === 0) && String(rowData.info);
   infoString = infoString && infoString.length > 0 ? infoString : ' ';
@@ -74,7 +72,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       {infoString}
     </Text>
   );
-  if (rowData.onPress && ((!isEditingDisabled || canEdit === true) && canEdit === true)) {
+  if (rowData.onPress && !isEditingDisabled && (!isEditingDisabled && canEdit !== false)) {
     return (
       <TouchableOpacity
         style={localStyles.rowContainer}
@@ -159,8 +157,12 @@ export default PageInfo;
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 PageInfo.propTypes = {
-  columns: PropTypes.array,
+  columns: PropTypes.array.isRequired,
   isEditingDisabled: PropTypes.bool,
+};
+
+PageInfo.defaultProps = {
+  isEditingDisabled: false,
 };
 
 const localStyles = StyleSheet.create({
