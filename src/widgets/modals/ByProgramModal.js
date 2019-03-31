@@ -185,7 +185,13 @@ export class ByProgramModal extends React.Component {
     return {
       program: baseProps('program'),
       supplier: baseProps('supplier'),
-      name: { name, placeholder: localization.nameTitle, key: name, type: 'input' },
+      name: {
+        name,
+        placeholder: localization.nameTitle,
+        key: 'name',
+        type: 'input',
+        stepNumber: stepNumbers.name,
+      },
       orderType: baseProps('orderType'),
       period: baseProps('period'),
     };
