@@ -283,7 +283,7 @@ export class StocktakeEditPage extends React.Component {
             style={localStyles.reasonCell}
           >
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
-              {stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason : 'Not applicable'}
+              {stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason.title : 'Not applicable'}
             </Text>
             <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
@@ -482,6 +482,7 @@ export class StocktakeEditPage extends React.Component {
       stocktakeItem,
       isStocktakeEditModalOpen,
       isReasonsModalOpen,
+      currentStocktakeItem,
     } = this.state;
 
     const resetModalText = isResetModalOpen // Small optimisation.
@@ -532,6 +533,11 @@ export class StocktakeEditPage extends React.Component {
         <GenericChooseModal
           isOpen={isReasonsModalOpen}
           data={database.objects('Options')}
+          highlightIndex={
+            currentStocktakeItem && currentStocktakeItem.hasReason
+              ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
+              : 0
+          }
           field="title"
           onPress={this.reasonModalConfirm}
           title="Select a reason"

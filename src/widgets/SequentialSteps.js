@@ -69,8 +69,8 @@ export default class SequentialSteps extends React.PureComponent {
   );
 
   renderRow = step => {
-    const { onPress, currentStep, steps, type } = this.props;
-    const { key, stepNumber, error } = step;
+    const { onPress, currentStep, steps } = this.props;
+    const { key, stepNumber, error, type } = step;
     const { content } = localStyles;
 
     const isCurrentStep = stepNumber === currentStep;
@@ -120,12 +120,8 @@ const localStyles = StyleSheet.create({
   text: { fontSize: 20, width: 300 },
 });
 
-SequentialSteps.defaultProps = {
-  type: 'select',
-};
 SequentialSteps.propTypes = {
   onPress: PropTypes.func.isRequired,
   steps: PropTypes.array.isRequired,
-  type: PropTypes.string,
   currentStep: PropTypes.number.isRequired,
 };

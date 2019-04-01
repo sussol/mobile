@@ -21,11 +21,12 @@ export default class GenericChooseModal extends React.PureComponent {
   };
 
   renderRow = ({ item, index }) => {
-    const { onPress, field } = this.props;
+    const { onPress, field, highlightIndex } = this.props;
     const { row, text } = localStyles;
 
-    const rowStyle = index === 0 ? { ...row, backgroundColor: '#E95C30' } : row;
-    const textStyle = index === 0 ? { ...text, color: '#FFF' } : text;
+    const htu = highlightIndex >= 0 ? highlightIndex : 0;
+    const rowStyle = index === htu ? { ...row, backgroundColor: '#E95C30' } : row;
+    const textStyle = index === htu ? { ...text, color: '#FFF' } : text;
     return (
       <TouchableOpacity onPress={() => onPress({ item, index, field })}>
         <View style={rowStyle}>
@@ -72,6 +73,7 @@ const localStyles = StyleSheet.create({
 
 GenericChooseModal.defaultProps = {
   field: PropTypes.null,
+  highlightIndex: 0,
 };
 
 GenericChooseModal.propTypes = {
@@ -80,4 +82,5 @@ GenericChooseModal.propTypes = {
   data: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
+  highlightIndex: PropTypes.number,
 };

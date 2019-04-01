@@ -129,8 +129,10 @@ export default class StocktakeBatchModal extends React.Component {
             onPress={() => this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch })}
             style={localStyles.reasonCell}
           >
-            <Text>{stocktakeBatch.option ? stocktakeBatch.option.title : ''}</Text>
-            <Icon name="pencil" size={14} color={SUSSOL_ORANGE} />
+            <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
+              {stocktakeBatch.option ? stocktakeBatch.option.title : ''}
+            </Text>
+            <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
         );
       }
@@ -244,7 +246,7 @@ export default class StocktakeBatchModal extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, isOpen } = this.props;
-    const { data, reasonModalOpen } = this.state;
+    const { data, reasonModalOpen, currentBatch } = this.state;
 
     return (
       <Modal
@@ -254,7 +256,6 @@ export default class StocktakeBatchModal extends React.Component {
         backdropOpacity={0.33}
         swipeToClose={false}
         position="top"
-        coverScreen
       >
         <GenericPage
           data={data}
@@ -275,6 +276,11 @@ export default class StocktakeBatchModal extends React.Component {
         <GenericChooseModal
           isOpen={reasonModalOpen}
           data={database.objects('Options')}
+          highlightIndex={
+            currentBatch && currentBatch.option
+              ? database.objects('Options').indexOf(currentBatch.option)
+              : 0
+          }
           onPress={this.reasonModalConfirm}
           field="title"
           title="Select a reason"
