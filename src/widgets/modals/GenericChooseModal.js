@@ -24,9 +24,9 @@ export default class GenericChooseModal extends React.PureComponent {
     const { onPress, field, highlightIndex } = this.props;
     const { row, text } = localStyles;
 
-    const htu = highlightIndex >= 0 ? highlightIndex : 0;
-    const rowStyle = index === htu ? { ...row, backgroundColor: '#E95C30' } : row;
-    const textStyle = index === htu ? { ...text, color: '#FFF' } : text;
+    const indexToHighlight = highlightIndex >= 0 ? highlightIndex : 0;
+    const rowStyle = index === indexToHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
+    const textStyle = index === indexToHighlight ? { ...text, color: '#FFF' } : text;
     return (
       <TouchableOpacity onPress={() => onPress({ item, index, field })}>
         <View style={rowStyle}>
