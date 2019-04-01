@@ -301,7 +301,7 @@ export class StocktakeItem extends Realm.Object {
       modeEntries.sort(
         ([, valueA], [, valueB]) => parseInt(valueB, 10) - parseInt(valueA, 10)
       )[0][0]
-    ].title;
+    ];
   }
 
   /**
@@ -311,7 +311,7 @@ export class StocktakeItem extends Realm.Object {
    */
   get hasReason() {
     if (!this.batches) return false;
-    return this.batches.find(batch => batch.option) >= 0;
+    return this.batches.findIndex(batch => batch.option) >= 0;
   }
 }
 
