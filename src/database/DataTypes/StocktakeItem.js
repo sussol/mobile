@@ -245,7 +245,7 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Applies the given Options object to all stocktake batches assosciated to
+   * Applies the given Options object to all stocktake batches associated to
    * this stocktake item, if there is a difference between countedTotalQuantity
    * and snapshotTotalQuantity.
    * @param {Realm}   database
@@ -262,7 +262,7 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Removes all Options objects from the stocktake batches assosciated
+   * Removes all Options objects from the stocktake batches associated
    * with this stocktake item.
    * @param {Realm} database
    */
@@ -306,7 +306,7 @@ export class StocktakeItem extends Realm.Object {
 
   /**
    * Returns true/false dependent on if there exists a stock take batch
-   * assosciated with this stock take item that has an option assosciated with it
+   * associated with this stock take item that has an option associated with it
    * @return {bool}
    */
   get hasReason() {
