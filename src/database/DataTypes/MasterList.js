@@ -80,9 +80,9 @@ export class MasterList extends Realm.Object {
    * @return {object} The matching orderType object
    */
   getOrderType(tags, orderTypeName) {
-    return this.getStoreTagObject(tags).orderTypes.filter(
+    return this.getStoreTagObject(tags).orderTypes.find(
       orderType => orderType.name === orderTypeName
-    )[0];
+    );
   }
 
   get parsedProgramSettings() {
