@@ -211,13 +211,13 @@ export class Stocktake extends Realm.Object {
       throw Error('Attempt to finalise stocktake with adjustments that make item stock negative');
     }
 
+    // Adjust stocktake inventory.
+    this.adjustInventory(database, user);
+
     // Set the stocktake finalise details.
     this.status = 'finalised';
     this.finalisedBy = user;
     this.stocktakeDate = new Date();
-
-    // Adjust stocktake inventory.
-    this.adjustInventory(database, user);
 
     database.save('Stocktake', this);
   }
