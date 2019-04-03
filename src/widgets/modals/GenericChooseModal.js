@@ -13,6 +13,18 @@ import { PageContentModal } from './PageContentModal';
 
 import { COMPONENT_HEIGHT } from '../../globalStyles';
 
+/**
+ * Generic modal for rendering a full screen modal with a
+ * list of options. On selecting a choice, returns the object
+ * which was selected, the index/row within the data array and
+ * the field which was displayed to the user.
+ * @prop  {array}   data            Array of objects from which a choice must be made from
+ * @prop  {string}  field           The object field which should be displayed to the user
+ * @prop  {string}  title           The title of the modal
+ * @prop  {func}    onPress         Function to call on selection returns {item, index, field}
+ * @prop  {boolean} isOpen          Indicator for if the modal should be open
+ * @prop  {int}     highlightIndex  Index of the data array for which object should be 'highlighted'
+ */
 export default class GenericChooseModal extends React.PureComponent {
   keyExtractor = (item, index) => {
     const { field } = this.props;
@@ -72,12 +84,11 @@ const localStyles = StyleSheet.create({
 });
 
 GenericChooseModal.defaultProps = {
-  field: PropTypes.null,
   highlightIndex: 0,
 };
 
 GenericChooseModal.propTypes = {
-  field: PropTypes.string,
+  field: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
