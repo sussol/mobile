@@ -256,7 +256,7 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
-   * Adds all items assosciated to this stocktakes program.
+   * Adds all items associated to this stocktakes program.
    * @param {Realm} database
    */
   addItemsFromProgram(database) {

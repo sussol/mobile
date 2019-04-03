@@ -214,7 +214,7 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Add all items for the assosciated program.
+   * Add all items for the associated program.
    * @param {Realm} database
    */
   addItemsFromProgram(database) {

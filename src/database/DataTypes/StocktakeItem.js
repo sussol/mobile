@@ -255,20 +255,9 @@ export class StocktakeItem extends Realm.Object {
     this.batches.forEach(batch => {
       if (batch.countedTotalQuantity !== batch.snapshotTotalQuantity) {
         database.write(() => {
-          database.update('StocktakeBatch', { id: batch.id, option });
+          database.update('StocktakeBatch', { ...batch, option });
         });
-      }
-    });
-  }
-
-  /**
-   * Removes all Options objects from the stocktake batches associated
-   * with this stocktake item.
-   * @param {Realm} database
-   */
-  removeReason(database) {
-    this.batches.forEach(batch => {
-      if (batch.option) {
+      } else {
         database.write(() => {
           database.update('StocktakeBatch', { ...batch, option: null });
         });

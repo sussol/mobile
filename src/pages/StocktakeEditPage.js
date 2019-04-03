@@ -139,11 +139,10 @@ export class StocktakeEditPage extends React.Component {
     const { database } = this.props;
     const { snapshotTotalQuantity, countedTotalQuantity } = stocktakeItem;
     const equalQuantities = snapshotTotalQuantity === countedTotalQuantity;
-
     if (!equalQuantities) {
       this.onOpenReasonModal();
     } else {
-      stocktakeItem.removeReason(database);
+      stocktakeItem.applyReasonToBatches(database);
     }
   };
 
@@ -165,9 +164,8 @@ export class StocktakeEditPage extends React.Component {
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
 
-    if (usesReasons) this.assignReason(stocktakeItem);
-
     stocktakeItem.setCountedTotalQuantity(database, quantity);
+    if (usesReasons) this.assignReason(stocktakeItem);
     this.setState({ currentStocktakeItem: stocktakeItem });
   };
 
