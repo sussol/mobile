@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -292,8 +291,12 @@ export default class StocktakeBatchModal extends React.Component {
   }
 }
 
+StocktakeBatchModal.defaultProps = {
+  genericTablePageStyles: {},
+};
+
 StocktakeBatchModal.propTypes = {
-  database: PropTypes.object,
+  database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object,
   stocktakeItem: PropTypes.object.isRequired,
   isOpen: PropTypes.bool.isRequired,
