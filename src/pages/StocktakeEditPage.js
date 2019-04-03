@@ -120,11 +120,11 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ usesReasons: database.objects('Options').length !== 0 });
   };
 
-  reasonModalConfirm = ({ item }) => {
-    if (item) {
+  reasonModalConfirm = ({ item: option }) => {
+    if (option) {
       const { currentStocktakeItem } = this.state;
       const { database } = this.props;
-      currentStocktakeItem.applyReasonToBatches(database, item);
+      currentStocktakeItem.applyReasonToBatches(database, option);
     }
     this.setState({ isReasonsModalOpen: false });
   };

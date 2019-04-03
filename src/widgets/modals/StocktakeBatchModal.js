@@ -189,12 +189,12 @@ export default class StocktakeBatchModal extends React.Component {
     );
   };
 
-  reasonModalConfirm = ({ item }) => {
+  reasonModalConfirm = ({ item: option }) => {
     const { currentBatch } = this.state;
     const { database } = this.props;
 
     database.write(() => {
-      database.update('StocktakeBatch', { id: currentBatch.id, option: item });
+      database.update('StocktakeBatch', { id: currentBatch.id, option });
     });
     this.setState({ reasonModalOpen: false });
   };
