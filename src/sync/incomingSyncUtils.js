@@ -373,7 +373,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         name: record.description,
         note: record.note,
         isProgram: parseBoolean(record.isProgram),
-        programSettings: record.programSettings ? JSON.stringify(record.programSettings) : '',
+        programSettings: record.programSettings && record.programSettings.replace(/\\/g, ''),
       };
       database.update(recordType, internalRecord);
       break;
