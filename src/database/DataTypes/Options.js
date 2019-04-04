@@ -19,8 +19,6 @@ import Realm from 'realm';
  */
 export class Options extends Realm.Object {}
 
-export default Options;
-
 Options.schema = {
   name: 'Options',
   primaryKey: 'id',
@@ -31,3 +29,5 @@ Options.schema = {
     isActive: { type: 'bool', default: false },
   },
 };
+
+export default Options;
