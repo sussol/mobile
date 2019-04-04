@@ -165,21 +165,17 @@ export class SupplierRequisitionPage extends React.Component {
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     const { requisition } = this.props;
     const { useThresholdMOS } = this.state;
-    const { thresholdMOS } = this.requisition;
 
-    if (newSearchTerm && newSortBy && newIsAscending) {
-      this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    }
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
 
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     let data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
+
     if (useThresholdMOS) {
-      data = data.filter(requisitionItem =>
-        requisitionItem.item.isLessThanThresholdMOS(thresholdMOS)
-      );
+      data = data.filter(requisitionItem => requisitionItem.isLessThanThresholdMOS);
     }
 
     let sortDataType;
