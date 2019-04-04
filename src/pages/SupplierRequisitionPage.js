@@ -42,7 +42,6 @@ export class SupplierRequisitionPage extends React.Component {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
-      isProgramOrder: false,
       orderType: null,
       useThresholdMOS: false,
     };
@@ -58,7 +57,7 @@ export class SupplierRequisitionPage extends React.Component {
     if (requisition.program) {
       const tags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
       const orderType = requisition.program.getOrderType(tags, requisition.orderType);
-      this.setState({ isProgramOrder: !!requisition.program, orderType });
+      this.setState({ orderType });
     }
   };
 
@@ -75,14 +74,10 @@ export class SupplierRequisitionPage extends React.Component {
 
   onCreateAutomaticOrder = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
-    const { isProgramOrder } = this.state;
     runWithLoadingIndicator(() => {
       database.write(() => {
-        if (isProgramOrder) {
-          requisition.setRequestedToSuggested(database);
-        } else {
-          requisition.createAutomaticOrder(database, this.getThisStore());
-        }
+        requisition.createAutomaticOrder(database, this.getThisStore());
+
         database.save('Requisition', requisition);
       });
       this.refreshData();
@@ -227,19 +222,19 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderPageInfo = () => {
     const { requisition } = this.props;
-    const { isProgramOrder, orderType } = this.state;
+    const { orderType } = this.state;
     const { period, program } = requisition;
     const infoColumns = [
       [
         {
           title: 'Program:',
           info: program && program.name,
-          shouldShow: isProgramOrder,
+          shouldShow: !!program,
         },
         {
           title: 'Order Type:',
           info: orderType && orderType.name,
-          shouldShow: isProgramOrder,
+          shouldShow: !!program,
         },
         {
           title: `${pageInfoStrings.entry_date}:`,
@@ -254,7 +249,7 @@ export class SupplierRequisitionPage extends React.Component {
         {
           title: 'Period:',
           info: period && `${period.name} -- ${period.toString()}`,
-          shouldShow: isProgramOrder,
+          shouldShow: !!program,
         },
         {
           title: `${pageInfoStrings.supplier}:`,
@@ -265,7 +260,7 @@ export class SupplierRequisitionPage extends React.Component {
           info: requisition.monthsToSupply,
           onPress: this.openMonthsSelector,
           editableType: 'selectable',
-          canEdit: !isProgramOrder,
+          canEdit: !program,
         },
         {
           title: `${pageInfoStrings.comment}:`,
@@ -382,31 +377,37 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderButtons = () => {
     const { requisition } = this.props;
-    const { isProgramOrder } = this.state;
+    const { program } = requisition;
+
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
           <PageButton
-            style={{ ...globalStyles.topButton, marginLeft: isProgramOrder ? 5 : 0 }}
-            text={buttonStrings.create_automatic_order}
-            onPress={this.onCreateAutomaticOrder}
+            style={{
+              ...globalStyles.leftButton,
+              marginLeft: program ? 5 : 0,
+              marginBottom: program ? 5 : 0,
+            }}
+            text={buttonStrings.use_suggested_quantities}
+            onPress={this.onUseSuggestedQuantities}
             isDisabled={requisition.isFinalised}
           />
-          {isProgramOrder && (
+
+          {program && (
             <ToggleBar style={globalStyles.toggleBar} toggles={this.getToggleBarProps()} />
           )}
 
-          {!isProgramOrder && (
+          {!program && (
             <PageButton
-              style={globalStyles.leftButton}
-              text={buttonStrings.use_suggested_quantities}
-              onPress={this.onUseSuggestedQuantities}
+              style={globalStyles.topButton}
+              text={buttonStrings.create_automatic_order}
+              onPress={this.onCreateAutomaticOrder}
               isDisabled={requisition.isFinalised}
             />
           )}
         </View>
 
-        {!isProgramOrder && (
+        {!program && (
           <View style={globalStyles.verticalContainer}>
             <PageButton
               style={globalStyles.topButton}
@@ -414,6 +415,7 @@ export class SupplierRequisitionPage extends React.Component {
               onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
               isDisabled={requisition.isFinalised}
             />
+
             <PageButton
               text={buttonStrings.add_master_list_items}
               onPress={this.onAddMasterItems}
