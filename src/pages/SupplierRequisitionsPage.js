@@ -12,7 +12,7 @@ import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
 
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import { formatStatus, sortDataBy } from '../utilities';
+import { formatStatus, sortDataBy, getAllPrograms } from '../utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -41,11 +41,9 @@ export class SupplierRequisitionsPage extends React.Component {
     };
   }
 
-  // Need to add filter to find if there are programs [Not in the schema of this branch]
   componentDidMount() {
-    const { database } = this.props;
-    const usesPrograms = database.objects('MasterList');
-    this.setState({ usesPrograms });
+    const { settings, database } = this.props;
+    this.setState({ usesPrograms: !!getAllPrograms(settings, database) });
   }
 
   onCancelByProgram = () => {
