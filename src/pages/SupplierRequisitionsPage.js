@@ -83,19 +83,18 @@ export class SupplierRequisitionsPage extends React.Component {
     }
 
     let requisition;
-    if (!(requisitionValues.program && requisitionValues.program.name)) {
-      const otherStoreName = requisitionValues.supplier || requisitionValues;
-      database.write(() => {
-        requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
-      });
-    } else {
-      const programValues = { ...requisitionValues, currentUser };
+    const otherStoreName = requisitionValues.supplier || requisitionValues;
+    database.write(() => {
+      requisition = createRecord(
+        database,
+        'Requisition',
+        currentUser,
+        otherStoreName,
+        requisitionValues
+      );
+      if (requisition.program) requisition.addItemsFromProgram(database);
+    });
 
-      database.write(() => {
-        requisition = createRecord(database, 'ProgramRequisition', programValues);
-        requisition.addItemsFromProgram(database);
-      });
-    }
     this.setState({ byProgramModalOpen: false });
     this.navigateToRequisition(requisition);
   };

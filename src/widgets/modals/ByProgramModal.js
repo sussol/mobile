@@ -40,11 +40,11 @@ const getNewState = command => {
   switch (command) {
     case 'RESET_ALL':
       newState = {
-        program: {},
-        supplier: {},
-        period: {},
+        program: null,
+        supplier: null,
+        period: null,
         periods: null,
-        orderType: {},
+        orderType: null,
         orderTypes: null,
         name: null,
         currentStep: 0,
@@ -86,10 +86,10 @@ export class ByProgramModal extends React.Component {
       modalIsOpen: false,
       isProgramBased: true,
       // New requisition or stocktake values
-      program: {},
-      supplier: {},
-      orderType: {},
-      period: {},
+      program: null,
+      supplier: null,
+      orderType: null,
+      period: null,
       name: null,
       // Data stored for performance
       storeTag: null,
@@ -214,7 +214,7 @@ export class ByProgramModal extends React.Component {
           ...getNewState('SELECT_SUPPLIER'),
           supplier: selectedItem,
           orderTypes:
-            program.name &&
+            program &&
             program.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)).orderTypes,
           currentStep: isProgramBased ? 2 : 1,
         };
