@@ -485,6 +485,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         enteredBy: database.getOrCreate('User', record.user_ID),
         type: REQUISITION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         otherStoreName: database.getOrCreate('Name', record.name_ID),
+        thresholdMOS: parseNumber(record.thresholdMOS),
         program: database.getOrCreate('MasterList', record.programID),
         period,
         orderType: record.orderType,
