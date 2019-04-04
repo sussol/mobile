@@ -42,7 +42,6 @@ export class SupplierRequisitionPage extends React.Component {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
-      orderType: null,
       useThresholdMOS: false,
     };
     this.dataFilters = {
@@ -51,15 +50,6 @@ export class SupplierRequisitionPage extends React.Component {
       isAscending: true,
     };
   }
-
-  componentDidMount = () => {
-    const { requisition, settings } = this.props;
-    if (requisition.program) {
-      const tags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
-      const orderType = requisition.program.getOrderType(tags, requisition.orderType);
-      this.setState({ orderType });
-    }
-  };
 
   onAddMasterItems = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
@@ -174,7 +164,8 @@ export class SupplierRequisitionPage extends React.Component {
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     const { requisition } = this.props;
-    const { useThresholdMOS, orderType } = this.state;
+    const { useThresholdMOS } = this.state;
+    const { thresholdMOS } = this.requisition;
 
     if (newSearchTerm && newSortBy && newIsAscending) {
       this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
@@ -187,7 +178,7 @@ export class SupplierRequisitionPage extends React.Component {
     );
     if (useThresholdMOS) {
       data = data.filter(requisitionItem =>
-        requisitionItem.item.isLessThanThresholdMOS(orderType.thresholdMOS)
+        requisitionItem.item.isLessThanThresholdMOS(thresholdMOS)
       );
     }
 
@@ -222,8 +213,7 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderPageInfo = () => {
     const { requisition } = this.props;
-    const { orderType } = this.state;
-    const { period, program } = requisition;
+    const { period, program, orderType } = requisition;
     const infoColumns = [
       [
         {
@@ -233,7 +223,7 @@ export class SupplierRequisitionPage extends React.Component {
         },
         {
           title: 'Order Type:',
-          info: orderType && orderType.name,
+          info: orderType,
           shouldShow: !!program,
         },
         {
