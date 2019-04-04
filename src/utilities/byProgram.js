@@ -40,10 +40,14 @@ const getAllPrograms = (settings, database) => {
  * @param  {Object}             orderType           an order Type object
  * @return {array}
  */
-const getAllPeriodsForProgram = (database, program, periodScheduleName, orderType) =>
-  database
+const getAllPeriodsForProgram = (database, program, periodScheduleName, orderType) => {
+  const periodScheduleNames = database
     .objects('PeriodSchedule')
-    .filtered('name = $0', periodScheduleName)[0]
-    .getPeriodsForOrderType(program, orderType);
+    .filtered('name = $0', periodScheduleName);
+
+  if (!periodScheduleNames.length) return null;
+
+  return periodScheduleNames[0].getPeriodsForOrderType(program, orderType);
+};
 
 export { getAllPrograms, getAllPeriodsForProgram };
