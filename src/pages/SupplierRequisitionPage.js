@@ -345,20 +345,22 @@ export class SupplierRequisitionPage extends React.Component {
     }
   };
 
-  getToggleBarProps = () => {
+  renderThresholdMOSToggle = () => {
     const { useThresholdMOS } = this.state;
-    return [
+    const onPress = () => this.setState({ useThresholdMOS: true }, this.refreshData);
+    const toggleProps = [
       {
         text: 'Hide over stocked',
-        onPress: () => this.setState({ useThresholdMOS: true }, this.refreshData),
         isOn: useThresholdMOS,
+        onPress,
       },
       {
         text: 'Show over stocked',
-        onPress: () => this.setState({ useThresholdMOS: false }, this.refreshData),
         isOn: !useThresholdMOS,
+        onPress,
       },
     ];
+    return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
   };
 
   renderButtons = () => {
@@ -379,9 +381,7 @@ export class SupplierRequisitionPage extends React.Component {
             isDisabled={requisition.isFinalised}
           />
 
-          {program && (
-            <ToggleBar style={globalStyles.toggleBar} toggles={this.getToggleBarProps()} />
-          )}
+          {program && this.renderThresholdMOSToggle()}
 
           {!program && (
             <PageButton
