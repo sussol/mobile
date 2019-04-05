@@ -30,12 +30,12 @@ import { WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
  *
  */
 export default class SequentialSteps extends React.PureComponent {
-  renderStepIcon = ({ isCurrentStep, isLessThanCurrentStep, step }) => {
+  renderStepIcon = ({ isCurrentStep, isLessThanCurrentStep, step, complete }) => {
     const { error } = step;
     return (
       <View style={{ minWidth: 40 }}>
         {isCurrentStep && error && <Ionicons name="ios-close" color="red" size={30} />}
-        {isLessThanCurrentStep && !error && (
+        {((isLessThanCurrentStep && !error) || complete) && (
           <Ionicons name="md-checkmark" color="green" size={30} />
         )}
         {isCurrentStep && !error && (
@@ -84,25 +84,27 @@ export default class SequentialSteps extends React.PureComponent {
   );
 
   renderRow = step => {
-    const { onPress, currentStep, steps } = this.props;
-    const { key, stepNumber, error, type } = step;
+    const { onPress, steps, currentStepKey } = this.props;
+    const { key, error, type } = step;
     const { content } = localStyles;
 
-    const isCurrentStep = stepNumber === currentStep;
-    const isLessThanCurrentStep = stepNumber < currentStep;
-    const isLastStep = currentStep === steps.length - 1;
     const isInput = type === 'input';
+    const isCurrentStep = key === currentStepKey;
+    const complete = currentStepKey === 'complete';
+
+    const isLessThanCurrentStep =
+      steps.findIndex(s => s.key === key) < steps.findIndex(s => s.key === currentStepKey);
     const onPressFunc =
-      (isCurrentStep || isLessThanCurrentStep) && !error
-        ? () => onPress({ key, stepNumber, isLastStep })
+      ((isCurrentStep || isLessThanCurrentStep) && !error) || complete
+        ? () => onPress({ key })
         : null;
 
     const args = {
-      canEdit: isLessThanCurrentStep || isCurrentStep,
+      canEdit: isLessThanCurrentStep || isCurrentStep || complete,
       isCurrentStep,
       isLessThanCurrentStep,
-      isLastStep,
       isInput,
+      complete,
       step,
       error,
     };
@@ -139,7 +141,7 @@ const localStyles = StyleSheet.create({
 SequentialSteps.propTypes = {
   onPress: PropTypes.func.isRequired,
   steps: PropTypes.array.isRequired,
-  currentStep: PropTypes.number.isRequired,
+  currentStepKey: PropTypes.string.isRequired,
 };
 
 /**
