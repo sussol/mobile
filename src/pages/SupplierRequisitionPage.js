@@ -215,12 +215,12 @@ export class SupplierRequisitionPage extends React.Component {
         {
           title: 'Program:',
           info: program && program.name,
-          shouldShow: !!program,
+          shouldHide: !program,
         },
         {
           title: 'Order Type:',
           info: orderType,
-          shouldShow: !!program,
+          shouldHide: !program,
         },
         {
           title: `${pageInfoStrings.entry_date}:`,
@@ -235,7 +235,7 @@ export class SupplierRequisitionPage extends React.Component {
         {
           title: 'Period:',
           info: period && `${period.name} -- ${period.toString()}`,
-          shouldShow: !!program,
+          shouldHide: !program,
         },
         {
           title: `${pageInfoStrings.supplier}:`,
@@ -244,16 +244,14 @@ export class SupplierRequisitionPage extends React.Component {
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
-          onPress: this.openMonthsSelector,
-          editableType: 'selectable',
-          canEdit: !program,
+          onPress: !program && this.openMonthsSelector,
+          editableType: !program && 'selectable',
         },
         {
           title: `${pageInfoStrings.comment}:`,
           info: requisition.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
-          canEdit: true,
         },
       ],
     ];
