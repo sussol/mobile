@@ -58,7 +58,7 @@ export default class SequentialSteps extends React.PureComponent {
   };
 
   renderEditIcon = ({ canEdit, isInput, error }) => (
-    <View style={{ marginTop: 4, minWidth: 60, display: 'flex', alignItems: 'flex-end' }}>
+    <View style={localStyles.icon}>
       {isInput && !error && (
         <FontAwesome name="pencil" size={20} color={canEdit ? 'white' : WARM_GREY} />
       )}
@@ -118,6 +118,7 @@ const localStyles = StyleSheet.create({
   },
   textContent: { display: 'flex', alignItems: 'flex-start', paddingLeft: 10 },
   text: { fontSize: 20, width: 300 },
+  icon: { marginTop: 4, minWidth: 60, display: 'flex', alignItems: 'flex-end' },
 });
 
 SequentialSteps.defaultProps = {
