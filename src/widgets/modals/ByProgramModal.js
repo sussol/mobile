@@ -35,45 +35,30 @@ const localization = {
   periodError: 'No periods available',
 };
 
-const getNewState = command => {
-  let newState;
-  switch (command) {
-    case 'RESET_ALL':
-      newState = {
-        program: null,
-        supplier: null,
-        period: null,
-        periods: null,
-        orderType: null,
-        orderTypes: null,
-        name: null,
-        currentStep: 0,
-      };
-      break;
-    case 'SELECT_PROGRAM':
-      newState = {
-        period: {},
-        periods: null,
-        supplier: {},
-        orderType: {},
-        orderTypes: null,
-        modalIsOpen: false,
-        currentStep: 1,
-      };
-      break;
-    case 'SELECT_ORDER_TYPE':
-      newState = { period: {}, periods: null, modalIsOpen: false };
-      break;
-    case 'SELECT_NAME':
-    case 'SELECT_PERIOD':
-    case 'SELECT_SUPPLIER':
-      newState = { modalIsOpen: false };
-      break;
-    default:
-      break;
-  }
-
-  return newState;
+const newState = {
+  RESET_ALL: {
+    program: null,
+    otherStoreName: null,
+    period: null,
+    periods: null,
+    orderType: null,
+    orderTypes: null,
+    name: null,
+    currentStep: 0,
+  },
+  SELECT_PROGRAM: {
+    period: {},
+    periods: null,
+    otherStoreName: {},
+    orderType: {},
+    orderTypes: null,
+    modalIsOpen: false,
+    currentStep: 1,
+  },
+  SELECT_ORDER_TYPE: { period: {}, periods: null, modalIsOpen: false },
+  SELECT_NAME: { modalIsOpen: false },
+  SELECT_PERIOD: { modalIsOpen: false },
+  SELECT_SUPPLIER: { modalIsOpen: false },
 };
 
 export class ByProgramModal extends React.Component {
@@ -189,7 +174,7 @@ export class ByProgramModal extends React.Component {
 
   toggleChange = () => {
     const { isProgramBased } = this.state;
-    this.setState({ ...getNewState('RESET_ALL'), isProgramBased: !isProgramBased }, () =>
+    this.setState({ ...newState.RESET_ALL, isProgramBased: !isProgramBased }, () =>
       this.setCurrentSteps()
     );
   };
@@ -199,19 +184,19 @@ export class ByProgramModal extends React.Component {
     const { program, storeTag, isProgramBased } = this.state;
     const periodScheduleName = storeTag && storeTag.periodScheduleName;
 
-    let newState;
+    let nextState;
     switch (key) {
       case 'program':
-        newState = {
-          ...getNewState('SELECT_PROGRAM'),
+        nextState = {
+          ...newState.SELECT_PROGRAM,
           storeTag: selectedItem.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)),
           program: selectedItem,
           currentStep: 1,
         };
         break;
       case 'supplier':
-        newState = {
-          ...getNewState('SELECT_SUPPLIER'),
+        nextState = {
+          ...newState.SELECT_SUPPLIER,
           supplier: selectedItem,
           orderTypes:
             program &&
@@ -220,23 +205,23 @@ export class ByProgramModal extends React.Component {
         };
         break;
       case 'orderType':
-        newState = {
-          ...getNewState('SELECT_ORDER_TYPE'),
+        nextState = {
+          ...newState.SELECT_ORDER_TYPE,
           periods: getAllPeriodsForProgram(database, program, periodScheduleName, selectedItem),
           orderType: selectedItem,
           currentStep: 3,
         };
         break;
       case 'period':
-        newState = {
-          ...getNewState('SELECT_PERIOD'),
+        nextState = {
+          ...newState.SELECT_PERIOD,
           period: selectedItem,
           currentStep: 4,
         };
         break;
       case 'name':
-        newState = {
-          ...getNewState('SELECT_NAME'),
+        nextState = {
+          ...newState.SELECT_NAME,
           name: selectedItem,
           currentStep: 3,
         };
@@ -244,7 +229,7 @@ export class ByProgramModal extends React.Component {
       default:
         break;
     }
-    this.setState(newState, () => this.setCurrentSteps());
+    this.setState(nextState, () => this.setCurrentSteps());
   };
 
   getBaseSearchModalProps = key => ({
@@ -328,7 +313,7 @@ export class ByProgramModal extends React.Component {
   onConfirmRequisition = () => {
     const { onConfirm } = this.props;
     onConfirm(this.getProgramValues());
-    this.setState({ ...getNewState('RESET_ALL') }, () => this.setCurrentSteps());
+    this.setState({ ...newState.RESET_ALL }, () => this.setCurrentSteps());
   };
 
   render() {
@@ -341,7 +326,7 @@ export class ByProgramModal extends React.Component {
         style={{ ...globalStyles.modal, backgroundColor: DARK_GREY }}
         swipeToClose={false}
         onClose={() => {
-          this.setState({ ...getNewState('RESET_ALL') }, () => onCancel());
+          this.setState({ ...newState.RESET_ALL }, () => onCancel());
         }}
         title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
       >
