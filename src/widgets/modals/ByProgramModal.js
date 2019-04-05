@@ -124,29 +124,16 @@ export class ByProgramModal extends React.Component {
 
   // Initial set up or update the current steps property to reflect the current state
   setCurrentSteps = () => {
-    const sequentialSteps = this.getSequentialStepsProps();
-    const steps = this.getSteps().map(step => sequentialSteps[step]);
-    this.setState({ steps });
-  };
-
-  // Gets the available steps this modal can handle
-  getSteps = () => {
     const { isProgramBased } = this.state;
     const { type } = this.props;
-    let steps;
-    switch (type) {
-      case 'requisition':
-        if (isProgramBased) steps = ['program', 'supplier', 'orderType', 'period'];
-        else steps = ['supplier'];
-        break;
-      case 'stocktake':
-        if (isProgramBased) steps = ['program', 'name'];
-        else steps = ['name'];
-        break;
-      default:
-        break;
-    }
-    return steps;
+
+    const sequentialSteps = this.getSequentialStepsProps();
+    const stepKeys = {
+      requisition: isProgramBased ? ['program', 'supplier', 'orderType', 'period'] : ['supplier'],
+      stocktake: isProgramBased ? ['program', 'name'] : ['name'],
+    };
+
+    this.setState({ steps: stepKeys[type].map(step => sequentialSteps[step]) });
   };
 
   getSequentialStepsProps = () => {
