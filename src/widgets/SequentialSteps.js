@@ -14,6 +14,21 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import { WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
+/**
+ * Component which renders either a pressable text field for
+ * triggering an AutoCompleteSelector modal, or an input field
+ * for a TextEditor modal. Primary use for within the ByProgramModal,
+ * but will display a selection of choices for the user to step through
+ * sequentially, disabling all steps after the current step in the
+ * sequence. An error is used as a fallback for callers to disable
+ * a step in the sequence and display an error message.
+ *
+ * @prop {Func} onPress       onPress handler for each step object, returns {key, field, isLastStep}
+ * @prop {array} steps        An array of step objects, example below*
+ * @prop {number} currentStep The index of the current step in the sequence
+ * @
+ *
+ */
 export default class SequentialSteps extends React.PureComponent {
   renderStepIcon = ({ isCurrentStep, isLessThanCurrentStep, step }) => {
     const { error } = step;
@@ -69,8 +84,8 @@ export default class SequentialSteps extends React.PureComponent {
   );
 
   renderRow = step => {
-    const { onPress, currentStep, steps, type } = this.props;
-    const { key, stepNumber, error } = step;
+    const { onPress, currentStep, steps } = this.props;
+    const { key, stepNumber, error, type } = step;
     const { content } = localStyles;
 
     const isCurrentStep = stepNumber === currentStep;
@@ -121,12 +136,22 @@ const localStyles = StyleSheet.create({
   icon: { marginTop: 4, minWidth: 60, display: 'flex', alignItems: 'flex-end' },
 });
 
-SequentialSteps.defaultProps = {
-  type: 'select',
-};
 SequentialSteps.propTypes = {
   onPress: PropTypes.func.isRequired,
   steps: PropTypes.array.isRequired,
-  type: PropTypes.string,
   currentStep: PropTypes.number.isRequired,
 };
+
+/**
+ * Steps array example
+ * [{
+ *    name: 'PNLS_ARV',
+ *    placeholder: 'Select a program',
+ *    stepNumber: 0,
+ *    key: 'program',
+ *    error: true,
+ *    errorText: 'No programs available',
+ * }
+ * ...
+ * ]
+ */
