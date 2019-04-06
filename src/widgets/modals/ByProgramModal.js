@@ -45,6 +45,7 @@ const newState = {
     orderTypes: null,
     name: null,
     currentStepKey: null,
+    isProgramBased: true,
   },
   SELECT_PROGRAM: {
     period: {},
@@ -94,7 +95,7 @@ export class ByProgramModal extends React.Component {
     this.setState({ programs, suppliers, currentStepKey: steps[0].key });
   };
 
-  onConfirmRequisition = () => {
+  onConfirm = () => {
     const { onConfirm } = this.props;
     const { supplier: otherStoreName, orderType } = this.state;
     onConfirm({ ...this.state, otherStoreName, orderType: orderType && orderType.name });
@@ -130,7 +131,7 @@ export class ByProgramModal extends React.Component {
     return {
       program: getBaseProps('program'),
       supplier: getBaseProps('supplier'),
-      name: { name, placeholder: localization.nameTitle, key: name, type: 'input' },
+      name: { name, placeholder: localization.nameTitle, key: 'name', type: 'input' },
       orderType: getBaseProps('orderType'),
       period: getBaseProps('period'),
     };
@@ -286,14 +287,16 @@ export class ByProgramModal extends React.Component {
     const { onCancel, isOpen, type, database } = this.props;
     const { modalIsOpen, steps, currentStepKey } = this.state;
     if (!(steps || currentStepKey)) return null;
-
     return (
       <PageContentModal
         isOpen={isOpen}
         style={{ ...globalStyles.modal, backgroundColor: DARK_GREY }}
         swipeToClose={false}
         onClose={() => {
-          this.setState({ ...newState.RESET_ALL }, () => onCancel());
+          this.setState({ ...newState.RESET_ALL }, () => {
+            this.setCurrentSteps(true);
+            onCancel();
+          });
         }}
         title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
       >
@@ -308,7 +311,7 @@ export class ByProgramModal extends React.Component {
 
         <PageButton
           text="OK"
-          onPress={this.onConfirmRequisition}
+          onPress={this.onConfirm}
           isDisabled={!(currentStepKey === 'complete')}
           disabledColor={WARM_GREY}
           style={localStyles.okButton}

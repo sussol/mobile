@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { GenericPage } from './GenericPage';
 
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import { formatStatus } from '../utilities';
+import { formatStatus, getAllPrograms } from '../utilities';
 import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
 import { ByProgramModal } from '../widgets/modals/index';
 
@@ -25,6 +25,7 @@ const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
  * @prop  {func}          navigateTo  CallBack for navigation stack.
  * @state {Realm.Results} stocktakes  Result object containing all items.
  */
+
 export class StocktakesPage extends React.Component {
   constructor(props) {
     super(props);
@@ -43,13 +44,8 @@ export class StocktakesPage extends React.Component {
   }
 
   componentDidMount() {
-    const { database, settings } = this.props;
-    const tags = settings.get('ThisStoreTags');
-    const usesPrograms = database
-      .objects('MasterList')
-      .filtered('isProgram = $0', true)
-      .find(masterList => masterList.canUseProgram(tags));
-    this.setState({ usesPrograms: !!usesPrograms });
+    const { settings, database } = this.props;
+    this.setState({ usesPrograms: !!getAllPrograms(settings, database) });
   }
 
   createNewStocktake = properties => {
@@ -57,7 +53,7 @@ export class StocktakesPage extends React.Component {
 
     let stocktake;
     database.write(() => {
-      stocktake = createRecord(database, 'ProgramStocktake', { ...properties, user: currentUser });
+      stocktake = createRecord(database, 'Stocktake', { ...properties, currentUser });
       stocktake.addItemsFromProgram(database);
     });
     return stocktake;

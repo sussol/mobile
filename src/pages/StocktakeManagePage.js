@@ -9,18 +9,11 @@ import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 
 import { GenericPage } from './GenericPage';
-
-import { createRecord } from '../database';
-import {
-  buttonStrings,
-  modalStrings,
-  generalStrings,
-  tableStrings,
-  navStrings,
-} from '../localization';
-import { formatDateAndTime } from '../utilities';
 import { BottomModal, OnePressButton, TextInput, ToggleBar } from '../widgets';
 
+import { createRecord } from '../database';
+
+import { buttonStrings, modalStrings, tableStrings, navStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
@@ -80,21 +73,16 @@ export class StocktakeManagePage extends React.Component {
 
     runWithLoadingIndicator(() => {
       const { currentUser, database, navigateTo } = this.props;
-      const { selection, stocktakeName } = this.state;
+      const { selection, stocktakeName: name } = this.state;
 
       let { stocktake } = this.props;
       database.write(() => {
         // If no |stocktake| came in props, make a new one.
         if (!stocktake) {
-          stocktake = createRecord(database, 'Stocktake', currentUser);
+          stocktake = createRecord(database, 'Stocktake', { currentUser, name });
         }
 
         stocktake.setItemsByID(database, selection);
-
-        stocktake.name =
-          stocktakeName !== ''
-            ? stocktakeName
-            : `${generalStrings.stocktake} ${formatDateAndTime(new Date(), 'slashes')}`;
 
         database.save('Stocktake', stocktake);
       });

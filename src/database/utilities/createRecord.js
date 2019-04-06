@@ -190,21 +190,21 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
  * @param   {User}       user      User creating stocktake.
  * @return  {Stocktake}
  */
-const createStocktake = (database, user) => {
+const createStocktake = (database, { createdBy, program, name }) => {
   const date = new Date();
-
-  const stocktake = database.create('Stocktake', {
+  const { stocktakeText } = generalStrings;
+  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(new Date(), 'slashes')}`;
+  return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: '',
+    name: name || defaultName,
     createdDate: date,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
-    createdBy: user,
+    createdBy,
+    program,
   });
-
-  return stocktake;
 };
 
 /**
@@ -347,25 +347,6 @@ const createTransactionItem = (database, transaction, item) => {
   return transactionItem;
 };
 
-const createProgramStocktake = (database, stocktakeValues) => {
-  const date = new Date();
-  const { program, name, user } = stocktakeValues;
-  const { stocktake } = generalStrings;
-
-  const defaultName = `${stocktake} - ${name} - ${formatDateAndTime(new Date(), 'slashes')}`;
-  return database.create('Stocktake', {
-    id: generateUUID(),
-    serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: !name || name === '' ? defaultName : name,
-    createdDate: date,
-    createdBy: user,
-    stocktakeDate: date,
-    status: 'suggested',
-    comment: '',
-    program,
-  });
-};
-
 /**
  * Create a record of the given type, taking care of linkages, generating IDs, serial
  * numbers, current dates, and inserting sensible defaults.
@@ -403,8 +384,6 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
-    case 'ProgramStocktake':
-      return createProgramStocktake(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
