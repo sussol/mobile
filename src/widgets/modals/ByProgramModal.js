@@ -45,6 +45,7 @@ const newState = {
     orderTypes: null,
     name: null,
     currentStepKey: null,
+    isProgramBased: true,
   },
   SELECT_PROGRAM: {
     period: {},
@@ -293,7 +294,10 @@ export class ByProgramModal extends React.Component {
         style={{ ...globalStyles.modal, backgroundColor: DARK_GREY }}
         swipeToClose={false}
         onClose={() => {
-          this.setState({ ...newState.RESET_ALL }, () => onCancel());
+          this.setState({ ...newState.RESET_ALL }, () => {
+            this.setCurrentSteps(true);
+            onCancel();
+          });
         }}
         title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
       >
