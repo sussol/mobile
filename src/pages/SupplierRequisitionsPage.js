@@ -70,25 +70,15 @@ export class SupplierRequisitionsPage extends React.Component {
 
   onNewRequisition = requisitionValues => {
     const { database, currentUser } = this.props;
-
+    let requisition;
     if (!requisitionValues) {
       this.setState({ byProgramModalOpen: false, isCreatingRequisition: false });
       return;
     }
-
-    let requisition;
-    const otherStoreName = requisitionValues.supplier || requisitionValues;
     database.write(() => {
-      requisition = createRecord(
-        database,
-        'Requisition',
-        currentUser,
-        otherStoreName,
-        requisitionValues
-      );
+      requisition = createRecord(database, 'Requisition', currentUser, requisitionValues);
       if (requisition.program) requisition.addItemsFromProgram(database);
     });
-
     this.navigateToRequisition(requisition);
   };
 
@@ -231,7 +221,7 @@ export class SupplierRequisitionsPage extends React.Component {
           placeholderText={modalStrings.start_typing_to_select_supplier}
           queryString="name BEGINSWITH[c] $0"
           sortByString="name"
-          onSelect={name => this.onNewRequisition(name)}
+          onSelect={name => this.onNewRequisition({ otherStoreName: name })}
           onClose={this.onNewRequisition}
           title={modalStrings.search_for_the_supplier}
         />

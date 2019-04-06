@@ -134,7 +134,7 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
  * @return  {Requisition}
  */
-const createRequisition = (database, user, otherStoreName, programValues) =>
+const createRequisition = (database, user, { otherStoreName, program, period, orderType }) =>
   database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -145,9 +145,9 @@ const createRequisition = (database, user, otherStoreName, programValues) =>
     daysToSupply: 30,
     enteredBy: user,
     otherStoreName,
-    program: programValues.program,
-    orderType: programValues.orderType && programValues.orderType.name,
-    period: programValues.period,
+    program,
+    orderType,
+    period,
   });
 
 /**
