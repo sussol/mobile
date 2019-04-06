@@ -27,6 +27,14 @@ export class MasterList extends Realm.Object {
   }
 
   /**
+   * Returns this master lists programSettings, which is stored
+   * as a stringified object as an object
+   */
+  get parsedProgramSettings() {
+    return this.programSettings && JSON.parse(this.programSettings);
+  }
+
+  /**
    * Add an item to this master list.
    *
    * @param  {MasterListItem}  masterListItem
@@ -47,49 +55,38 @@ export class MasterList extends Realm.Object {
 
   /**
    * Find the current stores matching store tag object in this master lists program settings.
-   * Program settings is a JSON object from 4D, which requires two parses.
+   * Program settings is a JSON object held as a string - example below.
    * @param  {string}  tags   Current stores tags field
    * @return {object} The matching storeTag programsettings field for the current store
    */
   getStoreTagObject(tags) {
-    if (!this.programSettings) return null;
-    const storeTags = tags.split(/[\s,]+/);
-    const firstParse = JSON.parse(this.programSettings);
-    if (!firstParse) return null;
+    const thisStoresTags = tags && tags.split(/[\s,]+/);
+    const storeTags = this.parsedProgramSettings && this.parsedProgramSettings.storeTags;
 
-    return Object.entries(JSON.parse(firstParse).storeTags).filter(
-      ([programStoreTag]) => storeTags.indexOf(programStoreTag) >= 0
-    )[0][1];
+    if (!(thisStoresTags && storeTags)) return null;
+
+    const foundStoreTag = Object.keys(storeTags).find(
+      storeTag => thisStoresTags.indexOf(storeTag) >= 0
+    );
+
+    return foundStoreTag && storeTags[foundStoreTag];
   }
 
   /**
-   * Find if this master list is a program useable by the current store
-   * @param  {string}  tags   Current stores tags field
-   * @return {bool} true if the current store can use this master list
-   */
-  canUseProgram(tags) {
-    return !!this.getStoreTagObject(tags);
-  }
-
-  /**
-   * Find a specifically named order type in the store tag object for this store
-   * and masterlist.
+   * Find a specific order type by name field in the store tag object
+   * associated to this store and master list.
    *
    * @param  {string}  tags            Current stores tags field
    * @param  {string}  orderTypeName   Name of the orderType to search for
    * @return {object} The matching orderType object
    */
   getOrderType(tags, orderTypeName) {
-    return this.getStoreTagObject(tags).orderTypes.filter(
-      orderType => orderType.name === orderTypeName
-    )[0];
-  }
+    const storeTagObject = this.getStoreTagObject(tags);
+    const orderTypes = storeTagObject && storeTagObject.orderTypes;
 
-  get parsedProgramSettings() {
-    if (!this.programSettings) return null;
-    const firstParse = JSON.parse(this.programSettings);
-    if (!firstParse) return null;
-    return JSON.parse(firstParse);
+    if (!orderTypes) return null;
+
+    return orderTypes.find(orderType => orderType.name === orderTypeName);
   }
 }
 

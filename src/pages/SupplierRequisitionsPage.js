@@ -7,12 +7,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
-import { ByProgramModal } from '../widgets/modals';
-import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
+import { BottomConfirmModal, PageButton, SelectModal, ByProgramModal } from '../widgets';
 
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import { formatStatus, sortDataBy } from '../utilities';
+import { formatStatus, sortDataBy, getAllPrograms } from '../utilities';
 
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
@@ -41,64 +40,45 @@ export class SupplierRequisitionsPage extends React.Component {
     };
   }
 
-  // Need to add filter to find if there are programs [Not in the schema of this branch]
   componentDidMount() {
-    const { database } = this.props;
-    const usesPrograms = database.objects('MasterList');
-    this.setState({ usesPrograms });
+    const { settings, database } = this.props;
+    this.setState({ usesPrograms: !!getAllPrograms(settings, database) });
   }
 
-  onCancelByProgram = () => {
-    this.setState({ byProgramModalOpen: false });
-  };
-
-  onDeleteConfirm = () => {
+  onDelete = shouldConfirm => () => {
     const { selection } = this.state;
     const { database } = this.props;
-    database.write(() => {
-      const requisitionsToDelete = [];
-      for (let i = 0; i < selection.length; i += 1) {
-        const requisition = this.requisitions.find(
-          currentRequisition => currentRequisition.id === selection[i]
-        );
-        if (requisition.isValid() && !requisition.isFinalised) {
-          requisitionsToDelete.push(requisition);
-        }
-      }
-      database.delete('Requisition', requisitionsToDelete);
-    });
-    this.setState({ selection: [] });
-    this.refreshData();
-  };
 
-  onDeleteCancel = () => {
+    if (shouldConfirm) {
+      database.write(() => {
+        const requisitionsToDelete = [];
+        for (let i = 0; i < selection.length; i += 1) {
+          const requisition = this.requisitions.find(
+            currentRequisition => currentRequisition.id === selection[i]
+          );
+          if (requisition.isValid() && !requisition.isFinalised) {
+            requisitionsToDelete.push(requisition);
+          }
+        }
+        database.delete('Requisition', requisitionsToDelete);
+      });
+    }
+
     this.setState({ selection: [] });
     this.refreshData();
   };
 
   onNewRequisition = requisitionValues => {
     const { database, currentUser } = this.props;
-
+    let requisition;
     if (!requisitionValues) {
-      this.setState({ byProgramModalOpen: false });
+      this.setState({ byProgramModalOpen: false, isCreatingRequisition: false });
       return;
     }
-
-    let requisition;
-    if (!(requisitionValues.program && requisitionValues.program.name)) {
-      const otherStoreName = requisitionValues.supplier || requisitionValues;
-      database.write(() => {
-        requisition = createRecord(database, 'Requisition', currentUser, otherStoreName);
-      });
-    } else {
-      const programValues = { ...requisitionValues, currentUser };
-
-      database.write(() => {
-        requisition = createRecord(database, 'ProgramRequisition', programValues);
-        requisition.addItemsFromProgram(database);
-      });
-    }
-    this.setState({ byProgramModalOpen: false });
+    database.write(() => {
+      requisition = createRecord(database, 'Requisition', currentUser, requisitionValues);
+      if (requisition.program) requisition.addItemsFromProgram(database);
+    });
     this.navigateToRequisition(requisition);
   };
 
@@ -108,7 +88,8 @@ export class SupplierRequisitionsPage extends React.Component {
 
   navigateToRequisition = requisition => {
     const { navigateTo } = this.props;
-    this.setState({ selection: [] }); // Clear any requsitions selected for deletion.
+    // Clear any requsitions selected to delete.
+    this.setState({ selection: [], byProgramModalOpen: false });
     navigateTo('supplierRequisition', `${navStrings.requisition} ${requisition.serialNumber}`, {
       requisition,
     });
@@ -163,14 +144,9 @@ export class SupplierRequisitionsPage extends React.Component {
 
   renderNewRequisitionButton = () => {
     const { usesPrograms } = this.state;
-    const newStateObject = usesPrograms
-      ? { byProgramModalOpen: true }
-      : { isCreatingRequisition: true };
+    const newState = usesPrograms ? { byProgramModalOpen: true } : { isCreatingRequisition: true };
     return (
-      <PageButton
-        text={buttonStrings.new_requisition}
-        onPress={() => this.setState(newStateObject)}
-      />
+      <PageButton text={buttonStrings.new_requisition} onPress={() => this.setState(newState)} />
     );
   };
 
@@ -235,8 +211,8 @@ export class SupplierRequisitionsPage extends React.Component {
         <BottomConfirmModal
           isOpen={selection.length > 0}
           questionText={modalStrings.delete_these_invoices}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
+          onCancel={this.onDelete(false)}
+          onConfirm={this.onDelete(true)}
           confirmText={modalStrings.delete}
         />
         <SelectModal
@@ -245,17 +221,15 @@ export class SupplierRequisitionsPage extends React.Component {
           placeholderText={modalStrings.start_typing_to_select_supplier}
           queryString="name BEGINSWITH[c] $0"
           sortByString="name"
-          onSelect={name =>
-            this.setState({ isCreatingRequisition: false }, () => this.onNewRequisition(name))
-          }
-          onClose={() => this.setState({ isCreatingRequisition: false })}
+          onSelect={name => this.onNewRequisition({ otherStoreName: name })}
+          onClose={this.onNewRequisition}
           title={modalStrings.search_for_the_supplier}
         />
         {byProgramModalOpen && (
           <ByProgramModal
             isOpen={byProgramModalOpen}
             onConfirm={this.onNewRequisition}
-            onCancel={this.onCancelByProgram}
+            onCancel={this.onNewRequisition}
             database={database}
             type="requisition"
             settings={settings}

@@ -47,9 +47,6 @@ export class Requisition extends Realm.Object {
    * @param {Realm} database
    */
   destructor(database) {
-    if (this.period) {
-      this.period.removeRequisition(this, database);
-    }
     database.delete('RequisitionItem', this.items);
   }
 
@@ -302,7 +299,8 @@ Requisition.schema = {
   properties: {
     id: 'string',
     status: { type: 'string', default: 'new' },
-    otherStoreName: { type: 'Name', optional: true },
+    orderType: { type: 'string', optional: true },
+    thresholdMOS: { type: 'double', optional: true },
     type: { type: 'string', default: 'request' },
     entryDate: { type: 'date', default: new Date() },
     daysToSupply: { type: 'double', default: 30 },
@@ -314,7 +312,7 @@ Requisition.schema = {
     linkedTransaction: { type: 'Transaction', optional: true },
     program: { type: 'MasterList', optional: true },
     period: { type: 'Period', optional: true },
-    orderType: { type: 'string', optional: true },
+    otherStoreName: { type: 'Name', optional: true },
   },
 };
 

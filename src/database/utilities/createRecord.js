@@ -137,7 +137,7 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
  * @return  {Requisition}
  */
-const createRequisition = (database, user, otherStoreName) =>
+const createRequisition = (database, user, { otherStoreName, program, period, orderType }) =>
   database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -148,6 +148,9 @@ const createRequisition = (database, user, otherStoreName) =>
     daysToSupply: 30,
     enteredBy: user,
     otherStoreName,
+    program,
+    orderType,
+    period,
   });
 
 /**
@@ -344,28 +347,6 @@ const createTransactionItem = (database, transaction, item) => {
   return transactionItem;
 };
 
-const createProgramRequisition = (database, requisitionValues) => {
-  const { period, currentUser } = requisitionValues;
-  const requisition = database.create('Requisition', {
-    id: generateUUID(),
-    serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
-    requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
-    status: 'suggested',
-    type: 'request',
-    entryDate: new Date(),
-    enteredBy: currentUser,
-    otherStoreName: requisitionValues.supplier,
-    daysToSupply: requisitionValues.orderType.maxMOS * 30,
-    ...requisitionValues,
-    orderType: requisitionValues.orderType.name,
-  });
-
-  database.save('Requisition', requisition);
-  period.addRequisitionIfUnique(requisition);
-  database.save('Period', period);
-  return requisition;
-};
-
 const createProgramStocktake = (database, stocktakeValues) => {
   const date = new Date();
   const { program, name, user } = stocktakeValues;
@@ -422,8 +403,6 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
-    case 'ProgramRequisition':
-      return createProgramRequisition(database, ...args);
     case 'ProgramStocktake':
       return createProgramStocktake(database, ...args);
     default:

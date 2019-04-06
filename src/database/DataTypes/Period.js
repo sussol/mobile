@@ -24,12 +24,6 @@ export class Period extends Realm.Object {
     return this.requisitions.length;
   }
 
-  removeRequisition(requisition, database) {
-    const indexToRemove = this.requisitions.indexOf(requisition);
-    this.requisitions.splice(indexToRemove, 1);
-    database.save('Period', this);
-  }
-
   requisitionsForOrderType(program, orderType) {
     return this.requisitions.filtered(
       'program.id = $0 && orderType = $1',
@@ -41,12 +35,6 @@ export class Period extends Realm.Object {
   addRequisitionIfUnique(requisition) {
     if (this.requisitions.filtered('id == $0', requisition.id).length > 0) return;
     this.requisitions.push(requisition);
-  }
-
-  getFormattedPeriod() {
-    return `${this.startDate.toLocaleDateString('en-US')} - ${this.endDate.toLocaleDateString(
-      'en-US'
-    )} `;
   }
 
   toString() {

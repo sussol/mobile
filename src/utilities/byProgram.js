@@ -3,38 +3,32 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import { SETTINGS_KEYS } from '../settings';
+
 /**
  * Generic helper methods to handle usage of MasterLists which
  * are programs and program based requisitions and stock takes.
  */
 
 /**
- * Finds if the currently logged in store is a store which uses programs.
- * If true then: there exists a master list which is a program, which has
- * a store tag in programSettings which also exists in the tags for this
- * store.
- * @param  {Object}  settings
- * @param  {Realm}   database
- * @return {boolean} indicator of the currently logged in store using programs
- */
-const thisStoreUsesPrograms = (settings, database) => {
-  const thisStoresTags = settings.get('ThisStoreTags');
-  const programs = database.objects('MasterList').filtered('isProgram = $0', true);
-  const hasAProgram = programs.find(program => program.canUseProgram(thisStoresTags));
-  return !!hasAProgram;
-};
-
-/**
  * Finds all MasterList objects which are programs usable by this store.
+ * A program: A master list which satisfies the following:
+ * -- associated with this store,
+ * -- masterList.isProgram = true,
+ * -- has a store tag in programSettings, with a key which matches a tag
+ * in this stores store tags
  * @param  {Object} settings
  * @param  {Realm}  database
  * @return {array}  MasterLists which are programs usable by this store.
  */
 const getAllPrograms = (settings, database) => {
-  const thisStoresTags = settings.get('ThisStoreTags');
-  const programs = database.objects('MasterList').filtered('isProgram = $0', true);
-  if (!programs) return null;
-  return programs.filter(program => program.canUseProgram(thisStoresTags));
+  const thisStoresNameID = settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+  const thisStoresTags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
+  return database
+    .objects('MasterListNameJoin')
+    .filtered('name.id = $0 && masterList.isProgram = $1', thisStoresNameID, true)
+    .filter(({ masterList }) => masterList.getStoreTagObject(thisStoresTags))
+    .map(({ masterList }) => masterList);
 };
 
 /**
@@ -46,10 +40,14 @@ const getAllPrograms = (settings, database) => {
  * @param  {Object}             orderType           an order Type object
  * @return {array}
  */
-const getAllPeriodsForProgram = (database, program, periodScheduleName, orderType) =>
-  database
+const getAllPeriodsForProgram = (database, program, periodScheduleName, orderType) => {
+  const periodScheduleNames = database
     .objects('PeriodSchedule')
-    .filtered('name = $0', periodScheduleName)[0]
-    .getPeriodsForOrderType(program, orderType);
+    .filtered('name = $0', periodScheduleName);
 
-export { thisStoreUsesPrograms, getAllPrograms, getAllPeriodsForProgram };
+  if (!periodScheduleNames.length) return null;
+
+  return periodScheduleNames[0].getPeriodsForOrderType(program, orderType);
+};
+
+export { getAllPrograms, getAllPeriodsForProgram };

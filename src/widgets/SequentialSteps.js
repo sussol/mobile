@@ -14,13 +14,28 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 
 import { WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
+/**
+ * Component which renders either a pressable text field for
+ * triggering an AutoCompleteSelector modal, or an input field
+ * for a TextEditor modal. Primary use for within the ByProgramModal,
+ * but will display a selection of choices for the user to step through
+ * sequentially, disabling all steps after the current step in the
+ * sequence. An error is used as a fallback for callers to disable
+ * a step in the sequence and display an error message.
+ *
+ * @prop {Func} onPress       onPress handler for each step object, returns {key, field, isLastStep}
+ * @prop {array} steps        An array of step objects, example below*
+ * @prop {number} currentStep The index of the current step in the sequence
+ * @
+ *
+ */
 export default class SequentialSteps extends React.PureComponent {
-  renderStepIcon = ({ isCurrentStep, isLessThanCurrentStep, step }) => {
+  renderStepIcon = ({ isCurrentStep, isLessThanCurrentStep, step, complete }) => {
     const { error } = step;
     return (
       <View style={{ minWidth: 40 }}>
         {isCurrentStep && error && <Ionicons name="ios-close" color="red" size={30} />}
-        {isLessThanCurrentStep && !error && (
+        {((isLessThanCurrentStep && !error) || complete) && (
           <Ionicons name="md-checkmark" color="green" size={30} />
         )}
         {isCurrentStep && !error && (
@@ -58,7 +73,7 @@ export default class SequentialSteps extends React.PureComponent {
   };
 
   renderEditIcon = ({ canEdit, isInput, error }) => (
-    <View style={{ marginTop: 4, minWidth: 60, display: 'flex', alignItems: 'flex-end' }}>
+    <View style={localStyles.icon}>
       {isInput && !error && (
         <FontAwesome name="pencil" size={20} color={canEdit ? 'white' : WARM_GREY} />
       )}
@@ -69,25 +84,27 @@ export default class SequentialSteps extends React.PureComponent {
   );
 
   renderRow = step => {
-    const { onPress, currentStep, steps } = this.props;
-    const { key, stepNumber, error, type } = step;
+    const { onPress, steps, currentStepKey } = this.props;
+    const { key, error, type } = step;
     const { content } = localStyles;
 
-    const isCurrentStep = stepNumber === currentStep;
-    const isLessThanCurrentStep = stepNumber < currentStep;
-    const isLastStep = currentStep === steps.length - 1;
     const isInput = type === 'input';
+    const isCurrentStep = key === currentStepKey;
+    const complete = currentStepKey === 'complete';
+
+    const isLessThanCurrentStep =
+      steps.findIndex(s => s.key === key) < steps.findIndex(s => s.key === currentStepKey);
     const onPressFunc =
-      (isCurrentStep || isLessThanCurrentStep) && !error
-        ? () => onPress({ key, stepNumber, isLastStep })
+      ((isCurrentStep || isLessThanCurrentStep) && !error) || complete
+        ? () => onPress({ key })
         : null;
 
     const args = {
-      canEdit: isLessThanCurrentStep || isCurrentStep,
+      canEdit: isLessThanCurrentStep || isCurrentStep || complete,
       isCurrentStep,
       isLessThanCurrentStep,
-      isLastStep,
       isInput,
+      complete,
       step,
       error,
     };
@@ -118,10 +135,25 @@ const localStyles = StyleSheet.create({
   },
   textContent: { display: 'flex', alignItems: 'flex-start', paddingLeft: 10 },
   text: { fontSize: 20, width: 300 },
+  icon: { marginTop: 4, minWidth: 60, display: 'flex', alignItems: 'flex-end' },
 });
 
 SequentialSteps.propTypes = {
   onPress: PropTypes.func.isRequired,
   steps: PropTypes.array.isRequired,
-  currentStep: PropTypes.number.isRequired,
+  currentStepKey: PropTypes.string.isRequired,
 };
+
+/**
+ * Steps array example
+ * [{
+ *    name: 'PNLS_ARV',
+ *    placeholder: 'Select a program',
+ *    stepNumber: 0,
+ *    key: 'program',
+ *    error: true,
+ *    errorText: 'No programs available',
+ * }
+ * ...
+ * ]
+ */

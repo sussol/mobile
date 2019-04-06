@@ -15,6 +15,7 @@ export {
   DemoUserModal,
   PageContentModal,
   SelectModal,
+  ByProgramModal,
 } from './modals';
 
 export { AutocompleteSelector } from './AutocompleteSelector';

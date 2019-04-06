@@ -35,49 +35,29 @@ const localization = {
   periodError: 'No periods available',
 };
 
-const getNewState = command => {
-  let newState;
-  switch (command) {
-    case 'RESET_ALL':
-      newState = {
-        program: {},
-        supplier: {},
-        period: {},
-        periods: null,
-        orderType: {},
-        orderTypes: null,
-        name: null,
-        currentStep: 0,
-      };
-      break;
-    case 'SELECT_PROGRAM':
-      newState = {
-        period: {},
-        periods: null,
-        supplier: {},
-        orderType: {},
-        orderTypes: null,
-        modalIsOpen: false,
-        currentStep: 1,
-      };
-      break;
-    case 'SELECT_ORDER_TYPE':
-      newState = { period: {}, periods: null, modalIsOpen: false };
-      break;
-    case 'SELECT_NAME':
-    case 'SELECT_PERIOD':
-    case 'SELECT_SUPPLIER':
-      newState = { modalIsOpen: false };
-      break;
-    case 'OPEN_COMMENT_MODAL':
-      newState = { textEditIsOpen: true };
-      break;
-
-    default:
-      break;
-  }
-
-  return newState;
+const newState = {
+  RESET_ALL: {
+    program: null,
+    supplier: null,
+    period: null,
+    periods: null,
+    orderType: null,
+    orderTypes: null,
+    name: null,
+    currentStepKey: null,
+  },
+  SELECT_PROGRAM: {
+    period: {},
+    periods: null,
+    supplier: {},
+    orderType: {},
+    orderTypes: null,
+    modalIsOpen: false,
+  },
+  SELECT_ORDER_TYPE: { period: {}, periods: null, modalIsOpen: false },
+  SELECT_NAME: { modalIsOpen: false },
+  SELECT_PERIOD: { modalIsOpen: false },
+  SELECT_SUPPLIER: { modalIsOpen: false },
 };
 
 export class ByProgramModal extends React.Component {
@@ -85,15 +65,15 @@ export class ByProgramModal extends React.Component {
     super(props);
     this.state = {
       // Values used for deriving current UI state
-      currentStep: 0,
       steps: null,
       modalIsOpen: false,
       isProgramBased: true,
+      currentStepKey: null,
       // New requisition or stocktake values
-      program: {},
-      supplier: {},
-      orderType: {},
-      period: {},
+      program: null,
+      supplier: null,
+      orderType: null,
+      period: null,
       name: null,
       // Data stored for performance
       storeTag: null,
@@ -110,180 +90,151 @@ export class ByProgramModal extends React.Component {
     const { settings, database } = this.props;
     const programs = getAllPrograms(settings, database);
     const suppliers = database.objects('Name').filtered('isSupplier = $0', true);
-    this.setCurrentSteps();
-    this.setState({ programs, suppliers });
+    const steps = this.setCurrentSteps();
+    this.setState({ programs, suppliers, currentStepKey: steps[0].key });
   };
 
-  getProgramValues = () => {
-    const { program, supplier, orderType, period, name } = this.state;
-    return { program, supplier, orderType, period, name };
+  onConfirmRequisition = () => {
+    const { onConfirm } = this.props;
+    const { supplier: otherStoreName, orderType } = this.state;
+    onConfirm({ ...this.state, otherStoreName, orderType: orderType && orderType.name });
+    this.setState({ ...newState.RESET_ALL }, () => this.setCurrentSteps());
   };
 
-  getStepNumbers = () => {
+  onToggleChange = () => {
     const { isProgramBased } = this.state;
-    return {
-      program: 0,
-      supplier: isProgramBased ? 1 : 0,
-      orderType: 2,
-      period: 3,
-      name: isProgramBased ? 1 : 0,
-    };
+    this.setState({ ...newState.RESET_ALL, isProgramBased: !isProgramBased }, () =>
+      this.setCurrentSteps(true)
+    );
   };
 
   // Open a modal - in case it is an earlier step in the process,
   // set the current step to the step number corresponding with
   // the onPress event.
-  openModal = ({ stepNumber }) => {
-    this.setState({ modalIsOpen: true, currentStep: stepNumber });
-  };
-
-  closeModal = () => {
-    this.setState({ modalIsOpen: false });
-  };
-
-  // Initial set up or update the current steps property to reflect the current state
-  setCurrentSteps = () => {
-    const sequentialSteps = this.getSequentialStepsProps();
-    const steps = this.getSteps().map(step => sequentialSteps[step]);
-    this.setState({ steps });
-  };
-
-  // Gets the available steps this modal can handle
-  getSteps = () => {
-    const { isProgramBased } = this.state;
-    const { type } = this.props;
-    let steps;
-    switch (type) {
-      case 'requisition':
-        if (isProgramBased) steps = ['program', 'supplier', 'orderType', 'period'];
-        else steps = ['supplier'];
-        break;
-      case 'stocktake':
-        if (isProgramBased) steps = ['program', 'name'];
-        else steps = ['name'];
-        break;
-      default:
-        break;
-    }
-    return steps;
+  onModalTransition = ({ key: currentStepKey }) => {
+    if (currentStepKey) this.setState({ modalIsOpen: true, currentStepKey });
+    else this.setState({ modalIsOpen: false });
   };
 
   getSequentialStepsProps = () => {
     const { name } = this.state;
-    const stepNumbers = this.getStepNumbers();
-    const programValues = this.getProgramValues();
 
-    const baseProps = key => ({
-      name: programValues[key] && programValues[key].name,
+    const getBaseProps = key => ({
+      name: this.state[key] && this.state[key].name,
       placeholder: localization[`${key}Title`],
-      stepNumber: stepNumbers[key],
       key,
       error: this.state[`${key}s`] ? this.state[`${key}s`].length === 0 : false,
       errorText: localization[`${key}Error`],
     });
 
     return {
-      program: baseProps('program'),
-      supplier: baseProps('supplier'),
-      name: {
-        name,
-        placeholder: localization.nameTitle,
-        key: 'name',
-        type: 'input',
-        stepNumber: stepNumbers.name,
-      },
-      orderType: baseProps('orderType'),
-      period: baseProps('period'),
+      program: getBaseProps('program'),
+      supplier: getBaseProps('supplier'),
+      name: { name, placeholder: localization.nameTitle, key: name, type: 'input' },
+      orderType: getBaseProps('orderType'),
+      period: getBaseProps('period'),
     };
   };
 
-  toggleChange = () => {
+  // Initial set up or update the current steps property to reflect the current state
+  setCurrentSteps = setNewCurrentKey => {
     const { isProgramBased } = this.state;
-    this.setState({ ...getNewState('RESET_ALL'), isProgramBased: !isProgramBased }, () =>
-      this.setCurrentSteps()
-    );
+    const { type } = this.props;
+
+    const sequentialSteps = this.getSequentialStepsProps();
+    const stepKeys = {
+      requisition: isProgramBased ? ['program', 'supplier', 'orderType', 'period'] : ['supplier'],
+      stocktake: isProgramBased ? ['program', 'name'] : ['name'],
+    };
+    const steps = stepKeys[type].map(step => sequentialSteps[step]);
+    if (setNewCurrentKey) this.setState({ steps, currentStepKey: steps[0].key });
+    else this.setState({ steps });
+
+    return steps;
   };
 
   setNewValue = ({ key, selectedItem }) => {
-    const { settings, database } = this.props;
+    const { settings, database, type } = this.props;
     const { program, storeTag, isProgramBased } = this.state;
     const periodScheduleName = storeTag && storeTag.periodScheduleName;
 
-    let newState;
+    let nextState;
     switch (key) {
       case 'program':
-        newState = {
-          ...getNewState('SELECT_PROGRAM'),
+        nextState = {
+          ...newState.SELECT_PROGRAM,
           storeTag: selectedItem.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)),
           program: selectedItem,
-          currentStep: 1,
+          currentStepKey: type === 'requisition' ? 'supplier' : 'name',
         };
         break;
       case 'supplier':
-        newState = {
-          ...getNewState('SELECT_SUPPLIER'),
+        nextState = {
+          ...newState.SELECT_SUPPLIER,
           supplier: selectedItem,
           orderTypes:
-            program.name &&
+            program &&
             program.getStoreTagObject(settings.get(SETTINGS_KEYS.THIS_STORE_TAGS)).orderTypes,
-          currentStep: isProgramBased ? 2 : 1,
+
+          currentStepKey: isProgramBased ? 'orderType' : 'complete',
         };
         break;
       case 'orderType':
-        newState = {
-          ...getNewState('SELECT_ORDER_TYPE'),
+        nextState = {
+          ...newState.SELECT_ORDER_TYPE,
           periods: getAllPeriodsForProgram(database, program, periodScheduleName, selectedItem),
           orderType: selectedItem,
-          currentStep: 3,
+          currentStepKey: 'period',
         };
         break;
       case 'period':
-        newState = {
-          ...getNewState('SELECT_PERIOD'),
+        nextState = {
+          ...newState.SELECT_PERIOD,
           period: selectedItem,
-          currentStep: 4,
+          currentStepKey: 'complete',
         };
         break;
       case 'name':
-        newState = {
-          ...getNewState('SELECT_NAME'),
+        nextState = {
+          ...newState.SELECT_NAME,
           name: selectedItem,
-          currentStep: 3,
+          currentStepKey: 'complete',
         };
         break;
       default:
         break;
     }
-    this.setState(newState, () => this.setCurrentSteps());
-  };
 
-  getBaseSearchModalProps = key => ({
-    queryString: 'code BEGINSWITH[c] $0',
-    sortByString: 'name',
-    primaryFilterProperty: 'name',
-    renderLeftText: item => `${item.name}`,
-    onSelect: selectedItem => this.setNewValue({ key, selectedItem }),
-  });
+    this.setState(nextState, () => this.setCurrentSteps());
+  };
 
   getSearchModalProps = () => {
     const { programs, suppliers, orderTypes, periods, program, orderType } = this.state;
 
+    const getBaseProps = key => ({
+      queryString: 'code BEGINSWITH[c] $0',
+      sortByString: 'name',
+      primaryFilterProperty: 'name',
+      renderLeftText: item => `${item.name}`,
+      onSelect: selectedItem => this.setNewValue({ key, selectedItem }),
+    });
+
     return {
       program: {
-        ...this.getBaseSearchModalProps('program'),
+        ...getBaseProps('program'),
         options: programs,
         queryStringSecondary: 'name BEGINSWITH[c] $0',
         renderRightText: item =>
           item.parsedProgramSettings ? item.parsedProgramSettings.elmisCode : '',
       },
       supplier: {
-        ...this.getBaseSearchModalProps('supplier'),
+        ...getBaseProps('supplier'),
         options: suppliers,
         secondaryFilterProperty: 'code',
         renderRightText: item => `(${item.code})`,
       },
       orderType: {
-        ...this.getBaseSearchModalProps('orderType'),
+        ...getBaseProps('orderType'),
         options: orderTypes,
         renderRightText: item =>
           `Max MOS: ${item.maxMOS} - Threshold MOS: ${item.thresholdMOS} - Max orders per period: ${
@@ -291,7 +242,7 @@ export class ByProgramModal extends React.Component {
           }`,
       },
       period: {
-        ...this.getBaseSearchModalProps('period'),
+        ...getBaseProps('period'),
         options: periods,
         renderRightText: item =>
           `${item.toString()} - ${item.requisitionsForOrderType(program, orderType)}/${
@@ -311,65 +262,54 @@ export class ByProgramModal extends React.Component {
     );
   };
 
-  renderSearchModal = () => {
-    const { steps, currentStep } = this.state;
-    if (!steps || currentStep >= steps.length) return null;
-    const { [steps[currentStep].key]: modalProps } = this.getSearchModalProps();
-    return <AutocompleteSelector {...modalProps} />;
-  };
-
   renderModal = () => {
-    const { currentStep, steps } = this.state;
-    const { key } = steps[currentStep];
-    if (key === 'name') return this.renderTextEditor();
-    return this.renderSearchModal();
+    const { currentStepKey } = this.state;
+    if (currentStepKey === 'name') return this.renderTextEditor();
+    return <AutocompleteSelector {...this.getSearchModalProps()[currentStepKey]} />;
   };
 
-  getToggleBarProps = () => {
+  renderToggleBar = () => {
     const { type } = this.props;
     const { isProgramBased } = this.state;
     const buttonText = type === 'requisition' ? 'order' : 'stocktake';
-    return [
-      { text: `Program ${buttonText}`, onPress: this.toggleChange, isOn: isProgramBased },
-      { text: `General ${buttonText}`, onPress: this.toggleChange, isOn: !isProgramBased },
-    ];
-  };
-
-  onConfirmRequisition = () => {
-    const { onConfirm } = this.props;
-    onConfirm(this.getProgramValues());
-    this.setState({ ...getNewState('RESET_ALL') }, () => this.setCurrentSteps());
+    return (
+      <ToggleBar
+        toggles={[
+          { text: `Program ${buttonText}`, onPress: this.onToggleChange, isOn: isProgramBased },
+          { text: `General ${buttonText}`, onPress: this.onToggleChange, isOn: !isProgramBased },
+        ]}
+      />
+    );
   };
 
   render() {
     const { onCancel, isOpen, type, database } = this.props;
-    const { modalIsOpen, currentStep, steps } = this.state;
-    if (!steps) return null;
+    const { modalIsOpen, steps, currentStepKey } = this.state;
+    if (!(steps || currentStepKey)) return null;
+
     return (
       <PageContentModal
         isOpen={isOpen}
         style={{ ...globalStyles.modal, backgroundColor: DARK_GREY }}
         swipeToClose={false}
         onClose={() => {
-          this.setState({ ...getNewState('RESET_ALL') }, () => onCancel());
+          this.setState({ ...newState.RESET_ALL }, () => onCancel());
         }}
         title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
       >
-        <View style={localStyles.toggleContainer}>
-          <ToggleBar toggles={this.getToggleBarProps()} />
-        </View>
+        <View style={localStyles.toggleContainer}>{this.renderToggleBar()}</View>
 
         <SequentialSteps
           database={database}
-          currentStep={currentStep}
           steps={steps}
-          onPress={this.openModal}
+          onPress={this.onModalTransition}
+          currentStepKey={currentStepKey}
         />
 
         <PageButton
           text="OK"
           onPress={this.onConfirmRequisition}
-          isDisabled={!(currentStep >= steps.length)}
+          isDisabled={!(currentStepKey === 'complete')}
           disabledColor={WARM_GREY}
           style={localStyles.okButton}
           textStyle={{ ...globalStyles.buttonText, color: 'white' }}
@@ -378,8 +318,8 @@ export class ByProgramModal extends React.Component {
         {modalIsOpen && (
           <PageContentModal
             isOpen={modalIsOpen}
-            onClose={this.closeModal}
-            title={localization[`${steps[currentStep].key}Title`]}
+            onClose={this.onModalTransition}
+            title={localization[`${currentStepKey}Title`]}
             coverScreen
           >
             {this.renderModal()}

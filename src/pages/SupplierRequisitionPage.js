@@ -42,9 +42,7 @@ export class SupplierRequisitionPage extends React.Component {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
-      isProgramOrder: false,
-      orderType: null,
-      useThresholdMOS: false,
+      useThresholdMOS: !!props.requisition.program,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -52,15 +50,6 @@ export class SupplierRequisitionPage extends React.Component {
       isAscending: true,
     };
   }
-
-  componentDidMount = () => {
-    const { requisition, settings } = this.props;
-    if (requisition.program) {
-      const tags = settings.get(SETTINGS_KEYS.THIS_STORE_TAGS);
-      const orderType = requisition.program.getOrderType(tags, requisition.orderType);
-      this.setState({ isProgramOrder: !!requisition.program, orderType });
-    }
-  };
 
   onAddMasterItems = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
@@ -75,14 +64,10 @@ export class SupplierRequisitionPage extends React.Component {
 
   onCreateAutomaticOrder = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
-    const { isProgramOrder } = this.state;
     runWithLoadingIndicator(() => {
       database.write(() => {
-        if (isProgramOrder) {
-          requisition.setRequestedToSuggested(database);
-        } else {
-          requisition.createAutomaticOrder(database, this.getThisStore());
-        }
+        requisition.createAutomaticOrder(database, this.getThisStore());
+
         database.save('Requisition', requisition);
       });
       this.refreshData();
@@ -179,21 +164,18 @@ export class SupplierRequisitionPage extends React.Component {
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     const { requisition } = this.props;
-    const { useThresholdMOS, orderType } = this.state;
+    const { useThresholdMOS } = this.state;
 
-    if (newSearchTerm && newSortBy && newIsAscending) {
-      this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    }
+    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
 
     const { searchTerm, sortBy, isAscending } = this.dataFilters;
     let data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
+
     if (useThresholdMOS) {
-      data = data.filter(requisitionItem =>
-        requisitionItem.item.isLessThanThresholdMOS(orderType.thresholdMOS)
-      );
+      data = data.filter(requisitionItem => requisitionItem.isLessThanThresholdMOS);
     }
 
     let sortDataType;
@@ -227,19 +209,18 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderPageInfo = () => {
     const { requisition } = this.props;
-    const { isProgramOrder, orderType } = this.state;
-    const { period, program } = requisition;
+    const { period, program, orderType } = requisition;
     const infoColumns = [
       [
         {
           title: 'Program:',
           info: program && program.name,
-          shouldShow: isProgramOrder,
+          shouldHide: !program,
         },
         {
           title: 'Order Type:',
-          info: orderType && orderType.name,
-          shouldShow: isProgramOrder,
+          info: orderType,
+          shouldHide: !program,
         },
         {
           title: `${pageInfoStrings.entry_date}:`,
@@ -254,7 +235,7 @@ export class SupplierRequisitionPage extends React.Component {
         {
           title: 'Period:',
           info: period && `${period.name} -- ${period.toString()}`,
-          shouldShow: isProgramOrder,
+          shouldHide: !program,
         },
         {
           title: `${pageInfoStrings.supplier}:`,
@@ -263,16 +244,14 @@ export class SupplierRequisitionPage extends React.Component {
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
-          onPress: this.openMonthsSelector,
-          editableType: 'selectable',
-          canEdit: !isProgramOrder,
+          onPress: !program && this.openMonthsSelector,
+          editableType: !program && 'selectable',
         },
         {
           title: `${pageInfoStrings.comment}:`,
           info: requisition.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
-          canEdit: true,
         },
       ],
     ];
@@ -364,49 +343,54 @@ export class SupplierRequisitionPage extends React.Component {
     }
   };
 
-  getToggleBarProps = () => {
+  renderThresholdMOSToggle = () => {
     const { useThresholdMOS } = this.state;
-    return [
+    const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
+    const toggleProps = [
       {
         text: 'Hide over stocked',
-        onPress: () => this.setState({ useThresholdMOS: true }, this.refreshData),
         isOn: useThresholdMOS,
+        onPress,
       },
       {
         text: 'Show over stocked',
-        onPress: () => this.setState({ useThresholdMOS: false }, this.refreshData),
         isOn: !useThresholdMOS,
+        onPress,
       },
     ];
+    return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
   };
 
   renderButtons = () => {
     const { requisition } = this.props;
-    const { isProgramOrder } = this.state;
+    const { program } = requisition;
+
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
           <PageButton
-            style={{ ...globalStyles.topButton, marginLeft: isProgramOrder ? 5 : 0 }}
-            text={buttonStrings.create_automatic_order}
-            onPress={this.onCreateAutomaticOrder}
+            style={{
+              ...globalStyles.topButton,
+              ...(program ? { marginLeft: 5 } : {}),
+            }}
+            text={buttonStrings.use_suggested_quantities}
+            onPress={this.onUseSuggestedQuantities}
             isDisabled={requisition.isFinalised}
           />
-          {isProgramOrder && (
-            <ToggleBar style={globalStyles.toggleBar} toggles={this.getToggleBarProps()} />
-          )}
 
-          {!isProgramOrder && (
+          {program && this.renderThresholdMOSToggle()}
+
+          {!program && (
             <PageButton
               style={globalStyles.leftButton}
-              text={buttonStrings.use_suggested_quantities}
-              onPress={this.onUseSuggestedQuantities}
+              text={buttonStrings.create_automatic_order}
+              onPress={this.onCreateAutomaticOrder}
               isDisabled={requisition.isFinalised}
             />
           )}
         </View>
 
-        {!isProgramOrder && (
+        {!program && (
           <View style={globalStyles.verticalContainer}>
             <PageButton
               style={globalStyles.topButton}
@@ -414,6 +398,7 @@ export class SupplierRequisitionPage extends React.Component {
               onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
               isDisabled={requisition.isFinalised}
             />
+
             <PageButton
               text={buttonStrings.add_master_list_items}
               onPress={this.onAddMasterItems}

@@ -7,6 +7,7 @@ import Realm from 'realm';
 
 import { Requisition } from './Requisition';
 import { parsePositiveInteger } from '../../utilities';
+import { getTotal } from '../utilities';
 
 /**
  * A requisition item (i.e. a requisition line).
@@ -23,6 +24,18 @@ import { parsePositiveInteger } from '../../utilities';
  * @property  {number}       sortIndex
  */
 export class RequisitionItem extends Realm.Object {
+  /**
+   * Calculates if this items current stock is less then the supplied
+   * threshold
+   * @return {bool} true if this item has total quantity of stock less than the threshold
+   */
+  get isLessThanThresholdMOS() {
+    return (
+      getTotal(this.item.realItem.batches, 'totalQuantity') <
+      this.dailyUsage * 30 * this.requisition.thresholdMOS
+    );
+  }
+
   /**
    * Get id of requisition item.
    *
