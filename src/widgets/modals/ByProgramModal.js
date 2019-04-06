@@ -96,9 +96,8 @@ export class ByProgramModal extends React.Component {
 
   onConfirmRequisition = () => {
     const { onConfirm } = this.props;
-    const { program, supplier, period, orderType, name } = this.state;
-    const values = { program, otherStoreName: supplier, period, orderType: orderType.name, name };
-    onConfirm(values);
+    const { supplier: otherStoreName, orderType } = this.state;
+    onConfirm({ ...this.state, otherStoreName, orderType: orderType && orderType.name });
     this.setState({ ...newState.RESET_ALL }, () => this.setCurrentSteps());
   };
 

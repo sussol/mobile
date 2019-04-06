@@ -42,7 +42,7 @@ export class SupplierRequisitionPage extends React.Component {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
-      useThresholdMOS: false,
+      useThresholdMOS: !!props.requisition.program,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -345,7 +345,7 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderThresholdMOSToggle = () => {
     const { useThresholdMOS } = this.state;
-    const onPress = () => this.setState({ useThresholdMOS: true }, this.refreshData);
+    const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
     const toggleProps = [
       {
         text: 'Hide over stocked',
@@ -370,9 +370,8 @@ export class SupplierRequisitionPage extends React.Component {
         <View style={globalStyles.verticalContainer}>
           <PageButton
             style={{
-              ...globalStyles.leftButton,
-              marginLeft: program ? 5 : 0,
-              marginBottom: program ? 5 : 0,
+              ...globalStyles.topButton,
+              ...(program ? { marginLeft: 5 } : {}),
             }}
             text={buttonStrings.use_suggested_quantities}
             onPress={this.onUseSuggestedQuantities}
@@ -383,7 +382,7 @@ export class SupplierRequisitionPage extends React.Component {
 
           {!program && (
             <PageButton
-              style={globalStyles.topButton}
+              style={globalStyles.leftButton}
               text={buttonStrings.create_automatic_order}
               onPress={this.onCreateAutomaticOrder}
               isDisabled={requisition.isFinalised}
