@@ -487,6 +487,7 @@ export class SupplierRequisitionPage extends React.Component {
           onConfirm={this.onDeleteConfirm}
           confirmText={modalStrings.remove}
         />
+
         <PageContentModal
           isOpen={modalIsOpen && !requisition.isFinalised}
           onClose={this.closeModal}

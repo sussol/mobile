@@ -511,6 +511,7 @@ export class StocktakeEditPage extends React.Component {
         >
           {this.renderModalContent()}
         </PageContentModal>
+
         <ConfirmModal
           coverScreen
           noCancel
