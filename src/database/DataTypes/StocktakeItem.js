@@ -305,6 +305,18 @@ export class StocktakeItem extends Realm.Object {
     if (!this.batches) return false;
     return this.batches.some(batch => batch.option);
   }
+
+  /**
+   * Returns true if the snapshot and counted quantities differ.
+   * Does not account for if reasons are used by the user, caller
+   * needs to account for this.
+   * @return {bool}
+   */
+  get shouldHaveReason() {
+    const { snapshotTotalQuantity, countedTotalQuantity } = this;
+    const equalQuantities = snapshotTotalQuantity === countedTotalQuantity;
+    return !equalQuantities;
+  }
 }
 
 StocktakeItem.schema = {

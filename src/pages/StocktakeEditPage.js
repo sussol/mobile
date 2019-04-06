@@ -137,9 +137,7 @@ export class StocktakeEditPage extends React.Component {
    */
   assignReason = stocktakeItem => {
     const { database } = this.props;
-    const { snapshotTotalQuantity, countedTotalQuantity } = stocktakeItem;
-    const equalQuantities = snapshotTotalQuantity === countedTotalQuantity;
-    if (!equalQuantities) {
+    if (stocktakeItem.shouldHaveReason) {
       this.onOpenReasonModal();
     } else {
       stocktakeItem.applyReasonToBatches(database);
@@ -246,7 +244,6 @@ export class StocktakeEditPage extends React.Component {
 
   renderCell = (key, stocktakeItem) => {
     const { stocktake } = this.props;
-
     const isEditable = !stocktake.isFinalised;
     switch (key) {
       default:
@@ -276,7 +273,9 @@ export class StocktakeEditPage extends React.Component {
           <TouchableOpacity
             key={stocktakeItem.id}
             onPress={() =>
-              this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
+              stocktakeItem.shouldHaveReason
+                ? this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
+                : null
             }
             style={localStyles.reasonCell}
           >
