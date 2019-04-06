@@ -114,6 +114,14 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * Checks if this item is a vaccine
+   * @return {boolean}
+   */
+  get isVaccine() {
+    return this.category && this.category.name === 'Vaccine';
+  }
+
+  /**
    * Get category of item, or empty string if no category exists.
    *
    * @return  {string}
