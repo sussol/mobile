@@ -270,27 +270,30 @@ export class StocktakeItem extends Realm.Object {
    * @return {string} The title of the reason with the highest frequency
    */
   get mostUsedReason() {
-    if (!this.batches) return false;
-    if (!this.batches[0]) return false;
+    if (!this.batches.length) return false;
 
-    const optionsCounts = {};
+    // Mapping table for ranking reasons by usage
+    // {option.id: {option: OptionObject, count: X}, ... }
     const options = {};
+
     this.batches.forEach(batch => {
       const { option } = batch;
-      if (option) {
-        optionsCounts[option.id] = optionsCounts[option.id] ? optionsCounts[option.id] + 1 : 1;
-        options[option.id] = option;
+      if (!option) return;
+      const { id } = option;
+
+      // If we've counted this option before, increment,
+      // otherwise add to the table with an initial count of 1
+      if (options[id]) {
+        options[id].count += 1;
+      } else {
+        options[id] = { count: 1, option };
       }
     });
 
-    const modeEntries = Object.entries(optionsCounts);
-    if (modeEntries.length === 0) return null;
-
-    return options[
-      modeEntries.sort(
-        ([, valueA], [, valueB]) => parseInt(valueB, 10) - parseInt(valueA, 10)
-      )[0][0]
-    ];
+    // Sort (ASC) the options by count, return the first option
+    return Object.values(options).sort(
+      ({ count: valueA }, { count: valueB }) => parseInt(valueB, 10) - parseInt(valueA, 10)
+    )[0].option;
   }
 
   /**
