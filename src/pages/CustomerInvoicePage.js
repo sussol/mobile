@@ -31,6 +31,47 @@ const MODAL_KEYS = {
   ITEM_SELECT: 'itemSelect',
 };
 
+const DATA_TABLE_COLUMNS = {
+  itemCode: {
+    key: 'itemCode',
+    width: 2,
+    title: tableStrings.item_code,
+    sortable: true,
+  },
+  itemName: {
+    key: 'itemName',
+    width: 4,
+    title: tableStrings.item_name,
+    sortable: true,
+  },
+  availableQuantity: {
+    key: 'availableQuantity',
+    width: 2,
+    title: tableStrings.available_stock,
+    sortable: true,
+    alignText: 'right',
+  },
+  totalQuantity: {
+    key: 'totalQuantity',
+    width: 2,
+    title: tableStrings.quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  remove: {
+    key: 'remove',
+    width: 1,
+    title: tableStrings.remove,
+    alignText: 'center',
+  },
+  doses: {
+    key: 'doses',
+    width: 1,
+    title: 'doses',
+    alignText: 'center',
+  },
+};
+
 export class CustomerInvoicePage extends GenericPage {
   constructor(props) {
     super(props);
@@ -38,6 +79,7 @@ export class CustomerInvoicePage extends GenericPage {
       selection: [],
       modalKey: null,
       modalIsOpen: false,
+      hasVaccine: false,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -45,6 +87,11 @@ export class CustomerInvoicePage extends GenericPage {
       isAscending: true,
     };
   }
+
+  componentDidMount = () => {
+    const { transaction } = this.props;
+    this.setState({ hasVaccine: transaction.hasVaccine });
+  };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
     // (... != null) checks for null or undefined (implicitly type coerced to null).
@@ -82,30 +129,38 @@ export class CustomerInvoicePage extends GenericPage {
   };
 
   onAddMasterItems = () => {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.transaction.addItemsFromMasterList(this.props.database);
-        this.props.database.save('Transaction', this.props.transaction);
+    const { database, transaction, runWithLoadingIndicator } = this.props;
+    runWithLoadingIndicator(() => {
+      database.write(() => {
+        transaction.addItemsFromMasterList(database);
+        database.save('Transaction', transaction);
       });
       this.refreshData();
     });
   };
 
   /**
-   * Respond to the user editing the number in the number received column.
-   *
-   * @param   {string}  key              Should always be |totalQuantity|.
+   * Respond to the user editing a number in a column.
+   * @param   {string}  key              Should always be totalQuantity or doses.
    * @param   {object}  transactionItem  The transaction item from the row being edited.
    * @param   {string}  newValue         The value the user entered in the cell.
    * @return  {none}
    */
   onEndEditing = (key, transactionItem, newValue) => {
-    if (key !== 'totalQuantity') return;
     const { database } = this.props;
-    database.write(() => {
-      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
-      database.save('TransactionItem', transactionItem);
-    });
+    const actions = {
+      totalQuantity: () => {
+        transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
+        if (transactionItem.item.doses === 1) transactionItem.doses = newValue;
+      },
+      doses: () => {
+        transactionItem.setDoses(newValue);
+      },
+    };
+
+    const actionToExecute = actions[key];
+    if (actionToExecute) database.write(actionToExecute);
+    database.save('TransactionItem', transactionItem);
   };
 
   onDeleteConfirm = () => {
@@ -201,21 +256,52 @@ export class CustomerInvoicePage extends GenericPage {
   };
 
   renderCell = (key, transactionItem) => {
+    const { transaction } = this.props;
+    const { totalQuantity } = transactionItem;
+    const { isFinalised } = transaction;
     switch (key) {
       default:
         return transactionItem[key];
       case 'totalQuantity':
         return {
-          type: this.props.transaction.isFinalised ? 'text' : 'editable',
-          cellContents: transactionItem.totalQuantity,
+          type: isFinalised ? 'text' : 'editable',
+          cellContents: totalQuantity,
         };
       case 'remove':
         return {
           type: 'checkable',
           icon: 'md-remove-circle',
-          isDisabled: this.props.transaction.isFinalised,
+          isDisabled: isFinalised,
         };
+      case 'doses': {
+        // If not a vaccine item, render an empty cell,
+        // otherwise display the doses of the item. Only
+        // editable if doses > 1.
+        const { item } = transactionItem;
+        const { isVaccine, doses } = item;
+        if (!isVaccine) {
+          return {
+            type: 'text',
+            cellContents: '',
+          };
+        }
+        return {
+          type: this.props,
+          cellContents: doses,
+          isDisabled: doses === 1,
+        };
+      }
     }
+  };
+
+  onSelectNewItem = item => {
+    const { database, transaction } = this.props;
+    database.write(() => {
+      if (!transaction.hasItem(item)) {
+        createRecord(database, 'TransactionItem', transaction, item);
+      }
+      if (item.isVaccine) this.setState({ hasVaccine: true });
+    });
   };
 
   renderModalContent = () => {
@@ -230,15 +316,7 @@ export class CustomerInvoicePage extends GenericPage {
             queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
             queryStringSecondary="name CONTAINS[c] $0"
             sortByString="name"
-            onSelect={item => {
-              database.write(() => {
-                if (!transaction.hasItem(item)) {
-                  createRecord(database, 'TransactionItem', transaction, item);
-                }
-              });
-              this.refreshData();
-              this.closeModal();
-            }}
+            onSelect={this.onSelectNewItem}
             renderLeftText={item => `${item.name}`}
             renderRightText={item => `${item.totalQuantity}`}
           />
@@ -292,6 +370,21 @@ export class CustomerInvoicePage extends GenericPage {
     </View>
   );
 
+  getDataTableColumns = () => {
+    const { hasVaccine } = this.state;
+    const normal = ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'];
+    const withVaccines = [
+      'itemCode',
+      'itemName',
+      'availableQuantity',
+      'totalQuantity',
+      'doses',
+      'remove',
+    ];
+    const columnsToUse = hasVaccine ? withVaccines : normal;
+    return columnsToUse.map(columnKey => DATA_TABLE_COLUMNS[columnKey]);
+  };
+
   render() {
     return (
       <GenericPage
@@ -305,40 +398,7 @@ export class CustomerInvoicePage extends GenericPage {
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 2,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 4,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'availableQuantity',
-            width: 2,
-            title: tableStrings.available_stock,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'totalQuantity',
-            width: 2,
-            title: tableStrings.quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
+        columns={this.getDataTableColumns()}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         finalisableDataType="Transaction"
         database={this.props.database}
@@ -353,6 +413,7 @@ export class CustomerInvoicePage extends GenericPage {
           onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.remove}
         />
+
         <PageContentModal
           isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
           onClose={this.closeModal}
