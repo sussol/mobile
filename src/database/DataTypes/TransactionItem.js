@@ -250,6 +250,21 @@ export class TransactionItem extends Realm.Object {
     });
     database.delete('TransactionBatch', batchesToDelete);
   }
+
+  /**
+   * Setter for doses such that:
+   * this.availableQuantity <= doses <= this.availableQuantity * this.item.doses
+   * @return {int} the value set
+   */
+  setDoses(value) {
+    const { doses } = this.item;
+    const { totalQuantity } = this;
+    const maxDoses = totalQuantity * doses;
+    if (value > maxDoses) value = maxDoses;
+    if (value < totalQuantity) value = totalQuantity;
+    this.doses = value;
+    return value;
+  }
 }
 
 TransactionItem.schema = {
