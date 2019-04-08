@@ -21,11 +21,11 @@ import {
  * states - True: LHS toggled, False: RHS Toggled, Null: Nothing toggled.
  * Can be controlled by pressing any part of the component to switch the toggle,
  * or use the returned key to control dependent on which toggle was pressed.
- * @prop {String} firstText     Text for the LHS toggle
- * @prop {String} secondText    Text for the RHS toggle
+ * @prop {String} leftText     Text for the LHS toggle
+ * @prop {String} leftText    Text for the RHS toggle
  * @prop {String} firstKey      Key returned when the LHS toggle is pressed
- * @prop {String} secondKey     Key returned when the RHS toggle is pressed
- * @prop {Bool}   currentState  Current state of the toggle. True = left, right = right, null = none
+ * @prop {String} rightKey     Key returned when the RHS toggle is pressed
+ * @prop {Bool}   currentState  Current state of the toggle. True = left, False = right, null = none
  * @prop {Func}   onPress       onPress function - returns {key, nextState}
  */
 export default class MiniToggleBar extends React.PureComponent {
@@ -34,7 +34,7 @@ export default class MiniToggleBar extends React.PureComponent {
     if (currentState === null) {
       return {
         // Set a middle divider when no toggles have been set.
-        firstStyle: { borderRightColor: '#CDCDCD', borderRightWidth: 1 },
+        leftStyle: { borderRightColor: '#CDCDCD', borderRightWidth: 1 },
       };
     }
 
@@ -42,11 +42,11 @@ export default class MiniToggleBar extends React.PureComponent {
       // Set the border color for the main container.
       mainStyle: currentState ? { borderColor: FINALISE_GREEN } : { borderColor: FINALISED_RED },
       // Set the background and font color for the left hand side.
-      firstStyle: currentState && { backgroundColor: FINALISE_GREEN },
-      firstTextStyle: currentState && { color: BLUE_WHITE },
+      leftStyle: currentState && { backgroundColor: FINALISE_GREEN },
+      leftTextStyle: currentState && { color: BLUE_WHITE },
       // Set the background color and font color for the right hand side.
-      secondTextStyle: !currentState && { color: BLUE_WHITE },
-      secondStyle: !currentState && { backgroundColor: FINALISED_RED, color: BLUE_WHITE },
+      rightTextStyle: !currentState && { color: BLUE_WHITE },
+      rightStyle: !currentState && { backgroundColor: FINALISED_RED, color: BLUE_WHITE },
     };
   };
 
@@ -56,20 +56,20 @@ export default class MiniToggleBar extends React.PureComponent {
   };
 
   render() {
-    const { firstText, secondText, firstKey, secondKey } = this.props;
+    const { leftText, rightText, leftKey, rightKey } = this.props;
     const { main, touchable, text } = localStyles;
-    const { mainStyle, firstStyle, firstTextStyle, secondTextStyle, secondStyle } = this.styles();
+    const { mainStyle, leftStyle, leftTextStyle, rightTextStyle, rightStyle } = this.styles();
     return (
       <View style={[main, mainStyle]}>
-        <TouchableOpacity style={[touchable, firstStyle]} onPress={this.onPress(firstKey)}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={[text, firstTextStyle]}>
-            {firstText}
+        <TouchableOpacity style={[touchable, leftStyle]} onPress={this.onPress(leftKey)}>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={[text, leftTextStyle]}>
+            {leftText}
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={[touchable, secondStyle]} onPress={this.onPress(secondKey)}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={[text, secondTextStyle]}>
-            {secondText}
+        <TouchableOpacity style={[touchable, rightStyle]} onPress={this.onPress(rightKey)}>
+          <Text numberOfLines={1} ellipsizeMode="tail" style={[text, rightTextStyle]}>
+            {rightText}
           </Text>
         </TouchableOpacity>
       </View>
@@ -99,15 +99,15 @@ const localStyles = StyleSheet.create({
 });
 
 MiniToggleBar.defaultProps = {
-  firstKey: null,
-  secondKey: null,
+  leftKey: null,
+  rightKey: null,
 };
 
 MiniToggleBar.propTypes = {
-  firstText: PropTypes.string.isRequired,
-  secondText: PropTypes.string.isRequired,
-  firstKey: PropTypes.string,
-  secondKey: PropTypes.string,
+  leftText: PropTypes.string.isRequired,
+  rightText: PropTypes.string.isRequired,
+  leftKey: PropTypes.string,
+  rightKey: PropTypes.string,
   currentState: PropTypes.bool.isRequired,
   onPress: PropTypes.func.isRequired,
 };
