@@ -13,6 +13,8 @@ import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord, mergeRecords } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
 
+/* eslint-disable camelcase */
+
 const { THIS_STORE_ID } = SETTINGS_KEYS;
 
 /**
@@ -39,10 +41,10 @@ const parseDate = (ISODate, ISOTime) => {
     return null;
   }
   const date = new Date(ISODate);
-  if (ISOTime && ISOTime.length >= 6) {
+  if (ISOTime && ISOTime.length >= 5) {
     const hours = ISOTime.substring(0, 2);
     const minutes = ISOTime.substring(3, 5);
-    const seconds = ISOTime.substring(6, 8);
+    const seconds = ISOTime.length >= 8 ? ISOTime.substring(6, 8) : 0;
     date.setHours(hours, minutes, seconds);
   }
   return date;
@@ -130,6 +132,14 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['item_ID', 'store_ID'],
       canBeBlank: [],
     },
+    Location: {
+      cannotBeBlank: ['description'],
+      canBeBlank: [],
+    },
+    LocationType: {
+      cannotBeBlank: ['description'],
+      canBeBlank: [],
+    },
     LocalListItem: {
       cannotBeBlank: ['item_ID', 'list_master_name_join_ID'],
       canBeBlank: [],
@@ -152,7 +162,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     NameStoreJoin: {
       cannotBeBlank: ['name_ID', 'store_ID'],
-      canBeBlank: ['name_ID', 'store_ID'],
+      canBeBlank: [],
     },
     NumberSequence: {
       cannotBeBlank: ['name', 'value'],
@@ -169,6 +179,18 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     RequisitionItem: {
       cannotBeBlank: ['requisition_ID', 'item_ID'],
       canBeBlank: ['stock_on_hand', 'Cust_stock_order'],
+    },
+    Sensor: {
+      cannotBeBlank: ['name', 'macAddress'],
+      canBeBlank: [],
+    },
+    SensorLog: {
+      cannotBeBlank: ['sensorID', 'pointer', 'date', 'time', 'temperature', 'logInterval'],
+      canBeBlank: [],
+    },
+    SensorLogItemBatchJoin: {
+      cannotBeBlank: ['sensorLogID', 'itemLineID'],
+      canBeBlank: [],
     },
     Stocktake: {
       cannotBeBlank: ['status'],
@@ -254,6 +276,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         defaultPackSize: 1, // Every item batch in mobile should be pack-to-one.
         defaultPrice: packSize ? parseNumber(record.buy_price) / packSize : 0,
         department: database.getOrCreate('ItemDepartment', record.department_ID),
+        doses: parseNumber(record.doses),
         description: record.description,
         name: record.item_name,
         crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
@@ -279,6 +302,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'ItemBatch': {
       const item = database.getOrCreate('Item', record.item_ID);
+      const location = database.getOrCreate('Location', record.location_ID);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
         id: record.ID,
@@ -291,6 +315,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: database.getOrCreate('Name', record.name_ID),
         donor: database.getOrCreate('Name', record.donor_ID),
+        location,
       };
       const itemBatch = database.update(recordType, internalRecord);
       item.addBatchIfUnique(itemBatch);
@@ -330,6 +355,30 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       };
       const localListItem = database.update('MasterListItem', internalRecord);
       masterList.addItemIfUnique(localListItem);
+      break;
+    }
+    case 'Location': {
+      const locationType = database.getOrCreate('LocationType', record.type_ID);
+      const { description, code } = record;
+      internalRecord = {
+        id: record.ID,
+        description,
+        code,
+        locationType,
+      };
+      database.update('Location', internalRecord);
+      break;
+    }
+    case 'LocationType': {
+      const { ID, Description, Temperature_min, Temperature_max, customData } = record;
+      internalRecord = {
+        id: ID,
+        description: Description,
+        temperatureMin: parseNumber(Temperature_min),
+        temperatureMax: parseNumber(Temperature_max),
+        customData,
+      };
+      database.update('LocationType', internalRecord);
       break;
     }
     case 'MasterListNameJoin': {
@@ -489,6 +538,75 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       database.save('Requisition', requisition);
       break;
     }
+    case 'Sensor': {
+      const {
+        ID,
+        name,
+        macAddress,
+        location_ID,
+        batteryLevel,
+        temperature,
+        lastConnectionDate,
+        lastConnectionTime,
+      } = record;
+      const location = database.getOrCreate('Location', location_ID);
+      internalRecord = {
+        id: ID,
+        name,
+        macAddress,
+        location,
+        batteryLevel: parseNumber(batteryLevel),
+        temperature: parseNumber(temperature),
+        lastConnectionTimestamp: parseDate(lastConnectionDate, lastConnectionTime),
+      };
+      database.update('Sensor', internalRecord);
+      break;
+    }
+    case 'SensorLog': {
+      const {
+        ID,
+        sensorID,
+        locationID,
+        pointer,
+        date,
+        time,
+        temperature,
+        logInterval,
+        isInBreach,
+      } = record;
+      const location = database.getOrCreate('Location', locationID);
+      const sensor = database.getOrCreate('Sensor', sensorID);
+      internalRecord = {
+        id: ID,
+        pointer: parseNumber(pointer),
+        temperature: parseNumber(temperature),
+        timestamp: parseDate(date, time),
+        logInterval: parseNumber(logInterval),
+        isInBreach: parseBoolean(isInBreach),
+        sensor,
+        location,
+      };
+      const sensorLog = database.update('SensorLog', internalRecord);
+      sensor.sensorLogs.push(sensorLog);
+
+      break;
+    }
+    case 'SensorLogItemBatchJoin': {
+      const { ID, sensorLogID, itemLineID } = record;
+      const sensorLog = database.getOrCreate('SensorLog', sensorLogID);
+      const itemBatch = database.getOrCreate('ItemBatch', itemLineID);
+      internalRecord = {
+        id: ID,
+        sensorLog,
+        itemBatch,
+      };
+
+      itemBatch.sensorLogs.push(sensorLog);
+      sensorLog.itemBatches.push(itemBatch);
+
+      database.update('SensorLogItemBatchJoin', internalRecord);
+      break;
+    }
     case 'Stocktake': {
       internalRecord = {
         id: record.ID,
@@ -579,6 +697,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
       const item = database.getOrCreate('Item', record.item_ID);
       const donor = database.getOrCreate('Name', record.donor_id);
+      const location = database.getOrCreate('Location', record.location_ID);
       itemBatch.item = item;
       itemBatch.donor = donor;
       item.addBatchIfUnique(itemBatch);
@@ -596,6 +715,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         donor,
+        location,
+        doses: parseNumber(record.doses),
+        isVVMPassed: parseBoolean(record.isVVMPassed),
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
@@ -648,3 +770,4 @@ export const integrateRecord = (database, settings, syncRecord) => {
     // Handle unexpected |changeType|.
   }
 };
+/* eslint-enable camelcase */

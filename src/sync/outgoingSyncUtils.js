@@ -24,15 +24,13 @@ const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SET
 const bugsnagClient = new BugsnagClient();
 
 const getDateString = date => {
-  let returnDate = '0000-00-00';
-  if (date && typeof date === 'object') returnDate = date.toISOString().slice(0, 10);
-
-  return `${returnDate}T00:00:00`;
+  if (!date && typeof date !== 'object' && !date.toLocaleDateString) return '0000-00-00';
+  return `${date.toLocaleDateString()}T00:00:00`;
 };
 
 function getTimeString(date) {
-  if (!date || typeof date !== 'object') return '00:00:00';
-  return date.toTimeString().substring(0, 8);
+  if (!date || typeof date !== 'object' || !date.toLocaleTimeString) return '00:00:00';
+  return date.toLocaleTimeString();
 }
 
 /**
@@ -91,6 +89,18 @@ const generateSyncData = (settings, recordType, record) => {
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: settings.get(SUPPLYING_STORE_NAME_ID),
         donor_id: record.donor && record.donor.id,
+        location_ID: record.location && record.locaiton.id,
+      };
+    }
+    case 'Location': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      const { id, description, code, locationType } = record;
+      return {
+        ID: id,
+        description,
+        code,
+        type_ID: locationType && locationType.id,
+        store_ID: thisStoreId,
       };
     }
     case 'NumberSequence': {
@@ -136,6 +146,62 @@ const generateSyncData = (settings, recordType, record) => {
         line_number: String(record.sortIndex),
         Cust_stock_order: String(record.requiredQuantity),
         comment: record.comment,
+      };
+    }
+    case 'Sensor': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      const {
+        id,
+        name,
+        macAddress,
+        location,
+        batteryLevel,
+        temperature,
+        lastConnectionTimestamp,
+      } = record;
+      return {
+        ID: id,
+        name,
+        macAddress,
+        locationID: location && location.id,
+        batteryLevel: String(batteryLevel),
+        temperature: String(temperature),
+        lastConnectionDate: getDateString(lastConnectionTimestamp),
+        lastConnectionTime: getTimeString(lastConnectionTimestamp),
+        storeID: thisStoreId,
+      };
+    }
+    case 'SensorLog': {
+      const thisStoreId = settings.get(THIS_STORE_ID);
+      const {
+        id,
+        sensor,
+        location,
+        pointer,
+        temperature,
+        logInterval,
+        isInBreach,
+        timestamp,
+      } = record;
+      return {
+        ID: id,
+        sensorID: sensor && sensor.id,
+        locationID: location && location.id,
+        pointer: String(pointer),
+        temperature: String(temperature),
+        logInterval: String(logInterval),
+        isInBreach: String(isInBreach),
+        date: getDateString(timestamp),
+        time: getTimeString(timestamp),
+        storeID: thisStoreId,
+      };
+    }
+    case 'SensorLogItemBatchJoin': {
+      const { id, sensorLog, itemBatch } = record;
+      return {
+        ID: id,
+        sensorLogID: sensorLog && sensorLog.id,
+        itemLineID: itemBatch && itemBatch.id,
       };
     }
     case 'Stocktake': {
@@ -196,7 +262,7 @@ const generateSyncData = (settings, recordType, record) => {
       };
     }
     case 'TransactionBatch': {
-      const { transaction } = record;
+      const { transaction, location, isVVMPassed, doses } = record;
       return {
         ID: record.id,
         transaction_ID: record.transaction.id,
@@ -215,6 +281,9 @@ const generateSyncData = (settings, recordType, record) => {
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
         donor_id: record.donor && record.donor.id,
+        location_ID: location && location.id,
+        doses: String(doses),
+        isVVMPassed: !!isVVMPassed && String(isVVMPassed),
         type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
       };
     }
@@ -295,6 +364,7 @@ export const generateSyncJson = (database, settings, syncOutRecord) => {
   }
 
   // Attach the record data to the json object.
+
   syncJson.Data = syncData;
   return syncJson;
 };
