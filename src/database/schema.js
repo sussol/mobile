@@ -10,6 +10,8 @@ import {
   ItemCategory,
   ItemDepartment,
   ItemStoreJoin,
+  Location,
+  LocationType,
   MasterList,
   MasterListItem,
   MasterListNameJoin,
@@ -19,6 +21,9 @@ import {
   NumberToReuse,
   Requisition,
   RequisitionItem,
+  Sensor,
+  SensorLog,
+  SensorLogItemBatchJoin,
   Setting,
   Stocktake,
   StocktakeBatch,
@@ -61,6 +66,16 @@ ItemDepartment.schema = {
     id: 'string',
     name: { type: 'string', default: 'placeholderName' },
     parentDepartment: { type: 'ItemDepartment', optional: true },
+  },
+};
+
+SensorLogItemBatchJoin.schema = {
+  name: 'SensorLogItemBatchJoin',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    itemBatch: 'ItemBatch',
+    sensorLog: 'SensorLog',
   },
 };
 
@@ -128,6 +143,8 @@ export const schema = {
     TransactionItem,
     TransactionBatch,
     TransactionCategory,
+    Location,
+    LocationType,
     MasterList,
     MasterListItem,
     MasterListNameJoin,
@@ -137,6 +154,9 @@ export const schema = {
     NumberToReuse,
     Requisition,
     RequisitionItem,
+    Sensor,
+    SensorLog,
+    SensorLogItemBatchJoin,
     Setting,
     SyncOut,
     Stocktake,
@@ -144,7 +164,7 @@ export const schema = {
     StocktakeBatch,
     User,
   ],
-  schemaVersion: 6,
+  schemaVersion: 7,
 };
 
 export default schema;
