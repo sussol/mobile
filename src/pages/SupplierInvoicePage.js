@@ -109,7 +109,7 @@ export class SupplierInvoicePage extends React.Component {
     const { transaction, database } = this.props;
     const defaultFridge = database.objects('Location').find(location => location.isFridge);
     database.write(() => {
-      transaction.getTransactionBatches.forEach(batch => {
+      transaction.getTransactionBatches(database).forEach(batch => {
         if (!batch.location && batch.isVaccine) batch.location = defaultFridge;
         database.save('TransactionBatch', batch);
       });
