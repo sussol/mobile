@@ -3,6 +3,11 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/**
+ * TODO
+ * doses
+ */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const tableStrings = new LocalizedStrings({
@@ -51,6 +56,7 @@ export const tableStrings = new LocalizedStrings({
     suggested_quantity: 'SUGGESTED\nQUANTITY',
     supply_quantity: 'SUPPLY THIS\nINVOICE',
     their_stock: 'THEIR\nSTOCK',
+    doses: 'DOSES',
   },
   fr: {
     actual_quantity: 'Quantité\nRéelle',
@@ -97,6 +103,7 @@ export const tableStrings = new LocalizedStrings({
     suggested_quantity: 'QUANTITÉ\nSUGGÉRÉE',
     supply_quantity: 'Fournir les\nquantités de\ncette facture',
     their_stock: 'Leur\nstock',
+    doses: 'DOSES',
   },
   gil: {
     // TODO add: batch, no_batch_name
@@ -142,6 +149,7 @@ export const tableStrings = new LocalizedStrings({
     supplier: 'KAMBANA NI KAOBWAI, PHARMACY',
     supply_quantity: 'BEEBA N OOTA MAN TE PHARMACY',
     their_stock: 'AIA BWAI\nN AORAKI',
+    doses: 'DOSES',
   },
   tl: {
     // TODO add: batch, no_batch_name
@@ -187,6 +195,7 @@ export const tableStrings = new LocalizedStrings({
     supplier: 'Distribuidor',
     supply_quantity: 'KUANTIDADE\nDISTRIBUI',
     their_stock: 'SIRA NIA\nSTOCK',
+    doses: 'DOSES',
   },
   la: {
     actual_quantity: 'ຈຳ​​ນວນ​ຕົວ​ຈິງ\nຈຳ​ນວນ',
@@ -232,6 +241,7 @@ export const tableStrings = new LocalizedStrings({
     suggested_quantity: 'ຈຳ​ນວນແນະ​ນຳ\nປະ​ລິ​ມານ',
     supply_quantity: 'ສະ​ໜອງ\nປະ​ລິ​ມານ',
     their_stock: 'ຈຳ​ນວນ​ສິນ​ຄ້າ​ຂອງ​ພວກ​ເຂົາ​\nສິນ​ຄ້າ',
+    doses: 'DOSES',
   },
 });
 
