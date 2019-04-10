@@ -6,61 +6,44 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { VictoryBar, VictoryChart, VictoryTheme } from 'victory-native';
+import { ChartWrapper } from '../widgets/ChartWrapper';
+import { VaccineChart } from '../widgets/VaccineChart';
 
 console.disableYellowBox = true;
 
-const data = [
-  { quarter: 1, earnings: 13000 },
-  { quarter: 2, earnings: 16500 },
-  { quarter: 3, earnings: 14250 },
-  { quarter: 4, earnings: 19000 },
-];
-
+// eslint-disable-next-line react/prefer-stateless-function
 export class VaccineChartPage extends React.Component {
-  // Victory Native sizes are set using absolute values. Parents dimensions are used to
-  // calculate relative values for width and height for each chart.
-  constructor(props) {
-    super(props);
-    this.state = { width: null };
-    // this.state = { width: null, height: null };
-  }
+  // eslint-disable-next-line class-methods-use-this
+  render() {
+    const maxTempLine = [
+      { date: 'Feb 23', temp: 6, isBreach: false },
+      { date: '24', temp: 6.4, isBreach: true },
+      { date: '25', temp: 7, isBreach: false },
+      { date: '26', temp: 7.4, isBreach: true },
+    ];
 
-  onLayout = event => {
-    this.setState({
-      width: event.nativeEvent.layout.width,
-      // height: event.nativeEvent.layout.height,
-    });
-  };
+    const minTempLine = [
+      { date: 'Feb 23', temp: 3, isBreach: false },
+      { date: '24', temp: 3.4, isBreach: true },
+      { date: '25', temp: 4, isBreach: false },
+      { date: '26', temp: 4.4, isBreach: true },
+    ];
 
-  render = () => {
-    const { width } = this.state;
+    const chartFunction = (width, height) => (
+      <VaccineChart data={[maxTempLine, minTempLine]} width={width} height={height} />
+    );
 
     return (
-      <View style={flexParent} onLayout={this.onLayout}>
+      <View style={chartContainer}>
         <View style={flexRowTop}>
-          <VictoryChart width={width * 0.9} theme={VictoryTheme.material}>
-            <VictoryBar data={data} x="quarter" y="earnings" />
-          </VictoryChart>
-        </View>
-        <View style={flexRowBottom}>
-          <View style={flexColumnBottomLeft}>
-            <VictoryChart width={width * 0.4} theme={VictoryTheme.material}>
-              <VictoryBar data={data} x="quarter" y="earnings" />
-            </VictoryChart>
-          </View>
-          <View style={flexColumnBottomRight}>
-            <VictoryChart width={width * 0.4} theme={VictoryTheme.material}>
-              <VictoryBar data={data} x="quarter" y="earnings" />
-            </VictoryChart>
-          </View>
+          <ChartWrapper chartFunction={chartFunction} />
         </View>
       </View>
     );
-  };
+  }
 }
 
-const flexParent = {
+const chartContainer = {
   display: 'flex',
   flexDirection: 'column',
   width: '100%',
@@ -78,6 +61,17 @@ const flexRowTop = {
   borderWidth: 1,
   borderColor: 'black',
 };
+
+{
+  /* <View style={flexRowBottom}>
+<View style={flexColumnBottomLeft}>
+  <VaccineChart lines={lines} width={width * 0.4} height={height * 0.4} />
+</View>
+<View style={flexColumnBottomRight}>
+  <VaccineChart lines={lines} width={width * 0.4} height={height * 0.4} />
+</View>
+</View> */
+}
 
 const flexRowBottom = {
   display: 'flex',
