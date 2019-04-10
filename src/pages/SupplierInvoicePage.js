@@ -19,6 +19,8 @@ import {
   PageInfo,
   TextEditor,
   ExpiryTextInput,
+  IconCell,
+  MiniToggleBar,
 } from '../widgets';
 
 import globalStyles, { dataTableStyles } from '../globalStyles';
@@ -29,6 +31,8 @@ const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
   ITEM_SELECT: 'itemSelect',
+  FRIDGE_SELECT: 'fridgeSelect',
+  SPLIT_VALUE_SELECT: 'splitValueSelect',
 };
 
 const SORT_DATA_TYPES = {
@@ -37,6 +41,51 @@ const SORT_DATA_TYPES = {
   batch: 'string',
   totalQuantity: 'number',
   packSize: 'number',
+};
+
+const COLUMNS = {
+  itemCode: {
+    key: 'itemCode',
+    width: 1,
+    title: tableStrings.item_code,
+    sortable: true,
+  },
+  itemName: {
+    key: 'itemName',
+    width: 3,
+    title: tableStrings.item_name,
+    sortable: true,
+  },
+  totalQuantity: {
+    key: 'totalQuantity',
+    width: 1,
+    title: tableStrings.quantity,
+    alignText: 'right',
+  },
+  expiryDate: {
+    key: 'expiryDate',
+    width: 1,
+    title: tableStrings.batch_expiry,
+    alignText: 'center',
+  },
+  remove: {
+    key: 'remove',
+    width: 1,
+    title: tableStrings.remove,
+    alignText: 'center',
+  },
+  vvm: {
+    key: 'vvm',
+    width: 1.5,
+    title: 'VVM STATUS',
+    alignText: 'center',
+  },
+  fridge: {
+    key: 'fridge',
+    width: 1.5,
+    title: 'FRIDGE',
+    alignText: 'center',
+  },
 };
 
 export class SupplierInvoicePage extends React.Component {
@@ -51,8 +100,15 @@ export class SupplierInvoicePage extends React.Component {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
+      hasVaccine: false,
+      selectedBatch: null,
     };
   }
+
+  componentDidMount = () => {
+    const { transaction } = this.props;
+    this.setState({ hasVaccine: transaction.hasVaccine });
+  };
 
   // Delete transaction batch then delete transaction item if no more transaction batches remain.
   onDeleteConfirm = () => {
@@ -60,6 +116,55 @@ export class SupplierInvoicePage extends React.Component {
     const { transaction, database } = this.props;
     database.write(() => transaction.removeTransactionBatchesById(database, selection));
     this.setState({ selection: [] }, this.refreshData);
+  };
+
+  // On toggling the VVM status, set the status [null -> pass -> fail -> pass -> fail].
+  // If the status is fail, trigger the doses modal, which will prompt for a number
+  // of packs that failed within that batch [splitValue]. A new batch is then made - a
+  // clone with the number of packs = originalNumberOfPacks - splitValue
+  onVvmToggle = transactionBatch => () => {
+    const { database } = this.props;
+    const { isVVMPassed } = transactionBatch;
+    const { SPLIT_VALUE_SELECT } = MODAL_KEYS;
+
+    this.setState({ selectedBatch: transactionBatch });
+
+    database.write(() => {
+      transactionBatch.isVVMPassed = !isVVMPassed;
+      database.save('TransactionBatch', transactionBatch);
+    });
+    this.refreshData();
+    if (!transactionBatch.isVVMPassed) this.openModal(SPLIT_VALUE_SELECT);
+  };
+
+  /**
+   * On entering a split value:
+   * If the value is non-numeric or splitValue >= totalQuantity - don't split.
+   * If splitValue <= 0 - revert to a passing status.
+   * If 0 < splitValue < totalQuantity - split into two batches on the
+   * splitValue, assign the cloned batch (with the remaining batches) a passing
+   * VVM status.
+   */
+  onEnterSplitValue = newValue => {
+    const { database } = this.props;
+    const { selectedBatch } = this.state;
+    const { totalQuantity } = selectedBatch;
+    const splitValue = parseInt(newValue, 10);
+
+    const writeAction = batch => {
+      batch.isVVMPassed = true;
+      database.save('TransactionBatch', batch);
+    };
+
+    if (splitValue <= 0) {
+      database.write(writeAction(selectedBatch));
+    } else if (splitValue < totalQuantity) {
+      const newBatch = selectedBatch.splitBatch({ database, splitValue });
+      database.write(writeAction(newBatch));
+    }
+
+    this.refreshData();
+    this.closeModal();
   };
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
@@ -96,16 +201,15 @@ export class SupplierInvoicePage extends React.Component {
   getModalTitle = () => {
     const { modalKey } = this.state;
 
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-    switch (modalKey) {
-      default:
-      case ITEM_SELECT:
-        return modalStrings.search_for_an_item_to_add;
-      case COMMENT_EDIT:
-        return modalStrings.edit_the_invoice_comment;
-      case THEIR_REF_EDIT:
-        return modalStrings.edit_their_reference;
-    }
+    const titles = {
+      [MODAL_KEYS.ITEM_SELECT]: modalStrings.search_for_an_item_to_add,
+      [MODAL_KEYS.COMMENT_EDIT]: modalStrings.edit_the_invoice_comment,
+      [MODAL_KEYS.THEIR_REF_EDIT]: modalStrings.edit_their_reference,
+      [MODAL_KEYS.FRIDGE_SELECT]: 'Place this Vaccine in a fridge',
+      [MODAL_KEYS.SPLIT_VALUE_SELECT]: 'How many vials have a failed VVM status?',
+    };
+
+    return titles[modalKey] || titles.ITEM_SELECT;
   };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
@@ -137,12 +241,20 @@ export class SupplierInvoicePage extends React.Component {
     const { database, transaction } = this.props;
     database.write(() => {
       const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
-      createRecord(
+      const transactionBatch = createRecord(
         database,
         'TransactionBatch',
         transactionItem,
         createRecord(database, 'ItemBatch', item, '')
       );
+
+      if (item.isVaccine) {
+        transactionBatch.location = database
+          .objects('Location')
+          .find(location => location.isFridge);
+        this.setState({ hasVaccine: true });
+      }
+      database.save('TransactionBatch', transactionBatch);
     });
   };
 
@@ -155,6 +267,11 @@ export class SupplierInvoicePage extends React.Component {
   openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
 
   openTheirRefEditor = () => this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
+
+  openFridgeSelector = transactionBatch => () => {
+    this.setState({ selectedBatch: transactionBatch });
+    this.openModal(MODAL_KEYS.FRIDGE_SELECT);
+  };
 
   renderPageInfo = () => {
     const { transaction } = this.props;
@@ -193,14 +310,17 @@ export class SupplierInvoicePage extends React.Component {
 
   renderCell = (key, transactionBatch) => {
     const { transaction } = this.props;
-
+    const { isVVMPassed, isVaccine, id, locationDescription } = transactionBatch;
     const isEditable = !transaction.isFinalised;
     const type = isEditable ? 'editable' : 'text';
     const editableCell = {
       type,
       cellContents: String(transactionBatch[key]),
     };
-
+    const emptycell = {
+      type: 'text',
+      cellContents: '',
+    };
     switch (key) {
       default:
         return {
@@ -211,7 +331,7 @@ export class SupplierInvoicePage extends React.Component {
       case 'expiryDate': {
         return (
           <ExpiryTextInput
-            key={transactionBatch.id}
+            key={id}
             isEditable={isEditable}
             onEndEditing={newValue => this.onEndEditing(key, transactionBatch, newValue)}
             text={transactionBatch[key]}
@@ -225,15 +345,41 @@ export class SupplierInvoicePage extends React.Component {
           icon: 'md-remove-circle',
           isDisabled: transaction.isFinalised,
         };
+      case 'vvm': {
+        if (!isVaccine) return emptycell;
+        return (
+          <MiniToggleBar
+            leftText="PASS"
+            rightText="FAIL"
+            currentState={isVVMPassed}
+            onPress={this.onVvmToggle(transactionBatch)}
+          />
+        );
+      }
+      case 'fridge': {
+        if (!isVaccine) return emptycell;
+        return (
+          <IconCell
+            text={isVVMPassed ? locationDescription : 'Discarded'}
+            onPress={isVVMPassed ? this.openFridgeSelector(transactionBatch) : null}
+            icon={isVVMPassed ? 'caret-up' : 'times'}
+            disabled={!isVVMPassed}
+          />
+        );
+      }
     }
   };
 
   renderModalContent = () => {
     const { database, transaction } = this.props;
-    const { modalKey } = this.state;
-
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-
+    const { modalKey, selectedBatch } = this.state;
+    const {
+      ITEM_SELECT,
+      COMMENT_EDIT,
+      THEIR_REF_EDIT,
+      FRIDGE_SELECT,
+      SPLIT_VALUE_SELECT,
+    } = MODAL_KEYS;
     switch (modalKey) {
       default:
       case ITEM_SELECT:
@@ -282,12 +428,37 @@ export class SupplierInvoicePage extends React.Component {
             }}
           />
         );
+      case FRIDGE_SELECT:
+        return (
+          <AutocompleteSelector
+            options={database.objects('Location')}
+            queryString="description BEGINSWITH[c] $0"
+            sortByString="description"
+            onSelect={item => {
+              database.write(() => {
+                selectedBatch.location = item;
+              });
+              this.refreshData();
+              this.closeModal();
+            }}
+            renderLeftText={({ description }) => description}
+          />
+        );
+      case SPLIT_VALUE_SELECT: {
+        const { totalQuantity } = selectedBatch;
+        return (
+          <TextEditor
+            text={totalQuantity}
+            keyboardType="numeric"
+            onEndEditing={this.onEnterSplitValue}
+          />
+        );
+      }
     }
   };
 
   renderAddBatchButton = () => {
     const { transaction } = this.props;
-
     return (
       <PageButton
         style={globalStyles.topButton}
@@ -298,10 +469,25 @@ export class SupplierInvoicePage extends React.Component {
     );
   };
 
+  getColumns = () => {
+    const { hasVaccine } = this.state;
+    const vaccineColumns = [
+      'itemCode',
+      'itemName',
+      'totalQuantity',
+      'expiryDate',
+      'vvm',
+      'fridge',
+      'remove',
+    ];
+    const normalColumns = ['itemCode', 'itemName', 'totalQuantity', 'expiryDate', 'remove'];
+    const columns = hasVaccine ? vaccineColumns : normalColumns;
+    return columns.map(columnKey => COLUMNS[columnKey]);
+  };
+
   render() {
     const { database, genericTablePageStyles, transaction, topRoute } = this.props;
     const { data, modalIsOpen, selection } = this.state;
-
     return (
       <GenericPage
         data={data}
@@ -313,38 +499,7 @@ export class SupplierInvoicePage extends React.Component {
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 3,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'totalQuantity',
-            width: 1,
-            title: tableStrings.quantity,
-            alignText: 'right',
-          },
-          {
-            key: 'expiryDate',
-            width: 1,
-            title: tableStrings.batch_expiry,
-            alignText: 'center',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
+        columns={this.getColumns()}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         finalisableDataType="Transaction"
         database={database}
@@ -359,6 +514,7 @@ export class SupplierInvoicePage extends React.Component {
           onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.remove}
         />
+
         <PageContentModal
           isOpen={modalIsOpen && !transaction.isFinalised}
           onClose={this.closeModal}
