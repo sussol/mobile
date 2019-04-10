@@ -252,18 +252,69 @@ export class TransactionItem extends Realm.Object {
   }
 
   /**
-   * Setter for doses such that:
-   * this.availableQuantity <= doses <= this.availableQuantity * this.item.doses
-   * @return {int} the value set
+   * Setter for TransactionBatch.doses related to this TransactionItem, in
+   * a FIFO queue, such that:
+   * batch.totalQuantity <= doses <= batch.totalQuantity * this.item.doses.
+   * @param {Number} value the number of doses to set
    */
   setDoses(value) {
-    const { doses } = this.item;
-    const { totalQuantity } = this;
-    const maxDoses = totalQuantity * doses;
-    if (value > maxDoses) value = maxDoses;
-    if (value < totalQuantity) value = totalQuantity;
-    this.doses = value;
+    const { doses: numberOfDosesPerVial } = this.item;
+    let dosesToAdd = this.getValidDosesValue(value);
+    const fifoBatches = this.batches.sorted('expiryDate');
+
+    fifoBatches.some(batch => {
+      const { totalQuantity: thisBatchTotalQuantity } = batch;
+      const maxDosesCanAddToBatch = thisBatchTotalQuantity * numberOfDosesPerVial;
+      const dosesAddingToThisBatch = Math.min(dosesToAdd, maxDosesCanAddToBatch);
+      batch.doses = dosesAddingToThisBatch;
+      dosesToAdd -= dosesAddingToThisBatch;
+      return !(dosesToAdd >= 0);
+    });
+  }
+
+  /**
+   * Takes a value as the number of doses to apply to this
+   * TransactionItem.
+   * If value is less than this.totalQuantity, use totalQuantity as the
+   * minimum number of doses per vial is 1.
+   * If the value is greater than this.totalQuantity * this.item.doses,
+   * return this.totalQuantity * this.item.doses as this is the maximum
+   * number of doses which can be given for the vials available.
+   * Otherwise, value can be used.
+   * @param  {Number} value The number to test
+   * @return {Number} The valid number of doses which can be set
+   */
+  getValidDosesValue(value) {
+    const { item, totalQuantity } = this;
+    const { doses } = item;
+
+    const maximumPossibleDoses = doses * totalQuantity;
+    if (value >= maximumPossibleDoses) return maximumPossibleDoses;
+    if (value <= totalQuantity) return totalQuantity;
     return value;
+  }
+
+  /**
+   * Sets the doses for this TransactionItem to 0.
+   */
+  resetAllDoses() {
+    const { batches } = this;
+    batches.forEach(batch => {
+      batch.doses = 0;
+    });
+  }
+
+  /**
+   * Gets the total number of doses given for
+   * TransactionBatch's associated to this
+   * TransactionItem.
+   */
+  get totalDoses() {
+    const { batches } = this;
+    return batches.reduce((sum, { doses }) => {
+      sum += Number(doses);
+      return sum;
+    }, 0);
   }
 }
 
