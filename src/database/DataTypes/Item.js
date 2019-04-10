@@ -41,6 +41,10 @@ export class Item extends Realm.Object {
     database.delete('ItemBatch', this.batches);
   }
 
+  get isVaccine() {
+    return !!(this.category && this.category.name === 'Vaccine');
+  }
+
   /**
    * If item is cross-referenced item, return the referenced item, else return this item.
    *
