@@ -133,11 +133,11 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: [],
     },
     Location: {
-      cannotBeBlank: [],
+      cannotBeBlank: ['description'],
       canBeBlank: [],
     },
     LocationType: {
-      cannotBeBlank: [],
+      cannotBeBlank: ['description'],
       canBeBlank: [],
     },
     LocalListItem: {
@@ -162,7 +162,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     NameStoreJoin: {
       cannotBeBlank: ['name_ID', 'store_ID'],
-      canBeBlank: ['name_ID', 'store_ID'],
+      canBeBlank: [],
     },
     NumberSequence: {
       cannotBeBlank: ['name', 'value'],
@@ -181,7 +181,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: ['stock_on_hand', 'Cust_stock_order'],
     },
     Sensor: {
-      cannotBeBlank: [],
+      cannotBeBlank: ['name', 'macAddress'],
       canBeBlank: [],
     },
     SensorLog: {
