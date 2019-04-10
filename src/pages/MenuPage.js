@@ -139,6 +139,16 @@ export class MenuPage extends React.Component {
           >
             <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
           </Icon.Button>
+          <Icon.Button
+            name="tachometer"
+            underlayColor="#888888"
+            iconStyle={localStyles.bottomIcon}
+            borderRadius={4}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={() => navigateTo('vaccineChart', navStrings.vaccine_chart)}
+          >
+            <Text>{navStrings.vaccine_chart.toUpperCase()}</Text>
+          </Icon.Button>
         </View>
       </View>
     );
@@ -184,6 +194,10 @@ const localStyles = StyleSheet.create({
     marginBottom: 30,
   },
   logOutText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: WARMER_GREY,
+  },
+  vaccineChartText: {
     fontFamily: APP_FONT_FAMILY,
     color: WARMER_GREY,
   },
