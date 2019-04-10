@@ -72,6 +72,14 @@ export class TransactionBatch extends Realm.Object {
     }
   }
 
+  get isVaccine() {
+    return this.itemBatch && this.itemBatch.item && this.itemBatch.item.isVaccine;
+  }
+
+  get locationDescription() {
+    return this.location && this.location.description;
+  }
+
   /**
    * Get id of associated item batch.
    *
@@ -143,6 +151,14 @@ export class TransactionBatch extends Realm.Object {
     }
     // For supplier invoice, there is no maximum amount that can be added.
     return quantity;
+  }
+
+  get transactionItem() {
+    const { transaction } = this;
+    return transaction.items.find(transactionItem => {
+      const { batches } = transactionItem;
+      return batches.some(batch => batch.id === this.id);
+    });
   }
 
   /**
