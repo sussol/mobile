@@ -106,7 +106,14 @@ export class SupplierInvoicePage extends React.Component {
   }
 
   componentDidMount = () => {
-    const { transaction } = this.props;
+    const { transaction, database } = this.props;
+    const defaultFridge = database.objects('Location').find(location => location.isFridge);
+    database.write(() => {
+      transaction.getTransactionBatches.forEach(batch => {
+        if (!batch.location && batch.isVaccine) batch.location = defaultFridge;
+        database.save('TransactionBatch', batch);
+      });
+    });
     this.setState({ hasVaccine: transaction.hasVaccine });
   };
 
@@ -157,10 +164,10 @@ export class SupplierInvoicePage extends React.Component {
     };
 
     if (splitValue <= 0) {
-      database.write(writeAction(selectedBatch));
+      database.write(() => writeAction(selectedBatch));
     } else if (splitValue < totalQuantity) {
       const newBatch = selectedBatch.splitBatch({ database, splitValue });
-      database.write(writeAction(newBatch));
+      database.write(() => writeAction(newBatch));
     }
 
     this.refreshData();
@@ -358,12 +365,13 @@ export class SupplierInvoicePage extends React.Component {
       }
       case 'fridge': {
         if (!isVaccine) return emptycell;
+        const failed = isVVMPassed === false;
         return (
           <IconCell
-            text={isVVMPassed ? locationDescription : 'Discarded'}
-            onPress={isVVMPassed ? this.openFridgeSelector(transactionBatch) : null}
-            icon={isVVMPassed ? 'caret-up' : 'times'}
-            disabled={!isVVMPassed}
+            text={failed ? 'Discarded' : locationDescription}
+            onPress={failed ? null : this.openFridgeSelector(transactionBatch)}
+            icon={failed ? 'times' : 'caret-up'}
+            disabled={failed}
           />
         );
       }
