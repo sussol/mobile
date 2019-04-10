@@ -1,5 +1,5 @@
 import Realm from 'realm';
-
+import { createRecord } from '..';
 /**
  * A transaction batch.
  *
@@ -175,6 +175,39 @@ export class TransactionBatch extends Realm.Object {
    */
   toString() {
     return `${this.itemBatch} in a ${this.transaction.type}`;
+  }
+
+  /**
+   * Splits a transactionBatch into two - (TB1, TB2). TB2 is a clone
+   * of TB1 except for numberOfPacks and doses fields.
+   * TB1.numberOfPacks = splitValue,
+   * TB2.numberOfPacks = originalNumberOfPacks - splitValue
+   * Doses are adjusted accordingly.
+   * Most values are from the itemBatch, except values which are editted
+   * from within a supplier invoice - expiryDate and location.
+   * @param {Realm}  database
+   * @param {Number} splitValue - the value of numberOfPacks to split the batches on
+   */
+  splitBatch({ database, splitValue }) {
+    const { itemBatch, transactionItem, numberOfPacks } = this;
+    const { item } = itemBatch;
+
+    let newTransactionBatch;
+    database.write(() => {
+      newTransactionBatch = createRecord(database, 'TransactionBatch', transactionItem, itemBatch);
+      const splitNumberOfPacks = numberOfPacks - splitValue;
+      newTransactionBatch.location = this.location;
+      newTransactionBatch.expiryDate = this.expiryDate;
+      newTransactionBatch.numberOfPacks = splitNumberOfPacks;
+      newTransactionBatch.doses = Number(item.doses) * splitNumberOfPacks;
+
+      this.numberOfPacks = splitValue;
+      this.doses = item.doses * splitValue;
+
+      database.save('TransactionBatch', newTransactionBatch);
+      database.save('TransactionBatch', this);
+    });
+    return newTransactionBatch;
   }
 }
 
