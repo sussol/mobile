@@ -66,9 +66,9 @@ const DATA_TABLE_COLUMNS = {
   },
   doses: {
     key: 'doses',
-    width: 1,
-    title: 'doses',
-    alignText: 'center',
+    width: 1.5,
+    title: tableStrings.doses,
+    alignText: 'right',
   },
 };
 
@@ -151,10 +151,11 @@ export class CustomerInvoicePage extends GenericPage {
     const actions = {
       totalQuantity: () => {
         transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
-        if (transactionItem.item.doses === 1) transactionItem.doses = newValue;
+        transactionItem.resetAllDoses();
+        if (transactionItem.item.doses === 1) transactionItem.setDoses(newValue);
       },
       doses: () => {
-        transactionItem.setDoses(newValue);
+        transactionItem.setDoses(parsePositiveInteger(newValue));
       },
     };
 
@@ -257,8 +258,9 @@ export class CustomerInvoicePage extends GenericPage {
 
   renderCell = (key, transactionItem) => {
     const { transaction } = this.props;
-    const { totalQuantity } = transactionItem;
+    const { totalQuantity, totalDoses } = transactionItem;
     const { isFinalised } = transaction;
+    const emptyCell = { type: 'text', cellContents: '' };
     switch (key) {
       default:
         return transactionItem[key];
@@ -274,21 +276,18 @@ export class CustomerInvoicePage extends GenericPage {
           isDisabled: isFinalised,
         };
       case 'doses': {
-        // If not a vaccine item, render an empty cell,
-        // otherwise display the doses of the item. Only
+        // If not a vaccine item, render an empty cell.
+        // If a vaccine, display the doses of the item. Only
         // editable if doses > 1.
         const { item } = transactionItem;
         const { isVaccine, doses } = item;
-        if (!isVaccine) {
-          return {
-            type: 'text',
-            cellContents: '',
-          };
-        }
+        const hasDosesOfOne = doses === 1;
+        if (!isVaccine) return emptyCell;
         return {
-          type: this.props,
-          cellContents: doses,
-          isDisabled: doses === 1,
+          type: hasDosesOfOne ? 'text' : 'editable',
+          cellContents: totalDoses,
+          placeholder: tableStrings.not_counted,
+          textAlign: 'right',
         };
       }
     }
@@ -302,6 +301,8 @@ export class CustomerInvoicePage extends GenericPage {
       }
       if (item.isVaccine) this.setState({ hasVaccine: true });
     });
+    this.refreshData();
+    this.closeModal();
   };
 
   renderModalContent = () => {
