@@ -29,8 +29,15 @@ export class TransactionBatch extends Realm.Object {
     this.setTotalQuantity(database, 0); // Ensure reverting of any stock changes to item batches.
 
     // Can safely remove associated item batch if transaction batch was created by an external
-    // supplier invoice.
-    if (this.transaction.isExternalSupplierInvoice) {
+    // supplier invoice unless it is a vaccine, which are split in a supplier invoice if the
+    // VVM status has failed. If the itemBatch has more than one TransactionBatch, there is
+    // another transactionBatch associated so don't delete.
+    let canDeleteItemBatch = true;
+    if (this.isVaccine) {
+      canDeleteItemBatch = this.itemBatch.transactionBatch.length === 1;
+    }
+
+    if (this.transaction.isExternalSupplierInvoice && canDeleteItemBatch) {
       database.delete('ItemBatch', this.itemBatch);
     }
   }
