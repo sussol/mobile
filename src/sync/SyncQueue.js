@@ -9,10 +9,14 @@ const { CREATE, UPDATE, DELETE } = CHANGE_TYPES;
 
 const recordTypesSynced = [
   'ItemBatch',
+  'Location',
   'NumberSequence',
   'NumberToReuse',
   'Requisition',
   'RequisitionItem',
+  'Sensor',
+  'SensorLog',
+  'SensorLogItemBatchJoin',
   'Stocktake',
   'StocktakeBatch',
   'Transaction',

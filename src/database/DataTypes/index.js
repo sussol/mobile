@@ -8,6 +8,7 @@ import Realm from 'realm';
 export class Address extends Realm.Object {}
 export class ItemCategory extends Realm.Object {}
 export class ItemDepartment extends Realm.Object {}
+export class SensorLogItemBatchJoin extends Realm.Object {}
 export class Setting extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export class TransactionCategory extends Realm.Object {}
@@ -16,6 +17,8 @@ export class User extends Realm.Object {}
 export { Item } from './Item';
 export { ItemBatch } from './ItemBatch';
 export { ItemStoreJoin } from './ItemStoreJoin';
+export { Location } from './Location';
+export { LocationType } from './LocationType';
 export { MasterList } from './MasterList';
 export { MasterListItem } from './MasterListItem';
 export { MasterListNameJoin } from './MasterListNameJoin';
@@ -25,6 +28,8 @@ export { NumberSequence } from './NumberSequence';
 export { NumberToReuse } from './NumberToReuse';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
+export { Sensor } from './Sensor';
+export { SensorLog } from './SensorLog';
 export { Stocktake } from './Stocktake';
 export { StocktakeBatch } from './StocktakeBatch';
 export { StocktakeItem } from './StocktakeItem';

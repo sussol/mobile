@@ -237,6 +237,7 @@ Item.schema = {
     defaultPrice: { type: 'double', optional: true },
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
+    doses: { type: 'int', optional: true },
   },
 };
 

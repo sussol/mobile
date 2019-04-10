@@ -174,6 +174,9 @@ TransactionBatch.schema = {
     sellPrice: 'double',
     donor: { type: 'Name', optional: true },
     sortIndex: { type: 'int', optional: true },
+    doses: { type: 'int', optional: true },
+    isVVMPassed: { type: 'bool', optional: true },
+    location: { type: 'Location', optional: true },
   },
 };
 
