@@ -50,19 +50,23 @@ const chartA = {
   maxTemp: 6,
 };
 
-// const breachA = {
-//   data: [
-//     { date: '8:00', temp: 7.5 },
-//     { date: '11:00', temp: 8.5 },
-//     { date: '14:00', temp: 10.3 },
-//     { date: '17:00', temp: 12 },
-//     { date: '20:00', temp: 11.3 },
-//     { date: '23:00', temp: 7.6 },
-//   ],
-//   boundary: 8,
-//   color: 'red',
-//   eventHandler: () => console.log('CLICKED'),
-// };
+const chartB = {
+  maxLine: [
+    { date: '8:00', temp: 7.5 },
+    { date: '11:00', temp: 8.5 },
+    { date: '14:00', temp: 10.3 },
+    { date: '17:00', temp: 12 },
+    { date: '20:00', temp: 11.3 },
+    { date: '23:00', temp: 7.6 },
+  ],
+  hazards: [
+    { date: '11:00', temp: 8.5 },
+    { date: '14:00', temp: 10.3 },
+    { date: '17:00', temp: 12 },
+    { date: '20:00', temp: 11.3 },
+  ],
+  maxTemp: 8,
+};
 
 // const breachB = {
 //   data: [
@@ -83,15 +87,33 @@ const chartA = {
 export class VaccineChartPage extends React.Component {
   // eslint-disable-next-line class-methods-use-this
   render() {
-    const { minLine, maxLine, hazards, minTemp, maxTemp } = chartA;
+    const {
+      minLine: minLineA,
+      maxLine: maxLineA,
+      hazards: hazardsA,
+      minTemp: minTempA,
+      maxTemp: maxTempA,
+    } = chartA;
 
-    const chartFridgeA = (width, height) => (
+    const renderChartA = (width, height) => (
       <VaccineChart
-        minLine={minLine}
-        maxLine={maxLine}
-        hazards={hazards}
-        minTemp={minTemp}
-        maxTemp={maxTemp}
+        minLine={minLineA}
+        maxLine={maxLineA}
+        hazards={hazardsA}
+        minTemp={minTempA}
+        maxTemp={maxTempA}
+        width={width}
+        height={height}
+      />
+    );
+
+    const { maxLine: maxLineB, hazards: hazardsB, maxTemp: maxTempB } = chartB;
+
+    const renderChartB = (width, height) => (
+      <VaccineChart
+        maxLine={maxLineB}
+        hazards={hazardsB}
+        maxTemp={maxTempB}
         width={width}
         height={height}
       />
@@ -100,14 +122,14 @@ export class VaccineChartPage extends React.Component {
     return (
       <View style={chartContainer}>
         <View style={flexRowTop}>
-          <ChartWrapper chartFunction={chartFridgeA} />
+          <ChartWrapper chartFunction={renderChartA} />
         </View>
         <View style={flexRowBottom}>
           <View style={flexColumnBottomLeft}>
-            <ChartWrapper chartFunction={chartFridgeA} />
+            <ChartWrapper chartFunction={renderChartB} />
           </View>
           <View style={flexColumnBottomRight}>
-            <ChartWrapper chartFunction={chartFridgeA} />
+            <ChartWrapper chartFunction={renderChartB} />
           </View>
         </View>
       </View>
