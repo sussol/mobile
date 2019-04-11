@@ -188,7 +188,7 @@ export class TransactionBatch extends Realm.Object {
    * @param {Number} splitValue - the value of numberOfPacks to split the batches on
    */
   splitBatch({ database, splitValue, newValues = {} }) {
-    const { itemBatch, transactionItem, numberOfPacks } = this;
+    const { itemBatch, transactionItem, numberOfPacks, id } = this;
     if (numberOfPacks <= splitValue || splitValue <= 0) return this; // don't split
     newValues.numberOfPacks = splitValue;
 
@@ -196,9 +196,7 @@ export class TransactionBatch extends Realm.Object {
     database.write(() => {
       newTransactionBatch = createRecord(database, 'TransactionBatch', transactionItem, itemBatch);
       database.update('TransactionBatch', { ...this, id: newTransactionBatch.id, ...newValues });
-
-      this.numberOfPacks = numberOfPacks - splitValue;
-      database.save('TransactionBatch', this);
+      database.update('TransactionBatch', { id, numberOfPacks });
     });
     return newTransactionBatch;
   }
