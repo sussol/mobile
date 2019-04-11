@@ -262,6 +262,7 @@ export class TransactionItem extends Realm.Object {
   setDoses(value) {
     let { totalQuantity } = this;
     let dosesToAdd = this.getValidDosesValue(value);
+    this.resetAllDoses();
 
     this.batches.sorted('expiryDate', false).forEach(batch => {
       const { totalQuantity: thisBatchesQuantity } = batch;
