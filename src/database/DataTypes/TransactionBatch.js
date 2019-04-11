@@ -196,7 +196,7 @@ export class TransactionBatch extends Realm.Object {
     database.write(() => {
       newTransactionBatch = createRecord(database, 'TransactionBatch', transactionItem, itemBatch);
       database.update('TransactionBatch', { ...this, id: newTransactionBatch.id, ...newValues });
-      database.update('TransactionBatch', { id, numberOfPacks });
+      database.update('TransactionBatch', { id, numberOfPacks: numberOfPacks - splitValue });
     });
     return newTransactionBatch;
   }
