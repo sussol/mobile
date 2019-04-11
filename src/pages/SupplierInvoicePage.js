@@ -136,12 +136,12 @@ export class SupplierInvoicePage extends React.Component {
 
     this.setState({ selectedBatch: transactionBatch });
 
-    database.write(() => {
-      transactionBatch.isVVMPassed = !isVVMPassed;
-      database.save('TransactionBatch', transactionBatch);
-    });
-    this.refreshData();
-    if (!transactionBatch.isVVMPassed) this.openModal(SPLIT_VALUE_SELECT);
+    if (!isVVMPassed) {
+      database.write(() =>
+        database.update('TransactionBatch', { id: transactionBatch.id, isVVMPassed: true })
+      );
+      this.refreshData();
+    } else this.openModal(SPLIT_VALUE_SELECT);
   };
 
   /**
@@ -157,21 +157,17 @@ export class SupplierInvoicePage extends React.Component {
     const { selectedBatch } = this.state;
     const { totalQuantity } = selectedBatch;
     const splitValue = parseInt(newValue, 10);
-
-    const writeAction = batch => {
-      batch.isVVMPassed = true;
-      database.save('TransactionBatch', batch);
-    };
-
-    if (splitValue <= 0) {
-      database.write(() => writeAction(selectedBatch));
-    } else if (splitValue < totalQuantity) {
-      const newBatch = selectedBatch.splitBatch({ database, splitValue });
-      database.write(() => writeAction(newBatch));
-    }
-
-    this.refreshData();
     this.closeModal();
+
+    if (splitValue <= 0) return;
+    if (splitValue < totalQuantity) {
+      selectedBatch.splitBatch({ database, splitValue, newValues: { isVVMPassed: false } });
+    } else {
+      database.write(() =>
+        database.update('TransactionBatch', { id: selectedBatch.id, isVVMPassed: false })
+      );
+    }
+    this.refreshData();
   };
 
   onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
