@@ -4,66 +4,109 @@
  */
 
 import React from 'react';
-import Svg from 'react-native-svg';
+import Svg, { Rect } from 'react-native-svg';
 
-import { VictoryLine, VictoryScatter, VictoryChart, VictoryTheme } from 'victory-native';
+import {
+  VictoryLine,
+  VictoryScatter,
+  VictoryChart,
+  VictoryAxis,
+  VictoryTheme,
+} from 'victory-native';
+
+function HazardPoint(props) {
+  const { x, y } = props;
+
+  const width = 10;
+  const height = 10;
+
+  return (
+    <Svg>
+      <Rect
+        x={x - width / 2}
+        y={y - height / 2}
+        width={width}
+        height={height}
+        stroke="red"
+        stroke-width="2.5"
+        fill="red"
+      />
+    </Svg>
+  );
+}
 
 export function VaccineChart(props) {
   // eslint-disable-next-line react/prop-types
-  const { lines, width, height } = props;
-  // eslint-disable-next-line react/prop-types
-  let { maxTemp, minTemp } = props;
+  const { minLine, maxLine, hazards, minTemp, maxTemp, width, height } = props;
 
-  lines.forEach(line => {
-    line.data.forEach(datum => {
-      minTemp = datum.temp < minTemp ? datum.temp : minTemp;
-      maxTemp = datum.temp > maxTemp ? datum.temp : maxTemp;
-    });
+  let minDomain = Infinity;
+  let maxDomain = -Infinity;
+
+  minLine.forEach(datum => {
+    if (datum.temp < minDomain) {
+      minDomain = datum.temp;
+    }
   });
 
-  lines.forEach(line => {
-    line.data.forEach(datum => {
-      datum.isBreach = datum.temp < minTemp || datum.temp > maxTemp;
-      datum.label = datum.isBreach ? 'BREACH' : '';
-    });
+  maxLine.forEach(datum => {
+    if (datum.temp > maxDomain) {
+      maxDomain = datum.temp;
+    }
   });
 
-  const maxDomain = maxTemp + 1;
-  const minDomain = minTemp - 1;
+  minDomain -= 1;
+  maxDomain += 1;
 
-  const maxLinePlot = (
-    <VictoryLine y={() => maxTemp} style={{ data: { strokeDasharray: '1', stroke: 'red' } }} />
-  );
-  const minLinePlot = (
+  const minTempPlotLine = (
     <VictoryLine y={() => minTemp} style={{ data: { strokeDasharray: '1', stroke: 'blue' } }} />
   );
 
-  const linePlots = lines.map(line => (
+  const maxTempPlotLine = (
+    <VictoryLine y={() => maxTemp} style={{ data: { strokeDasharray: '1', stroke: 'red' } }} />
+  );
+
+  const minLinePlotLine = (
     <VictoryLine
-      data={line.data}
+      data={minLine}
       interpolation="natural"
-      style={{ data: { stroke: line.color } }}
+      style={{ data: { stroke: 'blue' } }}
       x="date"
       y="temp"
     />
-  ));
+  );
 
-  const scatterPlots = lines.map(line => (
+  const minLinePlotScatter = (
+    <VictoryScatter data={minLine} style={{ data: { fill: 'blue' } }} x="date" y="temp" />
+  );
+
+  const maxLinePlotLine = (
+    <VictoryLine
+      data={maxLine}
+      interpolation="natural"
+      style={{ data: { stroke: 'red' } }}
+      x="date"
+      y="temp"
+    />
+  );
+
+  const maxLinePlotScatter = (
+    <VictoryScatter data={maxLine} style={{ data: { fill: 'red' } }} x="date" y="temp" />
+  );
+
+  const hazardPlotScatter = (
     <VictoryScatter
-      style={{ data: { fill: line.color } }}
-      labels={() => null}
+      dataComponent={<HazardPoint />}
       events={[
         {
           target: 'data',
-          eventHandlers: { onPressIn: () => line.eventHandler() },
+          eventHandlers: { onPressIn: datum => datum.onClick() },
         },
       ]}
-      size={7.5}
-      data={line.data}
+      data={hazards}
       x="date"
       y="temp"
     />
-  ));
+  );
 
   return (
     // Svg wrapper fixes victory-native onPressIn bug on Android devices.
@@ -76,10 +119,15 @@ export function VaccineChart(props) {
         maxDomain={{ y: maxDomain }}
         minDomain={{ y: minDomain }}
       >
-        {maxLinePlot}
-        {minLinePlot}
-        {linePlots}
-        {scatterPlots}
+        <VictoryAxis offsetY={50} />
+        <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
+        {minTempPlotLine}
+        {maxTempPlotLine}
+        {minLinePlotLine}
+        {minLinePlotScatter}
+        {maxLinePlotLine}
+        {maxLinePlotScatter}
+        {hazardPlotScatter}
       </VictoryChart>
     </Svg>
   );
