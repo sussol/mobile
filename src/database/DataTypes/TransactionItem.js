@@ -311,10 +311,7 @@ export class TransactionItem extends Realm.Object {
    */
   get totalDoses() {
     const { batches } = this;
-    return batches.reduce((sum, { doses }) => {
-      sum += Number(doses);
-      return sum;
-    }, 0);
+    return batches.sum('doses');
   }
 }
 
