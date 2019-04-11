@@ -15,28 +15,54 @@ console.disableYellowBox = true;
 export class VaccineChartPage extends React.Component {
   // eslint-disable-next-line class-methods-use-this
   render() {
-    const maxTempLine = [
-      { date: 'Feb 23', temp: 6, isBreach: false },
-      { date: '24', temp: 6.4, isBreach: true },
-      { date: '25', temp: 7, isBreach: false },
-      { date: '26', temp: 7.4, isBreach: true },
-    ];
+    const eventHandler = () => {
+      console.log('CLICKED');
+    };
 
-    const minTempLine = [
-      { date: 'Feb 23', temp: 3, isBreach: false },
-      { date: '24', temp: 3.4, isBreach: true },
-      { date: '25', temp: 4, isBreach: false },
-      { date: '26', temp: 4.4, isBreach: true },
-    ];
+    const maxTempLine = {
+      data: [
+        { date: 'Feb 23', temp: 6 },
+        { date: '24', temp: 6.4 },
+        { date: '25', temp: 7 },
+        { date: '26', temp: 7.4 },
+      ],
+      color: 'red',
+      eventHandler,
+    };
+
+    const minTempLine = {
+      data: [
+        { date: 'Feb 23', temp: 3 },
+        { date: '24', temp: 3.5 },
+        { date: '25', temp: 1 },
+        { date: '26', temp: 4 },
+      ],
+      color: 'blue',
+      eventHandler,
+    };
 
     const chartFunction = (width, height) => (
-      <VaccineChart data={[maxTempLine, minTempLine]} width={width} height={height} />
+      <VaccineChart
+        lines={[maxTempLine, minTempLine]}
+        maxTemp={6}
+        minTemp={3}
+        width={width}
+        height={height}
+      />
     );
 
     return (
       <View style={chartContainer}>
         <View style={flexRowTop}>
           <ChartWrapper chartFunction={chartFunction} />
+        </View>
+        <View style={flexRowBottom}>
+          <View style={flexColumnBottomLeft}>
+            <ChartWrapper chartFunction={chartFunction} />
+          </View>
+          <View style={flexColumnBottomRight}>
+            <ChartWrapper chartFunction={chartFunction} />
+          </View>
         </View>
       </View>
     );
@@ -61,17 +87,6 @@ const flexRowTop = {
   borderWidth: 1,
   borderColor: 'black',
 };
-
-{
-  /* <View style={flexRowBottom}>
-<View style={flexColumnBottomLeft}>
-  <VaccineChart lines={lines} width={width * 0.4} height={height * 0.4} />
-</View>
-<View style={flexColumnBottomRight}>
-  <VaccineChart lines={lines} width={width * 0.4} height={height * 0.4} />
-</View>
-</View> */
-}
 
 const flexRowBottom = {
   display: 'flex',
