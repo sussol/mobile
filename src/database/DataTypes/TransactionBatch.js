@@ -34,7 +34,7 @@ export class TransactionBatch extends Realm.Object {
     // another transactionBatch associated so don't delete.
     let canDeleteItemBatch = true;
     if (this.isVaccine) {
-      canDeleteItemBatch = this.itemBatch.transactionBatch.length === 1;
+      canDeleteItemBatch = this.itemBatch.transactionBatches.length === 1;
     }
 
     if (this.transaction.isExternalSupplierInvoice && canDeleteItemBatch) {
