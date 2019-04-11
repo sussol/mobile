@@ -151,7 +151,6 @@ export class CustomerInvoicePage extends GenericPage {
     const actions = {
       totalQuantity: () => {
         transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
-        transactionItem.resetAllDoses();
         if (transactionItem.item.doses === 1) transactionItem.setDoses(newValue);
       },
       doses: () => {
