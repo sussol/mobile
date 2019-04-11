@@ -148,10 +148,12 @@ export class CustomerInvoicePage extends GenericPage {
    */
   onEndEditing = (key, transactionItem, newValue) => {
     const { database } = this.props;
+    const { item } = transactionItem;
+
     const actions = {
       totalQuantity: () => {
         transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
-        if (transactionItem.item.doses === 1) transactionItem.setDoses(newValue);
+        if (item.doses === 1) transactionItem.setDoses(newValue);
       },
       doses: () => {
         transactionItem.setDoses(parsePositiveInteger(newValue));
@@ -280,10 +282,10 @@ export class CustomerInvoicePage extends GenericPage {
         // editable if doses > 1.
         const { item } = transactionItem;
         const { isVaccine, doses } = item;
-        const hasDosesOfOne = doses === 1;
-        if (!isVaccine) return emptyCell;
+        const shouldDisable = doses === 1;
+        if (!isVaccine || !doses) return emptyCell;
         return {
-          type: hasDosesOfOne ? 'text' : 'editable',
+          type: shouldDisable ? 'text' : 'editable',
           cellContents: totalDoses,
           placeholder: tableStrings.not_counted,
           textAlign: 'right',
