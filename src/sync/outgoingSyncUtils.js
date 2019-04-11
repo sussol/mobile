@@ -24,7 +24,7 @@ const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SET
 const bugsnagClient = new BugsnagClient();
 
 const getDateString = date => {
-  if (!date && typeof date !== 'object' && !date.toLocaleDateString) return '0000-00-00';
+  if (!date || typeof date !== 'object' || !date.toLocaleDateString) return '0000-00-00';
   return `${date.toLocaleDateString()}T00:00:00`;
 };
 
