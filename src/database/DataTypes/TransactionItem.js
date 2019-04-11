@@ -253,16 +253,15 @@ export class TransactionItem extends Realm.Object {
 
   /**
    * Sets the doses to be applied to this item. Will ensures that:
-   * totalQuantity <= doses <= totalQuantity * doses
+   * this.totalQuantity <= doses <= this.totalQuantity * this.item.doses
    * This averages and distributes the doses over all batches such that not all doses
    * are put only on the last expiring batch to avoid having some batches with no
    * doses.
    * @param {Number} value The number of doses to set for this item
    */
   setDoses(value) {
-    let { totalQuantity } = this.item;
+    let { totalQuantity } = this;
     let dosesToAdd = this.getValidDosesValue(value);
-    this.resetAllDoses();
 
     this.batches.sorted('expiryDate', false).forEach(batch => {
       const { totalQuantity: thisBatchesQuantity } = batch;
