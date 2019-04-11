@@ -252,23 +252,25 @@ export class TransactionItem extends Realm.Object {
   }
 
   /**
-   * Setter for TransactionBatch.doses related to this TransactionItem, in
-   * a FIFO queue, such that:
-   * batch.totalQuantity <= doses <= batch.totalQuantity * this.item.doses.
-   * @param {Number} value the number of doses to set
+   * Sets the doses to be applied to this item. Will ensures that:
+   * totalQuantity <= doses <= totalQuantity * doses
+   * Each batch.doses = floor(doses to add / total quantity * quantity this batch has)
+   * This averages and distributes the doses over all batches such that not all doses
+   * are put only on the last expiring batch to avoid having some batches with no
+   * doses.
+   * @param {Number} value The number of doses to set for this item
    */
   setDoses(value) {
-    const { doses: numberOfDosesPerVial } = this.item;
+    let { totalQuantity } = this.item;
     let dosesToAdd = this.getValidDosesValue(value);
-    const fifoBatches = this.batches.sorted('expiryDate');
 
-    fifoBatches.some(batch => {
-      const { totalQuantity: thisBatchTotalQuantity } = batch;
-      const maxDosesCanAddToBatch = thisBatchTotalQuantity * numberOfDosesPerVial;
-      const dosesAddingToThisBatch = Math.min(dosesToAdd, maxDosesCanAddToBatch);
-      batch.doses = dosesAddingToThisBatch;
-      dosesToAdd -= dosesAddingToThisBatch;
-      return !(dosesToAdd >= 0);
+    this.batches.sorted('expiryDate', false).forEach(batch => {
+      const { totalQuantity: thisBatchesQuantity } = batch;
+      const dosesForThisBatch = Math.floor((dosesToAdd / totalQuantity) * thisBatchesQuantity);
+      batch.doses = dosesForThisBatch;
+
+      dosesToAdd -= dosesForThisBatch;
+      totalQuantity -= thisBatchesQuantity;
     });
   }
 
