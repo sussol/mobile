@@ -8,8 +8,11 @@ import Realm from 'realm';
 export class Location extends Realm.Object {
   // TODO
   // getBreaches(database) <- ('SensorLogs') filter this ID and isInBreach = true
-  // isFridge -> check if locationType.description = fridge
   // getBatches ?
+
+  get isFridge() {
+    return this.locationType && this.locationType.description.toLowerCase() === 'fridge';
+  }
 }
 
 Location.schema = {

@@ -33,7 +33,7 @@ export class TextEditor extends React.Component {
   }
 
   render() {
-    const { onEndEditing } = this.props;
+    const { onEndEditing, keyboardType } = this.props;
     const { text } = this.state;
 
     return (
@@ -46,6 +46,7 @@ export class TextEditor extends React.Component {
           value={text}
           onChangeText={newText => this.setState({ text: newText })}
           onSubmitEditing={() => onEndEditing(text)}
+          keyboardType={keyboardType}
         />
         <Button
           style={[globalStyles.button, globalStyles.modalOrangeButton]}
@@ -58,12 +59,13 @@ export class TextEditor extends React.Component {
   }
 }
 
-export default TextEditor;
-
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
+TextEditor.defaultProps = {
+  keyboardType: 'default',
+};
 TextEditor.propTypes = {
-  text: PropTypes.string,
-  onEndEditing: PropTypes.func,
+  text: PropTypes.string.isRequired,
+  onEndEditing: PropTypes.func.isRequired,
+  keyboardType: PropTypes.string,
 };
 
 const localStyles = StyleSheet.create({
@@ -76,3 +78,5 @@ const localStyles = StyleSheet.create({
     marginRight: 10,
   },
 });
+
+export default TextEditor;

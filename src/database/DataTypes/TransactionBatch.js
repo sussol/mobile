@@ -1,5 +1,5 @@
 import Realm from 'realm';
-
+import { createRecord } from '..';
 /**
  * A transaction batch.
  *
@@ -29,8 +29,15 @@ export class TransactionBatch extends Realm.Object {
     this.setTotalQuantity(database, 0); // Ensure reverting of any stock changes to item batches.
 
     // Can safely remove associated item batch if transaction batch was created by an external
-    // supplier invoice.
-    if (this.transaction.isExternalSupplierInvoice) {
+    // supplier invoice unless it is a vaccine, which are split in a supplier invoice if the
+    // VVM status has failed. If the itemBatch has more than one TransactionBatch, there is
+    // another transactionBatch associated so don't delete.
+    let canDeleteItemBatch = true;
+    if (this.isVaccine) {
+      canDeleteItemBatch = this.itemBatch.transactionBatches.length === 1;
+    }
+
+    if (this.transaction.isExternalSupplierInvoice && canDeleteItemBatch) {
       database.delete('ItemBatch', this.itemBatch);
     }
   }
@@ -70,6 +77,14 @@ export class TransactionBatch extends Realm.Object {
       default:
         return 0;
     }
+  }
+
+  get isVaccine() {
+    return this.itemBatch && this.itemBatch.item && this.itemBatch.item.isVaccine;
+  }
+
+  get locationDescription() {
+    return this.location && this.location.description;
   }
 
   /**
@@ -152,6 +167,30 @@ export class TransactionBatch extends Realm.Object {
    */
   toString() {
     return `${this.itemBatch} in a ${this.transaction.type}`;
+  }
+
+  /**
+   * Splits a transactionBatch into two - (TB1, TB2). TB2 is a clone
+   * of TB1 except for numberOfPacks and doses fields.
+   * TB1.numberOfPacks = splitValue,
+   * TB2.numberOfPacks = originalNumberOfPacks - splitValue
+   * Most values are from the itemBatch, except values which are editted
+   * from within a supplier invoice - expiryDate and location.
+   * @param {Realm}  database
+   * @param {Number} splitValue - the value of numberOfPacks to split the batches on
+   */
+  splitBatch({ database, splitValue, newValues = {} }) {
+    const { itemBatch, transactionItem, numberOfPacks, id } = this;
+    if (numberOfPacks <= splitValue || splitValue <= 0) return this; // don't split
+    newValues.numberOfPacks = splitValue;
+
+    let newTransactionBatch;
+    database.write(() => {
+      newTransactionBatch = createRecord(database, 'TransactionBatch', transactionItem, itemBatch);
+      database.update('TransactionBatch', { ...this, id: newTransactionBatch.id, ...newValues });
+      database.update('TransactionBatch', { id, numberOfPacks: numberOfPacks - splitValue });
+    });
+    return newTransactionBatch;
   }
 }
 

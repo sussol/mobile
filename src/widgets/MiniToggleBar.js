@@ -28,7 +28,7 @@ import {
  * @prop {Bool}   currentState  Current state of the toggle. True = left, False = right, null = none
  * @prop {Func}   onPress       onPress function - returns {key, nextState}
  */
-export default class MiniToggleBar extends React.PureComponent {
+export class MiniToggleBar extends React.PureComponent {
   styles = () => {
     const { currentState } = this.props;
     if (currentState === null) {
@@ -111,3 +111,5 @@ MiniToggleBar.propTypes = {
   currentState: PropTypes.bool.isRequired,
   onPress: PropTypes.func.isRequired,
 };
+
+export default MiniToggleBar;
