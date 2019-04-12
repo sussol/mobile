@@ -250,6 +250,71 @@ export class TransactionItem extends Realm.Object {
     });
     database.delete('TransactionBatch', batchesToDelete);
   }
+
+  /**
+   * Sets the doses to be applied to this item. Will ensures that:
+   * this.totalQuantity <= doses <= this.totalQuantity * this.item.doses
+   * This averages and distributes the doses over all batches such that not all doses
+   * are put only on the last expiring batch to avoid having some batches with no
+   * doses.
+   * @param {Number} value The number of doses to set for this item
+   */
+  setDoses(value) {
+    let { totalQuantity } = this;
+    let dosesToAdd = this.getValidDosesValue(value);
+    this.resetAllDoses();
+
+    this.batches.sorted('expiryDate', false).forEach(batch => {
+      const { totalQuantity: thisBatchesQuantity } = batch;
+      const dosesForThisBatch = Math.floor((dosesToAdd / totalQuantity) * thisBatchesQuantity);
+      batch.doses = dosesForThisBatch;
+
+      dosesToAdd -= dosesForThisBatch;
+      totalQuantity -= thisBatchesQuantity;
+    });
+  }
+
+  /**
+   * Takes a value as the number of doses to apply to this
+   * TransactionItem.
+   * If value is less than this.totalQuantity, use totalQuantity as the
+   * minimum number of doses per vial is 1.
+   * If the value is greater than this.totalQuantity * this.item.doses,
+   * return this.totalQuantity * this.item.doses as this is the maximum
+   * number of doses which can be given for the vials available.
+   * Otherwise, value can be used.
+   * @param  {Number} value The number to test
+   * @return {Number} The valid number of doses which can be set
+   */
+  getValidDosesValue(value) {
+    const { item, totalQuantity } = this;
+    const { doses } = item;
+
+    const maximumPossibleDoses = doses * totalQuantity;
+    if (value >= maximumPossibleDoses) return maximumPossibleDoses;
+    if (value <= totalQuantity) return totalQuantity;
+    return value;
+  }
+
+  /**
+   * Sets the doses for this TransactionItem to 0.
+   */
+  resetAllDoses() {
+    const { batches } = this;
+    batches.forEach(batch => {
+      batch.doses = 0;
+    });
+  }
+
+  /**
+   * Gets the total number of doses given for
+   * TransactionBatch's associated to this
+   * TransactionItem.
+   */
+  get totalDoses() {
+    const { batches } = this;
+    return batches.sum('doses');
+  }
 }
 
 TransactionItem.schema = {
