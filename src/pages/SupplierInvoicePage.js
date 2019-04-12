@@ -11,6 +11,7 @@ import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
+
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -318,7 +319,7 @@ export class SupplierInvoicePage extends React.Component {
 
   renderCell = (key, transactionBatch) => {
     const { transaction } = this.props;
-    const { isVVMPassed, isVaccine, id, locationDescription } = transactionBatch;
+    const { isVVMPassed, isVaccine, id, locationDescription, location } = transactionBatch;
     const isEditable = !transaction.isFinalised;
     const type = isEditable ? 'editable' : 'text';
     const editableCell = {
@@ -367,14 +368,18 @@ export class SupplierInvoicePage extends React.Component {
       case 'fridge': {
         if (!isVaccine) return emptycell;
         const failed = isVVMPassed === false;
-        return (
-          <IconCell
-            text={failed ? 'Discarded' : locationDescription}
-            onPress={failed ? null : this.openFridgeSelector(transactionBatch)}
-            icon={failed ? 'times' : 'caret-up'}
-            disabled={failed}
-          />
-        );
+        const hasFridges = !location;
+        let props;
+        if (hasFridges) props = { text: 'No fridges', icon: 'times', disabled: true };
+        else {
+          props = {
+            text: failed ? 'Discarded' : locationDescription,
+            onPress: failed ? null : this.openFridgeSelector(transactionBatch),
+            icon: failed ? 'times' : 'caret-up',
+            disabled: failed,
+          };
+        }
+        return <IconCell {...props} />;
       }
     }
   };
