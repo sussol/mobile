@@ -96,6 +96,9 @@ export class SupplierInvoicePage extends React.Component {
       sortBy: 'itemName',
       isAscending: true,
     };
+
+    this.defaultFridge = null;
+
     this.state = {
       modalKey: null,
       modalIsOpen: false,
@@ -107,13 +110,17 @@ export class SupplierInvoicePage extends React.Component {
 
   componentDidMount = () => {
     const { transaction, database } = this.props;
-    const defaultFridge = database.objects('Location').find(location => location.isFridge);
-    database.write(() => {
-      transaction.getTransactionBatches(database).forEach(batch => {
-        if (!batch.location && batch.isVaccine) batch.location = defaultFridge;
-        database.save('TransactionBatch', batch);
+    this.defaultFridge = database.objects('Location').find(location => location.isFridge);
+    // If there are no fridges, don't iterate and assign.
+    if (this.defaultFridge) {
+      database.write(() => {
+        transaction.getTransactionBatches(database).forEach(batch => {
+          if (!batch.location && batch.isVaccine) batch.location = this.defaultFridge;
+          database.save('TransactionBatch', batch);
+        });
       });
-    });
+    }
+
     this.setState({ hasVaccine: transaction.hasVaccine });
   };
 
@@ -252,9 +259,7 @@ export class SupplierInvoicePage extends React.Component {
       );
 
       if (item.isVaccine) {
-        transactionBatch.location = database
-          .objects('Location')
-          .find(location => location.isFridge);
+        transactionBatch.location = this.defaultFridge;
         this.setState({ hasVaccine: true });
       }
       database.save('TransactionBatch', transactionBatch);
