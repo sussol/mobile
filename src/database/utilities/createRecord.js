@@ -134,8 +134,8 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
  * @return  {Requisition}
  */
-const createRequisition = (database, user, { otherStoreName, program, period, orderType }) =>
-  database.create('Requisition', {
+const createRequisition = (database, user, { otherStoreName, program, period, orderType }) => {
+  const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
     requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
@@ -149,6 +149,12 @@ const createRequisition = (database, user, { otherStoreName, program, period, or
     orderType,
     period,
   });
+
+  if (period) {
+    period.addRequisitionIfUnique(requisition);
+    database.save('Period', period);
+  }
+};
 
 /**
  * Create a new requisition item.
