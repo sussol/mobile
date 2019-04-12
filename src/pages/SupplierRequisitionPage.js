@@ -38,11 +38,15 @@ const MODAL_KEYS = {
 export class SupplierRequisitionPage extends React.Component {
   constructor(props) {
     super(props);
+
+    const { requisition } = props;
+    const { program, thresholdMOS } = requisition;
+
     this.state = {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
-      useThresholdMOS: !!props.requisition.program,
+      useThresholdMOS: !!program && thresholdMOS,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -363,7 +367,7 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderButtons = () => {
     const { requisition } = this.props;
-    const { program } = requisition;
+    const { program, thresholdMOS } = requisition;
 
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
@@ -378,7 +382,7 @@ export class SupplierRequisitionPage extends React.Component {
             isDisabled={requisition.isFinalised}
           />
 
-          {program && this.renderThresholdMOSToggle()}
+          {program && thresholdMOS && this.renderThresholdMOSToggle()}
 
           {!program && (
             <PageButton
