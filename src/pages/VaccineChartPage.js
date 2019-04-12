@@ -9,8 +9,6 @@ import { View } from 'react-native';
 import { ChartWrapper } from '../widgets/ChartWrapper';
 import { VaccineChart } from '../widgets/VaccineChart';
 
-console.disableYellowBox = true;
-
 const chartA = {
   maxLine: [
     { date: 'Feb 23', temp: 5.9 },
@@ -60,81 +58,94 @@ const chartB = {
     { date: '23:00', temp: 7.6 },
   ],
   hazards: [
-    { date: '11:00', temp: 8.5 },
-    { date: '14:00', temp: 10.3 },
-    { date: '17:00', temp: 12 },
-    { date: '20:00', temp: 11.3 },
+    { date: '11:00', temp: 8.5, onClick: () => console.log('CLICKED HAZARD 9') },
+    { date: '14:00', temp: 10.3, onClick: () => console.log('CLICKED HAZARD 10') },
+    { date: '17:00', temp: 12, onClick: () => console.log('CLICKED HAZARD 11') },
+    { date: '20:00', temp: 11.3, onClick: () => console.log('CLICKED HAZARD 12') },
   ],
   maxTemp: 8,
 };
 
-// const breachB = {
-//   data: [
-//     { date: '3:15', temp: 2.5 },
-//     { date: '3:30', temp: 1.5 },
-//     { date: '3:45', temp: 1 },
-//     { date: '4:00', temp: 0.5 },
-//     { date: '4:15', temp: -0.5 },
-//     { date: '4:30', temp: 1 },
-//     { date: '4:45', temp: 2 },
-//   ],
-//   boundary: 2,
-//   color: 'blue',
-//   eventHandler: () => console.log('CLICKED'),
-// };
+const chartC = {
+  minLine: [
+    { date: '3:15', temp: 2.5 },
+    { date: '3:30', temp: 1.5 },
+    { date: '3:45', temp: 1 },
+    { date: '4:00', temp: 0.5 },
+    { date: '4:15', temp: -0.5 },
+    { date: '4:30', temp: 1 },
+    { date: '4:45', temp: 2 },
+  ],
+  hazards: [
+    { date: '3:30', temp: 1.5, onClick: () => console.log('CLICKED HAZARD 13') },
+    { date: '3:45', temp: 1, onClick: () => console.log('CLICKED HAZARD 14') },
+    { date: '4:00', temp: 0.5, onClick: () => console.log('CLICKED HAZARD 15') },
+    { date: '4:15', temp: -0.5, onClick: () => console.log('CLICKED HAZARD 16') },
+    { date: '4:30', temp: 1, onClick: () => console.log('CLICKED HAZARD 17') },
+  ],
+  minTemp: 2,
+};
 
-// eslint-disable-next-line react/prefer-stateless-function
-export class VaccineChartPage extends React.Component {
-  // eslint-disable-next-line class-methods-use-this
-  render() {
-    const {
-      minLine: minLineA,
-      maxLine: maxLineA,
-      hazards: hazardsA,
-      minTemp: minTempA,
-      maxTemp: maxTempA,
-    } = chartA;
+export function VaccineChartPage() {
+  const {
+    minLine: minLineA,
+    maxLine: maxLineA,
+    hazards: hazardsA,
+    minTemp: minTempA,
+    maxTemp: maxTempA,
+  } = chartA;
 
-    const renderChartA = (width, height) => (
-      <VaccineChart
-        minLine={minLineA}
-        maxLine={maxLineA}
-        hazards={hazardsA}
-        minTemp={minTempA}
-        maxTemp={maxTempA}
-        width={width}
-        height={height}
-      />
-    );
+  const renderChartA = (width, height) => (
+    <VaccineChart
+      minLine={minLineA}
+      maxLine={maxLineA}
+      hazards={hazardsA}
+      minTemp={minTempA}
+      maxTemp={maxTempA}
+      width={width}
+      height={height}
+    />
+  );
 
-    const { maxLine: maxLineB, hazards: hazardsB, maxTemp: maxTempB } = chartB;
+  const { maxLine: maxLineB, hazards: hazardsB, maxTemp: maxTempB } = chartB;
 
-    const renderChartB = (width, height) => (
-      <VaccineChart
-        maxLine={maxLineB}
-        hazards={hazardsB}
-        maxTemp={maxTempB}
-        width={width}
-        height={height}
-      />
-    );
+  const renderChartB = (width, height) => (
+    <VaccineChart
+      maxLine={maxLineB}
+      hazards={hazardsB}
+      maxTemp={maxTempB}
+      width={width}
+      height={height}
+    />
+  );
 
-    return (
-      <View style={chartContainer}>
-        <View style={flexRowTop}>
-          <ChartWrapper chartFunction={renderChartA} />
+  const { minLine: minLineC, hazards: hazardsC, minTemp: minTempC } = chartC;
+
+  const renderChartC = (width, height) => (
+    <VaccineChart
+      minLine={minLineC}
+      hazards={hazardsC}
+      minTemp={minTempC}
+      width={width}
+      height={height}
+    />
+  );
+
+  return (
+    <View style={chartContainer}>
+      <View style={flexRowTop}>
+        <ChartWrapper chartFunction={renderChartA} />
+      </View>
+      <View style={flexRowBottom}>
+        <View style={flexColumnBottomLeft}>
+          <ChartWrapper chartFunction={renderChartB} />
         </View>
-        <View style={flexRowBottom}>
-          <View style={flexColumnBottomLeft}>
-            <ChartWrapper chartFunction={renderChartB} />
-          </View>
-          <View style={flexColumnBottomRight}>
-            <ChartWrapper chartFunction={renderChartB} />
-          </View>
+        <View style={flexColumnBottomRight}>
+          <ChartWrapper chartFunction={renderChartC} />
         </View>
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 const chartContainer = {

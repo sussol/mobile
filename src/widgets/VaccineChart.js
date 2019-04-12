@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import Svg, { Path } from 'react-native-svg';
+import PropTypes from 'prop-types';
 
 import {
   VictoryLine,
@@ -14,112 +14,79 @@ import {
   VictoryTheme,
 } from 'victory-native';
 
-function HazardPoint(props) {
-  const { x, y } = props;
+import Svg from 'react-native-svg';
 
-  return (
-    <Svg>
-      <Path
-        x={x - 15}
-        y={y - 40}
-        scale="0.05"
-        d="M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"
-        fill="red"
-      />
-    </Svg>
-  );
-}
+import { HazardPoint } from './HazardPoint';
 
-export function VaccineChart(props) {
-  // eslint-disable-next-line react/prop-types
+const getMinTemp = (minTemp, { temp }) => (temp < minTemp ? temp : minTemp);
+const getMaxTemp = (maxTemp, { temp }) => (temp > maxTemp ? temp : maxTemp);
+
+export const VaccineChart = props => {
   const { minLine, maxLine, hazards, minTemp, maxTemp, width, height } = props;
+
+  const x = 'date';
+  const y = 'temp';
 
   if (!minLine && !maxLine) return null;
 
-  let minDomain = minTemp !== undefined ? minTemp : Infinity;
-  let maxDomain = maxTemp !== undefined ? maxTemp : -Infinity;
-
-  if (minLine) {
-    minLine.forEach(datum => {
-      if (datum.temp < minDomain) {
-        minDomain = datum.temp;
-      }
-      if (datum.temp > maxDomain) {
-        maxDomain = datum.temp;
-      }
-    });
-  }
-
-  if (maxLine) {
-    maxLine.forEach(datum => {
-      if (datum.temp < minDomain) {
-        minDomain = datum.temp;
-      }
-      if (datum.temp > maxDomain) {
-        maxDomain = datum.temp;
-      }
-    });
-  }
-
-  minDomain -= 1;
-  maxDomain += 1;
+  const minDomain = minLine.concat(maxLine).reduce(getMinTemp, minTemp) - 1;
+  const maxDomain = minLine.concat(maxLine).reduce(getMaxTemp, maxTemp) + 1;
 
   const minTempPlotLine =
-    minTemp !== undefined ? (
-      <VictoryLine y={() => minTemp} style={{ data: { strokeDasharray: '1', stroke: 'blue' } }} />
+    minTemp !== Infinity ? (
+      <VictoryLine
+        y={() => minTemp}
+        style={{
+          data: { strokeDasharray: minLineStyles.strokeDasharray, stroke: minLineStyles.stroke },
+        }}
+      />
     ) : null;
 
   const maxTempPlotLine =
-    maxTemp !== undefined ? (
-      <VictoryLine y={() => maxTemp} style={{ data: { strokeDasharray: '1', stroke: 'red' } }} />
+    maxTemp !== -Infinity ? (
+      <VictoryLine
+        y={() => maxTemp}
+        style={{
+          data: { strokeDasharray: maxLineStyles.strokeDasharray, stroke: maxLineStyles.stroke },
+        }}
+      />
     ) : null;
 
   const minLinePlotLine =
-    minLine !== undefined ? (
+    minLine.length > 0 ? (
       <VictoryLine
         data={minLine}
-        interpolation="natural"
-        style={{ data: { stroke: 'blue' } }}
-        x="date"
-        y="temp"
+        interpolation={minLineStyles.interpolation}
+        style={{ data: { stroke: minLineStyles.stroke } }}
+        x={x}
+        y={y}
       />
     ) : null;
 
   const minLinePlotScatter =
-    minLine !== undefined ? (
-      <VictoryScatter data={minLine} style={{ data: { fill: 'blue' } }} x="date" y="temp" />
+    minLine.length > 0 ? (
+      <VictoryScatter data={minLine} style={{ data: { fill: minLineStyles.fill } }} x={x} y={y} />
     ) : null;
 
   const maxLinePlotLine =
-    maxLine !== undefined ? (
+    maxLine.length > 0 ? (
       <VictoryLine
         data={maxLine}
-        interpolation="natural"
-        style={{ data: { stroke: 'red' } }}
-        x="date"
-        y="temp"
+        interpolation={maxLineStyles.interpolation}
+        style={{ data: { stroke: maxLineStyles.stroke } }}
+        x={x}
+        y={y}
       />
     ) : null;
 
   const maxLinePlotScatter =
-    maxLine !== undefined ? (
-      <VictoryScatter data={maxLine} style={{ data: { fill: 'red' } }} x="date" y="temp" />
+    maxLine.length > 0 ? (
+      <VictoryScatter data={maxLine} style={{ data: { fill: maxLineStyles.fill } }} x={x} y={y} />
     ) : null;
 
   const hazardPlotScatter =
-    hazards !== undefined ? (
-      <VictoryScatter
-        dataComponent={<HazardPoint />}
-        events={[
-          {
-            target: 'data',
-            eventHandlers: { onPressIn: datum => datum.onClick() },
-          },
-        ]}
-        data={hazards}
-        x="date"
-        y="temp"
-      />
+    hazards.length > 0 ? (
+      <VictoryScatter dataComponent={<HazardPoint />} data={hazards} x={x} y={y} />
     ) : null;
 
   return (
@@ -145,12 +112,44 @@ export function VaccineChart(props) {
       </VictoryChart>
     </Svg>
   );
-}
+};
 
 const chartStyles = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
+};
+
+const minLineStyles = {
+  fill: 'blue',
+  interpolation: 'natural',
+  strokeDasharray: '1',
+  stroke: 'blue',
+};
+
+const maxLineStyles = {
+  fill: 'red',
+  interpolation: 'natural',
+  strokeDasharray: '1',
+  stroke: 'red',
+};
+
+VaccineChart.propTypes = {
+  minLine: PropTypes.arrayOf(PropTypes.object),
+  maxLine: PropTypes.arrayOf(PropTypes.object),
+  hazards: PropTypes.arrayOf(PropTypes.object),
+  minTemp: PropTypes.number,
+  maxTemp: PropTypes.number,
+  width: PropTypes.number.isRequired,
+  height: PropTypes.number.isRequired,
+};
+
+VaccineChart.defaultProps = {
+  minLine: [],
+  maxLine: [],
+  hazards: [],
+  minTemp: Infinity,
+  maxTemp: -Infinity,
 };
 
 export default VaccineChart;
