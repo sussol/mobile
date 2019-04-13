@@ -7,13 +7,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { GenericPage } from './GenericPage';
 import { MiniToggleBar, IconCell } from '../widgets/index';
 import { SUSSOL_ORANGE } from '../globalStyles/index';
 import { PageContentModal } from '../widgets/modals/index';
+
+import { formatExposureRange } from '../utilities';
 
 /**
  * CONSTANTS
@@ -71,14 +73,9 @@ const LOCALIZATION = {
 
 const getColumns = () => VACCINE_COLUMN_KEYS.map(key => COLUMNS[key]);
 
-const formatExposureRange = ({ min, max } = {}) => {
-  if (!(min && max)) return null;
-  const degree = String.fromCharCode(176);
-  return `${min}${degree}C to ${max}${degree}C`;
-};
-
 /**
- * MAnage item age etrc
+ * Page for managing items. Used for vaccine items currently.
+ * TODO: Expand when more clarification on this component.
  */
 export class ManageItemsPage extends React.Component {
   constructor(props) {
@@ -130,7 +127,8 @@ export class ManageItemsPage extends React.Component {
    */
   componentDidMount = () => {
     // TODO: If passed props e.g. initialSearchTerm, initialFilterStatus,
-    // set these in state and filter before setting data. This is bad.
+    // set these in state and filter before setting data. This is bad as
+    // is makes this component controlled and uncontrolled?
     //
     this.setData();
   };
@@ -169,13 +167,12 @@ export class ManageItemsPage extends React.Component {
   /**
    * RENDER HELPERS
    */
-
   renderModal = () => {
     const { modalKey } = this.state;
     const { BREACH } = MODAL_KEYS;
     switch (modalKey) {
       case BREACH:
-        return 'BREACH MODAL HERE';
+        return <Text>BREACH MODAL HERE</Text>;
       default:
         return null;
     }
@@ -244,7 +241,7 @@ export class ManageItemsPage extends React.Component {
         {...genericTablePageStyles}
       >
         {isModalOpen && (
-          <PageContentModal isOpen={isModalOpen} onClose={this.onModalUpdate}>
+          <PageContentModal isOpen={isModalOpen} onClose={this.onModalUpdate()}>
             <View>{this.renderModal()}</View>
           </PageContentModal>
         )}
@@ -253,7 +250,7 @@ export class ManageItemsPage extends React.Component {
   }
 }
 
-const localStyles = StyleSheet.create({});
+// const localStyles = StyleSheet.create({});
 
 ManageItemsPage.defaultProps = {};
 ManageItemsPage.propTypes = {
