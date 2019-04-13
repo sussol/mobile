@@ -42,7 +42,7 @@ export class SupplierRequisitionsPage extends React.Component {
 
   componentDidMount() {
     const { settings, database } = this.props;
-    this.setState({ usesPrograms: !!getAllPrograms(settings, database).length });
+    this.setState({ usesPrograms: getAllPrograms(settings, database).length > 0 });
   }
 
   onDelete = shouldConfirm => () => {
