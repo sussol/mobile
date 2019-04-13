@@ -19,7 +19,7 @@ import { COMPONENT_HEIGHT } from '../../globalStyles';
  * which was selected, the index/row within the data array and
  * the field which was displayed to the user.
  * @prop  {array}   data            Array of objects from which a choice must be made from
- * @prop  {string}  field           The object field which should be displayed to the user
+ * @prop  {string}  keyToDisplay    The object property which should be displayed to the user
  * @prop  {string}  title           The title of the modal
  * @prop  {func}    onPress         Function to call on selection returns {item, index, field}
  * @prop  {boolean} isOpen          Indicator for if the modal should be open
@@ -27,22 +27,22 @@ import { COMPONENT_HEIGHT } from '../../globalStyles';
  */
 export default class GenericChooseModal extends React.PureComponent {
   keyExtractor = (item, index) => {
-    const { field } = this.props;
-    const content = field && item ? item[field] : item;
+    const { keyToDisplay } = this.props;
+    const content = keyToDisplay && item ? item[keyToDisplay] : item;
     return `${content}${index}`;
   };
 
   renderRow = ({ item, index }) => {
-    const { onPress, field, highlightIndex } = this.props;
+    const { onPress, keyToDisplay, highlightIndex } = this.props;
     const { row, text } = localStyles;
 
     const indexToHighlight = highlightIndex >= 0 ? highlightIndex : 0;
     const rowStyle = index === indexToHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
     const textStyle = index === indexToHighlight ? { ...text, color: '#FFF' } : text;
     return (
-      <TouchableOpacity onPress={() => onPress({ item, index, field })}>
+      <TouchableOpacity onPress={() => onPress({ item, index, keyToDisplay })}>
         <View style={rowStyle}>
-          <Text style={textStyle}>{field ? item[field] : item}</Text>
+          <Text style={textStyle}>{keyToDisplay ? item[keyToDisplay] : item}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -88,7 +88,7 @@ GenericChooseModal.defaultProps = {
 };
 
 GenericChooseModal.propTypes = {
-  field: PropTypes.string.isRequired,
+  keyToDisplay: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
