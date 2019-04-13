@@ -118,7 +118,7 @@ export class ByProgramModal extends React.Component {
   // Open a modal - in case it is an earlier step in the process,
   // set the current step to the step number corresponding with
   // the onPress event.
-  onModalTransition = ({ key: currentStepKey }) => {
+  onModalTransition = ({ key: currentStepKey } = {}) => {
     if (currentStepKey) this.setState({ modalIsOpen: true, currentStepKey });
     else this.setState({ modalIsOpen: false });
   };
