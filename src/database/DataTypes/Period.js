@@ -38,9 +38,7 @@ export class Period extends Realm.Object {
   }
 
   toString() {
-    return `${this.startDate.toLocaleDateString('en-US')} - ${this.endDate.toLocaleDateString(
-      'en-US'
-    )} `;
+    return `${this.startDate.toLocaleDateString()} - ${this.endDate.toLocaleDateString()} `;
   }
 }
 
