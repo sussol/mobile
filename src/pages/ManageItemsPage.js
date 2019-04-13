@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -7,19 +8,26 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { View, StyleSheet } from 'react-native';
+import { SearchBar } from 'react-native-ui-components';
 
 import { GenericPage } from './GenericPage';
 import { MiniToggleBar } from '../widgets/index';
+import { SUSSOL_ORANGE } from '../globalStyles/index';
 
 /**
  * CONSTANTS
  */
 
 const COLUMNS = {
-  itemName: { key: 'itemName', width: 1, title: 'Item', alignText: 'left' },
-  batchesCount: { key: 'batchesCount', width: 1, title: 'Number of batches', alignText: 'left' },
+  name: { key: 'name', width: 1, title: 'Item', alignText: 'left' },
+  totalBatchesInStock: {
+    key: 'totalBatchesInStock',
+    width: 1,
+    title: 'Number of batches',
+    alignText: 'left',
+  },
   totalQuantity: { key: 'totalQuantity', width: 1, title: 'Quantity', alignText: 'left' },
-  breach: { key: 'breach', width: 1, title: 'Breach', alignText: 'left' },
+  hasBreach: { key: 'hasBreach', width: 1, title: 'Breach', alignText: 'left' },
   navigation: { key: 'navigation', width: 1, title: '', alignText: 'left' },
   quantityInBreach: {
     key: 'quantityInBreach',
@@ -36,14 +44,21 @@ const COLUMNS = {
 };
 
 const VACCINE_COLUMN_KEYS = [
-  'itemName',
-  'batchesCount',
+  'name',
+  'totalBatchesInStock',
   'totalQuantity',
   'quantityInBreach',
   'exposureRange',
-  'breach',
+  'hasBreach',
   'navigation',
 ];
+
+const LOCALIZATION = {
+  toggle: {
+    location: 'Filter by Location',
+    name: 'Filter by Item Name',
+  },
+};
 
 /**
  * HELPER METHODS
@@ -60,62 +75,118 @@ export class ManageItemsPage extends React.Component {
 
     this.state = {
       data: null,
+      filterStatus: true,
     };
   }
 
-  componentDidMount = () => {
+  /**
+   * HELPER METHODS
+   */
+  setData = ({ data } = {}) => {
     const { database } = this.props;
-    const data = database.objects('Item').filter(item => item.isVaccine);
-    this.setState({ data });
+    let dataToSet;
+    if (!data) {
+      dataToSet = database.objects('Item').filter(item => item.isVaccine);
+    } else {
+      dataToSet = data;
+    }
+    this.setState({ data: dataToSet });
   };
 
-  renderCell = (key, item) => item.id;
-
-  filteringData = term => {
-    const { data } = this.state;
+  locationFilter = searchTerm => {
     const { database } = this.props;
     const fridges = database
       .objects('Location')
-      .filter(fridge => fridge.description.startsWith(term));
-
-    // rrconst fridges = data.filter(item => item);
+      .filtered('description BEGINSWITH[c] $0', searchTerm);
+    return database
+      .objects('Item')
+      .filter(item => item.isVaccine)
+      .filter(item => item.hasBatchInFridges(fridges));
   };
 
-  refreshData = (searchTerm, sortBy, isAscending) => {
-    const { data } = this.state;
-    if (!data) return;
+  itemFilter = searchTerm => {
+    const { database } = this.props;
+    return database
+      .objects('Item')
+      .filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm)
+      .filter(item => item.isVaccine);
+  };
+
+  /**
+   * COMPONENT METHODS
+   */
+  componentDidMount = () => {
+    // TODO: If passed props e.g. initialSearchTerm, initialFilterStatus,
+    // set these in state and filter before setting data. This is bad.
+    //
+    this.setData();
+  };
+
+  /**
+   * EVENT HANDLERS
+   */
+
+  onToggle = () => {
+    const { filterStatus } = this.state;
+    this.setState({ filterStatus: !filterStatus });
+  };
+
+  onFilterData = searchTerm => {
+    const { filterStatus } = this.state;
+    let newData;
     if (searchTerm) {
+      newData = filterStatus ? this.locationFilter(searchTerm) : this.itemFilter(searchTerm);
     }
-    this.setState({
-      data: data.filter(item => item.location && item.location.description.startsWith('F')),
-    });
+    this.setData({ data: newData });
   };
+
+  /**
+   * RENDER HELPERS
+   */
+
+  renderCell = (key, item) => {
+    switch (key) {
+      default:
+        return item[key];
+      case 'hasBreach':
+        return 'BREACHED';
+      case 'navigation':
+        return 'ICON';
+      case 'exposureRange':
+        return 'X TO Y';
+    }
+  };
+
+  renderFilterToggle = () => {
+    const { filterStatus } = this.state;
+    const { toggle } = LOCALIZATION;
+    return (
+      <View style={{ height: 80 }}>
+        <MiniToggleBar
+          leftText={toggle.location}
+          rightText={toggle.name}
+          onPress={this.onToggle}
+          currentState={filterStatus}
+        />
+      </View>
+    );
+  };
+
+  renderSearchBar = () => <SearchBar color={SUSSOL_ORANGE} onChange={this.onFilterData} />;
 
   render() {
     const { genericTablePageStyles, database, topRoute } = this.props;
     const { data } = this.state;
+
     return (
       <GenericPage
-        data={data || []}
-        renderCell={this.renderCell}
-        renderTopRightComponent={() => (
-          <View style={{ height: 80 }}>
-            <MiniToggleBar leftText="Filter by Location" rightText="Filter by item name" />
-          </View>
-        )}
-        renderTopLeftComponent={() => (
-          <View
-            style={{
-              borderBottomWidth: 10,
-              borderBottomColor: 'red',
-              minHeight: 200,
-              minWidth: 200,
-            }}
-          />
-        )}
-        columns={[{ title: 'x', key: 'x', sortable: true }]}
         database={database}
         topRoute={topRoute}
+        columns={getColumns()}
+        data={data || []}
+        renderCell={this.renderCell}
+        renderTopRightComponent={this.renderFilterToggle}
+        renderTopLeftComponent={this.renderSearchBar}
         {...genericTablePageStyles}
       />
     );
@@ -125,6 +196,10 @@ export class ManageItemsPage extends React.Component {
 const localStyles = StyleSheet.create({});
 
 ManageItemsPage.defaultProps = {};
-ManageItemsPage.propTypes = {};
+ManageItemsPage.propTypes = {
+  genericTablePageStyles: PropTypes.object.isRequired,
+  database: PropTypes.object.isRequired,
+  topRoute: PropTypes.object.isRequired,
+};
 
 export default ManageItemsPage;
