@@ -528,18 +528,20 @@ export class StocktakeEditPage extends React.Component {
           onConfirm={this.onConfirmBatchModal}
         />
 
-        <GenericChooseModal
-          isOpen={isReasonsModalOpen}
-          data={database.objects('Options')}
-          highlightIndex={
-            currentStocktakeItem && currentStocktakeItem.hasReason
-              ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
-              : 0
-          }
-          field="title"
-          onPress={this.reasonModalConfirm}
-          title="Select a reason"
-        />
+        {isReasonsModalOpen && (
+          <GenericChooseModal
+            isOpen={isReasonsModalOpen}
+            data={database.objects('Options')}
+            highlightIndex={
+              currentStocktakeItem && currentStocktakeItem.hasReason
+                ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
+                : 0
+            }
+            field="title"
+            onPress={this.reasonModalConfirm}
+            title="Select a reason"
+          />
+        )}
       </GenericPage>
     );
   }

@@ -291,9 +291,11 @@ export class StocktakeItem extends Realm.Object {
     });
 
     // Sort (ASC) the options by count, return the first option
-    return Object.values(options).sort(
+    const sortedOptions = Object.values(options).sort(
       ({ count: valueA }, { count: valueB }) => parseInt(valueB, 10) - parseInt(valueA, 10)
-    )[0].option;
+    );
+
+    return sortedOptions[0] && sortedOptions[0].option;
   }
 
   /**
