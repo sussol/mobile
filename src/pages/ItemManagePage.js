@@ -90,7 +90,6 @@ export class ItemManagePage extends React.Component {
    */
   componentDidMount = () => {
     const { database, item } = this.props;
-    // Will normally be passed item from props;
     this.FRIDGES = database.objects('Location');
     this.setState({ data: item.batches.map(itemBatch => createRowObject(itemBatch)) });
   };
@@ -142,9 +141,14 @@ export class ItemManagePage extends React.Component {
 
   onApplyChanges = () => {
     // TODO:
-    // Create inventory adjustments for any failed vvm status'.
+    // Confirmation dialog
+    // Create inventory adjustments for any failed vvm status'
     // Create repacks for any location changes
     // Pop this page off the navigation stack.
+    // If more data is needed to create these repacks and inventory
+    // adjustments, they can easily be added to the row object with
+    // no side-effects. e.g. the ItemBatch itself or just
+    // some extra fields.
   };
 
   onDispose = () => {
