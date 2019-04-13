@@ -19,6 +19,7 @@ import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import SequentialSteps from '../SequentialSteps';
 
+// TODO: Proper localization
 const localization = {
   program: 'program',
   supplier: 'supplier',
