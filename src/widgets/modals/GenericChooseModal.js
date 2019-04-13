@@ -24,6 +24,10 @@ import { COMPONENT_HEIGHT } from '../../globalStyles';
  * @prop  {func}    onPress         Function to call on selection returns {item, index, field}
  * @prop  {boolean} isOpen          Indicator for if the modal should be open
  * @prop  {int}     highlightIndex  Index of the data array for which object should be 'highlighted'
+ * @prop  {string}  highlightValue  Value of the field in the data array for which object should be
+ *                                  'highlighted'
+ * NOTE: If there are multiple, equal values used in highlightValue within the data array,
+ * multiple values will be highlighted.
  */
 export default class GenericChooseModal extends React.PureComponent {
   keyExtractor = (item, index) => {
