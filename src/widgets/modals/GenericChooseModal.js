@@ -33,12 +33,15 @@ export default class GenericChooseModal extends React.PureComponent {
   };
 
   renderRow = ({ item, index }) => {
-    const { onPress, keyToDisplay, highlightIndex } = this.props;
+    const { onPress, keyToDisplay, highlightIndex, highlightValue } = this.props;
     const { row, text } = localStyles;
 
-    const indexToHighlight = highlightIndex >= 0 ? highlightIndex : 0;
-    const rowStyle = index === indexToHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
-    const textStyle = index === indexToHighlight ? { ...text, color: '#FFF' } : text;
+    let shouldHighlight = false;
+    if (keyToDisplay && highlightValue) shouldHighlight = item[keyToDisplay] === highlightValue;
+    else if (!highlightValue) shouldHighlight = index === highlightIndex;
+
+    const rowStyle = shouldHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
+    const textStyle = shouldHighlight ? { ...text, color: '#FFF' } : text;
     return (
       <TouchableOpacity onPress={() => onPress({ item, index, keyToDisplay })}>
         <View style={rowStyle}>
@@ -85,6 +88,7 @@ const localStyles = StyleSheet.create({
 
 GenericChooseModal.defaultProps = {
   highlightIndex: 0,
+  highlightValue: null,
 };
 
 GenericChooseModal.propTypes = {
@@ -94,4 +98,5 @@ GenericChooseModal.propTypes = {
   title: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   highlightIndex: PropTypes.number,
+  highlightValue: PropTypes.string,
 };
