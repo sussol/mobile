@@ -11,34 +11,39 @@ import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { GenericPage } from './GenericPage';
-import { MiniToggleBar } from '../widgets/index';
+import { MiniToggleBar, IconCell } from '../widgets/index';
 import { SUSSOL_ORANGE } from '../globalStyles/index';
+import { PageContentModal } from '../widgets/modals/index';
 
 /**
  * CONSTANTS
  */
 
+const MODAL_KEYS = {
+  BREACH: 'breach',
+};
+
 const COLUMNS = {
-  name: { key: 'name', width: 1, title: 'Item', alignText: 'left' },
+  name: { key: 'name', width: 1.5, title: 'ITEM NAME', alignText: 'left' },
   totalBatchesInStock: {
     key: 'totalBatchesInStock',
-    width: 1,
-    title: 'Number of batches',
+    width: 0.8,
+    title: 'NUMBER OF BATCHES',
     alignText: 'right',
   },
-  totalQuantity: { key: 'totalQuantity', width: 1, title: 'Quantity', alignText: 'right' },
-  hasBreach: { key: 'hasBreach', width: 1, title: 'Breach', alignText: 'left' },
-  navigation: { key: 'navigation', width: 1, title: 'Manage', alignText: 'left' },
+  totalQuantity: { key: 'totalQuantity', width: 0.5, title: 'QUANTITY', alignText: 'right' },
+  hasBreach: { key: 'hasBreach', width: 0.5, title: 'BREACH', alignText: 'left' },
+  navigation: { key: 'navigation', width: 0.5, title: 'MANAGE', alignText: 'left' },
   quantityInBreach: {
     key: 'quantityInBreach',
-    width: 1,
-    title: 'Quantity in breach',
+    width: 0.8,
+    title: 'QUANTITY IN BREACH',
     alignText: 'right',
   },
   exposureRange: {
-    key: 'exposureRange',
+    key: 'temperatureExposure',
     width: 1,
-    title: 'Temperature exposure',
+    title: 'TEMPERATURE EXPOSURE',
     alignText: 'center',
   },
 };
@@ -66,6 +71,12 @@ const LOCALIZATION = {
 
 const getColumns = () => VACCINE_COLUMN_KEYS.map(key => COLUMNS[key]);
 
+const formatExposureRange = ({ min, max } = {}) => {
+  if (!(min && max)) return null;
+  const degree = String.fromCharCode(176);
+  return `${min}${degree}C to ${max}${degree}C`;
+};
+
 /**
  * MAnage item age etrc
  */
@@ -76,6 +87,8 @@ export class ManageItemsPage extends React.Component {
     this.state = {
       data: null,
       filterStatus: true,
+      modalKey: null,
+      isModalOpen: false,
     };
   }
 
@@ -140,20 +153,61 @@ export class ManageItemsPage extends React.Component {
     this.setData({ data: newData });
   };
 
+  onNavigateToItem = ({ item } = {}) => {
+    if (!item) {
+      // return here, linter complaining about empty stuff
+      setTimeout();
+    }
+    // TODO: Navigate to Vaccine Manage Item Page
+  };
+
+  onModalUpdate = ({ modalKey } = {}) => () => {
+    if (!modalKey) this.setState({ isModalOpen: false, modalKey: null });
+    else this.setState({ isModalOpen: true, modalKey });
+  };
+
   /**
    * RENDER HELPERS
    */
 
+  renderModal = () => {
+    const { modalKey } = this.state;
+    const { BREACH } = MODAL_KEYS;
+    switch (modalKey) {
+      case BREACH:
+        return 'BREACH MODAL HERE';
+      default:
+        return null;
+    }
+  };
+
   renderCell = (key, item) => {
+    const { BREACH } = MODAL_KEYS;
+    const emptyCell = { type: 'text', cellContents: '' };
     switch (key) {
       default:
         return item[key];
       case 'hasBreach':
-        return 'BREACHED';
+        if (!item[key]) return emptyCell;
+        return (
+          <IconCell
+            icon="warning"
+            iconColor="red"
+            iconSize={30}
+            onPress={this.onModalUpdate({ modalKey: BREACH })}
+          />
+        );
       case 'navigation':
-        return 'ICON';
-      case 'exposureRange':
-        return 'X TO Y';
+        return (
+          <IconCell
+            icon="angle-double-up"
+            iconSize={20}
+            iconColor={SUSSOL_ORANGE}
+            onPress={this.onNavigateToItem}
+          />
+        );
+      case 'temperatureExposure':
+        return formatExposureRange(item[key]);
     }
   };
 
@@ -176,7 +230,7 @@ export class ManageItemsPage extends React.Component {
 
   render() {
     const { genericTablePageStyles, database, topRoute } = this.props;
-    const { data } = this.state;
+    const { data, isModalOpen } = this.state;
 
     return (
       <GenericPage
@@ -188,7 +242,13 @@ export class ManageItemsPage extends React.Component {
         renderTopRightComponent={this.renderFilterToggle}
         renderTopLeftComponent={this.renderSearchBar}
         {...genericTablePageStyles}
-      />
+      >
+        {isModalOpen && (
+          <PageContentModal isOpen={isModalOpen} onClose={this.onModalUpdate}>
+            <View>{this.renderModal()}</View>
+          </PageContentModal>
+        )}
+      </GenericPage>
     );
   }
 }
