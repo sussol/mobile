@@ -24,22 +24,22 @@ const COLUMNS = {
     key: 'totalBatchesInStock',
     width: 1,
     title: 'Number of batches',
-    alignText: 'left',
+    alignText: 'right',
   },
-  totalQuantity: { key: 'totalQuantity', width: 1, title: 'Quantity', alignText: 'left' },
+  totalQuantity: { key: 'totalQuantity', width: 1, title: 'Quantity', alignText: 'right' },
   hasBreach: { key: 'hasBreach', width: 1, title: 'Breach', alignText: 'left' },
-  navigation: { key: 'navigation', width: 1, title: '', alignText: 'left' },
+  navigation: { key: 'navigation', width: 1, title: 'Manage', alignText: 'left' },
   quantityInBreach: {
     key: 'quantityInBreach',
     width: 1,
     title: 'Quantity in breach',
-    alignText: 'left',
+    alignText: 'right',
   },
   exposureRange: {
     key: 'exposureRange',
     width: 1,
     title: 'Temperature exposure',
-    alignText: 'left',
+    alignText: 'center',
   },
 };
 
