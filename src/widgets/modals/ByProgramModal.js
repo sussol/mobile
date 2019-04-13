@@ -92,8 +92,8 @@ export class ByProgramModal extends React.Component {
     const { settings, database } = this.props;
     const programs = getAllPrograms(settings, database);
     const suppliers = database.objects('Name').filtered('isSupplier = $0', true);
-    const steps = this.setCurrentSteps();
-    this.setState({ programs, suppliers, currentStepKey: steps[0].key });
+    this.setCurrentSteps(true);
+    this.setState({ programs, suppliers });
   };
 
   onConfirmRequisition = () => {
