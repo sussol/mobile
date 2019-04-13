@@ -217,16 +217,24 @@ export class Item extends Realm.Object {
     return `${this.code} - ${this.name}`;
   }
 
-  /**
-   * Gets if this item has a batch in a fridge
-   * @param {*} fridge
-   */
-  hasBatchInFridge(fridge) {
-    return this.batches.some(({ location }) => location === fridge);
+  hasBatchInFridges(fridges) {
+    return this.batches.some(
+      batch => batch.location && fridges.find(fridge => fridge.id === batch.location.id)
+    );
   }
 
-  hasBatchInFridges(fridgeIDs) {
-    return this.batches.some(({ location }) => fridgeIDs.indexOf(location.id) > 0);
+  // TODO: Make this real
+  get hasBreach() {
+    return Math.round(Math.random()) & 1;
+  }
+
+  // TODO: Make this real
+  get quantityInBreach() {
+    return Math.round(Math.random(1, 10) * 50);
+  }
+
+  get temperatureExposure() {
+    return { max: 3, min: 10, average: (3 / 10) * 2 };
   }
 }
 
