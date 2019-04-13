@@ -149,11 +149,11 @@ const createRequisition = (database, user, { otherStoreName, program, period, or
     orderType,
     period,
   });
-
   if (period) {
     period.addRequisitionIfUnique(requisition);
     database.save('Period', period);
   }
+  return requisition;
 };
 
 /**
