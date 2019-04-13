@@ -118,14 +118,6 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * Checks if this item is a vaccine
-   * @return {boolean}
-   */
-  get isVaccine() {
-    return this.category && this.category.name === 'Vaccine';
-  }
-
-  /**
    * Get category of item, or empty string if no category exists.
    *
    * @return  {string}
@@ -223,6 +215,18 @@ export class Item extends Realm.Object {
    */
   toString() {
     return `${this.code} - ${this.name}`;
+  }
+
+  /**
+   * Gets if this item has a batch in a fridge
+   * @param {*} fridge
+   */
+  hasBatchInFridge(fridge) {
+    return this.batches.some(({ location }) => location === fridge);
+  }
+
+  hasBatchInFridges(fridgeIDs) {
+    return this.batches.some(({ location }) => fridgeIDs.indexOf(location.id) > 0);
   }
 }
 
