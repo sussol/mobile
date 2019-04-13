@@ -16,7 +16,7 @@ import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalS
 import { AutocompleteSelector, ToggleBar, PageButton, TextEditor } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
-import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities/byProgram';
+import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import SequentialSteps from '../SequentialSteps';
 
 const localization = {
