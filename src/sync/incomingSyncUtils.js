@@ -15,7 +15,7 @@ import { SETTINGS_KEYS } from '../settings';
 
 /* eslint-disable camelcase */
 
-const { THIS_STORE_ID } = SETTINGS_KEYS;
+const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
 /**
  * Returns the number string as a float, or null if none passed.
@@ -195,6 +195,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     Stocktake: {
       cannotBeBlank: ['status'],
       canBeBlank: ['Description', 'stock_take_created_date', 'serial_number'],
+    },
+    Store: {
+      cannotBeBlank: [],
+      canBeBlank: [],
     },
     StocktakeBatch: {
       cannotBeBlank: [
@@ -647,6 +651,17 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
       database.save('Stocktake', stocktake);
+      break;
+    }
+    case 'Store': {
+      const { tags, custom_data } = record;
+      if (settings.get(THIS_STORE_ID) === record.ID) {
+        database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
+        database.update('Setting', {
+          key: THIS_STORE_CUSTOM_DATA,
+          value: custom_data && custom_data.replace(/\\/g, ''),
+        });
+      }
       break;
     }
     case 'Transaction': {
