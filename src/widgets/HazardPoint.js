@@ -16,9 +16,12 @@ export const HazardPoint = props => {
   const { x, y, datum } = props;
   const { xOffset, yOffset, scale, fill } = hazardPointStyles;
 
+  const { onPress, data } = datum;
+  const onPressFunction = () => onPress && onPress(data);
+
   return (
     <Svg>
-      <G onPress={() => datum.onClick()}>
+      <G onPress={onPressFunction}>
         <Path x={x + xOffset} y={y + yOffset} scale={scale} d={hazardPath} fill={fill} />
       </G>
     </Svg>
