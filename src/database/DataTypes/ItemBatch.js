@@ -146,8 +146,8 @@ export class ItemBatch extends Realm.Object {
    * recorded temperatures for this ItemBatch.
    */
   get temperatureExposure() {
-    const maxTemperature = this.sensorLogs.max('temperature');
-    const minTemperature = this.sensorLogs.min('temperature');
+    const maxTemperature = this.sensorLogs.max('temperature') || -Infinity;
+    const minTemperature = this.sensorLogs.min('temperature') || Infinity;
     return { maxTemperature, minTemperature };
   }
 }
