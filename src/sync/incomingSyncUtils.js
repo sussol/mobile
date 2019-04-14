@@ -30,6 +30,23 @@ const parseNumber = numberString => {
 };
 
 /**
+ * Safely checks json as string, returns null if failure or passed parameter
+ *
+ * @param   {string/null/undefined}  jsonAsString  JSON string to check
+ * @return  {string/null} on successfull check return passed parameter or null
+ */
+const validateJson = jsonAsString => {
+  if (!jsonAsString) return null;
+  let result = null;
+  try {
+    result = JSON.parse(jsonAsString);
+  } catch (e) {
+    // do nothing
+  }
+  return result && jsonAsString;
+};
+
+/**
  * Return a Date object representing the given date, time.
  *
  * @param   {string}  ISODate  The date in ISO 8601 format.
@@ -243,6 +260,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
+      record[fieldName] !== undefined && // Field may be empty string.
       record[fieldName].length > 0, // Key must not be empty string.
     true
   );
@@ -659,7 +677,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
         database.update('Setting', {
           key: THIS_STORE_CUSTOM_DATA,
-          value: custom_data && custom_data.replace(/\\/g, ''),
+          value: validateJson(custom_data),
         });
       }
       break;
