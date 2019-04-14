@@ -6,7 +6,6 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import { ChartWrapper } from '../widgets/ChartWrapper';
 import { VaccineChart } from '../widgets/VaccineChart';
 
 const chartA = {
@@ -94,54 +93,26 @@ export function VaccineChartPage() {
     minTemp: minTempA,
     maxTemp: maxTempA,
   } = chartA;
-
-  const renderChartA = (width, height) => (
-    <VaccineChart
-      minLine={minLineA}
-      maxLine={maxLineA}
-      hazards={hazardsA}
-      minTemp={minTempA}
-      maxTemp={maxTempA}
-      width={width}
-      height={height}
-    />
-  );
-
   const { maxLine: maxLineB, hazards: hazardsB, maxTemp: maxTempB } = chartB;
-
-  const renderChartB = (width, height) => (
-    <VaccineChart
-      maxLine={maxLineB}
-      hazards={hazardsB}
-      maxTemp={maxTempB}
-      width={width}
-      height={height}
-    />
-  );
-
   const { minLine: minLineC, hazards: hazardsC, minTemp: minTempC } = chartC;
-
-  const renderChartC = (width, height) => (
-    <VaccineChart
-      minLine={minLineC}
-      hazards={hazardsC}
-      minTemp={minTempC}
-      width={width}
-      height={height}
-    />
-  );
 
   return (
     <View style={chartContainer}>
       <View style={flexRowTop}>
-        <ChartWrapper chartFunction={renderChartA} />
+        <VaccineChart
+          minLine={minLineA}
+          maxLine={maxLineA}
+          hazards={hazardsA}
+          minTemp={minTempA}
+          maxTemp={maxTempA}
+        />
       </View>
       <View style={flexRowBottom}>
         <View style={flexColumnBottomLeft}>
-          <ChartWrapper chartFunction={renderChartB} />
+          <VaccineChart maxLine={maxLineB} hazards={hazardsB} maxTemp={maxTempB} />
         </View>
         <View style={flexColumnBottomRight}>
-          <ChartWrapper chartFunction={renderChartC} />
+          <VaccineChart minLine={minLineC} hazards={hazardsC} minTemp={minTempC} />
         </View>
       </View>
     </View>
