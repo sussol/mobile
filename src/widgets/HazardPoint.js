@@ -14,6 +14,7 @@ const hazardPath = `M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.0
 
 export const HazardPoint = props => {
   const { x, y, datum } = props;
+
   const { xOffset, yOffset, scale, fill } = hazardPointStyles;
 
   const { onPress, data } = datum;
@@ -35,10 +36,14 @@ const hazardPointStyles = {
   fill: 'red',
 };
 
+// Bug in Victory charts causes required props to be undefined on first render.
 HazardPoint.propTypes = {
-  x: PropTypes.number.isRequired,
-  y: PropTypes.number.isRequired,
-  datum: PropTypes.objectOf.isRequired,
+  // eslint-disable-next-line react/require-default-props
+  x: PropTypes.number,
+  // eslint-disable-next-line react/require-default-props
+  y: PropTypes.number,
+  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
+  datum: PropTypes.object,
 };
 
 export default HazardPoint;
