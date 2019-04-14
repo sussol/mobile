@@ -171,10 +171,7 @@ export class TransactionBatch extends Realm.Object {
 
   get transactionItem() {
     const { transaction } = this;
-    return transaction.items.find(transactionItem => {
-      const { batches } = transactionItem;
-      return batches.some(batch => batch.id === this.id);
-    });
+    return transaction.items.find(({ batches }) => batches.some(batch => batch.id === this.id));
   }
 
   /**
