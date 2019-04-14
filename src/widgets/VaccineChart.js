@@ -20,9 +20,6 @@ import Svg from 'react-native-svg';
 
 import { HazardPoint } from './HazardPoint';
 
-const getMinTemp = (minTemp, { temp }) => (temp < minTemp ? temp : minTemp);
-const getMaxTemp = (maxTemp, { temp }) => (temp > maxTemp ? temp : maxTemp);
-
 export class VaccineChart extends React.Component {
   constructor(props) {
     super(props);
@@ -43,21 +40,24 @@ export class VaccineChart extends React.Component {
   };
 
   renderPlot() {
+    const { minLine, maxLine, hazards, minTemp, maxTemp } = this.props;
     const { width, height } = this.state;
 
     if (!width || !height) return null;
 
-    const { minLine, maxLine, hazards, minTemp, maxTemp } = this.props;
+    if (minLine.length + maxLine.length === 0) return null;
 
-    const x = 'date';
-    const y = 'temp';
+    const dataKeys = { x: 'date', y: 'temp' };
 
-    if (!minLine && !maxLine) return null;
+    const lines = [...minLine, ...maxLine];
 
-    const minDomain = minLine.concat(maxLine).reduce(getMinTemp, minTemp) - 1;
-    const maxDomain = minLine.concat(maxLine).reduce(getMaxTemp, maxTemp) + 1;
+    const minDomain =
+      lines.reduce((reducedTemp, { temp }) => Math.min(reducedTemp, temp), minTemp) - 1;
+    const maxDomain =
+      lines.reduce((reducedTemp, { temp }) => Math.max(reducedTemp, temp), maxTemp) + 1;
 
     const minTempPlotLine =
+      // minTemp default prop is Infinity.
       minTemp !== Infinity ? (
         <VictoryLine
           y={() => minTemp}
@@ -68,6 +68,7 @@ export class VaccineChart extends React.Component {
       ) : null;
 
     const maxTempPlotLine =
+      // maxTemp default prop is -Infinity.
       maxTemp !== -Infinity ? (
         <VictoryLine
           y={() => maxTemp}
@@ -83,14 +84,19 @@ export class VaccineChart extends React.Component {
           data={minLine}
           interpolation={minLineStyles.interpolation}
           style={{ data: { stroke: minLineStyles.stroke } }}
-          x={x}
-          y={y}
+          x={dataKeys.x}
+          y={dataKeys.y}
         />
       ) : null;
 
     const minLinePlotScatter =
       minLine.length > 0 ? (
-        <VictoryScatter data={minLine} style={{ data: { fill: minLineStyles.fill } }} x={x} y={y} />
+        <VictoryScatter
+          data={minLine}
+          style={{ data: { fill: minLineStyles.fill } }}
+          x={dataKeys.x}
+          y={dataKeys.y}
+        />
       ) : null;
 
     const maxLinePlotLine =
@@ -99,19 +105,29 @@ export class VaccineChart extends React.Component {
           data={maxLine}
           interpolation={maxLineStyles.interpolation}
           style={{ data: { stroke: maxLineStyles.stroke } }}
-          x={x}
-          y={y}
+          x={dataKeys.x}
+          y={dataKeys.y}
         />
       ) : null;
 
     const maxLinePlotScatter =
       maxLine.length > 0 ? (
-        <VictoryScatter data={maxLine} style={{ data: { fill: maxLineStyles.fill } }} x={x} y={y} />
+        <VictoryScatter
+          data={maxLine}
+          style={{ data: { fill: maxLineStyles.fill } }}
+          x={dataKeys.x}
+          y={dataKeys.y}
+        />
       ) : null;
 
     const hazardPlotScatter =
       hazards.length > 0 ? (
-        <VictoryScatter dataComponent={<HazardPoint />} data={hazards} x={x} y={y} />
+        <VictoryScatter
+          dataComponent={<HazardPoint />}
+          data={hazards}
+          x={dataKeys.x}
+          y={dataKeys.y}
+        />
       ) : null;
 
     return (
