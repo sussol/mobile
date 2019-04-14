@@ -118,14 +118,6 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * Checks if this item is a vaccine
-   * @return {boolean}
-   */
-  get isVaccine() {
-    return this.category && this.category.name === 'Vaccine';
-  }
-
-  /**
    * Get category of item, or empty string if no category exists.
    *
    * @return  {string}
@@ -223,6 +215,96 @@ export class Item extends Realm.Object {
    */
   toString() {
     return `${this.code} - ${this.name}`;
+  }
+
+  /**
+   * Finds all this items batches in a specific location.
+   * If no location is passed, all of this items ItemBatches
+   * are returned.
+   * @param {Location} location
+   */
+  getBatchesInLocation({ id } = {}) {
+    if (!id) return this.batches;
+    return this.batches.filtered('location.id = $0', id);
+  }
+
+  /**
+   * Returns the number of batches in a specific location. If
+   * no location is passed, finds the number of batches for all
+   * batches.
+   * @param {Location} location
+   */
+  getNumberOfBatches(location) {
+    return this.getBatchesInLocation(location).length;
+  }
+
+  /**
+   * Returns the sum of each ItemBatch.totalQuantity in a specific
+   * location. If no location is passed, finds the totalQuantity
+   * for all batches.
+   * @param {Location} location
+   */
+  getQuantityInLocation(location) {
+    return this.getBatchesInLocation(location).reduce(
+      (sum, { numberOfPacks = 0, packSize = 1 } = {}) => sum + numberOfPacks * packSize,
+      0
+    );
+  }
+
+  /**
+   * Returns all ItemBatches which have been in a breach in a specific
+   * location. If no location is passed, all of this items ItemBatches
+   * in breaches are returned.
+   * @param {Location} location
+   */
+  getBreachedBatches({ id } = {}) {
+    const breachedBatches = this.batches.filter(({ hasBreached } = {}) => hasBreached);
+    if (!id) return breachedBatches;
+    return breachedBatches.filter(({ location } = {}) => location && location.id === id);
+  }
+
+  /**
+   * Returns the number of ItemBatches related to this item in breaches
+   * for a specific location. If no location is passed, returns all
+   * ItemBatches in locations.
+   * @param {Location} location
+   */
+  getHasBreachedBatches(location) {
+    return this.getBreachedBatches(location).length > 0;
+  }
+
+  /**
+   * Returns the sum of all ItemBatches in breaches related to this item.
+   * If no location is passed, returns the sum for all ItemBatches related
+   * to this item.
+   * @param {Location} location
+   */
+  getQuantityInBreach(location) {
+    return this.getBreachedBatches(location).reduce(
+      (sum, { numberOfPacks = 0, packSize = 1 } = {}) => sum + numberOfPacks * packSize,
+      0
+    );
+  }
+
+  /**
+   * Returns an object {maxTemperature, minTemperature} for all ItemBatches
+   * related to this Item in a specific location. If no location is passed,
+   * uses all ItemBatches related to this item to find the values.
+   * @param {Location} location
+   */
+  getTemperatureExposure(location) {
+    let { batches } = this;
+    if (location) batches = this.getBatchesInLocation(location);
+    const temperatures = batches.map(({ temperatureExposure } = {}) => temperatureExposure);
+    const maxTemperatures = temperatures.reduce(
+      (maxTemp, { max = 0 } = {}) => Math.max(maxTemp, max),
+      0
+    );
+    const minTemperatures = temperatures.reduce(
+      (minTemp, { min = Infinity } = {}) => Math.min(minTemp, min),
+      Infinity
+    );
+    return { minTemperatures, maxTemperatures };
   }
 }
 
