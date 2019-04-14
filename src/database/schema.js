@@ -164,7 +164,7 @@ export const schema = {
     StocktakeBatch,
     User,
   ],
-  schemaVersion: 18,
+  schemaVersion: 19,
 };
 
 console.disableYellowBox = true;
