@@ -245,10 +245,7 @@ export class Item extends Realm.Object {
    * @param {Location} location
    */
   getQuantityInLocation(location) {
-    return this.getBatchesInLocation(location).reduce(
-      (sum, { numberOfPacks = 0, packSize = 1 } = {}) => sum + numberOfPacks * packSize,
-      0
-    );
+    return getTotal(this.getBatchesInLocation(location), 'totalQuantity');
   }
 
   /**
@@ -280,10 +277,7 @@ export class Item extends Realm.Object {
    * @param {Location} location
    */
   getQuantityInBreach(location) {
-    return this.getBreachedBatches(location).reduce(
-      (sum, { numberOfPacks = 0, packSize = 1 } = {}) => sum + numberOfPacks * packSize,
-      0
-    );
+    return getTotal(this.getBreachedBatches(location), 'totalQuantity');
   }
 
   /**
