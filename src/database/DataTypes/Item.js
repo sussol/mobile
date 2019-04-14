@@ -254,10 +254,8 @@ export class Item extends Realm.Object {
    * in breaches are returned.
    * @param {Location} location
    */
-  getBreachedBatches({ id: locationId } = {}) {
-    const breachedBatches = this.batches.filter(({ hasBreached } = {}) => hasBreached);
-    if (!locationId) return breachedBatches;
-    return breachedBatches.filter(({ location } = {}) => location && location.id === locationId);
+  getBreachedBatches(location) {
+    return this.getBatchesInLocation(location).filter(hasBreached => hasBreached);
   }
 
   /**
