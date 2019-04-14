@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -217,24 +218,54 @@ export class Item extends Realm.Object {
     return `${this.code} - ${this.name}`;
   }
 
-  hasBatchInFridges(fridges) {
-    return this.batches.some(
-      batch => batch.location && fridges.find(fridge => fridge.id === batch.location.id)
-    );
+  getBatchesInLocation(location) {
+    return this.batches.filtered('location = $0', location);
   }
 
-  // TODO: Make this real
-  get hasBreach() {
+  hasBatchInFridge(fridge) {
+    // call getBatchesInLocation(fridge) and return
+    // if length > 0
     return Math.round(Math.random()) & 1;
   }
 
   // TODO: Make this real
-  get quantityInBreach() {
+  getHasBreach(location) {
+    // return if *any* batch has had a breach
+    if (!location) return Math.round(Math.random()) & 1;
+    // return if any batch for this item has had a breach in location provided
+    // ItemBatch.hasBreach()
+    return Math.round(Math.random()) & 1;
+  }
+
+  getQuantityInBreach(location) {
+    // return sum of all ItemBatch which have been in a breach
+    if (!location) return Math.round(Math.random(1, 10) * 50);
+    // return sum of all ItemBatch which have been in a breach
+    // in the provided location
     return Math.round(Math.random(1, 10) * 50);
   }
 
-  get temperatureExposure() {
-    return { max: 3, min: 10, average: (3 / 10) * 2 };
+  getTemperatureExposure(location) {
+    this.batches.filtered('sensorLog.location.id = $0', location.id).max('sensorLog.temperature');
+
+    // let { batches } = this;
+    // if (location) batches = this.getBatchesInLocation(location);
+
+    // const maxTemperature = batches.reduce(
+    //   (maxValue, { max: max = 0 } = {}) => Math.max(maxValue, max),
+    //   0
+    // );
+    // const minTemperature = batches.reduce(
+    //   (minValue, { minTemperature: min = Infinity } = {}) => Math.min(minValue, min),
+    //   Infinity
+    // );
+
+    // return { maxTemperature, minTemperature };
+
+    if (!location) return { max: 3, min: 10 };
+    // return max and min from ItemBatches with sensorlogs
+    // in the provided location
+    return { max: 3, min: 10 };
   }
 }
 

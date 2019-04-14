@@ -117,6 +117,13 @@ export class ItemBatch extends Realm.Object {
     this.addTransactionBatch(transactionBatch);
   }
 
+  get temperatureExposure() {
+    const maxTemperature = this.sensorLogs.max('temperature');
+    const minTemperature = this.sensorLogs.min('temperature');
+
+    return { minTemperature, maxTemperature };
+  }
+
   /**
    * Get string representation of batch.
    *

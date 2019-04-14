@@ -11,11 +11,12 @@ import { View, StyleSheet, Text } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { GenericPage } from './GenericPage';
-import { MiniToggleBar, IconCell } from '../widgets/index';
+import { MiniToggleBar, IconCell, PageInfo } from '../widgets/index';
 import { SUSSOL_ORANGE } from '../globalStyles/index';
 import { PageContentModal } from '../widgets/modals/index';
 
 import { formatExposureRange } from '../utilities';
+import GenericChooseModal from '../widgets/modals/GenericChooseModal';
 
 /**
  * CONSTANTS
@@ -23,9 +24,27 @@ import { formatExposureRange } from '../utilities';
 
 const MODAL_KEYS = {
   BREACH: 'breach',
+  FRIDGE_SELECT: 'fridgeSelect',
 };
 
-const COLUMNS = {
+const LOCALIZATION = {
+  pageInfo: {
+    filter: 'Filter by Location',
+  },
+  headers: {},
+  misc: {
+    allLocations: 'All locations',
+  },
+};
+
+const PAGE_INFO_COLUMNS = {
+  filter: {
+    title: LOCALIZATION.pageInfo.filter,
+    editableType: 'selectable',
+  },
+};
+
+const TABLE_COLUMNS = {
   name: { key: 'name', width: 1.5, title: 'ITEM NAME', alignText: 'left' },
   totalBatchesInStock: {
     key: 'totalBatchesInStock',
@@ -60,18 +79,11 @@ const VACCINE_COLUMN_KEYS = [
   'navigation',
 ];
 
-const LOCALIZATION = {
-  toggle: {
-    location: 'Filter by Location',
-    name: 'Filter by Item Name',
-  },
-};
-
 /**
  * HELPER METHODS
  */
 
-const getColumns = () => VACCINE_COLUMN_KEYS.map(key => COLUMNS[key]);
+const getColumns = () => VACCINE_COLUMN_KEYS.map(key => TABLE_COLUMNS[key]);
 
 /**
  * Page for managing items. Used for vaccine items currently.
@@ -81,84 +93,66 @@ export class ManageItemsPage extends React.Component {
   constructor(props) {
     super(props);
 
+    this.LOCATION_FILTERS = null;
+    this.ITEMS = null;
+
     this.state = {
-      data: null,
-      filterStatus: true,
       modalKey: null,
       isModalOpen: false,
+      locationFilter: null,
+      searchTerm: '',
     };
   }
 
   /**
    * HELPER METHODS
    */
-  setData = ({ data } = {}) => {
-    const { database } = this.props;
-    let dataToSet;
-    if (!data) {
-      dataToSet = database.objects('Item').filter(item => item.isVaccine);
-    } else {
-      dataToSet = data;
-    }
-    this.setState({ data: dataToSet });
+
+  locationFilter = (location, item) => {
+    const { id = -1 } = location;
+    if (id === -1) return true;
+    return item.hasBatchInFridge(location);
   };
 
-  locationFilter = searchTerm => {
-    const { database } = this.props;
-    const fridges = database
-      .objects('Location')
-      .filtered('description BEGINSWITH[c] $0', searchTerm);
-    return database
-      .objects('Item')
-      .filter(item => item.isVaccine)
-      .filter(item => item.hasBatchInFridges(fridges));
-  };
+  nameAndCodeFilter = (searchTerm, { name, code } = {}) =>
+    name.toLowerCase().startsWith(searchTerm) || code.toLowerCase().startsWith(searchTerm);
 
-  itemFilter = searchTerm => {
-    const { database } = this.props;
-    return database
-      .objects('Item')
-      .filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm)
-      .filter(item => item.isVaccine);
+  getData = () => {
+    const { locationFilter, searchTerm } = this.state;
+    if (!locationFilter) return [];
+    return this.ITEMS.filter(item => this.locationFilter(locationFilter, item)).filter(item =>
+      this.nameAndCodeFilter(searchTerm, item)
+    );
   };
 
   /**
    * COMPONENT METHODS
    */
   componentDidMount = () => {
-    // TODO: If passed props e.g. initialSearchTerm, initialFilterStatus,
-    // set these in state and filter before setting data. This is bad as
+    // TODO: If passed props e.g. initialFilterStatus
+    // set locationFilter in state and filter before setting data. This is bad as
     // is makes this component controlled and uncontrolled?
-    //
-    this.setData();
+    const { database, initialLocation } = this.props;
+    const fridges = database.objects('Location').filter(location => location.isFridge);
+    // TODO: No fridges?
+    fridges.unshift({ id: -1, description: LOCALIZATION.misc.allLocations });
+    this.LOCATION_FILTERS = fridges;
+    this.ITEMS = database.objects('Item').filter(item => item.isVaccine);
+    const locationFilter = initialLocation || fridges[0];
+    this.setState({ locationFilter });
   };
 
   /**
    * EVENT HANDLERS
    */
 
-  onToggle = () => {
-    const { filterStatus } = this.state;
-    this.setState({ filterStatus: !filterStatus });
-  };
-
-  onFilterData = searchTerm => {
-    const { filterStatus } = this.state;
-    let newData;
-    if (searchTerm) {
-      newData = filterStatus ? this.locationFilter(searchTerm) : this.itemFilter(searchTerm);
-    }
-    this.setData({ data: newData });
-  };
-
   onNavigateToItem = ({ item } = {}) => {
-    if (!item) {
-      // return here, linter complaining about empty stuff
-      setTimeout();
-    }
     // TODO: Navigate to Vaccine Manage Item Page
+    // linter complaining about empty stuff
+    if (item) setTimeout();
   };
 
+  // Handler for opening and closing modals
   onModalUpdate = ({ modalKey } = {}) => () => {
     if (!modalKey) this.setState({ isModalOpen: false, modalKey: null });
     else this.setState({ isModalOpen: true, modalKey });
@@ -169,10 +163,20 @@ export class ManageItemsPage extends React.Component {
    */
   renderModal = () => {
     const { modalKey } = this.state;
-    const { BREACH } = MODAL_KEYS;
+    const { BREACH, FRIDGE_SELECT } = MODAL_KEYS;
     switch (modalKey) {
       case BREACH:
         return <Text>BREACH MODAL HERE</Text>;
+      case FRIDGE_SELECT:
+        return (
+          <GenericChooseModal
+            data={this.LOCATION_FILTERS}
+            keyToDisplay="description"
+            onPress={({ item: locationFilter } = {}) =>
+              this.setState({ locationFilter, isModalOpen: false })
+            }
+          />
+        );
       default:
         return null;
     }
@@ -208,36 +212,39 @@ export class ManageItemsPage extends React.Component {
     }
   };
 
-  renderFilterToggle = () => {
-    const { filterStatus } = this.state;
-    const { toggle } = LOCALIZATION;
-    return (
-      <View style={{ height: 80 }}>
-        <MiniToggleBar
-          leftText={toggle.location}
-          rightText={toggle.name}
-          onPress={this.onToggle}
-          currentState={filterStatus}
-        />
-      </View>
-    );
+  renderPageInfo = () => {
+    const { locationFilter } = this.state;
+    if (!locationFilter) return null;
+
+    const { filter } = PAGE_INFO_COLUMNS;
+    const { FRIDGE_SELECT } = MODAL_KEYS;
+    const { description } = locationFilter;
+
+    const filterColumn = {
+      ...filter,
+      onPress: this.onModalUpdate({ modalKey: FRIDGE_SELECT }),
+      info: description,
+    };
+
+    return <PageInfo columns={[[filterColumn]]} isEditingDisabled={false} />;
   };
 
-  renderSearchBar = () => <SearchBar color={SUSSOL_ORANGE} onChange={this.onFilterData} />;
+  renderTopRight = () => <View style={{ width: 200, height: 1 }} />;
 
   render() {
     const { genericTablePageStyles, database, topRoute } = this.props;
-    const { data, isModalOpen } = this.state;
+    const { isModalOpen } = this.state;
 
     return (
       <GenericPage
         database={database}
         topRoute={topRoute}
         columns={getColumns()}
-        data={data || []}
+        data={this.getData()}
         renderCell={this.renderCell}
-        renderTopRightComponent={this.renderFilterToggle}
-        renderTopLeftComponent={this.renderSearchBar}
+        renderTopRightComponent={this.renderTopRight}
+        refreshData={searchTerm => this.setState({ searchTerm })}
+        renderTopLeftComponent={this.renderPageInfo}
         {...genericTablePageStyles}
       >
         {isModalOpen && (
@@ -260,3 +267,24 @@ ManageItemsPage.propTypes = {
 };
 
 export default ManageItemsPage;
+// renderSearchBar = () => <SearchBar color={SUSSOL_ORANGE} onChange={this.onFilterData} />;
+
+// onToggle = () => {
+//   const { filterStatus } = this.state;
+//   this.setState({ filterStatus: !filterStatus });
+// };
+
+// renderFilterToggle = () => {
+//   const { filterStatus } = this.state;
+//   const { toggle } = LOCALIZATION;
+//   return (
+//     <View style={{ height: 80 }}>
+//       <MiniToggleBar
+//         leftText={toggle.location}
+//         rightText={toggle.name}
+//         onPress={this.onToggle}
+//         currentState={filterStatus}
+//       />
+//     </View>
+//   );
+// };

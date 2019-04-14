@@ -59,14 +59,14 @@ export default class GenericChooseModal extends React.PureComponent {
     const { data, isOpen, title } = this.props;
     if (!data) return null;
     return (
-      <PageContentModal isOpen={isOpen} style={{ alignItems: 'center' }} title={title} coverScreen>
-        <FlatList
-          data={data}
-          renderItem={this.renderRow}
-          style={localStyles.list}
-          keyExtractor={this.keyExtractor}
-        />
-      </PageContentModal>
+      // <PageContentModal isOpen={isOpen} style={{ alignItems: 'center' }} title={title} coverScreen>
+      <FlatList
+        data={data}
+        renderItem={this.renderRow}
+        style={localStyles.list}
+        keyExtractor={this.keyExtractor}
+      />
+      // </PageContentModal>
     );
   }
 }
