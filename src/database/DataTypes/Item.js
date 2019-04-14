@@ -223,9 +223,9 @@ export class Item extends Realm.Object {
    * are returned.
    * @param {Location} location
    */
-  getBatchesInLocation({ id } = {}) {
-    if (!id) return this.batches;
-    return this.batches.filtered('location.id = $0', id);
+  getBatchesInLocation({ id: locationId } = {}) {
+    if (!locationId) return this.batches;
+    return this.batches.filtered('location.id = $0', locationId);
   }
 
   /**
@@ -257,10 +257,10 @@ export class Item extends Realm.Object {
    * in breaches are returned.
    * @param {Location} location
    */
-  getBreachedBatches({ id } = {}) {
+  getBreachedBatches({ id: locationId } = {}) {
     const breachedBatches = this.batches.filter(({ hasBreached } = {}) => hasBreached);
-    if (!id) return breachedBatches;
-    return breachedBatches.filter(({ location } = {}) => location && location.id === id);
+    if (!locationId) return breachedBatches;
+    return breachedBatches.filter(({ location } = {}) => location && location.id === locationId);
   }
 
   /**
