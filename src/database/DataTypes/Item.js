@@ -287,16 +287,18 @@ export class Item extends Realm.Object {
   getTemperatureExposure(location) {
     let { batches } = this;
     if (location) batches = this.getBatchesInLocation(location);
+
     const temperatures = batches.map(({ temperatureExposure } = {}) => temperatureExposure);
-    const maxTemperatures = temperatures.reduce(
-      (maxTemp, { max = 0 } = {}) => Math.max(maxTemp, max),
+
+    const maxTemperature = temperatures.reduce(
+      (maxTemp, { maxTemperature: max = -Infinity } = {}) => Math.max(maxTemp, max),
       0
     );
-    const minTemperatures = temperatures.reduce(
-      (minTemp, { min = Infinity } = {}) => Math.min(minTemp, min),
+    const minTemperature = temperatures.reduce(
+      (minTemp, { minTemperature: min = Infinity } = {}) => Math.min(minTemp, min),
       Infinity
     );
-    return { minTemperatures, maxTemperatures };
+    return { minTemperature, maxTemperature };
   }
 }
 
