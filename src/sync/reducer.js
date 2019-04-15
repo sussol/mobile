@@ -59,6 +59,6 @@ const stateChanges = {
   },
 };
 
-export const reducer = createReducer(defaultState, stateChanges);
+const reducer = createReducer(defaultState, stateChanges);
 
 export default reducer;

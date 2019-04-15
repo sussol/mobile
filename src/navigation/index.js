@@ -4,5 +4,5 @@
  */
 
 export AppNavigator from './Navigator';
-export reducer from './reducer';
+export navigationReducer from './reducer';
 export { getCurrentRouteName, getCurrentParams } from './selectors';

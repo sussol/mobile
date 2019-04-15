@@ -9,7 +9,7 @@ const initialState = Navigator.router.getStateForAction(
   Navigator.router.getActionForPathAndParams('root')
 );
 
-const navReducer = (state = initialState, action) => {
+const navigationReducer = (state = initialState, action) => {
   // Ensure we don't push the same route twice (quick double tap of button etc.)
   // Code from https://github.com/react-community/react-navigation/issues/135
   if (action.type === 'Navigation/NAVIGATE') {
@@ -36,4 +36,4 @@ const paramsEqual = (params1, params2) => {
   return Object.entries(params1).every(([key, value]) => value === params2[key]);
 };
 
-export default navReducer;
+export default navigationReducer;
