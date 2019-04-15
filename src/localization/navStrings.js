@@ -78,6 +78,24 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Distribuidór nia Konta',
     supplier_requisitions: 'Rekuizasaun\nba Distribuidor',
   },
+  la: {
+    current_stock: 'ສິນ​ຄ້າ​ທີ່​ມີ ປັດຈຸບັນ',
+    customer_invoices: 'ໃບຈ່າຍສິນຄ້າ',
+    customer_requisitions: 'ໃບ​ສະ​ເໜີ​ຂໍ​ຂອງ​ລູກ​ຄ້າ',
+    customers: 'ລາຍຊື່ຜູ້ຮັບສິນຄ້າ',
+    finalise: 'ສະ​ຫຼຸບ',
+    finalised_cannot_be_edited: 'ກົດ​ສະຫຼຸບ​ ແລ້ວ ຈະ​ບໍ່​ສາ​ມາດ​ດັດ​ແປງ​ໄດ້​ອີກ',
+    invoice: 'ໃບເກັບເງິນ',
+    language: 'ພາສາ',
+    log_out: 'ອອກ​ຈາກ​ລະ​ບົບ',
+    manage_stocktake: 'ເຮັດ​ການ​ຈັດ​ການ ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
+    new_stocktake: 'ເຮັດ​ການກວດ​ສາ​ສາງໃໝ່',
+    requisition: 'ການ​ເຮັດ​ການ​ຮ້ອງ​ຂໍ',
+    stocktakes: 'ການກວດກາສາງ',
+    stocktake: 'ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
+    supplier_invoices: 'ໃບນຳສົ່ງສິນຄ້າ',
+    supplier_requisitions: 'ການ​ສະ​ເໜີ​ຂໍ ຫາຜູ້​ສະ​ໜອງ',
+  },
 });
 
 export default navStrings;

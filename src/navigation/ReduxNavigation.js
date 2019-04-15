@@ -17,10 +17,8 @@ ReduxNavigation.propTypes = {
   screenProps: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = state => {
-  return {
-    nav: state.nav,
-  };
-};
+const mapStateToProps = state => ({
+  nav: state.nav,
+});
 
 export default connect(mapStateToProps)(ReduxNavigation);

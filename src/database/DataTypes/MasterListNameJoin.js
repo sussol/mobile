@@ -5,30 +5,43 @@
 
 import Realm from 'realm';
 
-// Only used for the purpose of cleaning up master lists from names when deleted.
+/**
+ * A master list to name join used as a helper for sync deletion functionality.
+ *
+ * @property  {string}      id
+ * @property  {MasterList}  masterList
+ * @property  {Name}        name
+ */
 export class MasterListNameJoin extends Realm.Object {
+  /**
+   * Delete master list to name join and any name references to removed master lists.
+   *
+   * @param  {Realm}  database
+   */
   destructor(database) {
-    if (!this.name || !this.masterList) return; // Not a full join record.
+    // Not a full join record, do nothing.
+    if (!this.name || !this.masterList) return;
 
-    const indexInMasterLists = this.name.masterLists.findIndex(masterList => {
-      return masterList.id === this.masterList.id;
-    });
+    const indexInMasterLists = this.name.masterLists.findIndex(
+      masterList => masterList.id === this.masterList.id
+    );
 
     // If the master list and name are not joined, do nothing.
     if (!indexInMasterLists >= 0) return;
+
     // Remove the master list from the name.
     this.name.masterLists.splice(indexInMasterLists, 1);
     database.save('Name', this.name);
   }
 
+  /**
+   * Get string representation of master list to name join.
+   */
   toString() {
     return `Joins master list '${this.masterList.name}' with name '${this.name}'`;
   }
 }
 
-export default MasterListNameJoin;
-
-// MasterListNameJoin never used internally, only held for sync delete functionality.
 MasterListNameJoin.schema = {
   name: 'MasterListNameJoin',
   primaryKey: 'id',
@@ -38,3 +51,5 @@ MasterListNameJoin.schema = {
     name: { type: 'Name', optional: true },
   },
 };
+
+export default MasterListNameJoin;

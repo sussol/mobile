@@ -23,12 +23,12 @@ const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SET
 
 const bugsnagClient = new BugsnagClient();
 
-function getDateString(date) {
+const getDateString = date => {
   let returnDate = '0000-00-00';
   if (date && typeof date === 'object') returnDate = date.toISOString().slice(0, 10);
 
   return `${returnDate}T00:00:00`;
-}
+};
 
 function getTimeString(date) {
   if (!date || typeof date !== 'object') return '00:00:00';
@@ -44,7 +44,7 @@ function getTimeString(date) {
  * @param {string}  path    The path on that object safely try.
  * @return {any}            Whatever variable was stored at path, if no error thrown.
  */
-function safeGet(record, path) {
+const safeGet = (record, path) => {
   const pathSegments = path.split('.');
   let currentPath = 'record';
   let nestedProp = record;
@@ -62,7 +62,7 @@ function safeGet(record, path) {
     }
   }
   return nestedProp;
-}
+};
 
 /**
  * Turn an internal database object into data representing a record in the
@@ -73,7 +73,7 @@ function safeGet(record, path) {
  * @param   {Realm.object}  record      The record being synced.
  * @return  {object}                    The data to sync (in the form of upstream record).
  */
-function generateSyncData(settings, recordType, record) {
+const generateSyncData = (settings, recordType, record) => {
   switch (recordType) {
     case 'ItemBatch': {
       return {
@@ -90,6 +90,7 @@ function generateSyncData(settings, recordType, record) {
         sell_price: String(record.sellPrice),
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: settings.get(SUPPLYING_STORE_NAME_ID),
+        donor_id: record.donor && record.donor.id,
       };
     }
     case 'NumberSequence': {
@@ -213,13 +214,14 @@ function generateSyncData(settings, recordType, record) {
         line_number: String(record.sortIndex),
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
+        donor_id: record.donor && record.donor.id,
         type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
       };
     }
     default:
       throw new Error('Sync out record type not supported.');
   }
-}
+};
 
 /**
  * Returns a json object fulfilling the requirements of the mSupply primary sync
@@ -230,7 +232,7 @@ function generateSyncData(settings, recordType, record) {
  * @param   {Realm.object}  syncOutRecord  The sync out record to be translated.
  * @return  {object}                       The generated json object, ready to sync.
  */
-export function generateSyncJson(database, settings, syncOutRecord) {
+export const generateSyncJson = (database, settings, syncOutRecord) => {
   if (!syncOutRecord || !syncOutRecord.isValid()) {
     throw new Error('Missing sync out record');
   }
@@ -295,6 +297,6 @@ export function generateSyncJson(database, settings, syncOutRecord) {
   // Attach the record data to the json object.
   syncJson.Data = syncData;
   return syncJson;
-}
+};
 
 export default generateSyncJson;

@@ -10,7 +10,7 @@ import { StyleSheet, View } from 'react-native';
 import IoniconIcon from 'react-native-vector-icons/Ionicons';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
-export function SyncIcon(props) {
+export const SyncIcon = props => {
   const { size, cloudColor, arrowsColor, wifiColor } = props;
 
   return (
@@ -25,7 +25,7 @@ export function SyncIcon(props) {
       <IoniconIcon name="logo-rss" size={size * 22} style={localStyles.icon} color={wifiColor} />
     </View>
   );
-}
+};
 
 export default SyncIcon;
 

@@ -25,6 +25,4 @@ function App() {
   );
 }
 
-AppRegistry.registerComponent(appName, () => {
-  return App;
-});
+AppRegistry.registerComponent(appName, () => App);

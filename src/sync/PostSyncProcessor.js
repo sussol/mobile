@@ -41,10 +41,12 @@ export class PostSyncProcessor {
   onDatabaseEvent = (changeType, recordType, record, causedBy) => {
     // Exit if not a change caused by incoming sync.
     if (causedBy !== 'sync' || recordType === 'SyncOut') return;
+
     if (this.recordQueue.has(record.id)) {
       // Check if already in queue, remove old.
       this.recordQueue.delete(record.id);
     }
+
     // Add new entry at end of Map.
     this.recordQueue.set(record.id, recordType);
   };
@@ -69,13 +71,13 @@ export class PostSyncProcessor {
     this.functionQueue = [];
     this.recordQueue.clear(); // Reset the |recordQueue| to avoid unnessary runs.
 
-    this.database.objects('Requisition').forEach(record => {
-      this.enqueueFunctionsForRecordType('Requisition', record);
-    });
+    this.database
+      .objects('Requisition')
+      .forEach(record => this.enqueueFunctionsForRecordType('Requisition', record));
 
-    this.database.objects('Transaction').forEach(record => {
-      this.enqueueFunctionsForRecordType('Transaction', record);
-    });
+    this.database
+      .objects('Transaction')
+      .forEach(record => this.enqueueFunctionsForRecordType('Transaction', record));
 
     this.processFunctionQueue();
     this.settings.set(LAST_POST_PROCESSING_FAILED, 'false');
@@ -123,12 +125,12 @@ export class PostSyncProcessor {
     switch (recordType) {
       case 'Requisition':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForRequisition(record),
+          this.generateFunctionsForRequisition(record)
         );
         break;
       case 'Transaction':
         this.functionQueue = this.functionQueue.concat(
-          this.generateFunctionsForTransaction(record),
+          this.generateFunctionsForTransaction(record)
         );
         break;
       default:

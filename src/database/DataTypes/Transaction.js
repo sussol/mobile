@@ -10,16 +10,44 @@ import {
   reuseNumber as reuseSerialNumber,
 } from '../utilities';
 
+/**
+ * A transaction.
+ *
+ * @property  {string}                  id
+ * @property  {string}                  serialNumber
+ * @property  {Name}                    otherParty
+ * @property  {string}                  comment
+ * @property  {Date}                    entryDate
+ * @property  {string}                  type
+ * @property  {string}                  status
+ * @property  {Date}                    confirmDate
+ * @property  {User}                    enteredBy
+ * @property  {string}                  theirRef           External reference code.
+ * @property  {TransactionCategory}     category
+ * @property  {List.<TransactionItem>}  items
+ * @property  {Requisition}             linkedRequisition
+ */
 export class Transaction extends Realm.Object {
+  /**
+   * Create new transaction.
+   */
   constructor() {
     super();
     this.addItemsFromMasterList = this.addItemsFromMasterList.bind(this);
   }
 
+  /**
+   * Delete unfinalised transaction and associated transaction items. Throw error if transaction is
+   * finalised.
+   *
+   * @param  {Realm}  database
+   */
   destructor(database) {
     if (this.isFinalised) {
       throw new Error('Cannot delete finalised transaction');
     }
+
+    // Recycle invoice serial number to be reused.
     if (this.isCustomerInvoice) {
       reuseSerialNumber(database, NUMBER_SEQUENCE_KEYS.CUSTOMER_INVOICE_NUMBER, this.serialNumber);
     }
@@ -29,71 +57,158 @@ export class Transaction extends Realm.Object {
     database.delete('TransactionItem', this.items);
   }
 
+  /**
+   * Get if transaction is finalised.
+   *
+   * @return  {boolean}
+   */
   get isFinalised() {
     return this.status === 'finalised';
   }
 
+  /**
+   * Get if transaction is confirmed.
+   *
+   * @return  {boolean}
+   */
   get isConfirmed() {
     return this.status === 'confirmed';
   }
 
+  /**
+   * Get if transaction is incoming (i.e. a supplier invoice).
+   *
+   * @return  {boolean}
+   */
   get isIncoming() {
     return this.type === 'supplier_invoice';
   }
 
+  /**
+   * Get if transaction is outgoing (i.e. a customer invoice or supplier credit).
+   *
+   * @return  {boolean}
+   */
   get isOutgoing() {
+    // TODO: replace string matching with already defined getter methods.
     return this.type === 'customer_invoice' || this.type === 'supplier_credit';
   }
 
+  /**
+   * Get if transaction is a customer invoice.
+   *
+   * @return  {boolean}
+   */
   get isCustomerInvoice() {
     return this.type === 'customer_invoice';
   }
 
+  /**
+   * Get if transaction is a supplier invoice.
+   *
+   * @return  {boolean]}
+   */
   get isSupplierInvoice() {
     return this.type === 'supplier_invoice';
   }
 
+  /**
+   * Get if transaction is an external supplier invoice.
+   *
+   * @return  {boolean}
+   */
   get isExternalSupplierInvoice() {
     return this.isSupplierInvoice && this.otherParty && this.otherParty.isExternalSupplier;
   }
 
+  /**
+   * Get if transaction is an internal supplier invoice.
+   *
+   * @return  {boolean}
+   */
   get isInternalSupplierInvoice() {
     return this.isSupplierInvoice && this.otherParty && this.otherParty.isInternalSupplier;
   }
 
+  /**
+   * Get if transaction is an inventory adjustment.
+   *
+   * @return  {boolean}
+   */
   get isInventoryAdjustment() {
     return this.otherParty && this.otherParty.type === 'inventory_adjustment';
   }
 
+  /**
+   * Get name of other party to transaction.
+   *
+   * @return  {string}
+   */
   get otherPartyName() {
     return this.otherParty ? this.otherParty.name : '';
   }
 
+  /**
+   * Set other party to this transaction.
+   *
+   * @param  {Name}  name
+   */
   setOtherParty(name) {
     name.addTransaction(this);
     this.otherParty = name;
   }
 
+  /**
+   * Get total price of items in this transaction.
+   *
+   * @return  {number}
+   */
   get totalPrice() {
     return getTotal(this.items, 'totalPrice');
   }
 
+  /**
+   * Get total quantity of items in this transaction.
+   *
+   * @return  {number}
+   */
   get totalQuantity() {
     return getTotal(this.items, 'totalQuantity');
   }
 
+  /**
+   * Get total number of batches in this transaction.
+   *
+   * @return  {number}
+   */
   get numberOfBatches() {
     return getTotal(this.items, 'numberOfBatches');
   }
 
+  /**
+   * Get total number of items in this transaction.
+   *
+   * @return  {number}
+   */
   get numberOfItems() {
     return this.items.length;
   }
 
+  /**
+   * Get if this transaction is linked to a requisition.
+   *
+   * @return  {boolean}
+   */
   get isLinkedToRequisition() {
     return !!this.linkedRequisition;
   }
 
+  /**
+   * Get if this transaction includes a given item.
+   *
+   * @param   {Item}  item
+   * @return  {boolean}
+   */
   hasItem(item) {
     const itemId = item.realItem.id;
     return this.items.filtered('item.id == $0', itemId).length > 0;
@@ -102,14 +217,17 @@ export class Transaction extends Realm.Object {
   /**
    * Add an item to this transaction. If item already exists, do nothing.
    *
-   * @param  {TransactionItem}  transactionItem  Item to add.
+   * @param  {TransactionItem}  transactionItem
    */
   addItem(transactionItem) {
     this.items.push(transactionItem);
   }
 
   /**
-   * Add all items from the customer's master list to this customer invoice.
+   * Add all items from the customer's master list to this transaction. Transaction
+   * must be an unfinalised customer invoice.
+   *
+   * @param  {Realm}  database
    */
   addItemsFromMasterList(database) {
     if (!this.isCustomerInvoice) {
@@ -120,9 +238,7 @@ export class Transaction extends Realm.Object {
     }
     if (this.otherParty) {
       this.otherParty.masterLists.forEach(masterList => {
-        const itemsToAdd = complement(masterList.items, this.items, item => {
-          return item.itemId;
-        });
+        const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
         itemsToAdd.forEach(masterListItem => {
           if (!masterListItem.item.crossReferenceItem && masterListItem.item.isVisible) {
             // Do not add cross reference items as will cause duplicates.
@@ -136,16 +252,13 @@ export class Transaction extends Realm.Object {
   /**
    * Remove items with the given ids from this transaction.
    *
-   * @param   {Realm}  database  App database.
-   * @param   {array}  itemIds   Ids corresponding to each item to remove.
-   * @return  {none}
+   * @param   {Realm}           database
+   * @param   {Array.<string>}  itemIds
    */
   removeItemsById(database, itemIds) {
     const itemsToDelete = [];
     for (let i = 0; i < itemIds.length; i += 1) {
-      const transactionItem = this.items.find(testItem => {
-        return testItem.id === itemIds[i];
-      });
+      const transactionItem = this.items.find(testItem => testItem.id === itemIds[i]);
       if (transactionItem.isValid()) {
         itemsToDelete.push(transactionItem);
       }
@@ -154,11 +267,11 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Remove batches with given ids from this transaction. If any items now have no associated
-   * batches, prune them.
+   * Remove batches with given ids from this transaction. Prune any items with no remaining
+   * associated batches.
    *
-   * @param   {Realm}  database             App database.
-   * @param   {array}  transactionBatchIds  Ids corresponding to each batch to remove.
+   * @param   {Realm}           database
+   * @param   {Array.<string>}  transactionBatchIds
    */
   removeTransactionBatchesById(database, transactionBatchIds) {
     if (this.isFinalised) {
@@ -167,9 +280,9 @@ export class Transaction extends Realm.Object {
     const transactionBatches = this.getTransactionBatches(database);
     const transactionBatchesToDelete = [];
     transactionBatchIds.forEach(transactionBatchId => {
-      const transactionBatch = transactionBatches.find(matchTransactionBatch => {
-        return matchTransactionBatch.id === transactionBatchId;
-      });
+      const transactionBatch = transactionBatches.find(
+        matchTransactionBatch => matchTransactionBatch.id === transactionBatchId
+      );
       transactionBatchesToDelete.push(transactionBatch);
     });
     database.delete('TransactionBatch', transactionBatchesToDelete);
@@ -179,8 +292,8 @@ export class Transaction extends Realm.Object {
   /**
    * Remove given item from transaction.
    *
-   * @param   {Realm}            database         App database.
-   * @param   {TransactionItem}  TransactionItem  Item to remove.
+   * @param   {Realm}            database
+   * @param   {TransactionItem}  TransactionItem
    */
   // eslint-disable-next-line class-methods-use-this
   removeTransactionItem(database, transactionItem) {
@@ -191,22 +304,22 @@ export class Transaction extends Realm.Object {
    * Adds a batch to transaction, incorporating it into a matching item or creating a new
    * item if none already exist.
    *
-   * @param  {Realm}             database          App database.
-   * @param  {TransactionBatch}  transactionBatch  Batch to add to this transaction.
+   * @param  {Realm}             database
+   * @param  {TransactionBatch}  transactionBatch
    */
   addBatchIfUnique(database, transactionBatch) {
     const { itemBatch } = transactionBatch;
     const { item } = itemBatch;
 
-    addBatchToParent(transactionBatch, this, () => {
-      createRecord(database, 'TransactionItem', this, item);
-    });
+    addBatchToParent(transactionBatch, this, () =>
+      createRecord(database, 'TransactionItem', this, item)
+    );
   }
 
   /**
    * Delete any batches and items that are not contributing to this transaction.
    *
-   * @param  {Realm}  database  App database.
+   * @param  {Realm}  database
    */
   pruneRedundantBatchesAndItems(database) {
     const batchesToRemove = this.getTransactionBatches(database).filtered('numberOfPacks = 0');
@@ -216,9 +329,9 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Delete any items with no 'transactionBatches'.
+   * Delete any items with no associated transaction batches.
    *
-   * @param  {Realm}  database  App database.
+   * @param  {Realm}  database
    */
   pruneBatchlessTransactionItems(database) {
     const itemsToRemove = [];
@@ -234,8 +347,8 @@ export class Transaction extends Realm.Object {
    * Returns all transaction batches for this transaction as
    * a realm collection (can be filtered).
    *
-   * @param   {Realm}            database  App database.
-   * @return  {RealmCollection}            All transaction batches.
+   * @param   {Realm}                               database
+   * @return  {RealmCollection.<TransactionBatch>}
    */
   getTransactionBatches(database) {
     return database.objects('TransactionBatch').filtered('transaction.id == $0', this.id);
@@ -245,7 +358,7 @@ export class Transaction extends Realm.Object {
    * Confirm this transaction, generating the associated item batches, linking them
    * to their items, and setting the status to confirmed.
    *
-   * @param  {Realm}  database  App database.
+   * @param  {Realm}  database
    */
   confirm(database) {
     if (this.isConfirmed) {
@@ -308,7 +421,7 @@ export class Transaction extends Realm.Object {
    * locked down. If it has not already been confirmed (i.e. adjustments to inventory
    * made), confirm it first.
    *
-   * @param  {Realm}  database  App database.
+   * @param  {Realm}  database
    */
   finalise(database) {
     if (this.isFinalised) {
@@ -325,8 +438,6 @@ export class Transaction extends Realm.Object {
   }
 }
 
-export default Transaction;
-
 Transaction.schema = {
   name: 'Transaction',
   primaryKey: 'id',
@@ -340,9 +451,11 @@ Transaction.schema = {
     status: { type: 'string', default: 'new' },
     confirmDate: { type: 'date', optional: true },
     enteredBy: { type: 'User', optional: true },
-    theirRef: { type: 'string', optional: true }, // External reference code.
+    theirRef: { type: 'string', optional: true },
     category: { type: 'TransactionCategory', optional: true },
     items: { type: 'list', objectType: 'TransactionItem' },
     linkedRequisition: { type: 'Requisition', optional: true },
   },
 };
+
+export default Transaction;

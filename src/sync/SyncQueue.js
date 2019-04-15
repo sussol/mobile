@@ -120,9 +120,7 @@ export class SyncQueue {
    * @return  {none}
    */
   use(records) {
-    this.database.write(() => {
-      this.database.delete('SyncOut', records);
-    });
+    this.database.write(() => this.database.delete('SyncOut', records));
   }
 }
 

@@ -3,7 +3,7 @@ import { Client as BugsnagClient } from 'bugsnag-react-native';
 const bugsnagClient = new BugsnagClient();
 
 // versionToInteger logic is the same as ./android/app/build.gradle.
-function versionToInteger(version) {
+const versionToInteger = version => {
   const [majorMinorPatch, provisional] = version.split('-');
   const [major, minor, patch] = majorMinorPatch.split('.');
   return (
@@ -14,9 +14,9 @@ function versionToInteger(version) {
   );
   // Regex /[0-9]+/, '[0-9]' means match any digit.
   // '+' means match one or more of the preceding token.
-}
+};
 
-export function compareVersions(versionOne, versionTwo) {
+export const compareVersions = (versionOne, versionTwo) => {
   try {
     const result = versionToInteger(versionOne) - versionToInteger(versionTwo);
     if (result > 0) return 1;
@@ -29,9 +29,9 @@ export function compareVersions(versionOne, versionTwo) {
     bugsnagClient.notify(error);
   }
   return 0;
-}
+};
 
-export function test() {
+export const test = () => {
   const testHelper = (versionOne, versionTwo, expectedResult) => {
     const testResult = compareVersions(versionOne, versionTwo);
     const testMessage = testResult === expectedResult ? 'pass' : 'FAIL';
@@ -50,7 +50,7 @@ export function test() {
   testHelper('2.1.0-RC10', '2.1.0-RC1', 1);
   testHelper('2.1.0-RC10', '2.1.0', -1);
   testHelper('2.10.11-RC10', '3.10.11', -1);
-}
+};
 
 // TEST RESULTS:
 /*

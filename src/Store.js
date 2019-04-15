@@ -6,9 +6,7 @@ import { createReactNavigationReduxMiddleware } from 'react-navigation-redux-hel
 import reducers from './reducers';
 
 // Create middleware and connect
-const appNavigatorMiddleware = createReactNavigationReduxMiddleware(state => {
-  return state.nav;
-}, 'root');
+const appNavigatorMiddleware = createReactNavigationReduxMiddleware(state => state.nav, 'root');
 
 const persistConfig = {
   keyPrefix: '',

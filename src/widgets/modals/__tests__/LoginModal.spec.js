@@ -47,7 +47,7 @@ describe('LoginModal', () => {
         authenticator={authenticator}
         isAuthenticated={false}
         onAuthentication={onAuthentication}
-      />,
+      />
     );
   });
 

@@ -17,7 +17,7 @@ import globalStyles, { GREY, DARK_GREY } from '../globalStyles';
 const ACTIVE_COLOR = DARK_GREY;
 const INACTIVE_COLOR = GREY;
 
-export function SyncState(props) {
+export const SyncState = props => {
   const { state, style, showText } = props;
 
   let text = syncStrings.sync_enabled;
@@ -44,7 +44,7 @@ export function SyncState(props) {
       <SyncIcon cloudColor={cloudColor} arrowsColor={arrowsColor} wifiColor={wifiColor} />
     </View>
   );
-}
+};
 
 export default SyncState;
 

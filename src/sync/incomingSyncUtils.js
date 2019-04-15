@@ -21,11 +21,11 @@ const { THIS_STORE_ID } = SETTINGS_KEYS;
  * @param   {string}  numberString  The string to convert to a number.
  * @return  {float}                 The numeric representation of the string.
  */
-function parseNumber(numberString) {
+const parseNumber = numberString => {
   if (!numberString) return null;
   const result = parseFloat(numberString);
   return Number.isNaN(result) ? null : result;
-}
+};
 
 /**
  * Return a Date object representing the given date, time.
@@ -34,7 +34,7 @@ function parseNumber(numberString) {
  * @param   {string}  ISOTime  The time in ISO 8601 format. Optional.
  * @return  {Date}             The Date representing |ISODate| (and |ISOTime|).
  */
-function parseDate(ISODate, ISOTime) {
+const parseDate = (ISODate, ISOTime) => {
   if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
     return null;
   }
@@ -46,17 +46,17 @@ function parseDate(ISODate, ISOTime) {
     date.setHours(hours, minutes, seconds);
   }
   return date;
-}
+};
 
 /**
  * Returns the boolean string as a boolean (false if none passed)
  * @param  {string} numberString The string to convert to a boolean
  * @return {boolean}               The boolean representation of the string
  */
-function parseBoolean(booleanString) {
+const parseBoolean = booleanString => {
   const trueStrings = ['true', 'True', 'TRUE'];
   return booleanString && trueStrings.indexOf(booleanString) >= 0;
-}
+};
 
 /**
  * Return a database Address object with the given address details (reuse if one
@@ -70,7 +70,7 @@ function parseBoolean(booleanString) {
  * @param   {string}        zipCode   Zip code of the address (can be undefined).
  * @return  {Realm.object}            The Address object described by the params.
  */
-function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
+const getOrCreateAddress = (database, line1, line2, line3, line4, zipCode) => {
   let results = database.objects('Address');
   if (typeof line1 === 'string') {
     results = results.filtered('line1 == $0', line1);
@@ -95,7 +95,7 @@ function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
   if (typeof line4 === 'string') address.line4 = line4;
   if (typeof zipCode === 'string') address.zipCode = zipCode;
   return database.create('Address', address);
-}
+};
 
 /**
  * Ensure the given record has the right data to create an internal record of the given
@@ -107,7 +107,7 @@ function getOrCreateAddress(database, line1, line2, line3, line4, zipCode) {
  * @param   {object}  record      The data from the sync record.
  * @return  {boolean}             Whether the data is sufficient to create an internal record from.
  */
-export function sanityCheckIncomingRecord(recordType, record) {
+export const sanityCheckIncomingRecord = (recordType, record) => {
   if (!record.ID || record.ID.length < 1) return false; // Every record must have an ID.
   const requiredFields = {
     Item: {
@@ -124,7 +124,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
     },
     ItemBatch: {
       cannotBeBlank: ['item_ID', 'quantity'],
-      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price'],
+      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price', 'donor_id'],
     },
     ItemStoreJoin: {
       cannotBeBlank: ['item_ID', 'store_ID'],
@@ -201,33 +201,36 @@ export function sanityCheckIncomingRecord(recordType, record) {
         'cost_price',
         'sell_price',
       ],
-      canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
+      canBeBlank: [
+        'item_name',
+        'batch',
+        'expiry_date',
+        'pack_size',
+        'cost_price',
+        'sell_price',
+        'donor_id',
+      ],
     },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
-    (containsAllFieldsSoFar, fieldName) => {
-      return (
-        containsAllFieldsSoFar &&
-        record[fieldName] !== null && // Key must exist.
-        record[fieldName].length > 0 // Key must not be empty string.
-      );
-    },
-    true,
+    (containsAllFieldsSoFar, fieldName) =>
+      containsAllFieldsSoFar &&
+      record[fieldName] !== null && // Key must exist.
+      record[fieldName].length > 0, // Key must not be empty string.
+    true
   );
+
   if (!hasAllNonBlankFields) return false; // Return early if record invalid.
   const hasRequiredFields = requiredFields[recordType].canBeBlank.reduce(
-    (containsAllFieldsSoFar, fieldName) => {
-      return (
-        containsAllFieldsSoFar &&
-        record[fieldName] !== null && // Key must exist.
-        record[fieldName] !== undefined
-      );
-    }, // Field may be empty string.
-    hasAllNonBlankFields,
+    (containsAllFieldsSoFar, fieldName) =>
+      containsAllFieldsSoFar &&
+      record[fieldName] !== null && // Key must exist.
+      record[fieldName] !== undefined, // Field may be empty string.
+    hasAllNonBlankFields
   ); // Initialise |containsAllFieldsSoFar| as result from |hasAllNonBlankFields|.
   return hasRequiredFields;
-}
+};
 
 /**
  * Update an existing record or create a new one based on the sync record.
@@ -238,7 +241,7 @@ export function sanityCheckIncomingRecord(recordType, record) {
  * @param   {object} record      Data from sync representing the record.
  * @return  {none}
  */
-export function createOrUpdateRecord(database, settings, recordType, record) {
+export const createOrUpdateRecord = (database, settings, recordType, record) => {
   if (!sanityCheckIncomingRecord(recordType, record)) return; // Unsupported or malformed record.
   let internalRecord;
   switch (recordType) {
@@ -284,9 +287,10 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         numberOfPacks: parseNumber(record.quantity) * packSize,
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
-        costPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: database.getOrCreate('Name', record.name_ID),
+        donor: database.getOrCreate('Name', record.donor_ID),
       };
       const itemBatch = database.update(recordType, internalRecord);
       item.addBatchIfUnique(itemBatch);
@@ -384,7 +388,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
           record.bill_address2,
           record.bill_address3,
           record.bill_address4,
-          record.bill_postal_zip_code,
+          record.bill_postal_zip_code
         ),
         emailAddress: record.email,
         type: NAME_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
@@ -574,7 +578,9 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
       const transaction = database.getOrCreate('Transaction', record.transaction_ID);
       const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
       const item = database.getOrCreate('Item', record.item_ID);
+      const donor = database.getOrCreate('Name', record.donor_id);
       itemBatch.item = item;
+      itemBatch.donor = donor;
       item.addBatchIfUnique(itemBatch);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
@@ -589,6 +595,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
         note: record.note,
         costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        donor,
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
@@ -603,7 +610,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
     default:
       break; // Silently ignore record types which are not used by mobile.
   }
-}
+};
 
 /**
  * Take the data from a sync record, and integrate it into the local database as
@@ -616,7 +623,7 @@ export function createOrUpdateRecord(database, settings, recordType, record) {
  * @param   {object}  syncRecord  Data representing the sync record.
  * @return  {none}
  */
-export function integrateRecord(database, settings, syncRecord) {
+export const integrateRecord = (database, settings, syncRecord) => {
   // Ignore sync record if missing data, record type, sync type, or record ID.
   if (!syncRecord.RecordType || !syncRecord.SyncType) return;
   const syncType = syncRecord.SyncType;
@@ -640,4 +647,4 @@ export function integrateRecord(database, settings, syncRecord) {
     default:
     // Handle unexpected |changeType|.
   }
-}
+};
