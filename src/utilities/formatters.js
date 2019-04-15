@@ -9,4 +9,8 @@ export const formatStatus = status => {
   }
 };
 
-export default formatStatus;
+export const formatExposureRange = ({ min, max } = {}) => {
+  if (!(min && max)) return '';
+  const degree = String.fromCharCode(176);
+  return `${min}${degree}C to ${max}${degree}C`;
+};

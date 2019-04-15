@@ -38,6 +38,7 @@ import { VaccineModulePage } from './VaccineModulePage';
 import { VaccineChartPage } from './VaccineChartPage';
 
 import { RealmExplorer } from './RealmExplorer';
+import { ManageItemsPage } from './ManageItemsPage';
 
 export { FirstUsePage } from './FirstUsePage';
 
@@ -59,6 +60,7 @@ export const PAGES = {
   supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
   vaccineModule: props => <PageContainer page={VaccineModulePage} {...props} />,
   vaccineChart: props => <PageContainer page={VaccineChartPage} {...props} />,
+  manageVaccineItems: props => <PageContainer page={ManageItemsPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {

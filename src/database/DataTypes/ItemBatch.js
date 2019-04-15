@@ -117,6 +117,13 @@ export class ItemBatch extends Realm.Object {
     this.addTransactionBatch(transactionBatch);
   }
 
+  get temperatureExposure() {
+    const maxTemperature = this.sensorLogs.max('temperature');
+    const minTemperature = this.sensorLogs.min('temperature');
+
+    return { minTemperature, maxTemperature };
+  }
+
   /**
    * Get string representation of batch.
    *
@@ -124,6 +131,31 @@ export class ItemBatch extends Realm.Object {
    */
   toString() {
     return `${this.itemName} - Batch ${this.batch}`;
+  }
+
+  /**
+   * Returns all SensorLog objects related to this ItemBatch
+   * which has recorded a breach.
+   */
+  get breaches() {
+    return this.sensorLogs.filtered('isInBreach = $0', true);
+  }
+
+  /**
+   * Returns if this ItemBatch has been in a breach.
+   */
+  get hasBreached() {
+    return this.breaches.length > 0;
+  }
+
+  /**
+   * Returns an object {maxTemperature, minTemperature} for all
+   * recorded temperatures for this ItemBatch.
+   */
+  get temperatureExposure() {
+    const maxTemperature = this.sensorLogs.max('temperature') || -Infinity;
+    const minTemperature = this.sensorLogs.min('temperature') || Infinity;
+    return { maxTemperature, minTemperature };
   }
 }
 

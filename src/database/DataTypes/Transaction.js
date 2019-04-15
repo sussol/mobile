@@ -212,14 +212,6 @@ export class Transaction extends Realm.Object {
   }
 
   /**
-   * Gets if this transaction has an item that is a vaccine
-   * @return {boolean}
-   */
-  get hasVaccine() {
-    return !!this.items.find(({ item }) => item.isVaccine);
-  }
-
-  /**
    * Get if this transaction includes a given item.
    *
    * @param   {Item}  item

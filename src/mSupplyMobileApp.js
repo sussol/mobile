@@ -218,7 +218,7 @@ class MSupplyMobileAppContainer extends React.Component {
       syncModalIsOpen,
     } = this.state;
 
-    if (!isInitialised) {
+    if (false) {
       return (
         <FirstUsePage
           synchroniser={this.synchroniser}
@@ -276,7 +276,7 @@ class MSupplyMobileAppContainer extends React.Component {
         {/* <LoginModal
           authenticator={this.userAuthenticator}
           settings={this.settings}
-          isAuthenticated={currentUser !== null}
+          isAuthenticated={true}
           onAuthentication={this.onAuthentication}
         /> */}
         {isLoading && this.renderLoadingIndicator()}
