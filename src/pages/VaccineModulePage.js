@@ -220,7 +220,10 @@ export class VaccineModulePage extends React.Component {
           {this.renderButton({ text: 'Customer Invoice', onPress: () => console.log('yow') })}
           {this.renderButton({ text: 'Supplier Invoice', onPress: () => console.log('yow') })}
           {this.renderButton({ text: 'Order Stock', onPress: () => console.log('yow') })}
-          {this.renderButton({ text: 'Manage Stock', onPress: () => console.log('yow') })}
+          {this.renderButton({
+            text: 'Manage Stock',
+            onPress: () => this.props.navigateTo('manageVaccineItems', 'Manage Vaccine Items'),
+          })}
         </View>
         {fridges.map(this.renderFridge)}
       </View>
