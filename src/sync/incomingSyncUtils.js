@@ -55,7 +55,7 @@ const validateJson = jsonAsString => {
  */
 const parseDate = (ISODate, ISOTime) => {
   if (!ISODate || ISODate.length < 1 || ISODate === '0000-00-00T00:00:00') {
-    return null;
+    return new Date();
   }
   const date = new Date(ISODate);
   if (ISOTime && ISOTime.length >= 5) {

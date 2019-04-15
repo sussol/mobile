@@ -6,10 +6,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Image, StyleSheet, View, Text } from 'react-native';
+import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { VaccineChart } from '../widgets/VaccineChart';
 import globalStyles, { SHADOW_BORDER, APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 
 /* eslint-disable global-require */
@@ -22,7 +22,9 @@ export class VaccineModulePage extends React.Component {
 
   componentWillMount() {
     const { database } = this.props;
-    this.setState({ fridges: database.objects('Location').filter(({ isFridge }) => isFridge) });
+    const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
+    const selectedFridge = fridges.length > 0 && fridges[0].code;
+    this.setState({ fridges, selectedFridge });
   }
 
   renderButton = buttonProps => (
@@ -33,30 +35,29 @@ export class VaccineModulePage extends React.Component {
     />
   );
 
+  selectFridge = fridge => {
+    this.setState({ selectedFridge: fridge.code });
+  };
+
   renderFridge = fridge => (
-    <View>
+    <View key={fridge.code}>
       <View style={[localStyles.section, { flexDirection: 'column', alignItems: 'stretch' }]}>
         <View style={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
-          <View style={{ margin: 5, alignSelf: 'flex-end', flexDirection: 'row' }}>
-            {fridge.description !== 'Main Fridge' && (
-              <Icon
-                style={{ margin: 3, marginRight: 6 }}
-                name="chevron-down"
-                size={15}
-                color={SUSSOL_ORANGE}
-              />
-            )}
-            {fridge.description === 'Main Fridge' && (
-              <Image
-                style={{ height: 15, width: 15, margin: 3 }}
-                resizeMode="contain"
-                source={require('../images/fridge.png')}
-              />
-            )}
-            <Text style={{ fontFamily: APP_FONT_FAMILY, fontSize: 20, color: SUSSOL_ORANGE }}>
-              {fridge.description}
-            </Text>
-          </View>
+          <TouchableOpacity onPress={() => this.selectFridge(fridge)}>
+            <View style={{ margin: 5, alignSelf: 'flex-end', flexDirection: 'row' }}>
+              {this.state.selectedFridge !== fridge.code && (
+                <Icon
+                  style={{ margin: 3, marginRight: 6 }}
+                  name="chevron-down"
+                  size={15}
+                  color={SUSSOL_ORANGE}
+                />
+              )}
+              <Text style={{ fontFamily: APP_FONT_FAMILY, fontSize: 20, color: SUSSOL_ORANGE }}>
+                {fridge.description}
+              </Text>
+            </View>
+          </TouchableOpacity>
           <View style={{ marginLeft: 5, flexDirection: 'row', alignItems: 'flex-start' }}>
             <Text
               style={{
@@ -66,7 +67,7 @@ export class VaccineModulePage extends React.Component {
                 color: '#909192',
               }}
             >
-              3.5
+              {fridge.getCurrentTemperature()}
             </Text>
             <Text
               style={{
@@ -80,6 +81,9 @@ export class VaccineModulePage extends React.Component {
               ℃
             </Text>
           </View>
+          {fridge.isInBreach ? (
+            <Icon style={{ margin: 3, marginLeft: 6 }} name="warning" size={20} color="#e95c30" />
+          ) : null}
           <View
             style={{
               marginLeft: 5,
@@ -89,12 +93,37 @@ export class VaccineModulePage extends React.Component {
               flexGrow: 1,
             }}
           >
+            {fridge.getNumberOfBreaches() > 0 ? (
+              <Text
+                style={{
+                  fontFamily: APP_FONT_FAMILY,
+                  fontSize: 15,
+                  fontWeight: '400',
+                  color: '#909192',
+                }}
+              >
+                Breaches:{' '}
+              </Text>
+            ) : null}
+            {fridge.getNumberOfBreaches() > 0 ? (
+              <Text
+                style={{
+                  fontFamily: APP_FONT_FAMILY,
+                  fontSize: 20,
+                  fontWeight: '300',
+                  color: '#909192',
+                }}
+              >
+                {fridge.getNumberOfBreaches()}
+              </Text>
+            ) : null}
             <Text
               style={{
                 fontFamily: APP_FONT_FAMILY,
                 fontSize: 15,
                 fontWeight: '400',
                 color: '#909192',
+                marginLeft: 10,
               }}
             >
               Exposure:{' '}
@@ -107,7 +136,7 @@ export class VaccineModulePage extends React.Component {
                 color: '#909192',
               }}
             >
-              0.5℃ to 8.9℃
+              {fridge.getTemperatureExposure()}
             </Text>
           </View>
           <View
@@ -118,39 +147,60 @@ export class VaccineModulePage extends React.Component {
               alignItems: 'center',
             }}
           >
-            <Text
-              style={{
-                fontFamily: APP_FONT_FAMILY,
-                fontSize: 15,
-                marginLeft: 10,
-                fontWeight: '400',
-                color: SUSSOL_ORANGE,
-              }}
-            >
-              Total Stock:
-            </Text>
-            <Text
-              style={{
-                fontFamily: APP_FONT_FAMILY,
-                fontSize: 15,
-                marginLeft: 5,
-                fontWeight: '300',
-                color: SUSSOL_ORANGE,
-              }}
-            >
-              100
-            </Text>
-            <Icon
-              style={{ margin: 3, marginLeft: 5, marginRight: 6 }}
-              name="angle-double-right"
-              size={15}
-              color={SUSSOL_ORANGE}
-            />
+            {fridge.getTotalStock() > 0 ? (
+              <Text
+                style={{
+                  fontFamily: APP_FONT_FAMILY,
+                  fontSize: 15,
+                  marginLeft: 10,
+                  fontWeight: '400',
+                  color: SUSSOL_ORANGE,
+                }}
+              >
+                Total Stock:
+              </Text>
+            ) : null}
+            {fridge.getTotalStock() > 0 ? (
+              <Text
+                style={{
+                  fontFamily: APP_FONT_FAMILY,
+                  fontSize: 15,
+                  marginLeft: 5,
+                  fontWeight: '300',
+                  color: SUSSOL_ORANGE,
+                }}
+              >
+                {fridge.getTotalStock()}
+              </Text>
+            ) : null}
+            {fridge.getTotalStock() === 0 ? (
+              <Text
+                style={{
+                  fontFamily: APP_FONT_FAMILY,
+                  fontSize: 15,
+                  fontWeight: '400',
+                  color: SUSSOL_ORANGE,
+                  margin: 3,
+                  marginLeft: 5,
+                  marginRight: 6,
+                }}
+              >
+                Empty Fridge
+              </Text>
+            ) : null}
+            {fridge.getTotalStock() > 0 ? (
+              <Icon
+                style={{ margin: 3, marginLeft: 5, marginRight: 6 }}
+                name="angle-double-right"
+                size={15}
+                color={SUSSOL_ORANGE}
+              />
+            ) : null}
           </View>
         </View>
-        {fridge.description === 'Main Fridge' && (
-          <View style={{ height: 100 }}>
-            <Text>Graph Here</Text>
+        {this.state.selectedFridge === fridge.code && (
+          <View style={{ height: 250, alignSelf: 'stretch' }}>
+            <VaccineChart {...fridge.getTemperaturePoints()} />
           </View>
         )}
       </View>
