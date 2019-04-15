@@ -15,6 +15,7 @@ export {
   DemoUserModal,
   PageContentModal,
   SelectModal,
+  GenericChooseModal,
 } from './modals';
 
 export { AutocompleteSelector } from './AutocompleteSelector';
