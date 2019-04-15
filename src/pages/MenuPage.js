@@ -130,13 +130,13 @@ export class MenuPage extends React.Component {
 
   renderButton = ({ title, page }) => {
     const { menuButton, menuButtonText } = globalStyles;
+    const { navigateTo } = this.props;
     return (
       <Button
         style={menuButton}
         textStyle={menuButtonText}
         text={title}
-        // eslint-disable-next-line react/destructuring-assignment
-        onPress={() => this.props.navigateTo(page, title)}
+        onPress={() => navigateTo(page, title)}
       />
     );
   };
