@@ -148,31 +148,46 @@ export class VaccineModulePage extends React.Component {
             }}
           >
             {fridge.getTotalStock() > 0 ? (
-              <Text
-                style={{
-                  fontFamily: APP_FONT_FAMILY,
-                  fontSize: 15,
-                  marginLeft: 10,
-                  fontWeight: '400',
-                  color: SUSSOL_ORANGE,
-                }}
+              <TouchableOpacity
+                onPress={() =>
+                  this.props.navigateTo('manageVaccineItems', 'Manage Vaccine Items', {
+                    locationFilter: fridge,
+                  })
+                }
               >
-                Total Stock:
-              </Text>
+                <View style={{ margin: 5, alignItems: 'center', flexDirection: 'row' }}>
+                  <Text
+                    style={{
+                      fontFamily: APP_FONT_FAMILY,
+                      fontSize: 15,
+                      marginLeft: 10,
+                      fontWeight: '400',
+                      color: SUSSOL_ORANGE,
+                    }}
+                  >
+                    Total Stock:{' '}
+                  </Text>
+                  <Text
+                    style={{
+                      fontFamily: APP_FONT_FAMILY,
+                      fontSize: 15,
+                      marginLeft: 5,
+                      fontWeight: '300',
+                      color: SUSSOL_ORANGE,
+                    }}
+                  >
+                    {fridge.getTotalStock()}
+                  </Text>
+                  <Icon
+                    style={{ marginLeft: 5, marginRight: 6 }}
+                    name="angle-double-right"
+                    size={15}
+                    color={SUSSOL_ORANGE}
+                  />
+                </View>
+              </TouchableOpacity>
             ) : null}
-            {fridge.getTotalStock() > 0 ? (
-              <Text
-                style={{
-                  fontFamily: APP_FONT_FAMILY,
-                  fontSize: 15,
-                  marginLeft: 5,
-                  fontWeight: '300',
-                  color: SUSSOL_ORANGE,
-                }}
-              >
-                {fridge.getTotalStock()}
-              </Text>
-            ) : null}
+
             {fridge.getTotalStock() === 0 ? (
               <Text
                 style={{
@@ -187,14 +202,6 @@ export class VaccineModulePage extends React.Component {
               >
                 Empty Fridge
               </Text>
-            ) : null}
-            {fridge.getTotalStock() > 0 ? (
-              <Icon
-                style={{ margin: 3, marginLeft: 5, marginRight: 6 }}
-                name="angle-double-right"
-                size={15}
-                color={SUSSOL_ORANGE}
-              />
             ) : null}
           </View>
         </View>

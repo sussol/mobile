@@ -49,7 +49,7 @@ const TABLE_COLUMNS = {
   totalBatchesInStock: {
     key: 'totalBatchesInStock',
     width: 0.8,
-    title: 'NUMBER OF BATCHES',
+    title: 'NUMBER OF\nBATCHES',
     alignText: 'right',
   },
   totalQuantity: { key: 'totalQuantity', width: 0.5, title: 'QUANTITY', alignText: 'right' },
@@ -108,11 +108,11 @@ export class ManageItemsPage extends React.Component {
    * HELPER METHODS
    */
 
-  locationFilter = (location, item) => {
-    const { id = -1 } = location;
-    if (id === -1) return true;
-    return item.hasBatchInFridge(location);
-  };
+  locationFilter = (location, item) =>
+    // const { id = -1 } = location;
+    // if (id === -1) return true;
+    // return item.hasBatchInFridge(location);
+    item;
 
   nameAndCodeFilter = (searchTerm, { name, code } = {}) =>
     name.toLowerCase().startsWith(searchTerm) || code.toLowerCase().startsWith(searchTerm);
@@ -120,9 +120,7 @@ export class ManageItemsPage extends React.Component {
   getData = () => {
     const { locationFilter, searchTerm } = this.state;
     if (!locationFilter) return [];
-    return this.ITEMS.filter(item => this.locationFilter(locationFilter, item)).filter(item =>
-      this.nameAndCodeFilter(searchTerm, item)
-    );
+    return this.ITEMS.filter(item => this.nameAndCodeFilter(searchTerm, item));
   };
 
   /**
@@ -133,6 +131,7 @@ export class ManageItemsPage extends React.Component {
     // set locationFilter in state and filter before setting data. This is bad as
     // is makes this component controlled and uncontrolled?
     const { database, initialLocation } = this.props;
+    console.log(this.props);
     const fridges = database.objects('Location').filter(location => location.isFridge);
     // TODO: No fridges?
     fridges.unshift({ id: -1, description: LOCALIZATION.misc.allLocations });
@@ -184,6 +183,8 @@ export class ManageItemsPage extends React.Component {
 
   renderCell = (key, item) => {
     const { BREACH } = MODAL_KEYS;
+    console.log(key);
+    console.log(item[key]);
     const emptyCell = { type: 'text', cellContents: '' };
     switch (key) {
       default:
@@ -201,12 +202,14 @@ export class ManageItemsPage extends React.Component {
       case 'navigation':
         return (
           <IconCell
-            icon="angle-double-up"
+            icon="angle-double-right"
             iconSize={20}
             iconColor={SUSSOL_ORANGE}
             onPress={this.onNavigateToItem}
           />
         );
+      case 'quantityInBreach':
+        return item.getQuantityInBreach();
       case 'temperatureExposure':
         return formatExposureRange(item[key]);
     }
