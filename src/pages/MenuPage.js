@@ -229,6 +229,10 @@ const localStyles = StyleSheet.create({
     fontFamily: APP_FONT_FAMILY,
     color: WARMER_GREY,
   },
+  vaccineChartText: {
+    fontFamily: APP_FONT_FAMILY,
+    color: WARMER_GREY,
+  },
   bottomIcon: {
     color: GREY,
   },

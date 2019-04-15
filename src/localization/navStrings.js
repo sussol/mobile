@@ -24,6 +24,7 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Supplier Invoices',
     supplier_requisitions: 'Supplier Requisitions',
     vaccine_module: 'Vaccine Module',
+    vaccine_chart: 'Vaccine chart',
   },
   fr: {
     // TODO: add vaccine_module
@@ -43,7 +44,7 @@ export const navStrings = new LocalizedStrings({
     stocktake: "Relevé d'nventaire",
     supplier_invoices: 'Factures fournisseurs',
     supplier_requisitions: 'Factures réquisitions',
-    vaccine_module: 'Vaccine Module',
+    vaccine_chart: 'Vaccine chart',
   },
   gil: {
     // TODO: add |stocktake|, vaccine_module
@@ -63,6 +64,7 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Ana Invoice\nam Supplier',
     supplier_requisitions: 'Am oota nakon\nte pharmacy',
     vaccine_module: 'Vaccine Module',
+    vaccine_chart: 'Vaccine chart',
   },
   tl: {
     // TODO: add |stocktake|, vaccine_module
@@ -82,6 +84,7 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'Distribuidór nia Konta',
     supplier_requisitions: 'Rekuizasaun\nba Distribuidor',
     vaccine_module: 'Vaccine Module',
+    vaccine_chart: 'Vaccine chart',
   },
   la: {
     // TODO: add |stocktake|, vaccine_module
@@ -102,6 +105,7 @@ export const navStrings = new LocalizedStrings({
     supplier_invoices: 'ໃບນຳສົ່ງສິນຄ້າ',
     supplier_requisitions: 'ການ​ສະ​ເໜີ​ຂໍ ຫາຜູ້​ສະ​ໜອງ',
     vaccine_module: 'Vaccine Module',
+    vaccine_chart: 'Vaccine chart',
   },
 });
 

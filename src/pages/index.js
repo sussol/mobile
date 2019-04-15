@@ -35,6 +35,7 @@ import {
   checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
 } from './SupplierRequisitionPage';
 import { VaccineModulePage } from './VaccineModulePage';
+import { VaccineChartPage } from './VaccineChartPage';
 
 import { RealmExplorer } from './RealmExplorer';
 
@@ -57,6 +58,7 @@ export const PAGES = {
   supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
   supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
   vaccineModule: props => <PageContainer page={VaccineModulePage} {...props} />,
+  vaccineChart: props => <PageContainer page={VaccineChartPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
