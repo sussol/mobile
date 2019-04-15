@@ -15,7 +15,6 @@ export {
   DemoUserModal,
   PageContentModal,
   SelectModal,
-  GenericChooseModal,
 } from './modals';
 
 export { AutocompleteSelector } from './AutocompleteSelector';
@@ -33,3 +32,4 @@ export { ExpiryTextInput } from './ExpiryTextInput';
 export { OnePressButton } from './OnePressButton';
 export { IconCell } from './IconCell';
 export { MiniToggleBar } from './MiniToggleBar';
+export { GenericChoiceList } from './GenericChoiceList';

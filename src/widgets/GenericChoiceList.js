@@ -9,13 +9,12 @@ import PropTypes from 'prop-types';
 
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { COMPONENT_HEIGHT } from '../../globalStyles';
+import { COMPONENT_HEIGHT } from '../globalStyles';
 
 /**
- * Generic modal for rendering a full screen modal with a
- * list of options. On selecting a choice, returns the object
- * which was selected, the index/row within the data array and
- * the field which was displayed to the user.
+ * Generic choice list for use within a PageContentModal. Similar style as LanguageModal.
+ * On selecting a choice, returns the object which was selected, the index/row
+ * within the data array and the field which was displayed to the user.
  * @prop  {array}   data            Array of objects from which a choice must be made from
  * @prop  {string}  keyToDisplay    The object property which should be displayed to the user
  * @prop  {func}    onPress         Function to call on selection returns {item, index, field}
@@ -25,7 +24,7 @@ import { COMPONENT_HEIGHT } from '../../globalStyles';
  * NOTE: If there are multiple, equal values used in highlightValue within the data array,
  * multiple values will be highlighted.
  */
-export class GenericChooseModal extends React.PureComponent {
+export class GenericChoiceList extends React.PureComponent {
   keyExtractor = (item, index) => {
     const { keyToDisplay } = this.props;
     const content = keyToDisplay && item ? item[keyToDisplay] : item;
@@ -84,12 +83,12 @@ const localStyles = StyleSheet.create({
   },
 });
 
-GenericChooseModal.defaultProps = {
+GenericChoiceList.defaultProps = {
   highlightIndex: 0,
   highlightValue: null,
 };
 
-GenericChooseModal.propTypes = {
+GenericChoiceList.propTypes = {
   keyToDisplay: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
@@ -97,4 +96,4 @@ GenericChooseModal.propTypes = {
   highlightValue: PropTypes.string,
 };
 
-export default GenericChooseModal;
+export default GenericChoiceList;
