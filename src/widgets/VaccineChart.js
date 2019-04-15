@@ -6,6 +6,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { View } from 'react-native';
+
 import {
   VictoryLine,
   VictoryScatter,
@@ -18,101 +20,140 @@ import Svg from 'react-native-svg';
 
 import { HazardPoint } from './HazardPoint';
 
-const getMinTemp = (minTemp, { temp }) => (temp < minTemp ? temp : minTemp);
-const getMaxTemp = (maxTemp, { temp }) => (temp > maxTemp ? temp : maxTemp);
+export class VaccineChart extends React.Component {
+  constructor(props) {
+    super(props);
 
-export const VaccineChart = props => {
-  const { minLine, maxLine, hazards, minTemp, maxTemp, width, height } = props;
+    this.state = {
+      width: null,
+      height: null,
+    };
+  }
 
-  const x = 'date';
-  const y = 'temp';
+  // Victory Native sizes are set using absolute values. Parents dimensions are used to
+  // calculate relative values for width and height for each chart.
+  onLayout = event => {
+    this.setState({
+      width: event.nativeEvent.layout.width,
+      height: event.nativeEvent.layout.height,
+    });
+  };
 
-  if (!minLine && !maxLine) return null;
+  renderPlot() {
+    const { minLine, maxLine, hazards, minTemp, maxTemp } = this.props;
+    const { width, height } = this.state;
 
-  const minDomain = minLine.concat(maxLine).reduce(getMinTemp, minTemp) - 1;
-  const maxDomain = minLine.concat(maxLine).reduce(getMaxTemp, maxTemp) + 1;
+    if (!width || !height) return null;
 
-  const minTempPlotLine =
-    minTemp !== Infinity ? (
-      <VictoryLine
-        y={() => minTemp}
-        style={{
-          data: { strokeDasharray: minLineStyles.strokeDasharray, stroke: minLineStyles.stroke },
-        }}
-      />
-    ) : null;
+    if (minLine.length + maxLine.length === 0) return null;
 
-  const maxTempPlotLine =
-    maxTemp !== -Infinity ? (
-      <VictoryLine
-        y={() => maxTemp}
-        style={{
-          data: { strokeDasharray: maxLineStyles.strokeDasharray, stroke: maxLineStyles.stroke },
-        }}
-      />
-    ) : null;
+    const dataKeys = { x: 'date', y: 'temp' };
 
-  const minLinePlotLine =
-    minLine.length > 0 ? (
-      <VictoryLine
-        data={minLine}
-        interpolation={minLineStyles.interpolation}
-        style={{ data: { stroke: minLineStyles.stroke } }}
-        x={x}
-        y={y}
-      />
-    ) : null;
+    const lines = [...minLine, ...maxLine];
 
-  const minLinePlotScatter =
-    minLine.length > 0 ? (
-      <VictoryScatter data={minLine} style={{ data: { fill: minLineStyles.fill } }} x={x} y={y} />
-    ) : null;
+    const minDomain =
+      lines.reduce((reducedTemp, { temp }) => Math.min(reducedTemp, temp), minTemp) - 1;
+    const maxDomain =
+      lines.reduce((reducedTemp, { temp }) => Math.max(reducedTemp, temp), maxTemp) + 1;
 
-  const maxLinePlotLine =
-    maxLine.length > 0 ? (
-      <VictoryLine
-        data={maxLine}
-        interpolation={maxLineStyles.interpolation}
-        style={{ data: { stroke: maxLineStyles.stroke } }}
-        x={x}
-        y={y}
-      />
-    ) : null;
+    const minTempPlotLine =
+      // minTemp default prop is Infinity.
+      minTemp !== Infinity ? (
+        <VictoryLine
+          y={() => minTemp}
+          style={{
+            data: { strokeDasharray: minLineStyles.strokeDasharray, stroke: minLineStyles.stroke },
+          }}
+        />
+      ) : null;
 
-  const maxLinePlotScatter =
-    maxLine.length > 0 ? (
-      <VictoryScatter data={maxLine} style={{ data: { fill: maxLineStyles.fill } }} x={x} y={y} />
-    ) : null;
+    const maxTempPlotLine =
+      // maxTemp default prop is -Infinity.
+      maxTemp !== -Infinity ? (
+        <VictoryLine
+          y={() => maxTemp}
+          style={{
+            data: { strokeDasharray: maxLineStyles.strokeDasharray, stroke: maxLineStyles.stroke },
+          }}
+        />
+      ) : null;
 
-  const hazardPlotScatter =
-    hazards.length > 0 ? (
-      <VictoryScatter dataComponent={<HazardPoint />} data={hazards} x={x} y={y} />
-    ) : null;
+    const minLinePlotLine =
+      minLine.length > 0 ? (
+        <VictoryLine
+          data={minLine}
+          interpolation={minLineStyles.interpolation}
+          style={{ data: { stroke: minLineStyles.stroke } }}
+          {...dataKeys}
+        />
+      ) : null;
 
-  return (
-    // Svg wrapper fixes victory-native onPressIn bug on Android devices.
-    <Svg>
-      <VictoryChart
-        width={width}
-        height={height}
-        style={chartStyles}
-        theme={VictoryTheme.material}
-        maxDomain={{ y: maxDomain }}
-        minDomain={{ y: minDomain }}
-      >
-        <VictoryAxis offsetY={50} />
-        <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
-        {minTempPlotLine}
-        {maxTempPlotLine}
-        {minLinePlotLine}
-        {minLinePlotScatter}
-        {maxLinePlotLine}
-        {maxLinePlotScatter}
-        {hazardPlotScatter}
-      </VictoryChart>
-    </Svg>
-  );
-};
+    const minLinePlotScatter =
+      minLine.length > 0 ? (
+        <VictoryScatter
+          data={minLine}
+          style={{ data: { fill: minLineStyles.fill } }}
+          {...dataKeys}
+        />
+      ) : null;
+
+    const maxLinePlotLine =
+      maxLine.length > 0 ? (
+        <VictoryLine
+          data={maxLine}
+          interpolation={maxLineStyles.interpolation}
+          style={{ data: { stroke: maxLineStyles.stroke } }}
+          {...dataKeys}
+        />
+      ) : null;
+
+    const maxLinePlotScatter =
+      maxLine.length > 0 ? (
+        <VictoryScatter
+          data={maxLine}
+          style={{ data: { fill: maxLineStyles.fill } }}
+          {...dataKeys}
+        />
+      ) : null;
+
+    const hazardPlotScatter =
+      hazards.length > 0 ? (
+        <VictoryScatter dataComponent={<HazardPoint />} data={hazards} {...dataKeys} />
+      ) : null;
+
+    return (
+      <Svg>
+        <VictoryChart
+          width={width}
+          height={height}
+          style={chartStyles}
+          theme={VictoryTheme.material}
+          maxDomain={{ y: maxDomain }}
+          minDomain={{ y: minDomain }}
+        >
+          <VictoryAxis offsetY={50} />
+          <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
+          {minTempPlotLine}
+          {maxTempPlotLine}
+          {minLinePlotLine}
+          {minLinePlotScatter}
+          {maxLinePlotLine}
+          {maxLinePlotScatter}
+          {hazardPlotScatter}
+        </VictoryChart>
+      </Svg>
+    );
+  }
+
+  render() {
+    return (
+      // Svg wrapper fixes victory-native onPressIn bug on Android devices.
+      <View style={{ width: '100%', height: '100%' }} onLayout={this.onLayout}>
+        {this.renderPlot()}
+      </View>
+    );
+  }
+}
 
 const chartStyles = {
   display: 'flex',
@@ -140,8 +181,6 @@ VaccineChart.propTypes = {
   hazards: PropTypes.arrayOf(PropTypes.object),
   minTemp: PropTypes.number,
   maxTemp: PropTypes.number,
-  width: PropTypes.number.isRequired,
-  height: PropTypes.number.isRequired,
 };
 
 VaccineChart.defaultProps = {
