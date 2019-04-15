@@ -14,14 +14,14 @@ import { View, StyleSheet, TextInput as RNTextInput, ViewPropTypes } from 'react
  * @param   {object}  props   Properties passed where component was created.
  * @return  {React.Component} View containing a TextInput
  */
-export function TextInput(props) {
+export const TextInput = props => {
   const { style, textStyle, ...textInputProps } = props;
   return (
     <View style={[localStyles.container, style]}>
       <RNTextInput {...textInputProps} style={[textStyle, localStyles.textInput]} />
     </View>
   );
-}
+};
 
 export default TextInput;
 

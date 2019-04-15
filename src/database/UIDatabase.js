@@ -79,26 +79,26 @@ export class UIDatabase {
       case 'CustomerInvoice':
         // Only show invoices generated from requisitions once finalised.
         return results.filtered(
-          'type == "customer_invoice" AND (linkedRequisition == null OR status == "finalised")',
+          'type == "customer_invoice" AND (linkedRequisition == null OR status == "finalised")'
         );
       case 'SupplierInvoice':
         return results.filtered(
-          'type == "supplier_invoice" AND otherParty.type != "inventory_adjustment"',
+          'type == "supplier_invoice" AND otherParty.type != "inventory_adjustment"'
         );
       case 'Customer':
         return results.filtered(
           'isVisible == true AND isCustomer == true AND id != $0',
-          thisStoreNameId,
+          thisStoreNameId
         );
       case 'Supplier':
         return results.filtered(
           'isVisible == true AND isSupplier == true AND id != $0',
-          thisStoreNameId,
+          thisStoreNameId
         );
       case 'InternalSupplier':
         return results.filtered(
           'isVisible == true AND isSupplier == true AND type == "store" AND id != $0',
-          thisStoreNameId,
+          thisStoreNameId
         );
       case 'ExternalSupplier':
         return results.filtered('isVisible == true AND isSupplier == true AND type == "facility"');

@@ -32,9 +32,7 @@ export class CustomerRequisitionsPage extends React.Component {
     };
   }
 
-  onRowPress = requisition => {
-    this.navigateToRequisition(requisition);
-  };
+  onRowPress = requisition => this.navigateToRequisition(requisition);
 
   navigateToRequisition = requisition => {
     const { navigateTo } = this.props;

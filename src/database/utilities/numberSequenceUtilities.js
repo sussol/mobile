@@ -15,7 +15,7 @@ export const NUMBER_SEQUENCE_KEYS = {
 };
 
 // Find and return the sequence with the given key.
-export function getNumberSequence(database, sequenceKey) {
+export const getNumberSequence = (database, sequenceKey) => {
   const sequenceResults = database
     .objects('NumberSequence')
     .filtered('sequenceKey == $0', sequenceKey);
@@ -26,19 +26,19 @@ export function getNumberSequence(database, sequenceKey) {
     return createRecord(database, 'NumberSequence', sequenceKey);
   }
   return sequenceResults[0];
-}
+};
 
 // Get the next highest number in an existing number sequence.
-export function getNextNumber(database, sequenceKey) {
+export const getNextNumber = (database, sequenceKey) => {
   const numberSequence = getNumberSequence(database, sequenceKey);
   const number = numberSequence.getNextNumber(database);
   database.save('NumberSequence', numberSequence);
   return String(number);
-}
+};
 
 // Put a number back into a sequence for reuse.
-export function reuseNumber(database, sequenceKey, number) {
+export const reuseNumber = (database, sequenceKey, number) => {
   const numberSequence = getNumberSequence(database, sequenceKey);
   numberSequence.reuseNumber(database, parseInt(number, 10));
   database.save('NumberSequence', numberSequence);
-}
+};

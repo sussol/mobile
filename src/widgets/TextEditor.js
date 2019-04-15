@@ -44,20 +44,14 @@ export class TextEditor extends React.Component {
           textStyle={globalStyles.modalText}
           underlineColorAndroid="transparent"
           value={text}
-          onChangeText={newText => {
-            this.setState({ text: newText });
-          }}
-          onSubmitEditing={() => {
-            onEndEditing(text);
-          }}
+          onChangeText={newText => this.setState({ text: newText })}
+          onSubmitEditing={() => onEndEditing(text)}
         />
         <Button
           style={[globalStyles.button, globalStyles.modalOrangeButton]}
           textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
           text={buttonStrings.done}
-          onPress={() => {
-            onEndEditing(text);
-          }}
+          onPress={() => onEndEditing(text)}
         />
       </View>
     );

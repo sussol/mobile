@@ -60,9 +60,7 @@ export class StocktakesPage extends React.Component {
     database.write(() => {
       const stocktakesToDelete = [];
       for (let i = 0; i < selection.length; i += 1) {
-        const stocktake = this.stocktakes.find(s => {
-          return s.id === selection[i];
-        });
+        const stocktake = this.stocktakes.find(s => s.id === selection[i]);
         if (stocktake.isValid() && !stocktake.isFinalised) {
           stocktakesToDelete.push(stocktake);
         }
@@ -81,9 +79,7 @@ export class StocktakesPage extends React.Component {
   };
 
   clearSelection = shouldRefreshData => {
-    this.setState({ selection: [] }, () => {
-      return shouldRefreshData && this.refreshData();
-    });
+    this.setState({ selection: [] }, () => shouldRefreshData && this.refreshData());
   };
 
   updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
@@ -140,16 +136,12 @@ export class StocktakesPage extends React.Component {
         toggles={[
           {
             text: buttonStrings.current,
-            onPress: () => {
-              this.onToggleStatusFilter(true);
-            },
+            onPress: () => this.onToggleStatusFilter(true),
             isOn: showCurrent,
           },
           {
             text: buttonStrings.past,
-            onPress: () => {
-              this.onToggleStatusFilter(false);
-            },
+            onPress: () => this.onToggleStatusFilter(false),
             isOn: !showCurrent,
           },
         ]}
@@ -157,9 +149,9 @@ export class StocktakesPage extends React.Component {
     );
   };
 
-  renderNewStocktakeButton = () => {
-    return <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />;
-  };
+  renderNewStocktakeButton = () => (
+    <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />
+  );
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
@@ -210,12 +202,8 @@ export class StocktakesPage extends React.Component {
         <BottomConfirmModal
           isOpen={selection.length > 0 && showCurrent}
           questionText={modalStrings.delete_these_stocktakes}
-          onCancel={() => {
-            this.clearSelection(true);
-          }}
-          onConfirm={() => {
-            this.onDeleteConfirm();
-          }}
+          onCancel={() => this.clearSelection(true)}
+          onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.delete}
         />
       </GenericPage>

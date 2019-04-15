@@ -5,26 +5,46 @@
 
 import Realm from 'realm';
 
-// Only used for the purpose of cleaning up item visibility when deleted.
+/**
+ * An item to store join used as a helper for sync deletion functionality.
+ *
+ * @property  {string}   id
+ * @property  {string}   itemId
+ * @property  {boolean}  joinsThisStore
+ */
+
 export class ItemStoreJoin extends Realm.Object {
+  /**
+   * Delete item to store join and update visibility of items in current store.
+   *
+   * @param  {Realm}  database
+   */
   destructor(database) {
-    if (!this.joinsThisStore) return; // Unnecessary to change visibility if record not this store.
+    // Check if join is associated with this store. If not, nothing to be done.
+    if (!this.joinsThisStore) return;
+
+    // Check if join is associated with item in this database. If not, nothing
+    // to be done.
     const itemResults = database.objects('Item').filtered('id == $0', this.itemId);
-    if (!itemResults || itemResults.length <= 0) return; // Does not join an item in this database.
-    // Make the item no longer visible in this store.
+    if (!itemResults || itemResults.length <= 0) return;
+
+    // Join is associate with this store and item exists in this database. update
+    // item to no longer be visible in this store.
     const item = itemResults[0];
     item.isVisible = false;
     database.save('Item', item);
   }
 
+  /**
+   * Get string representation of item store join.
+   *
+   * @returns  {string}
+   */
   toString() {
     return `Joins item ${this.itemId} with ${this.joinsThisStore ? 'this' : 'another'} store`;
   }
 }
 
-export default ItemStoreJoin;
-
-// ItemStoreJoin never used internally, only held for sync delete functionality
 ItemStoreJoin.schema = {
   name: 'ItemStoreJoin',
   primaryKey: 'id',
@@ -34,3 +54,5 @@ ItemStoreJoin.schema = {
     joinsThisStore: 'bool',
   },
 };
+
+export default ItemStoreJoin;

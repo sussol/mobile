@@ -43,6 +43,4 @@ function App() {
   );
 }
 
-AppRegistry.registerComponent('mSupplyMobile', () => {
-  return App;
-});
+AppRegistry.registerComponent('mSupplyMobile', () => App);

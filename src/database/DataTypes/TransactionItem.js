@@ -3,7 +3,18 @@ import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
 
+/**
+ * A transaction item.
+ *
+ * @property  {string}                   id
+ * @property  {Item}                     item
+ * @property  {Transaction}              transaction
+ * @property  {List.<TransactionBatch>}  batches
+ */
 export class TransactionItem extends Realm.Object {
+  /**
+   * Delete transaction item associated with unfinalised transaction.
+   */
   destructor(database) {
     if (this.transaction.isFinalised) {
       throw new Error('Cannot delete an item from a finalised transaction');
@@ -11,37 +22,77 @@ export class TransactionItem extends Realm.Object {
     database.delete('TransactionBatch', this.batches);
   }
 
+  /**
+   * Get id of item associated with this transaction item.
+   *
+   * @return  {string}
+   */
   get itemId() {
     return this.item ? this.item.id : '';
   }
 
+  /**
+   * Get name of item associated with this transaction item.
+   *
+   * @return  {string}
+   */
   get itemName() {
     return this.item ? this.item.name : '';
   }
 
+  /**
+   * Get code of item associated with this transaction item.
+   *
+   * @return  {string}
+   */
   get itemCode() {
     return this.item ? this.item.code : '';
   }
 
+  /**
+   * Get total quantity of batches associated with this transaction item.
+   *
+   * @return  {number}
+   */
   get totalQuantity() {
     return getTotal(this.batches, 'totalQuantity');
   }
 
+  /**
+   * Get total quantity of batches associated with this transaction item which have been sent.
+   *
+   * @return  {number}
+   */
   get totalQuantitySent() {
     return getTotal(this.batches, 'totalQuantitySent');
   }
 
+  /**
+   * Get total price of batches associated with this transaction item.
+   *
+   * @return  {number}
+   */
   get totalPrice() {
     return getTotal(this.batches, 'totalPrice');
   }
 
+  /**
+   * Get total number of batches associated with this transaction item.
+   *
+   * @return  {number}
+   */
   get numberOfBatches() {
     return this.batches.length;
   }
 
-  // For customer invoices, return how much can be issued in total, accounting
-  // for the fact that any issued in a confirmed customer invoice has already
-  // been taken off the total.
+  /**
+   * Get available quantity of items.
+   *
+   * For customer invoices, get how much can be issued in total, accounting for the fact that any
+   * issued in a confirmed customer invoice has already been taken off the total.
+   *
+   * @return  {number}
+   */
   get availableQuantity() {
     if (
       this.transaction.isOutgoing &&
@@ -53,15 +104,13 @@ export class TransactionItem extends Realm.Object {
   }
 
   /**
-   * Returns the batch attached to this transaction item with the given item batch id.
+   * Get the batch attached to this transaction item with the given item batch id.
    *
-   * @param   {string}            itemId  The item id to look for.
-   * @return  {TransactionBatch}          The batch with the matching item id.
+   * @param   {string}            itemId
+   * @return  {TransactionBatch}
    */
   getBatch(itemBatchId) {
-    return this.batches.find(transactionBatch => {
-      return transactionBatch.itemBatchId === itemBatchId;
-    });
+    return this.batches.find(transactionBatch => transactionBatch.itemBatchId === itemBatchId);
   }
 
   addBatch(transactionBatch) {
@@ -72,11 +121,11 @@ export class TransactionItem extends Realm.Object {
    * Sets the quantity for the current item by applying the difference to the
    * shortest expiry batches possible.
    *
-   * N.B. For customer invoices, will create and delete transaction batches as appropriate.
-   * N.B. Supplier invoices do not take effect on the rest of the stock until they
+   * N.B. for customer invoices, will create and delete transaction batches as appropriate.
+   * N.B.  supplier invoices do not take effect on the rest of the stock until they
    * are finalised, whereas customer invoices immediately influence stock levels.
    *
-   * @param  {Realm}   database  App database.
+   * @param  {Realm}   database
    * @param  {double}  quantity
    */
   setTotalQuantity(database, quantity) {
@@ -101,16 +150,18 @@ export class TransactionItem extends Realm.Object {
   }
 
   /**
-   * Applies the given difference in quantity to the appropriate batches. If the difference
-   * is an increase, it will apply to the shortest expiry batches possible. If a reduction,
-   * it will apply to the longest batches possible. In this way it is FEFO for customer invoices,
-   * and pessimistic with changes to supplier invoices (assumes more of the shortest batch or
-   * less of the longest batch). This has the side effect of also being FEFO for supplier credits
-   * made from stocktake inventory adjustments, which is optimistic, but not problematic. Null
-   * expiries are treated as absolute shortest, which means they will be issued first.
+   * Applies the given difference in quantity to the appropriate batches.
    *
-   * @param {Realm}   database    App database.
-   * @param {double}  difference  The difference in quantity to set across all batches.
+   * If the difference is an increase, it will apply to the shortest expiry batches possible.
+   * If a reduction, it will apply to the longest batches possible. In this way it is FEFO for
+   * customer invoices, and pessimistic with changes to supplier invoices (assumes more of the
+   * shortest batch or less of the longest batch). This has the side effect of also being FEFO
+   * for supplier credits made from stocktake inventory adjustments, which is optimistic, but
+   * not problematic. Null expiries are treated as absolute shortest, which means they will be
+   * issued first.
+   *
+   * @param {Realm}   database
+   * @param {number}  difference  The difference in quantity to set across all batches.
    *                              Positive if greater new quantity, negative if lesser.
    */
   allocateDifferenceToBatches(database, difference) {
@@ -143,14 +194,10 @@ export class TransactionItem extends Realm.Object {
       //       item or all batches already in.
       const itemBatchesToAdd = complement(
         batchesToUse,
-        this.batches.map(transactionBatch => {
-          return {
-            id: transactionBatch.itemBatchId,
-          };
-        }),
-        batch => {
-          return batch.id;
-        },
+        this.batches.map(transactionBatch => ({
+          id: transactionBatch.itemBatchId,
+        })),
+        batch => batch.id
       );
 
       // Go through item batches, adding transaction batches and allocating remainder
@@ -173,10 +220,10 @@ export class TransactionItem extends Realm.Object {
   /**
    * Allocates as much as possible of the quantity passed in to the given batch.
    *
-   * @param   {Realm}    database    App database.
+   * @param   {Realm}    database
    * @param   {number}   difference  The difference in quantity to try to allocate.
    * @param   {object}   batch       The transaction batch to apply the quantity to.
-   * @return  {int}                  The remainder that could not be applied.
+   * @return  {number}               The remainder that could not be applied.
    */
   // eslint-disable-next-line class-methods-use-this
   allocateDifferenceToBatch(database, difference, batch) {
@@ -188,10 +235,11 @@ export class TransactionItem extends Realm.Object {
 
   /**
    * Delete any batches from this transaction that do not contribute to the total.
+   *
    * E.g. if the quantity being issued in a customer invoice is reduced, do not keep
    * a batch that is no longer being issued in the transaction.
    *
-   * @param  {Realm}  database  App database.
+   * @param  {Realm}  database
    */
   pruneEmptyBatches(database) {
     const batchesToDelete = [];

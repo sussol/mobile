@@ -11,23 +11,20 @@ import { ToggleBar } from './ToggleBar';
 import globalStyles from '../globalStyles';
 
 /**
- * A selector based on the ToggleBar, will highlight currently selected
- * @prop  {array}     options   The options to display in the selector
- * @prop  {any}       selected  The option that is currently selected
+ * A selector based on |ToggleBar|, will highlight currently selected.
+ *
+ * @prop  {array}     options   The options to display in the selector.
+ * @prop  {any}       selected  The option that is currently selected.
  * @prop  {function}  onSelect  A function taking the option selected
- *                              as a parameter
+ *                              as a parameter.
  */
-export function ToggleSelector(props) {
+export const ToggleSelector = props => {
   const { options, onSelect } = props;
-  const toggles = options.map(option => {
-    return {
-      text: String(option),
-      onPress: () => {
-        onSelect(option);
-      },
-      isOn: props.selected === option,
-    };
-  });
+  const toggles = options.map(option => ({
+    text: String(option),
+    onPress: () => onSelect(option),
+    isOn: props.selected === option,
+  }));
 
   return (
     <ToggleBar
@@ -39,7 +36,7 @@ export function ToggleSelector(props) {
       toggles={toggles}
     />
   );
-}
+};
 
 export default ToggleSelector;
 

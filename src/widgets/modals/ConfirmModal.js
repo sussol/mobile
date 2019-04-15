@@ -23,9 +23,8 @@ import { modalStrings } from '../../localization';
 
 import globalStyles, { DARK_GREY } from '../../globalStyles';
 
-export function ConfirmModal(props) {
+export const ConfirmModal = props => {
   const {
-    isOpen,
     questionText,
     confirmText,
     cancelText,
@@ -43,7 +42,7 @@ export function ConfirmModal(props) {
 
   // On opening, dismiss the keyboard to ensure editable cells lose their focus
   // and their values become fixed (so that they save correctly)
-  if (isOpen) Keyboard.dismiss();
+  if (modalProps.isOpen) Keyboard.dismiss();
 
   return (
     <Modal {...modalProps} style={style}>
@@ -75,7 +74,7 @@ export function ConfirmModal(props) {
       </View>
     </Modal>
   );
-}
+};
 
 export default ConfirmModal;
 

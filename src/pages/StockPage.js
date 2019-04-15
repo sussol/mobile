@@ -71,9 +71,7 @@ export class StockPage extends React.Component {
     });
   };
 
-  renderCell = (key, item) => {
-    return item[key];
-  };
+  renderCell = (key, item) => item[key];
 
   renderExpansion = item => {
     const batchInfo = item.batchesWithStock.map(ItemBatch => {
@@ -101,7 +99,7 @@ export class StockPage extends React.Component {
           info: item.departmentName,
         },
         dailyUsage && {
-          title: 'Montly Usage : ',
+          title: `${tableStrings.monthly_usage_s}`,
           info: Math.round(dailyUsage * 30),
         },
       ],

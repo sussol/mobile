@@ -55,9 +55,7 @@ export class RealmExplorer extends React.Component {
   constructor(props) {
     super(props);
     const dataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => {
-        return row1 !== row2;
-      },
+      rowHasChanged: (row1, row2) => row1 !== row2,
     });
     this.state = {
       data: null,
@@ -137,7 +135,7 @@ export class RealmExplorer extends React.Component {
             textStyle={globalStyles.text}
             width={1}
             text={key}
-          />,
+          />
         );
       }
     }
@@ -171,7 +169,7 @@ export class RealmExplorer extends React.Component {
         cells.push(
           <Cell key={key} style={globalStyles.cell} textStyle={globalStyles.text} width={1}>
             {itemString}
-          </Cell>,
+          </Cell>
         );
       }
     }

@@ -43,9 +43,9 @@ export class SupplierInvoicesPage extends React.Component {
     database.write(() => {
       const transactionsToDelete = [];
       for (let i = 0; i < selection.length; i += 1) {
-        const transaction = transactions.find(currentTransaction => {
-          return currentTransaction.id === selection[i];
-        });
+        const transaction = transactions.find(
+          currentTransaction => currentTransaction.id === selection[i]
+        );
         if (transaction.isValid() && !transaction.isFinalised) {
           transactionsToDelete.push(transaction);
         }
@@ -55,17 +55,11 @@ export class SupplierInvoicesPage extends React.Component {
     this.setState({ selection: [] }, this.refreshData);
   };
 
-  onDeleteCancel = () => {
-    this.setState({ selection: [] }, this.refreshData);
-  };
+  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
 
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
-  onRowPress = invoice => {
-    this.navigateToInvoice(invoice);
-  };
+  onRowPress = invoice => this.navigateToInvoice(invoice);
 
   /**
    * Create new supplier invoice and navigate user to the edit supplier invoice page.
@@ -151,16 +145,12 @@ export class SupplierInvoicesPage extends React.Component {
     }
   };
 
-  renderNewInvoiceButton = () => {
-    return (
-      <PageButton
-        text={buttonStrings.new_supplier_invoice}
-        onPress={() => {
-          this.setState({ isCreatingInvoice: true });
-        }}
-      />
-    );
-  };
+  renderNewInvoiceButton = () => (
+    <PageButton
+      text={buttonStrings.new_supplier_invoice}
+      onPress={() => this.setState({ isCreatingInvoice: true })}
+    />
+  );
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
@@ -223,12 +213,8 @@ export class SupplierInvoicesPage extends React.Component {
         <BottomConfirmModal
           isOpen={selection.length > 0}
           questionText={modalStrings.remove_these_items}
-          onCancel={() => {
-            this.onDeleteCancel();
-          }}
-          onConfirm={() => {
-            this.onDeleteConfirm();
-          }}
+          onCancel={() => this.onDeleteCancel()}
+          onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.remove}
         />
         <SelectModal
@@ -241,9 +227,7 @@ export class SupplierInvoicesPage extends React.Component {
             this.onNewSupplierInvoice(name);
             this.setState({ isCreatingInvoice: false });
           }}
-          onClose={() => {
-            this.setState({ isCreatingInvoice: false });
-          }}
+          onClose={() => this.setState({ isCreatingInvoice: false })}
           title={modalStrings.search_for_the_supplier}
         />
       </GenericPage>

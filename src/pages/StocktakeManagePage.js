@@ -28,9 +28,9 @@ const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];
 /**
  * Renders the page for managing a stocktake.
  *
- * @prop  {Realm}         database   App wide database.
- * @prop  {func}          navigateTo CallBack for navigation stack.
- * @state {Realm.Results} items      Realm.Result object containing all items.
+ * @prop  {Realm}         database    App wide database.
+ * @prop  {func}          navigateTo  CallBack for navigation stack.
+ * @state {Realm.Results} items       Realm.Result object containing all items.
  */
 export class StocktakeManagePage extends React.Component {
   constructor(props) {
@@ -64,14 +64,12 @@ export class StocktakeManagePage extends React.Component {
           selection: selected,
           stocktakeName: stocktake.name,
         },
-        this.refreshData,
+        this.refreshData
       );
     }
   };
 
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
+  onSelectionChange = newSelection => this.setState({ selection: newSelection });
 
   onConfirmPress = () => {
     const { runWithLoadingIndicator } = this.props;
@@ -102,7 +100,7 @@ export class StocktakeManagePage extends React.Component {
         navStrings.stocktake,
         { stocktake },
         // Coming from |StocktakesPage| : coming from |StocktakeEditPage|.
-        !stocktake ? 'replace' : 'goBack',
+        !stocktake ? 'replace' : 'goBack'
       );
     });
   };
@@ -131,7 +129,7 @@ export class StocktakeManagePage extends React.Component {
       {
         selection: [...selection],
       },
-      this.refreshData,
+      this.refreshData
     );
   };
 
@@ -142,7 +140,7 @@ export class StocktakeManagePage extends React.Component {
       {
         showItemsWithNoStock: !showItemsWithNoStock,
       },
-      this.refreshData,
+      this.refreshData
     );
   };
 
@@ -164,15 +162,11 @@ export class StocktakeManagePage extends React.Component {
     data = this.items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
     data = data.sorted(sortBy, !isAscending);
     if (!showItemsWithNoStock) {
-      data = data.slice().filter(item => {
-        return item.totalQuantity !== 0;
-      });
+      data = data.slice().filter(item => item.totalQuantity !== 0);
     }
     // Populate |visibleItemIds| with the ids of the items in the filtered data.
     this.setState({
-      visibleItemIds: data.map(item => {
-        return item.id;
-      }),
+      visibleItemIds: data.map(item => item.id),
       data,
     });
   };
@@ -191,10 +185,7 @@ export class StocktakeManagePage extends React.Component {
   renderToggleBar = () => {
     const { visibleItemIds, showItemsWithNoStock, selection } = this.state;
     const areAllItemsSelected =
-      visibleItemIds.length > 0 &&
-      visibleItemIds.every(id => {
-        return selection.includes(id);
-      });
+      visibleItemIds.length > 0 && visibleItemIds.every(id => selection.includes(id));
     return (
       <ToggleBar
         style={globalStyles.toggleBar}
@@ -205,16 +196,12 @@ export class StocktakeManagePage extends React.Component {
         toggles={[
           {
             text: buttonStrings.hide_stockouts,
-            onPress: () => {
-              return this.toggleShowItemsWithNoStock();
-            },
+            onPress: () => this.toggleShowItemsWithNoStock(),
             isOn: !showItemsWithNoStock,
           },
           {
             text: buttonStrings.all_items_selected,
-            onPress: () => {
-              return this.toggleSelectAllItems(areAllItemsSelected);
-            },
+            onPress: () => this.toggleSelectAllItems(areAllItemsSelected),
             isOn: areAllItemsSelected,
           },
         ]}
@@ -273,9 +260,7 @@ export class StocktakeManagePage extends React.Component {
             placeholderTextColor="white"
             placeholder={modalStrings.give_your_stocktake_a_name}
             value={stocktakeName}
-            onChangeText={text => {
-              this.setState({ stocktakeName: text });
-            }}
+            onChangeText={text => this.setState({ stocktakeName: text })}
           />
           <OnePressButton
             style={[globalStyles.button, globalStyles.modalOrangeButton]}

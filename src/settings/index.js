@@ -21,7 +21,7 @@ export const SETTINGS_KEYS = {
   HARDWARE_UUID: 'Hardware_UUID',
 };
 
-export async function getAppVersion() {
+export const getAppVersion = async () => {
   const appVersion = await AsyncStorage.getItem(SETTINGS_KEYS.APP_VERSION);
   return appVersion;
-}
+};

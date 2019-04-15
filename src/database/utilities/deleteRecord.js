@@ -7,13 +7,12 @@
  * Delete record by primary key. Relies on class destructors to initiate any changes that are
  * required for clean up.
  *
- * @param   {Realm}   database         App database.
+ * @param   {Realm}   database
  * @param   {string}  recordType       Internal record type.
  * @param   {string}  primaryKey       The primary key of the database object, usually an id field.
  * @param   {string}  primaryKeyField  The field used as the primary key, defaults to 'id'.
- * @return  {none}
  */
-export function deleteRecord(database, recordType, primaryKey, primaryKeyField = 'id') {
+export const deleteRecord = (database, recordType, primaryKey, primaryKeyField = 'id') => {
   // 'delete' is a reserved word, |deleteRecord| is in the upper scope.
   const obliterate = () => {
     const deleteResults = database
@@ -47,7 +46,7 @@ export function deleteRecord(database, recordType, primaryKey, primaryKeyField =
       break;
     }
 
-    // 'LocalListItem is mimicked with 'MasterListItem'.
+    // Local list item is mimicked with master list item..
     case 'LocalListItem':
       deleteRecord(database, 'MasterListItem', primaryKey, primaryKeyField);
       break;
@@ -66,6 +65,6 @@ export function deleteRecord(database, recordType, primaryKey, primaryKeyField =
     default:
       break; // Silently ignore record types which should not be synced to mobile.
   }
-}
+};
 
 export default deleteRecord;

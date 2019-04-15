@@ -11,20 +11,18 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { textStyles } from '../globalStyles';
 
-export function NavigationBar({ onPressBack, LeftComponent, CentreComponent, RightComponent }) {
-  return (
-    <View style={localStyles.container}>
-      <View style={localStyles.leftSection}>
-        <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
-          {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
-        </TouchableOpacity>
-        {LeftComponent && <LeftComponent />}
-      </View>
-      <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
-      <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
+export const NavigationBar = ({ onPressBack, LeftComponent, CentreComponent, RightComponent }) => (
+  <View style={localStyles.container}>
+    <View style={localStyles.leftSection}>
+      <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
+        {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
+      </TouchableOpacity>
+      {LeftComponent && <LeftComponent />}
     </View>
-  );
-}
+    <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
+    <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
+  </View>
+);
 
 export default NavigationBar;
 

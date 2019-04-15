@@ -8,54 +8,72 @@ import { complement } from 'set-manipulator';
 
 import { addBatchToParent, createRecord, getTotal } from '../utilities';
 
+/**
+ * A stocktake.
+ *
+ * @property  {string}                id
+ * @property  {string}                name
+ * @property  {Date}                  createdDate    Includes time.
+ * @property  {Date}                  stocktakeDate
+ * @property  {string}                status
+ * @property  {User}                  createdBy
+ * @property  {User}                  finalisedBy
+ * @property  {string}                comment
+ * @property  {string}                serialNumber
+ * @property  {List.<StocktakeItem>}  items
+ * @property  {Transaction}           additions
+ * @property  {Transaction}           reductions
+ */
 export class Stocktake extends Realm.Object {
+  /**
+   * Delete unfinalised stocktake. Throw error if stocktake is finalised.
+   *
+   * @param  {Realm}  database
+   */
   destructor(database) {
     if (this.isFinalised) {
       throw new Error('Cannot delete a finalised Stocktake');
     }
+
     database.delete('StocktakeItem', this.items);
   }
 
-  // Add a stocktake batch and incorporate into a matching stocktake item.
+  /**
+   * Add a new stocktake batch and incorporate into a matching stocktake item.
+   *
+   * @param  {Realm}           database
+   * @param  {StocktakeBatch}  stocktakeBatch
+   */
   addBatchIfUnique(database, stocktakeBatch) {
-    addBatchToParent(stocktakeBatch, this, () => {
-      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item);
-    });
+    // TODO: rename method to addBatch.
+    addBatchToParent(stocktakeBatch, this, () =>
+      createRecord(database, 'StocktakeItem', this, stocktakeBatch.itemBatch.item)
+    );
   }
 
   /**
-   * Sets the stocktake items attached to this stocktake based on |itemIds|.
+   * Sets the stocktake items attached to this stocktake based on item id.
    *
-   * @param   {Realm}  database  App database.
-   * @param   {array}  itemIds   The ids of the items to include in this stocktake.
-   * @return  {none}
+   * @param   {Realm}           database
+   * @param   {Array.<string>}  itemIds
    */
   setItemsByID(database, itemIds) {
     if (this.isFinalised) {
       throw new Error('Cannot add items to a finalised stocktake');
     }
 
-    // Delete any stocktake items not in the new array of ids.
+    // Delete any stocktake items not in |itemIds|.
     const itemsToRemove = complement(
       this.items,
-      itemIds.map(itemId => {
-        return { itemId };
-      }),
-      stocktakeItem => {
-        return stocktakeItem.itemId;
-      },
+      itemIds.map(itemId => ({ itemId })),
+      stocktakeItem => stocktakeItem.itemId
     );
     if (itemsToRemove && itemsToRemove.length > 0) {
       database.delete('StocktakeItem', itemsToRemove);
     }
 
     // Add a new stocktake item for each new item id not currently in the stocktake.
-    const itemIdsToAdd = complement(
-      itemIds,
-      this.items.map(stocktakeItem => {
-        return stocktakeItem.itemId;
-      }),
-    );
+    const itemIdsToAdd = complement(itemIds, this.items.map(stocktakeItem => stocktakeItem.itemId));
 
     const items = database.objects('Item');
     itemIdsToAdd.forEach(itemId => {
@@ -70,10 +88,20 @@ export class Stocktake extends Realm.Object {
     });
   }
 
+  /**
+   * Get if stocktake is confirmed.
+   *
+   * @return  {boolean}
+   */
   get isConfirmed() {
     return this.status === 'confirmed';
   }
 
+  /**
+   * Get if stocktake is finalised.
+   *
+   * @return  {boolean}
+   */
   get isFinalised() {
     return this.status === 'finalised';
   }
@@ -82,41 +110,46 @@ export class Stocktake extends Realm.Object {
    * Get any stocktake items that have a batch that would cause a reduction larger than
    * the amount of available stock in inventory if it were finalised.
    *
-   * @return  {array}  All stocktake items that have been reduced below minimum level.
+   * @return  {Array.<StocktakeItem>}  All stocktake items that have been reduced below
+   *                                   minimum level.
    */
   get itemsBelowMinimum() {
-    return this.items.filter(stocktakeItem => {
-      return stocktakeItem.isReducedBelowMinimum;
-    });
+    return this.items.filter(stocktakeItem => stocktakeItem.isReducedBelowMinimum);
   }
 
   /**
    * Get all stocktake items where snapshot does not match stock on hand or the corresponding
    * item has any batch with stock with no corresponding stocktake batch.
    *
-   * @return  {array}  Array of |StocktakeItem| representing all outdated stocktake items.
+   * @return  {Array.<StocktakeItem>}
    */
   get itemsOutdated() {
-    return this.items.filter(stocktakeItem => {
-      return stocktakeItem.isOutdated;
-    });
+    return this.items.filter(stocktakeItem => stocktakeItem.isOutdated);
   }
 
+  /**
+   * Get if stocktake has any items with counted batches.
+   *
+   * @return  {boolean}
+   */
   get hasSomeCountedItems() {
-    return this.items.some(item => {
-      return item.hasCountedBatches;
-    });
+    return this.items.some(item => item.hasCountedBatches);
   }
 
+  /**
+   * Get number of batches associated with this stocktake.
+   *
+   * @return  {number}
+   */
   get numberOfBatches() {
     return getTotal(this.items, 'numberOfBatches');
   }
 
   /**
-   * Resets each item in |stocktakeItems|.
+   * Resets a list of stocktake items.
    *
-   * @param  {Realm}  database        App database.
-   * @param  {array}  stocktakeItems  Array of |StocktakeItem| to reset.
+   * @param  {Realm}                  database
+   * @param  {Array.<StocktakeItem>}  stocktakeItems  Items to reset.
    */
   // eslint-disable-next-line class-methods-use-this
   resetStocktakeItems(database, stocktakeItems) {
@@ -130,9 +163,7 @@ export class Stocktake extends Realm.Object {
   /**
    * Get or create reducing invoice for this stocktake.
    *
-   * @param   {Realm}                database  App database.
-   * @param   {User}                 user      The currently logged in user.
-   * @return  {InventoryAdjustment}            Transaction for reduction.
+   * @param   {Realm}  database
    */
   getReductions(database) {
     if (!this.reductions) {
@@ -141,7 +172,7 @@ export class Stocktake extends Realm.Object {
         'InventoryAdjustment',
         this.finalisedBy,
         this.stocktakeDate,
-        false,
+        false
       );
     }
     return this.reductions;
@@ -150,9 +181,7 @@ export class Stocktake extends Realm.Object {
   /**
    * Get or create increasing invoice for this stocktake.
    *
-   * @param   {Realm}        database  App database.
-   * @param   {User}         user      The currently logged on user.
-   * @return  {Transaction}            Transaction for stock increase.
+   * @param   {Realm}  database
    */
   getAdditions(database) {
     if (!this.additions) {
@@ -161,7 +190,7 @@ export class Stocktake extends Realm.Object {
         'InventoryAdjustment',
         this.finalisedBy,
         this.stocktakeDate,
-        true,
+        true
       );
     }
     return this.additions;
@@ -170,8 +199,8 @@ export class Stocktake extends Realm.Object {
   /**
    * Finalises this stocktake and creates transactions to apply the stock changes to inventory.
    *
-   * @param {Realm}         database  App database.
-   * @param {Realm.Object}  user      The currently logged in user.
+   * @param {Realm}  database
+   * @param {User}   user
    */
   finalise(database, user) {
     if (this.isFinalised) {
@@ -183,13 +212,12 @@ export class Stocktake extends Realm.Object {
     }
 
     // Set the stocktake finalise details.
+    this.status = 'finalised';
     this.finalisedBy = user;
     this.stocktakeDate = new Date();
 
     // Adjust stocktake inventory.
     this.adjustInventory(database, user);
-
-    this.status = 'finalised';
 
     database.save('Stocktake', this);
   }
@@ -198,16 +226,14 @@ export class Stocktake extends Realm.Object {
    * Applies differences in snapshot and counted quantities to the appropriate inventory
    * adjustment transactions.
    *
-   * @param  {Realm}  database  App database.
-   * @param  {User}   user      The user that finalised this stocktake.
+   * @param  {Realm}  database
+   * @param  {User}   user
    */
   adjustInventory(database) {
     // Prune any stocktake item that has not had a quantity change.
     database.delete(
       'StocktakeItem',
-      this.items.filter(stocktakeItem => {
-        return !stocktakeItem.hasCountedBatches;
-      }),
+      this.items.filter(stocktakeItem => !stocktakeItem.hasCountedBatches)
     );
 
     // Get every batch associated with this stocktake.
@@ -218,20 +244,17 @@ export class Stocktake extends Realm.Object {
     // Delete each new stocktake batch that has been created by stocktake but has not been changed.
     database.delete(
       'StocktakeBatch',
-      stocktakeBatches.filter(stocktakeBatch => {
-        return stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0;
-      }),
+      stocktakeBatches.filter(
+        stocktakeBatch =>
+          stocktakeBatch.snapshotTotalQuantity === 0 && stocktakeBatch.difference === 0
+      )
     );
 
     // |stocktakeBatch.finalise()| handles optimisation based on what fields were entered
     // (i.e. count/batch/expiry).
-    stocktakeBatches.forEach(stocktakeBatch => {
-      return stocktakeBatch.finalise(database);
-    });
+    stocktakeBatches.forEach(stocktakeBatch => stocktakeBatch.finalise(database));
   }
 }
-
-export default Stocktake;
 
 Stocktake.schema = {
   name: 'Stocktake',
@@ -239,7 +262,7 @@ Stocktake.schema = {
   properties: {
     id: 'string',
     name: { type: 'string', default: 'placeholderName' },
-    createdDate: { type: 'date', default: new Date() }, // Includes time.
+    createdDate: { type: 'date', default: new Date() },
     stocktakeDate: { type: 'date', optional: true },
     status: { type: 'string', default: 'new' },
     createdBy: { type: 'User', optional: true },
@@ -251,3 +274,5 @@ Stocktake.schema = {
     reductions: { type: 'Transaction', optional: true },
   },
 };
+
+export default Stocktake;

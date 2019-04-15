@@ -12,11 +12,7 @@ import { Keyboard } from 'react-native';
 
 import { getCurrentRouteName } from '../navigation';
 
-const mapStateToProps = ({ navigation }) => {
-  return {
-    currentRouteName: getCurrentRouteName(navigation),
-  };
-};
+const mapStateToProps = ({ navigation }) => ({ currentRouteName: getCurrentRouteName(navigation) });
 
 const extractPropsForPage = props => {
   const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
@@ -25,9 +21,7 @@ const extractPropsForPage = props => {
   const isCurrentRoute = thisPageRouteName === currentRouteName;
   const navigateTo = (routeName, title, otherParams, type = 'push') => {
     Keyboard.dismiss(); // Dismiss keyboard before navigating to a different scene.
-    const push = () => {
-      navigate(routeName, { title, ...otherParams });
-    };
+    const push = () => navigate(routeName, { title, ...otherParams });
     const navigationFunctions = {
       push,
       replace: () => {
