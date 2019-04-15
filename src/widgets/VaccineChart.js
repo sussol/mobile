@@ -84,8 +84,7 @@ export class VaccineChart extends React.Component {
           data={minLine}
           interpolation={minLineStyles.interpolation}
           style={{ data: { stroke: minLineStyles.stroke } }}
-          x={dataKeys.x}
-          y={dataKeys.y}
+          {...dataKeys}
         />
       ) : null;
 
@@ -94,8 +93,7 @@ export class VaccineChart extends React.Component {
         <VictoryScatter
           data={minLine}
           style={{ data: { fill: minLineStyles.fill } }}
-          x={dataKeys.x}
-          y={dataKeys.y}
+          {...dataKeys}
         />
       ) : null;
 
@@ -105,8 +103,7 @@ export class VaccineChart extends React.Component {
           data={maxLine}
           interpolation={maxLineStyles.interpolation}
           style={{ data: { stroke: maxLineStyles.stroke } }}
-          x={dataKeys.x}
-          y={dataKeys.y}
+          {...dataKeys}
         />
       ) : null;
 
@@ -115,19 +112,13 @@ export class VaccineChart extends React.Component {
         <VictoryScatter
           data={maxLine}
           style={{ data: { fill: maxLineStyles.fill } }}
-          x={dataKeys.x}
-          y={dataKeys.y}
+          {...dataKeys}
         />
       ) : null;
 
     const hazardPlotScatter =
       hazards.length > 0 ? (
-        <VictoryScatter
-          dataComponent={<HazardPoint />}
-          data={hazards}
-          x={dataKeys.x}
-          y={dataKeys.y}
-        />
+        <VictoryScatter dataComponent={<HazardPoint />} data={hazards} {...dataKeys} />
       ) : null;
 
     return (
