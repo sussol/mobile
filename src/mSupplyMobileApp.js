@@ -7,6 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import RNFS from 'react-native-fs';
 
 import { addNavigationHelpers } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -52,7 +53,7 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
-    const database = new Database(schema);
+    const database = new Database(schema); // , `${RNFS.DocumentDirectoryPath}/hello.realm`);
     this.database = new UIDatabase(database);
     this.settings = new MobileAppSettings(this.database);
     migrateDataToVersion(this.database, this.settings);
@@ -67,6 +68,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
+
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
       const { currentUser } = this.state;
@@ -218,7 +220,7 @@ class MSupplyMobileAppContainer extends React.Component {
       syncModalIsOpen,
     } = this.state;
 
-    if (false) {
+    if (isInitialised) {
       return (
         <FirstUsePage
           synchroniser={this.synchroniser}
@@ -273,12 +275,12 @@ class MSupplyMobileAppContainer extends React.Component {
           onPressManualSync={this.synchronise}
           onClose={() => this.setState({ syncModalIsOpen: false })}
         />
-        {/* <LoginModal
+        <LoginModal
           authenticator={this.userAuthenticator}
           settings={this.settings}
           isAuthenticated={true}
           onAuthentication={this.onAuthentication}
-        /> */}
+        />
         {isLoading && this.renderLoadingIndicator()}
       </View>
     );
