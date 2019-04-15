@@ -61,27 +61,18 @@ export class MenuPage extends React.Component {
   constructor(props) {
     super(props);
     this.databaseListenerId = null;
+    this.usableModules = [];
+    this.usesModules = false;
+    this.sections = SECTIONS;
   }
 
   componentWillMount() {
     const { database, settings } = this.props;
 
-    this.sections = SECTIONS;
     // check is there are any modules enabled in this store customData
     const usableModules = this.getUsedModules(settings.get(THIS_STORE_CUSTOM_DATA));
-    const usesModules = usableModules.length > 0;
+    this.usesModules = usableModules.length > 0;
     this.sections.modules.buttons = usableModules;
-
-    if (!usesModules) {
-      this.layout = ORIGINAL_LAYOUT;
-      this.imageStyle = localStyles.originalImage;
-      this.sectionStyle = localStyles.section;
-    } else {
-      this.layout = VACCINE_MODULE_LAYOUT;
-      this.imageStyle = localStyles.VM_Image;
-      // Image will go on the left side as layout changes when modules are enabled
-      this.sectionStyle = { ...localStyles.section, flexDirection: 'row' };
-    }
 
     this.databaseListenerId = database.addListener(
       // Ensure that language changes in login modal are re-rendered onto the MenuPage.
@@ -93,6 +84,20 @@ export class MenuPage extends React.Component {
     const { database } = this.props;
 
     database.removeListener(this.databaseListenerId);
+  }
+
+  get styles() {
+    const resultStyles = { ...localStyles };
+
+    if (this.usesModules) {
+      resultStyles.image = localStyles.VM_Image;
+      resultStyles.section = { ...localStyles.section, flexDirection: 'row' };
+    }
+    return resultStyles;
+  }
+
+  get layout() {
+    return this.usesModules ? VACCINE_MODULE_LAYOUT : ORIGINAL_LAYOUT;
   }
 
   /**
@@ -109,13 +114,12 @@ export class MenuPage extends React.Component {
     const result = [];
     const checkAndAddToResult = ([moduleName, moduleValues]) => {
       if (!customData[moduleName]) return;
-      if (!customData[moduleName].data) return;
       if (customData[moduleName].data === 'true') result.push(moduleValues);
     };
 
     Object.entries(MODULES).forEach(checkAndAddToResult);
 
-    return result.length > 0 && result;
+    return result;
   };
 
   exportData = () => {
@@ -124,22 +128,25 @@ export class MenuPage extends React.Component {
     database.exportData(syncSiteName);
   };
 
-  renderButton = ({ title, page }) => (
-    <Button
-      style={globalStyles.menuButton}
-      textStyle={globalStyles.menuButtonText}
-      text={title}
-      // eslint-disable-next-line react/destructuring-assignment
-      onPress={() => this.props.navigateTo(page, title)}
-    />
-  );
+  renderButton = ({ title, page }) => {
+    const { menuButton, menuButtonText } = globalStyles;
+    return (
+      <Button
+        style={menuButton}
+        textStyle={menuButtonText}
+        text={title}
+        // eslint-disable-next-line react/destructuring-assignment
+        onPress={() => this.props.navigateTo(page, title)}
+      />
+    );
+  };
 
   renderSection = sectionName => {
-    const { imageStyle, sectionStyle } = this;
+    const { image, section: sectionStyle } = this.styles;
     const section = this.sections[sectionName];
     return (
       <View style={sectionStyle}>
-        <Image style={imageStyle} resizeMode="contain" source={section.icon} />
+        <Image style={image} resizeMode="contain" source={section.icon} />
         <View>{section.buttons.map(this.renderButton)}</View>
       </View>
     );
@@ -147,37 +154,37 @@ export class MenuPage extends React.Component {
 
   render() {
     const { isInAdminMode, logOut, navigateTo } = this.props;
+    const { pageContentContainer, horizontalContainer, bottomIcon, logOutText } = this.styles;
+    const { menuButton, menuButtonText, bottomContainer } = globalStyles;
 
     return (
-      <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
+      <View style={pageContentContainer}>
         {this.layout.map(row => (
-          <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
-            {row.map(this.renderSection)}
-          </View>
+          <View style={horizontalContainer}>{row.map(this.renderSection)}</View>
         ))}
-        <View style={globalStyles.bottomContainer}>
+        <View style={bottomContainer}>
           <Icon.Button
             name="power-off"
             underlayColor="#888888"
-            iconStyle={localStyles.bottomIcon}
+            iconStyle={bottomIcon}
             borderRadius={4}
             backgroundColor="rgba(255,255,255,0)"
             onPress={logOut}
           >
-            <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
+            <Text style={logOutText}>{navStrings.log_out}</Text>
           </Icon.Button>
           {isInAdminMode && (
             <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
+              style={menuButton}
+              textStyle={menuButtonText}
               text="Realm Explorer"
               onPress={() => navigateTo('realmExplorer', 'Database Contents')}
             />
           )}
           {isInAdminMode && (
             <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
+              style={menuButton}
+              textStyle={menuButtonText}
               text="Export Data"
               onPress={this.exportData}
             />
@@ -201,9 +208,11 @@ MenuPage.propTypes = {
 
 const localStyles = StyleSheet.create({
   pageContentContainer: {
+    ...globalStyles.pageContentContainer,
     padding: 0,
   },
   horizontalContainer: {
+    ...globalStyles.horizontalContainer,
     flex: 9,
     justifyContent: 'space-between',
   },
@@ -217,7 +226,7 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
-  originalImage: {
+  image: {
     height: 150,
     width: 150,
     marginBottom: 20,
