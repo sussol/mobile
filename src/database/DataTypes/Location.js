@@ -11,7 +11,9 @@ export class Location extends Realm.Object {
   // getBatches ?
 
   get isFridge() {
-    return this.locationType && this.locationType.description.toLowerCase() === 'fridge';
+    if (!this.locationType) return null;
+    if (!this.locationType.description) return null;
+    return String(this.locationType.description).toLowerCase() === 'fridge';
   }
 }
 

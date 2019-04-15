@@ -47,7 +47,7 @@ export const buttonStyles = {
     backgroundColor: 'white',
     padding: 15,
     marginVertical: 12,
-    marginHorizontal: 30,
+    marginHorizontal: 10,
     width: 240,
     height: 60,
     borderWidth: 1,

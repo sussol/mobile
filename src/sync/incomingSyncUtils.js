@@ -150,11 +150,11 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: [],
     },
     Location: {
-      cannotBeBlank: ['description'],
+      cannotBeBlank: ['Description'],
       canBeBlank: [],
     },
     LocationType: {
-      cannotBeBlank: ['description'],
+      cannotBeBlank: ['Description'],
       canBeBlank: [],
     },
     LocalListItem: {
@@ -381,7 +381,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Location': {
       const locationType = database.getOrCreate('LocationType', record.type_ID);
-      const { description, code } = record;
+      const { Description: description, code } = record;
       internalRecord = {
         id: record.ID,
         description,
@@ -392,10 +392,10 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'LocationType': {
-      const { ID, Description, Temperature_min, Temperature_max, customData } = record;
+      const { ID, Description: description, Temperature_min, Temperature_max, customData } = record;
       internalRecord = {
         id: ID,
-        description: Description,
+        description,
         temperatureMin: parseNumber(Temperature_min),
         temperatureMax: parseNumber(Temperature_max),
         customData,

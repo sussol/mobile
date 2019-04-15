@@ -273,12 +273,12 @@ class MSupplyMobileAppContainer extends React.Component {
           onPressManualSync={this.synchronise}
           onClose={() => this.setState({ syncModalIsOpen: false })}
         />
-        <LoginModal
+        {/* <LoginModal
           authenticator={this.userAuthenticator}
           settings={this.settings}
           isAuthenticated={currentUser !== null}
           onAuthentication={this.onAuthentication}
-        />
+        /> */}
         {isLoading && this.renderLoadingIndicator()}
       </View>
     );

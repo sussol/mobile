@@ -53,8 +53,7 @@ const SECTIONS = {
 // Below keys are matched against current store customData (stored in settings)
 // i.e. customData['usesVaccineModule']data === 'true'
 const MODULES = {
-  // TODO, change from 'stock' to 'vaccineModule'
-  usesVaccineModule: { title: navStrings.vaccine_module, page: 'stock' },
+  usesVaccineModule: { title: navStrings.vaccine_module, page: 'vaccineModule' },
 };
 
 export class MenuPage extends React.Component {
