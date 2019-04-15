@@ -292,7 +292,7 @@ export class Item extends Realm.Object {
 
     const maxTemperature = temperatures.reduce(
       (maxTemp, { maxTemperature: max = -Infinity } = {}) => Math.max(maxTemp, max),
-      0
+      -Infinity
     );
     const minTemperature = temperatures.reduce(
       (minTemp, { minTemperature: min = Infinity } = {}) => Math.min(minTemp, min),

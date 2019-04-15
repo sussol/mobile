@@ -11,15 +11,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { SUSSOL_ORANGE, APP_FONT_FAMILY, DARK_GREY, SOFT_RED } from '../globalStyles/index';
 
 /**
- * Simple stateless component which renders some text and and an
- * icon in a cell with an optional onPress. Setitng disabled to
- * true changes the colour scheme.
- *
+ * Simple stateless component which renders either:
+ * some text, left aligned and ellipsis overflow and a rightaligned icon
+ * or, a centered icon with optional colours.
+ * Default styles are dark grey text, soft red when disabled with an
+ * orange up-caret icon.
  */
 export class IconCell extends React.PureComponent {
   getComponent = () => {
-    const { text, icon, disabled } = this.props;
-    const { mainContainer, textContainer, iconContainer, font } = getLocalStyles(disabled);
+    const { text, icon, disabled, iconSize, iconColour } = this.props;
+    const styleParameters = { disabled, text };
+    const { mainContainer, textContainer, iconContainer, font } = getLocalStyles(styleParameters);
     return (
       <View style={mainContainer}>
         <View style={textContainer}>
@@ -29,7 +31,7 @@ export class IconCell extends React.PureComponent {
         </View>
 
         <View style={iconContainer}>
-          <Icon name={icon} size={20} color={disabled ? SOFT_RED : SUSSOL_ORANGE} />
+          <Icon name={icon} size={iconSize} color={iconColour} />
         </View>
       </View>
     );
@@ -43,7 +45,7 @@ export class IconCell extends React.PureComponent {
   }
 }
 
-const getLocalStyles = disabled =>
+const getLocalStyles = ({ disabled, text }) =>
   StyleSheet.create({
     mainContainer: {
       display: 'flex',
@@ -51,14 +53,14 @@ const getLocalStyles = disabled =>
       marginHorizontal: 10,
     },
     textContainer: {
-      width: '75%',
+      width: text ? '75%' : '0%',
       fontFamily: APP_FONT_FAMILY,
     },
     iconContainer: {
-      width: '20%',
+      width: text ? '20%' : '100%',
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'flex-end',
+      justifyContent: text ? 'flex-end' : 'center',
     },
     font: { fontFamily: APP_FONT_FAMILY, color: disabled ? SOFT_RED : DARK_GREY },
   });
@@ -68,6 +70,8 @@ IconCell.defaultProps = {
   icon: 'caret-up',
   disabled: false,
   onPress: null,
+  iconColour: SUSSOL_ORANGE,
+  iconSize: 20,
 };
 
 IconCell.propTypes = {
@@ -75,6 +79,8 @@ IconCell.propTypes = {
   onPress: PropTypes.func,
   icon: PropTypes.string,
   disabled: PropTypes.bool,
+  iconColour: PropTypes.string,
+  iconSize: PropTypes.number,
 };
 
 export default IconCell;
