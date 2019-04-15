@@ -217,7 +217,8 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
-      record[fieldName].length > 0, // Key must not be empty string.
+      record[fieldName] !== undefined && // Field may be undefined.
+      record[fieldName].length > 0, // Fidl must not be empty string.
     true
   );
 
@@ -226,7 +227,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
-      record[fieldName] !== undefined, // Field may be empty string.
+      record[fieldName] !== undefined, // Field may be undefined.
     hasAllNonBlankFields
   ); // Initialise |containsAllFieldsSoFar| as result from |hasAllNonBlankFields|.
   return hasRequiredFields;
