@@ -35,6 +35,7 @@ import {
   checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
 } from './SupplierRequisitionPage';
 
+import { VaccineModulePage } from './VaccineModulePage';
 import { RealmExplorer } from './RealmExplorer';
 
 export { FirstUsePage } from './FirstUsePage';
@@ -46,7 +47,7 @@ export const PAGES = {
   customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
   menu: props => <PageContainer page={MenuPage} {...props} />,
   realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
-  root: props => <PageContainer page={MenuPage} {...props} />,
+  root: props => <PageContainer page={VaccineModulePage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,

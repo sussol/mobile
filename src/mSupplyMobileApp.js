@@ -7,6 +7,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import RNFS from 'react-native-fs';
 
 import { addNavigationHelpers } from 'react-navigation';
 import { connect } from 'react-redux';
@@ -52,7 +53,7 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
-    const database = new Database(schema);
+    const database = new Database(schema, { path: `${RNFS.DocumentDirectoryPath}/vaccines.realm` });
     this.database = new UIDatabase(database);
     this.settings = new MobileAppSettings(this.database);
     migrateDataToVersion(this.database, this.settings);
