@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import Navigator from './Navigator';
+import Navigator from '../navigation/Navigator';
 
 const initialState = Navigator.router.getStateForAction(
   Navigator.router.getActionForPathAndParams('root')

@@ -10,15 +10,15 @@ const ReduxNavigation = props => {
   return <ReduxNavigator state={nav} dispatch={dispatch} screenProps={screenProps} />;
 };
 
+const mapStateToProps = state => ({
+  nav: state.nav,
+});
+
 /* eslint-disable react/forbid-prop-types */
 ReduxNavigation.propTypes = {
   nav: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
   screenProps: PropTypes.object.isRequired,
 };
-
-const mapStateToProps = state => ({
-  nav: state.nav,
-});
 
 export default connect(mapStateToProps)(ReduxNavigation);

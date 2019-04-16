@@ -21,13 +21,6 @@ import {
 
 import { Scheduler } from 'sussol-utilities';
 import { NavigationActions } from 'react-navigation';
-import globalStyles, {
-  dataTableColors,
-  dataTableStyles,
-  pageStyles,
-  textStyles,
-  SUSSOL_ORANGE,
-} from './globalStyles';
 
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
 import { MobileAppSettings } from './settings';
@@ -41,11 +34,18 @@ import {
   Spinner,
 } from './widgets';
 
-import { getCurrentParams, getCurrentRouteName } from './navigation';
+import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
-import ReduxNavigator from './navigation/ReduxNavigation';
+
+import globalStyles, {
+  dataTableColors,
+  dataTableStyles,
+  pageStyles,
+  textStyles,
+  SUSSOL_ORANGE,
+} from './globalStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -304,7 +304,7 @@ const mapStateToProps = state => {
   };
 };
 
-/* eslint-disable react/require-default-props, react/forbid-prop-types */
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 MSupplyMobileAppContainer.propTypes = {
   currentTitle: PropTypes.string,
   dispatch: PropTypes.func.isRequired,

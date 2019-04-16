@@ -11,7 +11,7 @@ import {
   SET_SYNC_MESSAGE,
   SET_SYNC_COMPLETION_TIME,
   SET_SYNC_IS_SYNCING,
-} from './constants';
+} from '../sync/constants';
 import { createReducer, REHYDRATE } from '../utilities';
 
 const defaultState = {
@@ -59,6 +59,6 @@ const stateChanges = {
   },
 };
 
-const reducer = createReducer(defaultState, stateChanges);
+const SyncReducer = createReducer(defaultState, stateChanges);
 
-export default reducer;
+export default SyncReducer;
