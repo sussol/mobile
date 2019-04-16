@@ -39,6 +39,7 @@ export {
   FINALISE_GREEN,
   FINALISED_RED,
   SOFT_RED,
+  HAZARD_RED,
 } from './colors';
 
 export { APP_FONT_FAMILY } from './fonts';
