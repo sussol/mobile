@@ -151,7 +151,7 @@ export class VaccineModulePage extends React.Component {
               <TouchableOpacity
                 onPress={() =>
                   this.props.navigateTo('manageVaccineItems', 'Manage Vaccine Items', {
-                    locationFilter: fridge,
+                    initialLocation: fridge,
                   })
                 }
               >

@@ -733,6 +733,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const location = database.getOrCreate('Location', record.location_ID);
       itemBatch.item = item;
       itemBatch.donor = donor;
+      console.log('isVVMPassed', record.isVVMPassed, record.isVVMPassed && parseBoolean(record.isVVMPassed))
       item.addBatchIfUnique(itemBatch);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
@@ -750,7 +751,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         donor,
         location,
         doses: parseNumber(record.doses),
-        isVVMPassed: parseBoolean(record.isVVMPassed),
+        isVVMPassed: record.isVVMPassed && parseBoolean(record.isVVMPassed),
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,

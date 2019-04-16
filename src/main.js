@@ -5,6 +5,7 @@
 
 import React from 'react';
 
+import Realm from 'realm';
 import { applyMiddleware, createStore } from 'redux';
 import { Provider } from 'react-redux';
 import thunk from 'redux-thunk';
@@ -34,6 +35,7 @@ const store = createStore(persistedReducer, {}, applyMiddleware(thunk));
 const persistedStore = persistStore(store);
 
 function App() {
+  Realm.copyBundledRealmFiles();
   return (
     <ErrorHandler persistedStore={persistedStore}>
       <Provider store={store}>

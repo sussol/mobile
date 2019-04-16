@@ -53,7 +53,7 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
-    const database = new Database(schema); // , `${RNFS.DocumentDirectoryPath}/hello.realm`);
+    const database = new Database(schema, `${RNFS.DocumentDirectoryPath}/vaccines.realm`);
     this.database = new UIDatabase(database);
     this.settings = new MobileAppSettings(this.database);
     migrateDataToVersion(this.database, this.settings);
@@ -220,7 +220,7 @@ class MSupplyMobileAppContainer extends React.Component {
       syncModalIsOpen,
     } = this.state;
 
-    if (isInitialised) {
+    if (!isInitialised) {
       return (
         <FirstUsePage
           synchroniser={this.synchroniser}
@@ -278,7 +278,7 @@ class MSupplyMobileAppContainer extends React.Component {
         <LoginModal
           authenticator={this.userAuthenticator}
           settings={this.settings}
-          isAuthenticated={true}
+          isAuthenticated={currentUser !== null}
           onAuthentication={this.onAuthentication}
         />
         {isLoading && this.renderLoadingIndicator()}

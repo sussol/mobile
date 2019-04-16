@@ -8,7 +8,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { generateUUID } from 'react-native-database';
-
 import { GenericPage } from './GenericPage';
 import { FinaliseButton, MiniToggleBar, AutocompleteSelector, TextEditor } from '../widgets/index';
 import { PageContentModal } from '../widgets/modals/index';
@@ -60,7 +59,7 @@ const createRowObject = (itemBatch, extraData) => {
     batch,
     totalQuantity,
     location: location || { description: 'Unassigned' },
-    expiryDate: typeof expiryDate === 'object' ? expiryDate.toDateString() : expiryDate,
+    expiryDate: typeof expiryDate === 'object' ? expiryDate.toLocaleDateString() : expiryDate,
     vvmStatus: null,
     ...extraData,
   };
@@ -132,7 +131,11 @@ export class ItemManagePage extends React.Component {
       newObjectValues = { vvmStatus: false };
       // Account for 0 & NaN (From entering a non-numeric character)
     } else if (parsedSplitValue) {
-      const newBatchValues = { totalQuantity: parsedSplitValue, vvmStatus: false };
+      const newBatchValues = {
+        totalQuantity: parsedSplitValue,
+        vvmStatus: false,
+        expiryDate: currentBatch.expiryDate,
+      };
       data.push(createRowObject(currentBatch, newBatchValues));
       newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
     }
@@ -187,6 +190,8 @@ export class ItemManagePage extends React.Component {
    */
   renderCell = (key, itemBatch) => {
     const { location, vvmStatus } = itemBatch;
+    console.log(key);
+    console.log(itemBatch[key]);
     const modalUpdateProps = { modalKey: key, itemBatch };
     const hasFridges = this.FRIDGES && this.FRIDGES.length > 0;
     const usingFridge = vvmStatus !== false && hasFridges;
@@ -197,7 +202,7 @@ export class ItemManagePage extends React.Component {
         return (
           <IconCell
             text={
-              (hasFridges && 'No Fridges') ||
+              (!hasFridges && 'No Fridges') ||
               (vvmStatus !== false ? location.description : 'Discarded')
             }
             disabled={!usingFridge}

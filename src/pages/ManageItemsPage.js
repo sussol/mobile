@@ -131,7 +131,6 @@ export class ManageItemsPage extends React.Component {
     // set locationFilter in state and filter before setting data. This is bad as
     // is makes this component controlled and uncontrolled?
     const { database, initialLocation } = this.props;
-    console.log(this.props);
     const fridges = database.objects('Location').filter(location => location.isFridge);
     // TODO: No fridges?
     fridges.unshift({ id: -1, description: LOCALIZATION.misc.allLocations });
@@ -145,10 +144,17 @@ export class ManageItemsPage extends React.Component {
    * EVENT HANDLERS
    */
 
-  onNavigateToItem = ({ item } = {}) => {
+  componentWillReceiveProps = () => {
+    this.setState({ searchTerm: ' ' }, () => this.setState({ searchTerm: '' }));
+  };
+
+  onNavigateToItem = item => {
     // TODO: Navigate to Vaccine Manage Item Page
     // linter complaining about empty stuff
-    if (item) setTimeout();
+
+    this.props.navigateTo('itemManagePage', item.name, {
+      item,
+    });
   };
 
   // Handler for opening and closing modals
@@ -205,7 +211,9 @@ export class ManageItemsPage extends React.Component {
             icon="angle-double-right"
             iconSize={20}
             iconColor={SUSSOL_ORANGE}
-            onPress={this.onNavigateToItem}
+            onPress={() => {
+              this.onNavigateToItem(item);
+            }}
           />
         );
       case 'quantityInBreach':
