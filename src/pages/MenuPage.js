@@ -69,7 +69,6 @@ export class MenuPage extends React.Component {
               onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
             />
           </View>
-
           <View style={[localStyles.container, localStyles.centralContainer]}>
             <Image
               style={localStyles.image}
@@ -98,7 +97,6 @@ export class MenuPage extends React.Component {
               />
             )}
           </View>
-
           <View style={localStyles.container}>
             <Image
               style={localStyles.image}
