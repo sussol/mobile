@@ -287,16 +287,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 }
 
-/* eslint-disable react/require-default-props, react/forbid-prop-types */
-MSupplyMobileAppContainer.propTypes = {
-  currentTitle: PropTypes.string,
-  dispatch: PropTypes.func.isRequired,
-  finaliseItem: PropTypes.object,
-  navigationState: PropTypes.object.isRequired,
-  syncState: PropTypes.object.isRequired,
-};
-
-function mapStateToProps(state) {
+const mapStateToProps = state => {
   const { nav: navigationState, sync: syncState } = state;
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
@@ -311,6 +302,15 @@ function mapStateToProps(state) {
     navigationState,
     syncState,
   };
-}
+};
+
+/* eslint-disable react/require-default-props, react/forbid-prop-types */
+MSupplyMobileAppContainer.propTypes = {
+  currentTitle: PropTypes.string,
+  dispatch: PropTypes.func.isRequired,
+  finaliseItem: PropTypes.object,
+  navigationState: PropTypes.object.isRequired,
+  syncState: PropTypes.object.isRequired,
+};
 
 export default connect(mapStateToProps)(MSupplyMobileAppContainer);
