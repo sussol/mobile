@@ -8,18 +8,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, View } from 'react-native';
+
 import MiniTable from './SimpleTable';
 
 import { generateUUID } from '../database';
 
+/**
+ * Simple component which renders SimpleTable components
+ * on top one one another. By default will use 100% of
+ * the width and height of it's parent. To give space
+ * between each table, the tablesHeight prop is the space
+ * all tables should occupy, leaving room between each if
+ * < 100%. i.e : 90% will occupy 90% of the height and use
+ * flexbox space-between, so 10% of the height is split evenly
+ * between each table.
+ */
 export class StackedTables extends React.PureComponent {
   render() {
-    const { data, additionalTableProps, tableHeight } = this.props;
+    const { data, additionalTableProps, tablesHeight } = this.props;
     const { containerStyle } = localStyles(this.props);
     return (
       <View style={containerStyle}>
         {data.map(datum => (
-          <View key={generateUUID()} style={{ height: `${tableHeight / data.length}%` }}>
+          <View key={generateUUID()} style={{ height: `${tablesHeight / data.length}%` }}>
             <MiniTable {...datum} {...additionalTableProps} />
           </View>
         ))}
@@ -42,13 +53,13 @@ const localStyles = ({ containerStyle }) =>
 
 StackedTables.defaultProps = {
   additionalTableProps: {},
-  tableHeight: 95,
+  tablesHeight: 95,
 };
 
 StackedTables.propTypes = {
   data: PropTypes.array.isRequired,
   additionalTableProps: PropTypes.object,
-  tableHeight: PropTypes.number,
+  tablesHeight: PropTypes.number,
 };
 
 export default StackedTables;
