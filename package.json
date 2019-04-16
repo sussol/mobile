@@ -18,28 +18,14 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest --coverage",
-    "build": "cd android && ./gradlew assembleRelease"
+    "build": "cd android && ./gradlew assembleRelease",
+    "lint": "eslint src"
   },
   "jest": {
-    "preprocessorIgnorePatterns": [
-      "node_modules/enzyme"
-    ],
-    "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
-    "setupEnvScriptFile": "node_modules/react-native/jestSupport/env.js",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "packager/react-packager/src/Activity/"
-    ],
-    "globals": {
-      "__DEV__": true
-    },
-    "unmockedModulePathPatterns": [
-      "react",
-      "react-dom",
-      "react-addons-test-utils",
-      "react-native-mock",
-      "enzyme"
-    ]
+    "preset": "react-native"
+  },
+  "resolutions": {
+    "react-devtools-core": "3.5.1"
   },
   "husky": {
     "hooks": {
@@ -57,54 +43,57 @@
     ]
   },
   "dependencies": {
-    "buffer": "^5.0.6",
-    "bugsnag-react-native": "^2.2.4",
-    "moment": "^2.18.1",
+    "bugsnag-react-native": "^2.14.0",
     "prop-types": "^15.6.2",
-    "react": "16.6.0-alpha.8af6728",
-    "react-native": "0.57.4",
-    "react-native-data-table": "^0.2.0",
+    "react": "16.6.3",
+    "react-native": "^0.58.3",
+    "react-native-data-table": "^0.2.1",
     "react-native-database": "^0.3.1",
     "react-native-device-info": "^0.24.3",
-    "react-native-fs": "^2.10.14",
+    "react-native-fs": "^2.13.3",
     "react-native-generic-table-page": "^0.4.0",
-    "react-native-localization": "^0.1.30",
-    "react-native-modalbox": "^1.4.1",
+    "react-native-localization": "^2.0.3",
+    "react-native-modalbox": "^1.7.1",
     "react-native-ui-components": "^0.5.0",
-    "react-native-vector-icons": "~6.0.2",
-    "react-navigation": "^1.0.0-beta.11",
-    "react-redux": "^5.0.5",
-    "realm": "^1.11.1",
+    "react-native-device-info": "^0.24.3",
+    "react-navigation": "1.0.0-beta.11",
+    "react-native-vector-icons": "^6.2.0",
+    "react-redux": "^6.0.0",
+    "realm": "^2.22.0",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
     "redux-persist-error-handler": "^0.1.1",
-    "redux-thunk": "^2.2.0",
-    "set-manipulator": "0.3.1",
+    "redux-thunk": "^2.3.0",
+    "set-manipulator": "^0.3.1",
     "sussol-utilities": "^0.5.1"
   },
   "devDependencies": {
-    "babel-core": "^6.10.4",
+    "@babel/core": "^7.2.2",
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^13.2.2",
-    "babel-polyfill": "^6.9.1",
-    "babel-preset-react-native": "^1.9.0",
-    "enzyme": "^2.4.1",
-    "eslint": "^5.13.0",
+    "babel-jest": "^24.0.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-react-native": "^4.0.1",
+    "enzyme": "^3.8.0",
+    "eslint": "^5.12.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-jsx-a11y": "^6.2.0",
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
-    "expect": "^1.18.0",
-    "expect-jsx": "^2.3.0",
-    "flow-bin": "^0.28.0",
+    "expect": "^24.0.0",
+    "expect-jsx": "^5.0.0",
+    "flow-bin": "^0.91.0",
     "husky": "^1.3.1",
-    "jest-cli": "^13.2.3",
+    "jest-cli": "^24.0.0",
     "lint-staged": "^8.1.0",
     "prettier": "^1.16.0",
-    "promise-sync-es6": "0.0.4",
-    "react-addons-test-utils": "~15.3.1",
-    "react-native-mock": "0.2.4",
-    "sinon": "^1.17.3"
+    "metro-react-native-babel-preset": "^0.51.1",
+    "lint-staged": "^8.1.0",
+    "prettier": "^1.16.0",
+    "promise-sync-es6": "^0.1.4",
+    "react-addons-test-utils": "^15.6.2",
+    "react-native-mock": "^0.3.1",
+    "react-test-renderer": "^16.7.0",
+    "sinon": "^7.2.3"
   }
 }
