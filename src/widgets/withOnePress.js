@@ -7,7 +7,7 @@ import React from 'react';
  * @param   {React.Component}  WrappedComponent  The component to be wrapped.
  * @return  {React.Component}                    The wrapped component.
  */
-export const withOnePress = WrappedComponent =>
+const withOnePress = WrappedComponent =>
   class extends React.Component {
     state = { hasBeenPressed: false };
 

@@ -13,7 +13,7 @@ import {
   setSyncError,
   setSyncIsSyncing,
   setSyncCompletionTime,
-} from './actions';
+} from '../actions';
 import { integrateRecord } from './incomingSyncUtils';
 import { generateSyncJson } from './outgoingSyncUtils';
 import { SyncDatabase } from './SyncDatabase';
