@@ -70,6 +70,7 @@
     "react-native-generic-table-page": "^0.4.0",
     "react-native-localization": "^0.1.30",
     "react-native-modalbox": "^1.4.1",
+    "react-native-svg": "^9.3.7",
     "react-native-ui-components": "^0.5.0",
     "react-native-vector-icons": "~6.0.2",
     "react-navigation": "^1.0.0-beta.11",
@@ -80,7 +81,8 @@
     "redux-persist-error-handler": "^0.1.1",
     "redux-thunk": "^2.2.0",
     "set-manipulator": "0.3.1",
-    "sussol-utilities": "^0.5.1"
+    "sussol-utilities": "^0.5.1",
+    "victory-native": "^32.0.2"
   },
   "devDependencies": {
     "babel-core": "^6.10.4",

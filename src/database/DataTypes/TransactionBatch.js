@@ -169,6 +169,11 @@ export class TransactionBatch extends Realm.Object {
     return `${this.itemBatch} in a ${this.transaction.type}`;
   }
 
+  get transactionItem() {
+    const { transaction } = this;
+    return transaction.items.find(({ batches }) => batches.some(batch => batch.id === this.id));
+  }
+
   /**
    * Splits a transactionBatch into two - (TB1, TB2). TB2 is a clone
    * of TB1 except for numberOfPacks and doses fields.
