@@ -1,14 +1,16 @@
+// Get daily intervals between two dates.
 const getDailyIntervals = (startDate, endDate) => {
   const dates = [];
   const date = startDate;
   while (date <= endDate) {
-    dates.push(new Date(date));
+    dates.push(new Date(date.getTime()));
     date.setDate(date.getDate() + 1);
   }
 
   return dates;
 };
 
+// Get hourly intervals between two dates.
 const getHourlyIntervals = (startDate, endDate) => {
   const dates = [];
   const date = startDate;
@@ -21,6 +23,18 @@ const getHourlyIntervals = (startDate, endDate) => {
 };
 
 const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) => {
+  // If start date is later than earliest date in data, update.
+  startDate = data.reduce(
+    (currentDate, { timestamp }) => (timestamp < currentDate ? timestamp : currentDate),
+    startDate
+  );
+
+  // If end date is earlier than latest date in data, update.
+  endDate = data.reduce(
+    (currentDate, { timestamp }) => (timestamp > currentDate ? timestamp : currentDate),
+    endDate
+  );
+
   // Get dates spanning start and end dates. If differences between start and end date
   // is less than three, use hourly intervals, otherwise daily.
   const dates =
@@ -29,14 +43,14 @@ const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) 
       : getDailyIntervals(startDate, endDate);
 
   // Get dates marking end date of each interval. Rounds to dynamically size
-  // boundaries to minimise differences in boundary size.
+  // boundaries to minimise differences in number of data points in each window.
   const intervalBoundaries = Array.from(
     { length: numberOfDataPoints },
     (_, index) => index + 1
-  ).map(interval =>
-    interval === numberOfDataPoints
+  ).map(index =>
+    index === numberOfDataPoints
       ? dates[dates.length - 1]
-      : dates[interval * Math.round(dates.length / numberOfDataPoints) - 1]
+      : dates[index * Math.round(dates.length / numberOfDataPoints) - 1]
   );
 
   // Aggregate data into intervals.
@@ -45,13 +59,31 @@ const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) 
     .map(() => []);
   data.forEach(datum => {
     let i = 0;
-    while (datum.timestamp > intervalBoundaries[i] && datum.timestamp < endDate) {
+    while (datum.timestamp > intervalBoundaries[i]) {
       i += 1;
     }
     aggregatedData[i].push(datum);
   });
-};
 
+  // Get date, max/min of each interval.
+  const aggregatedTemps = aggregatedData.map(interval => {
+    const { timestamp } = interval[Math.floor(interval.length / 2)];
+    const { temperature } = interval.reduce((minMaxDatum, datum) => {
+      const { temperature: currentTemperature } = datum;
+      const { temperature: minMaxTemperature } = minMaxDatum;
+
+      const isMinMaxTemp = isMax
+        ? currentTemperature > minMaxTemperature
+        : currentTemperature < minMaxTemperature;
+
+      return isMinMaxTemp ? datum : minMaxDatum;
+    });
+
+    return { timestamp, temperature };
+  });
+
+  return aggregatedTemps;
+};
 const data = [
   {
     timestamp: new Date('January 1'),
@@ -59,7 +91,7 @@ const data = [
   },
   {
     timestamp: new Date('January 2'),
-    temperature: 2,
+    temperature: 3,
   },
   {
     timestamp: new Date('January 3'),
@@ -83,7 +115,7 @@ const data = [
   },
   {
     timestamp: new Date('January 8'),
-    temperature: 2,
+    temperature: 6,
   },
 ];
 
@@ -91,6 +123,7 @@ const numberOfDataPoints = 3;
 
 aggregateLogs({
   data,
+  isMax: true,
   numberOfDataPoints,
   startDate: new Date('January 1'),
   endDate: new Date('January 8'),
