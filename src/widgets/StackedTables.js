@@ -20,6 +20,15 @@ import { SimpleTable } from './SimpleTable';
  * < 100%. i.e : 90% will occupy 90% of the height and use
  * flexbox space-between, so 10% of the height is split evenly
  * between each table.
+ * @prop    {array}  data  2D array, of data for each table. Example below.
+ * @prop    {object} additionalTableProps additional props for each simple table
+ * @prop    {number} tablesHeight The % of height all tables should utilize
+ *
+ * data should be in the form:
+ * [
+ *   {data: [ dataForFirstSimpleTable ], columns: [ columnsForFirstSimpleTable ] title: 'First'}
+ *   {data: [ dataForSecondSimpleTable ], columns: [ columnsForSecondSimpleTable ] title: 'Second'}
+ * ]
  */
 export class StackedTables extends React.PureComponent {
   render() {

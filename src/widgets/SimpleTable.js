@@ -12,14 +12,14 @@ import { StyleSheet, FlatList, View, Text } from 'react-native';
 import { ROW_BLUE, APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles/index';
 
 /**
- * Simple table component only rendering scalar values in a cell.
- * Required props
+ * Simple table component only rendering scalar values in a cell. Not intended
+ * for entering data. Below are frequently used props. Many other props are
+ * available for styling, documented in PropTypes.
+ * @prop    {array}  data    Array of data. Example below.
+ * @prop    {array}  columns Array of column objects. Example below.
+ * @prop    {string} title   Title for this table.
  * data = [ { a: 1, b: 2}, {a: 3, b: 4}, .. ]
- * columns = [
- * { key: 'a', width: 1, title: 'A COLUMN' },
- * { key: 'b', width: 1, title: 'B COLUMN' } ..
- * ]
- * title: Title of the table.
+ * columns = [ { key: 'a', width: 1, title: 'A COLUMN' }, { key: 'b', width: 1, title: 'B COLUMN' }]
  */
 export class SimpleTable extends React.PureComponent {
   keyExtractor = ({ index }) => index;
