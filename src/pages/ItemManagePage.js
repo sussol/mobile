@@ -53,18 +53,10 @@ const VACCINE_COLUMN_KEYS = ['batch', 'expiry', 'quantity', 'fridge', 'breach', 
 const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey]);
 
 // Creates a row object for use within this component.
-const createRowObject = (itemBatch, extraData) => {
-  const { id, batch, totalQuantity, location, expiryDate } = itemBatch;
-  return {
-    id: id || generateUUID(),
-    batch,
-    totalQuantity,
-    location: location || { description: 'Unassigned' },
-    expiryDate: typeof expiryDate === 'object' ? expiryDate.toDateString() : expiryDate,
-    vvmStatus: null,
-    ...extraData,
-  };
-};
+const createRowObject = (itemBatch, extraData) => ({
+  ...itemBatch,
+  ...extraData,
+});
 
 /**
  * Component used for displaying all ItemBatches for a particular
@@ -132,7 +124,11 @@ export class ItemManagePage extends React.Component {
       newObjectValues = { vvmStatus: false };
       // Account for 0 & NaN (From entering a non-numeric character)
     } else if (parsedSplitValue) {
-      const newBatchValues = { totalQuantity: parsedSplitValue, vvmStatus: false };
+      const newBatchValues = {
+        id: generateUUID(),
+        totalQuantity: parsedSplitValue,
+        vvmStatus: false,
+      };
       data.push(createRowObject(currentBatch, newBatchValues));
       newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
     }
