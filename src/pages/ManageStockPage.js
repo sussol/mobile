@@ -186,7 +186,7 @@ export class ManageStockPage extends React.Component {
     const fridges = database.objects('Location').filter(location => location.isFridge);
     fridges.unshift({ id: -1, description: LOCALIZATION.misc.allLocations });
     this.LOCATION_FILTERS = fridges;
-    this.ITEMS = database.objects('Item').filter(item => item.isVaccine);
+    this.ITEMS = database.objects('Item').filtered('name.category MATCHES[c] $0', 'vaccine');
     const locationFilter = initialLocation || fridges[0];
     this.setState({ locationFilter });
   };
