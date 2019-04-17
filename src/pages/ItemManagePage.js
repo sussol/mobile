@@ -173,8 +173,8 @@ export class ItemManagePage extends React.Component {
   // modal key in renderModal and set the passed itemBatch as the current
   // itemBatch. If called with no parameters, will clear the currentBatch
   // and close the modal.
-  onModalUpdate = ({ modalKey, itemBatch } = {}) => () => {
-    if (modalKey) this.setState({ modalKey, isModalOpen: true, currentBatch: itemBatch });
+  onModalUpdate = ({ modalKey, currentBatch } = {}) => () => {
+    if (modalKey) this.setState({ modalKey, isModalOpen: true, currentBatch });
     else this.setState({ isModalOpen: false, currentBatch: null });
   };
 
@@ -183,7 +183,7 @@ export class ItemManagePage extends React.Component {
    */
   renderCell = (key, itemBatch) => {
     const { location, vvmStatus } = itemBatch;
-    const modalUpdateProps = { modalKey: key, itemBatch };
+    const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
     const hasFridges = this.FRIDGES && this.FRIDGES.length > 0;
     const usingFridge = vvmStatus !== false && hasFridges;
     switch (key) {
