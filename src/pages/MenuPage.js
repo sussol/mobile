@@ -133,6 +133,7 @@ export class MenuPage extends React.Component {
     const { navigateTo } = this.props;
     return (
       <Button
+        key={page}
         style={menuButton}
         textStyle={menuButtonText}
         text={title}
@@ -160,7 +161,9 @@ export class MenuPage extends React.Component {
     return (
       <View style={pageContentContainer}>
         {this.layout.map(row => (
-          <View style={horizontalContainer}>{row.map(this.renderSection)}</View>
+          <View key={row} style={horizontalContainer}>
+            {row.map(this.renderSection)}
+          </View>
         ))}
         <View style={bottomContainer}>
           <Icon.Button
