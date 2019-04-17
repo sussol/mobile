@@ -85,7 +85,7 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
   breaches.map(breach => {
     const sensorIds = breach.map(log => log.id);
     const queryString = sensorIds.map((_, i) => `id = $${i}`).join(' OR ');
-    return database.objects('SensorLog').filtered(...queryString, ...sensorIds);
+    return database.objects('SensorLog').filtered(queryString, ...sensorIds);
   });
 
   return breaches;
