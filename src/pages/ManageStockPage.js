@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { View, Text } from 'react-native';
 
 import { GenericPage } from './GenericPage';
-import { IconCell, PageInfo, GenericChooseModal, PageContentModal } from '../widgets';
+import { IconCell, PageInfo, PageContentModal, GenericChoiceList } from '../widgets';
 import { SUSSOL_ORANGE } from '../globalStyles';
 
 import { formatExposureRange } from '../utilities';
@@ -220,7 +220,7 @@ export class ManageStockPage extends React.Component {
         return <Text>BREACH MODAL HERE</Text>;
       case FRIDGE_SELECT:
         return (
-          <GenericChooseModal
+          <GenericChoiceList
             data={this.LOCATION_FILTERS}
             highlightValue={highlightValue.description}
             keyToDisplay="description"
