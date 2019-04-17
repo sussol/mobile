@@ -145,23 +145,20 @@ export class ManageStockPage extends React.Component {
    * HELPER METHODS
    */
 
-  locationFilter = (location = {}, item) => {
-    const { id } = location;
-    if (!id) return true;
-    return item.hasBatchInFridge(location);
-  };
-
-  nameAndCodeFilter = (searchTerm, { name, code } = {}) =>
-    name.toLowerCase().startsWith(searchTerm) || code.toLowerCase().startsWith(searchTerm);
-
   // Called on every render(). Applies the location filter then
   // searchTerm filter on this.ITEMS.
   getData = () => {
     const { locationFilter, searchTerm } = this.state;
     if (!locationFilter) return [];
-    return this.ITEMS.filter(item => this.locationFilter(locationFilter, item)).filter(item =>
-      this.nameAndCodeFilter(searchTerm, item)
-    );
+    const { id } = locationFilter;
+    let data = this.ITEMS;
+    if (id) {
+      data = data.filtered('batches.numberOfPacks > 0 && batches.location.id = $0', id);
+    }
+    if (searchTerm) {
+      data = data.filtered('code BEGINSWITH[c] $0 OR name BEGINSWITH[c] $0', searchTerm);
+    }
+    return data;
   };
 
   // Gets and returns the Location object set as this.state.locationFilter.
