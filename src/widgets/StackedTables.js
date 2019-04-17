@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import { StyleSheet, View } from 'react-native';
 
-import MiniTable from './SimpleTable';
+import { SimpleTable } from './SimpleTable';
 
 import { generateUUID } from '../database';
 
@@ -31,7 +31,7 @@ export class StackedTables extends React.PureComponent {
       <View style={containerStyle}>
         {data.map(datum => (
           <View key={generateUUID()} style={{ height: `${tablesHeight / data.length}%` }}>
-            <MiniTable {...datum} {...additionalTableProps} />
+            <SimpleTable {...datum} {...additionalTableProps} />
           </View>
         ))}
       </View>
