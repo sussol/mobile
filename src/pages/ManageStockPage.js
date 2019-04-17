@@ -222,7 +222,7 @@ export class ManageStockPage extends React.Component {
             data={this.LOCATION_FILTERS}
             highlightValue={highlightValue.description}
             keyToDisplay="description"
-            onPress={({ item: locationFilter } = {}) =>
+            onPress={({ item: locationFilter }) =>
               this.setState({ locationFilter, isModalOpen: false })
             }
           />
