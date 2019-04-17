@@ -108,7 +108,7 @@ export class MenuPage extends React.Component {
    * @return {array}  result              The maxOrdersPerPeriod of the orderType
    */
   getUsedModules = customDataAsString => {
-    if (!customDataAsString || customDataAsString.length === 0) return [];
+    if (!customDataAsString) return [];
 
     const customData = JSON.parse(customDataAsString);
     const result = [];
