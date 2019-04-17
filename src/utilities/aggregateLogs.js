@@ -1,4 +1,14 @@
-// Get daily intervals between two dates.
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
+/**
+ * Get daily intervals between two dates.
+ *
+ * @param  {Date}  startDate
+ * @param  {Date}  endDate
+ */
 const getDailyIntervals = (startDate, endDate) => {
   const dates = [];
   const date = startDate;
@@ -10,7 +20,12 @@ const getDailyIntervals = (startDate, endDate) => {
   return dates;
 };
 
-// Get hourly intervals between two dates.
+/**
+ * Get hourly intervals between two dates.
+ *
+ * @param  {Date}  startDate
+ * @param  {Date}  endDate
+ */
 const getHourlyIntervals = (startDate, endDate) => {
   const dates = [];
   const date = startDate;
@@ -22,6 +37,22 @@ const getHourlyIntervals = (startDate, endDate) => {
   return dates;
 };
 
+/**
+ * Aggregates sensor logs into groups of logs by dates.
+ *
+ * @param   {Realm.results, Object[]}  data                An array of sensorLog objects to
+ *                                                         aggregate.
+ * @param   {boolean}                  isMax               If true, aggregate by max temperature,
+ *                                                         else min temperature.
+ * @param   {number}                   numberOfDataPoints  Number of aggregated data points to
+ *                                                         return.
+ * @param   {Date}                     startDate           Start date of temperature range to
+ *                                                         aggregate over.
+ * @param   {Date}                     endDate             End date of temperature range to
+ *                                                         aggregate over.
+ * @return  {Object[]}                                     Aggregated sensor logs, array of objects
+ *                                                         in form [{timestamp}, {temperature},...].
+ */
 const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) => {
   // If start date is later than earliest date in data, update.
   startDate = data.reduce(
@@ -54,36 +85,35 @@ const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) 
   );
 
   // Aggregate data into intervals.
-  const aggregatedData = Array(intervalBoundaries.length)
+  const logsByInterval = Array(intervalBoundaries.length)
     .fill()
     .map(() => []);
-  data.forEach(datum => {
+  data.forEach(log => {
     let i = 0;
-    while (datum.timestamp > intervalBoundaries[i]) {
-      i += 1;
-    }
-    aggregatedData[i].push(datum);
+    while (log.timestamp > intervalBoundaries[i]) i += 1;
+    logsByInterval[i].push(log);
   });
 
   // Get date, max/min of each interval.
-  const aggregatedTemps = aggregatedData.map(interval => {
+  const aggregatedLogs = logsByInterval.map(interval => {
     const { timestamp } = interval[Math.floor(interval.length / 2)];
-    const { temperature } = interval.reduce((minMaxDatum, datum) => {
-      const { temperature: currentTemperature } = datum;
-      const { temperature: minMaxTemperature } = minMaxDatum;
+    const { temperature } = interval.reduce((minMaxLog, currentLog) => {
+      const { temperature: currentTemperature } = currentLog;
+      const { temperature: minMaxTemperature } = minMaxLog;
 
       const isMinMaxTemp = isMax
         ? currentTemperature > minMaxTemperature
         : currentTemperature < minMaxTemperature;
 
-      return isMinMaxTemp ? datum : minMaxDatum;
+      return isMinMaxTemp ? currentLog : minMaxLog;
     });
 
     return { timestamp, temperature };
   });
 
-  return aggregatedTemps;
+  return aggregatedLogs;
 };
+
 const data = [
   {
     timestamp: new Date('January 1'),
