@@ -90,7 +90,7 @@ export class ItemManagePage extends React.Component {
    */
   componentDidMount = () => {
     const { database, item } = this.props;
-    this.FRIDGES = database.objects('Location');
+    this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
     this.setState({ data: item.batches.map(itemBatch => createRowObject(itemBatch)) });
   };
 
