@@ -10,7 +10,7 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { complement } from 'set-manipulator';
 import { APP_FONT_FAMILY } from '../globalStyles';
 import { generalStrings } from '../localization';
-import { withOnePress } from './withOnePress';
+import withOnePress from './withOnePress';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
