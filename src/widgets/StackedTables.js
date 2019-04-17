@@ -11,8 +11,6 @@ import { StyleSheet, View } from 'react-native';
 
 import { SimpleTable } from './SimpleTable';
 
-import { generateUUID } from '../database';
-
 /**
  * Simple component which renders SimpleTable components
  * on top one one another. By default will use 100% of
@@ -29,11 +27,14 @@ export class StackedTables extends React.PureComponent {
     const { containerStyle } = localStyles(this.props);
     return (
       <View style={containerStyle}>
-        {data.map(datum => (
-          <View key={generateUUID()} style={{ height: `${tablesHeight / data.length}%` }}>
-            <SimpleTable {...datum} {...additionalTableProps} />
-          </View>
-        ))}
+        {data.map((datum, index) => {
+          const { title = 'default' } = datum;
+          return (
+            <View key={`${title + index}`} style={{ height: `${tablesHeight / data.length}%` }}>
+              <SimpleTable {...datum} {...additionalTableProps} />
+            </View>
+          );
+        })}
       </View>
     );
   }

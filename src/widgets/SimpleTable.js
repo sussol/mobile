@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 
 import { StyleSheet, FlatList, View, Text } from 'react-native';
 import { ROW_BLUE, APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles/index';
-import { generateUUID } from '../database';
 
 /**
  * Simple table component only rendering scalar values in a cell.
@@ -23,7 +22,7 @@ import { generateUUID } from '../database';
  * title: Title of the table.
  */
 export class SimpleTable extends React.PureComponent {
-  keyExtractor = () => generateUUID();
+  keyExtractor = ({ index }) => index;
 
   renderTitle = () => {
     const { title } = this.props;
@@ -38,7 +37,7 @@ export class SimpleTable extends React.PureComponent {
   renderCell = ({ content, index, header, width }) => {
     const { cell, cellFont } = localStyles({ ...this.props, index, header, width });
     return (
-      <View style={cell} key={this.keyExtractor()}>
+      <View style={cell} key={this.keyExtractor({ index })}>
         <Text style={cellFont}>{content}</Text>
       </View>
     );
