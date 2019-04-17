@@ -11,39 +11,49 @@ import {
   SET_SYNC_MESSAGE,
   SET_SYNC_IS_SYNCING,
   SET_SYNC_COMPLETION_TIME,
-} from './constants';
+} from '../sync/constants';
 
-export const setSyncProgress = progress => ({
+const setSyncProgress = progress => ({
   type: SET_SYNC_PROGRESS,
   progress,
 });
 
-export const incrementSyncProgress = increment => ({
+const incrementSyncProgress = increment => ({
   type: INCREMENT_SYNC_PROGRESS,
   increment,
 });
 
-export const setSyncError = errorMessage => ({
+const setSyncError = errorMessage => ({
   type: SET_SYNC_ERROR,
   errorMessage,
 });
 
-export const setSyncTotal = total => ({
+const setSyncTotal = total => ({
   type: SET_SYNC_TOTAL,
   total,
 });
 
-export const setSyncProgressMessage = progressMessage => ({
+const setSyncProgressMessage = progressMessage => ({
   type: SET_SYNC_MESSAGE,
   progressMessage,
 });
 
-export const setSyncIsSyncing = isSyncing => ({
+const setSyncIsSyncing = isSyncing => ({
   type: SET_SYNC_IS_SYNCING,
   isSyncing,
 });
 
-export const setSyncCompletionTime = lastSyncTime => ({
+const setSyncCompletionTime = lastSyncTime => ({
   type: SET_SYNC_COMPLETION_TIME,
   lastSyncTime,
 });
+
+export {
+  setSyncProgress,
+  incrementSyncProgress,
+  setSyncError,
+  setSyncTotal,
+  setSyncProgressMessage,
+  setSyncIsSyncing,
+  setSyncCompletionTime,
+};

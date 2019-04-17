@@ -301,7 +301,7 @@ const createSupplierInvoice = (database, supplier, user) => {
  * @return  {TransactionBatch}
  */
 const createTransactionBatch = (database, transactionItem, itemBatch) => {
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
+  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
 
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -314,6 +314,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
     numberOfPacks: 0,
     costPrice,
     sellPrice,
+    donor,
     transaction: transactionItem.transaction,
     sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
   });
