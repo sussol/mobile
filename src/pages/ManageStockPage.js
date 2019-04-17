@@ -123,7 +123,7 @@ export class ManageStockPage extends React.Component {
 
     // List of location objects populated in ComponentDidMount.
     // Has a special object for 'No Location' to be selected,
-    // which has an id of -1.
+    // which has no ID
     this.LOCATION_FILTERS = null;
     // Store for all items. Is used to apply location and searchTerm
     // filters and derive the next GenericDataTable data prop.
@@ -145,9 +145,9 @@ export class ManageStockPage extends React.Component {
    * HELPER METHODS
    */
 
-  locationFilter = (location, item) => {
-    const { id = -1 } = location;
-    if (id === -1) return true;
+  locationFilter = (location = {}, item) => {
+    const { id } = location;
+    if (!id) return true;
     return item.hasBatchInFridge(location);
   };
 
@@ -168,7 +168,7 @@ export class ManageStockPage extends React.Component {
   // returns undefined if the locationFilter is the 'special' location, AllLocations.
   getLocation = () => {
     const { locationFilter } = this.state;
-    const location = !locationFilter || locationFilter.id === -1 ? undefined : locationFilter;
+    const location = !locationFilter || !locationFilter.id ? undefined : locationFilter;
     return location;
   };
 
@@ -177,14 +177,14 @@ export class ManageStockPage extends React.Component {
    */
 
   // On mounting, fetch the data for this.LOCATION_FILTERS and this.ITEMS.
-  // Prepend a 'special' location object for all locations with an ID of -1
+  // Prepend a 'special' location object for all locations with no ID
   // for 'No filter', and to display 'All locations' in the drop down. If
   // there are no locations/fridges only the All locations filter will
   // be available.
   componentDidMount = () => {
     const { database, initialLocation } = this.props;
     const fridges = database.objects('Location').filter(location => location.isFridge);
-    fridges.unshift({ id: -1, description: LOCALIZATION.misc.allLocations });
+    fridges.unshift({ description: LOCALIZATION.misc.allLocations });
     this.LOCATION_FILTERS = fridges;
     this.ITEMS = database.objects('Item').filtered('name.category MATCHES[c] $0', 'vaccine');
     const locationFilter = initialLocation || fridges[0];
