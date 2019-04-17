@@ -23,6 +23,7 @@ const MODAL_KEYS = {
   FRIDGE_SELECT: 'fridgeSelect',
 };
 
+// TODO: Localizatiopn
 const LOCALIZATION = {
   pageInfo: {
     filter: 'Filter by Location',
