@@ -18,6 +18,8 @@ export const SETTINGS_KEYS = {
   SYNC_SITE_PASSWORD_HASH: 'SyncSitePasswordHash',
   THIS_STORE_ID: 'ThisStoreId',
   THIS_STORE_NAME_ID: 'ThisStoreNameId',
+  THIS_STORE_TAGS: 'ThisStoreTags',
+  THIS_STORE_CUSTOM_DATA: 'ThisStoreCustomData',
   HARDWARE_UUID: 'Hardware_UUID',
 };
 
