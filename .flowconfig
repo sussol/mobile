@@ -1,13 +1,12 @@
 [ignore]
+; We fork some components by platform
+.*/*[.]android.js
 
-# We fork some components by platform.
-.*/*.android.js
+; Ignore "BUCK" generated dirs
+<PROJECT_ROOT>/\.buckd/
 
-# Ignore templates with `@flow` in header
-.*/local-cli/generator.*
-
-# Ignore malformed json
-.*/node_modules/y18n/test/.*\.json
+; Ignore unexpected extra "@providesModule"
+.*/node_modules/.*/node_modules/fbjs/.*
 
 ; Ignore duplicate module providers
 ; For RN Apps installed via npm, "Libraries" folder is inside
@@ -28,6 +27,11 @@ node_modules/react-native/flow/
 node_modules/react-native/flow-github/
 
 [options]
+emoji=true
+
+esproposal.optional_chaining=enable
+esproposal.nullish_coalescing=enable
+
 module.system=haste
 module.system.haste.use_name_reducers=true
 # get basename
@@ -43,14 +47,8 @@ module.system.haste.paths.blacklist=.*/__mocks__/.*
 module.system.haste.paths.blacklist=<PROJECT_ROOT>/node_modules/react-native/Libraries/Animated/src/polyfills/.*
 module.system.haste.paths.whitelist=<PROJECT_ROOT>/node_modules/react-native/Libraries/.*
 
-esproposal.class_static_fields=enable
-esproposal.class_instance_fields=enable
-
-experimental.strict_type_args=true
-
 munge_underscores=true
 
-module.name_mapper='^image![a-zA-Z0-9$_-]+$' -> 'GlobalImageStub'
 module.name_mapper='^[./a-zA-Z0-9$_-]+\.\(bmp\|gif\|jpg\|jpeg\|png\|psd\|svg\|webp\|m4v\|mov\|mp4\|mpeg\|mpg\|webm\|aac\|aiff\|caf\|m4a\|mp3\|wav\|html\|pdf\)$' -> 'RelativeImageStub'
 
 module.file_ext=.js
@@ -69,4 +67,4 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
 
 [version]
-^0.75.0
+^0.86.0

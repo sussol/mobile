@@ -12,7 +12,7 @@ import { Keyboard } from 'react-native';
 
 import { getCurrentRouteName } from '../navigation';
 
-const mapStateToProps = ({ navigation }) => ({ currentRouteName: getCurrentRouteName(navigation) });
+const mapStateToProps = ({ nav }) => ({ currentRouteName: getCurrentRouteName(nav) });
 
 const extractPropsForPage = props => {
   const { currentRouteName, screenProps, navigation, ...restOfProps } = props;

@@ -30,7 +30,7 @@ describe('ConfirmModal', () => {
         questionText="This is a test?"
         onCancel={cancelCallBack}
         onConfirm={confirmCallBack}
-      />,
+      />
     );
   });
 
