@@ -85,10 +85,11 @@ const TABLE_COLUMNS = {
 };
 
 const KEY_TO_FUNCTION_MAPPINGS = {
-  totalBatchesInStock: 'getQuantityInLocation',
+  totalBatchesInStock: 'getNumberOfBatches',
   hasBreach: 'getHasBreachedBatches',
   quantityInBreach: 'getQuantityInBreach',
   temperatureExposure: 'getTemperatureExposure',
+  totalQuantity: 'getQuantityInLocation',
 };
 
 const VACCINE_COLUMN_KEYS = [
@@ -245,7 +246,6 @@ export class ManageStockPage extends React.Component {
         return item[functionToCall](location);
       case 'name':
       case 'code':
-      case 'totalQuantity':
         return item[key];
       case 'hasBreach':
         if (item[functionToCall](location)) return emptyCell;
