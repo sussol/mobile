@@ -125,6 +125,7 @@ const generateSyncData = (settings, recordType, record) => {
         programID: record.program && record.program.id,
         periodID: record.period && record.period.id,
         orderType: record.orderType,
+        custom_data: record.customData,
       };
     }
     case 'RequisitionItem': {
