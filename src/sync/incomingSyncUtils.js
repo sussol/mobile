@@ -129,7 +129,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     ItemBatch: {
       cannotBeBlank: ['item_ID', 'quantity'],
-      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price'],
+      canBeBlank: ['pack_size', 'batch', 'expiry_date', 'cost_price', 'sell_price', 'donor_id'],
     },
     ItemStoreJoin: {
       cannotBeBlank: ['item_ID', 'store_ID'],
@@ -210,7 +210,15 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
         'cost_price',
         'sell_price',
       ],
-      canBeBlank: ['item_name', 'batch', 'expiry_date', 'pack_size', 'cost_price', 'sell_price'],
+      canBeBlank: [
+        'item_name',
+        'batch',
+        'expiry_date',
+        'pack_size',
+        'cost_price',
+        'sell_price',
+        'donor_id',
+      ],
     },
     Options: {
       cannotBeBlank: ['title', 'type', 'isActive'],
@@ -230,7 +238,8 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
-      record[fieldName].length > 0, // Key must not be empty string.
+      record[fieldName] !== undefined && // Field may be undefined.
+      record[fieldName].length > 0, // Fidl must not be empty string.
     true
   );
 
@@ -239,7 +248,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
-      record[fieldName] !== undefined, // Field may be empty string.
+      record[fieldName] !== undefined, // Field may be undefined.
     hasAllNonBlankFields
   ); // Initialise |containsAllFieldsSoFar| as result from |hasAllNonBlankFields|.
   return hasRequiredFields;
@@ -303,6 +312,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
         supplier: database.getOrCreate('Name', record.name_ID),
+        donor: database.getOrCreate('Name', record.donor_ID),
       };
       const itemBatch = database.update(recordType, internalRecord);
       item.addBatchIfUnique(itemBatch);
@@ -610,7 +620,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const transaction = database.getOrCreate('Transaction', record.transaction_ID);
       const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
       const item = database.getOrCreate('Item', record.item_ID);
+      const donor = database.getOrCreate('Name', record.donor_id);
       itemBatch.item = item;
+      itemBatch.donor = donor;
       item.addBatchIfUnique(itemBatch);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
@@ -625,6 +637,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         note: record.note,
         costPrice: packSize ? parseNumber(record.cost_price) / packSize : 0,
         sellPrice: packSize ? parseNumber(record.sell_price) / packSize : 0,
+        donor,
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,

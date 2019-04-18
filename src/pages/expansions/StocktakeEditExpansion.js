@@ -159,9 +159,7 @@ export class StocktakeEditExpansion extends React.Component {
           renderCell={this.renderCell}
           refreshData={this.refreshData}
           hideSearchBar={true}
-          renderDataTableFooter={
-            () => null // Overrides default generc pages footer.
-          }
+          renderDataTableFooter={null} // Overrides default generic pages footer.
           dontRenderSearchBar={true}
           onEndEditing={this.onEndEditing}
           renderTopLeftComponent={this.renderPageInfo}

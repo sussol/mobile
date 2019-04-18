@@ -16,6 +16,7 @@ import Realm from 'realm';
  * @property  {string}       note
  * @property  {number}       costPrice
  * @property  {number}       sellPrice
+ * @property  {Name}         donor
  * @property  {number}       sortIndex
  */
 export class TransactionBatch extends Realm.Object {
@@ -171,6 +172,7 @@ TransactionBatch.schema = {
     note: { type: 'string', optional: true },
     costPrice: 'double',
     sellPrice: 'double',
+    donor: { type: 'Name', optional: true },
     sortIndex: { type: 'int', optional: true },
   },
 };

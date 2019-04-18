@@ -71,23 +71,6 @@ export class MasterList extends Realm.Object {
 
     return foundStoreTag && storeTags[foundStoreTag];
   }
-
-  /**
-   * Find a specific order type by name field in the store tag object
-   * associated to this store and master list.
-   *
-   * @param  {string}  tags            Current stores tags field
-   * @param  {string}  orderTypeName   Name of the orderType to search for
-   * @return {object} The matching orderType object
-   */
-  getOrderType(tags, orderTypeName) {
-    const storeTagObject = this.getStoreTagObject(tags);
-    const orderTypes = storeTagObject && storeTagObject.orderTypes;
-
-    if (!orderTypes) return null;
-
-    return orderTypes.find(orderType => orderType.name === orderTypeName);
-  }
 }
 
 MasterList.schema = {

@@ -137,8 +137,8 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
  * @return  {Requisition}
  */
-const createRequisition = (database, user, { otherStoreName, program, period, orderType }) =>
-  database.create('Requisition', {
+const createRequisition = (database, user, { otherStoreName, program, period, orderType }) => {
+  const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
     requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
@@ -152,6 +152,12 @@ const createRequisition = (database, user, { otherStoreName, program, period, or
     orderType,
     period,
   });
+  if (period) {
+    period.addRequisitionIfUnique(requisition);
+    database.save('Period', period);
+  }
+  return requisition;
+};
 
 /**
  * Create a new requisition item.
@@ -298,7 +304,7 @@ const createSupplierInvoice = (database, supplier, user) => {
  * @return  {TransactionBatch}
  */
 const createTransactionBatch = (database, transactionItem, itemBatch) => {
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
+  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
 
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -311,6 +317,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
     numberOfPacks: 0,
     costPrice,
     sellPrice,
+    donor,
     transaction: transactionItem.transaction,
     sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
   });

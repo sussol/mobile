@@ -16,23 +16,30 @@ import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalS
 import { AutocompleteSelector, ToggleBar, PageButton, TextEditor } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
-import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities/byProgram';
+import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import SequentialSteps from '../SequentialSteps';
 
+// TODO: Proper localization
 const localization = {
-  program: 'program',
-  supplier: 'supplier',
-  orderType: 'order type',
-  period: 'period',
-  programTitle: 'Select a Program to use',
-  supplierTitle: 'Select a Supplier to use',
-  orderTypeTitle: 'Select a Order Type to use',
-  periodTitle: 'Select a Period to use',
-  nameTitle: 'Give your stocktake a name',
-  programError: 'No programs available',
-  supplierError: 'No suppliers available',
-  orderTypeError: 'No order types available',
-  periodError: 'No periods available',
+  title: {
+    program: 'Select a Program to use',
+    supplier: 'Select a Supplier to use',
+    orderType: 'Select a Order Type to use',
+    period: 'Select a Period to use',
+    name: 'Give your stocktake a name',
+  },
+  error: {
+    program: 'No programs available',
+    supplier: 'No suppliers available',
+    orderType: 'No order types available',
+    period: 'No periods available',
+  },
+  label: {
+    program: 'program',
+    supplier: 'supplier',
+    orderType: 'order type',
+    period: 'period',
+  },
 };
 
 const newState = {
@@ -91,15 +98,14 @@ export class ByProgramModal extends React.Component {
     const { settings, database } = this.props;
     const programs = getAllPrograms(settings, database);
     const suppliers = database.objects('Name').filtered('isSupplier = $0', true);
-    const steps = this.setCurrentSteps();
-    this.setState({ programs, suppliers, currentStepKey: steps[0].key });
+    this.setCurrentSteps(true);
+    this.setState({ programs, suppliers });
   };
 
   onConfirm = () => {
     const { onConfirm } = this.props;
     const { supplier: otherStoreName, orderType } = this.state;
     onConfirm({ ...this.state, otherStoreName, orderType: orderType && orderType.name });
-    this.setState({ ...newState.RESET_ALL }, () => this.setCurrentSteps());
   };
 
   onToggleChange = () => {
@@ -112,28 +118,26 @@ export class ByProgramModal extends React.Component {
   // Open a modal - in case it is an earlier step in the process,
   // set the current step to the step number corresponding with
   // the onPress event.
-  onModalTransition = ({ key: currentStepKey }) => {
+  onModalTransition = ({ key: currentStepKey } = {}) => {
     if (currentStepKey) this.setState({ modalIsOpen: true, currentStepKey });
     else this.setState({ modalIsOpen: false });
   };
 
   getSequentialStepsProps = () => {
-    const { name } = this.state;
-
+    const { name, programs, suppliers, orderTypes, periods } = this.state;
     const getBaseProps = key => ({
       name: this.state[key] && this.state[key].name,
-      placeholder: localization[`${key}Title`],
+      placeholder: localization.title[key],
+      errorText: localization.error[key],
       key,
-      error: this.state[`${key}s`] ? this.state[`${key}s`].length === 0 : false,
-      errorText: localization[`${key}Error`],
     });
 
     return {
-      program: getBaseProps('program'),
-      supplier: getBaseProps('supplier'),
-      name: { name, placeholder: localization.nameTitle, key: 'name', type: 'input' },
-      orderType: getBaseProps('orderType'),
-      period: getBaseProps('period'),
+      program: { ...getBaseProps('program'), error: !!(programs && programs.length === 0) },
+      supplier: { ...getBaseProps('supplier'), error: !!(suppliers && suppliers.length === 0) },
+      orderType: { ...getBaseProps('orderType'), error: !!(orderTypes && orderTypes.length === 0) },
+      period: { ...getBaseProps('period'), error: !!(periods && periods.length === 0) },
+      name: { name, placeholder: localization.title[name], key: 'name', type: 'input' },
     };
   };
 
@@ -322,7 +326,7 @@ export class ByProgramModal extends React.Component {
           <PageContentModal
             isOpen={modalIsOpen}
             onClose={this.onModalTransition}
-            title={localization[`${currentStepKey}Title`]}
+            title={localization.title[currentStepKey]}
             coverScreen
           >
             {this.renderModal()}

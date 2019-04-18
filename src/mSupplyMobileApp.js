@@ -10,7 +10,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { addNavigationHelpers } from 'react-navigation';
 import { connect } from 'react-redux';
 
 import {
@@ -23,11 +22,8 @@ import {
 } from 'react-native';
 
 import { Scheduler } from 'sussol-utilities';
+import { NavigationActions } from 'react-navigation';
 
-import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema, UIDatabase } from './database';
-import { migrateDataToVersion } from './dataMigration';
-import { Navigator, getCurrentParams, getCurrentRouteName } from './navigation';
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
 import { MobileAppSettings } from './settings';
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
@@ -39,6 +35,11 @@ import {
   SyncState,
   Spinner,
 } from './widgets';
+
+import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
+import { migrateDataToVersion } from './dataMigration';
+import { SyncAuthenticator, UserAuthenticator } from './authentication';
+import { Database, schema, UIDatabase } from './database';
 
 import globalStyles, {
   dataTableColors,
@@ -118,8 +119,8 @@ class MSupplyMobileAppContainer extends React.Component {
     // If we are on base screen (e.g. home), back button should close app as we can't go back.
     if (!this.getCanNavigateBack()) BackHandler.exitApp();
     else {
-      const { navigation } = this.navigator.props;
-      navigation.goBack();
+      const { dispatch } = this.navigator.props;
+      dispatch(NavigationActions.back());
     }
     return true;
   };
@@ -211,6 +212,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     const { dispatch, finaliseItem, navigationState, syncState } = this.props;
+
     const {
       confirmFinalise,
       currentUser,
@@ -229,6 +231,7 @@ class MSupplyMobileAppContainer extends React.Component {
         />
       );
     }
+
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
@@ -237,14 +240,13 @@ class MSupplyMobileAppContainer extends React.Component {
           CentreComponent={this.renderLogo}
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
-        <Navigator
+
+        <ReduxNavigator
           ref={navigator => {
             this.navigator = navigator;
           }}
-          navigation={addNavigationHelpers({
-            dispatch,
-            state: navigationState,
-          })}
+          state={navigationState}
+          dispatch={dispatch}
           screenProps={{
             database: this.database,
             settings: this.settings,
@@ -287,16 +289,8 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 }
 
-/* eslint-disable react/require-default-props, react/forbid-prop-types */
-MSupplyMobileAppContainer.propTypes = {
-  currentTitle: PropTypes.string,
-  dispatch: PropTypes.func.isRequired,
-  finaliseItem: PropTypes.object,
-  navigationState: PropTypes.object.isRequired,
-  syncState: PropTypes.object.isRequired,
-};
-
-function mapStateToProps({ navigation: navigationState, sync: syncState }) {
+const mapStateToProps = state => {
+  const { nav: navigationState, sync: syncState } = state;
   const currentParams = getCurrentParams(navigationState);
   const currentTitle = currentParams && currentParams.title;
   const finaliseItem = FINALISABLE_PAGES[getCurrentRouteName(navigationState)];
@@ -310,8 +304,15 @@ function mapStateToProps({ navigation: navigationState, sync: syncState }) {
     navigationState,
     syncState,
   };
-}
+};
 
-export const MSupplyMobileApp = connect(mapStateToProps)(MSupplyMobileAppContainer);
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
+MSupplyMobileAppContainer.propTypes = {
+  currentTitle: PropTypes.string,
+  dispatch: PropTypes.func.isRequired,
+  finaliseItem: PropTypes.object,
+  navigationState: PropTypes.object.isRequired,
+  syncState: PropTypes.object.isRequired,
+};
 
-export default MSupplyMobileApp;
+export default connect(mapStateToProps)(MSupplyMobileAppContainer);
