@@ -21,9 +21,10 @@ export function PageButton(props) {
   if (isDisabled) defaultTextStyle.push(globalStyles.disabledButtonText);
   return (
     <Button
-      {...buttonProps}
+      isDisabled={isDisabled}
       style={[...defaultButtonStyle, localStyles.button, style]}
       textStyle={[...defaultTextStyle, textStyle]}
+      {...buttonProps}
     />
   );
 }

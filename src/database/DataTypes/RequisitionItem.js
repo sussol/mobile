@@ -24,6 +24,15 @@ import { parsePositiveInteger } from '../../utilities';
  */
 export class RequisitionItem extends Realm.Object {
   /**
+   * Calculates if this items current stock is less then the supplied
+   * threshold
+   * @return {bool} true if this item has total quantity of stock less than the threshold
+   */
+  get isLessThanThresholdMOS() {
+    return this.stockOnHand < this.dailyUsage * 30 * this.requisition.thresholdMOS;
+  }
+
+  /**
    * Get id of requisition item.
    *
    * @return  {string}

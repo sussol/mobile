@@ -6,6 +6,9 @@
 import { generateUUID } from 'react-native-database';
 
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from './numberSequenceUtilities';
+import { formatDateAndTime } from '../../utilities';
+
+import { generalStrings } from '../../localization';
 
 const {
   CUSTOMER_INVOICE_NUMBER,
@@ -134,8 +137,8 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
  * @return  {Requisition}
  */
-const createRequisition = (database, user, otherStoreName) =>
-  database.create('Requisition', {
+const createRequisition = (database, user, { otherStoreName, program, period, orderType }) => {
+  const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
     requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
@@ -145,7 +148,16 @@ const createRequisition = (database, user, otherStoreName) =>
     daysToSupply: 30,
     enteredBy: user,
     otherStoreName,
+    program,
+    orderType,
+    period,
   });
+  if (period) {
+    period.addRequisitionIfUnique(requisition);
+    database.save('Period', period);
+  }
+  return requisition;
+};
 
 /**
  * Create a new requisition item.
@@ -184,21 +196,21 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
  * @param   {User}       user      User creating stocktake.
  * @return  {Stocktake}
  */
-const createStocktake = (database, user) => {
+const createStocktake = (database, { createdBy, program, name }) => {
   const date = new Date();
-
-  const stocktake = database.create('Stocktake', {
+  const { stocktakeText } = generalStrings;
+  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(new Date(), 'slashes')}`;
+  return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: '',
+    name: name || defaultName,
     createdDate: date,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
-    createdBy: user,
+    createdBy,
+    program,
   });
-
-  return stocktake;
 };
 
 /**

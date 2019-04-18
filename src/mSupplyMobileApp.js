@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-console */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019

@@ -25,6 +25,9 @@ import { createRecord, getTotal } from '../utilities';
  * @property  {User}                    enteredBy
  * @property  {List.<RequisitionItem>}  items
  * @property  {Transaction}             linkedTransaction
+ * @property  {MasterList}              program
+ * @property  {Period}                  period
+ * @property  {String}                  orderType
  */
 export class Requisition extends Realm.Object {
   /**
@@ -39,7 +42,7 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Delete requisition and associated requisition items.
+   * Delete requisition and associated requisition items/period.
    *
    * @param {Realm} database
    */
@@ -207,6 +210,10 @@ export class Requisition extends Realm.Object {
     });
   }
 
+  /**
+   * Add all items for the associated program.
+   * @param {Realm} database
+   */
   addItemsFromProgram(database) {
     if (this.isFinalized) {
       throw new Error('Cannot add items to a finalised requisition');
@@ -292,7 +299,8 @@ Requisition.schema = {
   properties: {
     id: 'string',
     status: { type: 'string', default: 'new' },
-    otherStoreName: { type: 'Name', optional: true },
+    orderType: { type: 'string', optional: true },
+    thresholdMOS: { type: 'double', optional: true },
     type: { type: 'string', default: 'request' },
     entryDate: { type: 'date', default: new Date() },
     daysToSupply: { type: 'double', default: 30 },
@@ -304,7 +312,7 @@ Requisition.schema = {
     linkedTransaction: { type: 'Transaction', optional: true },
     program: { type: 'MasterList', optional: true },
     period: { type: 'Period', optional: true },
-    orderType: { type: 'string', optional: true },
+    otherStoreName: { type: 'Name', optional: true },
   },
 };
 

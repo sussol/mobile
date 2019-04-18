@@ -12,6 +12,8 @@ import Realm from 'realm';
  * @property  {string}                 name
  * @property  {string}                 note
  * @property  {List.<MasterListItem>}  items
+ * @property  {string}                 programSettings *See below for example
+ * @property  {boolean}                isProgram
  *
  */
 export class MasterList extends Realm.Object {
@@ -22,6 +24,14 @@ export class MasterList extends Realm.Object {
    */
   destructor(database) {
     database.delete('masterListItem', this.items);
+  }
+
+  /**
+   * Returns this master lists programSettings, which is stored
+   * as a stringified object as an object
+   */
+  get parsedProgramSettings() {
+    return this.programSettings && JSON.parse(this.programSettings);
   }
 
   /**
@@ -44,40 +54,22 @@ export class MasterList extends Realm.Object {
   }
 
   /**
-   * Find the current stores matching store tag object in this master lists program settings
+   * Find the current stores matching store tag object in this master lists program settings.
+   * Program settings is a JSON object held as a string - example below.
    * @param  {string}  tags   Current stores tags field
    * @return {object} The matching storeTag programsettings field for the current store
    */
   getStoreTagObject(tags) {
-    const storeTags = tags.split(/[\s,]+/);
-    return Object.entries(JSON.parse(this.programSettings).storeTags).reduce(
-      ([programStoreTag, storeTagObject]) => {
-        if (!(storeTags.indexOf(programStoreTag) >= 0)) return null;
-        return storeTagObject;
-      }
+    const thisStoresTags = tags && tags.split(/[\s,]+/);
+    const storeTags = this.parsedProgramSettings && this.parsedProgramSettings.storeTags;
+
+    if (!(thisStoresTags && storeTags)) return null;
+
+    const foundStoreTag = Object.keys(storeTags).find(
+      storeTag => thisStoresTags.indexOf(storeTag) >= 0
     );
-  }
 
-  /**
-   * Find if this master list is a program useable by the current store
-   * @param  {string}  tags   Current stores tags field
-   * @return {bool} true if the current store can use this master list
-   */
-  canUseProgram(tags) {
-    return !!this.getStoreTagObject(tags);
-  }
-
-  /**
-   * Find a specifically named order type in the store tag object for this store and masterlist
-   * @param  {string}  tags            Current stores tags field
-   * @param  {string}  orderTypeName   Name of the orderType to search for
-   * @return {object} The matching orderType object
-   */
-  getOrderType(tags, orderTypeName) {
-    this.getStoreTagObject(tags).orderTypes.reduce(orderType => {
-      if (!(orderType.name === orderTypeName)) return null;
-      return orderType;
-    });
+    return foundStoreTag && storeTags[foundStoreTag];
   }
 }
 
@@ -95,3 +87,24 @@ MasterList.schema = {
 };
 
 export default MasterList;
+
+/**
+ * programSettings example
+ *
+ * programSettings: {
+ *  elmisCode: "CHR-1000",
+ *  storeTags: {
+ *    CHR1000: {
+ *      periodScheduleName: "Period Schedule 1"
+ *      orderTypes: [{
+ *        name: "normal",
+ *        type: "emergency",
+ *        maxOrdersPerPeriod: 1,
+ *        maxMOS: 2,
+ *        threshodMOS: 1,
+ *      }]
+ *    }
+ *  }
+ * }
+ *
+ */

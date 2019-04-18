@@ -211,13 +211,13 @@ export class Stocktake extends Realm.Object {
       throw Error('Attempt to finalise stocktake with adjustments that make item stock negative');
     }
 
+    // Adjust stocktake inventory.
+    this.adjustInventory(database, user);
+
     // Set the stocktake finalise details.
     this.status = 'finalised';
     this.finalisedBy = user;
     this.stocktakeDate = new Date();
-
-    // Adjust stocktake inventory.
-    this.adjustInventory(database, user);
 
     database.save('Stocktake', this);
   }
@@ -253,6 +253,16 @@ export class Stocktake extends Realm.Object {
     // |stocktakeBatch.finalise()| handles optimisation based on what fields were entered
     // (i.e. count/batch/expiry).
     stocktakeBatches.forEach(stocktakeBatch => stocktakeBatch.finalise(database));
+  }
+
+  /**
+   * Adds all items associated to this stocktakes program.
+   * @param {Realm} database
+   */
+  addItemsFromProgram(database) {
+    if (!this.program) return false;
+    this.setItemsByID(database, this.program.items.map(masterListItem => masterListItem.item.id));
+    return true;
   }
 }
 
