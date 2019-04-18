@@ -30,7 +30,7 @@
 export const extractBreaches = ({ sensorLogs = [], database }) => {
   if (!(database && sensorLogs.length > 0)) return [];
 
-  const sensorLogStack = [];
+  let sensorLogStack = [];
   const breaches = [];
   const sensorLogsByLocation = {};
 
@@ -66,8 +66,8 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
         // onto the stack as the new potential delimiter for the next breach.
       } else {
         sensorLogStack.push(sensorLog);
-        breaches.push([...sensorLogStack]);
-        sensorLogStack.length = 0;
+        breaches.push([sensorLogStack]);
+        sensorLogStack = [];
         sensorLogStack.push(sensorLog);
       }
     });
