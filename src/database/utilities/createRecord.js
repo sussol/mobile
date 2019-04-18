@@ -140,7 +140,7 @@ const createItemBatch = (database, item, batchString) => {
 const createRequisition = (
   database,
   user,
-  { otherStoreName, program, period, orderType, monthsLeadTime, maxMOS, thresholdMOS }
+  { otherStoreName, program, period, orderType, monthsLeadTime }
 ) => {
   const daysLeadTime = monthsLeadTime * 30;
   const requisition = database.create('Requisition', {
@@ -150,13 +150,12 @@ const createRequisition = (
     status: 'suggested',
     type: 'request',
     entryDate: new Date(),
-    daysToSupply: daysLeadTime + 30 * maxMOS,
+    daysToSupply: 30 + daysLeadTime,
     enteredBy: user,
     otherStoreName,
     program,
     orderType,
     period,
-    thresholdMOS,
   });
   if (period) {
     period.addRequisitionIfUnique(requisition);
