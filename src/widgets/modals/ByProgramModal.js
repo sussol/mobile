@@ -137,7 +137,7 @@ export class ByProgramModal extends React.Component {
       supplier: { ...getBaseProps('supplier'), error: !!(suppliers && suppliers.length === 0) },
       orderType: { ...getBaseProps('orderType'), error: !!(orderTypes && orderTypes.length === 0) },
       period: { ...getBaseProps('period'), error: !!(periods && periods.length === 0) },
-      name: { name, placeholder: localization.title[name], key: 'name', type: 'input' },
+      name: { name, placeholder: localization.title.name, key: 'name', type: 'input' },
     };
   };
 

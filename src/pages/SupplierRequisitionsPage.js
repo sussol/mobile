@@ -13,6 +13,10 @@ import { createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy, getAllPrograms } from '../utilities';
 
+import { SETTINGS_KEYS } from '../settings';
+
+const { THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
+
 const DATA_TYPES_SYNCHRONISED = ['Requisition'];
 
 /**
@@ -69,14 +73,21 @@ export class SupplierRequisitionsPage extends React.Component {
   };
 
   onNewRequisition = requisitionValues => {
-    const { database, currentUser } = this.props;
+    const { database, currentUser, settings } = this.props;
+
     let requisition;
     if (!requisitionValues) {
       this.setState({ byProgramModalOpen: false, isCreatingRequisition: false });
       return;
     }
     database.write(() => {
-      requisition = createRecord(database, 'Requisition', currentUser, requisitionValues);
+      const customData = JSON.parse(settings.get(THIS_STORE_CUSTOM_DATA) || {});
+      const monthsLeadTime = customData.monthsLeadTime ? Number(customData.monthsLeadTime.data) : 0;
+
+      requisition = createRecord(database, 'Requisition', currentUser, {
+        ...requisitionValues,
+        monthsLeadTime,
+      });
       if (requisition.program) requisition.addItemsFromProgram(database);
     });
     this.navigateToRequisition(requisition);

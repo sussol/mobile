@@ -50,10 +50,9 @@ export class StocktakesPage extends React.Component {
 
   createNewStocktake = properties => {
     const { currentUser, database } = this.props;
-
     let stocktake;
     database.write(() => {
-      stocktake = createRecord(database, 'Stocktake', { ...properties, currentUser });
+      stocktake = createRecord(database, 'Stocktake', { ...properties, createdBy: currentUser });
       stocktake.addItemsFromProgram(database);
     });
     return stocktake;
@@ -63,14 +62,12 @@ export class StocktakesPage extends React.Component {
     const { runWithLoadingIndicator, navigateTo } = this.props;
     const { program, name: stocktakeName } = programValues;
     runWithLoadingIndicator(() => {
-      this.setState({ byProgramModalOpen: false }, () => {
-        if (program && program.name) {
-          const stocktake = this.createNewStocktake(programValues);
-          navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake });
-        } else {
-          navigateTo('stocktakeManager', navStrings.new_stocktake, { stocktakeName });
-        }
-      });
+      if (program && program.name) {
+        const stocktake = this.createNewStocktake(programValues);
+        navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake });
+      } else {
+        navigateTo('stocktakeManager', navStrings.new_stocktake, { stocktakeName });
+      }
     });
   };
 

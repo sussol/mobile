@@ -272,18 +272,20 @@ export default class StocktakeBatchModal extends React.Component {
           {...genericTablePageStyles}
         />
 
-        <GenericChooseModal
-          isOpen={reasonModalOpen}
-          data={database.objects('Options')}
-          highlightIndex={
-            currentBatch && currentBatch.option
-              ? database.objects('Options').indexOf(currentBatch.option)
-              : 0
-          }
-          onPress={this.reasonModalConfirm}
-          field="title"
-          title="Select a reason"
-        />
+        {reasonModalOpen && (
+          <GenericChooseModal
+            isOpen={reasonModalOpen}
+            data={database.objects('Options')}
+            highlightIndex={
+              currentBatch && currentBatch.option
+                ? database.objects('Options').indexOf(currentBatch.option)
+                : 0
+            }
+            onPress={this.reasonModalConfirm}
+            keyToDisplay="title"
+            title="Select a reason"
+          />
+        )}
 
         {this.renderFooter()}
       </Modal>

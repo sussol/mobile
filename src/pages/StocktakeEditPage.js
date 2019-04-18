@@ -537,7 +537,7 @@ export class StocktakeEditPage extends React.Component {
                 ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
                 : 0
             }
-            field="title"
+            keyToDisplay="title"
             onPress={this.reasonModalConfirm}
             title="Select a reason"
           />

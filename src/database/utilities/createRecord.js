@@ -137,8 +137,13 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         values?  TODO: this param+description is wrong
  * @return  {Requisition}
  */
-const createRequisition = (database, user, { otherStoreName, program, period, orderType }) => {
+const createRequisition = (
+  database,
+  user,
+  { otherStoreName, program, period, orderType, monthsLeadTime }
+) => {
   const { regimenData } = program.parsedProgramSettings;
+  const daysLeadTime = monthsLeadTime * 30;
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -146,7 +151,7 @@ const createRequisition = (database, user, { otherStoreName, program, period, or
     status: 'suggested',
     type: 'request',
     entryDate: new Date(),
-    daysToSupply: 30,
+    daysToSupply: 30 + daysLeadTime,
     enteredBy: user,
     otherStoreName,
     program,
@@ -201,7 +206,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
 const createStocktake = (database, { createdBy, program, name }) => {
   const date = new Date();
   const { stocktakeText } = generalStrings;
-  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(new Date(), 'slashes')}`;
+  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(date, 'slashes')}`;
   return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
