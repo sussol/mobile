@@ -47,7 +47,9 @@ export class SupplierRequisitionPage extends React.Component {
       modalIsOpen: false,
       selection: [],
       useThresholdMOS: !!program && thresholdMOS,
+      // customData: requisition.parsedCustomData()
     };
+
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'itemName',
@@ -370,7 +372,7 @@ export class SupplierRequisitionPage extends React.Component {
           ...(program ? { marginLeft: 5 } : {}),
         }}
         text={buttonStrings.view_regimen_data}
-        onPress={() => {}}
+        onPress={() => console.log(requisition.parsedCustomData)}
         isDisabled={requisition.isFinalised}
       />
     );
@@ -517,7 +519,6 @@ export class SupplierRequisitionPage extends React.Component {
           onConfirm={this.onDeleteConfirm}
           confirmText={modalStrings.remove}
         />
-
         <PageContentModal
           isOpen={modalIsOpen && !requisition.isFinalised}
           onClose={this.closeModal}

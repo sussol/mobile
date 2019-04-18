@@ -122,6 +122,10 @@ export class Requisition extends Realm.Object {
     return this.items.length;
   }
 
+  get parsedCustomData() {
+    return this.customData && JSON.parse(this.customData);
+  }
+
   /**
    * Set the days to supply of this requisition in months.
    *
@@ -313,6 +317,7 @@ Requisition.schema = {
     program: { type: 'MasterList', optional: true },
     period: { type: 'Period', optional: true },
     otherStoreName: { type: 'Name', optional: true },
+    customData: { type: 'string', optional: true },
   },
 };
 

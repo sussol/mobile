@@ -134,10 +134,11 @@ const createItemBatch = (database, item, batchString) => {
  *
  * @param   {Realm}        database
  * @param   {User}         user            User creating requisition.
- * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
+ * @param   {Name}         values?  TODO: this param+description is wrong
  * @return  {Requisition}
  */
 const createRequisition = (database, user, { otherStoreName, program, period, orderType }) => {
+  const { regimenData } = program.parsedProgramSettings;
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -151,6 +152,7 @@ const createRequisition = (database, user, { otherStoreName, program, period, or
     program,
     orderType,
     period,
+    customData: regimenData && JSON.stringify({ regimenData }),
   });
   if (period) {
     period.addRequisitionIfUnique(requisition);
