@@ -347,67 +347,78 @@ export class SupplierRequisitionPage extends React.Component {
     }
   };
 
-  renderThresholdMOSToggle = () => {
-    const { useThresholdMOS } = this.state;
-    const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
-    const toggleProps = [
-      {
-        text: 'Hide over stocked',
-        isOn: useThresholdMOS,
-        onPress,
-      },
-      {
-        text: 'Show over stocked',
-        isOn: !useThresholdMOS,
-        onPress,
-      },
-    ];
-    return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
-  };
-
   renderButtons = () => {
     const { requisition } = this.props;
     const { program, thresholdMOS } = requisition;
 
+    const UseSuggestedQuantitiesButton = () => (
+      <PageButton
+        style={{
+          ...globalStyles.topButton,
+          ...(program ? { marginLeft: 5 } : {}),
+        }}
+        text={buttonStrings.use_suggested_quantities}
+        onPress={this.onUseSuggestedQuantities}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
+    const ThresholdMOSToggle = () => {
+      const { useThresholdMOS } = this.state;
+      const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
+      const toggleProps = [
+        {
+          text: 'Hide over stocked',
+          isOn: useThresholdMOS,
+          onPress,
+        },
+        {
+          text: 'Show over stocked',
+          isOn: !useThresholdMOS,
+          onPress,
+        },
+      ];
+      return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
+    };
+
+    const CreateAutomaticOrderButton = () => (
+      <PageButton
+        style={globalStyles.leftButton}
+        text={buttonStrings.create_automatic_order}
+        onPress={this.onCreateAutomaticOrder}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
+    const AddNewItemButton = () => (
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.new_item}
+        onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
+    const AddMasterListItemsButton = () => (
+      <PageButton
+        text={buttonStrings.add_master_list_items}
+        onPress={this.onAddMasterItems}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
-          <PageButton
-            style={{
-              ...globalStyles.topButton,
-              ...(program ? { marginLeft: 5 } : {}),
-            }}
-            text={buttonStrings.use_suggested_quantities}
-            onPress={this.onUseSuggestedQuantities}
-            isDisabled={requisition.isFinalised}
-          />
-
-          {program && thresholdMOS && this.renderThresholdMOSToggle()}
-
-          {!program && (
-            <PageButton
-              style={globalStyles.leftButton}
-              text={buttonStrings.create_automatic_order}
-              onPress={this.onCreateAutomaticOrder}
-              isDisabled={requisition.isFinalised}
-            />
-          )}
+          <UseSuggestedQuantitiesButton />
+          {program && thresholdMOS && <ThresholdMOSToggle />}
+          {!program && <CreateAutomaticOrderButton />}
         </View>
 
         {!program && (
           <View style={globalStyles.verticalContainer}>
-            <PageButton
-              style={globalStyles.topButton}
-              text={buttonStrings.new_item}
-              onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
-              isDisabled={requisition.isFinalised}
-            />
-
-            <PageButton
-              text={buttonStrings.add_master_list_items}
-              onPress={this.onAddMasterItems}
-              isDisabled={requisition.isFinalised}
-            />
+            <AddNewItemButton />
+            <AddMasterListItemsButton />
           </View>
         )}
       </View>
