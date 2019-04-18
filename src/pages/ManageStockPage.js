@@ -162,14 +162,6 @@ export class ManageStockPage extends React.Component {
     return data;
   };
 
-  // Gets and returns the Location object set as this.state.locationFilter.
-  // returns undefined if the locationFilter is the 'special' location, AllLocations.
-  getLocation = () => {
-    const { locationFilter } = this.state;
-    const location = !locationFilter || !locationFilter.id ? undefined : locationFilter;
-    return location;
-  };
-
   /**
    * COMPONENT METHODS
    */
@@ -237,18 +229,18 @@ export class ManageStockPage extends React.Component {
   // Item helper methods. If there is a location set as the current
   // locationFilter - the values will come from that particular location.
   renderCell = (key, item) => {
+    const { locationFilter } = this.state;
     const { BREACH } = MODAL_KEYS;
     const emptyCell = { type: 'text', cellContents: '' };
-    const location = this.getLocation();
     const functionToCall = KEY_TO_FUNCTION_MAPPINGS[key];
     switch (key) {
       default:
-        return item[functionToCall](location);
+        return item[functionToCall](locationFilter);
       case 'name':
       case 'code':
         return item[key];
       case 'hasBreach':
-        if (item[functionToCall](location)) return emptyCell;
+        if (item[functionToCall](locationFilter)) return emptyCell;
         return (
           <IconCell
             icon="warning"
@@ -267,7 +259,7 @@ export class ManageStockPage extends React.Component {
           />
         );
       case 'temperatureExposure':
-        return formatExposureRange(item[functionToCall](location));
+        return formatExposureRange(item[functionToCall](locationFilter));
     }
   };
 
