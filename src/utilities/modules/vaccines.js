@@ -32,33 +32,47 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
 
   const sensorLogStack = [];
   const breaches = [];
+  const sensorLogsByLocation = {};
 
   // Sort the sensor logs by timestamp.
   sensorLogs.sorted('timestamp', true);
 
+  // Group all sensorLogs by location
   sensorLogs.forEach(sensorLog => {
-    const { isInBreach } = sensorLog;
-    const { length: stackLength } = sensorLogStack;
-    // If the stack is empty, just push this sensorLog.
-    if (stackLength === 0) sensorLogStack.push(sensorLog);
-    // Any breached sensorLogs are always pushed onto the stack.
-    else if (isInBreach) sensorLogStack.push(sensorLog);
-    // If both head of the stack and this sensorLog are unbreached,
-    // replace the head. This can occurs when the length is 1. Two
-    // sequential unbreached logs are never pushed.
-    else if (!sensorLogStack[stackLength - 1].isInBreach && !isInBreach) {
-      sensorLogStack.pop();
-      sensorLogStack.push(sensorLog);
-      // In all other cases, a breach has been found. Push the last sensorlog,
-      // store the breach and reset the stack. Push this sensorLog back
-      // onto the stack as the new potential delimiter for the next breach.
-    } else {
-      sensorLogStack.push(sensorLog);
-      breaches.push([...sensorLogStack]);
-      sensorLogStack.length = 0;
-      sensorLogStack.push(sensorLog);
-    }
+    const { location } = sensorLog;
+    // If this sensorLog doesn't have a location,
+    // ignore it
+    if (!location) return;
+    if (!sensorLogsByLocation[location.id]) sensorLogsByLocation[location.id] = [sensorLog];
+    else sensorLogsByLocation[location.id].push(sensorLog);
   });
+
+  Object.values(sensorLogsByLocation).forEach(logsForLocation => {
+    logsForLocation.forEach(sensorLog => {
+      const { isInBreach } = sensorLog;
+      const { length: stackLength } = sensorLogStack;
+      // If the stack is empty, just push this sensorLog.
+      if (stackLength === 0) sensorLogStack.push(sensorLog);
+      // Any breached sensorLogs are always pushed onto the stack.
+      else if (isInBreach) sensorLogStack.push(sensorLog);
+      // If both head of the stack and this sensorLog are unbreached,
+      // replace the head. This can occurs when the length is 1. Two
+      // sequential unbreached logs are never pushed.
+      else if (!sensorLogStack[stackLength - 1].isInBreach && !isInBreach) {
+        sensorLogStack.pop();
+        sensorLogStack.push(sensorLog);
+        // In all other cases, a breach has been found. Push the last sensorlog,
+        // store the breach and reset the stack. Push this sensorLog back
+        // onto the stack as the new potential delimiter for the next breach.
+      } else {
+        sensorLogStack.push(sensorLog);
+        breaches.push([...sensorLogStack]);
+        sensorLogStack.length = 0;
+        sensorLogStack.push(sensorLog);
+      }
+    });
+  });
+
   // Push any remaining sensorlogs. If any are left, they form a breach
   // with no delimiting non-breached sensorlog.
   if (sensorLogStack.length > 0) breaches.push(sensorLogStack);
