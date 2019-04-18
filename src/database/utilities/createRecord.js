@@ -137,7 +137,12 @@ const createItemBatch = (database, item, batchString) => {
  * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
  * @return  {Requisition}
  */
-const createRequisition = (database, user, { otherStoreName, program, period, orderType }) => {
+const createRequisition = (
+  database,
+  user,
+  { otherStoreName, program, period, orderType, monthsLeadTime }
+) => {
+  const daysLeadTime = monthsLeadTime * 30;
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -145,7 +150,7 @@ const createRequisition = (database, user, { otherStoreName, program, period, or
     status: 'suggested',
     type: 'request',
     entryDate: new Date(),
-    daysToSupply: 30,
+    daysToSupply: 30 + daysLeadTime,
     enteredBy: user,
     otherStoreName,
     program,
