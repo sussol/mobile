@@ -385,7 +385,6 @@ export class SupplierRequisitionPage extends React.Component {
         }}
         text={buttonStrings.view_regimen_data}
         onPress={() => this.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA)}
-        isDisabled={requisition.isFinalised}
       />
     );
 
@@ -532,7 +531,7 @@ export class SupplierRequisitionPage extends React.Component {
           confirmText={modalStrings.remove}
         />
         <PageContentModal
-          isOpen={modalIsOpen && !requisition.isFinalised}
+          isOpen={modalIsOpen}
           onClose={this.closeModal}
           title={this.getModalTitle()}
         >
