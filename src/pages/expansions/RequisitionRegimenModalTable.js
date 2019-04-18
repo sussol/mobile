@@ -125,7 +125,7 @@ export class RequisitionRegimenModalTable extends React.Component {
         columns={[
           {
             key: 'name',
-            width: 5,
+            width: 4,
             title: 'Question',
             alignText: 'left',
           },
@@ -133,13 +133,13 @@ export class RequisitionRegimenModalTable extends React.Component {
             key: 'value',
             width: 1,
             title: 'Value',
-            alignText: 'center',
+            alignText: 'right',
           },
           {
             key: 'comment',
             width: 5,
             title: 'Comment',
-            alignText: 'left',
+            alignText: 'right',
           },
         ]}
         dataTypesLinked={['Requisition']}
