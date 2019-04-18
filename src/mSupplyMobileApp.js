@@ -23,7 +23,7 @@ import {
 import { Scheduler } from 'sussol-utilities';
 
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema, UIDatabase, generateUUID } from './database';
+import { Database, schema, UIDatabase } from './database';
 import { migrateDataToVersion } from './dataMigration';
 import { Navigator, getCurrentParams, getCurrentRouteName } from './navigation';
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
@@ -46,8 +46,6 @@ import globalStyles, {
   SUSSOL_ORANGE,
 } from './globalStyles';
 
-import { aggregateLogs } from './utilities/aggregateLogs';
-
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
@@ -57,7 +55,6 @@ class MSupplyMobileAppContainer extends React.Component {
     const database = new Database(schema);
     this.database = new UIDatabase(database);
     this.settings = new MobileAppSettings(this.database);
-
     migrateDataToVersion(this.database, this.settings);
     this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
     const syncAuthenticator = new SyncAuthenticator(this.settings);
@@ -85,59 +82,6 @@ class MSupplyMobileAppContainer extends React.Component {
       isLoading: false,
       syncModalIsOpen: false,
     };
-
-    this.database.write(() => {
-      this.database.create('SensorLog', {
-        id: generateUUID(),
-        timestamp: new Date(2019, 1, 1),
-        temperature: 1.0,
-      });
-      this.database.create('SensorLog', {
-        id: generateUUID(),
-        timestamp: new Date(2019, 1, 2),
-        temperature: 3.0,
-      });
-      this.database.create('SensorLog', {
-        id: generateUUID(),
-        timestamp: new Date(2019, 1, 3),
-        temperature: 2.0,
-      });
-      this.database.create('SensorLog', {
-        id: generateUUID(),
-        timestamp: new Date(2019, 1, 4),
-        temperature: 1.0,
-      });
-      this.database.create('SensorLog', {
-        id: generateUUID(),
-        timestamp: new Date(2019, 1, 5),
-        temperature: 4.0,
-      });
-      this.database.create('SensorLog', {
-        id: generateUUID(),
-        timestamp: new Date(2019, 1, 6),
-        temperature: 1.0,
-      });
-      this.database.create('SensorLog', {
-        id: generateUUID(),
-        timestamp: new Date(2019, 1, 7),
-        temperature: 6.0,
-      });
-    });
-
-    const sensorLogs = this.database.objects('SensorLog');
-
-    const numberOfIntervals = 3;
-
-    const aggregatedLogs = aggregateLogs({
-      sensorLogs,
-      numberOfIntervals,
-      isMax: true,
-      startDate: new Date(2019, 1, 1),
-      endDate: new Date(2019, 1, 8),
-    });
-
-    // eslint-disable-next-line no-console
-    console.log(aggregatedLogs);
   }
 
   componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
