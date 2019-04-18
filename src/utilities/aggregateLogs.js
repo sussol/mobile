@@ -4,111 +4,65 @@
  */
 
 /**
- * Get daily intervals between two dates.
- *
- * @param  {Date}  startDate
- * @param  {Date}  endDate
- */
-const getDailyIntervals = (startDate, endDate) => {
-  const dates = [];
-  const date = startDate;
-  while (date <= endDate) {
-    dates.push(new Date(date.getTime()));
-    date.setDate(date.getDate() + 1);
-  }
-
-  return dates;
-};
-
-/**
- * Get hourly intervals between two dates.
- *
- * @param  {Date}  startDate
- * @param  {Date}  endDate
- */
-const getHourlyIntervals = (startDate, endDate) => {
-  const dates = [];
-  const date = startDate;
-  while (date <= endDate) {
-    dates.push(new Date(date));
-    date.setHours(date.getHours() + 1);
-  }
-
-  return dates;
-};
-
-/**
  * Aggregates sensor logs into groups of logs by dates.
  *
- * @param   {Realm.results, Object[]}  data                An array of sensorLog objects to
- *                                                         aggregate.
- * @param   {boolean}                  isMax               If true, aggregate by max temperature,
- *                                                         else min temperature.
- * @param   {number}                   numberOfDataPoints  Number of aggregated data points to
- *                                                         return.
- * @param   {Date}                     startDate           Start date of temperature range to
- *                                                         aggregate over.
- * @param   {Date}                     endDate             End date of temperature range to
- *                                                         aggregate over.
- * @return  {Object[]}                                     Aggregated sensor logs, array of objects
- *                                                         in form [{timestamp}, {temperature},...].
+ * @param   {Realm.results}  sensorLogs          A collection of sensorLog objects to aggregate.
+ * @param   {boolean}        isMax               If true, aggregate by maximum temperature, else
+ *                                               by minimum temperature.
+ * @param   {number}         numberOfDataPoints  Number of aggregated data points to return.
+ * @param   {Date}           startDate           Start date of temperature range to aggregate
+ *                                               over.
+ * @param   {Date}           endDate             End date of temperature range to aggregate over.
+ * @return  {Object[]}                           Aggregated sensor logs, array of objects in form
+ *                                              [{timestamp}, {temperature},...].
  */
-export const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) => {
-  // If start date is later than earliest date in data, update.
-  startDate = data.reduce(
-    (currentDate, { timestamp }) => (timestamp < currentDate ? timestamp : currentDate),
-    startDate
-  );
+export const aggregateLogs = ({ sensorLogs, isMax, numberOfIntervals, startDate, endDate }) => {
+  sensorLogs.sorted('timestamp');
+
+  // If start date is later than earliest log, update.
+  const startLog = sensorLogs[0];
+  startDate = startDate > startLog.timestamp ? startLog.timestamp : startDate;
 
   // If end date is earlier than latest date in data, update.
-  endDate = data.reduce(
-    (currentDate, { timestamp }) => (timestamp > currentDate ? timestamp : currentDate),
-    endDate
-  );
+  const endLog = sensorLogs[sensorLogs.length - 1];
+  endDate = endDate < endLog.timestamp ? endLog.timestamp : endDate;
 
-  // Get dates spanning start and end dates. If differences between start and end date
-  // is less than three, use hourly intervals, otherwise daily.
-  const dates =
-    endDate.getDate() - startDate.getDate() < 3
-      ? getHourlyIntervals(startDate, endDate)
-      : getDailyIntervals(startDate, endDate);
+  // Calculate duration of each interval in milliseconds.
+  const totalDuration = endDate - startDate;
+  const intervalDuration = totalDuration / numberOfIntervals;
 
-  // Get dates marking end date of each interval. Rounds to dynamically size
-  // boundaries to minimise differences in number of data points in each window.
-  const intervalBoundaries = Array.from(
-    { length: numberOfDataPoints },
-    (_, index) => index + 1
-  ).map(index =>
-    index === numberOfDataPoints
-      ? dates[dates.length - 1]
-      : dates[index * Math.round(dates.length / numberOfDataPoints) - 1]
-  );
+  // Generate interval boundaries.
+  const aggregatedLogs = [];
+  for (let i = 0; i < numberOfIntervals; i += 1) {
+    const intervalStartDate = new Date(startDate.getTime() + intervalDuration * i);
+    const intervalEndDate = new Date(startDate.getTime() + intervalDuration * (i + 1) - 1);
+    aggregatedLogs.push({ intervalStartDate, intervalEndDate });
+  }
 
-  // Aggregate data into intervals.
-  const logsByInterval = Array(intervalBoundaries.length)
-    .fill()
-    .map(() => []);
-  data.forEach(log => {
-    let i = 0;
-    while (log.timestamp > intervalBoundaries[i]) i += 1;
-    logsByInterval[i].push(log);
-  });
+  // Map intervals to aggregated objects.
+  aggregatedLogs.forEach(({ intervalStartDate, intervalEndDate }, index) => {
+    // Calculate median date.
+    aggregatedLogs[index].medianDate = new Date(
+      intervalStartDate.getTime() + (intervalEndDate.getTime() - intervalStartDate.getTime()) / 2
+    );
 
-  // Get date, max/min of each interval.
-  const aggregatedLogs = logsByInterval.map(interval => {
-    const { timestamp } = interval[Math.floor(interval.length / 2)];
-    const { temperature } = interval.reduce((minMaxLog, currentLog) => {
-      const { temperature: currentTemperature } = currentLog;
-      const { temperature: minMaxTemperature } = minMaxLog;
+    // Get sensor logs.
+    aggregatedLogs[index].sensorLogs = sensorLogs.filtered(
+      'timestamp >= $0 && timestamp <= $1',
+      intervalStartDate,
+      intervalEndDate
+    );
 
-      const isMinMaxTemp = isMax
-        ? currentTemperature > minMaxTemperature
-        : currentTemperature < minMaxTemperature;
+    // Get maximum or minimum log.
+    const getMinMaxLog = isMax
+      ? (previousLog, currentLog) =>
+          previousLog.temperature > currentLog.temperature ? previousLog : currentLog
+      : (previousLog, currentLog) =>
+          previousLog.temperature < currentLog.temperature ? previousLog : currentLog;
 
-      return isMinMaxTemp ? currentLog : minMaxLog;
-    });
-
-    return { timestamp, temperature };
+    aggregatedLogs[index].sensorLog = aggregatedLogs[index].sensorLogs.reduce(
+      (accLog, currentLog) => getMinMaxLog(accLog, currentLog)
+    );
   });
 
   return aggregatedLogs;

@@ -124,14 +124,14 @@ class MSupplyMobileAppContainer extends React.Component {
       });
     });
 
-    const data = this.database.objects('SensorLog');
+    const sensorLogs = this.database.objects('SensorLog');
 
-    const numberOfDataPoints = 3;
+    const numberOfIntervals = 3;
 
     const aggregatedLogs = aggregateLogs({
-      data,
+      sensorLogs,
       isMax: true,
-      numberOfDataPoints,
+      numberOfIntervals,
       startDate: new Date(2019, 1, 1),
       endDate: new Date(2019, 1, 8),
     });
