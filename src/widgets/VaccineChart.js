@@ -20,6 +20,8 @@ import Svg from 'react-native-svg';
 
 import { HazardPoint } from './HazardPoint';
 
+import { APP_FONT_FAMILY } from '../globalStyles';
+
 export class VaccineChart extends React.Component {
   constructor(props) {
     super(props);
@@ -34,8 +36,8 @@ export class VaccineChart extends React.Component {
   // calculate relative values for width and height for each chart.
   onLayout = event => {
     this.setState({
-      width: event.nativeEvent.layout.width,
-      height: event.nativeEvent.layout.height,
+      width: event.nativeEvent.layout.width * 1,
+      height: event.nativeEvent.layout.height * 1.025,
     });
   };
 
@@ -62,7 +64,7 @@ export class VaccineChart extends React.Component {
         <VictoryLine
           y={() => minTemp}
           style={{
-            data: { strokeDasharray: minLineStyles.strokeDasharray, stroke: minLineStyles.stroke },
+            data: { opacity: 0.3, stroke: minLineStyles.stroke },
           }}
         />
       ) : null;
@@ -73,7 +75,7 @@ export class VaccineChart extends React.Component {
         <VictoryLine
           y={() => maxTemp}
           style={{
-            data: { strokeDasharray: maxLineStyles.strokeDasharray, stroke: maxLineStyles.stroke },
+            data: { opacity: 0.3, stroke: maxLineStyles.stroke },
           }}
         />
       ) : null;
@@ -92,7 +94,8 @@ export class VaccineChart extends React.Component {
       minLine.length > 0 ? (
         <VictoryScatter
           data={minLine}
-          style={{ data: { fill: minLineStyles.fill } }}
+          size={3}
+          style={{ data: { fill: 'white', stroke: minLineStyles.stroke, strokeWidth: 2 } }}
           {...dataKeys}
         />
       ) : null;
@@ -111,7 +114,8 @@ export class VaccineChart extends React.Component {
       maxLine.length > 0 ? (
         <VictoryScatter
           data={maxLine}
-          style={{ data: { fill: maxLineStyles.fill } }}
+          size={3}
+          style={{ data: { fill: 'white', stroke: maxLineStyles.stroke, strokeWidth: 2 } }}
           {...dataKeys}
         />
       ) : null;
@@ -126,13 +130,21 @@ export class VaccineChart extends React.Component {
         <VictoryChart
           width={width}
           height={height}
+          padding={{ top: 20, left: 50, right: 50, bottom: 50 }}
           style={chartStyles}
           theme={VictoryTheme.material}
           maxDomain={{ y: maxDomain }}
           minDomain={{ y: minDomain }}
         >
-          <VictoryAxis offsetY={50} />
-          <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
+          <VictoryAxis
+            style={{ tickLabels: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: '#909192' } }}
+          />
+          <VictoryAxis
+            dependentAxis
+            crossAxis={false}
+            tickFormat={t => `${t}℃`}
+            style={{ tickLabels: { fontSize: 15, fontFamily: APP_FONT_FAMILY, fill: '#909192' } }}
+          />
           {minTempPlotLine}
           {maxTempPlotLine}
           {minLinePlotLine}
@@ -162,17 +174,15 @@ const chartStyles = {
 };
 
 const minLineStyles = {
-  fill: 'blue',
+  fill: '#70b4f0',
   interpolation: 'natural',
-  strokeDasharray: '1',
-  stroke: 'blue',
+  stroke: '#70b4f0',
 };
 
 const maxLineStyles = {
-  fill: 'red',
+  fill: '#e95c30',
   interpolation: 'natural',
-  strokeDasharray: '1',
-  stroke: 'red',
+  stroke: '#e95c30',
 };
 
 VaccineChart.propTypes = {

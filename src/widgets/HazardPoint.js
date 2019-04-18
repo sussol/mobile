@@ -30,10 +30,10 @@ export const HazardPoint = props => {
 };
 
 const hazardPointStyles = {
-  xOffset: -15,
-  yOffset: -40,
+  xOffset: -14,
+  yOffset: -33,
   scale: 0.05,
-  fill: 'red',
+  fill: '#e95c30',
 };
 
 // Bug in Victory charts causes required props to be undefined on first render.
