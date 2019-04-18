@@ -105,7 +105,7 @@ export class ByProgramModal extends React.Component {
   onConfirm = () => {
     const { onConfirm } = this.props;
     const { supplier: otherStoreName, orderType } = this.state;
-    onConfirm({ ...this.state, otherStoreName, orderType: orderType && orderType.name });
+    onConfirm({ ...this.state, otherStoreName, orderType });
   };
 
   onToggleChange = () => {

@@ -142,8 +142,9 @@ const createRequisition = (
   user,
   { otherStoreName, program, period, orderType, monthsLeadTime }
 ) => {
+  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
   const { regimenData } = program.parsedProgramSettings;
-  const daysLeadTime = monthsLeadTime * 30;
+  const daysToSupply = (monthsLeadTime + maxMOS) * 30;
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -151,11 +152,12 @@ const createRequisition = (
     status: 'suggested',
     type: 'request',
     entryDate: new Date(),
-    daysToSupply: 30 + daysLeadTime,
+    daysToSupply,
     enteredBy: user,
     otherStoreName,
     program,
-    orderType,
+    orderType: orderTypeName,
+    thresholdMOS,
     period,
     customData: regimenData && JSON.stringify({ regimenData }),
   });
