@@ -135,6 +135,12 @@ export class Requisition extends Realm.Object {
     this.daysToSupply = months * 30;
   }
 
+  // Saves a new customData string. Call inside a write/transaction
+  // @data object matching shape of customData, it better be inclusive of EVERYTHING!
+  saveCustomData(data) {
+    this.customData = data && JSON.stringify({ ...data });
+  }
+
   /**
    * Check whether requisition requests a given item.
    *

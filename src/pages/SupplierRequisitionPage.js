@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
+import { RequisitionRegimenModalTable } from './expansions/RequisitionRegimenModalTable';
 
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
@@ -33,6 +34,7 @@ const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   ITEM_SELECT: 'itemSelect',
   MONTHS_SELECT: 'monthsSelect',
+  VIEW_REGIMEN_DATA: 'viewRegimenData',
 };
 
 export class SupplierRequisitionPage extends React.Component {
@@ -145,7 +147,7 @@ export class SupplierRequisitionPage extends React.Component {
   getModalTitle = () => {
     const { modalKey } = this.state;
 
-    const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
+    const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT, VIEW_REGIMEN_DATA } = MODAL_KEYS;
 
     switch (modalKey) {
       default:
@@ -155,6 +157,8 @@ export class SupplierRequisitionPage extends React.Component {
         return modalStrings.edit_the_requisition_comment;
       case MONTHS_SELECT:
         return modalStrings.select_the_number_of_months_stock_required;
+      case VIEW_REGIMEN_DATA:
+        return buttonStrings.view_regimen_data;
     }
   };
 
@@ -290,9 +294,9 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderModalContent = () => {
     const { modalKey } = this.state;
-    const { database, requisition } = this.props;
+    const { database, requisition, genericTablePageStyles } = this.props;
 
-    const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
+    const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT, VIEW_REGIMEN_DATA } = MODAL_KEYS;
 
     switch (modalKey) {
       default:
@@ -346,6 +350,14 @@ export class SupplierRequisitionPage extends React.Component {
             }}
           />
         );
+      case VIEW_REGIMEN_DATA:
+        return (
+          <RequisitionRegimenModalTable
+            database={database}
+            requisition={requisition}
+            genericTablePageStyles={genericTablePageStyles}
+          />
+        );
     }
   };
 
@@ -372,7 +384,7 @@ export class SupplierRequisitionPage extends React.Component {
           ...(program ? { marginLeft: 5 } : {}),
         }}
         text={buttonStrings.view_regimen_data}
-        onPress={() => console.log(requisition.parsedCustomData)}
+        onPress={() => this.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA)}
         isDisabled={requisition.isFinalised}
       />
     );
