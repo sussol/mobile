@@ -10,7 +10,13 @@ import PropTypes from 'prop-types';
 import { generateUUID } from 'react-native-database';
 
 import { GenericPage } from './GenericPage';
-import { FinaliseButton, MiniToggleBar, AutocompleteSelector, TextEditor } from '../widgets/index';
+import {
+  FinaliseButton,
+  MiniToggleBar,
+  AutocompleteSelector,
+  TextEditor,
+  ExpiryTextInput,
+} from '../widgets/index';
 import { PageContentModal } from '../widgets/modals/index';
 import { IconCell } from '../widgets/IconCell';
 import { DARK_GREY, FINALISED_RED, SUSSOL_ORANGE, SOFT_RED } from '../globalStyles/index';
@@ -189,6 +195,8 @@ export class ItemManagePage extends React.Component {
     switch (key) {
       default:
         return itemBatch[key];
+      case 'expiryDate':
+        return <ExpiryTextInput text={itemBatch[key]} />;
       case 'location':
         return (
           <IconCell

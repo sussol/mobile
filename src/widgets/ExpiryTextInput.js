@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -7,6 +8,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TextInput, StyleSheet } from 'react-native';
 import { formatExpiryDate, parseExpiryDate } from '../utilities';
+
+import { dataTableStyles } from '../globalStyles';
 
 /* Component that allows masking of TextInput for date in format MM/YY[YY] */
 export class ExpiryTextInput extends React.Component {
@@ -93,9 +96,14 @@ export class ExpiryTextInput extends React.Component {
 
 export default ExpiryTextInput;
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
+ExpiryTextInput.defaultProps = {
+  style: dataTableStyles.text,
+  onEndEditing: null,
+  isEditable: false,
+};
+
 ExpiryTextInput.propTypes = {
-  text: PropTypes.object,
+  text: PropTypes.object.isRequired,
   style: PropTypes.object,
   onEndEditing: PropTypes.func,
   isEditable: PropTypes.bool,
