@@ -189,6 +189,8 @@ export class ByProgramModal extends React.Component {
           ...newState.SELECT_ORDER_TYPE,
           periods: getAllPeriodsForProgram(database, program, periodScheduleName, selectedItem),
           orderType: selectedItem,
+          maxMOS: selectedItem.maxMOS,
+          thresholdMOS: selectedItem.thresholdMOS,
           currentStepKey: 'period',
         };
         break;
