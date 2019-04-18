@@ -53,7 +53,7 @@ const getHourlyIntervals = (startDate, endDate) => {
  * @return  {Object[]}                                     Aggregated sensor logs, array of objects
  *                                                         in form [{timestamp}, {temperature},...].
  */
-const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) => {
+export const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) => {
   // If start date is later than earliest date in data, update.
   startDate = data.reduce(
     (currentDate, { timestamp }) => (timestamp < currentDate ? timestamp : currentDate),
@@ -114,47 +114,4 @@ const aggregateLogs = ({ data, isMax, numberOfDataPoints, startDate, endDate }) 
   return aggregatedLogs;
 };
 
-const data = [
-  {
-    timestamp: new Date('January 1'),
-    temperature: 1,
-  },
-  {
-    timestamp: new Date('January 2'),
-    temperature: 3,
-  },
-  {
-    timestamp: new Date('January 3'),
-    temperature: 2,
-  },
-  {
-    timestamp: new Date('January 4'),
-    temperature: 2,
-  },
-  {
-    timestamp: new Date('January 5'),
-    temperature: 2,
-  },
-  {
-    timestamp: new Date('January 6'),
-    temperature: 2,
-  },
-  {
-    timestamp: new Date('January 7'),
-    temperature: 2,
-  },
-  {
-    timestamp: new Date('January 8'),
-    temperature: 6,
-  },
-];
-
-const numberOfDataPoints = 3;
-
-aggregateLogs({
-  data,
-  isMax: true,
-  numberOfDataPoints,
-  startDate: new Date('January 1'),
-  endDate: new Date('January 8'),
-});
+export default aggregateLogs;
