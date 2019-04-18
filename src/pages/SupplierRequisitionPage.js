@@ -363,6 +363,18 @@ export class SupplierRequisitionPage extends React.Component {
       />
     );
 
+    const ViewRegimenDataButton = () => (
+      <PageButton
+        style={{
+          ...globalStyles.topButton,
+          ...(program ? { marginLeft: 5 } : {}),
+        }}
+        text={buttonStrings.view_regimen_data}
+        onPress={() => {}}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
     const ThresholdMOSToggle = () => {
       const { useThresholdMOS } = this.state;
       const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
@@ -410,7 +422,10 @@ export class SupplierRequisitionPage extends React.Component {
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
-          <UseSuggestedQuantitiesButton />
+          <View style={globalStyles.horizontalContainer}>
+            <UseSuggestedQuantitiesButton />
+            {program && <ViewRegimenDataButton />}
+          </View>
           {program && thresholdMOS && <ThresholdMOSToggle />}
           {!program && <CreateAutomaticOrderButton />}
         </View>
