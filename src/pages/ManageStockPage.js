@@ -240,7 +240,7 @@ export class ManageStockPage extends React.Component {
       case 'code':
         return item[key];
       case 'hasBreach':
-        if (item[functionToCall](locationFilter)) return emptyCell;
+        if (!item[functionToCall](locationFilter)) return emptyCell;
         return (
           <IconCell
             icon="warning"
