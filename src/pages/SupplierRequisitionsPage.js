@@ -81,7 +81,12 @@ export class SupplierRequisitionsPage extends React.Component {
       return;
     }
     database.write(() => {
-      const customData = JSON.parse(settings.get(THIS_STORE_CUSTOM_DATA) || '{}');
+      let customData = {};
+      try {
+        customData = JSON.parse(settings.get(THIS_STORE_CUSTOM_DATA));
+      } catch (e) {
+        //
+      }
       const monthsLeadTime = customData.monthsLeadTime ? Number(customData.monthsLeadTime.data) : 0;
 
       requisition = createRecord(database, 'Requisition', currentUser, {
