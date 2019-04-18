@@ -194,7 +194,7 @@ export class ItemManagePage extends React.Component {
           <IconCell
             text={
               (hasFridges && 'No Fridges') ||
-              (vvmStatus !== false ? location.description : 'Discarded')
+              (vvmStatus !== false ? location.description || 'Unnamed Fridge' : 'Discarded')
             }
             disabled={!usingFridge}
             icon={usingFridge ? 'caret-up' : 'times'}
