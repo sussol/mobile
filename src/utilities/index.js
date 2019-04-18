@@ -8,7 +8,7 @@ export {
   parseExpiryDate,
   formatPlural,
 } from 'sussol-utilities';
-export { formatStatus } from './formatStatus';
+export { formatStatus, formatExposureRange } from './formatters';
 export { sortDataBy } from './sortDataBy';
 export { compareVersions } from './compareVersions';
 export { createReducer, REHYDRATE } from './createReducer';
