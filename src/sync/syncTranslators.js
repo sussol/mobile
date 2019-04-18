@@ -52,11 +52,11 @@ export const RECORD_TYPES = new SyncTranslator({
   RequisitionItem: 'requisition_line',
   Stocktake: 'Stock_take',
   StocktakeBatch: 'Stock_take_lines',
+  Store: 'store',
   Transaction: 'transact',
   TransactionCategory: 'transaction_category',
   TransactionBatch: 'trans_line',
   User: 'user',
-  Store: 'store',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({
