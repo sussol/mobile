@@ -64,11 +64,10 @@ export const aggregateLogs = ({
     );
 
     // Get maximum or minimum log.
-    const getMinMaxLog = isMax
-      ? (previousLog, currentLog) =>
-          previousLog.temperature > currentLog.temperature ? previousLog : currentLog
-      : (previousLog, currentLog) =>
-          previousLog.temperature < currentLog.temperature ? previousLog : currentLog;
+    const getMinMaxLog = (previousLog, currentLog) => {
+      if (isMax) return previousLog.temperature > currentLog.temperature ? previousLog : currentLog;
+      return previousLog.temperature < currentLog.temperature ? previousLog : currentLog;
+    };
 
     aggregatedLogs[index].sensorLog = aggregatedLogs[index].sensorLogs.reduce(
       (accLog, currentLog) => getMinMaxLog(accLog, currentLog)
