@@ -79,8 +79,10 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
         onPress={rowData.onPress}
       >
         <View style={containerStyle}>
-          {infoComponent}
-          <Icon name={iconName} size={14} color={SUSSOL_ORANGE} style={localStyles.editIcon} />
+          <View style={{ maxWidth: '85%' }}>{infoComponent}</View>
+          <View style={{ maxWidth: '10%' }}>
+            <Icon name={iconName} size={14} color={SUSSOL_ORANGE} style={localStyles.editIcon} />
+          </View>
         </View>
       </TouchableOpacity>
     );

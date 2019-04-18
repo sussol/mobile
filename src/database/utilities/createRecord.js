@@ -6,6 +6,9 @@
 import { generateUUID } from 'react-native-database';
 
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from './numberSequenceUtilities';
+import { formatDateAndTime } from '../../utilities';
+
+import { generalStrings } from '../../localization';
 
 const {
   CUSTOMER_INVOICE_NUMBER,
@@ -193,21 +196,21 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
  * @param   {User}       user      User creating stocktake.
  * @return  {Stocktake}
  */
-const createStocktake = (database, user) => {
+const createStocktake = (database, { createdBy, program, name }) => {
   const date = new Date();
-
-  const stocktake = database.create('Stocktake', {
+  const { stocktakeText } = generalStrings;
+  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(new Date(), 'slashes')}`;
+  return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: '',
+    name: name || defaultName,
     createdDate: date,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
-    createdBy: user,
+    createdBy,
+    program,
   });
-
-  return stocktake;
 };
 
 /**

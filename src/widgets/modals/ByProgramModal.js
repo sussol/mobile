@@ -102,7 +102,7 @@ export class ByProgramModal extends React.Component {
     this.setState({ programs, suppliers });
   };
 
-  onConfirmRequisition = () => {
+  onConfirm = () => {
     const { onConfirm } = this.props;
     const { supplier: otherStoreName, orderType } = this.state;
     onConfirm({ ...this.state, otherStoreName, orderType: orderType && orderType.name });
@@ -137,7 +137,7 @@ export class ByProgramModal extends React.Component {
       supplier: { ...getBaseProps('supplier'), error: !!(suppliers && suppliers.length === 0) },
       orderType: { ...getBaseProps('orderType'), error: !!(orderTypes && orderTypes.length === 0) },
       period: { ...getBaseProps('period'), error: !!(periods && periods.length === 0) },
-      name: { name, placeholder: localization.title[name], key: name, type: 'input' },
+      name: { name, placeholder: localization.title[name], key: 'name', type: 'input' },
     };
   };
 
@@ -291,7 +291,6 @@ export class ByProgramModal extends React.Component {
     const { onCancel, isOpen, type, database } = this.props;
     const { modalIsOpen, steps, currentStepKey } = this.state;
     if (!(steps || currentStepKey)) return null;
-
     return (
       <PageContentModal
         isOpen={isOpen}
@@ -316,7 +315,7 @@ export class ByProgramModal extends React.Component {
 
         <PageButton
           text="OK"
-          onPress={this.onConfirmRequisition}
+          onPress={this.onConfirm}
           isDisabled={!(currentStepKey === 'complete')}
           disabledColor={WARM_GREY}
           style={localStyles.okButton}
@@ -351,6 +350,13 @@ const localStyles = StyleSheet.create({
     backgroundColor: SUSSOL_ORANGE,
     alignSelf: 'center',
     marginTop: 60,
+  },
+  textInput: {
+    justifyContent: 'space-between',
+    paddingLeft: 20,
+    maxHeight: 35,
+    minWidth: 500,
+    marginTop: '2%',
   },
 });
 

@@ -6,10 +6,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { GenericPage } from './GenericPage';
 
 import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
+import { SUSSOL_ORANGE } from '../globalStyles';
 
 import {
   buttonStrings,
@@ -19,6 +23,8 @@ import {
   pageInfoStrings,
 } from '../localization';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
+import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
+import GenericChooseModal from '../widgets/modals/GenericChooseModal';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -90,6 +96,11 @@ export class StocktakeEditPage extends React.Component {
       modalKey: null,
       isModalOpen: false,
       isResetModalOpen: false,
+      stocktakeItem: null,
+      isStocktakeEditModalOpen: false,
+      usesReasons: false,
+      isReasonsModalOpen: false,
+      currentStocktakeItem: null,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -104,8 +115,39 @@ export class StocktakeEditPage extends React.Component {
     }
   }
 
+  componentDidMount = () => {
+    const { database } = this.props;
+    this.setState({ usesReasons: database.objects('Options').length !== 0 });
+  };
+
+  reasonModalConfirm = ({ item: option }) => {
+    if (option) {
+      const { currentStocktakeItem } = this.state;
+      const { database } = this.props;
+      currentStocktakeItem.applyReasonToBatches(database, option);
+    }
+    this.setState({ isReasonsModalOpen: false });
+  };
+
   /**
-   * Respond to the user editing the 'Actual Quantity' column.
+   * Opens the reason modal for applying a reason to a stocktakeItem
+   * if the snapshot quantity and counted total quantity differ.
+   * Otherwise, removes the reason from the stocktake items batches.
+   * @param {Object} stocktakeItem
+   */
+  assignReason = stocktakeItem => {
+    const { database } = this.props;
+    if (stocktakeItem.shouldHaveReason) {
+      this.onOpenReasonModal();
+    } else {
+      stocktakeItem.applyReasonToBatches(database);
+    }
+  };
+
+  /**
+   * Respond to the user editing the 'Actual Quantity' column. If the current user has
+   * an Options object defined, enforce that an option must be chosen if the snapshot
+   * quantity does not match the actual quantity.
    *
    * @param   {string}  key            Should always be |countedTotalQuantity|.
    * @param   {object}  stocktakeItem  The stocktake item from the row being edited.
@@ -114,12 +156,15 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing = (key, stocktakeItem, newValue) => {
     const { database } = this.props;
+    const { usesReasons } = this.state;
 
     if (key !== 'countedTotalQuantity' || newValue === '') return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
 
     stocktakeItem.setCountedTotalQuantity(database, quantity);
+    if (usesReasons) this.assignReason(stocktakeItem);
+    this.setState({ currentStocktakeItem: stocktakeItem });
   };
 
   /**
@@ -175,6 +220,7 @@ export class StocktakeEditPage extends React.Component {
     );
     let sortDataType;
     switch (sortBy) {
+      case 'reason':
       case 'itemCode':
       case 'itemName':
         sortDataType = 'string';
@@ -192,9 +238,12 @@ export class StocktakeEditPage extends React.Component {
     });
   };
 
+  onOpenReasonModal = () => {
+    this.setState({ isReasonsModalOpen: true });
+  };
+
   renderCell = (key, stocktakeItem) => {
     const { stocktake } = this.props;
-
     const isEditable = !stocktake.isFinalised;
     switch (key) {
       default:
@@ -218,6 +267,37 @@ export class StocktakeEditPage extends React.Component {
         const { difference } = stocktakeItem;
         const prefix = difference > 0 ? '+' : '';
         return { cellContents: `${prefix}${difference}` };
+      }
+      case 'reason': {
+        return (
+          <TouchableOpacity
+            key={stocktakeItem.id}
+            onPress={() =>
+              stocktakeItem.shouldHaveReason
+                ? this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
+                : null
+            }
+            style={localStyles.reasonCell}
+          >
+            <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
+              {stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason.title : 'Not applicable'}
+            </Text>
+            <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
+          </TouchableOpacity>
+        );
+      }
+      case 'modalControl': {
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              this.openBatchModal(stocktakeItem);
+            }}
+          >
+            <View style={localStyles.modalControl}>
+              <Icon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />
+            </View>
+          </TouchableOpacity>
+        );
       }
     }
   };
@@ -301,21 +381,106 @@ export class StocktakeEditPage extends React.Component {
           info: name,
           onPress: this.openNameEditor,
           editableType: 'text',
+          canEdit: true,
         },
         {
           title: `${pageInfoStrings.comment}:`,
           info: comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
+          canEdit: true,
         },
       ],
     ];
-    return <PageInfo columns={infoColumns} isEditingDisabled={isFinalised} />;
+    if (stocktake.program) {
+      infoColumns[0].unshift({
+        title: 'Program: ',
+        info: stocktake.program.name,
+      });
+    }
+
+    return (
+      <View style={{ width: '50%' }}>
+        <PageInfo columns={infoColumns} isEditingDisabled={isFinalised} />
+      </View>
+    );
+  };
+
+  onConfirmBatchModal = () => {
+    this.setState({ isStocktakeEditModalOpen: false });
+  };
+
+  openBatchModal = item => {
+    this.setState({ stocktakeItem: item, isStocktakeEditModalOpen: true });
+  };
+
+  getColumns = () => {
+    const { usesReasons } = this.state;
+    const columns = [
+      {
+        key: 'itemCode',
+        width: 1,
+        title: tableStrings.item_code,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'itemName',
+        width: 3.2,
+        title: tableStrings.item_name,
+        sortable: true,
+      },
+      {
+        key: 'snapshotTotalQuantity',
+        width: 1.2,
+        title: tableStrings.snapshot_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'countedTotalQuantity',
+        width: 1.2,
+        title: tableStrings.actual_quantity,
+        sortable: true,
+        alignText: 'right',
+      },
+      {
+        key: 'difference',
+        width: 1,
+        title: tableStrings.difference,
+        sortable: true,
+        alignText: 'right',
+      },
+    ];
+    if (usesReasons) {
+      columns.push({
+        key: 'reason',
+        width: 1.2,
+        title: 'REASON',
+        sortable: true,
+        alignText: 'right',
+      });
+    }
+    columns.push({
+      key: 'modalControl',
+      width: 0.6,
+      title: '',
+      sortable: false,
+    });
+    return columns;
   };
 
   render() {
     const { database, genericTablePageStyles, stocktake, topRoute } = this.props;
-    const { data, isResetModalOpen, isModalOpen } = this.state;
+    const {
+      data,
+      isResetModalOpen,
+      isModalOpen,
+      stocktakeItem,
+      isStocktakeEditModalOpen,
+      isReasonsModalOpen,
+      currentStocktakeItem,
+    } = this.state;
 
     const resetModalText = isResetModalOpen // Small optimisation.
       ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
@@ -326,48 +491,12 @@ export class StocktakeEditPage extends React.Component {
         data={data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
-        renderExpansion={this.renderExpansion}
-        renderTopRightComponent={this.renderManageStocktakeButton}
+        renderTopRightComponent={stocktake.program ? null : this.renderManageStocktakeButton}
         renderTopLeftComponent={this.renderPageInfo}
         onEndEditing={this.onEndEditing}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'itemName',
-            width: 3.2,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'snapshotTotalQuantity',
-            width: 1.2,
-            title: tableStrings.snapshot_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'countedTotalQuantity',
-            width: 1.2,
-            title: tableStrings.actual_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'difference',
-            width: 1,
-            title: tableStrings.difference,
-            sortable: true,
-            alignText: 'right',
-          },
-        ]}
+        columns={this.getColumns()}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         dataTypesLinked={['StocktakeBatch']}
         finalisableDataType="Stocktake"
@@ -382,6 +511,7 @@ export class StocktakeEditPage extends React.Component {
         >
           {this.renderModalContent()}
         </PageContentModal>
+
         <ConfirmModal
           coverScreen
           noCancel
@@ -389,6 +519,29 @@ export class StocktakeEditPage extends React.Component {
           questionText={resetModalText}
           onConfirm={this.onResetItemsConfirm}
         />
+
+        <StocktakeBatchModal
+          isOpen={isStocktakeEditModalOpen}
+          stocktakeItem={stocktakeItem}
+          database={database}
+          genericTablePageStyles={genericTablePageStyles}
+          onConfirm={this.onConfirmBatchModal}
+        />
+
+        {isReasonsModalOpen && (
+          <GenericChooseModal
+            isOpen={isReasonsModalOpen}
+            data={database.objects('Options')}
+            highlightIndex={
+              currentStocktakeItem && currentStocktakeItem.hasReason
+                ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
+                : 0
+            }
+            field="title"
+            onPress={this.reasonModalConfirm}
+            title="Select a reason"
+          />
+        )}
       </GenericPage>
     );
   }
@@ -403,3 +556,21 @@ StocktakeEditPage.propTypes = {
   stocktake: PropTypes.object.isRequired,
   topRoute: PropTypes.bool,
 };
+
+const localStyles = StyleSheet.create({
+  reasonCell: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  modalControl: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    minWidth: '100%',
+    minHeight: '100%',
+  },
+});

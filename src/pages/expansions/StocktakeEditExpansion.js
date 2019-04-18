@@ -216,7 +216,6 @@ StocktakeEditExpansion.propTypes = {
 };
 
 const unwrapText = text => text.replace(/\n/g, ' ');
-
 const localStyles = StyleSheet.create({
   addBatchButton: {
     height: 30,

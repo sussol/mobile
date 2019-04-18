@@ -659,7 +659,9 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Options': {
-      database.update(recordType, createOptionsInternalRecord(record));
+      if (record.type === 'stocktakeLineAdjustment') {
+        database.update(recordType, createOptionsInternalRecord(record));
+      }
       break;
     }
     default:
