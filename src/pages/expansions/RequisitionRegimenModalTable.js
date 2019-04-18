@@ -26,33 +26,6 @@ export class RequisitionRegimenModalTable extends React.Component {
 
   componentDidMount() {
     const { requisition } = this.props;
-    // const { customData } = this.state;
-    // const { database } = this.props;
-    // const { otherData } = customData;
-    // const newData = {
-    //   ...otherData,
-    //   regimenData: [
-    //     {
-    //       name: 'Number of RDT this month',
-    //       type: 'real',
-    //       default: '0',
-    //       comment: 'this is an additional and very helpful comment',
-    //       code: '09k',
-    //     },
-    //     {
-    //       code: 'AnotherOne',
-    //       name: 'Regimen Data Name',
-    //       type: 'string',
-    //       default: 'units',
-    //       isRequired: true,
-    //     },
-    //   ],
-    // };
-    // database.write(() => {
-    //   requisition.saveCustomData(newData);
-    //   database.save('Requisition', requisition);
-    // });
-
     this.setState({
       customData: requisition.parsedCustomData,
     });
