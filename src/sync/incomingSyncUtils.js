@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import {
   EXTERNAL_TO_INTERNAL,
   NAME_TYPES,
