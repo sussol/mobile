@@ -130,8 +130,8 @@ class MSupplyMobileAppContainer extends React.Component {
 
     const aggregatedLogs = aggregateLogs({
       sensorLogs,
-      isMax: true,
       numberOfIntervals,
+      isMax: true,
       startDate: new Date(2019, 1, 1),
       endDate: new Date(2019, 1, 8),
     });

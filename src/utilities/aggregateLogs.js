@@ -18,8 +18,8 @@
  */
 export const aggregateLogs = ({
   sensorLogs,
-  isMax = true,
   numberOfIntervals,
+  isMax = true,
   startDate = new Date(),
   endDate = new Date(),
 }) => {
