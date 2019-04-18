@@ -3,35 +3,18 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
 import Realm from 'realm';
-import { applyMiddleware, createStore } from 'redux';
+import React from 'react';
+import { AppRegistry } from 'react-native';
 import { Provider } from 'react-redux';
-import thunk from 'redux-thunk';
-import { persistStore, persistReducer } from 'redux-persist';
 import { ErrorHandler } from 'redux-persist-error-handler';
+import { Client as BugsnagClient } from 'bugsnag-react-native';
+import { name as appName } from '../app.json';
+import { store, persistedStore } from './Store';
+import MSupplyMobileApp from './mSupplyMobileApp';
 
-import { AppRegistry, AsyncStorage } from 'react-native';
-
-// import { Client as BugsnagClient } from 'bugsnag-react-native';
-
-import { MSupplyMobileApp } from './mSupplyMobileApp';
-import { reducers } from './reducers';
-
-// const bugsnagClient = new BugsnagClient();
-
-const persistConfig = {
-  keyPrefix: '',
-  key: 'root',
-  storage: AsyncStorage,
-  blacklist: ['navigation'],
-};
-
-const persistedReducer = persistReducer(persistConfig, reducers);
-
-const store = createStore(persistedReducer, {}, applyMiddleware(thunk));
-
-const persistedStore = persistStore(store);
+// eslint-disable-next-line no-unused-vars
+const bugsnagClient = new BugsnagClient();
 
 function App() {
   Realm.copyBundledRealmFiles();
@@ -44,4 +27,4 @@ function App() {
   );
 }
 
-AppRegistry.registerComponent('mSupplyMobile', () => App);
+AppRegistry.registerComponent(appName, () => App);

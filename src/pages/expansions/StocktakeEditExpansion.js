@@ -159,9 +159,7 @@ export class StocktakeEditExpansion extends React.Component {
           renderCell={this.renderCell}
           refreshData={this.refreshData}
           hideSearchBar={true}
-          renderDataTableFooter={() => {
-            return null; // Overrides default generc pages footer.
-          }}
+          renderDataTableFooter={null} // Overrides default generic pages footer.
           dontRenderSearchBar={true}
           onEndEditing={this.onEndEditing}
           renderTopLeftComponent={this.renderPageInfo}
@@ -217,9 +215,7 @@ StocktakeEditExpansion.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
 };
 
-const unwrapText = text => {
-  return text.replace(/\n/g, ' ');
-};
+const unwrapText = text => text.replace(/\n/g, ' ');
 
 const localStyles = StyleSheet.create({
   addBatchButton: {

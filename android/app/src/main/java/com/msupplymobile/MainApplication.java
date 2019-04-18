@@ -3,6 +3,7 @@ package com.msupplymobile;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import io.realm.react.RealmReactPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new RNDeviceInfo(),
           new MainReactPackage(),
+          new RNGestureHandlerPackage(),
           new RealmReactPackage(),
           new VectorIconsPackage(),
           new ReactNativeLocalizationPackage(),
