@@ -137,12 +137,9 @@ export class StocktakeEditPage extends React.Component {
    */
   assignReason = stocktakeItem => {
     const { database } = this.props;
-    console.log(1);
     if (stocktakeItem.shouldHaveReason) {
-      console.log(2);
       this.onOpenReasonModal();
     } else {
-      console.log(3);
       stocktakeItem.applyReasonToBatches(database);
     }
   };
