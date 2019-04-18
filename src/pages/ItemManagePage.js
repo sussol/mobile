@@ -164,8 +164,8 @@ export class ItemManagePage extends React.Component {
   // Called on toggle the vvm toggle bar. If being set to PASS, will just update
   // the object held in the closure to a PASS VVM status. Otherwise, opens a
   // modal for a user to enter the doses affected and set the currentBatch.
-  onVvmToggle = currentBatch => ({ newState }) => {
-    if (!newState) return this.setState({ modalKey: 'vvmStatus', isModalOpen: true, currentBatch });
+  onVvmToggle = ({ modalKey, currentBatch }) => ({ newState }) => {
+    if (!newState) return this.onModalUpdate({ modalKey, currentBatch });
     return this.setState({ currentBatch }, () => this.updateObject({ vvmStatus: true }));
   };
 
@@ -214,7 +214,7 @@ export class ItemManagePage extends React.Component {
             leftText="PASS"
             rightText="FAIL"
             currentState={itemBatch.vvmStatus}
-            onPress={this.onVvmToggle(itemBatch)}
+            onPress={this.onVvmToggle(modalUpdateProps)}
           />
         );
     }
