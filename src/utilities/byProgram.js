@@ -45,7 +45,7 @@ const getAllPeriodsForProgram = (database, program, periodScheduleName, orderTyp
     .objects('PeriodSchedule')
     .filtered('name = $0', periodScheduleName);
 
-  if (!periodScheduleNames.length) return null;
+  if (!periodScheduleNames.length) return [];
 
   return periodScheduleNames[0].getPeriodsForOrderType(program, orderType);
 };
