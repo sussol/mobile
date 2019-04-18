@@ -23,7 +23,7 @@
     "object-curly-newline": ["error", { "ObjectPattern": { "multiline": true } }],
     "operator-linebreak": "off",
     "prettier/prettier": "error",
-    "quotes": ["error", "single", { "avoidEscape": true }],
+    "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": true }],
     "react/jsx-boolean-value": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-one-expression-per-line": "off",

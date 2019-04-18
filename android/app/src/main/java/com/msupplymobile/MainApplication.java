@@ -7,6 +7,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.facebook.react.ReactApplication;
+import com.horcrux.svg.SvgPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.rnfs.RNFSPackage;
 import io.realm.react.RealmReactPackage;
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new RNDeviceInfo(),
           new MainReactPackage(),
+            new SvgPackage(),
           new RNFSPackage(),
           new RealmReactPackage(),
           new VectorIconsPackage(),

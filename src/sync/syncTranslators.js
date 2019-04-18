@@ -54,6 +54,7 @@ export const RECORD_TYPES = new SyncTranslator({
   SensorLogItemBatchJoin: 'sensorLogItemLineJoin',
   Stocktake: 'Stock_take',
   StocktakeBatch: 'Stock_take_lines',
+  Store: 'store',
   Transaction: 'transact',
   TransactionCategory: 'transaction_category',
   TransactionBatch: 'trans_line',
