@@ -215,6 +215,7 @@ export class SupplierRequisitionsPage extends React.Component {
           onConfirm={this.onDelete(true)}
           confirmText={modalStrings.delete}
         />
+
         <SelectModal
           isOpen={isCreatingRequisition}
           options={database.objects('InternalSupplier')}
@@ -225,6 +226,7 @@ export class SupplierRequisitionsPage extends React.Component {
           onClose={this.onNewRequisition}
           title={modalStrings.search_for_the_supplier}
         />
+
         {byProgramModalOpen && (
           <ByProgramModal
             isOpen={byProgramModalOpen}
