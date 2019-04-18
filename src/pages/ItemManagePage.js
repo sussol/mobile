@@ -80,6 +80,7 @@ export class ItemManagePage extends React.Component {
       isModalOpen: false,
       modalKey: null,
       currentBatch: null,
+      hasFridges: false,
     };
   }
 
@@ -89,7 +90,8 @@ export class ItemManagePage extends React.Component {
   componentDidMount = () => {
     const { database, item } = this.props;
     this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
-    this.setState({ data: item.batches.map(itemBatch => createRowObject(itemBatch)) });
+    const hasFridges = this.FRIDGES && this.FRIDGES.length > 0;
+    this.setState({ data: item.batches.map(itemBatch => createRowObject(itemBatch)), hasFridges });
   };
 
   /**
@@ -98,6 +100,12 @@ export class ItemManagePage extends React.Component {
   getModalTitle = () => {
     const { modalKey } = this.state;
     return MODAL_TITLES[modalKey];
+  };
+
+  getFridgeDescription = ({ location, vvmStatus }) => {
+    const { hasFridges } = this.state;
+    if (hasFridges && vvmStatus) return (location && location.description) || 'Unnasigned';
+    return (!hasFridges && 'No fridges') || (!vvmStatus && 'Discarded');
   };
 
   // Updates the currentBatch object held within state with new
@@ -188,9 +196,10 @@ export class ItemManagePage extends React.Component {
    * RENDER HELPERS
    */
   renderCell = (key, itemBatch) => {
-    const { location, vvmStatus } = itemBatch;
+    const { hasFridges } = this.state;
+    const { vvmStatus } = itemBatch;
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
-    const hasFridges = this.FRIDGES && this.FRIDGES.length > 0;
+
     const usingFridge = vvmStatus !== false && hasFridges;
     switch (key) {
       default:
@@ -200,10 +209,7 @@ export class ItemManagePage extends React.Component {
       case 'location':
         return (
           <IconCell
-            text={
-              (hasFridges && 'No Fridges') ||
-              (vvmStatus !== false ? location.description || 'Unnamed Fridge' : 'Discarded')
-            }
+            text={this.getFridgeDescription(itemBatch)}
             disabled={!usingFridge}
             icon={usingFridge ? 'caret-up' : 'times'}
             iconColour={usingFridge ? SUSSOL_ORANGE : SOFT_RED}
@@ -221,7 +227,7 @@ export class ItemManagePage extends React.Component {
           <MiniToggleBar
             leftText="PASS"
             rightText="FAIL"
-            currentState={itemBatch.vvmStatus}
+            currentState={vvmStatus}
             onPress={this.onVvmToggle(modalUpdateProps)}
           />
         );
