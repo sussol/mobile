@@ -81,7 +81,7 @@ export class SupplierRequisitionsPage extends React.Component {
       return;
     }
     database.write(() => {
-      const customData = JSON.parse(settings.get(THIS_STORE_CUSTOM_DATA));
+      const customData = JSON.parse(settings.get(THIS_STORE_CUSTOM_DATA) || {});
       const monthsLeadTime = customData.monthsLeadTime ? Number(customData.monthsLeadTime.data) : 0;
 
       requisition = createRecord(database, 'Requisition', currentUser, {
