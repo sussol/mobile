@@ -9,24 +9,6 @@
  */
 
 /**
- * Method used with Array.prototype.sort for sensorLogs
- * Sorts from oldest to newest.
- * @param  {SensorLog} sensorLogA
- * @param  {SensorLog} sensorLogB
- * @param  {Date}      sensorLogA.timestamp
- * @param  {Date}      sensorLogB.timestamp
- * @return {Number}    1 for A>B, -1 for A<B, 0 for A=B
- */
-const sortSensorLogs = (
-  { timestamp: timestampA = new Date(-8640000000000000) },
-  { timestamp: timestampB = new Date(-8640000000000000) }
-) => {
-  if (timestampA > timestampB) return 1;
-  if (timestampA < timestampB) return -1;
-  return 0;
-};
-
-/**
  * Extracts breaches from a set of sensor logs.
  * Breach: Sequential sensorLog objects whose temperature is outside
  * the lower or uppound limits, form a breach. Each array returned
@@ -40,7 +22,7 @@ const sortSensorLogs = (
  * All breached sensorLogs are pushed, until a non breached log, where this
  * marks a breach has been found. Store these sensorLogs and reset the stack.
  *
- * @param  {Realm.results/array} sensorLogs array of sensorLog objects
+ * @param  {Realm.results} sensorLogs array of sensorLog objects
  * @return {Array<Realm.results<SensorLog>} A 2D array of Realm.results. Example:
  * [ [ sensorLog1, sensorLog2 .. ], [ sensorLog1, sensorLog2, sensorLog3, .. ]]
  * where each element is a Realm.results<SensorLog>
@@ -52,7 +34,7 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
   const breaches = [];
 
   // Sort the sensor logs by timestamp.
-  sensorLogs.sort(sortSensorLogs);
+  sensorLogs.sorted('timestamp', true);
 
   sensorLogs.forEach(sensorLog => {
     const { isInBreach } = sensorLog;
@@ -72,7 +54,7 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
       // onto the stack as the new potential delimiter for the next breach.
     } else {
       sensorLogStack.push(sensorLog);
-      breaches.push(sensorLogStack);
+      breaches.push([...sensorLogStack]);
       sensorLogStack.length = 0;
       sensorLogStack.push(sensorLog);
     }
@@ -82,13 +64,11 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
   if (sensorLogStack.length > 0) breaches.push(sensorLogStack);
 
   // Create Realm.result objects for each breach.
-  breaches.map(breach => {
+  return breaches.map(breach => {
     const sensorIds = breach.map(log => log.id);
     const queryString = sensorIds.map((_, i) => `id = $${i}`).join(' OR ');
     return database.objects('SensorLog').filtered(queryString, ...sensorIds);
   });
-
-  return breaches;
 };
 
 /**
