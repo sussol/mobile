@@ -199,7 +199,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
 const createStocktake = (database, { createdBy, program, name }) => {
   const date = new Date();
   const { stocktakeText } = generalStrings;
-  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(new Date(), 'slashes')}`;
+  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(date, 'slashes')}`;
   return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
