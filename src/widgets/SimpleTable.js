@@ -71,13 +71,17 @@ export class SimpleTable extends React.PureComponent {
   };
 
   render() {
-    const { data, title } = this.props;
+    const { data, title, keyExtractor } = this.props;
     const { container } = localStyles(this.props);
     return (
       <View style={container}>
         {title && this.renderTitle()}
         {this.renderHeaderRow()}
-        <FlatList data={data} renderItem={this.renderRow} keyExtractor={this.keyExtractor} />
+        <FlatList
+          data={data}
+          renderItem={this.renderRow}
+          keyExtractor={keyExtractor || this.keyExtractor}
+        />
       </View>
     );
   }
@@ -164,6 +168,7 @@ SimpleTable.defaultProps = {
   cellFontColor: 'black',
   backgroundColor: 'white',
   columnSeperatorColor: '#ecf3fc',
+  keyExtractor: null,
 };
 
 SimpleTable.propTypes = {
@@ -181,6 +186,7 @@ SimpleTable.propTypes = {
   data: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,
   title: PropTypes.string,
+  keyExtractor: PropTypes.func,
 };
 
 export default SimpleTable;
