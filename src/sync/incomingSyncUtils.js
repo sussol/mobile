@@ -499,6 +499,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         program: database.getOrCreate('MasterList', record.programID),
         period,
         orderType: record.orderType,
+        customData: record.custom_data && record.custom_data.replace(/\\/g, ''),
       };
       const requisition = database.update(recordType, internalRecord);
       if (period) period.addRequisitionIfUnique(requisition);
