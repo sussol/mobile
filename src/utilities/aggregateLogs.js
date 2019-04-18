@@ -16,7 +16,17 @@
  * @return  {Object[]}                           Aggregated sensor logs, array of objects in form
  *                                              [{timestamp}, {temperature},...].
  */
-export const aggregateLogs = ({ sensorLogs, isMax, numberOfIntervals, startDate, endDate }) => {
+export const aggregateLogs = ({
+  sensorLogs,
+  isMax = true,
+  numberOfIntervals,
+  startDate = new Date(),
+  endDate = new Date(),
+}) => {
+  // Break out if no sensorLogs.
+  if (!(sensorLogs.length > 0)) return [];
+
+  // Sort sensor logs ascending by date.
   sensorLogs.sorted('timestamp');
 
   // If start date is later than earliest log, update.
