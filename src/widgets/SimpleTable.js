@@ -34,10 +34,10 @@ export class SimpleTable extends React.PureComponent {
     );
   };
 
-  renderCell = ({ content, index, header, width }) => {
-    const { cell, cellFont } = localStyles({ ...this.props, index, header, width });
+  renderCell = ({ content, rowIndex, header, width, cellIndex }) => {
+    const { cell, cellFont } = localStyles({ ...this.props, rowIndex, header, width });
     return (
-      <View style={cell} key={this.keyExtractor({ index })}>
+      <View style={cell} key={this.keyExtractor({ index: cellIndex })}>
         <Text style={cellFont}>{content}</Text>
       </View>
     );
@@ -56,15 +56,15 @@ export class SimpleTable extends React.PureComponent {
     );
   };
 
-  renderRow = ({ item, index }) => {
+  renderRow = ({ item, index: rowIndex }) => {
     const { columns } = this.props;
     const { row } = localStyles(this.props);
     return (
       <View style={row}>
-        {columns.map(column => {
+        {columns.map((column, cellIndex) => {
           const { key, width } = column;
           const content = item[key];
-          return this.renderCell({ content, column, index, width });
+          return this.renderCell({ content, column, width, cellIndex, rowIndex });
         })}
       </View>
     );
@@ -88,7 +88,7 @@ export class SimpleTable extends React.PureComponent {
 }
 
 const localStyles = ({
-  index,
+  rowIndex,
   header,
   width,
   cellFontColor,
@@ -151,7 +151,7 @@ const localStyles = ({
       alignItems: 'center',
       borderRightColor: columnSeperatorColor,
       borderRightWidth: 2,
-      backgroundColor: index % 2 === 0 ? ROW_BLUE : 'white',
+      backgroundColor: rowIndex % 2 === 0 ? ROW_BLUE : 'white',
     },
   });
 
