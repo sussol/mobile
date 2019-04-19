@@ -677,7 +677,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         if (validateJson(custom_data)) {
           database.update('Setting', {
             key: THIS_STORE_CUSTOM_DATA,
-            value: validateJson(custom_data),
+            value: custom_data,
           });
         }
         if (validateJson(tags)) {
