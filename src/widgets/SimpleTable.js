@@ -102,11 +102,12 @@ const localStyles = ({
   titleBackgroundColor,
   containerBackground,
   columnSeperatorColor,
+  data,
 } = {}) =>
   StyleSheet.create({
     container: {
       backgroundColor: containerBackground,
-      height: '100%',
+      height: rowHeight * data.length + headerHeight + titleHeight + 21,
       width: '100%',
     },
     titleContainer: {
