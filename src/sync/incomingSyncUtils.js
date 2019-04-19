@@ -674,11 +674,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'Store': {
       const { tags, custom_data } = record;
       if (settings.get(THIS_STORE_ID) === record.ID) {
-        database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
-        database.update('Setting', {
-          key: THIS_STORE_CUSTOM_DATA,
-          value: validateJson(custom_data),
-        });
+        if (validateJson(custom_data)) {
+          database.update('Setting', {
+            key: THIS_STORE_CUSTOM_DATA,
+            value: validateJson(custom_data),
+          });
+        }
+        if (validateJson(tags)) {
+          database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
+        }
       }
       break;
     }
