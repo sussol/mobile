@@ -19,6 +19,7 @@ import {
 import Svg from 'react-native-svg';
 
 import { HazardPoint } from './HazardPoint';
+import { APP_FONT_FAMILY } from '../globalStyles/fonts';
 
 /**
  * Plots a line graph of temperature over time for vaccines.
@@ -37,8 +38,8 @@ export class VaccineChart extends React.Component {
   // calculate relative values for width and height for each chart.
   onLayout = event => {
     this.setState({
-      width: event.nativeEvent.layout.width,
-      height: event.nativeEvent.layout.height,
+      width: event.nativeEvent.layout.width * chartSize.width,
+      height: event.nativeEvent.layout.height * chartSize.height,
     });
   };
 
@@ -73,7 +74,7 @@ export class VaccineChart extends React.Component {
       <VictoryLine
         y={() => minTemperature}
         style={{
-          data: { strokeDasharray: minLineStyles.strokeDasharray, stroke: minLineStyles.stroke },
+          data: { stroke: minBoundaryStyles.stroke, opacity: minBoundaryStyles.opacity },
         }}
       />
     ) : null;
@@ -87,7 +88,7 @@ export class VaccineChart extends React.Component {
       <VictoryLine
         y={() => maxTemperature}
         style={{
-          data: { strokeDasharray: maxLineStyles.strokeDasharray, stroke: maxLineStyles.stroke },
+          data: { stroke: maxBoundaryStyles.stroke, opacity: maxBoundaryStyles.opacity },
         }}
       />
     ) : null;
@@ -114,7 +115,18 @@ export class VaccineChart extends React.Component {
     if (!(minLine.length > 0)) return null;
 
     return (
-      <VictoryScatter data={minLine} style={{ data: { fill: minLineStyles.fill } }} {...dataKeys} />
+      <VictoryScatter
+        data={minLine}
+        size={minScatterStyles.size}
+        style={{
+          data: {
+            fill: minScatterStyles.fill,
+            stroke: minScatterStyles.stroke,
+            strokeWidth: minScatterStyles.strokeWidth,
+          },
+        }}
+        {...dataKeys}
+      />
     );
   }
 
@@ -127,7 +139,11 @@ export class VaccineChart extends React.Component {
       <VictoryLine
         data={maxLine}
         interpolation={maxLineStyles.interpolation}
-        style={{ data: { stroke: maxLineStyles.stroke } }}
+        style={{
+          data: {
+            stroke: maxLineStyles.stroke,
+          },
+        }}
         {...dataKeys}
       />
     );
@@ -139,7 +155,18 @@ export class VaccineChart extends React.Component {
     if (!(maxLine.length > 0)) return null;
 
     return (
-      <VictoryScatter data={maxLine} style={{ data: { fill: maxLineStyles.fill } }} {...dataKeys} />
+      <VictoryScatter
+        data={maxLine}
+        size={maxScatterStyles.size}
+        style={{
+          data: {
+            fill: maxScatterStyles.fill,
+            stroke: maxScatterStyles.stroke,
+            strokeWidth: maxScatterStyles.strokeWidth,
+          },
+        }}
+        {...dataKeys}
+      />
     );
   }
 
@@ -174,15 +201,41 @@ export class VaccineChart extends React.Component {
         <VictoryChart
           width={width}
           height={height}
+          padding={{ top: 20, left: 50, right: 50, bottom: 50 }}
           style={chartStyles}
           theme={VictoryTheme.material}
           maxDomain={{ y: maxDomain }}
           minDomain={{ y: minDomain }}
         >
-          <VictoryAxis offsetY={50} /> <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
-          {this.renderMinLogTemperatureLine()} {this.renderMinLogTemperatureScatter()}
-          {this.renderMaxLogTemperatureLine()} {this.renderMaxLogTemperatureScatter()}
-          {this.renderMinTemperatureBoundary()} {this.renderMaxTemperatureBoundary()}
+          <VictoryAxis
+            offsetY={50}
+            style={{
+              tickLabels: {
+                fontSize: axisStyles.fontSize,
+                fontFamily: axisStyles.fontFamily,
+                fill: axisStyles.fill,
+              },
+            }}
+          />
+          <VictoryAxis
+            dependentAxis
+            offsetX={50}
+            crossAxis={false}
+            tickFormat={t => `${t}℃`}
+            style={{
+              tickLabels: {
+                fontSize: axisStyles.fontSize,
+                fontFamily: axisStyles.fontFamily,
+                fill: axisStyles.fill,
+              },
+            }}
+          />
+          {this.renderMinLogTemperatureLine()}
+          {this.renderMinLogTemperatureScatter()}
+          {this.renderMaxLogTemperatureLine()}
+          {this.renderMaxLogTemperatureScatter()}
+          {this.renderMinTemperatureBoundary()}
+          {this.renderMaxTemperatureBoundary()}
           {this.renderHazardPoints()}
         </VictoryChart>
       </Svg>
@@ -199,24 +252,57 @@ export class VaccineChart extends React.Component {
   }
 }
 
+const chartSize = {
+  width: 1,
+  height: 1.025,
+};
+
 const chartStyles = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
 };
 
+const axisStyles = {
+  fontSize: 15,
+  fontFamily: APP_FONT_FAMILY,
+  fill: '#909192',
+};
+
+const minBoundaryStyles = {
+  stroke: '#70b4f0',
+  opacity: 0.3,
+};
+
+const maxBoundaryStyles = {
+  stroke: '#e95c30',
+  opacity: 0.3,
+};
+
 const minLineStyles = {
-  fill: 'blue',
+  fill: '#70b4f0',
+  stroke: '#70b4f0',
   interpolation: 'natural',
-  strokeDasharray: '1',
-  stroke: 'blue',
 };
 
 const maxLineStyles = {
-  fill: 'red',
+  fill: '#e95c30',
+  stroke: '#e95c30',
   interpolation: 'natural',
-  strokeDasharray: '1',
-  stroke: 'red',
+};
+
+const minScatterStyles = {
+  fill: 'white',
+  stroke: '#70b4f0',
+  strokeWidth: 2,
+  size: 3,
+};
+
+const maxScatterStyles = {
+  fill: 'white',
+  stroke: '#e95c30',
+  strokeWidth: 2,
+  size: 3,
 };
 
 VaccineChart.propTypes = {
