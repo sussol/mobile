@@ -22,7 +22,11 @@ import { HazardPoint } from './HazardPoint';
 import { APP_FONT_FAMILY } from '../globalStyles/fonts';
 
 /**
- * Plots a line graph of temperature over time for vaccines.
+ * A chart component for plotting vaccine sensor log data.
+ *
+ * Plots maximum and/or minimum vaccine temperatures. Optionally
+ * displays temperature breaches using hazard icons which can be
+ * used to trigger onPress events passed as props.
  */
 export class VaccineChart extends React.Component {
   constructor(props) {
@@ -43,6 +47,7 @@ export class VaccineChart extends React.Component {
     });
   };
 
+  // Calculates maximum and minimum temperatures for chart y-axis.
   getDomain() {
     const { minLine, maxLine, minTemperature, maxTemperature, dataKeys } = this.props;
     const lines = [...minLine, ...maxLine];
@@ -66,6 +71,7 @@ export class VaccineChart extends React.Component {
     return { minDomain, maxDomain };
   }
 
+  // Plots line marking minimum temperature boundary for breaches.
   renderMinTemperatureBoundary() {
     const { minTemperature } = this.props;
 
@@ -80,6 +86,7 @@ export class VaccineChart extends React.Component {
     ) : null;
   }
 
+  // Render line plot of maximum temperature boundary for breaches.
   renderMaxTemperatureBoundary() {
     const { maxTemperature } = this.props;
 
@@ -94,6 +101,7 @@ export class VaccineChart extends React.Component {
     ) : null;
   }
 
+  // Render line plot of minimum log temperatures.
   renderMinLogTemperatureLine() {
     const { minLine, dataKeys } = this.props;
 
@@ -109,6 +117,7 @@ export class VaccineChart extends React.Component {
     );
   }
 
+  // Render data points of minimum log temperature line plot.
   renderMinLogTemperatureScatter() {
     const { minLine, dataKeys } = this.props;
 
@@ -130,6 +139,7 @@ export class VaccineChart extends React.Component {
     );
   }
 
+  // Render line plot of maximum log temperatures.
   renderMaxLogTemperatureLine() {
     const { maxLine, dataKeys } = this.props;
 
@@ -149,6 +159,7 @@ export class VaccineChart extends React.Component {
     );
   }
 
+  // Render data points of maximum log temperature line plot.
   renderMaxLogTemperatureScatter() {
     const { maxLine, dataKeys } = this.props;
 
@@ -170,6 +181,7 @@ export class VaccineChart extends React.Component {
     );
   }
 
+  // Render hazard icons for sensor breaches.
   renderHazardPoints() {
     const { breaches, onPress, dataKeys } = this.props;
 
@@ -184,6 +196,7 @@ export class VaccineChart extends React.Component {
     ));
   }
 
+  // Helper method for rendering vaccine chart.
   renderPlot() {
     const { minLine, maxLine } = this.props;
 
