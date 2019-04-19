@@ -20,6 +20,9 @@ import Svg from 'react-native-svg';
 
 import { HazardPoint } from './HazardPoint';
 
+/**
+ * Plots a line graph of temperature over time for vaccines.
+ */
 export class VaccineChart extends React.Component {
   constructor(props) {
     super(props);
@@ -141,11 +144,17 @@ export class VaccineChart extends React.Component {
   }
 
   renderHazardPoints() {
-    const { hazards, dataKeys } = this.props;
+    const { breaches, onPress, dataKeys } = this.props;
 
-    return hazards.length > 0 ? (
-      <VictoryScatter dataComponent={<HazardPoint />} data={hazards} {...dataKeys} />
-    ) : null;
+    if (!(breaches.length > 0)) return null;
+
+    return breaches.map(breach => (
+      <VictoryScatter
+        dataComponent={<HazardPoint onPress={onPress} breach={breach} />}
+        data={breach}
+        {...dataKeys}
+      />
+    ));
   }
 
   renderPlot() {
@@ -170,14 +179,10 @@ export class VaccineChart extends React.Component {
           maxDomain={{ y: maxDomain }}
           minDomain={{ y: minDomain }}
         >
-          <VictoryAxis offsetY={50} />
-          <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
-          {this.renderMinLogTemperatureLine()}
-          {this.renderMinLogTemperatureScatter()}
-          {this.renderMaxLogTemperatureLine()}
-          {this.renderMaxLogTemperatureScatter()}
-          {this.renderMinTemperatureBoundary()}
-          {this.renderMaxTemperatureBoundary()}
+          <VictoryAxis offsetY={50} /> <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
+          {this.renderMinLogTemperatureLine()} {this.renderMinLogTemperatureScatter()}
+          {this.renderMaxLogTemperatureLine()} {this.renderMaxLogTemperatureScatter()}
+          {this.renderMinTemperatureBoundary()} {this.renderMaxTemperatureBoundary()}
           {this.renderHazardPoints()}
         </VictoryChart>
       </Svg>
@@ -217,18 +222,20 @@ const maxLineStyles = {
 VaccineChart.propTypes = {
   minLine: PropTypes.arrayOf(PropTypes.object),
   maxLine: PropTypes.arrayOf(PropTypes.object),
-  hazards: PropTypes.arrayOf(PropTypes.object),
+  breaches: PropTypes.arrayOf(PropTypes.array),
   minTemperature: PropTypes.number,
   maxTemperature: PropTypes.number,
+  onPress: PropTypes.func,
   dataKeys: PropTypes.objectOf(PropTypes.string),
 };
 
 VaccineChart.defaultProps = {
   minLine: [],
   maxLine: [],
-  hazards: [],
+  breaches: [],
   minTemperature: Infinity,
   maxTemperature: -Infinity,
+  onPress: () => null,
   dataKeys: { x: 'timestamp', y: 'temperature' },
 };
 

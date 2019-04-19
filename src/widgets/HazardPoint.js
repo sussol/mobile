@@ -12,17 +12,20 @@ const hazardPath = `M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.0
  46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982
  11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z`;
 
+/**
+ * Custom component for rendering clickable hazard icons.
+ */
 export const HazardPoint = props => {
-  const { x, y, datum } = props;
-
+  const { x, y, onPress, breach } = props;
   const { xOffset, yOffset, scale, fill } = hazardPointStyles;
 
-  const { onPress, data } = datum;
-  const onPressFunction = () => onPress && onPress(data);
+  // console.log(breach);
+
+  const onPressWrapper = () => onPress && onPress(breach);
 
   return (
     <Svg>
-      <G onPress={onPressFunction}>
+      <G onPress={onPressWrapper}>
         <Path x={x + xOffset} y={y + yOffset} scale={scale} d={hazardPath} fill={fill} />
       </G>
     </Svg>
@@ -36,14 +39,17 @@ const hazardPointStyles = {
   fill: 'red',
 };
 
-// Bug in Victory charts causes required props to be undefined on first render.
+// Bug in Victory charts causes required props to be undefined on first render,
+// do not set as required.
 HazardPoint.propTypes = {
   // eslint-disable-next-line react/require-default-props
   x: PropTypes.number,
   // eslint-disable-next-line react/require-default-props
   y: PropTypes.number,
-  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
-  datum: PropTypes.object,
+  // eslint-disable-next-line react/require-default-props
+  onPress: PropTypes.func,
+  // eslint-disable-next-line react/require-default-props
+  breach: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default HazardPoint;
