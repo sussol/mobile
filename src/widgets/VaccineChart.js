@@ -40,18 +40,22 @@ export class VaccineChart extends React.Component {
   };
 
   getDomain() {
-    const { minLine, maxLine, minTemperature, maxTemperature } = this.props;
+    const { minLine, maxLine, minTemperature, maxTemperature, dataKeys } = this.props;
     const lines = [...minLine, ...maxLine];
+
+    const { y: temperatureKey } = dataKeys;
 
     const minDomain =
       lines.reduce(
-        (reducedTemperature, { temperature }) => Math.min(reducedTemperature, temperature),
+        (currentMinTemperature, sensorLog) =>
+          Math.min(currentMinTemperature, sensorLog[temperatureKey]),
         minTemperature
       ) - 1;
 
     const maxDomain =
       lines.reduce(
-        (reducedTemperature, { temperature }) => Math.max(reducedTemperature, temperature),
+        (currentMaxTemperature, sensorLog) =>
+          Math.max(currentMaxTemperature, sensorLog[temperatureKey]),
         maxTemperature
       ) + 1;
 
@@ -86,47 +90,53 @@ export class VaccineChart extends React.Component {
     ) : null;
   }
 
-  renderMinLogTemperatures() {
+  renderMinLogTemperatureLine() {
     const { minLine, dataKeys } = this.props;
 
     if (!(minLine.length > 0)) return null;
 
     return (
-      <View>
-        <VictoryLine
-          data={minLine}
-          interpolation={minLineStyles.interpolation}
-          style={{ data: { stroke: minLineStyles.stroke } }}
-          {...dataKeys}
-        />
-        <VictoryScatter
-          data={minLine}
-          style={{ data: { fill: minLineStyles.fill } }}
-          {...dataKeys}
-        />
-      </View>
+      <VictoryLine
+        data={minLine}
+        interpolation={minLineStyles.interpolation}
+        style={{ data: { stroke: minLineStyles.stroke } }}
+        {...dataKeys}
+      />
     );
   }
 
-  renderMaxLogTemperatures() {
+  renderMinLogTemperatureScatter() {
+    const { minLine, dataKeys } = this.props;
+
+    if (!(minLine.length > 0)) return null;
+
+    return (
+      <VictoryScatter data={minLine} style={{ data: { fill: minLineStyles.fill } }} {...dataKeys} />
+    );
+  }
+
+  renderMaxLogTemperatureLine() {
     const { maxLine, dataKeys } = this.props;
 
     if (!(maxLine.length > 0)) return null;
 
     return (
-      <View>
-        <VictoryLine
-          data={maxLine}
-          interpolation={maxLineStyles.interpolation}
-          style={{ data: { stroke: maxLineStyles.stroke } }}
-          {...dataKeys}
-        />
-        <VictoryScatter
-          data={maxLine}
-          style={{ data: { fill: maxLineStyles.fill } }}
-          {...dataKeys}
-        />
-      </View>
+      <VictoryLine
+        data={maxLine}
+        interpolation={maxLineStyles.interpolation}
+        style={{ data: { stroke: maxLineStyles.stroke } }}
+        {...dataKeys}
+      />
+    );
+  }
+
+  renderMaxLogTemperatureScatter() {
+    const { maxLine, dataKeys } = this.props;
+
+    if (!(maxLine.length > 0)) return null;
+
+    return (
+      <VictoryScatter data={maxLine} style={{ data: { fill: maxLineStyles.fill } }} {...dataKeys} />
     );
   }
 
@@ -162,10 +172,12 @@ export class VaccineChart extends React.Component {
         >
           <VictoryAxis offsetY={50} />
           <VictoryAxis dependentAxis offsetX={50} crossAxis={false} />
+          {this.renderMinLogTemperatureLine()}
+          {this.renderMinLogTemperatureScatter()}
+          {this.renderMaxLogTemperatureLine()}
+          {this.renderMaxLogTemperatureScatter()}
           {this.renderMinTemperatureBoundary()}
           {this.renderMaxTemperatureBoundary()}
-          {this.renderMinLogTemperatures()}
-          {this.renderMaxLogTemperatures()}
           {this.renderHazardPoints()}
         </VictoryChart>
       </Svg>
@@ -208,7 +220,7 @@ VaccineChart.propTypes = {
   hazards: PropTypes.arrayOf(PropTypes.object),
   minTemperature: PropTypes.number,
   maxTemperature: PropTypes.number,
-  dataKeys: PropTypes.objectOf(),
+  dataKeys: PropTypes.objectOf(PropTypes.string),
 };
 
 VaccineChart.defaultProps = {
