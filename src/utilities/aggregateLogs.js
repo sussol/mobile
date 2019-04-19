@@ -20,58 +20,50 @@ export const aggregateLogs = ({
   sensorLogs,
   numberOfIntervals,
   isMax = true,
-  startDate = new Date(),
-  endDate = new Date(),
+  startDate = null,
+  endDate = null,
 }) => {
-  // Break out if no sensorLogs.
   if (!(sensorLogs.length > 0)) return [];
 
-  // Sort sensor logs ascending by date.
+  // Update date boundaries.
+
   sensorLogs.sorted('timestamp');
 
-  // If start date is later than earliest log, update.
-  const startLog = sensorLogs[0];
-  startDate = startDate > startLog.timestamp ? startLog.timestamp : startDate;
+  // Generate interval boundaries.
 
-  // If end date is earlier than latest date in data, update.
-  const endLog = sensorLogs[sensorLogs.length - 1];
-  endDate = endDate < endLog.timestamp ? endLog.timestamp : endDate;
+  const [{ timestamp: startTimestamp }, , { timestamp: endTimestamp }] = sensorLogs;
 
-  // Calculate duration of each interval in milliseconds.
-  const totalDuration = endDate - startDate;
+  const startBoundary = Math.min(startDate, startTimestamp) || startTimestamp;
+  const endBoundary = Math.max(endDate, endTimestamp) || endTimestamp;
+
+  const totalDuration = startBoundary - endBoundary;
   const intervalDuration = totalDuration / numberOfIntervals;
 
-  // Generate interval boundaries.
   const aggregatedLogs = [];
   for (let i = 0; i < numberOfIntervals; i += 1) {
-    const intervalStartDate = new Date(startDate.getTime() + intervalDuration * i);
-    const intervalEndDate = new Date(startDate.getTime() + intervalDuration * (i + 1) - 1);
+    const intervalStartDate = new Date(startBoundary.getTime() + intervalDuration * i);
+    const intervalEndDate = new Date(startBoundary.getTime() + intervalDuration * (i + 1) - 1);
     aggregatedLogs.push({ intervalStartDate, intervalEndDate });
   }
 
   // Map intervals to aggregated objects.
+
   aggregatedLogs.forEach(({ intervalStartDate, intervalEndDate }, index) => {
     // Calculate median date.
-    aggregatedLogs[index].medianDate = new Date(
-      intervalStartDate.getTime() + (intervalEndDate.getTime() - intervalStartDate.getTime()) / 2
-    );
+    const medianDuration = (intervalEndDate.getTime() - intervalStartDate.getTime()) / 2;
+    aggregatedLogs[index].medianDate = new Date(intervalStartDate.getTime() + medianDuration);
 
-    // Get sensor logs.
+    // Group sensor logs by interval.
     aggregatedLogs[index].sensorLogs = sensorLogs.filtered(
       'timestamp >= $0 && timestamp <= $1',
       intervalStartDate,
       intervalEndDate
     );
 
-    // Get maximum or minimum log.
-    const getMinMaxLog = (previousLog, currentLog) => {
-      if (isMax) return previousLog.temperature > currentLog.temperature ? previousLog : currentLog;
-      return previousLog.temperature < currentLog.temperature ? previousLog : currentLog;
-    };
-
-    aggregatedLogs[index].sensorLog = aggregatedLogs[index].sensorLogs.reduce(
-      (accLog, currentLog) => getMinMaxLog(accLog, currentLog)
-    );
+    // Get maximum or minimum log for each interval.
+    aggregatedLogs[index].sensorLog = isMax
+      ? aggregatedLogs[index].sensorLogs.max('temperature')
+      : aggregatedLogs[index].sensorLogs.min('temperature');
   });
 
   return aggregatedLogs;
