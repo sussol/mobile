@@ -7,8 +7,6 @@
  * Aggregates sensor logs into groups of logs by dates.
  *
  * @param   {Realm.results}  sensorLogs          A collection of sensorLog objects to aggregate.
- * @param   {boolean}        isMax               If true, aggregate by maximum temperature, else
- *                                               by minimum temperature.
  * @param   {number}         numberOfDataPoints  Number of aggregated data points to return.
  * @param   {Date}           startDate           Start date of temperature range to aggregate
  *                                               over.
@@ -19,7 +17,6 @@
 export const aggregateLogs = ({
   sensorLogs,
   numberOfIntervals,
-  isMax = true,
   startDate = null,
   endDate = null,
 }) => {
@@ -60,10 +57,9 @@ export const aggregateLogs = ({
       intervalEndDate
     );
 
-    // Get maximum or minimum log for each interval.
-    aggregatedLogs[index].sensorLog = isMax
-      ? aggregatedLogs[index].sensorLogs.max('temperature')
-      : aggregatedLogs[index].sensorLogs.min('temperature');
+    // Get maximum and minimum logs for each interval.
+    aggregatedLogs[index].maxSensorLog = aggregatedLogs[index].sensorLogs.max('temperature');
+    aggregatedLogs[index].minSensorLog = aggregatedLogs[index].sensorLogs.min('temperature');
   });
 
   return aggregatedLogs;
