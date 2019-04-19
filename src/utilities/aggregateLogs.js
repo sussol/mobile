@@ -28,12 +28,13 @@ export const aggregateLogs = ({
 
   // Generate interval boundaries.
 
-  const [{ timestamp: startTimestamp }, , { timestamp: endTimestamp }] = sensorLogs;
+  const { timestamp: startTimestamp } = sensorLogs[0];
+  const { timestamp: endTimestamp } = sensorLogs[sensorLogs.length - 1];
 
-  const startBoundary = Math.min(startDate, startTimestamp) || startTimestamp;
-  const endBoundary = Math.max(endDate, endTimestamp) || endTimestamp;
+  const startBoundary = new Date(Math.min(startTimestamp, startDate) || startTimestamp);
+  const endBoundary = new Date(Math.max(endTimestamp, endDate) || endTimestamp);
 
-  const totalDuration = startBoundary - endBoundary;
+  const totalDuration = endBoundary - startBoundary;
   const intervalDuration = totalDuration / numberOfIntervals;
 
   const aggregatedLogs = [];
@@ -48,7 +49,7 @@ export const aggregateLogs = ({
   aggregatedLogs.forEach(({ intervalStartDate, intervalEndDate }, index) => {
     // Calculate median date.
     const medianDuration = (intervalEndDate.getTime() - intervalStartDate.getTime()) / 2;
-    aggregatedLogs[index].medianDate = new Date(intervalStartDate.getTime() + medianDuration);
+    const medianDate = new Date(intervalStartDate.getTime() + medianDuration);
 
     // Group sensor logs by interval.
     aggregatedLogs[index].sensorLogs = sensorLogs.filtered(
@@ -57,9 +58,19 @@ export const aggregateLogs = ({
       intervalEndDate
     );
 
-    // Get maximum and minimum logs for each interval.
-    aggregatedLogs[index].maxSensorLog = aggregatedLogs[index].sensorLogs.max('temperature');
-    aggregatedLogs[index].minSensorLog = aggregatedLogs[index].sensorLogs.min('temperature');
+    const minTemperature = aggregatedLogs[index].sensorLogs.min('temperature');
+    const maxTemperature = aggregatedLogs[index].sensorLogs.max('temperature');
+
+    // Get minimum and maximum logs for each interval.
+    aggregatedLogs[index].minimumLog = {
+      timestamp: medianDate,
+      temperature: minTemperature,
+    };
+
+    aggregatedLogs[index].maximumLog = {
+      timestamp: medianDate,
+      temperature: maxTemperature,
+    };
   });
 
   return aggregatedLogs;
