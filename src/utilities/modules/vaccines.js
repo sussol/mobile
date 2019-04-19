@@ -78,11 +78,9 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
   if (sensorLogStack.length > 0) breaches.push(sensorLogStack);
 
   // Create Realm.result objects for each breach.
-  return breaches.map(breach => {
-    const sensorIds = breach.map(log => log.id);
-    const queryString = sensorIds.map((_, i) => `id = $${i}`).join(' OR ');
-    return database.objects('SensorLog').filtered(queryString, ...sensorIds);
-  });
+  return breaches.map(breach =>
+    database.objects('SensorLog').filtered(breach.map(({ id }) => `id = "${id}"`).join(' OR '))
+  );
 };
 
 /**
