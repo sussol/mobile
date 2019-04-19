@@ -22,6 +22,7 @@ import {
   ExpiryTextInput,
   IconCell,
   MiniToggleBar,
+  GenericChoiceList,
 } from '../widgets';
 
 import globalStyles, { dataTableStyles } from '../globalStyles';
@@ -98,7 +99,8 @@ export class SupplierInvoicePage extends React.Component {
       isAscending: true,
     };
 
-    this.defaultFridge = null;
+    this.DEFAULT_FRIDGE = null;
+    this.FRIDGES = null;
 
     this.state = {
       modalKey: null,
@@ -111,12 +113,14 @@ export class SupplierInvoicePage extends React.Component {
 
   componentDidMount = () => {
     const { transaction, database } = this.props;
-    this.defaultFridge = database.objects('Location').find(location => location.isFridge);
+    this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
+    [this.DEFAULT_FRIDGE = null] = this.FRIDGES;
+
     // If there are no fridges, don't iterate and assign.
-    if (this.defaultFridge) {
+    if (this.DEFAULT_FRIDGE) {
       database.write(() => {
         transaction.getTransactionBatches(database).forEach(batch => {
-          if (!batch.location && batch.isVaccine) batch.location = this.defaultFridge;
+          if (!batch.location && batch.isVaccine) batch.location = this.DEFAULT_FRIDGE;
           database.save('TransactionBatch', batch);
         });
       });
@@ -260,7 +264,7 @@ export class SupplierInvoicePage extends React.Component {
       );
 
       if (item.isVaccine) {
-        transactionBatch.location = this.defaultFridge;
+        transactionBatch.location = this.DEFAULT_FRIDGE;
         this.setState({ hasVaccine: true });
       }
       database.save('TransactionBatch', transactionBatch);
@@ -368,9 +372,9 @@ export class SupplierInvoicePage extends React.Component {
       case 'fridge': {
         if (!isVaccine) return emptycell;
         const failed = isVVMPassed === false;
-        const hasFridges = !location;
+        const hasFridges = !!location;
         let props;
-        if (hasFridges) props = { text: 'No fridges', icon: 'times', disabled: true };
+        if (!hasFridges) props = { text: 'No fridges', icon: 'times', disabled: true };
         else {
           props = {
             text: failed ? 'Discarded' : locationDescription,
@@ -444,18 +448,20 @@ export class SupplierInvoicePage extends React.Component {
         );
       case FRIDGE_SELECT:
         return (
-          <AutocompleteSelector
-            options={database.objects('Location')}
-            queryString="description BEGINSWITH[c] $0"
-            sortByString="description"
-            onSelect={item => {
+          <GenericChoiceList
+            data={database.objects('Location')}
+            keyToDisplay="description"
+            highlightValue={selectedBatch.location.description}
+            onPress={({ item: location }) => {
               database.write(() => {
-                selectedBatch.location = item;
+                database.update('TransactionBatch', {
+                  ...selectedBatch,
+                  location,
+                });
               });
               this.refreshData();
               this.closeModal();
             }}
-            renderLeftText={({ description }) => description}
           />
         );
       case SPLIT_VALUE_SELECT: {
