@@ -20,6 +20,7 @@ import Svg from 'react-native-svg';
 
 import { HazardPoint } from './HazardPoint';
 import { APP_FONT_FAMILY } from '../globalStyles/fonts';
+import { GREY, SUSSOL_ORANGE, WARM_BLUE } from '../globalStyles/colors';
 
 /**
  * A chart component for plotting vaccine sensor log data.
@@ -214,34 +215,18 @@ export class VaccineChart extends React.Component {
         <VictoryChart
           width={width}
           height={height}
-          padding={{ top: 20, left: 50, right: 50, bottom: 50 }}
           style={chartStyles}
           theme={VictoryTheme.material}
           maxDomain={{ y: maxDomain }}
           minDomain={{ y: minDomain }}
         >
-          <VictoryAxis
-            offsetY={50}
-            style={{
-              tickLabels: {
-                fontSize: axisStyles.fontSize,
-                fontFamily: axisStyles.fontFamily,
-                fill: axisStyles.fill,
-              },
-            }}
-          />
+          <VictoryAxis offsetY={50} style={{ tickLabels: axisStyles }} />
           <VictoryAxis
             dependentAxis
             offsetX={50}
             crossAxis={false}
             tickFormat={t => `${t}℃`}
-            style={{
-              tickLabels: {
-                fontSize: axisStyles.fontSize,
-                fontFamily: axisStyles.fontFamily,
-                fill: axisStyles.fill,
-              },
-            }}
+            style={{ tickLabels: axisStyles }}
           />
           {this.renderMinLogTemperatureLine()}
           {this.renderMinLogTemperatureScatter()}
@@ -274,46 +259,47 @@ const chartStyles = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
+  padding: { top: 20, left: 50, right: 50, bottom: 50 },
 };
 
 const axisStyles = {
   fontSize: 15,
   fontFamily: APP_FONT_FAMILY,
-  fill: '#909192',
+  fill: GREY,
 };
 
 const minBoundaryStyles = {
-  stroke: '#70b4f0',
+  stroke: WARM_BLUE,
   opacity: 0.3,
 };
 
 const maxBoundaryStyles = {
-  stroke: '#e95c30',
+  stroke: SUSSOL_ORANGE,
   opacity: 0.3,
 };
 
 const minLineStyles = {
-  fill: '#70b4f0',
-  stroke: '#70b4f0',
+  fill: WARM_BLUE,
+  stroke: WARM_BLUE,
   interpolation: 'natural',
 };
 
 const maxLineStyles = {
-  fill: '#e95c30',
-  stroke: '#e95c30',
+  fill: SUSSOL_ORANGE,
+  stroke: SUSSOL_ORANGE,
   interpolation: 'natural',
 };
 
 const minScatterStyles = {
   fill: 'white',
-  stroke: '#70b4f0',
+  stroke: WARM_BLUE,
   strokeWidth: 2,
   size: 3,
 };
 
 const maxScatterStyles = {
   fill: 'white',
-  stroke: '#e95c30',
+  stroke: SUSSOL_ORANGE,
   strokeWidth: 2,
   size: 3,
 };
