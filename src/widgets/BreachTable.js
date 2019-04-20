@@ -14,6 +14,7 @@ import { StyleSheet, View } from 'react-native';
 import { VaccineChart, StackedTables } from '.';
 
 import { SHADOW_BORDER } from '../globalStyles/index';
+import { formattedDifferenceBetweenDates, formatExposureRange } from '../utilities/formatters';
 
 /**
  * CONSTANTS
@@ -126,11 +127,24 @@ export class BreachTable extends React.PureComponent {
 
   // Simple cell renderer to display non-editable data
   // for the main table.
-  renderCell = (key, value) => ({
-    type: 'text',
-    cellContents: value.breachData[key],
-    textAlign: 'right',
-  });
+  renderCell = (key, value) => {
+    switch (key) {
+      case 'location':
+        return { type: 'text', cellContents: (value && value.description) || 'Not available' };
+      case 'temperatureExposure':
+        return {
+          type: 'text',
+          cellContents: formatExposureRange(value),
+        };
+      case 'duration':
+        return {
+          type: 'text',
+          cellContents: formattedDifferenceBetweenDates(value),
+        };
+      default:
+        return { type: 'text', cellContents: value[key] };
+    }
+  };
 
   render() {
     const { database, genericTablePageStyles, data } = this.props;
