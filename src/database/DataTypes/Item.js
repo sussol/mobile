@@ -224,8 +224,8 @@ export class Item extends Realm.Object {
    * @param {Location} location
    */
   getBatchesInLocation({ id: locationId } = {}) {
-    if (!locationId) return this.batches;
-    return this.batches.filtered('location.id = $0 & numberOfPacks > 0', locationId);
+    if (!locationId) return this.batchesWithStock;
+    return this.batchesWithStock.filtered('location.id = $0', locationId);
   }
 
   /**
