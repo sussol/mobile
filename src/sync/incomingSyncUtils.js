@@ -30,20 +30,20 @@ const parseNumber = numberString => {
 };
 
 /**
- * Safely checks json as string, returns null if failure or passed parameter
- *
+ * Safely checks json as string, returns an empty string on
+ * failure.
  * @param   {string/null/undefined}  jsonAsString  JSON string to check
- * @return  {string/null} on successfull check return passed parameter or null
+ * @return  {string} on successfull check return passed parameter or null
  */
 const validateJson = jsonAsString => {
   if (!jsonAsString) return null;
-  let result = null;
+  let error = false;
   try {
-    result = JSON.parse(jsonAsString);
+    JSON.parse(jsonAsString);
   } catch (e) {
-    // do nothing
+    error = true;
   }
-  return result && jsonAsString;
+  return error ? '' : jsonAsString;
 };
 
 /**
@@ -674,15 +674,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     case 'Store': {
       const { tags, custom_data } = record;
       if (settings.get(THIS_STORE_ID) === record.ID) {
-        if (validateJson(custom_data)) {
-          database.update('Setting', {
-            key: THIS_STORE_CUSTOM_DATA,
-            value: custom_data,
-          });
-        }
-        if (validateJson(tags)) {
-          database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
-        }
+        database.update('Setting', { key: THIS_STORE_TAGS, value: tags || '' });
+        database.update('Setting', {
+          key: THIS_STORE_CUSTOM_DATA,
+          value: validateJson(custom_data),
+        });
       }
       break;
     }
