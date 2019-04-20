@@ -81,7 +81,7 @@ export class VaccineChart extends React.Component {
       <VictoryLine
         y={() => minTemperature}
         style={{
-          data: { stroke: minBoundaryStyles.stroke, opacity: minBoundaryStyles.opacity },
+          data: { ...minBoundaryStyles },
         }}
       />
     ) : null;
@@ -96,7 +96,7 @@ export class VaccineChart extends React.Component {
       <VictoryLine
         y={() => maxTemperature}
         style={{
-          data: { stroke: maxBoundaryStyles.stroke, opacity: maxBoundaryStyles.opacity },
+          data: { ...maxBoundaryStyles },
         }}
       />
     ) : null;
@@ -125,18 +125,7 @@ export class VaccineChart extends React.Component {
     if (!(minLine.length > 0)) return null;
 
     return (
-      <VictoryScatter
-        data={minLine}
-        size={minScatterStyles.size}
-        style={{
-          data: {
-            fill: minScatterStyles.fill,
-            stroke: minScatterStyles.stroke,
-            strokeWidth: minScatterStyles.strokeWidth,
-          },
-        }}
-        {...dataKeys}
-      />
+      <VictoryScatter data={minLine} style={{ data: { ...minScatterStyles } }} {...dataKeys} />
     );
   }
 
@@ -150,11 +139,7 @@ export class VaccineChart extends React.Component {
       <VictoryLine
         data={maxLine}
         interpolation={maxLineStyles.interpolation}
-        style={{
-          data: {
-            stroke: maxLineStyles.stroke,
-          },
-        }}
+        style={{ data: { stroke: maxLineStyles.stroke } }}
         {...dataKeys}
       />
     );
@@ -170,13 +155,7 @@ export class VaccineChart extends React.Component {
       <VictoryScatter
         data={maxLine}
         size={maxScatterStyles.size}
-        style={{
-          data: {
-            fill: maxScatterStyles.fill,
-            stroke: maxScatterStyles.stroke,
-            strokeWidth: maxScatterStyles.strokeWidth,
-          },
-        }}
+        style={{ data: { ...maxScatterStyles } }}
         {...dataKeys}
       />
     );
