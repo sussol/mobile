@@ -18,8 +18,9 @@ export const formatExposureRange = ({ minTemperature, maxTemperature } = {}) => 
   return `${minTemperature}${degree}C to ${maxTemperature}${degree}C`;
 };
 
-export const formattedDifferenceBetweenDates = (dateA, dateB) => {
-  const differenceInMs = new Date(dateB.getTime() - dateA.getTime()).getTime();
+export const formattedDifferenceBetweenDates = ({ startDate, endDate }) => {
+  if (!(startDate || endDate)) return 'Unavailable';
+  const differenceInMs = new Date(endDate.getTime() - startDate.getTime()).getTime();
 
   const msPerMinute = 1000 * 60;
   const msPerHour = msPerMinute * 60;
