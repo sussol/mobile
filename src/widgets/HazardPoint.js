@@ -33,8 +33,8 @@ export const HazardPoint = props => {
 };
 
 const hazardPointStyles = {
-  xOffset: -15,
-  yOffset: -40,
+  xOffset: -14,
+  yOffset: -33,
   scale: 0.05,
   fill: SUSSOL_ORANGE,
 };
