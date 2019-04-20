@@ -169,6 +169,7 @@ export class VaccineChart extends React.Component {
 
     return breaches.map(breach => (
       <VictoryScatter
+        key={breach[0].id}
         dataComponent={<HazardPoint onPress={onPress} breach={breach} />}
         data={breach}
         {...dataKeys}
