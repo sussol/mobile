@@ -44,9 +44,8 @@ export class Location extends Realm.Object {
   };
 
   get isFridge() {
-    if (!this.locationType) return null;
-    if (!this.locationType.description) return null;
-    return String(this.locationType.description).toLowerCase() === 'fridge';
+    const { locationType: { description } = { description: '' } } = this;
+    return description.toLowerCase() === 'fridge';
   }
 
   getTemperaturePoints() {
