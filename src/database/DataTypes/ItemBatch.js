@@ -142,13 +142,30 @@ export class ItemBatch extends Realm.Object {
   }
 
   /**
-   * Returns an object {maxTemperature, minTemperature} for all
-   * recorded temperatures for this ItemBatch.
+   * Returns an object { maxTemperature, minTemperature } for all
+   * temperatures recorded for this item batch
    */
   get temperatureExposure() {
-    const maxTemperature = this.sensorLogs.max('temperature') || -Infinity;
-    const minTemperature = this.sensorLogs.min('temperature') || Infinity;
-    return { maxTemperature, minTemperature };
+    return {
+      minTemperature: this.sensorLogs.min('temperature') || Infinity,
+      maxTemperature: this.sensorLogs.max('temperature') || -Infinity,
+    };
+  }
+
+  /**
+   * Returns an object { maxTemperature, minTemperature } for all
+   * temperatures recorded for this item batch in a given
+   * location.
+   * @param {Location} location
+   * @param {Location.id} LocationId
+   */
+  getTemperatureExposureInLocation({ id: locationId } = {}) {
+    return {
+      minTemperature:
+        this.sensorLogs.filtered('location.id = $0', locationId).min('temperature') || Infinity,
+      maxTemperature:
+        this.sensorLogs.filtered('location.id = $0', locationId).max('temperature') || -Infinity,
+    };
   }
 }
 
