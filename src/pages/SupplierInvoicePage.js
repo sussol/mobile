@@ -449,13 +449,13 @@ export class SupplierInvoicePage extends React.Component {
       case FRIDGE_SELECT:
         return (
           <GenericChoiceList
-            data={database.objects('Location')}
+            data={this.FRIDGES}
             keyToDisplay="description"
             highlightValue={selectedBatch.location.description}
             onPress={({ item: location }) => {
               database.write(() => {
                 database.update('TransactionBatch', {
-                  ...selectedBatch,
+                  id: selectedBatch.id,
                   location,
                 });
               });
