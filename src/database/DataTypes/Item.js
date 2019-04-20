@@ -224,8 +224,8 @@ export class Item extends Realm.Object {
    * @param {Location} location
    */
   getBatchesInLocation({ id: locationId } = {}) {
-    if (!locationId) return this.batches;
-    return this.batches.filtered('location.id = $0', locationId);
+    if (!locationId) return this.batchesWithStock;
+    return this.batchesWithStock.filtered('location.id = $0', locationId);
   }
 
   /**
@@ -255,7 +255,7 @@ export class Item extends Realm.Object {
    * @param {Location} location
    */
   getBreachedBatches(location) {
-    return this.getBatchesInLocation(location).filter(hasBreached => hasBreached);
+    return this.getBatchesInLocation(location).filter(({ hasBreached }) => hasBreached);
   }
 
   /**
@@ -287,18 +287,10 @@ export class Item extends Realm.Object {
   getTemperatureExposure(location) {
     let { batches } = this;
     if (location) batches = this.getBatchesInLocation(location);
-
-    const temperatures = batches.map(({ temperatureExposure } = {}) => temperatureExposure);
-
-    const maxTemperature = temperatures.reduce(
-      (maxTemp, { maxTemperature: max = -Infinity } = {}) => Math.max(maxTemp, max),
-      -Infinity
-    );
-    const minTemperature = temperatures.reduce(
-      (minTemp, { minTemperature: min = Infinity } = {}) => Math.min(minTemp, min),
-      Infinity
-    );
-    return { minTemperature, maxTemperature };
+    return {
+      maxTemperature: batches.max('sensorLog.temperature') || -Infinity,
+      minTemperature: batches.min('sensorLog.temperature') || Infinity,
+    };
   }
 }
 
