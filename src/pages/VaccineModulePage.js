@@ -55,14 +55,14 @@ export class VaccineModulePage extends React.Component {
   );
 
   /* Render fridge name and chevron-down icon if icon not selected fridge */
-  renderFridgeName = (fridge, isFridgeSNotelected) => {
+  renderFridgeName = (fridge, isFridgeSelected) => {
     const onPress = () => this.setState({ selectedFridgeCode: fridge.code });
 
     const { fridgeInfoSectionStyle, fridgeNameTextStyle } = localStyles;
 
     return (
       <TouchableOpacity style={fridgeInfoSectionStyle} onPress={onPress}>
-        {!isFridgeSNotelected && this.renderIcon('chevron-down')}
+        {!isFridgeSelected && this.renderIcon('chevron-down')}
         <Text style={fridgeNameTextStyle}>{fridge.description}</Text>
       </TouchableOpacity>
     );
