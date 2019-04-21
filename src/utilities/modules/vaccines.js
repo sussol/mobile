@@ -8,6 +8,12 @@
  * module.
  */
 
+
+const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
+const MAX_BREACH_CHART_DATAPOINTS = 7;
+const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
+const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
+
 /**
  * Extracts breaches from a set of sensor logs.
  * Breach: Sequential sensorLog objects whose temperature is outside
@@ -189,8 +195,6 @@ export const extractBreachPoints = ({ lineData, fullBreaches, temperatureRange }
   },
 ];
 
-const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
-const MAX_BREACH_CHART_DATAPOINTS = 7;
 
 /**
  * Returns aggregated data for breach modal, based on passed array
@@ -219,8 +223,6 @@ export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilte
   });
 };
 
-const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
-const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
 /**
  * Returns aggregated data for breach modal, based on passed array
  * of sensorLogs (breaches)
