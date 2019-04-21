@@ -93,12 +93,12 @@ const extractBreachStatistics = (itemBatches, sensorLogs) => ({
   numberOfAffectedBatches: itemBatches.length,
   affectedQuantity: itemBatches.sum('numberOfPacks'),
   exposureRange: {
-    minTemperature: itemBatches.min('temperature') || Infinity,
-    maxTemperature: itemBatches.max('temperautre') || -Infinity,
+    minTemperature: sensorLogs.min('temperature') || Infinity,
+    maxTemperature: sensorLogs.max('temperautre') || -Infinity,
   },
   breachDuration: {
-    startDate: itemBatches.max('timestamp') || null,
-    endDate: itemBatches.min('timestamp') || null,
+    startDate: sensorLogs.max('timestamp') || null,
+    endDate: sensorLogs.min('timestamp') || null,
   },
 });
 
@@ -173,7 +173,9 @@ const extractItemBatches = sensorLogs => {
  * ]
  */
 export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, database } = {}) => {
-  let filteredLogs = sensorLogs;
+  // Ensure that when passed a breach, we disregard the delimiter sensorLogs
+  // which aren't breaches when calculating statistics.
+  let filteredLogs = sensorLogs.filtered('isInBreach = $0', true);
   // If an Item has been passed, only find batches for this item.
   if (item) filteredLogs = sensorLogs.filtered('ItemBatches.item.id = $0', item.id);
   // If an ItemBatch has been passed, only find batches for this item.
@@ -188,10 +190,11 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
     };
   });
   // Get all ItemBatch objects associated with these sensorLogs, used in
-  // calculating statistics of this breach.
+  // calculating statistics of this breach
+
   const allItemBatches = database
     .objects('ItemBatch')
-    .filtered(sensorLogs.map(({ id }) => `sensorLogs.id = "${id}"`).join(' OR '));
+    .filtered(filteredLogs.map(({ id }) => `sensorLogs.id = "${id}"`).join(' OR '));
   // Also return the sensorLogs for these items and batches.
   // If no items or batches have been found, items: [] is returned
   return {
