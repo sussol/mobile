@@ -32,6 +32,8 @@ export const HazardPoint = props => {
   );
 };
 
+// Offsets to position hazard point relative to top-left (x,y) coordinates to render above each
+// scatter point.
 const hazardPointStyles = {
   xOffset: -14,
   yOffset: -33,
@@ -41,14 +43,12 @@ const hazardPointStyles = {
 
 // Bug in Victory charts causes required props to be undefined on first render,
 // do not set as required.
+
+/* eslint-disable react/require-default-props */
 HazardPoint.propTypes = {
-  // eslint-disable-next-line react/require-default-props
   x: PropTypes.number,
-  // eslint-disable-next-line react/require-default-props
   y: PropTypes.number,
-  // eslint-disable-next-line react/require-default-props
   onPress: PropTypes.func,
-  // eslint-disable-next-line react/require-default-props
   breach: PropTypes.arrayOf(PropTypes.object),
 };
 
