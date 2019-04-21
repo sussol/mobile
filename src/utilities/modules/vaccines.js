@@ -184,13 +184,11 @@ export const aggregateLogs = sensorLogs => [
   { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
 ];
 
-export const extractBreachPoints = ({ lineData, fullBreaches, temperatureRange }) => [
+export const extractBreachPoints = ({ lineData, fullBreaches }) => [
   {
     timestamp: 'Feb 26',
     temperature: 8.4,
     sensorLogs: [],
-    isMax: true, // sensorLogs.max('temperature') > temperatureRange.maxTemperature;
-    ...temperatureRange,
   },
 ];
 
@@ -222,8 +220,7 @@ export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilte
 };
 
 /**
- * Returns aggregated data for breach modal, based on passed array
- * of sensorLogs (breaches)
+ * Returns chart props for fridge chart
  */
 export const extractDataForFridgeChart = ({ database, fridge }) => {
   const sensorLogs = fridge.getSensorLogs(database, FRIDGE_CHART_LOOKBACK_MS);
