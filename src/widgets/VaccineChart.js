@@ -55,17 +55,12 @@ export class VaccineChart extends React.Component {
     const { y: temperatureKey } = dataKeys;
 
     const minDomain =
-      lines.reduce(
-        (currentMinTemperature, sensorLog) =>
-          Math.min(currentMinTemperature, sensorLog[temperatureKey]),
-        minTemperature
+      Math.min(
+        ...lines.map(({ [temperatureKey]: temperature }) => temperature).append(minTemperature)
       ) - 1;
-
     const maxDomain =
-      lines.reduce(
-        (currentMaxTemperature, sensorLog) =>
-          Math.max(currentMaxTemperature, sensorLog[temperatureKey]),
-        maxTemperature
+      Math.max(
+        ...lines.map(({ [temperatureKey]: temperature }) => temperature).append(maxTemperature)
       ) + 1;
 
     return { minDomain, maxDomain };
