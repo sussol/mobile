@@ -41,16 +41,20 @@ export const aggregateLogs = ({
   const aggregatedLogs = [];
   for (let i = 0; i < numberOfIntervals; i += 1) {
     const intervalStartDate = new Date(startBoundary.getTime() + intervalDuration * i);
-    const intervalEndDate = new Date(startBoundary.getTime() + intervalDuration * (i + 1) - 1);
+
+    // Do not offset last end date to prevent not including last log.
+    const endDateOffset = i !== numberOfIntervals - 1 ? 1 : 0;
+    const intervalEndDate = new Date(
+      startBoundary.getTime() + intervalDuration * (i + 1) - endDateOffset
+    );
+
     aggregatedLogs.push({ intervalStartDate, intervalEndDate });
   }
 
-  // Offset last end date to prevent not including last log.
-  aggregatedLogs[aggregatedLogs.length - 1].intervalEndDate += 1;
-
   // Map intervals to aggregated objects.
   const medianDuration = intervalDuration / 2;
-  aggregatedLogs.map(aggregateLog => {
+
+  return aggregatedLogs.map(aggregateLog => {
     const { intervalStartDate, intervalEndDate } = aggregateLog;
 
     // Group sensor logs by interval.
@@ -69,8 +73,6 @@ export const aggregateLogs = ({
 
     return { timestamp, minTemperature, maxTemperature };
   });
-
-  return aggregatedLogs;
 };
 
 export default aggregateLogs;
