@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { VaccineChart } from '../widgets/VaccineChart';
+import { VaccineChart } from '../widgets';
 import globalStyles, {
   SHADOW_BORDER,
   APP_FONT_FAMILY,

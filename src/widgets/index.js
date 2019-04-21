@@ -35,3 +35,4 @@ export { MiniToggleBar } from './MiniToggleBar';
 export { GenericChoiceList } from './GenericChoiceList';
 export { SimpleTable } from './SimpleTable';
 export { StackedTables } from './StackedTables';
+export { VaccineChart } from './VaccineChart';
