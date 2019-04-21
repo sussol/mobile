@@ -17,3 +17,23 @@ export const formatExposureRange = ({ minTemperature, maxTemperature } = {}) => 
   const degree = String.fromCharCode(176);
   return `${minTemperature}${degree}C to ${maxTemperature}${degree}C`;
 };
+
+export const formattedDifferenceBetweenDates = ({ startDate, endDate }) => {
+  if (!(startDate || endDate)) return 'Unavailable';
+  const differenceInMs = new Date(endDate.getTime() - startDate.getTime()).getTime();
+
+  const msPerMinute = 1000 * 60;
+  const msPerHour = msPerMinute * 60;
+  const msPerDay = msPerHour * 24;
+
+  const numberOfDays = Math.floor(differenceInMs / msPerDay);
+  const numberOfHours = Math.floor((differenceInMs - numberOfDays * msPerDay) / msPerHour);
+  const numberOfMinutes = Math.floor((differenceInMs - numberOfHours * msPerHour) / msPerMinute);
+
+  let formattedDifference = '';
+  if (numberOfDays) formattedDifference += `${numberOfDays} Days `;
+  if (numberOfHours) formattedDifference += `${numberOfHours} Hours `;
+  if (numberOfMinutes) formattedDifference += `${numberOfMinutes} Minutes `;
+
+  return formattedDifference;
+};
