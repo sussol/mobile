@@ -247,7 +247,6 @@ const localStyles = StyleSheet.create({
   },
   extraInfoSectionStyle: {
     flexDirection: 'row',
-    justifySelf: 'flex-end',
     marginRight: 10,
   },
   imageStyle: {
