@@ -31,14 +31,14 @@ const MAX_LOOKBACK_MILLISECONDS = 30 * MILLISECONDS_IN_DAY;
 export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { fridges: [], selectedFridgeCode: null };
+    this.state = { fridges: [], selectedFridgeId: null };
   }
 
   componentWillMount() {
     const { database } = this.props;
     const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
-    const selectedFridgeCode = fridges.length > 0 && fridges[0].code;
-    this.setState({ fridges, selectedFridgeCode });
+    const selectedFridgeId = fridges.length > 0 ? fridges[0].id : null;
+    this.setState({ fridges, selectedFridgeId });
   }
 
   /* Helper to render menuButton */
@@ -56,7 +56,7 @@ export class VaccineModulePage extends React.Component {
 
   /* Render fridge name and chevron-down icon if icon not selected fridge */
   renderFridgeName = (fridge, isFridgeSelected) => {
-    const onPress = () => this.setState({ selectedFridgeCode: fridge.code });
+    const onPress = () => this.setState({ selectedFridgeId: fridge.id });
 
     const { fridgeInfoSectionStyle, fridgeNameTextStyle } = localStyles;
 
@@ -125,7 +125,7 @@ export class VaccineModulePage extends React.Component {
       <TouchableOpacity style={fridgeInfoSectionStyle} onPress={onPress}>
         <Text style={fontStyleSmall}>Total Stock:</Text>
         <Text style={fontStyleLarge}>{fridgeStock}</Text>
-        {this.renderIcon('angle-double-right', CHERVON_ICON_STYLE)}
+        {this.renderIcon('angle-double-right', CHEVRON_ICON_STYLE)}
       </TouchableOpacity>
     );
   };
@@ -136,8 +136,8 @@ export class VaccineModulePage extends React.Component {
     const currentTemperature = fridge.getCurrentTemperature(database);
     const isCriticalTemperature = fridge.isCriticalTemperature(database);
 
-    const { selectedFridgeCode } = this.state;
-    const isFridgeSelected = fridge.code === selectedFridgeCode;
+    const { selectedFridgeId } = this.state;
+    const isFridgeSelected = fridge.code === selectedFridgeId;
 
     const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
     return (
