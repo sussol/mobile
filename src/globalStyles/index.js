@@ -39,6 +39,7 @@ export {
   FINALISE_GREEN,
   FINALISED_RED,
   SOFT_RED,
+  HAZARD_RED,
   WARM_BLUE,
 } from './colors';
 

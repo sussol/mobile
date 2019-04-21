@@ -386,6 +386,7 @@ export class Transaction extends Realm.Object {
         expiryDate,
         costPrice,
         sellPrice,
+        location,
       } = transactionBatch;
 
       // Pack to one all transactions in mobile, so multiply by |packSize| to get
@@ -403,6 +404,7 @@ export class Transaction extends Realm.Object {
       itemBatch.batch = this.adjustBatchName(batch);
       itemBatch.costPrice = packedToOneCostPrice;
       itemBatch.sellPrice = packedToOneSellPrice;
+      itemBatch.location = location;
       database.save('ItemBatch', itemBatch);
     });
 

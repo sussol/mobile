@@ -69,7 +69,7 @@ const createRowObject = (itemBatch, extraData) => ({
  * item. No changes are made internally until the apply changes
  * button is pressed.
  */
-export class ItemManagePage extends React.Component {
+export class ManageVaccineItemPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -288,11 +288,11 @@ export class ItemManagePage extends React.Component {
   }
 }
 
-ItemManagePage.propTypes = {
+ManageVaccineItemPage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
   topRoute: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
 };
 
-export default ItemManagePage;
+export default ManageVaccineItemPage;
