@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 
 import {
   VictoryLine,
@@ -19,8 +19,7 @@ import {
 import Svg from 'react-native-svg';
 
 import { HazardPoint } from './HazardPoint';
-import { APP_FONT_FAMILY } from '../globalStyles/fonts';
-import { GREY, SUSSOL_ORANGE, WARM_BLUE } from '../globalStyles/colors';
+import { APP_FONT_FAMILY, GREY, SUSSOL_ORANGE, WARM_BLUE } from '../globalStyles';
 
 /**
  * A chart component for plotting vaccine sensor log data.
@@ -78,12 +77,7 @@ export class VaccineChart extends React.Component {
 
     // minTemp default prop is Infinity.
     return minTemperature !== Infinity ? (
-      <VictoryLine
-        y={() => minTemperature}
-        style={{
-          data: { ...minBoundaryStyles },
-        }}
-      />
+      <VictoryLine y={() => minTemperature} {...minBoundaryStyles} />
     ) : null;
   }
 
@@ -93,12 +87,7 @@ export class VaccineChart extends React.Component {
 
     // maxTemp default prop is -Infinity.
     return maxTemperature !== -Infinity ? (
-      <VictoryLine
-        y={() => maxTemperature}
-        style={{
-          data: { ...maxBoundaryStyles },
-        }}
-      />
+      <VictoryLine y={() => maxTemperature} {...maxBoundaryStyles} />
     ) : null;
   }
 
@@ -108,14 +97,7 @@ export class VaccineChart extends React.Component {
 
     if (!(minLine.length > 0)) return null;
 
-    return (
-      <VictoryLine
-        data={minLine}
-        interpolation={minLineStyles.interpolation}
-        style={{ data: { stroke: minLineStyles.stroke } }}
-        {...dataKeys}
-      />
-    );
+    return <VictoryLine data={minLine} {...minLineStyles} {...dataKeys} />;
   }
 
   // Render data points of minimum log temperature line plot.
@@ -124,9 +106,7 @@ export class VaccineChart extends React.Component {
 
     if (!(minLine.length > 0)) return null;
 
-    return (
-      <VictoryScatter data={minLine} style={{ data: { ...minScatterStyles } }} {...dataKeys} />
-    );
+    return <VictoryScatter data={minLine} {...minScatterStyles} {...dataKeys} />;
   }
 
   // Render line plot of maximum log temperatures.
@@ -135,14 +115,7 @@ export class VaccineChart extends React.Component {
 
     if (!(maxLine.length > 0)) return null;
 
-    return (
-      <VictoryLine
-        data={maxLine}
-        interpolation={maxLineStyles.interpolation}
-        style={{ data: { stroke: maxLineStyles.stroke } }}
-        {...dataKeys}
-      />
-    );
+    return <VictoryLine data={maxLine} {...maxLineStyles} {...dataKeys} />;
   }
 
   // Render data points of maximum log temperature line plot.
@@ -151,14 +124,7 @@ export class VaccineChart extends React.Component {
 
     if (!(maxLine.length > 0)) return null;
 
-    return (
-      <VictoryScatter
-        data={maxLine}
-        size={maxScatterStyles.size}
-        style={{ data: { ...maxScatterStyles } }}
-        {...dataKeys}
-      />
-    );
+    return <VictoryScatter data={maxLine} {...maxScatterStyles} {...dataKeys} />;
   }
 
   // Render hazard icons for sensor breaches.
@@ -195,19 +161,13 @@ export class VaccineChart extends React.Component {
         <VictoryChart
           width={width}
           height={height}
-          style={chartStyles}
           theme={VictoryTheme.material}
           maxDomain={{ y: maxDomain }}
           minDomain={{ y: minDomain }}
+          {...chartStyles}
         >
-          <VictoryAxis offsetY={50} style={{ tickLabels: axisStyles }} />
-          <VictoryAxis
-            dependentAxis
-            offsetX={50}
-            crossAxis={false}
-            tickFormat={t => `${t}℃`}
-            style={{ tickLabels: axisStyles }}
-          />
+          <VictoryAxis {...dateAxisStyles} />
+          <VictoryAxis dependentAxis crossAxis={false} {...tempAxisStyles} />
           {this.renderMinLogTemperatureLine()}
           {this.renderMinLogTemperatureScatter()}
           {this.renderMaxLogTemperatureLine()}
@@ -235,53 +195,91 @@ const chartSize = {
   height: 1.025,
 };
 
-const chartStyles = {
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'center',
-  padding: { top: 20, left: 50, right: 50, bottom: 50 },
+const chartStyles = StyleSheet.create({
+  style: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  padding: { top: 20, left: 50, bottom: 50, right: 50 },
+});
+
+const tempAxisStyles = {
+  style: {
+    fontSize: 15,
+    fontFamily: APP_FONT_FAMILY,
+    fill: GREY,
+  },
+  offsetX: 50,
+  // Unicode for degrees celcius.
+  tickFormat: t => `${t}\u2103`,
 };
 
-const axisStyles = {
-  fontSize: 15,
-  fontFamily: APP_FONT_FAMILY,
-  fill: GREY,
+const dateAxisStyles = {
+  style: {
+    fontSize: 15,
+    fontFamily: APP_FONT_FAMILY,
+    fill: GREY,
+  },
+  offsetY: 50,
 };
 
 const minBoundaryStyles = {
-  stroke: WARM_BLUE,
-  opacity: 0.3,
+  style: {
+    data: {
+      stroke: WARM_BLUE,
+      opacity: 0.3,
+    },
+  },
 };
 
 const maxBoundaryStyles = {
-  stroke: SUSSOL_ORANGE,
-  opacity: 0.3,
+  style: {
+    data: {
+      stroke: SUSSOL_ORANGE,
+      opacity: 0.3,
+    },
+  },
 };
 
 const minLineStyles = {
-  fill: WARM_BLUE,
-  stroke: WARM_BLUE,
+  style: {
+    data: {
+      stroke: WARM_BLUE,
+    },
+  },
   interpolation: 'natural',
 };
 
 const maxLineStyles = {
-  fill: SUSSOL_ORANGE,
-  stroke: SUSSOL_ORANGE,
+  style: {
+    data: {
+      stroke: SUSSOL_ORANGE,
+    },
+  },
   interpolation: 'natural',
 };
 
 const minScatterStyles = {
-  fill: 'white',
-  stroke: WARM_BLUE,
-  strokeWidth: 2,
-  size: 3,
+  style: {
+    data: {
+      fill: 'white',
+      stroke: WARM_BLUE,
+      strokeWidth: 2,
+      size: 3,
+    },
+  },
 };
 
 const maxScatterStyles = {
-  fill: 'white',
-  stroke: SUSSOL_ORANGE,
-  strokeWidth: 2,
-  size: 3,
+  style: {
+    data: {
+      fill: 'white',
+      stroke: SUSSOL_ORANGE,
+      strokeWidth: 2,
+      size: 3,
+    },
+  },
 };
 
 VaccineChart.propTypes = {
@@ -300,7 +298,7 @@ VaccineChart.defaultProps = {
   breaches: [],
   minTemperature: Infinity,
   maxTemperature: -Infinity,
-  onPress: () => null,
+  onPress: null,
   dataKeys: { x: 'timestamp', y: 'temperature' },
 };
 
