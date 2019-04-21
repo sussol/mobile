@@ -134,7 +134,7 @@ export class ItemManagePage extends React.Component {
     if (hasFridges && vvmStatus !== false && !reason) {
       return (location && location.description) || 'Unnasigned';
     }
-    return (!hasFridges && 'No fridges') || (!vvmStatus && 'Discarded');
+    return (!hasFridges && 'No fridges') || ((!vvmStatus || reason) && 'Discarded');
   };
 
   // Updates the currentBatch object held within state with new
