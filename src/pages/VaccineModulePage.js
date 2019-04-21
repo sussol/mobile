@@ -11,6 +11,8 @@ import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { VaccineChart } from '../widgets';
+import { extractDataForFridgeChart } from '../utilities/modules/vaccines';
+
 import globalStyles, {
   SHADOW_BORDER,
   APP_FONT_FAMILY,
@@ -21,9 +23,6 @@ import globalStyles, {
 
 const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
-
-const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
-const MAX_LOOKBACK_MILLISECONDS = 30 * MILLISECONDS_IN_DAY;
 
 // TODO navigation for menu buttons
 // TODO Localise all strings
@@ -84,11 +83,11 @@ export class VaccineModulePage extends React.Component {
   };
 
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
-  renderFridgeExtraInfo = fridge => {
+  renderFridgeExtraInfo = (fridge, numberOfBreaches) => {
     const { database } = this.props;
-    const numberOfBreaches = fridge.getNumberOfBreaches(database, MAX_LOOKBACK_MILLISECONDS);
-    const hasBreaches = numberOfBreaches > 0;
+
     const { minTemperature, maxTemperature } = fridge.getTemperatureExposure(database);
+    const hasBreaches = numberOfBreaches > 0;
 
     const {
       extraInfoSectionStyle,
@@ -138,9 +137,20 @@ export class VaccineModulePage extends React.Component {
     );
   };
 
+  onHazardPress = breach => {
+    console.log(breach.temperature);
+    // const breaches = [breach.sensorLogs];
+    // open modal with params, data: [getDataForBreachModal({ breaches })]
+  };
+
+  renderChart = fridge => <VaccineChart {...this.extractChartInfo(fridge)} />;
+
   /* Fridge and all of it's components */
   renderFridge = fridge => {
     const { database } = this.props;
+    const fridgeChartData = extractDataForFridgeChart({ database, fridge });
+    const numberOfBreaches = fridgeChartData.breaches.length;
+
     const currentTemperature = fridge.getCurrentTemperature(database);
     const isCriticalTemperature = fridge.isCriticalTemperature(database);
 
@@ -157,13 +167,13 @@ export class VaccineModulePage extends React.Component {
 
             {isCriticalTemperature ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
-              {this.renderFridgeExtraInfo(fridge)}
+              {this.renderFridgeExtraInfo(fridge, numberOfBreaches)}
               {this.renderFridgeStock(fridge)}
             </View>
           </View>
           {isFridgeSelected && (
             <View style={{ height: 250, alignSelf: 'stretch' }}>
-              <VaccineChart {...fridge.getTemperaturePoints()} />
+              {<VaccineChart {...fridgeChartData} hazardPress={this.onHazardPress} />}
             </View>
           )}
         </View>

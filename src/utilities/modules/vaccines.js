@@ -8,6 +8,11 @@
  * module.
  */
 
+const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
+const MAX_BREACH_CHART_DATAPOINTS = 7;
+const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
+const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
+
 /**
  * Extracts breaches from a set of sensor logs.
  * Breach: Sequential sensorLog objects whose temperature is outside
@@ -201,5 +206,79 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
     sensorLogs,
     items: allItemsForLogs,
     ...extractBreachStatistics(allItemBatches, sensorLogs),
+  };
+};
+
+export const aggregateLogs = sensorLogs => [
+  { timestamp: 'Feb 23', temperature: 5.9, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 24', temperature: 6, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 25', temperature: 7, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 26', temperature: 8.4, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 27', temperature: 8, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 1', temperature: 6, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 2', temperature: 5.7, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 3', temperature: 3.5, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 4', temperature: 3.8, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
+];
+
+export const extractBreachPoints = ({ lineData, fullBreaches }) => [
+  {
+    timestamp: 'Feb 26',
+    temperature: 8.4,
+    sensorLogs: [],
+  },
+];
+
+/**
+ * Returns aggregated data for breach modal, based on passed array
+ * of sensorLogs (breaches)
+ */
+export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilter }) => {
+  const result = [];
+  breaches.forEach(sensorLogs => {
+    const { minTemperature, maxTemperature } = TEMPERATURE_RANGE;
+    const maxPoints = MAX_BREACH_CHART_DATAPOINTS;
+    const numberOfDataPoints = sensorLogs.length >= maxPoints ? maxPoints : sensorLogs.length;
+    const isMax = sensorLogs.filtered('temperature >= $0', maxTemperature).length > 0;
+
+    result.push({
+      ...sensorLogsExtractBatches(sensorLogs, itemFilter, itemBatchFilter),
+      chartData: {
+        // TODO change based on aggregateLogs return format
+        [isMax ? 'maxLine' : 'minLine']: aggregateLogs({
+          sensorLogs,
+          numberOfDataPoints,
+          isMax,
+        }),
+        ...(isMax ? { maxTemperature } : { minTemperature }),
+      },
+    });
+  });
+};
+
+/**
+ * Returns chart props for fridge chart
+ */
+export const extractDataForFridgeChart = ({ database, fridge }) => {
+  const sensorLogs = fridge.getSensorLogs(database, FRIDGE_CHART_LOOKBACK_MS);
+
+  const chartRangeMilliseconds = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
+  const numberOfDataPoints = Math.floor(chartRangeMilliseconds / MILLISECONDS_IN_DAY);
+
+  // TODO change based on aggregateLogs return format
+  const minLine = aggregateLogs(sensorLogs, numberOfDataPoints, true);
+  const maxLine = aggregateLogs(sensorLogs, numberOfDataPoints, false);
+  const fullBreaches = extractBreaches(sensorLogs);
+  const breaches = [
+    ...extractBreachPoints(minLine, fullBreaches, TEMPERATURE_RANGE),
+    ...extractBreachPoints(maxLine, fullBreaches, TEMPERATURE_RANGE),
+  ];
+
+  return {
+    minLine,
+    maxLine,
+    breaches,
+    ...TEMPERATURE_RANGE,
   };
 };
