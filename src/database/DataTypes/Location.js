@@ -14,10 +14,6 @@ export class Location extends Realm.Object {
     return description.toLowerCase() === 'fridge';
   }
 
-  getTemperaturePoints() {
-    return this.data.temperaturePoints;
-  }
-
   getSensorLogs(database, lookBackMilliseconds = null) {
     const sensorLogs = database.objects('SensorLogs').filtered('location.id = $0', this.id);
     if (!lookBackMilliseconds) return sensorLogs;
