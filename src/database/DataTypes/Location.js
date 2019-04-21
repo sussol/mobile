@@ -67,7 +67,7 @@ export class Location extends Realm.Object {
   }
 
   getSensor(database) {
-    const sensor = database.object('Sensor').filtered('location.id = $0', this.id);
+    const sensor = database.objects('Sensor').filtered('location.id = $0', this.id);
     if (sensor.length === 0) return null;
     return sensor[0];
   }
