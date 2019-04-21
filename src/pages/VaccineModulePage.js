@@ -19,7 +19,7 @@ import globalStyles, {
   HAZARD_RED,
 } from '../globalStyles';
 
-const CHERVON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
+const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
@@ -50,7 +50,7 @@ export class VaccineModulePage extends React.Component {
     />
   );
 
-  renderIcon = (iconName, iconStyle = CHERVON_ICON_STYLE) => (
+  renderIcon = (iconName, iconStyle = CHEVRON_ICON_STYLE) => (
     <Icon style={{ margin: 5 }} name={iconName} {...iconStyle} />
   );
 
