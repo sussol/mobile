@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -16,6 +17,7 @@ import {
   AutocompleteSelector,
   TextEditor,
   ExpiryTextInput,
+  GenericChoiceList,
 } from '../widgets/index';
 import { PageContentModal } from '../widgets/modals/index';
 import { IconCell } from '../widgets/IconCell';
@@ -61,6 +63,7 @@ const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey])
 // Creates a row object for use within this component.
 const createRowObject = (itemBatch, extraData) => ({
   ...itemBatch,
+  totalQuantity: itemBatch.totalQuantity,
   ...extraData,
 });
 
@@ -74,6 +77,7 @@ export class ItemManagePage extends React.Component {
     super(props);
 
     this.FRIDGES = null;
+    this.REASONS = null;
 
     this.state = {
       data: null,
@@ -88,10 +92,35 @@ export class ItemManagePage extends React.Component {
    * COMPONENT METHODS
    */
   componentDidMount = () => {
-    const { database, item } = this.props;
+    const { database } = this.props;
+    const item = database
+      .objects('Item')
+      .filter(i => i.batches.length > 0 && i.batches[0].numberOfPacks > 0)[0];
     this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
+    this.REASONS = database
+      .objects('Options')
+      .filtered(
+        'type = $0 && isActive = $1 && NOT title CONTAINS[c] $2',
+        'vaccineDisposalReason',
+        true,
+        'vvm'
+      );
+    this.VVMREASON = database
+      .objects('Options')
+      .filtered(
+        'type = $0 && isActive = $1 && title CONTAINS[c] $2',
+        'vaccineDisposalReason',
+        true,
+        'vvm'
+      )[0];
+
     const hasFridges = this.FRIDGES && this.FRIDGES.length > 0;
-    this.setState({ data: item.batches.map(itemBatch => createRowObject(itemBatch)), hasFridges });
+    this.setState({
+      data: item.batches.map(itemBatch =>
+        createRowObject(itemBatch, { vvmStatus: null, reason: null })
+      ),
+      hasFridges,
+    });
   };
 
   /**
@@ -102,9 +131,11 @@ export class ItemManagePage extends React.Component {
     return MODAL_TITLES[modalKey];
   };
 
-  getFridgeDescription = ({ location, vvmStatus }) => {
+  getFridgeDescription = ({ location, vvmStatus, reason }) => {
     const { hasFridges } = this.state;
-    if (hasFridges && vvmStatus) return (location && location.description) || 'Unnasigned';
+    if (hasFridges && vvmStatus !== false && !reason) {
+      return (location && location.description) || 'Unnasigned';
+    }
     return (!hasFridges && 'No fridges') || (!vvmStatus && 'Discarded');
   };
 
@@ -135,13 +166,14 @@ export class ItemManagePage extends React.Component {
     let newObjectValues = {};
 
     if (parsedSplitValue > totalQuantity) {
-      newObjectValues = { vvmStatus: false };
+      newObjectValues = { vvmStatus: false, reason: this.VVMREASON || null };
       // Account for 0 & NaN (From entering a non-numeric character)
     } else if (parsedSplitValue) {
       const newBatchValues = {
         id: generateUUID(),
         totalQuantity: parsedSplitValue,
         vvmStatus: false,
+        reason: this.VVMREASON || null,
       };
       data.push(createRowObject(currentBatch, newBatchValues));
       newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
@@ -161,12 +193,11 @@ export class ItemManagePage extends React.Component {
     // some extra fields.
   };
 
-  onDispose = () => {
-    // TODO:
-    // Open a modal to select the doses?
-    // Set the row to have some distinctive marker to show it
-    // is being disposed of.
-    // Set the dispose icon to one which will 'undelete' this row.
+  onDispose = ({ itemBatch } = {}) => ({ item: reason }) => {
+    if (reason) return this.updateObject({ reason }, { isModalOpen: false });
+    return this.setState({ currentBatch: itemBatch }, () =>
+      this.updateObject({ reason: null, vvmStatus: true }, { isModalOpen: false })
+    );
   };
 
   // Called on selecting a fridge in the fridge selection modal,
@@ -179,8 +210,10 @@ export class ItemManagePage extends React.Component {
   // the object held in the closure to a PASS VVM status. Otherwise, opens a
   // modal for a user to enter the doses affected and set the currentBatch.
   onVvmToggle = ({ modalKey, currentBatch }) => ({ newState }) => {
-    if (!newState) return this.onModalUpdate({ modalKey, currentBatch });
-    return this.setState({ currentBatch }, () => this.updateObject({ vvmStatus: true }));
+    if (!newState) return this.onModalUpdate({ modalKey, currentBatch })();
+    return this.setState({ currentBatch }, () =>
+      this.updateObject({ vvmStatus: true, reason: null })
+    );
   };
 
   // Method which controls all modals. Will open a modal corresponding to the
@@ -197,13 +230,12 @@ export class ItemManagePage extends React.Component {
    */
   renderCell = (key, itemBatch) => {
     const { hasFridges } = this.state;
-    const { vvmStatus } = itemBatch;
+    const { vvmStatus, reason } = itemBatch;
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
-
-    const usingFridge = vvmStatus !== false && hasFridges;
+    const usingFridge = vvmStatus !== false && hasFridges && !reason;
     switch (key) {
       default:
-        return itemBatch[key];
+        return { type: 'text', cellContents: itemBatch[key] };
       case 'expiryDate':
         return <ExpiryTextInput text={itemBatch[key]} />;
       case 'location':
@@ -221,7 +253,16 @@ export class ItemManagePage extends React.Component {
           <IconCell icon="warning" iconSize={30} onPress={() => {}} iconColour={FINALISED_RED} />
         );
       case 'dispose':
-        return <IconCell icon="trash" iconSize={30} onPress={() => {}} iconColour={DARK_GREY} />;
+        console.log(reason && reason.title);
+        return (
+          <IconCell
+            text={reason && reason.title}
+            icon={reason ? 'times' : 'trash'}
+            iconSize={reason ? 20 : 30}
+            onPress={reason ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
+            iconColour={reason ? 'red' : DARK_GREY}
+          />
+        );
       case 'vvmStatus':
         return (
           <MiniToggleBar
@@ -235,7 +276,7 @@ export class ItemManagePage extends React.Component {
   };
 
   renderModal = () => {
-    const { modalKey } = this.state;
+    const { modalKey, currentBatch } = this.state;
     let splitValue;
     const modals = {
       location: (
@@ -245,6 +286,14 @@ export class ItemManagePage extends React.Component {
           sortByString="description"
           onSelect={this.onFridgeSelection}
           renderLeftText={({ description } = { description: 'Unnamed Fridge' }) => description}
+        />
+      ),
+      dispose: (
+        <GenericChoiceList
+          data={this.REASONS}
+          keyToDisplay="title"
+          onPress={this.onDispose()}
+          highlightValue={currentBatch && currentBatch.reason ? currentBatch.reason.title : null}
         />
       ),
       vvmStatus: <TextEditor text={splitValue} onEndEditing={this.onSplitBatch} />,
