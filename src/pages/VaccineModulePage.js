@@ -31,7 +31,7 @@ const MAX_LOOKBACK_MILLISECONDS = 30 * MILLISECONDS_IN_DAY;
 export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { fridges: [], selectedFridgeId: null };
+    this.state = { selectedFridgeId: null };
   }
 
   componentWillMount() {
