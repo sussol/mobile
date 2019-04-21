@@ -139,6 +139,7 @@ export class VaccineModulePage extends React.Component {
   renderFridge = fridge => {
     const { database } = this.props;
     const fridgeChartData = extractDataForFridgeChart({ database, fridge });
+    const numberOfBreaches = fridgeChartData.breaches.length;
 
     const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
     const { selectedFridgeCode } = this.state;
@@ -153,7 +154,7 @@ export class VaccineModulePage extends React.Component {
 
             {fridge.isInBreach ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
-              {this.renderFridgeExtraInfo(fridge, fridgeChartData.breaches)}
+              {this.renderFridgeExtraInfo(fridge, numberOfBreaches)}
               {this.renderFridgeStock(fridge)}
             </View>
           </View>
