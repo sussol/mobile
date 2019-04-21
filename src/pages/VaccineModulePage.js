@@ -19,6 +19,8 @@ import globalStyles, {
   HAZARD_RED,
 } from '../globalStyles';
 
+const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
+const MAX_LOOKBACK_DAYS = 30 * MILLISECONDS_IN_DAY;
 const CHERVON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 
@@ -126,6 +128,18 @@ export class VaccineModulePage extends React.Component {
     );
   };
 
+  onHazardPress = breach => {
+    console.log(breach.temperature);
+    // open modal with params, data: [getDataForBreachModal(breach, MAX_BREACH_CHART_DATAPOINS )]
+  };
+
+  extractChartInfo = fridge => {
+    console.log(fridge.description, MAX_LOOKBACK_DAYS);
+    // return reult of extractDataForFridgeChart(fridge, MAX_LOOKBACK_DAYS)
+  };
+
+  renderChart = fridge => <VaccineChart {...this.extractChartInfo(fridge)} />;
+
   /* Fridge and all of it's components */
   renderFridge = fridge => {
     const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
@@ -146,9 +160,7 @@ export class VaccineModulePage extends React.Component {
             </View>
           </View>
           {isFridgeSelected && (
-            <View style={{ height: 250, alignSelf: 'stretch' }}>
-              <VaccineChart {...fridge.getTemperaturePoints()} />
-            </View>
+            <View style={{ height: 250, alignSelf: 'stretch' }}>{this.renderChart(fridge)}</View>
           )}
         </View>
       </View>

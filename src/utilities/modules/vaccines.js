@@ -165,3 +165,87 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item } = 
     items: allItemsForLogs,
   };
 };
+
+export const aggregateLogs = sensorLogs => [
+  { timestamp: 'Feb 23', temperature: 5.9, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 24', temperature: 6, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 25', temperature: 7, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 26', temperature: 8.4, sensorLog: sensorLogs[0] },
+  { timestamp: 'Feb 27', temperature: 8, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 1', temperature: 6, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 2', temperature: 5.7, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 3', temperature: 3.5, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 4', temperature: 3.8, sensorLog: sensorLogs[0] },
+  { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
+];
+
+export const extractBreachPoints = ({ lineData, fullBreaches, temperatureRange }) => [
+  {
+    timestamp: 'Feb 26',
+    temperature: 8.4,
+    sensorLogs: [],
+    isMax: true, // sensorLogs.max('temperature') > temperatureRange.maxTemperature;
+    ...temperatureRange,
+  },
+];
+
+/**
+ * Returns aggregated data for breach modal, based on passed array
+ * of sensorLogs (breaches)
+ */
+export const extractDataForBreachModal = ({
+  breaches,
+  numberOfChartDataPoints,
+  itemFilter,
+  itemBatchFilter,
+}) => {
+  const result = [];
+  breaches.forEach(breach => {
+    const { sensorLogs, maxTemperature, minTemperature, isMax } = breach;
+    const numberOfDataPoints =
+      sensorLogs.length >= numberOfChartDataPoints ? numberOfChartDataPoints : sensorLogs.length;
+
+    result.push({
+      ...sensorLogsExtractBatches(sensorLogs, itemFilter, itemBatchFilter),
+      chartData: {
+        [isMax ? 'maxLine' : 'minLine']: aggregateLogs({
+          sensorLogs,
+          numberOfDataPoints,
+          isMax,
+        }),
+        ...(isMax ? { maxTemperature } : { minTemperature }),
+      },
+    });
+  });
+};
+
+const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
+
+/**
+ * Returns aggregated data for breach modal, based on passed array
+ * of sensorLogs (breaches)
+ */
+export const extractDataForFridgeChart = ({ fridge, MAX_LOOKBACK_DAYS }) => {
+  const { temperatureRange } = fridge;
+
+  const fromTimestamp = new Date(new Date() - MAX_LOOKBACK_DAYS);
+  const sensorLogs = fridge.sensorLogs.filtered('timestamp => $0', fromTimestamp);
+  const chartRangeMilliseconds = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
+  const numberOfDataPoints = Math.floor(chartRangeMilliseconds / MILLISECONDS_IN_DAY);
+
+  const minLine = aggregateLogs(sensorLogs, numberOfDataPoints, true);
+  const maxLine = aggregateLogs(sensorLogs, numberOfDataPoints, false);
+  const fullBreaches = extractBreaches(sensorLogs);
+  const breaches = [
+    ...extractBreachPoints(minLine, fullBreaches, temperatureRange),
+    ...extractBreachPoints(maxLine, fullBreaches, temperatureRange),
+  ];
+
+  return {
+    minLine,
+    maxLine,
+    breaches,
+    onHazardPress: this.onHazardPress,
+    ...temperatureRange,
+  };
+};
