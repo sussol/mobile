@@ -209,24 +209,40 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
   };
 };
 
-export const aggregateLogs = sensorLogs => [
-  { timestamp: 'Feb 23', temperature: 5.9, sensorLog: sensorLogs[0] },
-  { timestamp: 'Feb 24', temperature: 6, sensorLog: sensorLogs[0] },
-  { timestamp: 'Feb 25', temperature: 7, sensorLog: sensorLogs[0] },
-  { timestamp: 'Feb 26', temperature: 8.4, sensorLog: sensorLogs[0] },
-  { timestamp: 'Feb 27', temperature: 8, sensorLog: sensorLogs[0] },
-  { timestamp: 'March 1', temperature: 6, sensorLog: sensorLogs[0] },
-  { timestamp: 'March 2', temperature: 5.7, sensorLog: sensorLogs[0] },
-  { timestamp: 'March 3', temperature: 3.5, sensorLog: sensorLogs[0] },
-  { timestamp: 'March 4', temperature: 3.8, sensorLog: sensorLogs[0] },
-  { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
-];
+export const aggregateLogs = (sensorLogs, numberOfDataPoints, isMax = false) => {
+  if (isMax) {
+    return [
+      { timestamp: 'Feb 23', temperature: 5.9, sensorLog: sensorLogs[0] },
+      { timestamp: 'Feb 24', temperature: 6, sensorLog: sensorLogs[0] },
+      { timestamp: 'Feb 25', temperature: 7, sensorLog: sensorLogs[0] },
+      { timestamp: 'Feb 26', temperature: 8.4, sensorLog: sensorLogs[0] },
+      { timestamp: 'Feb 27', temperature: 8, sensorLog: sensorLogs[0] },
+      { timestamp: 'March 1', temperature: 6, sensorLog: sensorLogs[0] },
+      { timestamp: 'March 2', temperature: 5.7, sensorLog: sensorLogs[0] },
+      { timestamp: 'March 3', temperature: 3.5, sensorLog: sensorLogs[0] },
+      { timestamp: 'March 4', temperature: 3.8, sensorLog: sensorLogs[0] },
+      { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
+    ];
+  }
+  return [
+    { timestamp: 'Feb 23', temperature: 2, sensorLog: sensorLogs[0] },
+    { timestamp: 'Feb 24', temperature: 2.5, sensorLog: sensorLogs[0] },
+    { timestamp: 'Feb 25', temperature: 3.4, sensorLog: sensorLogs[0] },
+    { timestamp: 'Feb 26', temperature: 5, sensorLog: sensorLogs[0] },
+    { timestamp: 'Feb 27', temperature: 4.1, sensorLog: sensorLogs[0] },
+    { timestamp: 'March 1', temperature: 2.8, sensorLog: sensorLogs[0] },
+    { timestamp: 'March 2', temperature: 4, sensorLog: sensorLogs[0] },
+    { timestamp: 'March 3', temperature: 3.3, sensorLog: sensorLogs[0] },
+    { timestamp: 'March 4', temperature: 3.1, sensorLog: sensorLogs[0] },
+    { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
+  ];
+};
 
 export const extractBreachPoints = ({ lineData, fullBreaches }) => [
   {
     timestamp: 'Feb 26',
     temperature: 8.4,
-    sensorLogs: [],
+    sensorLogs: [{ id: 1 }],
   },
 ];
 
@@ -267,8 +283,8 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
   const numberOfDataPoints = Math.floor(chartRangeMilliseconds / MILLISECONDS_IN_DAY);
 
   // TODO change based on aggregateLogs return format
-  const minLine = aggregateLogs(sensorLogs, numberOfDataPoints, true);
-  const maxLine = aggregateLogs(sensorLogs, numberOfDataPoints, false);
+  const minLine = aggregateLogs(sensorLogs, numberOfDataPoints, false);
+  const maxLine = aggregateLogs(sensorLogs, numberOfDataPoints, true);
   const fullBreaches = extractBreaches(sensorLogs);
   const breaches = [
     ...extractBreachPoints(minLine, fullBreaches, TEMPERATURE_RANGE),

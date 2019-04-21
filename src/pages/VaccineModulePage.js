@@ -87,6 +87,8 @@ export class VaccineModulePage extends React.Component {
     const { database } = this.props;
 
     const { minTemperature, maxTemperature } = fridge.getTemperatureExposure(database);
+
+    if (!minTemperature || !maxTemperature) return null;
     const hasBreaches = numberOfBreaches > 0;
 
     const {
@@ -149,10 +151,12 @@ export class VaccineModulePage extends React.Component {
   renderFridge = fridge => {
     const { database } = this.props;
     const fridgeChartData = extractDataForFridgeChart({ database, fridge });
+
     const numberOfBreaches = fridgeChartData.breaches.length;
 
     const currentTemperature = fridge.getCurrentTemperature(database);
-    const isCriticalTemperature = fridge.isCriticalTemperature(database);
+    const isCriticalTemperature =
+      currentTemperature !== null && fridge.isCriticalTemperature(database);
 
     const { selectedFridgeId } = this.state;
     const isFridgeSelected = fridge.id === selectedFridgeId;
@@ -163,7 +167,7 @@ export class VaccineModulePage extends React.Component {
         <View style={[sectionStyle, { flexDirection: 'column', alignItems: 'stretch' }]}>
           <View style={fridgeInfoSectionStyle}>
             {this.renderFridgeName(fridge, isFridgeSelected)}
-            {currentTemperature !== null ? currentTemperature : null}
+            {currentTemperature !== null ? this.renderTemperature(30, currentTemperature) : null}
 
             {isCriticalTemperature ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
@@ -173,7 +177,7 @@ export class VaccineModulePage extends React.Component {
           </View>
           {isFridgeSelected && (
             <View style={{ height: 250, alignSelf: 'stretch' }}>
-              {<VaccineChart {...fridgeChartData} hazardPress={this.onHazardPress} />}
+              {<VaccineChart {...fridgeChartData} onHazardPress={this.onHazardPress} />}
             </View>
           )}
         </View>
