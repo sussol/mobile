@@ -56,7 +56,7 @@ export class Location extends Realm.Object {
   }
 
   getSensorLogs(database, lookBackMilliseconds = null) {
-    const sensorLogs = database.objects('SensorLogs').filtered('location.id = $0', this.id);
+    const sensorLogs = database.objects('SensorLog').filtered('location.id = $0', this.id);
     if (!lookBackMilliseconds) return sensorLogs;
     const fromDate = new Date(new Date() - lookBackMilliseconds);
     return sensorLogs.filtered('timestamp >= $0', fromDate);
