@@ -145,11 +145,11 @@ export class VaccineModulePage extends React.Component {
     const isCriticalTemperature = fridge.isCriticalTemperature(database);
 
     const { selectedFridgeId } = this.state;
-    const isFridgeSelected = fridge.code === selectedFridgeId;
+    const isFridgeSelected = fridge.id === selectedFridgeId;
 
     const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
     return (
-      <View key={fridge.code}>
+      <View key={fridge.id}>
         <View style={[sectionStyle, { flexDirection: 'column', alignItems: 'stretch' }]}>
           <View style={fridgeInfoSectionStyle}>
             {this.renderFridgeName(fridge, isFridgeSelected)}
