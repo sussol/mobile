@@ -84,7 +84,7 @@ export class VaccineModulePage extends React.Component {
     const { database } = this.props;
     const numberOfBreaches = fridge.getNumberOfBreaches(database, MAX_LOOKBACK_MILLISECONDS);
     const hasBreaches = numberOfBreaches > 0;
-    const { minTemperature, maxTemperature } = fridge.getTemperatureExposure();
+    const { minTemperature, maxTemperature } = fridge.getTemperatureExposure(database);
 
     const { greyTextStyleSmall, greyTextStyleLarge, fridgeInfoSectionStyle } = localStyles;
     const extraSectionStyle = { flexDirection: 'row', justifySelf: 'flex-end', marginRight: 10 };

@@ -77,8 +77,12 @@ export class Location extends Realm.Object {
     return sensor.temperature;
   }
 
-  getTemperatureExposure() {
-    return this.data.temperatureExposure;
+  getTemperatureExposure(database) {
+    const sensorLogs = this.getSensorLogs(database);
+    return {
+      minTemperature: sensorLogs.min('temperature'),
+      maxTemperature: sensorLogs.max('temperature'),
+    };
   }
 
   getTotalStock() {
