@@ -10,7 +10,9 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { VaccineChart } from '../widgets/VaccineChart';
+import { VaccineChart } from '../widgets';
+import { extractDataForFridgeChart } from '../utilities/modules/vaccines';
+
 import globalStyles, {
   SHADOW_BORDER,
   APP_FONT_FAMILY,
@@ -19,9 +21,7 @@ import globalStyles, {
   HAZARD_RED,
 } from '../globalStyles';
 
-import { extractDataForFridgeChart } from '../utilities/modules/vaccines';
-
-const CHERVON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
+const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 
 // TODO navigation for menu buttons
@@ -30,14 +30,14 @@ const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { fridges: [], selectedFridgeCode: null };
+    this.state = { fridges: [], selectedFridgeId: null };
   }
 
   componentWillMount() {
     const { database } = this.props;
     const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
-    const selectedFridgeCode = fridges.length > 0 && fridges[0].code;
-    this.setState({ fridges, selectedFridgeCode });
+    const selectedFridgeId = fridges.length > 0 ? fridges[0].id : null;
+    this.setState({ fridges, selectedFridgeId });
   }
 
   /* Helper to render menuButton */
@@ -49,19 +49,19 @@ export class VaccineModulePage extends React.Component {
     />
   );
 
-  renderIcon = (iconName, iconStyle = CHERVON_ICON_STYLE) => (
+  renderIcon = (iconName, iconStyle = CHEVRON_ICON_STYLE) => (
     <Icon style={{ margin: 5 }} name={iconName} {...iconStyle} />
   );
 
   /* Render fridge name and chevron-down icon if icon not selected fridge */
-  renderFridgeName = (fridge, isFridgeSNotelected) => {
-    const onPress = () => this.setState({ selectedFridgeCode: fridge.code });
+  renderFridgeName = (fridge, isFridgeSelected) => {
+    const onPress = () => this.setState({ selectedFridgeId: fridge.id });
 
     const { fridgeInfoSectionStyle, fridgeNameTextStyle } = localStyles;
 
     return (
       <TouchableOpacity style={fridgeInfoSectionStyle} onPress={onPress}>
-        {!isFridgeSNotelected && this.renderIcon('chevron-down')}
+        {!isFridgeSelected && this.renderIcon('chevron-down')}
         <Text style={fridgeNameTextStyle}>{fridge.description}</Text>
       </TouchableOpacity>
     );
@@ -80,14 +80,20 @@ export class VaccineModulePage extends React.Component {
 
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
   renderFridgeExtraInfo = (fridge, numberOfBreaches) => {
-    const hasBreaches = numberOfBreaches > 0;
-    const { minTemperature, maxTemperature } = fridge.getTemperatureExposure();
+    const { database } = this.props;
 
-    const { greyTextStyleSmall, greyTextStyleLarge, fridgeInfoSectionStyle } = localStyles;
-    const extraSectionStyle = { flexDirection: 'row', justifySelf: 'flex-end', marginRight: 10 };
+    const { minTemperature, maxTemperature } = fridge.getTemperatureExposure(database);
+    const hasBreaches = numberOfBreaches > 0;
+
+    const {
+      extraInfoSectionStyle,
+      greyTextStyleSmall,
+      greyTextStyleLarge,
+      fridgeInfoSectionStyle,
+    } = localStyles;
 
     return (
-      <View style={[fridgeInfoSectionStyle, extraSectionStyle]}>
+      <View style={[fridgeInfoSectionStyle, extraInfoSectionStyle]}>
         {hasBreaches && (
           <View style={[fridgeInfoSectionStyle, { marginRight: 10 }]}>
             <Text style={greyTextStyleSmall}>Breaches:</Text>
@@ -104,9 +110,9 @@ export class VaccineModulePage extends React.Component {
 
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
   renderFridgeStock = fridge => {
-    const fridgeStock = fridge.getTotalStock();
+    const { navigateTo, database } = this.props;
+    const fridgeStock = fridge.getTotalStock(database);
     const hasStock = fridgeStock > 0;
-    const { navigateTo } = this.props;
 
     const onPress = () =>
       navigateTo('manageVaccineItems', 'Manage Vaccine Items', {
@@ -122,7 +128,7 @@ export class VaccineModulePage extends React.Component {
       <TouchableOpacity style={fridgeInfoSectionStyle} onPress={onPress}>
         <Text style={fontStyleSmall}>Total Stock:</Text>
         <Text style={fontStyleLarge}>{fridgeStock}</Text>
-        {this.renderIcon('angle-double-right', CHERVON_ICON_STYLE)}
+        {this.renderIcon('angle-double-right', CHEVRON_ICON_STYLE)}
       </TouchableOpacity>
     );
   };
@@ -141,18 +147,21 @@ export class VaccineModulePage extends React.Component {
     const fridgeChartData = extractDataForFridgeChart({ database, fridge });
     const numberOfBreaches = fridgeChartData.breaches.length;
 
-    const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
-    const { selectedFridgeCode } = this.state;
-    const isFridgeSelected = fridge.code === selectedFridgeCode;
+    const currentTemperature = fridge.getCurrentTemperature(database);
+    const isCriticalTemperature = fridge.isCriticalTemperature(database);
 
+    const { selectedFridgeId } = this.state;
+    const isFridgeSelected = fridge.id === selectedFridgeId;
+
+    const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
     return (
-      <View key={fridge.code}>
+      <View key={fridge.id}>
         <View style={[sectionStyle, { flexDirection: 'column', alignItems: 'stretch' }]}>
           <View style={fridgeInfoSectionStyle}>
             {this.renderFridgeName(fridge, isFridgeSelected)}
-            {this.renderTemperature(30, fridge.getCurrentTemperature())}
+            {currentTemperature !== null ? currentTemperature : null}
 
-            {fridge.isInBreach ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
+            {isCriticalTemperature ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
               {this.renderFridgeExtraInfo(fridge, numberOfBreaches)}
               {this.renderFridgeStock(fridge)}
@@ -242,6 +251,11 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  extraInfoSectionStyle: {
+    flexDirection: 'row',
+    justifySelf: 'flex-end',
+    marginRight: 10,
   },
   imageStyle: {
     height: 60,
