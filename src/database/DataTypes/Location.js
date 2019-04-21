@@ -54,10 +54,15 @@ export class Location extends Realm.Object {
     return this.data.temperaturePoints;
   }
 
-  getNumberOfBreaches(database, lookBackMilliseconds) {
-    const fromDate = new Date(new Date() - lookBackMilliseconds);
+  getSensorLogs(database, lookBackMilliseconds = null) {
     const sensorLogs = database.objects('SensorLogs').filtered('location.id = $0', this.id);
-    return extractBreaches(sensorLogs.filtered('timestamp >= $0', fromDate)).length;
+    if (!lookBackMilliseconds) return sensorLogs;
+    const fromDate = new Date(new Date() - lookBackMilliseconds);
+    return sensorLogs.filtered('timestamp >= $0', fromDate);
+  }
+
+  getNumberOfBreaches(...params) {
+    return extractBreaches(this.getSensorLogs(...params)).length;
   }
 
   getCurrentTemperature() {
