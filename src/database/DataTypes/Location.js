@@ -5,6 +5,8 @@
 
 import Realm from 'realm';
 
+import { extractBreaches } from '../../utilities/modules/vaccines';
+
 export class Location extends Realm.Object {
   // TODO remove data object
   data = {
@@ -52,8 +54,15 @@ export class Location extends Realm.Object {
     return this.data.temperaturePoints;
   }
 
-  getNumberOfBreaches() {
-    return this.data.temperaturePoints.hazards.length;
+  getSensorLogs(database, lookBackMilliseconds = null) {
+    const sensorLogs = database.objects('SensorLogs').filtered('location.id = $0', this.id);
+    if (!lookBackMilliseconds) return sensorLogs;
+    const fromDate = new Date(new Date() - lookBackMilliseconds);
+    return sensorLogs.filtered('timestamp >= $0', fromDate);
+  }
+
+  getNumberOfBreaches(...params) {
+    return extractBreaches(this.getSensorLogs(...params)).length;
   }
 
   getCurrentTemperature() {

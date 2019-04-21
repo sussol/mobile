@@ -24,6 +24,9 @@ const MAX_LOOKBACK_DAYS = 30 * MILLISECONDS_IN_DAY;
 const CHERVON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 
+const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
+const MAX_LOOKBACK_MILLISECONDS = 30 * MILLISECONDS_IN_DAY;
+
 // TODO navigation for menu buttons
 // TODO Localise all strings
 
@@ -80,7 +83,8 @@ export class VaccineModulePage extends React.Component {
 
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
   renderFridgeExtraInfo = fridge => {
-    const numberOfBreaches = fridge.getNumberOfBreaches();
+    const { database } = this.props;
+    const numberOfBreaches = fridge.getNumberOfBreaches(database, MAX_LOOKBACK_MILLISECONDS);
     const hasBreaches = numberOfBreaches > 0;
     const { minTemperature, maxTemperature } = fridge.getTemperatureExposure();
 
