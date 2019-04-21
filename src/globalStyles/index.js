@@ -40,6 +40,7 @@ export {
   FINALISED_RED,
   SOFT_RED,
   HAZARD_RED,
+  WARM_BLUE,
 } from './colors';
 
 export { APP_FONT_FAMILY } from './fonts';

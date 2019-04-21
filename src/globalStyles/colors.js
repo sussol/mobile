@@ -19,3 +19,4 @@ export const FINALISED_RED = '#f63b30';
 export const SOFT_RED = '#f63b3022';
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 export const HAZARD_RED = '#e95c30';
+export const WARM_BLUE = '#70b4f0';
