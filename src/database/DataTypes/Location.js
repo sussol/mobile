@@ -6,6 +6,7 @@
 import Realm from 'realm';
 
 import { extractBreaches } from '../../utilities/modules/vaccines';
+import { getTotal } from '../utilities';
 
 export class Location extends Realm.Object {
   // TODO remove data object
@@ -85,8 +86,12 @@ export class Location extends Realm.Object {
     };
   }
 
-  getTotalStock() {
-    return this.data.totalStock;
+  getItemBatchesWithQuantity(database) {
+    return database.objects('ItemBatch').filtered('location.id = $0 && numberOfPacks > 0', this.id);
+  }
+
+  getTotalStock(database) {
+    return getTotal(this.getItemBatchesWithQuantity(database), 'totalQuantity');
   }
 
   get isInBreach() {

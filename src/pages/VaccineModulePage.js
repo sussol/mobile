@@ -107,9 +107,9 @@ export class VaccineModulePage extends React.Component {
 
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
   renderFridgeStock = fridge => {
-    const fridgeStock = fridge.getTotalStock();
+    const { navigateTo, database } = this.props;
+    const fridgeStock = fridge.getTotalStock(database);
     const hasStock = fridgeStock > 0;
-    const { navigateTo } = this.props;
 
     const onPress = () =>
       navigateTo('manageVaccineItems', 'Manage Vaccine Items', {
