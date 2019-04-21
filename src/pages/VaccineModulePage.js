@@ -121,7 +121,7 @@ export class VaccineModulePage extends React.Component {
     const hasStock = fridgeStock > 0;
 
     const onPress = () =>
-      navigateTo('manageVaccineItems', 'Manage Vaccine Items', {
+      navigateTo('manageVaccineStock', 'Manage Vaccine Stock', {
         initialLocation: fridge,
       });
 
@@ -195,7 +195,7 @@ export class VaccineModulePage extends React.Component {
       { text: 'Order Stock', onPress: () => console.log('Order Stock') },
       {
         text: 'Manage Stock',
-        onPress: () => navigateTo('manageVaccineItems', 'Manage Vaccine Items'),
+        onPress: () => navigateTo('manageVaccineStock', 'Manage Vaccine Stock'),
       },
     ];
 
