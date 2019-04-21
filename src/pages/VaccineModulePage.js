@@ -37,8 +37,12 @@ export class VaccineModulePage extends React.Component {
   componentWillMount() {
     const { database } = this.props;
     const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
-    const selectedFridgeId = fridges.length > 0 ? fridges[0].id : null;
-    this.setState({ fridges, selectedFridgeId });
+    const hasFridges = fridges.length > 0;
+    const selectedFridgeId = hasFridges ? fridges[0].id : null;
+
+    this.fridges = fridges;
+    this.hasFridges = hasFridges;
+    this.setState({ selectedFridgeId });
   }
 
   /* Helper to render menuButton */
@@ -168,7 +172,7 @@ export class VaccineModulePage extends React.Component {
   };
 
   render() {
-    const { fridges } = this.state;
+    const { fridges, hasFridges } = this;
     const { navigateTo } = this.props;
 
     const menuButtons = [
@@ -181,7 +185,6 @@ export class VaccineModulePage extends React.Component {
       },
     ];
 
-    const hasFridges = fridges.length > 0;
     const {
       pageContainerStyle,
       sectionStyle,
