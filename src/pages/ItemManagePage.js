@@ -78,6 +78,7 @@ export class ItemManagePage extends React.Component {
 
     this.FRIDGES = null;
     this.REASONS = null;
+    this.VVMREASON = null;
 
     this.state = {
       data: null,
@@ -92,10 +93,7 @@ export class ItemManagePage extends React.Component {
    * COMPONENT METHODS
    */
   componentDidMount = () => {
-    const { database } = this.props;
-    const item = database
-      .objects('Item')
-      .filter(i => i.batches.length > 0 && i.batches[0].numberOfPacks > 0)[0];
+    const { database, item } = this.props;
     this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
     this.REASONS = database
       .objects('Options')
