@@ -251,7 +251,6 @@ export class ItemManagePage extends React.Component {
           <IconCell icon="warning" iconSize={30} onPress={() => {}} iconColour={FINALISED_RED} />
         );
       case 'dispose':
-        console.log(reason && reason.title);
         return (
           <IconCell
             text={reason && reason.title}
