@@ -176,7 +176,9 @@ export class ManageVaccineStockPage extends React.Component {
     const fridges = database.objects('Location').filter(location => location.isFridge);
     fridges.unshift({ description: LOCALIZATION.misc.allLocations });
     this.LOCATION_FILTERS = fridges;
-    this.ITEMS = database.objects('Item').filtered('category.name = $0', 'vaccine');
+    this.ITEMS = database
+      .objects('Item')
+      .filtered('category.name BEGINSWITH[c] $0 && category.name ENDSWITH[c] $0 ', 'vaccine');
     const locationFilter = initialLocation || fridges[0];
     this.setState({ locationFilter });
   };
@@ -185,7 +187,7 @@ export class ManageVaccineStockPage extends React.Component {
    * EVENT HANDLERS
    */
 
-  onNavigateToItem = ({ item } = {}) => {
+  onNavigateToItem = item => {
     const { navigateTo } = this.props;
     navigateTo('manageVaccineItem', item.name, { item });
   };
@@ -229,6 +231,7 @@ export class ManageVaccineStockPage extends React.Component {
   // locationFilter - the values will come from that particular location.
   renderCell = (key, item) => {
     const { locationFilter } = this.state;
+    const { database } = this.props;
     const { BREACH } = MODAL_KEYS;
     const emptyCell = { type: 'text', cellContents: '' };
     const functionToCall = KEY_TO_FUNCTION_MAPPINGS[key];
@@ -254,11 +257,11 @@ export class ManageVaccineStockPage extends React.Component {
             icon="angle-double-right"
             iconSize={20}
             iconColor={SUSSOL_ORANGE}
-            onPress={this.onNavigateToItem}
+            onPress={() => this.onNavigateToItem(item)}
           />
         );
       case 'temperatureExposure':
-        return formatExposureRange(item[functionToCall](locationFilter));
+        return formatExposureRange(item[functionToCall](database, locationFilter));
     }
   };
 
