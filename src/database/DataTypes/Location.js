@@ -71,6 +71,12 @@ export class Location extends Realm.Object {
   get isInBreach() {
     return this.data.isInBreach;
   }
+
+  get temperatureRange() {
+    if (!this.isFridge) return null;
+    const { minTemperature, maxTemperature } = this.locationType;
+    return { minTemperature, maxTemperature };
+  }
 }
 
 Location.schema = {
