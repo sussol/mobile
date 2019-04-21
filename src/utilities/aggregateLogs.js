@@ -34,6 +34,7 @@ export const aggregateLogs = ({
   const startBoundary = new Date(Math.min(startTimestamp, startDate) || startTimestamp);
   const endBoundary = new Date(Math.max(endTimestamp, endDate) || endTimestamp);
 
+  // Caclulate interval duration in ms.
   const totalDuration = endBoundary - startBoundary;
   const intervalDuration = totalDuration / numberOfIntervals;
 
@@ -44,33 +45,29 @@ export const aggregateLogs = ({
     aggregatedLogs.push({ intervalStartDate, intervalEndDate });
   }
 
-  // Map intervals to aggregated objects.
+  // Offset last end date to prevent not including last log.
+  aggregatedLogs[aggregatedLogs.length - 1].intervalEndDate += 1;
 
-  aggregatedLogs.forEach(({ intervalStartDate, intervalEndDate }, index) => {
-    // Calculate median date.
-    const medianDuration = (intervalEndDate.getTime() - intervalStartDate.getTime()) / 2;
-    const medianDate = new Date(intervalStartDate.getTime() + medianDuration);
+  // Map intervals to aggregated objects.
+  const medianDuration = intervalDuration / 2;
+  aggregatedLogs.map(aggregateLog => {
+    const { intervalStartDate, intervalEndDate } = aggregateLog;
 
     // Group sensor logs by interval.
-    aggregatedLogs[index].sensorLogs = sensorLogs.filtered(
+    const intervalLogs = sensorLogs.filtered(
       'timestamp >= $0 && timestamp <= $1',
       intervalStartDate,
       intervalEndDate
     );
 
-    const minTemperature = aggregatedLogs[index].sensorLogs.min('temperature');
-    const maxTemperature = aggregatedLogs[index].sensorLogs.max('temperature');
+    // Calculate aggregated log date.
+    const timestamp = new Date(intervalStartDate.getTime() + medianDuration);
 
     // Get minimum and maximum logs for each interval.
-    aggregatedLogs[index].minimumLog = {
-      timestamp: medianDate,
-      temperature: minTemperature,
-    };
+    const minTemperature = intervalLogs.min('temperature');
+    const maxTemperature = intervalLogs.max('temperature');
 
-    aggregatedLogs[index].maximumLog = {
-      timestamp: medianDate,
-      temperature: maxTemperature,
-    };
+    return { timestamp, minTemperature, maxTemperature };
   });
 
   return aggregatedLogs;
