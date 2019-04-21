@@ -49,6 +49,7 @@ export const RECORD_TYPES = new SyncTranslator({
   NumberToReuse: 'number_reuse',
   Requisition: 'requisition',
   RequisitionItem: 'requisition_line',
+  Options: 'options',
   Sensor: 'sensor',
   SensorLog: 'sensorLog',
   SensorLogItemBatchJoin: 'sensorLogItemLineJoin',

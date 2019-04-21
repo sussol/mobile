@@ -189,6 +189,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'number_to_use'],
       canBeBlank: [],
     },
+    Options: {
+      cannotBeBlank: ['title', 'type', 'isActive'],
+      canBeBlank: [],
+    },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
       canBeBlank: ['date_entered', 'serial_number', 'requester_reference'],
@@ -518,6 +522,17 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const numberToReuse = database.update(recordType, internalRecord);
       // Attach the number to reuse to the number sequence.
       numberSequence.addNumberToReuse(numberToReuse);
+      break;
+    }
+    case 'Options': {
+      if (record.type === 'stocktakeLineAdjustment' || record.type === 'vaccineDisposalReason') {
+        database.update(recordType, {
+          id: record.ID,
+          title: record.title,
+          type: record.type,
+          isActive: parseBoolean(record.isActive),
+        });
+      }
       break;
     }
     case 'Requisition': {
