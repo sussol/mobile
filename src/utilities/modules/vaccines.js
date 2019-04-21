@@ -8,7 +8,6 @@
  * module.
  */
 
-
 const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
 const MAX_BREACH_CHART_DATAPOINTS = 7;
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
@@ -195,7 +194,6 @@ export const extractBreachPoints = ({ lineData, fullBreaches, temperatureRange }
   },
 ];
 
-
 /**
  * Returns aggregated data for breach modal, based on passed array
  * of sensorLogs (breaches)
@@ -233,6 +231,7 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
   const chartRangeMilliseconds = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
   const numberOfDataPoints = Math.floor(chartRangeMilliseconds / MILLISECONDS_IN_DAY);
 
+  // TODO change based on aggregateLogs return format
   const minLine = aggregateLogs(sensorLogs, numberOfDataPoints, true);
   const maxLine = aggregateLogs(sensorLogs, numberOfDataPoints, false);
   const fullBreaches = extractBreaches(sensorLogs);
@@ -245,7 +244,6 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
     minLine,
     maxLine,
     breaches,
-    onHazardPress: this.onHazardPress,
     ...TEMPERATURE_RANGE,
   };
 };

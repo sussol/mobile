@@ -159,7 +159,7 @@ export class VaccineModulePage extends React.Component {
           </View>
           {isFridgeSelected && (
             <View style={{ height: 250, alignSelf: 'stretch' }}>
-              {<VaccineChart {...fridgeChartData} />}
+              {<VaccineChart {...fridgeChartData} hazardPress={this.onHazardPress} />}
             </View>
           )}
         </View>
