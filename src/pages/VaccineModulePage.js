@@ -132,16 +132,19 @@ export class VaccineModulePage extends React.Component {
 
   /* Fridge and all of it's components */
   renderFridge = fridge => {
-    const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
+    const { database } = this.props;
+    const currentTemperature = fridge.getCurrentTemperature(database);
+
     const { selectedFridgeCode } = this.state;
     const isFridgeSelected = fridge.code === selectedFridgeCode;
 
+    const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
     return (
       <View key={fridge.code}>
         <View style={[sectionStyle, { flexDirection: 'column', alignItems: 'stretch' }]}>
           <View style={fridgeInfoSectionStyle}>
             {this.renderFridgeName(fridge, isFridgeSelected)}
-            {this.renderTemperature(30, fridge.getCurrentTemperature())}
+            {currentTemperature !== null ? currentTemperature : null}
 
             {fridge.isInBreach ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>

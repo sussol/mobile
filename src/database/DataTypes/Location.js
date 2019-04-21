@@ -65,8 +65,16 @@ export class Location extends Realm.Object {
     return extractBreaches(this.getSensorLogs(...params)).length;
   }
 
-  getCurrentTemperature() {
-    return this.data.currentTemperature;
+  getSensor(database) {
+    const sensor = database.object('Sensor').filtered('location.id = $0', this.id);
+    if (sensor.length === 0) return null;
+    return sensor[0];
+  }
+
+  getCurrentTemperature(database) {
+    const sensor = this.getSensor(database);
+    if (!sensor) return null;
+    return sensor.temperature;
   }
 
   getTemperatureExposure() {
