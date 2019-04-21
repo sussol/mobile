@@ -32,3 +32,6 @@ export { ExpiryTextInput } from './ExpiryTextInput';
 export { OnePressButton } from './OnePressButton';
 export { IconCell } from './IconCell';
 export { MiniToggleBar } from './MiniToggleBar';
+export { GenericChoiceList } from './GenericChoiceList';
+export { SimpleTable } from './SimpleTable';
+export { StackedTables } from './StackedTables';

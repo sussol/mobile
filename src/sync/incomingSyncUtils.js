@@ -15,7 +15,7 @@ import { SETTINGS_KEYS } from '../settings';
 
 /* eslint-disable camelcase */
 
-const { THIS_STORE_ID } = SETTINGS_KEYS;
+const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
 /**
  * Returns the number string as a float, or null if none passed.
@@ -27,6 +27,23 @@ const parseNumber = numberString => {
   if (!numberString) return null;
   const result = parseFloat(numberString);
   return Number.isNaN(result) ? null : result;
+};
+
+/**
+ * Safely checks json as string, returns an empty string on
+ * failure.
+ * @param   {string/null/undefined}  jsonAsString  JSON string to check
+ * @return  {string} on successfull check return passed parameter or null
+ */
+const validateJson = jsonAsString => {
+  if (!jsonAsString) return null;
+  let error = false;
+  try {
+    JSON.parse(jsonAsString);
+  } catch (e) {
+    error = true;
+  }
+  return error ? '' : jsonAsString;
 };
 
 /**
@@ -196,6 +213,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['status'],
       canBeBlank: ['Description', 'stock_take_created_date', 'serial_number'],
     },
+    Store: {
+      cannotBeBlank: [],
+      canBeBlank: [],
+    },
     StocktakeBatch: {
       cannotBeBlank: [
         'stock_take_ID',
@@ -239,6 +260,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     (containsAllFieldsSoFar, fieldName) =>
       containsAllFieldsSoFar &&
       record[fieldName] !== null && // Key must exist.
+      record[fieldName] !== undefined && // Field may be empty string.
       record[fieldName].length > 0, // Key must not be empty string.
     true
   );
@@ -647,6 +669,17 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       const stocktakeBatch = database.update(recordType, internalRecord);
       stocktake.addBatchIfUnique(database, stocktakeBatch);
       database.save('Stocktake', stocktake);
+      break;
+    }
+    case 'Store': {
+      const { tags, custom_data } = record;
+      if (settings.get(THIS_STORE_ID) === record.ID) {
+        database.update('Setting', { key: THIS_STORE_TAGS, value: tags || '' });
+        database.update('Setting', {
+          key: THIS_STORE_CUSTOM_DATA,
+          value: validateJson(custom_data),
+        });
+      }
       break;
     }
     case 'Transaction': {
