@@ -33,19 +33,19 @@ const MODAL_TITLES = {
 
 // Columns available for this component
 const COLUMNS = {
-  batch: { key: 'batch', title: 'BATCH', sortable: false, width: 2 },
-  expiry: { key: 'expiryDate', title: 'EXPIRY', sortable: false, width: 1.5 },
-  arrived: { key: 'arrived', title: 'ARRIVED', sortable: false, width: 1 },
-  fridge: { key: 'location', title: 'FRIDGE', sortable: false, width: 2 },
-  breach: { key: 'breach', title: 'BREACH', sortable: false, width: 1 },
-  vvm: { key: 'vvmStatus', title: 'VVM STATUS', sortable: false, width: 2 },
-  dispose: { key: 'dispose', title: 'DISPOSE', sortable: false, width: 1 },
+  batch: { key: 'batch', title: 'BATCH', sortable: false, width: 1.5, alignText: 'center' },
+  expiry: { key: 'expiryDate', title: 'EXPIRY', sortable: false, width: 1.5, alignText: 'center' },
+  arrived: { key: 'arrived', title: 'ARRIVED', sortable: false, width: 1, alignText: 'center' },
+  fridge: { key: 'location', title: 'FRIDGE', sortable: false, width: 1.5, alignText: 'center' },
+  breach: { key: 'breach', title: 'BREACH', sortable: false, width: 1, alignText: 'center' },
+  vvm: { key: 'vvmStatus', title: 'VVM STATUS', sortable: false, width: 2, alignText: 'center' },
+  dispose: { key: 'dispose', title: 'DISPOSE', sortable: false, width: 1.5, alignText: 'center' },
   quantity: {
     key: 'totalQuantity',
     title: 'QUANTITY',
     sortable: false,
-    width: 1.2,
-    alignText: 'right',
+    width: 1,
+    alignText: 'center',
   },
 };
 
