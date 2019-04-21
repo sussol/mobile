@@ -134,6 +134,7 @@ export class VaccineModulePage extends React.Component {
   renderFridge = fridge => {
     const { database } = this.props;
     const currentTemperature = fridge.getCurrentTemperature(database);
+    const isCriticalTemperature = fridge.isCriticalTemperature(database);
 
     const { selectedFridgeCode } = this.state;
     const isFridgeSelected = fridge.code === selectedFridgeCode;
@@ -146,7 +147,7 @@ export class VaccineModulePage extends React.Component {
             {this.renderFridgeName(fridge, isFridgeSelected)}
             {currentTemperature !== null ? currentTemperature : null}
 
-            {fridge.isInBreach ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
+            {isCriticalTemperature ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
               {this.renderFridgeExtraInfo(fridge)}
               {this.renderFridgeStock(fridge)}

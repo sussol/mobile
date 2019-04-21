@@ -94,8 +94,16 @@ export class Location extends Realm.Object {
     return getTotal(this.getItemBatchesWithQuantity(database), 'totalQuantity');
   }
 
-  get isInBreach() {
-    return this.data.isInBreach;
+  isCriticalTemperature(database) {
+    const currentTemperature = this.getCurrentTemperature(database);
+    const { minTemperature, maxTemperature } = this.temperatureRange;
+    return minTemperature >= currentTemperature || currentTemperature >= maxTemperature;
+  }
+
+  get temperatureRange() {
+    if (!this.isFridge) return null;
+    const { minTemperature, maxTemperature } = this.locationType;
+    return { minTemperature, maxTemperature };
   }
 }
 
