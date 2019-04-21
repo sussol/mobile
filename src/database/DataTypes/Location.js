@@ -61,10 +61,6 @@ export class Location extends Realm.Object {
     return sensorLogs.filtered('timestamp >= $0', fromDate);
   }
 
-  getNumberOfBreaches(...params) {
-    return extractBreaches(this.getSensorLogs(...params)).length;
-  }
-
   getCurrentTemperature() {
     return this.data.currentTemperature;
   }

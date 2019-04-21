@@ -19,13 +19,10 @@ import globalStyles, {
   HAZARD_RED,
 } from '../globalStyles';
 
-const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
-const MAX_LOOKBACK_DAYS = 30 * MILLISECONDS_IN_DAY;
+import { extractDataForFridgeChart } from '../utilities/modules/vaccines';
+
 const CHERVON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
-
-const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
-const MAX_LOOKBACK_MILLISECONDS = 30 * MILLISECONDS_IN_DAY;
 
 // TODO navigation for menu buttons
 // TODO Localise all strings
@@ -82,9 +79,7 @@ export class VaccineModulePage extends React.Component {
   };
 
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
-  renderFridgeExtraInfo = fridge => {
-    const { database } = this.props;
-    const numberOfBreaches = fridge.getNumberOfBreaches(database, MAX_LOOKBACK_MILLISECONDS);
+  renderFridgeExtraInfo = (fridge, numberOfBreaches) => {
     const hasBreaches = numberOfBreaches > 0;
     const { minTemperature, maxTemperature } = fridge.getTemperatureExposure();
 
@@ -134,18 +129,17 @@ export class VaccineModulePage extends React.Component {
 
   onHazardPress = breach => {
     console.log(breach.temperature);
-    // open modal with params, data: [getDataForBreachModal(breach, MAX_BREACH_CHART_DATAPOINS )]
-  };
-
-  extractChartInfo = fridge => {
-    console.log(fridge.description, MAX_LOOKBACK_DAYS);
-    // return reult of extractDataForFridgeChart(fridge, MAX_LOOKBACK_DAYS)
+    // const breaches = [breach.sensorLogs];
+    // open modal with params, data: [getDataForBreachModal({ breaches })]
   };
 
   renderChart = fridge => <VaccineChart {...this.extractChartInfo(fridge)} />;
 
   /* Fridge and all of it's components */
   renderFridge = fridge => {
+    const { database } = this.props;
+    const fridgeChartData = extractDataForFridgeChart({ database, fridge });
+
     const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
     const { selectedFridgeCode } = this.state;
     const isFridgeSelected = fridge.code === selectedFridgeCode;
@@ -159,12 +153,14 @@ export class VaccineModulePage extends React.Component {
 
             {fridge.isInBreach ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
-              {this.renderFridgeExtraInfo(fridge)}
+              {this.renderFridgeExtraInfo(fridge, fridgeChartData.breaches)}
               {this.renderFridgeStock(fridge)}
             </View>
           </View>
           {isFridgeSelected && (
-            <View style={{ height: 250, alignSelf: 'stretch' }}>{this.renderChart(fridge)}</View>
+            <View style={{ height: 250, alignSelf: 'stretch' }}>
+              {<VaccineChart {...fridgeChartData} />}
+            </View>
           )}
         </View>
       </View>

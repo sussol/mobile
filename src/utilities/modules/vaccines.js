@@ -189,25 +189,25 @@ export const extractBreachPoints = ({ lineData, fullBreaches, temperatureRange }
   },
 ];
 
+const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
+const MAX_BREACH_CHART_DATAPOINTS = 7;
+
 /**
  * Returns aggregated data for breach modal, based on passed array
  * of sensorLogs (breaches)
  */
-export const extractDataForBreachModal = ({
-  breaches,
-  numberOfChartDataPoints,
-  itemFilter,
-  itemBatchFilter,
-}) => {
+export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilter }) => {
   const result = [];
-  breaches.forEach(breach => {
-    const { sensorLogs, maxTemperature, minTemperature, isMax } = breach;
-    const numberOfDataPoints =
-      sensorLogs.length >= numberOfChartDataPoints ? numberOfChartDataPoints : sensorLogs.length;
+  breaches.forEach(sensorLogs => {
+    const { minTemperature, maxTemperature } = TEMPERATURE_RANGE;
+    const maxPoints = MAX_BREACH_CHART_DATAPOINTS;
+    const numberOfDataPoints = sensorLogs.length >= maxPoints ? maxPoints : sensorLogs.length;
+    const isMax = sensorLogs.filtered('temperature >= $0', maxTemperature).length > 0;
 
     result.push({
       ...sensorLogsExtractBatches(sensorLogs, itemFilter, itemBatchFilter),
       chartData: {
+        // TODO change based on aggregateLogs return format
         [isMax ? 'maxLine' : 'minLine']: aggregateLogs({
           sensorLogs,
           numberOfDataPoints,
@@ -220,16 +220,14 @@ export const extractDataForBreachModal = ({
 };
 
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 10000;
-
+const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
 /**
  * Returns aggregated data for breach modal, based on passed array
  * of sensorLogs (breaches)
  */
-export const extractDataForFridgeChart = ({ fridge, MAX_LOOKBACK_DAYS }) => {
-  const { temperatureRange } = fridge;
+export const extractDataForFridgeChart = ({ database, fridge }) => {
+  const sensorLogs = fridge.getSensorLogs(database, FRIDGE_CHART_LOOKBACK_MS);
 
-  const fromTimestamp = new Date(new Date() - MAX_LOOKBACK_DAYS);
-  const sensorLogs = fridge.sensorLogs.filtered('timestamp => $0', fromTimestamp);
   const chartRangeMilliseconds = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
   const numberOfDataPoints = Math.floor(chartRangeMilliseconds / MILLISECONDS_IN_DAY);
 
@@ -237,8 +235,8 @@ export const extractDataForFridgeChart = ({ fridge, MAX_LOOKBACK_DAYS }) => {
   const maxLine = aggregateLogs(sensorLogs, numberOfDataPoints, false);
   const fullBreaches = extractBreaches(sensorLogs);
   const breaches = [
-    ...extractBreachPoints(minLine, fullBreaches, temperatureRange),
-    ...extractBreachPoints(maxLine, fullBreaches, temperatureRange),
+    ...extractBreachPoints(minLine, fullBreaches, TEMPERATURE_RANGE),
+    ...extractBreachPoints(maxLine, fullBreaches, TEMPERATURE_RANGE),
   ];
 
   return {
@@ -246,6 +244,6 @@ export const extractDataForFridgeChart = ({ fridge, MAX_LOOKBACK_DAYS }) => {
     maxLine,
     breaches,
     onHazardPress: this.onHazardPress,
-    ...temperatureRange,
+    ...TEMPERATURE_RANGE,
   };
 };
