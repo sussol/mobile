@@ -86,11 +86,15 @@ export class VaccineModulePage extends React.Component {
     const hasBreaches = numberOfBreaches > 0;
     const { minTemperature, maxTemperature } = fridge.getTemperatureExposure(database);
 
-    const { greyTextStyleSmall, greyTextStyleLarge, fridgeInfoSectionStyle } = localStyles;
-    const extraSectionStyle = { flexDirection: 'row', justifySelf: 'flex-end', marginRight: 10 };
+    const {
+      extraInfoSectionStyle,
+      greyTextStyleSmall,
+      greyTextStyleLarge,
+      fridgeInfoSectionStyle,
+    } = localStyles;
 
     return (
-      <View style={[fridgeInfoSectionStyle, extraSectionStyle]}>
+      <View style={[fridgeInfoSectionStyle, extraInfoSectionStyle]}>
         {hasBreaches && (
           <View style={[fridgeInfoSectionStyle, { marginRight: 10 }]}>
             <Text style={greyTextStyleSmall}>Breaches:</Text>
@@ -237,6 +241,11 @@ const localStyles = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  extraInfoSectionStyle: {
+    flexDirection: 'row',
+    justifySelf: 'flex-end',
+    marginRight: 10,
   },
   imageStyle: {
     height: 60,
