@@ -120,18 +120,17 @@ export class VaccineChart extends React.Component {
 
   // Render hazard icons for sensor breaches.
   renderHazardPoints() {
-    const { breaches, onPress, dataKeys } = this.props;
+    const { breaches, onHazardPress, dataKeys } = this.props;
 
     if (!(breaches.length > 0)) return null;
 
-    return breaches.map(breach => (
+    return (
       <VictoryScatter
-        key={breach[0].id}
-        dataComponent={<HazardPoint onPress={onPress} breach={breach} />}
-        data={breach}
+        dataComponent={<HazardPoint onPress={onHazardPress} />}
+        data={breaches}
         {...dataKeys}
       />
-    ));
+    );
   }
 
   // Helper method for rendering vaccine chart.
@@ -279,7 +278,7 @@ VaccineChart.propTypes = {
   breaches: PropTypes.arrayOf(PropTypes.array),
   minTemperature: PropTypes.number,
   maxTemperature: PropTypes.number,
-  onPress: PropTypes.func,
+  onHazardPress: PropTypes.func,
   dataKeys: PropTypes.objectOf(PropTypes.string),
 };
 
@@ -289,7 +288,7 @@ VaccineChart.defaultProps = {
   breaches: [],
   minTemperature: Infinity,
   maxTemperature: -Infinity,
-  onPress: null,
+  onHazardPress: null,
   dataKeys: { x: 'timestamp', y: 'temperature' },
 };
 

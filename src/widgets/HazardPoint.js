@@ -18,10 +18,10 @@ const hazardPath = `M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.0
  * Custom component for rendering clickable hazard icons.
  */
 export const HazardPoint = props => {
-  const { x, y, onPress, breach } = props;
+  const { x, y, onPress, datum } = props;
   const { xOffset, yOffset, scale, fill } = hazardPointStyles;
 
-  const onPressWrapper = () => onPress && onPress(breach);
+  const onPressWrapper = () => onPress && onPress(datum);
 
   return (
     <Svg>
@@ -49,7 +49,8 @@ HazardPoint.propTypes = {
   x: PropTypes.number,
   y: PropTypes.number,
   onPress: PropTypes.func,
-  breach: PropTypes.arrayOf(PropTypes.object),
+  // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
+  datum: PropTypes.object,
 };
 
 export default HazardPoint;
