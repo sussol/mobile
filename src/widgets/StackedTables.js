@@ -22,7 +22,6 @@ import { SimpleTable } from './SimpleTable';
  * between each table.
  * @prop    {array}  data  2D array, of data for each table. Example below.
  * @prop    {object} additionalTableProps additional props for each simple table
- * @prop    {number} tablesHeight The % of height all tables should utilize
  *
  * data should be in the form:
  * [
@@ -32,14 +31,14 @@ import { SimpleTable } from './SimpleTable';
  */
 export class StackedTables extends React.PureComponent {
   render() {
-    const { data, additionalTableProps, tablesHeight } = this.props;
+    const { data, additionalTableProps } = this.props;
     const { containerStyle } = localStyles(this.props);
     return (
       <View style={containerStyle}>
         {data.map((datum, index) => {
           const { title = 'default' } = datum;
           return (
-            <View key={`${title + index}`} style={{ height: `${tablesHeight / data.length}%` }}>
+            <View key={`${title + index}`} style={{ backgroundColor: 'transparent' }}>
               <SimpleTable {...datum} {...additionalTableProps} />
             </View>
           );
@@ -63,13 +62,11 @@ const localStyles = ({ containerStyle }) =>
 
 StackedTables.defaultProps = {
   additionalTableProps: {},
-  tablesHeight: 95,
 };
 
 StackedTables.propTypes = {
   data: PropTypes.array.isRequired,
   additionalTableProps: PropTypes.object,
-  tablesHeight: PropTypes.number,
 };
 
 export default StackedTables;

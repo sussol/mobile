@@ -83,6 +83,70 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
 };
 
 /**
+ * Helper method for sensorLogExtractBreaches. Extracts
+ * statistics for a set of sensorlogs and itembatches.
+ * @param {Realm.results<ItemBatch>} itemBatches
+ * @param {Realm.results<SensorLog>} sensorLogs
+ */
+const extractBreachStatistics = (itemBatches, sensorLogs) => ({
+  location: sensorLogs.location,
+  numberOfAffectedBatches: itemBatches.length,
+  affectedQuantity: itemBatches.sum('numberOfPacks'),
+  exposureRange: {
+    minTemperature: sensorLogs.min('temperature') || Infinity,
+    maxTemperature: sensorLogs.max('temperautre') || -Infinity,
+  },
+  breachDuration: {
+    startDate: sensorLogs.max('timestamp') || null,
+    endDate: sensorLogs.min('timestamp') || null,
+  },
+});
+
+/**
+ * Helper method for sensorLogExtractBreaches
+ * @param {Realm.Results<SensorLog>} sensorLogs
+ * @return {Object} example below
+ * groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
+ */
+const extractItemBatches = sensorLogs => {
+  const groupedBatches = {};
+  sensorLogs.forEach(({ itemBatches, isInBreach }) => {
+    // Premature exit if log has no batches, or is not a breached sensorLog
+    if (itemBatches.length === 0 || !isInBreach) return;
+    // For each batch, store it's details:
+    // { duration, id, code, enteredDate, totalQuantity, expiryDate }
+    // If already stored, skip.
+    itemBatches.forEach(({ id: batchId, code, enteredDate, totalQuantity, expiryDate, item }) => {
+      // Ensure each batch has stock and an associated Item.
+      if (!(item || totalQuantity > 0)) return;
+      const { id: itemId } = item;
+      // If this batches item hasn't been encountered yet, create
+      // a grouping object. groupedBatches = { itemId: { item, batches: {}  }}
+      if (!groupedBatches[itemId]) groupedBatches[itemId] = { item, batches: {} };
+      // If this batch has been encountered before, skip it.
+      const itemBatchGroup = groupedBatches[itemId].batches;
+      if (itemBatchGroup[batchId]) return;
+      // Calculate the duration this ItemBatch has been counted in this group of sensorLogs.
+      const duration = new Date(
+        sensorLogs.filtered('ItemBatches.id = $0', batchId).max('temperature') -
+          sensorLogs.filtered('ItemBatches.id = $0', batchId).min('temperature')
+      );
+      // Finally store the batches details:
+      // groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
+      itemBatchGroup[batchId] = {
+        duration,
+        id: batchId,
+        code,
+        enteredDate,
+        totalQuantity,
+        expiryDate,
+      };
+    });
+  });
+  return groupedBatches;
+};
+
+/**
  * Extracts all ItemBatches which are related to the passed sensorLogs.
  * Groups all ItemBatch objects by Item and calculates the duration of
  * time each ItemBatch was present during these logs.
@@ -108,48 +172,15 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
  *  ...
  * ]
  */
-export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item } = {}) => {
-  const groupedBatches = {};
-  let filteredLogs;
+export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, database } = {}) => {
+  // Ensure that when passed a breach, we disregard the delimiter sensorLogs
+  // which aren't breaches when calculating statistics.
+  let filteredLogs = sensorLogs.filtered('isInBreach = $0', true);
   // If an Item has been passed, only find batches for this item.
   if (item) filteredLogs = sensorLogs.filtered('ItemBatches.item.id = $0', item.id);
   // If an ItemBatch has been passed, only find batches for this item.
   else if (itemBatch) filteredLogs = sensorLogs.filtered('ItemBatches.id = $0', itemBatch.id);
-  filteredLogs.forEach(({ itemBatches, isInBreach }) => {
-    // Premature exit if log has no batches, or is not a breached sensorLog
-    if (itemBatches.length === 0 || !isInBreach) return;
-    // For each batch, store it's details:
-    // { duration, id, code, enteredDate, totalQuantity, expiryDate }
-    // If already stored, skip.
-    itemBatches.forEach(
-      ({ id: batchId, code, enteredDate, totalQuantity, expiryDate, item: batchItem }) => {
-        // Ensure each batch has stock and an associated Item.
-        if (!(batchItem || totalQuantity > 0)) return;
-        const { id: itemId } = batchItem;
-        // If this batches item hasn't been encountered yet, create
-        // a grouping object. groupedBatches = { itemId: { item, batches: {}  }}
-        if (!groupedBatches[itemId]) groupedBatches[itemId] = { item: batchItem, batches: {} };
-        // If this batch has been encountered before, skip it.
-        const itemBatchGroup = groupedBatches[itemId].batches;
-        if (itemBatchGroup[batchId]) return;
-        // Calculate the duration this ItemBatch has been counted in this group of sensorLogs.
-        const duration = new Date(
-          filteredLogs.filtered('ItemBatches.id = $0', itemBatch.id).max('temperature') -
-            filteredLogs.filtered('ItemBatches.id = $0', itemBatch.id).min('temperature')
-        );
-        // Finally store the batches details:
-        // groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
-        itemBatchGroup[batchId] = {
-          duration,
-          id: batchId,
-          code,
-          enteredDate,
-          totalQuantity,
-          expiryDate,
-        };
-      }
-    );
-  });
+  const groupedBatches = extractItemBatches(filteredLogs);
   // Create the return object. [ {item, batches: [ as above ] }, .. ]
   const allItemsForLogs = Object.values(groupedBatches).map(itemObject => {
     const { item: itemForGroup, batches } = itemObject;
@@ -158,10 +189,17 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item } = 
       batches: Object.values(batches).map(batchObject => batchObject),
     };
   });
+  // Get all ItemBatch objects associated with these sensorLogs, used in
+  // calculating statistics of this breach
+
+  const allItemBatches = database
+    .objects('ItemBatch')
+    .filtered(filteredLogs.map(({ id }) => `sensorLogs.id = "${id}"`).join(' OR '));
   // Also return the sensorLogs for these items and batches.
   // If no items or batches have been found, items: [] is returned
   return {
     sensorLogs,
     items: allItemsForLogs,
+    ...extractBreachStatistics(allItemBatches, sensorLogs),
   };
 };
