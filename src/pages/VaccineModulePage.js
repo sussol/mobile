@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable react/forbid-prop-types, global-require */
 /**
  * mSupply Mobile
