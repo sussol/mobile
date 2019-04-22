@@ -291,9 +291,11 @@ export class Item extends Realm.Object {
       this.id
     );
 
+    if (sensorLogs.length === 0) return { maxTemperature: -Infinity, minTemperature: Infinity };
+      
     return {
-      maxTemperature: sensorLogs.max('temperature') || -Infinity,
-      minTemperature: sensorLogs.min('temperature') || Infinity,
+      maxTemperature: sensorLogs.max('temperature'),
+      minTemperature: sensorLogs.min('temperature'),
     };
   }
 }
