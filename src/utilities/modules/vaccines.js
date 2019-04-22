@@ -34,7 +34,6 @@ const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
  */
 export const extractBreaches = ({ sensorLogs = [], database }) => {
   if (!(database && sensorLogs.length > 0)) return [];
-
   let sensorLogStack = [];
   const breaches = [];
   const sensorLogsByLocation = {};
@@ -70,7 +69,7 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
         // onto the stack as the new potential delimiter for the next breach.
       } else {
         sensorLogStack.push(sensorLog);
-        breaches.push([sensorLogStack]);
+        breaches.push([...sensorLogStack]);
         sensorLogStack = [];
         sensorLogStack.push(sensorLog);
       }
@@ -79,7 +78,8 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
 
   // Push any remaining sensorlogs. If any are left, they form a breach
   // with no delimiting non-breached sensorlog.
-  if (sensorLogStack.length > 0) breaches.push(sensorLogStack);
+  const stackLength = sensorLogStack.length;
+  if (sensorLogStack[stackLength - 1].isInBreach) breaches.push(sensorLogStack);
 
   // Create Realm.result objects for each breach.
   return breaches.map(breach =>
@@ -209,42 +209,116 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
   };
 };
 
-export const aggregateLogs = (sensorLogs, numberOfDataPoints, isMax = false) => {
-  if (isMax) {
-    return [
-      { timestamp: 'Feb 23', temperature: 5.9, sensorLog: sensorLogs[0] },
-      { timestamp: 'Feb 24', temperature: 6, sensorLog: sensorLogs[0] },
-      { timestamp: 'Feb 25', temperature: 7, sensorLog: sensorLogs[0] },
-      { timestamp: 'Feb 26', temperature: 8.4, sensorLog: sensorLogs[0] },
-      { timestamp: 'Feb 27', temperature: 8, sensorLog: sensorLogs[0] },
-      { timestamp: 'March 1', temperature: 6, sensorLog: sensorLogs[0] },
-      { timestamp: 'March 2', temperature: 5.7, sensorLog: sensorLogs[0] },
-      { timestamp: 'March 3', temperature: 3.5, sensorLog: sensorLogs[0] },
-      { timestamp: 'March 4', temperature: 3.8, sensorLog: sensorLogs[0] },
-      { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
-    ];
+const formatChartDate = (date, interval) => date.toLocaleDateString();
+
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
+/**
+ * Aggregates sensor logs into groups of logs by dates.
+ *
+ * @param   {Realm.results}  sensorLogs          A collection of sensorLog objects to aggregate.
+ * @param   {number}         numberOfDataPoints  Number of aggregated data points to return.
+ * @param   {Date}           startDate           Start date of temperature range to aggregate
+ *                                               over.
+ * @param   {Date}           endDate             End date of temperature range to aggregate over.
+ * @return  {Object[]}                           Aggregated sensor logs, array of objects in form
+ *                                              [{timestamp}, {temperature},...].
+ */
+export const aggregateLogs = ({
+  sensorLogs,
+  numberOfDataPoints,
+  startDate = null,
+  endDate = null,
+}) => {
+  if (!(sensorLogs.length > 0)) return [];
+
+  // Generate interval boundaries.
+
+  const startTimestamp = sensorLogs.min('timestamp');
+  const endTimestamp = sensorLogs.max('timestamp');
+
+  const startBoundary = new Date(Math.min(startTimestamp, startDate) || startTimestamp);
+  const endBoundary = new Date(Math.max(endTimestamp, endDate) || endTimestamp);
+
+  // Caclulate interval duration in ms.
+  const totalDuration = endBoundary - startBoundary;
+  const intervalDuration = totalDuration / numberOfDataPoints;
+
+  const aggregatedLogs = [];
+  for (let i = 0; i < numberOfDataPoints; i += 1) {
+    const intervalStartDate = new Date(startBoundary.getTime() + intervalDuration * i);
+
+    // Do not offset last end date to prevent not including last log.
+    const endDateOffset = i !== numberOfDataPoints - 1 ? 1 : 0;
+    const intervalEndDate = new Date(
+      startBoundary.getTime() + intervalDuration * (i + 1) - endDateOffset
+    );
+
+    aggregatedLogs.push({ intervalStartDate, intervalEndDate });
   }
-  return [
-    { timestamp: 'Feb 23', temperature: 2, sensorLog: sensorLogs[0] },
-    { timestamp: 'Feb 24', temperature: 2.5, sensorLog: sensorLogs[0] },
-    { timestamp: 'Feb 25', temperature: 3.4, sensorLog: sensorLogs[0] },
-    { timestamp: 'Feb 26', temperature: 5, sensorLog: sensorLogs[0] },
-    { timestamp: 'Feb 27', temperature: 4.1, sensorLog: sensorLogs[0] },
-    { timestamp: 'March 1', temperature: 2.8, sensorLog: sensorLogs[0] },
-    { timestamp: 'March 2', temperature: 4, sensorLog: sensorLogs[0] },
-    { timestamp: 'March 3', temperature: 3.3, sensorLog: sensorLogs[0] },
-    { timestamp: 'March 4', temperature: 3.1, sensorLog: sensorLogs[0] },
-    { timestamp: 'March 5', temperature: 2.2, sensorLog: sensorLogs[0] },
-  ];
+
+  const maxLine = [];
+  const minLine = [];
+
+  // Map intervals to aggregated objects.
+  const medianDuration = intervalDuration / 2;
+
+  aggregatedLogs.forEach(aggregateLog => {
+    const { intervalStartDate, intervalEndDate } = aggregateLog;
+
+    // Group sensor logs by interval.
+    const intervalLogs = sensorLogs.filtered(
+      'timestamp >= $0 && timestamp <= $1',
+      intervalStartDate,
+      intervalEndDate
+    );
+
+    const timestamp = formatChartDate(
+      new Date(intervalStartDate.getTime() + medianDuration),
+      intervalDuration
+    );
+
+    if (intervalLogs.length === 0) {
+      maxLine.push({ temperature: null, timestamp });
+      minLine.push({ temperature: null, timestamp });
+      return null;
+    }
+
+    const maxSensorLog = intervalLogs.sorted('temperature', true)[0];
+    const minSensorLog = intervalLogs.sorted('temperature', false)[0];
+
+    maxLine.push({ temperature: maxSensorLog.temperature, timestamp, sensorLog: maxSensorLog });
+    minLine.push({ temperature: minSensorLog.temperature, timestamp, sensorLog: minSensorLog });
+  });
+
+  return { maxLine, minLine };
 };
 
-export const extractBreachPoints = ({ lineData, fullBreaches }) => [
-  {
-    timestamp: 'Feb 26',
-    temperature: 8.4,
-    sensorLogs: [{ id: 1 }],
-  },
-];
+export const extractBreachPoints = (lineData, fullBreaches, { maxTemperature }) => {
+  if (fullBreaches.length === 0) return [];
+  const result = [];
+
+  fullBreaches.forEach(breach => {
+    if (breach.length === 0) return;
+    const isMax = breach.max('temperature') > maxTemperature;
+    const { id: idToMatch } = breach.sorted('temperature', isMax)[0];
+    const matchedDataPoint = lineData.find(dataPoint => {
+      if (!dataPoint.sensorLog) return false;
+      return dataPoint.sensorLog.id === idToMatch;
+    });
+
+    if (!matchedDataPoint) return;
+
+    result.push({
+      ...matchedDataPoint,
+      sensorLogs: breach,
+    });
+  });
+  return result;
+};
 
 /**
  * Returns aggregated data for breach modal, based on passed array
@@ -256,17 +330,18 @@ export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilte
     const { minTemperature, maxTemperature } = TEMPERATURE_RANGE;
     const maxPoints = MAX_BREACH_CHART_DATAPOINTS;
     const numberOfDataPoints = sensorLogs.length >= maxPoints ? maxPoints : sensorLogs.length;
-    const isMax = sensorLogs.filtered('temperature >= $0', maxTemperature).length > 0;
+    const isMax = sensorLogs.max('temperature') > maxTemperature;
+    const lineKey = isMax ? 'maxLine' : 'minLine';
 
     result.push({
       ...sensorLogsExtractBatches(sensorLogs, itemFilter, itemBatchFilter),
       chartData: {
         // TODO change based on aggregateLogs return format
-        [isMax ? 'maxLine' : 'minLine']: aggregateLogs({
+        [lineKey]: aggregateLogs({
           sensorLogs,
           numberOfDataPoints,
           isMax,
-        }),
+        })[lineKey],
         ...(isMax ? { maxTemperature } : { minTemperature }),
       },
     });
@@ -282,18 +357,17 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
   const chartRangeMilliseconds = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
   const numberOfDataPoints = Math.floor(chartRangeMilliseconds / MILLISECONDS_IN_DAY);
 
-  // TODO change based on aggregateLogs return format
-  const minLine = aggregateLogs(sensorLogs, numberOfDataPoints, false);
-  const maxLine = aggregateLogs(sensorLogs, numberOfDataPoints, true);
-  const fullBreaches = extractBreaches(sensorLogs);
+  const lines = aggregateLogs({ sensorLogs, numberOfDataPoints, endDate: new Date() });
+
+  const fullBreaches = extractBreaches({ sensorLogs, database });
+
   const breaches = [
-    ...extractBreachPoints(minLine, fullBreaches, TEMPERATURE_RANGE),
-    ...extractBreachPoints(maxLine, fullBreaches, TEMPERATURE_RANGE),
+    ...extractBreachPoints(lines.minLine, fullBreaches, TEMPERATURE_RANGE),
+    ...extractBreachPoints(lines.maxLine, fullBreaches, TEMPERATURE_RANGE),
   ];
 
   return {
-    minLine,
-    maxLine,
+    ...lines,
     breaches,
     ...TEMPERATURE_RANGE,
   };
