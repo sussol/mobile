@@ -285,14 +285,15 @@ export class Item extends Realm.Object {
    * @param {Location} location
    */
   getTemperatureExposure(database, location) {
-    let sensorLogs = location ? location.getSensorLogs(database) : database.objects('SensorLog');
+    let sensorLogs =
+      location && location.id ? location.getSensorLogs(database) : database.objects('SensorLog');
     sensorLogs = sensorLogs.filtered(
       'itemBatches.item.id = $0 && itemBatches.numberOfPacks > 0',
       this.id
     );
 
     if (sensorLogs.length === 0) return { maxTemperature: -Infinity, minTemperature: Infinity };
-      
+
     return {
       maxTemperature: sensorLogs.max('temperature'),
       minTemperature: sensorLogs.min('temperature'),
