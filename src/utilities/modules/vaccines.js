@@ -93,19 +93,22 @@ export const extractBreaches = ({ sensorLogs = [], database }) => {
  * @param {Realm.results<ItemBatch>} itemBatches
  * @param {Realm.results<SensorLog>} sensorLogs
  */
-const extractBreachStatistics = (itemBatches, sensorLogs) => ({
-  location: sensorLogs.location,
-  numberOfAffectedBatches: itemBatches.length,
-  affectedQuantity: itemBatches.sum('numberOfPacks'),
-  exposureRange: {
-    minTemperature: sensorLogs.min('temperature') || Infinity,
-    maxTemperature: sensorLogs.max('temperature') || -Infinity,
-  },
-  breachDuration: {
-    startDate: sensorLogs.max('timestamp') || null,
-    endDate: sensorLogs.min('timestamp') || null,
-  },
-});
+const extractBreachStatistics = (itemBatches, sensorLogs) => {
+  const breachedLogs = sensorLogs.filtered('isInBreach = true');
+  return {
+    location: sensorLogs[0].location,
+    numberOfAffectedBatches: itemBatches.length,
+    affectedQuantity: itemBatches.sum('numberOfPacks'),
+    exposureRange: {
+      minTemperature: breachedLogs.min('temperature') || Infinity,
+      maxTemperature: breachedLogs.max('temperature') || -Infinity,
+    },
+    breachDuration: {
+      startDate: breachedLogs.min('timestamp') || null,
+      endDate: breachedLogs.max('timestamp') || null,
+    },
+  };
+};
 
 /**
  * Helper method for sensorLogExtractBreaches
@@ -121,32 +124,34 @@ const extractItemBatches = sensorLogs => {
     // For each batch, store it's details:
     // { duration, id, code, enteredDate, totalQuantity, expiryDate }
     // If already stored, skip.
-    itemBatches.forEach(({ id: batchId, code, enteredDate, totalQuantity, expiryDate, item }) => {
-      // Ensure each batch has stock and an associated Item.
-      if (!(item || totalQuantity > 0)) return;
-      const { id: itemId } = item;
-      // If this batches item hasn't been encountered yet, create
-      // a grouping object. groupedBatches = { itemId: { item, batches: {}  }}
-      if (!groupedBatches[itemId]) groupedBatches[itemId] = { item, batches: {} };
-      // If this batch has been encountered before, skip it.
-      const itemBatchGroup = groupedBatches[itemId].batches;
-      if (itemBatchGroup[batchId]) return;
-      // Calculate the duration this ItemBatch has been counted in this group of sensorLogs.
-      const duration = new Date(
-        sensorLogs.filtered('itemBatches.id = $0', batchId).max('temperature') -
-          sensorLogs.filtered('itemBatches.id = $0', batchId).min('temperature')
-      );
-      // Finally store the batches details:
-      // groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
-      itemBatchGroup[batchId] = {
-        duration,
-        id: batchId,
-        code,
-        enteredDate,
-        totalQuantity,
-        expiryDate,
-      };
-    });
+    itemBatches.forEach(
+      ({ id: batchId, batch: code, enteredDate, totalQuantity, expiryDate, item }) => {
+        // Ensure each batch has stock and an associated Item.
+        if (!(item || totalQuantity > 0)) return;
+        const { id: itemId } = item;
+        // If this batches item hasn't been encountered yet, create
+        // a grouping object. groupedBatches = { itemId: { item, batches: {}  }}
+        if (!groupedBatches[itemId]) groupedBatches[itemId] = { item, batches: {} };
+        // If this batch has been encountered before, skip it.
+        const itemBatchGroup = groupedBatches[itemId].batches;
+        if (itemBatchGroup[batchId]) return;
+        // Calculate the duration this ItemBatch has been counted in this group of sensorLogs.
+        const duration = new Date(
+          sensorLogs.filtered('itemBatches.id = $0', batchId).max('temperature') -
+            sensorLogs.filtered('itemBatches.id = $0', batchId).min('temperature')
+        );
+        // Finally store the batches details:
+        // groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
+        itemBatchGroup[batchId] = {
+          duration,
+          id: batchId,
+          code,
+          enteredDate,
+          totalQuantity,
+          expiryDate,
+        };
+      }
+    );
   });
   return groupedBatches;
 };
@@ -209,7 +214,10 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
   };
 };
 
-const formatChartDate = (date, interval) => date.toLocaleDateString();
+const formatChartDate = (date, timestampsByHour) => {
+  if (timestampsByHour) return date.toLocaleTimeString();
+  return date.toLocaleDateString();
+};
 
 /**
  * mSupply Mobile
@@ -247,6 +255,8 @@ export const aggregateLogs = ({
   const totalDuration = endBoundary - startBoundary;
   const intervalDuration = totalDuration / numberOfDataPoints;
 
+  const timestampsByHour = totalDuration < MILLISECONDS_IN_DAY * 3;
+
   const aggregatedLogs = [];
   for (let i = 0; i < numberOfDataPoints; i += 1) {
     const intervalStartDate = new Date(startBoundary.getTime() + intervalDuration * i);
@@ -278,13 +288,13 @@ export const aggregateLogs = ({
 
     const timestamp = formatChartDate(
       new Date(intervalStartDate.getTime() + medianDuration),
-      intervalDuration
+      timestampsByHour
     );
 
     if (intervalLogs.length === 0) {
       maxLine.push({ temperature: null, timestamp });
       minLine.push({ temperature: null, timestamp });
-      return null;
+      return;
     }
 
     const maxSensorLog = intervalLogs.sorted('temperature', true)[0];
@@ -333,7 +343,12 @@ export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilte
     const isMax = sensorLogs.max('temperature') > maxTemperature;
     const lineKey = isMax ? 'maxLine' : 'minLine';
     result.push({
-      ...sensorLogsExtractBatches({ sensorLogs, item: itemFilter, itemBatch: itemBatchFilter, database }),
+      ...sensorLogsExtractBatches({
+        sensorLogs,
+        item: itemFilter,
+        itemBatch: itemBatchFilter,
+        database,
+      }),
       chartData: {
         // TODO change based on aggregateLogs return format
         [lineKey]: aggregateLogs({
