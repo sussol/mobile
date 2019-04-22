@@ -52,10 +52,9 @@ const localStyles = ({ containerStyle }) =>
   StyleSheet.create({
     containerStyle: {
       backgroundColor: 'white',
-      height: '95%',
+
       width: '100%',
       display: 'flex',
-      justifyContent: 'space-between',
       ...containerStyle,
     },
   });
