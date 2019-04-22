@@ -10,8 +10,11 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { VaccineChart } from '../widgets';
-import { extractDataForFridgeChart, extractDataForBreachModal } from '../utilities/modules/vaccines';
+import { VaccineChart, BreachTable } from '../widgets';
+import {
+  extractDataForFridgeChart,
+  extractDataForBreachModal,
+} from '../utilities/modules/vaccines';
 
 import globalStyles, {
   SHADOW_BORDER,
@@ -20,6 +23,7 @@ import globalStyles, {
   GREY,
   HAZARD_RED,
 } from '../globalStyles';
+import { PageContentModal } from '../widgets/modals/index';
 
 const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
@@ -30,7 +34,7 @@ const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectedFridgeId: null };
+    this.state = { selectedFridgeId: null, breachData: null, isModalOpen: false };
   }
 
   componentWillMount() {
@@ -140,12 +144,9 @@ export class VaccineModulePage extends React.Component {
   };
 
   onHazardPress = ({ sensorLogs }) => {
-    const  { database } = this.props
+    const { database } = this.props;
     const dataForModal = extractDataForBreachModal({ breaches: [sensorLogs], database });
-
-    console.log(require('util').inspect(dataForModal));
-    console.log(require('util').inspect(dataForModal[0].items))
-    console.log(require('util').inspect(dataForModal[0].chartData.minLine));
+    this.setState({ breachData: dataForModal, isModalOpen: true });
   };
 
   renderChart = fridge => <VaccineChart {...this.extractChartInfo(fridge)} />;
@@ -190,8 +191,8 @@ export class VaccineModulePage extends React.Component {
 
   render() {
     const { fridges, hasFridges } = this;
-    const { navigateTo } = this.props;
-
+    const { navigateTo, genericTablePageStyles, database } = this.props;
+    const { isModalOpen, breachData } = this.state;
     const menuButtons = [
       { text: 'Customer Invoice', onPress: () => console.log('Customer Invoice') },
       { text: 'Supplier Invoice', onPress: () => console.log('Supplier Invoice') },
@@ -225,6 +226,15 @@ export class VaccineModulePage extends React.Component {
         </View>
         {hasFridges && fridges.map(this.renderFridge)}
         {!hasFridges && <Text style={[greyTextStyleLarge]}>NO CONFIGURED FRIDGES</Text>}
+        {isModalOpen && (
+          <PageContentModal isOpen={isModalOpen}>
+            <BreachTable
+              data={breachData}
+              genericTablePageStyles={genericTablePageStyles}
+              database={database}
+            />
+          </PageContentModal>
+        )}
       </View>
     );
   }
@@ -235,6 +245,7 @@ export default VaccineModulePage;
 VaccineModulePage.propTypes = {
   database: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
+  genericTablePageStyles: PropTypes.object.isRequired,
 };
 
 const localStyles = StyleSheet.create({
