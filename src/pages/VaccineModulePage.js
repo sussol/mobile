@@ -49,6 +49,17 @@ export class VaccineModulePage extends React.Component {
     this.setState({ selectedFridgeId });
   }
 
+  onModalUpdate = () => {
+    const { isModalOpen } = this.state;
+    this.setState({ isModalOpen: !isModalOpen });
+  };
+
+  getModalTitle = () => {
+    const { selectedFridgeId } = this.state;
+    const selectedFridge = this.fridges.find(({ id }) => selectedFridgeId === id);
+    return `Temperature breach for ${selectedFridge.description}`;
+  };
+
   /* Helper to render menuButton */
   renderMenuButton = buttonProps => (
     <Button
@@ -228,7 +239,11 @@ export class VaccineModulePage extends React.Component {
         {hasFridges && fridges.map(this.renderFridge)}
         {!hasFridges && <Text style={[greyTextStyleLarge]}>NO CONFIGURED FRIDGES</Text>}
         {isModalOpen && (
-          <PageContentModal isOpen={isModalOpen}>
+          <PageContentModal
+            isOpen={isModalOpen}
+            onClose={this.onModalUpdate}
+            title={this.getModalTitle()}
+          >
             <BreachTable
               data={breachData}
               genericTablePageStyles={genericTablePageStyles}
