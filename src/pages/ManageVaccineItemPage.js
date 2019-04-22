@@ -61,6 +61,7 @@ const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey])
 // Creates a row object for use within this component.
 const createRowObject = (itemBatch, extraData) => ({
   ...itemBatch,
+  totalQuantity: itemBatch.totalQuantity,
   ...extraData,
 });
 

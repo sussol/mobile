@@ -284,12 +284,19 @@ export class Item extends Realm.Object {
    * uses all ItemBatches related to this item to find the values.
    * @param {Location} location
    */
-  getTemperatureExposure(location) {
-    let { batches } = this;
-    if (location) batches = this.getBatchesInLocation(location);
+  getTemperatureExposure(database, location) {
+    let sensorLogs =
+      location && location.id ? location.getSensorLogs(database) : database.objects('SensorLog');
+    sensorLogs = sensorLogs.filtered(
+      'itemBatches.item.id = $0 && itemBatches.numberOfPacks > 0',
+      this.id
+    );
+
+    if (sensorLogs.length === 0) return { maxTemperature: -Infinity, minTemperature: Infinity };
+
     return {
-      maxTemperature: batches.max('sensorLog.temperature') || -Infinity,
-      minTemperature: batches.min('sensorLog.temperature') || Infinity,
+      maxTemperature: sensorLogs.max('temperature'),
+      minTemperature: sensorLogs.min('temperature'),
     };
   }
 }
