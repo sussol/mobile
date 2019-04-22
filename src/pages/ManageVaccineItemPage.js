@@ -18,10 +18,14 @@ import {
   TextEditor,
   ExpiryTextInput,
   GenericChoiceList,
-} from '../widgets/index';
-import { PageContentModal } from '../widgets/modals/index';
-import { IconCell } from '../widgets/IconCell';
+  PageContentModal,
+  IconCell,
+  BreachTable,
+} from '../widgets';
+
 import { DARK_GREY, FINALISED_RED, SUSSOL_ORANGE, SOFT_RED } from '../globalStyles/index';
+
+import { extractBreaches, extractDataForBreachModal } from '../utilities/modules/vaccines';
 
 /**
  * CONSTANTS
@@ -31,6 +35,7 @@ import { DARK_GREY, FINALISED_RED, SUSSOL_ORANGE, SOFT_RED } from '../globalStyl
 const MODAL_TITLES = {
   location: 'Place this batch of vaccines in a fridge',
   vvmStatus: 'How many vials have a failed VVM status?',
+  breach: 'Temperature breaches for ',
 };
 
 // Columns available for this component
@@ -86,6 +91,7 @@ export class ManageVaccineItemPage extends React.Component {
       modalKey: null,
       currentBatch: null,
       hasFridges: false,
+      breachData: null,
     };
   }
 
@@ -125,7 +131,11 @@ export class ManageVaccineItemPage extends React.Component {
    * HELPER METHODS
    */
   getModalTitle = () => {
-    const { modalKey } = this.state;
+    const { modalKey, currentBatch } = this.state;
+    if (modalKey === 'breach' && currentBatch) {
+      return `${MODAL_TITLES[modalKey]} ${currentBatch.item.name} - Batch: ${currentBatch.batch}`;
+    }
+
     return MODAL_TITLES[modalKey];
   };
 
@@ -146,6 +156,26 @@ export class ManageVaccineItemPage extends React.Component {
     // If something has gone wrong finding the batch, don't try to update
     if (batchIndex >= 0) data[batchIndex] = { ...currentBatch, ...extraObjectValues };
     this.setState({ data: [...data], ...extraStateValues });
+  };
+
+  getBreachData = () => {
+    const { currentBatch } = this.state;
+    const { database } = this.props;
+
+    const breaches = extractBreaches({
+      sensorLogs: database.objects('SensorLog').filtered('itemBatches.id = $0', currentBatch.id),
+      database,
+    });
+
+    this.setState({
+      breachData: extractDataForBreachModal({
+        breaches,
+        database,
+        itemBatchFilter: currentBatch,
+      }),
+      modalKey: 'breach',
+      isModalOpen: true,
+    });
   };
 
   /**
@@ -198,6 +228,10 @@ export class ManageVaccineItemPage extends React.Component {
     );
   };
 
+  onViewBreach = ({ itemBatch }) => () => {
+    this.setState({ currentBatch: itemBatch }, this.getBreachData);
+  };
+
   // Called on selecting a fridge in the fridge selection modal,
   // just update the location of the currentBatch and close the modal.
   onFridgeSelection = location => {
@@ -227,10 +261,13 @@ export class ManageVaccineItemPage extends React.Component {
    * RENDER HELPERS
    */
   renderCell = (key, itemBatch) => {
+    const { database } = this.props;
     const { hasFridges } = this.state;
+    const itemBatchObject = database.objects('ItemBatch').filtered('id = $0', itemBatch.id)[0];
     const { vvmStatus, reason } = itemBatch;
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
     const usingFridge = vvmStatus !== false && hasFridges && !reason;
+    const emptyCell = { type: 'text', cellContents: '' };
     switch (key) {
       default:
         return { type: 'text', cellContents: itemBatch[key] };
@@ -247,8 +284,17 @@ export class ManageVaccineItemPage extends React.Component {
           />
         );
       case 'breach':
+        if (itemBatchObject) {
+          const hasBreach = itemBatchObject.breaches.length > 0;
+          if (!hasBreach) return emptyCell;
+        }
         return (
-          <IconCell icon="warning" iconSize={30} onPress={() => {}} iconColour={FINALISED_RED} />
+          <IconCell
+            icon="warning"
+            iconSize={30}
+            onPress={this.onViewBreach({ itemBatch })}
+            iconColour={FINALISED_RED}
+          />
         );
       case 'dispose':
         return (
@@ -273,7 +319,8 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   renderModal = () => {
-    const { modalKey, currentBatch } = this.state;
+    const { modalKey, currentBatch, breachData } = this.state;
+    const { genericTablePageStyles, database } = this.props;
     let splitValue;
     const modals = {
       location: (
@@ -294,6 +341,13 @@ export class ManageVaccineItemPage extends React.Component {
         />
       ),
       vvmStatus: <TextEditor text={splitValue} onEndEditing={this.onSplitBatch} />,
+      breach: (
+        <BreachTable
+          data={breachData}
+          genericTablePageStyles={genericTablePageStyles}
+          database={database}
+        />
+      ),
     };
     return modals[modalKey];
   };
