@@ -118,7 +118,7 @@ const getColumns = () => VACCINE_COLUMN_KEYS.map(key => TABLE_COLUMNS[key]);
  * Optional prop of initialLocation, pre-filtering the list of
  * items.
  */
-export class ManageStockPage extends React.Component {
+export class ManageVaccineStockPage extends React.Component {
   constructor(props) {
     super(props);
 
@@ -176,7 +176,9 @@ export class ManageStockPage extends React.Component {
     const fridges = database.objects('Location').filter(location => location.isFridge);
     fridges.unshift({ description: LOCALIZATION.misc.allLocations });
     this.LOCATION_FILTERS = fridges;
-    this.ITEMS = database.objects('Item').filtered('name.category MATCHES[c] $0', 'vaccine');
+    this.ITEMS = database
+      .objects('Item')
+      .filtered('category.name BEGINSWITH[c] $0 && category.name ENDSWITH[c] $0 ', 'vaccine');
     const locationFilter = initialLocation || fridges[0];
     this.setState({ locationFilter });
   };
@@ -185,10 +187,9 @@ export class ManageStockPage extends React.Component {
    * EVENT HANDLERS
    */
 
-  onNavigateToItem = ({ item } = {}) => {
-    // TODO: Navigate to Vaccine Manage Item Page
-    // linter complaining about empty stuff
-    if (item) setTimeout();
+  onNavigateToItem = item => {
+    const { navigateTo } = this.props;
+    navigateTo('manageVaccineItem', item.name, { item });
   };
 
   // Handler for opening and closing modals. Whichever key from
@@ -230,9 +231,11 @@ export class ManageStockPage extends React.Component {
   // locationFilter - the values will come from that particular location.
   renderCell = (key, item) => {
     const { locationFilter } = this.state;
+    const { database } = this.props;
     const { BREACH } = MODAL_KEYS;
     const emptyCell = { type: 'text', cellContents: '' };
     const functionToCall = KEY_TO_FUNCTION_MAPPINGS[key];
+    if (!locationFilter) return null;
     switch (key) {
       default:
         return item[functionToCall](locationFilter);
@@ -255,11 +258,11 @@ export class ManageStockPage extends React.Component {
             icon="angle-double-right"
             iconSize={20}
             iconColor={SUSSOL_ORANGE}
-            onPress={this.onNavigateToItem}
+            onPress={() => this.onNavigateToItem(item)}
           />
         );
       case 'temperatureExposure':
-        return formatExposureRange(item[functionToCall](locationFilter));
+        return formatExposureRange(item[functionToCall](database, locationFilter));
     }
   };
 
@@ -306,14 +309,15 @@ export class ManageStockPage extends React.Component {
   }
 }
 
-ManageStockPage.defaultProps = {
+ManageVaccineStockPage.defaultProps = {
   initialLocation: null,
 };
-ManageStockPage.propTypes = {
+ManageVaccineStockPage.propTypes = {
   genericTablePageStyles: PropTypes.object.isRequired,
   database: PropTypes.object.isRequired,
+  navigateTo: PropTypes.func.isRequired,
   topRoute: PropTypes.object.isRequired,
   initialLocation: PropTypes.object,
 };
 
-export default ManageStockPage;
+export default ManageVaccineStockPage;

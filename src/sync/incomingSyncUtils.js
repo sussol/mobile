@@ -400,8 +400,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       internalRecord = {
         id: ID,
         description,
-        temperatureMin: parseNumber(Temperature_min),
-        temperatureMax: parseNumber(Temperature_max),
+        minTemperature: parseNumber(Temperature_min),
+        maxTemperature: parseNumber(Temperature_max),
         customData,
       };
       database.update('LocationType', internalRecord);

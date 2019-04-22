@@ -38,7 +38,11 @@ export class SimpleTable extends React.PureComponent {
     const { cell, cellFont } = localStyles({ ...this.props, rowIndex, header, width });
     return (
       <View style={cell} key={this.keyExtractor({ index: cellIndex })}>
-        <Text style={cellFont}>{content}</Text>
+        <Text style={cellFont}>
+          {content && typeof content === 'object'
+            ? content.toLocaleDateString()
+            : content.toString()}
+        </Text>
       </View>
     );
   };

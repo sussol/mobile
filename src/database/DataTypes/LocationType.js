@@ -16,8 +16,8 @@ LocationType.schema = {
   properties: {
     id: 'string',
     description: { type: 'string', optional: true },
-    minimumTemperature: { type: 'double', default: 0 },
-    maximumTemperature: { type: 'double', default: 0 },
+    minTemperature: { type: 'double', default: 2 },
+    maxTemperature: { type: 'double', default: 8 },
     customData: { type: 'string', optional: true },
   },
 };
