@@ -11,7 +11,7 @@ import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { VaccineChart } from '../widgets';
-import { extractDataForFridgeChart } from '../utilities/modules/vaccines';
+import { extractDataForFridgeChart, extractDataForBreachModal } from '../utilities/modules/vaccines';
 
 import globalStyles, {
   SHADOW_BORDER,
@@ -139,10 +139,13 @@ export class VaccineModulePage extends React.Component {
     );
   };
 
-  onHazardPress = breach => {
-    console.log(breach.temperature);
-    // const breaches = [breach.sensorLogs];
-    // open modal with params, data: [getDataForBreachModal({ breaches })]
+  onHazardPress = ({ sensorLogs }) => {
+    const  { database } = this.props
+    const dataForModal = extractDataForBreachModal({ breaches: [sensorLogs], database });
+
+    console.log(require('util').inspect(dataForModal));
+    console.log(require('util').inspect(dataForModal[0].items))
+    console.log(require('util').inspect(dataForModal[0].chartData.minLine));
   };
 
   renderChart = fridge => <VaccineChart {...this.extractChartInfo(fridge)} />;

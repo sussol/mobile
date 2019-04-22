@@ -99,7 +99,7 @@ const extractBreachStatistics = (itemBatches, sensorLogs) => ({
   affectedQuantity: itemBatches.sum('numberOfPacks'),
   exposureRange: {
     minTemperature: sensorLogs.min('temperature') || Infinity,
-    maxTemperature: sensorLogs.max('temperautre') || -Infinity,
+    maxTemperature: sensorLogs.max('temperature') || -Infinity,
   },
   breachDuration: {
     startDate: sensorLogs.max('timestamp') || null,
@@ -133,8 +133,8 @@ const extractItemBatches = sensorLogs => {
       if (itemBatchGroup[batchId]) return;
       // Calculate the duration this ItemBatch has been counted in this group of sensorLogs.
       const duration = new Date(
-        sensorLogs.filtered('ItemBatches.id = $0', batchId).max('temperature') -
-          sensorLogs.filtered('ItemBatches.id = $0', batchId).min('temperature')
+        sensorLogs.filtered('itemBatches.id = $0', batchId).max('temperature') -
+          sensorLogs.filtered('itemBatches.id = $0', batchId).min('temperature')
       );
       // Finally store the batches details:
       // groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
@@ -182,9 +182,9 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
   // which aren't breaches when calculating statistics.
   let filteredLogs = sensorLogs.filtered('isInBreach = $0', true);
   // If an Item has been passed, only find batches for this item.
-  if (item) filteredLogs = sensorLogs.filtered('ItemBatches.item.id = $0', item.id);
+  if (item) filteredLogs = sensorLogs.filtered('itemBatches.item.id = $0', item.id);
   // If an ItemBatch has been passed, only find batches for this item.
-  else if (itemBatch) filteredLogs = sensorLogs.filtered('ItemBatches.id = $0', itemBatch.id);
+  else if (itemBatch) filteredLogs = sensorLogs.filtered('itemBatches.id = $0', itemBatch.id);
   const groupedBatches = extractItemBatches(filteredLogs);
   // Create the return object. [ {item, batches: [ as above ] }, .. ]
   const allItemsForLogs = Object.values(groupedBatches).map(itemObject => {
@@ -324,7 +324,7 @@ export const extractBreachPoints = (lineData, fullBreaches, { maxTemperature }) 
  * Returns aggregated data for breach modal, based on passed array
  * of sensorLogs (breaches)
  */
-export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilter }) => {
+export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilter, database }) => {
   const result = [];
   breaches.forEach(sensorLogs => {
     const { minTemperature, maxTemperature } = TEMPERATURE_RANGE;
@@ -332,9 +332,8 @@ export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilte
     const numberOfDataPoints = sensorLogs.length >= maxPoints ? maxPoints : sensorLogs.length;
     const isMax = sensorLogs.max('temperature') > maxTemperature;
     const lineKey = isMax ? 'maxLine' : 'minLine';
-
     result.push({
-      ...sensorLogsExtractBatches(sensorLogs, itemFilter, itemBatchFilter),
+      ...sensorLogsExtractBatches({ sensorLogs, item: itemFilter, itemBatch: itemBatchFilter, database }),
       chartData: {
         // TODO change based on aggregateLogs return format
         [lineKey]: aggregateLogs({
@@ -346,6 +345,8 @@ export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilte
       },
     });
   });
+
+  return result;
 };
 
 /**
