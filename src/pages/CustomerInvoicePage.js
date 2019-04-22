@@ -12,6 +12,8 @@ import { GenericPage } from './GenericPage';
 
 import { createRecord } from '../database';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
+import { extractDataForBreachModal, extractBreaches } from '../utilities/modules/vaccines';
+
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
@@ -20,15 +22,18 @@ import {
   PageContentModal,
   PageInfo,
   TextEditor,
+  IconCell,
+  BreachTable,
 } from '../widgets';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
   ITEM_SELECT: 'itemSelect',
+  BREACH_MODAL: 'breachModal',
 };
 
 const DATA_TABLE_COLUMNS = {
@@ -70,6 +75,12 @@ const DATA_TABLE_COLUMNS = {
     title: tableStrings.doses,
     alignText: 'right',
   },
+  breach: {
+    key: 'breach',
+    width: 1.5,
+    title: 'BREACH',
+    alignText: 'center',
+  },
 };
 
 export class CustomerInvoicePage extends GenericPage {
@@ -80,6 +91,7 @@ export class CustomerInvoicePage extends GenericPage {
       modalKey: null,
       modalIsOpen: false,
       hasVaccine: false,
+      currentItem: null,
     };
     this.dataFilters = {
       searchTerm: '',
@@ -176,6 +188,24 @@ export class CustomerInvoicePage extends GenericPage {
     this.setState({ selection: [] }, this.refreshData);
   };
 
+  onSelectNewItem = item => {
+    const { database, transaction } = this.props;
+    database.write(() => {
+      if (!transaction.hasItem(item)) {
+        createRecord(database, 'TransactionItem', transaction, item);
+      }
+      if (item.isVaccine) this.setState({ hasVaccine: true });
+    });
+    this.refreshData();
+    this.closeModal();
+  };
+
+  onViewBreach = ({ item }) => () => {
+    this.setState({ currentItem: item, modalIsOpen: true, modalKey: MODAL_KEYS.BREACH_MODAL }, () =>
+      this.getBreachData()
+    );
+  };
+
   onDeleteCancel = () => {
     this.setState({ selection: [] }, this.refreshData);
   };
@@ -189,7 +219,7 @@ export class CustomerInvoicePage extends GenericPage {
   };
 
   closeModal = () => {
-    this.setState({ modalIsOpen: false });
+    this.setState({ modalIsOpen: false, currentItem: null, modalKey: null });
   };
 
   openItemSelector = () => {
@@ -204,8 +234,27 @@ export class CustomerInvoicePage extends GenericPage {
     this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
   };
 
+  getBreachData = () => {
+    const { currentItem } = this.state;
+    const { database } = this.props;
+
+    const breaches = extractBreaches({
+      sensorLogs: currentItem.getAllSensorLogs(database),
+      database,
+    });
+
+    this.setState({
+      breachData: extractDataForBreachModal({
+        breaches,
+        database,
+        itemFilter: currentItem,
+      }),
+    });
+  };
+
   getModalTitle = () => {
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+    const { currentItem } = this.state;
+    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT, BREACH_MODAL } = MODAL_KEYS;
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
@@ -214,6 +263,8 @@ export class CustomerInvoicePage extends GenericPage {
         return modalStrings.edit_the_invoice_comment;
       case THEIR_REF_EDIT:
         return modalStrings.edit_their_reference;
+      case BREACH_MODAL:
+        return `Temperature Breaches for ${currentItem.name}`;
     }
   };
 
@@ -262,6 +313,7 @@ export class CustomerInvoicePage extends GenericPage {
     const { totalQuantity, totalDoses } = transactionItem;
     const { isFinalised } = transaction;
     const emptyCell = { type: 'text', cellContents: '' };
+
     switch (key) {
       default:
         return transactionItem[key];
@@ -291,24 +343,26 @@ export class CustomerInvoicePage extends GenericPage {
           textAlign: 'right',
         };
       }
+      case 'breach': {
+        const { item } = transactionItem;
+        const hasBreach = item.getHasBreachedBatches();
+        if (!hasBreach) return emptyCell;
+        return (
+          <IconCell
+            icon="warning"
+            color={SUSSOL_ORANGE}
+            size={20}
+            onPress={this.onViewBreach({ item })}
+          />
+        );
+      }
     }
   };
 
-  onSelectNewItem = item => {
-    const { database, transaction } = this.props;
-    database.write(() => {
-      if (!transaction.hasItem(item)) {
-        createRecord(database, 'TransactionItem', transaction, item);
-      }
-      if (item.isVaccine) this.setState({ hasVaccine: true });
-    });
-    this.refreshData();
-    this.closeModal();
-  };
-
   renderModalContent = () => {
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-    const { database, transaction } = this.props;
+    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT, BREACH_MODAL } = MODAL_KEYS;
+    const { database, transaction, genericTablePageStyles } = this.props;
+    const { breachData } = this.state;
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
@@ -353,6 +407,14 @@ export class CustomerInvoicePage extends GenericPage {
             }}
           />
         );
+      case BREACH_MODAL:
+        return (
+          <BreachTable
+            data={breachData || []}
+            database={database}
+            genericTablePageStyles={genericTablePageStyles}
+          />
+        );
     }
   };
 
@@ -381,6 +443,7 @@ export class CustomerInvoicePage extends GenericPage {
       'availableQuantity',
       'totalQuantity',
       'doses',
+      'breach',
       'remove',
     ];
     const columnsToUse = hasVaccine ? withVaccines : normal;
@@ -416,13 +479,15 @@ export class CustomerInvoicePage extends GenericPage {
           confirmText={modalStrings.remove}
         />
 
-        <PageContentModal
-          isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
+        {this.state.modalIsOpen && !this.props.transaction.isFinalised && (
+          <PageContentModal
+            isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        )}
       </GenericPage>
     );
   }
