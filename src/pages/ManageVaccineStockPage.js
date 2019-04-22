@@ -235,6 +235,7 @@ export class ManageVaccineStockPage extends React.Component {
     const { BREACH } = MODAL_KEYS;
     const emptyCell = { type: 'text', cellContents: '' };
     const functionToCall = KEY_TO_FUNCTION_MAPPINGS[key];
+    if (!locationFilter) return null;
     switch (key) {
       default:
         return item[functionToCall](locationFilter);
