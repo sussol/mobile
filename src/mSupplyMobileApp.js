@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -82,6 +83,255 @@ class MSupplyMobileAppContainer extends React.Component {
       isLoading: false,
       syncModalIsOpen: false,
     };
+
+    this.database.write(() => {
+      const fridge1 = this.database
+        .objects('Location')
+        .filtered('id = $0', 'A183F5E649A945F3AC8CE7C598464F8A')[0];
+      this.database.update('Sensor', { id: 'senUUID2', location: fridge1 });
+      const fridge2 = this.database.objects('Location').filtered('id = $0', 'LOCUUID1')[0];
+      this.database.update('Sensor', { id: 'senUUID1', location: fridge2 });
+      this.database.update('LocationType', {
+        id: '9AD96A8E4D364DDB8E27F38A6096C17D',
+        minTemperature: 2,
+        maxTemperature: 8,
+      });
+
+      const fridge3filter = this.database.objects('Location').filtered('id = $0', 'LOCUUID2');
+      if (fridge3filter.length > 0) this.database.delete('Location', fridge3filter);
+      const straySeneosrLogs = this.database
+        .objects('SensorLog')
+        .filtered(
+          'location.id = null || id = "sensorLogUUID1" || id = "senLogUUID1" || id = "BCA"'
+        );
+      if (straySeneosrLogs.length > 0) this.database.delete('Location', straySeneosrLogs);
+      const straySensor = this.database.objects('Sensor').filtered('id = "ABC"');
+      if (straySensor.length > 0) this.database.delete('Sensor', straySensor);
+
+      const sensor1 = this.database.objects('Sensor').filtered('id = $0', 'senUUID2')[0];
+      const sensor2 = this.database.objects('Sensor').filtered('id = $0', 'senUUID1')[0];
+
+      const batches = this.database.objects('ItemBatch').filtered('item.category.name = "accine"');
+      const ItemBatches = this.database
+        .objects('ItemBatch')
+        .filtered('item.category.name BEGINSWITH[c] "vaccine"');
+
+      const sensor1logs = [
+        {
+          timestamp: new Date('2019-04-20T12:00:00'),
+          temperature: 6.5,
+          batches,
+          isInBreach: false,
+        },
+        { timestamp: new Date('2019-04-20T12:00:00'), temperature: 5, batches, isInBreach: false },
+        {
+          timestamp: new Date('2019-04-19T12:00:00'),
+          temperature: 6.2,
+          batches,
+          isInBreach: false,
+        },
+        { timestamp: new Date('2019-04-19T12:00:00'), temperature: 4, batches, isInBreach: false },
+        {
+          timestamp: new Date('2019-04-18T12:00:00'),
+          temperature: 5.2,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-18T12:00:00'),
+          temperature: 3.8,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-17T12:00:00'),
+          temperature: 5.5,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-17T12:00:00'),
+          temperature: 4.2,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-16T12:00:00'),
+          temperature: 4.8,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-16T12:00:00'),
+          temperature: 2.3,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-15T12:00:00'),
+          temperature: 4.4,
+          batches,
+          isInBreach: false,
+        },
+        { timestamp: new Date('2019-04-15T12:00:00'), temperature: 3, batches, isInBreach: false },
+        {
+          timestamp: new Date('2019-04-14T12:00:00'),
+          temperature: 3.5,
+          batches,
+          isInBreach: false,
+        },
+
+        {
+          timestamp: new Date('2019-04-14T12:15:00'),
+          temperature: 1.5,
+          batches,
+          isInBreach: true,
+        },
+        {
+          timestamp: new Date('2019-04-14T12:30:00'),
+          temperature: 1,
+          batches,
+          isInBreach: true,
+        },
+        {
+          timestamp: new Date('2019-04-14T12:45:00'),
+          temperature: 0.8,
+          batches,
+          isInBreach: true,
+        },
+        {
+          timestamp: new Date('2019-04-14T13:00:00'),
+          temperature: 1,
+          batches,
+          isInBreach: true,
+        },
+        {
+          timestamp: new Date('2019-04-14T13:15:00'),
+          temperature: 0.3,
+          batches,
+          isInBreach: true,
+        },
+        {
+          timestamp: new Date('2019-04-14T13:30:00'),
+          temperature: 1.2,
+          batches,
+          isInBreach: true,
+        },
+        {
+          timestamp: new Date('2019-04-14T13:45:00'),
+          temperature: 1.9,
+          batches,
+          isInBreach: true,
+        },
+
+        {
+          timestamp: new Date('2019-04-14T14:00:00'),
+          temperature: 2.3,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-13T12:00:00'),
+          temperature: 4.1,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-13T12:00:00'),
+          temperature: 2.4,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-12T12:00:00'),
+          temperature: 3.5,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-12T12:00:00'),
+          temperature: 2.1,
+          batches,
+          isInBreach: false,
+        },
+        { timestamp: new Date('2019-04-11T12:00:00'), temperature: 4, batches, isInBreach: false },
+        {
+          timestamp: new Date('2019-04-11T12:00:00'),
+          temperature: 2.5,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-10T12:00:00'),
+          temperature: 5.6,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-10T12:00:00'),
+          temperature: 4.1,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-09T12:00:00'),
+          temperature: 5.1,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-09T12:00:00'),
+          temperature: 3.8,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-08T12:00:00'),
+          temperature: 4.3,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-08T12:00:00'),
+          temperature: 3.2,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-07T12:00:00'),
+          temperature: 5.9,
+          batches,
+          isInBreach: false,
+        },
+        {
+          timestamp: new Date('2019-04-07T12:00:00'),
+          temperature: 4.9,
+          batches,
+          isInBreach: false,
+        },
+        { timestamp: new Date('2019-04-06T12:00:00'), temperature: 5, batches, isInBreach: false },
+        { timestamp: new Date('2019-04-06T12:00:00'), temperature: 3, batches, isInBreach: false },
+      ];
+
+      for (let i = 0; i < sensor1logs.length; i += 1) {
+        const currentSensorLog = this.database.update('SensorLog', {
+          id: `sen1log${i}`,
+          ...sensor1logs[i],
+          sensor: sensor1,
+          location: fridge1,
+          pointer: i + 1,
+          logInterval: 15,
+          batches: null,
+        });
+
+        ItemBatches.forEach(batch => {
+          if (!batch.sensorLogs.find(sensorLog => sensorLog.id === `sen1log${i}`)) {
+            batch.sensorLogs.push(currentSensorLog);
+            currentSensorLog.itemBatches.push(batch);
+          }
+        });
+      }
+    });
   }
 
   componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
