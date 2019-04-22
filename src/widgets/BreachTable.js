@@ -43,7 +43,12 @@ const LOCALIZATION = {
 const BREACH_COLUMNS = [
   { key: 'date', title: LOCALIZATION.columns.breach.date, width: 0.8, alignText: 'center' },
   { key: 'location', title: LOCALIZATION.columns.breach.location, width: 0.8, alignText: 'center' },
-  { key: 'duration', title: LOCALIZATION.columns.breach.duration, width: 0.8, alignText: 'center' },
+  {
+    key: 'breachDuration',
+    title: LOCALIZATION.columns.breach.duration,
+    width: 0.8,
+    alignText: 'center',
+  },
   {
     key: 'exposureRange',
     title: LOCALIZATION.columns.breach.exposureRange,
@@ -66,8 +71,8 @@ const BREACH_COLUMNS = [
 
 const BATCH_COLUMNS = [
   { key: 'code', title: LOCALIZATION.columns.batch.code, width: 0.8 },
-  { key: 'expiry', title: LOCALIZATION.columns.batch.expiry, width: 0.8 },
-  { key: 'quantity', title: LOCALIZATION.columns.batch.quantity, width: 0.8 },
+  { key: 'expiryDate', title: LOCALIZATION.columns.batch.expiry, width: 0.8 },
+  { key: 'totalQuantity', title: LOCALIZATION.columns.batch.quantity, width: 0.8 },
   { key: 'duration', title: LOCALIZATION.columns.batch.duration, width: 1 },
 ];
 
@@ -112,6 +117,7 @@ export class BreachTable extends React.PureComponent {
       title: itemGroup.item.name,
       columns: BATCH_COLUMNS,
     }));
+
     return (
       <View style={expansionContainer}>
         <View style={chartContainer}>
@@ -130,16 +136,19 @@ export class BreachTable extends React.PureComponent {
   renderCell = (key, value) => {
     switch (key) {
       case 'location':
-        return { type: 'text', cellContents: (value && value.description) || 'Not available' };
-      case 'temperatureExposure':
         return {
           type: 'text',
-          cellContents: formatExposureRange(value),
+          cellContents: (value[key] && value[key].description) || 'Not available',
         };
-      case 'duration':
+      case 'exposureRange':
         return {
           type: 'text',
-          cellContents: formattedDifferenceBetweenDates(value),
+          cellContents: formatExposureRange(value[key]),
+        };
+      case 'breachDuration':
+        return {
+          type: 'text',
+          cellContents: formattedDifferenceBetweenDates(value[key]),
         };
       default:
         return { type: 'text', cellContents: value[key] };
