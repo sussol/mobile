@@ -14,7 +14,7 @@ import { IconCell, PageInfo, PageContentModal, GenericChoiceList, BreachTable } 
 import { SUSSOL_ORANGE } from '../globalStyles';
 
 import { formatExposureRange } from '../utilities';
-import { extractDataForBreachModal, extractBreaches } from '../utilities/modules/vaccines';
+import { extractBreaches } from '../utilities/modules/vaccines';
 
 /**
  * CONSTANTS
@@ -46,6 +46,8 @@ const LOCALIZATION = {
     allLocations: 'All locations',
   },
 };
+
+const EMPTY_CELL = { type: 'text', cellContents: '' };
 
 const TABLE_COLUMNS = {
   name: { key: 'name', width: 1.5, title: LOCALIZATION.headers.name, alignText: 'left' },
@@ -125,7 +127,6 @@ const getColumns = () => VACCINE_COLUMN_KEYS.map(key => TABLE_COLUMNS[key]);
 export class ManageVaccineStockPage extends React.Component {
   constructor(props) {
     super(props);
-
     // List of location objects populated in ComponentDidMount.
     // Has a special object for 'No Location' to be selected,
     // which has no ID
@@ -133,7 +134,6 @@ export class ManageVaccineStockPage extends React.Component {
     // Store for all items. Is used to apply location and searchTerm
     // filters and derive the next GenericDataTable data prop.
     this.ITEMS = null;
-
     this.state = {
       // Key determining which modal should be rendered. Uses
       // MODAL_KEYS constant.
@@ -143,7 +143,7 @@ export class ManageVaccineStockPage extends React.Component {
       // and searchTerm key from the search bar in GenericDataTable.
       locationFilter: null,
       searchTerm: '',
-      breachData: null,
+      // The current item to work on
       currentItem: null,
     };
   }
@@ -174,24 +174,12 @@ export class ManageVaccineStockPage extends React.Component {
     return '';
   };
 
-  getBreachData = () => {
+  getBreaches = () => {
     const { currentItem } = this.state;
     const { database } = this.props;
-    const { BREACH } = MODAL_KEYS;
-
-    const breaches = extractBreaches({
+    return extractBreaches({
       sensorLogs: currentItem.getAllSensorLogs(database),
       database,
-    });
-
-    this.setState({
-      breachData: extractDataForBreachModal({
-        breaches,
-        database,
-        itemFilter: currentItem,
-      }),
-      isModalOpen: true,
-      modalKey: BREACH,
     });
   };
 
@@ -219,14 +207,9 @@ export class ManageVaccineStockPage extends React.Component {
   /**
    * EVENT HANDLERS
    */
-
   onNavigateToItem = item => {
     const { navigateTo } = this.props;
     navigateTo('manageVaccineItem', item.name, { item });
-  };
-
-  onViewBreach = ({ item }) => () => {
-    this.setState({ currentItem: item }, this.getBreachData);
   };
 
   // Handler for opening and closing modals. Whichever key from
@@ -241,19 +224,12 @@ export class ManageVaccineStockPage extends React.Component {
    * RENDER HELPERS
    */
   renderModal = () => {
-    const { modalKey, locationFilter: highlightValue, breachData } = this.state;
-    const { database, genericTablePageStyles } = this.props;
+    const { modalKey, locationFilter: highlightValue, currentItem } = this.state;
     const { BREACH, FRIDGE_SELECT } = MODAL_KEYS;
 
     switch (modalKey) {
       case BREACH:
-        return (
-          <BreachTable
-            data={breachData}
-            genericTablePageStyles={genericTablePageStyles}
-            database={database}
-          />
-        );
+        return <BreachTable {...this.props} breaches={this.getBreaches()} item={currentItem} />;
       case FRIDGE_SELECT:
         return (
           <GenericChoiceList
@@ -276,9 +252,9 @@ export class ManageVaccineStockPage extends React.Component {
   renderCell = (key, item) => {
     const { locationFilter } = this.state;
     const { database } = this.props;
-    const emptyCell = { type: 'text', cellContents: '' };
+
     const functionToCall = KEY_TO_FUNCTION_MAPPINGS[key];
-    if (!locationFilter) return null;
+
     switch (key) {
       default:
         return item[functionToCall](locationFilter);
@@ -286,13 +262,13 @@ export class ManageVaccineStockPage extends React.Component {
       case 'code':
         return item[key];
       case 'hasBreach':
-        if (!item[functionToCall](locationFilter)) return emptyCell;
+        if (!item[functionToCall](locationFilter)) return EMPTY_CELL;
         return (
           <IconCell
             icon="warning"
             iconColor="red"
             iconSize={30}
-            onPress={this.onViewBreach({ item })}
+            onPress={this.onModalUpdate({ item, modalKey: MODAL_KEYS.BREACH })}
           />
         );
       case 'navigation':
