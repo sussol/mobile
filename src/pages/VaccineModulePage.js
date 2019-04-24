@@ -23,6 +23,24 @@ import globalStyles, {
 } from '../globalStyles';
 import { PageContentModal } from '../widgets/modals/index';
 
+const LOCALIZATION = {
+  misc: {
+    emptyFridge: 'Empty Fridge',
+    breaches: 'Breaches',
+    totalStock: 'Total Stock',
+    noFridges: 'NO CONFIGURED FRIDGES',
+  },
+  modal: {
+    breachTitle: 'Temperature breach for ',
+  },
+  menuButtons: {
+    customerInvoice: 'Customer Invoice',
+    supplierInvoice: 'Supplier Invoice',
+    orderStock: 'Order Stock',
+    manageStock: 'Manage Stock',
+  },
+};
+
 const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 
@@ -53,7 +71,7 @@ export class VaccineModulePage extends React.Component {
 
   getModalTitle = () => {
     const { selectedFridge } = this.state;
-    return `Temperature breach for ${selectedFridge.description}`;
+    return `${LOCALIZATION.modal.breachTitle} ${selectedFridge.description}`;
   };
 
   /* Helper to render menuButton */
@@ -114,7 +132,7 @@ export class VaccineModulePage extends React.Component {
       <View style={[fridgeInfoSectionStyle, extraInfoSectionStyle]}>
         {hasBreaches && (
           <View style={[fridgeInfoSectionStyle, { marginRight: 10 }]}>
-            <Text style={greyTextStyleSmall}>Breaches:</Text>
+            <Text style={greyTextStyleSmall}>{`${LOCALIZATION.misc.breaches}:`}</Text>
             <Text style={greyTextStyleLarge}>{numberOfBreaches}</Text>
           </View>
         )}
@@ -141,10 +159,10 @@ export class VaccineModulePage extends React.Component {
     const fontStyleLarge = { ...greyTextStyleLarge, color: SUSSOL_ORANGE };
     const fontStyleSmall = { ...greyTextStyleSmall, color: SUSSOL_ORANGE };
 
-    if (!hasStock) return <Text style={fontStyleSmall}>Empty Fridge</Text>;
+    if (!hasStock) return <Text style={fontStyleSmall}>{LOCALIZATION.misc.emptyFridge}</Text>;
     return (
       <TouchableOpacity style={fridgeInfoSectionStyle} onPress={onPress}>
-        <Text style={fontStyleSmall}>Total Stock:</Text>
+        <Text style={fontStyleSmall}>{`${LOCALIZATION.misc.totalStock}:`}</Text>
         <Text style={fontStyleLarge}>{fridgeStock}</Text>
         {this.renderIcon('angle-double-right', CHEVRON_ICON_STYLE)}
       </TouchableOpacity>
@@ -200,11 +218,17 @@ export class VaccineModulePage extends React.Component {
     const { navigateTo } = this.props;
     const { isModalOpen, currentBreach } = this.state;
     const menuButtons = [
-      { text: 'Customer Invoice', onPress: () => console.log('Customer Invoice') },
-      { text: 'Supplier Invoice', onPress: () => console.log('Supplier Invoice') },
-      { text: 'Order Stock', onPress: () => console.log('Order Stock') },
       {
-        text: 'Manage Stock',
+        text: LOCALIZATION.menuButtons.customerInvoice,
+        onPress: () => console.log('Customer Invoice'),
+      },
+      {
+        text: LOCALIZATION.menuButtons.supplierInvoice,
+        onPress: () => console.log('Supplier Invoice'),
+      },
+      { text: LOCALIZATION.menuButtons.orderStock, onPress: () => console.log('Order Stock') },
+      {
+        text: LOCALIZATION.menuButtons.manageStock,
         onPress: () => navigateTo('manageVaccineStock', 'Manage Vaccine Stock'),
       },
     ];
@@ -231,7 +255,7 @@ export class VaccineModulePage extends React.Component {
           ))}
         </View>
         {hasFridges && fridges.map(this.renderFridge)}
-        {!hasFridges && <Text style={[greyTextStyleLarge]}>NO CONFIGURED FRIDGES</Text>}
+        {!hasFridges && <Text style={[greyTextStyleLarge]}>{LOCALIZATION.misc.noFridges}</Text>}
         {isModalOpen && (
           <PageContentModal
             isOpen={isModalOpen}
