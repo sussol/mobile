@@ -32,18 +32,18 @@ const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectedFridgeId: null, currentBreach: null, isModalOpen: false };
+    this.state = { selectedFridge: null, currentBreach: null, isModalOpen: false };
   }
 
   componentWillMount() {
     const { database } = this.props;
     const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
     const hasFridges = fridges.length > 0;
-    const selectedFridgeId = hasFridges ? fridges[0].id : null;
+    const selectedFridge = hasFridges ? fridges[0] : null;
 
     this.fridges = fridges;
     this.hasFridges = hasFridges;
-    this.setState({ selectedFridgeId });
+    this.setState({ selectedFridge });
   }
 
   onModalUpdate = () => {
@@ -52,8 +52,7 @@ export class VaccineModulePage extends React.Component {
   };
 
   getModalTitle = () => {
-    const { selectedFridgeId } = this.state;
-    const selectedFridge = this.fridges.find(({ id }) => selectedFridgeId === id);
+    const { selectedFridge } = this.state;
     return `Temperature breach for ${selectedFridge.description}`;
   };
 
@@ -72,7 +71,7 @@ export class VaccineModulePage extends React.Component {
 
   /* Render fridge name and chevron-down icon if icon not selected fridge */
   renderFridgeName = (fridge, isFridgeSelected) => {
-    const onPress = () => this.setState({ selectedFridgeId: fridge.id });
+    const onPress = () => this.setState({ selectedFridge: fridge });
 
     const { fridgeInfoSectionStyle, fridgeNameTextStyle } = localStyles;
 
@@ -169,8 +168,8 @@ export class VaccineModulePage extends React.Component {
     const isCriticalTemperature =
       currentTemperature !== null && fridge.isCriticalTemperature(database);
 
-    const { selectedFridgeId } = this.state;
-    const isFridgeSelected = fridge.id === selectedFridgeId;
+    const { selectedFridge } = this.state;
+    const isFridgeSelected = fridge.id === selectedFridge.id;
 
     const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
     return (
