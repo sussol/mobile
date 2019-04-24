@@ -139,11 +139,16 @@ const extractItemBatches = ({ sensorLogs, itemBatch, item, database }) => {
         // If this batch has been encountered before, skip it.
         const itemBatchGroup = groupedBatches[itemId].batches;
         if (itemBatchGroup[batchId]) return;
+
         // Calculate the duration this ItemBatch has been counted in this group of sensorLogs.
-        const duration = new Date(
-          sensorLogs.filtered('itemBatches.id = $0', batchId).max('temperature') -
-            sensorLogs.filtered('itemBatches.id = $0', batchId).min('temperature')
-        );
+        const sensorLogsForThisBatch = sensorLogs
+          .filtered('itemBatches.id = $0', batchId)
+          .sorted('timestamp');
+        const duration = {
+          startDate: sensorLogsForThisBatch[0].timestamp,
+          endDate: sensorLogsForThisBatch[sensorLogsForThisBatch.length - 1].timestamp,
+        };
+
         // Finally store the batches details:
         // groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
         itemBatchGroup[batchId] = {
