@@ -7,14 +7,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { GenericTablePage } from 'react-native-generic-table-page';
-
 import { StyleSheet, View } from 'react-native';
+import { GenericTablePage } from 'react-native-generic-table-page';
 
 import { VaccineChart, StackedTables } from '.';
 
-import { SHADOW_BORDER } from '../globalStyles/index';
 import { formattedDifferenceBetweenDates, formatExposureRange } from '../utilities/formatters';
+import { extractDataForBreachModal } from '../utilities/modules/vaccines';
+
+import { SHADOW_BORDER } from '../globalStyles';
 
 /**
  * CONSTANTS
@@ -83,29 +84,54 @@ const BATCH_COLUMNS = [
  * sub tables of item batches grouped by item, as well as a table
  * of temperatures for that breach.
  *
+ * Breaches prop is intended to be made by calling extractBreaches in
+ * utilities/modules/vaccines.
  *
- * Props are intended to be made by calling methods in utilities/modules/vaccines
- * -- extractBreaches : Getting the sensorLogs/breaches for a location, item or batch.
- * -- sensorLogsExtractBatches : Called on each breach to extract item data for sub tables.
- * -- getBreachData : Creates the data needed for the main table.
- * -- aggregateLogs : Creates the data needed for the chart component.
- * @prop {Array}  data     Array of data for both breach table and sub tables - example below
- * @prop {Object} database Realm database **Not used, required for main table**
- * @prop {Object} genericTablePageStyles Main table styles
- *
- * [
- *    {
- *      breach: [ array of sensorLogs ]
- *      items: [ { item, batches: [ { code, expiry, totalQuantity, duration }, ... ] }, .. ]
- *      chartData: [ {temp, date}, .. ]
- *    },
- *    .....
- * ]
+ * @prop {Array}     breaches 2D array of breaches - array of SensorLog arrays
+ * @prop {Realm}     database App-wide database reference
+ * @prop {Object}    genericTablePageStyles Main table styles
+ * @prop {Item}      itemFilter item to filter data by
+ * @prop {ItemBatch} itemBatchFilter ItemBatch to filter data by
+ * @prop {Func}      runWithLoadingIndicator app-wide wrapping function to display a spinner
+ * breaches: [[ [sensorLog1, sensorLog2, sensorLog3], [sensorLog1, sensorLog2, .. , ], ..]
  */
 export class BreachTable extends React.PureComponent {
+  constructor(props) {
+    super(props);
+
+    // Data is set through componentDidMount after
+    // generating the required data from the breaches
+    // prop.
+    this.state = {
+      data: null,
+    };
+  }
+
+  /**
+   * COMPONENT METHODS
+   */
+
+  // Takes the breaches passed in through props and generates the required
+  // data to display the main table and each expansion while displaying
+  // a loading indicator spinner to the user.
+  componentDidMount = async () => {
+    const { runWithLoadingIndicator, database, breaches, itemFilter, itemBatchFilter } = this.props;
+    await runWithLoadingIndicator(() => {
+      this.setState({
+        data: extractDataForBreachModal({
+          itemFilter,
+          itemBatchFilter,
+          database,
+          breaches,
+        }),
+      });
+    });
+  };
+
   /**
    * RENDER HELPERS
    */
+
   // Returns an expansion for a row.
   // Creates the required array for the StackTables component. See
   // that component for an example.
@@ -161,11 +187,12 @@ export class BreachTable extends React.PureComponent {
   };
 
   render() {
-    const { database, genericTablePageStyles, data } = this.props;
+    const { genericTablePageStyles } = this.props;
+    const { data } = this.state;
+    if (!data) return null;
     return (
       <GenericTablePage
         {...genericTablePageStyles}
-        database={database}
         data={data}
         columns={BREACH_COLUMNS}
         renderExpansion={this.renderExpansion}
@@ -203,11 +230,17 @@ const localStyles = StyleSheet.create({
   },
 });
 
-BreachTable.defaultProps = {};
+BreachTable.defaultProps = {
+  itemFilter: null,
+  itemBatchFilter: null,
+};
 BreachTable.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
-  data: PropTypes.array.isRequired,
+  breaches: PropTypes.array.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
+  itemFilter: PropTypes.object,
+  itemBatchFilter: PropTypes.object,
 };
 
 export default BreachTable;
