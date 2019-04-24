@@ -11,9 +11,11 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { VaccineChart, BreachTable } from '../widgets';
+
+import { VaccineChart, BreachTable, PageContentModal } from '../widgets';
 import { extractDataForFridgeChart } from '../utilities/modules/vaccines';
 
+import { navStrings } from '../localization';
 import globalStyles, {
   SHADOW_BORDER,
   APP_FONT_FAMILY,
@@ -21,7 +23,6 @@ import globalStyles, {
   GREY,
   HAZARD_RED,
 } from '../globalStyles';
-import { PageContentModal } from '../widgets/modals/index';
 
 const LOCALIZATION = {
   misc: {
@@ -38,6 +39,9 @@ const LOCALIZATION = {
     supplierInvoice: 'Supplier Invoice',
     orderStock: 'Order Stock',
     manageStock: 'Manage Stock',
+  },
+  navigation: {
+    manageVaccineStock: 'Manage Vaccine Stock',
   },
 };
 
@@ -220,16 +224,16 @@ export class VaccineModulePage extends React.Component {
     const menuButtons = [
       {
         text: LOCALIZATION.menuButtons.customerInvoice,
-        onPress: () => console.log('Customer Invoice'),
+        onPress: () => navigateTo('customerInvoices', navStrings.customer_invoices),
       },
       {
         text: LOCALIZATION.menuButtons.supplierInvoice,
-        onPress: () => console.log('Supplier Invoice'),
+        onPress: () => navigateTo('supplierInvoices', navStrings.supplier_invoices),
       },
       { text: LOCALIZATION.menuButtons.orderStock, onPress: () => console.log('Order Stock') },
       {
         text: LOCALIZATION.menuButtons.manageStock,
-        onPress: () => navigateTo('manageVaccineStock', 'Manage Vaccine Stock'),
+        onPress: () => navigateTo('manageVaccineStock', LOCALIZATION.navigation.manageVaccineStock),
       },
     ];
 
