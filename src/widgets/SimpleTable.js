@@ -18,8 +18,19 @@ import { ROW_BLUE, APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles/index'
  * @prop    {array}  data    Array of data. Example below.
  * @prop    {array}  columns Array of column objects. Example below.
  * @prop    {string} title   Title for this table.
+ *
  * data = [ { a: 1, b: 2}, {a: 3, b: 4}, .. ]
- * columns = [ { key: 'a', width: 1, title: 'A COLUMN' }, { key: 'b', width: 1, title: 'B COLUMN' }]
+ * Simple objects with key/values pairs corresponding to each column. Values
+ * must be simple scalar values, unless the corresponding column has a formatMethod
+ *
+ * columns = [ { key: 'a', width: 1, title: 'A COLUMN' },
+ *             { key: 'b', width: 1, title: 'B COLUMN', formatMethod: () => {} }
+ * ]
+ * formatMethod: e.g. (value) => value.toLocaleDateString()
+ *
+ * Objects using flex to scale width and a key to find the correct data for each
+ * row. If the value being passed in the data object is not a simple scalar value,
+ * a formatMethod can be passed to transform it to one.
  */
 export class SimpleTable extends React.PureComponent {
   keyExtractor = ({ index }) => index;
@@ -34,15 +45,11 @@ export class SimpleTable extends React.PureComponent {
     );
   };
 
-  renderCell = ({ content, rowIndex, header, width, cellIndex }) => {
+  renderCell = ({ content, rowIndex, header, width, cellIndex, formatMethod }) => {
     const { cell, cellFont } = localStyles({ ...this.props, rowIndex, header, width });
     return (
       <View style={cell} key={this.keyExtractor({ index: cellIndex })}>
-        <Text style={cellFont}>
-          {content && typeof content === 'object'
-            ? content.toLocaleDateString()
-            : content.toString()}
-        </Text>
+        <Text style={cellFont}>{formatMethod ? formatMethod(content) : content}</Text>
       </View>
     );
   };
@@ -66,9 +73,9 @@ export class SimpleTable extends React.PureComponent {
     return (
       <View style={row}>
         {columns.map((column, cellIndex) => {
-          const { key, width } = column;
+          const { key, width, formatMethod } = column;
           const content = item[key];
-          return this.renderCell({ content, column, width, cellIndex, rowIndex });
+          return this.renderCell({ content, column, width, cellIndex, rowIndex, formatMethod });
         })}
       </View>
     );
