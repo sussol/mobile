@@ -257,7 +257,6 @@ export class VaccineModulePage extends React.Component {
   render() {
     const { fridges, hasFridges } = this;
     const { isModalOpen, currentBreach } = this.state;
-
     const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
 
     return (
@@ -270,8 +269,12 @@ export class VaccineModulePage extends React.Component {
           />
           {this.renderMenuButtons()}
         </View>
-        {hasFridges && fridges.map(this.renderFridge)}
-        {!hasFridges && <Text style={[greyTextStyleLarge]}>{LOCALIZATION.misc.noFridges}</Text>}
+        {!hasFridges && fridges.map(this.renderFridge)}
+        {hasFridges && (
+          <View style={localStyles.noFridgesContainerStyle}>
+            <Text style={[greyTextStyleLarge]}>{LOCALIZATION.misc.noFridges}</Text>
+          </View>
+        )}
         {isModalOpen && (
           <PageContentModal
             isOpen={isModalOpen}
@@ -353,5 +356,9 @@ const localStyles = StyleSheet.create({
     alignSelf: 'flex-end',
     margin: 7,
     fontSize: 15,
+  },
+  noFridgesContainerStyle: {
+    ...globalStyles.centeredContent,
+    height: '70%',
   },
 });
