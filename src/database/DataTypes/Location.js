@@ -55,6 +55,7 @@ export class Location extends Realm.Object {
 
   isCriticalTemperature(database) {
     const currentTemperature = this.getCurrentTemperature(database);
+    if (!this.temperatureRange) return null;
     const { minTemperature, maxTemperature } = this.temperatureRange;
     return minTemperature >= currentTemperature || currentTemperature >= maxTemperature;
   }
