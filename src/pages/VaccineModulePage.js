@@ -45,11 +45,31 @@ const LOCALIZATION = {
   },
 };
 
+const MENU_BUTTONS = [
+  {
+    page: 'manageVaccineStock',
+    pageTitle: LOCALIZATION.navigation.manageVaccineStock,
+    buttonText: LOCALIZATION.menuButtons.manageStock,
+  },
+  {
+    page: 'supplierInvoices',
+    pageTitle: navStrings.supplier_invoices,
+    buttonText: navStrings.supplier_invoices,
+  },
+  {
+    page: 'customerInvoices',
+    pageTitle: navStrings.customer_invoices,
+    buttonText: navStrings.customer_invoices,
+  },
+  {
+    page: 'vaccineModulePage',
+    pageTitle: 'Order Stock',
+    buttonText: LOCALIZATION.menuButtons.orderStock,
+  },
+];
+
 const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
-
-// TODO navigation for menu buttons
-// TODO Localise all strings
 
 export class VaccineModulePage extends React.Component {
   constructor(props) {
@@ -217,34 +237,28 @@ export class VaccineModulePage extends React.Component {
     );
   };
 
+  renderMenuButtons = () => {
+    const { menuButtonTextStyle, menuButtonStyle } = localStyles;
+    const { navigateTo } = this.props;
+    return MENU_BUTTONS.map(menuButton => {
+      const { buttonText, pageTitle, page } = menuButton;
+      return (
+        <Button
+          key={buttonText}
+          style={menuButtonStyle}
+          textStyle={menuButtonTextStyle}
+          text={buttonText}
+          onPress={() => navigateTo(page, pageTitle)}
+        />
+      );
+    });
+  };
+
   render() {
     const { fridges, hasFridges } = this;
-    const { navigateTo } = this.props;
     const { isModalOpen, currentBreach } = this.state;
-    const menuButtons = [
-      {
-        text: LOCALIZATION.menuButtons.customerInvoice,
-        onPress: () => navigateTo('customerInvoices', navStrings.customer_invoices),
-      },
-      {
-        text: LOCALIZATION.menuButtons.supplierInvoice,
-        onPress: () => navigateTo('supplierInvoices', navStrings.supplier_invoices),
-      },
-      { text: LOCALIZATION.menuButtons.orderStock, onPress: () => console.log('Order Stock') },
-      {
-        text: LOCALIZATION.menuButtons.manageStock,
-        onPress: () => navigateTo('manageVaccineStock', LOCALIZATION.navigation.manageVaccineStock),
-      },
-    ];
 
-    const {
-      pageContainerStyle,
-      sectionStyle,
-      imageStyle,
-      menuButtonStyle,
-      greyTextStyleLarge,
-      menuButtonTextStyle,
-    } = localStyles;
+    const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
 
     return (
       <View style={pageContainerStyle}>
@@ -254,9 +268,7 @@ export class VaccineModulePage extends React.Component {
             resizeMode="contain"
             source={require('../images/menu_vaccines.png')}
           />
-          {menuButtons.map(props => (
-            <Button style={menuButtonStyle} textStyle={menuButtonTextStyle} {...props} />
-          ))}
+          {this.renderMenuButtons()}
         </View>
         {hasFridges && fridges.map(this.renderFridge)}
         {!hasFridges && <Text style={[greyTextStyleLarge]}>{LOCALIZATION.misc.noFridges}</Text>}
