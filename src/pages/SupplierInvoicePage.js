@@ -566,6 +566,41 @@ export function checkForFinaliseError(transaction) {
   return null;
 }
 
+export function doAfterFinalisation({ database, record: supplierInvoice, user }) {
+  const vvmFailedBatches = supplierInvoice
+    .getTransactionBatches(database)
+    .filtered('isVVMPassed = false');
+
+  if (vvmFailedBatches.length === 0) return;
+  const { confirmDate: date } = supplierInvoice;
+  const isAddition = false;
+
+  database.write(() => {
+    const inventoryAdjustment = createRecord(
+      database,
+      'InventoryAdjustment',
+      user,
+      date,
+      isAddition,
+      { status: 'new' }
+    );
+    vvmFailedBatches.forEach(({ itemBatch, numberOfPacks }) => {
+      const transactionItem = createRecord(
+        database,
+        'TransactionItem',
+        inventoryAdjustment,
+        itemBatch.item
+      );
+      createRecord(database, 'TransactionBatch', transactionItem, itemBatch, {
+        numberOfPacks,
+        isVVMPassed: false,
+        // vvmFailedOption
+      });
+    });
+    inventoryAdjustment.finalise(database);
+  });
+}
+
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 SupplierInvoicePage.propTypes = {
   database: PropTypes.object,

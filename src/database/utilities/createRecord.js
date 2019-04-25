@@ -85,7 +85,7 @@ const createNumberToReuse = (database, numberSequence, number) => {
  *                                     else, adjustment is a decrease.
  * @return  {Transaction}
  */
-const createInventoryAdjustment = (database, user, date, isAddition) =>
+const createInventoryAdjustment = (database, user, date, isAddition, extraFields) =>
   database.create('Transaction', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, INVENTORY_ADJUSTMENT_SERIAL_NUMBER),
@@ -96,6 +96,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) =>
     comment: '',
     enteredBy: user,
     otherParty: database.objects('Name').find(name => name.type === 'inventory_adjustment'),
+    ...extraFields,
   });
 
 /**
@@ -291,7 +292,7 @@ const createSupplierInvoice = (database, supplier, user) => {
  * @param   {ItemBatch}         itemBatch        Item batch to associate with transaction batch.
  * @return  {TransactionBatch}
  */
-const createTransactionBatch = (database, transactionItem, itemBatch) => {
+const createTransactionBatch = (database, transactionItem, itemBatch, extraFields) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
 
   const transactionBatch = database.create('TransactionBatch', {
@@ -308,6 +309,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
     donor,
     transaction: transactionItem.transaction,
     sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
+    ...extraFields,
   });
 
   transactionItem.addBatch(transactionBatch);

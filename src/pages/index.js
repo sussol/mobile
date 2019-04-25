@@ -27,6 +27,7 @@ import { StocktakesPage } from './StocktakesPage';
 import {
   SupplierInvoicePage,
   checkForFinaliseError as checkForSupplierInvoiceError,
+  doAfterFinalisation as doAfterFinalisingSupplierInvoice,
 } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
@@ -67,6 +68,7 @@ export const PAGES = {
 export const FINALISABLE_PAGES = {
   supplierInvoice: {
     checkForError: checkForSupplierInvoiceError,
+    doAfterFinalisation: doAfterFinalisingSupplierInvoice,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_supplier_invoice',
