@@ -135,6 +135,11 @@ export class BreachTable extends React.PureComponent {
   // for the main table.
   renderCell = (key, value) => {
     switch (key) {
+      case 'date':
+        return {
+          type: 'text',
+          cellContents: value[key].toLocaleDateString(),
+        };
       case 'location':
         return {
           type: 'text',
