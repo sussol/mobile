@@ -585,69 +585,6 @@ export function checkForFinaliseError(transaction) {
   return null;
 }
 
-export function vaccineDisposalAdjustments({
-  database,
-  record: supplierInvoice,
-  user,
-  itemBatches,
-}) {
-  let batchesToDispose;
-  // If ItemBatches were passed, making InventoryAdjustments for
-  // ItemBatches, rather than for TransactionBatches from a SupplierInvoice
-  if (itemBatches) {
-    // Any ItemBatch which has an Option, has been set as disposed or has
-    // a vvmStatus of failed.
-    // Create objects similar to a TransactionBatch for each ItemBatch
-    // a part of the InventoryAdjustment.
-    batchesToDispose = itemBatches
-      .filter(itemBatch => !!itemBatch.option)
-      .map(itemBatch => ({
-        itemBatch,
-        numberOfPacks: itemBatch.totalQuantity,
-        option: itemBatch.option,
-      }));
-  } else if (supplierInvoice) {
-    // When a SupplierInvoice is passed, InventoryAdjustments are made for
-    // each VVM Failed TransactionBatch a part of that invoice.
-    batchesToDispose = supplierInvoice
-      .getTransactionBatches(database)
-      .filtered('isVVMPassed = false');
-  } else {
-    // If neither of the above are passed, prematurely exit.
-    return;
-  }
-  // If there are no batches which should be disposed, prematurely exit.
-  if (batchesToDispose.length === 0) return;
-  const { confirmDate: date } = supplierInvoice;
-  const isAddition = false;
-  // Create an InventoryAdjustment transaction for removing
-  // stock.
-  database.write(() => {
-    const inventoryAdjustment = createRecord(
-      database,
-      'InventoryAdjustment',
-      user,
-      date,
-      isAddition,
-      { status: 'new' }
-    );
-    // Create the TransactionItem and TransactionBatch for each batch to dispose
-    batchesToDispose.forEach(({ itemBatch, numberOfPacks }) => {
-      // Defensively skip this batch if it has no item, option or the numberOfPacks
-      // isn't positive
-      const { item } = itemBatch;
-      if (!(item || numberOfPacks > 0)) return;
-      const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
-      createRecord(database, 'TransactionBatch', transactionItem, itemBatch, {
-        numberOfPacks,
-        isVVMPassed: false,
-      });
-    });
-    // Finalise the transaction to make real database changes.
-    inventoryAdjustment.finalise(database);
-  });
-}
-
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 SupplierInvoicePage.propTypes = {
   database: PropTypes.object,

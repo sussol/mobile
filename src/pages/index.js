@@ -27,7 +27,6 @@ import { StocktakesPage } from './StocktakesPage';
 import {
   SupplierInvoicePage,
   checkForFinaliseError as checkForSupplierInvoiceError,
-  vaccineDisposalAdjustments,
 } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
@@ -41,6 +40,8 @@ import { ManageVaccineStockPage } from './ManageVaccineStockPage';
 import { ManageVaccineItemPage } from './ManageVaccineItemPage';
 
 import { RealmExplorer } from './RealmExplorer';
+
+import { vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
 
 export { FirstUsePage } from './FirstUsePage';
 
