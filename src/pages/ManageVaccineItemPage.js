@@ -159,7 +159,6 @@ export class ManageVaccineItemPage extends React.Component {
   onSplitBatch = (splitValue = 0) => {
     const { currentBatch, data } = this.state;
     const { totalQuantity } = currentBatch;
-
     const parsedSplitValue = parseInt(splitValue, 10);
     let newObjectValues = {};
 
@@ -171,13 +170,15 @@ export class ManageVaccineItemPage extends React.Component {
       };
       // Account for 0 & NaN (From entering a non-numeric character)
     } else if (parsedSplitValue) {
+      let parentBatch = currentBatch;
+      if (currentBatch.parentBatch) parentBatch = currentBatch.parentBatch;
       const newBatchValues = {
         id: generateUUID(),
         totalQuantity: parsedSplitValue,
         vvmStatus: false,
         reason: this.VVMREASON || null,
         hasBreached: currentBatch.hasBreached,
-        parentBatch: currentBatch,
+        parentBatch,
       };
       data.push(createRowObject(currentBatch, newBatchValues));
       newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
