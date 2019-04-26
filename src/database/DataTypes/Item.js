@@ -5,10 +5,7 @@
 
 import Realm from 'realm';
 
-import { getTotal, millisecondsToDays, MILLISECONDS_PER_DAY } from '../utilities';
-
-// TODO: move USAGE_PERIOD_MILLISECONDS to Item.dailyUsage
-const USAGE_PERIOD_MILLISECONDS = 3 * 30 * MILLISECONDS_PER_DAY; // Three months.
+import { getTotal, millisecondsToDays } from '../utilities';
 
 /**
  * An item.
@@ -65,9 +62,10 @@ export class Item extends Realm.Object {
    * @return  {number}
    */
   get dailyUsage() {
+    const { AMCmillisecondsLookBack, AMCenforceLookBack } = global;
     const endDate = new Date();
-    const startDate = new Date(endDate - USAGE_PERIOD_MILLISECONDS); // 90 days ago.
-    return this.dailyUsageForPeriod(startDate, endDate);
+    const startDate = new Date(endDate - AMCmillisecondsLookBack);
+    return this.dailyUsageForPeriod(startDate, endDate, AMCenforceLookBack);
   }
 
   /**
@@ -175,10 +173,14 @@ export class Item extends Realm.Object {
    *                               period (often a decimal, should be rounded or ceiling taken
    *                               if used as quantity.
    */
-  dailyUsageForPeriod(startDate, endDate) {
+  dailyUsageForPeriod(startDate, endDate, enforceEndDate = false) {
     if (this.batches.length === 0) return 0;
 
-    const fromDate = this.addedDate > startDate ? this.addedDate : startDate;
+    let fromDate = startDate;
+    if (!enforceEndDate) {
+      const { addedDate } = this;
+      fromDate = addedDate < startDate ? addedDate : fromDate;
+    }
     const periodInDays = millisecondsToDays(endDate - fromDate);
     const usage = this.totalUsageForPeriod(fromDate, endDate);
 
