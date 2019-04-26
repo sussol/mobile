@@ -9,7 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { generateUUID } from 'react-native-database';
-import { extractBreaches } from '../utilities/modules/vaccines';
+import { extractBreaches, vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
 
 import { GenericPage } from './GenericPage';
 import {
@@ -178,15 +178,9 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   onApplyChanges = () => {
-    // TODO:
-    // Confirmation dialog
-    // Create inventory adjustments for any failed vvm status'
-    // Create repacks for any location changes
-    // Pop this page off the navigation stack.
-    // If more data is needed to create these repacks and inventory
-    // adjustments, they can easily be added to the row object with
-    // no side-effects. e.g. the ItemBatch itself or just
-    // some extra fields.
+    const { database, currentUser: user } = this.props;
+    const { data: itemBatches } = this.state;
+    vaccineDisposalAdjustments({ database, user, itemBatches });
   };
 
   onDispose = ({ itemBatch } = {}) => ({ item: option }) => {
@@ -324,7 +318,7 @@ export class ManageVaccineItemPage extends React.Component {
   renderTopRightComponent = () => (
     <FinaliseButton
       text="Apply Changes"
-      onPress={() => {}}
+      onPress={this.onApplyChanges}
       isFinalised={false}
       fontStyle={{ fontSize: 18 }}
     />
@@ -362,6 +356,7 @@ ManageVaccineItemPage.propTypes = {
   genericTablePageStyles: PropTypes.object.isRequired,
   topRoute: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired,
 };
 
 export default ManageVaccineItemPage;

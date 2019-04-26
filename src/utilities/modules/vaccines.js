@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -422,7 +423,7 @@ export function vaccineDisposalAdjustments({
     batchesToDispose = itemBatches
       .filter(itemBatch => !!itemBatch.option)
       .map(itemBatch => ({
-        itemBatch,
+        itemBatch: itemBatch.parentBatch,
         numberOfPacks: itemBatch.totalQuantity,
         option: itemBatch.option,
       }));
@@ -438,7 +439,8 @@ export function vaccineDisposalAdjustments({
   }
   // If there are no batches which should be disposed, prematurely exit.
   if (batchesToDispose.length === 0) return;
-  const { confirmDate: date } = supplierInvoice;
+  let date = new Date();
+  if (supplierInvoice) date = supplierInvoice.confirmDate;
   const isAddition = false;
   // Create an InventoryAdjustment transaction for removing
   // stock.
@@ -452,9 +454,14 @@ export function vaccineDisposalAdjustments({
       { status: 'new' }
     );
     // Create the TransactionItem and TransactionBatch for each batch to dispose
-    batchesToDispose.forEach(({ itemBatch, numberOfPacks, option }) => {
+    batchesToDispose.forEach(({ itemBatch: batch, numberOfPacks, option }) => {
       // Defensively skip this batch if it has no item, option or the numberOfPacks
       // isn't positive
+      let itemBatch = batch;
+      if (!batch.addTransactionBatch) {
+        itemBatch = database.objects('ItemBatch').filtered('id = $0', batch.id)[0];
+      }
+
       const { item } = itemBatch;
       if (!(item || numberOfPacks > 0)) return;
       const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
