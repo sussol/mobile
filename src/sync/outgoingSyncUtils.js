@@ -285,6 +285,7 @@ const generateSyncData = (settings, recordType, record) => {
         doses: String(doses),
         isVVMPassed: !!isVVMPassed && String(isVVMPassed),
         type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
+        optionID: record.option && record.option.id,
       };
     }
     default:
