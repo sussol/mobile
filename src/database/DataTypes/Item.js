@@ -179,7 +179,7 @@ export class Item extends Realm.Object {
     let fromDate = startDate;
     if (!enforceEndDate) {
       const { addedDate } = this;
-      fromDate = addedDate < startDate ? addedDate : fromDate;
+      fromDate = addedDate > startDate ? addedDate : fromDate;
     }
     const periodInDays = millisecondsToDays(endDate - fromDate);
     const usage = this.totalUsageForPeriod(fromDate, endDate);
