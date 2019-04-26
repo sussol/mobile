@@ -164,6 +164,7 @@ export class SupplierInvoicePage extends React.Component {
         database.update('TransactionBatch', {
           id: transactionBatch.id,
           isVVMPassed: true,
+          option: null,
         })
       );
       this.refreshData();
