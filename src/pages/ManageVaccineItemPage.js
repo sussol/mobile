@@ -9,7 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { generateUUID } from 'react-native-database';
-import { extractBreaches, vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
+import { extractBreaches } from '../utilities/modules/vaccines';
 
 import { GenericPage } from './GenericPage';
 import {
@@ -65,9 +65,10 @@ const VACCINE_COLUMN_KEYS = ['batch', 'expiry', 'quantity', 'fridge', 'breach', 
 const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey]);
 
 // Creates a row object for use within this component.
-const createRowObject = (itemBatch, extraData = { vvmStatus: null, option: null }) => ({
+const createRowObject = (itemBatch, extraData = { vvmStatus: null, reason: null }) => ({
   ...itemBatch,
   totalQuantity: itemBatch.totalQuantity,
+  hasBreached: itemBatch.hasBreached,
   ...extraData,
 });
 
@@ -119,12 +120,12 @@ export class ManageVaccineItemPage extends React.Component {
     return MODAL_TITLES(currentBatch)[modalKey];
   };
 
-  getFridgeDescription = ({ location, vvmStatus, option }) => {
+  getFridgeDescription = ({ location, vvmStatus, reason }) => {
     const { hasFridges } = this.state;
-    if (hasFridges && vvmStatus !== false && !option) {
+    if (hasFridges && vvmStatus !== false && !reason) {
       return (location && location.description) || 'Unnasigned';
     }
-    return (!hasFridges && 'No fridges') || ((!vvmStatus || option) && 'Discarded');
+    return (!hasFridges && 'No fridges') || ((!vvmStatus || reason) && 'Discarded');
   };
 
   // Updates the currentBatch object held within state with new
@@ -139,7 +140,8 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   getBreaches = () => {
-    const { currentBatch } = this.state;
+    let { currentBatch } = this.state;
+    if (currentBatch.parentBatch) currentBatch = currentBatch.parentBatch;
     const { database } = this.props;
     return extractBreaches({
       sensorLogs: database.objects('SensorLog').filtered('itemBatches.id = $0', currentBatch.id),
@@ -157,19 +159,26 @@ export class ManageVaccineItemPage extends React.Component {
   onSplitBatch = (splitValue = 0) => {
     const { currentBatch, data } = this.state;
     const { totalQuantity } = currentBatch;
-
     const parsedSplitValue = parseInt(splitValue, 10);
     let newObjectValues = {};
 
     if (parsedSplitValue > totalQuantity) {
-      newObjectValues = { vvmStatus: false, option: this.VVMREASON || null };
+      newObjectValues = {
+        vvmStatus: false,
+        reason: this.VVMREASON || null,
+        hasBreached: currentBatch.hasBreached,
+      };
       // Account for 0 & NaN (From entering a non-numeric character)
     } else if (parsedSplitValue) {
+      let parentBatch = currentBatch;
+      if (currentBatch.parentBatch) parentBatch = currentBatch.parentBatch;
       const newBatchValues = {
         id: generateUUID(),
         totalQuantity: parsedSplitValue,
         vvmStatus: false,
-        option: this.VVMREASON || null,
+        reason: this.VVMREASON || null,
+        hasBreached: currentBatch.hasBreached,
+        parentBatch,
       };
       data.push(createRowObject(currentBatch, newBatchValues));
       newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
@@ -178,15 +187,21 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   onApplyChanges = () => {
-    const { database, currentUser: user } = this.props;
-    const { data: itemBatches } = this.state;
-    vaccineDisposalAdjustments({ database, user, itemBatches });
+    // TODO:
+    // Confirmation dialog
+    // Create inventory adjustments for any failed vvm status'
+    // Create repacks for any location changes
+    // Pop this page off the navigation stack.
+    // If more data is needed to create these repacks and inventory
+    // adjustments, they can easily be added to the row object with
+    // no side-effects. e.g. the ItemBatch itself or just
+    // some extra fields.
   };
 
-  onDispose = ({ itemBatch } = {}) => ({ item: option }) => {
-    if (option) return this.updateObject({ option }, { isModalOpen: false });
+  onDispose = ({ itemBatch } = {}) => ({ item: reason }) => {
+    if (reason) return this.updateObject({ reason }, { isModalOpen: false });
     return this.setState({ currentBatch: itemBatch }, () =>
-      this.updateObject({ option: null, vvmStatus: true }, { isModalOpen: false })
+      this.updateObject({ reason: null, vvmStatus: true }, { isModalOpen: false })
     );
   };
 
@@ -202,7 +217,7 @@ export class ManageVaccineItemPage extends React.Component {
   onVvmToggle = ({ modalKey, currentBatch }) => ({ newState }) => {
     if (!newState) return this.onModalUpdate({ modalKey, currentBatch })();
     return this.setState({ currentBatch }, () =>
-      this.updateObject({ vvmStatus: true, option: null })
+      this.updateObject({ vvmStatus: true, reason: null })
     );
   };
 
@@ -219,13 +234,10 @@ export class ManageVaccineItemPage extends React.Component {
    * RENDER HELPERS
    */
   renderCell = (key, itemBatch) => {
-    const { database } = this.props;
     const { hasFridges } = this.state;
+    const { vvmStatus, reason } = itemBatch;
+    const usingFridge = vvmStatus !== false && hasFridges && !reason;
 
-    const { vvmStatus, option } = itemBatch;
-    const usingFridge = vvmStatus !== false && hasFridges && !option;
-
-    const itemBatchObject = database.objects('ItemBatch').filtered('id = $0', itemBatch.id)[0];
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
     const emptyCell = { type: 'text', cellContents: '' };
 
@@ -245,10 +257,7 @@ export class ManageVaccineItemPage extends React.Component {
           />
         );
       case 'breach':
-        if (itemBatchObject) {
-          const hasBreach = itemBatchObject.breaches.length > 0;
-          if (!hasBreach) return emptyCell;
-        }
+        if (!itemBatch.hasBreached) return emptyCell;
         return (
           <IconCell
             icon="warning"
@@ -260,11 +269,11 @@ export class ManageVaccineItemPage extends React.Component {
       case 'dispose':
         return (
           <IconCell
-            text={option && option.title}
-            icon={option ? 'times' : 'trash'}
-            iconSize={option ? 20 : 30}
-            onPress={option ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
-            iconColour={option ? 'red' : DARK_GREY}
+            text={reason && reason.title}
+            icon={reason ? 'times' : 'trash'}
+            iconSize={reason ? 20 : 30}
+            onPress={reason ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
+            iconColour={reason ? 'red' : DARK_GREY}
           />
         );
       case 'vvmStatus':
@@ -281,6 +290,8 @@ export class ManageVaccineItemPage extends React.Component {
 
   renderModal = () => {
     const { modalKey, currentBatch } = this.state;
+    if (!currentBatch) return null;
+
     switch (modalKey) {
       case 'location': {
         return (
@@ -299,7 +310,7 @@ export class ManageVaccineItemPage extends React.Component {
             data={this.REASONS}
             keyToDisplay="title"
             onPress={this.onDispose()}
-            highlightValue={currentBatch && currentBatch.option ? currentBatch.option.title : null}
+            highlightValue={currentBatch && currentBatch.reason ? currentBatch.reason.title : null}
           />
         );
       }
@@ -307,7 +318,13 @@ export class ManageVaccineItemPage extends React.Component {
         return <TextEditor text="" onEndEditing={this.onSplitBatch} />;
       }
       case 'breach': {
-        return <BreachTable {...this.props} breaches={this.getBreaches()} />;
+        return (
+          <BreachTable
+            {...this.props}
+            breaches={this.getBreaches()}
+            itemBatchFilter={currentBatch && currentBatch.parentBatch}
+          />
+        );
       }
       default: {
         return null;
@@ -318,7 +335,7 @@ export class ManageVaccineItemPage extends React.Component {
   renderTopRightComponent = () => (
     <FinaliseButton
       text="Apply Changes"
-      onPress={this.onApplyChanges}
+      onPress={() => {}}
       isFinalised={false}
       fontStyle={{ fontSize: 18 }}
     />
@@ -356,7 +373,6 @@ ManageVaccineItemPage.propTypes = {
   genericTablePageStyles: PropTypes.object.isRequired,
   topRoute: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
-  currentUser: PropTypes.object.isRequired,
 };
 
 export default ManageVaccineItemPage;
