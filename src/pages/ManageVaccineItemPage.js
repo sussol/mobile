@@ -68,6 +68,7 @@ const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey])
 const createRowObject = (itemBatch, extraData = { vvmStatus: null, reason: null }) => ({
   ...itemBatch,
   totalQuantity: itemBatch.totalQuantity,
+  hasBreached: itemBatch.hasBreached,
   ...extraData,
 });
 
@@ -139,7 +140,8 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   getBreaches = () => {
-    const { currentBatch } = this.state;
+    let { currentBatch } = this.state;
+    if (currentBatch.parentBatch) currentBatch = currentBatch.parentBatch;
     const { database } = this.props;
     return extractBreaches({
       sensorLogs: database.objects('SensorLog').filtered('itemBatches.id = $0', currentBatch.id),
@@ -162,7 +164,11 @@ export class ManageVaccineItemPage extends React.Component {
     let newObjectValues = {};
 
     if (parsedSplitValue > totalQuantity) {
-      newObjectValues = { vvmStatus: false, reason: this.VVMREASON || null };
+      newObjectValues = {
+        vvmStatus: false,
+        reason: this.VVMREASON || null,
+        hasBreached: currentBatch.hasBreached,
+      };
       // Account for 0 & NaN (From entering a non-numeric character)
     } else if (parsedSplitValue) {
       const newBatchValues = {
@@ -170,6 +176,8 @@ export class ManageVaccineItemPage extends React.Component {
         totalQuantity: parsedSplitValue,
         vvmStatus: false,
         reason: this.VVMREASON || null,
+        hasBreached: currentBatch.hasBreached,
+        parentBatch: currentBatch,
       };
       data.push(createRowObject(currentBatch, newBatchValues));
       newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
@@ -225,13 +233,10 @@ export class ManageVaccineItemPage extends React.Component {
    * RENDER HELPERS
    */
   renderCell = (key, itemBatch) => {
-    const { database } = this.props;
     const { hasFridges } = this.state;
-
     const { vvmStatus, reason } = itemBatch;
     const usingFridge = vvmStatus !== false && hasFridges && !reason;
 
-    const itemBatchObject = database.objects('ItemBatch').filtered('id = $0', itemBatch.id)[0];
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
     const emptyCell = { type: 'text', cellContents: '' };
 
@@ -251,10 +256,7 @@ export class ManageVaccineItemPage extends React.Component {
           />
         );
       case 'breach':
-        if (itemBatchObject) {
-          const hasBreach = itemBatchObject.breaches.length > 0;
-          if (!hasBreach) return emptyCell;
-        }
+        if (!itemBatch.hasBreached) return emptyCell;
         return (
           <IconCell
             icon="warning"
@@ -287,6 +289,8 @@ export class ManageVaccineItemPage extends React.Component {
 
   renderModal = () => {
     const { modalKey, currentBatch } = this.state;
+    if (!currentBatch) return null;
+
     switch (modalKey) {
       case 'location': {
         return (
@@ -313,7 +317,13 @@ export class ManageVaccineItemPage extends React.Component {
         return <TextEditor text="" onEndEditing={this.onSplitBatch} />;
       }
       case 'breach': {
-        return <BreachTable {...this.props} breaches={this.getBreaches()} />;
+        return (
+          <BreachTable
+            {...this.props}
+            breaches={this.getBreaches()}
+            itemBatchFilter={currentBatch && currentBatch.parentBatch}
+          />
+        );
       }
       default: {
         return null;
