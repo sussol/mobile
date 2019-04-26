@@ -6,7 +6,6 @@ import { SETTINGS_KEYS } from './index';
 import { MILLISECONDS_PER_DAY } from '../database/utilities';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 
-const { THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 const DEFAULT_AMC_MONTHS_LOOKBAK = 3; // three months
 
 export class MobileAppSettings extends Settings {
@@ -32,7 +31,7 @@ export class MobileAppSettings extends Settings {
     let customData = {};
 
     try {
-      customData = JSON.parse(this.get(THIS_STORE_CUSTOM_DATA));
+      customData = JSON.parse(this.get(SETTINGS_KEYS.THIS_STORE_CUSTOM_DATA));
     } catch (e) {
       //
     }
