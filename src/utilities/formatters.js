@@ -31,9 +31,9 @@ export const formattedDifferenceBetweenDates = ({ startDate, endDate }) => {
   const numberOfMinutes = Math.floor((differenceInMs - numberOfHours * msPerHour) / msPerMinute);
 
   let formattedDifference = '';
-  if (numberOfDays) formattedDifference += `${numberOfDays} Days `;
-  if (numberOfHours) formattedDifference += `${numberOfHours} Hours `;
-  if (numberOfMinutes) formattedDifference += `${numberOfMinutes} Minutes `;
+  if (numberOfDays) formattedDifference += `${numberOfDays} day(s) `;
+  if (numberOfHours) formattedDifference += `${numberOfHours} hr(s) `;
+  if (numberOfMinutes) formattedDifference += `${numberOfMinutes} min(s)`;
 
   return formattedDifference;
 };

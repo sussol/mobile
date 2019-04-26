@@ -189,6 +189,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'number_to_use'],
       canBeBlank: [],
     },
+    Options: {
+      cannotBeBlank: ['title', 'type', 'isActive'],
+      canBeBlank: [],
+    },
     Requisition: {
       cannotBeBlank: ['status', 'type', 'daysToSupply'],
       canBeBlank: ['date_entered', 'serial_number', 'requester_reference'],
@@ -520,6 +524,17 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       numberSequence.addNumberToReuse(numberToReuse);
       break;
     }
+    case 'Options': {
+      if (record.type === 'stocktakeLineAdjustment' || record.type === 'vaccineDisposalReason') {
+        database.update(recordType, {
+          id: record.ID,
+          title: record.title,
+          type: record.type,
+          isActive: parseBoolean(record.isActive),
+        });
+      }
+      break;
+    }
     case 'Requisition': {
       let status = REQUISITION_STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL);
       // If not a special 'wp' or 'wf' status, use the normal status translation.
@@ -754,6 +769,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
+        option: database.getOrCreate('Options', record.optionID),
       };
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);

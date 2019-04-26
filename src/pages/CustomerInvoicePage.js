@@ -9,12 +9,6 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
-
-import { createRecord } from '../database';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { extractDataForBreachModal, extractBreaches } from '../utilities/modules/vaccines';
-
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import {
   AutocompleteSelector,
   BottomConfirmModal,
@@ -26,6 +20,10 @@ import {
   BreachTable,
 } from '../widgets';
 
+import { createRecord } from '../database';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
+import { extractBreaches } from '../utilities/modules/vaccines';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
@@ -200,12 +198,6 @@ export class CustomerInvoicePage extends GenericPage {
     this.closeModal();
   };
 
-  onViewBreach = ({ item }) => () => {
-    this.setState({ currentItem: item, modalIsOpen: true, modalKey: MODAL_KEYS.BREACH_MODAL }, () =>
-      this.getBreachData()
-    );
-  };
-
   onDeleteCancel = () => {
     this.setState({ selection: [] }, this.refreshData);
   };
@@ -214,8 +206,8 @@ export class CustomerInvoicePage extends GenericPage {
     this.setState({ selection: newSelection });
   };
 
-  openModal = key => {
-    this.setState({ modalKey: key, modalIsOpen: true });
+  openModal = ({ modalKey, currentItem } = {}) => () => {
+    this.setState({ modalKey, currentItem, modalIsOpen: true });
   };
 
   closeModal = () => {
@@ -232,24 +224,6 @@ export class CustomerInvoicePage extends GenericPage {
 
   openTheirRefEditor = () => {
     this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-  };
-
-  getBreachData = () => {
-    const { currentItem } = this.state;
-    const { database } = this.props;
-
-    const breaches = extractBreaches({
-      sensorLogs: currentItem.getAllSensorLogs(database),
-      database,
-    });
-
-    this.setState({
-      breachData: extractDataForBreachModal({
-        breaches,
-        database,
-        itemFilter: currentItem,
-      }),
-    });
   };
 
   getModalTitle = () => {
@@ -292,13 +266,13 @@ export class CustomerInvoicePage extends GenericPage {
         {
           title: `${pageInfoStrings.their_ref}:`,
           info: this.props.transaction.theirRef,
-          onPress: this.openTheirRefEditor,
+          onPress: this.openModal({ modalKey: MODAL_KEYS.THEIR_REF_EDIT }),
           editableType: 'text',
         },
         {
           title: `${pageInfoStrings.comment}:`,
           info: this.props.transaction.comment,
-          onPress: this.openCommentEditor,
+          onPress: this.openModal({ modalKey: MODAL_KEYS.COMMENT_EDIT }),
           editableType: 'text',
         },
       ],
@@ -352,7 +326,7 @@ export class CustomerInvoicePage extends GenericPage {
             icon="warning"
             color={SUSSOL_ORANGE}
             size={20}
-            onPress={this.onViewBreach({ item })}
+            onPress={this.openModal({ currentItem: item, modalKey: MODAL_KEYS.BREACH_MODAL })}
           />
         );
       }
@@ -361,8 +335,8 @@ export class CustomerInvoicePage extends GenericPage {
 
   renderModalContent = () => {
     const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT, BREACH_MODAL } = MODAL_KEYS;
-    const { database, transaction, genericTablePageStyles } = this.props;
-    const { breachData } = this.state;
+    const { database, transaction } = this.props;
+    const { currentItem } = this.state;
     switch (this.state.modalKey) {
       default:
       case ITEM_SELECT:
@@ -410,9 +384,12 @@ export class CustomerInvoicePage extends GenericPage {
       case BREACH_MODAL:
         return (
           <BreachTable
-            data={breachData || []}
-            database={database}
-            genericTablePageStyles={genericTablePageStyles}
+            {...this.props}
+            itemFilter={currentItem}
+            breaches={extractBreaches({
+              sensorLogs: currentItem.getAllSensorLogs(database),
+              database,
+            })}
           />
         );
     }
@@ -423,7 +400,7 @@ export class CustomerInvoicePage extends GenericPage {
       <PageButton
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
-        onPress={this.openItemSelector}
+        onPress={this.openModal({ modalKey: MODAL_KEYS.ITEM_SELECT })}
         isDisabled={this.props.transaction.isFinalised}
       />
       <PageButton

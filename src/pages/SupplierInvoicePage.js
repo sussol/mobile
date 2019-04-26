@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -101,6 +102,7 @@ export class SupplierInvoicePage extends React.Component {
 
     this.DEFAULT_FRIDGE = null;
     this.FRIDGES = null;
+    this.VVMREASON = null;
 
     this.state = {
       modalKey: null,
@@ -113,6 +115,15 @@ export class SupplierInvoicePage extends React.Component {
 
   componentDidMount = () => {
     const { transaction, database } = this.props;
+
+    this.VVMREASON = database
+      .objects('Options')
+      .filtered(
+        'isActive = $0 && title CONTAINS[c] $1 && type = $2',
+        true,
+        'vvm',
+        'vaccineDisposalReason'
+      )[0];
     this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
     [this.DEFAULT_FRIDGE = null] = this.FRIDGES;
 
@@ -150,7 +161,11 @@ export class SupplierInvoicePage extends React.Component {
 
     if (!isVVMPassed) {
       database.write(() =>
-        database.update('TransactionBatch', { id: transactionBatch.id, isVVMPassed: true })
+        database.update('TransactionBatch', {
+          id: transactionBatch.id,
+          isVVMPassed: true,
+          option: null,
+        })
       );
       this.refreshData();
     } else this.openModal(SPLIT_VALUE_SELECT);
@@ -170,13 +185,17 @@ export class SupplierInvoicePage extends React.Component {
     const { totalQuantity } = selectedBatch;
     const splitValue = parseInt(newValue, 10);
     this.closeModal();
-
+    const newValues = { isVVMPassed: false, option: this.VVMREASON };
     if (splitValue <= 0) return;
     if (splitValue < totalQuantity) {
-      selectedBatch.splitBatch({ database, splitValue, newValues: { isVVMPassed: false } });
+      selectedBatch.splitBatch({
+        database,
+        splitValue,
+        newValues,
+      });
     } else {
       database.write(() =>
-        database.update('TransactionBatch', { id: selectedBatch.id, isVVMPassed: false })
+        database.update('TransactionBatch', { id: selectedBatch.id, ...newValues })
       );
     }
     this.refreshData();
