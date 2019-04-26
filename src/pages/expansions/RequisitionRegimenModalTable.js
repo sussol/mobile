@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unused-state */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -19,40 +20,23 @@ import { expansionPageStyles } from '../../globalStyles';
 export class RequisitionRegimenModalTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      customData: [],
-    };
-  }
-
-  componentDidMount() {
-    const { requisition } = this.props;
-    this.setState({
-      customData: requisition.parsedCustomData,
-    });
+    this.state = { forceUpdate: [] };
   }
 
   onEndEditing = (key, rowData, newValue) => {
-    const { customData } = this.state;
     const { database, requisition } = this.props;
-    const { regimenData, otherData } = customData;
+    const { parsedCustomData } = requisition;
+    const { regimenData } = parsedCustomData;
 
-    const newRegimenData = [...regimenData];
-    const rowIndex = newRegimenData.findIndex(row => row.code === rowData.code);
-
-    newRegimenData[rowIndex][key] = newValue;
-    const newData = { ...otherData, regimenData: newRegimenData };
+    const rowIndex = regimenData.findIndex(row => row.code === rowData.code);
+    regimenData[rowIndex][key] = newValue;
 
     database.write(() => {
-      requisition.saveCustomData(newData);
+      requisition.saveCustomData(parsedCustomData);
       database.save('Requisition', requisition);
     });
 
-    this.setState({ customData: newData });
-  };
-
-  refreshData = () => {
-    const { customData } = this.state;
-    this.setState({ ...customData });
+    this.setState({ forceUpdate: [...regimenData] });
   };
 
   renderCell = (key, regimenRow) => {
@@ -81,20 +65,27 @@ export class RequisitionRegimenModalTable extends React.Component {
     }
   };
 
+  getData = () => {
+    const { requisition } = this.props;
+    const { parsedCustomData } = requisition;
+    const { regimenData } = parsedCustomData;
+    return regimenData;
+  };
+
   render() {
     const { database, genericTablePageStyles } = this.props;
-    const { customData } = this.state;
-    const { regimenData } = customData;
 
     return (
       <GenericPage
-        data={regimenData}
+        data={this.getData()}
         renderCell={this.renderCell}
-        refreshData={this.refreshData}
         hideSearchBar={true}
-        renderDataTableFooter={null} // Overrides default generic pages footer.
         dontRenderSearchBar={true}
+        renderDataTableFooter={null} // Overrides default generic pages footer.
         onEndEditing={this.onEndEditing}
+        database={database}
+        pageStyles={expansionPageStyles}
+        {...genericTablePageStyles}
         columns={[
           {
             key: 'name',
@@ -115,10 +106,6 @@ export class RequisitionRegimenModalTable extends React.Component {
             alignText: 'right',
           },
         ]}
-        dataTypesLinked={['Requisition']}
-        database={database}
-        pageStyles={expansionPageStyles}
-        {...genericTablePageStyles}
       />
     );
   }
