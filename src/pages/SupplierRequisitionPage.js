@@ -363,8 +363,9 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderButtons = () => {
     const { requisition } = this.props;
-    const { program, thresholdMOS } = requisition;
-
+    const { program, thresholdMOS, parsedCustomData } = requisition;
+    const hasRegimenData =
+      parsedCustomData && parsedCustomData.regimenData && parsedCustomData.regimenData.length !== 0;
     const UseSuggestedQuantitiesButton = () => (
       <PageButton
         style={{
@@ -437,7 +438,7 @@ export class SupplierRequisitionPage extends React.Component {
         <View style={globalStyles.verticalContainer}>
           <View style={globalStyles.horizontalContainer}>
             <UseSuggestedQuantitiesButton />
-            {program && <ViewRegimenDataButton />}
+            {hasRegimenData && <ViewRegimenDataButton />}
           </View>
           {program && thresholdMOS && <ThresholdMOSToggle />}
           {!program && <CreateAutomaticOrderButton />}
