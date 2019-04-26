@@ -65,7 +65,7 @@ const VACCINE_COLUMN_KEYS = ['batch', 'expiry', 'quantity', 'fridge', 'breach', 
 const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey]);
 
 // Creates a row object for use within this component.
-const createRowObject = (itemBatch, extraData = { vvmStatus: null, reason: null }) => ({
+const createRowObject = (itemBatch, extraData = { vvmStatus: null, option: null }) => ({
   ...itemBatch,
   totalQuantity: itemBatch.totalQuantity,
   ...extraData,
@@ -119,12 +119,12 @@ export class ManageVaccineItemPage extends React.Component {
     return MODAL_TITLES(currentBatch)[modalKey];
   };
 
-  getFridgeDescription = ({ location, vvmStatus, reason }) => {
+  getFridgeDescription = ({ location, vvmStatus, option }) => {
     const { hasFridges } = this.state;
-    if (hasFridges && vvmStatus !== false && !reason) {
+    if (hasFridges && vvmStatus !== false && !option) {
       return (location && location.description) || 'Unnasigned';
     }
-    return (!hasFridges && 'No fridges') || ((!vvmStatus || reason) && 'Discarded');
+    return (!hasFridges && 'No fridges') || ((!vvmStatus || option) && 'Discarded');
   };
 
   // Updates the currentBatch object held within state with new
@@ -162,14 +162,14 @@ export class ManageVaccineItemPage extends React.Component {
     let newObjectValues = {};
 
     if (parsedSplitValue > totalQuantity) {
-      newObjectValues = { vvmStatus: false, reason: this.VVMREASON || null };
+      newObjectValues = { vvmStatus: false, option: this.VVMREASON || null };
       // Account for 0 & NaN (From entering a non-numeric character)
     } else if (parsedSplitValue) {
       const newBatchValues = {
         id: generateUUID(),
         totalQuantity: parsedSplitValue,
         vvmStatus: false,
-        reason: this.VVMREASON || null,
+        option: this.VVMREASON || null,
       };
       data.push(createRowObject(currentBatch, newBatchValues));
       newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
@@ -189,10 +189,10 @@ export class ManageVaccineItemPage extends React.Component {
     // some extra fields.
   };
 
-  onDispose = ({ itemBatch } = {}) => ({ item: reason }) => {
-    if (reason) return this.updateObject({ reason }, { isModalOpen: false });
+  onDispose = ({ itemBatch } = {}) => ({ item: option }) => {
+    if (option) return this.updateObject({ option }, { isModalOpen: false });
     return this.setState({ currentBatch: itemBatch }, () =>
-      this.updateObject({ reason: null, vvmStatus: true }, { isModalOpen: false })
+      this.updateObject({ option: null, vvmStatus: true }, { isModalOpen: false })
     );
   };
 
@@ -208,7 +208,7 @@ export class ManageVaccineItemPage extends React.Component {
   onVvmToggle = ({ modalKey, currentBatch }) => ({ newState }) => {
     if (!newState) return this.onModalUpdate({ modalKey, currentBatch })();
     return this.setState({ currentBatch }, () =>
-      this.updateObject({ vvmStatus: true, reason: null })
+      this.updateObject({ vvmStatus: true, option: null })
     );
   };
 
@@ -228,8 +228,8 @@ export class ManageVaccineItemPage extends React.Component {
     const { database } = this.props;
     const { hasFridges } = this.state;
 
-    const { vvmStatus, reason } = itemBatch;
-    const usingFridge = vvmStatus !== false && hasFridges && !reason;
+    const { vvmStatus, option } = itemBatch;
+    const usingFridge = vvmStatus !== false && hasFridges && !option;
 
     const itemBatchObject = database.objects('ItemBatch').filtered('id = $0', itemBatch.id)[0];
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
@@ -266,11 +266,11 @@ export class ManageVaccineItemPage extends React.Component {
       case 'dispose':
         return (
           <IconCell
-            text={reason && reason.title}
-            icon={reason ? 'times' : 'trash'}
-            iconSize={reason ? 20 : 30}
-            onPress={reason ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
-            iconColour={reason ? 'red' : DARK_GREY}
+            text={option && option.title}
+            icon={option ? 'times' : 'trash'}
+            iconSize={option ? 20 : 30}
+            onPress={option ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
+            iconColour={option ? 'red' : DARK_GREY}
           />
         );
       case 'vvmStatus':
@@ -305,7 +305,7 @@ export class ManageVaccineItemPage extends React.Component {
             data={this.REASONS}
             keyToDisplay="title"
             onPress={this.onDispose()}
-            highlightValue={currentBatch && currentBatch.reason ? currentBatch.reason.title : null}
+            highlightValue={currentBatch && currentBatch.option ? currentBatch.option.title : null}
           />
         );
       }
