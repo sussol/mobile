@@ -24,6 +24,7 @@ import {
 } from '../widgets';
 
 import { DARK_GREY, FINALISED_RED, SUSSOL_ORANGE, SOFT_RED } from '../globalStyles/index';
+import { ConfirmModal } from '../widgets/modals/index';
 
 /**
  * CONSTANTS
@@ -184,10 +185,14 @@ export class ManageVaccineItemPage extends React.Component {
     this.updateObject(newObjectValues, { isModalOpen: false });
   };
 
-  onApplyChanges = () => {
-    const { database, currentUser: user } = this.props;
+  onApplyChanges = shouldApply => () => {
+    const { database, currentUser: user, navigateBack } = this.props;
     const { data: itemBatches } = this.state;
-    vaccineDisposalAdjustments({ database, user, itemBatches });
+    this.onModalUpdate()();
+    if (shouldApply) {
+      vaccineDisposalAdjustments({ database, user, itemBatches });
+      navigateBack();
+    }
   };
 
   onDispose = ({ itemBatch } = {}) => ({ item: option }) => {
@@ -319,6 +324,7 @@ export class ManageVaccineItemPage extends React.Component {
           />
         );
       }
+
       default: {
         return null;
       }
@@ -328,7 +334,7 @@ export class ManageVaccineItemPage extends React.Component {
   renderTopRightComponent = () => (
     <FinaliseButton
       text="Apply Changes"
-      onPress={this.onApplyChanges}
+      onPress={this.onModalUpdate({ modalKey: 'applyChanges' })}
       isFinalised={false}
       fontStyle={{ fontSize: 18 }}
     />
@@ -336,7 +342,7 @@ export class ManageVaccineItemPage extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data, isModalOpen } = this.state;
+    const { data, isModalOpen, modalKey } = this.state;
     return (
       <GenericPage
         data={data || []}
@@ -349,13 +355,25 @@ export class ManageVaccineItemPage extends React.Component {
         isDataCircular={true}
         {...genericTablePageStyles}
       >
-        <PageContentModal
-          isOpen={isModalOpen}
-          onClose={this.onModalUpdate()}
-          title={this.getModalTitle()}
-        >
-          {this.renderModal()}
-        </PageContentModal>
+        {isModalOpen && modalKey !== 'applyChanges' && (
+          <PageContentModal
+            isOpen={isModalOpen}
+            onClose={this.onModalUpdate()}
+            title={this.getModalTitle()}
+          >
+            {this.renderModal()}
+          </PageContentModal>
+        )}
+        {isModalOpen && modalKey === 'applyChanges' && (
+          <ConfirmModal
+            isOpen={isModalOpen}
+            questionText="Are you sure you want to apply these changes?"
+            confirmText="Yes"
+            cancelText="No"
+            onConfirm={this.onApplyChanges(true)}
+            onCancel={this.onApplyChanges(false)}
+          />
+        )}
       </GenericPage>
     );
   }
@@ -367,6 +385,7 @@ ManageVaccineItemPage.propTypes = {
   topRoute: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
+  navigateBack: PropTypes.func.isRequired,
 };
 
 export default ManageVaccineItemPage;
