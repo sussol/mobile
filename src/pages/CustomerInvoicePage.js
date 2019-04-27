@@ -308,7 +308,7 @@ export class CustomerInvoicePage extends GenericPage {
         // editable if doses > 1.
         const { item } = transactionItem;
         const { isVaccine, doses } = item;
-        const shouldDisable = doses === 1;
+        const shouldDisable = doses === 1 || isFinalised;
         if (!isVaccine || !doses) return emptyCell;
         return {
           type: shouldDisable ? 'text' : 'editable',
