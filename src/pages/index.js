@@ -41,6 +41,8 @@ import { ManageVaccineItemPage } from './ManageVaccineItemPage';
 
 import { RealmExplorer } from './RealmExplorer';
 
+import { vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
+
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
@@ -67,6 +69,7 @@ export const PAGES = {
 export const FINALISABLE_PAGES = {
   supplierInvoice: {
     checkForError: checkForSupplierInvoiceError,
+    vaccineDisposalAdjustments,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_supplier_invoice',

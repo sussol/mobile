@@ -221,6 +221,7 @@ TransactionBatch.schema = {
     doses: { type: 'int', optional: true },
     isVVMPassed: { type: 'bool', optional: true },
     location: { type: 'Location', optional: true },
+    option: { type: 'Options', optional: true },
   },
 };
 

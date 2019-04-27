@@ -1,7 +1,10 @@
+/* eslint-disable prefer-destructuring */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+
+import { createRecord } from '../../database';
 
 /**
  * Utility and helper methods for the vaccine
@@ -139,11 +142,16 @@ const extractItemBatches = ({ sensorLogs, itemBatch, item, database }) => {
         // If this batch has been encountered before, skip it.
         const itemBatchGroup = groupedBatches[itemId].batches;
         if (itemBatchGroup[batchId]) return;
+
         // Calculate the duration this ItemBatch has been counted in this group of sensorLogs.
-        const duration = new Date(
-          sensorLogs.filtered('itemBatches.id = $0', batchId).max('temperature') -
-            sensorLogs.filtered('itemBatches.id = $0', batchId).min('temperature')
-        );
+        const sensorLogsForThisBatch = sensorLogs
+          .filtered('itemBatches.id = $0', batchId)
+          .sorted('timestamp');
+        const duration = {
+          startDate: sensorLogsForThisBatch[0].timestamp,
+          endDate: sensorLogsForThisBatch[sensorLogsForThisBatch.length - 1].timestamp,
+        };
+
         // Finally store the batches details:
         // groupedBatches = { itemId: { item, batches: { id: { duration, id, code.. }, .. }}, .. }
         itemBatchGroup[batchId] = {
@@ -397,3 +405,78 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
     ...TEMPERATURE_RANGE,
   };
 };
+
+export function vaccineDisposalAdjustments({
+  database,
+  record: supplierInvoice,
+  user,
+  itemBatches,
+}) {
+  let batchesToDispose;
+  // If ItemBatches were passed, making InventoryAdjustments for
+  // ItemBatches, rather than for TransactionBatches from a SupplierInvoice
+  if (itemBatches) {
+    // Any ItemBatch which has an Option, has been set as disposed or has
+    // a vvmStatus of failed.
+    // Create objects similar to a TransactionBatch for each ItemBatch
+    // a part of the InventoryAdjustment.
+    batchesToDispose = itemBatches
+      .filter(itemBatch => !!itemBatch.option)
+      .map(itemBatch => ({
+        itemBatch: itemBatch.parentBatch ? itemBatch.parentBatch : itemBatch,
+        numberOfPacks: itemBatch.totalQuantity,
+        option: itemBatch.option,
+      }));
+  } else if (supplierInvoice) {
+    // When a SupplierInvoice is passed, InventoryAdjustments are made for
+    // each VVM Failed TransactionBatch a part of that invoice.
+    batchesToDispose = supplierInvoice
+      .getTransactionBatches(database)
+      .filtered('isVVMPassed = false');
+  } else {
+    // If neither of the above are passed, prematurely exit.
+    return;
+  }
+  // If there are no batches which should be disposed, prematurely exit.
+  if (batchesToDispose.length === 0) return;
+
+  let date = new Date();
+  if (supplierInvoice) date = supplierInvoice.confirmDate;
+  const isAddition = false;
+  // Create an InventoryAdjustment transaction for removing
+  // stock.
+  database.write(() => {
+    const inventoryAdjustment = createRecord(
+      database,
+      'InventoryAdjustment',
+      user,
+      date,
+      isAddition,
+      { status: 'new' }
+    );
+    // Create the TransactionItem and TransactionBatch for each batch to dispose
+    batchesToDispose.forEach(({ itemBatch: batch, numberOfPacks, option, location }) => {
+      // Defensively skip this batch if it has no itemBatch, option or the numberOfPacks
+      // isn't positive
+      if (!(batch || numberOfPacks > 0 || option)) return;
+
+      let itemBatch = batch;
+      if (!batch.addTransactionBatch) {
+        itemBatch = database.objects('ItemBatch').filtered('id = $0', batch.id)[0];
+      }
+      // Skip this batch if the ItemBatch has no related Item.
+      const { item } = itemBatch;
+      if (!item) return;
+
+      const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
+      createRecord(database, 'TransactionBatch', transactionItem, itemBatch, {
+        numberOfPacks,
+        isVVMPassed: false,
+        option,
+        location,
+      });
+    });
+    // Finalise the transaction to make real database changes.
+    inventoryAdjustment.finalise(database);
+  });
+}

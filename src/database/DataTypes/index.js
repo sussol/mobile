@@ -26,6 +26,7 @@ export { Name } from './Name';
 export { NameStoreJoin } from './NameStoreJoin';
 export { NumberSequence } from './NumberSequence';
 export { NumberToReuse } from './NumberToReuse';
+export { Options } from './Options';
 export { Requisition } from './Requisition';
 export { RequisitionItem } from './RequisitionItem';
 export { Sensor } from './Sensor';

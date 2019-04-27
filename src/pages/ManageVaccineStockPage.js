@@ -7,13 +7,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
-import { IconCell, PageInfo, PageContentModal, GenericChoiceList } from '../widgets';
+import { IconCell, PageInfo, PageContentModal, GenericChoiceList, BreachTable } from '../widgets';
 import { SUSSOL_ORANGE } from '../globalStyles';
 
 import { formatExposureRange } from '../utilities';
+import { extractBreaches } from '../utilities/modules/vaccines';
 
 /**
  * CONSTANTS
@@ -25,6 +26,10 @@ const MODAL_KEYS = {
 
 // TODO: Localizatiopn
 const LOCALIZATION = {
+  modal: {
+    breach: 'Temperature breaches for',
+    fridge: 'Select a fridge to filter by',
+  },
   pageInfo: {
     filter: 'Filter by Location',
   },
@@ -42,6 +47,8 @@ const LOCALIZATION = {
     allLocations: 'All locations',
   },
 };
+
+const EMPTY_CELL = { type: 'text', cellContents: '' };
 
 const TABLE_COLUMNS = {
   name: { key: 'name', width: 1.5, title: LOCALIZATION.headers.name, alignText: 'left' },
@@ -121,7 +128,6 @@ const getColumns = () => VACCINE_COLUMN_KEYS.map(key => TABLE_COLUMNS[key]);
 export class ManageVaccineStockPage extends React.Component {
   constructor(props) {
     super(props);
-
     // List of location objects populated in ComponentDidMount.
     // Has a special object for 'No Location' to be selected,
     // which has no ID
@@ -129,7 +135,6 @@ export class ManageVaccineStockPage extends React.Component {
     // Store for all items. Is used to apply location and searchTerm
     // filters and derive the next GenericDataTable data prop.
     this.ITEMS = null;
-
     this.state = {
       // Key determining which modal should be rendered. Uses
       // MODAL_KEYS constant.
@@ -139,6 +144,8 @@ export class ManageVaccineStockPage extends React.Component {
       // and searchTerm key from the search bar in GenericDataTable.
       locationFilter: null,
       searchTerm: '',
+      // The current item to work on
+      currentItem: null,
     };
   }
 
@@ -160,6 +167,22 @@ export class ManageVaccineStockPage extends React.Component {
       data = data.filtered('code BEGINSWITH[c] $0 OR name BEGINSWITH[c] $0', searchTerm);
     }
     return data;
+  };
+
+  getModalTitle = () => {
+    const { modalKey, currentItem } = this.state;
+    if (modalKey && currentItem) return `${LOCALIZATION.modal.breach} ${currentItem.name}`;
+    if (modalKey === MODAL_KEYS.FRIDGE_SELECT) return `${LOCALIZATION.modal.fridge}`;
+    return '';
+  };
+
+  getBreaches = () => {
+    const { currentItem } = this.state;
+    const { database } = this.props;
+    return extractBreaches({
+      sensorLogs: currentItem.getAllSensorLogs(database),
+      database,
+    });
   };
 
   /**
@@ -186,7 +209,6 @@ export class ManageVaccineStockPage extends React.Component {
   /**
    * EVENT HANDLERS
    */
-
   onNavigateToItem = item => {
     const { navigateTo } = this.props;
     navigateTo('manageVaccineItem', item.name, { item });
@@ -195,21 +217,21 @@ export class ManageVaccineStockPage extends React.Component {
   // Handler for opening and closing modals. Whichever key from
   // MODAL_KEYS is passed will be the modal which is rendered. If
   // no key is passed, the current modal will be closed.
-  onModalUpdate = ({ modalKey } = {}) => () => {
+  onModalUpdate = ({ modalKey, item } = {}) => () => {
     if (!modalKey) this.setState({ isModalOpen: false, modalKey: null });
-    else this.setState({ isModalOpen: true, modalKey });
+    else this.setState({ isModalOpen: true, modalKey, currentItem: item });
   };
 
   /**
    * RENDER HELPERS
    */
   renderModal = () => {
-    const { modalKey, locationFilter: highlightValue } = this.state;
+    const { modalKey, locationFilter: highlightValue, currentItem } = this.state;
     const { BREACH, FRIDGE_SELECT } = MODAL_KEYS;
 
     switch (modalKey) {
       case BREACH:
-        return <Text>BREACH MODAL HERE</Text>;
+        return <BreachTable {...this.props} breaches={this.getBreaches()} item={currentItem} />;
       case FRIDGE_SELECT:
         return (
           <GenericChoiceList
@@ -232,10 +254,9 @@ export class ManageVaccineStockPage extends React.Component {
   renderCell = (key, item) => {
     const { locationFilter } = this.state;
     const { database } = this.props;
-    const { BREACH } = MODAL_KEYS;
-    const emptyCell = { type: 'text', cellContents: '' };
+
     const functionToCall = KEY_TO_FUNCTION_MAPPINGS[key];
-    if (!locationFilter) return null;
+
     switch (key) {
       default:
         return item[functionToCall](locationFilter);
@@ -243,13 +264,13 @@ export class ManageVaccineStockPage extends React.Component {
       case 'code':
         return item[key];
       case 'hasBreach':
-        if (!item[functionToCall](locationFilter)) return emptyCell;
+        if (!item[functionToCall](locationFilter)) return EMPTY_CELL;
         return (
           <IconCell
             icon="warning"
             iconColor="red"
             iconSize={30}
-            onPress={this.onModalUpdate({ modalKey: BREACH })}
+            onPress={this.onModalUpdate({ item, modalKey: MODAL_KEYS.BREACH })}
           />
         );
       case 'navigation':
@@ -300,8 +321,12 @@ export class ManageVaccineStockPage extends React.Component {
         {...genericTablePageStyles}
       >
         {isModalOpen && (
-          <PageContentModal isOpen={isModalOpen} onClose={this.onModalUpdate()}>
-            <View>{this.renderModal()}</View>
+          <PageContentModal
+            isOpen={isModalOpen}
+            onClose={this.onModalUpdate()}
+            title={this.getModalTitle()}
+          >
+            {this.renderModal()}
           </PageContentModal>
         )}
       </GenericPage>
