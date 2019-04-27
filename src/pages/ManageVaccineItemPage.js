@@ -9,13 +9,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { generateUUID } from 'react-native-database';
-import { extractBreaches } from '../utilities/modules/vaccines';
+import { extractBreaches, vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
 
 import { GenericPage } from './GenericPage';
 import {
   FinaliseButton,
   MiniToggleBar,
-  AutocompleteSelector,
   TextEditor,
   ExpiryTextInput,
   GenericChoiceList,
@@ -25,6 +24,7 @@ import {
 } from '../widgets';
 
 import { DARK_GREY, FINALISED_RED, SUSSOL_ORANGE, SOFT_RED } from '../globalStyles/index';
+import { ConfirmModal } from '../widgets/modals/index';
 
 /**
  * CONSTANTS
@@ -65,7 +65,7 @@ const VACCINE_COLUMN_KEYS = ['batch', 'expiry', 'quantity', 'fridge', 'breach', 
 const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey]);
 
 // Creates a row object for use within this component.
-const createRowObject = (itemBatch, extraData = { vvmStatus: null, reason: null }) => ({
+const createRowObject = (itemBatch, extraData = { vvmStatus: null, option: null }) => ({
   ...itemBatch,
   totalQuantity: itemBatch.totalQuantity,
   hasBreached: itemBatch.hasBreached,
@@ -82,6 +82,7 @@ export class ManageVaccineItemPage extends React.Component {
     super(props);
 
     this.FRIDGES = null;
+    this.HAS_FRIDGES = null;
     this.REASONS = null;
     this.VVMREASON = null;
 
@@ -90,7 +91,6 @@ export class ManageVaccineItemPage extends React.Component {
       isModalOpen: false,
       modalKey: null,
       currentBatch: null,
-      hasFridges: false,
     };
   }
 
@@ -99,9 +99,8 @@ export class ManageVaccineItemPage extends React.Component {
    */
   componentDidMount = () => {
     const { database, item } = this.props;
-
     this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
-    const hasFridges = this.FRIDGES && this.FRIDGES.length > 0;
+    this.HAS_FRIDGES = this.FRIDGES && this.FRIDGES.length > 0;
 
     const reasonsQuery = ['type = $0 && isActive = $1', 'vaccineDisposalReason', true];
     const reasons = database.objects('Options', ...reasonsQuery);
@@ -109,7 +108,7 @@ export class ManageVaccineItemPage extends React.Component {
     this.VVMREASON = reasons.filtered('title CONTAINS[c] $0', 'vvm')[0];
 
     const data = item.batches.map(itemBatch => createRowObject(itemBatch));
-    this.setState({ data, hasFridges });
+    this.setState({ data });
   };
 
   /**
@@ -120,12 +119,11 @@ export class ManageVaccineItemPage extends React.Component {
     return MODAL_TITLES(currentBatch)[modalKey];
   };
 
-  getFridgeDescription = ({ location, vvmStatus, reason }) => {
-    const { hasFridges } = this.state;
-    if (hasFridges && vvmStatus !== false && !reason) {
+  getFridgeDescription = ({ location, vvmStatus, option }) => {
+    if (this.HAS_FRIDGES && vvmStatus !== false && !option) {
       return (location && location.description) || 'Unnasigned';
     }
-    return (!hasFridges && 'No fridges') || ((!vvmStatus || reason) && 'Discarded');
+    return (!this.HAS_FRIDGES && 'No fridges') || ((!vvmStatus || option) && 'Discarded');
   };
 
   // Updates the currentBatch object held within state with new
@@ -165,7 +163,7 @@ export class ManageVaccineItemPage extends React.Component {
     if (parsedSplitValue > totalQuantity) {
       newObjectValues = {
         vvmStatus: false,
-        reason: this.VVMREASON || null,
+        option: this.VVMREASON || null,
         hasBreached: currentBatch.hasBreached,
       };
       // Account for 0 & NaN (From entering a non-numeric character)
@@ -176,7 +174,7 @@ export class ManageVaccineItemPage extends React.Component {
         id: generateUUID(),
         totalQuantity: parsedSplitValue,
         vvmStatus: false,
-        reason: this.VVMREASON || null,
+        option: this.VVMREASON || null,
         hasBreached: currentBatch.hasBreached,
         parentBatch,
       };
@@ -186,28 +184,39 @@ export class ManageVaccineItemPage extends React.Component {
     this.updateObject(newObjectValues, { isModalOpen: false });
   };
 
-  onApplyChanges = () => {
-    // TODO:
-    // Confirmation dialog
-    // Create inventory adjustments for any failed vvm status'
-    // Create repacks for any location changes
-    // Pop this page off the navigation stack.
-    // If more data is needed to create these repacks and inventory
-    // adjustments, they can easily be added to the row object with
-    // no side-effects. e.g. the ItemBatch itself or just
-    // some extra fields.
+  onApplyChanges = shouldApply => async () => {
+    const { navigateBack, runWithLoadingIndicator } = this.props;
+    this.onModalUpdate()();
+    if (shouldApply) {
+      await runWithLoadingIndicator(() => {
+        const { database, currentUser: user } = this.props;
+        const { data: itemBatches } = this.state;
+        database.write(() => {
+          itemBatches
+            .filter(batch => !batch.option)
+            .forEach(itemBatch => {
+              database.update('ItemBatch', {
+                id: itemBatch.id,
+                location: itemBatch.location,
+              });
+            });
+        });
+        vaccineDisposalAdjustments({ database, user, itemBatches });
+      });
+      if (navigateBack) navigateBack();
+    }
   };
 
-  onDispose = ({ itemBatch } = {}) => ({ item: reason }) => {
-    if (reason) return this.updateObject({ reason }, { isModalOpen: false });
+  onDispose = ({ itemBatch } = {}) => ({ item: option }) => {
+    if (option) return this.updateObject({ option }, { isModalOpen: false });
     return this.setState({ currentBatch: itemBatch }, () =>
-      this.updateObject({ reason: null, vvmStatus: true }, { isModalOpen: false })
+      this.updateObject({ option: null, vvmStatus: true }, { isModalOpen: false })
     );
   };
 
   // Called on selecting a fridge in the fridge selection modal,
   // just update the location of the currentBatch and close the modal.
-  onFridgeSelection = location => {
+  onFridgeSelection = ({ item: location }) => {
     this.updateObject({ location }, { isModalOpen: false });
   };
 
@@ -217,7 +226,7 @@ export class ManageVaccineItemPage extends React.Component {
   onVvmToggle = ({ modalKey, currentBatch }) => ({ newState }) => {
     if (!newState) return this.onModalUpdate({ modalKey, currentBatch })();
     return this.setState({ currentBatch }, () =>
-      this.updateObject({ vvmStatus: true, reason: null })
+      this.updateObject({ vvmStatus: true, option: null })
     );
   };
 
@@ -234,9 +243,8 @@ export class ManageVaccineItemPage extends React.Component {
    * RENDER HELPERS
    */
   renderCell = (key, itemBatch) => {
-    const { hasFridges } = this.state;
-    const { vvmStatus, reason } = itemBatch;
-    const usingFridge = vvmStatus !== false && hasFridges && !reason;
+    const { vvmStatus, option } = itemBatch;
+    const usingFridge = vvmStatus !== false && this.HAS_FRIDGES && !option;
 
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
     const emptyCell = { type: 'text', cellContents: '' };
@@ -269,11 +277,11 @@ export class ManageVaccineItemPage extends React.Component {
       case 'dispose':
         return (
           <IconCell
-            text={reason && reason.title}
-            icon={reason ? 'times' : 'trash'}
-            iconSize={reason ? 20 : 30}
-            onPress={reason ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
-            iconColour={reason ? 'red' : DARK_GREY}
+            text={option && option.title}
+            icon={option ? 'times' : 'trash'}
+            iconSize={option ? 20 : 30}
+            onPress={option ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
+            iconColour={option ? 'red' : DARK_GREY}
           />
         );
       case 'vvmStatus':
@@ -295,12 +303,13 @@ export class ManageVaccineItemPage extends React.Component {
     switch (modalKey) {
       case 'location': {
         return (
-          <AutocompleteSelector
-            options={this.FRIDGES}
-            queryString="description BEGINSWITH[c] $0"
-            sortByString="description"
-            onSelect={this.onFridgeSelection}
-            renderLeftText={({ description } = { description: 'Unnamed Fridge' }) => description}
+          <GenericChoiceList
+            data={this.FRIDGES}
+            keyToDisplay="description"
+            onPress={this.onFridgeSelection}
+            highlightValue={
+              currentBatch && currentBatch.location ? currentBatch.location.description : null
+            }
           />
         );
       }
@@ -310,7 +319,7 @@ export class ManageVaccineItemPage extends React.Component {
             data={this.REASONS}
             keyToDisplay="title"
             onPress={this.onDispose()}
-            highlightValue={currentBatch && currentBatch.reason ? currentBatch.reason.title : null}
+            highlightValue={currentBatch && currentBatch.option ? currentBatch.option.title : null}
           />
         );
       }
@@ -328,6 +337,7 @@ export class ManageVaccineItemPage extends React.Component {
           />
         );
       }
+
       default: {
         return null;
       }
@@ -337,7 +347,7 @@ export class ManageVaccineItemPage extends React.Component {
   renderTopRightComponent = () => (
     <FinaliseButton
       text="Apply Changes"
-      onPress={() => {}}
+      onPress={this.onModalUpdate({ modalKey: 'applyChanges' })}
       isFinalised={false}
       fontStyle={{ fontSize: 18 }}
     />
@@ -345,7 +355,7 @@ export class ManageVaccineItemPage extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data, isModalOpen } = this.state;
+    const { data, isModalOpen, modalKey } = this.state;
     return (
       <GenericPage
         data={data || []}
@@ -358,13 +368,25 @@ export class ManageVaccineItemPage extends React.Component {
         isDataCircular={true}
         {...genericTablePageStyles}
       >
-        <PageContentModal
-          isOpen={isModalOpen}
-          onClose={this.onModalUpdate()}
-          title={this.getModalTitle()}
-        >
-          {this.renderModal()}
-        </PageContentModal>
+        {isModalOpen && modalKey !== 'applyChanges' && (
+          <PageContentModal
+            isOpen={isModalOpen}
+            onClose={this.onModalUpdate()}
+            title={this.getModalTitle()}
+          >
+            {this.renderModal()}
+          </PageContentModal>
+        )}
+        {isModalOpen && modalKey === 'applyChanges' && (
+          <ConfirmModal
+            isOpen={isModalOpen}
+            questionText="Are you sure you want to apply these changes?"
+            confirmText="Yes"
+            cancelText="No"
+            onConfirm={this.onApplyChanges(true)}
+            onCancel={this.onApplyChanges(false)}
+          />
+        )}
       </GenericPage>
     );
   }
@@ -375,6 +397,9 @@ ManageVaccineItemPage.propTypes = {
   genericTablePageStyles: PropTypes.object.isRequired,
   topRoute: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  navigateBack: PropTypes.func.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
 };
 
 export default ManageVaccineItemPage;

@@ -10,8 +10,12 @@ import { getTotal } from '../utilities';
 
 export class Location extends Realm.Object {
   get isFridge() {
-    const { locationType: { description } = { description: '' } } = this;
-    return description.toLowerCase() === 'fridge';
+    const { locationType } = this;
+    return (
+      locationType &&
+      locationType.description &&
+      locationType.description.toLowerCase() === 'fridge'
+    );
   }
 
   getSensorLogs(database, lookBackMilliseconds = null) {
@@ -55,6 +59,7 @@ export class Location extends Realm.Object {
 
   isCriticalTemperature(database) {
     const currentTemperature = this.getCurrentTemperature(database);
+    if (!this.temperatureRange) return null;
     const { minTemperature, maxTemperature } = this.temperatureRange;
     return minTemperature >= currentTemperature || currentTemperature >= maxTemperature;
   }

@@ -33,7 +33,13 @@ export const FinaliseModal = props => {
   const { finaliseItem, isOpen, runWithLoadingIndicator, database, user, onClose } = props;
 
   if (!finaliseItem) return null;
-  const { record, recordType, checkForError, finaliseText } = finaliseItem;
+  const {
+    record,
+    recordType,
+    checkForError,
+    finaliseText,
+    vaccineDisposalAdjustments,
+  } = finaliseItem;
   if (!record || !record.isValid()) return null; // Record may have been deleted
   let errorText = !record.isFinalised && checkForError && checkForError(record);
 
@@ -52,6 +58,7 @@ export const FinaliseModal = props => {
             database.save(recordType, record);
           });
         }
+        if (vaccineDisposalAdjustments) vaccineDisposalAdjustments({ database, record, user });
         if (onClose) onClose();
       } catch (error) {
         // Fling off to bugsnag so we can be notified finalise isn't

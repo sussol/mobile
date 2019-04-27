@@ -20,7 +20,6 @@ import { SHADOW_BORDER } from '../globalStyles';
 /**
  * CONSTANTS
  */
-
 // TODO: Localization
 const LOCALIZATION = {
   columns: {
@@ -72,9 +71,19 @@ const BREACH_COLUMNS = [
 
 const BATCH_COLUMNS = [
   { key: 'code', title: LOCALIZATION.columns.batch.code, width: 0.8 },
-  { key: 'expiryDate', title: LOCALIZATION.columns.batch.expiry, width: 0.8 },
   { key: 'totalQuantity', title: LOCALIZATION.columns.batch.quantity, width: 0.8 },
-  { key: 'duration', title: LOCALIZATION.columns.batch.duration, width: 1 },
+  {
+    key: 'expiryDate',
+    title: LOCALIZATION.columns.batch.expiry,
+    width: 0.8,
+    formatMethod: content => content.toLocaleDateString(),
+  },
+  {
+    key: 'duration',
+    title: LOCALIZATION.columns.batch.duration,
+    width: 1,
+    formatMethod: content => formattedDifferenceBetweenDates(content),
+  },
 ];
 
 /**

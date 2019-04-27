@@ -28,6 +28,7 @@ const MODAL_KEYS = {
 const LOCALIZATION = {
   modal: {
     breach: 'Temperature breaches for',
+    fridge: 'Select a fridge to filter by',
   },
   pageInfo: {
     filter: 'Filter by Location',
@@ -171,6 +172,7 @@ export class ManageVaccineStockPage extends React.Component {
   getModalTitle = () => {
     const { modalKey, currentItem } = this.state;
     if (modalKey && currentItem) return `${LOCALIZATION.modal.breach} ${currentItem.name}`;
+    if (modalKey === MODAL_KEYS.FRIDGE_SELECT) return `${LOCALIZATION.modal.fridge}`;
     return '';
   };
 

@@ -13,6 +13,7 @@ import { dataTableStyles, dataTableColors } from './dataTableStyles';
 import { loadingIndicatorStyles } from './loadingIndicatorStyles';
 import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
+import { containerStyles } from './containerStyles';
 import {
   pageStyles,
   expansionPageStyles,
@@ -70,4 +71,5 @@ export default StyleSheet.create({
   ...navigationStyles,
   ...pageStyles,
   ...toggleBarStyles,
+  ...containerStyles,
 });
