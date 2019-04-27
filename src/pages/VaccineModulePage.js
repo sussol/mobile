@@ -244,7 +244,7 @@ export class VaccineModulePage extends React.Component {
           {this.renderFridgeInfoBar({
             numBreaches: fridgeChartData.breaches.length,
             currentTemp: fridge.getCurrentTemperature(database),
-            isInBreach: fridge.isCriticalTemperature(database),
+            isCriticalTemperature: fridge.isCriticalTemperature(database),
             isFridgeSelected,
             fridge,
             ...fridge.getTemperatureExposure(database),
