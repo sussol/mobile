@@ -21,12 +21,13 @@ import {
  * states - True: LHS toggled, False: RHS Toggled, Null: Nothing toggled.
  * Can be controlled by pressing any part of the component to switch the toggle,
  * or use the returned key to control dependent on which toggle was pressed.
- * @prop {String} leftText     Text for the LHS toggle
- * @prop {String} leftText    Text for the RHS toggle
+ * @prop {String} leftText      Text for the LHS toggle
+ * @prop {String} leftText      Text for the RHS toggle
  * @prop {String} firstKey      Key returned when the LHS toggle is pressed
- * @prop {String} rightKey     Key returned when the RHS toggle is pressed
+ * @prop {String} rightKey      Key returned when the RHS toggle is pressed
  * @prop {Bool}   currentState  Current state of the toggle. True = left, False = right, null = none
  * @prop {Func}   onPress       onPress function - returns {key, nextState}
+ * @prop {Bool}   disabled      Indicator if toggle should be wrapped in a Touchable or View
  */
 export class MiniToggleBar extends React.PureComponent {
   styles = () => {
