@@ -140,11 +140,13 @@ const createItemBatch = (database, item, batchString) => {
 const createRequisition = (
   database,
   user,
-  { otherStoreName, program, period, orderType, monthsLeadTime }
+  { otherStoreName, program, period, orderType = {}, monthsLeadTime = 0 }
 ) => {
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
-  const { regimenData } = program.parsedProgramSettings;
-  const daysToSupply = (monthsLeadTime + maxMOS) * 30;
+  const regimenData =
+    program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
+  const daysToSupply = monthsLeadTime ? (monthsLeadTime + maxMOS) * 30 : 30;
+
   const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
@@ -161,10 +163,12 @@ const createRequisition = (
     period,
     customData: regimenData && JSON.stringify({ regimenData }),
   });
+
   if (period) {
     period.addRequisitionIfUnique(requisition);
     database.save('Period', period);
   }
+
   return requisition;
 };
 
