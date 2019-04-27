@@ -148,6 +148,18 @@ export class SupplierInvoicePage extends React.Component {
     this.setState({ selection: [] }, this.refreshData);
   };
 
+  getPassingTransactionBatches = ({ transactionBatch }) => {
+    const { database, transaction } = this.props;
+    return database
+      .objects('TransactionBatch')
+      .filtered(
+        'transaction.id = $0 && itemBatch.id = $1 && NOT isVVMPassed = $2',
+        transaction.id,
+        transactionBatch.itemBatch.id,
+        false
+      );
+  };
+
   // On toggling the VVM status, set the status [null -> pass -> fail -> pass -> fail].
   // If the status is fail, trigger the doses modal, which will prompt for a number
   // of packs that failed within that batch [splitValue]. A new batch is then made - a
@@ -156,17 +168,48 @@ export class SupplierInvoicePage extends React.Component {
     const { database } = this.props;
     const { isVVMPassed } = transactionBatch;
     const { SPLIT_VALUE_SELECT } = MODAL_KEYS;
-
     this.setState({ selectedBatch: transactionBatch });
-
-    if (!isVVMPassed) {
-      database.write(() =>
+    // If the vvm status is null, just set it to passed
+    // initially.
+    if (isVVMPassed == null) {
+      database.write(() => {
         database.update('TransactionBatch', {
           id: transactionBatch.id,
           isVVMPassed: true,
+        });
+      });
+      this.refreshData();
+    } else if (isVVMPassed === false) {
+      // If the VVM Status is false, the user is toggling back to
+      // passed. If there are multiple transaction batches for the
+      // same itembatch, reconciliate. Otherwise, just set the VVM
+      // status to passed.
+      // Not opening modals here.
+      this.setState({ selectedBatch: null, modalKey: null, modalIsOpen: false });
+      // Find all TB's for this Transaction for this ItemBatch.
+      const batches = this.getPassingTransactionBatches({ transactionBatch });
+      let numberOfPacks = transactionBatch.numberOfPacks;
+      let id = transactionBatch.id;
+      // There will always be zero or one TB that has a passing or undefined
+      // VVM status for this ItemBatch.
+      // If there is one, it is not this TB, so consolidate.
+      // Otherwise, just set the status to passed.
+      if (batches.length > 0) {
+        // Calculate the update values for the consolidated batch.
+        const { numberOfPacks: packsToReturn } = transactionBatch;
+        numberOfPacks = batches[0].numberOfPacks + packsToReturn;
+        id = batches[0].id;
+        // Delete the batch being consolidated
+        database.write(() => database.delete('TransactionBatch', transactionBatch));
+      }
+      database.write(() => {
+        database.update('TransactionBatch', {
+          id,
+          isVVMPassed: true,
           option: null,
-        })
-      );
+          numberOfPacks,
+        });
+      });
       this.refreshData();
     } else this.openModal(SPLIT_VALUE_SELECT);
   };
@@ -180,24 +223,48 @@ export class SupplierInvoicePage extends React.Component {
    * VVM status.
    */
   onEnterSplitValue = newValue => {
-    const { database } = this.props;
+    const { database, transaction } = this.props;
     const { selectedBatch } = this.state;
     const { totalQuantity } = selectedBatch;
     const splitValue = parseInt(newValue, 10);
     this.closeModal();
-    const newValues = { isVVMPassed: false, option: this.VVMREASON };
-    if (splitValue <= 0) return;
-    if (splitValue < totalQuantity) {
-      selectedBatch.splitBatch({
-        database,
-        splitValue,
-        newValues,
+
+    // Firstly find all failed batches. If there is one
+    // for this Transaction, we just need to update that
+    // batch with the new splitValue.
+    if (splitValue <= 0 || Number.isNaN(splitValue)) return;
+    const failedBatches = database
+      .objects('TransactionBatch')
+      .filtered(
+        'transaction.id = $0 && itemBatch.id = $1 && isVVMPassed = $2',
+        transaction.id,
+        selectedBatch.itemBatch.id,
+        false
+      );
+    if (failedBatches.length > 0) {
+      const failedBatch = failedBatches[0];
+      database.write(() => {
+        database.update('TransactionBatch', {
+          id: failedBatch.id,
+          numberOfPacks: failedBatch.numberOfPacks + splitValue,
+        });
       });
     } else {
-      database.write(() =>
-        database.update('TransactionBatch', { id: selectedBatch.id, ...newValues })
-      );
+      const newValues = { isVVMPassed: false, option: this.VVMREASON };
+
+      if (splitValue < totalQuantity) {
+        selectedBatch.splitBatch({
+          database,
+          splitValue,
+          newValues,
+        });
+      } else {
+        database.write(() =>
+          database.update('TransactionBatch', { id: selectedBatch.id, ...newValues })
+        );
+      }
     }
+
     this.refreshData();
   };
 
@@ -554,14 +621,15 @@ export class SupplierInvoicePage extends React.Component {
           onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.remove}
         />
-
-        <PageContentModal
-          isOpen={modalIsOpen && !transaction.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
+        {modalIsOpen && !transaction.isFinalise && (
+          <PageContentModal
+            isOpen={modalIsOpen && !transaction.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        )}
       </GenericPage>
     );
   }
