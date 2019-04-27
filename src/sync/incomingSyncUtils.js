@@ -577,6 +577,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
           key: THIS_STORE_CUSTOM_DATA,
           value: custom_data && custom_data.replace(/\\/g, ''),
         });
+
+        settings.refreshGlobals();
       }
       break;
     }
