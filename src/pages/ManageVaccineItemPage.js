@@ -82,6 +82,7 @@ export class ManageVaccineItemPage extends React.Component {
     super(props);
 
     this.FRIDGES = null;
+    this.HAS_FRIDGES = null;
     this.REASONS = null;
     this.VVMREASON = null;
 
@@ -90,7 +91,6 @@ export class ManageVaccineItemPage extends React.Component {
       isModalOpen: false,
       modalKey: null,
       currentBatch: null,
-      hasFridges: false,
     };
   }
 
@@ -100,7 +100,7 @@ export class ManageVaccineItemPage extends React.Component {
   componentDidMount = () => {
     const { database, item } = this.props;
     this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
-    const hasFridges = this.FRIDGES && this.FRIDGES.length > 0;
+    this.HAS_FRIDGES = this.FRIDGES && this.FRIDGES.length > 0;
 
     const reasonsQuery = ['type = $0 && isActive = $1', 'vaccineDisposalReason', true];
     const reasons = database.objects('Options', ...reasonsQuery);
@@ -108,7 +108,7 @@ export class ManageVaccineItemPage extends React.Component {
     this.VVMREASON = reasons.filtered('title CONTAINS[c] $0', 'vvm')[0];
 
     const data = item.batches.map(itemBatch => createRowObject(itemBatch));
-    this.setState({ data, hasFridges });
+    this.setState({ data });
   };
 
   /**
@@ -120,11 +120,10 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   getFridgeDescription = ({ location, vvmStatus, option }) => {
-    const { hasFridges } = this.state;
-    if (hasFridges && vvmStatus !== false && !option) {
+    if (this.HAS_FRIDGES && vvmStatus !== false && !option) {
       return (location && location.description) || 'Unnasigned';
     }
-    return (!hasFridges && 'No fridges') || ((!vvmStatus || option) && 'Discarded');
+    return (!this.HAS_FRIDGES && 'No fridges') || ((!vvmStatus || option) && 'Discarded');
   };
 
   // Updates the currentBatch object held within state with new
@@ -244,9 +243,8 @@ export class ManageVaccineItemPage extends React.Component {
    * RENDER HELPERS
    */
   renderCell = (key, itemBatch) => {
-    const { hasFridges } = this.state;
     const { vvmStatus, option } = itemBatch;
-    const usingFridge = vvmStatus !== false && hasFridges && !option;
+    const usingFridge = vvmStatus !== false && this.HAS_FRIDGES && !option;
 
     const modalUpdateProps = { modalKey: key, currentBatch: itemBatch };
     const emptyCell = { type: 'text', cellContents: '' };
