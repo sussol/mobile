@@ -413,18 +413,15 @@ export class CustomerInvoicePage extends GenericPage {
   );
 
   getDataTableColumns = () => {
+    const { transaction } = this.props;
+    const { isFinalised } = transaction;
     const { hasVaccine } = this.state;
-    const normal = ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'];
-    const withVaccines = [
-      'itemCode',
-      'itemName',
-      'availableQuantity',
-      'totalQuantity',
-      'doses',
-      'breach',
-      'remove',
-    ];
+    const normal = ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity'];
+    const withVaccines = [...normal, 'doses'];
+
+    if (!isFinalised) withVaccines.push('breach');
     const columnsToUse = hasVaccine ? withVaccines : normal;
+    columnsToUse.push('remove');
     return columnsToUse.map(columnKey => DATA_TABLE_COLUMNS[columnKey]);
   };
 
