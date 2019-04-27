@@ -516,7 +516,9 @@ export class ManageVaccineItemPage extends React.Component {
           <BreachTable
             {...this.props}
             breaches={this.getBreaches()}
-            itemBatchFilter={currentBatch && currentBatch.parentBatch}
+            itemBatchFilter={
+              currentBatch && currentBatch.parentBatch ? currentBatch.parentBatch : currentBatch
+            }
           />
         );
       }

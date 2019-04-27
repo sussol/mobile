@@ -231,7 +231,9 @@ export class ManageVaccineStockPage extends React.Component {
 
     switch (modalKey) {
       case BREACH:
-        return <BreachTable {...this.props} breaches={this.getBreaches()} item={currentItem} />;
+        return (
+          <BreachTable {...this.props} breaches={this.getBreaches()} itemFilter={currentItem} />
+        );
       case FRIDGE_SELECT:
         return (
           <GenericChoiceList
