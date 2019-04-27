@@ -55,23 +55,54 @@ export class MiniToggleBar extends React.PureComponent {
     onPress({ newState: !currentState, key });
   };
 
+  wrapInOnPress = ({ onPress, containerStyle, children, disabled }) => {
+    if (!disabled) {
+      return (
+        <TouchableOpacity style={containerStyle} onPress={onPress}>
+          {children}
+        </TouchableOpacity>
+      );
+    }
+    return <View style={containerStyle}>{children}</View>;
+  };
+
+  getTextComponent = ({ text, additionalStyle }) => {
+    const { textStyle } = localStyles;
+    return (
+      <Text numberOfLines={1} ellipsizeMode="tail" style={[textStyle, additionalStyle]}>
+        {text}
+      </Text>
+    );
+  };
+
   render() {
-    const { leftText, rightText, leftKey, rightKey } = this.props;
-    const { main, touchable, text } = localStyles;
+    const { leftText, rightText, leftKey, rightKey, disabled } = this.props;
+    const { main, container } = localStyles;
     const { mainStyle, leftStyle, leftTextStyle, rightTextStyle, rightStyle } = this.styles();
+
+    const leftComponent = this.wrapInOnPress({
+      onPress: this.onPress(leftKey),
+      containerStyle: [container, leftStyle],
+      children: this.getTextComponent({
+        text: leftText,
+        additionalStyle: leftTextStyle,
+      }),
+      disabled,
+    });
+    const rightComponent = this.wrapInOnPress({
+      onPress: this.onPress(rightKey),
+      containerStyle: [container, rightStyle],
+      children: this.getTextComponent({
+        text: rightText,
+        additionalStyle: rightTextStyle,
+      }),
+      disabled,
+    });
+
     return (
       <View style={[main, mainStyle]}>
-        <TouchableOpacity style={[touchable, leftStyle]} onPress={this.onPress(leftKey)}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={[text, leftTextStyle]}>
-            {leftText}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[touchable, rightStyle]} onPress={this.onPress(rightKey)}>
-          <Text numberOfLines={1} ellipsizeMode="tail" style={[text, rightTextStyle]}>
-            {rightText}
-          </Text>
-        </TouchableOpacity>
+        {leftComponent}
+        {rightComponent}
       </View>
     );
   }
@@ -87,12 +118,12 @@ const localStyles = StyleSheet.create({
     height: '85%',
     width: '85%',
   },
-  touchable: {
+  container: {
     width: '50%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
+  textStyle: {
     color: DARK_GREY,
     fontFamily: APP_FONT_FAMILY,
   },
@@ -101,6 +132,7 @@ const localStyles = StyleSheet.create({
 MiniToggleBar.defaultProps = {
   leftKey: null,
   rightKey: null,
+  disabled: false,
 };
 
 MiniToggleBar.propTypes = {
@@ -110,6 +142,7 @@ MiniToggleBar.propTypes = {
   rightKey: PropTypes.string,
   currentState: PropTypes.bool.isRequired,
   onPress: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };
 
 export default MiniToggleBar;
