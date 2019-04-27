@@ -256,6 +256,7 @@ class MSupplyMobileAppContainer extends React.Component {
               pageStyles,
               colors: dataTableColors,
             },
+            navigateBack: this.getCanNavigateBack() ? this.handleBackEvent : null,
           }}
         />
         <FinaliseModal
