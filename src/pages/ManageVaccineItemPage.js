@@ -34,6 +34,8 @@ import { ConfirmModal } from '../widgets/modals/index';
 const MODAL_TITLES = itemBatch => ({
   location: 'Place this batch of vaccines in a fridge',
   vvmStatus: 'How many vials have a failed VVM status?',
+  dispose: 'How many vials are being disposed of?',
+  disposalReason: 'What is the reason for disposal?',
   breach: `Temperature breaches for ${itemBatch && itemBatch.item.name} - Batch: ${itemBatch &&
     itemBatch.batch}`,
 });
@@ -66,6 +68,7 @@ const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey])
 
 // Creates a row object for use within this component.
 const createRowObject = (itemBatch, extraData = { vvmStatus: null, option: null }) => ({
+  childrenBatches: [],
   ...itemBatch,
   totalQuantity: itemBatch.totalQuantity,
   hasBreached: itemBatch.hasBreached,
@@ -130,12 +133,40 @@ export class ManageVaccineItemPage extends React.Component {
   // Updates the currentBatch object held within state with new
   // values. Optional second parameter of fields to be used within
   // the setState call.
-  updateObject = (extraObjectValues = {}, extraStateValues = {}) => {
-    const { data, currentBatch } = this.state;
+  updateObject = (extraObjectValues = {}, extraStateValues = {}, batchToUpdate = null) => {
+    const { data } = this.state;
+    let { currentBatch } = this.state;
+    if (batchToUpdate) currentBatch = batchToUpdate;
+
+    const { childrenBatches, parentBatch } = currentBatch;
     const batchIndex = data.findIndex(({ id = 0 }) => currentBatch.id === id);
     // If something has gone wrong finding the batch, don't try to update
-    if (batchIndex >= 0) data[batchIndex] = { ...currentBatch, ...extraObjectValues };
+    if (batchIndex >= 0) {
+      data[batchIndex] = { ...currentBatch, ...extraObjectValues };
+      if (childrenBatches.length > 0) {
+        childrenBatches.forEach(childBatch => {
+          childBatch.parentBatch = data[batchIndex];
+        });
+      }
+      if (parentBatch && parentBatch.childrenBatches.length > 0) {
+        const childBatchIndex = parentBatch.childrenBatches.findIndex(
+          ({ id }) => id === currentBatch.id
+        );
+        if (childBatchIndex >= 0) parentBatch.childrenBatches[childBatchIndex] = data[batchIndex];
+      }
+    }
     this.setState({ data: [...data], ...extraStateValues });
+  };
+
+  removeRow = ({ itemBatch }) => {
+    const { data } = this.state;
+    const { parentBatch, id: batchId } = itemBatch;
+    if (parentBatch) {
+      const childIndex = parentBatch.childrenBatches.findIndex(({ id }) => id === batchId);
+      if (childIndex >= 0) parentBatch.childrenBatches.splice(childIndex, 1);
+    }
+    const dataIndex = data.findIndex(batch => batch.id === batchId);
+    data.splice(dataIndex, 1);
   };
 
   getBreaches = () => {
@@ -148,6 +179,19 @@ export class ManageVaccineItemPage extends React.Component {
     });
   };
 
+  findBatchWithSameReason = ({ itemBatch }) => {
+    const { data } = this.state;
+    const { option, batch: batchCode, id } = itemBatch;
+    const batchesWithSameReason = data.filter(
+      ({ option: matchingOption, batch: matchingBatch, id: matchingId }) =>
+        (matchingOption && matchingOption.id) === option.id &&
+        matchingBatch === batchCode &&
+        matchingId !== id
+    );
+    if (batchesWithSameReason.length > 0) return batchesWithSameReason[0];
+    return null;
+  };
+
   /**
    * EVENT HANDLERS
    */
@@ -157,18 +201,36 @@ export class ManageVaccineItemPage extends React.Component {
   // quantity.
   onSplitBatch = (splitValue = 0) => {
     const { currentBatch, data } = this.state;
-    const { totalQuantity } = currentBatch;
-    const parsedSplitValue = parseInt(splitValue, 10);
+    let parsedSplitValue = parseInt(splitValue, 10);
     let newObjectValues = {};
+    // let batchToUpdate = currentBatch;
 
-    if (parsedSplitValue > totalQuantity) {
+    // Account for 0 & NaN (From entering a non-numeric character)
+    if (parsedSplitValue <= 0 || Number.isNaN(parsedSplitValue)) return;
+
+    // This is a parent, find any children that are failing and consolidate
+    // them before doing any other operations.
+    if (!currentBatch.parentBatch) {
+      const child = this.findBatchWithSameReason({
+        itemBatch: { ...currentBatch, option: this.VVMREASON },
+      });
+      if (child) {
+        // setState would be to slow, need an instant assignment.
+        currentBatch.totalQuantity = child.totalQuantity + currentBatch.totalQuantity;
+        this.removeRow({ itemBatch: child });
+        parsedSplitValue += child.totalQuantity;
+      }
+    }
+
+    // Fully updating, not creation of rows.
+    if (parsedSplitValue >= currentBatch.totalQuantity) {
       newObjectValues = {
+        ...newObjectValues,
         vvmStatus: false,
         option: this.VVMREASON || null,
         hasBreached: currentBatch.hasBreached,
       };
-      // Account for 0 & NaN (From entering a non-numeric character)
-    } else if (parsedSplitValue) {
+    } else {
       let parentBatch = currentBatch;
       if (currentBatch.parentBatch) parentBatch = currentBatch.parentBatch;
       const newBatchValues = {
@@ -179,10 +241,15 @@ export class ManageVaccineItemPage extends React.Component {
         hasBreached: currentBatch.hasBreached,
         parentBatch,
       };
-      data.push(createRowObject(currentBatch, newBatchValues));
-      newObjectValues = { vvmStatus: true, totalQuantity: totalQuantity - parsedSplitValue };
+      const childBatch = createRowObject(currentBatch, newBatchValues);
+      data.push(childBatch);
+      currentBatch.childrenBatches.push(childBatch);
+      newObjectValues = {
+        vvmStatus: true,
+        totalQuantity: currentBatch.totalQuantity - parsedSplitValue,
+      };
     }
-    this.updateObject(newObjectValues, { isModalOpen: false });
+    this.updateObject(newObjectValues, { isModalOpen: false }, currentBatch);
   };
 
   onApplyChanges = shouldApply => async () => {
@@ -208,11 +275,46 @@ export class ManageVaccineItemPage extends React.Component {
     }
   };
 
+  // After selecting a reason for disposal, try to find a matching
+  // batch with the same reason, and same batch code. If succesful,
+  // apply split value to that batch, otherwise, apply reason to
+  // this ItemBatch.
+  // Also called on cancelling a disposal. Find if the batches
+  // parent has and Option applied. If not, apply the totalQuantity
+  // of this batch to the parent, otherwise just clear the option
+  // from this batch.
   onDispose = ({ itemBatch } = {}) => ({ item: option }) => {
-    if (option) return this.updateObject({ option }, { isModalOpen: false });
-    return this.setState({ currentBatch: itemBatch }, () =>
-      this.updateObject({ option: null, vvmStatus: true }, { isModalOpen: false })
-    );
+    const { currentBatch, data } = this.state;
+    const { totalQuantity } = currentBatch;
+    if (!option) {
+      // When cancelling the disposal, try to find a batch in the tree
+      // which has the same VVMStatus to add to.
+      const { parentBatch } = itemBatch;
+      if (parentBatch && !parentBatch.option) {
+        this.removeRow({ itemBatch });
+        return this.updateObject(
+          {
+            totalQuantity: parentBatch.totalQuantity + itemBatch.totalQuantity,
+          },
+          {},
+          parentBatch
+        );
+      }
+      return this.updateObject({ option: null, vvmStatus: null }, {}, itemBatch);
+    }
+
+    const batchWithSameReason = this.findBatchWithSameReason({
+      itemBatch: { ...currentBatch, option },
+    });
+    if (batchWithSameReason) {
+      return this.updateObject(
+        { totalQuantity: batchWithSameReason.totalQuantity + totalQuantity },
+        { isModalOpen: false, modalKey: null, currentBatch: null },
+        batchWithSameReason[0]
+      );
+    }
+    data.push(currentBatch);
+    return this.updateObject({ option }, { isModalOpen: false });
   };
 
   // Called on selecting a fridge in the fridge selection modal,
@@ -221,14 +323,28 @@ export class ManageVaccineItemPage extends React.Component {
     this.updateObject({ location }, { isModalOpen: false });
   };
 
-  // Called on toggle the vvm toggle bar. If being set to PASS, will just update
-  // the object held in the closure to a PASS VVM status. Otherwise, opens a
-  // modal for a user to enter the doses affected and set the currentBatch.
-  onVvmToggle = ({ modalKey, currentBatch }) => ({ newState }) => {
-    if (!newState) return this.onModalUpdate({ modalKey, currentBatch })();
-    return this.setState({ currentBatch }, () =>
-      this.updateObject({ vvmStatus: true, option: null })
-    );
+  // Called on toggle the vvm toggle bar. If prior to toggling VVM Status is:
+  // Null - just set to true.
+  // True - Split the batch, open a modal.
+  // False - If the batch has a parent with a passed VVM status, apply the total
+  // Quantity of this row to that batch and delete this row. Otherwise, just set
+  // this VVM status to true.
+  onVvmToggle = ({ modalKey, currentBatch }) => () => {
+    const { vvmStatus, parentBatch } = currentBatch;
+    let batchToUpdate = currentBatch;
+    let updateObject = {};
+    if (vvmStatus === null) updateObject = { vvmStatus: true, option: null };
+    else if (vvmStatus === true) return this.onModalUpdate({ modalKey, currentBatch })();
+    else {
+      updateObject = { vvmStatus: true, option: null };
+      if (parentBatch && parentBatch.vvmStatus) {
+        const { totalQuantity } = parentBatch;
+        this.removeRow({ itemBatch: currentBatch });
+        updateObject.totalQuantity = totalQuantity + currentBatch.totalQuantity;
+        batchToUpdate = parentBatch;
+      }
+    }
+    return this.updateObject(updateObject, {}, batchToUpdate);
   };
 
   // Method which controls all modals. Will open a modal corresponding to the
@@ -238,6 +354,46 @@ export class ManageVaccineItemPage extends React.Component {
   onModalUpdate = ({ modalKey, currentBatch } = {}) => () => {
     if (modalKey) this.setState({ modalKey, isModalOpen: true, currentBatch });
     else this.setState({ isModalOpen: false, currentBatch: null, modalKey: null });
+  };
+
+  // On applying a reason, a split value is entered by the user.
+  // If this split value is:
+  // Not numeric or less than 0, ignore the action.
+  // >= the batches totalQuantity - open a modal to select a reason and apply it.
+  // < totalQuantity - create a new rowObject with a totalQuantity equal to the
+  // split value, update the currentBatches totalQuantity and set the new batch
+  // as the new currentBatch, then open a modal for reason selection.
+  onApplyReason = (splitValue = 0) => {
+    const { currentBatch: baseBatch } = this.state;
+    const { totalQuantity } = baseBatch;
+    let currentBatch;
+    let parentBatch = baseBatch;
+    if (baseBatch.parentBatch) parentBatch = baseBatch.parentBatch;
+
+    let parsedSplitValue = parseInt(splitValue, 10);
+    if (parsedSplitValue <= 0 || Number.isNaN(parsedSplitValue)) return;
+
+    if (parsedSplitValue < totalQuantity) {
+      currentBatch = createRowObject(parentBatch, {
+        id: generateUUID(),
+        totalQuantity: parsedSplitValue,
+        hasBreached: parentBatch.hasBreached,
+        parentBatch,
+      });
+      parentBatch.childrenBatches.push(currentBatch);
+    }
+    if (parsedSplitValue >= totalQuantity) {
+      parsedSplitValue = 0;
+      currentBatch = baseBatch;
+    }
+    this.updateObject(
+      { totalQuantity: totalQuantity - parsedSplitValue },
+      {
+        modalKey: 'disposalReason',
+        currentBatch: currentBatch || baseBatch,
+        isModalOpen: true,
+      }
+    );
   };
 
   /**
@@ -301,7 +457,6 @@ export class ManageVaccineItemPage extends React.Component {
   renderModal = () => {
     const { modalKey, currentBatch } = this.state;
     if (!currentBatch) return null;
-
     switch (modalKey) {
       case 'location': {
         return (
@@ -315,7 +470,7 @@ export class ManageVaccineItemPage extends React.Component {
           />
         );
       }
-      case 'dispose': {
+      case 'disposalReason': {
         return (
           <GenericChoiceList
             data={this.REASONS}
@@ -325,8 +480,14 @@ export class ManageVaccineItemPage extends React.Component {
           />
         );
       }
+      case 'dispose':
       case 'vvmStatus': {
-        return <TextEditor text="" onEndEditing={this.onSplitBatch} />;
+        return (
+          <TextEditor
+            text=""
+            onEndEditing={modalKey === 'vvmStatus' ? this.onSplitBatch : this.onApplyReason}
+          />
+        );
       }
       case 'breach': {
         return (
