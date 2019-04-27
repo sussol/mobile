@@ -191,7 +191,7 @@ export class ManageVaccineItemPage extends React.Component {
     this.onModalUpdate()();
     if (shouldApply) {
       vaccineDisposalAdjustments({ database, user, itemBatches });
-      navigateBack();
+      if (navigateBack) navigateBack();
     }
   };
 
