@@ -423,7 +423,7 @@ export function vaccineDisposalAdjustments({
     batchesToDispose = itemBatches
       .filter(itemBatch => !!itemBatch.option)
       .map(itemBatch => ({
-        itemBatch: itemBatch.parentBatch,
+        itemBatch: itemBatch.parentBatch ? itemBatch.parentBatch : itemBatch,
         numberOfPacks: itemBatch.totalQuantity,
         option: itemBatch.option,
       }));
@@ -456,14 +456,18 @@ export function vaccineDisposalAdjustments({
     );
     // Create the TransactionItem and TransactionBatch for each batch to dispose
     batchesToDispose.forEach(({ itemBatch: batch, numberOfPacks, option, location }) => {
-      // Defensively skip this batch if it has no item, option or the numberOfPacks
+      // Defensively skip this batch if it has no itemBatch, option or the numberOfPacks
       // isn't positive
+      if (!(batch || numberOfPacks > 0 || option)) return;
+
       let itemBatch = batch;
       if (!batch.addTransactionBatch) {
         itemBatch = database.objects('ItemBatch').filtered('id = $0', batch.id)[0];
       }
+      // Skip this batch if the ItemBatch has no related Item.
       const { item } = itemBatch;
-      if (!(item || numberOfPacks > 0)) return;
+      if (!item) return;
+
       const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
       createRecord(database, 'TransactionBatch', transactionItem, itemBatch, {
         numberOfPacks,
