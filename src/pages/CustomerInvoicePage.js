@@ -327,6 +327,7 @@ export class CustomerInvoicePage extends GenericPage {
             color={SUSSOL_ORANGE}
             size={20}
             onPress={this.openModal({ currentItem: item, modalKey: MODAL_KEYS.BREACH_MODAL })}
+            disabled={isFinalised}
           />
         );
       }
