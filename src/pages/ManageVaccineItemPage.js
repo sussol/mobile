@@ -286,7 +286,7 @@ export class ManageVaccineItemPage extends React.Component {
     const { parentBatch } = itemBatch;
     if (parentBatch && !parentBatch.option) {
       this.removeRow({ itemBatch });
-      this.updateObject(
+      return this.updateObject(
         {
           totalQuantity: parentBatch.totalQuantity + itemBatch.totalQuantity,
         },
@@ -294,7 +294,23 @@ export class ManageVaccineItemPage extends React.Component {
         parentBatch
       );
     }
-    return this.updateObject({ option: null }, { isModalOpen: false }, itemBatch);
+    if (!parentBatch) {
+      const batchesWithNoReason = itemBatch.childrenBatches.filter(batch => !batch.option);
+      if (batchesWithNoReason.length > 0) {
+        const [batchWithNoReason] = batchesWithNoReason;
+        this.removeRow({ itemBatch: batchWithNoReason });
+        return this.updateObject(
+          {
+            option: null,
+            vvmStatus: null,
+            totalQuantity: itemBatch.totalQuantity + batchWithNoReason.totalQuantity,
+          },
+          { isModalOpen: false },
+          itemBatch
+        );
+      }
+    }
+    return this.updateObject({ option: null, vvmStatus: null }, { isModalOpen: false }, itemBatch);
   };
 
   // After selecting a reason for disposal, try to find a matching
@@ -315,7 +331,8 @@ export class ManageVaccineItemPage extends React.Component {
         batchWithSameReason[0]
       );
     }
-    data.push(currentBatch);
+    if (currentBatch.parentBatch) data.push(currentBatch);
+
     return this.updateObject({ option }, { isModalOpen: false });
   };
 
@@ -353,7 +370,7 @@ export class ManageVaccineItemPage extends React.Component {
       { totalQuantity: totalQuantity - parsedSplitValue },
       {
         modalKey: 'disposalReason',
-        currentBatch: currentBatch || baseBatch,
+        currentBatch,
         isModalOpen: true,
       }
     );
@@ -453,6 +470,7 @@ export class ManageVaccineItemPage extends React.Component {
             rightText="FAIL"
             currentState={vvmStatus}
             onPress={this.onVvmToggle(modalUpdateProps)}
+            disabled={!!option}
           />
         );
     }
