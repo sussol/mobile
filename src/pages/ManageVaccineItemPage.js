@@ -132,17 +132,19 @@ export class ManageVaccineItemPage extends React.Component {
 
   // Updates the currentBatch object held within state with new
   // values. Optional second parameter of fields to be used within
-  // the setState call.
+  // the setState call. Optional third parameter of a batch to use
+  // rather than the currentBatch.
   updateObject = (extraObjectValues = {}, extraStateValues = {}, batchToUpdate = null) => {
     const { data } = this.state;
     let { currentBatch } = this.state;
     if (batchToUpdate) currentBatch = batchToUpdate;
-
     const { childrenBatches, parentBatch } = currentBatch;
+
     const batchIndex = data.findIndex(({ id = 0 }) => currentBatch.id === id);
     // If something has gone wrong finding the batch, don't try to update
     if (batchIndex >= 0) {
       data[batchIndex] = { ...currentBatch, ...extraObjectValues };
+      // Update all references on an update for children and parents.
       if (childrenBatches.length > 0) {
         childrenBatches.forEach(childBatch => {
           childBatch.parentBatch = data[batchIndex];
@@ -275,33 +277,33 @@ export class ManageVaccineItemPage extends React.Component {
     }
   };
 
+  // Called on cancelling a disposal. Find if the batches
+  // parent has an Option applied. If not, apply the totalQuantity
+  // of this batch to the parent, otherwise just clear the option
+  // from this batch, there can be no other batches with the same
+  // option to consolidate with.
+  onRemoveDisposal = ({ itemBatch }) => () => {
+    const { parentBatch } = itemBatch;
+    if (parentBatch && !parentBatch.option) {
+      this.removeRow({ itemBatch });
+      this.updateObject(
+        {
+          totalQuantity: parentBatch.totalQuantity + itemBatch.totalQuantity,
+        },
+        {},
+        parentBatch
+      );
+    }
+    return this.updateObject({ option: null }, { isModalOpen: false }, itemBatch);
+  };
+
   // After selecting a reason for disposal, try to find a matching
   // batch with the same reason, and same batch code. If succesful,
   // apply split value to that batch, otherwise, apply reason to
   // this ItemBatch.
-  // Also called on cancelling a disposal. Find if the batches
-  // parent has and Option applied. If not, apply the totalQuantity
-  // of this batch to the parent, otherwise just clear the option
-  // from this batch.
-  onDispose = ({ itemBatch } = {}) => ({ item: option }) => {
+  onDispose = ({ item: option }) => {
     const { currentBatch, data } = this.state;
     const { totalQuantity } = currentBatch;
-    if (!option) {
-      // When cancelling the disposal, try to find a batch in the tree
-      // which has the same VVMStatus to add to.
-      const { parentBatch } = itemBatch;
-      if (parentBatch && !parentBatch.option) {
-        this.removeRow({ itemBatch });
-        return this.updateObject(
-          {
-            totalQuantity: parentBatch.totalQuantity + itemBatch.totalQuantity,
-          },
-          {},
-          parentBatch
-        );
-      }
-      return this.updateObject({ option: null, vvmStatus: null }, {}, itemBatch);
-    }
 
     const batchWithSameReason = this.findBatchWithSameReason({
       itemBatch: { ...currentBatch, option },
@@ -315,6 +317,46 @@ export class ManageVaccineItemPage extends React.Component {
     }
     data.push(currentBatch);
     return this.updateObject({ option }, { isModalOpen: false });
+  };
+
+  // On applying a reason, a split value is entered by the user.
+  // If this split value is:
+  // Not numeric or less than 0, ignore the action.
+  // >= the batches totalQuantity - open a modal to select a reason and apply it.
+  // < totalQuantity - create a new rowObject with a totalQuantity equal to the
+  // split value, update the currentBatches totalQuantity and set the new batch
+  // as the new currentBatch, then open a modal for reason selection.
+  onEnterReasonSplitValue = (splitValue = 0) => {
+    const { currentBatch: baseBatch } = this.state;
+    const { totalQuantity } = baseBatch;
+    let currentBatch;
+    let parentBatch = baseBatch;
+    if (baseBatch.parentBatch) parentBatch = baseBatch.parentBatch;
+
+    let parsedSplitValue = parseInt(splitValue, 10);
+    if (parsedSplitValue <= 0 || Number.isNaN(parsedSplitValue)) return;
+
+    if (parsedSplitValue < totalQuantity) {
+      currentBatch = createRowObject(parentBatch, {
+        id: generateUUID(),
+        totalQuantity: parsedSplitValue,
+        hasBreached: parentBatch.hasBreached,
+        parentBatch,
+      });
+      parentBatch.childrenBatches.push(currentBatch);
+    }
+    if (parsedSplitValue >= totalQuantity) {
+      parsedSplitValue = 0;
+      currentBatch = baseBatch;
+    }
+    this.updateObject(
+      { totalQuantity: totalQuantity - parsedSplitValue },
+      {
+        modalKey: 'disposalReason',
+        currentBatch: currentBatch || baseBatch,
+        isModalOpen: true,
+      }
+    );
   };
 
   // Called on selecting a fridge in the fridge selection modal,
@@ -354,46 +396,6 @@ export class ManageVaccineItemPage extends React.Component {
   onModalUpdate = ({ modalKey, currentBatch } = {}) => () => {
     if (modalKey) this.setState({ modalKey, isModalOpen: true, currentBatch });
     else this.setState({ isModalOpen: false, currentBatch: null, modalKey: null });
-  };
-
-  // On applying a reason, a split value is entered by the user.
-  // If this split value is:
-  // Not numeric or less than 0, ignore the action.
-  // >= the batches totalQuantity - open a modal to select a reason and apply it.
-  // < totalQuantity - create a new rowObject with a totalQuantity equal to the
-  // split value, update the currentBatches totalQuantity and set the new batch
-  // as the new currentBatch, then open a modal for reason selection.
-  onApplyReason = (splitValue = 0) => {
-    const { currentBatch: baseBatch } = this.state;
-    const { totalQuantity } = baseBatch;
-    let currentBatch;
-    let parentBatch = baseBatch;
-    if (baseBatch.parentBatch) parentBatch = baseBatch.parentBatch;
-
-    let parsedSplitValue = parseInt(splitValue, 10);
-    if (parsedSplitValue <= 0 || Number.isNaN(parsedSplitValue)) return;
-
-    if (parsedSplitValue < totalQuantity) {
-      currentBatch = createRowObject(parentBatch, {
-        id: generateUUID(),
-        totalQuantity: parsedSplitValue,
-        hasBreached: parentBatch.hasBreached,
-        parentBatch,
-      });
-      parentBatch.childrenBatches.push(currentBatch);
-    }
-    if (parsedSplitValue >= totalQuantity) {
-      parsedSplitValue = 0;
-      currentBatch = baseBatch;
-    }
-    this.updateObject(
-      { totalQuantity: totalQuantity - parsedSplitValue },
-      {
-        modalKey: 'disposalReason',
-        currentBatch: currentBatch || baseBatch,
-        isModalOpen: true,
-      }
-    );
   };
 
   /**
@@ -438,7 +440,9 @@ export class ManageVaccineItemPage extends React.Component {
             text={option && option.title}
             icon={option ? 'times' : 'trash'}
             iconSize={option ? 20 : 30}
-            onPress={option ? this.onDispose({ itemBatch }) : this.onModalUpdate(modalUpdateProps)}
+            onPress={
+              option ? this.onRemoveDisposal({ itemBatch }) : this.onModalUpdate(modalUpdateProps)
+            }
             iconColour={option ? 'red' : DARK_GREY}
           />
         );
@@ -475,7 +479,7 @@ export class ManageVaccineItemPage extends React.Component {
           <GenericChoiceList
             data={this.REASONS}
             keyToDisplay="title"
-            onPress={this.onDispose()}
+            onPress={this.onDispose}
             highlightValue={currentBatch && currentBatch.option ? currentBatch.option.title : null}
           />
         );
@@ -485,7 +489,9 @@ export class ManageVaccineItemPage extends React.Component {
         return (
           <TextEditor
             text=""
-            onEndEditing={modalKey === 'vvmStatus' ? this.onSplitBatch : this.onApplyReason}
+            onEndEditing={
+              modalKey === 'vvmStatus' ? this.onSplitBatch : this.onEnterReasonSplitValue
+            }
           />
         );
       }
