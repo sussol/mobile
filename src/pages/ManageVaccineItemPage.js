@@ -185,12 +185,25 @@ export class ManageVaccineItemPage extends React.Component {
     this.updateObject(newObjectValues, { isModalOpen: false });
   };
 
-  onApplyChanges = shouldApply => () => {
-    const { database, currentUser: user, navigateBack } = this.props;
-    const { data: itemBatches } = this.state;
+  onApplyChanges = shouldApply => async () => {
+    const { navigateBack, runWithLoadingIndicator } = this.props;
     this.onModalUpdate()();
     if (shouldApply) {
-      vaccineDisposalAdjustments({ database, user, itemBatches });
+      await runWithLoadingIndicator(() => {
+        const { database, currentUser: user } = this.props;
+        const { data: itemBatches } = this.state;
+        database.write(() => {
+          itemBatches
+            .filter(batch => !batch.option)
+            .forEach(itemBatch => {
+              database.update('ItemBatch', {
+                id: itemBatch.id,
+                location: itemBatch.location,
+              });
+            });
+        });
+        vaccineDisposalAdjustments({ database, user, itemBatches });
+      });
       if (navigateBack) navigateBack();
     }
   };
@@ -386,6 +399,7 @@ ManageVaccineItemPage.propTypes = {
   item: PropTypes.object.isRequired,
   currentUser: PropTypes.object.isRequired,
   navigateBack: PropTypes.func.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
 };
 
 export default ManageVaccineItemPage;
