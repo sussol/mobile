@@ -385,6 +385,7 @@ export class SupplierInvoicePage extends React.Component {
             rightText="FAIL"
             currentState={isVVMPassed}
             onPress={this.onVvmToggle(transactionBatch)}
+            disabled={!isEditable}
           />
         );
       }
