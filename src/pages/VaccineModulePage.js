@@ -86,7 +86,6 @@ export class VaccineModulePage extends React.Component {
 
     await runWithLoadingIndicator(() => {
       fridges.forEach(fridge => {
-        console.log('getting fridge data');
         this.fridgeData[fridge.id] = extractDataForFridgeChart({ database, fridge });
       });
     });
