@@ -6,6 +6,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import dateFormat from 'dateformat';
 
 import { StyleSheet, View } from 'react-native';
 import { GenericTablePage } from 'react-native-generic-table-page';
@@ -14,8 +16,6 @@ import { VaccineChart, StackedTables } from '.';
 
 import { formattedDifferenceBetweenDates, formatExposureRange } from '../utilities/formatters';
 import { extractDataForBreachModal } from '../utilities/modules/vaccines';
-
-import { SHADOW_BORDER } from '../globalStyles';
 
 /**
  * CONSTANTS
@@ -68,7 +68,6 @@ const BREACH_COLUMNS = [
     alignText: 'center',
   },
 ];
-
 const BATCH_COLUMNS = [
   { key: 'code', title: LOCALIZATION.columns.batch.code, width: 0.8 },
   { key: 'totalQuantity', title: LOCALIZATION.columns.batch.quantity, width: 0.8 },
@@ -76,7 +75,7 @@ const BATCH_COLUMNS = [
     key: 'expiryDate',
     title: LOCALIZATION.columns.batch.expiry,
     width: 0.8,
-    formatMethod: content => content.toLocaleDateString(),
+    formatMethod: content => dateFormat(content, 'mm/yy'),
   },
   {
     key: 'duration',
@@ -86,6 +85,15 @@ const BATCH_COLUMNS = [
   },
 ];
 
+class GenericTablePageExpandFirstRow extends GenericTablePage {
+  constructor(props) {
+    super(props);
+    const { data } = props;
+    if (data && data.length > 0) {
+      this.state = { ...this.state, expandedRows: [data[0].id] };
+    }
+  }
+}
 /**
  * Component to be used within a PageContentModal
  *
@@ -200,7 +208,7 @@ export class BreachTable extends React.PureComponent {
     const { data } = this.state;
     if (!data) return null;
     return (
-      <GenericTablePage
+      <GenericTablePageExpandFirstRow
         {...genericTablePageStyles}
         data={data}
         columns={BREACH_COLUMNS}
@@ -212,30 +220,25 @@ export class BreachTable extends React.PureComponent {
 }
 
 const localStyles = StyleSheet.create({
-  tablesContainer: { width: '47%', margin: 30 },
+  tablesContainer: { width: '47%' },
   chartContainer: {
     width: '47%',
     justifyContent: 'center',
     height: 300,
     backgroundColor: 'white',
-    margin: 20,
   },
   expansionContainer: {
     display: 'flex',
     flexDirection: 'row',
     backgroundColor: '#ecf3fc',
     margin: 10,
-    borderWidth: 1,
-    borderRadius: 2,
-    borderColor: SHADOW_BORDER,
-    borderBottomWidth: 0,
-    shadowColor: 'white',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 1,
+    borderRadius: 4,
     marginHorizontal: 5,
     marginTop: 10,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    padding: 10,
   },
 });
 

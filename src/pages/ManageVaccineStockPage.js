@@ -36,12 +36,12 @@ const LOCALIZATION = {
   headers: {
     name: 'ITEM NAME',
     code: 'ITEM CODE',
-    totalBatchesInStock: 'NUMBER OF BATCHES',
+    totalBatchesInStock: 'BATCHES',
     totalQuantity: 'QUANTITY',
     hasBreach: 'BREACH',
     navigation: 'MANAGE',
-    quantityInBreach: 'QUANTITY IN BREACH',
-    temperatureExposure: 'TEMPERATURE EXPOSURE',
+    quantityInBreach: 'QUANTITY\nINBREACH',
+    temperatureExposure: 'TEMPERATURE\nEXPOSURE',
   },
   misc: {
     allLocations: 'All locations',
@@ -55,33 +55,33 @@ const TABLE_COLUMNS = {
   code: { key: 'code', width: 0.6, title: LOCALIZATION.headers.code, alignText: 'left' },
   totalBatchesInStock: {
     key: 'totalBatchesInStock',
-    width: 0.8,
+    width: 0.5,
     title: LOCALIZATION.headers.totalBatchesInStock,
-    alignText: 'right',
+    alignText: 'center',
   },
   totalQuantity: {
     key: 'totalQuantity',
     width: 0.5,
     title: LOCALIZATION.headers.totalQuantity,
-    alignText: 'right',
+    alignText: 'center',
   },
   hasBreach: {
     key: 'hasBreach',
     width: 0.5,
     title: LOCALIZATION.headers.hasBreach,
-    alignText: 'left',
+    alignText: 'lecenterft',
   },
   navigation: {
     key: 'navigation',
     width: 0.5,
     title: LOCALIZATION.headers.navigation,
-    alignText: 'left',
+    alignText: 'center',
   },
   quantityInBreach: {
     key: 'quantityInBreach',
-    width: 0.8,
+    width: 0.5,
     title: LOCALIZATION.headers.quantityInBreach,
-    alignText: 'right',
+    alignText: 'center',
   },
   temperatureExposure: {
     key: 'temperatureExposure',
@@ -270,7 +270,7 @@ export class ManageVaccineStockPage extends React.Component {
         return (
           <IconCell
             icon="warning"
-            iconColor="red"
+            iconColor={SUSSOL_ORANGE}
             iconSize={30}
             onPress={this.onModalUpdate({ item, modalKey: MODAL_KEYS.BREACH })}
           />

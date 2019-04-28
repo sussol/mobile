@@ -4,15 +4,17 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+// eslint-disable-next-line import/no-extraneous-dependencies
+import dateFormat from 'dateformat';
 import { createRecord } from '../../database';
-
+// eslint-disable-next-line import/no-extraneous-dependencies
 /**
  * Utility and helper methods for the vaccine
  * module.
  */
 
 const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
-const MAX_BREACH_CHART_DATAPOINTS = 7;
+const MAX_BREACH_CHART_DATAPOINTS = 10;
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
 
@@ -233,7 +235,7 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
 };
 
 const formatChartDate = (date, timestampsByHour) => {
-  if (timestampsByHour) return date.toLocaleTimeString();
+  if (timestampsByHour) return dateFormat(date, 'h:MM');
   return date.toLocaleDateString();
 };
 
@@ -426,6 +428,7 @@ export function vaccineDisposalAdjustments({
         itemBatch: itemBatch.parentBatch ? itemBatch.parentBatch : itemBatch,
         numberOfPacks: itemBatch.totalQuantity,
         option: itemBatch.option,
+        location: itemBatch.location,
       }));
   } else if (supplierInvoice) {
     // When a SupplierInvoice is passed, InventoryAdjustments are made for
@@ -462,7 +465,8 @@ export function vaccineDisposalAdjustments({
 
       let itemBatch = batch;
       if (!batch.addTransactionBatch) {
-        itemBatch = database.objects('ItemBatch').filtered('id = $0', batch.id)[0];
+        const id = (batch.parentBatch && batch.parentBatch.id) || batch.id;
+        itemBatch = database.objects('ItemBatch').filtered('id = $0', id)[0];
       }
       // Skip this batch if the ItemBatch has no related Item.
       const { item } = itemBatch;

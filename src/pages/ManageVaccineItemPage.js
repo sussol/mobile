@@ -23,7 +23,7 @@ import {
   BreachTable,
 } from '../widgets';
 
-import { DARK_GREY, FINALISED_RED, SUSSOL_ORANGE, SOFT_RED } from '../globalStyles/index';
+import { DARK_GREY, SUSSOL_ORANGE } from '../globalStyles/index';
 import { ConfirmModal } from '../widgets/modals/index';
 
 /**
@@ -69,9 +69,9 @@ const getColumns = columnKeys => columnKeys.map(columnKey => COLUMNS[columnKey])
 // Creates a row object for use within this component.
 const createRowObject = (itemBatch, extraData = { vvmStatus: null, option: null }) => ({
   childrenBatches: [],
-  ...itemBatch,
   totalQuantity: itemBatch.totalQuantity,
   hasBreached: itemBatch.hasBreached,
+  ...itemBatch,
   ...extraData,
 });
 
@@ -110,7 +110,9 @@ export class ManageVaccineItemPage extends React.Component {
     this.REASONS = reasons.filtered('NOT title CONTAINS[c] $0', 'vvm');
     this.VVMREASON = reasons.filtered('title CONTAINS[c] $0', 'vvm')[0];
 
-    const data = item.batches.map(itemBatch => createRowObject(itemBatch));
+    const data = item.batches
+      .filtered('numberOfPacks > 0')
+      .map(itemBatch => createRowObject(itemBatch));
     this.setState({ data });
   };
 
@@ -123,6 +125,7 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   getFridgeDescription = ({ location, vvmStatus, option }) => {
+    console.log(location);
     if (this.HAS_FRIDGES && vvmStatus !== false && !option) {
       return (location && location.description) || 'Unnasigned';
     }
@@ -327,12 +330,12 @@ export class ManageVaccineItemPage extends React.Component {
       return this.updateObject(
         { totalQuantity: batchWithSameReason.totalQuantity + totalQuantity },
         { isModalOpen: false, modalKey: null, currentBatch: null },
-        batchWithSameReason[0]
+        batchWithSameReason
       );
     }
     if (currentBatch.parentBatch) data.push(currentBatch);
 
-    return this.updateObject({ option }, { isModalOpen: false });
+    return this.updateObject({ option, vvmStatus: null }, { isModalOpen: false });
   };
 
   // On applying a reason, a split value is entered by the user.
@@ -435,7 +438,7 @@ export class ManageVaccineItemPage extends React.Component {
             text={this.getFridgeDescription(itemBatch)}
             disabled={!usingFridge}
             icon={usingFridge ? 'caret-up' : 'times'}
-            iconColour={usingFridge ? SUSSOL_ORANGE : SOFT_RED}
+            iconColour={SUSSOL_ORANGE}
             onPress={this.onModalUpdate(modalUpdateProps)}
           />
         );
@@ -446,7 +449,7 @@ export class ManageVaccineItemPage extends React.Component {
             icon="warning"
             iconSize={30}
             onPress={this.onModalUpdate(modalUpdateProps)}
-            iconColour={FINALISED_RED}
+            iconColour={SUSSOL_ORANGE}
           />
         );
       case 'dispose':
@@ -458,7 +461,7 @@ export class ManageVaccineItemPage extends React.Component {
             onPress={
               option ? this.onRemoveDisposal({ itemBatch }) : this.onModalUpdate(modalUpdateProps)
             }
-            iconColour={option ? 'red' : DARK_GREY}
+            iconColour={option ? SUSSOL_ORANGE : DARK_GREY}
           />
         );
       case 'vvmStatus':
