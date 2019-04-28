@@ -62,7 +62,7 @@ const MENU_BUTTONS = [
     buttonText: navStrings.customer_invoices,
   },
   {
-    page: 'vaccineModulePage',
+    page: 'supplierRequisitions',
     pageTitle: 'Order Stock',
     buttonText: LOCALIZATION.menuButtons.orderStock,
   },
