@@ -408,12 +408,14 @@ export class SupplierRequisitionPage extends React.Component {
       case 'price':
         return {
           type: 'text',
-          cellContents: this.ITEM_PRICE_MAPPING[requisitionItem.item.id] || 'N/A',
+          cellContents: this.ITEM_PRICE_MAPPING[requisitionItem.item.id]
+            ? this.ITEM_PRICE_MAPPING[requisitionItem.item.id]
+            : 'N/A',
         };
       case 'unit': {
         return {
           type: 'text',
-          cellContents: requisitionItem.item.unitId.units || 'N/A',
+          cellContents: requisitionItem.item.unit ? requisitionItem.item.unit.units : 'N/A',
         };
       }
     }

@@ -285,7 +285,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         description: record.description,
         name: record.item_name,
         crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
-        unitId: database.getOrCreate('Unit', record.unit_ID),
+        unit: database.getOrCreate('Unit', record.unit_ID),
       };
       database.update(recordType, internalRecord);
       break;

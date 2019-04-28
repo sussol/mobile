@@ -231,7 +231,7 @@ Item.schema = {
     defaultPrice: { type: 'double', optional: true },
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
-    unitId: { type: 'Unit', optional: true },
+    unit: { type: 'Unit', optional: true },
   },
 };
 
