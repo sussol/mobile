@@ -395,6 +395,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         item: database.getOrCreate('Item', record.item_ID),
         imprestQuantity: parseNumber(record.imprest_quan),
+        price: parseNumber(record.price),
         masterList,
       };
       const masterListItem = database.update(recordType, internalRecord);
