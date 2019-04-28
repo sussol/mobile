@@ -57,6 +57,7 @@ export const RECORD_TYPES = new SyncTranslator({
   TransactionCategory: 'transaction_category',
   TransactionBatch: 'trans_line',
   User: 'user',
+  Unit: 'unit',
 });
 
 export const REQUISITION_TYPES = new SyncTranslator({

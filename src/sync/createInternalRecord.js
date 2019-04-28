@@ -9,7 +9,7 @@
  * createOrUpdateRecord in incomingSyncUtils.
  */
 
-import { parseBoolean, parseDate } from './incomingSyncUtils';
+import { parseBoolean, parseDate, parseNumber } from './incomingSyncUtils';
 
 export const createPeriodInternalRecord = (record, database) => ({
   id: record.ID,
@@ -29,4 +29,11 @@ export const createOptionsInternalRecord = record => ({
 export const createPeriodScheduleInternalRecord = record => ({
   id: record.ID,
   name: record.name,
+});
+
+export const createUnitInternalRecord = record => ({
+  id: record.ID,
+  units: record.units,
+  orderNumber: parseNumber(record.order_number),
+  comment: record.comment,
 });
