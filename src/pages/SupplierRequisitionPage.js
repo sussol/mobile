@@ -37,9 +37,94 @@ const MODAL_KEYS = {
   VIEW_REGIMEN_DATA: 'viewRegimenData',
 };
 
+const NORMAL_COLUMNS = [
+  'itemCode',
+  'itemName',
+  'stockOnHand',
+  'monthlyUsage',
+  'suggestedQuantity',
+  'requiredQuantity',
+  'remove',
+];
+
+const PROGRAM_COLUMNS = [
+  'itemCode',
+  'itemName',
+  'price',
+  'unit',
+  'stockOnHand',
+  'monthlyUsage',
+  'suggestedQuantity',
+  'requiredQuantity',
+  'remove',
+];
+
+const COLUMNS = {
+  itemCode: {
+    key: 'itemCode',
+    width: 1.4,
+    title: tableStrings.code,
+    sortable: true,
+  },
+  itemName: {
+    key: 'itemName',
+    width: 3.5,
+    title: tableStrings.item_name,
+    sortable: true,
+  },
+  stockOnHand: {
+    key: 'stockOnHand',
+    width: 2,
+    title: tableStrings.current_stock,
+    sortable: true,
+    alignText: 'right',
+  },
+  monthlyUsage: {
+    key: 'monthlyUsage',
+    width: 1.5,
+    title: tableStrings.monthly_usage,
+    sortable: true,
+    alignText: 'right',
+  },
+  suggestedQuantity: {
+    key: 'suggestedQuantity',
+    width: 2,
+    title: tableStrings.suggested_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  requiredQuantity: {
+    key: 'requiredQuantity',
+    width: 2,
+    title: tableStrings.required_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  remove: {
+    key: 'remove',
+    width: 1,
+    title: tableStrings.remove,
+    alignText: 'center',
+  },
+  price: {
+    key: 'price',
+    width: 1,
+    title: 'PRICE',
+    alignText: 'center',
+  },
+  unit: {
+    key: 'unit',
+    width: 1,
+    title: 'UNIT',
+    alignText: 'center',
+  },
+};
+
 export class SupplierRequisitionPage extends React.Component {
   constructor(props) {
     super(props);
+
+    this.ITEM_PRICE_MAPPING = null;
 
     const { requisition } = props;
     const { program, thresholdMOS } = requisition;
@@ -58,6 +143,37 @@ export class SupplierRequisitionPage extends React.Component {
       isAscending: true,
     };
   }
+
+  // On mounting, creating an Item -> Price mapping table if
+  // this is a program requisition.
+  componentDidMount = () => {
+    const { database, requisition } = this.props;
+    const { program, otherStoreName } = requisition;
+    this.ITEM_PRICE_MAPPING = {};
+    // If not a program requisition, premature return
+    if (!(program && otherStoreName)) return;
+
+    // Get all MasterListNameJoins for the supplier.
+    const supplierMasterListNameJoins = database
+      .objects('MasterListNameJoin')
+      .filtered('name.id == $0', otherStoreName.id);
+
+    // If no MasterListNameJoins, premature return
+    if (supplierMasterListNameJoins.length === 0) return;
+
+    // Get all MasterListItems for the supplier
+    const queryString = supplierMasterListNameJoins
+      .map(({ masterList }) => `masterList.id == "${masterList.id}"`)
+      .join(' OR ');
+    const masterListItems = database.objects('MasterListItem').filtered(queryString);
+
+    // Create a lookup table for each item in all of the MasterLists, mapped to
+    // the highest price.
+    masterListItems.forEach(({ item, price }) => {
+      if (!this.ITEM_PRICE_MAPPING[item.id]) this.ITEM_PRICE_MAPPING[item.id] = price;
+      else this.ITEM_PRICE_MAPPING[item.id] = Math.max(this.ITEM_PRICE_MAPPING[item.id], price);
+    });
+  };
 
   onAddMasterItems = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
@@ -289,6 +405,17 @@ export class SupplierRequisitionPage extends React.Component {
           icon: 'md-remove-circle',
           isDisabled: requisition.isFinalised,
         };
+      case 'price':
+        return {
+          type: 'text',
+          cellContents: this.ITEM_PRICE_MAPPING[requisitionItem.item.id] || 'N/A',
+        };
+      case 'unit': {
+        return {
+          type: 'text',
+          cellContents: requisitionItem.item.unitId.units || 'N/A',
+        };
+      }
     }
   };
 
@@ -454,6 +581,15 @@ export class SupplierRequisitionPage extends React.Component {
     );
   };
 
+  getColumns = () => {
+    const { requisition } = this.props;
+    const { program } = requisition;
+    let columnsToUse;
+    if (program) columnsToUse = PROGRAM_COLUMNS;
+    else columnsToUse = NORMAL_COLUMNS;
+    return columnsToUse.map(columnKey => COLUMNS[columnKey]);
+  };
+
   render() {
     const { database, genericTablePageStyles, requisition, topRoute } = this.props;
     const { data, modalIsOpen, selection } = this.state;
@@ -469,54 +605,7 @@ export class SupplierRequisitionPage extends React.Component {
         onSelectionChange={this.onSelectionChange}
         defaultSortKey={this.dataFilters.sortBy}
         defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1.5,
-            title: tableStrings.code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 4,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'stockOnHand',
-            width: 2,
-            title: tableStrings.current_stock,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'monthlyUsage',
-            width: 2,
-            title: tableStrings.monthly_usage,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'suggestedQuantity',
-            width: 2,
-            title: tableStrings.suggested_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'requiredQuantity',
-            width: 2,
-            title: tableStrings.required_quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
+        columns={this.getColumns()}
         dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
         finalisableDataType="Requisition"
         database={database}
