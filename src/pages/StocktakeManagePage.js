@@ -249,26 +249,28 @@ export class StocktakeManagePage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <BottomModal
-          isOpen={!(stocktake && stocktake.isFinalised) && selection.length > 0}
-          style={localStyles.bottomModal}
-        >
-          <TextInput
-            style={globalStyles.modalTextInput}
-            textStyle={globalStyles.modalText}
-            underlineColorAndroid="transparent"
-            placeholderTextColor="white"
-            placeholder={modalStrings.give_your_stocktake_a_name}
-            value={stocktakeName}
-            onChangeText={text => this.setState({ stocktakeName: text })}
-          />
-          <OnePressButton
-            style={[globalStyles.button, globalStyles.modalOrangeButton]}
-            textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-            text={!stocktake ? modalStrings.create : modalStrings.confirm}
-            onPress={this.onConfirmPress}
-          />
-        </BottomModal>
+        {!(stocktake && stocktake.isFinalised) && selection.length > 0 && (
+          <BottomModal
+            isOpen={!(stocktake && stocktake.isFinalised) && selection.length > 0}
+            style={localStyles.bottomModal}
+          >
+            <TextInput
+              style={globalStyles.modalTextInput}
+              textStyle={globalStyles.modalText}
+              underlineColorAndroid="transparent"
+              placeholderTextColor="white"
+              placeholder={modalStrings.give_your_stocktake_a_name}
+              value={stocktakeName}
+              onChangeText={text => this.setState({ stocktakeName: text })}
+            />
+            <OnePressButton
+              style={[globalStyles.button, globalStyles.modalOrangeButton]}
+              textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
+              text={!stocktake ? modalStrings.create : modalStrings.confirm}
+              onPress={this.onConfirmPress}
+            />
+          </BottomModal>
+        )}
       </GenericPage>
     );
   }

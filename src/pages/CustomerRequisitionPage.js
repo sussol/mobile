@@ -326,13 +326,15 @@ export class CustomerRequisitionPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <PageContentModal
-          isOpen={modalIsOpen && !requisition.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
+        {modalIsOpen && !requisition.isFinalised && (
+          <PageContentModal
+            isOpen={modalIsOpen && !requisition.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        )}
       </GenericPage>
     );
   }
