@@ -38,7 +38,7 @@ export class StackedTables extends React.PureComponent {
         {data.map((datum, index) => {
           const { title = 'default' } = datum;
           return (
-            <View key={`${title + index}`} style={{ backgroundColor: 'transparent' }}>
+            <View key={`${title + index}`}>
               <SimpleTable {...datum} {...additionalTableProps} />
             </View>
           );
@@ -51,8 +51,6 @@ export class StackedTables extends React.PureComponent {
 const localStyles = ({ containerStyle }) =>
   StyleSheet.create({
     containerStyle: {
-      backgroundColor: 'white',
-
       width: '100%',
       display: 'flex',
       ...containerStyle,

@@ -10,10 +10,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import {
   APP_FONT_FAMILY,
-  FINALISED_RED,
-  FINALISE_GREEN,
+  SUSSOL_ORANGE,
   BLUE_WHITE,
   DARK_GREY,
+  FINALISE_GREEN,
 } from '../globalStyles';
 
 /**
@@ -41,13 +41,13 @@ export class MiniToggleBar extends React.PureComponent {
 
     return {
       // Set the border color for the main container.
-      mainStyle: currentState ? { borderColor: FINALISE_GREEN } : { borderColor: FINALISED_RED },
+      mainStyle: currentState ? { borderColor: FINALISE_GREEN } : { borderColor: SUSSOL_ORANGE },
       // Set the background and font color for the left hand side.
       leftStyle: currentState && { backgroundColor: FINALISE_GREEN },
       leftTextStyle: currentState && { color: BLUE_WHITE },
       // Set the background color and font color for the right hand side.
       rightTextStyle: !currentState && { color: BLUE_WHITE },
-      rightStyle: !currentState && { backgroundColor: FINALISED_RED, color: BLUE_WHITE },
+      rightStyle: !currentState && { backgroundColor: SUSSOL_ORANGE, color: BLUE_WHITE },
     };
   };
 

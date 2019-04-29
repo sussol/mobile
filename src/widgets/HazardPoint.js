@@ -25,7 +25,7 @@ export const HazardPoint = props => {
 
   return (
     <Svg>
-      <G onPress={onPressWrapper}>
+      <G onPressIn={onPressWrapper} delayPressIn={0}>
         <Path x={x + xOffset} y={y + yOffset} scale={scale} d={hazardPath} fill={fill} />
       </G>
     </Svg>

@@ -8,8 +8,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { StyleSheet, FlatList, View, Text } from 'react-native';
-import { ROW_BLUE, APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles/index';
+import { Dimensions, StyleSheet, FlatList, View, Text } from 'react-native';
+import { ROW_BLUE, APP_FONT_FAMILY, SUSSOL_ORANGE, DARK_GREY } from '../globalStyles/index';
 
 /**
  * Simple table component only rendering scalar values in a cell. Not intended
@@ -45,8 +45,8 @@ export class SimpleTable extends React.PureComponent {
     );
   };
 
-  renderCell = ({ content, rowIndex, header, width, cellIndex, formatMethod }) => {
-    const { cell, cellFont } = localStyles({ ...this.props, rowIndex, header, width });
+  renderCell = ({ content, rowIndex, header, width, cellIndex, formatMethod, isLastCell }) => {
+    const { cell, cellFont } = localStyles({ ...this.props, rowIndex, header, width, isLastCell });
     return (
       <View style={cell} key={this.keyExtractor({ index: cellIndex })}>
         <Text style={cellFont}>{formatMethod ? formatMethod(content) : content}</Text>
@@ -59,9 +59,10 @@ export class SimpleTable extends React.PureComponent {
     const { headerColumn } = localStyles(this.props);
     return (
       <View style={headerColumn}>
-        {columns.map(column => {
+        {columns.map((column, cellIndex) => {
           const { title: content, width } = column;
-          return this.renderCell({ content, column, width, header: true });
+          const isLastCell = columns.length === cellIndex + 1;
+          return this.renderCell({ content, column, width, header: true, isLastCell });
         })}
       </View>
     );
@@ -75,7 +76,16 @@ export class SimpleTable extends React.PureComponent {
         {columns.map((column, cellIndex) => {
           const { key, width, formatMethod } = column;
           const content = item[key];
-          return this.renderCell({ content, column, width, cellIndex, rowIndex, formatMethod });
+          const isLastCell = columns.length === cellIndex + 1;
+          return this.renderCell({
+            content,
+            column,
+            width,
+            cellIndex,
+            rowIndex,
+            formatMethod,
+            isLastCell,
+          });
         })}
       </View>
     );
@@ -113,12 +123,13 @@ const localStyles = ({
   titleBackgroundColor,
   containerBackground,
   columnSeperatorColor,
+  isLastCell,
   data,
 } = {}) =>
   StyleSheet.create({
     container: {
       backgroundColor: containerBackground,
-      height: rowHeight * data.length + headerHeight + titleHeight + 21,
+      height: rowHeight * data.length + headerHeight + titleHeight + 5,
       width: '100%',
     },
     titleContainer: {
@@ -127,15 +138,13 @@ const localStyles = ({
       alignItems: 'center',
       maxHeight: titleHeight,
       minHeight: titleHeight,
-      paddingVertical: 10,
       backgroundColor: titleBackgroundColor,
       marginBottom: 1,
     },
     titleFont: {
-      fontSize: 18,
+      fontSize: Dimensions.get('window').width / 80,
       fontFamily: APP_FONT_FAMILY,
       color: titleFontColor,
-      fontWeight: 'bold',
       ...titleFontStyle,
     },
     headerColumn: {
@@ -154,7 +163,7 @@ const localStyles = ({
     },
     cellFont: {
       fontFamily: APP_FONT_FAMILY,
-      fontSize: 16,
+      fontSize: Dimensions.get('window').width / 100,
       color: header ? headerFontColor : cellFontColor,
     },
     cell: {
@@ -162,22 +171,21 @@ const localStyles = ({
       justifyContent: 'center',
       alignItems: 'center',
       borderRightColor: columnSeperatorColor,
-      borderRightWidth: 2,
+      borderRightWidth: isLastCell ? 0 : 2,
       backgroundColor: rowIndex % 2 === 0 ? ROW_BLUE : 'white',
     },
   });
 
 SimpleTable.defaultProps = {
   title: null,
-  titleHeight: 50,
+  titleHeight: 40,
   titleBackgroundColor: 'white',
   titleFontColor: SUSSOL_ORANGE,
   titleFontStyle: {},
   rowHeight: 30,
-  headerFontColor: SUSSOL_ORANGE,
-  headerHeight: 40,
-  containerBackground: ROW_BLUE,
-  cellFontColor: 'black',
+  headerFontColor: DARK_GREY,
+  headerHeight: 35,
+  cellFontColor: DARK_GREY,
   backgroundColor: 'white',
   columnSeperatorColor: '#ecf3fc',
   keyExtractor: null,
@@ -192,7 +200,6 @@ SimpleTable.propTypes = {
   backgroundColor: PropTypes.string,
   headerFontColor: PropTypes.string,
   headerHeight: PropTypes.number,
-  containerBackground: PropTypes.string,
   cellFontColor: PropTypes.string,
   columnSeperatorColor: PropTypes.string,
   data: PropTypes.array.isRequired,

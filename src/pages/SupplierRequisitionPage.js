@@ -7,7 +7,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { View } from 'react-native';
-
+import { Expansion } from 'react-native-data-table';
+import dateFormater from 'dateformat';
 import { GenericPage } from './GenericPage';
 
 import { createRecord } from '../database';
@@ -24,8 +25,9 @@ import {
   ToggleSelector,
 } from '../widgets';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { dataTableStyles } from '../globalStyles';
 
+const CATCHMENT = 100;
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 
 const MODAL_KEYS = {
@@ -46,7 +48,14 @@ export class SupplierRequisitionPage extends React.Component {
       searchTerm: '',
       sortBy: 'itemName',
       isAscending: true,
+      isVaccine: false,
     };
+
+    this.prevRequisititionDate = -Infinity;
+  }
+
+  componentWillMount() {
+    this.refreshIsVaccine();
   }
 
   onAddMasterItems = () => {
@@ -71,6 +80,7 @@ export class SupplierRequisitionPage extends React.Component {
       });
       this.refreshData();
     });
+    this.refreshIsVaccine();
   };
 
   /**
@@ -90,6 +100,13 @@ export class SupplierRequisitionPage extends React.Component {
       requisitionItem.requiredQuantity = parsePositiveInteger(newValue);
       database.save('RequisitionItem', requisitionItem);
     });
+  };
+
+  refreshIsVaccine = () => {
+    const { requisition } = this.props;
+
+    const isVaccine = requisition.items.some(({ item }) => item.isVaccine);
+    this.setState({ isVaccine });
   };
 
   onDeleteConfirm = () => {
@@ -280,6 +297,7 @@ export class SupplierRequisitionPage extends React.Component {
                   createRecord(database, 'RequisitionItem', requisition, item);
                 }
               });
+              this.refreshIsVaccine();
               this.refreshData();
               this.closeModal();
             }}
@@ -356,6 +374,74 @@ export class SupplierRequisitionPage extends React.Component {
     );
   };
 
+  renderExpansion = requisitionItem => {
+    const { isVaccine } = this.state;
+    if (!isVaccine) return null;
+
+    const prevDate =
+      this.prevRequisititionDate === -Infinity ? new Date(2000, 1, 1) : this.prevRequisititionDate;
+    const { database } = this.props;
+    const dosesInVial = requisitionItem.item.doses;
+
+    const transactionBatchesCI = database
+      .objects('TransactionBatch')
+      .filtered(
+        'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
+        requisitionItem.item.id,
+        prevDate,
+        'customer_invoice'
+      );
+    const doses = transactionBatchesCI.sum('doses');
+
+    const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses;
+
+    const transactionBatchesIA = database
+      .objects('TransactionBatch')
+      .filtered(
+        'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
+        requisitionItem.item.id,
+        prevDate,
+        'supplier_credit'
+      );
+
+    const closeVialWastage = transactionBatchesIA.sum('numberOfPacks') * dosesInVial;
+    const infoColumns = [
+      [
+        {
+          title: `Previous Requisition Date:`,
+          info:
+            this.prevRequisititionDate === -Infinity
+              ? 'n/a'
+              : dateFormater(this.prevRequisititionDate, 'dd/mm/yy'),
+        },
+        {
+          title: 'Catchment Population:',
+          info: CATCHMENT,
+        },
+        {
+          title: 'Doses Given:',
+          info: doses,
+        },
+      ],
+      [
+        {
+          title: `Open Vial Wastage (doses):`,
+          info: openVialWastage,
+        },
+        {
+          title: 'Close Vial Wastage (doses):',
+          info: closeVialWastage,
+        },
+      ],
+    ];
+
+    return (
+      <Expansion style={dataTableStyles.expansion}>
+        <PageInfo columns={infoColumns} />
+      </Expansion>
+    );
+  };
+
   render() {
     const { database, genericTablePageStyles, requisition, topRoute } = this.props;
     const { data, modalIsOpen, selection } = this.state;
@@ -365,6 +451,7 @@ export class SupplierRequisitionPage extends React.Component {
         data={data}
         refreshData={this.refreshData}
         renderCell={this.renderCell}
+        renderExpansion={this.renderExpansion}
         renderTopLeftComponent={this.renderPageInfo}
         renderTopRightComponent={this.renderButtons}
         onEndEditing={this.onEndEditing}

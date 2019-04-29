@@ -303,7 +303,8 @@ export class Item extends Realm.Object {
   getAllSensorLogs(database) {
     return database
       .objects('SensorLog')
-      .filtered('itemBatches.item.id = $0 && itemBatches.numberOfPacks > 0', this.id);
+      .filtered('itemBatches.item.id = $0', this.id)
+      .filtered('itemBatches.numberOfPacks > 0 && NOT itemBatches.numberOfPacks == 0');
   }
 }
 
