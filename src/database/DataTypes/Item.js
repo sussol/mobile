@@ -42,7 +42,7 @@ export class Item extends Realm.Object {
   }
 
   get isVaccine() {
-    return !!(this.category && this.category.name === 'Vaccine');
+    return !!(this.category && this.category.name.contains('Vaccine'));
   }
 
   /**
