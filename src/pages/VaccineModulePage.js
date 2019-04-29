@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 /* eslint-disable react/forbid-prop-types, global-require */
 /**
  * mSupply Mobile
@@ -90,6 +91,11 @@ export class VaccineModulePage extends React.Component {
     this.fridges = fridges;
     this.hasFridges = hasFridges;
     this.setState({ selectedFridge });
+  }
+
+  componentWillReceiveProps(props) {
+    const { isInAdminMode } = props;
+    this.setState({ isInAdminMode });
   }
 
   onModalUpdate = () => {
@@ -278,7 +284,8 @@ export class VaccineModulePage extends React.Component {
 
   render() {
     const { fridges, hasFridges } = this;
-    const { isModalOpen, currentBreach } = this.state;
+    const { navigateTo } = this.props;
+    const { isModalOpen, currentBreach, isInAdminMode } = this.state;
     const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
 
     return (
@@ -297,6 +304,15 @@ export class VaccineModulePage extends React.Component {
             <Text style={greyTextStyleLarge}>{LOCALIZATION.misc.noFridges}</Text>
           </View>
         )}
+        {isInAdminMode ? (
+          <Button
+            key="VM Admin"
+            style={localStyles.menuButtonStyle}
+            textStyle={localStyles.menuButtonTextStyle}
+            text="VM Admin"
+            onPress={() => navigateTo('vaccineModuleAdminPage', 'Vaccine Module Admin')}
+          />
+        ) : null}
         {isModalOpen && (
           <PageContentModal
             isOpen={isModalOpen}
@@ -317,6 +333,7 @@ VaccineModulePage.propTypes = {
   database: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
+  isInAdminMode: PropTypes.object,
 };
 
 const localStyles = StyleSheet.create({

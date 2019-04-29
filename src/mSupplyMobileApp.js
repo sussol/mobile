@@ -122,17 +122,18 @@ class MSupplyMobileAppContainer extends React.Component {
     return true;
   };
 
-  runWithLoadingIndicator = async functionToRun => {
+  runWithLoadingIndicator = async (functionToRun, isAsync = false) => {
     this.database.isLoading = true;
     // We here set up an asyncronous promise that will be resolved after a timeout
-    // of 1 millisecond. This allows a fraction of a delay for the javascript thread
-    // to unblock and allow the spinner animation to start up. The |functionToRun| should
-    // not be run inside a |setTimeout| as that relegates to a lower priority, resulting
-    // in very slow performance.
+    // of 1 millisecond. This allows a fraction of a delay during which the javascript
+    // thread unblocks and allows our spinner animation to start up. We cannot simply
+    // call the functionToRun inside a setTimeout as that relegates to a lower
+    // priority and results in very slow performance.
     await new Promise(resolve => {
       this.setState({ isLoading: true }, () => setTimeout(resolve, 1));
     });
-    functionToRun();
+    if (isAsync) await functionToRun();
+    else functionToRun();
     this.setState({ isLoading: false });
     this.database.isLoading = false;
   };

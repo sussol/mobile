@@ -40,6 +40,7 @@ import { ManageVaccineStockPage } from './ManageVaccineStockPage';
 import { ManageVaccineItemPage } from './ManageVaccineItemPage';
 
 import { RealmExplorer } from './RealmExplorer';
+import { VaccineModuleAdminPage } from './VaccineModuleAdminPage';
 
 import { vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
 
@@ -64,6 +65,7 @@ export const PAGES = {
   vaccineModule: props => <PageContainer page={VaccineModulePage} {...props} />,
   manageVaccineStock: props => <PageContainer page={ManageVaccineStockPage} {...props} />,
   manageVaccineItem: props => <PageContainer page={ManageVaccineItemPage} {...props} />,
+  vaccineModuleAdminPage: props => <PageContainer page={VaccineModuleAdminPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {

@@ -19,6 +19,8 @@ Sensor.schema = {
     name: { type: 'string', optional: true },
     macAddress: { type: 'string', optional: true },
     batteryLevel: { type: 'double', optional: true },
+    logInterval: { type: 'int', optional: true },
+    numberOfLogs: { type: 'int', optional: true },
     temperature: { type: 'double', optional: true },
     lastConnectionTimestamp: { type: 'date', optional: true },
     sensorLogs: { type: 'list', objectType: 'SensorLog' },
