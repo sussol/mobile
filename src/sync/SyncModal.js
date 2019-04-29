@@ -17,7 +17,14 @@ import { Button, ProgressBar } from '../widgets';
 
 import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
-export const SyncModal = ({ database, isOpen, onClose, onPressManualSync, state }) => {
+export const SyncModal = ({
+  database,
+  isOpen,
+  onClose,
+  onPressManualSync,
+  onPressTemperatureSync,
+  state,
+}) => {
   const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
     let message = '';
 
@@ -83,6 +90,15 @@ export const SyncModal = ({ database, isOpen, onClose, onPressManualSync, state 
             onPress={onPressManualSync}
             disabledColor={WARM_GREY}
             isDisabled={isSyncing}
+          />
+        </View>
+        <View style={localStyles.row}>
+          <Button
+            style={[globalStyles.button, localStyles.button]}
+            textStyle={[globalStyles.authFormButtonText, localStyles.buttonText]}
+            text="Sync Temperatures"
+            onPress={onPressTemperatureSync}
+            disabledColor={WARM_GREY}
           />
         </View>
       </View>
@@ -153,6 +169,7 @@ SyncModal.propTypes = {
   database: PropTypes.object.isRequired,
   state: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
+  onPressTemperatureSync: PropTypes.func.isRequired,
   onPressManualSync: PropTypes.func.isRequired,
   isOpen: PropTypes.bool,
 };
