@@ -1,4 +1,5 @@
 import { generateUUID } from 'react-native-database';
+import { NativeModules } from 'react-native';
 
 function toInt(byteArray, startPosition) {
   // TO DO negative temperatures (this is unsigned int conversion)
@@ -73,4 +74,68 @@ export function updateSensors(sensors, database) {
     const sensorData = parseSensorAdvertisment(advertismentData);
     addRefreshSensor({ macAddress: address, name }, sensorData, database);
   });
+}
+
+function integrateLogs(downloadedData, lastLogTimeStamp, pointer, sensor, database) {
+  // logInterval is in seconds
+  const { logInterval, location } = sensor;
+
+  const parsedLogs = parseDownloadedData(downloadedData).temperatureReadings;
+  const logIntervalMillisecods = logInterval * 1000;
+
+  if (!lastLogTimeStamp) {
+    lastLogTimeStamp = new Date(new Date() - logIntervalMillisecods * parsedLogs.length);
+  }
+  database.write(() => {
+    for (let i = 0; i < parsedLogs.length; i += 1) {
+      const currentLog = parsedLogs[i];
+      // TODO add to itemBatch and itemBatch sensorLogJoin
+      // Also have to think about not creating sync out records until logs are aggregated
+      const sensorLog = database.update('SensorLog', {
+        id: generateUUID(),
+        temperature: currentLog / 10,
+        timestamp: new Date(lastLogTimeStamp.getTime() + logIntervalMillisecods * i),
+        location,
+        sensor,
+        logInterval,
+        pointer: pointer + i,
+      });
+      sensor.sensorLogs.push(sensorLog);
+    }
+  });
+}
+
+export async function syncSensor(sensor, database) {
+  const { macAddress } = sensor;
+  let lastLogTimeStamp = null;
+  let pointer = 0;
+
+  if (sensor.sensorLogs.length !== 0) {
+    lastLogTimeStamp = sensor.sensorLogs.max('timestamp');
+    const lastSensorLog = sensor.sensorLogs.filtered('timestamp == $0', lastLogTimeStamp)[0];
+    // eslint-disable-next-line prefer-destructuring
+    pointer = lastSensorLog.pointer + 1;
+  }
+
+  let downloadedData = {};
+  let foundSensors = false;
+
+  try {
+    const sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, macAddress);
+
+    foundSensors = Object.entries(sensors).length > 0;
+    if (foundSensors) {
+      updateSensors(sensors, database);
+      // TODO: check here if sensor has been reset (i.e. pointer > number of logs)
+      downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
+        macAddress,
+        `*logprt${pointer}`
+      );
+      console.log(downloadedData);
+
+      integrateLogs(downloadedData, lastLogTimeStamp, pointer, sensor, database);
+    } else console.log('cant find sesnor');
+  } catch (e) {
+    console.log('rejected ', e);
+  }
 }

@@ -13,7 +13,7 @@ import PropTypes from 'prop-types';
 import { GenericPage } from './GenericPage';
 // import { PageButton, PageContentModal, AutocompleteSelector } from '../widgets';
 import { IconCell, PageButton, GenericChoiceList, PageContentModal } from '../widgets';
-import { updateSensors, parseDownloadedData } from '../utilities/modules/temperatureSensorHelpers';
+import { updateSensors, syncSensor } from '../utilities/modules/temperatureSensorHelpers';
 
 import { SUSSOL_ORANGE } from '../globalStyles/index';
 import { generateUUID } from '../database';
@@ -108,74 +108,14 @@ export class VaccineModuleAdminPage extends React.Component {
     }, true);
   };
 
-  syncSensor = async sensor => {
-    const { macAddress } = sensor;
-    const { database, runWithLoadingIndicator } = this.props;
-    let lastLogTimeStamp = null;
-    let pointer = 0;
+  renderRefreshSensors = () => <PageButton text="Refresh Sensors" onPress={this.refreshSensors} />;
 
-    if (sensor.sensorLogs.length !== 0) {
-      lastLogTimeStamp = sensor.sensorLogs.max('timestamp');
-      const lastSensorLog = sensor.sensorLogs.filtered('timestamp == $0', lastLogTimeStamp)[0];
-      // eslint-disable-next-line prefer-destructuring
-      pointer = lastSensorLog.pointer;
-    }
-
-    let downloadedData = {};
-    let foundSensors = false;
+  syncSensorPress = async fridgeSensor => {
+    const { runWithLoadingIndicator, database } = this.props;
     await runWithLoadingIndicator(async () => {
-      try {
-        const sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, macAddress);
-
-        foundSensors = Object.entries(sensors).length > 0;
-        if (foundSensors) {
-          updateSensors(sensors, database);
-          // TODO: check here if sensor has been reset (i.e. pointer > number of logs)
-          downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
-            macAddress,
-            `*logprt${pointer}`
-          );
-          console.log(downloadedData);
-
-          this.integrateLogs(downloadedData, lastLogTimeStamp, pointer, sensor);
-        } else console.log('cant find senor');
-      } catch (e) {
-        console.log('rejected ', e);
-      }
+      await syncSensor(fridgeSensor, database);
     }, true);
   };
-
-  integrateLogs = (downloadedData, lastLogTimeStamp, pointer, sensor) => {
-    const { database } = this.props;
-    // logInterval is in seconds
-    const { logInterval, location } = sensor;
-
-    const parsedLogs = parseDownloadedData(downloadedData).temperatureReadings;
-    const logIntervalMillisecods = logInterval * 1000;
-
-    if (!lastLogTimeStamp) {
-      lastLogTimeStamp = new Date(new Date() - logIntervalMillisecods * parsedLogs.length);
-    }
-    database.write(() => {
-      for (let i = 0; i < parsedLogs.length; i += 1) {
-        const currentLog = parsedLogs[i];
-        // TODO add to itemBatch and itemBatch sensorLogJoin
-        // Also have to think about not creating sync out records until logs are aggregated
-        const sensorLog = database.update('SensorLog', {
-          id: generateUUID(),
-          temperature: currentLog / 10,
-          timestamp: new Date(lastLogTimeStamp.getTime() + logIntervalMillisecods * i),
-          location,
-          sensor,
-          logInterval,
-          pointer: pointer + i,
-        });
-        sensor.sensorLogs.push(sensorLog);
-      }
-    });
-  };
-
-  renderRefreshSensors = () => <PageButton text="Refresh Sensors" onPress={this.refreshSensors} />;
 
   renderCell = (key, fridge) => {
     const { sensors } = this.state;
@@ -196,7 +136,7 @@ export class VaccineModuleAdminPage extends React.Component {
             disabled={!hasSensors}
             icon={hasSensors ? 'caret-up' : 'times'}
             iconColour={SUSSOL_ORANGE}
-            onPress={() => this.selectSensor(fridge)}
+            onPress={() => this.refreshSensors(fridge)}
           />
         );
       }
@@ -211,7 +151,7 @@ export class VaccineModuleAdminPage extends React.Component {
         return (
           <TouchableOpacity
             style={{ alignSelf: 'center' }}
-            onPress={() => this.syncSensor(fridgeSensor)}
+            onPress={() => this.syncSensorPress(fridgeSensor)}
           >
             <Text>Sync Sensor</Text>
           </TouchableOpacity>
