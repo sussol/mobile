@@ -199,7 +199,7 @@ const extractItemBatches = ({ sensorLogs, itemBatch, item, database }) => {
 export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, database } = {}) => {
   // Ensure that when passed a breach, we disregard the delimiter sensorLogs
   // which aren't breaches when calculating statistics.
-  let filteredLogs = sensorLogs.filtered('isInBreach = $0', true);
+  let filteredLogs = sensorLogs.filtered('isInBreach = $0', true).sorted('timestamp');
   // If an Item has been passed, only find batches for this item.
   if (item) filteredLogs = sensorLogs.filtered('itemBatches.item.id = $0', item.id);
   // If an ItemBatch has been passed, only find batches for this item.
@@ -314,7 +314,8 @@ export const aggregateLogs = ({
 
     const timestamp = formatChartDate(
       new Date(intervalStartDate.getTime() + medianDuration),
-      timestampsByHour
+      timestampsByHour,
+      shouldDisplayMonth
     );
 
     if (intervalLogs.length === 0) {

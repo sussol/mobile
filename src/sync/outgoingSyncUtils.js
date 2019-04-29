@@ -89,7 +89,7 @@ const generateSyncData = (settings, recordType, record) => {
         total_cost: String(record.costPrice * record.numberOfPacks),
         name_ID: settings.get(SUPPLYING_STORE_NAME_ID),
         donor_id: record.donor && record.donor.id,
-        location_ID: record.location && record.locaiton.id,
+        location_ID: record.location && record.location.id,
       };
     }
     case 'Location': {
