@@ -136,7 +136,7 @@ const extractItemBatches = ({ sensorLogs, itemBatch, item, database }) => {
     itemBatches.forEach(
       ({ id: batchId, batch: code, enteredDate, totalQuantity, expiryDate, item: batchItem }) => {
         // Ensure each batch has stock and an associated Item.
-        if (!(item || totalQuantity > 0)) return;
+        if (!(item || totalQuantity > 0) || !totalQuantity) return;
         const { id: itemId } = batchItem;
         // If this batches item hasn't been encountered yet, create
         // a grouping object. groupedBatches = { itemId: { item, batches: {}  }}
@@ -228,15 +228,17 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
   // Also return the sensorLogs for these items and batches.
   // If no items or batches have been found, items: [] is returned
   return {
+    id: sensorLogs.map(({ id }) => id).join(),
     sensorLogs,
     items: allItemsForLogs,
     ...extractBreachStatistics(allItemBatches, sensorLogs),
   };
 };
 
-const formatChartDate = (date, timestampsByHour) => {
+const formatChartDate = (date, timestampsByHour, shouldDisplayMonth) => {
   if (timestampsByHour) return dateFormat(date, 'h:MM');
-  return date.toLocaleDateString();
+  if (shouldDisplayMonth) return dateFormat(date, 'mmm d');
+  return dateFormat(date, 'd');
 };
 
 /**
@@ -295,7 +297,7 @@ export const aggregateLogs = ({
 
   // Map intervals to aggregated objects.
   const medianDuration = intervalDuration / 2;
-
+  let currentMonth = null;
   aggregatedLogs.forEach(aggregateLog => {
     const { intervalStartDate, intervalEndDate } = aggregateLog;
 
@@ -305,6 +307,10 @@ export const aggregateLogs = ({
       intervalStartDate,
       intervalEndDate
     );
+
+    const thisLogsMonth = intervalStartDate.getMonth();
+    const shouldDisplayMonth = thisLogsMonth !== currentMonth;
+    if (shouldDisplayMonth) currentMonth = intervalStartDate.getMonth();
 
     const timestamp = formatChartDate(
       new Date(intervalStartDate.getTime() + medianDuration),
