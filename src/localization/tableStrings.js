@@ -3,6 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/**
+ * TODO: reason, batches, batch_name, expiry
+ */
+
 import LocalizedStrings from 'react-native-localization';
 
 export const tableStrings = new LocalizedStrings({
@@ -51,6 +55,10 @@ export const tableStrings = new LocalizedStrings({
     suggested_quantity: 'SUGGESTED\nQUANTITY',
     supply_quantity: 'SUPPLY THIS\nINVOICE',
     their_stock: 'THEIR\nSTOCK',
+    reason: 'REASON',
+    batches: 'BATCHES',
+    batch_name: 'BATCH NAME',
+    expiry: 'EXPIRY',
   },
   fr: {
     actual_quantity: 'Quantité\nRéelle',
@@ -97,6 +105,10 @@ export const tableStrings = new LocalizedStrings({
     suggested_quantity: 'QUANTITÉ\nSUGGÉRÉE',
     supply_quantity: 'Fournir les\nquantités de\ncette facture',
     their_stock: 'Leur\nstock',
+    reason: 'RAISON',
+    batches: 'BATCHES',
+    batch_name: 'BATCH NAME',
+    expiry: 'EXPIRY',
   },
   gil: {
     // TODO add: batch, no_batch_name
@@ -142,6 +154,10 @@ export const tableStrings = new LocalizedStrings({
     supplier: 'KAMBANA NI KAOBWAI, PHARMACY',
     supply_quantity: 'BEEBA N OOTA MAN TE PHARMACY',
     their_stock: 'AIA BWAI\nN AORAKI',
+    reason: 'REASON',
+    batches: 'BATCHES',
+    batch_name: 'BATCH NAME',
+    expiry: 'EXPIRY',
   },
   tl: {
     // TODO add: batch, no_batch_name
@@ -187,6 +203,10 @@ export const tableStrings = new LocalizedStrings({
     supplier: 'Distribuidor',
     supply_quantity: 'KUANTIDADE\nDISTRIBUI',
     their_stock: 'SIRA NIA\nSTOCK',
+    reason: 'REASON',
+    batches: 'BATCHES',
+    batch_name: 'BATCH NAME',
+    expiry: 'EXPIRY',
   },
   la: {
     actual_quantity: 'ຈຳ​​ນວນ​ຕົວ​ຈິງ\nຈຳ​ນວນ',
@@ -232,6 +252,10 @@ export const tableStrings = new LocalizedStrings({
     suggested_quantity: 'ຈຳ​ນວນແນະ​ນຳ\nປະ​ລິ​ມານ',
     supply_quantity: 'ສະ​ໜອງ\nປະ​ລິ​ມານ',
     their_stock: 'ຈຳ​ນວນ​ສິນ​ຄ້າ​ຂອງ​ພວກ​ເຂົາ​\nສິນ​ຄ້າ',
+    reason: 'REASON',
+    batches: 'BATCHES',
+    batch_name: 'BATCH NAME',
+    expiry: 'EXPIRY',
   },
 });
 
