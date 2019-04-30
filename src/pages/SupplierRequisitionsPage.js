@@ -199,25 +199,29 @@ export class SupplierRequisitionsPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <BottomConfirmModal
-          isOpen={selection.length > 0}
-          questionText={modalStrings.delete_these_invoices}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.delete}
-        />
-        <SelectModal
-          isOpen={isCreatingRequisition}
-          options={database.objects('InternalSupplier')}
-          placeholderText={modalStrings.start_typing_to_select_supplier}
-          queryString="name BEGINSWITH[c] $0"
-          sortByString="name"
-          onSelect={name =>
-            this.setState({ isCreatingRequisition: false }, () => this.onNewRequisition(name))
-          }
-          onClose={() => this.setState({ isCreatingRequisition: false })}
-          title={modalStrings.search_for_the_supplier}
-        />
+        {selection.length > 0 && (
+          <BottomConfirmModal
+            isOpen={selection.length > 0}
+            questionText={modalStrings.delete_these_invoices}
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.delete}
+          />
+        )}
+        {isCreatingRequisition && (
+          <SelectModal
+            isOpen={isCreatingRequisition}
+            options={database.objects('InternalSupplier')}
+            placeholderText={modalStrings.start_typing_to_select_supplier}
+            queryString="name BEGINSWITH[c] $0"
+            sortByString="name"
+            onSelect={name =>
+              this.setState({ isCreatingRequisition: false }, () => this.onNewRequisition(name))
+            }
+            onClose={() => this.setState({ isCreatingRequisition: false })}
+            title={modalStrings.search_for_the_supplier}
+          />
+        )}
       </GenericPage>
     );
   }

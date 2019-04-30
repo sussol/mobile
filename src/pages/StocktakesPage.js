@@ -199,13 +199,15 @@ export class StocktakesPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <BottomConfirmModal
-          isOpen={selection.length > 0 && showCurrent}
-          questionText={modalStrings.delete_these_stocktakes}
-          onCancel={() => this.clearSelection(true)}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.delete}
-        />
+        {selection.length > 0 && showCurrent && (
+          <BottomConfirmModal
+            isOpen={selection.length > 0 && showCurrent}
+            questionText={modalStrings.delete_these_stocktakes}
+            onCancel={() => this.clearSelection(true)}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.delete}
+          />
+        )}
       </GenericPage>
     );
   }

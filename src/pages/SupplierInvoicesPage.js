@@ -210,26 +210,30 @@ export class SupplierInvoicesPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <BottomConfirmModal
-          isOpen={selection.length > 0}
-          questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.remove}
-        />
-        <SelectModal
-          isOpen={isCreatingInvoice}
-          options={database.objects('ExternalSupplier')}
-          placeholderText={modalStrings.start_typing_to_select_supplier}
-          queryString="name BEGINSWITH[c] $0"
-          sortByString="name"
-          onSelect={name => {
-            this.onNewSupplierInvoice(name);
-            this.setState({ isCreatingInvoice: false });
-          }}
-          onClose={() => this.setState({ isCreatingInvoice: false })}
-          title={modalStrings.search_for_the_supplier}
-        />
+        {selection.length > 0 && (
+          <BottomConfirmModal
+            isOpen={selection.length > 0}
+            questionText={modalStrings.remove_these_items}
+            onCancel={() => this.onDeleteCancel()}
+            onConfirm={() => this.onDeleteConfirm()}
+            confirmText={modalStrings.remove}
+          />
+        )}
+        {isCreatingInvoice && (
+          <SelectModal
+            isOpen={isCreatingInvoice}
+            options={database.objects('ExternalSupplier')}
+            placeholderText={modalStrings.start_typing_to_select_supplier}
+            queryString="name BEGINSWITH[c] $0"
+            sortByString="name"
+            onSelect={name => {
+              this.onNewSupplierInvoice(name);
+              this.setState({ isCreatingInvoice: false });
+            }}
+            onClose={() => this.setState({ isCreatingInvoice: false })}
+            title={modalStrings.search_for_the_supplier}
+          />
+        )}
       </GenericPage>
     );
   }

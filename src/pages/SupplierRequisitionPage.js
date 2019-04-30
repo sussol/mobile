@@ -302,7 +302,7 @@ export class SupplierRequisitionPage extends React.Component {
             selected={requisition.monthsToSupply}
           />
         );
-      case COMMENT_EDIT:
+      case COMMENT_EDIT: {
         return (
           <TextEditor
             text={requisition.comment}
@@ -317,6 +317,7 @@ export class SupplierRequisitionPage extends React.Component {
             }}
           />
         );
+      }
     }
   };
 
@@ -426,20 +427,24 @@ export class SupplierRequisitionPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <BottomConfirmModal
-          isOpen={selection.length > 0 && !requisition.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={this.onDeleteCancel}
-          onConfirm={this.onDeleteConfirm}
-          confirmText={modalStrings.remove}
-        />
-        <PageContentModal
-          isOpen={modalIsOpen && !requisition.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
+        {selection.length > 0 && !requisition.isFinalised && (
+          <BottomConfirmModal
+            isOpen={selection.length > 0 && !requisition.isFinalised}
+            questionText={modalStrings.remove_these_items}
+            onCancel={this.onDeleteCancel}
+            onConfirm={this.onDeleteConfirm}
+            confirmText={modalStrings.remove}
+          />
+        )}
+        {modalIsOpen && !requisition.isFinalised && (
+          <PageContentModal
+            isOpen={modalIsOpen && !requisition.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        )}
       </GenericPage>
     );
   }

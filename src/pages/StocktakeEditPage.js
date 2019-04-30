@@ -375,13 +375,15 @@ export class StocktakeEditPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <PageContentModal
-          isOpen={isModalOpen && !stocktake.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
+        {isModalOpen && !stocktake.isFinalised && (
+          <PageContentModal
+            isOpen={isModalOpen && !stocktake.isFinalised}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        )}
         <ConfirmModal
           coverScreen
           noCancel
