@@ -269,13 +269,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
   let internalRecord;
   switch (recordType) {
     case 'Item': {
-      const packSize = parseNumber(record.default_pack_size);
       internalRecord = {
         id: record.ID,
         category: database.getOrCreate('ItemCategory', record.category_ID),
         code: record.code,
-        defaultPackSize: 1, // Every item batch in mobile should be pack-to-one.
-        defaultPrice: packSize ? parseNumber(record.buy_price) / packSize : 0,
+        defaultPackSize: 1, // Every item batch in mobile should be pack-to-one
         department: database.getOrCreate('ItemDepartment', record.department_ID),
         description: record.description,
         name: record.item_name,
@@ -332,6 +330,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         // If it joins this store, set the item's visibility.
         const item = database.getOrCreate('Item', record.item_ID);
         item.isVisible = !parseBoolean(record.inactive);
+        item.defaultPrice = parseNumber(record.default_price);
         database.save('Item', item);
       }
       break;

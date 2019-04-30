@@ -228,7 +228,7 @@ Item.schema = {
     department: { type: 'ItemDepartment', optional: true },
     description: { type: 'string', optional: true },
     category: { type: 'ItemCategory', optional: true },
-    defaultPrice: { type: 'double', optional: true },
+    defaultPrice: { type: 'double', default: 0 },
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
   },
