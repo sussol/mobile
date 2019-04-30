@@ -313,6 +313,10 @@ export class StocktakeItem extends Realm.Object {
     });
   }
 
+  get hasAnyReason() {
+    return this.batches.some(({ option }) => !!option);
+  }
+
   /**
    * Returns true if the snapshot and counted quantities differ.
    * Does not account for if reasons are used by the user, caller

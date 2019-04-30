@@ -245,6 +245,7 @@ export class StocktakeEditPage extends React.Component {
   renderCell = (key, stocktakeItem) => {
     const { stocktake } = this.props;
     const isEditable = !stocktake.isFinalised;
+    const { hasAnyReason } = stocktakeItem;
     switch (key) {
       default:
         return stocktakeItem[key];
@@ -273,16 +274,18 @@ export class StocktakeEditPage extends React.Component {
           <TouchableOpacity
             key={stocktakeItem.id}
             onPress={() =>
-              stocktakeItem.shouldHaveReason
+              hasAnyReason && isEditable
                 ? this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
                 : null
             }
             style={localStyles.reasonCell}
           >
+            {hasAnyReason && isEditable && (
+              <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
+            )}
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
               {stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason.title : 'Not applicable'}
             </Text>
-            <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
         );
       }
@@ -455,7 +458,7 @@ export class StocktakeEditPage extends React.Component {
     if (usesReasons) {
       columns.push({
         key: 'reason',
-        width: 1.2,
+        width: 1,
         title: 'REASON',
         sortable: true,
         alignText: 'right',
@@ -463,8 +466,8 @@ export class StocktakeEditPage extends React.Component {
     }
     columns.push({
       key: 'modalControl',
-      width: 0.6,
-      title: '',
+      width: 0.8,
+      title: 'BATCHES',
       sortable: false,
     });
     return columns;
@@ -481,7 +484,6 @@ export class StocktakeEditPage extends React.Component {
       isReasonsModalOpen,
       currentStocktakeItem,
     } = this.state;
-
     const resetModalText = isResetModalOpen // Small optimisation.
       ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
       : '';
