@@ -46,6 +46,8 @@ import globalStyles, {
   SUSSOL_ORANGE,
 } from './globalStyles';
 
+import { syncSensor } from './utilities/modules/temperatureSensorHelpers';
+
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
@@ -68,6 +70,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
+    // this.scheduler.schedule(this.synchroniseSensor, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
       const { currentUser } = this.state;
       if (currentUser !== null) {
@@ -138,9 +141,18 @@ class MSupplyMobileAppContainer extends React.Component {
     this.database.isLoading = false;
   };
 
+  synchroniseSensors = async () => {
+    await this.runWithLoadingIndicator(async () => {
+      const linkedSensors = this.database.objects('Sensor').filtered('location != null');
+      for (let i = 0; i < linkedSensors.length; i += 1)
+        await syncSensor(linkedSensors[i], this.database);
+    }, true);
+  };
+
   synchronise = async () => {
     const { syncState } = this.props;
     const { isInitialised } = this.state;
+
     if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
     // True if most recent call to |this.synchroniser.synchronise()| failed.
     const lastSyncFailed = this.synchroniser.lastSyncFailed();
@@ -273,6 +285,7 @@ class MSupplyMobileAppContainer extends React.Component {
           isOpen={syncModalIsOpen}
           state={syncState}
           onPressManualSync={this.synchronise}
+          onPressTemperatureSync={this.synchroniseSensors}
           onClose={() => this.setState({ syncModalIsOpen: false })}
         />
         <LoginModal

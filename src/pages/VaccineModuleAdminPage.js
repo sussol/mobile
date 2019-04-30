@@ -136,7 +136,7 @@ export class VaccineModuleAdminPage extends React.Component {
             disabled={!hasSensors}
             icon={hasSensors ? 'caret-up' : 'times'}
             iconColour={SUSSOL_ORANGE}
-            onPress={() => this.refreshSensors(fridge)}
+            onPress={() => this.selectSensor(fridge)}
           />
         );
       }
@@ -146,17 +146,6 @@ export class VaccineModuleAdminPage extends React.Component {
           cellContents: fridge.description,
           keyboardType: 'default',
         };
-      case 'refresh': {
-        if (!fridgeSensor) return '';
-        return (
-          <TouchableOpacity
-            style={{ alignSelf: 'center' }}
-            onPress={() => this.syncSensorPress(fridgeSensor)}
-          >
-            <Text>Sync Sensor</Text>
-          </TouchableOpacity>
-        );
-      }
       default:
         return fridge[key];
     }
@@ -206,12 +195,6 @@ export class VaccineModuleAdminPage extends React.Component {
             key: 'sensorMacAddress',
             width: 1,
             title: 'Sensor Mac Address',
-            alignText: 'center',
-          },
-          {
-            key: 'refresh',
-            width: 1,
-            title: '',
             alignText: 'center',
           },
         ]}

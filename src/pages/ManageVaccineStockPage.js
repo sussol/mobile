@@ -201,7 +201,7 @@ export class ManageVaccineStockPage extends React.Component {
     this.LOCATION_FILTERS = fridges;
     this.ITEMS = database
       .objects('Item')
-      .filtered('category.name BEGINSWITH[c] $0 && category.name ENDSWITH[c] $0 ', 'vaccine');
+      .filtered('category.name CONTAINS[c] $0 ', 'vaccine');
     const locationFilter = initialLocation || fridges[0];
     this.setState({ locationFilter });
   };
