@@ -7,9 +7,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Button } from 'react-native-ui-components';
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Modal, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { LanguageModal } from './LanguageModal';
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
@@ -103,113 +102,102 @@ export class LoginModal extends React.Component {
     const { authStatus, username, password, appVersion, isLanguageModalOpen } = this.state;
 
     return (
-      // android:windowSoftInputMode="adjustResize|stateUnchanged">
-      // In AndroidManifest.xml stops this modal dismissing for some
-      // Annoying reason, so this a crude hack around it.
-      !isAuthenticated && (
-        <Modal
-          isOpen={true}
-          style={[globalStyles.modal, globalStyles.authFormModal]}
-          backdropPressToClose={false}
-          swipeToClose={false}
-          startOpen
-        >
-          <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
-            <View style={[globalStyles.authFormContainer]}>
-              <Image
-                resizeMode="contain"
-                style={globalStyles.authFormLogo}
-                // TODO: require assets at top of file
-                // eslint-disable-next-line global-require
-                source={require('../../images/logo_large.png')}
+      <Modal visible={!isAuthenticated} animationType="slide">
+        <View style={[globalStyles.verticalContainer, { flex: 1 }]}>
+          <View style={[globalStyles.authFormContainer]}>
+            <Image
+              resizeMode="contain"
+              style={globalStyles.authFormLogo}
+              // TODO: require assets at top of file
+              // eslint-disable-next-line global-require
+              source={require('../../images/logo_large.png')}
+            />
+            <View style={globalStyles.horizontalContainer}>
+              <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
+                {settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
+              </Text>
+            </View>
+            <View style={globalStyles.horizontalContainer}>
+              <TextInput
+                style={globalStyles.authFormTextInputStyle}
+                placeholder={authStrings.user_name}
+                placeholderTextColor={SUSSOL_ORANGE}
+                underlineColorAndroid={SUSSOL_ORANGE}
+                value={username}
+                editable={authStatus !== 'authenticating'}
+                returnKeyType="next"
+                selectTextOnFocus
+                onChangeText={text => {
+                  this.setState({
+                    username: text,
+                    authStatus: 'unauthenticated',
+                  });
+                }}
+                onSubmitEditing={() => {
+                  if (this.passwordInputRef) this.passwordInputRef.focus();
+                }}
               />
-              <View style={globalStyles.horizontalContainer}>
-                <Text style={[globalStyles.authFormTextInputStyle, localStyles.syncSiteName]}>
-                  {settings.get(SETTINGS_KEYS.SYNC_SITE_NAME)}
-                </Text>
-              </View>
-              <View style={globalStyles.horizontalContainer}>
-                <TextInput
-                  style={globalStyles.authFormTextInputStyle}
-                  placeholder={authStrings.user_name}
-                  placeholderTextColor={SUSSOL_ORANGE}
-                  underlineColorAndroid={SUSSOL_ORANGE}
-                  value={username}
-                  editable={authStatus !== 'authenticating'}
-                  returnKeyType="next"
-                  selectTextOnFocus
-                  onChangeText={text => {
-                    this.setState({
-                      username: text,
-                      authStatus: 'unauthenticated',
-                    });
-                  }}
-                  onSubmitEditing={() => {
-                    if (this.passwordInputRef) this.passwordInputRef.focus();
-                  }}
-                />
-              </View>
-              <View style={globalStyles.horizontalContainer}>
-                <TextInput
-                  ref={reference => {
-                    this.passwordInputRef = reference;
-                  }}
-                  style={globalStyles.authFormTextInputStyle}
-                  placeholder={authStrings.password}
-                  placeholderTextColor={SUSSOL_ORANGE}
-                  underlineColorAndroid={SUSSOL_ORANGE}
-                  value={password}
-                  secureTextEntry
-                  editable={authStatus !== 'authenticating'}
-                  returnKeyType="done"
-                  selectTextOnFocus
-                  onChangeText={text =>
-                    this.setState({
-                      password: text,
-                      authStatus: 'unauthenticated',
-                    })
-                  }
-                  onSubmitEditing={() => {
-                    if (this.passwordInputRef) this.passwordInputRef.blur();
-                    if (this.canAttemptLogin) this.onLogin();
-                  }}
-                />
-              </View>
-              <View style={globalStyles.authFormButtonContainer}>
-                <Button
-                  style={[globalStyles.authFormButton, globalStyles.loginButton]}
-                  textStyle={globalStyles.authFormButtonText}
-                  text={this.buttonText}
-                  onPress={this.onLogin}
-                  disabledColor={WARM_GREY}
-                  isDisabled={!this.canAttemptLogin}
-                />
-              </View>
+            </View>
+            <View style={globalStyles.horizontalContainer}>
+              <TextInput
+                ref={reference => {
+                  this.passwordInputRef = reference;
+                }}
+                style={globalStyles.authFormTextInputStyle}
+                placeholder={authStrings.password}
+                placeholderTextColor={SUSSOL_ORANGE}
+                underlineColorAndroid={SUSSOL_ORANGE}
+                value={password}
+                secureTextEntry
+                editable={authStatus !== 'authenticating'}
+                returnKeyType="done"
+                selectTextOnFocus
+                onChangeText={text =>
+                  this.setState({
+                    password: text,
+                    authStatus: 'unauthenticated',
+                  })
+                }
+                onSubmitEditing={() => {
+                  if (this.passwordInputRef) this.passwordInputRef.blur();
+                  if (this.canAttemptLogin) this.onLogin();
+                }}
+              />
+            </View>
+            <View style={globalStyles.authFormButtonContainer}>
+              <Button
+                style={[globalStyles.authFormButton, globalStyles.loginButton]}
+                textStyle={globalStyles.authFormButtonText}
+                text={this.buttonText}
+                onPress={this.onLogin}
+                disabledColor={WARM_GREY}
+                isDisabled={!this.canAttemptLogin}
+              />
             </View>
           </View>
-          <View style={globalStyles.bottomContainer}>
-            <Icon.Button
-              name="language"
-              size={25}
-              underlayColor="#888888"
-              iconStyle={localStyles.bottomIcon}
-              borderRadius={4}
-              backgroundColor="rgba(255,255,255,0)"
-              onPress={() => {
-                this.setState({ isLanguageModalOpen: true });
-              }}
-            >
-              <Text style={globalStyles.authWindowButtonText}>{navStrings.language}</Text>
-            </Icon.Button>
-            <Text style={globalStyles.authWindowButtonText}>v{appVersion}</Text>
-          </View>
-          <LanguageModal
-            isOpen={isLanguageModalOpen}
-            onClose={() => this.setState({ isLanguageModalOpen: false })}
-            settings={settings}
-          />
-        </Modal>
-      )
+        </View>
+        <View style={globalStyles.bottomContainer}>
+          <Icon.Button
+            name="language"
+            size={25}
+            underlayColor="#888888"
+            iconStyle={localStyles.bottomIcon}
+            borderRadius={4}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={() => {
+              this.setState({ isLanguageModalOpen: true });
+            }}
+          >
+            <Text style={globalStyles.authWindowButtonText}>{navStrings.language}</Text>
+          </Icon.Button>
+          <Text style={globalStyles.authWindowButtonText}>v{appVersion}</Text>
+        </View>
+        <LanguageModal
+          isOpen={isLanguageModalOpen}
+          onClose={() => this.setState({ isLanguageModalOpen: false })}
+          settings={settings}
+        />
+      </Modal>
     );
   }
 }
