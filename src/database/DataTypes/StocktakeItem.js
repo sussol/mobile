@@ -305,7 +305,12 @@ export class StocktakeItem extends Realm.Object {
    */
   get hasReason() {
     if (!this.batches) return false;
-    return this.batches.some(batch => batch.option);
+    return this.batches.every(batch => {
+      if (batch.snapshotTotalQuantity !== batch.countedTotalQuantity) {
+        return !!batch.option;
+      }
+      return true;
+    });
   }
 
   /**
@@ -315,9 +320,9 @@ export class StocktakeItem extends Realm.Object {
    * @return {bool}
    */
   get shouldHaveReason() {
-    const { snapshotTotalQuantity, countedTotalQuantity } = this;
+    const { snapshotTotalQuantity, countedTotalQuantity, hasReason } = this;
     const equalQuantities = snapshotTotalQuantity === countedTotalQuantity;
-    return !equalQuantities;
+    return !(equalQuantities || hasReason);
   }
 }
 
