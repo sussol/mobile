@@ -1,36 +1,37 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  StyleSheet,
-  Text,
-  ViewPropTypes,
-} from 'react-native';
 
+import { StyleSheet, Text, ViewPropTypes } from 'react-native';
 import { Button } from 'react-native-ui-components';
+
 import globalStyles from '../globalStyles';
 
 // A generic button for use on pages
 export function PageButton(props) {
-  const { style, textStyle, ...buttonProps } = props;
+  const { style, textStyle, isDisabled, ...buttonProps } = props;
 
   const defaultButtonStyle = [globalStyles.button];
-  if (props.isDisabled) defaultButtonStyle.push(globalStyles.disabledButton);
+  if (isDisabled) defaultButtonStyle.push(globalStyles.disabledButton);
   const defaultTextStyle = [globalStyles.buttonText];
-  if (props.isDisabled) defaultTextStyle.push(globalStyles.disabledButtonText);
+  if (isDisabled) defaultTextStyle.push(globalStyles.disabledButtonText);
   return (
     <Button
-      {...buttonProps}
+      isDisabled={isDisabled}
       style={[...defaultButtonStyle, localStyles.button, style]}
       textStyle={[...defaultTextStyle, textStyle]}
+      {...buttonProps}
     />
   );
 }
 
+export default PageButton;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 PageButton.propTypes = {
   style: ViewPropTypes.style,
   textStyle: Text.propTypes.style,

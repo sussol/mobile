@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -35,6 +35,7 @@ import {
   checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
 } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
+
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {

@@ -1,18 +1,18 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-import { createReducer, REHYDRATE } from '../utilities';
 
 import {
-    INCREMENT_SYNC_PROGRESS,
-    SET_SYNC_ERROR,
-    SET_SYNC_PROGRESS,
-    SET_SYNC_TOTAL,
-    SET_SYNC_MESSAGE,
-    SET_SYNC_COMPLETION_TIME,
-    SET_SYNC_IS_SYNCING,
-} from './constants';
+  INCREMENT_SYNC_PROGRESS,
+  SET_SYNC_ERROR,
+  SET_SYNC_PROGRESS,
+  SET_SYNC_TOTAL,
+  SET_SYNC_MESSAGE,
+  SET_SYNC_COMPLETION_TIME,
+  SET_SYNC_IS_SYNCING,
+} from '../sync/constants';
+import { createReducer, REHYDRATE } from '../utilities';
 
 const defaultState = {
   progressMessage: '',
@@ -50,7 +50,7 @@ const stateChanges = {
     lastSyncTime,
   }),
   [REHYDRATE]: ({ sync: persistedSyncState = defaultState }) => {
-    // For sync, we want to keep any error message and last sync time persistent across sessions
+    // Keep any error message and last sync time persistent across sessions.
     const { errorMessage, lastSyncTime } = persistedSyncState;
     return {
       errorMessage,
@@ -59,4 +59,6 @@ const stateChanges = {
   },
 };
 
-export const reducer = createReducer(defaultState, stateChanges);
+const SyncReducer = createReducer(defaultState, stateChanges);
+
+export default SyncReducer;

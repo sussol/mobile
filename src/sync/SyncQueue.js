@@ -1,5 +1,12 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { CHANGE_TYPES, generateUUID } from '../database';
+
 const { CREATE, UPDATE, DELETE } = CHANGE_TYPES;
+
 const recordTypesSynced = [
   'ItemBatch',
   'NumberSequence',
@@ -15,7 +22,7 @@ const recordTypesSynced = [
 /**
  * Maintains the queue of records to be synced: listens to database changes,
  * queues sync records, provides them when asked, and removes them when marked as
- * used. First changed first out, i.e. the oldest changes are synced first.
+ * used. First changed, first out, i.e. oldest changes are synced first.
  */
 export class SyncQueue {
   constructor(database) {
@@ -25,7 +32,8 @@ export class SyncQueue {
   }
 
   /**
-   * Start the queue listening to database changes
+   * Start the queue listening to database changes.
+   *
    * @return {none}
    */
   enable() {
@@ -33,7 +41,8 @@ export class SyncQueue {
   }
 
   /**
-   * Stop the queue listening to database changes
+   * Stop the queue listening to database changes.
+   *
    * @return {none}
    */
   disable() {
@@ -43,14 +52,15 @@ export class SyncQueue {
   /**
    * Respond to a database change event. Must be called from within a database
    * write transaction.
-   * @param  {string} changeType The type of database change, e.g. CREATE, UPDATE, DELETE
-   * @param  {string} recordType The type of record changed (from database schema)
-   * @param  {object} record     The record changed
-   * @param  {string} causedBy   The cause of this database event, either 'sync' or undefined
-   * @return {none}
+   *
+   * @param   {string}  changeType  The type of database change, e.g. CREATE, UPDATE, DELETE.
+   * @param   {string}  recordType  The type of record changed (from database schema).
+   * @param   {object}  record      The record changed.
+   * @param   {string}  causedBy    The cause of this database event, either 'sync' or undefined.
+   * @return  {none}
    */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
-    if (causedBy === 'sync') return; // Don't re-sync any changes caused by a sync
+    if (causedBy === 'sync') return; // Don't re-sync any changes caused by a sync.
     if (recordTypesSynced.indexOf(recordType) >= 0) {
       switch (changeType) {
         case CREATE:
@@ -64,8 +74,8 @@ export class SyncQueue {
             this.database.create('SyncOut', {
               id: generateUUID(),
               changeTime: new Date().getTime(),
-              changeType: changeType,
-              recordType: recordType,
+              changeType,
+              recordType,
               recordId: record.id,
             });
           } else {
@@ -76,7 +86,7 @@ export class SyncQueue {
           break;
         }
         default:
-          // Not a supported database event, do nothing. E.g. WIPE (takes care of itself)
+          // Not a supported database event, do nothing (e.g. WIPE, takes care of itself).
           break;
       }
     }
@@ -84,7 +94,8 @@ export class SyncQueue {
 
   /**
    * Return the number of records in the sync queue.
-   * @return {integer} Number of records awaiting sync
+   *
+   * @return  {integer}  Number of records awaiting sync
    */
   get length() {
     return this.database.objects('SyncOut').length;
@@ -92,8 +103,9 @@ export class SyncQueue {
 
   /**
    * Return the next x records to be synced.
-   * @param  {integer}   numberOfRecords The number of records to return (defaults to 1)
-   * @return {array}                     An array of the top x records in the sync queue
+   *
+   * @param   {integer}  numberOfRecords  The number of records to return (defaults to 1).
+   * @return  {array}                     An array of the top x records in the sync queue.
    */
   next(numberOfRecords) {
     const numberToReturn = numberOfRecords || 1;
@@ -103,12 +115,13 @@ export class SyncQueue {
 
   /**
    * Remove the given records from the sync queue.
-   * @param  {array} records An array of the records that have been used
-   * @return {none}
+   *
+   * @param   {array}  records  An array of the records that have been used.
+   * @return  {none}
    */
   use(records) {
-    this.database.write(() => {
-      this.database.delete('SyncOut', records);
-    });
+    this.database.write(() => this.database.delete('SyncOut', records));
   }
 }
+
+export default SyncQueue;

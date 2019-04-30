@@ -14,12 +14,13 @@ import { withOnePress } from './withOnePress';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
- * the dropdown options to be selected
+ * the dropdown options to be selected. Will gravefully handle null values
+ * by using an empty array of searchable objects.
  * @prop  {array}     options         The options to select from
  * @prop  {function}  onSelect        A function taking the selected option as a parameter
  * @prop  {string}    queryString     The query to filter the options by, where $0 will
- *        														be replaced by the user's current search
- *        														e.g. 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'
+ *                                    be replaced by the user's current search
+ *                                    e.g. 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'
  * @prop  {string}    placeholderText The text to initially display in the search bar
  */
 export class AutocompleteSelector extends React.PureComponent {
@@ -30,32 +31,62 @@ export class AutocompleteSelector extends React.PureComponent {
     };
   }
 
-  render() {
-    const {
-      options,
-      onSelect,
-      queryString,
-      queryStringSecondary,
-      sortByString,
-      placeholderText,
-      renderLeftText,
-      renderRightText,
-    } = this.props;
+  /**
+   * Filters a realm results object. Creates two realm results A, B
+   * by two query strings. And concats A to B - A.
+   */
+  filterResultData = options => {
+    const { sortByString, queryString, queryStringSecondary } = this.props;
+    const { queryText } = this.state;
 
     let data = options
-      .filtered(queryString, this.state.queryText)
+      .filtered(queryString, queryText)
       .sorted(sortByString)
       .slice();
-    if (queryStringSecondary) {
-      const secondQueryResult = options
-        .filtered(queryStringSecondary, this.state.queryText)
-        .sorted(sortByString);
-      // Remove duplicates from secondQueryResult
-      const secondaryData = complement(secondQueryResult, data);
 
-      // Append secondary results to the first query results
-      data = data.concat(secondaryData);
+    if (queryStringSecondary) {
+      data = data.concat(
+        complement(options.filtered(queryStringSecondary, queryText).sorted(sortByString), data)
+      );
     }
+
+    return data;
+  };
+
+  /**
+   * Filters an array by two filter properties, and user input query text.
+   * Ignores case. Querying a realm result with filtered is more performant,
+   * so have two cases for each.
+   */
+  filterArrayData = options => {
+    const { primaryFilterProperty, secondaryFilterProperty } = this.props;
+    const { queryText } = this.state;
+
+    const regexFilter = RegExp(queryText, 'i');
+
+    return options.filter(
+      optionItem =>
+        regexFilter.test(optionItem[primaryFilterProperty]) ||
+        regexFilter.test(optionItem[secondaryFilterProperty])
+    );
+  };
+
+  /**
+   * Delegator of filtering process. Check if the object is a realm
+   * object (has the filtered member) or if it is an array. Otherwise,
+   * return an empty list to display.
+   */
+  getData = () => {
+    const { options, primaryFilterProperty, queryString } = this.props;
+    if (options && options.filtered && queryString) return this.filterResultData(options);
+    if (Array.isArray(options) && primaryFilterProperty) return this.filterArrayData(options);
+    return [];
+  };
+
+  render() {
+    const { onSelect, placeholderText, renderLeftText, renderRightText } = this.props;
+
+    const data = this.getData();
 
     return (
       <View style={localStyles.container}>
@@ -63,16 +94,16 @@ export class AutocompleteSelector extends React.PureComponent {
           autoCapitalize="none"
           autoCorrect={false}
           autoFocus
-          color={'white'}
+          color="white"
           onChange={text => this.setState({ queryText: text })}
           placeholder={placeholderText}
-          placeholderTextColor={'white'}
+          placeholderTextColor="white"
           style={[localStyles.text, localStyles.searchBar]}
         />
         {data.length > 0 && (
           <FlatList
             data={data}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.id || item.name}
             renderItem={({ item }) => (
               <ResultRowWithOnePress
                 item={item}
@@ -90,6 +121,9 @@ export class AutocompleteSelector extends React.PureComponent {
   }
 }
 
+export default AutocompleteSelector;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 AutocompleteSelector.propTypes = {
   options: PropTypes.object.isRequired,
   queryString: PropTypes.string.isRequired,
@@ -99,13 +133,19 @@ AutocompleteSelector.propTypes = {
   onSelect: PropTypes.func.isRequired,
   renderLeftText: PropTypes.func,
   renderRightText: PropTypes.func,
+  primaryFilterProperty: PropTypes.string,
+  secondaryFilterProperty: PropTypes.string,
 };
 AutocompleteSelector.defaultProps = {
   placeholderText: generalStrings.start_typing_to_search,
 };
 
+// TODO: move ResultRow to dedicated file
+// eslint-disable-next-line react/no-multi-comp
 class ResultRow extends React.PureComponent {
   render() {
+    // TODO: add ResultRow.propTypes
+    // eslint-disable-next-line react/prop-types
     const { item, renderLeftText, renderRightText, onPress } = this.props;
     return (
       <TouchableOpacity style={localStyles.resultRow} onPress={() => onPress(item)}>

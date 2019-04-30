@@ -1,17 +1,20 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import { Text, StyleSheet, ViewPropTypes } from 'react-native';
+
 import { OnePressButton } from '../OnePressButton';
 import { BottomModal } from './BottomModal';
-import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 import { modalStrings } from '../../localization';
 
-export function BottomConfirmModal(props) {
+import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
+
+export const BottomConfirmModal = props => {
   const {
     onCancel,
     onConfirm,
@@ -21,6 +24,7 @@ export function BottomConfirmModal(props) {
     style,
     ...modalProps
   } = props;
+
   return (
     <BottomModal {...modalProps} style={[localStyles.modal, style]}>
       <Text style={[globalStyles.text, localStyles.questionText]}>{questionText}</Text>
@@ -38,7 +42,9 @@ export function BottomConfirmModal(props) {
       />
     </BottomModal>
   );
-}
+};
+
+export default BottomConfirmModal;
 
 BottomConfirmModal.propTypes = {
   style: ViewPropTypes.style,

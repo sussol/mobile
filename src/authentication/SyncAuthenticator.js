@@ -1,6 +1,12 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
+
 const {
   SUPPLYING_STORE_ID,
   SUPPLYING_STORE_NAME_ID,
@@ -11,6 +17,7 @@ const {
   SYNC_SITE_PASSWORD_HASH,
   THIS_STORE_ID,
   THIS_STORE_NAME_ID,
+  HARDWARE_UUID,
 } = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v3/site';
@@ -18,30 +25,34 @@ const AUTH_ENDPOINT = '/sync/v3/site';
 export class SyncAuthenticator {
   constructor(settings) {
     this.settings = settings;
+    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
   }
 
   /**
- * Check whether the username and password are valid, against the server. On
- * successful authentication, save the details in settings.
- * @param  {string}   username         The sync site username to test
- * @param  {string}   password         The password to test
- * @param  {function} onAuthentication The function to call on authentication, with
- *                                     a boolean parameter representing success, and
- *                                     any error message as a second parameter
- * @return {none}
- */
+   * Validate username and password on server-side. On successful authentication,
+   * save the details in settings.
+   *
+   * @param  {string}    username          The sync site username to test
+   * @param  {string}    password          The password to test
+   * @param  {function}  onAuthentication  The function to call on authentication, with
+   *                                       a boolean parameter representing success, and
+   *                                       any error message as a second parameter
+   * @return {none}
+   */
   async authenticate(serverURL, username, password) {
     if (serverURL.length === 0) throw new Error('Enter a server URL');
     if (username.length === 0) throw new Error('Enter the sync site username');
     if (password.length === 0) throw new Error('Enter the sync site password');
 
-    // Hash the password
+    // Hash the password.
     const passwordHash = hashPassword(password);
 
     const authURL = `${serverURL}${AUTH_ENDPOINT}`;
 
     try {
-      const responseJson = await authenticateAsync(authURL, username, passwordHash);
+      const responseJson = await authenticateAsync(authURL, username, passwordHash, {
+        ...this.extraHeaders,
+      });
       this.settings.set(SYNC_URL, serverURL);
       this.settings.set(SYNC_SITE_NAME, username);
       this.settings.set(SYNC_SITE_PASSWORD_HASH, passwordHash);
@@ -58,8 +69,9 @@ export class SyncAuthenticator {
   }
 
   /**
-   * Returns the basic base64 encoded authorization header value for this sync site
-   * @return {string} Authorization header value
+   * Returns the basic base64 encoded authorization header value for this sync site.
+   *
+   * @return  {string}  Authorization header value.
    */
   getAuthHeader() {
     const username = this.settings.get(SYNC_SITE_NAME);
@@ -67,3 +79,5 @@ export class SyncAuthenticator {
     return getAuthHeader(username, password);
   }
 }
+
+export default SyncAuthenticator;

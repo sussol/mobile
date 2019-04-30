@@ -1,6 +1,6 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
@@ -23,11 +23,7 @@ export function SelectModal(props) {
   } = props;
 
   return (
-    <PageContentModal
-      isOpen={isOpen}
-      onClose={onClose}
-      {...modalProps}
-    >
+    <PageContentModal isOpen={isOpen} onClose={onClose} {...modalProps}>
       <AutocompleteSelector
         options={options}
         placeholderText={placeholderText}
@@ -37,9 +33,12 @@ export function SelectModal(props) {
         onSelect={onSelect}
       />
     </PageContentModal>
-   );
+  );
 }
 
+export default SelectModal;
+
+/* eslint-disable react/forbid-prop-types, react/require-default-props */
 SelectModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   options: PropTypes.object.isRequired,

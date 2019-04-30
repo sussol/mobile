@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -12,7 +10,9 @@ export const authStrings = new LocalizedStrings({
     logging_in: 'Logging in...',
     login: 'Login',
     password: 'Password',
+    repeat_password: 'Please re-enter password',
     user_name: 'User Name',
+    email: 'E-mail Address',
   },
   fr: {
     logging_in: 'Connexion en cours',
@@ -39,3 +39,5 @@ export const authStrings = new LocalizedStrings({
     user_name: 'ຊື່​ຜູ້​ນຳ​ໃຊ້',
   },
 });
+
+export default authStrings;
