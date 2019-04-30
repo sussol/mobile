@@ -239,7 +239,7 @@ export class SupplierRequisitionsPage extends React.Component {
           queryString="name BEGINSWITH[c] $0"
           sortByString="name"
           onSelect={name => this.onNewRequisition({ otherStoreName: name })}
-          onClose={this.onNewRequisition}
+          onClose={() => this.onNewRequisition()}
           title={modalStrings.search_for_the_supplier}
         />
 
