@@ -147,29 +147,26 @@ export class SupplierRequisitionPage extends React.Component {
   // On mounting, creating an Item -> Price mapping table if
   // this is a program requisition.
   componentDidMount = () => {
-    const { database, requisition } = this.props;
+    const { database, requisition, settings } = this.props;
     const { program, otherStoreName } = requisition;
     this.ITEM_PRICE_MAPPING = {};
     // If not a program requisition, premature return
     if (!(program && otherStoreName)) return;
+    const thisStoresNameId = settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID);
 
-    // Get all MasterListNameJoins for the supplier.
-    const supplierMasterListNameJoins = database
+    const thisStoresMasterListNameJoins = database
       .objects('MasterListNameJoin')
-      .filtered('name.id == $0', otherStoreName.id);
+      .filtered('name.id == $0', thisStoresNameId);
+    // If no MasterLists for this store, return
+    if (thisStoresMasterListNameJoins.length === 0) return;
 
-    // If no MasterListNameJoins, premature return
-    if (supplierMasterListNameJoins.length === 0) return;
-
-    // Get all MasterListItems for the supplier
-    const queryString = supplierMasterListNameJoins
+    const queryString = thisStoresMasterListNameJoins
       .map(({ masterList }) => `masterList.id == "${masterList.id}"`)
       .join(' OR ');
-    const masterListItems = database.objects('MasterListItem').filtered(queryString);
 
-    // Create a lookup table for each item in all of the MasterLists, mapped to
-    // the highest price.
-    masterListItems.forEach(({ item, price }) => {
+    const thisStoresMasterListItems = database.objects('MasterListItem').filtered(queryString);
+
+    thisStoresMasterListItems.forEach(({ item, price }) => {
       if (!this.ITEM_PRICE_MAPPING[item.id]) this.ITEM_PRICE_MAPPING[item.id] = price;
       else this.ITEM_PRICE_MAPPING[item.id] = Math.max(this.ITEM_PRICE_MAPPING[item.id], price);
     });
