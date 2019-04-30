@@ -243,6 +243,82 @@ export class StocktakeItem extends Realm.Object {
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
     createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
+
+  /**
+   * Applies the given Options object to all stocktake batches associated to
+   * this stocktake item, if there is a difference between countedTotalQuantity
+   * and snapshotTotalQuantity.
+   * @param {Realm}   database
+   * @param {Options} option
+   */
+  applyReasonToBatches(database, option) {
+    this.batches.forEach(batch => {
+      if (batch.countedTotalQuantity !== batch.snapshotTotalQuantity) {
+        database.write(() => {
+          database.update('StocktakeBatch', { ...batch, option });
+        });
+      } else {
+        database.write(() => {
+          database.update('StocktakeBatch', { ...batch, option: null });
+        });
+      }
+    });
+  }
+
+  /**
+   * Finds the mode option within this stocktake items batches
+   * @return {string} The title of the reason with the highest frequency
+   */
+  get mostUsedReason() {
+    if (!this.batches.length) return false;
+
+    // Mapping table for ranking reasons by usage
+    // {option.id: {option: OptionObject, count: X}, ... }
+    const options = {};
+
+    this.batches.forEach(batch => {
+      const { option } = batch;
+      if (!option) return;
+      const { id } = option;
+
+      // If we've counted this option before, increment,
+      // otherwise add to the table with an initial count of 1
+      if (options[id]) {
+        options[id].count += 1;
+      } else {
+        options[id] = { count: 1, option };
+      }
+    });
+
+    // Sort (ASC) the options by count, return the first option
+    const sortedOptions = Object.values(options).sort(
+      ({ count: valueA }, { count: valueB }) => parseInt(valueB, 10) - parseInt(valueA, 10)
+    );
+
+    return sortedOptions[0] && sortedOptions[0].option;
+  }
+
+  /**
+   * Returns true/false dependent on if there exists a stock take batch
+   * associated with this stock take item that has an option associated with it
+   * @return {bool}
+   */
+  get hasReason() {
+    if (!this.batches) return false;
+    return this.batches.some(batch => batch.option);
+  }
+
+  /**
+   * Returns true if the snapshot and counted quantities differ.
+   * Does not account for if reasons are used by the user, caller
+   * needs to account for this.
+   * @return {bool}
+   */
+  get shouldHaveReason() {
+    const { snapshotTotalQuantity, countedTotalQuantity } = this;
+    const equalQuantities = snapshotTotalQuantity === countedTotalQuantity;
+    return !equalQuantities;
+  }
 }
 
 StocktakeItem.schema = {

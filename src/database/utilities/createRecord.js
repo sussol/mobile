@@ -6,6 +6,9 @@
 import { generateUUID } from 'react-native-database';
 
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from './numberSequenceUtilities';
+import { formatDateAndTime } from '../../utilities';
+
+import { generalStrings } from '../../localization';
 
 const {
   CUSTOMER_INVOICE_NUMBER,
@@ -131,21 +134,43 @@ const createItemBatch = (database, item, batchString) => {
  *
  * @param   {Realm}        database
  * @param   {User}         user            User creating requisition.
- * @param   {Name}         otherStoreName  Name of other store (e.g. supplying store).
+ * @param   {Name}         values?  TODO: this param+description is wrong
  * @return  {Requisition}
  */
-const createRequisition = (database, user, otherStoreName) =>
-  database.create('Requisition', {
+const createRequisition = (
+  database,
+  user,
+  { otherStoreName, program, period, orderType = {}, monthsLeadTime = 0 }
+) => {
+  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
+  const regimenData =
+    program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
+  const daysToSupply = monthsLeadTime ? (monthsLeadTime + maxMOS) * 30 : 30;
+
+  const requisition = database.create('Requisition', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
     requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
     status: 'suggested',
     type: 'request',
     entryDate: new Date(),
-    daysToSupply: 30,
+    daysToSupply,
     enteredBy: user,
     otherStoreName,
+    program,
+    orderType: orderTypeName,
+    thresholdMOS,
+    period,
+    customData: regimenData && JSON.stringify({ regimenData }),
   });
+
+  if (period) {
+    period.addRequisitionIfUnique(requisition);
+    database.save('Period', period);
+  }
+
+  return requisition;
+};
 
 /**
  * Create a new requisition item.
@@ -184,21 +209,21 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
  * @param   {User}       user      User creating stocktake.
  * @return  {Stocktake}
  */
-const createStocktake = (database, user) => {
+const createStocktake = (database, { createdBy, program, name }) => {
   const date = new Date();
-
-  const stocktake = database.create('Stocktake', {
+  const { stocktakeText } = generalStrings;
+  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(date, 'slashes')}`;
+  return database.create('Stocktake', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: '',
+    name: name || defaultName,
     createdDate: date,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
-    createdBy: user,
+    createdBy,
+    program,
   });
-
-  return stocktake;
 };
 
 /**

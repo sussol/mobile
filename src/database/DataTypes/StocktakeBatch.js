@@ -193,6 +193,7 @@ StocktakeBatch.schema = {
     sellPrice: 'double',
     countedNumberOfPacks: { type: 'double', optional: true },
     sortIndex: { type: 'int', optional: true },
+    option: { type: 'Options', optional: true },
   },
 };
 

@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
+import { RequisitionRegimenModalTable } from './expansions/RequisitionRegimenModalTable';
 
 import { createRecord } from '../database';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
@@ -22,6 +23,7 @@ import {
   PageContentModal,
   TextEditor,
   ToggleSelector,
+  ToggleBar,
 } from '../widgets';
 
 import globalStyles from '../globalStyles';
@@ -32,16 +34,24 @@ const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   ITEM_SELECT: 'itemSelect',
   MONTHS_SELECT: 'monthsSelect',
+  VIEW_REGIMEN_DATA: 'viewRegimenData',
 };
 
 export class SupplierRequisitionPage extends React.Component {
   constructor(props) {
     super(props);
+
+    const { requisition } = props;
+    const { program, thresholdMOS } = requisition;
+
     this.state = {
       modalKey: null,
       modalIsOpen: false,
       selection: [],
+      useThresholdMOS: !!program && thresholdMOS,
+      // customData: requisition.parsedCustomData()
     };
+
     this.dataFilters = {
       searchTerm: '',
       sortBy: 'itemName',
@@ -51,7 +61,6 @@ export class SupplierRequisitionPage extends React.Component {
 
   onAddMasterItems = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
-
     runWithLoadingIndicator(() => {
       database.write(() => {
         requisition.addItemsFromMasterList(database, this.getThisStore());
@@ -63,10 +72,10 @@ export class SupplierRequisitionPage extends React.Component {
 
   onCreateAutomaticOrder = () => {
     const { database, requisition, runWithLoadingIndicator } = this.props;
-
     runWithLoadingIndicator(() => {
       database.write(() => {
         requisition.createAutomaticOrder(database, this.getThisStore());
+
         database.save('Requisition', requisition);
       });
       this.refreshData();
@@ -138,7 +147,7 @@ export class SupplierRequisitionPage extends React.Component {
   getModalTitle = () => {
     const { modalKey } = this.state;
 
-    const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
+    const { ITEM_SELECT, COMMENT_EDIT, MONTHS_SELECT, VIEW_REGIMEN_DATA } = MODAL_KEYS;
 
     switch (modalKey) {
       default:
@@ -148,6 +157,8 @@ export class SupplierRequisitionPage extends React.Component {
         return modalStrings.edit_the_requisition_comment;
       case MONTHS_SELECT:
         return modalStrings.select_the_number_of_months_stock_required;
+      case VIEW_REGIMEN_DATA:
+        return buttonStrings.view_regimen_data;
     }
   };
 
@@ -163,14 +174,19 @@ export class SupplierRequisitionPage extends React.Component {
    */
   refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
     const { requisition } = this.props;
+    const { useThresholdMOS } = this.state;
 
     this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
 
-    const data = requisition.items.filtered(
+    const { searchTerm, sortBy, isAscending } = this.dataFilters;
+    let data = requisition.items.filtered(
       'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
       searchTerm
     );
+
+    if (useThresholdMOS) {
+      data = data.filter(requisitionItem => requisitionItem.isLessThanThresholdMOS);
+    }
 
     let sortDataType;
     switch (sortBy) {
@@ -203,8 +219,19 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderPageInfo = () => {
     const { requisition } = this.props;
+    const { period, program, orderType } = requisition;
     const infoColumns = [
       [
+        {
+          title: 'Program:',
+          info: program && program.name,
+          shouldHide: !program,
+        },
+        {
+          title: 'Order Type:',
+          info: orderType,
+          shouldHide: !program,
+        },
         {
           title: `${pageInfoStrings.entry_date}:`,
           info: formatDate(requisition.entryDate),
@@ -216,14 +243,19 @@ export class SupplierRequisitionPage extends React.Component {
       ],
       [
         {
+          title: 'Period:',
+          info: period && `${period.name} -- ${period.toString()}`,
+          shouldHide: !program,
+        },
+        {
           title: `${pageInfoStrings.supplier}:`,
           info: requisition.otherStoreName ? requisition.otherStoreName.name : '',
         },
         {
           title: `${pageInfoStrings.months_stock_required}:`,
           info: requisition.monthsToSupply,
-          onPress: this.openMonthsSelector,
-          editableType: 'selectable',
+          onPress: !program && this.openMonthsSelector,
+          editableType: !program && 'selectable',
         },
         {
           title: `${pageInfoStrings.comment}:`,
@@ -233,6 +265,7 @@ export class SupplierRequisitionPage extends React.Component {
         },
       ],
     ];
+
     return <PageInfo columns={infoColumns} isEditingDisabled={requisition.isFinalised} />;
   };
 
@@ -261,9 +294,9 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderModalContent = () => {
     const { modalKey } = this.state;
-    const { database, requisition } = this.props;
+    const { database, requisition, genericTablePageStyles } = this.props;
 
-    const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT } = MODAL_KEYS;
+    const { COMMENT_EDIT, ITEM_SELECT, MONTHS_SELECT, VIEW_REGIMEN_DATA } = MODAL_KEYS;
 
     switch (modalKey) {
       default:
@@ -317,41 +350,106 @@ export class SupplierRequisitionPage extends React.Component {
             }}
           />
         );
+      case VIEW_REGIMEN_DATA:
+        return (
+          <RequisitionRegimenModalTable
+            database={database}
+            requisition={requisition}
+            genericTablePageStyles={genericTablePageStyles}
+          />
+        );
     }
   };
 
   renderButtons = () => {
     const { requisition } = this.props;
+    const { program, thresholdMOS, parsedCustomData } = requisition;
+    const hasRegimenData =
+      parsedCustomData && parsedCustomData.regimenData && parsedCustomData.regimenData.length !== 0;
+    const UseSuggestedQuantitiesButton = () => (
+      <PageButton
+        style={{
+          ...globalStyles.topButton,
+          ...(program ? { marginLeft: 5 } : {}),
+        }}
+        text={buttonStrings.use_suggested_quantities}
+        onPress={this.onUseSuggestedQuantities}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
+    const ViewRegimenDataButton = () => (
+      <PageButton
+        style={{
+          ...globalStyles.topButton,
+          ...(program ? { marginLeft: 5 } : {}),
+        }}
+        text={buttonStrings.view_regimen_data}
+        onPress={() => this.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA)}
+      />
+    );
+
+    const ThresholdMOSToggle = () => {
+      const { useThresholdMOS } = this.state;
+      const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
+      const toggleProps = [
+        {
+          text: 'Hide over stocked',
+          isOn: useThresholdMOS,
+          onPress,
+        },
+        {
+          text: 'Show over stocked',
+          isOn: !useThresholdMOS,
+          onPress,
+        },
+      ];
+      return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
+    };
+
+    const CreateAutomaticOrderButton = () => (
+      <PageButton
+        style={globalStyles.leftButton}
+        text={buttonStrings.create_automatic_order}
+        onPress={this.onCreateAutomaticOrder}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
+    const AddNewItemButton = () => (
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.new_item}
+        onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
+        isDisabled={requisition.isFinalised}
+      />
+    );
+
+    const AddMasterListItemsButton = () => (
+      <PageButton
+        text={buttonStrings.add_master_list_items}
+        onPress={this.onAddMasterItems}
+        isDisabled={requisition.isFinalised}
+      />
+    );
 
     return (
       <View style={globalStyles.pageTopRightSectionContainer}>
         <View style={globalStyles.verticalContainer}>
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.create_automatic_order}
-            onPress={this.onCreateAutomaticOrder}
-            isDisabled={requisition.isFinalised}
-          />
-          <PageButton
-            style={globalStyles.leftButton}
-            text={buttonStrings.use_suggested_quantities}
-            onPress={this.onUseSuggestedQuantities}
-            isDisabled={requisition.isFinalised}
-          />
+          <View style={globalStyles.horizontalContainer}>
+            <UseSuggestedQuantitiesButton />
+            {hasRegimenData && <ViewRegimenDataButton />}
+          </View>
+          {program && thresholdMOS && <ThresholdMOSToggle />}
+          {!program && <CreateAutomaticOrderButton />}
         </View>
-        <View style={globalStyles.verticalContainer}>
-          <PageButton
-            style={globalStyles.topButton}
-            text={buttonStrings.new_item}
-            onPress={() => this.openModal(MODAL_KEYS.ITEM_SELECT)}
-            isDisabled={requisition.isFinalised}
-          />
-          <PageButton
-            text={buttonStrings.add_master_list_items}
-            onPress={this.onAddMasterItems}
-            isDisabled={requisition.isFinalised}
-          />
-        </View>
+
+        {!program && (
+          <View style={globalStyles.verticalContainer}>
+            <AddNewItemButton />
+            <AddMasterListItemsButton />
+          </View>
+        )}
       </View>
     );
   };
@@ -434,7 +532,7 @@ export class SupplierRequisitionPage extends React.Component {
           confirmText={modalStrings.remove}
         />
         <PageContentModal
-          isOpen={modalIsOpen && !requisition.isFinalised}
+          isOpen={modalIsOpen}
           onClose={this.closeModal}
           title={this.getModalTitle()}
         >

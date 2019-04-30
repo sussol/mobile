@@ -122,6 +122,10 @@ const generateSyncData = (settings, recordType, record) => {
         requester_reference: record.requesterReference,
         comment: record.comment,
         type: REQUISITION_TYPES.translate(record.type, INTERNAL_TO_EXTERNAL),
+        programID: record.program && record.program.id,
+        periodID: record.period && record.period.id,
+        orderType: record.orderType,
+        custom_data: record.customData,
       };
     }
     case 'RequisitionItem': {
@@ -153,6 +157,7 @@ const generateSyncData = (settings, recordType, record) => {
         comment: record.comment,
         stock_take_created_date: getDateString(record.createdDate),
         serial_number: record.serialNumber,
+        programID: record.program && record.program.id,
       };
     }
     case 'StocktakeBatch': {
@@ -169,6 +174,7 @@ const generateSyncData = (settings, recordType, record) => {
         sell_price: String(record.sellPrice),
         Batch: record.batch,
         item_ID: record.itemId,
+        optionID: record.option && record.option.id,
       };
     }
     case 'Transaction': {

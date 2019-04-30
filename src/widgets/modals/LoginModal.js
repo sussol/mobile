@@ -14,7 +14,6 @@ import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { LanguageModal } from './LanguageModal';
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
 import { authStrings, navStrings } from '../../localization';
-
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 
 export class LoginModal extends React.Component {

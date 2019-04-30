@@ -9,10 +9,12 @@ import PropTypes from 'prop-types';
 import { GenericPage } from './GenericPage';
 
 import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import { formatStatus } from '../utilities';
+import { formatStatus, getAllPrograms } from '../utilities';
 import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
+import { ByProgramModal } from '../widgets/modals/index';
 
 import globalStyles from '../globalStyles';
+import { createRecord } from '../database/utilities/index';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
@@ -23,6 +25,7 @@ const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
  * @prop  {func}          navigateTo  CallBack for navigation stack.
  * @state {Realm.Results} stocktakes  Result object containing all items.
  */
+
 export class StocktakesPage extends React.Component {
   constructor(props) {
     super(props);
@@ -34,9 +37,39 @@ export class StocktakesPage extends React.Component {
     this.state = {
       showCurrent: true,
       selection: [],
+      usesPrograms: false,
+      byProgramModalOpen: false,
     };
     this.stocktakes = props.database.objects('Stocktake');
   }
+
+  componentDidMount() {
+    const { settings, database } = this.props;
+    this.setState({ usesPrograms: !!getAllPrograms(settings, database) });
+  }
+
+  createNewStocktake = properties => {
+    const { currentUser, database } = this.props;
+    let stocktake;
+    database.write(() => {
+      stocktake = createRecord(database, 'Stocktake', { ...properties, createdBy: currentUser });
+      stocktake.addItemsFromProgram(database);
+    });
+    return stocktake;
+  };
+
+  onConfirmProgramStocktake = programValues => {
+    const { runWithLoadingIndicator, navigateTo } = this.props;
+    const { program, name: stocktakeName } = programValues;
+    runWithLoadingIndicator(() => {
+      if (program && program.name) {
+        const stocktake = this.createNewStocktake(programValues);
+        navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake });
+      } else {
+        navigateTo('stocktakeManager', navStrings.new_stocktake, { stocktakeName });
+      }
+    });
+  };
 
   onRowPress = stocktake => {
     const { navigateTo } = this.props;
@@ -49,9 +82,14 @@ export class StocktakesPage extends React.Component {
 
   onNewStockTake = () => {
     const { navigateTo } = this.props;
-
+    const { usesPrograms } = this.state;
     this.clearSelection();
-    navigateTo('stocktakeManager', navStrings.new_stocktake);
+
+    if (!usesPrograms) {
+      navigateTo('stocktakeManager', navStrings.new_stocktake);
+    } else {
+      this.setState({ byProgramModalOpen: true });
+    }
   };
 
   onDeleteConfirm = () => {
@@ -149,14 +187,17 @@ export class StocktakesPage extends React.Component {
     );
   };
 
+  onCancelByProgram = () => {
+    this.setState({ byProgramModalOpen: false });
+  };
+
   renderNewStocktakeButton = () => (
     <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />
   );
 
   render() {
-    const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data, selection, showCurrent } = this.state;
-
+    const { database, genericTablePageStyles, topRoute, settings } = this.props;
+    const { data, selection, showCurrent, byProgramModalOpen } = this.state;
     return (
       <GenericPage
         data={data}
@@ -206,6 +247,14 @@ export class StocktakesPage extends React.Component {
           onConfirm={() => this.onDeleteConfirm()}
           confirmText={modalStrings.delete}
         />
+        <ByProgramModal
+          isOpen={byProgramModalOpen}
+          onConfirm={this.onConfirmProgramStocktake}
+          onCancel={this.onCancelByProgram}
+          database={database}
+          type="stocktake"
+          settings={settings}
+        />
       </GenericPage>
     );
   }
@@ -219,4 +268,7 @@ StocktakesPage.propTypes = {
   genericTablePageStyles: PropTypes.object,
   topRoute: PropTypes.bool,
   navigateTo: PropTypes.func.isRequired,
+  settings: PropTypes.object.isRequired,
+  currentUser: PropTypes.object.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
 };

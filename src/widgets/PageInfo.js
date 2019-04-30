@@ -45,7 +45,8 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
   let editTextStyle;
   let containerStyle;
   let iconName;
-  switch (rowData.editableType) {
+  const { editableType } = rowData;
+  switch (editableType) {
     case 'selectable':
       containerStyle = localStyles.selectContainer;
       iconName = 'angle-down';
@@ -57,6 +58,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
       editTextStyle = localStyles.infoText;
       break;
   }
+
   // If null or empty string, use single space to avoid squishing row
   let infoString = (rowData.info || rowData.info === 0) && String(rowData.info);
   infoString = infoString && infoString.length > 0 ? infoString : ' ';
@@ -77,8 +79,10 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
         onPress={rowData.onPress}
       >
         <View style={containerStyle}>
-          {infoComponent}
-          <Icon name={iconName} size={14} style={localStyles.editIcon} color={SUSSOL_ORANGE} />
+          <View style={{ maxWidth: '85%' }}>{infoComponent}</View>
+          <View style={{ maxWidth: '10%' }}>
+            <Icon name={iconName} size={14} color={SUSSOL_ORANGE} style={localStyles.editIcon} />
+          </View>
         </View>
       </TouchableOpacity>
     );
@@ -129,14 +133,14 @@ export const PageInfo = props => {
             }
           >
             <View>
-              {columnData.map((...args) =>
-                renderTitleComponent(isEditingDisabled, columnIndex, ...args)
-              )}
+              {columnData
+                .filter(data => !data.shouldHide)
+                .map((...args) => renderTitleComponent(isEditingDisabled, columnIndex, ...args))}
             </View>
             <View style={localStyles.infoContainer}>
-              {columnData.map((...args) =>
-                renderInfoComponent(isEditingDisabled, columnIndex, ...args)
-              )}
+              {columnData
+                .filter(data => !data.shouldHide)
+                .map((...args) => renderInfoComponent(isEditingDisabled, columnIndex, ...args))}
             </View>
           </View>
         );
@@ -149,8 +153,12 @@ export default PageInfo;
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 PageInfo.propTypes = {
-  columns: PropTypes.array,
+  columns: PropTypes.array.isRequired,
   isEditingDisabled: PropTypes.bool,
+};
+
+PageInfo.defaultProps = {
+  isEditingDisabled: false,
 };
 
 const localStyles = StyleSheet.create({
