@@ -6,8 +6,9 @@
 import Realm from 'realm';
 
 export class Sensor extends Realm.Object {
-  // TODO
-  // Does this need to be a class ??
+  get toString() {
+    return `MAC: ${this.macAddress} TEMP: ${this.temperature}`;
+  }
 }
 
 Sensor.schema = {

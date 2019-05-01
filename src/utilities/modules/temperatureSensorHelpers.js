@@ -76,6 +76,17 @@ export function updateSensors(sensors, database) {
   });
 }
 
+export async function refreshAndUpdateSensors(runWithLoadingIndicator, database) {
+  let sensors = [];
+  try {
+    sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, '');
+    console.log('recevied results ', sensors);
+  } catch (e) {
+    console.log('rejected ', e.code, e.message);
+  }
+  updateSensors(sensors, database);
+}
+
 function integrateLogs(downloadedData, lastLogTimeStamp, pointer, sensor, database) {
   // logInterval is in seconds
   const { logInterval, location } = sensor;

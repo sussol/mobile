@@ -1,19 +1,17 @@
-/* eslint-disable import/prefer-default-export, react/require-default-props  */
-/* eslint-disable react/forbid-prop-types */
+/* eslint-disable react/forbid-prop-types, import/prefer-default-export */
+/* eslint-disable react/require-default-props */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
 import React from 'react';
-import { NativeModules, TouchableOpacity, Text } from 'react-native';
 import PropTypes from 'prop-types';
-// import { generateUUID } from 'react-native-database';
-// import { VaccineModuleAdminExpansion } from './expansions/VaccineModuleAdminExpansion';
+
 import { GenericPage } from './GenericPage';
-// import { PageButton, PageContentModal, AutocompleteSelector } from '../widgets';
+
+import { refreshAndUpdateSensors, syncSensor } from '../utilities/modules/temperatureSensorHelpers';
 import { IconCell, PageButton, GenericChoiceList, PageContentModal } from '../widgets';
-import { updateSensors, syncSensor } from '../utilities/modules/temperatureSensorHelpers';
 
 import { SUSSOL_ORANGE } from '../globalStyles/index';
 import { generateUUID } from '../database';
@@ -33,82 +31,73 @@ export class VaccineModuleAdminPage extends React.Component {
 
   refresh = () => {
     const { database } = this.props;
+    const locationTypes = database
+      .objects('LocationType')
+      .filtered('description BEGINSWITH[c] "fridge"');
+    this.locationType = locationTypes.length > 0 ? locationTypes[0] : null;
     const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
     const sensors = database.objects('Sensor');
-    this.setState({ fridges: { ...fridges }, sensors });
+    this.setState({ fridges: [], sensors }, () => this.setState({ fridges }));
   };
 
   selectSensor = fridge => {
-    this.setState({ currentFridge: fridge, modalKey: 'selectSensor', isModalOpen: true });
+    this.setState({ currentFridge: fridge, isModalOpen: true });
   };
 
   onSensorSelection = ({ item: sensor }) => {
     const { database } = this.props;
-    const { currentFridge } = this.state;
+    const { currentFridge: location, sensors } = this.state;
+    const { id } = sensor;
+    const sensorsAssignedToFridge = sensors.filtered('location.id = $0', location.id);
+
     database.write(() => {
-      database.update('Sensor', { id: sensor.id, location: currentFridge });
+      sensorsAssignedToFridge.forEach(currentSensor => {
+        database.update('Sensor', { id: currentSensor.id, location: null });
+      });
+      database.update('Sensor', { id, location });
     });
     this.setState({ currentFridge: null, isModalOpen: false }, this.refresh);
   };
 
-  renderModal = () => {
-    const { modalKey, sensors } = this.state;
-    switch (modalKey) {
-      case 'selectSensor': {
-        return (
-          <GenericChoiceList
-            data={sensors}
-            keyToDisplay="macAddress"
-            onPress={this.onSensorSelection}
-          />
-        );
-      }
-      default: {
-        return null;
-      }
-    }
-  };
+  renderSelectSensorModal = () => {
+    const { sensors, currentFridge } = this.state;
+    const fridgeSensors = sensors.filtered('location.id == $0', currentFridge.id);
+    let highlightValue = null;
+    if (fridgeSensors.length > 0) highlightValue = fridgeSensors[0].toString;
 
-  renderNewFridgeButton = () => {
-    const { database } = this.props;
-
-    // TODO check here that location type with === fridge exists, otherwise warn
     return (
-      <PageButton
-        text="Add Fridge"
-        onPress={() => {
-          database.write(() => {
-            const locationType = database.objects('LocationType')[0];
-            database.update('Location', {
-              id: generateUUID(),
-              locationType,
-              description: 'newFridge',
-              code: 'abcdefg', // TODO code should increment code (based on store code)
-            });
-          });
-          this.refresh();
-        }}
+      <GenericChoiceList
+        data={sensors}
+        keyToDisplay="toString"
+        onPress={this.onSensorSelection}
+        highlightValue={highlightValue}
       />
     );
   };
 
-  refreshSensors = async () => {
+  onNewFridgeButtonPress = () => {
+    const { database } = this.props;
+    const { locationType } = this;
+    const { fridges } = this.state;
+    database.write(() => {
+      database.update('Location', {
+        id: generateUUID(),
+        locationType,
+        description: 'newFridge',
+        code: `${fridges.length + 1}`, // TODO code should increment code (based on store code)
+      });
+    });
+    this.refresh();
+  };
+
+  onRefreshSensorsPress = async () => {
     const { runWithLoadingIndicator, database } = this.props;
 
     await runWithLoadingIndicator(async () => {
-      let sensors = [];
-      try {
-        sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, '');
-        console.log('recevied results ', sensors);
-      } catch (e) {
-        console.log('rejected ', e.code, e.message);
-      }
-      updateSensors(sensors, database);
-      this.refresh();
+      await refreshAndUpdateSensors(runWithLoadingIndicator, database);
     }, true);
+    this.refresh();
   };
-
-  renderRefreshSensors = () => <PageButton text="Refresh Sensors" onPress={this.refreshSensors} />;
 
   syncSensorPress = async fridgeSensor => {
     const { runWithLoadingIndicator, database } = this.props;
@@ -126,10 +115,10 @@ export class VaccineModuleAdminPage extends React.Component {
     const sensorName = () => {
       if (!hasSensors) return 'no sensors';
       if (!fridgeSensor) return 'no sensor attached';
-      return fridgeSensor.macAddress;
+      return fridgeSensor.toString;
     };
     switch (key) {
-      case 'sensorMacAddress': {
+      case 'sensorInfo': {
         return (
           <IconCell
             text={sensorName()}
@@ -152,9 +141,9 @@ export class VaccineModuleAdminPage extends React.Component {
   };
 
   onEndEditing = (key, fridge, description) => {
-    const { database } = this.props;
-
     if (key !== 'description') return;
+
+    const { database } = this.props;
 
     database.write(() => {
       database.update('Location', { id: fridge.id, description });
@@ -162,21 +151,27 @@ export class VaccineModuleAdminPage extends React.Component {
     this.refresh();
   };
 
-  // Needs this otherwise break after onEndEditing
-  refreshData = () => {
-    /* empty */
-  };
-
   render() {
     const { fridges, isModalOpen } = this.state;
+    const { locationType } = this;
     const { database, topRoute, genericTablePageStyles } = this.props;
     return (
       <GenericPage
         data={fridges}
         renderCell={this.renderCell}
-        refreshData={this.refreshData}
-        renderTopLeftComponent={this.renderNewFridgeButton}
-        renderTopRightComponent={this.renderRefreshSensors}
+        refreshData={() => {
+          /* need this otherwithe error after onEndEditing */
+        }}
+        renderTopLeftComponent={() => (
+          <PageButton
+            text="Add Fridge"
+            isDisabled={!locationType}
+            onPress={this.onNewFridgeButtonPress}
+          />
+        )}
+        renderTopRightComponent={() => (
+          <PageButton text="Refresh Sensors" onPress={this.onRefreshSensorsPress} />
+        )}
         onEndEditing={this.onEndEditing}
         columns={[
           {
@@ -192,7 +187,7 @@ export class VaccineModuleAdminPage extends React.Component {
             alignText: 'center',
           },
           {
-            key: 'sensorMacAddress',
+            key: 'sensorInfo',
             width: 1,
             title: 'Sensor Mac Address',
             alignText: 'center',
@@ -205,7 +200,7 @@ export class VaccineModuleAdminPage extends React.Component {
       >
         {isModalOpen && (
           <PageContentModal isOpen={isModalOpen} title="Select Sensor">
-            {this.renderModal()}
+            {this.renderSelectSensorModal()}
           </PageContentModal>
         )}
       </GenericPage>
