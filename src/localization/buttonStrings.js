@@ -101,6 +101,25 @@ export const buttonStrings = new LocalizedStrings({
     use_suggested_quantities: 'ນຳໃຊ້ຈຳ​ນວນທີ່​ຖືກແນະ​ນຳ',
     use_requested_quantities: 'ນຳໃຊ້ຈຳ​ນວນທີ່​ສະ​ເໜີ​ຂໍ',
   },
+  gbSimplified: {
+    add_batch: 'Add Batch',
+    add_master_list_items: 'Add Master List Items',
+    all_items_selected: 'All Items Selected',
+    create_automatic_order: 'Create Automatic Order',
+    current: 'Current',
+    done: 'Done',
+    hide_stockouts: 'Hide Stockouts',
+    manage_stocktake: 'Manage Stocktake',
+    new_invoice: 'Issue Stock',
+    new_item: 'New Item',
+    new_line: 'New Line',
+    new_requisition: 'Order Stock',
+    new_stocktake: 'New Stocktake',
+    new_supplier_invoice: 'Receive Stock',
+    past: 'Past',
+    use_suggested_quantities: 'Use Suggested Quantities',
+    use_requested_quantities: 'Use Requested Quantities',
+  },
 });
 
 export default buttonStrings;
