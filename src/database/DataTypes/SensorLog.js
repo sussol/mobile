@@ -18,7 +18,7 @@ SensorLog.schema = {
     sensor: 'Sensor',
     location: { type: 'Location', optional: true },
     pointer: 'int',
-    timestamp: 'date',
+    timestamp: { type: 'date', optional: true },
     temperature: 'double',
     logInterval: 'int',
     isInBreach: { type: 'bool', default: false },

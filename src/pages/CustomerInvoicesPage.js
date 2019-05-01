@@ -215,26 +215,30 @@ export class CustomerInvoicesPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <BottomConfirmModal
-          isOpen={selection.length > 0}
-          questionText={modalStrings.delete_these_invoices}
-          onCancel={this.onDeleteCancel}
-          onConfirm={this.onDeleteConfirm}
-          confirmText={modalStrings.delete}
-        />
-        <SelectModal
-          isOpen={isCreatingInvoice}
-          options={database.objects('Customer')}
-          placeholderText={modalStrings.start_typing_to_select_customer}
-          queryString="name BEGINSWITH[c] $0"
-          sortByString="name"
-          onSelect={name => {
-            this.onNewInvoice(name);
-            this.setState({ isCreatingInvoice: false });
-          }}
-          onClose={() => this.setState({ isCreatingInvoice: false })}
-          title={modalStrings.search_for_the_customer}
-        />
+        {selection.length > 0 && (
+          <BottomConfirmModal
+            isOpen={selection.length > 0}
+            questionText={modalStrings.delete_these_invoices}
+            onCancel={this.onDeleteCancel}
+            onConfirm={this.onDeleteConfirm}
+            confirmText={modalStrings.delete}
+          />
+        )}
+        {isCreatingInvoice && (
+          <SelectModal
+            isOpen={isCreatingInvoice}
+            options={database.objects('Customer')}
+            placeholderText={modalStrings.start_typing_to_select_customer}
+            queryString="name BEGINSWITH[c] $0"
+            sortByString="name"
+            onSelect={name => {
+              this.onNewInvoice(name);
+              this.setState({ isCreatingInvoice: false });
+            }}
+            onClose={() => this.setState({ isCreatingInvoice: false })}
+            title={modalStrings.search_for_the_customer}
+          />
+        )}
       </GenericPage>
     );
   }

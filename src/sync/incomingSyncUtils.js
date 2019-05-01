@@ -73,6 +73,7 @@ const parseDate = (ISODate, ISOTime) => {
  * @return {boolean}               The boolean representation of the string
  */
 const parseBoolean = booleanString => {
+  if (!booleanString && booleanString !== false) return null;
   const trueStrings = ['true', 'True', 'TRUE'];
   return booleanString && trueStrings.indexOf(booleanString) >= 0;
 };
