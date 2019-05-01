@@ -535,7 +535,7 @@ export class StocktakeEditPage extends React.Component {
             isOpen={isReasonsModalOpen}
             data={database.objects('Options')}
             highlightIndex={
-              currentStocktakeItem && currentStocktakeItem.hasReason
+              currentStocktakeItem && currentStocktakeItem.mostUsedReason
                 ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
                 : 0
             }
