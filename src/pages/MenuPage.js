@@ -26,22 +26,22 @@ const SECTIONS = {
   customer: {
     icon: require('../images/menu_people.png'),
     buttons: [
-      { title: navStrings.customer_invoices, page: 'customerInvoices' },
-      { title: navStrings.customer_requisitions, page: 'customerRequisitions' },
+      { title: 'customer_invoices', page: 'customerInvoices' },
+      { title: 'customer_requisitions', page: 'customerRequisitions' },
     ],
   },
   supplier: {
     icon: require('../images/menu_truck.png'),
     buttons: [
-      { title: navStrings.supplier_invoices, page: 'supplierInvoices' },
-      { title: navStrings.supplier_requisitions, page: 'supplierRequisitions' },
+      { title: 'supplier_invoices', page: 'supplierInvoices' },
+      { title: 'supplier_requisitions', page: 'supplierRequisitions' },
     ],
   },
   stock: {
     icon: require('../images/menu_pc_clipboard.png'),
     buttons: [
-      { title: navStrings.current_stock, page: 'stock' },
-      { title: navStrings.stocktakes, page: 'stocktakes' },
+      { title: 'current_stock', page: 'stock' },
+      { title: 'stocktakes', page: 'stocktakes' },
     ],
   },
   modules: {
@@ -54,7 +54,7 @@ const SECTIONS = {
 // i.e. customData['usesVaccineModule']data === 'true'
 const MODULES = {
   // TODO, change from 'stock' to 'vaccineModule'
-  usesVaccineModule: { title: navStrings.vaccine_module, page: 'vaccineModule' },
+  usesVaccineModule: { title: 'vaccine_module', page: 'vaccineModule' },
 };
 
 export class MenuPage extends React.Component {
@@ -136,8 +136,8 @@ export class MenuPage extends React.Component {
         key={page}
         style={menuButton}
         textStyle={menuButtonText}
-        text={title}
-        onPress={() => navigateTo(page, title)}
+        text={navStrings[title]}
+        onPress={() => navigateTo(page, navStrings[title])}
       />
     );
   };

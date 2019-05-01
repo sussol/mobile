@@ -38,6 +38,14 @@ export const authStrings = new LocalizedStrings({
     password: 'ລະຫັດຜ່ານ',
     user_name: 'ຊື່​ຜູ້​ນຳ​ໃຊ້',
   },
+  gbSimplified: {
+    logging_in: 'Logging in...',
+    login: 'Login',
+    password: 'Password',
+    repeat_password: 'Please re-enter password',
+    user_name: 'User Name',
+    email: 'E-mail Address',
+  },
 });
 
 export default authStrings;

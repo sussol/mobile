@@ -25,6 +25,7 @@ const languageKeys = {
   fr: 'French',
   tl: 'Tetum',
   la: 'Laos',
+  gbSimplified: 'English - Simplified',
 };
 
 export const DEFAULT_LANGUAGE = Object.keys(languageKeys)[0]; // English as default.
@@ -37,4 +38,5 @@ export const COUNTRY_FLAGS = {
   gil: require('../images/flags/gil.png'),
   tl: require('../images/flags/tl.png'),
   la: require('../images/flags/la.png'),
+  gbSimplified: require('../images/flags/gb.png'),
 };

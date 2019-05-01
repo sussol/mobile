@@ -60,6 +60,18 @@ export const syncStrings = new LocalizedStrings({
     all_records_updated: 'ລາຍ​ການ​ທັງ​ໝົດ​ຖື​ກ​ອັບ​ເດດ​ແລ້ວ',
     loading_change_count: 'ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ',
   },
+  gbSimplified: {
+    last_sync: 'LAST SYNC',
+    manual_sync: 'Manual Sync',
+    sync_enabled: 'SYNC ENABLED',
+    sync_error: 'SYNC ERROR',
+    sync_in_progress: 'SYNC IN PROGRESS',
+    checking_server_for_records: 'Checking server for records...',
+    records_waiting: 'Records Waiting',
+    sync_complete: 'Sync Complete',
+    all_records_updated: 'All records updated.',
+    loading_change_count: 'Loading change count...',
+  },
 });
 
 export default syncStrings;

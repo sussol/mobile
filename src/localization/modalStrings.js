@@ -249,6 +249,55 @@ export const modalStrings = new LocalizedStrings({
     stocktake_invalid_stock:
       'ສິນ​ຄ້າ​ໃນ​ສາງ​ໄດ້​ມີ​ການ​ປ່ຽນ​ແປງ​ຕັ້ງ​ແຕ່ ໄດ້​ມີ​ການ​ເຮັດ​ການ​ດັດ​ປັບ​ສາງ​ຄັ້ງ​ສຸດ​ທ້າຍ​ຂອງ​ການ ການ​ກວດ​ການ​ສິນ​ຄ້າ​ໃນ​ສາງ (ຜ່ານ ໃບ​ສັ່ງ​ຈ່າຍ, ໃບ​ຮັບ​ສິນ​ຄ້າ, ຫຼື​ໃບ​ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ), ບໍ່​ວ່າ​ຈະ​ເປັນ ສ​ະ​ພາບ​ລວມ​ ແລະ ຈຳ​ນວນ​ຕົວ​ຈິ່ງ​ຂອງ​ສິນ​ຄ້າ "ຈະ​ຖືກ​ດັດ​ປັບ​ໃຫມ່',
   },
+  gbSimplified: {
+    add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',
+    and: 'and',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
+    create: 'Create',
+    delete_these_invoices: 'Are you sure you want to delete these invoices?',
+    delete_these_requisitions: 'Are you sure you want to delete these requisitions?',
+    delete_these_stocktakes: 'Are you sure you want to delete these stocktakes?',
+    delete: 'Delete',
+    edit_the_invoice_comment: 'Edit the invoice comment',
+    edit_the_requisition_comment: 'Edit the requisition comment',
+    edit_their_reference: 'Edit their reference',
+    edit_the_stocktake_comment: 'Edit stocktake comment',
+    edit_the_stocktake_name: 'Edit stocktake name',
+    finalise_customer_invoice: 'Finalise will lock this invoice permanently.',
+    finalise_supplier_requisition: 'Finalise will send this requisition and lock it permanently.',
+    finalise_customer_requisition:
+      // eslint-disable-next-line no-multi-str
+      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this\
+       requisition permanently.',
+    finalise_stocktake: 'Finalise will adjust inventory and lock this stocktake permanently.',
+    finalise_supplier_invoice: 'Finalise will adjust inventory and lock this invoice permanently.',
+    following_items_reduced_more_than_available_stock:
+      'The following items have been reduced by more than the available stock:',
+    give_your_stocktake_a_name: 'Give your stocktake a name',
+    got_it: 'Got it',
+    more: 'more',
+    record_stock_required_before_finalising:
+      'You need to record how much stock is required before finalising',
+    record_stock_to_issue_before_finalising:
+      'You need to record how much stock to issue before finalising',
+    remove_these_items: 'Are you sure you want to remove these items?',
+    remove: 'Remove',
+    search_for_an_item_to_add: 'Search for an item to add',
+    search_for_the_customer: 'Search for the customer',
+    search_for_the_supplier: 'Search for the supplier',
+    select_a_language: 'Select a language',
+    select_the_number_of_months_stock_required: 'Select the number of months stock required',
+    start_typing_to_select_customer: 'Start typing to select customer',
+    start_typing_to_select_supplier: 'Start typing to select supplier',
+    stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
+    stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
+    stocktake_invalid_stock:
+      // eslint-disable-next-line no-multi-str
+      'Stock on hand for these item(s) have changed since this stocktake was last opened \
+       (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" \
+       and "Actual Quantity" will be reset',
+  },
 });
 
 /* eslint-enable max-len */

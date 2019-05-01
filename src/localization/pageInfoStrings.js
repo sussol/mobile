@@ -71,6 +71,19 @@ export const pageInfoStrings = new LocalizedStrings({
     supplier: 'ຜູ້ສະໜອງ',
     their_ref: 'ຂໍ້ມູນອ້າງອີງ',
   },
+  gbSimplified: {
+    address: 'Address',
+    code: 'Code',
+    comment: 'Comment',
+    confirm_date: 'Confirm Date',
+    customer: 'Customer',
+    entered_by: 'Entered By',
+    entry_date: 'Entry Date',
+    months_stock_required: 'Months Stock',
+    stocktake_name: 'Stocktake Name',
+    supplier: 'Supplier',
+    their_ref: 'Their Ref',
+  },
 });
 
 export default pageInfoStrings;

@@ -103,6 +103,25 @@ export const navStrings = new LocalizedStrings({
     supplier_requisitions: 'ການ​ສະ​ເໜີ​ຂໍ ຫາຜູ້​ສະ​ໜອງ',
     vaccine_module: 'Vaccine Module',
   },
+  gbSimplified: {
+    current_stock: 'Current Stock',
+    customer_invoices: 'Issue Stock',
+    customer_requisitions: 'Incoming Order',
+    customers: 'Customers',
+    finalise: 'FINALISE',
+    finalised_cannot_be_edited: 'FINALISED. CANNOT BE EDITED',
+    invoice: 'Invoice',
+    language: 'LANGUAGE',
+    log_out: 'LOG OUT',
+    manage_stocktake: 'Manage Stockake',
+    new_stocktake: 'New Stocktake',
+    requisition: 'Requisition',
+    stocktakes: 'Stocktakes',
+    stocktake: 'Stocktake',
+    supplier_invoices: 'Receive Stock',
+    supplier_requisitions: 'Order Stock',
+    vaccine_module: 'Vaccine Module',
+  },
 });
 
 export default navStrings;

@@ -29,6 +29,13 @@ export const generalStrings = new LocalizedStrings({
     stocktake: 'ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
     start_typing_to_search: 'ພິມ ເພື່ອ​ຄົ້ນ​ຫາ',
   },
+  gbSimplified: {
+    submit: 'Submit',
+    submitting: 'Submitting...',
+    submitted: 'Submitted',
+    stocktake: 'Stocktake',
+    start_typing_to_search: 'Start typing to search',
+  },
 });
 
 export default generalStrings;
