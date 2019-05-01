@@ -3,10 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/**
- * TODO: by_batch
- */
-
 import LocalizedStrings from 'react-native-localization';
 
 export const pageInfoStrings = new LocalizedStrings({
@@ -36,7 +32,7 @@ export const pageInfoStrings = new LocalizedStrings({
     stocktake_name: "Nom du relevé d'inventaire",
     supplier: 'Fournisseur',
     their_ref: 'Leur référence',
-    by_batch: 'By batch',
+    by_batch: 'Par lot',
   },
   gil: {
     // TODO: add - stocktake_name

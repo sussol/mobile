@@ -3,10 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/**
- * TODO: reason, batches, batch_name, expiry
- */
-
 import LocalizedStrings from 'react-native-localization';
 
 export const tableStrings = new LocalizedStrings({
@@ -106,9 +102,9 @@ export const tableStrings = new LocalizedStrings({
     supply_quantity: 'Fournir les\nquantités de\ncette facture',
     their_stock: 'Leur\nstock',
     reason: 'RAISON',
-    batches: 'BATCHES',
-    batch_name: 'BATCH NAME',
-    expiry: 'EXPIRY',
+    batches: 'LOTS',
+    batch_name: 'NOM DU LOT',
+    expiry: 'EXPIRATION',
   },
   gil: {
     // TODO add: batch, no_batch_name

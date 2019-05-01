@@ -7,10 +7,6 @@ import LocalizedStrings from 'react-native-localization';
 
 /* eslint-disable max-len */
 
-/**
- * TODO: select_a_reason
- */
-
 export const modalStrings = new LocalizedStrings({
   gb: {
     add_at_least_one_item_before_finalising: 'You need to add at least one item before finalising',
@@ -115,7 +111,7 @@ export const modalStrings = new LocalizedStrings({
        ouvert pour la dernière fois ( à cause de factures clients, factures de fournisseurs ou \
        d'autres relevé d'inventaire). La quantité actuelle et celle de l'instantané seront \
        réinitialisées.",
-    select_a_reason: 'Select a reason',
+    select_a_reason: 'Sélectionnez une raison',
   },
   gil: {
     // TODO: add |edit_the_stocktake_comment|, |edit_the_stocktake_name|, |stocktake_invalid_stock|
