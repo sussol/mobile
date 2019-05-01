@@ -93,11 +93,10 @@ export class RequisitionItem extends Realm.Object {
    * @return  {TransactionItem}
    */
   get linkedTransactionItem() {
-    // TODO: RequisitionItem.Requisition is optional field, unhandled possible TypeError.
-    // TODO: isRequest is Requisition field, will always return undefined.
-    if (this.isRequest || !this.requisition.linkedTransaction) return null;
+    if (this.requisition.isRequest || !this.requisition.linkedTransaction) {
+      return null;
+    }
 
-    // TODO: Requisition.linkedTransaction is optional field, unhandled possible TypeError.
     return this.requisition.linkedTransaction.items.filtered('item.id == $0', this.item.id)[0];
   }
 
@@ -108,15 +107,11 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get ourStockOnHand() {
-    // TODO: this.linkedTransactionItem and this.item can both be null or undefined, unhandled
-    // possible TypeError.
+    if (!this.linkedTransactionItem || !this.item) return null;
     const { availableQuantity } = this.linkedTransactionItem;
     const { totalQuantity } = this.item;
 
-    // TODO: this.linkedTransactionItem and this.item can both be falsey, unhandled possible return
-    // undefined.
-    if (availableQuantity) return availableQuantity;
-    return totalQuantity;
+    return availableQuantity || totalQuantity;
   }
 
   /**
