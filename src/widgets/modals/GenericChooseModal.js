@@ -98,7 +98,7 @@ GenericChooseModal.defaultProps = {
 GenericChooseModal.propTypes = {
   keyToDisplay: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   title: PropTypes.string.isRequired,
   isOpen: PropTypes.bool.isRequired,
   highlightIndex: PropTypes.number,

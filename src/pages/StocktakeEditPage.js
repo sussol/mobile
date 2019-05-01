@@ -21,6 +21,7 @@ import {
   navStrings,
   tableStrings,
   pageInfoStrings,
+  programStrings,
 } from '../localization';
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
@@ -280,7 +281,9 @@ export class StocktakeEditPage extends React.Component {
             style={localStyles.reasonCell}
           >
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
-              {stocktakeItem.mostUsedReason ? stocktakeItem.mostUsedReason.title : 'Not applicable'}
+              {stocktakeItem.mostUsedReason
+                ? stocktakeItem.mostUsedReason.title
+                : programStrings.not_applicable}
             </Text>
             <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
@@ -394,7 +397,7 @@ export class StocktakeEditPage extends React.Component {
     ];
     if (stocktake.program) {
       infoColumns[0].unshift({
-        title: 'Program: ',
+        title: `${programStrings.program}:`,
         info: stocktake.program.name,
       });
     }
@@ -456,7 +459,7 @@ export class StocktakeEditPage extends React.Component {
       columns.push({
         key: 'reason',
         width: 1.2,
-        title: 'REASON',
+        title: tableStrings.reason,
         sortable: true,
         alignText: 'right',
       });
@@ -464,7 +467,7 @@ export class StocktakeEditPage extends React.Component {
     columns.push({
       key: 'modalControl',
       width: 0.6,
-      title: '',
+      title: tableStrings.batches,
       sortable: false,
     });
     return columns;
@@ -539,7 +542,7 @@ export class StocktakeEditPage extends React.Component {
             }
             keyToDisplay="title"
             onPress={this.reasonModalConfirm}
-            title="Select a reason"
+            title={modalStrings.select_a_reason}
           />
         )}
       </GenericPage>

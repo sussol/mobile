@@ -14,6 +14,7 @@ export { setCurrentLanguage } from './utilities';
 export { tableStrings } from './tableStrings';
 export { syncStrings } from './syncStrings';
 export { validationStrings } from './validationStrings';
+export { programStrings } from './programStrings';
 
 // Order of pairs defines the order they show in the |ListView| of |LanguageModal|. Languages
 // appear in alphabetical order, with the exception of English, which appears first.
