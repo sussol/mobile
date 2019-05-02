@@ -93,11 +93,11 @@ export class RequisitionItem extends Realm.Object {
    * @return  {TransactionItem}
    */
   get linkedTransactionItem() {
-    if (this.requisition.isRequest || !this.requisition.linkedTransaction) {
-      return null;
-    }
-
-    return this.requisition.linkedTransaction.items.filtered('item.id == $0', this.item.id)[0];
+    if (this.requisition.isRequest) return null;
+    return (
+      this.requisition.linkedTransaction &&
+      this.requisition.linkedTransaction.items.filtered('item.id == $0', this.item.id)[0]
+    );
   }
 
   /**
