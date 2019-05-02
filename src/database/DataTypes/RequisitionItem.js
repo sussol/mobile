@@ -107,9 +107,10 @@ export class RequisitionItem extends Realm.Object {
    * @return  {number}
    */
   get ourStockOnHand() {
-    if (!this.linkedTransactionItem || !this.item) return null;
-    const { availableQuantity } = this.linkedTransactionItem;
-    const { totalQuantity } = this.item;
+    const totalQuantity = this.item ? this.item.totalQuantity : null;
+    const availableQuantity = this.linkedTransactionItem
+      ? this.linkedTransactionItem.availableQuantity
+      : null;
 
     return availableQuantity || totalQuantity;
   }
