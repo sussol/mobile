@@ -11,7 +11,7 @@ import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { GenericPage } from '../../pages/GenericPage';
 
-import { tableStrings, buttonStrings } from '../../localization';
+import { tableStrings, buttonStrings, modalStrings, pageInfoStrings } from '../../localization';
 import { parsePositiveInteger } from '../../utilities';
 import { Button, PageButton, ExpiryTextInput, PageInfo } from '..';
 import globalStyles, {
@@ -170,7 +170,7 @@ export default class StocktakeBatchModal extends React.Component {
     const infoColumns = [
       [
         {
-          title: 'By Batch:',
+          title: pageInfoStrings.by_batch,
           info: itemName,
         },
       ],
@@ -209,13 +209,13 @@ export default class StocktakeBatchModal extends React.Component {
       {
         key: 'batch',
         width: 2,
-        title: 'BATCH NAME',
+        title: tableStrings.batch_name,
         alignText: 'center',
       },
       {
         key: 'expiryDate',
         width: 1,
-        title: 'EXPIRY',
+        title: tableStrings.expiry,
         alignText: 'center',
       },
       {
@@ -241,7 +241,7 @@ export default class StocktakeBatchModal extends React.Component {
       columns.push({
         key: 'reason',
         width: 1,
-        title: 'REASON',
+        title: tableStrings.reason,
         alignText: 'right',
       });
     }
@@ -287,7 +287,7 @@ export default class StocktakeBatchModal extends React.Component {
             }
             onPress={this.reasonModalConfirm}
             keyToDisplay="title"
-            title="Select a reason"
+            title={modalStrings.select_a_reason}
           />
         )}
 

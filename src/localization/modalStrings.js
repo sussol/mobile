@@ -56,6 +56,7 @@ export const modalStrings = new LocalizedStrings({
       'Stock on hand for these item(s) have changed since this stocktake was last opened \
        (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" \
        and "Actual Quantity" will be reset',
+    select_a_reason: 'Select a reason',
   },
   fr: {
     add_at_least_one_item_before_finalising:
@@ -110,6 +111,7 @@ export const modalStrings = new LocalizedStrings({
        ouvert pour la dernière fois ( à cause de factures clients, factures de fournisseurs ou \
        d'autres relevé d'inventaire). La quantité actuelle et celle de l'instantané seront \
        réinitialisées.",
+    select_a_reason: 'Sélectionnez une raison',
   },
   gil: {
     // TODO: add |edit_the_stocktake_comment|, |edit_the_stocktake_name|, |stocktake_invalid_stock|
@@ -155,6 +157,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero:
       'Te maiti are e warekaki e na maiti riki nakon AKEA imain kamatoana',
     stocktake_no_counted_items: 'Ko aki kona n Finalise ngkana akea am warebwai',
+    select_a_reason: 'Select a reason',
   },
   tl: {
     // TODO: add - edit_the_stocktake_comment, edit_the_stocktake_name, stocktake_invalid_stock
@@ -197,6 +200,7 @@ export const modalStrings = new LocalizedStrings({
     start_typing_to_select_supplier: "Hakerek iha ne'e atu selekta distribuidor",
     stock_quantity_greater_then_zero: 'Kuantidade Disponivel tenki bot liu Zero antes finaliza',
     stocktake_no_counted_items: 'La bele finaliza ajustamentu se laiha item ida priense',
+    select_a_reason: 'Select a reason',
   },
   la: {
     add_at_least_one_item_before_finalising:
@@ -248,6 +252,7 @@ export const modalStrings = new LocalizedStrings({
       'ບໍ່​ສາ​ມາດ​ກົດ​ສະຫຼຸບ​ໃບ​ກວດ​ກາ​ສາງ​ໄດ້​ໂດຍ​ທີ່​ບໍ່​ມີ​ການກວດ​ນັບ​ລາຍ​ການ​ສິນ​ຄ້າ​ໃນ​ສາງ​ກ່ອນ',
     stocktake_invalid_stock:
       'ສິນ​ຄ້າ​ໃນ​ສາງ​ໄດ້​ມີ​ການ​ປ່ຽນ​ແປງ​ຕັ້ງ​ແຕ່ ໄດ້​ມີ​ການ​ເຮັດ​ການ​ດັດ​ປັບ​ສາງ​ຄັ້ງ​ສຸດ​ທ້າຍ​ຂອງ​ການ ການ​ກວດ​ການ​ສິນ​ຄ້າ​ໃນ​ສາງ (ຜ່ານ ໃບ​ສັ່ງ​ຈ່າຍ, ໃບ​ຮັບ​ສິນ​ຄ້າ, ຫຼື​ໃບ​ກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ), ບໍ່​ວ່າ​ຈະ​ເປັນ ສ​ະ​ພາບ​ລວມ​ ແລະ ຈຳ​ນວນ​ຕົວ​ຈິ່ງ​ຂອງ​ສິນ​ຄ້າ "ຈະ​ຖືກ​ດັດ​ປັບ​ໃຫມ່',
+    select_a_reason: 'Select a reason',
   },
 });
 

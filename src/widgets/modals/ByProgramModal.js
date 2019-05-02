@@ -18,27 +18,43 @@ import { AutocompleteSelector, ToggleBar, PageButton, TextEditor } from '..';
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import SequentialSteps from '../SequentialSteps';
+import { programStrings, modalStrings, generalStrings, navStrings } from '../../localization';
 
 // TODO: Proper localization
 const localization = {
   title: {
-    program: 'Select a Program to use',
-    supplier: 'Select a Supplier to use',
-    orderType: 'Select a Order Type to use',
-    period: 'Select a Period to use',
-    name: 'Give your stocktake a name',
+    program: programStrings.select_a_program,
+    supplier: programStrings.select_a_supplier,
+    orderType: programStrings.select_an_order_type,
+    period: programStrings.select_a_period,
+    name: modalStrings.give_your_stocktake_a_name,
   },
   error: {
-    program: 'No programs available',
-    supplier: 'No suppliers available',
-    orderType: 'No order types available',
-    period: 'No periods available',
+    program: programStrings.no_programs,
+    supplier: programStrings.no_suppliers,
+    orderType: programStrings.no_order_types,
+    period: programStrings.no_periods,
   },
   label: {
-    program: 'program',
-    supplier: 'supplier',
-    orderType: 'order type',
-    period: 'period',
+    program: programStrings.program,
+    supplier: programStrings.supplier,
+    orderType: programStrings.order_type,
+    period: programStrings.period,
+  },
+  misc: {
+    maxMOS: programStrings.max_mos,
+    thresholdMOS: programStrings.threshold_mos,
+    maxOrdersPerPeriod: programStrings.max_orders_per_period,
+    requisitions: programStrings.requisitions,
+    program: programStrings.program,
+    general: programStrings.general,
+    details: programStrings.details,
+    requisition: navStrings.requisition,
+    stocktake: navStrings.stocktake,
+  },
+  button: {
+    order: programStrings.order,
+    stocktake: generalStrings.stocktake,
   },
 };
 
@@ -242,9 +258,9 @@ export class ByProgramModal extends React.Component {
         ...getBaseProps('orderType'),
         options: orderTypes,
         renderRightText: item =>
-          `Max MOS: ${item.maxMOS} - Threshold MOS: ${item.thresholdMOS} - Max orders per period: ${
-            item.maxOrdersPerPeriod
-          }`,
+          `${localization.misc.maxMOS}: ${item.maxMOS} - ${localization.misc.thresholdMOS}: ${
+            item.thresholdMOS
+          } - ${localization.misc.maxOrdersPerPeriod}: ${item.maxOrdersPerPeriod}`,
       },
       period: {
         ...getBaseProps('period'),
@@ -252,7 +268,7 @@ export class ByProgramModal extends React.Component {
         renderRightText: item =>
           `${item.toString()} - ${item.requisitionsForOrderType(program, orderType)}/${
             orderType.maxOrdersPerPeriod
-          } Requisition(s)`,
+          } ${localization.misc.requisitions}`,
       },
     };
   };
@@ -280,8 +296,16 @@ export class ByProgramModal extends React.Component {
     return (
       <ToggleBar
         toggles={[
-          { text: `Program ${buttonText}`, onPress: this.onToggleChange, isOn: isProgramBased },
-          { text: `General ${buttonText}`, onPress: this.onToggleChange, isOn: !isProgramBased },
+          {
+            text: `${localization.misc.program} ${buttonText}`,
+            onPress: this.onToggleChange,
+            isOn: isProgramBased,
+          },
+          {
+            text: `${localization.misc.general} ${buttonText}`,
+            onPress: this.onToggleChange,
+            isOn: !isProgramBased,
+          },
         ]}
       />
     );
@@ -302,7 +326,9 @@ export class ByProgramModal extends React.Component {
             onCancel();
           });
         }}
-        title={`${type[0].toUpperCase()}${type.slice(1, type.length)} Details`}
+        title={`${
+          type === 'requisition' ? localization.misc.requisition : localization.misc.stocktake
+        } ${localization.misc.details}`}
       >
         <View style={localStyles.toggleContainer}>{this.renderToggleBar()}</View>
 
