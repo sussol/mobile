@@ -61,7 +61,21 @@ export const parseDate = (ISODate, ISOTime) => {
  */
 export const parseBoolean = booleanString => {
   const trueStrings = ['true', 'True', 'TRUE'];
-  return booleanString && trueStrings.indexOf(booleanString) >= 0;
+  return trueStrings.includes(booleanString);
+};
+
+/**
+ * Returns jsonString prepared correctly for mobile realm database
+ * @param  {string} jsonString The string to parse
+ * @return {string}            The parsed string or |null|
+ */
+export const parseJsonString = jsonString => {
+  // 4D adds extra backslashes, remove them so JSON.parse doesn't break
+  let validatedString = jsonString && jsonString.replace(/\\/g, '');
+  // 'undefined' is stored as string on 4D, but as an optional field
+  // in our realm schemas we can prefer |null|
+  if (validatedString === 'undefined') validatedString = null;
+  return validatedString;
 };
 
 /**
@@ -383,7 +397,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         name: record.description,
         note: record.note,
         isProgram: parseBoolean(record.isProgram),
-        programSettings: record.programSettings && record.programSettings.replace(/\\/g, ''),
+        programSettings: parseJsonString(record.programSettings),
       };
       database.update(recordType, internalRecord);
       break;
@@ -499,7 +513,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         program: database.getOrCreate('MasterList', record.programID),
         period,
         orderType: record.orderType,
-        customData: record.custom_data && record.custom_data.replace(/\\/g, ''),
+        customData: parseJsonString(record.custom_data),
       };
       const requisition = database.update(recordType, internalRecord);
       if (period) period.addRequisitionIfUnique(requisition);
@@ -574,7 +588,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
         database.update('Setting', {
           key: THIS_STORE_CUSTOM_DATA,
-          value: custom_data && custom_data.replace(/\\/g, ''),
+          value: parseJsonString(custom_data),
         });
 
         settings.refreshGlobals();
