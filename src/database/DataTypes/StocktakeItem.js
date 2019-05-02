@@ -139,6 +139,59 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
+   * Finds the mode option within this stocktake items batches
+   * @return {string} The title of the reason with the highest frequency
+   */
+  get mostUsedReason() {
+    if (!this.batches.length) return false;
+
+    // Mapping table for ranking reasons by usage
+    // {option.id: {option: OptionObject, count: X}, ... }
+    const options = {};
+
+    this.batches.forEach(batch => {
+      const { option } = batch;
+      if (!option) return;
+      const { id } = option;
+
+      // If we've counted this option before, increment,
+      // otherwise add to the table with an initial count of 1
+      if (options[id]) {
+        options[id].count += 1;
+      } else {
+        options[id] = { count: 1, option };
+      }
+    });
+
+    // Sort (ASC) the options by count, return the first option
+    const sortedOptions = Object.values(options).sort(
+      ({ count: valueA }, { count: valueB }) => parseInt(valueB, 10) - parseInt(valueA, 10)
+    );
+
+    return sortedOptions[0] && sortedOptions[0].option;
+  }
+
+  /**
+   * Returns a boolean indicator on whether one of the batches
+   * of this stocktake item has an option applied, or not.
+   */
+  get hasAnyReason() {
+    return this.batches.some(({ option }) => !!option);
+  }
+
+  /**
+   * Returns true if the snapshot and counted quantities differ.
+   * Does not account for if reasons are used by the user, caller
+   * needs to account for this.
+   * @return {bool}
+   */
+  get shouldHaveReason() {
+    return this.batches.some(({ snapshotTotalQuantity, countedTotalQuantity, option }) =>
+      snapshotTotalQuantity !== countedTotalQuantity ? !option : false
+    );
+  }
+
+  /**
    * Reset this stocktake item, deleting all batches and recreating them for each corresponding item
    * batch in inventory.
    *
@@ -263,61 +316,6 @@ export class StocktakeItem extends Realm.Object {
         });
       }
     });
-  }
-
-  /**
-   * Finds the mode option within this stocktake items batches
-   * @return {string} The title of the reason with the highest frequency
-   */
-  get mostUsedReason() {
-    if (!this.batches.length) return false;
-
-    // Mapping table for ranking reasons by usage
-    // {option.id: {option: OptionObject, count: X}, ... }
-    const options = {};
-
-    this.batches.forEach(batch => {
-      const { option } = batch;
-      if (!option) return;
-      const { id } = option;
-
-      // If we've counted this option before, increment,
-      // otherwise add to the table with an initial count of 1
-      if (options[id]) {
-        options[id].count += 1;
-      } else {
-        options[id] = { count: 1, option };
-      }
-    });
-
-    // Sort (ASC) the options by count, return the first option
-    const sortedOptions = Object.values(options).sort(
-      ({ count: valueA }, { count: valueB }) => parseInt(valueB, 10) - parseInt(valueA, 10)
-    );
-
-    return sortedOptions[0] && sortedOptions[0].option;
-  }
-
-  /**
-   * Returns true/false dependent on if there exists a stock take batch
-   * associated with this stock take item that has an option associated with it
-   * @return {bool}
-   */
-  get hasReason() {
-    if (!this.batches) return false;
-    return this.batches.some(batch => batch.option);
-  }
-
-  /**
-   * Returns true if the snapshot and counted quantities differ.
-   * Does not account for if reasons are used by the user, caller
-   * needs to account for this.
-   * @return {bool}
-   */
-  get shouldHaveReason() {
-    const { snapshotTotalQuantity, countedTotalQuantity } = this;
-    const equalQuantities = snapshotTotalQuantity === countedTotalQuantity;
-    return !equalQuantities;
   }
 }
 

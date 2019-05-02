@@ -78,6 +78,7 @@ export default class StocktakeBatchModal extends React.Component {
     const { stocktakeItem } = this.props;
     const { stocktake } = stocktakeItem;
     const isEditable = !stocktake.isFinalised;
+    const { option } = stocktakeBatch;
     switch (key) {
       default:
         return {
@@ -125,13 +126,17 @@ export default class StocktakeBatchModal extends React.Component {
         return (
           <TouchableOpacity
             key={stocktakeBatch.id}
-            onPress={() => this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch })}
+            onPress={() =>
+              option && isEditable
+                ? this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch })
+                : null
+            }
             style={localStyles.reasonCell}
           >
+            {option && isEditable && <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />}
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
               {stocktakeBatch.option ? stocktakeBatch.option.title : ''}
             </Text>
-            <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
         );
       }
@@ -246,7 +251,6 @@ export default class StocktakeBatchModal extends React.Component {
   render() {
     const { database, genericTablePageStyles, isOpen } = this.props;
     const { data, reasonModalOpen, currentBatch } = this.state;
-
     return (
       <Modal
         isOpen={isOpen}
@@ -314,7 +318,7 @@ const localStyles = StyleSheet.create({
   modal: {
     height: '100%',
     width: '100%',
-    padding: 50,
+    padding: 20,
     backgroundColor: DARK_GREY,
   },
   footer: {

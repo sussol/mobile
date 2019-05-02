@@ -246,6 +246,7 @@ export class StocktakeEditPage extends React.Component {
   renderCell = (key, stocktakeItem) => {
     const { stocktake } = this.props;
     const isEditable = !stocktake.isFinalised;
+    const { hasAnyReason } = stocktakeItem;
     switch (key) {
       default:
         return stocktakeItem[key];
@@ -274,18 +275,20 @@ export class StocktakeEditPage extends React.Component {
           <TouchableOpacity
             key={stocktakeItem.id}
             onPress={() =>
-              stocktakeItem.shouldHaveReason
+              hasAnyReason && isEditable
                 ? this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
                 : null
             }
             style={localStyles.reasonCell}
           >
+            {hasAnyReason && isEditable && (
+              <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
+            )}
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
               {stocktakeItem.mostUsedReason
                 ? stocktakeItem.mostUsedReason.title
                 : programStrings.not_applicable}
             </Text>
-            <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
           </TouchableOpacity>
         );
       }
@@ -484,7 +487,6 @@ export class StocktakeEditPage extends React.Component {
       isReasonsModalOpen,
       currentStocktakeItem,
     } = this.state;
-
     const resetModalText = isResetModalOpen // Small optimisation.
       ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
       : '';
@@ -536,7 +538,7 @@ export class StocktakeEditPage extends React.Component {
             isOpen={isReasonsModalOpen}
             data={database.objects('Options')}
             highlightIndex={
-              currentStocktakeItem && currentStocktakeItem.hasReason
+              currentStocktakeItem && currentStocktakeItem.mostUsedReason
                 ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
                 : 0
             }
