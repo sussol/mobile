@@ -584,13 +584,15 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'Store': {
       const { tags, custom_data } = record;
+      const customData = parseJsonString(custom_data);
       if (settings.get(THIS_STORE_ID) === record.ID) {
         database.update('Setting', { key: THIS_STORE_TAGS, value: tags });
-        database.update('Setting', {
-          key: THIS_STORE_CUSTOM_DATA,
-          value: parseJsonString(custom_data),
-        });
-
+        if (customData) {
+          database.update('Setting', {
+            key: THIS_STORE_CUSTOM_DATA,
+            value: customData,
+          });
+        }
         settings.refreshGlobals();
       }
       break;
