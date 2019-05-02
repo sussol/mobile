@@ -42,8 +42,7 @@ export class MobileAppSettings extends Settings {
     } = customData;
 
     let AMCLookBackMonth = parseInt(AMCLookBackMonthsString, 10);
-    // eslint-disable-next-line no-restricted-globals
-    if (isNaN(AMCLookBackMonth) || AMCLookBackMonth <= 0) {
+    if (Number.isNaN(AMCLookBackMonth) || AMCLookBackMonth <= 0) {
       AMCLookBackMonth = DEFAULT_AMC_MONTHS_LOOKBACK;
     }
 
