@@ -6,7 +6,7 @@ import { SETTINGS_KEYS } from './index';
 import { MILLISECONDS_PER_DAY } from '../database/utilities';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
 
-const DEFAULT_AMC_MONTHS_LOOKBAK = 3; // three months
+const DEFAULT_AMC_MONTHS_LOOKBACK = 3; // three months
 
 export class MobileAppSettings extends Settings {
   constructor(database) {
@@ -44,7 +44,7 @@ export class MobileAppSettings extends Settings {
     let AMCLookBackMonth = parseInt(AMCLookBackMonthsString, 10);
     // eslint-disable-next-line no-restricted-globals
     if (isNaN(AMCLookBackMonth) || AMCLookBackMonth <= 0) {
-      AMCLookBackMonth = DEFAULT_AMC_MONTHS_LOOKBAK;
+      AMCLookBackMonth = DEFAULT_AMC_MONTHS_LOOKBACK;
     }
 
     global.AMCmillisecondsLookBack = AMCLookBackMonth * 30 * MILLISECONDS_PER_DAY;
