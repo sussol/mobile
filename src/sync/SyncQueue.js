@@ -65,6 +65,14 @@ export class SyncQueue {
    */
   onDatabaseEvent(changeType, recordType, record, causedBy) {
     if (causedBy === 'sync') return; // Don't re-sync any changes caused by a sync.
+    if (
+      recordType === 'SensorLog' &&
+      changeType !== DELETE &&
+      record.aggregation !== 'aggregate' &&
+      record.aggregation !== 'breachAggregate'
+    ) {
+      return;
+    }
     if (recordTypesSynced.indexOf(recordType) >= 0) {
       switch (changeType) {
         case CREATE:
@@ -74,6 +82,7 @@ export class SyncQueue {
           const existingSyncOutRecord = this.database
             .objects('SyncOut')
             .filtered('recordId == $0', record.id)[0];
+          if (!existingSyncOutRecord && recordType === 'SensorLog' && changeType === DELETE) return;
           if (!existingSyncOutRecord) {
             this.database.create('SyncOut', {
               id: generateUUID(),

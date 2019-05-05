@@ -19,7 +19,9 @@ export class Location extends Realm.Object {
   }
 
   getSensorLogs(database, lookBackMilliseconds = null) {
-    const sensorLogs = database.objects('SensorLog').filtered('location.id = $0', this.id);
+    const sensorLogs = database
+      .objects('SensorLog')
+      .filtered('location.id = $0 && aggregation != null && aggregation != ""', this.id);
     if (!lookBackMilliseconds) return sensorLogs;
     const fromDate = new Date(new Date() - lookBackMilliseconds);
     return sensorLogs.filtered('timestamp >= $0', fromDate);
@@ -38,7 +40,7 @@ export class Location extends Realm.Object {
   getCurrentTemperature(database) {
     const sensor = this.getSensor(database);
     if (!sensor) return null;
-    return sensor.temperature;
+    return sensor.latestTemperature;
   }
 
   getTemperatureExposure(database) {
@@ -58,10 +60,9 @@ export class Location extends Realm.Object {
   }
 
   isCriticalTemperature(database) {
-    const currentTemperature = this.getCurrentTemperature(database);
-    if (!this.temperatureRange) return null;
-    const { minTemperature, maxTemperature } = this.temperatureRange;
-    return minTemperature >= currentTemperature || currentTemperature >= maxTemperature;
+    const sensor = this.getSensor(database);
+    if (!sensor) return false;
+    return sensor.isInBreach;
   }
 
   get temperatureRange() {

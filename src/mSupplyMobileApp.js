@@ -144,8 +144,10 @@ class MSupplyMobileAppContainer extends React.Component {
   synchroniseSensors = async () => {
     await this.runWithLoadingIndicator(async () => {
       const linkedSensors = this.database.objects('Sensor').filtered('location != null');
-      for (let i = 0; i < linkedSensors.length; i += 1)
-        await syncSensor(linkedSensors[i], this.database);
+      for (let i = 0; i < linkedSensors.length; i += 1) {
+        const result = await syncSensor(linkedSensors[i], this.database);
+        console.log(result);
+      }
     }, true);
   };
 

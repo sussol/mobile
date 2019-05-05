@@ -45,29 +45,6 @@ const LOCALIZATION = {
   },
 };
 
-const MENU_BUTTONS = [
-  {
-    page: 'manageVaccineStock',
-    pageTitle: LOCALIZATION.navigation.manageVaccineStock,
-    buttonText: LOCALIZATION.menuButtons.manageStock,
-  },
-  {
-    page: 'supplierInvoices',
-    pageTitle: navStrings.supplier_invoices,
-    buttonText: navStrings.supplier_invoices,
-  },
-  {
-    page: 'customerInvoices',
-    pageTitle: navStrings.customer_invoices,
-    buttonText: navStrings.customer_invoices,
-  },
-  {
-    page: 'supplierRequisitions',
-    pageTitle: 'Order Stock',
-    buttonText: LOCALIZATION.menuButtons.orderStock,
-  },
-];
-
 const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
 
@@ -75,6 +52,29 @@ export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = { selectedFridge: null, currentBreach: null, isModalOpen: false };
+
+    this.MENU_BUTTONS = [
+      {
+        page: 'manageVaccineStock',
+        pageTitle: LOCALIZATION.navigation.manageVaccineStock,
+        buttonText: LOCALIZATION.menuButtons.manageStock,
+      },
+      {
+        page: 'supplierInvoices',
+        pageTitle: navStrings.supplier_invoices,
+        buttonText: navStrings.supplier_invoices,
+      },
+      {
+        page: 'customerInvoices',
+        pageTitle: navStrings.customer_invoices,
+        buttonText: navStrings.customer_invoices,
+      },
+      {
+        page: 'supplierRequisitions',
+        pageTitle: 'Order Stock',
+        buttonText: LOCALIZATION.menuButtons.orderStock,
+      },
+    ];
   }
 
   componentWillMount = async () => {
@@ -119,8 +119,8 @@ export class VaccineModulePage extends React.Component {
     />
   );
 
-  renderIcon = (iconName, iconStyle = CHEVRON_ICON_STYLE) => (
-    <Icon style={{ margin: 5 }} name={iconName} {...iconStyle} />
+  renderIcon = (iconName, iconStyle = CHEVRON_ICON_STYLE, onPress = () => {}) => (
+    <Icon style={{ margin: 5 }} name={iconName} {...iconStyle} onPress={onPress} />
   );
 
   /* Render fridge name and chevron-down icon if icon not selected fridge */
@@ -215,6 +215,11 @@ export class VaccineModulePage extends React.Component {
     const fridgeChartData = this.fridgeData[fridge.id];
 
     const numberOfBreaches = fridgeChartData.breaches.length;
+    let lastBreach = null;
+    if (numberOfBreaches > 0) {
+      lastBreach = fridgeChartData.breaches[numberOfBreaches - 1];
+      // console.log(require('util').inspect(this.lastBreach));
+    }
 
     const currentTemperature = fridge.getCurrentTemperature(database);
     const isCriticalTemperature =
@@ -231,7 +236,9 @@ export class VaccineModulePage extends React.Component {
             {this.renderFridgeName(fridge, isFridgeSelected)}
             {currentTemperature !== null ? this.renderTemperature(30, currentTemperature) : null}
 
-            {isCriticalTemperature ? this.renderIcon('warning', BREACH_ICON_STYLE) : null}
+            {isCriticalTemperature
+              ? this.renderIcon('warning', BREACH_ICON_STYLE, () => this.onHazardPress(lastBreach))
+              : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
               {this.renderFridgeExtraInfo(fridge, numberOfBreaches)}
               {this.renderFridgeStock(fridge)}
@@ -250,7 +257,7 @@ export class VaccineModulePage extends React.Component {
   renderMenuButtons = () => {
     const { menuButtonTextStyle, menuButtonStyle } = localStyles;
     const { navigateTo } = this.props;
-    return MENU_BUTTONS.map(menuButton => {
+    return this.MENU_BUTTONS.map(menuButton => {
       const { buttonText, pageTitle, page } = menuButton;
       return (
         <Button

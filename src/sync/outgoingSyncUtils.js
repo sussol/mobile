@@ -2,7 +2,8 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
+// eslint-disable-next-line import/no-extraneous-dependencies
+import dateFormat from 'dateformat';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
 import {
@@ -25,7 +26,7 @@ const bugsnagClient = new BugsnagClient();
 
 const getDateString = date => {
   if (!date || typeof date !== 'object' || !date.toLocaleDateString) return '0000-00-00';
-  return `${date.toLocaleDateString()}T00:00:00`;
+  return `${dateFormat(date, 'yyyy-mm-dd')}T00:00:00`;
 };
 
 function getTimeString(date) {
@@ -158,6 +159,7 @@ const generateSyncData = (settings, recordType, record) => {
         batteryLevel,
         temperature,
         lastConnectionTimestamp,
+        // logInterval, TODO add to desktop schema
       } = record;
       return {
         ID: id,
@@ -166,6 +168,7 @@ const generateSyncData = (settings, recordType, record) => {
         locationID: location && location.id,
         batteryLevel: String(batteryLevel),
         temperature: String(temperature),
+        //   logInterval: String(logInterval), TODO add to desktop schema
         lastConnectionDate: getDateString(lastConnectionTimestamp),
         lastConnectionTime: getTimeString(lastConnectionTimestamp),
         storeID: thisStoreId,
@@ -173,23 +176,12 @@ const generateSyncData = (settings, recordType, record) => {
     }
     case 'SensorLog': {
       const thisStoreId = settings.get(THIS_STORE_ID);
-      const {
-        id,
-        sensor,
-        location,
-        pointer,
-        temperature,
-        logInterval,
-        isInBreach,
-        timestamp,
-      } = record;
+      const { id, sensor, location, temperature, isInBreach, timestamp } = record;
       return {
         ID: id,
         sensorID: sensor && sensor.id,
         locationID: location && location.id,
-        pointer: String(pointer),
         temperature: String(temperature),
-        logInterval: String(logInterval),
         isInBreach: String(isInBreach),
         date: getDateString(timestamp),
         time: getTimeString(timestamp),

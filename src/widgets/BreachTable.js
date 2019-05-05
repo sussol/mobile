@@ -140,6 +140,7 @@ export class BreachTable extends React.PureComponent {
           itemBatchFilter,
           database,
           breaches,
+          includeBothEnds: true,
         }),
       });
     });

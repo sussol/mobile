@@ -9,6 +9,25 @@ export class Sensor extends Realm.Object {
   get toString() {
     return `MAC: ${this.macAddress} TEMP: ${this.temperature}`;
   }
+
+  get latestAggregatedLog() {
+    const aggregatedLogs = this.sensorLogs.filtered('aggregation != null && aggregation != ""');
+    if (aggregatedLogs.length === 0) return null;
+    const latestTimestamp = aggregatedLogs.max('timestamp');
+    return aggregatedLogs.filtered('timestamp == $0', latestTimestamp)[0];
+  }
+
+  get latestTemperature() {
+    const { latestAggregatedLog } = this;
+    if (latestAggregatedLog === null) return null;
+    return latestAggregatedLog.temperature;
+  }
+
+  get isInBreach() {
+    const { latestAggregatedLog } = this;
+    if (latestAggregatedLog === null) return false;
+    return latestAggregatedLog.isInBreach;
+  }
 }
 
 Sensor.schema = {

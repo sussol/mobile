@@ -17,11 +17,10 @@ SensorLog.schema = {
     id: 'string',
     sensor: 'Sensor',
     location: { type: 'Location', optional: true },
-    pointer: 'int',
     timestamp: { type: 'date', optional: true },
     temperature: 'double',
-    logInterval: 'int',
     isInBreach: { type: 'bool', default: false },
+    aggregation: { type: 'string', default: '' },
     itemBatches: { type: 'list', objectType: 'ItemBatch' },
   },
 };

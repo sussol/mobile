@@ -23,6 +23,7 @@ export const SyncModal = ({
   onClose,
   onPressManualSync,
   onPressTemperatureSync,
+  temperatureSyncMessage,
   state,
 }) => {
   const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
@@ -93,6 +94,7 @@ export const SyncModal = ({
           />
         </View>
         <View style={localStyles.row}>
+          <Text style={localStyles.progressDescription}>{temperatureSyncMessage}</Text>
           <Button
             style={[globalStyles.button, localStyles.button]}
             textStyle={[globalStyles.authFormButtonText, localStyles.buttonText]}
@@ -171,6 +173,7 @@ SyncModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onPressTemperatureSync: PropTypes.func.isRequired,
   onPressManualSync: PropTypes.func.isRequired,
+  temperatureSyncMessage: PropTypes.string,
   isOpen: PropTypes.bool,
 };
 

@@ -235,12 +235,12 @@ export const sensorLogsExtractBatches = ({ sensorLogs = [], itemBatch, item, dat
   };
 };
 
-const formatChartDate = (date, timestampsByHour, shouldDisplayMonth) => {
-  if (timestampsByHour) return dateFormat(date, 'h:MM');
-  if (shouldDisplayMonth) return dateFormat(date, 'mmm d');
-  return dateFormat(date, 'd');
+const formatChartDate = (date, shouldDisplayMonth, shouldDisplayDay) => {
+  let result = `${dateFormat(date, 'h:MM')}\n`;
+  if (shouldDisplayMonth) result += `${dateFormat(date, 'mmm')} `;
+  if (shouldDisplayDay) result += `${dateFormat(date, 'd')}`;
+  return result;
 };
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -262,6 +262,7 @@ export const aggregateLogs = ({
   numberOfDataPoints,
   startDate = null,
   endDate = null,
+  includeBothEnds = false,
 }) => {
   if (!(sensorLogs.length > 0)) return [];
 
@@ -276,8 +277,6 @@ export const aggregateLogs = ({
   // Caclulate interval duration in ms.
   const totalDuration = endBoundary - startBoundary;
   const intervalDuration = totalDuration / numberOfDataPoints;
-
-  const timestampsByHour = totalDuration < MILLISECONDS_IN_DAY * 3;
 
   const aggregatedLogs = [];
   for (let i = 0; i < numberOfDataPoints; i += 1) {
@@ -298,6 +297,7 @@ export const aggregateLogs = ({
   // Map intervals to aggregated objects.
   const medianDuration = intervalDuration / 2;
   let currentMonth = null;
+  let currentDay = null;
   aggregatedLogs.forEach(aggregateLog => {
     const { intervalStartDate, intervalEndDate } = aggregateLog;
 
@@ -308,15 +308,16 @@ export const aggregateLogs = ({
       intervalEndDate
     );
 
-    const thisLogsMonth = intervalStartDate.getMonth();
+    const timeStampUnformated = new Date(intervalStartDate.getTime() + medianDuration);
+    const thisLogsMonth = timeStampUnformated.getMonth();
+    const thisLogsDay = timeStampUnformated.getDay();
     const shouldDisplayMonth = thisLogsMonth !== currentMonth;
-    if (shouldDisplayMonth) currentMonth = intervalStartDate.getMonth();
+    const shouldDisplayDays = thisLogsDay !== currentDay;
 
-    const timestamp = formatChartDate(
-      new Date(intervalStartDate.getTime() + medianDuration),
-      timestampsByHour,
-      shouldDisplayMonth
-    );
+    const timestamp = formatChartDate(timeStampUnformated, shouldDisplayMonth, shouldDisplayDays);
+
+    currentMonth = thisLogsMonth;
+    currentDay = thisLogsDay;
 
     if (intervalLogs.length === 0) {
       maxLine.push({ temperature: null, timestamp });
@@ -324,8 +325,22 @@ export const aggregateLogs = ({
       return;
     }
 
-    const maxSensorLog = intervalLogs.sorted('temperature', true)[0];
-    const minSensorLog = intervalLogs.sorted('temperature', false)[0];
+    let maxSensorLog = intervalLogs.sorted('temperature', true)[0];
+    let minSensorLog = intervalLogs.sorted('temperature', false)[0];
+
+    if (includeBothEnds) {
+      let shouldUseLast = null;
+      if (intervalStartDate <= startTimestamp && startTimestamp <= intervalEndDate) {
+        shouldUseLast = false;
+      }
+      if (intervalStartDate <= endTimestamp && endTimestamp <= intervalEndDate) {
+        shouldUseLast = true;
+      }
+      if (shouldUseLast !== null) {
+        maxSensorLog = intervalLogs.sorted('timestamp', shouldUseLast)[0];
+        minSensorLog = maxSensorLog;
+      }
+    }
 
     maxLine.push({ temperature: maxSensorLog.temperature, timestamp, sensorLog: maxSensorLog });
     minLine.push({ temperature: minSensorLog.temperature, timestamp, sensorLog: minSensorLog });
@@ -361,7 +376,13 @@ export const extractBreachPoints = (lineData, fullBreaches, { maxTemperature }) 
  * Returns aggregated data for breach modal, based on passed array
  * of sensorLogs (breaches)
  */
-export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilter, database }) => {
+export const extractDataForBreachModal = ({
+  breaches,
+  itemFilter,
+  itemBatchFilter,
+  database,
+  includeBothEnds = false,
+}) => {
   const result = [];
   breaches.forEach(sensorLogs => {
     const { minTemperature, maxTemperature } = TEMPERATURE_RANGE;
@@ -382,6 +403,7 @@ export const extractDataForBreachModal = ({ breaches, itemFilter, itemBatchFilte
           sensorLogs,
           numberOfDataPoints,
           isMax,
+          includeBothEnds,
         })[lineKey],
         ...(isMax ? { maxTemperature } : { minTemperature }),
       },
@@ -397,7 +419,17 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
   const sensorLogs = fridge.getSensorLogs(database, FRIDGE_CHART_LOOKBACK_MS);
 
   const chartRangeMilliseconds = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
-  const numberOfDataPoints = Math.floor(chartRangeMilliseconds / MILLISECONDS_IN_DAY);
+
+  let numberOfDataPoints = 0;
+  // Full aggregation is 12 hour periods
+  if (chartRangeMilliseconds < 12 * 60 * 60 * 1000) {
+    // Pre aggregation is in 20 minute periods
+    numberOfDataPoints = Math.floor(chartRangeMilliseconds / (20 * 60 * 1000));
+  } else {
+    numberOfDataPoints = Math.floor(chartRangeMilliseconds / (12 * 60 * 60 * 1000));
+  }
+
+  numberOfDataPoints = numberOfDataPoints > 30 ? 30 : numberOfDataPoints;
 
   const lines = aggregateLogs({ sensorLogs, numberOfDataPoints, endDate: new Date() });
 

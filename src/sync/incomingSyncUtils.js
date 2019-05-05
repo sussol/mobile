@@ -207,7 +207,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       canBeBlank: [],
     },
     SensorLog: {
-      cannotBeBlank: ['sensorID', 'pointer', 'date', 'time', 'temperature', 'logInterval'],
+      cannotBeBlank: ['sensorID', 'date', 'time', 'temperature'],
       canBeBlank: [],
     },
     SensorLogItemBatchJoin: {
@@ -601,25 +601,13 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'SensorLog': {
-      const {
-        ID,
-        sensorID,
-        locationID,
-        pointer,
-        date,
-        time,
-        temperature,
-        logInterval,
-        isInBreach,
-      } = record;
+      const { ID, sensorID, locationID, date, time, temperature, isInBreach } = record;
       const location = database.getOrCreate('Location', locationID);
       const sensor = database.getOrCreate('Sensor', sensorID);
       internalRecord = {
         id: ID,
-        pointer: parseNumber(pointer),
         temperature: parseNumber(temperature),
         timestamp: parseDate(date, time),
-        logInterval: parseNumber(logInterval),
         isInBreach: parseBoolean(isInBreach),
         sensor,
         location,
@@ -664,7 +652,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'StocktakeBatch': {
       const stocktake = database.getOrCreate('Stocktake', record.stock_take_ID);
-      const packSize = parseNumber(record.snapshot_packsize);
+      const packSize = 1;
       const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
       const item = database.getOrCreate('Item', record.item_ID);
       itemBatch.item = item;
