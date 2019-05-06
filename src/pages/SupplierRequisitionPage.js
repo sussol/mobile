@@ -412,7 +412,7 @@ export class SupplierRequisitionPage extends React.Component {
       case 'unit': {
         return {
           type: 'text',
-          cellContents: requisitionItem.item.unit ? requisitionItem.item.unit.units : 'N/A',
+          cellContents: requisitionItem.itemUnit,
         };
       }
     }
