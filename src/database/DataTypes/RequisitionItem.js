@@ -120,6 +120,14 @@ export class RequisitionItem extends Realm.Object {
   }
 
   /**
+   * Gets the unit string for this requisition items related item.
+   * @return {string}
+   */
+  get itemUnit() {
+    return this.item.unitString;
+  }
+
+  /**
    * Set supplied quantity of this requisition item.
    *
    * @param  {Realm}   database
