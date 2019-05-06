@@ -15,7 +15,7 @@ Unit.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    units: { type: 'string', default: 'Each' },
+    units: { type: 'string', optional: true },
     comment: { type: 'string', optional: true },
     orderNumber: { type: 'double', default: 0 },
   },
