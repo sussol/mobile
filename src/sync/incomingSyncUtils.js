@@ -72,9 +72,12 @@ export const parseBoolean = booleanString => {
 export const parseJsonString = jsonString => {
   // 4D adds extra backslashes, remove them so JSON.parse doesn't break
   let validatedString = jsonString && jsonString.replace(/\\/g, '');
+  const nullValues = ['null', 'undefined'];
   // 'undefined' is stored as string on 4D, but as an optional field
   // in our realm schemas we can prefer |null|
-  if (validatedString === 'undefined') validatedString = null;
+  if (!validatedString || nullValues.includes(validatedString.toLowerCase())) {
+    validatedString = null;
+  }
   return validatedString;
 };
 
