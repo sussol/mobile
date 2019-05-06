@@ -148,6 +148,14 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * Returns a string representing the units for this item.
+   * @return {string} the unit for this item, or N/A if none has been assigned.
+   */
+  get unitString() {
+    return (this.unit && this.unit.units) || 'N/A';
+  }
+
+  /**
    * Get the sum of all transaction batch usage related to batches for this item within a start
    * and end date.
    *
@@ -231,6 +239,7 @@ Item.schema = {
     defaultPrice: { type: 'double', default: 0 },
     isVisible: { type: 'bool', default: false },
     crossReferenceItem: { type: 'Item', optional: true },
+    unit: { type: 'Unit', optional: true },
   },
 };
 

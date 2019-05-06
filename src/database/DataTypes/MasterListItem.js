@@ -32,6 +32,7 @@ MasterListItem.schema = {
     masterList: { type: 'MasterList', optional: true },
     item: { type: 'Item', optional: true },
     imprestQuantity: { type: 'double', optional: true },
+    price: { type: 'double', default: 0 },
   },
 };
 

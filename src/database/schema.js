@@ -32,6 +32,7 @@ import {
   TransactionCategory,
   TransactionItem,
   User,
+  Unit,
 } from './DataTypes';
 
 Address.schema = {
@@ -149,6 +150,7 @@ export const schema = {
     PeriodSchedule,
     StocktakeBatch,
     User,
+    Unit,
   ],
   schemaVersion: 7,
 };

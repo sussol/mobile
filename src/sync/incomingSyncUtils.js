@@ -17,6 +17,7 @@ import {
   createOptionsInternalRecord,
   createPeriodInternalRecord,
   createPeriodScheduleInternalRecord,
+  createUnitInternalRecord,
 } from './createInternalRecord';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
@@ -27,7 +28,7 @@ const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS
  * @param   {string}  numberString  The string to convert to a number.
  * @return  {float}                 The numeric representation of the string.
  */
-const parseNumber = numberString => {
+export const parseNumber = numberString => {
   if (!numberString) return null;
   const result = parseFloat(numberString);
   return Number.isNaN(result) ? null : result;
@@ -233,6 +234,10 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
       cannotBeBlank: ['name', 'startDate', 'endDate', 'periodScheduleID'],
       canBeBlank: [],
     },
+    Unit: {
+      cannotBeBlank: [],
+      canBeBlank: ['units', 'comment', 'order_number'],
+    },
   };
   if (!requiredFields[recordType]) return false; // Unsupported record type
   const hasAllNonBlankFields = requiredFields[recordType].cannotBeBlank.reduce(
@@ -278,6 +283,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         description: record.description,
         name: record.item_name,
         crossReferenceItem: database.getOrCreate('Item', record.cross_ref_item_ID),
+        unit: database.getOrCreate('Unit', record.unit_ID),
       };
       database.update(recordType, internalRecord);
       break;
@@ -394,6 +400,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         id: record.ID,
         item: database.getOrCreate('Item', record.item_ID),
         imprestQuantity: parseNumber(record.imprest_quan),
+        price: parseNumber(record.price),
         masterList,
       };
       const masterListItem = database.update(recordType, internalRecord);
@@ -672,6 +679,11 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       }
       break;
     }
+    case 'Unit': {
+      database.update(recordType, createUnitInternalRecord(record));
+      break;
+    }
+
     default:
       break; // Silently ignore record types which are not used by mobile.
   }
