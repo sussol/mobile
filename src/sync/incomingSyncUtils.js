@@ -196,7 +196,7 @@ export const sanityCheckIncomingRecord = (recordType, record) => {
     },
     Stocktake: {
       cannotBeBlank: ['status'],
-      canBeBlank: ['Description', 'stock_take_created_date', 'serial_number', 'program'],
+      canBeBlank: ['Description', 'stock_take_created_date', 'serial_number', 'programID'],
     },
     StocktakeBatch: {
       cannotBeBlank: [
