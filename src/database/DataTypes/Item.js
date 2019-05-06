@@ -149,7 +149,7 @@ export class Item extends Realm.Object {
 
   /**
    * Returns a string representing the units for this item.
-   * @return {string} the unit for this item, or N/A if none has been assgined.
+   * @return {string} the unit for this item, or N/A if none has been assigned.
    */
   get unitString() {
     return (this.unit && this.unit.units) || 'N/A';
