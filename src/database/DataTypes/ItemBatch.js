@@ -1,14 +1,43 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import Realm from 'realm';
 
 import { getTotal } from '../utilities';
 
+/**
+ * A batch of items.
+ *
+ * @property  {string}                   id
+ * @property  {Item}                     item
+ * @property  {number}                   packSize
+ * @property  {number}                   numberOfPacks
+ * @property  {Date}                     expiryDate
+ * @property  {string}                   batch
+ * @property  {number}                   costPrice
+ * @property  {number}                   sellPrice
+ * @property  {Name}                     supplier
+ * @property  {Name}                     donor
+ * @property  {List.<TransactionBatch>}  transactionBatches
+ */
 export class ItemBatch extends Realm.Object {
+  /**
+   * Get the total number of items in this batch.
+   *
+   * @returns  {number}
+   */
   get totalQuantity() {
     return this.numberOfPacks * this.packSize;
   }
 
-  // Return the date this batch was added, assuming that was in the earliest transaction batch
-  // connected to this item batch
+  /**
+   * Get the date this batch was added, equivalent to the confirm date
+   * of the earliest transaction batch this batch is associated with.
+   *
+   * @return  {Date}
+   */
   get addedDate() {
     if (this.transactionBatches.length === 0) return new Date();
     const transactionBatches = this.transactionBatches.slice();
@@ -18,25 +47,45 @@ export class ItemBatch extends Realm.Object {
     return sortedTransactionBatches[0].transaction.confirmDate;
   }
 
+  /**
+   * Get the id of the item this batch is associated with.
+   *
+   * @return  {string}
+   */
   get itemId() {
     return this.item ? this.item.id : '';
   }
 
+  /**
+   * Get the name of the item this batch is associated with.
+   *
+   * @return  {string}
+   */
   get itemName() {
     return this.item ? this.item.name : '';
   }
 
+  /**
+   * Set the total number of items in this batch.
+   *
+   * @param  {number}  quantity  The total number of items in this batch, expressed as
+   *                             the product of the number of packs associated with the
+   *                             batch and the number of items contained in each pack.
+   */
   set totalQuantity(quantity) {
-    if (quantity < 0) throw new Error('Cannot set a negative item batch quantity');
+    if (quantity < 0) {
+      throw new Error('Cannot set a negative item batch quantity');
+    }
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
   }
 
   /**
-   * Returns the sum of all usage in TransactionBatches related to this ItemBatch within
-   * period defined by a starting and ending date.
-   * @param   {Date} startDate  Starting Date (e.g. From 25/4/2017)
-   * @param   {Date} endDate    Starting Date (e.g. to 25/7/2017)
-   * @return  {number}          The total transaction usage for this batch
+   * Get the sum of all usage in each transaction batch related to this item
+   * batch within a starting and ending date.
+   *
+   * @param   {Date}    startDate
+   * @param   {Date}    endDate
+   * @return  {number}
    */
   totalUsageForPeriod(startDate, endDate) {
     const transactionBatches = this.transactionBatches.filtered(
@@ -48,15 +97,31 @@ export class ItemBatch extends Realm.Object {
     return getTotal(transactionBatches, 'usage');
   }
 
+  /**
+   * Add a transaction batch to be associated with this batch.
+   *
+   * @param  {TransactionBatch}  transactionBatch
+   */
   addTransactionBatch(transactionBatch) {
     this.transactionBatches.push(transactionBatch);
   }
 
+  /**
+   * Add a transaction batch to be associated with this batch, if not
+   * already added.
+   *
+   * @param  {TransactionBatch}  transactionBatch
+   */
   addTransactionBatchIfUnique(transactionBatch) {
     if (this.transactionBatches.filtered('id == $0', transactionBatch.id).length > 0) return;
     this.addTransactionBatch(transactionBatch);
   }
 
+  /**
+   * Get string representation of batch.
+   *
+   * @return  {string}
+   */
   toString() {
     return `${this.itemName} - Batch ${this.batch}`;
   }
@@ -75,6 +140,9 @@ ItemBatch.schema = {
     costPrice: { type: 'double', default: 0 },
     sellPrice: { type: 'double', default: 0 },
     supplier: { type: 'Name', optional: true },
+    donor: { type: 'Name', optional: true },
     transactionBatches: { type: 'list', objectType: 'TransactionBatch' },
   },
 };
+
+export default ItemBatch;

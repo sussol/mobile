@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -20,6 +18,7 @@ export const pageInfoStrings = new LocalizedStrings({
     stocktake_name: 'Stocktake Name',
     supplier: 'Supplier',
     their_ref: 'Their Ref',
+    by_batch: 'By batch',
   },
   fr: {
     address: 'Addresse',
@@ -33,8 +32,10 @@ export const pageInfoStrings = new LocalizedStrings({
     stocktake_name: "Nom du relevé d'inventaire",
     supplier: 'Fournisseur',
     their_ref: 'Leur référence',
+    by_batch: 'Par lot',
   },
-  gil: { // TODO: add - stocktake_name
+  gil: {
+    // TODO: add - stocktake_name
     address: 'Am tabo',
     code: 'Code',
     comment: 'Comment',
@@ -45,8 +46,10 @@ export const pageInfoStrings = new LocalizedStrings({
     months_stock_required: 'Iraua te Namakaina?',
     supplier: 'Kambana n oota, Pharmacy ke HC',
     their_ref: 'Ana Ref',
+    by_batch: 'By batch',
   },
-  tl: { // TODO: add - stocktake_name
+  tl: {
+    // TODO: add - stocktake_name
     address: 'Enderesu',
     code: 'Kódigu',
     comment: 'komentáriu',
@@ -57,6 +60,7 @@ export const pageInfoStrings = new LocalizedStrings({
     months_stock_required: 'Pedido ba fulan',
     supplier: 'Distribuidor',
     their_ref: 'Referensia',
+    by_batch: 'By batch',
   },
   la: {
     address: 'ທີ່ຢູ່',
@@ -70,5 +74,8 @@ export const pageInfoStrings = new LocalizedStrings({
     stocktake_name: 'ຊື່​ຂອງ​ໃບກວດ​ກາ​ສິນ​ຄ້າ​ໃນ​ສາງ',
     supplier: 'ຜູ້ສະໜອງ',
     their_ref: 'ຂໍ້ມູນອ້າງອີງ',
+    by_batch: 'By batch',
   },
 });
+
+export default pageInfoStrings;

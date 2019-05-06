@@ -1,35 +1,29 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
 
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
-import { SyncState } from '../widgets';
-import globalStyles, {
-  SUSSOL_ORANGE,
-  WARM_GREY,
-} from '../globalStyles';
+
 import { getAppVersion } from '../settings';
+import { SyncState, DemoUserModal } from '../widgets';
+
+import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 
 export class FirstUsePage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       appVersion: '',
-      status: 'uninitialised', // uninitialised, initialising, initialised, error
+      status: 'uninitialised', // uninitialised, initialising, initialised, error.
       serverURL: '',
       syncSiteName: '',
       syncSitePassword: '',
+      isDemoUserModalOpen: false,
     };
     this.setAppVersion();
     this.siteNameInputRef = null;
@@ -38,14 +32,15 @@ export class FirstUsePage extends React.Component {
   }
 
   async onPressConnect() {
+    const { onInitialised, synchroniser } = this.props;
+    const { serverURL, syncSiteName, syncSitePassword } = this.state;
+
     try {
       this.setState({ status: 'initialising' });
-      await this.props.synchroniser.initialise(
-        this.state.serverURL,
-        this.state.syncSiteName,
-        this.state.syncSitePassword);
+      await synchroniser.initialise(serverURL, syncSiteName, syncSitePassword);
       this.setState({ status: 'initialised' });
-      this.props.onInitialised();
+
+      onInitialised();
     } catch (error) {
       this.setState({ status: 'error' });
     }
@@ -53,21 +48,27 @@ export class FirstUsePage extends React.Component {
 
   async setAppVersion() {
     const appVersion = await getAppVersion();
-    this.setState({ appVersion: appVersion });
+    this.setState({ appVersion });
   }
 
   get canAttemptLogin() {
+    const { status, serverURL, syncSiteName, syncSitePassword } = this.state;
+
     return (
-      (this.state.status === 'uninitialised' || this.state.status === 'error') &&
-      this.state.serverURL.length > 0 &&
-      this.state.syncSiteName.length > 0 &&
-      this.state.syncSitePassword.length > 0
+      (status === 'uninitialised' || status === 'error') &&
+      serverURL.length > 0 &&
+      syncSiteName.length > 0 &&
+      syncSitePassword.length > 0
     );
   }
 
   get buttonText() {
-    const { progressMessage, errorMessage, progress, total } = this.props.syncState;
-    switch (this.state.status) {
+    const { syncState } = this.props;
+    const { status } = this.state;
+
+    const { progressMessage, errorMessage, progress, total } = syncState;
+
+    switch (status) {
       case 'initialising':
         return `${progressMessage}${total > 0 ? `\n${progress}/${total}` : ''}`;
       case 'error':
@@ -79,13 +80,28 @@ export class FirstUsePage extends React.Component {
     }
   }
 
+  handleDemoModalOpen = () => this.setState({ isDemoUserModalOpen: true });
+
+  handleDemoModalClose = () => this.setState({ isDemoUserModalOpen: false });
+
   render() {
+    const { syncState } = this.props;
+    const {
+      appVersion,
+      isDemoUserModalOpen,
+      serverURL,
+      status,
+      syncSiteName,
+      syncSitePassword,
+    } = this.state;
+
     return (
       <View style={[globalStyles.verticalContainer, localStyles.verticalContainer]}>
         <View style={globalStyles.authFormContainer}>
           <Image
             resizeMode="contain"
             style={globalStyles.authFormLogo}
+            // eslint-disable-next-line global-require
             source={require('../images/logo_large.png')}
           />
           <View style={globalStyles.horizontalContainer}>
@@ -94,13 +110,11 @@ export class FirstUsePage extends React.Component {
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Primary Server URL"
-              value={this.state.serverURL}
-              editable={this.state.status !== 'initialising'}
-              returnKeyType={'next'}
+              value={serverURL}
+              editable={status !== 'initialising'}
+              returnKeyType="next"
               selectTextOnFocus
-              onChangeText={(text) => {
-                this.setState({ serverURL: text, status: 'uninitialised' });
-              }}
+              onChangeText={text => this.setState({ serverURL: text, status: 'uninitialised' })}
               onSubmitEditing={() => {
                 if (this.siteNameInputRef) this.siteNameInputRef.focus();
               }}
@@ -108,18 +122,18 @@ export class FirstUsePage extends React.Component {
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
-              ref={(reference) => (this.siteNameInputRef = reference)}
+              ref={reference => {
+                this.siteNameInputRef = reference;
+              }}
               style={globalStyles.authFormTextInputStyle}
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
               placeholder="Sync Site Name"
-              value={this.state.syncSiteName}
-              editable={this.state.status !== 'initialising'}
-              returnKeyType={'next'}
+              value={syncSiteName}
+              editable={status !== 'initialising'}
+              returnKeyType="next"
               selectTextOnFocus
-              onChangeText={(text) => {
-                this.setState({ syncSiteName: text, status: 'uninitialised' });
-              }}
+              onChangeText={text => this.setState({ syncSiteName: text, status: 'uninitialised' })}
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.focus();
               }}
@@ -127,19 +141,24 @@ export class FirstUsePage extends React.Component {
           </View>
           <View style={globalStyles.horizontalContainer}>
             <TextInput
-              ref={(reference) => (this.passwordInputRef = reference)}
+              ref={reference => {
+                this.passwordInputRef = reference;
+              }}
               style={globalStyles.authFormTextInputStyle}
               placeholder="Sync Site Password"
               placeholderTextColor={SUSSOL_ORANGE}
               underlineColorAndroid={SUSSOL_ORANGE}
-              value={this.state.syncSitePassword}
+              value={syncSitePassword}
               secureTextEntry
-              editable={this.state.status !== 'initialising'}
-              returnKeyType={'done'}
+              editable={status !== 'initialising'}
+              returnKeyType="done"
               selectTextOnFocus
-              onChangeText={(text) => {
-                this.setState({ syncSitePassword: text, status: 'uninitialised' });
-              }}
+              onChangeText={text =>
+                this.setState({
+                  syncSitePassword: text,
+                  status: 'uninitialised',
+                })
+              }
               onSubmitEditing={() => {
                 if (this.passwordInputRef) this.passwordInputRef.blur();
                 if (this.canAttemptLogin) this.onPressConnect();
@@ -148,7 +167,7 @@ export class FirstUsePage extends React.Component {
           </View>
           <SyncState
             style={localStyles.initialisationStateIcon}
-            state={this.props.syncState}
+            state={syncState}
             showText={false}
           />
           <View style={globalStyles.authFormButtonContainer}>
@@ -162,12 +181,28 @@ export class FirstUsePage extends React.Component {
             />
           </View>
         </View>
-        <Text style={globalStyles.authWindowButtonText}> v{this.state.appVersion}</Text>
+        <View style={localStyles.demoSiteRequestButtonContainer}>
+          <View style={globalStyles.horizontalContainer}>
+            <Button
+              style={[globalStyles.authFormButton, { flex: 1 }]}
+              textStyle={globalStyles.authFormButtonText}
+              text="Request a Demo Store"
+              onPress={this.handleDemoModalOpen}
+              disabledColor={WARM_GREY}
+              isDisabled={status !== 'uninitialised' && status !== 'error'}
+            />
+          </View>
+        </View>
+        <Text style={globalStyles.authWindowButtonText}> v{appVersion}</Text>
+        <DemoUserModal isOpen={isDemoUserModalOpen} onClose={this.handleDemoModalClose} />
       </View>
     );
   }
 }
 
+export default FirstUsePage;
+
+/* eslint-disable react/forbid-prop-types */
 FirstUsePage.propTypes = {
   onInitialised: PropTypes.func.isRequired,
   synchroniser: PropTypes.object.isRequired,
@@ -175,6 +210,11 @@ FirstUsePage.propTypes = {
 };
 
 const localStyles = StyleSheet.create({
+  demoSiteRequestButtonContainer: {
+    marginHorizontal: 300,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
   initialisationStateIcon: {
     marginTop: 46,
     marginBottom: 24,

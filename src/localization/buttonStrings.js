@@ -1,9 +1,7 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-/* eslint-disable max-len */
 
 import LocalizedStrings from 'react-native-localization';
 
@@ -26,8 +24,10 @@ export const buttonStrings = new LocalizedStrings({
     past: 'Past',
     use_suggested_quantities: 'Use Suggested Quantities',
     use_requested_quantities: 'Use Requested Quantities',
+    view_regimen_data: 'View Regimen Data',
   },
   fr: {
+    // TODO: view_regimen_data
     add_batch: 'Ajouter un lot',
     add_master_list_items: "Ajouter une liste-Maître d'articles ?",
     all_items_selected: 'Tout les articles sélectionnés',
@@ -46,7 +46,8 @@ export const buttonStrings = new LocalizedStrings({
     use_suggested_quantities: 'Utiliser les quantités suggérées',
     use_requested_quantities: 'Utiliser les quantités demandées',
   },
-  gil: {  // TODO: add_batch
+  gil: {
+    // TODO: add_batch, view_regimen_data
     add_master_list_items: 'Rinea am list',
     all_items_selected: 'Aikai nikabane',
     create_automatic_order: 'Create Automatic Order',
@@ -64,7 +65,8 @@ export const buttonStrings = new LocalizedStrings({
     use_requested_quantities: 'Kabongana maitina\nae kainnanoaki',
     use_suggested_quantities: 'Kabongana te\nmwaiti are e katauaki',
   },
-  tl: { // TODO: add_batch
+  tl: {
+    // TODO: add_batch, view_regimen_data
     add_master_list_items: 'Utiliza Lista Master',
     all_items_selected: 'Hili Item Hotu',
     create_automatic_order: 'Kria Orden Automátiku',
@@ -83,6 +85,7 @@ export const buttonStrings = new LocalizedStrings({
     use_requested_quantities: 'Kuantidade Ezije',
   },
   la: {
+    // TODO: view_regimen_data
     add_batch: '​ໃສ​່​ເລກ​ຊຸດ​ຜະ​ລິດ',
     add_master_list_items: '​​ເພີ່ມລາຍ​​ການສິນ​ຄ້າທັງ​ໝົດ​ທີ່​ມີຢ​ູ່​',
     all_items_selected: 'ລາຍ​ການ​ທັງ​ໝົດ​ຖືກ​ເລືອກ​ແລ້ວ',
@@ -102,3 +105,5 @@ export const buttonStrings = new LocalizedStrings({
     use_requested_quantities: 'ນຳໃຊ້ຈຳ​ນວນທີ່​ສະ​ເໜີ​ຂໍ',
   },
 });
+
+export default buttonStrings;

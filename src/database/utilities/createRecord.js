@@ -1,5 +1,14 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { generateUUID } from 'react-native-database';
+
 import { getNextNumber, NUMBER_SEQUENCE_KEYS } from './numberSequenceUtilities';
+import { formatDateAndTime } from '../../utilities';
+
+import { generalStrings } from '../../localization';
 
 const {
   CUSTOMER_INVOICE_NUMBER,
@@ -11,15 +20,363 @@ const {
 } = NUMBER_SEQUENCE_KEYS;
 
 /**
- * Creates a record of the given type, taking care of linking
- * up everything that might need linking up, generating IDs, serial
- * numbers, current dates, and inserting sensible defaults.
- * @param  {Realm}  database App wide local database
- * @param  {string} type     The type of record to create (not 1:1 with schema types)
- * @param  {args}   ...args  Any specific arguments the record type will need
- * @return {object}          The created database record, all ready to use
+ * Create a customer invoice associated with a given customer.
+ *
+ * @param   {Realm}        database
+ * @param   {Name}         customer  Customer associated with invoice.
+ * @return  {Transaction}
  */
-export function createRecord(database, type, ...args) {
+const createCustomerInvoice = (database, customer, user) => {
+  const currentDate = new Date();
+  const invoice = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_invoice',
+    // Mobile customer invoices are always 'confirmed' for easy stock tracking.
+    status: 'confirmed',
+    comment: '',
+    otherParty: customer,
+    enteredBy: user,
+  });
+
+  database.save('Transaction', invoice);
+  customer.addTransaction(invoice);
+  database.save('Name', customer);
+
+  return invoice;
+};
+
+/**
+ * Create a new number sequence.
+ *
+ * @param   {Realm}           database
+ * @param   {string}          sequenceKey
+ * @return  {NumberSequence}
+ */
+const createNumberSequence = (database, sequenceKey) =>
+  database.create('NumberSequence', {
+    id: generateUUID(),
+    sequenceKey,
+  });
+
+/**
+ * Create a number attached to a sequence.
+ *
+ * @param  {Realm}           database
+ * @param  {NumberSequence}  numberSequence  Sequence to attach the number to.
+ * @param  {number}          number
+ */
+const createNumberToReuse = (database, numberSequence, number) => {
+  const numberToReuse = database.create('NumberToReuse', {
+    id: generateUUID(),
+    numberSequence,
+    number,
+  });
+
+  numberSequence.addNumberToReuse(numberToReuse);
+};
+
+/**
+ * Create a transaction representing an inventory adjustment.
+ *
+ * @param   {Realm}        database    Local database.
+ * @param   {Name}         user        Currently logged in user.
+ * @param   {Date}         date        Current date.
+ * @param   {bool}         isAddition  If true, adjustment is an increase,
+ *                                     else, adjustment is a decrease.
+ * @return  {Transaction}
+ */
+const createInventoryAdjustment = (database, user, date, isAddition) =>
+  database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, INVENTORY_ADJUSTMENT_SERIAL_NUMBER),
+    entryDate: date,
+    confirmDate: date,
+    type: isAddition ? 'supplier_invoice' : 'supplier_credit',
+    status: 'confirmed',
+    comment: '',
+    enteredBy: user,
+    otherParty: database.objects('Name').find(name => name.type === 'inventory_adjustment'),
+  });
+
+/**
+ * Create a new empty batch for a given item.
+ *
+ * @param  {Realm}      database
+ * @param  {Item}       item         Item assocated with new batch.
+ * @param  {string}     batchString
+ * @return {ItemBatch}
+ */
+const createItemBatch = (database, item, batchString) => {
+  // Handle cross-reference items.
+  const { realItem } = item;
+
+  const itemBatch = database.create('ItemBatch', {
+    id: generateUUID(),
+    item: realItem,
+    batch: batchString,
+    packSize: 1,
+    numberOfPacks: 0,
+    costPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
+    sellPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
+  });
+
+  realItem.addBatch(itemBatch);
+  database.save('Item', realItem);
+
+  return itemBatch;
+};
+
+/**
+ * Create a new requisition.
+ *
+ * @param   {Realm}        database
+ * @param   {User}         user            User creating requisition.
+ * @param   {Name}         values?  TODO: this param+description is wrong
+ * @return  {Requisition}
+ */
+const createRequisition = (
+  database,
+  user,
+  { otherStoreName, program, period, orderType = {}, monthsLeadTime = 0 }
+) => {
+  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
+  const regimenData =
+    program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
+  const daysToSupply = monthsLeadTime ? (monthsLeadTime + maxMOS) * 30 : 30;
+
+  const requisition = database.create('Requisition', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
+    requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
+    status: 'suggested',
+    type: 'request',
+    entryDate: new Date(),
+    daysToSupply,
+    enteredBy: user,
+    otherStoreName,
+    program,
+    orderType: orderTypeName,
+    thresholdMOS,
+    period,
+    customData: regimenData && JSON.stringify({ regimenData }),
+  });
+
+  if (period) {
+    period.addRequisitionIfUnique(requisition);
+    database.save('Period', period);
+  }
+
+  return requisition;
+};
+
+/**
+ * Create a new requisition item.
+ *
+ * @param   {Database}        database
+ * @param   {Requisition}     requisition  Parent requisition.
+ * @param   {Item}            item         Item to add to requisition.
+ * @param   {double}          dailyUsage   Daily usage of item.
+ * @return  {RequisitionItem}
+ */
+const createRequisitionItem = (database, requisition, item, dailyUsage) => {
+  // Handle cross reference items.
+  const { realItem } = item;
+
+  const requisitionItem = database.create('RequisitionItem', {
+    id: generateUUID(),
+    item: realItem,
+    requisition,
+    stockOnHand: realItem.totalQuantity,
+    dailyUsage: dailyUsage || realItem.dailyUsage,
+    requiredQuantity: 0,
+    comment: '',
+    sortIndex: requisition.items.length + 1,
+  });
+
+  requisition.addItem(requisitionItem);
+  database.save('Requisition', requisition);
+
+  return requisitionItem;
+};
+
+/**
+ * Create a new stocktake.
+ *
+ * @param   {Realm}      database
+ * @param   {User}       user      User creating stocktake.
+ * @return  {Stocktake}
+ */
+const createStocktake = (database, { createdBy, program, name }) => {
+  const date = new Date();
+  const { stocktakeText } = generalStrings;
+  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(date, 'slashes')}`;
+  return database.create('Stocktake', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
+    name: name || defaultName,
+    createdDate: date,
+    stocktakeDate: date,
+    status: 'suggested',
+    comment: '',
+    createdBy,
+    program,
+  });
+};
+
+/**
+ * Create a new stocktake item.
+ *
+ * @param   {Realm}          database
+ * @param   {Stocktake}      stocktake  Parent stocktake.
+ * @param   {Item}           item       Real item to create stocktake item from.
+ * @return  {StocktakeItem}
+ */
+const createStocktakeItem = (database, stocktake, item) => {
+  // Handle cross reference items.
+  const { realItem } = item;
+
+  const stocktakeItem = database.create('StocktakeItem', {
+    id: generateUUID(),
+    item: realItem,
+    stocktake,
+  });
+
+  stocktake.items.push(stocktakeItem);
+  database.save('Stocktake', stocktake);
+
+  return stocktakeItem;
+};
+
+/**
+ * Create a new stocktake batch.
+ *
+ * @param   {Realm}          database
+ * @param   {Item}           stocktakeItem  Batch item.
+ * @param   {ItemBatch}      itemBatch      Item batch to associate with stocktake batch.
+ * @return  {StocktakeBatch}
+ */
+const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
+  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
+
+  const stocktakeBatch = database.create('StocktakeBatch', {
+    id: generateUUID(),
+    stocktake: stocktakeItem.stocktake,
+    itemBatch,
+    snapshotNumberOfPacks: numberOfPacks,
+    packSize,
+    expiryDate,
+    batch,
+    costPrice,
+    sellPrice,
+    sortIndex: stocktakeItem.stocktake ? stocktakeItem.stocktake.numberOfBatches : 0,
+  });
+
+  stocktakeItem.addBatch(stocktakeBatch);
+  database.save('StocktakeItem', stocktakeItem);
+
+  return stocktakeBatch;
+};
+
+/**
+ * Create a new supplier invoice.
+ *
+ * @param   {Realm}       database
+ * @param   {Name}        supplier   Name of supplier being invoiced.
+ * @param   {User}        enteredBy  User who creating invoice.
+ * @return  {Transaction}
+ */
+const createSupplierInvoice = (database, supplier, user) => {
+  const currentDate = new Date();
+
+  const invoice = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    type: 'supplier_invoice',
+    status: 'new',
+    comment: '',
+    otherParty: supplier,
+    enteredBy: user,
+  });
+
+  database.save('Transaction', invoice);
+  supplier.addTransaction(invoice);
+
+  return invoice;
+};
+
+/**
+ * Create a new transaction batch.
+ *
+ * @param   {Realm}             database
+ * @param   {TransactionItem}   transactionItem  Batch item.
+ * @param   {ItemBatch}         itemBatch        Item batch to associate with transaction batch.
+ * @return  {TransactionBatch}
+ */
+const createTransactionBatch = (database, transactionItem, itemBatch) => {
+  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+
+  const transactionBatch = database.create('TransactionBatch', {
+    id: generateUUID(),
+    itemId: item.id,
+    itemName: item.name,
+    itemBatch,
+    batch,
+    expiryDate,
+    packSize,
+    numberOfPacks: 0,
+    costPrice,
+    sellPrice,
+    donor,
+    transaction: transactionItem.transaction,
+    sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
+  });
+
+  transactionItem.addBatch(transactionBatch);
+  database.save('TransactionItem', transactionItem);
+  itemBatch.addTransactionBatch(transactionBatch);
+  database.save('ItemBatch', itemBatch);
+
+  return transactionBatch;
+};
+
+/**
+ * Create a new transaction item.
+ *
+ * @param   {Realm}            database
+ * @param   {Transaction}      transaction  Parent transaction.
+ * @param   {Item}             item         Real item to create transaction item from.
+ * @return  {TransactionItem}
+ */
+const createTransactionItem = (database, transaction, item) => {
+  // Handle cross reference items.
+  const { realItem } = item;
+
+  const transactionItem = database.create('TransactionItem', {
+    id: generateUUID(),
+    item: realItem,
+    transaction,
+  });
+
+  transaction.addItem(transactionItem);
+  database.save('Transaction', transaction);
+
+  return transactionItem;
+};
+
+/**
+ * Create a record of the given type, taking care of linkages, generating IDs, serial
+ * numbers, current dates, and inserting sensible defaults.
+ *
+ * @param   {Realm}         database
+ * @param   {string}        type      The type of record to create (not 1:1 with schema types).
+ * @param   {args}          ...args   Any specific arguments the record type will need.
+ * @return  {Realm.Object}            The new database record.
+ */
+export const createRecord = (database, type, ...args) => {
   switch (type) {
     case 'CustomerInvoice':
       return createCustomerInvoice(database, ...args);
@@ -50,217 +407,6 @@ export function createRecord(database, type, ...args) {
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
-}
+};
 
-// Creates a customer invoice (Transaction) and adds it to the customer (Name)
-function createCustomerInvoice(database, customer, user) {
-  const currentDate = new Date();
-  const invoice = database.create('Transaction', {
-    id: generateUUID(),
-    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
-    entryDate: currentDate,
-    confirmDate: currentDate, // Customer invoices always confirmed in mobile
-    type: 'customer_invoice',
-    status: 'confirmed', // Customer invoices always confirmed in mobile for easy stock tracking
-    comment: '',
-    otherParty: customer,
-    enteredBy: user,
-  });
-  database.save('Transaction', invoice);
-  customer.addTransaction(invoice);
-  database.save('Name', customer);
-  return invoice;
-}
-
-// Creates a new number sequence
-function createNumberSequence(database, sequenceKey) {
-  return database.create('NumberSequence', {
-    id: generateUUID(),
-    sequenceKey: sequenceKey,
-  });
-}
-
-// Creates a number attached to a sequence
-function createNumberToReuse(database, numberSequence, number) {
-  const numberToReuse = database.create('NumberToReuse', {
-    id: generateUUID(),
-    numberSequence: numberSequence,
-    number: number,
-  });
-  numberSequence.addNumberToReuse(numberToReuse);
-}
-
-// Creates a transaction representing an inventory adjustment, either up (isAddition = true)
-// or down (isAddition = false)
-function createInventoryAdjustment(database, user, date, isAddition) {
-  return database.create('Transaction', {
-    id: generateUUID(),
-    serialNumber: getNextNumber(database, INVENTORY_ADJUSTMENT_SERIAL_NUMBER),
-    entryDate: date,
-    confirmDate: date,
-    type: isAddition ? 'supplier_invoice' : 'supplier_credit',
-    status: 'confirmed',
-    comment: '',
-    enteredBy: user,
-    otherParty: database.objects('Name').find(name => name.type === 'inventory_adjustment'),
-  });
-}
-
-// Creates a new empty ItemBatch and adds it to the item
-function createItemBatch(database, item, batchString) {
-  // Handle cross reference items
-  const realItem = item.realItem;
-  const itemBatch = database.create('ItemBatch', {
-    id: generateUUID(),
-    item: realItem,
-    batch: batchString,
-    packSize: 1,
-    numberOfPacks: 0,
-    costPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
-    sellPrice: realItem.defaultPrice ? realItem.defaultPrice : 0,
-  });
-  realItem.addBatch(itemBatch);
-  database.save('Item', realItem);
-  return itemBatch;
-}
-
-// Creates a Requisition
-function createRequisition(database, user, otherStoreName) {
-  const requisition = database.create('Requisition', {
-    id: generateUUID(),
-    serialNumber: getNextNumber(database, REQUISITION_SERIAL_NUMBER),
-    requesterReference: getNextNumber(database, REQUISITION_REQUESTER_REFERENCE),
-    status: 'suggested',
-    type: 'request',
-    entryDate: new Date(),
-    daysToSupply: 30, // 1 month
-    enteredBy: user,
-    otherStoreName,
-  });
-  return requisition;
-}
-
-// Creates a RequisitionItem and adds it to the requisition.
-function createRequisitionItem(database, requisition, item, dailyUsage) {
-  // Handle cross reference items
-  const realItem = item.realItem;
-  const requisitionItem = database.create('RequisitionItem', {
-    id: generateUUID(),
-    item: realItem,
-    requisition: requisition,
-    stockOnHand: realItem.totalQuantity,
-    dailyUsage: dailyUsage || realItem.dailyUsage,
-    requiredQuantity: 0,
-    comment: '',
-    sortIndex: requisition.items.length + 1,
-  });
-  requisition.addItem(requisitionItem);
-  database.save('Requisition', requisition);
-  return requisitionItem;
-}
-
-// Creates a Stocktake
-function createStocktake(database, user) {
-  const date = new Date();
-  const stocktake = database.create('Stocktake', {
-    id: generateUUID(),
-    serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: '',
-    createdDate: date,
-    stocktakeDate: date,
-    status: 'suggested',
-    comment: '',
-    createdBy: user,
-  });
-  return stocktake;
-}
-
-// Creates a StocktakeItem and adds it to the Stocktake.
-function createStocktakeItem(database, stocktake, item) {
-  // Handle cross reference items
-  const realItem = item.realItem;
-  const stocktakeItem = database.create('StocktakeItem', {
-    id: generateUUID(),
-    item: realItem,
-    stocktake: stocktake,
-  });
-  stocktake.items.push(stocktakeItem);
-  database.save('Stocktake', stocktake);
-  return stocktakeItem;
-}
-
-// Creates a StocktakeBatch and adds it to the StocktakeItem
-function createStocktakeBatch(database, stocktakeItem, itemBatch) {
-  const { numberOfPacks, packSize, expiryDate, batch, costPrice, sellPrice } = itemBatch;
-  const stocktakeBatch = database.create('StocktakeBatch', {
-    id: generateUUID(),
-    stocktake: stocktakeItem.stocktake,
-    itemBatch: itemBatch,
-    snapshotNumberOfPacks: numberOfPacks,
-    packSize: packSize,
-    expiryDate: expiryDate,
-    batch: batch,
-    costPrice: costPrice,
-    sellPrice: sellPrice,
-    sortIndex: stocktakeItem.stocktake ? stocktakeItem.stocktake.numberOfBatches : 0,
-  });
-  stocktakeItem.addBatch(stocktakeBatch);
-  database.save('StocktakeItem', stocktakeItem);
-  return stocktakeBatch;
-}
-
-// Creates a supplier invoice (Transaction) and adds it to the supplier (Name)
-function createSupplierInvoice(database, supplier, user) {
-  const currentDate = new Date();
-  const invoice = database.create('Transaction', {
-    id: generateUUID(),
-    serialNumber: getNextNumber(database, SUPPLIER_INVOICE_NUMBER),
-    entryDate: currentDate,
-    type: 'supplier_invoice',
-    status: 'new',
-    comment: '',
-    otherParty: supplier,
-    enteredBy: user,
-  });
-  database.save('Transaction', invoice);
-  supplier.addTransaction(invoice);
-  return invoice;
-}
-
-// Creates a TransactionBatch and adds it to the TransactionItem
-function createTransactionBatch(database, transactionItem, itemBatch) {
-  const { item, batch, expiryDate, packSize, costPrice, sellPrice } = itemBatch;
-  const transactionBatch = database.create('TransactionBatch', {
-    id: generateUUID(),
-    itemId: item.id,
-    itemName: item.name,
-    itemBatch: itemBatch,
-    batch: batch,
-    expiryDate: expiryDate,
-    packSize: packSize,
-    numberOfPacks: 0,
-    costPrice: costPrice,
-    sellPrice: sellPrice,
-    transaction: transactionItem.transaction,
-    sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
-  });
-  transactionItem.addBatch(transactionBatch);
-  database.save('TransactionItem', transactionItem);
-  itemBatch.addTransactionBatch(transactionBatch);
-  database.save('ItemBatch', itemBatch);
-  return transactionBatch;
-}
-
-// Creates a TransactionItem and adds it to the Transaction
-function createTransactionItem(database, transaction, item) {
-  // Handle cross reference items
-  const realItem = item.realItem;
-  const transactionItem = database.create('TransactionItem', {
-    id: generateUUID(),
-    item: realItem,
-    transaction: transaction,
-  });
-  transaction.addItem(transactionItem);
-  database.save('Transaction', transaction);
-  return transactionItem;
-}
+export default createRecord;

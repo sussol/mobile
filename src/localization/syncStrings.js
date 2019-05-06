@@ -1,11 +1,9 @@
 /**
  * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2016
+ * Sustainable Solutions (NZ) Ltd. 2019
  */
 
 import LocalizedStrings from 'react-native-localization';
-
-/* eslint-disable max-len */
 
 export const syncStrings = new LocalizedStrings({
   gb: {
@@ -32,7 +30,8 @@ export const syncStrings = new LocalizedStrings({
     all_records_updated: 'Tous les enregistrements ont été mis à jour',
     loading_change_count: 'Chargement du nombre de changements',
   },
-  // Add: checking_server_for_records, records_waiting, sync_complete, all_records_updated, loading_change_count
+  // Add |checking_server_for_records|, |records_waiting|, |sync_complete|, |all_records_updated|,
+  // |loading_change_count|
   gil: {
     last_sync: 'LAST SYNC',
     manual_sync: 'Manual Sync',
@@ -40,7 +39,8 @@ export const syncStrings = new LocalizedStrings({
     sync_error: 'SYNC ERROR',
     sync_in_progress: 'SYNC IN PROGRESS',
   },
-  // Add: checking_server_for_records, records_waiting, sync_complete, all_records_updated, loading_change_count
+  // Add |checking_server_for_records|, |records_waiting|, |sync_complete|, |all_records_updated|,
+  // |loading_change_count|
   tl: {
     last_sync: 'SYNC FOIN DADAUN',
     manual_sync: 'Synk Manual',
@@ -61,3 +61,5 @@ export const syncStrings = new LocalizedStrings({
     loading_change_count: 'ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ',
   },
 });
+
+export default syncStrings;
