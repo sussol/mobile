@@ -73,13 +73,13 @@ export class StocktakeManagePage extends React.Component {
 
     runWithLoadingIndicator(() => {
       const { currentUser, database, navigateTo } = this.props;
-      const { selection, stocktakeName: name } = this.state;
+      const { selection, stocktakeName } = this.state;
 
       let { stocktake } = this.props;
       database.write(() => {
         // If no |stocktake| came in props, make a new one.
         if (!stocktake) {
-          stocktake = createRecord(database, 'Stocktake', { currentUser, name });
+          stocktake = createRecord(database, 'Stocktake', currentUser, stocktakeName);
         }
 
         stocktake.setItemsByID(database, selection);
