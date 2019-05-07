@@ -45,7 +45,7 @@ export class StocktakesPage extends React.Component {
 
   componentDidMount() {
     const { settings, database } = this.props;
-    this.setState({ usesPrograms: !!getAllPrograms(settings, database) });
+    this.setState({ usesPrograms: getAllPrograms(settings, database).length > 0 });
   }
 
   createNewStocktake = properties => {
