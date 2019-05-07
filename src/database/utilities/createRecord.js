@@ -206,22 +206,25 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
  * Create a new stocktake.
  *
  * @param   {Realm}      database
- * @param   {User}       user      User creating stocktake.
+ * @param   {User}       user             User creating the stocktake.
+ * @param   {string}     stocktakeName    What to name the stocktake
+ * @param   {Program}    program          Program record to associate with the stocktake
  * @return  {Stocktake}
  */
-const createStocktake = (database, { createdBy, program, name }) => {
+const createStocktake = (database, user, stocktakeName, program) => {
   const date = new Date();
-  const { stocktakeText } = generalStrings;
-  const defaultName = `${stocktakeText} - ${name} - ${formatDateAndTime(date, 'slashes')}`;
+  const serialNumber = getNextNumber(database, STOCKTAKE_SERIAL_NUMBER);
+  const title = program ? program.name : generalStrings.stocktake;
+  const defaultName = `${title} - ${formatDateAndTime(date, 'slashes')}`;
   return database.create('Stocktake', {
     id: generateUUID(),
-    serialNumber: getNextNumber(database, STOCKTAKE_SERIAL_NUMBER),
-    name: name || defaultName,
+    serialNumber,
+    name: stocktakeName || defaultName,
     createdDate: date,
     stocktakeDate: date,
     status: 'suggested',
     comment: '',
-    createdBy,
+    createdBy: user,
     program,
   });
 };
