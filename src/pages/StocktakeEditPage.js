@@ -118,7 +118,9 @@ export class StocktakeEditPage extends React.Component {
 
   componentDidMount = () => {
     const { database } = this.props;
-    this.setState({ usesReasons: database.objects('Options').length !== 0 });
+    const queryString = 'type == $0 && isActive == true';
+    const reasons = database.objects('Options').filtered(queryString, 'stocktakeLineAdjustment');
+    this.setState({ usesReasons: reasons.length !== 0 });
   };
 
   reasonModalConfirm = ({ item: option }) => {
@@ -138,7 +140,7 @@ export class StocktakeEditPage extends React.Component {
    */
   assignReason = stocktakeItem => {
     const { database } = this.props;
-    if (stocktakeItem.shouldHaveReason) {
+    if (stocktakeItem.shouldApplyReason) {
       this.onOpenReasonModal();
     } else {
       stocktakeItem.applyReasonToBatches(database);
@@ -432,7 +434,7 @@ export class StocktakeEditPage extends React.Component {
       },
       {
         key: 'itemName',
-        width: 3.2,
+        width: 2.8,
         title: tableStrings.item_name,
         sortable: true,
       },
@@ -469,7 +471,7 @@ export class StocktakeEditPage extends React.Component {
     }
     columns.push({
       key: 'modalControl',
-      width: 0.6,
+      width: 0.8,
       title: tableStrings.batches,
       sortable: false,
     });

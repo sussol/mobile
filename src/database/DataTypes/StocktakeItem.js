@@ -185,10 +185,8 @@ export class StocktakeItem extends Realm.Object {
    * needs to account for this.
    * @return {bool}
    */
-  get shouldHaveReason() {
-    return this.batches.some(({ snapshotTotalQuantity, countedTotalQuantity, option }) =>
-      snapshotTotalQuantity !== countedTotalQuantity ? !option : false
-    );
+  get shouldApplyReason() {
+    return this.batches.some(({ shouldApplyReason }) => shouldApplyReason);
   }
 
   /**
@@ -306,15 +304,12 @@ export class StocktakeItem extends Realm.Object {
    */
   applyReasonToBatches(database, option) {
     this.batches.forEach(batch => {
-      if (batch.countedTotalQuantity !== batch.snapshotTotalQuantity) {
-        database.write(() => {
-          database.update('StocktakeBatch', { ...batch, option });
-        });
-      } else {
-        database.write(() => {
-          database.update('StocktakeBatch', { ...batch, option: null });
-        });
-      }
+      const { id, countedTotalQuantity, snapshotTotalQuantity } = batch;
+      let batchOption = option;
+      if (countedTotalQuantity === snapshotTotalQuantity) batchOption = null;
+      database.write(() => {
+        database.update('StocktakeBatch', { id, option: batchOption });
+      });
     });
   }
 }
