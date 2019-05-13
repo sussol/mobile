@@ -113,7 +113,7 @@ export class ByProgramModal extends React.Component {
   componentDidMount = () => {
     const { settings, database } = this.props;
     const programs = getAllPrograms(settings, database);
-    const suppliers = database.objects('Name').filtered('isSupplier = $0', true);
+    const suppliers = database.objects('InternalSupplier');
     this.setCurrentSteps(true);
     this.setState({ programs, suppliers });
   };
