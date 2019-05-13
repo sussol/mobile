@@ -29,44 +29,69 @@ export default class StocktakeBatchModal extends React.Component {
     this.state = {
       reasonModalOpen: false,
       currentBatch: null,
+      usesReasons: null,
     };
   }
 
   componentDidMount = () => {
     const { database } = this.props;
-    this.setState({ usesReasons: database.objects('Options').length !== 0 });
+    const queryString = 'type == $0 && isActive == true';
+    const reasons = database.objects('Options').filtered(queryString, 'stocktakeLineAdjustment');
+    this.setState({ usesReasons: reasons.length !== 0 });
+  };
+
+  reasonModalConfirm = ({ item: option }) => {
+    if (option) {
+      const { currentBatch } = this.state;
+      const { id } = currentBatch;
+      const { database } = this.props;
+      database.write(() => database.update('StocktakeBatch', { id, option }));
+    }
+    this.setState({ reasonModalOpen: false });
+  };
+
+  /**
+   * Opens the reason modal for applying a reason to a stocktakeItem
+   * if the snapshot quantity and counted total quantity differ.
+   * Otherwise, removes the reason from the stocktake items batches.
+   * @param {Object} stocktakeItem
+   */
+  assignReason = stocktakeBatch => {
+    const { stocktakeItem } = this.props;
+    if (stocktakeItem.shouldApplyReason) {
+      this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch });
+    }
   };
 
   onEndEditing = (key, stocktakeBatch, newValue) => {
     const { database } = this.props;
+    const { usesReasons } = this.state;
+    const { id } = stocktakeBatch;
 
-    database.write(() => {
-      switch (key) {
-        case 'countedTotalQuantity': {
-          const newCountedQuantity = parsePositiveInteger(newValue);
-          if (newCountedQuantity === null) return;
+    if (!newValue || newValue === '') return;
 
+    switch (key) {
+      case 'countedTotalQuantity': {
+        if (parsePositiveInteger(newValue) === null) return;
+        database.write(() => {
           stocktakeBatch.countedTotalQuantity = parsePositiveInteger(newValue);
-
-          if (newCountedQuantity !== stocktakeBatch.snapshotTotalQuantity) {
-            this.setState({ currentBatch: stocktakeBatch, reasonModalOpen: true });
-          }
-          break;
-        }
-        case 'batch': {
-          if (!newValue || newValue === '' || newValue === `(${tableStrings.no_batch_name})`) {
-            stocktakeBatch.batch = '';
-          } else stocktakeBatch.batch = newValue;
-          break;
-        }
-        case 'expiryDate':
-          stocktakeBatch.expiryDate = newValue;
-          break;
-        default:
-          break;
+        });
+        database.save(stocktakeBatch);
+        if (usesReasons) this.assignReason(stocktakeBatch);
+        break;
       }
-      database.save('StocktakeBatch', stocktakeBatch);
-    });
+      case 'batch': {
+        let newBatchName = '';
+        if (newValue !== `(${tableStrings.no_batch_name})`) newBatchName = newValue;
+        database.write(() => database.update('StocktakeBatch', { id, batch: newBatchName }));
+        break;
+      }
+      case 'expiryDate':
+        database.write(() => database.update('StocktakeBatch', { id, expiryDate: newValue }));
+        break;
+      default:
+        break;
+    }
   };
 
   refreshData = () => {
@@ -191,16 +216,6 @@ export default class StocktakeBatchModal extends React.Component {
         />
       </View>
     );
-  };
-
-  reasonModalConfirm = ({ item: option }) => {
-    const { currentBatch } = this.state;
-    const { database } = this.props;
-
-    database.write(() => {
-      database.update('StocktakeBatch', { id: currentBatch.id, option });
-    });
-    this.setState({ reasonModalOpen: false });
   };
 
   getColumns = () => {
