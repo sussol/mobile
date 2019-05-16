@@ -7,7 +7,9 @@ const halfInt = fullInt / 2;
 const millisecondInMinute = 60 * 1000;
 const preAggregateInterval = 20 * millisecondInMinute;
 const fullAggregateInterval = 12 * 60 * millisecondInMinute;
-const resetLogInterval = 60 * 4; // Set sensor to 4 minute intervals
+const sensorLogInterval = 60 * 4;
+const manufacturerID = 307;
+const sensorScanTimeout = 10000;
 
 function toUInt(byteArray, startPosition) {
   // TO DO negative temperatures (this is unsigned int conversion)
@@ -95,7 +97,7 @@ export function updateSensors(sensors, database) {
 export async function refreshAndUpdateSensors(runWithLoadingIndicator, database) {
   let sensors = [];
   try {
-    sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, '');
+    sensors = await NativeModules.bleTempoDisc.getDevices(manufacturerID, sensorScanTimeout, '');
     console.log('recevied results ', sensors);
   } catch (e) {
     console.log('rejected ', e.code, e.message);
@@ -167,7 +169,7 @@ function preAggregateLogs({ result, sensor, database }) {
     const curLog = sortedLogs[i];
     if (curLog.timestamp > endTimeStamp) {
       // For logs that were previously higher then preAggregateInterval
-      while (curLog.timestamp > new Date(endTimeStamp + preAggregateInterval)) {
+      while (curLog.timestamp > new Date(endTimeStamp.getTime() + preAggregateInterval)) {
         timeStamp = endTimeStamp;
         endTimeStamp = new Date(endTimeStamp.getTime() + preAggregateInterval);
       }
@@ -466,9 +468,12 @@ function doAllSenosorAggregations({ result: resultParameter, sensor, database })
 
 async function downloadAndIntegrateLogs({ database, sensor }) {
   const { macAddress } = sensor;
+  console.log('sending log all');
   const downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
     macAddress,
-    `*logall`
+    `*logall`,
+    450, // connection delay
+    11 // number of reconnects
   );
   const parsedLogs = parseDownloadedData(downloadedData).temperatureReadings;
   if (parsedLogs.length > 0) {
@@ -484,19 +489,35 @@ export async function syncSensor(sensor, database) {
   const { macAddress } = sensor;
 
   try {
-    const sensors = await NativeModules.bleTempoDisc.getDevices(51, 20000, macAddress);
+    const sensors = await NativeModules.bleTempoDisc.getDevices(
+      manufacturerID,
+      sensorScanTimeout,
+      macAddress
+    );
     const foundSensors = Object.entries(sensors).length > 0;
     if (foundSensors) {
       updateSensors(sensors, database);
       const result = await downloadAndIntegrateLogs({ sensor, database });
       // Reset log interval (resets sensor)
 
+      const resetResult = await NativeModules.bleTempoDisc.getUARTCommandResults(
+        macAddress,
+        `*lint${sensorLogInterval}`, // this also resets sensor logs
+        450, // connection delay
+        11 // number of reconnects
+      );
+
+      const adjustFrequencyResult = await NativeModules.bleTempoDisc.getUARTCommandResults(
+        macAddress,
+        `*sadv1000`, // adjust frequencey, for more chances of sync next time
+        450, // connection delay
+        11 // number of reconnects
+      );
+
       return {
         ...result,
-        resetResult: await NativeModules.bleTempoDisc.getUARTCommandResults(
-          macAddress,
-          `*lint${resetLogInterval}`
-        ),
+        resetResult,
+        adjustFrequencyResult,
       };
     }
     return { failStep: 'looking for sensor' };

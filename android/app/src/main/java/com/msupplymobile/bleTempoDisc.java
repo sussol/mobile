@@ -9,6 +9,7 @@ import com.facebook.react.bridge.Promise;
 public class bleTempoDisc extends ReactContextBaseJavaModule {
     private ReactContext reactContext;
     private bleDeviceScanner deviceScanner;
+    private bleUART uartManager;
 
     @Override
     public String getName() {
@@ -36,8 +37,9 @@ public class bleTempoDisc extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getUARTCommandResults(String deviceAddress, String command, Promise promise) {
-        (new bleUART(reactContext, deviceScanner, deviceAddress, command, promise)).getCommandResult();
+    public void getUARTCommandResults(String deviceAddress, String command, int connectionDelay, int numberOConnectionRetries, Promise promise) {
+        uartManager = new bleUART(reactContext, deviceScanner, deviceAddress, command, connectionDelay, numberOConnectionRetries, promise);
+        uartManager.getCommandResult();
     }
 
 //   private WritableMap decodeAdvertisment(byte advertismentInfo[]) {

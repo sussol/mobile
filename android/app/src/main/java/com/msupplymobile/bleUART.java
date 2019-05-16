@@ -1,6 +1,5 @@
 package com.msupplymobile;
 
-import android.annotation.TargetApi;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
@@ -17,9 +16,10 @@ import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactContext;
 
+import java.util.TimerTask;
+import java.util.Timer;
 import java.util.UUID;
 
-@TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class bleUART {
 
     public static final String TAG = "bleUART";
@@ -37,21 +37,29 @@ public class bleUART {
     private WritableArray resultLinesArrayString;
     private ReactContext reactContext;
     private bleDeviceScanner deviceScanner;
+    private BluetoothDevice bluetoothDevice;
+    private int reconnectionCount;
+    private int connectionDelay;
+    private int numberOConnectionRetries;
 
-    public bleUART(ReactContext reactContext, bleDeviceScanner deviceScanner, String deviceAddress, String command, Promise promise) {
+    public bleUART(ReactContext reactContext, bleDeviceScanner deviceScanner, String deviceAddress, String command, int connectionDelay, int numberOConnectionRetries, Promise promise) {
         this.reactContext = reactContext;
         this.deviceAddress = deviceAddress;
         this.deviceScanner = deviceScanner;
         this.command = command;
         this.promise = promise;
+        this.connectionDelay = connectionDelay;
+        this.numberOConnectionRetries = numberOConnectionRetries;
+        reconnectionCount = 0;
         resultMap = Arguments.createMap();
         resultLinesArrayRaw = Arguments.createArray();
         resultLinesArrayString = Arguments.createArray();
+
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void getCommandResult() {
-        BluetoothDevice bluetoothDevice = null;
+        bluetoothDevice = null;
+        Log.e(TAG, "starting log of bleUART");
         try {
             bluetoothDevice = deviceScanner.getScannedDevice(deviceAddress);
             if (bluetoothDevice == null) throw new Error();
@@ -61,12 +69,26 @@ public class bleUART {
             resolve(resultMap);
             return;
         }
+        connectGattWithTimeout();
+    }
 
+    private void connectGattWithTimeout() {
+        TimerTask scanTimeout = new TimerTask() {
+            @Override
+            public void run() {
+                connectGatt();
+            }
+        };
+
+        (new Timer()).schedule(scanTimeout, connectionDelay);
+    }
+
+    private void connectGatt() {
         try {
-            bluetoothDevice.connectGatt(reactContext, false, getCommandResultCallback);
+            Log.e(TAG, "end of delay");
+            bluetoothDevice.connectGatt(reactContext, false, getCommandResultCallback, BluetoothDevice.TRANSPORT_LE);
         } catch (Exception e) {
             reject("error", "Cannot connect GATT", e.toString());
-
         }
     }
 
@@ -89,8 +111,15 @@ public class bleUART {
     private BluetoothGattCallback getCommandResultCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            Log.e(TAG, "connection status " + status + " " + newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 gatt.discoverServices();
+                reconnectionCount=numberOConnectionRetries;
+            } else if (reconnectionCount<numberOConnectionRetries) {
+                Log.e(TAG, "trying to reconnect");
+                reconnectionCount++;
+                gatt.close();
+                connectGattWithTimeout();
             } else {
                 gatt.close();
                 resultMap.putArray("rawResultLines", resultLinesArrayRaw);

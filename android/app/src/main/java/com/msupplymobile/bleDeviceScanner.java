@@ -8,7 +8,6 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.ReactContext;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
@@ -16,21 +15,23 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 
+import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Hashtable;
 import java.util.TimerTask;
 import java.util.Timer;
 
-@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 public class bleDeviceScanner {
 
     public static final String TAG = "bleDeviceScanner";
-    private static final int MANUFACTURER_LOCATION = 5;
     private static final int REQUEST_ENABLE_BT = 2;
     private Promise promise;
     private int timeout;
@@ -42,17 +43,27 @@ public class bleDeviceScanner {
     private BluetoothLeScanner leScanner;
     private String deviceAddress;
     BluetoothAdapter btAdapter;
-
+    private ScanSettings scanSettings;
+    private List<ScanFilter> scanFilters;
+    
     public bleDeviceScanner(ReactContext reactContext, int timeout) {
         this.timeout = timeout;
         this.reactContext = reactContext;
         leScanner = null;
         isScanEnabled = false;
         deviceAddress = "";
+
+        scanSettings = new ScanSettings.Builder()
+                            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                            .setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT)
+                            .setReportDelay(0)
+                            .build();
+
         reactContext.addActivityEventListener(activityEventListener);
     }
 
     public BluetoothDevice getScannedDevice(String deviceAddress) throws Exception{
+        Log.e(TAG, "getting remote device " + deviceAddress);
         return (BluetoothDevice) scanResultDeviceMap.get(deviceAddress);
     }
 
@@ -62,6 +73,11 @@ public class bleDeviceScanner {
         this.promise = promiseParam;
         scanResultAdvertismentInfoMap = Arguments.createMap();
         scanResultDeviceMap = new Hashtable();
+
+        ScanFilter.Builder scanFilter = new ScanFilter.Builder().setManufacturerData(manufacturerID, new byte[0]);
+        if(!deviceAddress.equals("")) scanFilter = scanFilter.setDeviceAddress(deviceAddress);
+
+        scanFilters = Arrays.asList(new ScanFilter[]{ scanFilter.build() });
 
         restartScan();
     }
@@ -73,7 +89,7 @@ public class bleDeviceScanner {
             btAdapter = ((BluetoothManager) reactContext.getSystemService(Context.BLUETOOTH_SERVICE))
                     .getAdapter();
         } catch (Exception e) {
-            reject("error", "Issues while getting bluetooth adapter", e.toString());
+            reject(TAG, "Issues while getting bluetooth adapter", e.toString());
             return;
         }
         if (btAdapter == null || !btAdapter.isEnabled()) {
@@ -83,20 +99,22 @@ public class bleDeviceScanner {
                         .startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 return;
             } catch (Exception e) {
-                reject("error", "Issues while initiating bluetooth enable intent", e.toString());
+                reject(TAG, "Issues while initiating bluetooth enable intent", e.toString());
                 return;
             }
         }
 
         try {
+            btAdapter = btAdapter.getDefaultAdapter();
             leScanner = btAdapter.getBluetoothLeScanner();
             isScanEnabled = true;
 
-            //leScanner.stopScan(mScanCallback);
-            leScanner.startScan(mScanCallback);
+            leScanner.startScan(scanFilters, scanSettings, mScanCallback);
+
         } catch (Exception e) {
-            reject("error", "Issues while initiating ble scan", e.toString());
+            reject(TAG, "Issues while initiating ble scan", e.toString());
         }
+
         TimerTask scanTimeout = new TimerTask() {
             @Override
             public void run() {
@@ -111,6 +129,7 @@ public class bleDeviceScanner {
     private void resolve(WritableMap resolve) {
         Log.e(TAG, "resolving promise");
         if(leScanner != null) {
+            Log.e(TAG, "stopping scan");
             leScanner.stopScan(mScanCallback);
             leScanner = null;
         }
@@ -143,30 +162,29 @@ public class bleDeviceScanner {
             if (!isScanEnabled) return;
             try {
                 byte advertismentInfo[] = scanResult.getScanRecord().getBytes();
-                Log.e(TAG, "found some device");
-         
-                if (bleUtil.toInt(advertismentInfo[MANUFACTURER_LOCATION]) != manufacturerID)
-                    return;
                 Log.e(TAG, "found device: " + scanResult.getDevice().getAddress() + " match to: " + deviceAddress);
-                if (!deviceAddress.equals("") && !scanResult.getDevice().getAddress().equals(deviceAddress))
-                    return;
-                Log.e(TAG, "device matched");
+
                 addDeviceToResults(advertismentInfo, scanResult);
+
                 if (!deviceAddress.equals("")) {
                     Log.e(TAG, "resolving promise in Scan");
                     resolve(scanResultAdvertismentInfoMap);
                     return;
                 }
-
             } catch (Exception e) {
-                reject("error", "Something went wrong while reading device advertisement", e.toString());
+                reject(TAG, "Something went wrong while reading device advertisement", e.toString());
             }
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            Log.e(TAG, "discovered device in batch");
         }
 
         @Override
         public void onScanFailed(int errorCode) {
             Log.e(TAG, "scan fail to start, error code: " + errorCode);
-            Log.e(TAG, "bt adapter isEnabled" + btAdapter.isEnabled());
+            Log.e(TAG, "bt adapter isEnabled: " + btAdapter.isEnabled());
             
         }
     };
