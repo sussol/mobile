@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable no-continue */
 import { generateUUID } from 'react-native-database';
 import { NativeModules } from 'react-native';
