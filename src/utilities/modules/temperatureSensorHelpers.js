@@ -481,9 +481,11 @@ function doFullAggregation({ result, sensor, database }) {
     .map(group => createFullAggregateSensorLogs(group))
     .flat();
   // Store each aggregated sensorlog in the database.
-  aggregatedSensorLogs.forEach(aggregatedLog => database.update('SensorLog', aggregatedLog));
-  // Delete each pre-aggregated sensorlog.
-  sortedSensorLogs.forEach(preAggregatedLog => database.delete(preAggregatedLog));
+  database.write(() => {
+    aggregatedSensorLogs.forEach(aggregatedLog => database.update('SensorLog', aggregatedLog));
+    // Delete each pre-aggregated sensorlog.
+    sortedSensorLogs.forEach(preAggregatedLog => database.delete(preAggregatedLog));
+  });
   return {
     ...result,
     fullAggregateAdditions: aggregatedSensorLogs.length,
