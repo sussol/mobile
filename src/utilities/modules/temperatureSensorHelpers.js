@@ -447,11 +447,9 @@ function doFullAggregation({ result, sensor, database }) {
   const maxTimeToAggregate =
     sensorLogs.filtered('aggregate == $0', 'preAggregate').max('timestamp') -
     TWO_HOURS_MILLISECONDS;
-  const sortedSensorLogs = sensorLogs.filtered(
-    'aggregate == $0 && timestamp < $1',
-    'preAggregate',
-    maxTimeToAggregate
-  );
+  const sortedSensorLogs = sensorLogs
+    .filtered('aggregate == $0 && timestamp < $1', 'preAggregate', maxTimeToAggregate)
+    .sorted('timestamp');
   // Initialized for creating a timestamp of the first sensor log for
   // a sequential group of logs, which are delimited by a sensorlog
   // outside of the 8 hour window this group is aggregated for.
