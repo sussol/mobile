@@ -470,10 +470,10 @@ function doFullAggregation({ result, sensor, database }) {
   // aggregate the most recently added preAggregate logs, from the most
   // most recent fullAggregation log.
   const mostRecentFullAggregateTimestamp = sensorLogs
-    .filtered('aggregate == $0', SENSOR_LOG_FULL_AGGREGATE_TYPE)
+    .filtered('aggregation == $0', SENSOR_LOG_FULL_AGGREGATE_TYPE)
     .max('timestamp');
   const mostRecentPreAggregateTimestamp = sensorLogs
-    .filtered('aggregate == $0', SENSOR_LOG_PRE_AGGREGATE_TYPE)
+    .filtered('aggregation == $0', SENSOR_LOG_PRE_AGGREGATE_TYPE)
     .max('timestamp');
   const maxTimestampForDeletion = new Date().getTime() - SENSOR_LOG_NO_DELETION_INTERVAL;
   // Starting timestamp is either from the first fullAggregate timestamp, or beginning of time
