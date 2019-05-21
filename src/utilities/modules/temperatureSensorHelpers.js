@@ -453,7 +453,7 @@ function doFullAggregation({ result, sensor, database }) {
   // Initialized for creating a timestamp of the first sensor log for
   // a sequential group of logs, which are delimited by a sensorlog
   // outside of the 8 hour window this group is aggregated for.
-  let logGroupStartTimestamp = null;
+  let logGroupStartTimestamp = Infinity;
   // 2D array for all groups of to-be-aggregated sensor logs.
   const sensorLogGroups = [];
   // A collection of sensor logs, grouped for the currently being operated on,
@@ -463,7 +463,8 @@ function doFullAggregation({ result, sensor, database }) {
     const { timestamp } = sensorLog;
     // Premature return if this sensorlog is malformed
     if (!timestamp) return;
-    // Check if this sensorLog is in the current interval.
+    // Check if this sensorLog is in the current interval. The first iteration
+    // will never be in the same interval, as there isn't one yet.
     const isInSameInterval = logGroupStartTimestamp - timestamp < FULL_AGGREGATION_INTERVAL;
     // If so, simply add it to the current group of logs.
     if (isInSameInterval) sensorLogGroup.push(sensorLog);
