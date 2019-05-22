@@ -1,12 +1,24 @@
+/* eslint-disable no-console */
 /* eslint-disable no-continue */
 import { generateUUID } from 'react-native-database';
 import { NativeModules } from 'react-native';
 
+const SENSOR_LOG_PRE_AGGREGATE_TYPE = 'preAggregate';
+const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
+const SENSOR_LOG_BREACH_AGGREGATE_TYPE = 'breachAggregate';
+
+const ONE_MINUTE_MILLISECONDS = 1000 * 60;
+const ONE_HOUR_MILLISECONDS = ONE_MINUTE_MILLISECONDS * 60;
+const EIGHT_HOURS_MILLISECONDS = ONE_HOUR_MILLISECONDS * 8;
+const FIVE_MINUTES_MILLISECONDS = ONE_MINUTE_MILLISECONDS * 5;
+const NO_FULL_AGGREGATE_PERIOD = EIGHT_HOURS_MILLISECONDS * 4 + FIVE_MINUTES_MILLISECONDS;
+// Include a small offset on the interval to account for each timestamp being
+// small amounts of time off.
+const FULL_AGGREGATION_INTERVAL = EIGHT_HOURS_MILLISECONDS + FIVE_MINUTES_MILLISECONDS;
 const fullInt = 256 * 256;
 const halfInt = fullInt / 2;
 const millisecondInMinute = 60 * 1000;
 const preAggregateInterval = 20 * millisecondInMinute;
-const fullAggregateInterval = 12 * 60 * millisecondInMinute;
 const sensorLogInterval = 60 * 4;
 const manufacturerID = 307;
 const sensorScanTimeout = 10000;
@@ -287,7 +299,7 @@ function applyBreaches({ result, sensor, database }) {
   for (let i = 0; i < sensorLogs.length; i += 1) {
     const currentLog = sensorLogs[i];
     const isLogBeyondThreshold = isBeyondThreshold(currentLog);
-    if (currentLog.aggregation === 'breachAggregate') {
+    if (currentLog.aggregation === SENSOR_LOG_BREACH_AGGREGATE_TYPE) {
       // eslint-disable-next-line prefer-destructuring
       isInBreach = currentLog.isInBreach;
       continue;
@@ -370,87 +382,170 @@ function addHeadAndTrailingLogToBreach({ result, sensor, database }) {
   return { ...result, numberOfBreachHedOrTailLogs: headOrTrailLogs.length };
 }
 
+function linkSensorLogToItemBatches({ sensorLog, database }) {
+  const { location } = sensorLog;
+  if (!location) return;
+  const itemBatches = location.getItemBatchesWithQuantity(database);
+  if (!itemBatches || itemBatches.length === 0) return;
+  database.update('SensorLog', {
+    ...sensorLog,
+    itemBatches,
+  });
+  itemBatches.forEach(itemBatch => {
+    itemBatch.addSensorLog(sensorLog);
+    itemBatch.save();
+    database.update('SensorLogItemBatchJoin', {
+      id: generateUUID(),
+      itemBatch,
+      sensorLog,
+    });
+  });
+}
+
+function createGenericSensorLog({
+  sensor,
+  location,
+  temperature,
+  isInBreach = false,
+  aggregation,
+  itemBatches,
+}) {
+  return {
+    id: generateUUID(),
+    sensor,
+    location,
+    temperature,
+    isInBreach,
+    aggregation,
+    itemBatches,
+  };
+}
+
+/**
+ *
+ * @param {Array} SensorLogGroup
+ */
+function createFullAggregateSensorLogs(sensorLogGroup) {
+  const medianSensorLog = sensorLogGroup[Math.floor(sensorLogGroup.length / 2)];
+  return [
+    createGenericSensorLog({
+      ...medianSensorLog,
+      aggregation: SENSOR_LOG_FULL_AGGREGATE_TYPE,
+      temperature: Math.max(...sensorLogGroup.map(({ max }) => max)),
+    }),
+    createGenericSensorLog({
+      ...medianSensorLog,
+      aggregation: SENSOR_LOG_FULL_AGGREGATE_TYPE,
+      temperature: Math.min(...sensorLogGroup.map(({ min }) => min)),
+    }),
+  ];
+}
+
+/**
+ * Utility method used to aggregate pre-aggregate sensor logs for a given
+ * sensor.
+ *
+ * Pre-aggregate sensor logs: sensor log for a 20 minute time interval.
+ * Aggregate sensor log: aggregated sensor log for a 8 hour interval.
+ *
+ * Takes groups of pre-aggregate sensor logs and creates two new
+ * sensor logs for each group - each having a temperature equal
+ * to the max and min temperature within the group of sensor logs.
+ * The timestamp is equal to the median timestamp of all sensor
+ * logs within the group.
+ *
+ * Each group to be aggregated is a collection of sequential sensor logs which fit
+ * within an 8 hour interval beginning with the first sensor logs timestamp. Each
+ * pre-aggregate sensor log is for a 20 minute interval, so there will be a
+ * maximum of 24 sensor logs for each full aggregate log.
+ * If within the 8 hour period a breach occurred, there will be less sensorlogs,
+ * to a minimum of 1.
+ * @param {object}       result   object containing the result of aggregation
+ * @param {Realm.Sensor} sensor   The Sensor object for which the logs should be aggregated
+ * @param {Realm}        database App-wide database entry point
+ */
 function doFullAggregation({ result, sensor, database }) {
   const { sensorLogs } = sensor;
-
-  let lastFullAggregation = null;
-  let aggregateFrom = sensorLogs
-    .filtered('aggregation == "aggregate" || aggregation == "breachAggregate"')
+  if (!sensorLogs || sensorLogs.length === 0) return null;
+  // Want to leave at least the last 32 hours unaggregated. Also want to only
+  // aggregate the most recently added preAggregate logs, from the most
+  // most recent fullAggregation log.
+  const mostRecentFullAggregateTimestamp = sensorLogs
+    .filtered('aggregation == $0', SENSOR_LOG_FULL_AGGREGATE_TYPE)
     .max('timestamp');
-  const allPreAggregateLogs = sensorLogs.filtered('aggregation == "preAggregate"');
-
-  if (!aggregateFrom) aggregateFrom = allPreAggregateLogs.min('timestamp');
-  else {
-    lastFullAggregation = aggregateFrom;
-    aggregateFrom = new Date(aggregateFrom.getTime() + 1);
-  }
-
-  if (!aggregateFrom) {
-    return { ...result, noRecordsToFullAggregate: true };
-  }
-
-  const allPreAggregateMaxDate = allPreAggregateLogs.max('timestamp');
-  const logsToAdd = [];
-
-  const halfFullAggregateInterval = Math.floor(fullAggregateInterval / 2);
-  let aggregateTo = new Date(aggregateFrom.getTime() + fullAggregateInterval);
-  let aggregateMiddlePoint = new Date(aggregateFrom.getTime() + halfFullAggregateInterval);
-  let lastAggregationTo = null;
-
-  while (allPreAggregateMaxDate >= aggregateTo) {
-    const thisPeriodLogs = allPreAggregateLogs.filtered(
-      'timestamp >= $0 && timestamp < $1',
-      aggregateFrom,
-      aggregateTo
-    );
-
-    logsToAdd.push({
-      id: generateUUID(),
-      location: sensor.location,
-      sensor,
-      temperature: thisPeriodLogs.max('temperature'),
-      timestamp: aggregateMiddlePoint,
-      aggregation: 'aggregate',
-    });
-
-    logsToAdd.push({
-      id: generateUUID(),
-      location: sensor.location,
-      sensor,
-      temperature: thisPeriodLogs.min('temperature'),
-      timestamp: aggregateMiddlePoint,
-      aggregation: 'aggregate',
-    });
-
-    lastAggregationTo = aggregateTo;
-    aggregateFrom = aggregateTo;
-    aggregateTo = new Date(aggregateFrom.getTime() + fullAggregateInterval);
-    aggregateMiddlePoint = new Date(aggregateFrom.getTime() + halfFullAggregateInterval);
-  }
-  if (lastAggregationTo == null) {
-    if (lastFullAggregation !== null) lastAggregationTo = lastFullAggregation;
-    else lastAggregationTo = new Date(2019, 1, 1);
-  }
-
-  const logsToDelete = sensorLogs
-    .filtered('aggregation == "preAggregate" && timestamp < $0', lastAggregationTo)
-    .slice();
-  const fullAggregationDeletions = logsToDelete.length;
-  database.write(() => {
-    logsToDelete.forEach(sensorLog => {
-      database.delete('SensorLog', sensorLog);
-    });
+  const mostRecentPreAggregateTimestamp = sensorLogs
+    .filtered('aggregation == $0', SENSOR_LOG_PRE_AGGREGATE_TYPE)
+    .max('timestamp');
+  // Starting timestamp is either from the first fullAggregate timestamp, or beginning of time
+  const aggregationIntervalStart = (mostRecentFullAggregateTimestamp || -Infinity) + 1;
+  // Ending timestamp is either from the most recent preAggregate or from now, less the
+  // no full aggregate period (32 hours)
+  const aggregationIntervalEnd =
+    (mostRecentPreAggregateTimestamp || new Date().getTime()) - NO_FULL_AGGREGATE_PERIOD;
+  // Query for all sensorLogs which are preAggregates, between the above two
+  // timestamps
+  const sortedSensorLogs = sensorLogs
+    .filtered(
+      'aggregation == $0  && timestamp > $1 && timestamp < $2',
+      SENSOR_LOG_PRE_AGGREGATE_TYPE,
+      aggregationIntervalStart,
+      aggregationIntervalEnd
+    )
+    .sorted('timestamp');
+  // Will hold the timestamp of a sequential group of preAggregate logs
+  // which are to-be aggregated into a fullAggregate.
+  let logGroupStartTimestamp = Infinity;
+  // sensorLogGroups is a 2D array for all groups of to-be-aggregated sensor logs.
+  // sensorLogGroup is A collection of sensor logs which will be aggregated into a
+  // full aggregated sensorLog - 1D arrays housed within the 2D array.
+  const sensorLogGroups = [];
+  let sensorLogGroup = [];
+  // Find sets of sensorLogs within the full aggregation interval. Delimited by
+  // a sensorLog which is not within the same interval.
+  sortedSensorLogs.forEach(sensorLog => {
+    const { timestamp } = sensorLog;
+    // Premature return if this sensorlog is malformed
+    if (!timestamp) return;
+    // Check if this sensorLog is in the current interval. The first iteration
+    // will never be in the same interval, as one hasn't been created/started.
+    const isInSameInterval = logGroupStartTimestamp - timestamp < FULL_AGGREGATION_INTERVAL;
+    // If so, add it to the current group of logs.
+    if (isInSameInterval) sensorLogGroup.push(sensorLog);
+    // Otherwise, hit a delimiter. If there are already logs in the current
+    // sensor log group, this is an ending delimiter, store the group and reset.
+    else if (sensorLogGroup.length !== 0) sensorLogGroups.push([...sensorLogGroup]);
+    // Resetting for a new group of sensor log. This is called on the first iteration
+    // to initialize the first group. The last group of sensorLogs will not be set aside
+    // for aggregation unless it is also delimited by a sensorLog not within that group.
+    if (!isInSameInterval) {
+      sensorLogGroup = [sensorLog];
+      logGroupStartTimestamp = timestamp;
+    }
   });
-
+  // Create an array of aggregated sensor log objects
+  const aggregatedSensorLogs = sensorLogGroups
+    .map(group => createFullAggregateSensorLogs(group))
+    .flat();
+  const deleteFromTimestamp =
+    sensorLogGroup.length > 0 ? sensorLogGroup[0].timestamp : aggregationIntervalEnd;
+  const sensorLogsToDelete = sortedSensorLogs.filtered('timestamp < $0', deleteFromTimestamp);
+  // Store each aggregated sensorlog in the database and link the item batches
+  // currently in the same location. Also create a sensorLogItemBatchJoin record.
   database.write(() => {
-    logsToAdd.forEach(sensorLog => {
-      const newSensorLog = database.update('SensorLog', sensorLog);
-      sensor.sensorLogs.push(newSensorLog);
-      linkToBatches(newSensorLog, database);
+    aggregatedSensorLogs.forEach(aggregatedLog => {
+      database.update('SensorLog', aggregatedLog);
+      linkSensorLogToItemBatches({ sensorLog: aggregatedLog, database });
     });
+    // Delete each pre-aggregated sensorlog prior to the 'no deletion interval'.
+    // Somewhat arbitrary three days to ensure there is always enough data and
+    // a little bit defensive in case something goes wrong.
+    database.delete('SensorLog', sensorLogsToDelete);
   });
-
-  return { ...result, fullAggregateAdditions: logsToAdd.length, fullAggregationDeletions };
+  return {
+    ...result,
+    fullAggregateAdditions: aggregatedSensorLogs.length,
+    preAggregateDeletions: sensorLogsToDelete.length,
+  };
 }
 
 function doAllSenosorAggregations({ result: resultParameter, sensor, database }) {
