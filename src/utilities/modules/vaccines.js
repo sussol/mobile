@@ -18,7 +18,9 @@ const MAX_BREACH_CHART_DATAPOINTS = 10;
 const MAX_FRIDGE_CHART_DATAPOINTS = 30;
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
-const FRIDGE_CHART_DATA_POINT_INTERVAL = 1000 * 60 * 60 * 9;
+const MILLISECONDS_IN_TWELVE_HOURS = MILLISECONDS_IN_DAY / 2;
+const MILLISECONDS_IN_TWENTY_MINUTES = 1000 * 60 * 20;
+const FRIDGE_CHART_TICK_FREQUENCY_BOUNDARY = MILLISECONDS_IN_TWELVE_HOURS * 3;
 
 /**
  * Extracts breaches from a set of sensor logs.
@@ -426,20 +428,19 @@ export const extractDataForBreachModal = ({
  * @param {Realm.Fridge} fridge   Provided fridge object to find chart data for.
  */
 export const extractDataForFridgeChart = ({ database, fridge }) => {
-  // Fetch the last 30 days of sensorlogs
+  // Fetch the last 30 days of sensorlogs which have some aggregation status.
   const sensorLogs = fridge.getSensorLogs(database, FRIDGE_CHART_LOOKBACK_MS);
-  // Find the duration of of all sesorlogs and the current date. Leaves space
-  // in the chart indicating when the last sync cycle was.
-  const chartRangeMilliseconds = new Date().getTime() - sensorLogs.min('timestamp');
-  // Find the number of nine hour intervals during the duration of sensorlogs.
-  const nineHourIntervals = Math.floor(chartRangeMilliseconds / FRIDGE_CHART_DATA_POINT_INTERVAL);
-  // Use the maximum of either nine hour intervals, or the length of sensorlogs.
-  // If there are not enough sensorlogs to have a datapoint for each 9 hour interval,
-  // just use a datapoint for each sensorlog.
-  const chartIntervals = Math.max(nineHourIntervals, sensorLogs.length);
-  // Use either the above value, or if there are too many nine hour intervals,
-  // limit this to 30.
-  const numberOfDataPoints = Math.min(chartIntervals, MAX_FRIDGE_CHART_DATAPOINTS);
+  // Find the domain for all sensor logs.
+  const sensorLogsDuration = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
+  // Determine if we are using 20 minute intervals, 12 hours or a constant 30 data points.
+  const isLessThanTickBoundary = sensorLogsDuration > FRIDGE_CHART_TICK_FREQUENCY_BOUNDARY;
+  const chartIntervals = isLessThanTickBoundary
+    ? MILLISECONDS_IN_TWENTY_MINUTES
+    : MILLISECONDS_IN_TWELVE_HOURS;
+  const numberOfDataPoints = Math.min(
+    Math.floor(sensorLogsDuration / chartIntervals),
+    MAX_FRIDGE_CHART_DATAPOINTS
+  );
   // Aggregate the sensorlogs into the number of intervals provided.
   const lines = aggregateLogs({ sensorLogs, numberOfDataPoints, endDate: new Date() });
   // Find each breach point within the sensorlogs.
