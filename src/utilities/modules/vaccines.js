@@ -15,8 +15,12 @@ import { createRecord } from '../../database';
 
 const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
 const MAX_BREACH_CHART_DATAPOINTS = 10;
+const MAX_FRIDGE_CHART_DATAPOINTS = 30;
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 const FRIDGE_CHART_LOOKBACK_MS = 30 * MILLISECONDS_IN_DAY;
+const MILLISECONDS_IN_TWELVE_HOURS = MILLISECONDS_IN_DAY / 2;
+const MILLISECONDS_IN_TWENTY_MINUTES = 1000 * 60 * 20;
+const FRIDGE_CHART_TICK_FREQUENCY_BOUNDARY = MILLISECONDS_IN_TWELVE_HOURS * 3;
 
 /**
  * Extracts breaches from a set of sensor logs.
@@ -413,33 +417,39 @@ export const extractDataForBreachModal = ({
 };
 
 /**
- * Returns chart props for fridge chart
+ * Returns chart props for fridge chart.
+ *
+ * Collects the last 30 days of sensor logs for a given fridge.
+ * aggregates these logs into periods. Will use a number of periods
+ * in [ 0, 30 ] - attempting to use 9 hour periods. If there are less
+ * sensorLogs than 9 hour periods, we just use the sensorlogs length.
+ *
+ * @param {Realm}        database App wide database
+ * @param {Realm.Fridge} fridge   Provided fridge object to find chart data for.
  */
 export const extractDataForFridgeChart = ({ database, fridge }) => {
+  // Fetch the last 30 days of sensorlogs which have some aggregation status.
   const sensorLogs = fridge.getSensorLogs(database, FRIDGE_CHART_LOOKBACK_MS);
-
-  const chartRangeMilliseconds = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
-
-  let numberOfDataPoints = 0;
-  // Full aggregation is 12 hour periods
-  if (chartRangeMilliseconds < 12 * 60 * 60 * 1000) {
-    // Pre aggregation is in 20 minute periods
-    numberOfDataPoints = Math.floor(chartRangeMilliseconds / (20 * 60 * 1000));
-  } else {
-    numberOfDataPoints = Math.floor(chartRangeMilliseconds / (12 * 60 * 60 * 1000));
-  }
-
-  numberOfDataPoints = numberOfDataPoints > 30 ? 30 : numberOfDataPoints;
-
+  // Find the domain for all sensor logs.
+  const sensorLogsDuration = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
+  // Determine if we are using 20 minute intervals, 12 hours or a constant 30 data points.
+  const isLessThanTickBoundary = sensorLogsDuration > FRIDGE_CHART_TICK_FREQUENCY_BOUNDARY;
+  const chartIntervals = isLessThanTickBoundary
+    ? MILLISECONDS_IN_TWENTY_MINUTES
+    : MILLISECONDS_IN_TWELVE_HOURS;
+  const numberOfDataPoints = Math.min(
+    Math.floor(sensorLogsDuration / chartIntervals),
+    MAX_FRIDGE_CHART_DATAPOINTS
+  );
+  // Aggregate the sensorlogs into the number of intervals provided.
   const lines = aggregateLogs({ sensorLogs, numberOfDataPoints, endDate: new Date() });
-
+  // Find each breach point within the sensorlogs.
   const fullBreaches = extractBreaches({ sensorLogs, database });
-
+  // Extract the exact data points on the chart for each breach.
   const breaches = [
     ...extractBreachPoints(lines.minLine, fullBreaches, TEMPERATURE_RANGE),
     ...extractBreachPoints(lines.maxLine, fullBreaches, TEMPERATURE_RANGE),
   ];
-
   return {
     ...lines,
     breaches,
