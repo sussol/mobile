@@ -12,7 +12,6 @@ const ONE_HOUR_MILLISECONDS = ONE_MINUTE_MILLISECONDS * 60;
 const EIGHT_HOURS_MILLISECONDS = ONE_HOUR_MILLISECONDS * 8;
 const FIVE_MINUTES_MILLISECONDS = ONE_MINUTE_MILLISECONDS * 5;
 const NO_FULL_AGGREGATE_PERIOD = EIGHT_HOURS_MILLISECONDS * 4 + FIVE_MINUTES_MILLISECONDS;
-const SENSOR_LOG_NO_DELETION_INTERVAL = ONE_HOUR_MILLISECONDS * 24 * 3;
 // Include a small offset on the interval to account for each timestamp being
 // small amounts of time off.
 const FULL_AGGREGATION_INTERVAL = EIGHT_HOURS_MILLISECONDS + FIVE_MINUTES_MILLISECONDS;
@@ -475,7 +474,6 @@ function doFullAggregation({ result, sensor, database }) {
   const mostRecentPreAggregateTimestamp = sensorLogs
     .filtered('aggregation == $0', SENSOR_LOG_PRE_AGGREGATE_TYPE)
     .max('timestamp');
-  const maxTimestampForDeletion = new Date().getTime() - SENSOR_LOG_NO_DELETION_INTERVAL;
   // Starting timestamp is either from the first fullAggregate timestamp, or beginning of time
   const aggregationIntervalStart = (mostRecentFullAggregateTimestamp || -Infinity) + 1;
   // Ending timestamp is either from the most recent preAggregate or from now, less the
