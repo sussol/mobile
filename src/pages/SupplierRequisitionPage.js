@@ -27,7 +27,6 @@ import {
 
 import globalStyles, { dataTableStyles } from '../globalStyles';
 
-const CATCHMENT = 100;
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 
 const MODAL_KEYS = {
@@ -50,8 +49,6 @@ export class SupplierRequisitionPage extends React.Component {
       isAscending: true,
       isVaccine: false,
     };
-
-    this.prevRequisititionDate = -Infinity;
   }
 
   componentWillMount() {
@@ -379,9 +376,18 @@ export class SupplierRequisitionPage extends React.Component {
     const { isVaccine } = this.state;
     if (!isVaccine) return null;
 
-    const prevDate =
-      this.prevRequisititionDate === -Infinity ? new Date(2000, 1, 1) : this.prevRequisititionDate;
     const { database } = this.props;
+
+    // Get date of most recent requisition.
+    const prevRequisitions = database
+      .objects('Requisition')
+      .filtered('items.id = $0', requisitionItem.id)
+      .sorted('entryDate');
+    const prevRequisitionDate =
+      prevRequisitions.length > 0 ? prevRequisitions[0].entryDate : -Infinity;
+
+    // Calculate open vial wastage.
+
     const dosesInVial = requisitionItem.item.doses;
 
     const transactionBatchesCI = database
@@ -389,35 +395,35 @@ export class SupplierRequisitionPage extends React.Component {
       .filtered(
         'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
         requisitionItem.item.id,
-        prevDate,
+        prevRequisitionDate,
         'customer_invoice'
       );
+
     const doses = transactionBatchesCI.sum('doses');
 
     const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses;
+
+    // Calculate closed vial wastage.
 
     const transactionBatchesIA = database
       .objects('TransactionBatch')
       .filtered(
         'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
         requisitionItem.item.id,
-        prevDate,
+        prevRequisitionDate,
         'supplier_credit'
       );
 
     const closeVialWastage = transactionBatchesIA.sum('numberOfPacks') * dosesInVial;
+
     const infoColumns = [
       [
         {
           title: `Previous Requisition Date:`,
           info:
-            this.prevRequisititionDate === -Infinity
+            prevRequisitionDate === -Infinity
               ? 'n/a'
-              : dateFormater(this.prevRequisititionDate, 'dd/mm/yy'),
-        },
-        {
-          title: 'Catchment Population:',
-          info: CATCHMENT,
+              : dateFormater(prevRequisitionDate, 'dd/mm/yy'),
         },
         {
           title: 'Doses Given:',
