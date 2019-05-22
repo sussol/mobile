@@ -391,13 +391,15 @@ function linkSensorLogToItemBatches({ sensorLog, database }) {
     ...sensorLog,
     itemBatches,
   });
-  itemBatches.forEach(itemBatch =>
+  itemBatches.forEach(itemBatch => {
+    itemBatch.addSensorLog(sensorLog);
+    itemBatch.save();
     database.update('SensorLogItemBatchJoin', {
       id: generateUUID(),
       itemBatch,
       sensorLog,
-    })
-  );
+    });
+  });
 }
 
 function createGenericSensorLog({
@@ -524,7 +526,9 @@ function doFullAggregation({ result, sensor, database }) {
   const aggregatedSensorLogs = sensorLogGroups
     .map(group => createFullAggregateSensorLogs(group))
     .flat();
-  const sensorLogsToDelete = sortedSensorLogs.filtered('timestamp < $0', maxTimestampForDeletion);
+  const deleteFromTimestamp =
+    sensorLogGroup.length > 0 ? sensorLogGroup[0].timestamp : aggregationIntervalEnd;
+  const sensorLogsToDelete = sortedSensorLogs.filtered('timestamp < $0', deleteFromTimestamp);
   // Store each aggregated sensorlog in the database and link the item batches
   // currently in the same location. Also create a sensorLogItemBatchJoin record.
   database.write(() => {
@@ -540,7 +544,7 @@ function doFullAggregation({ result, sensor, database }) {
   return {
     ...result,
     fullAggregateAdditions: aggregatedSensorLogs.length,
-    preAggregateDeletions: sortedSensorLogs.length,
+    preAggregateDeletions: sensorLogsToDelete.length,
   };
 }
 

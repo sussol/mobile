@@ -107,6 +107,14 @@ export class ItemBatch extends Realm.Object {
   }
 
   /**
+   * Add a sensor log to be associated with this batch.
+   * @param {SensorLog} sensorLog
+   */
+  addSensorLog(sensorLog) {
+    this.sensorLogs.push(sensorLog);
+  }
+
+  /**
    * Add a transaction batch to be associated with this batch, if not
    * already added.
    *
