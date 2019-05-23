@@ -376,13 +376,13 @@ export class SupplierRequisitionPage extends React.Component {
     const { isVaccine } = this.state;
     if (!isVaccine) return null;
 
-    const { database } = this.props;
+    const { database, requisition } = this.props;
 
     // Get date of most recent requisition.
 
     const prevRequisitions = database
       .objects('Requisition')
-      .filtered('items.id = $0', requisitionItem.id)
+      .filtered('id != $0 && items.item.id = $1', requisition.id, requisitionItem.item.id)
       .sorted('entryDate');
 
     const isPrevRequisition = prevRequisitions.length > 0;
@@ -391,40 +391,22 @@ export class SupplierRequisitionPage extends React.Component {
 
     // Get transactions for this item since most recent requisition.
 
-    const transactionBatchesIA = isPrevRequisition
-      ? database
-          .objects('TransactionBatch')
-          .filtered(
-            'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
-            requisitionItem.item.id,
-            prevRequisitionDate,
-            'supplier_credit'
-          )
-      : null;
+    const transactionBatches = database.objects('TransactionBatch').filtered('itemId = $0', requisitionItem.item.id);
+          
+    const recentTransactionBatches = prevRequisitionDate ? transactionBatches.filtered('transaction.confirmDate >= $0', prevRequisitionDate) : transactionBatches;
 
-    const transactionBatchesCI = isPrevRequisition
-      ? database
-          .objects('TransactionBatch')
-          .filtered(
-            'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
-            requisitionItem.item.id,
-            prevRequisitionDate,
-            'customer_invoice'
-          )
-      : null;
+      // Get all customer invoices since most recent requisition.
+    const transactionBatchesCI = recentTransactionBatches.filtered('transaction.type = $0', 'customer_invoice');
+
+    // Get all inventory adjustments since most recent requisition.
+    const transactionBatchesIA = recentTransactionBatches.filtered('transaction.type = $0', 'supplier_credit');
 
     // Calculate wastage.
 
-    const doses = isPrevRequisition ? transactionBatchesCI.sum('doses') : 0;
+    const doses = transactionBatchesCI.sum('doses');
     const dosesInVial = requisitionItem.item.doses;
-
-    const openVialWastage = isPrevRequisition
-      ? transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses
-      : 0;
-
-    const closeVialWastage = isPrevRequisition
-      ? transactionBatchesIA.sum('numberOfPacks') * dosesInVial
-      : 0;
+    const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses
+    const closeVialWastage = transactionBatchesIA.sum('numberOfPacks') * dosesInVial;
 
     // Initialise columns for rendering expansion.
 
@@ -432,7 +414,7 @@ export class SupplierRequisitionPage extends React.Component {
       [
         {
           title: `Previous Requisition Date:`,
-          info: prevRequisitionDate ? 'n/a' : dateFormater(prevRequisitionDate, 'dd/mm/yy'),
+          info: prevRequisitionDate ? dateFormater(prevRequisitionDate, 'dd/mm/yy'): 'n/a',
         },
         {
           title: 'Doses Given:',
