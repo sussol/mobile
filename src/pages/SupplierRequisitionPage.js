@@ -374,7 +374,7 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderExpansion = requisitionItem => {
     const { isVaccine } = this.state;
-    // if (!isVaccine) return null;
+    if (!isVaccine) return null;
 
     const { database } = this.props;
 
