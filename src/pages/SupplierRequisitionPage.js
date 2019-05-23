@@ -374,56 +374,65 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderExpansion = requisitionItem => {
     const { isVaccine } = this.state;
-    if (!isVaccine) return null;
+    // if (!isVaccine) return null;
 
     const { database } = this.props;
 
     // Get date of most recent requisition.
+
     const prevRequisitions = database
       .objects('Requisition')
       .filtered('items.id = $0', requisitionItem.id)
       .sorted('entryDate');
-    const prevRequisitionDate =
-      prevRequisitions.length > 0 ? prevRequisitions[0].entryDate : -Infinity;
 
-    // Calculate open vial wastage.
+    const isPrevRequisition = prevRequisitions.length > 0;
 
+    const prevRequisitionDate = isPrevRequisition ? prevRequisitions[0].entryDate : null;
+
+    // Get transactions for this item since most recent requisition.
+
+    const transactionBatchesIA = isPrevRequisition
+      ? database
+          .objects('TransactionBatch')
+          .filtered(
+            'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
+            requisitionItem.item.id,
+            prevRequisitionDate,
+            'supplier_credit'
+          )
+      : null;
+
+    const transactionBatchesCI = isPrevRequisition
+      ? database
+          .objects('TransactionBatch')
+          .filtered(
+            'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
+            requisitionItem.item.id,
+            prevRequisitionDate,
+            'customer_invoice'
+          )
+      : null;
+
+    // Calculate wastage.
+
+    const doses = isPrevRequisition ? transactionBatchesCI.sum('doses') : 0;
     const dosesInVial = requisitionItem.item.doses;
 
-    const transactionBatchesCI = database
-      .objects('TransactionBatch')
-      .filtered(
-        'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
-        requisitionItem.item.id,
-        prevRequisitionDate,
-        'customer_invoice'
-      );
+    const openVialWastage = isPrevRequisition
+      ? transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses
+      : 0;
 
-    const doses = transactionBatchesCI.sum('doses');
+    const closeVialWastage = isPrevRequisition
+      ? transactionBatchesIA.sum('numberOfPacks') * dosesInVial
+      : 0;
 
-    const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses;
-
-    // Calculate closed vial wastage.
-
-    const transactionBatchesIA = database
-      .objects('TransactionBatch')
-      .filtered(
-        'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
-        requisitionItem.item.id,
-        prevRequisitionDate,
-        'supplier_credit'
-      );
-
-    const closeVialWastage = transactionBatchesIA.sum('numberOfPacks') * dosesInVial;
+    // Initialise columns for rendering expansion.
 
     const infoColumns = [
       [
         {
           title: `Previous Requisition Date:`,
-          info:
-            prevRequisitionDate === -Infinity
-              ? 'n/a'
-              : dateFormater(prevRequisitionDate, 'dd/mm/yy'),
+          info: prevRequisitionDate ? 'n/a' : dateFormater(prevRequisitionDate, 'dd/mm/yy'),
         },
         {
           title: 'Doses Given:',
