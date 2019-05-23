@@ -41,6 +41,7 @@ public class bleUART {
     private int reconnectionCount;
     private int connectionDelay;
     private int numberOConnectionRetries;
+    private boolean successfullConnection;
 
     public bleUART(ReactContext reactContext, bleDeviceScanner deviceScanner, String deviceAddress, String command, int connectionDelay, int numberOConnectionRetries, Promise promise) {
         this.reactContext = reactContext;
@@ -50,6 +51,7 @@ public class bleUART {
         this.promise = promise;
         this.connectionDelay = connectionDelay;
         this.numberOConnectionRetries = numberOConnectionRetries;
+        successfullConnection=false;
         reconnectionCount = 0;
         resultMap = Arguments.createMap();
         resultLinesArrayRaw = Arguments.createArray();
@@ -114,14 +116,15 @@ public class bleUART {
             Log.e(TAG, "connection status " + status + " " + newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 gatt.discoverServices();
-                reconnectionCount=numberOConnectionRetries;
-            } else if (reconnectionCount<numberOConnectionRetries) {
+                successfullConnection =true;
+            } else if (!successfullConnection && reconnectionCount<numberOConnectionRetries) {
                 Log.e(TAG, "trying to reconnect");
                 reconnectionCount++;
                 gatt.close();
                 connectGattWithTimeout();
             } else {
                 gatt.close();
+                resultMap.putBoolean("success",successfullConnection);  
                 resultMap.putArray("rawResultLines", resultLinesArrayRaw);
                 resultMap.putArray("stringResultLines", resultLinesArrayString);
                 resolve(resultMap);

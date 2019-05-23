@@ -53,12 +53,6 @@ public class bleDeviceScanner {
         isScanEnabled = false;
         deviceAddress = "";
 
-        scanSettings = new ScanSettings.Builder()
-                            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                            .setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT)
-                            .setReportDelay(0)
-                            .build();
-
         reactContext.addActivityEventListener(activityEventListener);
     }
 
@@ -74,10 +68,16 @@ public class bleDeviceScanner {
         scanResultAdvertismentInfoMap = Arguments.createMap();
         scanResultDeviceMap = new Hashtable();
 
-        ScanFilter.Builder scanFilter = new ScanFilter.Builder().setManufacturerData(manufacturerID, new byte[0]);
-        if(!deviceAddress.equals("")) scanFilter = scanFilter.setDeviceAddress(deviceAddress);
+        ScanFilter.Builder scanFilterBuilder = new ScanFilter.Builder().setManufacturerData(manufacturerID, new byte[0]);
+        ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0);
 
-        scanFilters = Arrays.asList(new ScanFilter[]{ scanFilter.build() });
+        if(!deviceAddress.equals("")) {
+             scanFilterBuilder.setDeviceAddress(deviceAddress);
+             scanSettingsBuilder.setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT);
+        }
+
+        scanFilters = Arrays.asList(new ScanFilter[]{ scanFilterBuilder.build() });
+        scanSettings = scanSettingsBuilder.build();
 
         restartScan();
     }

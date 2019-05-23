@@ -1,3 +1,4 @@
+/* eslint-disable no-throw-literal */
 /* eslint-disable no-console */
 /* eslint-disable no-continue */
 import { generateUUID } from 'react-native-database';
@@ -6,6 +7,12 @@ import { NativeModules } from 'react-native';
 const SENSOR_LOG_PRE_AGGREGATE_TYPE = 'preAggregate';
 const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
 const SENSOR_LOG_BREACH_AGGREGATE_TYPE = 'breachAggregate';
+
+const SENSOR_SYNC_COMMAND_GET_LOGS = '*logall';
+const SENOSOR_SYNC_COMMAND_RESET_INTERVAL = '*lint240'; // 4 minutes
+const SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL = '*sadv1000';
+const SENSOR_SYNC_CONNECTION_DELAY = 450;
+const SENSOR_SYNC_NUMBER_OF_RECONNECTS = 11;
 
 const ONE_MINUTE_MILLISECONDS = 1000 * 60;
 const ONE_HOUR_MILLISECONDS = ONE_MINUTE_MILLISECONDS * 60;
@@ -19,7 +26,6 @@ const fullInt = 256 * 256;
 const halfInt = fullInt / 2;
 const millisecondInMinute = 60 * 1000;
 const preAggregateInterval = 20 * millisecondInMinute;
-const sensorLogInterval = 60 * 4;
 const manufacturerID = 307;
 const sensorScanTimeout = 10000;
 
@@ -50,6 +56,15 @@ function addRefreshSensor(sensorInfo, sensorData, database) {
   });
 }
 
+function genericErrorReturn(e) {
+  let failData = e;
+
+  if (!e.code) {
+    failData = { code: 'unexpected', description: 'unexpected error', e };
+  }
+  return { success: false, failData };
+}
+
 function parseSensorAdvertisment(advertismentData) {
   return {
     batteryLevel: advertismentData[8],
@@ -60,43 +75,42 @@ function parseSensorAdvertisment(advertismentData) {
   };
 }
 
-export function getFormatedPeriod(difference) {
-  const seconds = difference / 1000;
-  const minutes = seconds / 60;
-  const hours = minutes / 60;
-  const days = hours / 24;
-  if (days > 1) return `${days.toFixed(0)} day/s`;
-  if (hours > 1) return `${hours.toFixed(0)} hour/s`;
-  if (minutes > 1) return `${minutes.toFixed(0)} minute/s`;
-  if (seconds > 1) return `${seconds.toFixed(0)} second/s`;
-  return 'now';
-}
+// TODO either delete or maybe can use in 'breach duration' output
+// export function getFormatedPeriod(difference) {
+//   const seconds = difference / 1000;
+//   const minutes = seconds / 60;
+//   const hours = minutes / 60;
+//   const days = hours / 24;
+//   if (days > 1) return `${days.toFixed(0)} day/s`;
+//   if (hours > 1) return `${hours.toFixed(0)} hour/s`;
+//   if (minutes > 1) return `${minutes.toFixed(0)} minute/s`;
+//   if (seconds > 1) return `${seconds.toFixed(0)} second/s`;
+//   return 'now';
+// }
 
 export function parseDownloadedData(downloadedData) {
-  if (downloadedData.rawResultLines.length === 0) {
-    return {
-      failedParsing: true,
-    };
-  }
-  const temperatureReadings = [];
-  const { rawResultLines } = downloadedData;
-  const totalNumberOfRecords = toInt(rawResultLines[0], 4);
-  for (let i = 1; i < rawResultLines.length; i += 1) {
-    const line = rawResultLines[i];
-    for (let y = 0; y < line.length; y += 2) {
-      const reading = toInt(line, y);
-      if (reading === 11308) {
-        return {
-          temperatureReadings,
-          totalNumberOfRecords,
-        };
+  let e = null;
+  try {
+    const temperatureReadings = [];
+    const { rawResultLines } = downloadedData;
+    const totalNumberOfRecords = toInt(rawResultLines[0], 4);
+    for (let i = 1; i < rawResultLines.length; i += 1) {
+      const line = rawResultLines[i];
+      for (let y = 0; y < line.length; y += 2) {
+        const reading = toInt(line, y);
+        if (reading === 11308) {
+          return {
+            temperatureReadings,
+            totalNumberOfRecords,
+          };
+        }
+        temperatureReadings.push(reading);
       }
-      temperatureReadings.push(reading);
     }
+  } catch (caughtError) {
+    e = caughtError;
   }
-  return {
-    failedParsing: true,
-  };
+  throw { code: 'failureparsing', description: 'failure while parsing', e };
 }
 
 export function updateSensors(sensors, database) {
@@ -165,62 +179,67 @@ function integrateLogs(parsedLogs, sensor, database) {
   return { rawIntegratedLogCount: logsToIntegrate.length };
 }
 
-function preAggregateLogs({ result, sensor, database }) {
+export function preAggregateLogs({ sensor, database }) {
   let logsToDelete = [];
   const logsToAdd = [];
-  const sortedLogs = sensor.sensorLogs
-    .filtered('aggregation == null || aggregation == ""')
-    .sorted('timestamp');
+  try {
+    const sortedLogs = sensor.sensorLogs
+      .filtered('aggregation == null || aggregation == ""')
+      .sorted('timestamp');
 
-  let timeStamp = sortedLogs[0].timestamp;
-  let endTimeStamp = new Date(timeStamp.getTime() + preAggregateInterval);
-  let minLog = sortedLogs[0];
-  let logsToDeleteTemp = [];
+    let timeStamp = sortedLogs[0].timestamp;
+    let endTimeStamp = new Date(timeStamp.getTime() + preAggregateInterval);
+    let minLog = sortedLogs[0];
+    let logsToDeleteTemp = [];
 
-  for (let i = 0; i < sortedLogs.length; i += 1) {
-    const curLog = sortedLogs[i];
-    if (curLog.timestamp > endTimeStamp) {
-      // For logs that were previously higher then preAggregateInterval
-      while (curLog.timestamp > new Date(endTimeStamp.getTime() + preAggregateInterval)) {
+    for (let i = 0; i < sortedLogs.length; i += 1) {
+      const curLog = sortedLogs[i];
+      if (curLog.timestamp > endTimeStamp) {
+        // For logs that were previously higher then preAggregateInterval
+        while (curLog.timestamp > new Date(endTimeStamp.getTime() + preAggregateInterval)) {
+          timeStamp = endTimeStamp;
+          endTimeStamp = new Date(endTimeStamp.getTime() + preAggregateInterval);
+        }
+        logsToDelete = [...logsToDelete, ...logsToDeleteTemp];
+        logsToDeleteTemp = [curLog];
+        logsToAdd.push({
+          id: generateUUID(),
+          location: sensor.location,
+          sensor,
+          temperature: minLog.temperature,
+          timestamp: endTimeStamp,
+          aggregation: 'preAggregate',
+        });
+        minLog = curLog;
         timeStamp = endTimeStamp;
         endTimeStamp = new Date(endTimeStamp.getTime() + preAggregateInterval);
+      } else {
+        logsToDeleteTemp.push(curLog);
+        if (minLog.temperature > curLog.temperature) minLog = curLog;
       }
-      logsToDelete = [...logsToDelete, ...logsToDeleteTemp];
-      logsToDeleteTemp = [curLog];
-      logsToAdd.push({
-        id: generateUUID(),
-        location: sensor.location,
-        sensor,
-        temperature: minLog.temperature,
-        timestamp: endTimeStamp,
-        aggregation: 'preAggregate',
-      });
-      minLog = curLog;
-      timeStamp = endTimeStamp;
-      endTimeStamp = new Date(endTimeStamp.getTime() + preAggregateInterval);
-    } else {
-      logsToDeleteTemp.push(curLog);
-      if (minLog.temperature > curLog.temperature) minLog = curLog;
     }
+
+    database.write(() => {
+      logsToDelete.forEach(sensorLog => {
+        database.delete('SensorLog', sensorLog);
+      });
+    });
+
+    database.write(() => {
+      logsToAdd.forEach(sensorLog => {
+        const newSensorLog = database.update('SensorLog', sensorLog);
+        sensor.sensorLogs.push(newSensorLog);
+      });
+    });
+  } catch (e) {
+    return genericErrorReturn(e);
   }
-
-  database.write(() => {
-    logsToDelete.forEach(sensorLog => {
-      database.delete('SensorLog', sensorLog);
-    });
-  });
-
-  database.write(() => {
-    logsToAdd.forEach(sensorLog => {
-      const newSensorLog = database.update('SensorLog', sensorLog);
-      sensor.sensorLogs.push(newSensorLog);
-    });
-  });
-
   return {
-    ...result,
-    preAggregationlogsToDeleteLength: logsToDelete.length,
-    preAggregationlogsToAddLength: logsToAdd.length,
+    success: true,
+    data: {
+      preAggregationlogsToDeleteLength: logsToDelete.length,
+      preAggregationlogsToAddLength: logsToAdd.length,
+    },
   };
 }
 
@@ -240,146 +259,157 @@ function linkToBatches(sensorLog, database) {
   });
 }
 
-function applyBreaches({ result, sensor, database }) {
-  if (!sensor.location) return result;
-
-  const minTemperature = 2;
-  const maxTemperature = 8;
-
-  const breachDescribers = [
-    {
-      fromTemperature: -Infinity,
-      toTemperature: 2,
-      duration: 15,
-    },
-    {
-      fromTemperature: 8,
-      toTemperature: Infinity,
-      duration: 60,
-    },
-  ];
-
-  const isBeyondThreshold = sensorLog =>
-    minTemperature > sensorLog.temperature || sensorLog.temperature > maxTemperature;
-
-  const areLogsInBreach = sensorLogs => {
-    const last = sensorLogs.length - 1;
-
-    const { temperature } = sensorLogs[0];
-    let duration = sensorLogs[last].timestamp.getTime() - sensorLogs[0].timestamp.getTime();
-    duration /= millisecondInMinute;
-
-    return breachDescribers.some(
-      ({ fromTemperature, toTemperature, duration: thresholdDuration }) =>
-        fromTemperature <= temperature &&
-        toTemperature >= temperature &&
-        duration >= thresholdDuration
-    );
-  };
-
+export function applyBreaches({ sensor, database }) {
   const breachedLogs = [];
-  const addBreachLog = ({ id }) => {
-    breachedLogs.push(id);
-  };
+  try {
+    const minTemperature = 16;
+    const maxTemperature = 20;
 
-  let firstAggregate = sensor.sensorLogs.filtered('aggregation == "aggregate"').max('timestamp');
-  if (!firstAggregate) firstAggregate = new Date(2019, 1, 1);
-  const sensorLogs = sensor.sensorLogs
-    .filtered(
-      '(aggregation == "preAggregate" || aggregation == "breachAggregate") && timestamp > $0',
-      firstAggregate
-    )
-    .sorted('timestamp')
-    .slice();
+    const breachDescribers = [
+      {
+        fromTemperature: -Infinity,
+        toTemperature: 16,
+        duration: 15,
+      },
+      {
+        fromTemperature: 20,
+        toTemperature: Infinity,
+        duration: 60,
+      },
+    ];
 
-  let isInBreach = false;
+    const isBeyondThreshold = sensorLog =>
+      minTemperature > sensorLog.temperature || sensorLog.temperature > maxTemperature;
 
-  let possibleBreachLogs = [];
-  // Add breaches
-  for (let i = 0; i < sensorLogs.length; i += 1) {
-    const currentLog = sensorLogs[i];
-    const isLogBeyondThreshold = isBeyondThreshold(currentLog);
-    if (currentLog.aggregation === SENSOR_LOG_BREACH_AGGREGATE_TYPE) {
-      // eslint-disable-next-line prefer-destructuring
-      isInBreach = currentLog.isInBreach;
-      continue;
-    }
+    const areLogsInBreach = sensorLogs => {
+      const last = sensorLogs.length - 1;
 
-    if (isInBreach && isLogBeyondThreshold) {
-      addBreachLog(currentLog);
-      continue;
-    } else if (isInBreach && !isLogBeyondThreshold) {
-      isInBreach = false;
-      continue;
-    }
+      const { temperature } = sensorLogs[0];
+      let duration = sensorLogs[last].timestamp.getTime() - sensorLogs[0].timestamp.getTime();
+      duration /= millisecondInMinute;
 
-    if (isLogBeyondThreshold) {
-      possibleBreachLogs.push(currentLog);
-      if (possibleBreachLogs.length > 1 && areLogsInBreach(possibleBreachLogs)) {
-        isInBreach = true;
-        possibleBreachLogs.forEach(breachedLog => addBreachLog(breachedLog));
+      return breachDescribers.some(
+        ({ fromTemperature, toTemperature, duration: thresholdDuration }) =>
+          fromTemperature <= temperature &&
+          toTemperature >= temperature &&
+          duration >= thresholdDuration
+      );
+    };
+
+    const addBreachLog = ({ id }) => {
+      breachedLogs.push(id);
+    };
+
+    let firstAggregate = sensor.sensorLogs.filtered('aggregation == "aggregate"').max('timestamp');
+    if (!firstAggregate) firstAggregate = new Date(2019, 1, 1);
+    const sensorLogs = sensor.sensorLogs
+      .filtered(
+        '(aggregation == "preAggregate" || aggregation == "breachAggregate") && timestamp > $0',
+        firstAggregate
+      )
+      .sorted('timestamp')
+      .slice();
+
+    let isInBreach = false;
+
+    let possibleBreachLogs = [];
+    // Add breaches
+    for (let i = 0; i < sensorLogs.length; i += 1) {
+      const currentLog = sensorLogs[i];
+      const isLogBeyondThreshold = isBeyondThreshold(currentLog);
+      if (currentLog.aggregation === SENSOR_LOG_BREACH_AGGREGATE_TYPE) {
+        // eslint-disable-next-line prefer-destructuring
+        isInBreach = currentLog.isInBreach;
+        continue;
+      }
+
+      if (isInBreach && isLogBeyondThreshold) {
+        addBreachLog(currentLog);
+        continue;
+      } else if (isInBreach && !isLogBeyondThreshold) {
+        isInBreach = false;
+        continue;
+      }
+
+      if (isLogBeyondThreshold) {
+        possibleBreachLogs.push(currentLog);
+        if (possibleBreachLogs.length > 1 && areLogsInBreach(possibleBreachLogs)) {
+          isInBreach = true;
+          possibleBreachLogs.forEach(breachedLog => addBreachLog(breachedLog));
+          possibleBreachLogs = [];
+        }
+      } else {
         possibleBreachLogs = [];
       }
-    } else {
-      possibleBreachLogs = [];
     }
+
+    database.write(() => {
+      breachedLogs.forEach(id => {
+        const sensorLog = database.update('SensorLog', {
+          id,
+          aggregation: 'breachAggregate',
+          isInBreach: true,
+        });
+
+        linkToBatches(sensorLog, database);
+      });
+    });
+  } catch (e) {
+    return genericErrorReturn(e);
   }
 
-  database.write(() => {
-    breachedLogs.forEach(id => {
-      const sensorLog = database.update('SensorLog', {
-        id,
-        aggregation: 'breachAggregate',
-        isInBreach: true,
-      });
-
-      linkToBatches(sensorLog, database);
-    });
-  });
-
-  return { ...result, numberOfNewLogsInBreach: breachedLogs.length };
+  return { success: true, data: { numberOfNewLogsInBreach: breachedLogs.length } };
 }
 
-function addHeadAndTrailingLogToBreach({ result, sensor, database }) {
-  const headOrTrailLogs = [];
-  const addHeadOrTrailLog = ({ id }) => {
-    headOrTrailLogs.push(id);
-  };
+export function addHeadAndTrailingLogToBreach({ sensor, database }) {
+  try {
+    const headOrTrailLogs = [];
+    const addHeadOrTrailLog = ({ id }) => {
+      headOrTrailLogs.push(id);
+    };
 
-  let firstAggregate = sensor.sensorLogs.filtered('aggregation == "aggregate"').max('timestamp');
-  if (!firstAggregate) firstAggregate = new Date(2019, 1, 1);
+    let firstAggregate = sensor.sensorLogs.filtered('aggregation == "aggregate"').max('timestamp');
+    if (!firstAggregate) firstAggregate = new Date(2019, 1, 1);
 
-  const sensorLogs = sensor.sensorLogs
-    .filtered(
-      '(aggregation == "preAggregate" || aggregation == "breachAggregate") && timestamp > $0',
-      firstAggregate
-    )
-    .sorted('timestamp')
-    .slice();
+    const sensorLogs = sensor.sensorLogs
+      .filtered(
+        '(aggregation == "preAggregate" || aggregation == "breachAggregate") && timestamp > $0',
+        firstAggregate
+      )
+      .sorted('timestamp')
+      .slice();
 
-  for (let i = 0; i < sensorLogs.length; i += 1) {
-    const currentLog = sensorLogs[i];
-    if (currentLog.aggregation !== 'preAggregate') continue;
-    if (sensorLogs.length === 1) continue;
-    if (
-      (i !== 0 && sensorLogs[i - 1].isInBreach) ||
-      (i !== sensorLogs.length - 1 && sensorLogs[i + 1].isInBreach)
-    ) {
-      addHeadOrTrailLog(currentLog);
+    for (let i = 0; i < sensorLogs.length; i += 1) {
+      const currentLog = sensorLogs[i];
+      if (currentLog.aggregation !== 'preAggregate') continue;
+      if (sensorLogs.length === 1) continue;
+      if (
+        (i !== 0 && sensorLogs[i - 1].isInBreach) ||
+        (i !== sensorLogs.length - 1 && sensorLogs[i + 1].isInBreach)
+      ) {
+        addHeadOrTrailLog(currentLog);
+      }
     }
-  }
 
-  database.write(() => {
-    headOrTrailLogs.forEach(id => {
-      const sensorLog = database.update('SensorLog', {
-        id,
-        aggregation: 'breachAggregate',
+    database.write(() => {
+      headOrTrailLogs.forEach(id => {
+        const sensorLog = database.update('SensorLog', {
+          id,
+          aggregation: 'breachAggregate',
+        });
+        linkToBatches(sensorLog, database);
       });
-      linkToBatches(sensorLog, database);
     });
-  });
 
-  return { ...result, numberOfBreachHedOrTailLogs: headOrTrailLogs.length };
+    return {
+      success: true,
+      data: {
+        numberOfBreachHedOrTailLogs: headOrTrailLogs.length,
+      },
+    };
+  } catch (e) {
+    return genericErrorReturn(e);
+  }
 }
 
 function linkSensorLogToItemBatches({ sensorLog, database }) {
@@ -393,7 +423,6 @@ function linkSensorLogToItemBatches({ sensorLog, database }) {
   });
   itemBatches.forEach(itemBatch => {
     itemBatch.addSensorLog(sensorLog);
-    itemBatch.save();
     database.update('SensorLogItemBatchJoin', {
       id: generateUUID(),
       itemBatch,
@@ -409,6 +438,7 @@ function createGenericSensorLog({
   isInBreach = false,
   aggregation,
   itemBatches,
+  timestamp,
 }) {
   return {
     id: generateUUID(),
@@ -418,6 +448,7 @@ function createGenericSensorLog({
     isInBreach,
     aggregation,
     itemBatches,
+    timestamp,
   };
 }
 
@@ -427,16 +458,17 @@ function createGenericSensorLog({
  */
 function createFullAggregateSensorLogs(sensorLogGroup) {
   const medianSensorLog = sensorLogGroup[Math.floor(sensorLogGroup.length / 2)];
+  const temperatures = sensorLogGroup.map(({ temperature }) => temperature);
   return [
     createGenericSensorLog({
       ...medianSensorLog,
       aggregation: SENSOR_LOG_FULL_AGGREGATE_TYPE,
-      temperature: Math.max(...sensorLogGroup.map(({ max }) => max)),
+      temperature: Math.max(...temperatures),
     }),
     createGenericSensorLog({
       ...medianSensorLog,
       aggregation: SENSOR_LOG_FULL_AGGREGATE_TYPE,
-      temperature: Math.min(...sensorLogGroup.map(({ min }) => min)),
+      temperature: Math.min(...temperatures),
     }),
   ];
 }
@@ -464,159 +496,209 @@ function createFullAggregateSensorLogs(sensorLogGroup) {
  * @param {Realm.Sensor} sensor   The Sensor object for which the logs should be aggregated
  * @param {Realm}        database App-wide database entry point
  */
-function doFullAggregation({ result, sensor, database }) {
+export function doFullAggregation({ sensor, database }) {
   const { sensorLogs } = sensor;
-  if (!sensorLogs || sensorLogs.length === 0) return null;
-  // Want to leave at least the last 32 hours unaggregated. Also want to only
-  // aggregate the most recently added preAggregate logs, from the most
-  // most recent fullAggregation log.
-  const mostRecentFullAggregateTimestamp = sensorLogs
-    .filtered('aggregation == $0', SENSOR_LOG_FULL_AGGREGATE_TYPE)
-    .max('timestamp');
-  const mostRecentPreAggregateTimestamp = sensorLogs
-    .filtered('aggregation == $0', SENSOR_LOG_PRE_AGGREGATE_TYPE)
-    .max('timestamp');
-  // Starting timestamp is either from the first fullAggregate timestamp, or beginning of time
-  const aggregationIntervalStart = (mostRecentFullAggregateTimestamp || -Infinity) + 1;
-  // Ending timestamp is either from the most recent preAggregate or from now, less the
-  // no full aggregate period (32 hours)
-  const aggregationIntervalEnd =
-    (mostRecentPreAggregateTimestamp || new Date().getTime()) - NO_FULL_AGGREGATE_PERIOD;
-  // Query for all sensorLogs which are preAggregates, between the above two
-  // timestamps
-  const sortedSensorLogs = sensorLogs
-    .filtered(
-      'aggregation == $0  && timestamp > $1 && timestamp < $2',
-      SENSOR_LOG_PRE_AGGREGATE_TYPE,
-      aggregationIntervalStart,
-      aggregationIntervalEnd
-    )
-    .sorted('timestamp');
-  // Will hold the timestamp of a sequential group of preAggregate logs
-  // which are to-be aggregated into a fullAggregate.
-  let logGroupStartTimestamp = Infinity;
-  // sensorLogGroups is a 2D array for all groups of to-be-aggregated sensor logs.
-  // sensorLogGroup is A collection of sensor logs which will be aggregated into a
-  // full aggregated sensorLog - 1D arrays housed within the 2D array.
-  const sensorLogGroups = [];
-  let sensorLogGroup = [];
-  // Find sets of sensorLogs within the full aggregation interval. Delimited by
-  // a sensorLog which is not within the same interval.
-  sortedSensorLogs.forEach(sensorLog => {
-    const { timestamp } = sensorLog;
-    // Premature return if this sensorlog is malformed
-    if (!timestamp) return;
-    // Check if this sensorLog is in the current interval. The first iteration
-    // will never be in the same interval, as one hasn't been created/started.
-    const isInSameInterval = logGroupStartTimestamp - timestamp < FULL_AGGREGATION_INTERVAL;
-    // If so, add it to the current group of logs.
-    if (isInSameInterval) sensorLogGroup.push(sensorLog);
-    // Otherwise, hit a delimiter. If there are already logs in the current
-    // sensor log group, this is an ending delimiter, store the group and reset.
-    else if (sensorLogGroup.length !== 0) sensorLogGroups.push([...sensorLogGroup]);
-    // Resetting for a new group of sensor log. This is called on the first iteration
-    // to initialize the first group. The last group of sensorLogs will not be set aside
-    // for aggregation unless it is also delimited by a sensorLog not within that group.
-    if (!isInSameInterval) {
-      sensorLogGroup = [sensorLog];
-      logGroupStartTimestamp = timestamp;
-    }
-  });
-  // Create an array of aggregated sensor log objects
-  const aggregatedSensorLogs = sensorLogGroups
-    .map(group => createFullAggregateSensorLogs(group))
-    .flat();
-  const deleteFromTimestamp =
-    sensorLogGroup.length > 0 ? sensorLogGroup[0].timestamp : aggregationIntervalEnd;
-  const sensorLogsToDelete = sortedSensorLogs.filtered('timestamp < $0', deleteFromTimestamp);
-  // Store each aggregated sensorlog in the database and link the item batches
-  // currently in the same location. Also create a sensorLogItemBatchJoin record.
-  database.write(() => {
-    aggregatedSensorLogs.forEach(aggregatedLog => {
-      database.update('SensorLog', aggregatedLog);
-      linkSensorLogToItemBatches({ sensorLog: aggregatedLog, database });
-    });
-    // Delete each pre-aggregated sensorlog prior to the 'no deletion interval'.
-    // Somewhat arbitrary three days to ensure there is always enough data and
-    // a little bit defensive in case something goes wrong.
-    database.delete('SensorLog', sensorLogsToDelete);
-  });
-  return {
-    ...result,
-    fullAggregateAdditions: aggregatedSensorLogs.length,
-    preAggregateDeletions: sensorLogsToDelete.length,
-  };
-}
-
-function doAllSenosorAggregations({ result: resultParameter, sensor, database }) {
-  // aggregation
-  // eslint-disable-next-line no-unused-vars
-  let result = resultParameter;
-  result = preAggregateLogs({ result, sensor, database });
-  result = applyBreaches({ result, sensor, database });
-  result = addHeadAndTrailingLogToBreach({ result, sensor, database });
-  result = doFullAggregation({ result, sensor, database });
-
-  return result;
-  // the aggregation
-}
-
-async function downloadAndIntegrateLogs({ database, sensor }) {
-  const { macAddress } = sensor;
-  console.log('sending log all');
-  const downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
-    macAddress,
-    `*logall`,
-    450, // connection delay
-    11 // number of reconnects
-  );
-  const parsedLogs = parseDownloadedData(downloadedData).temperatureReadings;
-  if (parsedLogs.length > 0) {
-    const result = integrateLogs(parsedLogs, sensor, database);
-
-    return doAllSenosorAggregations({ result, sensor, database });
-    // resetSensor
+  if (!sensorLogs || sensorLogs.length === 0) {
+    return { success: true, data: { fullAggregateAdditions: 0, preAggregateDeletions: 0 } };
   }
-  return { failStep: 'downloading logs' };
+  try {
+    // Want to leave at least the last 32 hours unaggregated. Also want to only
+    // aggregate the most recently added preAggregate logs, from the most
+    // most recent fullAggregation log.
+    const mostRecentFullAggregateTimestamp = sensorLogs
+      .filtered('aggregation == $0', SENSOR_LOG_FULL_AGGREGATE_TYPE)
+      .max('timestamp');
+    const mostRecentPreAggregateTimestamp = sensorLogs
+      .filtered('aggregation == $0', SENSOR_LOG_PRE_AGGREGATE_TYPE)
+      .max('timestamp');
+    // Starting timestamp is either from the first fullAggregate timestamp, or beginning of time
+    const aggregationIntervalStart = mostRecentFullAggregateTimestamp || new Date(2001, 1, 1);
+    // Ending timestamp is either from the most recent preAggregate or from now, less the
+    // no full aggregate period (32 hours)
+    const aggregationIntervalEnd = new Date(
+      (mostRecentPreAggregateTimestamp || new Date()).getTime() - NO_FULL_AGGREGATE_PERIOD
+    );
+    // Query for all sensorLogs which are preAggregates, between the above two
+    // timestamps
+    const sortedSensorLogs = sensorLogs
+      .filtered(
+        'aggregation == $0  && timestamp > $1 && timestamp < $2',
+        SENSOR_LOG_PRE_AGGREGATE_TYPE,
+        aggregationIntervalStart,
+        aggregationIntervalEnd
+      )
+      .sorted('timestamp');
+
+    // Will hold the timestamp of a sequential group of preAggregate logs
+    // which are to-be aggregated into a fullAggregate.
+    let logGroupStartTimestamp = -Infinity;
+    // sensorLogGroups is a 2D array for all groups of to-be-aggregated sensor logs.
+    // sensorLogGroup is A collection of sensor logs which will be aggregated into a
+    // full aggregated sensorLog - 1D arrays housed within the 2D array.
+    const sensorLogGroups = [];
+    let sensorLogGroup = [];
+    // Find sets of sensorLogs within the full aggregation interval. Delimited by
+    // a sensorLog which is not within the same interval.
+    sortedSensorLogs.forEach(sensorLog => {
+      const { timestamp } = sensorLog;
+      // Premature return if this sensorlog is malformed
+      if (!timestamp) return;
+      // Check if this sensorLog is in the current interval. The first iteration
+      // will never be in the same interval, as one hasn't been created/started.
+      const isInSameInterval = timestamp - logGroupStartTimestamp < FULL_AGGREGATION_INTERVAL;
+      // If so, add it to the current group of logs.
+      if (isInSameInterval) sensorLogGroup.push(sensorLog);
+      // Otherwise, hit a delimiter. If there are already logs in the current
+      // sensor log group, this is an ending delimiter, store the group and reset.
+      else if (sensorLogGroup.length !== 0) sensorLogGroups.push([...sensorLogGroup]);
+      // Resetting for a new group of sensor log. This is called on the first iteration
+      // to initialize the first group. The last group of sensorLogs will not be set aside
+      // for aggregation unless it is also delimited by a sensorLog not within that group.
+      if (!isInSameInterval) {
+        sensorLogGroup = [sensorLog];
+        logGroupStartTimestamp = timestamp;
+      }
+    });
+    // Create an array of aggregated sensor log objects
+    let aggregatedSensorLogs = [];
+    sensorLogGroups.forEach(group => {
+      aggregatedSensorLogs = [...aggregatedSensorLogs, ...createFullAggregateSensorLogs(group)];
+    });
+    const deleteFromTimestamp = new Date(
+      sensorLogGroup.length > 0 ? sensorLogGroup[0].timestamp : aggregationIntervalEnd
+    );
+    const sensorLogsToDelete = sortedSensorLogs.filtered('timestamp < $0', deleteFromTimestamp);
+    const preAggregateDeletions = sensorLogsToDelete.length;
+    // Store each aggregated sensorlog in the database and link the item batches
+    // currently in the same location. Also create a sensorLogItemBatchJoin record.
+    database.write(() => {
+      aggregatedSensorLogs.forEach(aggregatedLog => {
+        const sensorLog = database.update('SensorLog', aggregatedLog);
+        sensor.sensorLogs.push(sensorLog);
+        linkSensorLogToItemBatches({ sensorLog, database });
+      });
+      // Delete each pre-aggregated sensorlog prior to the 'no deletion interval'.
+      // Somewhat arbitrary three days to ensure there is always enough data and
+      // a little bit defensive in case something goes wrong.
+      database.delete('SensorLog', sensorLogsToDelete);
+    });
+
+    return {
+      success: true,
+      data: {
+        fullAggregateAdditions: aggregatedSensorLogs.length,
+        preAggregateDeletions,
+      },
+    };
+  } catch (e) {
+    return genericErrorReturn(e);
+  }
 }
 
-export async function syncSensor(sensor, database) {
+export async function syncSensorLogs({
+  database,
+  sensor,
+  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
+  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+}) {
   const { macAddress } = sensor;
+  try {
+    const downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
+      macAddress,
+      SENSOR_SYNC_COMMAND_GET_LOGS,
+      connectionDelay,
+      numberOfReconnects
+    );
 
+    if (!downloadedData || !downloadedData.success) {
+      throw { code: 'syncdata', description: 'failed to sync data from sensor' };
+    }
+    const parsedLogsReturn = parseDownloadedData(downloadedData);
+    return {
+      success: true,
+      data: {
+        ...integrateLogs(parsedLogsReturn.temperatureReadings, sensor, database),
+        totalNumberOfSyncedLogs: parsedLogsReturn.totalNumberOfRecords,
+      },
+    };
+  } catch (e) {
+    return genericErrorReturn(e);
+  }
+}
+
+export async function findAndUpdateSensor({ sensor, database }) {
+  const { macAddress } = sensor;
   try {
     const sensors = await NativeModules.bleTempoDisc.getDevices(
       manufacturerID,
       sensorScanTimeout,
       macAddress
     );
-    const foundSensors = Object.entries(sensors).length > 0;
-    if (foundSensors) {
-      updateSensors(sensors, database);
-      const result = await downloadAndIntegrateLogs({ sensor, database });
-      // Reset log interval (resets sensor)
+    const foundSensor = Object.entries(sensors).length > 0;
+    if (foundSensor) updateSensors(sensors, database);
+    else throw { code: 'notfound', description: 'sensor not found' };
+  } catch (e) {
+    return genericErrorReturn(e);
+  }
+  return {
+    success: true,
+  };
+}
 
-      const resetResult = await NativeModules.bleTempoDisc.getUARTCommandResults(
+export async function executeSensorUARTCommand({
+  sensor,
+  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
+  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+  command,
+}) {
+  const { macAddress } = sensor;
+  let uartResult = null;
+
+  try {
+    uartResult = await NativeModules.bleTempoDisc.getUARTCommandResults(
+      macAddress,
+      command, // this also resets sensor logs
+      connectionDelay, // connection delay
+      numberOfReconnects // number of reconnects
+    );
+
+    if (!uartResult || !uartResult.success) {
+      throw {
+        code: 'communicationerror',
+        description: 'failed to communicate with sensor while sending UART command',
         macAddress,
-        `*lint${sensorLogInterval}`, // this also resets sensor logs
-        450, // connection delay
-        11 // number of reconnects
-      );
-
-      const adjustFrequencyResult = await NativeModules.bleTempoDisc.getUARTCommandResults(
-        macAddress,
-        `*sadv1000`, // adjust frequencey, for more chances of sync next time
-        450, // connection delay
-        11 // number of reconnects
-      );
-
-      return {
-        ...result,
-        resetResult,
-        adjustFrequencyResult,
+        command,
       };
     }
-    return { failStep: 'looking for sensor' };
   } catch (e) {
-    return { failStep: 'syncing sensor', e };
+    return genericErrorReturn(e);
   }
+
+  return { success: true, data: uartResult };
+}
+
+export async function resetSensorInterval({
+  sensor,
+  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
+  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+}) {
+  return executeSensorUARTCommand({
+    sensor,
+    connectionDelay,
+    numberOfReconnects,
+    command: SENOSOR_SYNC_COMMAND_RESET_INTERVAL,
+  });
+}
+
+export async function resetSensorAdvertismentFrequency({
+  sensor,
+  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
+  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+}) {
+  return executeSensorUARTCommand({
+    sensor,
+    connectionDelay,
+    numberOfReconnects,
+    command: SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL,
+  });
 }

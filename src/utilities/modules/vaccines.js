@@ -13,7 +13,7 @@ import { createRecord } from '../../database';
  * module.
  */
 
-const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
+const TEMPERATURE_RANGE = { minTemperature: 16, maxTemperature: 20 };
 const MAX_BREACH_CHART_DATAPOINTS = 10;
 const MAX_FRIDGE_CHART_DATAPOINTS = 30;
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
@@ -433,7 +433,7 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
   // Find the domain for all sensor logs.
   const sensorLogsDuration = sensorLogs.max('timestamp') - sensorLogs.min('timestamp');
   // Determine if we are using 20 minute intervals, 12 hours or a constant 30 data points.
-  const isLessThanTickBoundary = sensorLogsDuration > FRIDGE_CHART_TICK_FREQUENCY_BOUNDARY;
+  const isLessThanTickBoundary = sensorLogsDuration < FRIDGE_CHART_TICK_FREQUENCY_BOUNDARY;
   const chartIntervals = isLessThanTickBoundary
     ? MILLISECONDS_IN_TWENTY_MINUTES
     : MILLISECONDS_IN_TWELVE_HOURS;

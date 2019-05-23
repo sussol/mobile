@@ -46,7 +46,7 @@ import globalStyles, {
   SUSSOL_ORANGE,
 } from './globalStyles';
 
-import { syncSensor } from './utilities/modules/temperatureSensorHelpers';
+import * as sensorSyncMethods from './utilities/modules/temperatureSensorHelpers';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -141,11 +141,44 @@ class MSupplyMobileAppContainer extends React.Component {
     this.database.isLoading = false;
   };
 
+  syncSensor = async sensor => {
+    const { database } = this;
+    const params = { sensor, database };
+    let result = null;
+    // Sync
+    result = await sensorSyncMethods.findAndUpdateSensor(params);
+    console.log(result, sensor.macAddress);
+    if (!result.success) return;
+    result = await sensorSyncMethods.syncSensorLogs(params);
+    console.log(result);
+    if (!result.success) return;
+    // Aggregation
+    result = sensorSyncMethods.preAggregateLogs(params);
+    console.log(result);
+    if (!result.success) return;
+    result = await sensorSyncMethods.applyBreaches(params);
+    console.log(result);
+    if (!result.success) return;
+    result = await sensorSyncMethods.addHeadAndTrailingLogToBreach(params);
+    console.log(result);
+    if (!result.success) return;
+    result = await sensorSyncMethods.doFullAggregation(params);
+    console.log(result);
+    // Reconfiguring sensor
+    if (!result.success) return;
+    result = await sensorSyncMethods.resetSensorInterval(params);
+    console.log(result);
+    if (!result.success) return;
+    result = await sensorSyncMethods.resetSensorAdvertismentFrequency(params);
+    console.log(result);
+  };
+
   synchroniseSensors = async () => {
     await this.runWithLoadingIndicator(async () => {
       const linkedSensors = this.database.objects('Sensor').filtered('location != null');
       for (let i = 0; i < linkedSensors.length; i += 1) {
-        const result = await syncSensor(linkedSensors[i], this.database);
+        // eslint-disable-next-line no-await-in-loop
+        const result = await this.syncSensor(linkedSensors[i]);
         console.log(result);
       }
     }, true);
