@@ -13,7 +13,7 @@ import { createRecord } from '../../database';
  * module.
  */
 
-const TEMPERATURE_RANGE = { minTemperature: 16, maxTemperature: 20 };
+const TEMPERATURE_RANGE = { minTemperature: 2, maxTemperature: 8 };
 const MAX_BREACH_CHART_DATAPOINTS = 10;
 const MAX_FRIDGE_CHART_DATAPOINTS = 30;
 const MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
