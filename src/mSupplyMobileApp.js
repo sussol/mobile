@@ -78,12 +78,21 @@ class MSupplyMobileAppContainer extends React.Component {
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
+
+    const latestTemperatureSync = database.objects('SensorLog').max('timestamp');
     this.state = {
       confirmFinalise: false,
       currentUser: null,
       isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
+      temperatureSyncState: {
+        message: 'Temperature Sync Details',
+        lastSync: latestTemperatureSync,
+        isSyncing: false,
+        progress: 1,
+        total: 1,
+      },
     };
   }
 
@@ -144,44 +153,105 @@ class MSupplyMobileAppContainer extends React.Component {
   syncSensor = async sensor => {
     const { database } = this;
     const params = { sensor, database };
+    const updateMessageSyncState = ({ message, lastSync, total = 100, progress = 100 }) => {
+      // eslint-disable-next-line react/destructuring-assignment, prefer-destructuring
+      if (!lastSync) lastSync = this.state.temperatureSyncState.lastSync;
+      this.setState({
+        temperatureSyncState: {
+          ...this.state.temperatureSyncState, // eslint-disable-line react/no-access-state-in-setstate, react/destructuring-assignment, max-len
+          message,
+          lastSync,
+          isSyncing: progress < 100,
+          total,
+          progress,
+        },
+      });
+    };
     let result = null;
+    // TODO move all of this out and into redux (similar to normal sync)
     // Sync
+    updateMessageSyncState({ message: 'Searching for sensor', progress: 0 });
     result = await sensorSyncMethods.findAndUpdateSensor(params);
     console.log(result, sensor.macAddress);
-    if (!result.success) return;
+    if (!result.success) {
+      updateMessageSyncState({ message: 'Cannot find sensor in proximity' });
+      return;
+    }
+    updateMessageSyncState({
+      message: `Syncing logs: ${sensor.numberOfLogs}`,
+      progress: 10,
+    });
     result = await sensorSyncMethods.syncSensorLogs(params);
     console.log(result);
-    if (!result.success) return;
+    if (!result.success) {
+      updateMessageSyncState({ message: 'Failed to sync temperature data' });
+      return;
+    }
     // Aggregation
-    result = sensorSyncMethods.preAggregateLogs(params);
+    const lastSync = database.objects('SensorLog').max('timestamp');
+    updateMessageSyncState({ lastSync, message: 'Pre aggregating Logs', progress: 40 });
+    result = await sensorSyncMethods.preAggregateLogs(params);
     console.log(result);
-    if (!result.success) return;
+    if (!result.success) {
+      updateMessageSyncState({
+        message: 'Temperature sync successfull, but failure during aggregation',
+        progress: 45,
+      });
+      return;
+    }
+    updateMessageSyncState({ message: 'Searching for breaches', progress: 50 });
     result = await sensorSyncMethods.applyBreaches(params);
     console.log(result);
-    if (!result.success) return;
+    if (!result.success) {
+      updateMessageSyncState({
+        message: 'Temperature sync successfull, but failed to search for breaches',
+      });
+      return;
+    }
     result = await sensorSyncMethods.addHeadAndTrailingLogToBreach(params);
     console.log(result);
-    if (!result.success) return;
+    if (!result.success) {
+      updateMessageSyncState({
+        message: 'Temperature sync successfull, but failed to search for breaches',
+      });
+      return;
+    }
+    updateMessageSyncState({ message: 'Finalising aggregation', progress: 55 });
     result = await sensorSyncMethods.doFullAggregation(params);
     console.log(result);
     // Reconfiguring sensor
-    if (!result.success) return;
+    if (!result.success) {
+      updateMessageSyncState({
+        message: 'Temperature sync successfull, but failed finalise aggregation',
+      });
+      return;
+    }
+    updateMessageSyncState({ message: 'Resetting Sensor', progress: 60 });
     result = await sensorSyncMethods.resetSensorInterval(params);
     console.log(result);
-    if (!result.success) return;
-    result = await sensorSyncMethods.resetSensorAdvertismentFrequency(params);
+    if (!result.success) {
+      updateMessageSyncState({ message: 'Sync successfull, but failed to reset sensor' });
+      return;
+    }
+    updateMessageSyncState({ message: 'Reconfiguring sensor', progress: 80 });
     console.log(result);
+    result = await sensorSyncMethods.resetSensorAdvertismentFrequency(params);
+    if (!result.success) {
+      updateMessageSyncState({
+        message: 'Temperature sync successfull, but failed to reconfigure sensor',
+      });
+      return;
+    }
+    updateMessageSyncState({ message: 'Full temperature sync successfull' });
   };
 
   synchroniseSensors = async () => {
-    await this.runWithLoadingIndicator(async () => {
-      const linkedSensors = this.database.objects('Sensor').filtered('location != null');
-      for (let i = 0; i < linkedSensors.length; i += 1) {
-        // eslint-disable-next-line no-await-in-loop
-        const result = await this.syncSensor(linkedSensors[i]);
-        console.log(result);
-      }
-    }, true);
+    const linkedSensors = this.database.objects('Sensor').filtered('location != null');
+    for (let i = 0; i < linkedSensors.length; i += 1) {
+      // eslint-disable-next-line no-await-in-loop
+      const result = await this.syncSensor(linkedSensors[i]);
+      console.log(result);
+    }
   };
 
   synchronise = async () => {
@@ -264,6 +334,7 @@ class MSupplyMobileAppContainer extends React.Component {
       isInitialised,
       isLoading,
       syncModalIsOpen,
+      temperatureSyncState,
     } = this.state;
 
     if (!isInitialised) {
@@ -319,6 +390,7 @@ class MSupplyMobileAppContainer extends React.Component {
           database={this.database}
           isOpen={syncModalIsOpen}
           state={syncState}
+          temperatureSyncState={temperatureSyncState}
           onPressManualSync={this.synchronise}
           onPressTemperatureSync={this.synchroniseSensors}
           onClose={() => this.setState({ syncModalIsOpen: false })}
