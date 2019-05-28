@@ -139,7 +139,7 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Finds the mode option within this stocktake items batches
+   * Returns the title of the most common option within this stocktakeItem's batches
    * @return {string} The title of the reason with the highest frequency
    */
   get mostUsedReasonTitle() {
