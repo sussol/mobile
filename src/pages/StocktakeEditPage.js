@@ -223,7 +223,7 @@ export class StocktakeEditPage extends React.Component {
     );
     let sortDataType;
     switch (sortBy) {
-      case 'reason':
+      case 'mostUsedReasonTitle':
       case 'itemCode':
       case 'itemName':
         sortDataType = 'string';
@@ -272,7 +272,7 @@ export class StocktakeEditPage extends React.Component {
         const prefix = difference > 0 ? '+' : '';
         return { cellContents: `${prefix}${difference}` };
       }
-      case 'reason': {
+      case 'mostUsedReasonTitle': {
         return (
           <TouchableOpacity
             key={stocktakeItem.id}
@@ -287,8 +287,8 @@ export class StocktakeEditPage extends React.Component {
               <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
             )}
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
-              {stocktakeItem.mostUsedReason
-                ? stocktakeItem.mostUsedReason.title
+              {stocktakeItem.mostUsedReasonTitle
+                ? stocktakeItem.mostUsedReasonTitle
                 : programStrings.not_applicable}
             </Text>
           </TouchableOpacity>
@@ -462,7 +462,7 @@ export class StocktakeEditPage extends React.Component {
     ];
     if (usesReasons) {
       columns.push({
-        key: 'reason',
+        key: 'mostUsedReasonTitle',
         width: 1.2,
         title: tableStrings.reason,
         sortable: true,
