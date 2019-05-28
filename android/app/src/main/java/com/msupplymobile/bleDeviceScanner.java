@@ -57,7 +57,7 @@ public class bleDeviceScanner {
     }
 
     public BluetoothDevice getScannedDevice(String deviceAddress) throws Exception{
-        Log.e(TAG, "getting remote device " + deviceAddress);
+        Log.i(TAG, "getting remote device " + deviceAddress);
         return (BluetoothDevice) scanResultDeviceMap.get(deviceAddress);
     }
 
@@ -118,7 +118,7 @@ public class bleDeviceScanner {
         TimerTask scanTimeout = new TimerTask() {
             @Override
             public void run() {
-                Log.e(TAG, "resolving promise in Timer");
+                Log.i(TAG, "resolving promise in Timer");
                 resolve(advertismentInfoMap);
             }
         };
@@ -127,9 +127,9 @@ public class bleDeviceScanner {
     }
 
     private void resolve(WritableMap resolve) {
-        Log.e(TAG, "resolving promise");
+        Log.i(TAG, "resolving promise");
         if(leScanner != null) {
-            Log.e(TAG, "stopping scan");
+            Log.i(TAG, "stopping scan");
             leScanner.stopScan(mScanCallback);
             leScanner = null;
         }
@@ -144,7 +144,7 @@ public class bleDeviceScanner {
     }
 
     private void reject(String error, String message, String e) {
-        Log.e(TAG, "rejection promise " + error + " " + message + " " + e);
+        Log.i(TAG, "rejection promise " + error + " " + message + " " + e);
         if(leScanner != null) {
             leScanner.stopScan(mScanCallback);
             leScanner = null;
@@ -158,16 +158,16 @@ public class bleDeviceScanner {
     private ScanCallback mScanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult scanResult) {
-            Log.e(TAG, "discovered device");
+            Log.i(TAG, "discovered device");
             if (!isScanEnabled) return;
             try {
                 byte advertismentInfo[] = scanResult.getScanRecord().getBytes();
-                Log.e(TAG, "found device: " + scanResult.getDevice().getAddress() + " match to: " + deviceAddress);
+                Log.i(TAG, "found device: " + scanResult.getDevice().getAddress() + " match to: " + deviceAddress);
 
                 addDeviceToResults(advertismentInfo, scanResult);
 
                 if (!deviceAddress.equals("")) {
-                    Log.e(TAG, "resolving promise in Scan");
+                    Log.i(TAG, "resolving promise in Scan");
                     resolve(advertismentInfoMap);
                     return;
                 }
@@ -178,13 +178,13 @@ public class bleDeviceScanner {
 
         @Override
         public void onBatchScanResults(List<ScanResult> results) {
-            Log.e(TAG, "discovered device in batch");
+            Log.i(TAG, "discovered device in batch");
         }
 
         @Override
         public void onScanFailed(int errorCode) {
-            Log.e(TAG, "scan fail to start, error code: " + errorCode);
-            Log.e(TAG, "bt adapter isEnabled: " + btAdapter.isEnabled());
+            Log.i(TAG, "scan fail to start, error code: " + errorCode);
+            Log.i(TAG, "bt adapter isEnabled: " + btAdapter.isEnabled());
             
         }
     };
@@ -194,7 +194,7 @@ public class bleDeviceScanner {
         public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent intent) {
             if (requestCode == REQUEST_ENABLE_BT) {
                 reactContext.removeActivityEventListener(this);
-                Log.e(TAG, "result code = " + resultCode + " " + (intent != null));
+                Log.i(TAG, "result code = " + resultCode + " " + (intent != null));
                 if (resultCode == -1) {
                     restartScan();
                 } else {
