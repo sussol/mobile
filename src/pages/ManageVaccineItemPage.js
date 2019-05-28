@@ -125,7 +125,6 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   getFridgeDescription = ({ location, vvmStatus, option }) => {
-    console.log(location);
     if (this.HAS_FRIDGES && vvmStatus !== false && !option) {
       return (location && location.description) || 'Unnasigned';
     }

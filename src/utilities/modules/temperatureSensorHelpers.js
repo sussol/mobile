@@ -124,11 +124,10 @@ export async function refreshAndUpdateSensors(runWithLoadingIndicator, database)
   let sensors = [];
   try {
     sensors = await NativeModules.bleTempoDisc.getDevices(manufacturerID, sensorScanTimeout, '');
-    console.log('recevied results ', sensors);
+    updateSensors(sensors, database);
   } catch (e) {
-    console.log('rejected ', e.code, e.message);
+    // TO DO warn user or bugsnag for error
   }
-  updateSensors(sensors, database);
 }
 
 function integrateLogs(parsedLogs, sensor, database) {
