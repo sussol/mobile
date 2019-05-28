@@ -59,7 +59,7 @@ export class Location extends Realm.Object {
     return getTotal(this.getItemBatchesWithQuantity(database), 'totalQuantity');
   }
 
-  isCriticalTemperature(database) {
+  isInBreach(database) {
     const sensor = this.getSensor(database);
     if (!sensor) return false;
     return sensor.isInBreach;

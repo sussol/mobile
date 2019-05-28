@@ -222,8 +222,7 @@ export class VaccineModulePage extends React.Component {
     }
 
     const currentTemperature = fridge.getCurrentTemperature(database);
-    const isCriticalTemperature =
-      currentTemperature !== null && fridge.isCriticalTemperature(database);
+    const isInBreach = currentTemperature !== null && fridge.isInBreach(database);
 
     const { selectedFridge } = this.state;
     const isFridgeSelected = fridge.id === selectedFridge.id;
@@ -236,7 +235,7 @@ export class VaccineModulePage extends React.Component {
             {this.renderFridgeName(fridge, isFridgeSelected)}
             {currentTemperature !== null ? this.renderTemperature(30, currentTemperature) : null}
 
-            {isCriticalTemperature
+            {isInBreach
               ? this.renderIcon('warning', BREACH_ICON_STYLE, () => this.onHazardPress(lastBreach))
               : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
