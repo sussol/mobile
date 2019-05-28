@@ -37,7 +37,7 @@ public class bleDeviceScanner {
     private int timeout;
     private int manufacturerID;
     private boolean isScanEnabled;
-    private WritableMap scanResultAdvertismentInfoMap;
+    private WritableMap advertismentInfoMap;
     private Map scanResultDeviceMap;
     private ReactContext reactContext;
     private BluetoothLeScanner leScanner;
@@ -65,7 +65,7 @@ public class bleDeviceScanner {
         this.deviceAddress = deviceAddress;
         this.manufacturerID = manufacturerID;
         this.promise = promiseParam;
-        scanResultAdvertismentInfoMap = Arguments.createMap();
+        advertismentInfoMap = Arguments.createMap();
         scanResultDeviceMap = new Hashtable();
 
         ScanFilter.Builder scanFilterBuilder = new ScanFilter.Builder().setManufacturerData(manufacturerID, new byte[0]);
@@ -119,7 +119,7 @@ public class bleDeviceScanner {
             @Override
             public void run() {
                 Log.e(TAG, "resolving promise in Timer");
-                resolve(scanResultAdvertismentInfoMap);
+                resolve(advertismentInfoMap);
             }
         };
 
@@ -168,7 +168,7 @@ public class bleDeviceScanner {
 
                 if (!deviceAddress.equals("")) {
                     Log.e(TAG, "resolving promise in Scan");
-                    resolve(scanResultAdvertismentInfoMap);
+                    resolve(advertismentInfoMap);
                     return;
                 }
             } catch (Exception e) {
@@ -216,6 +216,6 @@ public class bleDeviceScanner {
         advertismentInfoObject.putInt("signalStrength", scanResult.getRssi());
         advertismentInfoObject.putArray("advertismentData", bleUtil.toWritableIntArray(advertismentInfo));
 
-        scanResultAdvertismentInfoMap.putMap(bluetoothDevice.getAddress(), advertismentInfoObject);
+        advertismentInfoMap.putMap(bluetoothDevice.getAddress(), advertismentInfoObject);
     }
 }
