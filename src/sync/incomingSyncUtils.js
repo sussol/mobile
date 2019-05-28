@@ -608,18 +608,26 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Transaction': {
-      if (record.store_ID !== settings.get(THIS_STORE_ID)) break; // Not for this store
+      // Only sync transactions for this store.
+      const { store_ID } = record;
+      if (store_ID !== settings.get(THIS_STORE_ID)) break;
+
+      // Do not sync transactions without valid entry date.
+      const entryDate = parseDate(record.entry_date);
+      if (entryDate == null) break;
+
       const otherParty = database.getOrCreate('Name', record.name_ID);
       const enteredBy = database.getOrCreate('User', record.user_ID);
       const linkedRequisition = record.requisition_ID
         ? database.getOrCreate('Requisition', record.requisition_ID)
         : null;
       const category = database.getOrCreate('TransactionCategory', record.category_ID);
+
       internalRecord = {
         id: record.ID,
         serialNumber: record.invoice_num,
         comment: record.comment,
-        entryDate: parseDate(record.entry_date),
+        entryDate,
         type: TRANSACTION_TYPES.translate(record.type, EXTERNAL_TO_INTERNAL),
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
@@ -629,6 +637,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         otherParty,
         linkedRequisition,
       };
+
       const transaction = database.update(recordType, internalRecord);
       if (linkedRequisition) {
         database.update('Requisition', {
