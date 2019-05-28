@@ -99,7 +99,7 @@ export class StocktakeEditPage extends React.Component {
       isResetModalOpen: false,
       stocktakeItem: null,
       isStocktakeEditModalOpen: false,
-      usesReasons: false,
+      reasons: [],
       isReasonsModalOpen: false,
       currentStocktakeItem: null,
     };
@@ -120,7 +120,7 @@ export class StocktakeEditPage extends React.Component {
     const { database } = this.props;
     const queryString = 'type == $0 && isActive == true';
     const reasons = database.objects('Options').filtered(queryString, 'stocktakeLineAdjustment');
-    this.setState({ usesReasons: reasons.length !== 0 });
+    this.setState({ reasons });
   };
 
   reasonModalConfirm = ({ item: option }) => {
@@ -159,14 +159,14 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing = (key, stocktakeItem, newValue) => {
     const { database } = this.props;
-    const { usesReasons } = this.state;
+    const { reasons } = this.state;
 
     if (key !== 'countedTotalQuantity' || newValue === '') return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
 
     stocktakeItem.setCountedTotalQuantity(database, quantity);
-    if (usesReasons) this.assignReason(stocktakeItem);
+    if (reasons.length > 0) this.assignReason(stocktakeItem);
     this.setState({ currentStocktakeItem: stocktakeItem });
   };
 
@@ -422,8 +422,26 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ stocktakeItem: item, isStocktakeEditModalOpen: true });
   };
 
+  renderReasonModal = () => {
+    const { currentStocktakeItem, isReasonsModalOpen, reasons } = this.state;
+    const currentReasonIndex = reasons.findIndex(
+      reason => reason.title === currentStocktakeItem.mostUsedReasonTitle
+    );
+
+    return (
+      <GenericChooseModal
+        isOpen={isReasonsModalOpen}
+        data={reasons}
+        highlightIndex={currentReasonIndex}
+        keyToDisplay="title"
+        onPress={this.reasonModalConfirm}
+        title={modalStrings.select_a_reason}
+      />
+    );
+  };
+
   getColumns = () => {
-    const { usesReasons } = this.state;
+    const { reasons } = this.state;
     const columns = [
       {
         key: 'itemCode',
@@ -460,7 +478,7 @@ export class StocktakeEditPage extends React.Component {
         alignText: 'right',
       },
     ];
-    if (usesReasons) {
+    if (reasons.length > 0) {
       columns.push({
         key: 'mostUsedReasonTitle',
         width: 1.2,
@@ -487,7 +505,6 @@ export class StocktakeEditPage extends React.Component {
       stocktakeItem,
       isStocktakeEditModalOpen,
       isReasonsModalOpen,
-      currentStocktakeItem,
     } = this.state;
     const resetModalText = isResetModalOpen // Small optimisation.
       ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
@@ -535,20 +552,7 @@ export class StocktakeEditPage extends React.Component {
           onConfirm={this.onConfirmBatchModal}
         />
 
-        {isReasonsModalOpen && (
-          <GenericChooseModal
-            isOpen={isReasonsModalOpen}
-            data={database.objects('Options')}
-            highlightIndex={
-              currentStocktakeItem && currentStocktakeItem.mostUsedReason
-                ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
-                : 0
-            }
-            keyToDisplay="title"
-            onPress={this.reasonModalConfirm}
-            title={modalStrings.select_a_reason}
-          />
-        )}
+        {isReasonsModalOpen && this.renderReasonModal()}
       </GenericPage>
     );
   }
