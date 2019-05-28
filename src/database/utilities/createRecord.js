@@ -142,10 +142,10 @@ const createRequisition = (
   user,
   { otherStoreName, program, period, orderType = {}, monthsLeadTime = 0 }
 ) => {
-  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
+  const { name: orderTypeName, maxMOS = 1, thresholdMOS } = orderType;
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
-  const daysToSupply = monthsLeadTime ? (monthsLeadTime + maxMOS) * 30 : 30;
+  const daysToSupply = monthsLeadTime + maxMOS * 30;
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
