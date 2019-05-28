@@ -161,7 +161,7 @@ export class StocktakeEditPage extends React.Component {
     const { database } = this.props;
     const { usesReasons } = this.state;
 
-    if (key !== 'countedTotalQuantity' || newValue === '') return;
+    if (key !== 'countedTotalQuantity' || !newValue) return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
 
