@@ -1,5 +1,3 @@
-// CustomToastPackage.java
-
 package com.msupplymobile;
 
 import android.app.Activity;
