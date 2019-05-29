@@ -193,7 +193,11 @@ export class VaccineModuleAdminPage extends React.Component {
         topRoute={topRoute}
       >
         {isModalOpen && (
-          <PageContentModal isOpen={isModalOpen} title="Select Sensor">
+          <PageContentModal
+            isOpen={isModalOpen}
+            onClose={() => this.setState({ isModalOpen: false })}
+            title="Select Sensor"
+          >
             {this.renderSelectSensorModal()}
           </PageContentModal>
         )}
