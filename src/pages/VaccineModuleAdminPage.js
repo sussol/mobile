@@ -24,6 +24,7 @@ export class VaccineModuleAdminPage extends React.Component {
       fridges: [],
       sensors: [],
       currentFridge: null,
+      hasSensors: false,
     };
   }
 
@@ -38,7 +39,8 @@ export class VaccineModuleAdminPage extends React.Component {
     this.locationType = locationTypes.length > 0 ? locationTypes[0] : null;
     const fridges = database.objects('Fridge');
     const sensors = database.objects('Sensor');
-    this.setState({ fridges, sensors });
+    const hasSensors = sensors.length > 0;
+    this.setState({ fridges, sensors, hasSensors });
   };
 
   selectSensor = fridge => {
@@ -101,9 +103,8 @@ export class VaccineModuleAdminPage extends React.Component {
   };
 
   renderCell = (key, fridge) => {
-    const { sensors } = this.state;
+    const { hasSensors } = this.state;
     const { database } = this.props;
-    const hasSensors = sensors.length > 0;
     const fridgeSensor = fridge.getSensor(database);
 
     const sensorName = () => {
