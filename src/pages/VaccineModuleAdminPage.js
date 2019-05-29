@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
 
-import { refreshAndUpdateSensors, syncSensor } from '../utilities/modules/temperatureSensorHelpers';
+import { refreshAndUpdateSensors } from '../utilities/modules/temperatureSensorHelpers';
 import { IconCell, PageButton, GenericChoiceList, PageContentModal } from '../widgets';
 
 import { SUSSOL_ORANGE } from '../globalStyles/index';
@@ -97,13 +97,6 @@ export class VaccineModuleAdminPage extends React.Component {
       await refreshAndUpdateSensors(runWithLoadingIndicator, database);
     }, true);
     this.refresh();
-  };
-
-  syncSensorPress = async fridgeSensor => {
-    const { runWithLoadingIndicator, database } = this.props;
-    await runWithLoadingIndicator(async () => {
-      await syncSensor(fridgeSensor, database);
-    }, true);
   };
 
   renderCell = (key, fridge) => {
