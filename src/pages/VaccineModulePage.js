@@ -79,7 +79,7 @@ export class VaccineModulePage extends React.Component {
 
   componentWillMount = async () => {
     const { database, runWithLoadingIndicator } = this.props;
-    const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
+    const fridges = database.objects('Fridge');
     const hasFridges = fridges.length > 0;
     const selectedFridge = hasFridges ? fridges[0] : null;
     this.fridgeData = {};

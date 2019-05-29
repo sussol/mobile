@@ -9,15 +9,6 @@ import { extractBreaches } from '../../utilities/modules/vaccines';
 import { getTotal } from '../utilities';
 
 export class Location extends Realm.Object {
-  get isFridge() {
-    const { locationType } = this;
-    return (
-      locationType &&
-      locationType.description &&
-      locationType.description.toLowerCase() === 'fridge'
-    );
-  }
-
   getSensorLogs(database, lookBackMilliseconds = null) {
     const sensorLogs = database
       .objects('SensorLog')
@@ -66,7 +57,7 @@ export class Location extends Realm.Object {
   }
 
   get temperatureRange() {
-    if (!this.isFridge) return null;
+    if (!this.locationType) return null;
     const { minTemperature, maxTemperature } = this.locationType;
     return { minTemperature, maxTemperature };
   }

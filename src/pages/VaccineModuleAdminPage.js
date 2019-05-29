@@ -33,11 +33,10 @@ export class VaccineModuleAdminPage extends React.Component {
 
   refresh = () => {
     const { database } = this.props;
-    const locationTypes = database
-      .objects('LocationType')
-      .filtered('description BEGINSWITH[c] "fridge"');
+    const locationTypes = database.objects('FridgeLocationType');
+    // TODO Warn here that there are not location types of fridge
     this.locationType = locationTypes.length > 0 ? locationTypes[0] : null;
-    const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
+    const fridges = database.objects('Fridge');
     const sensors = database.objects('Sensor');
     this.setState({ fridges: [], sensors }, () => this.setState({ fridges }));
   };
