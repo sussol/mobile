@@ -22,6 +22,8 @@ export class VaccineModuleAdminPage extends React.Component {
     this.state = {
       isModalOpen: false,
       fridges: [],
+      sensors: [],
+      currentFridge: null,
     };
   }
 
