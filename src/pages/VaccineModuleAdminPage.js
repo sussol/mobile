@@ -38,7 +38,7 @@ export class VaccineModuleAdminPage extends React.Component {
     this.locationType = locationTypes.length > 0 ? locationTypes[0] : null;
     const fridges = database.objects('Fridge');
     const sensors = database.objects('Sensor');
-    this.setState({ fridges: [], sensors }, () => this.setState({ fridges }));
+    this.setState({ fridges, sensors });
   };
 
   selectSensor = fridge => {
