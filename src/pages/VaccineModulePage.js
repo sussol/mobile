@@ -95,11 +95,6 @@ export class VaccineModulePage extends React.Component {
     this.setState({ selectedFridge });
   };
 
-  componentWillReceiveProps(props) {
-    const { isInAdminMode } = props;
-    this.setState({ isInAdminMode });
-  }
-
   onModalUpdate = () => {
     const { isModalOpen } = this.state;
     this.setState({ isModalOpen: !isModalOpen });
@@ -272,8 +267,8 @@ export class VaccineModulePage extends React.Component {
 
   render() {
     const { fridges, hasFridges } = this;
-    const { navigateTo } = this.props;
-    const { isModalOpen, currentBreach, isInAdminMode } = this.state;
+    const { navigateTo, isInAdminMode } = this.props;
+    const { isModalOpen, currentBreach } = this.state;
     const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
 
     return (
