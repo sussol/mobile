@@ -165,7 +165,7 @@ export class StocktakeItem extends Realm.Object {
 
     // Sort (ASC) the options by count
     const sortedOptions = Object.values(options).sort((a, b) => b.count - a.count);
-    // Return the first option or empty string if there aren't any options
+    // Return the first option title or empty string if there aren't any options
     return sortedOptions[0] ? sortedOptions[0].option.title : '';
   }
 
