@@ -1,5 +1,4 @@
-/* eslint-disable react/forbid-prop-types, import/prefer-default-export */
-/* eslint-disable react/require-default-props */
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -204,9 +203,10 @@ export class VaccineModuleAdminPage extends React.Component {
 }
 
 VaccineModuleAdminPage.propTypes = {
-  database: PropTypes.object,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
+  database: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object.isRequired,
+  topRoute: PropTypes.bool.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  navigateTo: PropTypes.func.isRequired,
 };
+
+export default VaccineModuleAdminPage;
