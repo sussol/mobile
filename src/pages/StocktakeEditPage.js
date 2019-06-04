@@ -97,7 +97,6 @@ export class StocktakeEditPage extends React.Component {
       modalKey: null,
       isModalOpen: false,
       isResetModalOpen: false,
-      stocktakeItem: null,
       isStocktakeEditModalOpen: false,
       reasons: [],
       isReasonsModalOpen: false,
@@ -141,7 +140,7 @@ export class StocktakeEditPage extends React.Component {
   assignReason = stocktakeItem => {
     const { database } = this.props;
     if (stocktakeItem.shouldApplyReason) {
-      this.onOpenReasonModal();
+      this.setState({ isReasonsModalOpen: true, currentStocktakeItem: stocktakeItem });
     } else {
       stocktakeItem.applyReasonToBatches(database);
     }
@@ -159,15 +158,19 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing = (key, stocktakeItem, newValue) => {
     const { database } = this.props;
-    const { reasons } = this.state;
+    const { reasons, isReasonsModalOpen } = this.state;
+
+    // If the reason modal is open just ignore any change to the current line
+    // This a hack to solve https://github.com/openmsupply/mobile/issues/1011
+    // Underlying issue requires data table rewrite
+    if (isReasonsModalOpen) return;
 
     if (key !== 'countedTotalQuantity' || !newValue) return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
-
     stocktakeItem.setCountedTotalQuantity(database, quantity);
+
     if (reasons.length > 0) this.assignReason(stocktakeItem);
-    this.setState({ currentStocktakeItem: stocktakeItem });
   };
 
   /**
@@ -241,10 +244,6 @@ export class StocktakeEditPage extends React.Component {
     });
   };
 
-  onOpenReasonModal = () => {
-    this.setState({ isReasonsModalOpen: true });
-  };
-
   renderCell = (key, stocktakeItem) => {
     const { stocktake } = this.props;
     const isEditable = !stocktake.isFinalised;
@@ -278,7 +277,7 @@ export class StocktakeEditPage extends React.Component {
             key={stocktakeItem.id}
             onPress={() =>
               hasAnyReason && isEditable
-                ? this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
+                ? this.setState({ currentStocktakeItem: stocktakeItem, isReasonsModalOpen: true })
                 : null
             }
             style={localStyles.reasonCell}
@@ -298,7 +297,10 @@ export class StocktakeEditPage extends React.Component {
         return (
           <TouchableOpacity
             onPress={() => {
-              this.openBatchModal(stocktakeItem);
+              this.setState({
+                isStocktakeEditModalOpen: true,
+                currentStocktakeItem: stocktakeItem,
+              });
             }}
           >
             <View style={localStyles.modalControl}>
@@ -418,12 +420,9 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ isStocktakeEditModalOpen: false });
   };
 
-  openBatchModal = item => {
-    this.setState({ stocktakeItem: item, isStocktakeEditModalOpen: true });
-  };
-
   renderReasonModal = () => {
     const { currentStocktakeItem, isReasonsModalOpen, reasons } = this.state;
+    // The below findIndex would fail if title was changed on central server!
     const currentReasonIndex = reasons.findIndex(
       reason => reason.title === currentStocktakeItem.mostUsedReasonTitle
     );
@@ -502,7 +501,7 @@ export class StocktakeEditPage extends React.Component {
       data,
       isResetModalOpen,
       isModalOpen,
-      stocktakeItem,
+      currentStocktakeItem,
       isStocktakeEditModalOpen,
       isReasonsModalOpen,
     } = this.state;
@@ -546,7 +545,7 @@ export class StocktakeEditPage extends React.Component {
 
         <StocktakeBatchModal
           isOpen={isStocktakeEditModalOpen}
-          stocktakeItem={stocktakeItem}
+          stocktakeItem={currentStocktakeItem}
           database={database}
           genericTablePageStyles={genericTablePageStyles}
           onConfirm={this.onConfirmBatchModal}
