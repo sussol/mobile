@@ -51,15 +51,18 @@ export default class StocktakeBatchModal extends React.Component {
   };
 
   /**
-   * Opens the reason modal for applying a reason to a stocktakeItem
+   * Opens the reason modal for applying a reason to a stocktakeBatch
    * if the snapshot quantity and counted total quantity differ.
    * Otherwise, removes the reason from the stocktake items batches.
    * @param {Object} stocktakeItem
    */
   assignReason = stocktakeBatch => {
-    const { stocktakeItem } = this.props;
-    if (stocktakeItem.shouldApplyReason) {
+    if (stocktakeBatch.shouldApplyReason) {
       this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch });
+    } else {
+      const { database } = this.props;
+      const { id } = stocktakeBatch;
+      database.write(() => database.update('StocktakeBatch', { id, option: null }));
     }
   };
 
