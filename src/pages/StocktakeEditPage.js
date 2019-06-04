@@ -141,7 +141,7 @@ export class StocktakeEditPage extends React.Component {
   assignReason = stocktakeItem => {
     const { database } = this.props;
     if (stocktakeItem.shouldApplyReason) {
-      this.onOpenReasonModal();
+      this.setState({ isReasonsModalOpen: true, currentStocktakeItem: stocktakeItem });
     } else {
       stocktakeItem.applyReasonToBatches(database);
     }
@@ -171,7 +171,6 @@ export class StocktakeEditPage extends React.Component {
 
     stocktakeItem.setCountedTotalQuantity(database, quantity);
     if (reasons.length > 0) this.assignReason(stocktakeItem);
-    this.setState({ currentStocktakeItem: stocktakeItem });
   };
 
   /**
@@ -245,10 +244,6 @@ export class StocktakeEditPage extends React.Component {
     });
   };
 
-  onOpenReasonModal = () => {
-    this.setState({ isReasonsModalOpen: true });
-  };
-
   renderCell = (key, stocktakeItem) => {
     const { stocktake } = this.props;
     const isEditable = !stocktake.isFinalised;
@@ -282,7 +277,7 @@ export class StocktakeEditPage extends React.Component {
             key={stocktakeItem.id}
             onPress={() =>
               hasAnyReason && isEditable
-                ? this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
+                ? this.setState({ currentStocktakeItem: stocktakeItem, isReasonsModalOpen: true })
                 : null
             }
             style={localStyles.reasonCell}
@@ -428,6 +423,7 @@ export class StocktakeEditPage extends React.Component {
 
   renderReasonModal = () => {
     const { currentStocktakeItem, isReasonsModalOpen, reasons } = this.state;
+    // The below findIndex would fail if title was changed on central server!
     const currentReasonIndex = reasons.findIndex(
       reason => reason.title === currentStocktakeItem.mostUsedReasonTitle
     );
