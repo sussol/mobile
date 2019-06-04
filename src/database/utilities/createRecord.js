@@ -145,7 +145,7 @@ const createRequisition = (
   const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
-  const daysToSupply = monthsLeadTime ? (monthsLeadTime + maxMOS) * 30 : 30;
+  const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * 30;
 
   const requisition = database.create('Requisition', {
     id: generateUUID(),
