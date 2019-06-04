@@ -226,7 +226,6 @@ export default class StocktakeBatchModal extends React.Component {
   };
 
   renderReasonModal = () => {
-    const { database } = this.props;
     const { reasonModalOpen, currentBatch, reasons } = this.state;
     const { option } = currentBatch;
     const currentReasonIndex = option && reasons.findIndex(reason => reason.id === option.id);
@@ -234,7 +233,7 @@ export default class StocktakeBatchModal extends React.Component {
     return (
       <GenericChooseModal
         isOpen={reasonModalOpen}
-        data={database.objects('Options')}
+        data={reasons}
         highlightIndex={currentReasonIndex}
         onPress={this.reasonModalConfirm}
         keyToDisplay="title"
