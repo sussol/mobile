@@ -97,7 +97,6 @@ export class StocktakeEditPage extends React.Component {
       modalKey: null,
       isModalOpen: false,
       isResetModalOpen: false,
-      stocktakeItem: null,
       isStocktakeEditModalOpen: false,
       reasons: [],
       isReasonsModalOpen: false,
@@ -297,7 +296,10 @@ export class StocktakeEditPage extends React.Component {
         return (
           <TouchableOpacity
             onPress={() => {
-              this.openBatchModal(stocktakeItem);
+              this.setState({
+                isStocktakeEditModalOpen: true,
+                currentStocktakeItem: stocktakeItem,
+              });
             }}
           >
             <View style={localStyles.modalControl}>
@@ -417,10 +419,6 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ isStocktakeEditModalOpen: false });
   };
 
-  openBatchModal = item => {
-    this.setState({ stocktakeItem: item, isStocktakeEditModalOpen: true });
-  };
-
   renderReasonModal = () => {
     const { currentStocktakeItem, isReasonsModalOpen, reasons } = this.state;
     // The below findIndex would fail if title was changed on central server!
@@ -502,7 +500,7 @@ export class StocktakeEditPage extends React.Component {
       data,
       isResetModalOpen,
       isModalOpen,
-      stocktakeItem,
+      currentStocktakeItem,
       isStocktakeEditModalOpen,
       isReasonsModalOpen,
     } = this.state;
@@ -546,7 +544,7 @@ export class StocktakeEditPage extends React.Component {
 
         <StocktakeBatchModal
           isOpen={isStocktakeEditModalOpen}
-          stocktakeItem={stocktakeItem}
+          stocktakeItem={currentStocktakeItem}
           database={database}
           genericTablePageStyles={genericTablePageStyles}
           onConfirm={this.onConfirmBatchModal}
