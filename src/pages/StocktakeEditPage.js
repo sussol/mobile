@@ -160,15 +160,16 @@ export class StocktakeEditPage extends React.Component {
     const { database } = this.props;
     const { reasons, isReasonsModalOpen } = this.state;
 
-    if (key !== 'countedTotalQuantity' || newValue === '') return;
-    const quantity = parsePositiveInteger(newValue);
-    if (quantity === null) return;
     // If the reason modal is open just ignore any change to the current line
     // This a hack to solve https://github.com/openmsupply/mobile/issues/1011
     // Underlying issue requires data table rewrite
     if (isReasonsModalOpen) return;
 
+    if (key !== 'countedTotalQuantity' || newValue === '') return;
+    const quantity = parsePositiveInteger(newValue);
+    if (quantity === null) return;
     stocktakeItem.setCountedTotalQuantity(database, quantity);
+
     if (reasons.length > 0) this.assignReason(stocktakeItem);
   };
 

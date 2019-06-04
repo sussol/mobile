@@ -67,16 +67,17 @@ export default class StocktakeBatchModal extends React.Component {
   };
 
   onEndEditing = (key, stocktakeBatch, newValue) => {
-    const { database } = this.props;
-    const { reasons, reasonModalOpen } = this.state;
-    const { id } = stocktakeBatch;
-
     if (!newValue || newValue === '') return;
+
+    const { reasons, reasonModalOpen } = this.state;
+    const { database } = this.props;
+
     // If the reason modal is open just ignore any change to the current line
     // This a hack to solve similar issue https://github.com/openmsupply/mobile/issues/1011
     // Underlying issue requires data table rewrite
     if (reasonModalOpen) return;
 
+    const { id } = stocktakeBatch;
     switch (key) {
       case 'countedTotalQuantity': {
         if (parsePositiveInteger(newValue) === null) return;
