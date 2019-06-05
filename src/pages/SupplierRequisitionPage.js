@@ -307,6 +307,7 @@ export class SupplierRequisitionPage extends React.Component {
       case 'itemName':
         sortDataType = 'string';
         break;
+      case 'stockOnHand':
       case 'monthlyUsage':
       case 'suggestedQuantity':
       case 'requiredQuantity':
