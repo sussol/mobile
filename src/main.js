@@ -3,7 +3,6 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import Realm from 'realm';
 import React from 'react';
 import { AppRegistry } from 'react-native';
 import { Provider } from 'react-redux';
@@ -17,7 +16,6 @@ import MSupplyMobileApp from './mSupplyMobileApp';
 const bugsnagClient = new BugsnagClient();
 
 function App() {
-  Realm.copyBundledRealmFiles();
   return (
     <ErrorHandler persistedStore={persistedStore}>
       <Provider store={store}>
