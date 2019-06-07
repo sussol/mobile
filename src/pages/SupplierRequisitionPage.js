@@ -567,7 +567,7 @@ export class SupplierRequisitionPage extends React.Component {
             <UseSuggestedQuantitiesButton />
             {hasRegimenData && <ViewRegimenDataButton />}
           </View>
-          {program && thresholdMOS && <ThresholdMOSToggle />}
+          {program && !!thresholdMOS && <ThresholdMOSToggle />}
           {!program && <CreateAutomaticOrderButton />}
         </View>
 
