@@ -5,16 +5,15 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { GenericPage } from './GenericPage';
-
 import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
+import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
+import GenericChooseModal from '../widgets/modals/GenericChooseModal';
+import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import { SUSSOL_ORANGE } from '../globalStyles';
-
 import {
   buttonStrings,
   modalStrings,
@@ -23,9 +22,6 @@ import {
   pageInfoStrings,
   programStrings,
 } from '../localization';
-import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
-import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
-import GenericChooseModal from '../widgets/modals/GenericChooseModal';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -324,18 +320,6 @@ export class StocktakeEditPage extends React.Component {
           })
         }
         isDisabled={stocktake.isFinalised}
-      />
-    );
-  };
-
-  renderExpansion = stocktakeItem => {
-    const { database, genericTablePageStyles } = this.props;
-
-    return (
-      <StocktakeEditExpansion
-        stocktakeItem={stocktakeItem}
-        database={database}
-        genericTablePageStyles={genericTablePageStyles}
       />
     );
   };
