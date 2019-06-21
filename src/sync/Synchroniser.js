@@ -87,10 +87,10 @@ export class Synchroniser {
   fetchWrapper = async (url, opts) => {
     const { body } = opts;
 
-    const bugsnagNotify = (message, response) => {
+    const bugsnagNotify = async (message, response) => {
       bugsnagClient.notify(new Error(message), {
         context: 'SYNC ERROR',
-        metaData: { url, body, responseText: response.text() },
+        metaData: { url, body, responseText: await response.text() },
       });
     };
     // eslint-disable-next-line no-undef
