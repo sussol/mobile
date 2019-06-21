@@ -102,11 +102,11 @@ export class Synchroniser {
     try {
       responseJson = await response.json();
     } catch (error) {
-      bugsnagNotify('Failed parsing response form server', response);
+      bugsnagNotify('Failed parsing response from server', response);
       throw new Error('Unexpected response from sync server');
     }
 
-    if (responseJson.error && responseJson.error) {
+    if (responseJson.error) {
       if (responseJson.error.startsWith("Site registration doesn't match.")) {
         throw new Error(responseJson.error);
       } else {
