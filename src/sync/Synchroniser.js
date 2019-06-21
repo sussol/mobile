@@ -106,7 +106,7 @@ export class Synchroniser {
       throw new Error('Unexpected response from sync server');
     }
 
-    if (responseJson.error && responseJson.error !== '') {
+    if (responseJson.error && responseJson.error) {
       if (responseJson.error.startsWith("Site registration doesn't match.")) {
         throw new Error(responseJson.error);
       } else {
