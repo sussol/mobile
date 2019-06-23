@@ -93,7 +93,6 @@ export class Synchroniser {
         metaData: { url, body, responseText: await response.text() },
       });
     };
-    // eslint-disable-next-line no-undef
     const response = await fetch(url, opts);
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to sync.');

@@ -1,18 +1,24 @@
 {
   "env": { "jest": true },
   "extends": "airbnb",
+  "globals": {
+    "fetch": false
+  },
   "parser": "babel-eslint",
   "plugins": ["prettier"],
   "rules": {
     "arrow-body-style": ["error", "as-needed"],
     "arrow-parens": ["error", "as-needed"],
-    "comma-dangle": ["error", {
-      "arrays": "always-multiline",
-      "exports": "always-multiline",
-      "functions": "never",
-      "imports": "always-multiline",
-      "objects": "always-multiline"
-    }],
+    "comma-dangle": [
+      "error",
+      {
+        "arrays": "always-multiline",
+        "exports": "always-multiline",
+        "functions": "never",
+        "imports": "always-multiline",
+        "objects": "always-multiline"
+      }
+    ],
     "function-paren-newline": "off",
     "implicit-arrow-linebreak": "off",
     "indent": ["error", 2, { "SwitchCase": 1 }],
