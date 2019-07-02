@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "@react-navigation/core": "^3.0.3",
-    "bugsnag-react-native": "^2.14.0",
+    "bugsnag-react-native": "^2.21.1",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-native": "^0.59.10",
