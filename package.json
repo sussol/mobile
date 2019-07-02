@@ -47,7 +47,7 @@
     "bugsnag-react-native": "^2.14.0",
     "prop-types": "^15.6.2",
     "react": "^16.8.6",
-    "react-native": "0.58.4",
+    "react-native": "^0.59.10",
     "react-native-data-table": "^0.2.1",
     "react-native-database": "^0.3.2",
     "react-native-device-info": "^0.24.3",
