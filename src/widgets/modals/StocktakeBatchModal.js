@@ -29,7 +29,7 @@ export default class StocktakeBatchModal extends React.Component {
     this.state = {
       reasonModalOpen: false,
       currentBatch: null,
-      usesReasons: null,
+      reasons: [],
     };
   }
 
@@ -37,7 +37,7 @@ export default class StocktakeBatchModal extends React.Component {
     const { database } = this.props;
     const queryString = 'type == $0 && isActive == true';
     const reasons = database.objects('Options').filtered(queryString, 'stocktakeLineAdjustment');
-    this.setState({ usesReasons: reasons.length !== 0 });
+    this.setState({ reasons });
   };
 
   reasonModalConfirm = ({ item: option }) => {
@@ -51,25 +51,33 @@ export default class StocktakeBatchModal extends React.Component {
   };
 
   /**
-   * Opens the reason modal for applying a reason to a stocktakeItem
+   * Opens the reason modal for applying a reason to a stocktakeBatch
    * if the snapshot quantity and counted total quantity differ.
    * Otherwise, removes the reason from the stocktake items batches.
-   * @param {Object} stocktakeItem
+   * @param {Object} stocktakeBatch
    */
   assignReason = stocktakeBatch => {
-    const { stocktakeItem } = this.props;
-    if (stocktakeItem.shouldApplyReason) {
+    if (stocktakeBatch.shouldApplyReason) {
       this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch });
+    } else {
+      const { database } = this.props;
+      const { id } = stocktakeBatch;
+      database.write(() => database.update('StocktakeBatch', { id, option: null }));
     }
   };
 
   onEndEditing = (key, stocktakeBatch, newValue) => {
-    const { database } = this.props;
-    const { usesReasons } = this.state;
-    const { id } = stocktakeBatch;
-
     if (!newValue || newValue === '') return;
 
+    const { reasons, reasonModalOpen } = this.state;
+    const { database } = this.props;
+
+    // If the reason modal is open just ignore any change to the current line
+    // This a hack to solve similar issue https://github.com/openmsupply/mobile/issues/1011
+    // Underlying issue requires data table rewrite
+    if (reasonModalOpen) return;
+
+    const { id } = stocktakeBatch;
     switch (key) {
       case 'countedTotalQuantity': {
         if (parsePositiveInteger(newValue) === null) return;
@@ -77,7 +85,7 @@ export default class StocktakeBatchModal extends React.Component {
           stocktakeBatch.countedTotalQuantity = parsePositiveInteger(newValue);
         });
         database.save(stocktakeBatch);
-        if (usesReasons) this.assignReason(stocktakeBatch);
+        if (reasons.length > 0) this.assignReason(stocktakeBatch);
         break;
       }
       case 'batch': {
@@ -218,8 +226,25 @@ export default class StocktakeBatchModal extends React.Component {
     );
   };
 
+  renderReasonModal = () => {
+    const { reasonModalOpen, currentBatch, reasons } = this.state;
+    const { option } = currentBatch;
+    const currentReasonIndex = option && reasons.findIndex(reason => reason.id === option.id);
+
+    return (
+      <GenericChooseModal
+        isOpen={reasonModalOpen}
+        data={reasons}
+        highlightIndex={currentReasonIndex}
+        onPress={this.reasonModalConfirm}
+        keyToDisplay="title"
+        title={modalStrings.select_a_reason}
+      />
+    );
+  };
+
   getColumns = () => {
-    const { usesReasons } = this.state;
+    const { reasons } = this.state;
     const columns = [
       {
         key: 'batch',
@@ -252,7 +277,7 @@ export default class StocktakeBatchModal extends React.Component {
         alignText: 'right',
       },
     ];
-    if (usesReasons) {
+    if (reasons.length > 0) {
       columns.push({
         key: 'reason',
         width: 1,
@@ -265,7 +290,7 @@ export default class StocktakeBatchModal extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, isOpen } = this.props;
-    const { data, reasonModalOpen, currentBatch } = this.state;
+    const { data, reasonModalOpen } = this.state;
     return (
       <Modal
         isOpen={isOpen}
@@ -290,22 +315,7 @@ export default class StocktakeBatchModal extends React.Component {
           pageStyles={expansionPageStyles}
           {...genericTablePageStyles}
         />
-
-        {reasonModalOpen && (
-          <GenericChooseModal
-            isOpen={reasonModalOpen}
-            data={database.objects('Options')}
-            highlightIndex={
-              currentBatch && currentBatch.option
-                ? database.objects('Options').indexOf(currentBatch.option)
-                : 0
-            }
-            onPress={this.reasonModalConfirm}
-            keyToDisplay="title"
-            title={modalStrings.select_a_reason}
-          />
-        )}
-
+        {reasonModalOpen && this.renderReasonModal()}
         {this.renderFooter()}
       </Modal>
     );

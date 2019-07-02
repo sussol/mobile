@@ -120,6 +120,9 @@ export class SupplierInvoicesPage extends React.Component {
       case 'serialNumber':
         sortDataType = 'number';
         break;
+      case 'otherPartyName':
+        sortDataType = 'string';
+        break;
       default:
         sortDataType = 'realm';
     }

@@ -307,6 +307,7 @@ export class SupplierRequisitionPage extends React.Component {
       case 'itemName':
         sortDataType = 'string';
         break;
+      case 'stockOnHand':
       case 'monthlyUsage':
       case 'suggestedQuantity':
       case 'requiredQuantity':
@@ -566,7 +567,7 @@ export class SupplierRequisitionPage extends React.Component {
             <UseSuggestedQuantitiesButton />
             {hasRegimenData && <ViewRegimenDataButton />}
           </View>
-          {program && thresholdMOS && <ThresholdMOSToggle />}
+          {program && !!thresholdMOS && <ThresholdMOSToggle />}
           {!program && <CreateAutomaticOrderButton />}
         </View>
 

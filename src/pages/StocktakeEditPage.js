@@ -5,16 +5,15 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { StocktakeEditExpansion } from './expansions/StocktakeEditExpansion';
 import { GenericPage } from './GenericPage';
-
 import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
+import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
+import GenericChooseModal from '../widgets/modals/GenericChooseModal';
+import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
 import { SUSSOL_ORANGE } from '../globalStyles';
-
 import {
   buttonStrings,
   modalStrings,
@@ -23,9 +22,6 @@ import {
   pageInfoStrings,
   programStrings,
 } from '../localization';
-import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
-import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
-import GenericChooseModal from '../widgets/modals/GenericChooseModal';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 
@@ -97,9 +93,8 @@ export class StocktakeEditPage extends React.Component {
       modalKey: null,
       isModalOpen: false,
       isResetModalOpen: false,
-      stocktakeItem: null,
       isStocktakeEditModalOpen: false,
-      usesReasons: false,
+      reasons: [],
       isReasonsModalOpen: false,
       currentStocktakeItem: null,
     };
@@ -120,7 +115,7 @@ export class StocktakeEditPage extends React.Component {
     const { database } = this.props;
     const queryString = 'type == $0 && isActive == true';
     const reasons = database.objects('Options').filtered(queryString, 'stocktakeLineAdjustment');
-    this.setState({ usesReasons: reasons.length !== 0 });
+    this.setState({ reasons });
   };
 
   reasonModalConfirm = ({ item: option }) => {
@@ -141,7 +136,7 @@ export class StocktakeEditPage extends React.Component {
   assignReason = stocktakeItem => {
     const { database } = this.props;
     if (stocktakeItem.shouldApplyReason) {
-      this.onOpenReasonModal();
+      this.setState({ isReasonsModalOpen: true, currentStocktakeItem: stocktakeItem });
     } else {
       stocktakeItem.applyReasonToBatches(database);
     }
@@ -159,15 +154,19 @@ export class StocktakeEditPage extends React.Component {
    */
   onEndEditing = (key, stocktakeItem, newValue) => {
     const { database } = this.props;
-    const { usesReasons } = this.state;
+    const { reasons, isReasonsModalOpen } = this.state;
+
+    // If the reason modal is open just ignore any change to the current line
+    // This a hack to solve https://github.com/openmsupply/mobile/issues/1011
+    // Underlying issue requires data table rewrite
+    if (isReasonsModalOpen) return;
 
     if (key !== 'countedTotalQuantity' || !newValue) return;
     const quantity = parsePositiveInteger(newValue);
     if (quantity === null) return;
-
     stocktakeItem.setCountedTotalQuantity(database, quantity);
-    if (usesReasons) this.assignReason(stocktakeItem);
-    this.setState({ currentStocktakeItem: stocktakeItem });
+
+    if (reasons.length > 0) this.assignReason(stocktakeItem);
   };
 
   /**
@@ -223,7 +222,7 @@ export class StocktakeEditPage extends React.Component {
     );
     let sortDataType;
     switch (sortBy) {
-      case 'reason':
+      case 'mostUsedReasonTitle':
       case 'itemCode':
       case 'itemName':
         sortDataType = 'string';
@@ -239,10 +238,6 @@ export class StocktakeEditPage extends React.Component {
     this.setState({
       data: sortDataBy(data, sortBy, sortDataType, isAscending),
     });
-  };
-
-  onOpenReasonModal = () => {
-    this.setState({ isReasonsModalOpen: true });
   };
 
   renderCell = (key, stocktakeItem) => {
@@ -272,13 +267,13 @@ export class StocktakeEditPage extends React.Component {
         const prefix = difference > 0 ? '+' : '';
         return { cellContents: `${prefix}${difference}` };
       }
-      case 'reason': {
+      case 'mostUsedReasonTitle': {
         return (
           <TouchableOpacity
             key={stocktakeItem.id}
             onPress={() =>
               hasAnyReason && isEditable
-                ? this.setState({ currentStocktakeItem: stocktakeItem }, this.onOpenReasonModal)
+                ? this.setState({ currentStocktakeItem: stocktakeItem, isReasonsModalOpen: true })
                 : null
             }
             style={localStyles.reasonCell}
@@ -287,8 +282,8 @@ export class StocktakeEditPage extends React.Component {
               <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />
             )}
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
-              {stocktakeItem.mostUsedReason
-                ? stocktakeItem.mostUsedReason.title
+              {stocktakeItem.mostUsedReasonTitle
+                ? stocktakeItem.mostUsedReasonTitle
                 : programStrings.not_applicable}
             </Text>
           </TouchableOpacity>
@@ -298,7 +293,10 @@ export class StocktakeEditPage extends React.Component {
         return (
           <TouchableOpacity
             onPress={() => {
-              this.openBatchModal(stocktakeItem);
+              this.setState({
+                isStocktakeEditModalOpen: true,
+                currentStocktakeItem: stocktakeItem,
+              });
             }}
           >
             <View style={localStyles.modalControl}>
@@ -322,18 +320,6 @@ export class StocktakeEditPage extends React.Component {
           })
         }
         isDisabled={stocktake.isFinalised}
-      />
-    );
-  };
-
-  renderExpansion = stocktakeItem => {
-    const { database, genericTablePageStyles } = this.props;
-
-    return (
-      <StocktakeEditExpansion
-        stocktakeItem={stocktakeItem}
-        database={database}
-        genericTablePageStyles={genericTablePageStyles}
       />
     );
   };
@@ -418,12 +404,27 @@ export class StocktakeEditPage extends React.Component {
     this.setState({ isStocktakeEditModalOpen: false });
   };
 
-  openBatchModal = item => {
-    this.setState({ stocktakeItem: item, isStocktakeEditModalOpen: true });
+  renderReasonModal = () => {
+    const { currentStocktakeItem, isReasonsModalOpen, reasons } = this.state;
+    // The below findIndex would fail if title was changed on central server!
+    const currentReasonIndex = reasons.findIndex(
+      reason => reason.title === currentStocktakeItem.mostUsedReasonTitle
+    );
+
+    return (
+      <GenericChooseModal
+        isOpen={isReasonsModalOpen}
+        data={reasons}
+        highlightIndex={currentReasonIndex}
+        keyToDisplay="title"
+        onPress={this.reasonModalConfirm}
+        title={modalStrings.select_a_reason}
+      />
+    );
   };
 
   getColumns = () => {
-    const { usesReasons } = this.state;
+    const { reasons } = this.state;
     const columns = [
       {
         key: 'itemCode',
@@ -460,9 +461,9 @@ export class StocktakeEditPage extends React.Component {
         alignText: 'right',
       },
     ];
-    if (usesReasons) {
+    if (reasons.length > 0) {
       columns.push({
-        key: 'reason',
+        key: 'mostUsedReasonTitle',
         width: 1.2,
         title: tableStrings.reason,
         sortable: true,
@@ -484,10 +485,9 @@ export class StocktakeEditPage extends React.Component {
       data,
       isResetModalOpen,
       isModalOpen,
-      stocktakeItem,
+      currentStocktakeItem,
       isStocktakeEditModalOpen,
       isReasonsModalOpen,
-      currentStocktakeItem,
     } = this.state;
     const resetModalText = isResetModalOpen // Small optimisation.
       ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
@@ -529,26 +529,13 @@ export class StocktakeEditPage extends React.Component {
 
         <StocktakeBatchModal
           isOpen={isStocktakeEditModalOpen}
-          stocktakeItem={stocktakeItem}
+          stocktakeItem={currentStocktakeItem}
           database={database}
           genericTablePageStyles={genericTablePageStyles}
           onConfirm={this.onConfirmBatchModal}
         />
 
-        {isReasonsModalOpen && (
-          <GenericChooseModal
-            isOpen={isReasonsModalOpen}
-            data={database.objects('Options')}
-            highlightIndex={
-              currentStocktakeItem && currentStocktakeItem.mostUsedReason
-                ? database.objects('Options').indexOf(currentStocktakeItem.mostUsedReason)
-                : 0
-            }
-            keyToDisplay="title"
-            onPress={this.reasonModalConfirm}
-            title={modalStrings.select_a_reason}
-          />
-        )}
+        {isReasonsModalOpen && this.renderReasonModal()}
       </GenericPage>
     );
   }
