@@ -29,7 +29,7 @@ import { COMPONENT_HEIGHT } from '../../globalStyles';
  * NOTE: If there are multiple, equal values used in highlightValue within the data array,
  * multiple values will be highlighted.
  */
-export default class GenericChooseModal extends React.PureComponent {
+export class GenericChooseModal extends React.PureComponent {
   keyExtractor = (item, index) => {
     const { keyToDisplay } = this.props;
     const content = keyToDisplay && item ? item[keyToDisplay] : item;
@@ -104,3 +104,5 @@ GenericChooseModal.propTypes = {
   highlightIndex: PropTypes.number,
   highlightValue: PropTypes.string,
 };
+
+export default GenericChooseModal;

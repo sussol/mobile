@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
 
 import { Keyboard } from 'react-native';
 
-import { getCurrentRouteName } from '../navigation';
+import { getCurrentRouteName } from '../navigation/selectors';
 
 const mapStateToProps = ({ nav }) => ({ currentRouteName: getCurrentRouteName(nav) });
 

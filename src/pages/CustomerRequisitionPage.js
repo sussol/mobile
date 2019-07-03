@@ -9,10 +9,11 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { GenericPage } from './GenericPage';
+import { PageContentModal } from '../widgets/modals';
+import { PageButton, PageInfo, TextEditor } from '../widgets';
 
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import { formatDate, sortDataBy } from '../utilities';
-import { PageButton, PageInfo, PageContentModal, TextEditor } from '../widgets';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 
 import globalStyles from '../globalStyles';
 

@@ -11,14 +11,13 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
-
-import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
-import { AutocompleteSelector, ToggleBar, PageButton, TextEditor } from '..';
+import { SequentialSteps, AutocompleteSelector, ToggleBar, PageButton, TextEditor } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
-import SequentialSteps from '../SequentialSteps';
 import { programStrings, modalStrings, generalStrings, navStrings } from '../../localization';
+
+import globalStyles, { DARK_GREY, WARM_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 // TODO: Proper localization
 const localization = {

@@ -9,6 +9,7 @@ import PropTypes from 'prop-types';
 import { Image, ListView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import { PageContentModal } from './PageContentModal';
+
 import { SETTINGS_KEYS } from '../../settings';
 import { COUNTRY_FLAGS, LANGUAGE_KEYS, modalStrings } from '../../localization';
 

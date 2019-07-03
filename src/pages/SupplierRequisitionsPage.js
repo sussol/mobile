@@ -6,14 +6,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { PageButton } from '../widgets';
 import { GenericPage } from './GenericPage';
-import { BottomConfirmModal, PageButton, SelectModal, ByProgramModal } from '../widgets';
+import { BottomConfirmModal, ByProgramModal, SelectModal } from '../widgets/modals';
 
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-import { formatStatus, sortDataBy, getAllPrograms } from '../utilities';
-
 import { SETTINGS_KEYS } from '../settings';
+import { formatStatus, sortDataBy, getAllPrograms } from '../utilities';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const { THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 

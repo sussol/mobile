@@ -7,11 +7,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
+import { PageButton } from '../widgets';
+import { BottomConfirmModal, SelectModal } from '../widgets/modals';
 
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy } from '../utilities';
-import { BottomConfirmModal, PageButton, SelectModal } from '../widgets';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 

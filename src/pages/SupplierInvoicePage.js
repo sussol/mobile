@@ -6,20 +6,19 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { GenericPage } from './GenericPage';
-
-import { createRecord } from '../database';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import {
   AutocompleteSelector,
-  BottomConfirmModal,
   PageButton,
-  PageContentModal,
   PageInfo,
   TextEditor,
   ExpiryTextInput,
 } from '../widgets';
+import { GenericPage } from './GenericPage';
+import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+
+import { createRecord } from '../database';
+import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
+import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 
 import globalStyles, { dataTableStyles } from '../globalStyles';
 

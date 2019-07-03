@@ -9,11 +9,14 @@ import PropTypes from 'prop-types';
 import Modal from 'react-native-modalbox';
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
 import { GenericPage } from '../../pages/GenericPage';
+import { Button, PageButton, ExpiryTextInput, PageInfo } from '..';
+import { GenericChooseModal } from './GenericChooseModal';
 
 import { tableStrings, buttonStrings, modalStrings, pageInfoStrings } from '../../localization';
 import { parsePositiveInteger } from '../../utilities';
-import { Button, PageButton, ExpiryTextInput, PageInfo } from '..';
+
 import globalStyles, {
   WARM_GREY,
   SUSSOL_ORANGE,
@@ -21,9 +24,8 @@ import globalStyles, {
   dataTableStyles,
   expansionPageStyles,
 } from '../../globalStyles';
-import GenericChooseModal from './GenericChooseModal';
 
-export default class StocktakeBatchModal extends React.Component {
+export class StocktakeBatchModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -368,3 +370,5 @@ const localStyles = StyleSheet.create({
     paddingRight: 10,
   },
 });
+
+export default StocktakeBatchModal;

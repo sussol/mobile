@@ -9,11 +9,13 @@ import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 
 import { GenericPage } from './GenericPage';
-import { BottomModal, OnePressButton, TextInput, ToggleBar } from '../widgets';
+import { OnePressButton, TextInput, ToggleBar } from '../widgets';
+import { BottomModal } from '../widgets/modals';
 
 import { createRecord } from '../database';
 
 import { buttonStrings, modalStrings, tableStrings, navStrings } from '../localization';
+
 import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch'];

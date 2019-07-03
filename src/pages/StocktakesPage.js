@@ -8,13 +8,14 @@ import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
 
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { PageButton, ToggleBar } from '../widgets';
+import { ByProgramModal, BottomConfirmModal } from '../widgets/modals';
+
+import { createRecord } from '../database/utilities/index';
 import { formatStatus, getAllPrograms } from '../utilities';
-import { PageButton, BottomConfirmModal, ToggleBar } from '../widgets';
-import { ByProgramModal } from '../widgets/modals/index';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 import globalStyles from '../globalStyles';
-import { createRecord } from '../database/utilities/index';
 
 const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
 
