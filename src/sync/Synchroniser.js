@@ -88,12 +88,15 @@ export class Synchroniser {
     const { body } = opts;
 
     const bugsnagNotify = async (message, response) => {
-      bugsnagClient.notify(new Error(message), {
-        context: 'SYNC ERROR',
-        metaData: { url, body, responseText: await response.text() },
+      const responseText = await response.text();
+      bugsnagClient.notify(new Error(message), report => {
+        report.context = 'SYNC ERROR';
+        report.metadata = { error: { url, body, responseText } };
       });
     };
+
     const response = await fetch(url, opts);
+
     if (response.status < 200 || response.status >= 300) {
       throw new Error('Connection failure while attempting to sync.');
     }
