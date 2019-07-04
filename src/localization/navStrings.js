@@ -33,7 +33,7 @@ export const navStrings = new LocalizedStrings({
     finalised_cannot_be_edited: 'FINALISÉ. NE PEUT ÊTRE MODIFIÉ',
     invoice: 'Facture',
     language: 'Langage',
-    log_out: 'SE DÉCONNECTER or DÉCONNEXION',
+    log_out: 'SE DÉCONNECTER',
     manage_stocktake: "Gérer les relevés d'inventaire",
     new_stocktake: "Nouveau relevé d'inventaire",
     requisition: 'Réquisition',
