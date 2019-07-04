@@ -59,7 +59,7 @@ const PROGRAM_COLUMNS = [
   'remove',
 ];
 
-const COLUMNS = {
+const getColumns = () => ({
   itemCode: {
     key: 'itemCode',
     width: 1.4,
@@ -118,14 +118,14 @@ const COLUMNS = {
     title: 'UNIT',
     alignText: 'center',
   },
-};
+});
 
 export class SupplierRequisitionPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.ITEM_PRICE_MAPPING = null;
-
+    this.COLUMNS = getColumns();
     const { requisition } = props;
     const { program, thresholdMOS } = requisition;
 
@@ -587,7 +587,7 @@ export class SupplierRequisitionPage extends React.Component {
     let columnsToUse;
     if (program) columnsToUse = PROGRAM_COLUMNS;
     else columnsToUse = NORMAL_COLUMNS;
-    return columnsToUse.map(columnKey => COLUMNS[columnKey]);
+    return columnsToUse.map(columnKey => this.COLUMNS[columnKey]);
   };
 
   render() {
