@@ -11,6 +11,7 @@ import { navStrings } from './navStrings';
 import { pageInfoStrings } from './pageInfoStrings';
 import { syncStrings } from './syncStrings';
 import { tableStrings } from './tableStrings';
+import { programStrings } from './programStrings';
 
 export function setCurrentLanguage(language) {
   authStrings.setLanguage(language);
@@ -21,6 +22,7 @@ export function setCurrentLanguage(language) {
   pageInfoStrings.setLanguage(language);
   tableStrings.setLanguage(language);
   syncStrings.setLanguage(language);
+  programStrings.setLanguage(language);
 }
 
 export default setCurrentLanguage;
