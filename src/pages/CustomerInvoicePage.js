@@ -165,7 +165,7 @@ export class CustomerInvoicePage extends GenericPage {
       [
         {
           title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(this.props.transaction.entryDate),
+          info: formatDate(this.props.transaction.entryDate) || 'N/A',
         },
         {
           title: `${pageInfoStrings.confirm_date}:`,
