@@ -38,7 +38,7 @@ export const navStrings = new LocalizedStrings({
     new_stocktake: "Nouveau relevé d'inventaire",
     requisition: 'Réquisition',
     stocktakes: "Relevés d'inventaire",
-    stocktake: "Relevé d'nventaire",
+    stocktake: "Relevé d'inventaire",
     supplier_invoices: 'Factures fournisseurs',
     supplier_requisitions: 'Factures réquisitions',
   },
