@@ -55,6 +55,8 @@ export const tableStrings = new LocalizedStrings({
     batches: 'BATCHES',
     batch_name: 'BATCH NAME',
     expiry: 'EXPIRY',
+    price: 'PRICE',
+    unit: 'UNIT',
   },
   fr: {
     actual_quantity: 'QUANTITÉ\nRÉELLE',
@@ -105,6 +107,8 @@ export const tableStrings = new LocalizedStrings({
     batches: 'LOTS',
     batch_name: 'NOM DU LOT',
     expiry: 'EXPIRATION',
+    price: 'PRIX',
+    unit: 'UNITÉ',
   },
   gil: {
     // TODO add: batch, no_batch_name
@@ -154,6 +158,8 @@ export const tableStrings = new LocalizedStrings({
     batches: 'BATCHES',
     batch_name: 'BATCH NAME',
     expiry: 'EXPIRY',
+    price: 'PRICE',
+    unit: 'UNIT',
   },
   tl: {
     // TODO add: batch, no_batch_name
@@ -203,6 +209,8 @@ export const tableStrings = new LocalizedStrings({
     batches: 'BATCHES',
     batch_name: 'BATCH NAME',
     expiry: 'EXPIRY',
+    price: 'PRICE',
+    unit: 'UNIT',
   },
   la: {
     actual_quantity: 'ຈຳ​​ນວນ​ຕົວ​ຈິງ\nຈຳ​ນວນ',
@@ -252,6 +260,8 @@ export const tableStrings = new LocalizedStrings({
     batches: 'BATCHES',
     batch_name: 'BATCH NAME',
     expiry: 'EXPIRY',
+    price: 'PRICE',
+    unit: 'UNIT',
   },
 });
 
