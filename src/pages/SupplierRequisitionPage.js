@@ -12,7 +12,13 @@ import { GenericPage } from './GenericPage';
 import { RequisitionRegimenModalTable } from './expansions/RequisitionRegimenModalTable';
 
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  programStrings,
+  buttonStrings,
+  modalStrings,
+  pageInfoStrings,
+  tableStrings,
+} from '../localization';
 import { SETTINGS_KEYS } from '../settings';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import {
@@ -109,11 +115,11 @@ const getColumns = () => ({
   price: {
     key: 'price',
     width: 1,
-    title: 'PRICE',
+    title: tableStrings.price,
     alignText: 'center',
   },
   unit: {
-    key: 'unit',
+    key: tableStrings.unit,
     width: 1,
     title: 'UNIT',
     alignText: 'center',
@@ -337,12 +343,12 @@ export class SupplierRequisitionPage extends React.Component {
     const infoColumns = [
       [
         {
-          title: 'Program:',
+          title: `${programStrings.program}:`,
           info: program && program.name,
           shouldHide: !program,
         },
         {
-          title: 'Order Type:',
+          title: `${programStrings.order_type}:`,
           info: orderType,
           shouldHide: !program,
         },
@@ -357,7 +363,7 @@ export class SupplierRequisitionPage extends React.Component {
       ],
       [
         {
-          title: 'Period:',
+          title: `${programStrings.period}:`,
           info: period && `${period.name} -- ${period.toString()}`,
           shouldHide: !program,
         },
