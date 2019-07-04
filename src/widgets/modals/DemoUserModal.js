@@ -11,9 +11,10 @@ import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { ConfirmModal } from './ConfirmModal';
+
 import { DemoSiteRequest } from '../../authentication';
 import { authStrings, generalStrings, demoUserModalStrings } from '../../localization';
-import { ConfirmModal } from '..';
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
 

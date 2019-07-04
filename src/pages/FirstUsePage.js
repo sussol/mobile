@@ -9,8 +9,9 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
+import { SyncState } from '../widgets';
 import { getAppVersion } from '../settings';
-import { SyncState, DemoUserModal } from '../widgets';
+import { DemoUserModal } from '../widgets/modals';
 
 import globalStyles, { SUSSOL_ORANGE, WARM_GREY } from '../globalStyles';
 

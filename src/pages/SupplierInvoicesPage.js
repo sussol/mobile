@@ -6,12 +6,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { PageButton } from '../widgets';
 import { GenericPage } from './GenericPage';
+import { SelectModal, BottomConfirmModal } from '../widgets/modals';
 
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 import { formatStatus, sortDataBy } from '../utilities';
-import { SelectModal, PageButton, BottomConfirmModal } from '../widgets';
+import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
 
 const DATA_TYPES_SYNCHRONISED = ['Transaction'];
 

@@ -27,14 +27,8 @@ import { NavigationActions } from 'react-navigation';
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
 import { MobileAppSettings } from './settings';
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
-import {
-  FinaliseButton,
-  FinaliseModal,
-  LoginModal,
-  NavigationBar,
-  SyncState,
-  Spinner,
-} from './widgets';
+import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
+import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
 import { migrateDataToVersion } from './dataMigration';

@@ -9,11 +9,15 @@ import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { GenericPage } from './GenericPage';
-import { PageButton, PageInfo, TextEditor, PageContentModal, ConfirmModal } from '../widgets';
-import StocktakeBatchModal from '../widgets/modals/StocktakeBatchModal';
-import GenericChooseModal from '../widgets/modals/GenericChooseModal';
+import { PageButton, PageInfo, TextEditor } from '../widgets';
+import {
+  PageContentModal,
+  ConfirmModal,
+  StocktakeBatchModal,
+  GenericChooseModal,
+} from '../widgets/modals';
+
 import { parsePositiveInteger, truncateString, sortDataBy } from '../utilities';
-import { SUSSOL_ORANGE } from '../globalStyles';
 import {
   buttonStrings,
   modalStrings,
@@ -22,6 +26,8 @@ import {
   pageInfoStrings,
   programStrings,
 } from '../localization';
+
+import { SUSSOL_ORANGE } from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['StocktakeItem', 'StocktakeBatch', 'ItemBatch', 'Item'];
 

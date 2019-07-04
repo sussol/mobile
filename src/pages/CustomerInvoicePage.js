@@ -13,14 +13,8 @@ import { GenericPage } from './GenericPage';
 import { createRecord } from '../database';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
-import {
-  AutocompleteSelector,
-  BottomConfirmModal,
-  PageButton,
-  PageContentModal,
-  PageInfo,
-  TextEditor,
-} from '../widgets';
+import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
+import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 
 import globalStyles from '../globalStyles';
 

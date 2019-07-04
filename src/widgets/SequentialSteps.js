@@ -29,7 +29,7 @@ import { WARM_GREY, SUSSOL_ORANGE } from '../globalStyles';
  * @
  *
  */
-export default class SequentialSteps extends React.PureComponent {
+export class SequentialSteps extends React.PureComponent {
   renderStepIcon = ({ isCurrentStep, isLessThanCurrentStep, step, complete }) => {
     const { error } = step;
     return (
@@ -143,6 +143,8 @@ SequentialSteps.propTypes = {
   steps: PropTypes.array.isRequired,
   currentStepKey: PropTypes.string.isRequired,
 };
+
+export default SequentialSteps;
 
 /**
  * Steps array example
