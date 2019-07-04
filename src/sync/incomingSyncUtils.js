@@ -601,7 +601,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'SensorLog': {
-      const { ID, sensorID, locationID, date, time, temperature, isInBreach } = record;
+      const { ID, sensorID, locationID, date, time, temperature, isInBreach, aggregation } = record;
       const location = database.getOrCreate('Location', locationID);
       const sensor = database.getOrCreate('Sensor', sensorID);
       internalRecord = {
@@ -609,6 +609,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         temperature: parseNumber(temperature),
         timestamp: parseDate(date, time),
         isInBreach: parseBoolean(isInBreach),
+        aggregation,
         sensor,
         location,
       };

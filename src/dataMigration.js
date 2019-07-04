@@ -188,6 +188,22 @@ const dataMigrations = [
       });
     },
   },
+  {
+    version: '2.2.0-rc2',
+    migrate: database => {
+      // Vaccine Module was introduced in 2.2.0-rc0, but aggregation field was not added
+      // to the original prototype, export to Typaia relies on aggregation = 'breachAggregate'
+      // or aggregation = 'aggregate', need to resync all sensorLogs to update aggregation field
+      // on primary server.
+      database.write(() => {
+        // Resync sensorLogs with aggregation status
+        const aggregatedSensorLogs =
+          .objects('SensorLog')
+          .filtered('aggregation == "aggregate" or aggregation == "breachAggregate"');
+        aggregatedSensorLogs.forEach(sensorLog => database.save('SensorLog', sensorLog));
+      });
+    },
+  },
 ];
 
 export default dataMigrations;
