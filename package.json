@@ -63,7 +63,7 @@
     "react-navigation-redux-helpers": "^3.0.0",
     "react-navigation-tabs": "^0.4.0",
     "react-redux": "^6.0.0",
-    "realm": "^2.22.0",
+    "realm": "^2.29.0",
     "redux": "^4.0.1",
     "redux-persist": "^5.10.0",
     "redux-persist-error-handler": "^0.1.1",
