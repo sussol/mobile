@@ -17,14 +17,13 @@ import { SETTINGS_KEYS } from '../settings';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import {
   AutocompleteSelector,
-  BottomConfirmModal,
   PageButton,
   PageInfo,
-  PageContentModal,
   TextEditor,
   ToggleSelector,
   ToggleBar,
 } from '../widgets';
+import { PageContentModal, BottomConfirmModal } from '../widgets/modals';
 
 import globalStyles from '../globalStyles';
 
