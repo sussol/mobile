@@ -91,7 +91,6 @@
     "metro-react-native-babel-preset": "^0.51.1",
     "prettier": "^1.16.0",
     "promise-sync-es6": "^0.1.4",
-    "react-addons-test-utils": "^15.6.2",
     "react-test-renderer": "^16.7.0"
   }
 }
