@@ -96,7 +96,6 @@
     "promise-sync-es6": "^0.1.4",
     "react-addons-test-utils": "^15.6.2",
     "react-native-mock": "^0.3.1",
-    "react-test-renderer": "^16.7.0",
-    "sinon": "^7.2.3"
+    "react-test-renderer": "^16.7.0"
   }
 }
