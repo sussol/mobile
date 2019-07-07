@@ -66,7 +66,7 @@
     "react-native": "0.57.4",
     "react-native-data-table": "^0.2.0",
     "react-native-database": "^0.3.2",
-    "react-native-device-info": "^0.24.3",
+    "react-native-device-info": "^2.2.2",
     "react-native-fs": "^2.10.14",
     "react-native-generic-table-page": "^0.4.0",
     "react-native-localization": "^0.1.30",
