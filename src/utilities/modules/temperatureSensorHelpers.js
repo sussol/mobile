@@ -45,11 +45,9 @@ function toInt(byteArray, startPosition) {
 function addRefreshSensor(sensorInfo, sensorData, database) {
   const sensors = database.objects('Sensor').filtered('macAddress == $0', sensorInfo.macAddress);
   database.write(() => {
-    let id = generateUUID();
-    // eslint-disable-next-line prefer-destructuring
-    if (sensors.length > 0) id = sensors[0].id;
+    const idForUpdate = sensors.length ? sensors[0].id : generateUUID();
     database.update('Sensor', {
-      id,
+      id: idForUpdate,
       ...sensorInfo,
       ...sensorData,
     });
