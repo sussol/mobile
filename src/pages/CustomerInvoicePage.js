@@ -161,43 +161,42 @@ export class CustomerInvoicePage extends GenericPage {
   };
 
   renderPageInfo = () => {
+    const { transaction } = this.props;
     const infoColumns = [
       [
         {
           title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(this.props.transaction.entryDate) || 'N/A',
+          info: formatDate(transaction.entryDate) || 'N/A',
         },
         {
           title: `${pageInfoStrings.confirm_date}:`,
-          info: formatDate(this.props.transaction.confirmDate),
+          info: formatDate(transaction.confirmDate),
         },
         {
           title: `${pageInfoStrings.entered_by}:`,
-          info: this.props.transaction.enteredBy && this.props.transaction.enteredBy.username,
+          info: transaction.enteredBy && transaction.enteredBy.username,
         },
       ],
       [
         {
           title: `${pageInfoStrings.customer}:`,
-          info: this.props.transaction.otherParty && this.props.transaction.otherParty.name,
+          info: transaction.otherParty && transaction.otherParty.name,
         },
         {
           title: `${pageInfoStrings.their_ref}:`,
-          info: this.props.transaction.theirRef,
+          info: transaction.theirRef,
           onPress: this.openTheirRefEditor,
           editableType: 'text',
         },
         {
           title: `${pageInfoStrings.comment}:`,
-          info: this.props.transaction.comment,
+          info: transaction.comment,
           onPress: this.openCommentEditor,
           editableType: 'text',
         },
       ],
     ];
-    return (
-      <PageInfo columns={infoColumns} isEditingDisabled={this.props.transaction.isFinalised} />
-    );
+    return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
   };
 
   renderCell = (key, transactionItem) => {
