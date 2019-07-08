@@ -2,7 +2,7 @@ package com.msupplymobile;
 
 import android.app.Activity;
 
-import com.msupplymobile.bleTempoDisc;
+import com.msupplymobile.BleTempoDisc;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BLEPackager implements ReactPackage {
+public class BlePackager implements ReactPackage {
 
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
@@ -26,7 +26,7 @@ public class BLEPackager implements ReactPackage {
                               ReactApplicationContext reactContext) {
     List<NativeModule> modules = new ArrayList<>();
 
-    modules.add(new bleTempoDisc(reactContext));
+    modules.add(new BleTempoDisc(reactContext));
 
     return modules;
   }

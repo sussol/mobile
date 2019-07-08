@@ -3,7 +3,7 @@ package com.msupplymobile;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableArray;
 
-public class bleUtil {
+public class BleUtility {
     public static int toInt(byte b) {
         return (b & 0xff);
     }

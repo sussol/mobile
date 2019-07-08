@@ -123,7 +123,7 @@ export function updateSensors(sensors, database) {
 export async function refreshAndUpdateSensors(runWithLoadingIndicator, database) {
   let sensors = [];
   try {
-    sensors = await NativeModules.bleTempoDisc.getDevices(manufacturerID, sensorScanTimeout, '');
+    sensors = await NativeModules.BleTempoDisc.getDevices(manufacturerID, sensorScanTimeout, '');
     updateSensors(sensors, database);
   } catch (e) {
     // TO DO warn user or bugsnag for error
@@ -602,7 +602,7 @@ export async function syncSensorLogs({
 }) {
   const { macAddress } = sensor;
   try {
-    const downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
+    const downloadedData = await NativeModules.BleTempoDisc.getUARTCommandResults(
       macAddress,
       SENSOR_SYNC_COMMAND_GET_LOGS,
       connectionDelay,
@@ -628,7 +628,7 @@ export async function syncSensorLogs({
 export async function findAndUpdateSensor({ sensor, database }) {
   const { macAddress } = sensor;
   try {
-    const sensors = await NativeModules.bleTempoDisc.getDevices(
+    const sensors = await NativeModules.BleTempoDisc.getDevices(
       manufacturerID,
       sensorScanTimeout,
       macAddress
@@ -654,7 +654,7 @@ export async function executeSensorUARTCommand({
   let uartResult = null;
 
   try {
-    uartResult = await NativeModules.bleTempoDisc.getUARTCommandResults(
+    uartResult = await NativeModules.BleTempoDisc.getUARTCommandResults(
       macAddress,
       command, // this also resets sensor logs
       connectionDelay, // connection delay

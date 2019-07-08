@@ -20,9 +20,9 @@ import java.util.TimerTask;
 import java.util.Timer;
 import java.util.UUID;
 
-public class bleUART {
+public class BleUart {
 
-    public static final String TAG = "bleUART";
+    public static final String TAG = "BleUart";
 
     private static final UUID GATT_SERVICE = UUID.fromString("6e400001-b5a3-f393-e0a9-e50e24dcca9e");
     private static final UUID OUT_CHARASTERISTIC = UUID.fromString("6e400002-b5a3-f393-e0a9-e50e24dcca9e");
@@ -36,14 +36,14 @@ public class bleUART {
     private WritableArray resultLinesArrayRaw;
     private WritableArray resultLinesArrayString;
     private ReactContext reactContext;
-    private bleDeviceScanner deviceScanner;
+    private BleDeviceScanner deviceScanner;
     private BluetoothDevice bluetoothDevice;
     private int reconnectionCount;
     private int connectionDelay;
     private int numberOConnectionRetries;
     private boolean successfullConnection;
 
-    public bleUART(ReactContext reactContext, bleDeviceScanner deviceScanner, String deviceAddress, String command, int connectionDelay, int numberOConnectionRetries, Promise promise) {
+    public BleUart(ReactContext reactContext, BleDeviceScanner deviceScanner, String deviceAddress, String command, int connectionDelay, int numberOConnectionRetries, Promise promise) {
         this.reactContext = reactContext;
         this.deviceAddress = deviceAddress;
         this.deviceScanner = deviceScanner;
@@ -61,7 +61,7 @@ public class bleUART {
 
     public void getCommandResult() {
         bluetoothDevice = null;
-        Log.i(TAG, "starting log of bleUART");
+        Log.i(TAG, "starting log of BleUart");
         try {
             bluetoothDevice = deviceScanner.getScannedDevice(deviceAddress);
             if (bluetoothDevice == null) throw new Error();
@@ -168,8 +168,8 @@ public class bleUART {
                                             BluetoothGattCharacteristic characteristic) {
             byte response[] = characteristic.getValue();
             Log.i(TAG, "receiving data " + response.length + " bytes");
-            resultLinesArrayRaw.pushArray(bleUtil.toWritableIntArray(response));
-            resultLinesArrayString.pushString(bleUtil.toString(response));
+            resultLinesArrayRaw.pushArray(BleUtility.toWritableIntArray(response));
+            resultLinesArrayString.pushString(BleUtility.toString(response));
         }
 
         @Override
