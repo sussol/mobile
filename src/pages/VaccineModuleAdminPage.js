@@ -65,7 +65,7 @@ export class VaccineModuleAdminPage extends React.Component {
     const { database } = this;
     const { sensors, currentFridge } = this.state;
     const fridgeSensor = currentFridge.getSensor(database);
-    const highlightValue = fridgeSensor || fridgeSensor.toString();
+    const highlightValue = fridgeSensor || (fridgeSensor && fridgeSensor.toString());
 
     return (
       <GenericChoiceList
