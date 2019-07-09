@@ -189,7 +189,7 @@ const dataMigrations = [
     },
   },
   {
-    version: '2.2.0-rc2',
+    version: '2.2.0-rc4',
     migrate: database => {
       // Vaccine Module was introduced in 2.2.0-rc0, but aggregation field was not added
       // to the original prototype, export to Typaia relies on aggregation = 'breachAggregate'
@@ -197,7 +197,7 @@ const dataMigrations = [
       // on primary server.
       database.write(() => {
         // Resync sensorLogs with aggregation status
-        const aggregatedSensorLogs =
+        const aggregatedSensorLogs = database
           .objects('SensorLog')
           .filtered('aggregation == "aggregate" or aggregation == "breachAggregate"');
         aggregatedSensorLogs.forEach(sensorLog => database.save('SensorLog', sensorLog));
