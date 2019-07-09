@@ -261,8 +261,6 @@ function linkToBatches(sensorLog, database) {
 
 export function applyBreaches({ sensor, database }) {
   const breachedLogs = [];
-  let breachedLogsToAggregate = [];
-  let breachAggregateCount = 0;
   try {
     const minTemperature = 2;
     const maxTemperature = 8;
@@ -298,64 +296,9 @@ export function applyBreaches({ sensor, database }) {
       );
     };
 
-    const createAggregatesOfBreachLogs = () => {
-      const length = breachedLogsToAggregate.length;
-      const firstTimeStamp = breachedLogsToAggregate[0].getTime();
-      const lastTimeStamp = breachedLogsToAggregate[length-1].getTime();
-      const timeStampDifference = (lastTimeStamp-firstTimeStamp)/2;
-      const middleTimeStamp = new Date(firstTimeStamp + timeStampDifference);
-      let min = Infinity;
-      let max = -Infinity;
-
-      breachedLogsToAggregate.forEach({ temperature } => {
-        min = temperature < min ? temperature : min;
-        max = temperature > max ? temperature : max;
-      });
-
-     breachedLogs.push({
-       ...breachedLogsToAggregate[0], 
-       timestamp: middleTimeStamp,
-       temperature: min,
-     });
-
-     breachedLogs.push({
-      ...breachedLogsToAggregate[0], 
-      id: generateUUID(),
-      timestamp: middleTimeStamp,
-      temperature: max,
-    });
-
-    database.write(() => {
-      breachedLogsToAggregate.forEach(sensorLog => {
-        database.delete('SensorLog', sensorLog);
-      });
-    });
-
-      breachedLogsToAggregate = [];
-    }
-
     const addBreachLog = ({ id }) => {
-      if(breachAggregateCount < MAX_20MIN_BREACH_LOGS) {
-        breachedLogs.push(id);
-        breachAggregateCount += 1;
-      } else {
-        if(breachedLogsToAggregate.length < MAX_BREACH_LOGS_TO_AGGREGATES) {
-          breachedLogsToAggregate.push(id);
-        } else {
-          createAggregatesOfBreachLogs();
-        }
-      }
+      breachedLogs.push(id);
     };
-
-    const finaliseBreach = () => {
-      if(breachedLogsToAggregate.length === 0) return;
-      if(breachedLogsToAggregate.length === 1) {
-         addBreachLogs(breachedLogsToAggregate[0]);
-         breachedLogsToAggregate = [];
-         return;
-      }
-      createAggregatesOfBreachLogs();
-    }
 
     let firstAggregate = sensor.sensorLogs.filtered('aggregation == "aggregate"').max('timestamp');
     if (!firstAggregate) firstAggregate = new Date(2019, 1, 1);
@@ -375,25 +318,18 @@ export function applyBreaches({ sensor, database }) {
       const currentLog = sensorLogs[i];
       const isLogBeyondThreshold = isBeyondThreshold(currentLog);
       if (currentLog.aggregation === SENSOR_LOG_BREACH_AGGREGATE_TYPE) {
-        if(!isInBreach) breachAggregateCount = 1;
-        else breachAggregateCount += 1;
         // eslint-disable-next-line prefer-destructuring
         isInBreach = currentLog.isInBreach;
         continue;
       }
-        // New breach aggregate (continue statement above will skip exisint breach aggregate)
+
       if (isInBreach && isLogBeyondThreshold) {
         addBreachLog(currentLog);
         continue;
       } else if (isInBreach && !isLogBeyondThreshold) {
-        breachAggregateCount = 0;
-        finaliseBreach();
         isInBreach = false;
         continue;
       }
-
-      breachAggregateCount = 0;
-      breachedLogsToAggregate = [];
 
       if (isLogBeyondThreshold) {
         possibleBreachLogs.push(currentLog);
@@ -408,14 +344,14 @@ export function applyBreaches({ sensor, database }) {
     }
 
     database.write(() => {
-      breachedLogs.forEach({ sensorLog } => {
-        const createdOrUpdatedLog = database.update('SensorLog', {
-          ...sensorLog,
+      breachedLogs.forEach(id => {
+        const sensorLog = database.update('SensorLog', {
+          id,
           aggregation: 'breachAggregate',
           isInBreach: true,
         });
 
-        linkToBatches(createdOrUpdatedLog, database);
+        linkToBatches(sensorLog, database);
       });
     });
   } catch (e) {
