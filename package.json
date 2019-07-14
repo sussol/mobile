@@ -25,7 +25,8 @@
     "preset": "react-native"
   },
   "resolutions": {
-    "react-devtools-core": "3.5.1"
+    "react-devtools-core": "3.6.0",
+    "lodash": "4.17.14"
   },
   "husky": {
     "hooks": {
