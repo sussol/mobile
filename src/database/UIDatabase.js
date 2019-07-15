@@ -49,7 +49,10 @@ export class UIDatabase {
     const { realm } = this.database;
     const { path: realmPath } = realm;
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
-    const copyFileName = `${filename}${formatDate(new Date(), 'dashes')}`;
+    const copyFileName = `${filename}${formatDate(new Date(), 'dashes')}`.replace(
+      /[~\\\\/|?*<:>"+]/g,
+      ''
+    );
 
     const permissionParameters = {
       permissionType: 'WRITE_EXTERNAL_STORAGE',
