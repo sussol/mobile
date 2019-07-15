@@ -14,3 +14,4 @@ export { compareVersions } from './compareVersions';
 export { createReducer, REHYDRATE } from './createReducer';
 export { getAllPeriodsForProgram, getAllPrograms } from './byProgram';
 export { requestPermission } from './requestPermission';
+export { backupValidation } from './fileSystem';
