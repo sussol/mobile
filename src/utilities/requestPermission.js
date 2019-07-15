@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { PermissionsAndroid } from 'react-native';
 
 /**
@@ -18,7 +19,7 @@ import { PermissionsAndroid } from 'react-native';
  * See [for permission groups]:
  * https://developer.android.com/guide/topics/permissions/overview
  */
-export default async function requestPermission({ permissionType, message }) {
+export async function requestPermission({ permissionType, message }) {
   const rationale = {
     title: 'mSupply Mobile',
     buttonNeutral: 'Ask Me Later',
