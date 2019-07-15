@@ -6,7 +6,7 @@
 import RNFS from 'react-native-fs';
 
 import { SETTINGS_KEYS } from '../settings';
-import { formatDate, requestPermission } from '../utilities';
+import { formatDate, requestPermission, backupValidation } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
@@ -33,13 +33,21 @@ export class UIDatabase {
     this.database = database;
   }
 
+  ERRORS = {
+    ERROR_IN_TRANSACTION: { code: 'ERROR_IN_TRANSACTION', message: 'Database is in a transaction' },
+    ERROR_NO_PERMISSION: { code: 'ERROR_NO_PERMISSION', message: 'Storage permission not granted' },
+    ERROR_UNKNOWN: { code: 'ERROR_UNKOWN', message: 'ERROR_UNKNOWN' },
+  };
+
   /**
-   * Closes the database, exports the realm file to '/Download/mSupplyMobile\ data' on device
-   * file system. The app will crash if anything tries to access the database while it is closed.
+   * Exports the realm file to '/Download/mSupplyMobile\ data' on device file system.
+   * Ensures there is enough space, the realm exists and requests storage permission,
+   * if required.
    */
+
   async exportData(filename = 'msupply-mobile-data') {
     const { realm } = this.database;
-    const realmPath = realm.path;
+    const { path: realmPath } = realm;
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
     const copyFileName = `${filename}${formatDate(new Date(), 'dashes')}`;
 
@@ -48,18 +56,27 @@ export class UIDatabase {
       message: 'Export database',
     };
 
-    const { success } = await requestPermission(permissionParameters);
+    // Before requesting permissions, ensure there is enough space and the realm
+    // file exists.
+    const exportValidation = backupValidation(realmPath);
+    const { success } = exportValidation;
+    if (!success) return exportValidation;
+    // Request permissions for external storage before trying to backup the realm file.
+    const { success: permissionSuccess } = await requestPermission(permissionParameters);
+    // If permission was granted, ensure the realm is not in a transaction and backup
+    // the realm file.
+    if (!permissionSuccess) return { success: false, ...this.ERRORS.ERROR_NO_PERMISSION };
+    if (realm.isInTransaction) return { success: false, ...this.ERRORS.ERROR_IN_TRANSACTION };
 
-    let error;
+    // Finally try to create the backup/exported realm
+    try {
+      await RNFS.mkdir(exportFolder);
+      await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
+    } catch (error) {
+      return { success: false, ...this.ERRORS.ERROR_UNKNOWN };
+    }
 
-    if (success) {
-      if (!realm.isInTransaction) {
-        await RNFS.mkdir(exportFolder);
-        await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
-      } else error = { code: 'ERROR_IN_TRANSACTION', message: 'Database is in a transaction' };
-    } else error = { code: 'ERROR_NO_PERMISSION', message: 'Storage permission not granted' };
-
-    return { success, error };
+    return { success: true };
   }
 
   objects(type) {
