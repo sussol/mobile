@@ -3,12 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import Realm from 'realm';
-
 import RNFS from 'react-native-fs';
 
-import { schema } from './schema';
 import { SETTINGS_KEYS } from '../settings';
+import { formatDate, requestPermission } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
@@ -39,32 +37,29 @@ export class UIDatabase {
    * Closes the database, exports the realm file to '/Download/mSupplyMobile\ data' on device
    * file system. The app will crash if anything tries to access the database while it is closed.
    */
-  exportData(filename = 'msupply-mobile-data') {
-    // TO DO: add method to react-native-database.
-
+  async exportData(filename = 'msupply-mobile-data') {
     const { realm } = this.database;
     const realmPath = realm.path;
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
+    const copyFileName = `${filename}${formatDate(new Date(), 'dashes')}`;
 
-    const date = new Date();
-    const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-    const copyFileName = `${filename} ${dateString}`;
+    const permissionParameters = {
+      permissionType: 'WRITE_EXTERNAL_STORAGE',
+      message: 'Export database',
+    };
 
-    // If the database is not closed, there is a small chance of corrupting the data if currently in
-    // a transaction.
-    realm.close();
+    const { success } = await requestPermission(permissionParameters);
 
-    RNFS.mkdir(exportFolder)
-      .then(() => {
-        RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
-        // |copyFileName| is derived from store name. May have invalid characters for filesystem.
-      })
-      .catch(() => {
-        RNFS.copyFile(realmPath, `${exportFolder}/msupply-mobile-data.realm`);
-      })
-      .finally(() => {
-        this.database.realm = new Realm(schema);
-      }); // Reopen the realm.
+    let error;
+
+    if (success) {
+      if (!realm.isInTransaction) {
+        await RNFS.mkdir(exportFolder);
+        await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
+      } else error = { code: 'ERROR_IN_TRANSACTION', message: 'Database is in a transaction' };
+    } else error = { code: 'ERROR_NO_PERMISSION', message: 'Storage permission not granted' };
+
+    return { success, error };
   }
 
   objects(type) {
