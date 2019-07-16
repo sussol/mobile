@@ -11,10 +11,16 @@ import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { GenericPage } from '../../pages/GenericPage';
-import { Button, PageButton, ExpiryTextInput, PageInfo } from '..';
-import { GenericChooseModal } from './GenericChooseModal';
+import { GenericChoiceList, Button, PageButton, ExpiryTextInput, PageInfo } from '..';
+import { PageContentModal } from './PageContentModal';
 
-import { tableStrings, buttonStrings, modalStrings, pageInfoStrings } from '../../localization';
+import {
+  programStrings,
+  tableStrings,
+  buttonStrings,
+  modalStrings,
+  pageInfoStrings,
+} from '../../localization';
 import { parsePositiveInteger } from '../../utilities';
 
 import globalStyles, {
@@ -25,13 +31,17 @@ import globalStyles, {
   expansionPageStyles,
 } from '../../globalStyles';
 
+const MODAL_KEYS = {
+  REASON_EDIT: 'reasonEdit',
+};
 export class StocktakeBatchModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      reasonModalOpen: false,
       currentBatch: null,
       reasons: [],
+      isModalOpen: false,
+      modalKey: null,
     };
   }
 
@@ -42,14 +52,20 @@ export class StocktakeBatchModal extends React.Component {
     this.setState({ reasons });
   };
 
+  openModal = (key, currentBatch) => {
+    this.setState({ modalKey: key, isModalOpen: true, currentBatch });
+  };
+
+  closeModal = () => this.setState({ isModalOpen: false });
+
   reasonModalConfirm = ({ item: option }) => {
     if (option) {
+      const { database } = this.props;
       const { currentBatch } = this.state;
       const { id } = currentBatch;
-      const { database } = this.props;
       database.write(() => database.update('StocktakeBatch', { id, option }));
     }
-    this.setState({ reasonModalOpen: false });
+    this.closeModal();
   };
 
   /**
@@ -59,32 +75,27 @@ export class StocktakeBatchModal extends React.Component {
    * @param {Object} stocktakeBatch
    */
   assignReason = stocktakeBatch => {
-    if (stocktakeBatch.shouldApplyReason) {
-      this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch });
-    } else {
-      const { database } = this.props;
-      const { id } = stocktakeBatch;
-      database.write(() => database.update('StocktakeBatch', { id, option: null }));
-    }
+    const { REASON_EDIT } = MODAL_KEYS;
+    const { database } = this.props;
+    const { id, shouldApplyReason } = stocktakeBatch;
+    if (shouldApplyReason) this.openModal(this, REASON_EDIT, stocktakeBatch);
+    else database.write(() => database.update('StocktakeBatch', { id, option: null }));
   };
 
   onEndEditing = (key, stocktakeBatch, newValue) => {
-    if (!newValue || newValue === '') return;
-
-    const { reasons, reasonModalOpen } = this.state;
+    const { reasons, isModalOpen } = this.state;
     const { database } = this.props;
-
-    // If the reason modal is open just ignore any change to the current line
-    // This a hack to solve similar issue https://github.com/openmsupply/mobile/issues/1011
-    // Underlying issue requires data table rewrite
-    if (reasonModalOpen) return;
-
     const { id } = stocktakeBatch;
+
+    if (!newValue) return;
+    // If the reason modal is open just ignore any change to the current line
+    if (isModalOpen) return;
     switch (key) {
       case 'countedTotalQuantity': {
-        if (parsePositiveInteger(newValue) === null) return;
+        const quantity = parsePositiveInteger(newValue);
+        if (quantity === null) return;
         database.write(() => {
-          stocktakeBatch.countedTotalQuantity = parsePositiveInteger(newValue);
+          stocktakeBatch.countedTotalQuantity = quantity;
         });
         database.save(stocktakeBatch);
         if (reasons.length > 0) this.assignReason(stocktakeBatch);
@@ -114,6 +125,7 @@ export class StocktakeBatchModal extends React.Component {
     const { stocktake } = stocktakeItem;
     const isEditable = !stocktake.isFinalised;
     const { option } = stocktakeBatch;
+    const { REASON_EDIT } = MODAL_KEYS;
     switch (key) {
       default:
         return {
@@ -158,17 +170,15 @@ export class StocktakeBatchModal extends React.Component {
         return { cellContents: `${prefix}${difference}` };
       }
       case 'reason': {
+        const onPress = this.openModal.bind(this, REASON_EDIT, stocktakeBatch);
+        const editable = option && isEditable;
         return (
           <TouchableOpacity
             key={stocktakeBatch.id}
-            onPress={() =>
-              option && isEditable
-                ? this.setState({ reasonModalOpen: true, currentBatch: stocktakeBatch })
-                : null
-            }
+            onPress={editable ? onPress : null}
             style={localStyles.reasonCell}
           >
-            {option && isEditable && <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />}
+            {editable && <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />}
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
               {stocktakeBatch.option ? stocktakeBatch.option.title : ''}
             </Text>
@@ -218,7 +228,7 @@ export class StocktakeBatchModal extends React.Component {
     return (
       <View style={localStyles.footer}>
         <Button
-          text="OK"
+          text={buttonStrings.done}
           disabledColor={WARM_GREY}
           style={[globalStyles.button, localStyles.OKButton]}
           textStyle={[globalStyles.buttonText, localStyles.OKButtonText]}
@@ -228,21 +238,38 @@ export class StocktakeBatchModal extends React.Component {
     );
   };
 
-  renderReasonModal = () => {
-    const { reasonModalOpen, currentBatch, reasons } = this.state;
-    const { option } = currentBatch;
-    const currentReasonIndex = option && reasons.findIndex(reason => reason.id === option.id);
+  getModalTitle = () => {
+    const { modalKey } = this.state;
+    const { REASON_EDIT } = MODAL_KEYS;
+    switch (modalKey) {
+      default:
+        return '';
+      case REASON_EDIT:
+        return programStrings.select_a_reason;
+    }
+  };
 
-    return (
-      <GenericChooseModal
-        isOpen={reasonModalOpen}
-        data={reasons}
-        highlightIndex={currentReasonIndex}
-        onPress={this.reasonModalConfirm}
-        keyToDisplay="title"
-        title={modalStrings.select_a_reason}
-      />
-    );
+  renderModalContent = () => {
+    const { modalKey, currentBatch, reasons } = this.state;
+    const { option } = currentBatch;
+    const highlightValue = option && option.title;
+    const { REASON_EDIT } = MODAL_KEYS;
+    switch (modalKey) {
+      default: {
+        return null;
+      }
+      case REASON_EDIT: {
+        return (
+          <GenericChoiceList
+            data={reasons}
+            highlightValue={highlightValue}
+            keyToDisplay="title"
+            onPress={this.reasonModalConfirm}
+            title={modalStrings.select_a_reason}
+          />
+        );
+      }
+    }
   };
 
   getColumns = () => {
@@ -292,15 +319,17 @@ export class StocktakeBatchModal extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, isOpen } = this.props;
-    const { data, reasonModalOpen } = this.state;
+    const { data, isModalOpen, modalKey } = this.state;
+    const { REASON_EDIT } = MODAL_KEYS;
+
     return (
       <Modal
         isOpen={isOpen}
         style={[localStyles.modal]}
-        backdropPressToClose={true}
         backdropOpacity={0.33}
-        swipeToClose={false}
         position="top"
+        backdropPressToClose={false}
+        swipeToClose={false}
       >
         <GenericPage
           data={data}
@@ -317,7 +346,16 @@ export class StocktakeBatchModal extends React.Component {
           pageStyles={expansionPageStyles}
           {...genericTablePageStyles}
         />
-        {reasonModalOpen && this.renderReasonModal()}
+        {isModalOpen && (
+          <PageContentModal
+            isOpen={isModalOpen}
+            onClose={this.closeModal}
+            title={this.getModalTitle()}
+            coverScreen={modalKey === REASON_EDIT}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        )}
         {this.renderFooter()}
       </Modal>
     );
