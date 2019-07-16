@@ -14,4 +14,3 @@ export { SelectModal } from './SelectModal';
 export { DemoUserModal } from './DemoUserModal';
 export { ByProgramModal } from './ByProgramModal';
 export { StocktakeBatchModal } from './StocktakeBatchModal';
-export { GenericChooseModal } from './GenericChooseModal';
