@@ -23,7 +23,7 @@ import globalStyles, {
 } from '../../globalStyles';
 import GenericChooseModal from './GenericChooseModal';
 
-export default class StocktakeBatchModal extends React.Component {
+export class StocktakeBatchModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -333,6 +333,8 @@ StocktakeBatchModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onConfirm: PropTypes.func.isRequired,
 };
+
+export default StocktakeBatchModal;
 
 const unwrapText = text => text.replace(/\n/g, ' ');
 const localStyles = StyleSheet.create({
