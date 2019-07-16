@@ -61,7 +61,7 @@ export class UIDatabase {
 
     // Before requesting permissions, ensure there is enough space and the realm
     // file exists.
-    const exportValidation = backupValidation(realmPath);
+    const exportValidation = await backupValidation(realmPath);
     const { success } = exportValidation;
     if (!success) return exportValidation;
     // Request permissions for external storage before trying to backup the realm file.
