@@ -56,7 +56,9 @@ export class StocktakeBatchModal extends React.Component {
     this.setState({ modalKey: key, isModalOpen: true, currentBatch });
   };
 
-  closeModal = () => this.setState({ isModalOpen: false });
+  closeModal = () => {
+    this.setState({ isModalOpen: false });
+  };
 
   reasonModalConfirm = ({ item: option }) => {
     if (option) {
@@ -77,9 +79,10 @@ export class StocktakeBatchModal extends React.Component {
   assignReason = stocktakeBatch => {
     const { REASON_EDIT } = MODAL_KEYS;
     const { database } = this.props;
-    const { id, shouldApplyReason } = stocktakeBatch;
-    if (shouldApplyReason) this.openModal(this, REASON_EDIT, stocktakeBatch);
-    else database.write(() => database.update('StocktakeBatch', { id, option: null }));
+    const { id, option, shouldHaveReason } = stocktakeBatch;
+    if (shouldHaveReason) {
+      if (!option) this.openModal(REASON_EDIT, stocktakeBatch);
+    } else database.write(() => database.update('StocktakeBatch', { id, option: null }));
   };
 
   onEndEditing = (key, stocktakeBatch, newValue) => {
@@ -319,7 +322,7 @@ export class StocktakeBatchModal extends React.Component {
 
   render() {
     const { database, genericTablePageStyles, isOpen } = this.props;
-    const { data, isModalOpen, modalKey } = this.state;
+    const { data, isModalOpen, modalKey, currentBatch } = this.state;
     const { REASON_EDIT } = MODAL_KEYS;
 
     return (
@@ -349,7 +352,7 @@ export class StocktakeBatchModal extends React.Component {
         {isModalOpen && (
           <PageContentModal
             isOpen={isModalOpen}
-            onClose={this.closeModal}
+            onClose={currentBatch && currentBatch.enforceReason ? null : this.closeModal}
             title={this.getModalTitle()}
             coverScreen={modalKey === REASON_EDIT}
           >
