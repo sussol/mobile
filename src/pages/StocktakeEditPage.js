@@ -136,8 +136,10 @@ export class StocktakeEditPage extends React.Component {
   assignReason = stocktakeItem => {
     const { database } = this.props;
     const { REASON_EDIT } = MODAL_KEYS;
-    if (stocktakeItem.shouldApplyReason) this.openModal(REASON_EDIT, stocktakeItem);
-    else stocktakeItem.applyReasonToBatches(database);
+    const { shouldHaveReason, hasAnyReason } = stocktakeItem;
+    if (shouldHaveReason) {
+      if (!hasAnyReason) this.openModal(REASON_EDIT, stocktakeItem);
+    } else stocktakeItem.applyReasonToBatches(database);
   };
 
   /**
@@ -500,14 +502,18 @@ export class StocktakeEditPage extends React.Component {
         {...genericTablePageStyles}
         topRoute={topRoute}
       >
-        <PageContentModal
-          isOpen={isModalOpen && !stocktake.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-          coverScreen={modalKey === REASON_EDIT}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
+        {isModalOpen && (
+          <PageContentModal
+            isOpen={isModalOpen && !stocktake.isFinalised}
+            onClose={
+              currentStocktakeItem && currentStocktakeItem.enforceReason ? null : this.closeModal
+            }
+            title={this.getModalTitle()}
+            coverScreen={modalKey === REASON_EDIT}
+          >
+            {this.renderModalContent()}
+          </PageContentModal>
+        )}
 
         <ConfirmModal
           coverScreen
