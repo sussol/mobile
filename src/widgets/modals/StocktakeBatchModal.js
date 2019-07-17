@@ -183,7 +183,7 @@ export class StocktakeBatchModal extends React.Component {
           >
             {editable && <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />}
             <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
-              {stocktakeBatch.option ? stocktakeBatch.option.title : ''}
+              {stocktakeBatch.option ? stocktakeBatch.option.title : programStrings.not_applicable}
             </Text>
           </TouchableOpacity>
         );
