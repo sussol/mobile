@@ -259,17 +259,17 @@ function linkToBatches(sensorLog, database) {
 export function applyBreaches({ sensor, database }) {
   const breachedLogs = [];
   try {
-    const minTemperature = 16;
-    const maxTemperature = 20;
+    const minTemperature = 2;
+    const maxTemperature = 8;
 
     const breachDescribers = [
       {
         fromTemperature: -Infinity,
-        toTemperature: 16,
+        toTemperature: 2,
         duration: 15,
       },
       {
-        fromTemperature: 20,
+        fromTemperature: 8,
         toTemperature: Infinity,
         duration: 60,
       },

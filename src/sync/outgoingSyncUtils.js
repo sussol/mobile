@@ -159,7 +159,6 @@ const generateSyncData = (settings, recordType, record) => {
         batteryLevel,
         temperature,
         lastConnectionTimestamp,
-        // logInterval, TODO add to desktop schema
       } = record;
       return {
         ID: id,
@@ -168,7 +167,6 @@ const generateSyncData = (settings, recordType, record) => {
         locationID: location && location.id,
         batteryLevel: String(batteryLevel),
         temperature: String(temperature),
-        //   logInterval: String(logInterval), TODO add to desktop schema
         lastConnectionDate: getDateString(lastConnectionTimestamp),
         lastConnectionTime: getTimeString(lastConnectionTimestamp),
         storeID: thisStoreId,
@@ -176,7 +174,7 @@ const generateSyncData = (settings, recordType, record) => {
     }
     case 'SensorLog': {
       const thisStoreId = settings.get(THIS_STORE_ID);
-      const { id, sensor, location, temperature, isInBreach, timestamp } = record;
+      const { id, sensor, location, temperature, isInBreach, timestamp, aggregation } = record;
       return {
         ID: id,
         sensorID: sensor && sensor.id,
@@ -186,6 +184,7 @@ const generateSyncData = (settings, recordType, record) => {
         date: getDateString(timestamp),
         time: getTimeString(timestamp),
         storeID: thisStoreId,
+        aggregation,
       };
     }
     case 'SensorLogItemBatchJoin': {

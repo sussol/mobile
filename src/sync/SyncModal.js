@@ -23,7 +23,7 @@ export const SyncModal = ({
   onClose,
   onPressManualSync,
   onPressTemperatureSync,
-  temperatureSyncMessage,
+  temperatureSyncState,
   state,
 }) => {
   const getStatusMessage = (progress, total, isSyncing, errorMessage, progressMessage) => {
@@ -50,7 +50,7 @@ export const SyncModal = ({
   };
 
   const getSyncDateLabel = syncTime => {
-    if (syncTime > 0) {
+    if (syncTime && syncTime > 0) {
       return formatDate(new Date(syncTime), 'H:mm, MMMM D, YYYY');
     }
     return '-';
@@ -94,13 +94,29 @@ export const SyncModal = ({
           />
         </View>
         <View style={localStyles.row}>
-          <Text style={localStyles.progressDescription}>{temperatureSyncMessage}</Text>
+          <Text style={localStyles.progressDescription}>{temperatureSyncState.message}</Text>
+          <View style={localStyles.progressBarContainer}>
+            <ProgressBar
+              total={temperatureSyncState.total}
+              progress={temperatureSyncState.progress}
+              isComplete={!temperatureSyncState.isSyncing}
+            />
+          </View>
+        </View>
+        <View style={localStyles.row}>
+          <Text style={localStyles.lastSyncText}>Last successfull temperature sync:</Text>
+          <Text style={localStyles.lastSyncText}>
+            {getSyncDateLabel(temperatureSyncState.lastSync)}
+          </Text>
+        </View>
+        <View style={localStyles.row}>
           <Button
             style={[globalStyles.button, localStyles.button]}
             textStyle={[globalStyles.authFormButtonText, localStyles.buttonText]}
-            text="Sync Temperatures"
+            text="Sync temperatures"
             onPress={onPressTemperatureSync}
             disabledColor={WARM_GREY}
+            isDisabled={temperatureSyncState.isSyncing}
           />
         </View>
       </View>
@@ -173,7 +189,7 @@ SyncModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   onPressTemperatureSync: PropTypes.func.isRequired,
   onPressManualSync: PropTypes.func.isRequired,
-  temperatureSyncMessage: PropTypes.string,
+  temperatureSyncState: PropTypes.object,
   isOpen: PropTypes.bool,
 };
 
