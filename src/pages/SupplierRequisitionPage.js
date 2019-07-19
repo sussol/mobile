@@ -27,7 +27,6 @@ import {
 
 import globalStyles, { dataTableStyles } from '../globalStyles';
 
-const CATCHMENT = 100;
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
 
 const MODAL_KEYS = {
@@ -50,8 +49,6 @@ export class SupplierRequisitionPage extends React.Component {
       isAscending: true,
       isVaccine: false,
     };
-
-    this.prevRequisititionDate = -Infinity;
   }
 
   componentWillMount() {
@@ -379,45 +376,55 @@ export class SupplierRequisitionPage extends React.Component {
     const { isVaccine } = this.state;
     if (!isVaccine) return null;
 
-    const prevDate =
-      this.prevRequisititionDate === -Infinity ? new Date(2000, 1, 1) : this.prevRequisititionDate;
-    const { database } = this.props;
-    const dosesInVial = requisitionItem.item.doses;
+    const { database, requisition } = this.props;
 
-    const transactionBatchesCI = database
+    // Get date of most recent requisition.
+
+    const prevRequisitions = database
+      .objects('Requisition')
+      .filtered('id != $0 && items.item.id = $1', requisition.id, requisitionItem.item.id)
+      .sorted('entryDate');
+
+    const isPrevRequisition = prevRequisitions.length > 0;
+
+    const prevRequisitionDate = isPrevRequisition ? prevRequisitions[0].entryDate : null;
+
+    // Get transactions for this item since most recent requisition.
+
+    const transactionBatches = database
       .objects('TransactionBatch')
-      .filtered(
-        'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
-        requisitionItem.item.id,
-        prevDate,
-        'customer_invoice'
-      );
+      .filtered('itemId = $0', requisitionItem.item.id);
+
+    const recentTransactionBatches = prevRequisitionDate
+      ? transactionBatches.filtered('transaction.confirmDate >= $0', prevRequisitionDate)
+      : transactionBatches;
+
+    // Get all customer invoices since most recent requisition.
+    const transactionBatchesCI = recentTransactionBatches.filtered(
+      'transaction.type = $0',
+      'customer_invoice'
+    );
+
+    // Get all inventory adjustments since most recent requisition.
+    const transactionBatchesIA = recentTransactionBatches.filtered(
+      'transaction.type = $0',
+      'supplier_credit'
+    );
+
+    // Calculate wastage.
+
     const doses = transactionBatchesCI.sum('doses');
-
+    const dosesInVial = requisitionItem.item.doses;
     const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses;
-
-    const transactionBatchesIA = database
-      .objects('TransactionBatch')
-      .filtered(
-        'itemId = $0 && transaction.confirmDate >= $1 && transaction.type = $2',
-        requisitionItem.item.id,
-        prevDate,
-        'supplier_credit'
-      );
-
     const closeVialWastage = transactionBatchesIA.sum('numberOfPacks') * dosesInVial;
+
+    // Initialise columns for rendering expansion.
+
     const infoColumns = [
       [
         {
           title: `Previous Requisition Date:`,
-          info:
-            this.prevRequisititionDate === -Infinity
-              ? 'n/a'
-              : dateFormater(this.prevRequisititionDate, 'dd/mm/yy'),
-        },
-        {
-          title: 'Catchment Population:',
-          info: CATCHMENT,
+          info: prevRequisitionDate ? dateFormater(prevRequisitionDate, 'dd/mm/yy') : 'n/a',
         },
         {
           title: 'Doses Given:',
