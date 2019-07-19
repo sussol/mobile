@@ -391,21 +391,31 @@ export class SupplierRequisitionPage extends React.Component {
 
     // Get transactions for this item since most recent requisition.
 
-    const transactionBatches = database.objects('TransactionBatch').filtered('itemId = $0', requisitionItem.item.id);
-          
-    const recentTransactionBatches = prevRequisitionDate ? transactionBatches.filtered('transaction.confirmDate >= $0', prevRequisitionDate) : transactionBatches;
+    const transactionBatches = database
+      .objects('TransactionBatch')
+      .filtered('itemId = $0', requisitionItem.item.id);
 
-      // Get all customer invoices since most recent requisition.
-    const transactionBatchesCI = recentTransactionBatches.filtered('transaction.type = $0', 'customer_invoice');
+    const recentTransactionBatches = prevRequisitionDate
+      ? transactionBatches.filtered('transaction.confirmDate >= $0', prevRequisitionDate)
+      : transactionBatches;
+
+    // Get all customer invoices since most recent requisition.
+    const transactionBatchesCI = recentTransactionBatches.filtered(
+      'transaction.type = $0',
+      'customer_invoice'
+    );
 
     // Get all inventory adjustments since most recent requisition.
-    const transactionBatchesIA = recentTransactionBatches.filtered('transaction.type = $0', 'supplier_credit');
+    const transactionBatchesIA = recentTransactionBatches.filtered(
+      'transaction.type = $0',
+      'supplier_credit'
+    );
 
     // Calculate wastage.
 
     const doses = transactionBatchesCI.sum('doses');
     const dosesInVial = requisitionItem.item.doses;
-    const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses
+    const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses;
     const closeVialWastage = transactionBatchesIA.sum('numberOfPacks') * dosesInVial;
 
     // Initialise columns for rendering expansion.
@@ -414,7 +424,7 @@ export class SupplierRequisitionPage extends React.Component {
       [
         {
           title: `Previous Requisition Date:`,
-          info: prevRequisitionDate ? dateFormater(prevRequisitionDate, 'dd/mm/yy'): 'n/a',
+          info: prevRequisitionDate ? dateFormater(prevRequisitionDate, 'dd/mm/yy') : 'n/a',
         },
         {
           title: 'Doses Given:',

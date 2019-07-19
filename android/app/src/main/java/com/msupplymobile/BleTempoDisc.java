@@ -6,24 +6,24 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.Promise;
 
-public class bleTempoDisc extends ReactContextBaseJavaModule {
+public class BleTempoDisc extends ReactContextBaseJavaModule {
     private ReactContext reactContext;
-    private bleDeviceScanner deviceScanner;
-    private bleUART uartManager;
+    private BleDeviceScanner deviceScanner;
+    private BleUart uartManager;
 
     @Override
     public String getName() {
-        return "bleTempoDisc";
+        return "BleTempoDisc";
     }
 
-    public bleTempoDisc(ReactApplicationContext reactContext) {
+    public BleTempoDisc(ReactApplicationContext reactContext) {
         super(reactContext);
         this.reactContext = reactContext;
     }
 
     @ReactMethod
     public void getDevices(int manufacturerID, int timeout, String deviceAddress, Promise promise) {
-        deviceScanner = new bleDeviceScanner(reactContext, timeout);
+        deviceScanner = new BleDeviceScanner(reactContext, timeout);
         deviceScanner.startScanning(manufacturerID, deviceAddress, promise);
     }
 
@@ -38,7 +38,7 @@ public class bleTempoDisc extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void getUARTCommandResults(String deviceAddress, String command, int connectionDelay, int numberOConnectionRetries, Promise promise) {
-        uartManager = new bleUART(reactContext, deviceScanner, deviceAddress, command, connectionDelay, numberOConnectionRetries, promise);
+        uartManager = new BleUart(reactContext, deviceScanner, deviceAddress, command, connectionDelay, numberOConnectionRetries, promise);
         uartManager.getCommandResult();
     }
 

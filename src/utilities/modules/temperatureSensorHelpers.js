@@ -22,34 +22,32 @@ const NO_FULL_AGGREGATE_PERIOD = EIGHT_HOURS_MILLISECONDS * 4 + FIVE_MINUTES_MIL
 // Include a small offset on the interval to account for each timestamp being
 // small amounts of time off.
 const FULL_AGGREGATION_INTERVAL = EIGHT_HOURS_MILLISECONDS + FIVE_MINUTES_MILLISECONDS;
-const fullInt = 256 * 256;
-const halfInt = fullInt / 2;
+
 const millisecondInMinute = 60 * 1000;
 const preAggregateInterval = 20 * millisecondInMinute;
 const manufacturerID = 307;
 const sensorScanTimeout = 10000;
 
-function toUInt(byteArray, startPosition) {
-  // TO DO negative temperatures (this is unsigned int conversion)
+// Helpers for byte to int conversion
+const RANGE_OF_16_BITS = 256 * 256;
+const RANGE_OF_8_BITS = RANGE_OF_16_BITS / 2;
+
+function toUnsignedInt(byteArray, startPosition) {
   return byteArray[startPosition] * 256 + byteArray[startPosition + 1];
 }
 
 function toInt(byteArray, startPosition) {
-  const uINT = toUInt(byteArray, startPosition);
-  if (uINT > halfInt) {
-    return (fullInt - uINT) * -1;
-  }
-  return uINT;
+  const unsignedInt = toUnsignedInt(byteArray, startPosition);
+  if (unsignedInt > RANGE_OF_8_BITS) return (RANGE_OF_16_BITS - unsignedInt) * -1;
+  return unsignedInt;
 }
 
 function addRefreshSensor(sensorInfo, sensorData, database) {
   const sensors = database.objects('Sensor').filtered('macAddress == $0', sensorInfo.macAddress);
   database.write(() => {
-    let id = generateUUID();
-    // eslint-disable-next-line prefer-destructuring
-    if (sensors.length > 0) id = sensors[0].id;
+    const idForUpdate = sensors.length ? sensors[0].id : generateUUID();
     database.update('Sensor', {
-      id,
+      id: idForUpdate,
       ...sensorInfo,
       ...sensorData,
     });
@@ -123,7 +121,7 @@ export function updateSensors(sensors, database) {
 export async function refreshAndUpdateSensors(runWithLoadingIndicator, database) {
   let sensors = [];
   try {
-    sensors = await NativeModules.bleTempoDisc.getDevices(manufacturerID, sensorScanTimeout, '');
+    sensors = await NativeModules.BleTempoDisc.getDevices(manufacturerID, sensorScanTimeout, '');
     updateSensors(sensors, database);
   } catch (e) {
     // TO DO warn user or bugsnag for error
@@ -602,7 +600,7 @@ export async function syncSensorLogs({
 }) {
   const { macAddress } = sensor;
   try {
-    const downloadedData = await NativeModules.bleTempoDisc.getUARTCommandResults(
+    const downloadedData = await NativeModules.BleTempoDisc.getUARTCommandResults(
       macAddress,
       SENSOR_SYNC_COMMAND_GET_LOGS,
       connectionDelay,
@@ -628,7 +626,7 @@ export async function syncSensorLogs({
 export async function findAndUpdateSensor({ sensor, database }) {
   const { macAddress } = sensor;
   try {
-    const sensors = await NativeModules.bleTempoDisc.getDevices(
+    const sensors = await NativeModules.BleTempoDisc.getDevices(
       manufacturerID,
       sensorScanTimeout,
       macAddress
@@ -654,7 +652,7 @@ export async function executeSensorUARTCommand({
   let uartResult = null;
 
   try {
-    uartResult = await NativeModules.bleTempoDisc.getUARTCommandResults(
+    uartResult = await NativeModules.BleTempoDisc.getUARTCommandResults(
       macAddress,
       command, // this also resets sensor logs
       connectionDelay, // connection delay

@@ -29,9 +29,9 @@ import java.util.Hashtable;
 import java.util.TimerTask;
 import java.util.Timer;
 
-public class bleDeviceScanner {
+public class BleDeviceScanner {
 
-    public static final String TAG = "bleDeviceScanner";
+    public static final String TAG = "BleDeviceScanner";
     private static final int REQUEST_ENABLE_BT = 2;
     private Promise promise;
     private int timeout;
@@ -46,7 +46,7 @@ public class bleDeviceScanner {
     private ScanSettings scanSettings;
     private List<ScanFilter> scanFilters;
     
-    public bleDeviceScanner(ReactContext reactContext, int timeout) {
+    public BleDeviceScanner(ReactContext reactContext, int timeout) {
         this.timeout = timeout;
         this.reactContext = reactContext;
         leScanner = null;
@@ -214,7 +214,7 @@ public class bleDeviceScanner {
 
         advertismentInfoObject.putString("name", bluetoothDevice.getName());
         advertismentInfoObject.putInt("signalStrength", scanResult.getRssi());
-        advertismentInfoObject.putArray("advertismentData", bleUtil.toWritableIntArray(advertismentInfo));
+        advertismentInfoObject.putArray("advertismentData", BleUtility.toWritableIntArray(advertismentInfo));
 
         advertismentInfoMap.putMap(bluetoothDevice.getAddress(), advertismentInfoObject);
     }

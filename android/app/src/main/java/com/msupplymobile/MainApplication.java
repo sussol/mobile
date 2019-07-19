@@ -18,7 +18,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.horcrux.svg.SvgPackage;
-import com.msupplymobile.BLEPackager;
+import com.msupplymobile.BlePackager;
 
 
 
@@ -43,7 +43,7 @@ public class MainApplication extends Application implements ReactApplication {
           new RealmReactPackage(),
           new VectorIconsPackage(),
           new ReactNativeLocalizationPackage(),
-          new BLEPackager(),
+          new BlePackager(),
           BugsnagReactNative.getPackage()
       );
     }
