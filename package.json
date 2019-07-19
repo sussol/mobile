@@ -59,6 +59,7 @@
   "dependencies": {
     "buffer": "^5.0.6",
     "bugsnag-react-native": "^2.2.4",
+    "dateformat": "^3.0.3",
     "moment": "^2.18.1",
     "prop-types": "^15.6.2",
     "react": "16.6.0-alpha.8af6728",

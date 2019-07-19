@@ -1,5 +1,4 @@
-/* eslint-disable react/forbid-prop-types, import/prefer-default-export */
-/* eslint-disable react/require-default-props */
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -10,7 +9,7 @@ import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
 
-import { refreshAndUpdateSensors, syncSensor } from '../utilities/modules/temperatureSensorHelpers';
+import { refreshAndUpdateSensors } from '../utilities/modules/temperatureSensorHelpers';
 import { IconCell, PageButton, GenericChoiceList, PageContentModal } from '../widgets';
 
 import { SUSSOL_ORANGE } from '../globalStyles/index';
@@ -22,6 +21,9 @@ export class VaccineModuleAdminPage extends React.Component {
     this.state = {
       isModalOpen: false,
       fridges: [],
+      sensors: [],
+      currentFridge: null,
+      hasSensors: false,
     };
   }
 
@@ -31,13 +33,13 @@ export class VaccineModuleAdminPage extends React.Component {
 
   refresh = () => {
     const { database } = this.props;
-    const locationTypes = database
-      .objects('LocationType')
-      .filtered('description BEGINSWITH[c] "fridge"');
+    const locationTypes = database.objects('FridgeLocationType');
+    // TODO Warn here that there are not location types of fridge
     this.locationType = locationTypes.length > 0 ? locationTypes[0] : null;
-    const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
+    const fridges = database.objects('Fridge');
     const sensors = database.objects('Sensor');
-    this.setState({ fridges: [], sensors }, () => this.setState({ fridges }));
+    const hasSensors = sensors.length > 0;
+    this.setState({ fridges, sensors, hasSensors });
   };
 
   selectSensor = fridge => {
@@ -60,10 +62,10 @@ export class VaccineModuleAdminPage extends React.Component {
   };
 
   renderSelectSensorModal = () => {
+    const { database } = this;
     const { sensors, currentFridge } = this.state;
-    const fridgeSensors = sensors.filtered('location.id == $0', currentFridge.id);
-    let highlightValue = null;
-    if (fridgeSensors.length > 0) highlightValue = fridgeSensors[0].toString;
+    const fridgeSensor = currentFridge.getSensor(database);
+    const highlightValue = fridgeSensor || fridgeSensor.toString();
 
     return (
       <GenericChoiceList
@@ -99,17 +101,9 @@ export class VaccineModuleAdminPage extends React.Component {
     this.refresh();
   };
 
-  syncSensorPress = async fridgeSensor => {
-    const { runWithLoadingIndicator, database } = this.props;
-    await runWithLoadingIndicator(async () => {
-      await syncSensor(fridgeSensor, database);
-    }, true);
-  };
-
   renderCell = (key, fridge) => {
-    const { sensors } = this.state;
+    const { hasSensors } = this.state;
     const { database } = this.props;
-    const hasSensors = sensors.length > 0;
     const fridgeSensor = fridge.getSensor(database);
 
     const sensorName = () => {
@@ -199,7 +193,11 @@ export class VaccineModuleAdminPage extends React.Component {
         topRoute={topRoute}
       >
         {isModalOpen && (
-          <PageContentModal isOpen={isModalOpen} title="Select Sensor">
+          <PageContentModal
+            isOpen={isModalOpen}
+            onClose={() => this.setState({ isModalOpen: false })}
+            title="Select Sensor"
+          >
             {this.renderSelectSensorModal()}
           </PageContentModal>
         )}
@@ -209,9 +207,10 @@ export class VaccineModuleAdminPage extends React.Component {
 }
 
 VaccineModuleAdminPage.propTypes = {
-  database: PropTypes.object,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
+  database: PropTypes.object.isRequired,
+  genericTablePageStyles: PropTypes.object.isRequired,
+  topRoute: PropTypes.bool.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  navigateTo: PropTypes.func.isRequired,
 };
+
+export default VaccineModuleAdminPage;

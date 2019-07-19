@@ -196,12 +196,10 @@ export class ManageVaccineStockPage extends React.Component {
   // be available.
   componentDidMount = () => {
     const { database, initialLocation } = this.props;
-    const fridges = database.objects('Location').filter(location => location.isFridge);
+    const fridges = database.objects('Fridge');
     fridges.unshift({ description: LOCALIZATION.misc.allLocations });
     this.LOCATION_FILTERS = fridges;
-    this.ITEMS = database
-      .objects('Item')
-      .filtered('category.name CONTAINS[c] $0 ', 'vaccine');
+    this.ITEMS = database.objects('Item').filtered('category.name CONTAINS[c] $0 ', 'vaccine');
     const locationFilter = initialLocation || fridges[0];
     this.setState({ locationFilter });
   };

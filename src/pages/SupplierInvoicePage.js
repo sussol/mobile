@@ -124,7 +124,7 @@ export class SupplierInvoicePage extends React.Component {
         'vvm',
         'vaccineDisposalReason'
       )[0];
-    this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
+    this.FRIDGES = database.objects('Fridge');
     [this.DEFAULT_FRIDGE = null] = this.FRIDGES;
 
     // If there are no fridges, don't iterate and assign.

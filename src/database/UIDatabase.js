@@ -18,6 +18,10 @@ const translateToCoreDatabaseType = type => {
     case 'SupplierInvoice':
       return 'Transaction';
     case 'Customer':
+    case 'Fridge':
+      return 'Location';
+    case 'FridgeLocationType':
+      return 'LocationType';
     case 'Supplier':
     case 'InternalSupplier':
     case 'ExternalSupplier':
@@ -90,6 +94,10 @@ export class UIDatabase {
           'isVisible == true AND isCustomer == true AND id != $0',
           thisStoreNameId
         );
+      case 'Fridge':
+        return results.filtered('locationType.description CONTAINS[c] "fridge"');
+      case 'FridgeLocationType':
+        return results.filtered('description CONTAINS[c] "fridge"');
       case 'Supplier':
         return results.filtered(
           'isVisible == true AND isSupplier == true AND id != $0',

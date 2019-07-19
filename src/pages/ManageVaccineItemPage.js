@@ -102,7 +102,7 @@ export class ManageVaccineItemPage extends React.Component {
    */
   componentDidMount = () => {
     const { database, item } = this.props;
-    this.FRIDGES = database.objects('Location').filter(({ isFridge }) => isFridge);
+    this.FRIDGES = database.objects('Fridge');
     this.HAS_FRIDGES = this.FRIDGES && this.FRIDGES.length > 0;
 
     const reasonsQuery = ['type = $0 && isActive = $1', 'vaccineDisposalReason', true];
@@ -125,7 +125,6 @@ export class ManageVaccineItemPage extends React.Component {
   };
 
   getFridgeDescription = ({ location, vvmStatus, option }) => {
-    console.log(location);
     if (this.HAS_FRIDGES && vvmStatus !== false && !option) {
       return (location && location.description) || 'Unnasigned';
     }

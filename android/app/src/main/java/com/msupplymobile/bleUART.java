@@ -61,7 +61,7 @@ public class bleUART {
 
     public void getCommandResult() {
         bluetoothDevice = null;
-        Log.e(TAG, "starting log of bleUART");
+        Log.i(TAG, "starting log of bleUART");
         try {
             bluetoothDevice = deviceScanner.getScannedDevice(deviceAddress);
             if (bluetoothDevice == null) throw new Error();
@@ -87,7 +87,7 @@ public class bleUART {
 
     private void connectGatt() {
         try {
-            Log.e(TAG, "end of delay");
+            Log.i(TAG, "end of delay");
             bluetoothDevice.connectGatt(reactContext, false, getCommandResultCallback, BluetoothDevice.TRANSPORT_LE);
         } catch (Exception e) {
             reject("error", "Cannot connect GATT", e.toString());
@@ -113,12 +113,12 @@ public class bleUART {
     private BluetoothGattCallback getCommandResultCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            Log.e(TAG, "connection status " + status + " " + newState);
+            Log.i(TAG, "connection status " + status + " " + newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 gatt.discoverServices();
                 successfullConnection =true;
             } else if (!successfullConnection && reconnectionCount<numberOConnectionRetries) {
-                Log.e(TAG, "trying to reconnect");
+                Log.i(TAG, "trying to reconnect");
                 reconnectionCount++;
                 gatt.close();
                 connectGattWithTimeout();
@@ -167,7 +167,7 @@ public class bleUART {
         public void onCharacteristicChanged(BluetoothGatt gatt,
                                             BluetoothGattCharacteristic characteristic) {
             byte response[] = characteristic.getValue();
-            Log.e(TAG, "receiving data " + response.length + " bytes");
+            Log.i(TAG, "receiving data " + response.length + " bytes");
             resultLinesArrayRaw.pushArray(bleUtil.toWritableIntArray(response));
             resultLinesArrayString.pushString(bleUtil.toString(response));
         }

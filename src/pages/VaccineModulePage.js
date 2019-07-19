@@ -79,7 +79,7 @@ export class VaccineModulePage extends React.Component {
 
   componentWillMount = async () => {
     const { database, runWithLoadingIndicator } = this.props;
-    const fridges = database.objects('Location').filter(({ isFridge }) => isFridge);
+    const fridges = database.objects('Fridge');
     const hasFridges = fridges.length > 0;
     const selectedFridge = hasFridges ? fridges[0] : null;
     this.fridgeData = {};
@@ -94,11 +94,6 @@ export class VaccineModulePage extends React.Component {
     this.hasFridges = hasFridges;
     this.setState({ selectedFridge });
   };
-
-  componentWillReceiveProps(props) {
-    const { isInAdminMode } = props;
-    this.setState({ isInAdminMode });
-  }
 
   onModalUpdate = () => {
     const { isModalOpen } = this.state;
@@ -222,8 +217,7 @@ export class VaccineModulePage extends React.Component {
     }
 
     const currentTemperature = fridge.getCurrentTemperature(database);
-    const isCriticalTemperature =
-      currentTemperature !== null && fridge.isCriticalTemperature(database);
+    const isInBreach = currentTemperature !== null && fridge.isInBreach(database);
 
     const { selectedFridge } = this.state;
     const isFridgeSelected = fridge.id === selectedFridge.id;
@@ -236,7 +230,7 @@ export class VaccineModulePage extends React.Component {
             {this.renderFridgeName(fridge, isFridgeSelected)}
             {currentTemperature !== null ? this.renderTemperature(30, currentTemperature) : null}
 
-            {isCriticalTemperature
+            {isInBreach
               ? this.renderIcon('warning', BREACH_ICON_STYLE, () => this.onHazardPress(lastBreach))
               : null}
             <View style={[fridgeInfoSectionStyle, { justifyContent: 'flex-end', flexGrow: 1 }]}>
@@ -273,8 +267,8 @@ export class VaccineModulePage extends React.Component {
 
   render() {
     const { fridges, hasFridges } = this;
-    const { navigateTo } = this.props;
-    const { isModalOpen, currentBreach, isInAdminMode } = this.state;
+    const { navigateTo, isInAdminMode } = this.props;
+    const { isModalOpen, currentBreach } = this.state;
     const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
 
     return (
