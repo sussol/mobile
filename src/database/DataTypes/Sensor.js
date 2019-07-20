@@ -24,6 +24,12 @@ export class Sensor extends Realm.Object {
     return latestAggregatedLog.temperature;
   }
 
+  get latestTimestamp() {
+    const { latestAggregatedLog } = this;
+    if (latestAggregatedLog === null) return null;
+    return latestAggregatedLog.timestamp;
+  }
+
   get isInBreach() {
     const { latestAggregatedLog } = this;
     if (latestAggregatedLog === null) return false;
