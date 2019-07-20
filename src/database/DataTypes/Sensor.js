@@ -14,6 +14,7 @@ export class Sensor extends Realm.Object {
     const aggregatedLogs = this.sensorLogs.filtered('aggregation != null && aggregation != ""');
     if (aggregatedLogs.length === 0) return null;
     const latestTimestamp = aggregatedLogs.max('timestamp');
+    if (!latestTimestamp) return null;
     return aggregatedLogs.filtered('timestamp == $0', latestTimestamp)[0];
   }
 
