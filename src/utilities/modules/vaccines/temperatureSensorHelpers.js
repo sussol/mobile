@@ -3,6 +3,7 @@
 /* eslint-disable no-continue */
 import { generateUUID } from 'react-native-database';
 import { NativeModules } from 'react-native';
+import { parseDownloadedLogs } from './utilities';
 
 const SENSOR_LOG_PRE_AGGREGATE_TYPE = 'preAggregate';
 const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
@@ -112,7 +113,7 @@ function genericErrorReturn(e) {
 //   return 'now';
 // }
 
-export function parseDownloadedData(downloadedData) {
+export function parseDownloaded(downloadedData) {
   let e = null;
   try {
     const temperatureReadings = [];
@@ -619,7 +620,7 @@ export async function syncSensorLogs({
     if (!downloadedData || !downloadedData.success) {
       throw { code: 'syncdata', description: 'failed to sync data from sensor' };
     }
-    const parsedLogsReturn = parseDownloadedData(downloadedData);
+    const parsedLogsReturn = parseDownloadedLogs(downloadedData);
     return {
       success: true,
       data: {
