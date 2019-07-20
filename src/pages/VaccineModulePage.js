@@ -47,51 +47,54 @@ const LOCALIZATION = {
 
 const CHEVRON_ICON_STYLE = { size: 18, color: SUSSOL_ORANGE };
 const BREACH_ICON_STYLE = { size: 25, color: HAZARD_RED };
+const getMenuButtons = () => [
+  {
+    page: 'manageVaccineStock',
+    pageTitle: LOCALIZATION.navigation.manageVaccineStock,
+    buttonText: LOCALIZATION.menuButtons.manageStock,
+  },
+  {
+    page: 'supplierInvoices',
+    pageTitle: navStrings.supplier_invoices,
+    buttonText: navStrings.supplier_invoices,
+  },
+  {
+    page: 'customerInvoices',
+    pageTitle: navStrings.customer_invoices,
+    buttonText: navStrings.customer_invoices,
+  },
+  {
+    page: 'supplierRequisitions',
+    pageTitle: 'Order Stock',
+    buttonText: LOCALIZATION.menuButtons.orderStock,
+  },
+];
 
 export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectedFridge: null, currentBreach: null, isModalOpen: false };
 
-    this.MENU_BUTTONS = [
-      {
-        page: 'manageVaccineStock',
-        pageTitle: LOCALIZATION.navigation.manageVaccineStock,
-        buttonText: LOCALIZATION.menuButtons.manageStock,
-      },
-      {
-        page: 'supplierInvoices',
-        pageTitle: navStrings.supplier_invoices,
-        buttonText: navStrings.supplier_invoices,
-      },
-      {
-        page: 'customerInvoices',
-        pageTitle: navStrings.customer_invoices,
-        buttonText: navStrings.customer_invoices,
-      },
-      {
-        page: 'supplierRequisitions',
-        pageTitle: 'Order Stock',
-        buttonText: LOCALIZATION.menuButtons.orderStock,
-      },
-    ];
+    this.MENU_BUTTONS = getMenuButtons();
+    this.FRIDGE_DATA = {};
+    this.HAS_FRIDGES = false;
+    this.FRIDGES = null;
+
+    this.state = { selectedFridge: null, currentBreach: null, isModalOpen: false };
   }
 
   componentWillMount = async () => {
     const { database, runWithLoadingIndicator } = this.props;
-    const fridges = database.objects('Fridge');
-    const hasFridges = fridges.length > 0;
-    const selectedFridge = hasFridges ? fridges[0] : null;
-    this.fridgeData = {};
+    this.FRIDGES = database.objects('Fridge');
+    this.HAS_FRIDGES = this.FRIDGES.length > 0;
+    const selectedFridge = this.HAS_FRIDGES ? this.FRIDGES[0] : null;
 
     await runWithLoadingIndicator(() => {
-      fridges.forEach(fridge => {
-        this.fridgeData[fridge.id] = extractDataForFridgeChart({ database, fridge });
+      this.FRIDGES.forEach(fridge => {
+        const x = extractDataForFridgeChart({ database, fridge });
+        // console.log(x);
+        this.FRIDGE_DATA[fridge.id] = x;
       });
     });
-
-    this.fridges = fridges;
-    this.hasFridges = hasFridges;
     this.setState({ selectedFridge });
   };
 
@@ -207,13 +210,12 @@ export class VaccineModulePage extends React.Component {
   /* Fridge and all of it's components */
   renderFridge = fridge => {
     const { database } = this.props;
-    const fridgeChartData = this.fridgeData[fridge.id];
-
+    const fridgeChartData = this.FRIDGE_DATA[fridge.id];
+    if (!fridgeChartData) return null;
     const numberOfBreaches = fridgeChartData.breaches.length;
     let lastBreach = null;
     if (numberOfBreaches > 0) {
       lastBreach = fridgeChartData.breaches[numberOfBreaches - 1];
-      // console.log(require('util').inspect(this.lastBreach));
     }
 
     const currentTemperature = fridge.getCurrentTemperature(database);
@@ -266,11 +268,12 @@ export class VaccineModulePage extends React.Component {
   };
 
   render() {
-    const { fridges, hasFridges } = this;
+    const { FRIDGES, HAS_FRIDGES } = this;
     const { navigateTo, isInAdminMode } = this.props;
-    const { isModalOpen, currentBreach } = this.state;
+    const { isModalOpen, currentBreach, selectedFridge } = this.state;
     const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
-
+    if (!selectedFridge) return null;
+    console.log(FRIDGES.length, HAS_FRIDGES);
     return (
       <View style={pageContainerStyle}>
         <View style={sectionStyle}>
@@ -281,8 +284,8 @@ export class VaccineModulePage extends React.Component {
           />
           {this.renderMenuButtons()}
         </View>
-        {hasFridges && fridges.map(this.renderFridge)}
-        {hasFridges === false ? (
+        {HAS_FRIDGES && FRIDGES.map(this.renderFridge)}
+        {HAS_FRIDGES === false ? (
           <Text style={[greyTextStyleLarge]}>{LOCALIZATION.misc.noFridges}</Text>
         ) : null}
         {isInAdminMode ? (
