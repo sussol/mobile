@@ -3,13 +3,11 @@
 /* eslint-disable no-continue */
 import { generateUUID } from 'react-native-database';
 import { NativeModules } from 'react-native';
-import { parseDownloadedLogs } from './utilities';
 
 const SENSOR_LOG_PRE_AGGREGATE_TYPE = 'preAggregate';
 const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
 const SENSOR_LOG_BREACH_AGGREGATE_TYPE = 'breachAggregate';
 
-const SENSOR_SYNC_COMMAND_GET_LOGS = '*logall';
 const SENOSOR_SYNC_COMMAND_RESET_INTERVAL = '*lint240'; // 4 minutes
 const SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL = '*sadv1000';
 const SENSOR_SYNC_CONNECTION_DELAY = 450;
@@ -98,92 +96,6 @@ function genericErrorReturn(e) {
     failData = { code: 'unexpected', description: 'unexpected error', e };
   }
   return { success: false, failData };
-}
-
-// TODO either delete or maybe can use in 'breach duration' output
-// export function getFormatedPeriod(difference) {
-//   const seconds = difference / 1000;
-//   const minutes = seconds / 60;
-//   const hours = minutes / 60;
-//   const days = hours / 24;
-//   if (days > 1) return `${days.toFixed(0)} day/s`;
-//   if (hours > 1) return `${hours.toFixed(0)} hour/s`;
-//   if (minutes > 1) return `${minutes.toFixed(0)} minute/s`;
-//   if (seconds > 1) return `${seconds.toFixed(0)} second/s`;
-//   return 'now';
-// }
-
-export function parseDownloaded(downloadedData) {
-  let e = null;
-  try {
-    const temperatureReadings = [];
-    const { rawResultLines } = downloadedData;
-    const totalNumberOfRecords = toInt(rawResultLines[0], 4);
-    for (let i = 1; i < rawResultLines.length; i += 1) {
-      const line = rawResultLines[i];
-      for (let y = 0; y < line.length; y += 2) {
-        const reading = toInt(line, y);
-        if (reading === 11308) {
-          return {
-            temperatureReadings,
-            totalNumberOfRecords,
-          };
-        }
-        temperatureReadings.push(reading);
-      }
-    }
-  } catch (caughtError) {
-    e = caughtError;
-  }
-  throw { code: 'failureparsing', description: 'failure while parsing', e };
-}
-
-function integrateLogs(parsedLogs, sensor, database) {
-  // logInterval is in seconds
-  const { logInterval, location, sensorLogs } = sensor;
-
-  const logIntervalMillisecods = logInterval * 1000;
-  const currentDateMilliseconds = new Date().getTime();
-
-  let lookBackNumberOfLogs = parsedLogs.length;
-
-  let startOfIntegratingLogsTimestamp =
-    currentDateMilliseconds - logIntervalMillisecods * lookBackNumberOfLogs;
-
-  if (sensorLogs.length > 0) {
-    const latestLogTimestamp = sensorLogs.max('timestamp');
-    if (latestLogTimestamp > startOfIntegratingLogsTimestamp) {
-      lookBackNumberOfLogs = Math.floor(
-        (currentDateMilliseconds - latestLogTimestamp) / logIntervalMillisecods - 1
-      );
-      startOfIntegratingLogsTimestamp =
-        currentDateMilliseconds - lookBackNumberOfLogs * logIntervalMillisecods;
-    }
-  }
-
-  const startingLogIndex = parsedLogs.length - lookBackNumberOfLogs;
-
-  const logsToIntegrate = [];
-  let nextIntegratingLogTimestanp = startOfIntegratingLogsTimestamp;
-
-  for (let i = startingLogIndex; i < parsedLogs.length; i += 1) {
-    logsToIntegrate.push({
-      id: generateUUID(),
-      temperature: parsedLogs[i] / 10,
-      timestamp: new Date(nextIntegratingLogTimestanp),
-      location,
-    });
-    nextIntegratingLogTimestanp += logIntervalMillisecods;
-  }
-
-  database.write(() => {
-    logsToIntegrate.forEach(sensorLog => {
-      const sLog = database.update('SensorLog', sensorLog);
-      sensor.sensorLogs.push(sLog);
-    });
-  });
-
-  return { rawIntegratedLogCount: logsToIntegrate.length };
 }
 
 export function preAggregateLogs({ sensor, database }) {
@@ -595,37 +507,6 @@ export function doFullAggregation({ sensor, database }) {
       data: {
         fullAggregateAdditions: aggregatedSensorLogs.length,
         preAggregateDeletions,
-      },
-    };
-  } catch (e) {
-    return genericErrorReturn(e);
-  }
-}
-
-export async function syncSensorLogs({
-  database,
-  sensor,
-  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
-  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
-}) {
-  const { macAddress } = sensor;
-  try {
-    const downloadedData = await NativeModules.BleTempoDisc.getUARTCommandResults(
-      macAddress,
-      SENSOR_SYNC_COMMAND_GET_LOGS,
-      connectionDelay,
-      numberOfReconnects
-    );
-
-    if (!downloadedData || !downloadedData.success) {
-      throw { code: 'syncdata', description: 'failed to sync data from sensor' };
-    }
-    const parsedLogsReturn = parseDownloadedLogs(downloadedData);
-    return {
-      success: true,
-      data: {
-        ...integrateLogs(parsedLogsReturn.temperatureReadings, sensor, database),
-        totalNumberOfSyncedLogs: parsedLogsReturn.totalNumberOfRecords,
       },
     };
   } catch (e) {

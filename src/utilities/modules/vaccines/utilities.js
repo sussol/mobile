@@ -6,6 +6,7 @@ import { generateUUID } from 'react-native-database';
 // Helpers for byte to int conversion
 const RANGE_OF_16_BITS = 256 * 256;
 const RANGE_OF_8_BITS = RANGE_OF_16_BITS / 2;
+const SENSOR_LOG_DELIMITER_BYTE = 11308;
 
 function toUnsignedInt(byteArray, startPosition) {
   return byteArray[startPosition] * 256 + byteArray[startPosition + 1];
@@ -17,32 +18,20 @@ function toInt(byteArray, startPosition) {
   return unsignedInt;
 }
 
-export function parseDownloadedLogs(downloadedData) {
-  let e = null;
-  try {
-    const temperatureReadings = [];
-    const { rawResultLines } = downloadedData;
-    const totalNumberOfRecords = toInt(rawResultLines[0], 4);
-    for (let i = 1; i < rawResultLines.length; i += 1) {
-      const line = rawResultLines[i];
-      for (let y = 0; y < line.length; y += 2) {
-        const reading = toInt(line, y);
-        if (reading === 11308) {
-          return {
-            temperatureReadings,
-            totalNumberOfRecords,
-          };
-        }
-        temperatureReadings.push(reading);
-      }
-    }
-  } catch (caughtError) {
-    e = caughtError;
+export function parseDownloadedLogs(sensorLogData) {
+  const { rawResultLines } = sensorLogData;
+  const flattenedResultLines = rawResultLines.reduce((acc, value) => [...acc, ...value], []);
+  const temperatureReadings = [];
+
+  for (let i = 0; i < flattenedResultLines.length; i += 2) {
+    const reading = toInt(flattenedResultLines, i);
+    if (reading === SENSOR_LOG_DELIMITER_BYTE) break;
+    temperatureReadings.push(reading / 10);
   }
-  throw { code: 'failureparsing', description: 'failure while parsing', e };
+  return temperatureReadings;
 }
 
-export function integrateLogs(parsedLogs, sensor, database) {
+export function createSensorLogs(parsedLogs, sensor, database) {
   // logInterval is in seconds
   const { logInterval, location, sensorLogs } = sensor;
 
@@ -66,19 +55,14 @@ export function integrateLogs(parsedLogs, sensor, database) {
   }
 
   const startingLogIndex = parsedLogs.length - lookBackNumberOfLogs;
-
-  const logsToIntegrate = [];
-  let nextIntegratingLogTimestanp = startOfIntegratingLogsTimestamp;
-
-  for (let i = startingLogIndex; i < parsedLogs.length; i += 1) {
-    logsToIntegrate.push({
+  const logsToIntegrate = parsedLogs
+    .slice(startingLogIndex, parsedLogs.length)
+    .map((parsedLog, i) => ({
       id: generateUUID(),
-      temperature: parsedLogs[i] / 10,
-      timestamp: new Date(nextIntegratingLogTimestanp),
+      temperature: parsedLog,
+      timestamp: new Date(startOfIntegratingLogsTimestamp + logIntervalMillisecods * i),
       location,
-    });
-    nextIntegratingLogTimestanp += logIntervalMillisecods;
-  }
+    }));
 
   database.write(() => {
     logsToIntegrate.forEach(sensorLog => {
@@ -87,7 +71,7 @@ export function integrateLogs(parsedLogs, sensor, database) {
     });
   });
 
-  return { rawIntegratedLogCount: logsToIntegrate.length };
+  return { numberOfLogsCreated: logsToIntegrate.length };
 }
 
 export function genericErrorReturn(e) {
