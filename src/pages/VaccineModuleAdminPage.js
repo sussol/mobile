@@ -9,7 +9,9 @@ import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
 
-import { refreshAndUpdateSensors } from '../utilities/modules/temperatureSensorHelpers';
+import { updateOrCreateSensors } from '../utilities/modules/vaccines/temperatureSensorHelpers';
+import { scanForSensors } from '../utilities/modules/vaccines/bluetoothHelpers';
+
 import { IconCell, PageButton, GenericChoiceList, PageContentModal } from '../widgets';
 
 import { SUSSOL_ORANGE } from '../globalStyles/index';
@@ -96,7 +98,8 @@ export class VaccineModuleAdminPage extends React.Component {
     const { runWithLoadingIndicator, database } = this.props;
 
     await runWithLoadingIndicator(async () => {
-      await refreshAndUpdateSensors(runWithLoadingIndicator, database);
+      const sensors = await scanForSensors();
+      if (sensors) updateOrCreateSensors(sensors, database);
     }, true);
     this.refresh();
   };
@@ -153,9 +156,7 @@ export class VaccineModuleAdminPage extends React.Component {
       <GenericPage
         data={fridges}
         renderCell={this.renderCell}
-        refreshData={() => {
-          /* need this otherwithe error after onEndEditing */
-        }}
+        refreshData={() => {}}
         renderTopLeftComponent={() => (
           <PageButton
             text="Add Fridge"
