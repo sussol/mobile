@@ -42,6 +42,34 @@ function toInt(byteArray, startPosition) {
   return unsignedInt;
 }
 
+export function parseSensorAdvertisment(advertismentData) {
+  return {
+    batteryLevel: advertismentData[8],
+    temperature: toInt(advertismentData, 13) / 10.0,
+    logInterval: toInt(advertismentData, 9),
+    numberOfLogs: toInt(advertismentData, 11),
+    lastConnectionTimestamp: new Date(),
+  };
+}
+
+export function updateOrCreateSensor(sensorAdvertisement, database) {
+  const { macAddress } = sensorAdvertisement;
+  const sensors = database.objects('Sensor').filtered('macAddress == $0', macAddress);
+  database.write(() => {
+    database.update('Sensor', {
+      id: sensors.length ? sensors[0].id : generateUUID(),
+      ...sensorAdvertisement,
+    });
+  });
+}
+
+export function updateOrCreateSensors(sensorAdvertisements, database) {
+  sensorAdvertisements.forEach(sensorAdvertisement => {
+    updateOrCreateSensor(sensorAdvertisement, database);
+  });
+}
+
+// @@ TODO: Remove
 function addRefreshSensor(sensorInfo, sensorData, database) {
   const sensors = database.objects('Sensor').filtered('macAddress == $0', sensorInfo.macAddress);
   database.write(() => {
@@ -54,6 +82,14 @@ function addRefreshSensor(sensorInfo, sensorData, database) {
   });
 }
 
+// @@ TODO:  Remove
+export function updateSensors(sensors, database) {
+  Object.entries(sensors).forEach(([address, { name, advertismentData }]) => {
+    const sensorData = parseSensorAdvertisment(advertismentData);
+    addRefreshSensor({ macAddress: address, name }, sensorData, database);
+  });
+}
+
 function genericErrorReturn(e) {
   let failData = e;
 
@@ -61,16 +97,6 @@ function genericErrorReturn(e) {
     failData = { code: 'unexpected', description: 'unexpected error', e };
   }
   return { success: false, failData };
-}
-
-function parseSensorAdvertisment(advertismentData) {
-  return {
-    batteryLevel: advertismentData[8],
-    temperature: toInt(advertismentData, 13) / 10.0,
-    logInterval: toInt(advertismentData, 9),
-    numberOfLogs: toInt(advertismentData, 11),
-    lastConnectionTimestamp: new Date(),
-  };
 }
 
 // TODO either delete or maybe can use in 'breach duration' output
@@ -109,23 +135,6 @@ export function parseDownloadedData(downloadedData) {
     e = caughtError;
   }
   throw { code: 'failureparsing', description: 'failure while parsing', e };
-}
-
-export function updateSensors(sensors, database) {
-  Object.entries(sensors).forEach(([address, { name, advertismentData }]) => {
-    const sensorData = parseSensorAdvertisment(advertismentData);
-    addRefreshSensor({ macAddress: address, name }, sensorData, database);
-  });
-}
-
-export async function refreshAndUpdateSensors(runWithLoadingIndicator, database) {
-  let sensors = [];
-  try {
-    sensors = await NativeModules.BleTempoDisc.getDevices(manufacturerID, sensorScanTimeout, '');
-    updateSensors(sensors, database);
-  } catch (e) {
-    // TO DO warn user or bugsnag for error
-  }
 }
 
 function integrateLogs(parsedLogs, sensor, database) {
