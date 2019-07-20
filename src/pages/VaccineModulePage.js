@@ -272,8 +272,8 @@ export class VaccineModulePage extends React.Component {
     const { navigateTo, isInAdminMode } = this.props;
     const { isModalOpen, currentBreach, selectedFridge } = this.state;
     const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
+
     if (!selectedFridge) return null;
-    console.log(FRIDGES.length, HAS_FRIDGES);
     return (
       <View style={pageContainerStyle}>
         <View style={sectionStyle}>
