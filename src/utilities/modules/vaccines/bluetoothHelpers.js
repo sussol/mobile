@@ -1,7 +1,7 @@
 /* eslint-disable no-throw-literal */
 import { NativeModules } from 'react-native';
 import { parseSensorAdvertisment } from './temperatureSensorHelpers';
-import { parseDownloadedLogs, integrateLogs, genericErrorReturn } from './utilities';
+import { parseDownloadedLogs, createSensorLogs, genericErrorReturn } from './utilities';
 
 const MANUFACTURER_ID = 307;
 const SENSOR_SCAN_TIMEOUT = 10000;
@@ -55,7 +55,7 @@ export async function syncSensorLogs({
     return {
       success: true,
       data: {
-        ...integrateLogs(parsedLogs.temperatureReadings, sensor, database),
+        ...createSensorLogs(parsedLogs.temperatureReadings, sensor, database),
         totalNumberOfSyncedLogs: parsedLogs.totalNumberOfRecords,
       },
     };
