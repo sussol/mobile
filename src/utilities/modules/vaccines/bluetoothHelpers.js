@@ -1,7 +1,11 @@
 /* eslint-disable no-throw-literal */
 import { NativeModules } from 'react-native';
-import { parseSensorAdvertisment } from './temperatureSensorHelpers';
-import { parseDownloadedLogs, createSensorLogs, genericErrorReturn } from './utilities';
+import {
+  parseDownloadedLogs,
+  createSensorLogs,
+  genericErrorReturn,
+  parseSensorAdvertisment,
+} from './utilities';
 
 const MANUFACTURER_ID = 307;
 const SENSOR_SCAN_TIMEOUT = 10000;

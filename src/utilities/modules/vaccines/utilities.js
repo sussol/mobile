@@ -31,6 +31,16 @@ export function parseDownloadedLogs(sensorLogData) {
   return temperatureReadings;
 }
 
+export function parseSensorAdvertisment(advertismentData) {
+  return {
+    batteryLevel: advertismentData[8],
+    temperature: toInt(advertismentData, 13) / 10.0,
+    logInterval: toInt(advertismentData, 9),
+    numberOfLogs: toInt(advertismentData, 11),
+    lastConnectionTimestamp: new Date(),
+  };
+}
+
 export function createSensorLogs(parsedLogs, sensor, database) {
   // logInterval is in seconds
   const { logInterval, location, sensorLogs } = sensor;

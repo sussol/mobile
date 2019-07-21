@@ -3,6 +3,7 @@
 /* eslint-disable no-continue */
 import { generateUUID } from 'react-native-database';
 import { NativeModules } from 'react-native';
+import { parseSensorAdvertisment } from './utilities';
 
 const SENSOR_LOG_PRE_AGGREGATE_TYPE = 'preAggregate';
 const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
@@ -26,30 +27,6 @@ const millisecondInMinute = 60 * 1000;
 const preAggregateInterval = 20 * millisecondInMinute;
 const manufacturerID = 307;
 const sensorScanTimeout = 10000;
-
-// Helpers for byte to int conversion
-const RANGE_OF_16_BITS = 256 * 256;
-const RANGE_OF_8_BITS = RANGE_OF_16_BITS / 2;
-
-function toUnsignedInt(byteArray, startPosition) {
-  return byteArray[startPosition] * 256 + byteArray[startPosition + 1];
-}
-
-function toInt(byteArray, startPosition) {
-  const unsignedInt = toUnsignedInt(byteArray, startPosition);
-  if (unsignedInt > RANGE_OF_8_BITS) return (RANGE_OF_16_BITS - unsignedInt) * -1;
-  return unsignedInt;
-}
-
-export function parseSensorAdvertisment(advertismentData) {
-  return {
-    batteryLevel: advertismentData[8],
-    temperature: toInt(advertismentData, 13) / 10.0,
-    logInterval: toInt(advertismentData, 9),
-    numberOfLogs: toInt(advertismentData, 11),
-    lastConnectionTimestamp: new Date(),
-  };
-}
 
 export function updateOrCreateSensor(sensorAdvertisement, database) {
   const { macAddress } = sensorAdvertisement;
