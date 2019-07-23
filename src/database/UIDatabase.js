@@ -36,7 +36,7 @@ export class UIDatabase {
   ERRORS = {
     ERROR_IN_TRANSACTION: { code: 'ERROR_IN_TRANSACTION', message: 'Database is in a transaction' },
     ERROR_NO_PERMISSION: { code: 'ERROR_NO_PERMISSION', message: 'Storage permission not granted' },
-    ERROR_UNKNOWN: { code: 'ERROR_UNKOWN', message: 'ERROR_UNKNOWN' },
+    ERROR_UNKNOWN: { code: 'ERROR_UNKNOWN', message: 'Unkown error occurred' },
   };
 
   /**
