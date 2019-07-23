@@ -49,6 +49,7 @@ export class UIDatabase {
     const { realm } = this.database;
     const { path: realmPath } = realm;
     const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
+    // Replace all invalid characters in the android file system with an empty string.
     const copyFileName = `${filename}${formatDate(new Date(), 'dashes')}`.replace(
       /[~\\\\/|?*<:>"+]/g,
       ''
