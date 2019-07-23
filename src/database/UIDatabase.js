@@ -76,7 +76,7 @@ export class UIDatabase {
       await RNFS.mkdir(exportFolder);
       await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
     } catch (error) {
-      return { success: false, ...this.ERRORS.ERROR_UNKNOWN };
+      return { success: false, ...this.ERRORS.ERROR_UNKNOWN, error };
     }
 
     return { success: true };
