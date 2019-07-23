@@ -31,6 +31,8 @@ const translateToCoreDatabaseType = type => {
 export class UIDatabase {
   constructor(database) {
     this.database = database;
+    this.EXPORT_DIRECTORY = '/Download/mSupplyMobile_data';
+    this.DEFAULT_EXPORT_FILE = 'msupply-mobile-data';
   }
 
   ERRORS = {
@@ -45,10 +47,10 @@ export class UIDatabase {
    * if required.
    */
 
-  async exportData(filename = 'msupply-mobile-data') {
+  async exportData(filename = this.DEFAULT_EXPORT_FILE) {
     const { realm } = this.database;
     const { path: realmPath } = realm;
-    const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
+    const exportFolder = `${RNFS.ExternalStorageDirectoryPath}${this.EXPORT_DIRECTORY}`;
     // Replace all invalid characters in the android file system with an empty string.
     const copyFileName = `${filename}${formatDate(new Date(), 'dashes')}`.replace(
       /[~\\\\/|?*<:>"+]/g,
