@@ -9,11 +9,6 @@ const SENSOR_LOG_PRE_AGGREGATE_TYPE = 'preAggregate';
 const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
 const SENSOR_LOG_BREACH_AGGREGATE_TYPE = 'breachAggregate';
 
-const SENOSOR_SYNC_COMMAND_RESET_INTERVAL = '*lint240'; // 4 minutes
-const SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL = '*sadv1000';
-const SENSOR_SYNC_CONNECTION_DELAY = 450;
-const SENSOR_SYNC_NUMBER_OF_RECONNECTS = 11;
-
 const ONE_MINUTE_MILLISECONDS = 1000 * 60;
 const ONE_HOUR_MILLISECONDS = ONE_MINUTE_MILLISECONDS * 60;
 const EIGHT_HOURS_MILLISECONDS = ONE_HOUR_MILLISECONDS * 8;
@@ -508,62 +503,4 @@ export async function findAndUpdateSensor({ sensor, database }) {
   return {
     success: true,
   };
-}
-
-export async function executeSensorUARTCommand({
-  sensor,
-  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
-  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
-  command,
-}) {
-  const { macAddress } = sensor;
-  let uartResult = null;
-
-  try {
-    uartResult = await NativeModules.BleTempoDisc.getUARTCommandResults(
-      macAddress,
-      command, // this also resets sensor logs
-      connectionDelay, // connection delay
-      numberOfReconnects // number of reconnects
-    );
-
-    if (!uartResult || !uartResult.success) {
-      throw {
-        code: 'communicationerror',
-        description: 'failed to communicate with sensor while sending UART command',
-        macAddress,
-        command,
-      };
-    }
-  } catch (e) {
-    return genericErrorReturn(e);
-  }
-
-  return { success: true, data: uartResult };
-}
-
-export async function resetSensorInterval({
-  sensor,
-  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
-  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
-}) {
-  return executeSensorUARTCommand({
-    sensor,
-    connectionDelay,
-    numberOfReconnects,
-    command: SENOSOR_SYNC_COMMAND_RESET_INTERVAL,
-  });
-}
-
-export async function resetSensorAdvertismentFrequency({
-  sensor,
-  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
-  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
-}) {
-  return executeSensorUARTCommand({
-    sensor,
-    connectionDelay,
-    numberOfReconnects,
-    command: SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL,
-  });
 }

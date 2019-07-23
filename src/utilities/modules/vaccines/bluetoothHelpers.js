@@ -13,6 +13,62 @@ const SENSOR_SYNC_CONNECTION_DELAY = 450;
 const SENSOR_SYNC_NUMBER_OF_RECONNECTS = 11;
 const SENSOR_SYNC_COMMAND_GET_LOGS = '*logall';
 
+const SENOSOR_SYNC_COMMAND_RESET_INTERVAL = '*lint240'; // 4 minutes
+const SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL = '*sadv1000';
+
+export async function sendSensorCommand({
+  sensor,
+  delay = SENSOR_SYNC_CONNECTION_DELAY,
+  retries = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+  command,
+}) {
+  const { macAddress } = sensor;
+
+  const { BleTempoDisc } = NativeModules;
+  try {
+    const result = await BleTempoDisc.getUARTCommandResults(macAddress, command, delay, retries);
+
+    if (!result) {
+      throw {
+        code: 'communicationerror',
+        description: 'failed to communicate with sensor while sending UART command',
+        macAddress,
+        command,
+      };
+    }
+  } catch (e) {
+    return genericErrorReturn(e);
+  }
+
+  return { success: true };
+}
+
+export async function resetSensorInterval({
+  sensor,
+  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
+  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+}) {
+  return sendSensorCommand({
+    sensor,
+    connectionDelay,
+    numberOfReconnects,
+    command: SENOSOR_SYNC_COMMAND_RESET_INTERVAL,
+  });
+}
+
+export async function resetSensorAdvertismentFrequency({
+  sensor,
+  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
+  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+}) {
+  return sendSensorCommand({
+    sensor,
+    connectionDelay,
+    numberOfReconnects,
+    command: SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL,
+  });
+}
+
 /* eslint-disable import/prefer-default-export */
 export async function scanForSensors() {
   // Initiate a BLE scan for devices, returning all sensors found
@@ -42,11 +98,9 @@ export async function syncSensorLogs({
   connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
   numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
 }) {
-  const { macAddress } = sensor;
-  const { BleTempoDisc } = NativeModules;
   try {
-    const downloadedData = await BleTempoDisc.getUARTCommandResults(
-      macAddress,
+    const downloadedData = await sendSensorCommand(
+      sensor,
       SENSOR_SYNC_COMMAND_GET_LOGS,
       connectionDelay,
       numberOfReconnects
