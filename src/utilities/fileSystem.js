@@ -14,7 +14,7 @@ const ERRORS = {
  * { success: true/false, error:}
  */
 export async function backupValidation(path) {
-  let returnObject = { success: true };
+  let validationResult = { success: true };
   try {
     // Fetch the size of the realm file.
     const { size } = await RNFS.stat(path);
@@ -24,11 +24,11 @@ export async function backupValidation(path) {
     // realm file, to be certain
     if (freeSpace < size * 2) {
       const { ERROR_NO_SPACE } = ERRORS;
-      returnObject = { success: false, ...ERROR_NO_SPACE };
+      validationResult = { success: false, ...ERROR_NO_SPACE };
     }
   } catch (error) {
     const { ERROR_NO_FILE } = ERRORS;
-    returnObject = { success: false, ...ERROR_NO_FILE };
+    validationResult = { success: false, ...ERROR_NO_FILE };
   }
-  return returnObject;
+  return validationResult;
 }
