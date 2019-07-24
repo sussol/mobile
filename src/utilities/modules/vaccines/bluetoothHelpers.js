@@ -13,22 +13,28 @@ const SENSOR_SYNC_CONNECTION_DELAY = 450;
 const SENSOR_SYNC_NUMBER_OF_RECONNECTS = 11;
 const SENSOR_SYNC_COMMAND_GET_LOGS = '*logall';
 
-const SENOSOR_SYNC_COMMAND_RESET_INTERVAL = '*lint240'; // 4 minutes
+const SENSOR_SYNC_COMMAND_RESET_INTERVAL = '*lint240'; // 4 minutes
 const SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL = '*sadv1000';
 
+/**
+ * Sends the provided command to a provided sensor.
+ * Optional delay and retries parameters for the number
+ * of retry attempts to connect to a sensor and the delay
+ * between each retry for failed attempts.
+ */
 export async function sendSensorCommand({
   sensor,
+  command,
   delay = SENSOR_SYNC_CONNECTION_DELAY,
   retries = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
-  command,
 }) {
   const { macAddress } = sensor;
-
   const { BleTempoDisc } = NativeModules;
+
   try {
     const result = await BleTempoDisc.getUARTCommandResults(macAddress, command, delay, retries);
-
-    if (!result) {
+    console.log(result);
+    if (!(result && result.success)) {
       throw {
         code: 'communicationerror',
         description: 'failed to communicate with sensor while sending UART command',
@@ -36,88 +42,119 @@ export async function sendSensorCommand({
         command,
       };
     }
+    return { success: true };
   } catch (e) {
     return genericErrorReturn(e);
   }
-
-  return { success: true };
 }
 
-export async function resetSensorInterval({
+/**
+ * Resets the logging interval on a provided sensor.
+ * This command is a setter for the logging interval,
+ * but doubles as a reset/delete command as all logs
+ * are removed once the interval is set.
+ *
+ * The command itself - *lint240 holds the new logging
+ * interval in seconds.
+ */
+export async function resetInterval({
   sensor,
-  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
-  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+  delay = SENSOR_SYNC_CONNECTION_DELAY,
+  retries = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
 }) {
-  return sendSensorCommand({
-    sensor,
-    connectionDelay,
-    numberOfReconnects,
-    command: SENOSOR_SYNC_COMMAND_RESET_INTERVAL,
-  });
+  const command = SENSOR_SYNC_COMMAND_RESET_INTERVAL;
+  return sendSensorCommand({ sensor, delay, retries, command });
 }
 
-export async function resetSensorAdvertismentFrequency({
+/**
+ * Resets the advertisement frequency of a sensor.
+ *
+ * The command itself - *sadv1000 contains the new
+ * logging frequency of 1 second.
+ */
+export async function resetAdvertismentFrequency({
   sensor,
-  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
-  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+  delay = SENSOR_SYNC_CONNECTION_DELAY,
+  retries = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
 }) {
-  return sendSensorCommand({
-    sensor,
-    connectionDelay,
-    numberOfReconnects,
-    command: SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL,
-  });
+  const command = SENSOR_SYNC_COMMAND_RESET_ADVERTISEMENT_INTERVAL;
+  return sendSensorCommand({ sensor, delay, retries, command });
 }
 
-/* eslint-disable import/prefer-default-export */
-export async function scanForSensors() {
-  // Initiate a BLE scan for devices, returning all sensors found
-  // which match the provided manufacturers ID. Returns an array
-  // of sensor advertisement data from all sensors found. In the
-  // shape:
-  // { batteryLevel, temperature, logInterval, numberOfLogs
-  //   lastConnectionTimestamp, name, macAddress }
-  // @@TODO: Check return
+/**
+ * Initiate a BLE scan for devices, returning status data
+ * of the provided sensor passed. If no sensor is passed,
+ * a scan for all sensors matching the default manufacturer
+ * ID will be initiated. Status data example
+ * @param {{sensor}} sensor Realm sensor object to scan for
+ * @returns {[{
+ * batteryLevel:Number,
+ * temperature:Number,
+ * logInterval:Number,
+ * numberOfLogs:Number,
+ *  lastConnectionTimestamp:Date,
+ * name:String,
+ * macAddress:String
+ * }]}
+ */
+export async function scanForSensor({ sensor = {} } = {}) {
+  const { macAddress: address = '' } = sensor;
   try {
     const { BleTempoDisc } = NativeModules;
-    const sensors = await BleTempoDisc.getDevices(MANUFACTURER_ID, SENSOR_SCAN_TIMEOUT, '');
-    return Object.entries(sensors).map(([macAddress, { name, advertismentData }]) => ({
+    const result = await BleTempoDisc.getDevices(MANUFACTURER_ID, SENSOR_SCAN_TIMEOUT, address);
+    if (!result) return null;
+    return Object.entries(result).map(([macAddress, { name, advertismentData }]) => ({
       ...parseSensorAdvertisment(advertismentData),
       macAddress,
       name,
     }));
-  } catch (e) {
-    // @@TODO: Check error objects, log to bugsnag
-    return null;
+  } catch (error) {
+    return { success: false, error };
+  }
+}
+
+/**
+ * Downloads logs from a provided sensor.
+ */
+export async function downloadLogs({
+  sensor,
+  delay = SENSOR_SYNC_CONNECTION_DELAY,
+  retries = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+}) {
+  try {
+    const downloadedData = await sendSensorCommand(
+      sensor,
+      SENSOR_SYNC_COMMAND_GET_LOGS,
+      delay,
+      retries
+    );
+
+    if (!downloadedData || !downloadedData.success) {
+      throw { code: 'syncdata', description: 'failed to sync data from sensor' };
+    }
+
+    return downloadedData;
+  } catch (error) {
+    return genericErrorReturn(error);
   }
 }
 
 export async function syncSensorLogs({
   database,
   sensor,
-  connectionDelay = SENSOR_SYNC_CONNECTION_DELAY,
-  numberOfReconnects = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
+  delay = SENSOR_SYNC_CONNECTION_DELAY,
+  retries = SENSOR_SYNC_NUMBER_OF_RECONNECTS,
 }) {
-  try {
-    const downloadedData = await sendSensorCommand(
-      sensor,
-      SENSOR_SYNC_COMMAND_GET_LOGS,
-      connectionDelay,
-      numberOfReconnects
-    );
+  const result = downloadLogs({ sensor, delay, retries });
 
-    if (!downloadedData || !downloadedData.success) {
-      throw { code: 'syncdata', description: 'failed to sync data from sensor' };
-    }
-    const parsedLogs = parseDownloadedLogs(downloadedData);
-    return {
-      success: true,
-      data: {
-        ...createSensorLogs(parsedLogs.temperatureReadings, sensor, database),
-        totalNumberOfSyncedLogs: parsedLogs.totalNumberOfRecords,
-      },
-    };
-  } catch (e) {
-    return genericErrorReturn(e);
-  }
+  if (!(result && result.success)) return result;
+
+  const parsedLogs = parseDownloadedLogs(result);
+  return {
+    success: true,
+    data: {
+      ...createSensorLogs(parsedLogs.temperatureReadings, sensor, database),
+      totalNumberOfSyncedLogs: parsedLogs.totalNumberOfRecords,
+    },
+  };
 }
