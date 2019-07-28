@@ -83,6 +83,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      * executed, or if the results should be sent back to JS.
      */
     private void handleEvent(){
+        if (Debug.LOG) Log.i(Debug.TAG, "BleManager: Handling event");
         // If there is a command, mac address and devices have been scanned, 
         // a command needs to be executed.
         boolean shouldSendCommand = this.command != null && this.macAddress != null && this.devices != null;
@@ -118,6 +119,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      * }
      */
     private void returnException(MsupplyException exception){
+        if (Debug.LOG) Log.i(Debug.TAG, "BleManager: Returning Exception");
         WritableMap jsObject = Arguments.createMap();
         jsObject.putBoolean("success", false);
         jsObject.putMap("error", exception.toObject());
@@ -134,7 +136,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      * }
      */
     private void returnResult(){
-        if (Debug.LOG) Log.i(Debug.TAG, "Return Result: ");
+        if (Debug.LOG) Log.i(Debug.TAG, "Return Result");
         WritableArray results = Arguments.createArray();
         
         for (String key : this.devices.keySet()){
@@ -142,14 +144,11 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
                 if (Debug.LOG) Log.i(Debug.TAG, key);
                 WritableMap bleDeviceAsObject = ((BleDevice)this.devices.get(key)).toObject();
                 results.pushMap(bleDeviceAsObject);
-                if (Debug.LOG) Log.i(Debug.TAG, "end looop1");
-            }catch(Exception e){
-                if (Debug.LOG) Log.i(Debug.TAG, e.toString());
+            } catch(Exception exception){
+                returnException(new MsupplyException(ErrorCode.E_PARSING_FAILED, exception));
+                return;
             }
-            
         }
-
-        if (Debug.LOG) Log.i(Debug.TAG, "after looping");
         WritableMap jsObject = Arguments.createMap();
         jsObject.putBoolean("success", true);
         jsObject.putArray("data", results);
@@ -166,6 +165,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      */
     @ReactMethod
     public void getDevices(int manufacturerID, String macAddress, Promise promise) {
+        if (Debug.LOG) Log.i(Debug.TAG, "getDevices:" + Integer.toString(manufacturerID) + " " + macAddress);
         this.promise = promise;
         BleDeviceScanner deviceScanner = new BleDeviceScanner(reactContext);
         deviceScanner.registerListener(this);
@@ -183,6 +183,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      */
     @ReactMethod
     public void sendCommand(int manufacturerID, String macAddress, String command, Promise promise) {
+        if (Debug.LOG) Log.i(Debug.TAG, "sendCommand" + Integer.toString(manufacturerID) + " " + macAddress + " " + command);
         this.promise = promise;
         this.command = command;
         this.macAddress = macAddress;
