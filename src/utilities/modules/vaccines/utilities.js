@@ -1,10 +1,14 @@
-/* eslint-disable no-throw-literal */
-/* eslint-disable import/prefer-default-export */
-
 import { generateUUID } from 'react-native-database';
+
+/**
+ * Utility methods for the Vaccine module.
+ */
 
 const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
 
+/**
+ * Creates generic JS objects representing a sensor log
+ */
 function createGenericSensorLog({
   sensor,
   location,
@@ -27,7 +31,9 @@ function createGenericSensorLog({
 }
 
 /**
- *
+ * Creates two generic sensor log objects representing a full aggregation,
+ * from a group of sensor logs. One created for both the minimum temperature
+ * during the period of the sensor logs and another for hte maximum temperature.
  * @param {Array} SensorLogGroup
  */
 export function createFullAggregateSensorLogs(sensorLogGroup) {
@@ -47,6 +53,12 @@ export function createFullAggregateSensorLogs(sensorLogGroup) {
   ];
 }
 
+/**
+ * Takes a sensor log and links all item batches which are currently
+ * in that location. Only used once a sensor log has been flagged as
+ * a breach or after a full aggregation as to limit the number of
+ * SensorLogItemBatchJoin records.
+ */
 export function linkSensorLogToItemBatches({ sensorLog, database }) {
   const { location } = sensorLog;
   if (!location) return;
@@ -66,41 +78,48 @@ export function linkSensorLogToItemBatches({ sensorLog, database }) {
   });
 }
 
+/**
+ * Creates realm SensorLog objects from logs downloaded from a physical
+ * sensor.
+ *
+ * Logs downloaded from a sensor have no timestamp. To ensure the correct
+ * number of logs are created, compare the most recent logs timestamp, with
+ * the difference between the sensors log interval * the number of logs
+ * and the current date. If the latest log timestamp is larger, adjust the
+ * number of logs and starting date for logs that should be created.
+ */
 export function createSensorLogs({ parsedLogs, sensor, database }) {
-  // logInterval is in seconds
   const { logInterval, location, sensorLogs } = sensor;
-  console.log('create');
-
-  console.log(parsedLogs);
+  // Log interval is in seconds, working with milliseconds in this function.
   const logIntervalMillisecods = logInterval * 1000;
   const currentDateMilliseconds = new Date().getTime();
 
+  // Find the number of logs to be created.
   let lookBackNumberOfLogs = parsedLogs.length;
+  let firstLogTimestamp = currentDateMilliseconds - logIntervalMillisecods * lookBackNumberOfLogs;
 
-  let startOfIntegratingLogsTimestamp =
-    currentDateMilliseconds - logIntervalMillisecods * lookBackNumberOfLogs;
-
+  // If there are sensor logs, check if the starting timestamp and number of logs
+  // being created need to be adjusted.
   if (sensorLogs.length > 0) {
     const latestLogTimestamp = sensorLogs.max('timestamp');
-    if (latestLogTimestamp > startOfIntegratingLogsTimestamp) {
-      lookBackNumberOfLogs = Math.floor(
-        (currentDateMilliseconds - latestLogTimestamp) / logIntervalMillisecods - 1
-      );
-      startOfIntegratingLogsTimestamp =
-        currentDateMilliseconds - lookBackNumberOfLogs * logIntervalMillisecods;
+    if (latestLogTimestamp > firstLogTimestamp) {
+      const millisecondsSinceLastLog = currentDateMilliseconds - latestLogTimestamp;
+      // Account for the length of the array
+      lookBackNumberOfLogs = Math.floor(millisecondsSinceLastLog / logIntervalMillisecods - 1);
+      firstLogTimestamp = currentDateMilliseconds - lookBackNumberOfLogs * logIntervalMillisecods;
     }
   }
 
+  // Create generic sensor log objects for each log to create
   const startingLogIndex = parsedLogs.length - lookBackNumberOfLogs;
   const logsToIntegrate = parsedLogs
     .slice(startingLogIndex, parsedLogs.length)
-    .map(({ temperature }, i) => ({
-      id: generateUUID(),
-      temperature,
-      timestamp: new Date(startOfIntegratingLogsTimestamp + logIntervalMillisecods * i),
-      location,
-    }));
+    .map(({ temperature }, index) => {
+      const timestamp = new Date(firstLogTimestamp + logIntervalMillisecods * index);
+      return createGenericSensorLog({ timestamp, temperature, sensor, location });
+    });
 
+  // Enter each log into the database
   database.write(() => {
     logsToIntegrate.forEach(sensorLog => {
       const sLog = database.update('SensorLog', sensorLog);
@@ -108,7 +127,7 @@ export function createSensorLogs({ parsedLogs, sensor, database }) {
     });
   });
 
-  return { numberOfLogsCreated: logsToIntegrate.length };
+  return { success: true, data: { numberOfLogsCreated: logsToIntegrate.length } };
 }
 
 export function genericErrorReturn(e) {
