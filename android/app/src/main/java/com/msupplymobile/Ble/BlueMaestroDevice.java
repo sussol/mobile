@@ -41,7 +41,9 @@ public class BlueMaestroDevice extends BleDevice{
     
     public BlueMaestroDevice(ScanResult scanResult){
         super(scanResult);
+        command = "";
         retryCount = 0;
+        connected = false;
         commandResult = new byte[0];
         parser = new BlueMaestroParser();
     }
@@ -76,7 +78,7 @@ public class BlueMaestroDevice extends BleDevice{
     public WritableMap toObject(){
         WritableMap asObject = this.parseAdvertisement();
         asObject.putString("name", getName());
-        asObject.putString("deviceAddress", getAddress());
+        asObject.putString("macAddress", getAddress());
         asObject.putInt("rssi", getRssi());
         if (command.equals("*logall")){
             asObject.putArray("logs", this.parseLogs());
@@ -129,7 +131,7 @@ public class BlueMaestroDevice extends BleDevice{
          */
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            
+            if (Debug.LOG) Log.i(Debug.TAG, "BleDevice: OnConnectionStateChanged");
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 gatt.discoverServices();
                 connected = true;
