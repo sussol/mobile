@@ -11,8 +11,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
@@ -73,9 +73,7 @@ public class BleDeviceScanner {
     /** Setter for the lookup table of scanned devices */
     private void addScannedDevice(BleDevice bleDevice){
         if (Debug.LOG) Log.i(Debug.TAG,"Adding device:" + bleDevice.getAddress());
-        this.scannedDevices.put(bleDevice.getAddress(),bleDevice);
-        
-        
+        this.scannedDevices.put(bleDevice.getAddress(),bleDevice);   
     }
 
     /** Check if a device has already been scanned previously */
@@ -133,12 +131,11 @@ public class BleDeviceScanner {
      */
     public void startScan(){
         if (Debug.LOG) Log.i(Debug.TAG, "Device Scanner: Starting scan");
-        ScanFilter.Builder scanFilterBuilder = new ScanFilter.Builder().setManufacturerData(manufacturerID, new byte[0]);
+        ScanFilter.Builder scanFilterBuilder = new ScanFilter.Builder().setManufacturerData(this.manufacturerID, new byte[0]);
         ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0);
         if(!deviceAddress.equals("")) {
             try{
-                
-                scanFilterBuilder.setDeviceAddress(deviceAddress);
+                scanFilterBuilder.setDeviceAddress(this.deviceAddress);
                 scanSettingsBuilder.setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT);
             }catch(Exception e){
                 notifyListeners(new MsupplyException(ErrorCode.E_INVALID_ADDRESS));
@@ -149,8 +146,9 @@ public class BleDeviceScanner {
         scanFilters = Arrays.asList(new ScanFilter[]{ scanFilterBuilder.build() });
         scanSettings = scanSettingsBuilder.build();
         
+        
         Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        reactContext.getCurrentActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        reactContext.getCurrentActivity().startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);   
     }
 
     /**
@@ -183,7 +181,7 @@ public class BleDeviceScanner {
             notifyListeners(new MsupplyException(ErrorCode.E_BLUETOOTH_ADAPTER));
             return;
         }
-        leScanner.startScan(scanCallback);
+        leScanner.startScan(scanFilters, scanSettings, scanCallback);
     }
 
     /**
@@ -203,7 +201,7 @@ public class BleDeviceScanner {
             }
         }
     };
-    
+
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult scanResult) {
