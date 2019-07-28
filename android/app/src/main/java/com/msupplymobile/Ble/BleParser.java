@@ -5,7 +5,7 @@ import com.facebook.react.bridge.WritableArray;
 public abstract class BleParser{
  
     public static final String BATTERY_LEVEL = "batteryLevel";
-    public static final String LOGGING_INTERVAL = "loggingInterval";
+    public static final String LOGGING_INTERVAL = "logInterval";
     public static final String NUMBER_OF_LOGS = "numberOfLogs";
     public static final String VERSION_NUMBER = "versionNumber";
     
@@ -13,9 +13,9 @@ public abstract class BleParser{
     public static final String AVERAGE_HUMIDTY_DAY = "averageHumidityDay";
     public static final String AVERAGE_DEW_POINT_DAY = "averageDewPointDay";
     
-    public static final String CURRENT_TEMPERATURE = "currentTemperature";
-    public static final String CURRENT_HUMIDITY = "currentHumidity";
-    public static final String CURRENT_DEW_POINT = "currentDewPoint";
+    public static final String CURRENT_TEMPERATURE = "temperature";
+    public static final String CURRENT_HUMIDITY = "humidity";
+    public static final String CURRENT_DEW_POINT = "dewPoint";
 
     public static final String HIGHEST_TEMP_DAY = "highestTempDay";
     public static final String HIGHEST_HUMIDITY_DAY = "highestHumidityDay";
