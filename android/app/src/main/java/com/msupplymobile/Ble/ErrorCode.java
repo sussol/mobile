@@ -1,6 +1,7 @@
 package com.msupplymobile;
 
 public enum ErrorCode{
+    E_PARSING_FAILED("Problem parsing, decode failed"),
     E_GATT_CONNECTION("Problem fetching the GATT connection"),
     E_DOWNLOADING_LOGS("Problem downloading logs from sensor"),
     E_COMMAND_FAILED("Problem executing the supplied command"),
