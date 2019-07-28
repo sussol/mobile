@@ -17,6 +17,7 @@ export const syncStrings = new LocalizedStrings({
     sync_complete: 'Sync Complete',
     all_records_updated: 'All records updated.',
     loading_change_count: 'Loading change count...',
+    last_successful_sync: 'Last successful sync',
   },
   fr: {
     last_sync: 'Dernier SYNC',
@@ -29,25 +30,31 @@ export const syncStrings = new LocalizedStrings({
     sync_complete: 'Sync complété',
     all_records_updated: 'Tous les enregistrements ont été mis à jour',
     loading_change_count: 'Chargement du nombre de changements',
+    last_successful_sync: 'Date de dernière synchronisation',
   },
   // Add |checking_server_for_records|, |records_waiting|, |sync_complete|, |all_records_updated|,
   // |loading_change_count|
+  // TODO: last_successful_sync
   gil: {
     last_sync: 'LAST SYNC',
     manual_sync: 'Manual Sync',
     sync_enabled: 'SYNC ENABLED',
     sync_error: 'SYNC ERROR',
     sync_in_progress: 'SYNC IN PROGRESS',
+    last_successful_sync: 'Last successful sync',
   },
   // Add |checking_server_for_records|, |records_waiting|, |sync_complete|, |all_records_updated|,
   // |loading_change_count|
+  // TODO: last_successful_sync
   tl: {
     last_sync: 'SYNC FOIN DADAUN',
     manual_sync: 'Synk Manual',
     sync_enabled: 'HAMORIS SYNC',
     sync_error: 'SYNC SALA',
     sync_in_progress: "SYNC LA'O HELA",
+    last_successful_sync: 'Last successful sync',
   },
+  // TODO: last_successful_sync
   la: {
     last_sync: 'ເຊື່ອມ​ຕໍ່​ຄັ້ງຫຼ້າ​ສຸດ',
     manual_sync: 'ເຊື່ອມ​ຕໍ່​ຄູ່​ມື​ການ​ໃຊ້​ງານ',
@@ -59,6 +66,7 @@ export const syncStrings = new LocalizedStrings({
     sync_complete: 'ການ​ເຊື່ອມ​ຕໍ່​ສຳ​ເລັດ',
     all_records_updated: 'ລາຍ​ການ​ທັງ​ໝົດ​ຖື​ກ​ອັບ​ເດດ​ແລ້ວ',
     loading_change_count: 'ກຳ​ລັງ​ໂຫຼດ​ຮັບ​ການ​ປ່ຽນ​ແປງ',
+    last_successful_sync: 'Last successful sync',
   },
 });
 
