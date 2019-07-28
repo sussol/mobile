@@ -128,10 +128,6 @@ export class StocktakeBatchModal extends React.Component {
     const { option } = stocktakeBatch;
     const { REASON_EDIT } = MODAL_KEYS;
     switch (key) {
-      default:
-        return {
-          cellContents: stocktakeBatch[key],
-        };
       case 'batch':
         return {
           type: isEditable ? 'editable' : 'text',
@@ -186,6 +182,10 @@ export class StocktakeBatchModal extends React.Component {
           </TouchableOpacity>
         );
       }
+      default:
+        return {
+          cellContents: stocktakeBatch[key],
+        };
     }
   };
 
