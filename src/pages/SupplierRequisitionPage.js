@@ -527,12 +527,12 @@ export class SupplierRequisitionPage extends React.Component {
       const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
       const toggleProps = [
         {
-          text: 'Hide over stocked',
+          text: programStrings.hide_over_stocked,
           isOn: useThresholdMOS,
           onPress,
         },
         {
-          text: 'Show over stocked',
+          text: programStrings.show_over_stocked,
           isOn: !useThresholdMOS,
           onPress,
         },
