@@ -3,48 +3,75 @@
 
 import { generateUUID } from 'react-native-database';
 
-// Helpers for byte to int conversion
-const RANGE_OF_16_BITS = 256 * 256;
-const RANGE_OF_8_BITS = RANGE_OF_16_BITS / 2;
-const SENSOR_LOG_DELIMITER_BYTE = 11308;
+const SENSOR_LOG_FULL_AGGREGATE_TYPE = 'aggregate';
 
-function toUnsignedInt(byteArray, startPosition) {
-  return byteArray[startPosition] * 256 + byteArray[startPosition + 1];
-}
-
-function toInt(byteArray, startPosition) {
-  const unsignedInt = toUnsignedInt(byteArray, startPosition);
-  if (unsignedInt > RANGE_OF_8_BITS) return (RANGE_OF_16_BITS - unsignedInt) * -1;
-  return unsignedInt;
-}
-
-export function parseDownloadedLogs(sensorLogData) {
-  const { rawResultLines } = sensorLogData;
-  const flattenedResultLines = rawResultLines.reduce((acc, value) => [...acc, ...value], []);
-  const temperatureReadings = [];
-
-  for (let i = 0; i < flattenedResultLines.length; i += 2) {
-    const reading = toInt(flattenedResultLines, i);
-    if (reading === SENSOR_LOG_DELIMITER_BYTE) break;
-    temperatureReadings.push(reading / 10);
-  }
-  return temperatureReadings;
-}
-
-export function parseSensorAdvertisment(advertismentData) {
+function createGenericSensorLog({
+  sensor,
+  location,
+  temperature,
+  isInBreach = false,
+  aggregation,
+  itemBatches,
+  timestamp,
+}) {
   return {
-    batteryLevel: advertismentData[8],
-    temperature: toInt(advertismentData, 13) / 10.0,
-    logInterval: toInt(advertismentData, 9),
-    numberOfLogs: toInt(advertismentData, 11),
-    lastConnectionTimestamp: new Date(),
+    id: generateUUID(),
+    sensor,
+    location,
+    temperature,
+    isInBreach,
+    aggregation,
+    itemBatches,
+    timestamp,
   };
 }
 
-export function createSensorLogs(parsedLogs, sensor, database) {
+/**
+ *
+ * @param {Array} SensorLogGroup
+ */
+export function createFullAggregateSensorLogs(sensorLogGroup) {
+  const medianSensorLog = sensorLogGroup[Math.floor(sensorLogGroup.length / 2)];
+  const temperatures = sensorLogGroup.map(({ temperature }) => temperature);
+  return [
+    createGenericSensorLog({
+      ...medianSensorLog,
+      aggregation: SENSOR_LOG_FULL_AGGREGATE_TYPE,
+      temperature: Math.max(...temperatures),
+    }),
+    createGenericSensorLog({
+      ...medianSensorLog,
+      aggregation: SENSOR_LOG_FULL_AGGREGATE_TYPE,
+      temperature: Math.min(...temperatures),
+    }),
+  ];
+}
+
+export function linkSensorLogToItemBatches({ sensorLog, database }) {
+  const { location } = sensorLog;
+  if (!location) return;
+  const itemBatches = location.getItemBatchesWithQuantity(database);
+  if (!itemBatches || itemBatches.length === 0) return;
+  database.update('SensorLog', {
+    ...sensorLog,
+    itemBatches,
+  });
+  itemBatches.forEach(itemBatch => {
+    itemBatch.addSensorLog(sensorLog);
+    database.update('SensorLogItemBatchJoin', {
+      id: generateUUID(),
+      itemBatch,
+      sensorLog,
+    });
+  });
+}
+
+export function createSensorLogs({ parsedLogs, sensor, database }) {
   // logInterval is in seconds
   const { logInterval, location, sensorLogs } = sensor;
+  console.log('create');
 
+  console.log(parsedLogs);
   const logIntervalMillisecods = logInterval * 1000;
   const currentDateMilliseconds = new Date().getTime();
 
@@ -67,9 +94,9 @@ export function createSensorLogs(parsedLogs, sensor, database) {
   const startingLogIndex = parsedLogs.length - lookBackNumberOfLogs;
   const logsToIntegrate = parsedLogs
     .slice(startingLogIndex, parsedLogs.length)
-    .map((parsedLog, i) => ({
+    .map(({ temperature }, i) => ({
       id: generateUUID(),
-      temperature: parsedLog,
+      temperature,
       timestamp: new Date(startOfIntegratingLogsTimestamp + logIntervalMillisecods * i),
       location,
     }));
