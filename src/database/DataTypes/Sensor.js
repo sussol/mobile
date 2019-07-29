@@ -6,8 +6,36 @@
 import Realm from 'realm';
 
 import { NativeModules } from 'react-native';
+import { generateUUID } from 'react-native-database';
+
+const MANUFACTURER_ID = 307;
 
 export class Sensor extends Realm.Object {
+  static async scanForSensors(database) {
+    try {
+      const { BleManager } = NativeModules;
+      const result = await BleManager.getDevices(MANUFACTURER_ID, '');
+      if (!result.success) return result;
+      const { data } = result;
+      database.write(() => {
+        data.forEach(sensor => {
+          const { temperature, batteryLevel, logInterval, macAddress, numberOfLogs } = sensor;
+          database.update('Sensor', {
+            id: generateUUID(),
+            temperature,
+            batteryLevel,
+            logInterval,
+            macAddress,
+            numberOfLogs,
+          });
+        });
+      });
+      return { success: true, data: { sensorsUpdated: data.length } };
+    } catch (error) {
+      return { success: false, error };
+    }
+  }
+
   get toString() {
     return `MAC: ${this.macAddress} TEMP: ${this.temperature}`;
   }
@@ -38,31 +66,31 @@ export class Sensor extends Realm.Object {
     return latestAggregatedLog.isInBreach;
   }
 
-  async sendCommand({ manufacturerId, command }) {
+  async sendCommand(command) {
     const { BleManager } = NativeModules;
     try {
+      const manufacturerId = MANUFACTURER_ID;
       return await BleManager.sendCommand(manufacturerId, this.macAddress, command);
     } catch (error) {
       return error;
     }
   }
 
-  async sendBlink(manufacturerId) {
+  async sendBlink() {
     try {
-      const { success } = await this.sendCommand({ manufacturerId, command: '*blink' });
-      return success;
+      return await this.sendCommand('*blink');
     } catch (error) {
       return error;
     }
   }
 
-  async sendReset({ manufacturerId }) {
+  async sendReset() {
     try {
-      const firstResult = await this.sendCommand({ manufacturerId, command: '*lint240' });
+      const firstResult = await this.sendCommand('*lint240');
       const { success: firstSuccess } = firstResult;
       if (!firstSuccess) return false;
 
-      const secondResult = await this.sendCommand({ manufacturerId, command: '*sadv1000' });
+      const secondResult = await this.sendCommand('*sadv1000');
       const { success: secondSuccess } = secondResult;
       if (!secondSuccess) return false;
 
@@ -72,11 +100,12 @@ export class Sensor extends Realm.Object {
     }
   }
 
-  async downloadLogs({ manufacturerId }) {
+  async downloadLogs() {
     try {
-      return await this.sendCommand({ manufacturerId, command: '*logall' });
+      const command = '*logall';
+      return await this.sendCommand(command);
     } catch (error) {
-      return error;
+      return { success: false, error };
     }
   }
 
@@ -85,24 +114,25 @@ export class Sensor extends Realm.Object {
     try {
       const result = await BleManager.getDevices(manufacturerId, this.macAddress);
       const { success, data } = result;
-      console.log(result);
-      if (!success) return false;
-      if (!data || data.length === 0) return false;
+      if (!success) return result;
+      if (!data || data.length === 0) return result;
+
       const advertisement = data[0];
-      const { macAddress, batteryLevel, currentTemperature, loggingInterval } = advertisement;
-      console.log('scan and update');
-      console.log(macAddress, batteryLevel, currentTemperature, loggingInterval);
-      if (macAddress !== this.macAddress) return false;
+      const { macAddress, batteryLevel, temperature, logInterval } = advertisement;
+      if (macAddress !== this.macAddress) {
+        return { success: false, error: { message: 'MAC Address mismatch' } };
+      }
+
       database.write(() => {
         database.update('Sensor', {
           id: this.id,
           batteryLevel,
-          temperature: currentTemperature,
-          logInterval: loggingInterval,
+          temperature,
+          logInterval,
           lastConnectionTimestamp: new Date(),
         });
       });
-      return true;
+      return result;
     } catch (error) {
       return error;
     }
