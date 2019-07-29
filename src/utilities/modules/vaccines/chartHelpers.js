@@ -3,13 +3,10 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
-// eslint-disable-next-line import/no-extraneous-dependencies
 import dateFormat from 'dateformat';
-import { createRecord } from '../../database';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 /**
- * Utility and helper methods for the vaccine
+ * Helper methods for rendering charts for the vaccine
  * module.
  */
 
@@ -456,80 +453,3 @@ export const extractDataForFridgeChart = ({ database, fridge }) => {
     ...TEMPERATURE_RANGE,
   };
 };
-
-export function vaccineDisposalAdjustments({
-  database,
-  record: supplierInvoice,
-  user,
-  itemBatches,
-}) {
-  let batchesToDispose;
-  // If ItemBatches were passed, making InventoryAdjustments for
-  // ItemBatches, rather than for TransactionBatches from a SupplierInvoice
-  if (itemBatches) {
-    // Any ItemBatch which has an Option, has been set as disposed or has
-    // a vvmStatus of failed.
-    // Create objects similar to a TransactionBatch for each ItemBatch
-    // a part of the InventoryAdjustment.
-    batchesToDispose = itemBatches
-      .filter(itemBatch => !!itemBatch.option)
-      .map(itemBatch => ({
-        itemBatch: itemBatch.parentBatch ? itemBatch.parentBatch : itemBatch,
-        numberOfPacks: itemBatch.totalQuantity,
-        option: itemBatch.option,
-        location: itemBatch.location,
-      }));
-  } else if (supplierInvoice) {
-    // When a SupplierInvoice is passed, InventoryAdjustments are made for
-    // each VVM Failed TransactionBatch a part of that invoice.
-    batchesToDispose = supplierInvoice
-      .getTransactionBatches(database)
-      .filtered('isVVMPassed = false');
-  } else {
-    // If neither of the above are passed, prematurely exit.
-    return;
-  }
-  // If there are no batches which should be disposed, prematurely exit.
-  if (batchesToDispose.length === 0) return;
-
-  let date = new Date();
-  if (supplierInvoice) date = supplierInvoice.confirmDate;
-  const isAddition = false;
-  // Create an InventoryAdjustment transaction for removing
-  // stock.
-  database.write(() => {
-    const inventoryAdjustment = createRecord(
-      database,
-      'InventoryAdjustment',
-      user,
-      date,
-      isAddition,
-      { status: 'new' }
-    );
-    // Create the TransactionItem and TransactionBatch for each batch to dispose
-    batchesToDispose.forEach(({ itemBatch: batch, numberOfPacks, option, location }) => {
-      // Defensively skip this batch if it has no itemBatch, option or the numberOfPacks
-      // isn't positive
-      if (!(batch || numberOfPacks > 0 || option)) return;
-
-      let itemBatch = batch;
-      if (!batch.addTransactionBatch) {
-        const id = (batch.parentBatch && batch.parentBatch.id) || batch.id;
-        itemBatch = database.objects('ItemBatch').filtered('id = $0', id)[0];
-      }
-      // Skip this batch if the ItemBatch has no related Item.
-      const { item } = itemBatch;
-      if (!item) return;
-
-      const transactionItem = createRecord(database, 'TransactionItem', inventoryAdjustment, item);
-      createRecord(database, 'TransactionBatch', transactionItem, itemBatch, {
-        numberOfPacks,
-        isVVMPassed: false,
-        option,
-        location,
-      });
-    });
-    // Finalise the transaction to make real database changes.
-    inventoryAdjustment.finalise(database);
-  });
-}
