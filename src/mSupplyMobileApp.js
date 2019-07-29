@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-bind */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -7,10 +8,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
 import { addNavigationHelpers } from 'react-navigation';
 import { connect } from 'react-redux';
-
 import {
   BackHandler,
   Image,
@@ -22,6 +21,7 @@ import {
 
 import { Scheduler } from 'sussol-utilities';
 
+import { synchroniseSensors } from './utilities/modules/vaccines/sensorSynchroniser';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import { Database, schema, UIDatabase } from './database';
 import { migrateDataToVersion } from './dataMigration';
@@ -45,8 +45,6 @@ import globalStyles, {
   textStyles,
   SUSSOL_ORANGE,
 } from './globalStyles';
-
-import * as sensorSyncMethods from './utilities/modules/temperatureSensorHelpers';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -82,9 +80,9 @@ class MSupplyMobileAppContainer extends React.Component {
     const latestTemperatureSync = database.objects('SensorLog').max('timestamp');
     this.state = {
       confirmFinalise: false,
-      currentUser: null,
       isInitialised,
       isLoading: false,
+      currentUser: null,
       syncModalIsOpen: false,
       temperatureSyncState: {
         message: 'Temperature Sync Details',
@@ -96,7 +94,9 @@ class MSupplyMobileAppContainer extends React.Component {
     };
   }
 
-  componentDidMount = () => BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  componentDidMount = async () => {
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
+  };
 
   componentWillUnmount = () => {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackEvent);
@@ -150,108 +150,19 @@ class MSupplyMobileAppContainer extends React.Component {
     this.database.isLoading = false;
   };
 
-  syncSensor = async sensor => {
-    const { database } = this;
-    const params = { sensor, database };
-    const updateMessageSyncState = ({ message, lastSync, total = 100, progress = 100 }) => {
-      // eslint-disable-next-line react/destructuring-assignment, prefer-destructuring
-      if (!lastSync) lastSync = this.state.temperatureSyncState.lastSync;
-      this.setState({
-        temperatureSyncState: {
-          ...this.state.temperatureSyncState, // eslint-disable-line react/no-access-state-in-setstate, react/destructuring-assignment, max-len
-          message,
-          lastSync,
-          isSyncing: progress < 100,
-          total,
-          progress,
-        },
-      });
-    };
-    let result = null;
-    // TODO move all of this out and into redux (similar to normal sync)
-    // Sync
-    updateMessageSyncState({ message: 'Searching for sensor', progress: 0 });
-    result = await sensorSyncMethods.findAndUpdateSensor(params);
-    console.log(result, sensor.macAddress);
-    if (!result.success) {
-      updateMessageSyncState({ message: 'Cannot find sensor in proximity' });
-      return;
-    }
-    updateMessageSyncState({
-      message: `Syncing logs: ${sensor.numberOfLogs}`,
-      progress: 10,
+  updateMessageSyncState = ({ message, lastSync, total = 100, progress = 100 }) => {
+    // eslint-disable-next-line react/destructuring-assignment, prefer-destructuring
+    if (!lastSync) lastSync = this.state.temperatureSyncState.lastSync;
+    this.setState({
+      temperatureSyncState: {
+        ...this.state.temperatureSyncState, // eslint-disable-line react/no-access-state-in-setstate, react/destructuring-assignment, max-len
+        message,
+        lastSync,
+        isSyncing: progress < 100,
+        total,
+        progress,
+      },
     });
-    result = await sensorSyncMethods.syncSensorLogs(params);
-    console.log(result);
-    if (!result.success) {
-      updateMessageSyncState({ message: 'Failed to sync temperature data' });
-      return;
-    }
-    // Aggregation
-    const lastSync = database.objects('SensorLog').max('timestamp');
-    updateMessageSyncState({ lastSync, message: 'Pre aggregating Logs', progress: 40 });
-    result = await sensorSyncMethods.preAggregateLogs(params);
-    console.log(result);
-    if (!result.success) {
-      updateMessageSyncState({
-        message: 'Temperature sync successfull, but failure during aggregation',
-        progress: 45,
-      });
-      return;
-    }
-    updateMessageSyncState({ message: 'Searching for breaches', progress: 50 });
-    result = await sensorSyncMethods.applyBreaches(params);
-    console.log(result);
-    if (!result.success) {
-      updateMessageSyncState({
-        message: 'Temperature sync successfull, but failed to search for breaches',
-      });
-      return;
-    }
-    result = await sensorSyncMethods.addHeadAndTrailingLogToBreach(params);
-    console.log(result);
-    if (!result.success) {
-      updateMessageSyncState({
-        message: 'Temperature sync successfull, but failed to search for breaches',
-      });
-      return;
-    }
-    updateMessageSyncState({ message: 'Finalising aggregation', progress: 55 });
-    result = await sensorSyncMethods.doFullAggregation(params);
-    console.log(result);
-    // Reconfiguring sensor
-    if (!result.success) {
-      updateMessageSyncState({
-        message: 'Temperature sync successfull, but failed finalise aggregation',
-      });
-      return;
-    }
-    updateMessageSyncState({ message: 'Resetting Sensor', progress: 60 });
-    result = await sensorSyncMethods.resetSensorInterval(params);
-    console.log(result);
-    if (!result.success) {
-      updateMessageSyncState({ message: 'Sync successfull, but failed to reset sensor' });
-      return;
-    }
-    updateMessageSyncState({ message: 'Reconfiguring sensor', progress: 80 });
-    console.log(result);
-    result = await sensorSyncMethods.resetSensorAdvertismentFrequency(params);
-    if (!result.success) {
-      updateMessageSyncState({
-        message: 'Temperature sync successfull, but failed to reconfigure sensor',
-      });
-      return;
-    }
-    updateMessageSyncState({ message: 'Full temperature sync successfull' });
-  };
-
-  synchroniseSensors = async () => {
-    const linkedSensors = this.database.objects('Sensor').filtered('location != null');
-    for (let i = 0; i < linkedSensors.length; i += 1) {
-      // eslint-disable-next-line no-await-in-loop
-      const result = await this.syncSensor(linkedSensors[i]);
-      console.log(result);
-    }
   };
 
   synchronise = async () => {
@@ -336,7 +247,10 @@ class MSupplyMobileAppContainer extends React.Component {
       syncModalIsOpen,
       temperatureSyncState,
     } = this.state;
-
+    const sensorSynchroniser = synchroniseSensors.bind(this, {
+      database: this.database,
+      updateMessage: this.updateMessageSyncState,
+    });
     if (!isInitialised) {
       return (
         <FirstUsePage
@@ -392,7 +306,7 @@ class MSupplyMobileAppContainer extends React.Component {
           state={syncState}
           temperatureSyncState={temperatureSyncState}
           onPressManualSync={this.synchronise}
-          onPressTemperatureSync={this.synchroniseSensors}
+          onPressTemperatureSync={sensorSynchroniser}
           onClose={() => this.setState({ syncModalIsOpen: false })}
         />
         <LoginModal
