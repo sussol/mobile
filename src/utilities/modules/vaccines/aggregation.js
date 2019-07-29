@@ -4,6 +4,22 @@ import {
   createGenericSensorLog,
 } from './utilities';
 
+/**
+ * Aggregation methods for SensorLogs. PreAggregate
+ * and FullAggregate.
+ *
+ * Preaggregates are aggregations of raw data synced
+ * from a sensor. Sensors can be quite sensitive to
+ * temperatures, so a shorter interval is used on a
+ * physical sensor to achieve a more representitive
+ * temperature once aggregated.
+ *
+ * Full aggregations are much larger consolidations
+ * of sensor logs in which a breach has not occurred,
+ * to limit the number of SensorLog records as well
+ * as SensorLogItemBatchJoins.
+ */
+
 const PREAGGREGATE_TYPE = 'preAggregate';
 const FULL_AGGREGATE_TYPE = 'aggregate';
 
