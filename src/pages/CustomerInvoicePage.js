@@ -22,7 +22,7 @@ import {
 
 import { createRecord } from '../database';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { extractBreaches } from '../utilities/modules/vaccines';
+import { extractBreaches } from '../utilities/modules/vaccines/chartHelpers';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 

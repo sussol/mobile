@@ -5,7 +5,7 @@
 
 import Realm from 'realm';
 
-import { extractBreaches } from '../../utilities/modules/vaccines';
+import { extractBreaches } from '../../utilities/modules/vaccines/chartHelpers';
 import { getTotal } from '../utilities';
 
 export class Location extends Realm.Object {

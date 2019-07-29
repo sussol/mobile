@@ -14,7 +14,7 @@ import { IconCell, PageInfo, PageContentModal, GenericChoiceList, BreachTable } 
 import { SUSSOL_ORANGE } from '../globalStyles';
 
 import { formatExposureRange } from '../utilities';
-import { extractBreaches } from '../utilities/modules/vaccines';
+import { extractBreaches } from '../utilities/modules/vaccines/chartHelpers';
 
 /**
  * CONSTANTS
