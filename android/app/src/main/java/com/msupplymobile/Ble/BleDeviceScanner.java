@@ -88,7 +88,6 @@ public class BleDeviceScanner {
         this.listeners.add(listener);
     }
 
-
     /** 
      * Notify listeners of this subject that a scan has finished
      * providing a WritableMap with the shape:
@@ -225,5 +224,5 @@ public class BleDeviceScanner {
         public void onScanFailed(int errorCode) {
             notifyListeners(new MsupplyException(ErrorCode.E_SCAN_FAILED));
         } 
-};
+    };
 }

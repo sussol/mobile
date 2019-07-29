@@ -26,7 +26,7 @@ export class Sensor extends Realm.Object {
   /**
    * Scans for all devices matching the passed manufacturer ID,
    * returning their advertisement data. Updates or creates
-   * any found sensors
+   * any found sensors.
    */
   static async scanForSensors(database) {
     try {
