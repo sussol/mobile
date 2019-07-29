@@ -39,7 +39,7 @@ export class Sensor extends Realm.Object {
           const { temperature, batteryLevel, logInterval, macAddress, numberOfLogs } = sensor;
           const sensorToUpdate = database.objects('Sensor').filtered('macAddress = $0', macAddress);
           database.update('Sensor', {
-            id: sensorToUpdate ? sensorToUpdate.id : generateUUID(),
+            id: sensorToUpdate.length ? sensorToUpdate[0].id : generateUUID(),
             temperature,
             batteryLevel,
             logInterval,
