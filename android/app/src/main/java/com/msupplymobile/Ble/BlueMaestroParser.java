@@ -19,8 +19,9 @@ public class BlueMaestroParser extends BleParser{
     private static final String ERROR_COMMAND_RESULT = "error";
 
     /**
-     * Uses a bytebuffer as a view over the byte array to decode bytes to their
-     * correct value and place in a JS useable object.
+     * Uses a bytebuffer as a view over the byte array to decode bytes of a
+     * BlueMaestro sensor advertisement packet and place in a JS useable object.
+     * First 7 bytes are mysterious, as are bytes 19-34.
      */
     public WritableMap parseAdvertisement(byte[] advertisementBytes){
         WritableMap advertisement = Arguments.createMap();
@@ -65,7 +66,7 @@ public class BlueMaestroParser extends BleParser{
         advertisement.putDouble(AVERAGE_TEMP_DAY, byteBuffer.getShort()/10.0);
         // Get index: 57, 58
         advertisement.putDouble(AVERAGE_HUMIDTY_DAY, byteBuffer.getShort()/10.0);
-        // Get index: 59, 60z
+        // Get index: 59, 60
         advertisement.putDouble(AVERAGE_DEW_POINT_DAY, byteBuffer.getShort()/10.0);
         return advertisement;
     }
@@ -74,7 +75,8 @@ public class BlueMaestroParser extends BleParser{
     /**
      * Byte array has 15 bytes of header values, and three sequences
      * delimited by DELIMITER_VALUE and 7-9 0 bytes. Each value is a 
-     * short (2 bytes). Parser only decodes the first sequence, temperatures.
+     * short (2 bytes). Parser only decodes the first sequence, temperatures,
+     * and returns an array of objects [ {temperature} ]
      */
     public WritableArray parseLogs(byte[] logData){
         int bufferLength = logData.length - LOGS_HEADER_OFFSET;
@@ -82,29 +84,30 @@ public class BlueMaestroParser extends BleParser{
                                             .asShortBuffer()
                                             .asReadOnlyBuffer();
         WritableArray result = Arguments.createArray();
-        short shortValue;
-        do {
-            shortValue = shortBuffer.get();
+        short shortValue = shortBuffer.get();
+        while (shortValue != DELIMITER_VALUE){
             WritableMap sensorLog = Arguments.createMap();
             sensorLog.putDouble("temperature", shortValue / 10.0 );
             result.pushMap(sensorLog);
-        } while (shortValue != DELIMITER_VALUE);
-
+            shortValue = shortBuffer.get();
+        }
         return result;
     }
 
     /**
-     * Parse the command result to determine if it was
-     * succesful or not.
-     * Unsuccesful commands return "error" or "Error",
+     * Parse the result of a command send to the sensor determining
+     * if it was successful or not.
+     * Unsuccesful commands always return "error" or "Error",
      * while succesful commands either return a stream of
      * bytes which are downloaded (with a header of at least 15 bytes)
-     * or the string "Ok" or "ok".
+     * or some variation of "Ok" or "ok", with varying filler bytes.
      */
     public boolean parseCommandResult(byte[] data){
+        if (data.length == 0) return false;
         if (data.length > LOGS_HEADER_OFFSET) return true;
+        
         String result  = new String(data);
-        if (result.equalsIgnoreCase(ERROR_COMMAND_RESULT)) return false;
-        return true;
+        if (!result.equalsIgnoreCase(ERROR_COMMAND_RESULT)) return true;
+        return false;
     }
 }
