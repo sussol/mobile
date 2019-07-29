@@ -83,7 +83,6 @@ export const synchroniseSensors = async ({ database, updateMessage }) => {
   const linkedSensors = database.objects('Sensor').filtered('location != null');
   for (let i = 0; i < linkedSensors.length; i += 1) {
     // eslint-disable-next-line no-await-in-loop
-    const result = await syncSensor({ sensor: linkedSensors[i], database, updateMessage });
-    console.log(result);
+    await syncSensor({ sensor: linkedSensors[i], database, updateMessage });
   }
 };
