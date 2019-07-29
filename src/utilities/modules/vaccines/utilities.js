@@ -265,16 +265,3 @@ export function createBreaches({ sensor, database }) {
 
   return { success: true, data: { numberOfBreaches } };
 }
-
-// const createOrUpdateSensor = ({
-//   id = generateUUID(),
-//   location = null,
-//   name = "",
-//   macAddress = "",
-//   batteryLevel = null,
-//   logInterval = null,
-//   numberOfLogs = null,
-//   temperature: { type: 'double', optional: true },
-//   lastConnectionTimestamp: { type: 'date', optional: true },
-//   sensorLogs: { type: 'list', objectType: 'SensorLog' },
-// }) => {};
