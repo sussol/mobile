@@ -146,6 +146,17 @@ export class VaccineModulePage extends React.Component {
     );
   };
 
+  blinkSensor = async () => {
+    const { selectedFridge } = this.state;
+    const { database, runWithLoadingIndicator } = this.props;
+
+    await runWithLoadingIndicator(async () => {
+      const sensors = database.objects('Sensor').filtered('location.id = $0', selectedFridge.id);
+      const sensor = sensors[0];
+      await sensor.sendBlink();
+    }, true);
+  };
+
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
   renderFridgeExtraInfo = (fridge, numberOfBreaches) => {
     const { database } = this.props;
@@ -170,6 +181,9 @@ export class VaccineModulePage extends React.Component {
             <Text style={greyTextStyleLarge}>{numberOfBreaches}</Text>
           </View>
         )}
+        <TouchableOpacity onPress={this.blinkSensor}>
+          <Icon name="lightbulb-o" size={30} />
+        </TouchableOpacity>
         <Text style={greyTextStyleSmall}>Exposure:</Text>
         {this.renderTemperature(20, minTemperature)}
         <Text style={greyTextStyleSmall}>to</Text>
