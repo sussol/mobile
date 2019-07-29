@@ -10,7 +10,24 @@ import { generateUUID } from 'react-native-database';
 
 const MANUFACTURER_ID = 307;
 
+const getCommand = (manufacturerID, command, param) => {
+  const commands = {
+    307: {
+      BLINK: '*blink',
+      RESET_ADV_FREQ: '*sadv1000',
+      RESET_LOG_FREQ: `*lint${param}`,
+      DL_LOGS: '*logall',
+    },
+  };
+  return commands[manufacturerID][command];
+};
+
 export class Sensor extends Realm.Object {
+  /**
+   * Scans for all devices matching the passed manufacturer ID,
+   * returning their advertisement data. Updates or creates
+   * any found sensors
+   */
   static async scanForSensors(database) {
     try {
       const { BleManager } = NativeModules;
@@ -66,49 +83,92 @@ export class Sensor extends Realm.Object {
     return latestAggregatedLog.isInBreach;
   }
 
+  /**
+   * Send a command to the physical device this model
+   * represents, returning the result.
+   * Return object shapes:
+   * {
+   *  success: true/false,
+   *  data,
+   *  error [when success = false]
+   * }
+   */
   async sendCommand(command) {
     const { BleManager } = NativeModules;
     try {
       const manufacturerId = MANUFACTURER_ID;
       return await BleManager.sendCommand(manufacturerId, this.macAddress, command);
     } catch (error) {
-      return error;
+      return { success: false, error };
     }
   }
 
+  /**
+   * Sends a blink command, request the LED on the physical
+   * sensor light up.
+   * Return object:
+   * { success: true/false }
+   */
   async sendBlink() {
     try {
-      return await this.sendCommand('*blink');
+      const command = getCommand(MANUFACTURER_ID, 'BLINK');
+      return await this.sendCommand(command);
     } catch (error) {
       return error;
     }
   }
 
+  /**
+   * Sends reset commands to a physical sensor, resetting the
+   * logging interval, causing all currently stored logs to be
+   * deleted and resetting the sensor advertisement frequency.
+   * Return object:
+   * { success: true/false }
+   */
   async sendReset() {
     try {
-      const firstResult = await this.sendCommand('*lint240');
+      const firstCommand = getCommand(MANUFACTURER_ID, 'RESET_LOG_FREQ');
+      const firstResult = await this.sendCommand(firstCommand);
       const { success: firstSuccess } = firstResult;
       if (!firstSuccess) return false;
 
-      const secondResult = await this.sendCommand('*sadv1000');
+      const secondCommand = getCommand(MANUFACTURER_ID, 'RESET_ADV_FREQ');
+      const secondResult = await this.sendCommand(secondCommand);
       const { success: secondSuccess } = secondResult;
       if (!secondSuccess) return false;
 
       return true;
     } catch (error) {
-      return error;
+      return { success: false, error };
     }
   }
 
+  /**
+   * Downloads all stored logs from this sensor. Returns an object in the shape
+   * {
+   *   success: true,
+   *   data: [{ logs: [] }]
+   * }
+   * or on not being able to download:
+   * {
+   *  success: false,
+   *  error,
+   * }
+   */
   async downloadLogs() {
     try {
-      const command = '*logall';
+      const command = getCommand(MANUFACTURER_ID, 'DL_LOGS');
       return await this.sendCommand(command);
     } catch (error) {
       return { success: false, error };
     }
   }
 
+  /**
+   * Connects with the native bluetooth adapter to scan for this sensor
+   * and retrieve the advertisement data, updating this sensor.
+   * Return object: See BleParser.java
+   */
   async scanAndUpdate({ manufacturerId, database }) {
     const { BleManager } = NativeModules;
     try {
