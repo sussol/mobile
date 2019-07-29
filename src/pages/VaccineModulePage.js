@@ -13,7 +13,7 @@ import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { VaccineChart, BreachTable, PageContentModal } from '../widgets';
-import { extractDataForFridgeChart } from '../utilities/modules/vaccines';
+import { extractDataForFridgeChart } from '../utilities/modules/vaccines/chartHelpers';
 
 import { navStrings } from '../localization';
 import globalStyles, {

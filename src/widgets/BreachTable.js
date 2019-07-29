@@ -15,7 +15,7 @@ import { GenericTablePage } from 'react-native-generic-table-page';
 import { VaccineChart, StackedTables } from '.';
 
 import { formattedDifferenceBetweenDates, formatExposureRange } from '../utilities/formatters';
-import { extractDataForBreachModal } from '../utilities/modules/vaccines';
+import { extractDataForBreachModal } from '../utilities/modules/vaccines/chartHelpers';
 
 /**
  * CONSTANTS
@@ -102,7 +102,7 @@ class GenericTablePageExpandFirstRow extends GenericTablePage {
  * of temperatures for that breach.
  *
  * Breaches prop is intended to be made by calling extractBreaches in
- * utilities/modules/vaccines.
+ * utilities/modules/chartHelpers.
  *
  * @prop {Array}     breaches 2D array of breaches - array of SensorLog arrays
  * @prop {Realm}     database App-wide database reference

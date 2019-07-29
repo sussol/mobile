@@ -9,7 +9,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { generateUUID } from 'react-native-database';
-import { extractBreaches, vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
+import { vaccineDisposalAdjustments } from '../utilities/modules/vaccines/utilities';
+import { extractBreaches } from '../utilities/modules/vaccines/chartHelpers';
 
 import { GenericPage } from './GenericPage';
 import {

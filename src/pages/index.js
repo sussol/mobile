@@ -42,7 +42,7 @@ import { ManageVaccineItemPage } from './ManageVaccineItemPage';
 import { RealmExplorer } from './RealmExplorer';
 import { VaccineModuleAdminPage } from './VaccineModuleAdminPage';
 
-import { vaccineDisposalAdjustments } from '../utilities/modules/vaccines';
+import { vaccineDisposalAdjustments } from '../utilities/modules/vaccines/utilities';
 
 export { FirstUsePage } from './FirstUsePage';
 
