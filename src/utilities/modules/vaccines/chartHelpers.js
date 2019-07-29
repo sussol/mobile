@@ -242,10 +242,6 @@ const formatChartDate = (date, shouldDisplayMonth, shouldDisplayDay) => {
   if (shouldDisplayDay) result += `${dateFormat(date, 'd')}`;
   return result;
 };
-/**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
- */
 
 /**
  * Aggregates sensor logs into groups of logs by dates.
@@ -399,7 +395,6 @@ export const extractDataForBreachModal = ({
         database,
       }),
       chartData: {
-        // TODO change based on aggregateLogs return format
         [lineKey]: aggregateLogs({
           sensorLogs,
           numberOfDataPoints,
