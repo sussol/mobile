@@ -8,9 +8,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { GenericPage } from './GenericPage';
-
-import { updateOrCreateSensors } from '../utilities/modules/vaccines/temperatureSensorHelpers';
-import { scanForSensors } from '../utilities/modules/vaccines/bluetoothHelpers';
+import { Sensor } from '../database/DataTypes/Sensor';
 
 import { IconCell, PageButton, GenericChoiceList, PageContentModal } from '../widgets';
 
@@ -98,8 +96,7 @@ export class VaccineModuleAdminPage extends React.Component {
     const { runWithLoadingIndicator, database } = this.props;
 
     await runWithLoadingIndicator(async () => {
-      const sensors = await scanForSensors();
-      if (sensors) updateOrCreateSensors(sensors, database);
+      await Sensor.scanForSensors(database);
     }, true);
     this.refresh();
   };
