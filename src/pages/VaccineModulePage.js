@@ -8,7 +8,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Image, StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, View, Text, TouchableOpacity, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -91,7 +91,6 @@ export class VaccineModulePage extends React.Component {
     await runWithLoadingIndicator(() => {
       this.FRIDGES.forEach(fridge => {
         const x = extractDataForFridgeChart({ database, fridge });
-        // console.log(x);
         this.FRIDGE_DATA[fridge.id] = x;
       });
     });
@@ -149,12 +148,15 @@ export class VaccineModulePage extends React.Component {
   blinkSensor = async () => {
     const { selectedFridge } = this.state;
     const { database, runWithLoadingIndicator } = this.props;
-
-    await runWithLoadingIndicator(async () => {
-      const sensors = database.objects('Sensor').filtered('location.id = $0', selectedFridge.id);
-      const sensor = sensors[0];
-      await sensor.sendBlink();
-    }, true);
+    const sensors = database.objects('Sensor').filtered('location.id = $0', selectedFridge.id);
+    if (!sensors.length) {
+      ToastAndroid.show('No sensor attached to this fridge', ToastAndroid.SHORT);
+    } else {
+      await runWithLoadingIndicator(async () => {
+        const sensor = sensors[0];
+        await sensor.sendBlink();
+      }, true);
+    }
   };
 
   /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
