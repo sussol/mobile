@@ -90,8 +90,8 @@ export class VaccineModulePage extends React.Component {
 
     await runWithLoadingIndicator(() => {
       this.FRIDGES.forEach(fridge => {
-        const x = extractDataForFridgeChart({ database, fridge });
-        this.FRIDGE_DATA[fridge.id] = x;
+        const dataForFridgeChart = extractDataForFridgeChart({ database, fridge });
+        this.FRIDGE_DATA[fridge.id] = dataForFridgeChart;
       });
     });
     this.setState({ selectedFridge });
