@@ -74,11 +74,11 @@ export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
 
-    this.MENU_BUTTONS = getMenuButtons();
+    // { fridgeID: { extractDataForFridgeChart() }, ... }
     this.FRIDGE_DATA = {};
     this.HAS_FRIDGES = false;
     this.FRIDGES = null;
-
+    this.MENU_BUTTONS = getMenuButtons();
     this.state = { selectedFridge: null, currentBreach: null, isModalOpen: false };
   }
 
@@ -94,6 +94,7 @@ export class VaccineModulePage extends React.Component {
         this.FRIDGE_DATA[fridge.id] = dataForFridgeChart;
       });
     });
+
     this.setState({ selectedFridge });
   };
 
@@ -123,9 +124,7 @@ export class VaccineModulePage extends React.Component {
   /* Render fridge name and chevron-down icon if icon not selected fridge */
   renderFridgeName = (fridge, isFridgeSelected) => {
     const onPress = () => this.setState({ selectedFridge: fridge });
-
     const { fridgeInfoSectionStyle, fridgeNameTextStyle } = localStyles;
-
     return (
       <TouchableOpacity style={fridgeInfoSectionStyle} onPress={onPress}>
         {!isFridgeSelected && this.renderIcon('chevron-down')}
@@ -134,7 +133,7 @@ export class VaccineModulePage extends React.Component {
     );
   };
 
-  /* Temperature with celcius symbol based no passed fontSize */
+  /* Temperature with celcius symbol based on passed fontSize */
   renderTemperature = (fontSize, temperature) => {
     const { greyTextStyleLarge } = localStyles;
     return (
