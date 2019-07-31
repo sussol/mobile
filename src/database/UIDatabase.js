@@ -3,12 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import Realm from 'realm';
-
 import RNFS from 'react-native-fs';
 
-import { schema } from './schema';
 import { SETTINGS_KEYS } from '../settings';
+import { formatDate, requestPermission, backupValidation } from '../utilities';
 
 const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
@@ -33,38 +31,58 @@ const translateToCoreDatabaseType = type => {
 export class UIDatabase {
   constructor(database) {
     this.database = database;
+    this.EXPORT_DIRECTORY = '/Download/mSupplyMobile_data';
+    this.DEFAULT_EXPORT_FILE = 'msupply-mobile-data';
   }
 
+  ERRORS = {
+    ERROR_IN_TRANSACTION: { code: 'ERROR_IN_TRANSACTION', message: 'Database is in a transaction' },
+    ERROR_NO_PERMISSION: { code: 'ERROR_NO_PERMISSION', message: 'Storage permission not granted' },
+    ERROR_UNKNOWN: { code: 'ERROR_UNKNOWN', message: 'Unkown error occurred' },
+  };
+
   /**
-   * Closes the database, exports the realm file to '/Download/mSupplyMobile\ data' on device
-   * file system. The app will crash if anything tries to access the database while it is closed.
+   * Exports the realm file to '/Download/mSupplyMobile\ data' on device file system.
+   * Ensures there is enough space, the realm exists and requests storage permission,
+   * if required.
    */
-  exportData(filename = 'msupply-mobile-data') {
-    // TO DO: add method to react-native-database.
 
+  async exportData(filename = this.DEFAULT_EXPORT_FILE) {
     const { realm } = this.database;
-    const realmPath = realm.path;
-    const exportFolder = `${RNFS.ExternalStorageDirectoryPath}/Download/mSupplyMobile_data`;
+    const { path: realmPath } = realm;
+    const exportFolder = `${RNFS.ExternalStorageDirectoryPath}${this.EXPORT_DIRECTORY}`;
+    // Replace all invalid characters in the android file system with an empty string.
+    const copyFileName = `${filename}${formatDate(new Date(), 'dashes')}`.replace(
+      /[~\\\\/|?*<:>"+]/g,
+      ''
+    );
 
-    const date = new Date();
-    const dateString = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()}T${date.getHours()}-${date.getMinutes()}-${date.getSeconds()}`;
-    const copyFileName = `${filename} ${dateString}`;
+    const permissionParameters = {
+      permissionType: 'WRITE_EXTERNAL_STORAGE',
+      message: 'Export database',
+    };
 
-    // If the database is not closed, there is a small chance of corrupting the data if currently in
-    // a transaction.
-    realm.close();
+    // Before requesting permissions, ensure there is enough space and the realm
+    // file exists.
+    const exportValidation = await backupValidation(realmPath);
+    const { success } = exportValidation;
+    if (!success) return exportValidation;
+    // Request permissions for external storage before trying to backup the realm file.
+    const { success: permissionSuccess } = await requestPermission(permissionParameters);
+    // If permission was granted, ensure the realm is not in a transaction and backup
+    // the realm file.
+    if (!permissionSuccess) return { success: false, ...this.ERRORS.ERROR_NO_PERMISSION };
+    if (realm.isInTransaction) return { success: false, ...this.ERRORS.ERROR_IN_TRANSACTION };
 
-    RNFS.mkdir(exportFolder)
-      .then(() => {
-        RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
-        // |copyFileName| is derived from store name. May have invalid characters for filesystem.
-      })
-      .catch(() => {
-        RNFS.copyFile(realmPath, `${exportFolder}/msupply-mobile-data.realm`);
-      })
-      .finally(() => {
-        this.database.realm = new Realm(schema);
-      }); // Reopen the realm.
+    // Finally try to create the backup/exported realm
+    try {
+      await RNFS.mkdir(exportFolder);
+      await RNFS.copyFile(realmPath, `${exportFolder}/${copyFileName}.realm`);
+    } catch (error) {
+      return { success: false, ...this.ERRORS.ERROR_UNKNOWN, error };
+    }
+
+    return { success: true };
   }
 
   objects(type) {

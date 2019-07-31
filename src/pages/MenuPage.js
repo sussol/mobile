@@ -6,7 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -38,10 +38,18 @@ export class MenuPage extends React.Component {
     database.removeListener(this.databaseListenerId);
   }
 
-  exportData = () => {
+  exportData = async () => {
     const { settings, database } = this.props;
     const syncSiteName = settings.get(SYNC_SITE_NAME);
-    database.exportData(syncSiteName);
+    const { success, error } = await database.exportData(syncSiteName);
+    let toastMessage;
+    if (success) {
+      toastMessage = 'Exported data file';
+    } else {
+      const { message } = error;
+      toastMessage = `Couldn't export data: ${message}`;
+    }
+    ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
   };
 
   render() {
