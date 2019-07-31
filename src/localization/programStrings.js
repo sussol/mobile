@@ -43,7 +43,7 @@ export const programStrings = new LocalizedStrings({
     no_suppliers: 'Aucun fournisseur disponible',
     no_order_types: 'Aucun type de commande disponible',
     no_periods: 'Aucune période disponible',
-    program: 'Programme',
+    program: 'Programme\n',
     supplier: 'Fournisseur',
     order_type: 'Type de commande',
     period: 'Période',
