@@ -5,6 +5,7 @@
 
 /* eslint-disable no-await-in-loop */
 
+import { Client as BugsnagClient } from 'bugsnag-react-native';
 import {
   incrementSyncProgress,
   setSyncProgress,
@@ -19,6 +20,8 @@ import { generateSyncJson } from './outgoingSyncUtils';
 import { SyncDatabase } from './SyncDatabase';
 import { SyncQueue } from './SyncQueue';
 import { SETTINGS_KEYS } from '../settings';
+
+const bugsnagClient = new BugsnagClient();
 
 const {
   SYNC_IS_INITIALISED,
@@ -81,6 +84,42 @@ export class Synchroniser {
     this.batchSize = MIN_SYNC_BATCH_SIZE;
   };
 
+  fetchWrapper = async (url, opts) => {
+    const { body } = opts;
+
+    const bugsnagNotify = async message => {
+      const responseText = await responseClone.text();
+      bugsnagClient.notify(new Error(message), report => {
+        report.context = 'SYNC ERROR';
+        report.metadata = { error: { url, body, responseText } };
+      });
+    };
+
+    const response = await fetch(url, opts);
+    const responseClone = response.clone();
+
+    if (response.status < 200 || response.status >= 300) {
+      throw new Error('Connection failure while attempting to sync.');
+    }
+    let responseJson;
+    try {
+      responseJson = await response.json();
+    } catch (error) {
+      bugsnagNotify('Failed parsing response from server', response);
+      throw new Error('Unexpected response from sync server');
+    }
+
+    if (responseJson.error) {
+      if (responseJson.error.startsWith("Site registration doesn't match.")) {
+        throw new Error(responseJson.error);
+      } else {
+        bugsnagNotify(responseJson.error, response);
+        throw new Error('Server rejected pushed records');
+      }
+    }
+    return { responseJson };
+  };
+
   /**
    * Wipe the current database, check that the given URL can be synced against
    * using the given name and password, and if so populate the database by pulling
@@ -117,8 +156,7 @@ export class Synchroniser {
 
       if (isFresh) {
         // If a fresh initialisation, send request to server to prepare required sync records.
-        // eslint-disable-next-line no-undef
-        const response = await fetch(
+        await this.fetchWrapper(
           `${this.serverURL}/sync/v3/initial_dump/` +
             `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
           {
@@ -128,16 +166,6 @@ export class Synchroniser {
             },
           }
         );
-
-        if (response.status < 200 || response.status >= 300) {
-          throw new Error('Connection failure while attempting to sync.');
-        }
-
-        const responseJson = await response.json();
-        if (responseJson.error && responseJson.error.length > 0) {
-          throw new Error(responseJson.error);
-        }
-
         // If the initial_dump has been successful, serverURL is valid, and should now have all sync
         // records queued and ready to send. Safe to store as this.serverURL
         this.serverURL = serverURL;
@@ -257,8 +285,7 @@ export class Synchroniser {
    * @return  {Promise}          Resolves if successful, or passes up any error thrown.
    */
   pushRecords = async records => {
-    // eslint-disable-next-line no-undef
-    const response = await fetch(
+    await this.fetchWrapper(
       `${this.serverURL}/sync/v3/queued_records/` +
         `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
@@ -270,19 +297,6 @@ export class Synchroniser {
         body: JSON.stringify(records),
       }
     );
-    let responseJson;
-    try {
-      responseJson = await response.json();
-    } catch (error) {
-      throw new Error('Unexpected response from sync server');
-    }
-    if (responseJson.error.length > 0) {
-      if (responseJson.error.startsWith("Site registration doesn't match.")) {
-        throw new Error(responseJson.error);
-      } else {
-        throw new Error('Server rejected pushed records');
-      }
-    }
   };
 
   /**
@@ -331,8 +345,7 @@ export class Synchroniser {
    * @return  {Promise}  Resolves with the record count, or bubbles up any errors thrown.
    */
   getWaitingRecordCount = async () => {
-    // eslint-disable-next-line no-undef
-    const response = await fetch(
+    const { responseJson } = await this.fetchWrapper(
       `${this.serverURL}/sync/v3/queued_records/count` +
         `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
@@ -342,16 +355,6 @@ export class Synchroniser {
         },
       }
     );
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error('Connection failure while attempting to sync.');
-    }
-    const responseJson = await response.json();
-    if (responseJson.error && responseJson.error.length > 0) {
-      throw new Error(responseJson.error);
-    }
-    if (typeof responseJson.NumRecords !== 'number') {
-      throw new Error('Unexpected response from server');
-    }
     return responseJson.NumRecords;
   };
 
@@ -361,8 +364,7 @@ export class Synchroniser {
    * @return  {Promise}  Resolves with the records, or bubbles up any errors thrown.
    */
   getIncomingRecords = async () => {
-    // eslint-disable-next-line no-undef
-    const response = await fetch(
+    const { responseJson } = await this.fetchWrapper(
       `${this.serverURL}/sync/v3/queued_records` +
         `?from_site=${this.thisSiteId}&to_site=${this.serverId}&limit=${this.batchSize}`,
       {
@@ -372,13 +374,6 @@ export class Synchroniser {
         },
       }
     );
-    if (response.status < 200 || response.status >= 300) {
-      throw new Error('Connection failure while pulling sync records.');
-    }
-    const responseJson = await response.json();
-    if (responseJson.error && responseJson.error.length > 0) {
-      throw new Error(responseJson.error);
-    }
     return responseJson;
   };
 
@@ -409,8 +404,7 @@ export class Synchroniser {
       SyncRecordIDs: syncIds,
     };
 
-    // eslint-disable-next-line no-undef
-    const response = await fetch(
+    await this.fetchWrapper(
       `${this.serverURL}/sync/v3/acknowledged_records` +
         `?from_site=${this.thisSiteId}&to_site=${this.serverId}`,
       {
@@ -422,15 +416,6 @@ export class Synchroniser {
         body: JSON.stringify(requestBody),
       }
     );
-    let responseJson;
-    try {
-      responseJson = await response.json();
-    } catch (error) {
-      throw new Error('Unexpected response from sync server');
-    }
-    if (responseJson.error.length > 0) {
-      throw new Error(responseJson.error);
-    }
   };
 
   /**
