@@ -162,7 +162,7 @@ export class SupplierInvoicePage extends React.Component {
       [
         {
           title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(transaction.entryDate),
+          info: formatDate(transaction.entryDate) || 'N/A',
         },
         {
           title: `${pageInfoStrings.confirm_date}:`,
