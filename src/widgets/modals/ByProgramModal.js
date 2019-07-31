@@ -20,8 +20,7 @@ import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
 import SequentialSteps from '../SequentialSteps';
 import { programStrings, modalStrings, generalStrings, navStrings } from '../../localization';
 
-// TODO: Proper localization
-const localization = {
+const getLocalizedStrings = () => ({
   title: {
     program: programStrings.select_a_program,
     supplier: programStrings.select_a_supplier,
@@ -56,7 +55,7 @@ const localization = {
     order: programStrings.order,
     stocktake: generalStrings.stocktake,
   },
-};
+});
 
 const newState = {
   RESET_ALL: {
@@ -87,6 +86,8 @@ const newState = {
 export class ByProgramModal extends React.Component {
   constructor(props) {
     super(props);
+
+    this.LOCALIZATION = getLocalizedStrings();
     this.state = {
       // Values used for deriving current UI state
       steps: null,
@@ -143,8 +144,8 @@ export class ByProgramModal extends React.Component {
     const { name, programs, suppliers, orderTypes, periods } = this.state;
     const getBaseProps = key => ({
       name: this.state[key] && this.state[key].name,
-      placeholder: localization.title[key],
-      errorText: localization.error[key],
+      placeholder: this.LOCALIZATION.title[key],
+      errorText: this.LOCALIZATION.error[key],
       key,
     });
 
@@ -153,7 +154,7 @@ export class ByProgramModal extends React.Component {
       supplier: { ...getBaseProps('supplier'), error: !!(suppliers && suppliers.length === 0) },
       orderType: { ...getBaseProps('orderType'), error: !!(orderTypes && orderTypes.length === 0) },
       period: { ...getBaseProps('period'), error: !!(periods && periods.length === 0) },
-      name: { name, placeholder: localization.title.name, key: 'name', type: 'input' },
+      name: { name, placeholder: this.LOCALIZATION.title.name, key: 'name', type: 'input' },
     };
   };
 
@@ -258,9 +259,11 @@ export class ByProgramModal extends React.Component {
         ...getBaseProps('orderType'),
         options: orderTypes,
         renderRightText: item =>
-          `${localization.misc.maxMOS}: ${item.maxMOS} - ${localization.misc.thresholdMOS}: ${
-            item.thresholdMOS
-          } - ${localization.misc.maxOrdersPerPeriod}: ${item.maxOrdersPerPeriod}`,
+          `${this.LOCALIZATION.misc.maxMOS}: ${item.maxMOS} - ${
+            this.LOCALIZATION.misc.thresholdMOS
+          }: ${item.thresholdMOS} - ${this.LOCALIZATION.misc.maxOrdersPerPeriod}: ${
+            item.maxOrdersPerPeriod
+          }`,
       },
       period: {
         ...getBaseProps('period'),
@@ -268,7 +271,7 @@ export class ByProgramModal extends React.Component {
         renderRightText: item =>
           `${item.toString()} - ${item.requisitionsForOrderType(program, orderType)}/${
             orderType.maxOrdersPerPeriod
-          } ${localization.misc.requisitions}`,
+          } ${this.LOCALIZATION.misc.requisitions}`,
       },
     };
   };
@@ -292,17 +295,18 @@ export class ByProgramModal extends React.Component {
   renderToggleBar = () => {
     const { type } = this.props;
     const { isProgramBased } = this.state;
-    const buttonText = type === 'requisition' ? 'order' : 'stocktake';
+    const buttonText =
+      type === 'requisition' ? this.LOCALIZATION.button.order : this.LOCALIZATION.button.stocktake;
     return (
       <ToggleBar
         toggles={[
           {
-            text: `${localization.misc.program} ${buttonText}`,
+            text: `${this.LOCALIZATION.misc.program} ${buttonText}`,
             onPress: this.onToggleChange,
             isOn: isProgramBased,
           },
           {
-            text: `${localization.misc.general} ${buttonText}`,
+            text: `${this.LOCALIZATION.misc.general} ${buttonText}`,
             onPress: this.onToggleChange,
             isOn: !isProgramBased,
           },
@@ -327,8 +331,10 @@ export class ByProgramModal extends React.Component {
           });
         }}
         title={`${
-          type === 'requisition' ? localization.misc.requisition : localization.misc.stocktake
-        } ${localization.misc.details}`}
+          type === 'requisition'
+            ? this.LOCALIZATION.misc.requisition
+            : this.LOCALIZATION.misc.stocktake
+        } ${this.LOCALIZATION.misc.details}`}
       >
         <View style={localStyles.toggleContainer}>{this.renderToggleBar()}</View>
 
@@ -352,7 +358,7 @@ export class ByProgramModal extends React.Component {
           <PageContentModal
             isOpen={modalIsOpen}
             onClose={this.onModalTransition}
-            title={localization.title[currentStepKey]}
+            title={this.LOCALIZATION.title[currentStepKey]}
             coverScreen
           >
             {this.renderModal()}

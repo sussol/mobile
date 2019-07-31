@@ -172,7 +172,7 @@ export class SupplierInvoicesPage extends React.Component {
         columns={[
           {
             key: 'serialNumber',
-            width: 1,
+            width: 1.5,
             title: tableStrings.invoice_number,
             sortable: true,
           },
