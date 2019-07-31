@@ -92,6 +92,7 @@ export class PostSyncProcessor {
     this.recordQueue.forEach((recordType, recordId) => {
       // Use local database record, not what comes in sync. Ensures that records are
       // integrated information (definitely after sync is done).
+      if (recordType === 'Setting') return;
       const internalRecord = this.database.objects(recordType).filtered('id == $0', recordId)[0];
       this.enqueueFunctionsForRecordType(recordType, internalRecord);
     });
