@@ -188,6 +188,39 @@ const dataMigrations = [
       });
     },
   },
+
+  //  2.3.6 Introduced a patch for ItemBatch outgoing sync supplier. Previously,
+  // all outgoing ItemBatches had their supplier field set to the default
+  // supplying store record for its store. 2.3.6 ensured that the supplier
+  // of a ItemBatch was correctly synced out, maintaining it's supplier field.
+  // This migration code
+  {
+    version: '2.3.6',
+    migrate: database => {
+      const supplierInvoiceType = 'supplier_invoice';
+      const itemBatches = database.objects('ItemBatch');
+      database.write(() => {
+        itemBatches.forEach(batch => {
+          const { id, transactionBatches } = batch;
+          if (!(transactionBatches && transactionBatches.length)) return;
+          const supplierInvoice = transactionBatches.reduce((_, transactionBatch) => {
+            const { transaction } = transactionBatch;
+            if (!transaction) return null;
+            const { status } = transaction;
+            if (!status) return null;
+            if (status === supplierInvoiceType) return transaction;
+            return null;
+          }, null);
+
+          if (!supplierInvoice) return;
+          const { otherParty: supplier } = supplierInvoice;
+          if (!supplier) return;
+
+          database.update('ItemBatch', { id, supplier });
+        });
+      });
+    },
+  },
 ];
 
 export default dataMigrations;
