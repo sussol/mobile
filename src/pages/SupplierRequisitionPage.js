@@ -119,9 +119,9 @@ const getColumns = () => ({
     alignText: 'center',
   },
   unit: {
-    key: tableStrings.unit,
+    key: 'unit',
     width: 1,
-    title: 'UNIT',
+    title: tableStrings.unit,
     alignText: 'center',
   },
 });
