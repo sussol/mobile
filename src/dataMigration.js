@@ -200,22 +200,26 @@ const dataMigrations = [
       const supplierInvoiceType = 'supplier_invoice';
       const itemBatches = database.objects('ItemBatch');
       database.write(() => {
+        // For each item batch, find the supplier invoice transaction which
+        // introduced it and set the otherParty of the related transaction
+        // to the supplier of the related batch.
         itemBatches.forEach(batch => {
           const { id, transactionBatches } = batch;
+          // Ensure there are transaction batches before trying to find the transaction.
           if (!(transactionBatches && transactionBatches.length)) return;
+          // There should only be one supplier invoice related to the item batch,
+          // in case somethings wrong and there are two, use the last one iterated over.
           const supplierInvoice = transactionBatches.reduce((_, transactionBatch) => {
             const { transaction } = transactionBatch;
             if (!transaction) return null;
             const { status } = transaction;
             if (!status) return null;
-            if (status === supplierInvoiceType) return transaction;
-            return null;
+            if (status !== supplierInvoiceType) return null;
+            return transaction;
           }, null);
-
           if (!supplierInvoice) return;
           const { otherParty: supplier } = supplierInvoice;
           if (!supplier) return;
-
           database.update('ItemBatch', { id, supplier });
         });
       });
