@@ -17,7 +17,7 @@ import { AutocompleteSelector, ToggleBar, PageButton, TextEditor } from '..';
 
 import { SETTINGS_KEYS } from '../../settings';
 import { getAllPrograms, getAllPeriodsForProgram } from '../../utilities';
-import SequentialSteps from '../SequentialSteps';
+import { SequentialSteps } from '../SequentialSteps';
 import { programStrings, modalStrings, generalStrings, navStrings } from '../../localization';
 
 const getLocalizedStrings = () => ({
