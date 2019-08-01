@@ -19,7 +19,7 @@ import {
 import { CHANGE_TYPES } from '../database';
 import { SETTINGS_KEYS } from '../settings';
 
-const { SUPPLYING_STORE_NAME_ID, THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
+const { THIS_STORE_ID, SYNC_URL, SYNC_SITE_NAME } = SETTINGS_KEYS;
 
 const bugsnagClient = new BugsnagClient();
 
@@ -89,7 +89,7 @@ const generateSyncData = (settings, recordType, record) => {
         cost_price: String(record.costPrice),
         sell_price: String(record.sellPrice),
         total_cost: String(record.costPrice * record.numberOfPacks),
-        name_ID: settings.get(SUPPLYING_STORE_NAME_ID),
+        name_ID: String(record.supplier) && String(record.supplier.id),
         donor_id: record.donor && record.donor.id,
       };
     }
