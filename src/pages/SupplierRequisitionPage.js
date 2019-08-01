@@ -23,14 +23,13 @@ import { SETTINGS_KEYS } from '../settings';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import {
   AutocompleteSelector,
-  BottomConfirmModal,
   PageButton,
   PageInfo,
-  PageContentModal,
   TextEditor,
   ToggleSelector,
   ToggleBar,
 } from '../widgets';
+import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 
 import globalStyles from '../globalStyles';
 
@@ -391,7 +390,6 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderCell = (key, requisitionItem) => {
     const { requisition } = this.props;
-
     switch (key) {
       default:
         return requisitionItem[key];
