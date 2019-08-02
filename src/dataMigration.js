@@ -211,15 +211,15 @@ const dataMigrations = [
           // There should only be one supplier invoice related to the item batch,
           // in case somethings wrong and there are two, use the last one iterated over.
           // Also ensure it is finalised. If it isn't, the supplier will be set when confirmed.
-          const supplierInvoice = transactionBatches.reduce((acc, transactionBatch) => {
+          const supplierInvoice = transactionBatches.find(transactionBatch => {
             const { transaction } = transactionBatch;
-            if (!transaction) return acc;
+            if (!transaction) return false;
             const { type, status } = transaction;
-            if (!(type && status)) return acc;
-            if (type !== supplierInvoiceType) return acc;
-            if (status !== finalisedStatus) return acc;
-            return transaction;
-          }, null);
+            if (!(type && status)) return false;
+            if (type !== supplierInvoiceType) return false;
+            if (status !== finalisedStatus) return false;
+            return true;
+          });
           if (!supplierInvoice) return;
           const { otherParty: supplier } = supplierInvoice;
           if (!supplier) return;
