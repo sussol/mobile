@@ -198,6 +198,7 @@ const dataMigrations = [
     version: '2.3.6',
     migrate: database => {
       const supplierInvoiceType = 'supplier_invoice';
+      const finalisedStatus = 'finalised';
       const itemBatches = database.objects('ItemBatch');
       database.write(() => {
         // For each item batch, find the supplier invoice transaction which
@@ -206,15 +207,17 @@ const dataMigrations = [
         itemBatches.forEach(batch => {
           const { id, transactionBatches } = batch;
           // Ensure there are transaction batches before trying to find the transaction.
-          if (!(transactionBatches && transactionBatches.length)) return;
+          if (!(transactionBatches && transactionBatches.length !== 0)) return;
           // There should only be one supplier invoice related to the item batch,
           // in case somethings wrong and there are two, use the last one iterated over.
-          const supplierInvoice = transactionBatches.reduce((_, transactionBatch) => {
+          // Also ensure it is finalised. If it isn't, the supplier will be set when confirmed.
+          const supplierInvoice = transactionBatches.reduce((acc, transactionBatch) => {
             const { transaction } = transactionBatch;
-            if (!transaction) return null;
-            const { status } = transaction;
-            if (!status) return null;
-            if (status !== supplierInvoiceType) return null;
+            if (!transaction) return acc;
+            const { type, status } = transaction;
+            if (!(type && status)) return acc;
+            if (type !== supplierInvoiceType) return acc;
+            if (status !== finalisedStatus) return acc;
             return transaction;
           }, null);
           if (!supplierInvoice) return;
