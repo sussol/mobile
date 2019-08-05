@@ -103,19 +103,19 @@ export class StocktakeEditPage extends React.Component {
       sortBy: 'itemName',
       isAscending: true,
     };
-
-    // Validate the current state of the stocktake, use modal to warn user about any issues.
-    this.itemsOutdated = stocktake.itemsOutdated;
-    if (!stocktake.isFinalised && this.itemsOutdated.length > 0) {
-      this.state.isResetModalOpen = true;
-    }
   }
 
   componentDidMount = () => {
-    const { database } = this.props;
+    const { database, stocktake } = this.props;
+    const { itemsOutdated } = stocktake;
     const queryString = 'type == $0 && isActive == true';
     const reasons = database.objects('Options').filtered(queryString, 'stocktakeLineAdjustment');
-    this.setState({ reasons });
+
+    // Validate the current state of the stocktake, use modal to warn user about any issues.
+    this.setState({
+      reasons,
+      isResetModalOpen: !stocktake.isFinalised && itemsOutdated.length > 0,
+    });
   };
 
   reasonModalConfirm = ({ item: option }) => {
