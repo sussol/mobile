@@ -110,7 +110,7 @@ export class LoginModal extends React.Component {
       // Annoying reason, so this a crude hack around it.
       !isAuthenticated && (
         <Modal
-          isOpen={true}
+          isOpen={!isAuthenticated}
           style={[globalStyles.modal, globalStyles.authFormModal]}
           backdropPressToClose={false}
           swipeToClose={false}
