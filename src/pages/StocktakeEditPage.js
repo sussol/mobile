@@ -172,11 +172,12 @@ export class StocktakeEditPage extends React.Component {
    */
   onResetItemsConfirm = () => {
     const { database, stocktake, runWithLoadingIndicator } = this.props;
-    this.setState({ isResetModalOpen: false });
-    runWithLoadingIndicator(() => {
-      stocktake.resetStocktakeItems(database, this.itemsOutdated);
-      this.refreshData();
-    });
+    const { itemsOutdated } = stocktake;
+    this.setState({ isResetModalOpen: false }, () =>
+      runWithLoadingIndicator(() => {
+        stocktake.resetStocktakeItems(database, itemsOutdated);
+      })
+    );
   };
 
   getModalTitle = () => {
