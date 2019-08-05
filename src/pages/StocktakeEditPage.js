@@ -470,6 +470,12 @@ export class StocktakeEditPage extends React.Component {
     return columns;
   };
 
+  getModalText = () => {
+    const { stocktake } = this.props;
+    const { itemsOutdated } = stocktake;
+    return modalStrings.stocktake_invalid_stock + formatErrorItemNames(itemsOutdated);
+  };
+
   render() {
     const { database, genericTablePageStyles, stocktake, topRoute } = this.props;
     const {
@@ -481,9 +487,6 @@ export class StocktakeEditPage extends React.Component {
       modalKey,
     } = this.state;
     const { REASON_EDIT } = MODAL_KEYS;
-    const resetModalText = isResetModalOpen // Small optimisation.
-      ? modalStrings.stocktake_invalid_stock + formatErrorItemNames(this.itemsOutdated)
-      : '';
 
     return (
       <GenericPage
@@ -516,13 +519,15 @@ export class StocktakeEditPage extends React.Component {
           </PageContentModal>
         )}
 
-        <ConfirmModal
-          coverScreen
-          noCancel
-          isOpen={isResetModalOpen}
-          questionText={resetModalText}
-          onConfirm={this.onResetItemsConfirm}
-        />
+        {isResetModalOpen && (
+          <ConfirmModal
+            coverScreen
+            noCancel
+            isOpen={isResetModalOpen}
+            questionText={this.getModalText()}
+            onConfirm={this.onResetItemsConfirm}
+          />
+        )}
 
         <StocktakeBatchModal
           isOpen={isStocktakeEditModalOpen}
