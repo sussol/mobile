@@ -48,15 +48,15 @@ export class VaccineModuleAdminPage extends React.Component {
 
   onSensorSelection = ({ item: sensor }) => {
     const { database } = this.props;
-    const { currentFridge: location, sensors } = this.state;
+    const { currentFridge, sensors } = this.state;
     const { id } = sensor;
-    const sensorsAssignedToFridge = sensors.filtered('location.id = $0', location.id);
+    const sensorsAssignedToFridge = sensors.filtered('location.id = $0', currentFridge.id);
 
     database.write(() => {
       sensorsAssignedToFridge.forEach(currentSensor => {
-        database.update('Sensor', { id: currentSensor.id, location: null });
+        database.update('Sensor', { id: currentSensor.id, currentFridge: null });
       });
-      database.update('Sensor', { id, location });
+      database.update('Sensor', { id, currentFridge });
     });
     this.setState({ currentFridge: null, isModalOpen: false }, this.refresh);
   };
