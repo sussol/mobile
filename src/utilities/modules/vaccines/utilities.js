@@ -200,6 +200,37 @@ export function createBreach({ breach, database, locationType }) {
 }
 
 /**
+ * Helper method to find an ongoing breach, if there is on.
+ * Uses the most recent delimiter log (with isInBreach = true,
+ * but without the breachAggregate aggregation type) timestamp
+ * to find all sensor logs after that point. If the most recent
+ * log after the delimiter log is a breachAggregate, then it is
+ * a head log, otherwise it is a tail log and there is no ongoing
+ * breach. If there is no delimiter logs, then the logs have always
+ * been in an ongoing breach.
+ */
+const getOngoingBreach = ({ database, sensor }) => {
+  const { location } = sensor;
+  if (!location) return [];
+  // Fetch all the sensor logs in the sensors location.
+  const sensorLogs = database.objects('SensorLog').filtered('location.id = $0', location.id);
+  // Find either the most recent delimiter timestamp, or the start of time.
+  const latestDelimiterTimestamp =
+    sensorLogs
+      .filtered('isInBreach == $1 && aggregation != $2', true, SENSOR_LOG_BREACH_AGGREGATE_TYPE)
+      .max('timestamp') || new Date(null);
+  // Find all sensor logs after the most recent delimiter, or all sensor logs.
+  const potentialBreach = sensorLogs.filtered('timestamp > $0', latestDelimiterTimestamp);
+  // If there are no sensor logs after the delimiter, last aggregated logs finished on a delimiter.
+  if (potentialBreach.length === 0) return [];
+  const lastSensorLog = potentialBreach[potentialBreach.length - 1];
+  //  If the last aggregated log is not a breach aggregate, there is no ongoing breach.
+  if (lastSensorLog.aggregation !== SENSOR_LOG_BREACH_AGGREGATE_TYPE) return [];
+  // Otherwise, the delimiter is a head log for an ongoing breach.
+  return potentialBreach;
+};
+
+/**
  * Helper method to convert preAggregate sensor logs to breach aggregate
  * sensor logs. A breach being sequential sensor logs which exceed a given
  * temperature for a given amount of time.
@@ -239,12 +270,8 @@ export function createBreaches({ sensor, database }) {
   // Inner function, checking a log is beyond either min or max temperature threshold.
   const isBeyondThreshold = sensorLog =>
     minTemperature > sensorLog.temperature || sensorLog.temperature > maxTemperature;
-  // Find the latest log, used to determine to continue a breach or not.
-  const latestLog = sensorLogs.sorted('timestamp')[0];
-
   const breaches = [];
-  let breach = { breachLogs: [] };
-  if (latestLog.aggregation === SENSOR_LOG_BREACH_AGGREGATE_TYPE) breach.breachLogs.push(latestLog);
+  let breach = { breachLogs: getOngoingBreach({ sensor, database }) };
   // Iterate through each log adding as either the tail, head or as part of the breach itself.
   preAggregateLogs.forEach(log => {
     const { breachLogs } = breach;
