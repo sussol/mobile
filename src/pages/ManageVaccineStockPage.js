@@ -160,9 +160,15 @@ export class ManageVaccineStockPage extends React.Component {
     if (!locationFilter) return [];
     const { id } = locationFilter;
     let data = this.ITEMS;
-    if (id) {
+
+    if (id === 'ALL_LOCATIONS') {
+      data = data.filtered('batches.numberOfPacks > 0 && batches.location.id != $0', null);
+    } else if (id === 'NO_LOCATION') {
+      data = data.filtered('batches.numberOfPacks > 0 && batches.location.id == $0', null);
+    } else if (id) {
       data = data.filtered('batches.numberOfPacks > 0 && batches.location.id = $0', id);
     }
+
     if (searchTerm) {
       data = data.filtered('code BEGINSWITH[c] $0 OR name BEGINSWITH[c] $0', searchTerm);
     }
@@ -197,7 +203,14 @@ export class ManageVaccineStockPage extends React.Component {
   componentDidMount = () => {
     const { database, initialLocation } = this.props;
     const fridges = database.objects('Fridge').slice();
-    this.LOCATION_FILTERS = fridges.unshift({ description: LOCALIZATION.misc.allLocations });
+    this.LOCATION_FILTERS = fridges.unshift({
+      id: 'NO_LOCATION',
+      description: 'No location',
+    });
+    this.LOCATION_FILTERS = fridges.unshift({
+      id: 'ALL_LOCATIONS',
+      description: LOCALIZATION.misc.allLocations,
+    });
     this.ITEMS = database.objects('Vaccine');
     const locationFilter = initialLocation || fridges[0];
     this.setState({ locationFilter });
