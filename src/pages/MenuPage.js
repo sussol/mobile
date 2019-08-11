@@ -22,39 +22,38 @@ const { SYNC_SITE_NAME, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 const ORIGINAL_LAYOUT = [['customer', 'supplier', 'stock']];
 const VACCINE_MODULE_LAYOUT = [['customer', 'supplier'], ['stock', 'modules']];
 
-const SECTIONS = {
+const getSections = () => ({
   customer: {
     icon: require('../images/menu_people.png'),
     buttons: [
-      { title: 'customer_invoices', page: 'customerInvoices' },
-      { title: 'customer_requisitions', page: 'customerRequisitions' },
+      { title: navStrings.customer_invoices, page: 'customerInvoices' },
+      { title: navStrings.customer_requisitions, page: 'customerRequisitions' },
     ],
   },
   supplier: {
     icon: require('../images/menu_truck.png'),
     buttons: [
-      { title: 'supplier_invoices', page: 'supplierInvoices' },
-      { title: 'supplier_requisitions', page: 'supplierRequisitions' },
+      { title: navStrings.supplier_invoices, page: 'supplierInvoices' },
+      { title: navStrings.supplier_requisitions, page: 'supplierRequisitions' },
     ],
   },
   stock: {
     icon: require('../images/menu_pc_clipboard.png'),
     buttons: [
-      { title: 'current_stock', page: 'stock' },
-      { title: 'stocktakes', page: 'stocktakes' },
+      { title: navStrings.current_stock, page: 'stock' },
+      { title: navStrings.stocktakes, page: 'stocktakes' },
     ],
   },
   modules: {
     icon: require('../images/menu_modules.png'),
     buttons: [], // buttons will come from mathich MODULES as per below
   },
-};
+});
 
 // Below keys are matched against current store customData (stored in settings)
 // i.e. customData['usesVaccineModule']data === 'true'
 const MODULES = {
-  // TODO, change from 'stock' to 'vaccineModule'
-  usesVaccineModule: { title: 'vaccine_module', page: 'vaccineModule' },
+  usesVaccineModule: { title: navStrings.vaccine_module, page: 'vaccineModule' },
 };
 
 export class MenuPage extends React.Component {
@@ -63,7 +62,7 @@ export class MenuPage extends React.Component {
     this.databaseListenerId = null;
     this.usableModules = [];
     this.usesModules = false;
-    this.sections = SECTIONS;
+    this.SECTIONS = getSections();
   }
 
   componentWillMount() {
@@ -72,7 +71,7 @@ export class MenuPage extends React.Component {
     // check is there are any modules enabled in this store customData
     const usableModules = this.getUsedModules(settings.get(THIS_STORE_CUSTOM_DATA));
     this.usesModules = usableModules.length > 0;
-    this.sections.modules.buttons = usableModules;
+    this.SECTIONS.modules.buttons = usableModules;
 
     this.databaseListenerId = database.addListener(
       // Ensure that language changes in login modal are re-rendered onto the MenuPage.
@@ -82,7 +81,6 @@ export class MenuPage extends React.Component {
 
   componentWillUnmount() {
     const { database } = this.props;
-
     database.removeListener(this.databaseListenerId);
   }
 
@@ -137,14 +135,14 @@ export class MenuPage extends React.Component {
         style={menuButton}
         textStyle={menuButtonText}
         text={navStrings[title]}
-        onPress={() => navigateTo(page, navStrings[title])}
+        onPress={() => navigateTo(page, title)}
       />
     );
   };
 
   renderSection = sectionName => {
     const { image, section: sectionStyle } = this.styles;
-    const section = this.sections[sectionName];
+    const section = this.SECTIONS[sectionName];
     return (
       <View style={sectionStyle}>
         <Image style={image} resizeMode="contain" source={section.icon} />
