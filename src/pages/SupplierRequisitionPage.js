@@ -47,7 +47,6 @@ export class SupplierRequisitionPage extends React.Component {
       searchTerm: '',
       sortBy: 'itemName',
       isAscending: true,
-      isVaccine: false,
     };
   }
 
