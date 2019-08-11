@@ -128,7 +128,7 @@ public class BleDeviceScanner {
      * acitivity requesting BlueTooth is enabled, if it is, or if the
      * users enables it, start the scan through that activity.
      */
-    public void startScan(){
+    public void initiateScan(){
         if (Debug.LOG) Log.i(Debug.TAG, "Device Scanner: Starting scan");
         ScanFilter.Builder scanFilterBuilder = new ScanFilter.Builder().setManufacturerData(this.manufacturerID, new byte[0]);
         ScanSettings.Builder scanSettingsBuilder = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).setReportDelay(0);

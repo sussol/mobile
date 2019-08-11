@@ -180,7 +180,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         deviceScanner.setFilters(manufacturerID, macAddress);
         // Full coverage fallback catcher for any uncaught errors occuring.
         try{
-            deviceScanner.startScan();
+            deviceScanner.initiateScan();
         }catch(Throwable e){
             if (promise != null) promise.reject("error", e.toString());
             promise = null;
