@@ -236,6 +236,10 @@ class MSupplyMobileAppContainer extends React.Component {
     );
   };
 
+  sensorSynchroniser = () => {
+    synchroniseSensors({ database: this.database, updateMessage: this.updateMessageSyncState });
+  };
+
   render() {
     const { dispatch, finaliseItem, navigationState, syncState } = this.props;
     const {
@@ -247,10 +251,7 @@ class MSupplyMobileAppContainer extends React.Component {
       syncModalIsOpen,
       temperatureSyncState,
     } = this.state;
-    const sensorSynchroniser = synchroniseSensors.bind(this, {
-      database: this.database,
-      updateMessage: this.updateMessageSyncState,
-    });
+
     if (!isInitialised) {
       return (
         <FirstUsePage
@@ -306,7 +307,7 @@ class MSupplyMobileAppContainer extends React.Component {
           state={syncState}
           temperatureSyncState={temperatureSyncState}
           onPressManualSync={this.synchronise}
-          onPressTemperatureSync={sensorSynchroniser}
+          onPressTemperatureSync={this.sensorSynchroniser}
           onClose={() => this.setState({ syncModalIsOpen: false })}
         />
         <LoginModal
