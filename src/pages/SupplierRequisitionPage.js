@@ -374,22 +374,16 @@ export class SupplierRequisitionPage extends React.Component {
   renderExpansion = requisitionItem => {
     const { isVaccine } = this.state;
     if (!isVaccine) return null;
-
     const { database, requisition } = this.props;
 
     // Get date of most recent requisition.
-
-    const prevRequisitions = database
-      .objects('Requisition')
-      .filtered('id != $0 && items.item.id = $1', requisition.id, requisitionItem.item.id)
-      .sorted('entryDate');
-
-    const isPrevRequisition = prevRequisitions.length > 0;
-
-    const prevRequisitionDate = isPrevRequisition ? prevRequisitions[0].entryDate : null;
+    const prevRequisitionDate =
+      database
+        .objects('Requisition')
+        .filtered('id != $0 && items.item.id = $1', requisition.id, requisitionItem.item.id)
+        .max('entryDate') || new Date(null);
 
     // Get transactions for this item since most recent requisition.
-
     const transactionBatches = database
       .objects('TransactionBatch')
       .filtered('itemId = $0', requisitionItem.item.id);
@@ -411,14 +405,12 @@ export class SupplierRequisitionPage extends React.Component {
     );
 
     // Calculate wastage.
-
     const doses = transactionBatchesCI.sum('doses');
     const dosesInVial = requisitionItem.item.doses;
     const openVialWastage = transactionBatchesCI.sum('numberOfPacks') * dosesInVial - doses;
     const closeVialWastage = transactionBatchesIA.sum('numberOfPacks') * dosesInVial;
 
     // Initialise columns for rendering expansion.
-
     const infoColumns = [
       [
         {
