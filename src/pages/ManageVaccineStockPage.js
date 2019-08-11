@@ -69,7 +69,7 @@ const TABLE_COLUMNS = {
     key: 'hasBreach',
     width: 0.5,
     title: LOCALIZATION.headers.hasBreach,
-    alignText: 'lecenterft',
+    alignText: 'center',
   },
   navigation: {
     key: 'navigation',
