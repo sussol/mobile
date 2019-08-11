@@ -199,7 +199,7 @@ export class ManageVaccineStockPage extends React.Component {
     const fridges = database.objects('Fridge');
     fridges.slice().unshift({ description: LOCALIZATION.misc.allLocations });
     this.LOCATION_FILTERS = fridges;
-    this.ITEMS = database.objects('Item').filtered('category.name CONTAINS[c] $0 ', 'vaccine');
+    this.ITEMS = database.objects('Vaccine');
     const locationFilter = initialLocation || fridges[0];
     this.setState({ locationFilter });
   };
