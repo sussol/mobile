@@ -223,9 +223,9 @@ export function createBreach({ breach, database, locationType }) {
 export function createBreaches({ sensor, database }) {
   const { sensorLogs, location } = sensor;
   // Early return where there are no sensor logs or location
-  if (!(sensorLogs && sensorLogs.length && location)) return null;
+  if (!(sensorLogs && sensorLogs.length && location)) return { success: false };
   const { locationType } = location;
-  if (!locationType) return null;
+  if (!locationType) return { success: false };
   const { minTemperature, maxTemperature } = locationType;
   // Find the first full aggregate. This will be the point to create breaches from.
   const firstAggregateTime =
@@ -235,7 +235,7 @@ export function createBreaches({ sensor, database }) {
     .filtered('aggregation = $0 && timestamp >= $1', PREAGGREGATE_TYPE, firstAggregateTime)
     .slice();
   // Early return where there are no preaggregate logs.
-  if (!(preAggregateLogs || preAggregateLogs.length)) return null;
+  if (!(preAggregateLogs || preAggregateLogs.length)) return { success: false };
   // Inner function, checking a log is beyond either min or max temperature threshold.
   const isBeyondThreshold = sensorLog =>
     minTemperature > sensorLog.temperature || sensorLog.temperature > maxTemperature;
