@@ -51,11 +51,11 @@ export function preAggregateLogs({ sensor, database }) {
     // the minimum temperature and push it onto the potential delete stack, to be
     // deleted if it is included in an aggregation.
     if (logTimestamp <= endTimestamp) {
-      logsToDeleteTemp.push({ ...sensorLog });
+      logsToDeleteTemp.push(sensorLog);
       if (temperature > sensorLog.temperature) temperature = logTemperature;
     } else {
       logsToDelete = [...logsToDelete, ...logsToDeleteTemp];
-      logsToDeleteTemp = [{ ...sensorLog }];
+      logsToDeleteTemp = [sensorLog];
       logsToAdd.push(
         createGenericSensorLog({
           sensor,
@@ -84,9 +84,8 @@ export function preAggregateLogs({ sensor, database }) {
   });
 
   database.write(() => {
-    // **TODO: Change to use IN when realm is upgraded
     logsToDelete.forEach(sensorLog => {
-      database.delete('SensorLog', database.objects('SensorLog').filtered('id = $0', sensorLog.id));
+      database.delete('SensorLog', sensorLog);
     });
   });
 
