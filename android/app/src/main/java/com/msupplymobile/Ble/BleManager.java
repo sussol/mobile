@@ -125,6 +125,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      * }
      */
     private void returnException(MsupplyException exception){
+        this.command = this.macAddress = null;
         if (Debug.LOG) Log.i(Debug.TAG, "BleManager: Returning Exception");
         WritableMap jsObject = Arguments.createMap();
         jsObject.putBoolean("success", false);
