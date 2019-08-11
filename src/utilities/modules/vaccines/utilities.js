@@ -223,7 +223,7 @@ export function createBreach({ breach, database, locationType }) {
 export function createBreaches({ sensor, database }) {
   const { sensorLogs, location } = sensor;
   // Early return where there are no sensor logs or location
-  if (!(sensorLogs || sensorLogs.length || location)) return null;
+  if (!(sensorLogs && sensorLogs.length && location)) return null;
   const { locationType } = location;
   if (!locationType) return null;
   const { minTemperature, maxTemperature } = locationType;
