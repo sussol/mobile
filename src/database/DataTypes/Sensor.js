@@ -10,12 +10,12 @@ import { generateUUID } from 'react-native-database';
 
 const MANUFACTURER_ID = 307;
 
-const getCommand = (manufacturerID, command, param) => {
+const getCommand = (manufacturerID, command) => {
   const commands = {
     307: {
       BLINK: '*blink',
       RESET_ADV_FREQ: '*sadv1000',
-      RESET_LOG_FREQ: `*lint${param}`,
+      RESET_LOG_FREQ: `*lint240`,
       DL_LOGS: '*logall',
     },
   };
