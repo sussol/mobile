@@ -653,7 +653,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
     }
     case 'StocktakeBatch': {
       const stocktake = database.getOrCreate('Stocktake', record.stock_take_ID);
-      const packSize = 1;
+      const packSize = parseNumber(record.snapshot_packsize);
       const itemBatch = database.getOrCreate('ItemBatch', record.item_line_ID);
       const item = database.getOrCreate('Item', record.item_ID);
       itemBatch.item = item;
