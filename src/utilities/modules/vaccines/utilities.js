@@ -220,7 +220,11 @@ const getOngoingBreach = ({ database, sensor }) => {
       .filtered('isInBreach == $1 && aggregation != $2', true, SENSOR_LOG_BREACH_AGGREGATE_TYPE)
       .max('timestamp') || new Date(null);
   // Find all sensor logs after the most recent delimiter, or all sensor logs.
-  const potentialBreach = sensorLogs.filtered('timestamp > $0', latestDelimiterTimestamp);
+  const potentialBreach = sensorLogs.filtered(
+    'timestamp > $0 && aggregation == $1',
+    latestDelimiterTimestamp,
+    SENSOR_LOG_BREACH_AGGREGATE_TYPE
+  );
   // If there are no sensor logs after the delimiter, last aggregated logs finished on a delimiter.
   if (potentialBreach.length === 0) return [];
   const lastSensorLog = potentialBreach[potentialBreach.length - 1];
