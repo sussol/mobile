@@ -93,7 +93,8 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
                 if (Debug.LOG) Log.i(Debug.TAG, "BleManager: in should send");
                 String commandSub = this.command;
                 this.command = this.macAddress = null;
-                device.register(this);
+                // Register to events from the BLE device
+                device.registerListener(this);
                 if (Debug.LOG) Log.i(Debug.TAG, "BleManager: after register");
                 device.sendCommand(this.reactContext, commandSub);
                 if (Debug.LOG) Log.i(Debug.TAG, "BleManager: after send command");

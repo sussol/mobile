@@ -27,7 +27,7 @@ public abstract class BleDevice{
     }
 
     /**  Registers a listener. Currently supports just one listener */
-    public void register(BleDeviceListener bleLDeviceistener){
+    public void registerListener(BleDeviceListener bleLDeviceistener){
         this.bleDeviceListener = bleLDeviceistener;
     }
 
