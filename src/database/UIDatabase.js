@@ -29,6 +29,8 @@ const translateToCoreDatabaseType = type => {
     case 'RequestRequisition':
     case 'ResponseRequisition':
       return 'Requisition';
+    case 'Vaccine':
+      return 'Item';
     default:
       return type;
   }
@@ -116,6 +118,8 @@ export class UIDatabase {
         return results.filtered('type == "request"');
       case 'ResponseRequisition':
         return results.filtered('serialNumber != "-1" AND type == "response"');
+      case 'Vaccine':
+        return results.objects('Item').filtered('category.name CONTAINS[c] $0', 'vaccine');
       default:
         return results;
     }
