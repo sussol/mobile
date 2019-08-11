@@ -193,7 +193,7 @@ export class VaccineModulePage extends React.Component {
     );
   };
 
-  /* Render 'Breach: {num} Exposure: {fromTemp} to {toTemp} */
+  /* Render Totaal Stock: {num} */
   renderFridgeStock = fridge => {
     const { navigateTo, database } = this.props;
     const fridgeStock = fridge.getTotalStock(database);
