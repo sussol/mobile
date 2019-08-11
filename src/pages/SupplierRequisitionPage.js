@@ -416,7 +416,10 @@ export class SupplierRequisitionPage extends React.Component {
       [
         {
           title: `Previous Requisition Date:`,
-          info: prevRequisitionDate ? dateFormater(prevRequisitionDate, 'dd/mm/yy') : 'n/a',
+          info:
+            prevRequisitionDate > new Date(null)
+              ? dateFormater(prevRequisitionDate, 'dd/mm/yy')
+              : 'n/a',
         },
         {
           title: 'Doses Given:',
