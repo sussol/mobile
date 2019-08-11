@@ -94,7 +94,7 @@ class MSupplyMobileAppContainer extends React.Component {
     };
   }
 
-  componentDidMount = async () => {
+  componentDidMount = () => {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackEvent);
   };
 
