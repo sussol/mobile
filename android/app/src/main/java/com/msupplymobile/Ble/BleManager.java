@@ -129,7 +129,8 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         WritableMap jsObject = Arguments.createMap();
         jsObject.putBoolean("success", false);
         jsObject.putMap("error", exception.toObject());
-        promise.resolve(jsObject);
+        if (promise != null) promise.resolve(jsObject);
+        promise = null;
     }
 
     /**
@@ -158,7 +159,8 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         WritableMap jsObject = Arguments.createMap();
         jsObject.putBoolean("success", true);
         jsObject.putArray("data", results);
-        promise.resolve(jsObject);
+        if (promise != null) promise.resolve(jsObject);
+        promise = null;
     }
     
     /**
@@ -180,7 +182,8 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         try{
             deviceScanner.startScan();
         }catch(Throwable e){
-            promise.reject("error", e.toString());
+            if (promise != null) promise.reject("error", e.toString());
+            promise = null;
         }
     }
 
