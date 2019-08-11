@@ -304,7 +304,7 @@ export class Item extends Realm.Object {
     return database
       .objects('SensorLog')
       .filtered('itemBatches.item.id = $0', this.id)
-      .filtered('itemBatches.numberOfPacks > 0 && NOT itemBatches.numberOfPacks == 0');
+      .filtered('itemBatches.numberOfPacks > 0');
   }
 }
 
