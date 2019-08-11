@@ -89,7 +89,7 @@ export function preAggregateLogs({ sensor, database }) {
     });
   });
 
-  return { success: true };
+  return { success: true, data: { logs: logsToAdd, deletedLogs: logsToDelete } };
 }
 
 /**
