@@ -388,9 +388,10 @@ export class SupplierRequisitionPage extends React.Component {
       .objects('TransactionBatch')
       .filtered('itemId = $0', requisitionItem.item.id);
 
-    const recentTransactionBatches = prevRequisitionDate
-      ? transactionBatches.filtered('transaction.confirmDate >= $0', prevRequisitionDate)
-      : transactionBatches;
+    const recentTransactionBatches = transactionBatches.filtered(
+      'transaction.confirmDate >= $0',
+      prevRequisitionDate
+    );
 
     // Get all customer invoices since most recent requisition.
     const transactionBatchesCI = recentTransactionBatches.filtered(
