@@ -46,6 +46,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
     /** 
      * Callback for handling commands sent to devices,
      * whether it was succcesful, or not.
+     * Overrides BleDeviceListener
      */
     @Override
     public void BleCallback(boolean result){
@@ -61,6 +62,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      * Callback for handled exceptions occuring which will be resolved.
      * MsupplyExcpetion can be represented as a WritableMap to send
      * to JS.
+     * Overrides BleDeviceListener
      */
     @Override
     public void BleCallback(MsupplyException exception){
@@ -68,7 +70,10 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         this.returnException(exception);
     }
 
-    /** Callback for scanning operations */
+    /** 
+     * Callback for scanning operations 
+     * Overrides BleScanListener
+     * */
     @Override
     public void BleCallback(Map<String,Object> result){
         if (Debug.LOG) Log.i(Debug.TAG, "BleManager: WritableMap callback");
