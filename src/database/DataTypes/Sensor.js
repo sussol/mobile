@@ -31,7 +31,7 @@ export class Sensor extends Realm.Object {
   static async scanForSensors(database) {
     try {
       const { BleManager } = NativeModules;
-      const result = await BleManager.getDevices(MANUFACTURER_ID);
+      const result = await BleManager.getDevices(MANUFACTURER_ID, '');
       if (!result.success) return result;
       const { data } = result;
       database.write(() => {

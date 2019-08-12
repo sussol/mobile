@@ -187,23 +187,6 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
             promise = null;
         }
     }
-    
-    
-    @ReactMethod
-    public void getDevices(int manufacturerID, Promise promise) {
-        if (Debug.LOG) Log.i(Debug.TAG, "getDevices:" + Integer.toString(manufacturerID));
-        this.promise = promise;
-        BleDeviceScanner deviceScanner = new BleDeviceScanner(reactContext);
-        deviceScanner.registerListener(this);
-        deviceScanner.setFilters(manufacturerID, "");
-        // Full coverage fallback catcher for any uncaught errors occuring.
-        try{
-            deviceScanner.initiateScan();
-        }catch(Throwable e){
-            if (promise != null) promise.reject("error", e.toString());
-            promise = null;
-        }
-    }
 
     /**
      * Find the provided device and send the provided command.
