@@ -119,7 +119,7 @@ export class UIDatabase {
       case 'ResponseRequisition':
         return results.filtered('serialNumber != "-1" AND type == "response"');
       case 'Vaccine':
-        return results.objects('Item').filtered('category.name CONTAINS[c] $0', 'vaccine');
+        return results.filtered('category.name CONTAINS[c] $0', 'vaccine');
       default:
         return results;
     }
