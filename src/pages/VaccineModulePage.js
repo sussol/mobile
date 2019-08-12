@@ -85,9 +85,10 @@ export class VaccineModulePage extends React.Component {
     const { database, runWithLoadingIndicator } = this.props;
     this.FRIDGES = database.objects('Fridge');
     this.HAS_FRIDGES = this.FRIDGES.length > 0;
-    if (this.HAS_FRIDGES) this.FRIDGE_DATA = {};
     const selectedFridge = this.HAS_FRIDGES ? this.FRIDGES[0] : null;
     await runWithLoadingIndicator(() => {
+      if (!this.HAS_FRIDGES) return;
+      this.FRIDGE_DATA = {};
       this.FRIDGES.forEach(fridge => {
         const dataForFridgeChart = extractDataForFridgeChart({ database, fridge });
         this.FRIDGE_DATA[fridge.id] = dataForFridgeChart;
@@ -223,6 +224,8 @@ export class VaccineModulePage extends React.Component {
   renderFridge = fridge => {
     const { database } = this.props;
     const fridgeChartData = this.FRIDGE_DATA[fridge.id];
+    const { selectedFridge } = this.state;
+    if (!selectedFridge) return null;
 
     const numberOfBreaches = fridgeChartData.breaches.length;
     let lastBreach = null;
@@ -233,7 +236,6 @@ export class VaccineModulePage extends React.Component {
     const currentTemperature = fridge.getCurrentTemperature(database);
     const isInBreach = currentTemperature !== null && fridge.isInBreach(database);
 
-    const { selectedFridge } = this.state;
     const isFridgeSelected = fridge.id === selectedFridge.id;
 
     const { sectionStyle, fridgeInfoSectionStyle } = localStyles;
