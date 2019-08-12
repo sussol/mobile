@@ -134,7 +134,7 @@ export class MenuPage extends React.Component {
         key={page}
         style={menuButton}
         textStyle={menuButtonText}
-        text={navStrings[title]}
+        text={title}
         onPress={() => navigateTo(page, title)}
       />
     );
