@@ -38,6 +38,7 @@ export function preAggregateLogs({ sensor, database }) {
   const { location } = sensor;
   let logsToDelete = [];
   const logsToAdd = [];
+
   const sortedLogs = sensor.sensorLogs
     .filtered('aggregation == null || aggregation == ""')
     .sorted('timestamp');
@@ -65,12 +66,14 @@ export function preAggregateLogs({ sensor, database }) {
           aggregation: PREAGGREGATE_TYPE,
         })
       );
+
       // If the currentlogs timestamp is greater than the end timestamp of the current
       // aggregation, increment the timestamps for the next aggregation.
       while (logTimestamp >= new Date(endTimestamp)) {
         firstTimestamp = endTimestamp;
         endTimestamp = new Date(endTimestamp.getTime() + PREAGGREGATE_INTERVAL);
       }
+
       // Reset temperature and timestamps;
       temperature = Infinity;
     }
@@ -89,7 +92,7 @@ export function preAggregateLogs({ sensor, database }) {
     });
   });
 
-  return { success: true, data: { logs: logsToAdd, deletedLogs: logsToDelete } };
+  return { success: true, data: { created: logsToAdd.length, deleted: logsToDelete.length } };
 }
 
 /**
