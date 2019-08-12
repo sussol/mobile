@@ -147,12 +147,11 @@ export class VaccineModulePage extends React.Component {
   blinkSensor = async () => {
     const { selectedFridge } = this.state;
     const { database, runWithLoadingIndicator } = this.props;
-    const sensors = selectedFridge.getSensor(database);
-    if (!sensors.length) {
+    const sensor = selectedFridge.getSensor(database);
+    if (!sensor) {
       ToastAndroid.show('No sensor attached to this fridge', ToastAndroid.SHORT);
     } else {
       await runWithLoadingIndicator(async () => {
-        const sensor = sensors[0];
         await sensor.sendBlink();
       }, true);
     }
