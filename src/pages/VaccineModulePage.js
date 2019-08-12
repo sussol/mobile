@@ -73,9 +73,8 @@ const getMenuButtons = () => [
 export class VaccineModulePage extends React.Component {
   constructor(props) {
     super(props);
-
     // { fridgeID: { extractDataForFridgeChart() }, ... }
-    this.FRIDGE_DATA = {};
+    this.FRIDGE_DATA = null;
     this.HAS_FRIDGES = false;
     this.FRIDGES = null;
     this.MENU_BUTTONS = getMenuButtons();
@@ -86,15 +85,14 @@ export class VaccineModulePage extends React.Component {
     const { database, runWithLoadingIndicator } = this.props;
     this.FRIDGES = database.objects('Fridge');
     this.HAS_FRIDGES = this.FRIDGES.length > 0;
+    if (this.HAS_FRIDGES) this.FRIDGE_DATA = {};
     const selectedFridge = this.HAS_FRIDGES ? this.FRIDGES[0] : null;
-
     await runWithLoadingIndicator(() => {
       this.FRIDGES.forEach(fridge => {
         const dataForFridgeChart = extractDataForFridgeChart({ database, fridge });
         this.FRIDGE_DATA[fridge.id] = dataForFridgeChart;
-      });
+      }, true);
     });
-
     this.setState({ selectedFridge });
   };
 
@@ -225,7 +223,7 @@ export class VaccineModulePage extends React.Component {
   renderFridge = fridge => {
     const { database } = this.props;
     const fridgeChartData = this.FRIDGE_DATA[fridge.id];
-    if (!fridgeChartData) return null;
+
     const numberOfBreaches = fridgeChartData.breaches.length;
     let lastBreach = null;
     if (numberOfBreaches > 0) {
@@ -284,10 +282,8 @@ export class VaccineModulePage extends React.Component {
   render() {
     const { FRIDGES, HAS_FRIDGES } = this;
     const { navigateTo, isInAdminMode } = this.props;
-    const { isModalOpen, currentBreach, selectedFridge } = this.state;
+    const { isModalOpen, currentBreach } = this.state;
     const { pageContainerStyle, sectionStyle, imageStyle, greyTextStyleLarge } = localStyles;
-
-    if (!selectedFridge) return null;
     return (
       <View style={pageContainerStyle}>
         <View style={sectionStyle}>
@@ -298,10 +294,13 @@ export class VaccineModulePage extends React.Component {
           />
           {this.renderMenuButtons()}
         </View>
-        {HAS_FRIDGES && FRIDGES.map(this.renderFridge)}
-        {HAS_FRIDGES === false ? (
-          <Text style={[greyTextStyleLarge]}>{LOCALIZATION.misc.noFridges}</Text>
-        ) : null}
+        {HAS_FRIDGES && this.FRIDGE_DATA ? (
+          FRIDGES.map(this.renderFridge)
+        ) : (
+          <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
+            <Text style={[greyTextStyleLarge]}>{LOCALIZATION.misc.noFridges}</Text>
+          </View>
+        )}
         {isInAdminMode ? (
           <Button
             key="VM Admin"
