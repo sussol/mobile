@@ -153,7 +153,6 @@ export function createBreach({ breach, database, locationType }) {
   const startingTime = firstTimestamp.getTime();
   const endingTime = lastTimestamp.getTime();
   const duration = (endingTime - startingTime) / ONE_MINUTE_MILLISECONDS;
-
   // Breach descriptors for a min or max breach, including the duration required.
   const breachDescriptors = [
     {
@@ -213,11 +212,14 @@ const getOngoingBreach = ({ database, sensor }) => {
   const { location } = sensor;
   if (!location) return [];
   // Fetch all the sensor logs in the sensors location.
-  const sensorLogs = database.objects('SensorLog').filtered('location.id = $0', location.id);
+  const sensorLogs = database
+    .objects('SensorLog')
+    .filtered('location.id = $0', location.id)
+    .sorted('timestamp');
   // Find either the most recent delimiter timestamp, or the start of time.
   const latestDelimiterTimestamp =
     sensorLogs
-      .filtered('isInBreach == $1 && aggregation != $2', true, SENSOR_LOG_BREACH_AGGREGATE_TYPE)
+      .filtered('isInBreach == $0 && aggregation == $1', false, SENSOR_LOG_BREACH_AGGREGATE_TYPE)
       .max('timestamp') || new Date(null);
   // Find all sensor logs after the most recent delimiter, or all sensor logs.
   const potentialBreach = sensorLogs.filtered(
@@ -231,7 +233,7 @@ const getOngoingBreach = ({ database, sensor }) => {
   //  If the last aggregated log is not a breach aggregate, there is no ongoing breach.
   if (lastSensorLog.aggregation !== SENSOR_LOG_BREACH_AGGREGATE_TYPE) return [];
   // Otherwise, the delimiter is a head log for an ongoing breach.
-  return potentialBreach;
+  return potentialBreach.slice();
 };
 
 /**
@@ -258,7 +260,7 @@ const getOngoingBreach = ({ database, sensor }) => {
 export function createBreaches({ sensor, database }) {
   const { sensorLogs, location } = sensor;
   // Early return where there are no sensor logs or location
-  if (!(sensorLogs && sensorLogs.length && location)) return { success: false };
+  if (!(sensorLogs && sensorLogs.length > 0 && location)) return { success: false };
   const { locationType } = location;
   if (!locationType) return { success: false };
   const { minTemperature, maxTemperature } = locationType;
@@ -268,6 +270,7 @@ export function createBreaches({ sensor, database }) {
   // Find all pre aggregates, which are potentially breaches
   const preAggregateLogs = sensor.sensorLogs
     .filtered('aggregation = $0 && timestamp >= $1', PREAGGREGATE_TYPE, firstAggregateTime)
+    .sorted('timestamp')
     .slice();
   // Early return where there are no preaggregate logs.
   if (!(preAggregateLogs || preAggregateLogs.length)) return { success: false };
