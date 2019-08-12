@@ -5,7 +5,7 @@ import com.facebook.react.bridge.WritableMap;
 
 interface BleScanListener{
     void BleCallback(MsupplyException exception);
-    void BleCallback(Map<String,Object> result);
+    void BleCallback(Map<String,BleDevice> result);
 }
 
 interface BleDeviceListener{

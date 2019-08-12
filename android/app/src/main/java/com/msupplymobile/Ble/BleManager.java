@@ -75,7 +75,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
      * Overrides BleScanListener
      * */
     @Override
-    public void BleCallback(Map<String,Object> result){
+    public void BleCallback(Map<String,BleDevice> result){
         if (Debug.LOG) Log.i(Debug.TAG, "BleManager: WritableMap callback");
         this.devices = result;
         handleEvent();
@@ -188,14 +188,14 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         }
     }
     
-    @Override
+    
     @ReactMethod
     public void getDevices(int manufacturerID, Promise promise) {
         if (Debug.LOG) Log.i(Debug.TAG, "getDevices:" + Integer.toString(manufacturerID));
         this.promise = promise;
         BleDeviceScanner deviceScanner = new BleDeviceScanner(reactContext);
         deviceScanner.registerListener(this);
-        deviceScanner.setFilters(manufacturerID, '');
+        deviceScanner.setFilters(manufacturerID, "");
         // Full coverage fallback catcher for any uncaught errors occuring.
         try{
             deviceScanner.initiateScan();
