@@ -45,7 +45,7 @@ export function preAggregateLogs({ sensor, database }) {
   let firstTimestamp = sortedLogs[0].timestamp;
   let endTimestamp = new Date(firstTimestamp.getTime() + PREAGGREGATE_INTERVAL);
   let logsToDeleteTemp = [];
-  let temperature = Infinity;
+  let minTemperature = Infinity;
   sortedLogs.forEach(sensorLog => {
     const { timestamp: logTimestamp, temperature: logTemperature } = sensorLog;
     // If this sensorlog does exceed the aggregated end timestamp, check if it has
@@ -53,7 +53,7 @@ export function preAggregateLogs({ sensor, database }) {
     // deleted if it is included in an aggregation.
     if (logTimestamp <= endTimestamp) {
       logsToDeleteTemp.push(sensorLog);
-      if (temperature > sensorLog.temperature) temperature = logTemperature;
+      if (minTemperature > sensorLog.temperature) minTemperature = logTemperature;
     } else {
       logsToDelete = [...logsToDelete, ...logsToDeleteTemp];
       logsToDeleteTemp = [sensorLog];
@@ -61,7 +61,7 @@ export function preAggregateLogs({ sensor, database }) {
         createGenericSensorLog({
           sensor,
           location,
-          temperature,
+          temperature: minTemperature,
           timestamp: endTimestamp,
           aggregation: PREAGGREGATE_TYPE,
         })
@@ -75,7 +75,7 @@ export function preAggregateLogs({ sensor, database }) {
       }
 
       // Reset temperature and timestamps;
-      temperature = Infinity;
+      minTemperature = Infinity;
     }
   });
 
