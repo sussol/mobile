@@ -31,7 +31,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
     private Promise promise;
     private String command;
     private String macAddress;
-    private Map<String, Object> devices;
+    private Map<String, BleDevice> devices;
 
     public BleManager(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -94,7 +94,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         boolean shouldSendCommand = this.command != null && this.macAddress != null && this.devices != null;
         if (shouldSendCommand){
             try{
-                BleDevice device = (BleDevice)this.devices.get(this.macAddress);
+                BleDevice device = this.devices.get(this.macAddress);
                 if (Debug.LOG) Log.i(Debug.TAG, "BleManager: in should send");
                 String commandSub = this.command;
                 this.command = this.macAddress = null;
@@ -150,7 +150,7 @@ public class BleManager extends ReactContextBaseJavaModule implements BleScanLis
         for (String key : this.devices.keySet()){
             try{
                 if (Debug.LOG) Log.i(Debug.TAG, key);
-                WritableMap bleDeviceAsObject = ((BleDevice)this.devices.get(key)).toObject();
+                WritableMap bleDeviceAsObject = this.devices.get(key).toObject();
                 results.pushMap(bleDeviceAsObject);
             } catch(Exception exception){
                 returnException(new MsupplyException(ErrorCode.E_PARSING_FAILED, exception));

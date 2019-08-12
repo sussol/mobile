@@ -41,7 +41,7 @@ public class BleDeviceScanner {
     private int manufacturerID;
     private boolean isScanEnabled;
     private String deviceAddress;
-    private Map<String, Object> scannedDevices;
+    private Map<String, BleDevice> scannedDevices;
     private ReactContext reactContext;
     private BluetoothLeScanner leScanner;
     BluetoothAdapter btAdapter;
