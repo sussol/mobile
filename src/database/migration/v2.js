@@ -147,6 +147,7 @@ const v2Migrations = [
       transactionBatches.forEach(transactionBatch => {
         if (!transactionBatch) return;
         const {
+          id,
           itemId,
           batch,
           expiryDate,
@@ -176,11 +177,11 @@ const v2Migrations = [
             item,
           });
           // Add the transaction batch into the new item batch
-          newItemBatch.transactionBatches.push(transactionBatch);
+          newItemBatch.addTransactionBatchIfUnique(transactionBatch);
           database.save('ItemBatch', newItemBatch);
           // Update the TransactionBatch with the newly created ItemBatch
           database.update('TransactionBatch', {
-            ...transactionBatch,
+            id,
             itemBatch: newItemBatch,
           });
         });
