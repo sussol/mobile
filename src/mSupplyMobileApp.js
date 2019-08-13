@@ -37,9 +37,8 @@ import {
 } from './widgets';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
-import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema, UIDatabase } from './database';
+import { Database, schema, UIDatabase, migrateDataToVersion } from './database';
 
 import globalStyles, {
   dataTableColors,
