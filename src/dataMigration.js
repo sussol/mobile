@@ -4,6 +4,7 @@
  */
 
 import { AsyncStorage } from 'react-native';
+import { generateUUID } from 'react-native-database';
 
 import { compareVersions } from './utilities';
 import { SETTINGS_KEYS } from './settings';
@@ -185,6 +186,60 @@ const dataMigrations = [
         if (batchesToDelete.length > 0) {
           deleteBatches(line.transaction, batchesToDelete);
         }
+      });
+    },
+  },
+  // An unavoidable situation around the time 2.3.5 was released, delete records
+  // for item lines were synced to mobile. This caused issues having TransactionBatch
+  // records with no related ItemBatch. Solution was to use migration code to
+  // create ItemBatch records for these TransactionBatches with a quantity of zero.
+  {
+    version: '2.3.6',
+    migrate: database => {
+      // Find all the transactions with no item batches, if any
+      const transactionBatches = database
+        .objects('TransactionBatch')
+        .filtered('itemBatch == $0', null)
+        .snapshot();
+      // Do nothing if there aren't any.
+      if (!(transactionBatches.length > 0)) return;
+      // For each of these item batchless-transaction batches, create a new
+      // 0 quantity item batch
+      transactionBatches.forEach(transactionBatch => {
+        const {
+          itemId,
+          batch,
+          expiryDate,
+          packSize,
+          costPrice,
+          sellPrice,
+          donor,
+        } = transactionBatch;
+
+        // TransactionBatch are not directly related, just hold a reference. Find
+        // the actual Item record.
+        const item = database.objects('Item').filtered('id == $0', itemId)[0];
+        // Create the new ItemBatch using as much detail from the TransactionBatch
+        // as possible
+        database.write(() => {
+          const newItemBatch = database.update('ItemBatch', {
+            id: generateUUID(),
+            batch,
+            expiryDate,
+            packSize,
+            costPrice,
+            sellPrice,
+            donor,
+            item,
+          });
+          newItemBatch.transactionBatches.push(transactionBatch);
+          database.save('ItemBatch', newItemBatch);
+          // Update the TransactionBatch with the newly created ItemBatch
+          database.update('TransactionBatch', {
+            ...transactionBatch,
+            itemBatch: newItemBatch,
+          });
+        });
       });
     },
   },
