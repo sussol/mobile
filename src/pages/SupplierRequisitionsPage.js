@@ -72,14 +72,15 @@ export class SupplierRequisitionsPage extends React.Component {
     this.refreshData();
   };
 
+  onCancelNewRequisition = () => {
+    this.setState({ byProgramModalOpen: false, isCreatingRequisition: false });
+  };
+
   onNewRequisition = requisitionValues => {
     const { database, currentUser, settings } = this.props;
 
     let requisition;
-    if (!requisitionValues) {
-      this.setState({ byProgramModalOpen: false, isCreatingRequisition: false });
-      return;
-    }
+
     database.write(() => {
       let customData = {};
       try {
@@ -239,7 +240,7 @@ export class SupplierRequisitionsPage extends React.Component {
           queryString="name BEGINSWITH[c] $0"
           sortByString="name"
           onSelect={name => this.onNewRequisition({ otherStoreName: name })}
-          onClose={() => this.onNewRequisition()}
+          onClose={this.onCancelNewRequisition}
           title={modalStrings.search_for_the_supplier}
         />
 
@@ -247,7 +248,7 @@ export class SupplierRequisitionsPage extends React.Component {
           <ByProgramModal
             isOpen={byProgramModalOpen}
             onConfirm={this.onNewRequisition}
-            onCancel={this.onNewRequisition}
+            onCancel={this.onCancelNewRequisition}
             database={database}
             type="requisition"
             settings={settings}
