@@ -51,10 +51,8 @@ export class StocktakesPage extends React.Component {
 
   createNewStocktake = properties => {
     const { currentUser, database } = this.props;
-    const { steps, program } = properties;
-    const stocktakeName = steps[1].name;
+    const { program, name: stocktakeName } = properties;
     let stocktake;
-
     database.write(() => {
       stocktake = createRecord(database, 'Stocktake', currentUser, stocktakeName, program);
       stocktake.addItemsFromProgram(database);
