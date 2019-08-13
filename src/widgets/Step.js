@@ -101,11 +101,11 @@ export const Step = memo(props => {
   // Render the error string if in an error state, the title if there is
   // data/the step is complete and a placeholder otherwise.
   const TextDisplay = () => {
-    const { textContainerStyle } = localStyles;
+    const { textContainerStyle, textStyle } = localStyles;
     const text = (data && data[field]) || data;
     return (
       <View style={textContainerStyle}>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={{ color: 'white' }}>
+        <Text numberOfLines={1} ellipsizeMode="tail" style={textStyle}>
           {(errorState && errorString) || text || placeholder}
         </Text>
       </View>
@@ -154,6 +154,7 @@ const localStyles = StyleSheet.create({
   },
   textContainerStyle: { minWidth: '30%', justifyContent: 'center' },
   iconContainerStyle: { minWidth: '5%' },
+  textStyle: { color: 'white' },
 });
 
 Step.whyDidYouRender = true;
