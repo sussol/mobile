@@ -156,5 +156,3 @@ const localStyles = StyleSheet.create({
   iconContainerStyle: { minWidth: '5%' },
   textStyle: { color: 'white' },
 });
-
-Step.whyDidYouRender = true;
