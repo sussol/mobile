@@ -140,8 +140,6 @@ const v2Migrations = [
         .objects('TransactionBatch')
         .filtered('itemBatch == $0', null)
         .snapshot();
-      // Do nothing if there aren't any.
-      if (!(transactionBatches.length > 0)) return;
       // For each of these item batchless-transaction batches, create a new
       // 0 quantity item batch
       transactionBatches.forEach(transactionBatch => {
