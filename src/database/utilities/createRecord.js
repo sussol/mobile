@@ -142,7 +142,7 @@ const createRequisition = (
   user,
   { otherStoreName, program, period, orderType = {}, monthsLeadTime = 0 }
 ) => {
-  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
+  const { name: orderTypeName = '', maxMOS = 0, thresholdMOS = 0 } = orderType || {};
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
   const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * 30;
