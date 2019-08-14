@@ -69,9 +69,9 @@ const EditableCell = React.memo(
 );
 
 EditableCell.propTypes = {
-  value: PropTypes.onOfType(PropTypes.string, PropTypes.number),
-  rowKey: PropTypes.onOfType(PropTypes.string, PropTypes.number).isRequired,
-  columnKey: PropTypes.onOfType(PropTypes.string, PropTypes.number).isRequired,
+  value: PropTypes.oneOfType(PropTypes.string, PropTypes.number),
+  rowKey: PropTypes.oneOfType(PropTypes.string, PropTypes.number).isRequired,
+  columnKey: PropTypes.oneOfType(PropTypes.string, PropTypes.number).isRequired,
   disabled: PropTypes.bool,
   isFocused: PropTypes.bool,
   editAction: PropTypes.func.isRequired,
