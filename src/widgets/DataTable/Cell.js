@@ -12,7 +12,7 @@ const Cell = React.memo(({ value }) => {
 });
 
 Cell.propTypes = {
-  value: PropTypes.onOfType(PropTypes.string, PropTypes.number),
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 Cell.defaultProps = {

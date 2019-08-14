@@ -32,9 +32,9 @@ const TouchableCell = React.memo(
 
 TouchableCell.propTypes = {
   ...TouchableOpacityPropTypes,
-  value: PropTypes.oneOfType(PropTypes.string, PropTypes.number),
-  rowKey: PropTypes.oneOfType(PropTypes.string, PropTypes.number).isRequired,
-  columnKey: PropTypes.oneOfType(PropTypes.string, PropTypes.number).isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onPressAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   renderChildren: PropTypes.func.isRequired,

@@ -41,8 +41,8 @@ const CheckableCell = React.memo(
 );
 
 CheckableCell.propTypes = {
-  rowKey: PropTypes.oneOfType(PropTypes.string, PropTypes.number).isRequired,
-  columnKey: PropTypes.oneOfType(PropTypes.string, PropTypes.number).isRequired,
+  rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isChecked: PropTypes.bool,
   isDisabled: PropTypes.bool,
   CheckedComponent: PropTypes.element.isRequired,
