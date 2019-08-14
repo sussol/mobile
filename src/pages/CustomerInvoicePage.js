@@ -5,7 +5,7 @@
 
 import React, { useState, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -19,6 +19,7 @@ import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import { DataTable, Row, Cell, EditableCell, CheckableCell } from '../widgets/DataTable';
 
 import globalStyles, { dataTableColors } from '../globalStyles';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -280,6 +281,22 @@ const deselectAll = () => ({
   type: 'deselectAll',
 });
 
+const sortData = (searchTerm, sortBy, isAscending) => ({
+  type: 'sortData',
+  searchTerm,
+  sortBy,
+  isAscending,
+});
+
+/**
+ * Renders a mSupply mobile page with customer invoice loaded for editing
+ *
+ * @prop {transaction} prop0
+ * @prop {database} prop0
+ * @prop {genericTablePageStyles} prop0
+ * @prop {runWithLoadingIndicator} prop0
+ * @prop {topRoute} prop0
+ */
 export const CustomerInvoicePage = ({
   transaction,
   database,
@@ -339,9 +356,11 @@ export const CustomerInvoicePage = ({
   };
 
   const onDeleteConfirm = () => {};
+
   const onDeleteCancel = () => {
     dispatch(deselectAll());
   };
+
   const onAddMasterItems = () => {
     runWithLoadingIndicator(() => {
       database.write(() => {
@@ -521,6 +540,19 @@ export const CustomerInvoicePage = ({
       />
     </View>
   );
+
+  const renderHeader = () => {
+    return (
+      <Row>
+        {columns.map(column => (
+          <TouchableOpacity onPressAction={() => sortData} dispatch={dispatch}>
+            <Text>{column.title}</Text>
+          </TouchableOpacity>
+        ))}
+      </Row>
+    );
+  };
+
   return (
     <View style={[defaultStyles.pageContentContainer, pageStyles.pageContentContainer]}>
       <View style={[defaultStyles.container, pageStyles.container]}>
