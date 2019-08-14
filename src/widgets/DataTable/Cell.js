@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 
 const Cell = React.memo(({ value }) => {
@@ -9,6 +10,14 @@ const Cell = React.memo(({ value }) => {
     </View>
   );
 });
+
+Cell.propTypes = {
+  value: PropTypes.onOfType(PropTypes.string, PropTypes.number),
+};
+
+Cell.defaultProps = {
+  value: '',
+};
 
 const defaultStyles = StyleSheet.create({
   cell: {

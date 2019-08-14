@@ -16,13 +16,7 @@ import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
-import {
-  DataTable,
-  Row,
-  Cell,
-  EditableCell,
-  CheckableCell,
-} from '../widgets/NewGenericPage/DataTable';
+import { DataTable, Row, Cell, EditableCell, CheckableCell } from '../widgets/DataTable';
 
 import globalStyles, { dataTableColors } from '../globalStyles';
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { View, TouchableWithoutFeedback, Text, TextInput, StyleSheet } from 'react-native';
 
 import Cell from './Cell';
@@ -66,6 +67,24 @@ const EditableCell = React.memo(
     );
   }
 );
+
+EditableCell.propTypes = {
+  value: PropTypes.onOfType(PropTypes.string, PropTypes.number),
+  rowKey: PropTypes.onOfType(PropTypes.string, PropTypes.number).isRequired,
+  columnKey: PropTypes.onOfType(PropTypes.string, PropTypes.number).isRequired,
+  disabled: PropTypes.bool,
+  isFocused: PropTypes.bool,
+  editAction: PropTypes.func.isRequired,
+  focusAction: PropTypes.func.isRequired,
+  focusNextAction: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
+};
+
+EditableCell.defaultProps = {
+  value: '',
+  disabled: false,
+  isFocused: false,
+};
 
 const defaultStyles = StyleSheet.create({
   cell: {

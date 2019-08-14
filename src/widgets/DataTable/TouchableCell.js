@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { TouchableOpacity, Text, StyleSheet, TouchableOpacityPropTypes } from 'react-native';
 
 const TouchableCell = React.memo(
@@ -8,9 +9,8 @@ const TouchableCell = React.memo(
     columnKey,
     onPressAction,
     dispatch,
-    children,
     renderChildren,
-    CellComponent,
+    TouchableComponent,
     ...otherProps
   }) => {
     console.log(`- TouchableCell: ${rowKey},${columnKey}`);
@@ -19,7 +19,7 @@ const TouchableCell = React.memo(
       dispatch(onPressAction(rowKey, columnKey));
     };
 
-    const Container = CellComponent || TouchableOpacity;
+    const Container = TouchableComponent || TouchableOpacity;
     const content = renderChildren ? renderChildren(value) : <Text>{value}</Text>;
 
     return (
@@ -32,13 +32,17 @@ const TouchableCell = React.memo(
 
 TouchableCell.propTypes = {
   ...TouchableOpacityPropTypes,
-  // style: ViewPropTypes.style,
-  // textStyle: Text.propTypes.style,
-  // width: PropTypes.number,
+  value: PropTypes.onOfType(PropTypes.string, PropTypes.number),
+  rowKey: PropTypes.onOfType(PropTypes.string, PropTypes.number).isRequired,
+  columnKey: PropTypes.onOfType(PropTypes.string, PropTypes.number).isRequired,
+  onPressAction: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  renderChildren: PropTypes.func.isRequired,
+  TouchableComponent: PropTypes.func.isRequired,
 };
 
 TouchableCell.defaultProps = {
-  width: 1,
+  value: '',
 };
 
 const defaultStyles = StyleSheet.create({

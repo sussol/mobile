@@ -17,6 +17,7 @@ DataTable.propTypes = {
   getItem: PropTypes.func,
   getItemCount: PropTypes.func,
 };
+
 DataTable.defaultProps = {
   getItem: (items, index) => items[index],
   getItemCount: items => items.length,
