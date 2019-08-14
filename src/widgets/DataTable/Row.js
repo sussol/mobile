@@ -13,7 +13,7 @@ const Row = React.memo(({ rowData, rowState, rowKey, renderCells }) => {
 Row.propTypes = {
   rowData: PropTypes.any.isRequired,
   rowState: PropTypes.any,
-  rowKey: PropTypes.onOfType(PropTypes.string, PropTypes.number).isRequired,
+  rowKey: PropTypes.oneOfType(PropTypes.string, PropTypes.number).isRequired,
   renderCells: PropTypes.func.isRequired,
 };
 
