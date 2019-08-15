@@ -141,7 +141,7 @@ const v2Migrations = [
       // *** PART ONE, find foreign item line and delete
 
       const itemBatches = database.objects('ItemBatch').snapshot();
-      const itemBatcheIDsToDelete = [];
+      const itemBatchIDsToDelete = [];
       // Assuming this exists everywhere
       const inventoryAdjustmentName = database
         .objects('Name')
@@ -150,7 +150,7 @@ const v2Migrations = [
       itemBatches.forEach(({ id, transactionBatches }) => {
         // No transaction batches on item line should mean it's foreign
         if (transactionBatches.length === 0) {
-          itemBatcheIDsToDelete.push(id);
+          itemBatchIDsToDelete.push(id);
           return;
         }
         // supplier_invoice type transactions are all addition transactions
@@ -191,12 +191,12 @@ const v2Migrations = [
           const hasStockAddition = stocktakeBatches[0].countedNumberOfPacks > 0;
           if (snapShotIsZero && hasStockAddition) return;
         }
-        itemBatcheIDsToDelete.push(id);
+        itemBatchIDsToDelete.push(id);
       });
 
       // Delete foreign item lines
       database.write(() => {
-        itemBatcheIDsToDelete.forEach(id => {
+        itemBatchIDsToDelete.forEach(id => {
           database.delete('ItemBatch', database.objects('ItemBatch').filtered('id = $0', id));
         });
       });
@@ -204,7 +204,7 @@ const v2Migrations = [
       // *** PART TWO, delete sync outs for those Item Batches that were just deleted
 
       database.write(() => {
-        itemBatcheIDsToDelete.forEach(id => {
+        itemBatchIDsToDelete.forEach(id => {
           const syncOuts = database.objects('SyncOut').filtered('recordId = $0', id);
           if (syncOuts.length > 0) database.delete('SyncOut', syncOuts);
         });
