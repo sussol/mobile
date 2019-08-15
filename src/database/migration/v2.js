@@ -140,7 +140,7 @@ const v2Migrations = [
     migrate: database => {
       // *** PART ONE, find foreign item line and delete
 
-      const itemBatches = this.database.objects('ItemBatch').snapshot();
+      const itemBatches = database.objects('ItemBatch').snapshot();
       const itemBatcheIDsToDelete = [];
       // Assuming this exists everywhere
       const inventoryAdjustmentName = database
@@ -195,7 +195,7 @@ const v2Migrations = [
       // Delete foreign item lines
       database.write(() => {
         itemBatcheIDsToDelete.forEach(id => {
-          database.delete('ItemBatch', database.objects('ItemLine').filtered('id = $0', id));
+          database.delete('ItemBatch', database.objects('ItemBatch').filtered('id = $0', id));
         });
       });
 
