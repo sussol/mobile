@@ -12,7 +12,13 @@ import { GenericPage } from './GenericPage';
 import { RequisitionRegimenModalTable } from './expansions/RequisitionRegimenModalTable';
 
 import { createRecord } from '../database';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import {
+  programStrings,
+  buttonStrings,
+  modalStrings,
+  pageInfoStrings,
+  tableStrings,
+} from '../localization';
 import { SETTINGS_KEYS } from '../settings';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import {
@@ -23,8 +29,8 @@ import {
   ToggleSelector,
   ToggleBar,
 } from '../widgets';
-import { PageContentModal, BottomConfirmModal } from '../widgets/modals';
 
+import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
@@ -58,7 +64,7 @@ const PROGRAM_COLUMNS = [
   'remove',
 ];
 
-const COLUMNS = {
+const getColumns = () => ({
   itemCode: {
     key: 'itemCode',
     width: 1.4,
@@ -108,23 +114,23 @@ const COLUMNS = {
   price: {
     key: 'price',
     width: 1,
-    title: 'PRICE',
+    title: tableStrings.price,
     alignText: 'center',
   },
   unit: {
     key: 'unit',
     width: 1,
-    title: 'UNIT',
+    title: tableStrings.unit,
     alignText: 'center',
   },
-};
+});
 
 export class SupplierRequisitionPage extends React.Component {
   constructor(props) {
     super(props);
 
     this.ITEM_PRICE_MAPPING = null;
-
+    this.COLUMNS = getColumns();
     const { requisition } = props;
     const { program, thresholdMOS } = requisition;
 
@@ -336,12 +342,12 @@ export class SupplierRequisitionPage extends React.Component {
     const infoColumns = [
       [
         {
-          title: 'Program:',
+          title: `${programStrings.program}:`,
           info: program && program.name,
           shouldHide: !program,
         },
         {
-          title: 'Order Type:',
+          title: `${programStrings.order_type}:`,
           info: orderType,
           shouldHide: !program,
         },
@@ -356,7 +362,7 @@ export class SupplierRequisitionPage extends React.Component {
       ],
       [
         {
-          title: 'Period:',
+          title: `${programStrings.period}:`,
           info: period && `${period.name} -- ${period.toString()}`,
           shouldHide: !program,
         },
@@ -384,7 +390,6 @@ export class SupplierRequisitionPage extends React.Component {
 
   renderCell = (key, requisitionItem) => {
     const { requisition } = this.props;
-
     switch (key) {
       default:
         return requisitionItem[key];
@@ -520,12 +525,12 @@ export class SupplierRequisitionPage extends React.Component {
       const onPress = () => this.setState({ useThresholdMOS: !useThresholdMOS }, this.refreshData);
       const toggleProps = [
         {
-          text: 'Hide over stocked',
+          text: programStrings.hide_over_stocked,
           isOn: useThresholdMOS,
           onPress,
         },
         {
-          text: 'Show over stocked',
+          text: programStrings.show_over_stocked,
           isOn: !useThresholdMOS,
           onPress,
         },
@@ -586,7 +591,7 @@ export class SupplierRequisitionPage extends React.Component {
     let columnsToUse;
     if (program) columnsToUse = PROGRAM_COLUMNS;
     else columnsToUse = NORMAL_COLUMNS;
-    return columnsToUse.map(columnKey => COLUMNS[columnKey]);
+    return columnsToUse.map(columnKey => this.COLUMNS[columnKey]);
   };
 
   render() {

@@ -139,7 +139,7 @@ export class SupplierInvoicesPage extends React.Component {
       case 'status':
         return formatStatus(invoice.status);
       case 'entryDate':
-        return invoice.entryDate.toDateString();
+        return (invoice.entryDate && invoice.entryDate.toDateString()) || 'N/A';
       case 'remove':
         return {
           type: 'checkable',
@@ -173,7 +173,7 @@ export class SupplierInvoicesPage extends React.Component {
         columns={[
           {
             key: 'serialNumber',
-            width: 1,
+            width: 1.5,
             title: tableStrings.invoice_number,
             sortable: true,
           },

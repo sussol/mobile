@@ -25,19 +25,20 @@ import {
 import { toggleBarStyles } from './toggleBarStyles';
 
 export {
-  SUSSOL_ORANGE,
-  BLUE_WHITE,
   BACKGROUND_COLOR,
-  SHADOW_BORDER,
+  BLUE_WHITE,
   DARK_GREY,
   DARKER_GREY,
-  GREY,
-  WARM_GREY,
-  WARMER_GREY,
-  LIGHT_GREY,
-  ROW_BLUE,
   FINALISE_GREEN,
   FINALISED_RED,
+  GREY,
+  LIGHT_GREY,
+  ROW_BLUE,
+  SHADOW_BORDER,
+  SOFT_RED,
+  SUSSOL_ORANGE,
+  WARM_GREY,
+  WARMER_GREY,
 } from './colors';
 
 export { APP_FONT_FAMILY } from './fonts';

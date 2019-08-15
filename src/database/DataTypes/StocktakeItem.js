@@ -183,8 +183,16 @@ export class StocktakeItem extends Realm.Object {
    * needs to account for this.
    * @return {bool}
    */
-  get shouldApplyReason() {
-    return this.batches.some(({ shouldApplyReason }) => shouldApplyReason);
+  get shouldHaveReason() {
+    return this.batches.some(({ shouldHaveReason }) => shouldHaveReason);
+  }
+
+  /**
+   * Returns a boolean indicator whether a reason needs to be enforced
+   * on this stocktake line item.
+   */
+  get enforceReason() {
+    return this.shouldHaveReason && !this.hasAnyReason;
   }
 
   /**

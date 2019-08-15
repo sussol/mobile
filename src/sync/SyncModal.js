@@ -72,7 +72,7 @@ export const SyncModal = ({ database, isOpen, onClose, onPressManualSync, state 
           </View>
         </View>
         <View style={localStyles.row}>
-          <Text style={localStyles.lastSyncText}>Last successful sync</Text>
+          <Text style={localStyles.lastSyncText}>{syncStrings.last_successful_sync}</Text>
           <Text style={localStyles.lastSyncText}>{getSyncDateLabel(lastSyncTime)}</Text>
         </View>
         <View style={localStyles.row}>

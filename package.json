@@ -5,7 +5,7 @@
   },
   "name": "mSupplyMobile",
   "//": "version must be in the format ${majorNumber}.${minorNumber}.${patchNumber}-rc${releaseCandidateNumber}",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "private": false,
   "license": "MIT",
   "description": "Mobile app for use with the mSupply medical inventory control software",
@@ -19,7 +19,9 @@
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest --coverage",
     "build": "cd android && ./gradlew assembleRelease",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "export": "./dev_scripts/export.sh",
+    "uninstall": "./dev_scripts/uninstall.sh"
   },
   "jest": {
     "preset": "react-native"
