@@ -251,6 +251,7 @@ const v2Migrations = [
           });
           // Add the transaction batch into the new item batch
           newItemBatch.addTransactionBatchIfUnique(transactionBatch);
+          item.addBatch(newItemBatch);
           database.save('ItemBatch', newItemBatch);
           // Update the TransactionBatch with the newly created ItemBatch
           database.update('TransactionBatch', {
