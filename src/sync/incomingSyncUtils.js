@@ -322,6 +322,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'ItemBatch': {
+      // Not for this store
+      if (record.store_ID !== settings.get(THIS_STORE_ID)) break;
       const item = database.getOrCreate('Item', record.item_ID);
       const packSize = parseNumber(record.pack_size);
       internalRecord = {
