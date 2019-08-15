@@ -58,7 +58,7 @@ const EditableCell = React.memo(
       <View style={defaultStyles.cell}>
         <TextInput
           style={defaultStyles.editableCell}
-          value={value}
+          value={String(value)}
           onChangeText={onEdit}
           autoFocus={isFocused}
           onSubmitEditing={focusNextCell}
