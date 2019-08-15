@@ -1,76 +1,20 @@
+import { generateUUID } from 'react-native-database';
+
+import { SETTINGS_KEYS } from '../../settings';
+
 /**
- * mSupply Mobile
- * Sustainable Solutions (NZ) Ltd. 2019
+ * 2.3.6: An unavoidable situation around the time 2.3.5 was released, delete records
+ *       for item lines were synced to mobile. This caused issues having TransactionBatch
+ *       records with no related ItemBatch. Solution was to use migration code to
+ *       create ItemBatch records for these TransactionBatches with a quantity of zero.
  */
 
-import { AsyncStorage } from 'react-native';
-
-import { compareVersions } from './utilities';
-import { SETTINGS_KEYS } from './settings';
-import packageJson from '../package.json';
-
-const APP_VERSION_KEY = 'AppVersion';
-
-export const migrateDataToVersion = async (database, settings) => {
-  // Get current app version.
-  let fromVersion;
-  try {
-    // First check for the old app version in local storage.
-    fromVersion = await AsyncStorage.getItem(APP_VERSION_KEY);
-  } catch (error) {
-    // Silently ignore local storage errors.
-  }
-  // If app version not correctly retrieved from local storage, check settings.
-  if (!fromVersion || fromVersion.length === 0) {
-    fromVersion = settings.get(SETTINGS_KEYS.APP_VERSION);
-    // Migrate app version from settings to local storage.
-    AsyncStorage.setItem(APP_VERSION_KEY, fromVersion);
-    settings.delete(SETTINGS_KEYS.APP_VERSION);
-  }
-
-  // Get upgraded version.
-  const toVersion = packageJson.version;
-
-  // If version was in neither local storage or settings, app instance is a new install,
-  // no need to migrate.
-  if (fromVersion && fromVersion.length !== 0) {
-    // If version is latest, don't do anything.
-    if (fromVersion === toVersion) return;
-    // Do any required version update data migrations.
-    // eslint-disable-next-line no-restricted-syntax
-    for (const migration of dataMigrations) {
-      if (
-        compareVersions(fromVersion, migration.version) < 0 &&
-        compareVersions(toVersion, migration.version) >= 0
-      ) {
-        migration.migrate(database, settings);
-      }
-    }
-  }
-  // Record the new app version.
-  AsyncStorage.setItem(APP_VERSION_KEY, toVersion);
-};
-
-// All data migration functions should be kept in this array, in sequential order. Each migration
-// needs a 'version' key, denoting the version that migration will migrate to, and a 'migrate' key,
-// which is a function taking the database and the settings and performs the migration.
-const dataMigrations = [
-  {
-    version: '1.0.30',
-    migrate: (database, settings) => {
-      // 1.0.30 added the setting 'SYNC_IS_INITIALISED', where it previously relied on 'SYNC_URL'.
-      const syncURL = settings.get(SETTINGS_KEYS.SYNC_URL);
-      if (syncURL && syncURL.length > 0) {
-        settings.set(SETTINGS_KEYS.SYNC_IS_INITIALISED, 'true');
-      }
-    },
-  },
+const v2Migrations = [
   {
     version: '2.0.0-rc0',
     migrate: (database, settings) => {
       // Changed |SyncQueue| to expect no more than one 'SyncOut' record for every record in
       // database.
-
       // Assume that last SyncOut record is correct.
       const allRecords = database
         .objects('SyncOut')
@@ -188,6 +132,60 @@ const dataMigrations = [
       });
     },
   },
+  {
+    version: '2.3.6',
+    migrate: database => {
+      // Find all the transactions with no item batches, if any
+      const transactionBatches = database
+        .objects('TransactionBatch')
+        .filtered('itemBatch == $0', null)
+        .snapshot();
+      // For each of these item batchless-transaction batches, create a new
+      // 0 quantity item batch
+      transactionBatches.forEach(transactionBatch => {
+        if (!transactionBatch) return;
+        const {
+          id,
+          itemId,
+          batch,
+          expiryDate,
+          packSize,
+          costPrice,
+          sellPrice,
+          donor,
+        } = transactionBatch;
+        // TransactionBatch are not directly related, just hold a reference. Find
+        // the actual Item record.
+        const items = database.objects('Item').filtered('id == $0', itemId);
+        // Double checking the itemId in an ItemBatch is actually related to an item.
+        // Early exit if not, something else is wrong
+        if (!items.length > 0) return;
+        const item = items[0];
+        // Create the new ItemBatch using as much detail from the TransactionBatch
+        // as possible
+        database.write(() => {
+          const newItemBatch = database.update('ItemBatch', {
+            id: generateUUID(),
+            batch,
+            expiryDate,
+            packSize,
+            costPrice,
+            sellPrice,
+            donor,
+            item,
+          });
+          // Add the transaction batch into the new item batch
+          newItemBatch.addTransactionBatchIfUnique(transactionBatch);
+          database.save('ItemBatch', newItemBatch);
+          // Update the TransactionBatch with the newly created ItemBatch
+          database.update('TransactionBatch', {
+            id,
+            itemBatch: newItemBatch,
+          });
+        });
+      });
+    },
+  },
 ];
 
-export default dataMigrations;
+export default v2Migrations;
