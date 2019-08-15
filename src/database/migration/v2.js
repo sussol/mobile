@@ -3,10 +3,13 @@ import { generateUUID } from 'react-native-database';
 import { SETTINGS_KEYS } from '../../settings';
 
 /**
- * 2.3.6: An unavoidable situation around the time 2.3.5 was released, delete records
+ * 2.3.6-IC1: An unavoidable situation around the time 2.3.5 was released, delete records
  *       for item lines were synced to mobile. This caused issues having TransactionBatch
  *       records with no related ItemBatch. Solution was to use migration code to
  *       create ItemBatch records for these TransactionBatches with a quantity of zero.
+ *
+ * 2.3.6-IC1: Also we want to find and delete all foreign batches. Then run migration as per
+ *       above, then make sure to delete, deleted batches from sync out queue
  */
 
 const v2Migrations = [
@@ -133,8 +136,80 @@ const v2Migrations = [
     },
   },
   {
-    version: '2.3.6',
+    version: '2.3.6-IC1',
     migrate: database => {
+      // *** PART ONE, find foreign item line and delete
+
+      const itemBatches = this.database.objects('ItemBatch').snapshot();
+      const itemBatcheIDsToDelete = [];
+      // Assuming this exists everywhere
+      const inventoryAdjustmentName = database
+        .objects('Name')
+        .filtered('type = $0', 'inventory_adjustment')[0];
+
+      itemBatches.forEach(({ id, transactionBatches }) => {
+        // No transaction batches on item line should mean it's foreign
+        if (transactionBatches.length === 0) {
+          itemBatcheIDsToDelete.push(id);
+          return;
+        }
+        // supplier_invoice type transactions are all addition transactions
+        const additionTransactionBatches = transactionBatches.filtered(
+          'transaction.type = "supplier_invoice"'
+        );
+        // First try to find supplier invoice, if found this must be a local ItemBatch
+        const supplierInvoiceBatches = additionTransactionBatches.filtered(
+          'transaction.otherParty.id != $0',
+          inventoryAdjustmentName.id
+        );
+        if (supplierInvoiceBatches.length > 0) return;
+
+        // Find all 'addition' inventory adjustments
+        const additionInventoryAdjustemnetBatches = additionTransactionBatches.filtered(
+          'transaction.otherParty.id = $0',
+          inventoryAdjustmentName.id
+        );
+        // Look at all of them and see if any have StocktakeBatch with
+        for (let i = 0; i < additionInventoryAdjustemnetBatches.length; i += 1) {
+          const inventoryAdjustmentBatch = additionInventoryAdjustemnetBatches[i];
+          const inventoryAdjustment = inventoryAdjustmentBatch.transaction;
+          const stocktakes = database
+            .objects('Stocktake')
+            .filtered('additions.id = $0', inventoryAdjustment.id);
+          // Some mobile sites were desktop sites, and it's possible to create
+          // inventory adjustmenst without stock take. This check should be safe
+          // as we filter out transactions by store id
+          if (stocktakes.length < 1) return;
+          const stocktakeBatches = database
+            .objects('StocktakeBatch')
+            .filtered('stocktake.id = $0 && itemBatch.id = $1', stocktakes[0].id, id);
+          // If stocktake batch is indeed original one for item line it would have
+          // snapshotNumberOfPacks = 0 and some quantity increase
+          const snapShotIsZero = stocktakeBatches[0].snapshotNumberOfPacks === 0;
+          const hasStockAddition = stocktakeBatches[0].countedNumberOfPacks > 0;
+          if (snapShotIsZero && hasStockAddition) return;
+        }
+        itemBatcheIDsToDelete.push(id);
+      });
+
+      // Delete foreign item lines
+      database.write(() => {
+        itemBatcheIDsToDelete.forEach(id => {
+          database.delete('ItemBatch', database.objects('ItemLine').filtered('id = $0', id));
+        });
+      });
+
+      // *** PART TWO, delete sync outs for those Item Batches that were just deleted
+
+      database.write(() => {
+        itemBatcheIDsToDelete.forEach(id => {
+          const syncOuts = database.objects('SyncOut').filtered('recordId = $0', id);
+          if (syncOuts.length > 0) database.delete('SyncOut', syncOuts);
+        });
+      });
+
+      // *** PART THREE, add item line for all transaction batches without item line
+
       // Find all the transactions with no item batches, if any
       const transactionBatches = database
         .objects('TransactionBatch')
