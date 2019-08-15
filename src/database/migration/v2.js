@@ -3,12 +3,12 @@ import { generateUUID } from 'react-native-database';
 import { SETTINGS_KEYS } from '../../settings';
 
 /**
- * 2.3.6-IC1: An unavoidable situation around the time 2.3.5 was released, delete records
+ * 2.3.6-rc1: An unavoidable situation around the time 2.3.5 was released, delete records
  *       for item lines were synced to mobile. This caused issues having TransactionBatch
  *       records with no related ItemBatch. Solution was to use migration code to
  *       create ItemBatch records for these TransactionBatches with a quantity of zero.
  *
- * 2.3.6-IC1: Also we want to find and delete all foreign batches. Then run migration as per
+ * 2.3.6-rc1: Also we want to find and delete all foreign batches. Then run migration as per
  *       above, then make sure to delete, deleted batches from sync out queue
  */
 
@@ -136,7 +136,7 @@ const v2Migrations = [
     },
   },
   {
-    version: '2.3.6-IC1',
+    version: '2.3.6-rc1',
     migrate: database => {
       // *** PART ONE, find foreign item line and delete
 
