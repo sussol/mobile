@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet, Text } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/Ionicons';
+import FAIcon from 'react-native-vector-icons/FontAwesome';
+import whyDidYouRender from '@welldone-software/why-did-you-render';
 
 // import { GenericPage } from './GenericPage';
 
@@ -19,7 +21,10 @@ import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import { DataTable, Row, Cell, EditableCell, CheckableCell } from '../widgets/DataTable';
 
 import globalStyles, { dataTableColors } from '../globalStyles';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import HeaderCell from '../widgets/DataTable/HeaderCell';
+import HeaderRow from '../widgets/DataTable/HeaderRow';
+import RealmRow from '../widgets/DataTable/RealmRow';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -64,6 +69,12 @@ const columns = [
     alignText: 'center',
   },
 ];
+
+const SortNeutralIcon = <FAIcon name="sort" size={15} color="purple" />;
+const SortDescIcon = <FAIcon name="sort-desc" size={15} color="purple" />;
+const SortAscIcon = <FAIcon name="sort-asc" size={15} color="purple" />;
+
+whyDidYouRender(React);
 
 const CheckedComponent = () => (
   <Icon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
@@ -140,27 +151,38 @@ const reducer = (state, action) => {
   switch (action.type) {
     case 'editCell': {
       const { value, rowKey, columnKey } = action;
-      const { data, database } = state;
+      const { data, database, dataState } = state;
       const rowIndex = data.findIndex(row => keyExtractor(row) === rowKey);
 
       const transactionItem = data.find(row => keyExtractor(row) === rowKey);
+
       database.write(() => {
-        transactionItem.setTotalQuantity(database, parsePositiveInteger(value));
+        transactionItem.setTotalQuantity(database, parsePositiveInteger(Number(value)));
         database.save('TransactionItem', transactionItem);
       });
 
       // Immutable array editing so only the row/cell edited are re-rendered.
       // If you don't do this, every row will re-render as well as the cell
       // edited.
-      const newData = data.map((row, index) => {
-        if (index !== rowIndex) {
-          return row;
-        }
-        const rowEdited = { ...row };
-        rowEdited[columnKey] = transactionItem.totalQuantity;
-        return rowEdited;
+      // const newData = data.map((row, index) => {
+      //   if (index !== rowIndex) {
+      //     return row;
+      //   }
+      //   const rowEdited = { ...row };
+      //   rowEdited[columnKey] = transactionItem.totalQuantity;
+      //   return rowEdited;
+      // });
+      const newDataState = new Map(dataState);
+      const nextRowState = newDataState.get(rowKey);
+      newDataState.set(rowKey, {
+        ...nextRowState,
       });
-      return { ...state, data: newData };
+
+      // state.dataState = newDataState;
+
+      return {
+        ...state,
+      };
     }
     case 'reverseData':
       return { ...state, data: state.data.reverse() };
@@ -281,9 +303,8 @@ const deselectAll = () => ({
   type: 'deselectAll',
 });
 
-const sortData = (searchTerm, sortBy, isAscending) => ({
+const sortData = (sortBy, isAscending) => ({
   type: 'sortData',
-  searchTerm,
   sortBy,
   isAscending,
 });
@@ -305,7 +326,7 @@ export const CustomerInvoicePage = ({
   topRoute,
 }) => {
   const [tableState, dispatch] = useReducer(reducer, {
-    data: transaction.items,
+    data: transaction.items.slice(),
     database,
     dataState: new Map(),
     currentFocusedRowKey: null,
@@ -423,8 +444,8 @@ export const CustomerInvoicePage = ({
                 rowKey={rowKey}
                 columnKey={colKey}
                 editAction={editCell}
-                isFocused={colKey === rowState.focusedColumn}
-                disabled={rowState.disabled}
+                isFocused={colKey === (rowState && rowState.focusedColumn)}
+                disabled={rowState && rowState.disabled}
                 focusAction={focusCell}
                 focusNextAction={focusNext}
                 dispatch={dispatch}
@@ -436,8 +457,8 @@ export const CustomerInvoicePage = ({
                 key={colKey}
                 rowKey={rowKey}
                 columnKey={colKey}
-                isChecked={rowState.isSelected}
-                disabled={rowState.disabled}
+                isChecked={rowState && rowState.isSelected}
+                disabled={rowState && rowState.disabled}
                 CheckedComponent={CheckedComponent}
                 UncheckedComponent={UncheckedComponent}
                 DisabledCheckedComponent={DisabledCheckedComponent}
@@ -454,21 +475,18 @@ export const CustomerInvoicePage = ({
     []
   );
 
-  const renderRow = useCallback(
-    listItem => {
-      const { item, index } = listItem;
-      const rowKey = keyExtractor(item);
-      return (
-        <Row
-          rowData={data[index]}
-          rowState={dataState.get(rowKey)}
-          rowKey={rowKey}
-          renderCells={renderCells}
-        />
-      );
-    },
-    [data, dataState, renderCells]
-  );
+  const renderRow = useCallback(listItem => {
+    const { item, index } = listItem;
+    const rowKey = keyExtractor(item);
+    return (
+      <RealmRow
+        realmObject={data[index]}
+        rowState={dataState.get(rowKey)}
+        rowKey={rowKey}
+        renderCells={renderCells}
+      />
+    );
+  }, [data, dataState, renderCells]);
 
   const renderModalContent = () => {
     switch (modalKey) {
@@ -541,17 +559,28 @@ export const CustomerInvoicePage = ({
     </View>
   );
 
-  const renderHeader = () => {
-    return (
-      <Row>
-        {columns.map(column => (
-          <TouchableOpacity onPressAction={() => sortData} dispatch={dispatch}>
-            <Text>{column.title}</Text>
-          </TouchableOpacity>
-        ))}
-      </Row>
-    );
-  };
+  const renderHeader = () => (
+    <HeaderRow
+      renderCells={() =>
+        columns.map(column => (
+          <HeaderCell
+            key={column.key}
+            title={column.title}
+            SortAscComponent={SortAscIcon}
+            SortDescComponent={SortDescIcon}
+            SortNeutralComponent={SortNeutralIcon}
+            columnKey={column.key}
+            onPressAction={sortData}
+            dispatch={dispatch}
+          />
+        ))
+      }
+    />
+  );
+
+  // <TouchableOpacity onPressAction={() => sortData} dispatch={dispatch}>
+  //   <Text>{column.title}</Text>
+  // </TouchableOpacity>
 
   return (
     <View style={[defaultStyles.pageContentContainer, pageStyles.pageContentContainer]}>
@@ -584,6 +613,7 @@ export const CustomerInvoicePage = ({
           data={data}
           extraData={dataState}
           renderRow={renderRow}
+          renderHeader={renderHeader}
           keyExtractor={keyExtractor}
         />
         <BottomConfirmModal
