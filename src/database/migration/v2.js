@@ -183,6 +183,8 @@ const v2Migrations = [
           const stocktakeBatches = database
             .objects('StocktakeBatch')
             .filtered('stocktake.id = $0 && itemBatch.id = $1', stocktakes[0].id, id);
+          // eslint-disable-next-line no-continue
+          if (stocktakeBatches.length < 1) continue;
           // If stocktake batch is indeed original one for item line it would have
           // snapshotNumberOfPacks = 0 and some quantity increase
           const snapShotIsZero = stocktakeBatches[0].snapshotNumberOfPacks === 0;
@@ -255,6 +257,43 @@ const v2Migrations = [
           database.save('ItemBatch', newItemBatch);
           // Update the TransactionBatch with the newly created ItemBatch
           database.update('TransactionBatch', {
+            id,
+            itemBatch: newItemBatch,
+          });
+        });
+      });
+
+      // *** PART FOUR, delete all stocktakeBatches without item line
+
+      // Find all the stocktake batches with no item batches, if any
+      const stocktakeBatches = database
+        .objects('StocktakeBatch')
+        .filtered('itemBatch == $0', null)
+        .snapshot();
+      // For each of these item batchless-stocktake batches, create a new
+      // 0 quantity item batch
+      stocktakeBatches.forEach(stocktakeBatch => {
+        if (!stocktakeBatch) return;
+        const { id, batch, expiryDate, packSize, costPrice, sellPrice } = stocktakeBatch;
+
+        // Find item
+        const { item } = database.objects('StocktakeItem').filtered('batches.id == $0', id)[0];
+        // Create the new ItemBatch using as much detail from the TransactionBatch
+        // as possible
+        database.write(() => {
+          const newItemBatch = database.update('ItemBatch', {
+            id: generateUUID(),
+            batch,
+            expiryDate,
+            packSize,
+            costPrice,
+            sellPrice,
+            item,
+          });
+          item.addBatch(newItemBatch);
+          database.save('ItemBatch', newItemBatch);
+          // Update the TransactionBatch with the newly created ItemBatch
+          database.update('StocktakeBatch', {
             id,
             itemBatch: newItemBatch,
           });
