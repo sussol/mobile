@@ -9,7 +9,6 @@ import { View, StyleSheet, Text } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
-import whyDidYouRender from '@welldone-software/why-did-you-render';
 
 // import { GenericPage } from './GenericPage';
 
@@ -74,7 +73,6 @@ const SortNeutralIcon = <FAIcon name="sort" size={15} color="purple" />;
 const SortDescIcon = <FAIcon name="sort-desc" size={15} color="purple" />;
 const SortAscIcon = <FAIcon name="sort-asc" size={15} color="purple" />;
 
-whyDidYouRender(React);
 
 const CheckedComponent = () => (
   <Icon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />

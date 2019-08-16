@@ -30,7 +30,6 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
-Row.whyDidYouRender = true;
 
 export default React.memo(Row, (prevProps, nextProps) => {
   const { rowData, rowState, rowKey, renderCells } = prevProps;
