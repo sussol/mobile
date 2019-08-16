@@ -5,25 +5,27 @@
 
 import React, { useState, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/Ionicons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
-
-// import { GenericPage } from './GenericPage';
 
 import { createRecord } from '../database';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
-import { DataTable, Row, Cell, EditableCell, CheckableCell } from '../widgets/DataTable';
+import {
+  DataTable,
+  Row,
+  Cell,
+  EditableCell,
+  CheckableCell,
+  HeaderCell,
+  HeaderRow,
+} from '../widgets/DataTable';
 
 import globalStyles, { dataTableColors } from '../globalStyles';
-
-import HeaderCell from '../widgets/DataTable/HeaderCell';
-import HeaderRow from '../widgets/DataTable/HeaderRow';
-import RealmRow from '../widgets/DataTable/RealmRow';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -324,6 +326,7 @@ export const CustomerInvoicePage = ({
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
   const { data, dataState, searchTerm, sortBy, isAscending } = tableState;
   let isSelection = false;
+
   // eslint-disable-next-line no-restricted-syntax
   for (const row of dataState.values()) {
     if (row.isSelected) {
@@ -566,10 +569,6 @@ export const CustomerInvoicePage = ({
     />
   );
 
-  // <TouchableOpacity onPressAction={() => sortData} dispatch={dispatch}>
-  //   <Text>{column.title}</Text>
-  // </TouchableOpacity>
-
   return (
     <View style={[defaultStyles.pageContentContainer, pageStyles.pageContentContainer]}>
       <View style={[defaultStyles.container, pageStyles.container]}>
@@ -691,59 +690,3 @@ export function checkForFinaliseError(customerInvoice) {
 
   return null;
 }
-
-// data={data}
-// refreshData={refreshData}
-// renderCell={renderCell}
-// renderTopLeftComponent={renderPageInfo}
-// renderTopRightComponent={renderButtons}
-// onSelectionChange={onSelectionChange}
-// onEndEditing={onEndEditing}
-// defaultSortKey={dataFilters.sortBy}
-// defaultSortDirection={dataFilters.isAscending ? 'ascending' : 'descending'}
-// columns= {columns}
-// dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-// finalisableDataType="Transaction" database={database}
-// selection={selection}
-// {...genericTablePageStyles}
-// topRoute={topRoute}
-
-// /**
-//  * Respond to the user editing the number in the number received column.
-//  *
-//  * @param   {string}  key              Should always be |totalQuantity|.
-//  * @param   {object}  transactionItem  The transaction item from the row being edited.
-//  * @param   {string}  newValue         The value the user entered in the cell.
-//  * @return  {none}
-//  */
-// const onEndEditing = (key, transactionItem, newValue) => {
-//   if (key !== 'totalQuantity') return;
-//   database.write(() => {
-//     transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
-//     database.save('TransactionItem', transactionItem);
-//   });
-// };
-
-// const onDeleteConfirm = () => {
-//   database.write(() => {
-//     transaction.removeItemsById(database, selection);
-//     database.save('Transaction', transaction);
-//   });
-//   setPageState(...pageState, { selection: [] });
-// };
-
-// const onDeleteCancel = () => {
-//   setPageState(...pageState, { selection: [] });
-// };
-
-// const onSelectionChange = newSelection => {
-//   setPageState(...pageState, { selection: newSelection });
-// };
-
-// const openModal = key => {
-//   setPageState(...pageState, { modalKey: key, modalIsOpen: true });
-// };
-
-// const closeModal = () => {
-//   setPageState(...pageState, { modalIsOpen: false });
-// };

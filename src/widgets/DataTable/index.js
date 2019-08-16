@@ -3,6 +3,8 @@ import EditableCell from './EditableCell';
 import CheckableCell from './CheckableCell';
 import TouchableCell from './TouchableCell';
 import Row from './Row';
+import HeaderRow from './HeaderRow';
+import HeaderCell from './HeaderCell';
 import DataTable from './DataTable';
 
-export { DataTable, Cell, EditableCell, CheckableCell, TouchableCell, Row };
+export { DataTable, Cell, EditableCell, CheckableCell, TouchableCell, Row, HeaderRow, HeaderCell };
