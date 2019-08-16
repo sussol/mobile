@@ -73,7 +73,6 @@ const SortNeutralIcon = <FAIcon name="sort" size={15} color="purple" />;
 const SortDescIcon = <FAIcon name="sort-desc" size={15} color="purple" />;
 const SortAscIcon = <FAIcon name="sort-asc" size={15} color="purple" />;
 
-
 const CheckedComponent = () => (
   <Icon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
 );
@@ -148,10 +147,8 @@ const reducer = (state, action) => {
 
   switch (action.type) {
     case 'editCell': {
-      const { value, rowKey, columnKey } = action;
+      const { value, rowKey } = action;
       const { data, database, dataState } = state;
-      const rowIndex = data.findIndex(row => keyExtractor(row) === rowKey);
-
       const transactionItem = data.find(row => keyExtractor(row) === rowKey);
 
       database.write(() => {
@@ -159,27 +156,17 @@ const reducer = (state, action) => {
         database.save('TransactionItem', transactionItem);
       });
 
-      // Immutable array editing so only the row/cell edited are re-rendered.
-      // If you don't do this, every row will re-render as well as the cell
-      // edited.
-      // const newData = data.map((row, index) => {
-      //   if (index !== rowIndex) {
-      //     return row;
-      //   }
-      //   const rowEdited = { ...row };
-      //   rowEdited[columnKey] = transactionItem.totalQuantity;
-      //   return rowEdited;
-      // });
+      // Change object reference of row in `dataState` to trigger rerender of that row.
+      // Realm object reference in `data` can't be affected in any tidy manner.
       const newDataState = new Map(dataState);
       const nextRowState = newDataState.get(rowKey);
       newDataState.set(rowKey, {
         ...nextRowState,
       });
 
-      // state.dataState = newDataState;
-
       return {
         ...state,
+        dataState: newDataState,
       };
     }
     case 'reverseData':
@@ -473,18 +460,21 @@ export const CustomerInvoicePage = ({
     []
   );
 
-  const renderRow = useCallback(listItem => {
-    const { item, index } = listItem;
-    const rowKey = keyExtractor(item);
-    return (
-      <RealmRow
-        realmObject={data[index]}
-        rowState={dataState.get(rowKey)}
-        rowKey={rowKey}
-        renderCells={renderCells}
-      />
-    );
-  }, [data, dataState, renderCells]);
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <Row
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          renderCells={renderCells}
+        />
+      );
+    },
+    [data, dataState, renderCells]
+  );
 
   const renderModalContent = () => {
     switch (modalKey) {
