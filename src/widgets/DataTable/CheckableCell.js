@@ -1,5 +1,7 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { StyleSheet } from 'react-native';
 
 import TouchableCell from './TouchableCell';
 
@@ -36,6 +38,7 @@ const CheckableCell = React.memo(
     onCheckAction,
     onUncheckAction,
     dispatch,
+    containerStyle,
   }) => {
     console.log(`- CheckableCell: ${rowKey},${columnKey}`);
 
@@ -55,10 +58,18 @@ const CheckableCell = React.memo(
         columnKey={columnKey}
         onPressAction={onPressAction}
         dispatch={dispatch}
+        containerStyle={containerStyle}
       />
     );
   }
 );
+
+const defaultStyles = StyleSheet.create({
+  containerStyle: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+});
 
 CheckableCell.propTypes = {
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -72,6 +83,7 @@ CheckableCell.propTypes = {
   onCheckAction: PropTypes.func.isRequired,
   onUncheckAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
+  containerStyle: PropTypes.object,
 };
 
 CheckableCell.defaultProps = {
@@ -79,6 +91,7 @@ CheckableCell.defaultProps = {
   DisabledCheckedComponent: null,
   DisabledUncheckedComponent: null,
   isDisabled: false,
+  containerStyle: defaultStyles.containerStyle,
 };
 
 export default CheckableCell;
