@@ -38,4 +38,33 @@ export const sortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
   return sortedData;
 };
 
+/**
+ * Sorts an array of objects, returning a new array.
+ * Sorts strings, numbers, dates or booleans.
+ * Types: 'string', 'number', 'date', 'boolean'.
+ * @param {Array}   data          Array of objects to sort
+ * @param {String}  sortBy        Key for the field to sort by
+ * @param {String}  sortDataType  The type of data to sort
+ * @param {Boolean} isAscending   True if ascending, false otherwise.
+ */
+export const newSortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
+  switch (sortDataType) {
+    case 'string':
+      if (isAscending) return [...data.sort((a, b) => b[sortBy].localeCompare(a[sortBy]))];
+      return [...data.sort((a, b) => a[sortBy].localeCompare(b[sortBy]))];
+    case 'number':
+      // Casts to number to cover cases where the property is a string (e.g. |serialNumber|).
+      if (isAscending) return [...data.sort((a, b) => Number(a[sortBy]) - Number(b[sortBy]))];
+      return [...data.sort((a, b) => Number(b[sortBy]) - Number(a[sortBy]))];
+    case 'date':
+      if (isAscending) return [...data.sort((a, b) => new Date(b[sortBy]) - new Date(a[sortBy]))];
+      return [...data.sort((a, b) => new Date(a[sortBy]) - new Date(b[sortBy]))];
+    case 'boolean':
+      if (isAscending) return [...data.sort((a, b) => b[sortBy] - a[sortBy])];
+      return [...data.sort((a, b) => a[sortBy] - b[sortBy])];
+    default:
+      return [...data];
+  }
+};
+
 export default sortDataBy;
