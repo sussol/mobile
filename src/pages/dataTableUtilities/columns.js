@@ -5,10 +5,12 @@
 
 import { tableStrings } from '../../localization';
 
-const customerInvoice = ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'];
+const PAGE_COLUMN_WIDTHS = {
+  customerInvoice: [2, 4, 2, 2, 1],
+};
 
 const PAGE_COLUMNS = {
-  customerInvoice,
+  customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
 };
 
 const COLUMNS = () => ({
@@ -43,8 +45,9 @@ const COLUMNS = () => ({
   },
 });
 
-const getColumns = (page, widths) => {
+const getColumns = page => {
   const columnKeys = PAGE_COLUMNS[page];
+  const widths = PAGE_COLUMN_WIDTHS[page];
   if (!columnKeys) return [];
   if (!(columnKeys.length === widths.length)) return [];
   const columns = COLUMNS();
