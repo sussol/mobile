@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 
 import { createRecord } from '../database';
-import { formatDate, parsePositiveInteger, debounce } from '../utilities';
+import { formatDate, parsePositiveInteger, debounce, newSortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
@@ -249,6 +249,19 @@ const reducer = (state, action) => {
         }
       }
       return { ...state, dataState: newDataState };
+    }
+    case 'sortBy': {
+      const { data, isAscending } = state;
+      const { sortBy } = action;
+      const columnKeyToDataType = {
+        itemCode: 'string',
+        itemName: 'string',
+        availableQuantity: 'number',
+        totalQuantity: 'number',
+      };
+
+      const newData = newSortDataBy(data, sortBy, columnKeyToDataType[sortBy], isAscending);
+      return { ...state, data: newData, sortBy, isAscending: !isAscending };
     }
     default:
       return state;
