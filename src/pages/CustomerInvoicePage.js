@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useState, useReducer, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -44,9 +44,8 @@ import {
   DisabledUncheckedComponent,
 } from '../widgets/icons';
 
-import getReducer from './dataTableUtilities/reducer/getReducer';
-import getColumns from './dataTableUtilities/columns';
 import globalStyles from '../globalStyles';
+import usePageReducer from '../hooks/usePageReducer';
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -70,16 +69,13 @@ export const CustomerInvoicePage = ({
   database,
   genericTablePageStyles: pageStyles,
   runWithLoadingIndicator,
+  routeName,
 }) => {
-  const reducer = useMemo(() => getReducer('customerInvoice'), []);
-  const columns = useMemo(() => getColumns('customerInvoice', [2, 4, 2, 2, 1]), []);
-
-  const [tableState, dispatch] = useReducer(reducer, {
+  const [tableState, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     backingData: transaction.items,
     data: transaction.items.slice(),
     database,
     keyExtractor,
-    columns,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
@@ -91,7 +87,7 @@ export const CustomerInvoicePage = ({
   const [modalKey, setModalKey] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-  const { data, dataState, sortBy, isAscending } = tableState;
+  const { data, dataState, sortBy, isAscending, columns } = tableState;
   let isSelection = false;
 
   // eslint-disable-next-line no-restricted-syntax
@@ -150,7 +146,6 @@ export const CustomerInvoicePage = ({
     dispatch(filterData(searchTerm));
   };
 
-  const instantDebouncedDispatch = useMemo(() => debounce(dispatch, 250, true), []);
   const searchBarDispatch = useMemo(() => debounce(onSearchChange, 500), []);
 
   const renderPageInfo = () => {
@@ -407,7 +402,7 @@ CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-
+  routeName: PropTypes.string.isRequired,
   transaction: PropTypes.object.isRequired,
 };
 
