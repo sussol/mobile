@@ -7,8 +7,6 @@ import React, { useState, useReducer, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
-import Icon from 'react-native-vector-icons/Ionicons';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
 
 import { createRecord } from '../database';
 import { formatDate, debounce } from '../utilities';
@@ -36,32 +34,25 @@ import {
   filterData,
 } from './dataTableUtilities/actions';
 
+import {
+  SortAscIcon,
+  SortNeutralIcon,
+  SortDescIcon,
+  CheckedComponent,
+  UncheckedComponent,
+  DisabledCheckedComponent,
+  DisabledUncheckedComponent,
+} from '../widgets/icons';
+
 import getReducer from './dataTableUtilities/reducer/getReducer';
 import getColumns from './dataTableUtilities/columns';
-import globalStyles, { dataTableColors } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
   ITEM_SELECT: 'itemSelect',
 };
-
-const SortNeutralIcon = <FAIcon name="sort" size={15} color="purple" />;
-const SortDescIcon = <FAIcon name="sort-desc" size={15} color="purple" />;
-const SortAscIcon = <FAIcon name="sort-asc" size={15} color="purple" />;
-
-const CheckedComponent = () => (
-  <Icon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
-);
-const UncheckedComponent = () => (
-  <Icon name="md-radio-button-off" size={15} color={dataTableColors.checkableCellUnchecked} />
-);
-const DisabledCheckedComponent = () => (
-  <Icon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
-);
-const DisabledUncheckedComponent = () => (
-  <Icon name="md-radio-button-off" size={15} color={dataTableColors.checkableCellDisabled} />
-);
 
 const keyExtractor = item => item.id;
 
@@ -82,11 +73,13 @@ export const CustomerInvoicePage = ({
 }) => {
   const reducer = useMemo(() => getReducer('customerInvoice'), []);
   const columns = useMemo(() => getColumns('customerInvoice', [2, 4, 2, 2, 1]), []);
+
   const [tableState, dispatch] = useReducer(reducer, {
     backingData: transaction.items,
     data: transaction.items.slice(),
     database,
     keyExtractor,
+    columns,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
@@ -94,6 +87,7 @@ export const CustomerInvoicePage = ({
     sortBy: '',
     isAscending: true,
   });
+
   const [modalKey, setModalKey] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -370,7 +364,7 @@ export const CustomerInvoicePage = ({
               onChange={searchBarDispatch}
               style={pageStyles.searchBar}
               color="blue"
-              placeholder="fuck off"
+              placeholder=""
             />
           </View>
           <View
