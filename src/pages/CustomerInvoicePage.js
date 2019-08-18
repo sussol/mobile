@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useState, useReducer, useCallback } from 'react';
+import React, { useState, useReducer, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 
 import { createRecord } from '../database';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
+import { formatDate, parsePositiveInteger, debounce } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
@@ -27,7 +27,6 @@ import {
 
 import globalStyles, { dataTableColors } from '../globalStyles';
 
-const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
@@ -310,7 +309,6 @@ export const CustomerInvoicePage = ({
   database,
   genericTablePageStyles: pageStyles,
   runWithLoadingIndicator,
-  topRoute,
 }) => {
   const [tableState, dispatch] = useReducer(reducer, {
     data: transaction.items.slice(),
@@ -324,7 +322,7 @@ export const CustomerInvoicePage = ({
   const [modalKey, setModalKey] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-  const { data, dataState, searchTerm, sortBy, isAscending } = tableState;
+  const { data, dataState, sortBy, isAscending } = tableState;
   let isSelection = false;
 
   // eslint-disable-next-line no-restricted-syntax
@@ -550,23 +548,33 @@ export const CustomerInvoicePage = ({
     </View>
   );
 
-  const renderHeader = () => (
-    <HeaderRow
-      renderCells={() =>
-        columns.map(column => (
-          <HeaderCell
-            key={column.key}
-            title={column.title}
-            SortAscComponent={SortAscIcon}
-            SortDescComponent={SortDescIcon}
-            SortNeutralComponent={SortNeutralIcon}
-            columnKey={column.key}
-            onPressAction={sortData}
-            dispatch={dispatch}
-          />
-        ))
-      }
-    />
+  const instantDebouncedDispatch = useMemo(() => debounce(dispatch, 250, true), []);
+
+  const renderHeader = useCallback(
+    () => (
+      <HeaderRow
+        renderCells={() =>
+          columns.map(({ key, title, sortable }) => {
+            const sortDirection = isAscending ? 'ASC' : 'DESC';
+            const directionForThisColumn = key === sortBy ? sortDirection : null;
+            return (
+              <HeaderCell
+                key={key}
+                title={title}
+                SortAscComponent={SortAscIcon}
+                SortDescComponent={SortDescIcon}
+                SortNeutralComponent={SortNeutralIcon}
+                columnKey={key}
+                onPressAction={sortable ? sortData : null}
+                dispatch={instantDebouncedDispatch}
+                sortDirection={directionForThisColumn}
+              />
+            );
+          })
+        }
+      />
+    ),
+    [sortBy, isAscending]
   );
 
   return (
@@ -627,7 +635,7 @@ CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  topRoute: PropTypes.bool.isRequired,
+
   transaction: PropTypes.object.isRequired,
 };
 
