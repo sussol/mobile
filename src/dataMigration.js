@@ -209,19 +209,19 @@ const dataMigrations = [
           // Ensure there are transaction batches before trying to find the transaction.
           if (!(transactionBatches && transactionBatches.length !== 0)) return;
           // There should only be one supplier invoice related to the item batch,
-          // in case somethings wrong and there are two, use the last one iterated over.
+          // in case somethings wrong and there are more, use the first one.
           // Also ensure it is finalised. If it isn't, the supplier will be set when confirmed.
-          const supplierInvoice = transactionBatches.find(transactionBatch => {
-            const { transaction } = transactionBatch;
-            if (!transaction) return false;
-            const { type, status } = transaction;
-            if (!(type && status)) return false;
-            if (type !== supplierInvoiceType) return false;
-            if (status !== finalisedStatus) return false;
-            return true;
-          });
-          if (!supplierInvoice) return;
-          const { otherParty: supplier } = supplierInvoice;
+          const supplierInvoiceTransactionBatches = transactionBatches.filtered(
+            'transaction.type = $0 && transaction.status = $1',
+            supplierInvoiceType,
+            finalisedStatus
+          );
+          // If there aren't any transaction batches, exit.
+          if (!(supplierInvoiceTransactionBatches.length > 0)) return;
+          const { transaction } = supplierInvoiceTransactionBatches[0];
+          // If somehow the transaction batch doesn't have a transaction, return
+          if (!transaction) return;
+          const { otherParty: supplier } = transaction;
           if (!supplier) return;
           database.update('ItemBatch', { id, supplier });
         });
