@@ -5,7 +5,7 @@ import { debounce } from '../utilities/index';
 
 /**
  * useReducer wrapper for pages within the app. Creates a
- * composed reducer through getReducer for a paraticular
+ * composed reducer through getReducer for a particular
  * page as well as fetching the required columns and inserting
  * them into the initial state of the component.
  *
