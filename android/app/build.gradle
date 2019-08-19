@@ -100,6 +100,12 @@ def getAppVersion() {
     return packageJson["version"]
 }
 
+def getAppName() {
+    def inputFile = new File("../package.json")
+    def packageJson = new JsonSlurper().parseText(inputFile.text)
+    return packageJson["name"]
+}
+
 def (appVersion, provisional) = getAppVersion().tokenize('-rc')
 def (major, minor, patch) = appVersion.tokenize('.')
 def appVersionCode = ((major.toInteger() * 10000000) + (minor.toInteger() * 100000) + (patch.toInteger() * 100) + (provisional != null ? provisional.toInteger() : 99))
@@ -107,7 +113,7 @@ def appVersionCode = ((major.toInteger() * 10000000) + (minor.toInteger() * 1000
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-
+    setProperty("archivesBaseName", getAppName() + "-" + getAppVersion())
     defaultConfig {
         applicationId "com.msupplymobile"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -139,6 +145,7 @@ android {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
+
         }
     }
     // applicationVariants are e.g. debug, release
@@ -151,7 +158,7 @@ android {
             if (abi != null) {  // null for the universal-debug, universal-release variants
                 output.versionCodeOverride =
                         versionCodes.get(abi) * 1048576 + defaultConfig.versionCode
-            }
+            }   
         }
     }
 }
