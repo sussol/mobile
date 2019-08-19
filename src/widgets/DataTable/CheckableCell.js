@@ -23,6 +23,7 @@ import TouchableCell from './TouchableCell';
  * @param {func} onUncheckAction Action creator for handling unchecking of this cell.
  *                          `(rowKey, columnKey) => {...}`
  * @param {func} dispatch Reducer dispatch callback for handling actions
+ * @param {Object} containerStyle Style object for the containing Touchable component
  */
 
 const CheckableCell = React.memo(
