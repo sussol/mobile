@@ -57,14 +57,17 @@ export const Step = memo(props => {
   // Each stepKey used with this component has a placeholder/error string in getLocalisation.
   const { placeholder, errorString } = getLocalisation({ stepKey });
   // Calculate the errorState in this component after fetching modalData. If there is no
-  // modalData (there are no options to choose from), display the error string and a new icon.
-  const errorState = !(modalData && modalData.length) && status === 'CURRENT' && getModalData;
-  const Container = errorState || status === 'INCOMPLETE' ? View : TouchableOpacity;
+  // modalData and the status is CURRENT, the step is in an error state - display the
+  // error string and a new icon.
+  const internalStatus =
+    !(modalData && modalData.length) && status === 'CURRENT' && getModalData ? 'ERROR' : status;
+  const Container =
+    internalStatus === 'ERROR' || internalStatus === 'INCOMPLETE' ? View : TouchableOpacity;
   // Fetch modalData when the status is current and store it in state.
   useEffect(() => {
     if (status !== 'CURRENT' || !getModalData) return;
     setModalData(getModalData());
-  }, [status, errorState]);
+  }, [status, internalStatus]);
 
   const onSelection = () => {
     onPress({ selection: modalData, key: stepKey });
@@ -76,37 +79,36 @@ export const Step = memo(props => {
   // complete or a orange arrow on the current step.
   const StepIcon = () => {
     const { iconContainerStyle } = localStyles;
-    let icon;
-    if (errorState) icon = <Ionicons name="ios-close" color="red" size={30} />;
-    else if (status === 'INCOMPLETE') icon = null;
-    else if (status === 'COMPLETE') icon = <Ionicons name="md-checkmark" color="green" size={30} />;
-    else if (status === 'CURRENT') {
-      icon = <Ionicons name="md-arrow-round-forward" color={SUSSOL_ORANGE} size={30} />;
-    }
+    const icons = {
+      ERROR: <Ionicons name="ios-close" color="red" size={30} />,
+      COMPLETE: <Ionicons name="md-checkmark" color="green" size={30} />,
+      CURRENT: <Ionicons name="md-arrow-round-forward" color={SUSSOL_ORANGE} size={30} />,
+      INCOMPLETE: null,
+    };
 
-    return <View style={iconContainerStyle}>{icon}</View>;
+    return <View style={iconContainerStyle}>{icons[internalStatus]}</View>;
   };
 
   // Render a pencil on text editing or a down arrow for list selections.
   const EditIcon = () => {
-    if (errorState) return null;
-    return (
-      <View>
-        {type === 'input' && <FontAwesome name="pencil" size={20} color="white" />}
-        {type !== 'input' && <Ionicons name="ios-arrow-down" size={20} color="white" />}
-      </View>
-    );
+    if (internalStatus === 'ERROR') return null;
+    const PencilIcon = <FontAwesome name="pencil" size={20} color="white" />;
+    const ArrowDownIcon = <Ionicons name="ios-arrow-down" size={20} color="white" />;
+    return <View>{type === 'input' ? PencilIcon : ArrowDownIcon}</View>;
   };
 
   // Render the error string if in an error state, the title if there is
   // data/the step is complete and a placeholder otherwise.
   const TextDisplay = () => {
     const { textContainerStyle, textStyle } = localStyles;
+    // Display either data[field] if field was passed, or just data if it is a string.
     const text = (data && data[field]) || data;
+    // If in an ERROR state, return the error string.
+    const error = internalStatus === 'ERROR' && errorString;
     return (
       <View style={textContainerStyle}>
         <Text numberOfLines={1} ellipsizeMode="tail" style={textStyle}>
-          {(errorState && errorString) || text || placeholder}
+          {error || text || placeholder}
         </Text>
       </View>
     );
