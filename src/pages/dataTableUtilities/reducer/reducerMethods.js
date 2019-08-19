@@ -102,7 +102,7 @@ export const editTotalQuantity = (state, action) => {
 };
 
 /**
- * Focus' the next cell, after the current cell provided in action
+ * Focus the next appropriate cell after the current cell provided in action
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
  */
