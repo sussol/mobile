@@ -648,7 +648,6 @@ CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-
   transaction: PropTypes.object.isRequired,
 };
 
