@@ -36,20 +36,23 @@ const getLocalisation = ({ stepKey }) => {
 /**
  * Component rendering a sequential step in a process, according to it's
  * current status.
- * COMPLETE = The step is complete, render a tick and is pressable.
- * CURRENT = The current step to complete, render an arrow and is pressable.
+ *
+ * COMPLETE   = The step is complete, render a tick and is pressable.
+ * CURRENT    = The current step to complete, render an arrow and is pressable.
  * INCOMPLETE = A future step, no icon and no pressable.
- * ERROR = A step not able to be completed, render an X and is not pressable.
- * @prop {Object} data - the data object the step represents. Used for displaying details
- * @prop {String} field - The field in the data object to display
- * @prop {String} type  - The type of step, select (dropdown) or input (text field).
- * @prop {String} stepKey - A string key for this step.
- * @prop {String} status - The status of this step (as above)
- * @prop {Func}   getModalData - Callback for fetching this steps modal data
- * @prop {Func}   onPress      - Callback for pressing this step (opens modal)
- * @state modalData - Data to pass to the modal on opening and for determining if the
- * current step is in an error state. Fetched when the status of this step changes,
- * and stored for performance as to not re-fetch every re-render
+ * ERROR      = A step not able to be completed, render an X and is not pressable.
+ *
+ * @prop  {Object} data          The data object the step represents. Used for displaying details
+ * @prop  {String} field         The field in the data object to display
+ * @prop  {String} type          The type of step, select (dropdown) or input (text field).
+ * @prop  {String} stepKey       A string key for this step.
+ * @prop  {String} status        The status of this step (as above)
+ * @prop  {Func}   getModalData  Callback for fetching this steps modal data
+ * @prop  {Func}   onPress       Callback for pressing this step (opens modal)
+ * @state {Array} modalData      Data to pass to the modal on opening and for determining if the
+ *                               current step is in an error state. Fetched when the status of this
+ *                               step changes, and stored for performance as to not re-fetch every
+ *                               re-render.
  */
 export const Step = memo(props => {
   const [modalData, setModalData] = useState([]);
