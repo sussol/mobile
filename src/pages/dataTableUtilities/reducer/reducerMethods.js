@@ -200,6 +200,7 @@ export const deselectAll = state => {
   }
   return { ...state, dataState: newDataState };
 };
+
 /**
  * Focuses the cell provided in the action passed
  * @param {Object} state  The current state
