@@ -2,6 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, Text, StyleSheet, TouchableOpacityPropTypes } from 'react-native';
 
+/**
+ * Renders a cell with value (or renderChildren) that is touchable
+ *
+ * @param {string|number} value The value to render in cell
+ * @param {string|number} rowKey Unique key associated to row cell is in
+ * @param {string|number} columnKey Unique key associated to column cell is in
+ * @param {func} onPressAction Action creator for handling focusing of this cell.
+ *                          `(rowKey, columnKey) => {...}`
+ * @param {func} dispatch Reducer dispatch callback for handling actions
+ * @param {func} renderChildren Reducer dispatch callback for handling actions
+ * @param {func} TouchableComponent Override containing element of TouchableCell
+ * Additional props spread into TouchableComponent
+ */
 const TouchableCell = React.memo(
   ({
     value,

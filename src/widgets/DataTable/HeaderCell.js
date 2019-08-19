@@ -7,12 +7,12 @@ import { TouchableOpacity, Text, StyleSheet, View, TouchableOpacityPropTypes } f
  */
 const HeaderCell = React.memo(
   ({
+    title,
+    columnKey,
     sortDirection,
     SortAscComponent,
     SortDescComponent,
     SortNeutralComponent,
-    title,
-    columnKey,
     onPressAction,
     dispatch,
     ...otherProps
