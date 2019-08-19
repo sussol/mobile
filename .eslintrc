@@ -19,6 +19,7 @@
         "objects": "always-multiline"
       }
     ],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "function-paren-newline": "off",
     "implicit-arrow-linebreak": "off",
     "indent": ["error", 2, { "SwitchCase": 1 }],

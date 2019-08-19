@@ -3,20 +3,29 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useState, useReducer, useCallback } from 'react';
 import PropTypes from 'prop-types';
-
-import { View } from 'react-native';
-
-import { GenericPage } from './GenericPage';
+import { View, StyleSheet } from 'react-native';
+import { SearchBar } from 'react-native-ui-components';
+import Icon from 'react-native-vector-icons/Ionicons';
+import FAIcon from 'react-native-vector-icons/FontAwesome';
 
 import { createRecord } from '../database';
 import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
 import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+import {
+  DataTable,
+  Row,
+  Cell,
+  EditableCell,
+  CheckableCell,
+  HeaderCell,
+  HeaderRow,
+} from '../widgets/DataTable';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { dataTableColors } from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
 const MODAL_KEYS = {
@@ -25,125 +34,326 @@ const MODAL_KEYS = {
   ITEM_SELECT: 'itemSelect',
 };
 
-export class CustomerInvoicePage extends GenericPage {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selection: [],
-      modalKey: null,
-      modalIsOpen: false,
+const columns = [
+  {
+    key: 'itemCode',
+    width: 2,
+    title: tableStrings.item_code,
+    sortable: true,
+  },
+  {
+    key: 'itemName',
+    width: 4,
+    title: tableStrings.item_name,
+    sortable: true,
+  },
+  {
+    key: 'availableQuantity',
+    width: 2,
+    title: tableStrings.available_stock,
+    sortable: true,
+    alignText: 'right',
+  },
+  {
+    key: 'totalQuantity',
+    width: 2,
+    type: 'editable',
+    title: tableStrings.quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  {
+    key: 'remove',
+    width: 1,
+    type: 'checkable',
+    title: tableStrings.remove,
+    alignText: 'center',
+  },
+];
+
+const SortNeutralIcon = <FAIcon name="sort" size={15} color="purple" />;
+const SortDescIcon = <FAIcon name="sort-desc" size={15} color="purple" />;
+const SortAscIcon = <FAIcon name="sort-asc" size={15} color="purple" />;
+
+const CheckedComponent = () => (
+  <Icon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
+);
+const UncheckedComponent = () => (
+  <Icon name="md-radio-button-off" size={15} color={dataTableColors.checkableCellUnchecked} />
+);
+const DisabledCheckedComponent = () => (
+  <Icon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
+);
+const DisabledUncheckedComponent = () => (
+  <Icon name="md-radio-button-off" size={15} color={dataTableColors.checkableCellDisabled} />
+);
+
+const keyExtractor = item => item.id;
+
+// Reducer for managing DataTable state
+const reducer = (state, action) => {
+  /**
+   * Immutably clears the current focus
+   * @param {object} currState  the copy of state you want affected
+   * @return {object}           A new object with no cell focused
+   */
+  const clearFocus = currState => {
+    const { dataState, currentFocusedRowKey } = currState;
+    if (!currentFocusedRowKey) {
+      return currState;
+    }
+
+    const newDataState = new Map(dataState);
+    const currentRowState = newDataState.get(currentFocusedRowKey);
+    newDataState.set(currentFocusedRowKey, {
+      ...currentRowState,
+      focusedColumn: null,
+    });
+
+    return { ...currState, dataState: newDataState, currentFocusedRowKey: null };
+  };
+
+  /**
+   * Immutably sets the current focus to the cell identified by `rowKey` and `columnKey`
+   * @param {object} currState  The copy of state to affect
+   * @param {string} rowKey     The key of the row the cell to focus is in
+   * @param {string} columnKey  The key of the column the cell to focus is in
+   * @return {object}           A new object with a cell focused
+   */
+  const setFocus = (currState, rowKey, columnKey) => {
+    const { dataState, currentFocusedRowKey } = currState;
+    const newDataState = new Map(dataState);
+
+    // Clear previous focus if in a different row
+    if (currentFocusedRowKey && rowKey !== currentFocusedRowKey) {
+      const currentRowState = newDataState.get(currentFocusedRowKey);
+      newDataState.set(currentFocusedRowKey, {
+        ...currentRowState,
+        focusedColumn: null,
+      });
+    }
+
+    // Update focusedColumn in specified row
+    const nextRowState = newDataState.get(rowKey);
+    newDataState.set(rowKey, {
+      ...nextRowState,
+      focusedColumn: columnKey,
+    });
+
+    return {
+      ...currState,
+      dataState: newDataState,
+      currentFocusedRowKey: rowKey,
     };
-    this.dataFilters = {
-      searchTerm: '',
-      sortBy: 'itemName',
-      isAscending: true,
-    };
+  };
+
+  switch (action.type) {
+    case 'editCell': {
+      const { value, rowKey } = action;
+      const { data, database, dataState } = state;
+      const transactionItem = data.find(row => keyExtractor(row) === rowKey);
+
+      database.write(() => {
+        transactionItem.setTotalQuantity(database, parsePositiveInteger(Number(value)));
+        database.save('TransactionItem', transactionItem);
+      });
+
+      // Change object reference of row in `dataState` to trigger rerender of that row.
+      // Realm object reference in `data` can't be affected in any tidy manner.
+      const newDataState = new Map(dataState);
+      const nextRowState = newDataState.get(rowKey);
+      newDataState.set(rowKey, {
+        ...nextRowState,
+      });
+
+      return {
+        ...state,
+        dataState: newDataState,
+      };
+    }
+    case 'reverseData':
+      return { ...state, data: state.data.reverse() };
+    case 'focusCell': {
+      // Clear any existing focus and focus cell specified in action
+      const { rowKey, columnKey } = action;
+      return setFocus(state, rowKey, columnKey);
+    }
+    case 'focusNextCell': {
+      const { data } = state;
+      const { rowKey, columnKey } = action;
+
+      // Handle finding next cell to focus
+      let nextEditableColKey;
+      const currentColIndex = columns.findIndex(col => col.key === columnKey);
+      for (let index = currentColIndex + 1; index < columns.length; index++) {
+        if (columns[index].type === 'editable') {
+          nextEditableColKey = columns[index].key;
+          break;
+        }
+      }
+
+      if (nextEditableColKey) {
+        // Focus next editable cell in row
+        return setFocus(state, rowKey, nextEditableColKey);
+      }
+
+      // Attempt moving focus to next row
+      const nextRowIndex = data.findIndex(row => keyExtractor(row) === rowKey) + 1;
+
+      if (nextRowIndex < data.length) {
+        // Focus first editable cell in next row
+        const nextRowKey = keyExtractor(data[nextRowIndex]);
+        const firstEditableColKey = columns.find(col => col.type === 'editable').key;
+        return setFocus(state, nextRowKey, firstEditableColKey);
+      }
+
+      // We were on the last row and last column, so unfocus current cell
+      return clearFocus(state);
+    }
+    case 'selectRow': {
+      const { dataState } = state;
+      const { rowKey } = action;
+      const newDataState = new Map(dataState);
+
+      const rowState = newDataState.get(rowKey);
+      newDataState.set(rowKey, {
+        ...rowState,
+        isSelected: true,
+      });
+
+      return { ...state, dataState: newDataState };
+    }
+    case 'deselectRow': {
+      const { dataState } = state;
+      const { rowKey } = action;
+      const newDataState = new Map(dataState);
+
+      const rowState = newDataState.get(rowKey);
+      newDataState.set(rowKey, {
+        ...rowState,
+        isSelected: false,
+      });
+
+      return { ...state, dataState: newDataState };
+    }
+    case 'deselectAll': {
+      const { dataState } = state;
+      const newDataState = new Map(dataState);
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [rowKey, rowState] of newDataState.entries()) {
+        if (rowState.isSelected) {
+          newDataState.set(rowKey, {
+            ...rowState,
+            isSelected: false,
+          });
+        }
+      }
+      return { ...state, dataState: newDataState };
+    }
+    default:
+      return state;
+  }
+};
+
+// Actions
+const editCell = (value, rowKey, columnKey) => ({
+  type: 'editCell',
+  value,
+  rowKey,
+  columnKey,
+});
+
+const focusCell = (rowKey, columnKey) => ({
+  type: 'focusCell',
+  rowKey,
+  columnKey,
+});
+
+const focusNext = (rowKey, columnKey) => ({
+  type: 'focusNextCell',
+  rowKey,
+  columnKey,
+});
+
+const selectRow = rowKey => ({
+  type: 'selectRow',
+  rowKey,
+});
+
+const deselectRow = rowKey => ({
+  type: 'deselectRow',
+  rowKey,
+});
+
+const deselectAll = () => ({
+  type: 'deselectAll',
+});
+
+const sortData = (sortBy, isAscending) => ({
+  type: 'sortData',
+  sortBy,
+  isAscending,
+});
+
+/**
+ * Renders a mSupply mobile page with customer invoice loaded for editing
+ *
+ * @prop {transaction} prop0
+ * @prop {database} prop0
+ * @prop {genericTablePageStyles} prop0
+ * @prop {runWithLoadingIndicator} prop0
+ * @prop {topRoute} prop0
+ */
+export const CustomerInvoicePage = ({
+  transaction,
+  database,
+  genericTablePageStyles: pageStyles,
+  runWithLoadingIndicator,
+  topRoute,
+}) => {
+  const [tableState, dispatch] = useReducer(reducer, {
+    data: transaction.items.slice(),
+    database,
+    dataState: new Map(),
+    currentFocusedRowKey: null,
+    searchTerm: '',
+    sortBy: 'itemName',
+    isAscending: true,
+  });
+  const [modalKey, setModalKey] = useState(null);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+  const { data, dataState, searchTerm, sortBy, isAscending } = tableState;
+  let isSelection = false;
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const row of dataState.values()) {
+    if (row.isSelected) {
+      isSelection = true;
+      break;
+    }
   }
 
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
+  const openItemSelector = () => {
+    setModalKey(ITEM_SELECT);
+    setModalIsOpen(true);
   };
 
-  /**
-   * Returns updated data fitlered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.props.transaction.items.filtered(
-      'item.name BEGINSWITH[c] $0 OR item.code BEGINSWITH[c] $0',
-      searchTerm
-    );
-    let sortDataType;
-    switch (sortBy) {
-      case 'itemCode':
-      case 'itemName':
-        sortDataType = 'string';
-        break;
-      case 'availableQuantity':
-      case 'totalQuantity':
-        sortDataType = 'number';
-        break;
-      default:
-        sortDataType = 'realm';
-    }
-    this.setState({
-      data: sortDataBy(data, sortBy, sortDataType, isAscending),
-    });
+  const openCommentEditor = () => {
+    setModalKey(COMMENT_EDIT);
+    setModalIsOpen(true);
   };
 
-  onAddMasterItems = () => {
-    this.props.runWithLoadingIndicator(() => {
-      this.props.database.write(() => {
-        this.props.transaction.addItemsFromMasterList(this.props.database);
-        this.props.database.save('Transaction', this.props.transaction);
-      });
-      this.refreshData();
-    });
+  const openTheirRefEditor = () => {
+    setModalKey(THEIR_REF_EDIT);
+    setModalIsOpen(true);
   };
 
-  /**
-   * Respond to the user editing the number in the number received column.
-   *
-   * @param   {string}  key              Should always be |totalQuantity|.
-   * @param   {object}  transactionItem  The transaction item from the row being edited.
-   * @param   {string}  newValue         The value the user entered in the cell.
-   * @return  {none}
-   */
-  onEndEditing = (key, transactionItem, newValue) => {
-    if (key !== 'totalQuantity') return;
-    const { database } = this.props;
-    database.write(() => {
-      transactionItem.setTotalQuantity(database, parsePositiveInteger(newValue));
-      database.save('TransactionItem', transactionItem);
-    });
-  };
+  const closeModal = () => setModalIsOpen(false);
 
-  onDeleteConfirm = () => {
-    const { selection } = this.state;
-    const { transaction, database } = this.props;
-
-    database.write(() => {
-      transaction.removeItemsById(database, selection);
-      database.save('Transaction', transaction);
-    });
-    this.setState({ selection: [] }, this.refreshData);
-  };
-
-  onDeleteCancel = () => {
-    this.setState({ selection: [] }, this.refreshData);
-  };
-
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
-
-  openModal = key => {
-    this.setState({ modalKey: key, modalIsOpen: true });
-  };
-
-  closeModal = () => {
-    this.setState({ modalIsOpen: false });
-  };
-
-  openItemSelector = () => {
-    this.openModal(MODAL_KEYS.ITEM_SELECT);
-  };
-
-  openCommentEditor = () => {
-    this.openModal(MODAL_KEYS.COMMENT_EDIT);
-  };
-
-  openTheirRefEditor = () => {
-    this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-  };
-
-  getModalTitle = () => {
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-    switch (this.state.modalKey) {
+  const getModalTitle = () => {
+    switch (modalKey) {
       default:
       case ITEM_SELECT:
         return modalStrings.search_for_an_item_to_add;
@@ -154,8 +364,24 @@ export class CustomerInvoicePage extends GenericPage {
     }
   };
 
-  renderPageInfo = () => {
-    const { transaction } = this.props;
+  const onDeleteConfirm = () => {};
+
+  const onDeleteCancel = () => {
+    dispatch(deselectAll());
+  };
+
+  const onAddMasterItems = () => {
+    runWithLoadingIndicator(() => {
+      database.write(() => {
+        transaction.addItemsFromMasterList(database);
+        database.save('Transaction', transaction);
+      });
+    });
+  };
+
+  const onSearchChange = () => {};
+
+  const renderPageInfo = () => {
     const infoColumns = [
       [
         {
@@ -179,13 +405,13 @@ export class CustomerInvoicePage extends GenericPage {
         {
           title: `${pageInfoStrings.their_ref}:`,
           info: transaction.theirRef,
-          onPress: this.openTheirRefEditor,
+          onPress: openTheirRefEditor,
           editableType: 'text',
         },
         {
           title: `${pageInfoStrings.comment}:`,
           info: transaction.comment,
-          onPress: this.openCommentEditor,
+          onPress: openCommentEditor,
           editableType: 'text',
         },
       ],
@@ -193,28 +419,68 @@ export class CustomerInvoicePage extends GenericPage {
     return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
   };
 
-  renderCell = (key, transactionItem) => {
-    switch (key) {
-      default:
-        return transactionItem[key];
-      case 'totalQuantity':
-        return {
-          type: this.props.transaction.isFinalised ? 'text' : 'editable',
-          cellContents: transactionItem.totalQuantity,
-        };
-      case 'remove':
-        return {
-          type: 'checkable',
-          icon: 'md-remove-circle',
-          isDisabled: this.props.transaction.isFinalised,
-        };
-    }
-  };
+  const renderCells = useCallback(
+    (rowData, rowState = {}, rowKey) =>
+      columns.map(column => {
+        const { key: colKey, type } = column;
+        switch (type) {
+          case 'editable':
+            return (
+              <EditableCell
+                key={colKey}
+                value={rowData[colKey]}
+                rowKey={rowKey}
+                columnKey={colKey}
+                editAction={editCell}
+                isFocused={colKey === (rowState && rowState.focusedColumn)}
+                disabled={rowState && rowState.disabled}
+                focusAction={focusCell}
+                focusNextAction={focusNext}
+                dispatch={dispatch}
+              />
+            );
+          case 'checkable':
+            return (
+              <CheckableCell
+                key={colKey}
+                rowKey={rowKey}
+                columnKey={colKey}
+                isChecked={rowState && rowState.isSelected}
+                disabled={rowState && rowState.disabled}
+                CheckedComponent={CheckedComponent}
+                UncheckedComponent={UncheckedComponent}
+                DisabledCheckedComponent={DisabledCheckedComponent}
+                DisabledUncheckedComponent={DisabledUncheckedComponent}
+                onCheckAction={selectRow}
+                onUncheckAction={deselectRow}
+                dispatch={dispatch}
+              />
+            );
+          default:
+            return <Cell key={colKey} value={rowData[colKey]} />;
+        }
+      }),
+    []
+  );
 
-  renderModalContent = () => {
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-    const { database, transaction } = this.props;
-    switch (this.state.modalKey) {
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <Row
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          renderCells={renderCells}
+        />
+      );
+    },
+    [data, dataState, renderCells]
+  );
+
+  const renderModalContent = () => {
+    switch (modalKey) {
       default:
       case ITEM_SELECT:
         return (
@@ -229,8 +495,7 @@ export class CustomerInvoicePage extends GenericPage {
                   createRecord(database, 'TransactionItem', transaction, item);
                 }
               });
-              this.refreshData();
-              this.closeModal();
+              closeModal();
             }}
             renderLeftText={item => `${item.name}`}
             renderRightText={item => `${item.totalQuantity}`}
@@ -247,7 +512,7 @@ export class CustomerInvoicePage extends GenericPage {
                   database.save('Transaction', transaction);
                 });
               }
-              this.closeModal();
+              closeModal();
             }}
           />
         );
@@ -262,109 +527,150 @@ export class CustomerInvoicePage extends GenericPage {
                   database.save('Transaction', transaction);
                 });
               }
-              this.closeModal();
+              closeModal();
             }}
           />
         );
     }
   };
 
-  renderButtons = () => (
+  const renderButtons = () => (
     <View style={globalStyles.verticalContainer}>
       <PageButton
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
-        onPress={this.openItemSelector}
-        isDisabled={this.props.transaction.isFinalised}
+        onPress={openItemSelector}
+        isDisabled={transaction.isFinalised}
       />
       <PageButton
         text={buttonStrings.add_master_list_items}
-        onPress={this.onAddMasterItems}
-        isDisabled={this.props.transaction.isFinalised}
+        onPress={onAddMasterItems}
+        isDisabled={transaction.isFinalised}
       />
     </View>
   );
 
-  render() {
-    return (
-      <GenericPage
-        data={this.state.data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderButtons}
-        onRowPress={this.onRowPress}
-        onSelectionChange={this.onSelectionChange}
-        onEndEditing={this.onEndEditing}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 2,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 4,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'availableQuantity',
-            width: 2,
-            title: tableStrings.available_stock,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'totalQuantity',
-            width: 2,
-            title: tableStrings.quantity,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType="Transaction"
-        database={this.props.database}
-        selection={this.state.selection}
-        {...this.props.genericTablePageStyles}
-        topRoute={this.props.topRoute}
-      >
+  const renderHeader = () => (
+    <HeaderRow
+      renderCells={() =>
+        columns.map(column => (
+          <HeaderCell
+            key={column.key}
+            title={column.title}
+            SortAscComponent={SortAscIcon}
+            SortDescComponent={SortDescIcon}
+            SortNeutralComponent={SortNeutralIcon}
+            columnKey={column.key}
+            onPressAction={sortData}
+            dispatch={dispatch}
+          />
+        ))
+      }
+    />
+  );
+
+  return (
+    <View style={[defaultStyles.pageContentContainer, pageStyles.pageContentContainer]}>
+      <View style={[defaultStyles.container, pageStyles.container]}>
+        <View style={[defaultStyles.pageTopSectionContainer, pageStyles.pageTopSectionContainer]}>
+          <View
+            style={[
+              defaultStyles.pageTopLeftSectionContainer,
+              pageStyles.pageTopLeftSectionContainer,
+            ]}
+          >
+            {renderPageInfo()}
+            <SearchBar
+              onChange={onSearchChange}
+              style={pageStyles.searchBar}
+              color="blue"
+              placeholder="fuck off"
+            />
+          </View>
+          <View
+            style={[
+              defaultStyles.pageTopRightSectionContainer,
+              pageStyles.pageTopRightSectionContainer,
+            ]}
+          >
+            {renderButtons()}
+          </View>
+        </View>
+        <DataTable
+          data={data}
+          extraData={dataState}
+          renderRow={renderRow}
+          renderHeader={renderHeader}
+          keyExtractor={keyExtractor}
+        />
         <BottomConfirmModal
-          isOpen={this.state.selection.length > 0 && !this.props.transaction.isFinalised}
+          isOpen={isSelection && !transaction.isFinalised}
           questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
+          onCancel={onDeleteCancel}
+          onConfirm={onDeleteConfirm}
           confirmText={modalStrings.remove}
         />
         <PageContentModal
-          isOpen={this.state.modalIsOpen && !this.props.transaction.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
+          isOpen={modalIsOpen && !transaction.isFinalised}
+          onClose={closeModal}
+          title={getModalTitle()}
         >
-          {this.renderModalContent()}
+          {renderModalContent()}
         </PageContentModal>
-      </GenericPage>
-    );
-  }
-}
+      </View>
+    </View>
+  );
+};
 
 /* eslint-disable react/forbid-prop-types */
 CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
+  genericTablePageStyles: PropTypes.object.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
+  topRoute: PropTypes.bool.isRequired,
   transaction: PropTypes.object.isRequired,
 };
+
+const defaultStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    borderWidth: 1,
+  },
+  pageContentContainer: {
+    flex: 1,
+  },
+  pageTopSectionContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+  },
+  pageTopLeftSectionContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: 500,
+  },
+  pageTopRightSectionContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  listView: {
+    flex: 1,
+  },
+  alignTextLeft: {
+    marginLeft: 20,
+    textAlign: 'left',
+  },
+  alignTextCenter: {
+    textAlign: 'center',
+  },
+  alignTextRight: {
+    marginRight: 20,
+    textAlign: 'right',
+  },
+});
 
 /**
  * Check whether a given customer invoice is safe to be finalised. If safe to finalise,
