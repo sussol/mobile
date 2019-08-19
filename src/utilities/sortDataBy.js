@@ -63,7 +63,7 @@ export const newSortDataBy = (data, sortBy, sortDataType, isAscending = true) =>
       if (isAscending) return [...data.sort((a, b) => b[sortBy] - a[sortBy])];
       return [...data.sort((a, b) => a[sortBy] - b[sortBy])];
     default:
-      return [...data];
+      throw new Error('Invalid sortDataType');
   }
 };
 
