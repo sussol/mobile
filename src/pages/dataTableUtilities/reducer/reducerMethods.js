@@ -236,8 +236,8 @@ export const focusCell = (state, action) => {
  * sortBy: String key of the field of the objects to sort by.
  */
 export const sortData = (state, action) => {
-  const { data, isAscending } = state;
-  const { sortBy } = action;
+  const { data, isAscending, sortBy } = state;
+  const { sortBy: newSortBy } = action;
   const columnKeyToDataType = {
     itemCode: 'string',
     itemName: 'string',
@@ -245,6 +245,10 @@ export const sortData = (state, action) => {
     totalQuantity: 'number',
   };
 
-  const newData = newSortDataBy(data, sortBy, columnKeyToDataType[sortBy], isAscending);
-  return { ...state, data: newData, sortBy, isAscending: !isAscending };
+  // If the new sortBy is the same as the sortBy in state, then invert isAscending
+  // that was set by the last sortBy action. Otherwise, default to true.
+  const newIsAscending = newSortBy === sortBy ? !isAscending : true;
+
+  const newData = newSortDataBy(data, newSortBy, columnKeyToDataType[newSortBy], newIsAscending);
+  return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
 };
