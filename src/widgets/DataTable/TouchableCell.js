@@ -68,7 +68,7 @@ TouchableCell.propTypes = {
   onPressAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   renderChildren: PropTypes.func.isRequired,
-  TouchableComponent: PropTypes.func.isRequired,
+  TouchableComponent: PropTypes.node,
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
@@ -79,6 +79,7 @@ TouchableCell.defaultProps = {
   containerStyle: defaultStyles.containerStyle,
   textStyle: defaultStyles.textStyle,
   isLastCell: false,
+  TouchableComponent: null,
 };
 
 export default TouchableCell;
