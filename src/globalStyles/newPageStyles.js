@@ -13,9 +13,9 @@ export const PAGE_CONTENT_PADDING_BOTTOM = 20;
 const newPageStyles = {
   newPageContentContainer: {
     flex: 1,
-    PAGE_CONTENT_PADDING_TOP: 10,
-    PAGE_CONTENT_PADDING_HORIZONTAL: 20,
-    PAGE_CONTENT_PADDING_BOTTOM: 20,
+    paddingTop: PAGE_CONTENT_PADDING_TOP,
+    paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
+    paddingBottom: PAGE_CONTENT_PADDING_BOTTOM,
     backgroundColor: '#f8fbfe',
   },
   newContainer: {
