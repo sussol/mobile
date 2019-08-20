@@ -58,8 +58,6 @@ const HeaderCell = React.memo(
 
     const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
 
-    const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
-
     return (
       <Container style={internalContainerStyle} onPress={onPress} {...otherProps}>
         <Text style={textStyle}>{title}</Text>
