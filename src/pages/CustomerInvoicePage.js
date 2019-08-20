@@ -44,7 +44,7 @@ import {
   DisabledUncheckedComponent,
 } from '../widgets/icons';
 
-import globalStyles from '../globalStyles';
+import globalStyles, { dataTableStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 
 const MODAL_KEYS = {
@@ -234,12 +234,14 @@ export const CustomerInvoicePage = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
+      const { row, alternateRow } = dataTableStyles;
       return (
         <Row
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           renderCells={renderCells}
+          style={index % 2 === 0 ? alternateRow : row}
         />
       );
     },
