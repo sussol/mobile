@@ -113,7 +113,7 @@ def appVersionCode = ((major.toInteger() * 10000000) + (minor.toInteger() * 1000
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
-    setProperty("archivesBaseName", getAppName() + "-" + getAppVersion())
+    setProperty("archivesBaseName", (getAppName() + "-" + getAppVersion()).replace(".","_"))
     defaultConfig {
         applicationId "com.msupplymobile"
         minSdkVersion rootProject.ext.minSdkVersion
