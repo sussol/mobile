@@ -50,3 +50,8 @@ export const filterData = searchTerm => ({
   type: 'filterData',
   searchTerm,
 });
+
+export const openBasicModal = modalKey => ({
+  type: 'openBasicModal',
+  modalKey,
+});
