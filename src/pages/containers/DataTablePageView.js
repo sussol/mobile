@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { pageStyles } from '../../globalStyles';
+import newPageStyles from '../../globalStyles/newPageStyles';
 
-const { newPageContentContainer, newContainer } = pageStyles;
+const { newPageContentContainer, newContainer } = newPageStyles;
 
 /**
  * Simple container for a standard data table
