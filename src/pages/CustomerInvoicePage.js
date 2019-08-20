@@ -9,7 +9,7 @@ import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { createRecord } from '../database';
-import { formatDate, debounce } from '../utilities';
+import { formatDate, debounce, MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
 
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
@@ -52,12 +52,6 @@ import {
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
-
-const MODAL_KEYS = {
-  COMMENT_EDIT: 'commentEdit',
-  THEIR_REF_EDIT: 'theirRefEdit',
-  ITEM_SELECT: 'itemSelect',
-};
 
 const keyExtractor = item => item.id;
 
@@ -103,18 +97,6 @@ export const CustomerInvoicePage = ({
       break;
     }
   }
-
-  const getModalTitle = () => {
-    switch (modalKey) {
-      default:
-      case ITEM_SELECT:
-        return modalStrings.search_for_an_item_to_add;
-      case COMMENT_EDIT:
-        return modalStrings.edit_the_invoice_comment;
-      case THEIR_REF_EDIT:
-        return modalStrings.edit_their_reference;
-    }
-  };
 
   const onDeleteConfirm = () => {};
 

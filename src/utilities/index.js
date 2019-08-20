@@ -16,3 +16,4 @@ export { getAllPeriodsForProgram, getAllPrograms } from './byProgram';
 export { requestPermission } from './requestPermission';
 export { backupValidation } from './fileSystem';
 export { debounce } from './underscoreMethods';
+export { getModalTitle, MODAL_KEYS } from './getModalTitle';
