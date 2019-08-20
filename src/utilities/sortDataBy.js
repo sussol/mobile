@@ -51,8 +51,8 @@ export const sortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
 export const newSortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
   switch (sortDataType) {
     case 'string':
-      if (isAscending) return [...data.sort((a, b) => b[sortBy].localeCompare(a[sortBy]))];
-      return [...data.sort((a, b) => a[sortBy].localeCompare(b[sortBy]))];
+      if (isAscending) return [...data.sort((a, b) => a[sortBy].localeCompare(b[sortBy]))];
+      return [...data.sort((a, b) => b[sortBy].localeCompare(a[sortBy]))];
     case 'number':
       // Casts to number to cover cases where the property is a string (e.g. |serialNumber|).
       if (isAscending) return [...data.sort((a, b) => Number(a[sortBy]) - Number(b[sortBy]))];
