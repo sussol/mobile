@@ -25,6 +25,7 @@ import {
   deselectAll,
   focusCell,
   sortData,
+  openBasicModal,
 } from './reducerMethods';
 
 /**
@@ -43,6 +44,7 @@ const customerInvoice = {
   selectRow,
   deselectRow,
   deselectAll,
+  openBasicModal,
 };
 
 const PAGE_REDUCERS = {
