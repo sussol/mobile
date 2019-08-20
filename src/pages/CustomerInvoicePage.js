@@ -264,8 +264,13 @@ const reducer = (state, action) => {
       // that was set by the last sortBy action. Otherwise, default to true.
       const newIsAscending = newSortBy === sortBy ? !isAscending : true;
 
-      const newData = newSortDataBy(data, sortBy, columnKeyToDataType[sortBy], newIsAscending);
-      return { ...state, data: newData, sortBy, isAscending: newIsAscending };
+      const newData = newSortDataBy(
+        data,
+        newSortBy,
+        columnKeyToDataType[newSortBy],
+        newIsAscending
+      );
+      return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
     }
     default:
       return state;
