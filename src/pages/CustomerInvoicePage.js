@@ -80,7 +80,7 @@ export const CustomerInvoicePage = ({
     currentFocusedRowKey: null,
     searchTerm: '',
     filterDataKeys: ['item.name'],
-    sortBy: '',
+    sortBy: 'itemName',
     isAscending: true,
   });
 
@@ -403,6 +403,7 @@ CustomerInvoicePage.propTypes = {
   genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   transaction: PropTypes.object.isRequired,
+  routeName: PropTypes.string.isRequired,
 };
 
 const defaultStyles = StyleSheet.create({
