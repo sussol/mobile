@@ -307,7 +307,7 @@ const deselectAll = () => ({
 });
 
 const sortData = (sortBy, isAscending) => ({
-  type: 'sortData',
+  type: 'sortBy',
   sortBy,
   isAscending,
 });
