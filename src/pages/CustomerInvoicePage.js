@@ -5,7 +5,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { createRecord } from '../database';
@@ -44,7 +44,7 @@ import {
   DisabledUncheckedComponent,
 } from '../widgets/icons';
 
-import globalStyles, { dataTableStyles } from '../globalStyles';
+import globalStyles, { dataTableStyles, pageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
@@ -68,7 +68,6 @@ const keyExtractor = item => item.id;
 export const CustomerInvoicePage = ({
   transaction,
   database,
-  genericTablePageStyles: pageStyles,
   runWithLoadingIndicator,
   routeName,
 }) => {
@@ -371,13 +370,8 @@ export const CustomerInvoicePage = ({
 
   return (
     <DataTablePageView>
-      <View style={[defaultStyles.pageTopSectionContainer, pageStyles.pageTopSectionContainer]}>
-        <View
-          style={[
-            defaultStyles.pageTopLeftSectionContainer,
-            pageStyles.pageTopLeftSectionContainer,
-          ]}
-        >
+      <View style={pageStyles.newPageTopSectionContainer}>
+        <View style={pageStyles.newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
             onChange={searchBarDispatch}
@@ -386,14 +380,7 @@ export const CustomerInvoicePage = ({
             placeholder=""
           />
         </View>
-        <View
-          style={[
-            defaultStyles.pageTopRightSectionContainer,
-            pageStyles.pageTopRightSectionContainer,
-          ]}
-        >
-          {renderButtons()}
-        </View>
+        <View style={pageStyles.newPageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
       <DataTable
         data={data}
@@ -423,52 +410,10 @@ export const CustomerInvoicePage = ({
 /* eslint-disable react/forbid-prop-types */
 CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
-  genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   transaction: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
 };
-
-const defaultStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    borderWidth: 1,
-  },
-  pageContentContainer: {
-    flex: 1,
-  },
-  pageTopSectionContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-  pageTopLeftSectionContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    width: 500,
-  },
-  pageTopRightSectionContainer: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  listView: {
-    flex: 1,
-  },
-  alignTextLeft: {
-    marginLeft: 20,
-    textAlign: 'left',
-  },
-  alignTextCenter: {
-    textAlign: 'center',
-  },
-  alignTextRight: {
-    marginRight: 20,
-    textAlign: 'right',
-  },
-});
 
 /**
  * Check whether a given customer invoice is safe to be finalised. If safe to finalise,
