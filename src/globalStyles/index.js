@@ -23,6 +23,8 @@ import {
   PAGE_CONTENT_PADDING_HORIZONTAL,
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
+import newPageStyles from './newPageStyles';
+import newDataTableStyles from './newDataTableStyles';
 
 export {
   BACKGROUND_COLOR,
@@ -47,6 +49,8 @@ export { textStyles } from './textStyles';
 
 export {
   COMPONENT_HEIGHT,
+  newPageStyles,
+  newDataTableStyles,
   dataTableStyles,
   dataTableColors,
   pageStyles,

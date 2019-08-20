@@ -44,12 +44,9 @@ import {
   DisabledUncheckedComponent,
 } from '../widgets/icons';
 
-import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
-
-import newDataTableStyles from '../globalStyles/newDataTableStyles';
-import newPageStyles from '../globalStyles/newPageStyles';
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
