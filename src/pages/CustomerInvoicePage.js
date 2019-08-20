@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -45,6 +45,7 @@ import {
   deselectAll,
   sortData,
   filterData,
+  openBasicModal,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -74,6 +75,7 @@ export const CustomerInvoicePage = ({
   runWithLoadingIndicator,
   routeName,
 }) => {
+  const startTime = Date.now();
   const [tableState, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
@@ -85,12 +87,12 @@ export const CustomerInvoicePage = ({
     filterDataKeys: ['item.name'],
     sortBy: 'itemName',
     isAscending: true,
+    modalIsOpen: false,
+    modalKey: '',
   });
 
-  const [modalKey, setModalKey] = useState(null);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-  const { data, dataState, sortBy, isAscending, columns } = tableState;
+  const { data, dataState, sortBy, isAscending, columns, modalIsOpen, modalKey } = tableState;
   let isSelection = false;
 
   // eslint-disable-next-line no-restricted-syntax
@@ -100,11 +102,6 @@ export const CustomerInvoicePage = ({
       break;
     }
   }
-
-  const openItemSelector = () => {
-    setModalKey(ITEM_SELECT);
-    setModalIsOpen(true);
-  };
 
   const openCommentEditor = () => {
     setModalKey(COMMENT_EDIT);
@@ -334,7 +331,7 @@ export const CustomerInvoicePage = ({
       <PageButton
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
-        onPress={openItemSelector}
+        onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
         isDisabled={transaction.isFinalised}
       />
       <PageButton
@@ -378,6 +375,12 @@ export const CustomerInvoicePage = ({
     ),
     [sortBy, isAscending]
   );
+
+  useLayoutEffect(() => {
+    console.log('===============Layout time=====================');
+    console.log(Date.now() - startTime);
+    console.log('====================================');
+  });
 
   const {
     newPageTopSectionContainer,
