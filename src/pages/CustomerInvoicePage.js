@@ -323,7 +323,7 @@ export const CustomerInvoicePage = ({
     () => (
       <HeaderRow
         renderCells={() =>
-          columns.map(({ key, title, sortable }) => {
+          columns.map(({ key, title, sortable, width, alignText }, index) => {
             const sortDirection = isAscending ? 'ASC' : 'DESC';
             const directionForThisColumn = key === sortBy ? sortDirection : null;
             return (
@@ -337,6 +337,11 @@ export const CustomerInvoicePage = ({
                 onPressAction={sortable ? sortData : null}
                 dispatch={instantDebouncedDispatch}
                 sortDirection={directionForThisColumn}
+                sortable={sortable}
+                width={width}
+                containerStyle={dataTableStyles.headerCells[alignText || 'left']}
+                textStyle={dataTableStyles.cellText[alignText || 'left']}
+                isLastCell={index === columns.length - 1}
               />
             );
           })
