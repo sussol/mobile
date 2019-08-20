@@ -1,7 +1,9 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, Text, StyleSheet, View, TouchableOpacityPropTypes } from 'react-native';
 
+import { getAdjustedStyle } from './utilities';
 /**
  * Simple component to be used in conjunction with HeaderRow component.
  *
@@ -14,6 +16,8 @@ import { TouchableOpacity, Text, StyleSheet, View, TouchableOpacityPropTypes } f
  * @prop {ReactElement} SortAscComponent      Icon component for ascending sorting
  * @prop {ReactElement} SortDescComponent     Icon component for descending sorting
  * @prop {ReactElement} SortNeutralComponent  Icon component for neutral state, no sort.
+ * @prop {Object}       containerStyle        Style object for the wrapping Touchable or View.
+ * @prop {Object}       textStyle             Style object for the inner text component.
  */
 const HeaderCell = React.memo(
   ({
@@ -25,6 +29,11 @@ const HeaderCell = React.memo(
     SortNeutralComponent,
     onPressAction,
     dispatch,
+    sortable,
+    containerStyle,
+    textStyle,
+    width,
+    isLastCell,
     ...otherProps
   }) => {
     const onPress = () => {
@@ -47,14 +56,21 @@ const HeaderCell = React.memo(
 
     const Container = onPressAction ? TouchableOpacity : View;
 
+    const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
+
     return (
-      <Container style={defaultStyles.headerCell} onPress={onPress} {...otherProps}>
-        <Text>{title}</Text>
-        {onPressAction && <Icon />}
+      <Container style={internalContainerStyle} onPress={onPress} {...otherProps}>
+        <Text style={textStyle}>{title}</Text>
+        {sortable && <Icon />}
       </Container>
     );
   }
 );
+
+const defaultStyles = StyleSheet.create({
+  containerStyle: {},
+  textStyle: {},
+});
 
 HeaderCell.propTypes = {
   ...TouchableOpacityPropTypes,
@@ -66,6 +82,10 @@ HeaderCell.propTypes = {
   SortAscComponent: PropTypes.element,
   SortDescComponent: PropTypes.element,
   SortNeutralComponent: PropTypes.element,
+  containerStyle: PropTypes.object,
+  textStyle: PropTypes.object,
+  width: PropTypes.number,
+  sortable: PropTypes.bool,
 };
 
 HeaderCell.defaultProps = {
@@ -75,15 +95,10 @@ HeaderCell.defaultProps = {
   SortAscComponent: null,
   SortDescComponent: null,
   SortNeutralComponent: null,
+  containerStyle: defaultStyles.containerStyle,
+  textStyle: defaultStyles.textStyle,
+  sortable: false,
+  width: 0,
 };
-
-const defaultStyles = StyleSheet.create({
-  headerCell: {
-    flex: 1,
-    backgroundColor: 'turquoise',
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-});
 
 export default HeaderCell;
