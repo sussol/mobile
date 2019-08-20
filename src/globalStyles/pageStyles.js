@@ -50,6 +50,39 @@ export const pageStyles = {
     fontFamily: APP_FONT_FAMILY,
     backgroundColor: TRANSPARENT,
   },
+  newPageContentContainer: {
+    flex: 1,
+    paddingTop: 10,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+    backgroundColor: '#f8fbfe',
+  },
+  newContainer: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 0, 0, 0.1)',
+    backgroundColor: '#ecf3fc',
+  },
+  newPageTopSectionContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  newPageTopLeftSectionContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: 500,
+    paddingHorizontal: 10,
+  },
+  newPageTopRightSectionContainer: {
+    flexDirection: 'row',
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
 };
 
 export const expansionPageStyles = {
