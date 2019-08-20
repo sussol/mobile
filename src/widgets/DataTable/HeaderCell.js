@@ -3,16 +3,26 @@ import PropTypes from 'prop-types';
 import { TouchableOpacity, Text, StyleSheet, View, TouchableOpacityPropTypes } from 'react-native';
 
 /**
+ * Simple component to be used in conjunction with HeaderRow component.
  *
+ * Renders a title and if passed, a sorting icon.
+ *
+ * @prop {String}       title                 Text to display in the cell
+ * @prop {String}       columnKey             The key for the column the cell heads.
+ * @prop {Func}         onPressAction         Action for dispatching on press
+ * @prop {Func}         dispatch              Dispatcher to backing reducer
+ * @prop {ReactElement} SortAscComponent      Icon component for ascending sorting
+ * @prop {ReactElement} SortDescComponent     Icon component for descending sorting
+ * @prop {ReactElement} SortNeutralComponent  Icon component for neutral state, no sort.
  */
 const HeaderCell = React.memo(
   ({
+    title,
+    columnKey,
     sortDirection,
     SortAscComponent,
     SortDescComponent,
     SortNeutralComponent,
-    title,
-    columnKey,
     onPressAction,
     dispatch,
     ...otherProps

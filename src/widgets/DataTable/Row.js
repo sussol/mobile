@@ -5,11 +5,20 @@ import PropTypes from 'prop-types';
 
 import { View, StyleSheet } from 'react-native';
 
-const Row = ({ rowData, rowState, rowKey, renderCells }) => {
+/**
+ * Renders a row of children as outputted by renderCells render prop
+ *
+ * @param {object} rowData Data to pass to renderCells callback
+ * @param {string|number} rowKey Unique key associated to row
+ * @param {object} rowState State to pass to renderCells callBack
+ * @param {func} renderCells renderProp callBack for rendering cells based on rowData and rowState
+ *                          `(rowKey, columnKey) => {...}`
+ */
+const Row = React.memo(({ rowData, rowState, rowKey, renderCells }) => {
   console.log('=================================');
   console.log(`Row: ${rowKey}`);
   return <View style={defaultStyles.row}>{renderCells(rowData, rowState, rowKey)}</View>;
-};
+});
 
 Row.propTypes = {
   rowData: PropTypes.any.isRequired,
@@ -29,23 +38,4 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
-export default React.memo(Row);
-
-//   (prevProps, nextProps) => {
-//   const { rowData, rowState, rowKey, renderCells } = prevProps;
-//   const {
-//     rowData: nextRowData,
-//     rowState: nextRowState,
-//     rowKey: nextRowKey,
-//     renderCells: nextRenderCells,
-//   } = nextProps;
-
-//   console.log('=================================');
-//   console.log('rowdata', rowData === nextRowData);
-//   console.log('rowState', rowState === nextRowState);
-//   console.log('rowKey', rowKey === nextRowKey);
-//   console.log('renderCells', renderCells === nextRenderCells);
-//   console.log('=================================');
-
-//   return false;
-// });
+export default Row;

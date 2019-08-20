@@ -8,12 +8,19 @@ import Cell from './Cell';
  * Renders a cell that on press or focus contains a TextInput for
  * editing values.
  *
- * @param {string|number} value
- * @param {string|number} rowKey
- * @param {string|number} columnKey
- * @param {bool} disabled
- * @param {func} editAction
- * @param {func} dispatch
+ * @param {string|number} value The value to render in cell
+ * @param {string|number} rowKey Unique key associated to row cell is in
+ * @param {string|number} columnKey Unique key associated to column cell is in
+ * @param {bool} disabled If `true` will render a plain Cell element with no interaction
+ * @param {bool} isFocused If `false` will TouchableOpacity that dispatches a focusAction
+ *                         when pressed. When `true` will render a TextInput with focus
+ * @param {func} editAction Action creator for handling editing of this cell.
+ *                          `(newValue, rowKey, columnKey) => {...}`
+ * @param {func} focusAction Action creator for handling focusing of this cell.
+ *                          `(rowKey, columnKey) => {...}`
+ * @param {func} focusNextAction Action creator for handling focusing of this cell.
+ *                          `(rowKey, columnKey) => {...}`
+ * @param {func} dispatch Reducer dispatch callback for handling actions
  */
 const EditableCell = React.memo(
   ({

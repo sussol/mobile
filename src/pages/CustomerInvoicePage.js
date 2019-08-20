@@ -260,8 +260,8 @@ const reducer = (state, action) => {
       return { ...state, dataState: newDataState };
     }
     case 'sortBy': {
-      const { data, isAscending } = state;
-      const { sortBy } = action;
+      const { data, isAscending, sortBy } = state;
+      const { sortBy: newSortBy } = action;
       const columnKeyToDataType = {
         itemCode: 'string',
         itemName: 'string',
@@ -269,8 +269,17 @@ const reducer = (state, action) => {
         totalQuantity: 'number',
       };
 
-      const newData = newSortDataBy(data, sortBy, columnKeyToDataType[sortBy], isAscending);
-      return { ...state, data: newData, sortBy, isAscending: !isAscending };
+      // If the new sortBy is the same as the sortBy in state, then invert isAscending
+      // that was set by the last sortBy action. Otherwise, default to true.
+      const newIsAscending = newSortBy === sortBy ? !isAscending : true;
+
+      const newData = newSortDataBy(
+        data,
+        newSortBy,
+        columnKeyToDataType[newSortBy],
+        newIsAscending
+      );
+      return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
     }
     default:
       return state;
@@ -339,7 +348,7 @@ export const CustomerInvoicePage = ({
 }) => {
   const [tableState, dispatch] = useReducer(reducer, {
     backingData: transaction.items,
-    data: transaction.items.slice(),
+    data: transaction.items.sorted('item.name').slice(),
     database,
     dataState: new Map(),
     currentFocusedRowKey: null,
@@ -667,7 +676,6 @@ CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-
   transaction: PropTypes.object.isRequired,
 };
 
