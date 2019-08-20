@@ -328,7 +328,7 @@ export const CustomerInvoicePage = ({
   runWithLoadingIndicator,
 }) => {
   const [tableState, dispatch] = useReducer(reducer, {
-    data: transaction.items.slice(),
+    data: transaction.items.sorted('item.name').slice(),
     database,
     dataState: new Map(),
     currentFocusedRowKey: null,
