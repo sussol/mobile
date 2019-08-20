@@ -40,6 +40,7 @@ const CheckableCell = React.memo(
     onUncheckAction,
     dispatch,
     containerStyle,
+    width,
   }) => {
     console.log(`- CheckableCell: ${rowKey},${columnKey}`);
 
@@ -60,16 +61,14 @@ const CheckableCell = React.memo(
         onPressAction={onPressAction}
         dispatch={dispatch}
         containerStyle={containerStyle}
+        width={width}
       />
     );
   }
 );
 
 const defaultStyles = StyleSheet.create({
-  containerStyle: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+  containerStyle: {},
 });
 
 CheckableCell.propTypes = {
@@ -85,6 +84,7 @@ CheckableCell.propTypes = {
   onUncheckAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
+  width: PropTypes.number,
 };
 
 CheckableCell.defaultProps = {
@@ -93,6 +93,7 @@ CheckableCell.defaultProps = {
   DisabledUncheckedComponent: null,
   isDisabled: false,
   containerStyle: defaultStyles.containerStyle,
+  width: 1,
 };
 
 export default CheckableCell;
