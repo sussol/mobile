@@ -1,6 +1,8 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
 import { TouchableOpacity, Text, StyleSheet, TouchableOpacityPropTypes } from 'react-native';
+import { getAdjustedStyle } from './utilities';
 
 /**
  * Renders a cell with value (or renderChildren) that is touchable
@@ -14,6 +16,8 @@ import { TouchableOpacity, Text, StyleSheet, TouchableOpacityPropTypes } from 'r
  * @param {func} renderChildren Reducer dispatch callback for handling actions
  * @param {func} TouchableComponent Override containing element of TouchableCell
  * Additional props spread into TouchableComponent
+ * @param {object} containerStyle Style object for the containing Touchable component
+ * @param {object} textStyle Style object for the inner Text component
  */
 const TouchableCell = React.memo(
   ({
@@ -24,6 +28,10 @@ const TouchableCell = React.memo(
     dispatch,
     renderChildren,
     TouchableComponent,
+    containerStyle,
+    width,
+    textStyle,
+    isLastCell,
     ...otherProps
   }) => {
     console.log(`- TouchableCell: ${rowKey},${columnKey}`);
@@ -32,16 +40,25 @@ const TouchableCell = React.memo(
       dispatch(onPressAction(rowKey, columnKey));
     };
 
+    const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
     const Container = TouchableComponent || TouchableOpacity;
-    const content = renderChildren ? renderChildren(value) : <Text>{value}</Text>;
+    const content = renderChildren ? renderChildren(value) : <Text style={textStyle}>{value}</Text>;
 
     return (
-      <Container style={defaultStyles.touchableCell} onPress={onPress} {...otherProps}>
+      <Container style={internalContainerStyle} onPress={onPress} {...otherProps}>
         {content}
       </Container>
     );
   }
 );
+
+const defaultStyles = StyleSheet.create({
+  containerStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textStyle: {},
+});
 
 TouchableCell.propTypes = {
   ...TouchableOpacityPropTypes,
@@ -52,18 +69,16 @@ TouchableCell.propTypes = {
   dispatch: PropTypes.func.isRequired,
   renderChildren: PropTypes.func.isRequired,
   TouchableComponent: PropTypes.func.isRequired,
+  containerStyle: PropTypes.object,
+  textStyle: PropTypes.object,
+  isLastCell: PropTypes.bool,
 };
 
 TouchableCell.defaultProps = {
   value: '',
+  containerStyle: defaultStyles.containerStyle,
+  textStyle: defaultStyles.textStyle,
+  isLastCell: false,
 };
-
-const defaultStyles = StyleSheet.create({
-  touchableCell: {
-    flex: 1,
-    backgroundColor: 'turquoise',
-    justifyContent: 'center',
-  },
-});
 
 export default TouchableCell;
