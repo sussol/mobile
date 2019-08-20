@@ -55,3 +55,7 @@ export const openBasicModal = modalKey => ({
   type: 'openBasicModal',
   modalKey,
 });
+
+export const closeBasicModal = () => ({
+  type: 'closeBasicModal',
+});
