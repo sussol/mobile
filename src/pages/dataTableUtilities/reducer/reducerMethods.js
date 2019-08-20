@@ -67,12 +67,26 @@ const setFocus = (state, rowKey, columnKey) => {
  * @param {Object} action The action to act upon
  */
 export const filterData = (state, action) => {
-  const { backingData, filterDataKeys } = state;
+  const { backingData, filterDataKeys, sortBy, isAscending } = state;
   const { searchTerm } = action;
+
+  const columnKeyToDataType = {
+    itemCode: 'string',
+    itemName: 'string',
+    availableQuantity: 'number',
+    totalQuantity: 'number',
+  };
+
   const queryString = filterDataKeys
     .map(filterTerm => `${filterTerm} BEGINSWITH[c]  $0`)
     .join(' OR ');
-  const newData = backingData.filtered(queryString, searchTerm).slice();
+
+  const newData = newSortDataBy(
+    backingData.filtered(queryString, searchTerm).slice(),
+    sortBy,
+    columnKeyToDataType[sortBy],
+    isAscending
+  );
   return { ...state, data: newData };
 };
 
