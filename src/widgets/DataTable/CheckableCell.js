@@ -41,6 +41,7 @@ const CheckableCell = React.memo(
     dispatch,
     containerStyle,
     width,
+    isLastCell,
   }) => {
     console.log(`- CheckableCell: ${rowKey},${columnKey}`);
 
@@ -62,6 +63,7 @@ const CheckableCell = React.memo(
         dispatch={dispatch}
         containerStyle={containerStyle}
         width={width}
+        isLastCell={isLastCell}
       />
     );
   }
@@ -85,6 +87,7 @@ CheckableCell.propTypes = {
   dispatch: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
   width: PropTypes.number,
+  isLastCell: PropTypes.bool,
 };
 
 CheckableCell.defaultProps = {
@@ -93,7 +96,8 @@ CheckableCell.defaultProps = {
   DisabledUncheckedComponent: null,
   isDisabled: false,
   containerStyle: defaultStyles.containerStyle,
-  width: 1,
+  width: 0,
+  isLastCell: false,
 };
 
 export default CheckableCell;
