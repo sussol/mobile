@@ -265,3 +265,12 @@ export const openBasicModal = (state, action) => {
   const { modalKey } = action;
   return { ...state, modalIsOpen: true, modalKey };
 };
+
+/**
+ * Sets the modal open state to false, closing any
+ * modal that is open.
+ *
+ * @param {Object} state  The current state
+ * Action: { type: 'closeBasicModal' }
+ */
+export const closeBasicModal = state => ({ ...state, modalIsOpen: false, modalKey: '' });
