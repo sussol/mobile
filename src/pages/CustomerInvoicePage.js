@@ -11,8 +11,21 @@ import { SearchBar } from 'react-native-ui-components';
 import { createRecord } from '../database';
 import { formatDate, debounce } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
-import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
+
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+import {
+  AutocompleteSelector,
+  PageButton,
+  PageInfo,
+  TextEditor,
+  SortAscIcon,
+  SortNeutralIcon,
+  SortDescIcon,
+  CheckedComponent,
+  UncheckedComponent,
+  DisabledCheckedComponent,
+  DisabledUncheckedComponent,
+} from '../widgets';
 import {
   DataTable,
   Row,
@@ -33,16 +46,6 @@ import {
   sortData,
   filterData,
 } from './dataTableUtilities/actions';
-
-import {
-  SortAscIcon,
-  SortNeutralIcon,
-  SortDescIcon,
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
-} from '../widgets/icons';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
