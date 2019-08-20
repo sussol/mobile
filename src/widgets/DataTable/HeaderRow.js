@@ -8,22 +8,28 @@ import { View, StyleSheet } from 'react-native';
 /**
  * Renders a row of children as outputted by renderCells render prop
  *
- * @param {func} renderCells renderProp callBack for rendering cells based on rowData and rowState
+ * @param {func}   renderCells renderProp callBack for rendering cells based on rowData and rowState
+ * @param {Object} style   Style object for the wrapping View component
  */
-const HeaderRow = React.memo(({ renderCells }) => (
-  <View style={defaultStyles.row}>{renderCells()}</View>
+const HeaderRow = React.memo(({ renderCells, style }) => (
+  <View style={style}>{renderCells()}</View>
 ));
 
-HeaderRow.propTypes = {
-  renderCells: PropTypes.func.isRequired,
-};
-
 const defaultStyles = StyleSheet.create({
-  row: {
-    flex: 1,
-    maxHeight: 100,
+  style: {
+    backgroundColor: 'white',
+
     flexDirection: 'row',
   },
 });
+
+HeaderRow.propTypes = {
+  renderCells: PropTypes.func.isRequired,
+  style: PropTypes.object,
+};
+
+HeaderRow.defaultProps = {
+  style: defaultStyles.style,
+};
 
 export default HeaderRow;
