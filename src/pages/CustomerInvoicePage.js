@@ -46,6 +46,7 @@ import {
 
 import globalStyles, { dataTableStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
+import DataTablePageView from './containers/DataTablePageView';
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -369,55 +370,53 @@ export const CustomerInvoicePage = ({
   );
 
   return (
-    <View style={[defaultStyles.pageContentContainer, pageStyles.pageContentContainer]}>
-      <View style={[defaultStyles.container, pageStyles.container]}>
-        <View style={[defaultStyles.pageTopSectionContainer, pageStyles.pageTopSectionContainer]}>
-          <View
-            style={[
-              defaultStyles.pageTopLeftSectionContainer,
-              pageStyles.pageTopLeftSectionContainer,
-            ]}
-          >
-            {renderPageInfo()}
-            <SearchBar
-              onChange={searchBarDispatch}
-              style={pageStyles.searchBar}
-              color="blue"
-              placeholder=""
-            />
-          </View>
-          <View
-            style={[
-              defaultStyles.pageTopRightSectionContainer,
-              pageStyles.pageTopRightSectionContainer,
-            ]}
-          >
-            {renderButtons()}
-          </View>
-        </View>
-        <DataTable
-          data={data}
-          extraData={dataState}
-          renderRow={renderRow}
-          renderHeader={renderHeader}
-          keyExtractor={keyExtractor}
-        />
-        <BottomConfirmModal
-          isOpen={isSelection && !transaction.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={onDeleteCancel}
-          onConfirm={onDeleteConfirm}
-          confirmText={modalStrings.remove}
-        />
-        <PageContentModal
-          isOpen={modalIsOpen && !transaction.isFinalised}
-          onClose={closeModal}
-          title={getModalTitle()}
+    <DataTablePageView>
+      <View style={[defaultStyles.pageTopSectionContainer, pageStyles.pageTopSectionContainer]}>
+        <View
+          style={[
+            defaultStyles.pageTopLeftSectionContainer,
+            pageStyles.pageTopLeftSectionContainer,
+          ]}
         >
-          {renderModalContent()}
-        </PageContentModal>
+          {renderPageInfo()}
+          <SearchBar
+            onChange={searchBarDispatch}
+            style={pageStyles.searchBar}
+            color="blue"
+            placeholder=""
+          />
+        </View>
+        <View
+          style={[
+            defaultStyles.pageTopRightSectionContainer,
+            pageStyles.pageTopRightSectionContainer,
+          ]}
+        >
+          {renderButtons()}
+        </View>
       </View>
-    </View>
+      <DataTable
+        data={data}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+      />
+      <BottomConfirmModal
+        isOpen={isSelection && !transaction.isFinalised}
+        questionText={modalStrings.remove_these_items}
+        onCancel={onDeleteCancel}
+        onConfirm={onDeleteConfirm}
+        confirmText={modalStrings.remove}
+      />
+      <PageContentModal
+        isOpen={modalIsOpen && !transaction.isFinalised}
+        onClose={closeModal}
+        title={getModalTitle()}
+      >
+        {renderModalContent()}
+      </PageContentModal>
+    </DataTablePageView>
   );
 };
 
