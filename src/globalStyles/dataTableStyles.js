@@ -30,6 +30,7 @@ export const dataTableStyles = {
   },
   header: {
     backgroundColor: 'white',
+    flexDirection: 'row',
   },
   headerCell: {
     height: 40,
@@ -37,9 +38,21 @@ export const dataTableStyles = {
     borderBottomWidth: 2,
     backgroundColor: 'white',
     borderColor: BLUE_WHITE,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   row: {
     backgroundColor: BACKGROUND_COLOR,
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
+  },
+  alternateRow: {
+    backgroundColor: 'white',
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
   },
   expansion: {
     padding: 15,
@@ -57,6 +70,8 @@ export const dataTableStyles = {
   cell: {
     borderRightWidth: 2,
     borderColor: BLUE_WHITE,
+    flex: 1,
+    justifyContent: 'center',
   },
   rightMostCell: {
     borderRightWidth: 0,
@@ -74,5 +89,67 @@ export const dataTableStyles = {
     padding: 15,
     margin: 5,
     borderColor: SUSSOL_ORANGE,
+  },
+  cellContainer: {
+    left: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+    },
+    right: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+    },
+    center: { borderRightWidth: 2, borderColor: '#ecf3fc', flex: 1, justifyContent: 'center' },
+  },
+  cellText: {
+    left: {
+      marginLeft: 20,
+      textAlign: 'left',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: Dimensions.get('window').width / 100,
+      color: DARK_GREY,
+    },
+    right: {
+      marginRight: 20,
+      textAlign: 'right',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: Dimensions.get('window').width / 100,
+      color: DARK_GREY,
+    },
+    center: {
+      textAlign: 'center',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: Dimensions.get('window').width / 100,
+      color: DARK_GREY,
+    },
+  },
+  touchableCellContainer: {
+    borderRightWidth: 2,
+    borderColor: '#ecf3fc',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  editableCellTextView: {
+    borderBottomColor: '#cbcbcb',
+    borderBottomWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
+    width: '88%',
+    maxHeight: '65%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginRight: 20,
+  },
+  editableCellText: {
+    textAlign: 'right',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: Dimensions.get('window').width / 100,
+    color: DARK_GREY,
   },
 };
