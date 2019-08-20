@@ -46,6 +46,7 @@ import {
   sortData,
   filterData,
   openBasicModal,
+  closeBasicModal,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -102,8 +103,6 @@ export const CustomerInvoicePage = ({
       break;
     }
   }
-
-  const closeModal = () => setModalIsOpen(false);
 
   const getModalTitle = () => {
     switch (modalKey) {
@@ -277,7 +276,7 @@ export const CustomerInvoicePage = ({
                   createRecord(database, 'TransactionItem', transaction, item);
                 }
               });
-              closeModal();
+              dispatch(closeBasicModal());
             }}
             renderLeftText={item => `${item.name}`}
             renderRightText={item => `${item.totalQuantity}`}
@@ -294,7 +293,7 @@ export const CustomerInvoicePage = ({
                   database.save('Transaction', transaction);
                 });
               }
-              closeModal();
+              dispatch(closeBasicModal());
             }}
           />
         );
@@ -309,7 +308,7 @@ export const CustomerInvoicePage = ({
                   database.save('Transaction', transaction);
                 });
               }
-              closeModal();
+              dispatch(closeBasicModal());
             }}
           />
         );
@@ -408,7 +407,7 @@ export const CustomerInvoicePage = ({
       />
       <PageContentModal
         isOpen={modalIsOpen && !transaction.isFinalised}
-        onClose={closeModal}
+        onClose={() => dispatch(closeBasicModal())}
         title={getModalTitle()}
       >
         {renderModalContent()}
