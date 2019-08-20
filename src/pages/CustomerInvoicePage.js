@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useState, useCallback, useMemo, useLayoutEffect } from 'react';
+import React, { useCallback, useMemo, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -103,16 +103,6 @@ export const CustomerInvoicePage = ({
     }
   }
 
-  const openCommentEditor = () => {
-    setModalKey(COMMENT_EDIT);
-    setModalIsOpen(true);
-  };
-
-  const openTheirRefEditor = () => {
-    setModalKey(THEIR_REF_EDIT);
-    setModalIsOpen(true);
-  };
-
   const closeModal = () => setModalIsOpen(false);
 
   const getModalTitle = () => {
@@ -172,13 +162,13 @@ export const CustomerInvoicePage = ({
         {
           title: `${pageInfoStrings.their_ref}:`,
           info: transaction.theirRef,
-          onPress: openTheirRefEditor,
+          onPress: () => dispatch(openBasicModal(THEIR_REF_EDIT)),
           editableType: 'text',
         },
         {
           title: `${pageInfoStrings.comment}:`,
           info: transaction.comment,
-          onPress: openCommentEditor,
+          onPress: () => dispatch(openBasicModal(COMMENT_EDIT)),
           editableType: 'text',
         },
       ],
