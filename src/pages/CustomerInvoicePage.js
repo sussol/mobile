@@ -44,9 +44,12 @@ import {
   DisabledUncheckedComponent,
 } from '../widgets/icons';
 
-import globalStyles, { dataTableStyles, pageStyles } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
+
+import newDataTableStyles from '../globalStyles/newDataTableStyles';
+import newPageStyles from '../globalStyles/newPageStyles';
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -186,72 +189,77 @@ export const CustomerInvoicePage = ({
     return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
   };
 
-  const renderCells = useCallback(
-    (rowData, rowState = {}, rowKey) =>
-      columns.map(({ key: colKey, type, width, alignText }, index) => {
-        switch (type) {
-          case 'editable':
-            return (
-              <EditableCell
-                key={colKey}
-                value={rowData[colKey]}
-                rowKey={rowKey}
-                columnKey={colKey}
-                editAction={editTotalQuantity}
-                isFocused={colKey === (rowState && rowState.focusedColumn)}
-                disabled={rowState && rowState.disabled}
-                focusAction={focusCell}
-                focusNextAction={focusNext}
-                dispatch={dispatch}
-                width={width}
-                viewStyle={dataTableStyles.cellContainer[alignText || 'left']}
-                textInputStyle={dataTableStyles.cellText[alignText || 'left']}
-                textStyle={dataTableStyles.editableCellText}
-                textViewStyle={dataTableStyles.editableCellTextView}
-                isLastCell={index === columns.length - 1}
-              />
-            );
-          case 'checkable':
-            return (
-              <CheckableCell
-                key={colKey}
-                rowKey={rowKey}
-                columnKey={colKey}
-                isChecked={rowState && rowState.isSelected}
-                disabled={rowState && rowState.disabled}
-                CheckedComponent={CheckedComponent}
-                UncheckedComponent={UncheckedComponent}
-                DisabledCheckedComponent={DisabledCheckedComponent}
-                DisabledUncheckedComponent={DisabledUncheckedComponent}
-                onCheckAction={selectRow}
-                onUncheckAction={deselectRow}
-                dispatch={dispatch}
-                containerStyle={dataTableStyles.touchableCellContainer}
-                width={width}
-                isLastCell={index === columns.length - 1}
-              />
-            );
-          default:
-            return (
-              <Cell
-                key={colKey}
-                value={rowData[colKey]}
-                width={width}
-                viewStyle={dataTableStyles.cellContainer[alignText || 'left']}
-                textStyle={dataTableStyles.cellText[alignText || 'left']}
-                isLastCell={index === columns.length - 1}
-              />
-            );
-        }
-      }),
-    []
-  );
+  const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
+    const {
+      cellContainer,
+      editableCellText,
+      editableCellTextView,
+      cellText,
+      touchableCellContainer,
+    } = newDataTableStyles;
+    return columns.map(({ key: colKey, type, width, alignText }, index) => {
+      switch (type) {
+        case 'editable':
+          return (
+            <EditableCell
+              key={colKey}
+              value={rowData[colKey]}
+              rowKey={rowKey}
+              columnKey={colKey}
+              editAction={editTotalQuantity}
+              isFocused={colKey === (rowState && rowState.focusedColumn)}
+              disabled={rowState && rowState.disabled}
+              focusAction={focusCell}
+              focusNextAction={focusNext}
+              dispatch={dispatch}
+              width={width}
+              viewStyle={cellContainer[alignText || 'left']}
+              textInputStyle={cellText[alignText || 'left']}
+              textStyle={editableCellText}
+              textViewStyle={editableCellTextView}
+              isLastCell={index === columns.length - 1}
+            />
+          );
+        case 'checkable':
+          return (
+            <CheckableCell
+              key={colKey}
+              rowKey={rowKey}
+              columnKey={colKey}
+              isChecked={rowState && rowState.isSelected}
+              disabled={rowState && rowState.disabled}
+              CheckedComponent={CheckedComponent}
+              UncheckedComponent={UncheckedComponent}
+              DisabledCheckedComponent={DisabledCheckedComponent}
+              DisabledUncheckedComponent={DisabledUncheckedComponent}
+              onCheckAction={selectRow}
+              onUncheckAction={deselectRow}
+              dispatch={dispatch}
+              containerStyle={touchableCellContainer}
+              width={width}
+              isLastCell={index === columns.length - 1}
+            />
+          );
+        default:
+          return (
+            <Cell
+              key={colKey}
+              value={rowData[colKey]}
+              width={width}
+              viewStyle={cellContainer[alignText || 'left']}
+              textStyle={cellText[alignText || 'left']}
+              isLastCell={index === columns.length - 1}
+            />
+          );
+      }
+    });
+  }, []);
 
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = dataTableStyles;
+      const { row, alternateRow } = newDataTableStyles;
       return (
         <Row
           rowData={data[index]}
@@ -343,6 +351,7 @@ export const CustomerInvoicePage = ({
           columns.map(({ key, title, sortable, width, alignText }, index) => {
             const sortDirection = isAscending ? 'ASC' : 'DESC';
             const directionForThisColumn = key === sortBy ? sortDirection : null;
+            const { headerCells, cellText } = newDataTableStyles;
             return (
               <HeaderCell
                 key={key}
@@ -356,8 +365,8 @@ export const CustomerInvoicePage = ({
                 sortDirection={directionForThisColumn}
                 sortable={sortable}
                 width={width}
-                containerStyle={dataTableStyles.headerCells[alignText || 'left']}
-                textStyle={dataTableStyles.cellText[alignText || 'left']}
+                containerStyle={headerCells[alignText || 'left']}
+                textStyle={cellText[alignText || 'left']}
                 isLastCell={index === columns.length - 1}
               />
             );
@@ -368,19 +377,25 @@ export const CustomerInvoicePage = ({
     [sortBy, isAscending]
   );
 
+  const {
+    newPageTopSectionContainer,
+    newPageTopLeftSectionContainer,
+    newPageTopRightSectionContainer,
+    searchBar,
+  } = newPageStyles;
   return (
     <DataTablePageView>
-      <View style={pageStyles.newPageTopSectionContainer}>
-        <View style={pageStyles.newPageTopLeftSectionContainer}>
+      <View style={newPageTopSectionContainer}>
+        <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
             onChange={searchBarDispatch}
-            style={pageStyles.searchBar}
-            color="blue"
+            style={searchBar}
+            color={SUSSOL_ORANGE}
             placeholder=""
           />
         </View>
-        <View style={pageStyles.newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
       <DataTable
         data={data}
