@@ -252,3 +252,16 @@ export const sortData = (state, action) => {
   const newData = newSortDataBy(data, newSortBy, columnKeyToDataType[newSortBy], newIsAscending);
   return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
 };
+
+/**
+ * Opens a basic modal which does not require any other value
+ * to be set upon opening. i.e. text editors
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'openBasicModal', modalKey }
+ */
+export const openBasicModal = (state, action) => {
+  const { modalKey } = action;
+  return { ...state, modalIsOpen: true, modalKey };
+};
