@@ -45,7 +45,7 @@ const HeaderCell = React.memo(
       }
     };
 
-    const Container = onPressAction ? View : TouchableOpacity;
+    const Container = onPressAction ? TouchableOpacity : View;
 
     return (
       <Container style={defaultStyles.headerCell} onPress={onPress} {...otherProps}>
