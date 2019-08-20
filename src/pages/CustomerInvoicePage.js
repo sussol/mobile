@@ -198,6 +198,7 @@ export const CustomerInvoicePage = ({
       touchableCellContainer,
     } = newDataTableStyles;
     return columns.map(({ key: colKey, type, width, alignText }, index) => {
+      const isLastCell = index === columns.length - 1;
       switch (type) {
         case 'editable':
           return (
@@ -217,7 +218,7 @@ export const CustomerInvoicePage = ({
               textInputStyle={cellText[alignText || 'left']}
               textStyle={editableCellText}
               textViewStyle={editableCellTextView}
-              isLastCell={index === columns.length - 1}
+              isLastCell={isLastCell}
             />
           );
         case 'checkable':
@@ -237,7 +238,7 @@ export const CustomerInvoicePage = ({
               dispatch={dispatch}
               containerStyle={touchableCellContainer}
               width={width}
-              isLastCell={index === columns.length - 1}
+              isLastCell={isLastCell}
             />
           );
         default:
@@ -248,7 +249,7 @@ export const CustomerInvoicePage = ({
               width={width}
               viewStyle={cellContainer[alignText || 'left']}
               textStyle={cellText[alignText || 'left']}
-              isLastCell={index === columns.length - 1}
+              isLastCell={isLastCell}
             />
           );
       }
@@ -351,6 +352,7 @@ export const CustomerInvoicePage = ({
           columns.map(({ key, title, sortable, width, alignText }, index) => {
             const sortDirection = isAscending ? 'ASC' : 'DESC';
             const directionForThisColumn = key === sortBy ? sortDirection : null;
+            const isLastCell = index === columns.length - 1;
             const { headerCells, cellText } = newDataTableStyles;
             return (
               <HeaderCell
@@ -367,7 +369,7 @@ export const CustomerInvoicePage = ({
                 width={width}
                 containerStyle={headerCells[alignText || 'left']}
                 textStyle={cellText[alignText || 'left']}
-                isLastCell={index === columns.length - 1}
+                isLastCell={isLastCell}
               />
             );
           })
