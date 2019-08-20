@@ -13,11 +13,21 @@ import { View, StyleSheet } from 'react-native';
  * @param {object} rowState State to pass to renderCells callBack
  * @param {func} renderCells renderProp callBack for rendering cells based on rowData and rowState
  *                          `(rowKey, columnKey) => {...}`
+ * @param {object} viewStyle Style object for the wrapping View component
  */
-const Row = React.memo(({ rowData, rowState, rowKey, renderCells }) => {
+const Row = React.memo(({ rowData, rowState, rowKey, renderCells, style }) => {
   console.log('=================================');
   console.log(`Row: ${rowKey}`);
-  return <View style={defaultStyles.row}>{renderCells(rowData, rowState, rowKey)}</View>;
+  return <View style={style}>{renderCells(rowData, rowState, rowKey)}</View>;
+});
+
+const defaultStyles = StyleSheet.create({
+  style: {
+    backgroundColor: 'white',
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
+  },
 });
 
 Row.propTypes = {
@@ -25,17 +35,12 @@ Row.propTypes = {
   rowState: PropTypes.any,
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   renderCells: PropTypes.func.isRequired,
+  style: PropTypes.object,
 };
 
 Row.defaultProps = {
   rowState: null,
+  style: defaultStyles.viewStyle,
 };
-
-const defaultStyles = StyleSheet.create({
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-});
 
 export default Row;
