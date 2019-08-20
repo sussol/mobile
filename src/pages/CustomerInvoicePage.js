@@ -188,8 +188,7 @@ export const CustomerInvoicePage = ({
 
   const renderCells = useCallback(
     (rowData, rowState = {}, rowKey) =>
-      columns.map(column => {
-        const { key: colKey, type } = column;
+      columns.map(({ key: colKey, type, width, alignText }, index) => {
         switch (type) {
           case 'editable':
             return (
@@ -204,6 +203,12 @@ export const CustomerInvoicePage = ({
                 focusAction={focusCell}
                 focusNextAction={focusNext}
                 dispatch={dispatch}
+                width={width}
+                viewStyle={dataTableStyles.cellContainer[alignText || 'left']}
+                textInputStyle={dataTableStyles.cellText[alignText || 'left']}
+                textStyle={dataTableStyles.editableCellText}
+                textViewStyle={dataTableStyles.editableCellTextView}
+                isLastCell={index === columns.length - 1}
               />
             );
           case 'checkable':
@@ -221,10 +226,22 @@ export const CustomerInvoicePage = ({
                 onCheckAction={selectRow}
                 onUncheckAction={deselectRow}
                 dispatch={dispatch}
+                containerStyle={dataTableStyles.touchableCellContainer}
+                width={width}
+                isLastCell={index === columns.length - 1}
               />
             );
           default:
-            return <Cell key={colKey} value={rowData[colKey]} />;
+            return (
+              <Cell
+                key={colKey}
+                value={rowData[colKey]}
+                width={width}
+                viewStyle={dataTableStyles.cellContainer[alignText || 'left']}
+                textStyle={dataTableStyles.cellText[alignText || 'left']}
+                isLastCell={index === columns.length - 1}
+              />
+            );
         }
       }),
     []
