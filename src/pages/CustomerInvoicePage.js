@@ -73,7 +73,7 @@ export const CustomerInvoicePage = ({
 }) => {
   const [tableState, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     backingData: transaction.items,
-    data: transaction.items.slice(),
+    data: transaction.items.sorted('item.name').slice(),
     database,
     keyExtractor,
     dataState: new Map(),
@@ -402,7 +402,6 @@ CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
   genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  routeName: PropTypes.string.isRequired,
   transaction: PropTypes.object.isRequired,
 };
 
