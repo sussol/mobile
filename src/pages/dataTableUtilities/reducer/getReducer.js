@@ -27,6 +27,7 @@ import {
   sortData,
   openBasicModal,
   closeBasicModal,
+  addMasterListItems,
 } from './reducerMethods';
 
 /**
@@ -47,6 +48,7 @@ const customerInvoice = {
   deselectAll,
   openBasicModal,
   closeBasicModal,
+  addMasterListItems,
 };
 
 const PAGE_REDUCERS = {
