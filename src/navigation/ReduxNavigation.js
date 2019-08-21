@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 import { createReduxContainer } from 'react-navigation-redux-helpers';
 import AppNavigator from './Navigator';
 
+const ReduxNavigator = createReduxContainer(AppNavigator, 'root');
+
 const ReduxNavigation = props => {
   const { nav, dispatch, screenProps } = props;
-  const ReduxNavigator = createReduxContainer(AppNavigator, 'root');
+
   return <ReduxNavigator state={nav} dispatch={dispatch} screenProps={screenProps} />;
 };
 
