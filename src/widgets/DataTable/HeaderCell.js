@@ -17,9 +17,9 @@ import { getAdjustedStyle } from './utilities';
  * @param {ReactElement} SortDescComponent     Icon component for descending sorting
  * @param {ReactElement} SortNeutralComponent  Icon component for neutral state, no sort.
  * @param {Object}       containerStyle        Style object for the wrapping Touchable or View.
- * @param {Object}       textStyle             Style object for the inner text component.
- * @param {Number}        width               Optional flex property to inject into styles.
- * @param {Bool}          isLastCell          Indicator for if this cell is the last
+ * @param {Object}       textStyle             Style object for the inner Text component.
+ * @param {Number}       width               Optional flex property to inject into styles.
+ * @param {Bool}         isLastCell          Indicator for if this cell is the last
  *                                            in a row. Removing the borderRight if true.
  */
 const HeaderCell = React.memo(
