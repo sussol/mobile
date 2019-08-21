@@ -5,6 +5,7 @@
 
 /* eslint-disable import/prefer-default-export */
 import { parsePositiveInteger, newSortDataBy } from '../../../utilities';
+import { createRecord } from '../../../database/utilities/index';
 
 /**
  * Immutably clears the current focus
@@ -293,8 +294,28 @@ export const addMasterListItems = (state, action) => {
 
   const newData = backingData.slice();
 
-  return {
-    ...state,
-    data: newData,
-  };
+  return { ...state, data: newData };
+};
+
+/**
+ * Creates an Item (Either Requisition or Transaction), and appends
+ * this item to the data array for a page.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'adadItem', item, addedItemType }
+ */
+export const addItem = (state, action) => {
+  const { database, pageObject, data } = state;
+  const { item, addedItemType } = action;
+  let addedItem;
+
+  database.write(() => {
+    if (pageObject.hasItem(item)) return;
+    addedItem = createRecord(database, addedItemType, pageObject, item);
+  });
+
+  if (addedItem) return { ...state, data: [addedItem, ...data], modalIsOpen: false };
+
+  return { ...state, modalIsOpen: false };
 };
