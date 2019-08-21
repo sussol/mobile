@@ -33,7 +33,12 @@ const usePageReducer = (
 ) => {
   const columns = getColumns(page);
   const pageInfo = getPageInfo(page);
-  const [state, dispatch] = useReducer(getReducer(page), { ...initialState, columns, pageInfo });
+  const memoizedReducer = useCallback(getReducer(page), []);
+  const [state, dispatch] = useReducer(memoizedReducer, {
+    ...initialState,
+    columns,
+    pageInfo,
+  });
 
   const debouncedDispatch = useCallback(debounce(dispatch, debounceTimeout), []);
   const instantDebouncedDispatch = useCallback(
