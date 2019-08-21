@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Text, StyleSheet, TouchableOpacityPropTypes } from 'react-native';
+import { TouchableOpacity, Text, TouchableOpacityPropTypes } from 'react-native';
 import { getAdjustedStyle } from './utilities';
 
 /**
@@ -55,14 +55,6 @@ const TouchableCell = React.memo(
   }
 );
 
-const defaultStyles = StyleSheet.create({
-  containerStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textStyle: {},
-});
-
 TouchableCell.propTypes = {
   ...TouchableOpacityPropTypes,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -80,8 +72,8 @@ TouchableCell.propTypes = {
 
 TouchableCell.defaultProps = {
   value: '',
-  containerStyle: defaultStyles.containerStyle,
-  textStyle: defaultStyles.textStyle,
+  containerStyle: {},
+  textStyle: {},
   isLastCell: false,
   width: 0,
 };
