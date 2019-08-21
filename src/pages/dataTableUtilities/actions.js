@@ -64,3 +64,9 @@ export const addMasterListItems = objectType => ({
   type: 'addMasterListItems',
   objectType,
 });
+
+export const addItem = (item, addedItemType) => ({
+  type: 'addItem',
+  item,
+  addedItemType,
+});
