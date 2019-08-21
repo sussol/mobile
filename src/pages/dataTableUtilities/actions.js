@@ -70,3 +70,10 @@ export const addItem = (item, addedItemType) => ({
   item,
   addedItemType,
 });
+
+export const editPageObject = (value, pageObjectType, field) => ({
+  type: 'editPageObject',
+  pageObjectType,
+  value,
+  field,
+});

@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
+// eslint-disable-next-line no-unused-vars
+import { createRecord } from '../database';
 import { debounce, MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 
@@ -48,6 +50,7 @@ import {
   closeBasicModal,
   addMasterListItems,
   addItem,
+  editPageObject,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -218,6 +221,7 @@ export const CustomerInvoicePage = ({
   );
 
   const renderModalContent = () => {
+    const { comment, theirRef } = transaction;
     switch (modalKey) {
       default:
       case ITEM_SELECT:
@@ -235,31 +239,15 @@ export const CustomerInvoicePage = ({
       case COMMENT_EDIT:
         return (
           <TextEditor
-            text={transaction.comment}
-            onEndEditing={newComment => {
-              if (newComment !== transaction.comment) {
-                database.write(() => {
-                  transaction.comment = newComment;
-                  database.save('Transaction', transaction);
-                });
-              }
-              dispatch(closeBasicModal());
-            }}
+            text={comment}
+            onEndEditing={value => dispatch(editPageObject(value, 'Transaction', 'comment'))}
           />
         );
       case THEIR_REF_EDIT:
         return (
           <TextEditor
-            text={transaction.theirRef}
-            onEndEditing={newTheirRef => {
-              if (newTheirRef !== transaction.theirRef) {
-                database.write(() => {
-                  transaction.theirRef = newTheirRef;
-                  database.save('Transaction', transaction);
-                });
-              }
-              dispatch(closeBasicModal());
-            }}
+            text={theirRef}
+            onEndEditing={value => dispatch(editPageObject(value, 'Transaction', 'theirRef'))}
           />
         );
     }
