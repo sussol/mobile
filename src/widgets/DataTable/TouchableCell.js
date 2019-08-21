@@ -75,6 +75,7 @@ TouchableCell.propTypes = {
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
+  width: PropTypes.number,
 };
 
 TouchableCell.defaultProps = {
@@ -82,6 +83,7 @@ TouchableCell.defaultProps = {
   containerStyle: defaultStyles.containerStyle,
   textStyle: defaultStyles.textStyle,
   isLastCell: false,
+  width: 0,
 };
 
 export default TouchableCell;
