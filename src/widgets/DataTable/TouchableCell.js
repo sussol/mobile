@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Text, StyleSheet, TouchableOpacityPropTypes } from 'react-native';
+import { TouchableOpacity, Text, TouchableOpacityPropTypes } from 'react-native';
 import { getAdjustedStyle } from './utilities';
 
 /**
@@ -18,6 +18,9 @@ import { getAdjustedStyle } from './utilities';
  * Additional props spread into TouchableComponent
  * @param {object} containerStyle Style object for the containing Touchable component
  * @param {object} textStyle Style object for the inner Text component
+ * @param {Number} width Optional flex property to inject into styles.
+ * @param {Bool}   isLastCell Indicator for if this cell is the last
+ *                            in a row. Removing the borderRight if true.
  */
 const TouchableCell = React.memo(
   ({
@@ -52,14 +55,6 @@ const TouchableCell = React.memo(
   }
 );
 
-const defaultStyles = StyleSheet.create({
-  containerStyle: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  textStyle: {},
-});
-
 TouchableCell.propTypes = {
   ...TouchableOpacityPropTypes,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -72,14 +67,16 @@ TouchableCell.propTypes = {
   containerStyle: PropTypes.object,
   textStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
+  width: PropTypes.number,
 };
 
 TouchableCell.defaultProps = {
   value: '',
-  containerStyle: defaultStyles.containerStyle,
-  textStyle: defaultStyles.textStyle,
+  containerStyle: {},
+  textStyle: {},
   isLastCell: false,
   TouchableComponent: null,
+  width: 0,
 };
 
 export default TouchableCell;
