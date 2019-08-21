@@ -147,6 +147,29 @@ const reducer = (state, action) => {
   };
 
   switch (action.type) {
+    case 'filterData': {
+      const { backingData, filterDataKeys, sortBy, isAscending } = state;
+      const { searchTerm } = action;
+
+      const columnKeyToDataType = {
+        itemCode: 'string',
+        itemName: 'string',
+        availableQuantity: 'number',
+        totalQuantity: 'number',
+      };
+
+      const queryString = filterDataKeys
+        .map(filterTerm => `${filterTerm} BEGINSWITH[c]  $0`)
+        .join(' OR ');
+
+      const newData = newSortDataBy(
+        backingData.filtered(queryString, searchTerm).slice(),
+        sortBy,
+        columnKeyToDataType[sortBy],
+        isAscending
+      );
+      return { ...state, data: newData };
+    }
     case 'editCell': {
       const { value, rowKey } = action;
       const { data, database, dataState } = state;
@@ -317,6 +340,11 @@ const sortData = (sortBy, isAscending) => ({
   isAscending,
 });
 
+const filterData = searchTerm => ({
+  type: 'filterData',
+  searchTerm,
+});
+
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
  *
@@ -333,11 +361,13 @@ export const CustomerInvoicePage = ({
   runWithLoadingIndicator,
 }) => {
   const [tableState, dispatch] = useReducer(reducer, {
+    backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
     database,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
+    filterDataKeys: ['item.name'],
     sortBy: 'itemName',
     isAscending: true,
   });
@@ -399,7 +429,12 @@ export const CustomerInvoicePage = ({
     });
   };
 
-  const onSearchChange = () => {};
+  const onSearchChange = searchTerm => {
+    dispatch(filterData(searchTerm));
+  };
+
+  const instantDebouncedDispatch = useMemo(() => debounce(dispatch, 250, true), []);
+  const searchBarDispatch = useMemo(() => debounce(onSearchChange, 500), []);
 
   const renderPageInfo = () => {
     const infoColumns = [
@@ -570,8 +605,6 @@ export const CustomerInvoicePage = ({
     </View>
   );
 
-  const instantDebouncedDispatch = useMemo(() => debounce(dispatch, 250, true), []);
-
   const renderHeader = useCallback(
     () => (
       <HeaderRow
@@ -611,7 +644,7 @@ export const CustomerInvoicePage = ({
           >
             {renderPageInfo()}
             <SearchBar
-              onChange={onSearchChange}
+              onChange={searchBarDispatch}
               style={pageStyles.searchBar}
               color="blue"
               placeholder="fuck off"
