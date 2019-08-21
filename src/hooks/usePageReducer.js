@@ -6,6 +6,7 @@
 import { useReducer, useCallback } from 'react';
 import getReducer from '../pages/dataTableUtilities/reducer/getReducer';
 import getColumns from '../pages/dataTableUtilities/columns';
+import getPageInfo from '../pages/dataTableUtilities/pageInfo';
 import { debounce } from '../utilities/index';
 
 /**
@@ -31,7 +32,8 @@ const usePageReducer = (
   instantDebounceTimeout = 250
 ) => {
   const columns = getColumns(page);
-  const [state, dispatch] = useReducer(getReducer(page), { ...initialState, columns });
+  const pageInfo = getPageInfo(page);
+  const [state, dispatch] = useReducer(getReducer(page), { ...initialState, columns, pageInfo });
 
   const debouncedDispatch = useCallback(debounce(dispatch, debounceTimeout), []);
   const instantDebouncedDispatch = useCallback(
