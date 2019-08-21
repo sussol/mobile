@@ -206,7 +206,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     const { dispatch, finaliseItem, navigationState, syncState } = this.props;
-
     const {
       confirmFinalise,
       currentUser,
@@ -234,7 +233,6 @@ class MSupplyMobileAppContainer extends React.Component {
           CentreComponent={this.renderLogo}
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
-
         <ReduxNavigator
           ref={navigator => {
             this.navigator = navigator;
@@ -246,6 +244,7 @@ class MSupplyMobileAppContainer extends React.Component {
             settings: this.settings,
             logOut: this.logOut,
             currentUser,
+            routeName: navigationState.routes[navigationState.index].routeName,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
             isInAdminMode,
             genericTablePageStyles: {

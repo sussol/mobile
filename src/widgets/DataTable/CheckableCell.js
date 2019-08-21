@@ -43,9 +43,9 @@ const CheckableCell = React.memo(
 
     const renderCheck = () => {
       if (isDisabled) {
-        return isChecked ? <DisabledCheckedComponent /> : <DisabledUncheckedComponent />;
+        return isChecked ? DisabledCheckedComponent : DisabledUncheckedComponent;
       }
-      return isChecked ? <CheckedComponent /> : <UncheckedComponent />;
+      return isChecked ? CheckedComponent : UncheckedComponent;
     };
 
     return (
