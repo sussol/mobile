@@ -8,7 +8,6 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
-import { createRecord } from '../database';
 import { debounce, MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 
@@ -48,6 +47,7 @@ import {
   openBasicModal,
   closeBasicModal,
   addMasterListItems,
+  addItem,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -227,14 +227,7 @@ export const CustomerInvoicePage = ({
             queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
             queryStringSecondary="name CONTAINS[c] $0"
             sortByString="name"
-            onSelect={item => {
-              database.write(() => {
-                if (!transaction.hasItem(item)) {
-                  createRecord(database, 'TransactionItem', transaction, item);
-                }
-              });
-              dispatch(closeBasicModal());
-            }}
+            onSelect={item => dispatch(addItem(item, 'TransactionItem'))}
             renderLeftText={item => `${item.name}`}
             renderRightText={item => `${item.totalQuantity}`}
           />
