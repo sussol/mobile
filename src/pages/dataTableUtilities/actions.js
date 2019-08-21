@@ -8,7 +8,7 @@
  */
 
 export const editTotalQuantity = (value, rowKey, columnKey) => ({
-  type: 'editCell',
+  type: 'editTotalQuantity',
   value,
   rowKey,
   columnKey,
