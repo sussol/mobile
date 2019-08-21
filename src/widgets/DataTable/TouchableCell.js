@@ -18,6 +18,9 @@ import { getAdjustedStyle } from './utilities';
  * Additional props spread into TouchableComponent
  * @param {object} containerStyle Style object for the containing Touchable component
  * @param {object} textStyle Style object for the inner Text component
+ * @param {Number} width Optional flex property to inject into styles.
+ * @param {Bool}   isLastCell Indicator for if this cell is the last
+ *                            in a row. Removing the borderRight if true.
  */
 const TouchableCell = React.memo(
   ({

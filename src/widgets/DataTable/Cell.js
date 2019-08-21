@@ -8,9 +8,12 @@ import { getAdjustedStyle } from './utilities';
  * Renders a cell that displays a string/number value within
  * a react-native `Text` component.
  *
- * @param {string|number} value     The value to render in cell
- * @param {Object}        viewStyle Style object for the containing View
- * @param {Object}        textStyle Style object for the inner Text
+ * @param {string|number} value      The value to render in cell
+ * @param {Object}        viewStyle  Style object for the containing View
+ * @param {Object}        textStyle  Style object for the inner Text
+ * @param {Number}        width      optional flex property to inject into styles.
+ * @param {Bool}          isLastCell Indicator for if this cell is the last
+ *                                   in a row. Removing the borderRight if true.
  */
 const Cell = React.memo(({ value, textStyle, viewStyle, width, isLastCell }) => {
   console.log(`- Cell: ${value}`);

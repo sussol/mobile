@@ -27,6 +27,9 @@ import { getAdjustedStyle } from './utilities';
  * @param {Object} touchableStyle Style object for the wrapping Touchable component
  * @param {Object} viewStyle Style object for the wrapping View component
  * @param {Object} textStyle Style object for the inner Text component
+ * @param {Number}        width Optional flex property to inject into styles.
+ * @param {Bool}          isLastCell Indicator for if this cell is the last
+ *                                   in a row. Removing the borderRight if true.
  */
 const EditableCell = React.memo(
   ({
