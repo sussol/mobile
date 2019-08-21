@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Text, StyleSheet, View, TouchableOpacityPropTypes } from 'react-native';
+import { TouchableOpacity, Text, View, TouchableOpacityPropTypes } from 'react-native';
 
 import { getAdjustedStyle } from './utilities';
 /**
@@ -18,9 +18,9 @@ import { getAdjustedStyle } from './utilities';
  * @param {ReactElement} SortNeutralComponent  Icon component for neutral state, no sort.
  * @param {Object}       containerStyle        Style object for the wrapping Touchable or View.
  * @param {Object}       textStyle             Style object for the inner Text component.
- * @param {Number}       width               Optional flex property to inject into styles.
- * @param {Bool}         isLastCell          Indicator for if this cell is the last
- *                                            in a row. Removing the borderRight if true.
+ * @param {Number}       width                 Optional flex property to inject into styles.
+ * @param {Bool}         isLastCell            Indicator for if this cell is the last
+ *                                             in a row. Removing the borderRight if true.
  */
 const HeaderCell = React.memo(
   ({
@@ -70,11 +70,6 @@ const HeaderCell = React.memo(
   }
 );
 
-const defaultStyles = StyleSheet.create({
-  containerStyle: {},
-  textStyle: {},
-});
-
 HeaderCell.propTypes = {
   ...TouchableOpacityPropTypes,
   title: PropTypes.string.isRequired,
@@ -99,8 +94,8 @@ HeaderCell.defaultProps = {
   SortAscComponent: null,
   SortDescComponent: null,
   SortNeutralComponent: null,
-  containerStyle: defaultStyles.containerStyle,
-  textStyle: defaultStyles.textStyle,
+  containerStyle: {},
+  textStyle: {},
   sortable: false,
   width: 0,
   isLastCell: false,
