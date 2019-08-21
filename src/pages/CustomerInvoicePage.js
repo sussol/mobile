@@ -9,8 +9,8 @@ import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { createRecord } from '../database';
-import { formatDate, debounce, MODAL_KEYS, getModalTitle } from '../utilities';
-import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
+import { debounce, MODAL_KEYS, getModalTitle } from '../utilities';
+import { buttonStrings, modalStrings } from '../localization';
 
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import {
@@ -72,6 +72,7 @@ export const CustomerInvoicePage = ({
 }) => {
   const startTime = Date.now();
   const [tableState, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
+    pageObject: transaction,
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
     database,
@@ -87,7 +88,17 @@ export const CustomerInvoicePage = ({
   });
 
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-  const { data, dataState, sortBy, isAscending, columns, modalIsOpen, modalKey } = tableState;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    modalIsOpen,
+    modalKey,
+    pageInfo,
+    pageObject,
+  } = tableState;
   let isSelection = false;
 
   // eslint-disable-next-line no-restricted-syntax
@@ -119,43 +130,15 @@ export const CustomerInvoicePage = ({
 
   const searchBarDispatch = useMemo(() => debounce(onSearchChange, 500), []);
 
-  const renderPageInfo = () => {
-    const infoColumns = [
-      [
-        {
-          title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(transaction.entryDate) || 'N/A',
-        },
-        {
-          title: `${pageInfoStrings.confirm_date}:`,
-          info: formatDate(transaction.confirmDate),
-        },
-        {
-          title: `${pageInfoStrings.entered_by}:`,
-          info: transaction.enteredBy && transaction.enteredBy.username,
-        },
-      ],
-      [
-        {
-          title: `${pageInfoStrings.customer}:`,
-          info: transaction.otherParty && transaction.otherParty.name,
-        },
-        {
-          title: `${pageInfoStrings.their_ref}:`,
-          info: transaction.theirRef,
-          onPress: () => dispatch(openBasicModal(THEIR_REF_EDIT)),
-          editableType: 'text',
-        },
-        {
-          title: `${pageInfoStrings.comment}:`,
-          info: transaction.comment,
-          onPress: () => dispatch(openBasicModal(COMMENT_EDIT)),
-          editableType: 'text',
-        },
-      ],
-    ];
-    return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
-  };
+  const renderPageInfo = useCallback(
+    () => (
+      <PageInfo
+        columns={pageInfo(pageObject, dispatch)}
+        isEditingDisabled={transaction.isFinalised}
+      />
+    ),
+    []
+  );
 
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
     const {
