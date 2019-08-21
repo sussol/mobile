@@ -13,7 +13,7 @@ import { StyleSheet, VirtualizedList, VirtualizedListPropTypes } from 'react-nat
  * a header component. All VirtualizedList props can be passed through,
  * however renderItem is renamed renderRow.
  *
- * @param {Func}   renderRow    renaming of virtualizedList renderItem prop.
+ * @param {Func}   renderRow    Renaming of VirtualizedList renderItem prop.
  * @param {Func}   renderHeader Function which should return a header component
  */
 const DataTable = React.memo(({ renderRow, renderHeader, style, ...otherProps }) => (
