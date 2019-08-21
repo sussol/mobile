@@ -3,7 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 
 /**
  * Renders a row of children as outputted by renderCells render prop
@@ -15,21 +15,13 @@ const HeaderRow = React.memo(({ renderCells, style }) => (
   <View style={style}>{renderCells()}</View>
 ));
 
-const defaultStyles = StyleSheet.create({
-  style: {
-    backgroundColor: 'white',
-
-    flexDirection: 'row',
-  },
-});
-
 HeaderRow.propTypes = {
   renderCells: PropTypes.func.isRequired,
   style: PropTypes.object,
 };
 
 HeaderRow.defaultProps = {
-  style: defaultStyles.style,
+  style: {},
 };
 
 export default HeaderRow;
