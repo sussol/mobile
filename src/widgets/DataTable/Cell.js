@@ -45,7 +45,7 @@ Cell.defaultProps = {
   textStyle: defaultStyles.textStyle,
   viewStyle: defaultStyles.viewStyle,
   width: 0,
-  isLastCell: 0,
+  isLastCell: false,
 };
 
 export default Cell;
