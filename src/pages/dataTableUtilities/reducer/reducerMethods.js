@@ -274,3 +274,27 @@ export const openBasicModal = (state, action) => {
  * Action: { type: 'closeBasicModal' }
  */
 export const closeBasicModal = state => ({ ...state, modalIsOpen: false, modalKey: '' });
+
+/**
+ * Adds all items from a master list to the pageObject held
+ * in state - either a Requisition or Transaction.
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'addMasterListItems', objectType }
+ */
+export const addMasterListItems = (state, action) => {
+  const { pageObject, database, backingData } = state;
+  const { objectType } = action;
+
+  database.write(() => {
+    pageObject.addItemsFromMasterList(database);
+    database.save(objectType, pageObject);
+  });
+
+  const newData = backingData.slice();
+
+  return {
+    ...state,
+    data: newData,
+  };
+};
