@@ -3,10 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { Dimensions } from 'react-native';
-
 import { BACKGROUND_COLOR, BLUE_WHITE, DARK_GREY } from './colors';
-import { APP_FONT_FAMILY } from './fonts';
+import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
 
 const newDataTableStyles = {
   cellContainer: {
@@ -37,27 +35,27 @@ const newDataTableStyles = {
       marginLeft: 20,
       textAlign: 'left',
       fontFamily: APP_FONT_FAMILY,
-      fontSize: Dimensions.get('window').width / 100,
+      fontSize: APP_GENERAL_FONT_SIZE,
       color: DARK_GREY,
     },
     right: {
       marginRight: 20,
       textAlign: 'right',
       fontFamily: APP_FONT_FAMILY,
-      fontSize: Dimensions.get('window').width / 100,
+      fontSize: APP_GENERAL_FONT_SIZE,
       color: DARK_GREY,
     },
     center: {
       textAlign: 'center',
       fontFamily: APP_FONT_FAMILY,
-      fontSize: Dimensions.get('window').width / 100,
+      fontSize: APP_GENERAL_FONT_SIZE,
       color: DARK_GREY,
     },
   },
   editableCellText: {
     textAlign: 'right',
     fontFamily: APP_FONT_FAMILY,
-    fontSize: Dimensions.get('window').width / 100,
+    fontSize: APP_GENERAL_FONT_SIZE,
     color: DARK_GREY,
   },
   editableCellTextView: {
