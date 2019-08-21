@@ -21,3 +21,12 @@ export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
+export {
+  SortAscIcon,
+  SortNeutralIcon,
+  SortDescIcon,
+  CheckedComponent,
+  UncheckedComponent,
+  DisabledCheckedComponent,
+  DisabledUncheckedComponent,
+} from './icons';

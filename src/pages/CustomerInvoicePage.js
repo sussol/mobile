@@ -5,14 +5,27 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { createRecord } from '../database';
 import { formatDate, debounce } from '../utilities';
 import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
-import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
+
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+import {
+  AutocompleteSelector,
+  PageButton,
+  PageInfo,
+  TextEditor,
+  SortAscIcon,
+  SortNeutralIcon,
+  SortDescIcon,
+  CheckedComponent,
+  UncheckedComponent,
+  DisabledCheckedComponent,
+  DisabledUncheckedComponent,
+} from '../widgets';
 import {
   DataTable,
   Row,
@@ -34,18 +47,9 @@ import {
   filterData,
 } from './dataTableUtilities/actions';
 
-import {
-  SortAscIcon,
-  SortNeutralIcon,
-  SortDescIcon,
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
-} from '../widgets/icons';
-
-import globalStyles from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
+import DataTablePageView from './containers/DataTablePageView';
 
 const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
@@ -67,7 +71,6 @@ const keyExtractor = item => item.id;
 export const CustomerInvoicePage = ({
   transaction,
   database,
-  genericTablePageStyles: pageStyles,
   runWithLoadingIndicator,
   routeName,
 }) => {
@@ -186,60 +189,85 @@ export const CustomerInvoicePage = ({
     return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
   };
 
-  const renderCells = useCallback(
-    (rowData, rowState = {}, rowKey) =>
-      columns.map(column => {
-        const { key: colKey, type } = column;
-        switch (type) {
-          case 'editable':
-            return (
-              <EditableCell
-                key={colKey}
-                value={rowData[colKey]}
-                rowKey={rowKey}
-                columnKey={colKey}
-                editAction={editTotalQuantity}
-                isFocused={colKey === (rowState && rowState.focusedColumn)}
-                disabled={rowState && rowState.disabled}
-                focusAction={focusCell}
-                focusNextAction={focusNext}
-                dispatch={dispatch}
-              />
-            );
-          case 'checkable':
-            return (
-              <CheckableCell
-                key={colKey}
-                rowKey={rowKey}
-                columnKey={colKey}
-                isChecked={rowState && rowState.isSelected}
-                disabled={rowState && rowState.disabled}
-                CheckedComponent={CheckedComponent}
-                UncheckedComponent={UncheckedComponent}
-                DisabledCheckedComponent={DisabledCheckedComponent}
-                DisabledUncheckedComponent={DisabledUncheckedComponent}
-                onCheckAction={selectRow}
-                onUncheckAction={deselectRow}
-                dispatch={dispatch}
-              />
-            );
-          default:
-            return <Cell key={colKey} value={rowData[colKey]} />;
-        }
-      }),
-    []
-  );
+  const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
+    const {
+      cellContainer,
+      editableCellText,
+      editableCellTextView,
+      cellText,
+      touchableCellContainer,
+    } = newDataTableStyles;
+    return columns.map(({ key: colKey, type, width, alignText }, index) => {
+      const isLastCell = index === columns.length - 1;
+      switch (type) {
+        case 'editable':
+          return (
+            <EditableCell
+              key={colKey}
+              value={rowData[colKey]}
+              rowKey={rowKey}
+              columnKey={colKey}
+              editAction={editTotalQuantity}
+              isFocused={colKey === (rowState && rowState.focusedColumn)}
+              disabled={rowState && rowState.disabled}
+              focusAction={focusCell}
+              focusNextAction={focusNext}
+              dispatch={dispatch}
+              width={width}
+              viewStyle={cellContainer[alignText || 'left']}
+              textInputStyle={cellText[alignText || 'left']}
+              textStyle={editableCellText}
+              textViewStyle={editableCellTextView}
+              isLastCell={isLastCell}
+            />
+          );
+        case 'checkable':
+          return (
+            <CheckableCell
+              key={colKey}
+              rowKey={rowKey}
+              columnKey={colKey}
+              isChecked={rowState && rowState.isSelected}
+              disabled={rowState && rowState.disabled}
+              CheckedComponent={CheckedComponent}
+              UncheckedComponent={UncheckedComponent}
+              DisabledCheckedComponent={DisabledCheckedComponent}
+              DisabledUncheckedComponent={DisabledUncheckedComponent}
+              onCheckAction={selectRow}
+              onUncheckAction={deselectRow}
+              dispatch={dispatch}
+              containerStyle={touchableCellContainer}
+              width={width}
+              isLastCell={isLastCell}
+            />
+          );
+        default:
+          return (
+            <Cell
+              key={colKey}
+              value={rowData[colKey]}
+              width={width}
+              viewStyle={cellContainer[alignText || 'left']}
+              textStyle={cellText[alignText || 'left']}
+              isLastCell={isLastCell}
+            />
+          );
+      }
+    });
+  }, []);
 
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
+      const { row, alternateRow } = newDataTableStyles;
       return (
         <Row
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           renderCells={renderCells}
+          style={index % 2 === 0 ? alternateRow : row}
         />
       );
     },
@@ -320,10 +348,13 @@ export const CustomerInvoicePage = ({
   const renderHeader = useCallback(
     () => (
       <HeaderRow
+        style={newDataTableStyles.headerRow}
         renderCells={() =>
-          columns.map(({ key, title, sortable }) => {
+          columns.map(({ key, title, sortable, width, alignText }, index) => {
             const sortDirection = isAscending ? 'ASC' : 'DESC';
             const directionForThisColumn = key === sortBy ? sortDirection : null;
+            const isLastCell = index === columns.length - 1;
+            const { headerCells, cellText } = newDataTableStyles;
             return (
               <HeaderCell
                 key={key}
@@ -335,6 +366,11 @@ export const CustomerInvoicePage = ({
                 onPressAction={sortable ? sortData : null}
                 dispatch={instantDebouncedDispatch}
                 sortDirection={directionForThisColumn}
+                sortable={sortable}
+                width={width}
+                containerStyle={headerCells[alignText || 'left']}
+                textStyle={cellText[alignText || 'left']}
+                isLastCell={isLastCell}
               />
             );
           })
@@ -344,108 +380,58 @@ export const CustomerInvoicePage = ({
     [sortBy, isAscending]
   );
 
+  const {
+    newPageTopSectionContainer,
+    newPageTopLeftSectionContainer,
+    newPageTopRightSectionContainer,
+    searchBar,
+  } = newPageStyles;
   return (
-    <View style={[defaultStyles.pageContentContainer, pageStyles.pageContentContainer]}>
-      <View style={[defaultStyles.container, pageStyles.container]}>
-        <View style={[defaultStyles.pageTopSectionContainer, pageStyles.pageTopSectionContainer]}>
-          <View
-            style={[
-              defaultStyles.pageTopLeftSectionContainer,
-              pageStyles.pageTopLeftSectionContainer,
-            ]}
-          >
-            {renderPageInfo()}
-            <SearchBar
-              onChange={searchBarDispatch}
-              style={pageStyles.searchBar}
-              color="blue"
-              placeholder=""
-            />
-          </View>
-          <View
-            style={[
-              defaultStyles.pageTopRightSectionContainer,
-              pageStyles.pageTopRightSectionContainer,
-            ]}
-          >
-            {renderButtons()}
-          </View>
+    <DataTablePageView>
+      <View style={newPageTopSectionContainer}>
+        <View style={newPageTopLeftSectionContainer}>
+          {renderPageInfo()}
+          <SearchBar
+            onChange={searchBarDispatch}
+            style={searchBar}
+            color={SUSSOL_ORANGE}
+            placeholder=""
+          />
         </View>
-        <DataTable
-          data={data}
-          extraData={dataState}
-          renderRow={renderRow}
-          renderHeader={renderHeader}
-          keyExtractor={keyExtractor}
-        />
-        <BottomConfirmModal
-          isOpen={isSelection && !transaction.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={onDeleteCancel}
-          onConfirm={onDeleteConfirm}
-          confirmText={modalStrings.remove}
-        />
-        <PageContentModal
-          isOpen={modalIsOpen && !transaction.isFinalised}
-          onClose={closeModal}
-          title={getModalTitle()}
-        >
-          {renderModalContent()}
-        </PageContentModal>
+        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
-    </View>
+      <DataTable
+        data={data}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+      />
+      <BottomConfirmModal
+        isOpen={isSelection && !transaction.isFinalised}
+        questionText={modalStrings.remove_these_items}
+        onCancel={onDeleteCancel}
+        onConfirm={onDeleteConfirm}
+        confirmText={modalStrings.remove}
+      />
+      <PageContentModal
+        isOpen={modalIsOpen && !transaction.isFinalised}
+        onClose={closeModal}
+        title={getModalTitle()}
+      >
+        {renderModalContent()}
+      </PageContentModal>
+    </DataTablePageView>
   );
 };
 
 /* eslint-disable react/forbid-prop-types */
 CustomerInvoicePage.propTypes = {
   database: PropTypes.object.isRequired,
-  genericTablePageStyles: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   transaction: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
 };
-
-const defaultStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    borderWidth: 1,
-  },
-  pageContentContainer: {
-    flex: 1,
-  },
-  pageTopSectionContainer: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-  pageTopLeftSectionContainer: {
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    width: 500,
-  },
-  pageTopRightSectionContainer: {
-    flexDirection: 'row',
-    flex: 1,
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end',
-  },
-  listView: {
-    flex: 1,
-  },
-  alignTextLeft: {
-    marginLeft: 20,
-    textAlign: 'left',
-  },
-  alignTextCenter: {
-    textAlign: 'center',
-  },
-  alignTextRight: {
-    marginRight: 20,
-    textAlign: 'right',
-  },
-});
 
 /**
  * Check whether a given customer invoice is safe to be finalised. If safe to finalise,

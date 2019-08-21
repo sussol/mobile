@@ -1,3 +1,8 @@
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
+
 import { useReducer, useCallback } from 'react';
 import getReducer from '../pages/dataTableUtilities/reducer/getReducer';
 import getColumns from '../pages/dataTableUtilities/columns';

@@ -1,5 +1,7 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { StyleSheet } from 'react-native';
 
 import TouchableCell from './TouchableCell';
 
@@ -21,6 +23,7 @@ import TouchableCell from './TouchableCell';
  * @param {func} onUncheckAction Action creator for handling unchecking of this cell.
  *                          `(rowKey, columnKey) => {...}`
  * @param {func} dispatch Reducer dispatch callback for handling actions
+ * @param {Object} containerStyle Style object for the containing Touchable component
  */
 
 const CheckableCell = React.memo(
@@ -36,6 +39,9 @@ const CheckableCell = React.memo(
     onCheckAction,
     onUncheckAction,
     dispatch,
+    containerStyle,
+    width,
+    isLastCell,
   }) => {
     console.log(`- CheckableCell: ${rowKey},${columnKey}`);
 
@@ -55,10 +61,17 @@ const CheckableCell = React.memo(
         columnKey={columnKey}
         onPressAction={onPressAction}
         dispatch={dispatch}
+        containerStyle={containerStyle}
+        width={width}
+        isLastCell={isLastCell}
       />
     );
   }
 );
+
+const defaultStyles = StyleSheet.create({
+  containerStyle: {},
+});
 
 CheckableCell.propTypes = {
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -72,6 +85,9 @@ CheckableCell.propTypes = {
   onCheckAction: PropTypes.func.isRequired,
   onUncheckAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
+  containerStyle: PropTypes.object,
+  width: PropTypes.number,
+  isLastCell: PropTypes.bool,
 };
 
 CheckableCell.defaultProps = {
@@ -79,6 +95,9 @@ CheckableCell.defaultProps = {
   DisabledCheckedComponent: null,
   DisabledUncheckedComponent: null,
   isDisabled: false,
+  containerStyle: defaultStyles.containerStyle,
+  width: 0,
+  isLastCell: false,
 };
 
 export default CheckableCell;
