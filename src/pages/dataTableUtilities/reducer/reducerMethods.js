@@ -319,3 +319,25 @@ export const addItem = (state, action) => {
 
   return { ...state, modalIsOpen: false };
 };
+
+/**
+ * Edits the passed pageObject field with the value supplied.
+ * Used for simple value setting i.e. comments.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'editPageObject', value, field, pageObjectType }
+ */
+export const editPageObject = (state, action) => {
+  const { database, pageObject } = state;
+  const { value, pageObjectType, field } = action;
+
+  if (pageObject[field] !== value) {
+    database.write(() => {
+      pageObject[field] = value;
+      database.save(pageObjectType, pageObject);
+    });
+  }
+
+  return { ...state, modalIsOpen: false };
+};

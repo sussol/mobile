@@ -29,6 +29,7 @@ import {
   closeBasicModal,
   addMasterListItems,
   addItem,
+  editPageObject,
 } from './reducerMethods';
 
 /**
@@ -51,6 +52,7 @@ const customerInvoice = {
   closeBasicModal,
   addMasterListItems,
   addItem,
+  editPageObject,
 };
 
 const PAGE_REDUCERS = {
