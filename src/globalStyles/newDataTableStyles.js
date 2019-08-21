@@ -89,6 +89,10 @@ const newDataTableStyles = {
     flexDirection: 'row',
     height: 45,
   },
+  headerRow: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
   headerCells: {
     left: {
       height: 40,

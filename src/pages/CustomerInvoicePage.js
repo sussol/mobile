@@ -348,6 +348,7 @@ export const CustomerInvoicePage = ({
   const renderHeader = useCallback(
     () => (
       <HeaderRow
+        style={newDataTableStyles.headerRow}
         renderCells={() =>
           columns.map(({ key, title, sortable, width, alignText }, index) => {
             const sortDirection = isAscending ? 'ASC' : 'DESC';
