@@ -1,8 +1,11 @@
+/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, TouchableWithoutFeedback, Text, TextInput, StyleSheet } from 'react-native';
+import { View, TouchableWithoutFeedback, Text, TextInput } from 'react-native';
 
 import Cell from './Cell';
+import { dataTableColors } from '../../globalStyles/index';
+import { getAdjustedStyle } from './utilities';
 
 /**
  * Renders a cell that on press or focus contains a TextInput for
@@ -20,7 +23,13 @@ import Cell from './Cell';
  *                          `(rowKey, columnKey) => {...}`
  * @param {func} focusNextAction Action creator for handling focusing of this cell.
  *                          `(rowKey, columnKey) => {...}`
- * @param {func} dispatch Reducer dispatch callback for handling actions
+ * @param {func}  dispatch Reducer dispatch callback for handling actions
+ * @param {Object}  touchableStyle Style object for the wrapping Touchable component
+ * @param {Object}  viewStyle Style object for the wrapping View component
+ * @param {Object}  textStyle Style object for the inner Text component
+ * @param {Number}  width Optional flex property to inject into styles.
+ * @param {Bool}  isLastCell Indicator for if this cell is the last
+ *                                   in a row. Removing the borderRight if true.
  */
 const EditableCell = React.memo(
   ({
@@ -33,6 +42,13 @@ const EditableCell = React.memo(
     focusAction,
     focusNextAction,
     dispatch,
+    touchableStyle,
+    viewStyle,
+    textInputStyle,
+    textStyle,
+    textViewStyle,
+    isLastCell,
+    width,
   }) => {
     const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
 
@@ -41,9 +57,12 @@ const EditableCell = React.memo(
 
     console.log(`- EditableCell: ${value}`);
 
+    const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
+    const internalTextStyle = getAdjustedStyle(textStyle, width);
+
     // Render a plain Cell if disabled.
     if (disabled) {
-      return <Cell value={value} />;
+      return <Cell viewStyle={internalViewStyle} textStyle={internalTextStyle} value={value} />;
     }
 
     // Too many TextInputs causes React Native to crash, so only
@@ -52,9 +71,11 @@ const EditableCell = React.memo(
     // feedback to resemble a TextInput regardless of focus.
     if (!isFocused) {
       return (
-        <TouchableWithoutFeedback onPress={focusCell}>
-          <View style={defaultStyles.cell}>
-            <Text>{value}</Text>
+        <TouchableWithoutFeedback style={touchableStyle} onPress={focusCell}>
+          <View style={internalViewStyle}>
+            <View style={textViewStyle}>
+              <Text style={internalTextStyle}>{value}</Text>
+            </View>
           </View>
         </TouchableWithoutFeedback>
       );
@@ -62,13 +83,14 @@ const EditableCell = React.memo(
 
     // Render a Cell with a textInput.
     return (
-      <View style={defaultStyles.cell}>
+      <View style={internalViewStyle}>
         <TextInput
-          style={defaultStyles.editableCell}
+          style={textInputStyle}
           value={String(value)}
           onChangeText={onEdit}
           autoFocus={isFocused}
           onSubmitEditing={focusNextCell}
+          underlineColorAndroid={dataTableColors.editableCellUnderline}
         />
       </View>
     );
@@ -85,25 +107,26 @@ EditableCell.propTypes = {
   focusAction: PropTypes.func.isRequired,
   focusNextAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
+  touchableStyle: PropTypes.object,
+  viewStyle: PropTypes.object,
+  textStyle: PropTypes.object,
+  width: PropTypes.number,
+  textInputStyle: PropTypes.object,
+  textViewStyle: PropTypes.object,
+  isLastCell: PropTypes.bool,
 };
 
 EditableCell.defaultProps = {
   value: '',
   disabled: false,
   isFocused: false,
+  width: 0,
+  touchableStyle: {},
+  viewStyle: {},
+  textStyle: {},
+  textInputStyle: {},
+  textViewStyle: {},
+  isLastCell: false,
 };
-
-const defaultStyles = StyleSheet.create({
-  cell: {
-    flex: 1,
-    backgroundColor: 'pink',
-    justifyContent: 'center',
-  },
-  editableCell: {
-    flex: 1,
-    backgroundColor: 'green',
-    justifyContent: 'center',
-  },
-});
 
 export default EditableCell;
