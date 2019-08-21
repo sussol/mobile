@@ -89,6 +89,7 @@ export const CustomerInvoicePage = ({
     isAscending: true,
     modalIsOpen: false,
     modalKey: '',
+    hasSelection: false,
   });
 
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
@@ -102,16 +103,8 @@ export const CustomerInvoicePage = ({
     modalKey,
     pageInfo,
     pageObject,
+    hasSelection,
   } = tableState;
-  let isSelection = false;
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const row of dataState.values()) {
-    if (row.isSelected) {
-      isSelection = true;
-      break;
-    }
-  }
 
   const onDeleteConfirm = () => {};
 
@@ -337,7 +330,7 @@ export const CustomerInvoicePage = ({
         keyExtractor={keyExtractor}
       />
       <BottomConfirmModal
-        isOpen={isSelection && !transaction.isFinalised}
+        isOpen={hasSelection && !transaction.isFinalised}
         questionText={modalStrings.remove_these_items}
         onCancel={onDeleteCancel}
         onConfirm={onDeleteConfirm}

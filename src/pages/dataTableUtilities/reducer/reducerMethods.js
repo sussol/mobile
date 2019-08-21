@@ -171,7 +171,7 @@ export const selectRow = (state, action) => {
     isSelected: true,
   });
 
-  return { ...state, dataState: newDataState };
+  return { ...state, dataState: newDataState, hasSelection: true };
 };
 
 /**
@@ -192,7 +192,16 @@ export const deselectRow = (state, action) => {
     isSelected: false,
   });
 
-  return { ...state, dataState: newDataState };
+  let hasSelection = false;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const row of newDataState.values()) {
+    if (row.isSelected) {
+      hasSelection = true;
+      break;
+    }
+  }
+
+  return { ...state, dataState: newDataState, hasSelection };
 };
 
 /**
@@ -213,7 +222,7 @@ export const deselectAll = state => {
       });
     }
   }
-  return { ...state, dataState: newDataState };
+  return { ...state, dataState: newDataState, hasSelection: false };
 };
 
 /**
