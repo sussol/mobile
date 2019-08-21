@@ -59,3 +59,8 @@ export const openBasicModal = modalKey => ({
 export const closeBasicModal = () => ({
   type: 'closeBasicModal',
 });
+
+export const addMasterListItems = objectType => ({
+  type: 'addMasterListItems',
+  objectType,
+});
