@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { getAdjustedStyle } from './utilities';
 
 /**
@@ -27,11 +27,6 @@ const Cell = React.memo(({ value, textStyle, viewStyle, width, isLastCell }) => 
   );
 });
 
-const defaultStyles = StyleSheet.create({
-  viewStyle: {},
-  textStyle: {},
-});
-
 Cell.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   textStyle: PropTypes.object,
@@ -42,8 +37,8 @@ Cell.propTypes = {
 
 Cell.defaultProps = {
   value: '',
-  textStyle: defaultStyles.textStyle,
-  viewStyle: defaultStyles.viewStyle,
+  textStyle: {},
+  viewStyle: {},
   width: 0,
   isLastCell: false,
 };
