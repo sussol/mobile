@@ -89,6 +89,7 @@ HeaderCell.propTypes = {
   textStyle: PropTypes.object,
   width: PropTypes.number,
   sortable: PropTypes.bool,
+  isLastCell: PropTypes.bool,
 };
 
 HeaderCell.defaultProps = {
@@ -102,6 +103,7 @@ HeaderCell.defaultProps = {
   textStyle: defaultStyles.textStyle,
   sortable: false,
   width: 0,
+  isLastCell: false,
 };
 
 export default HeaderCell;
