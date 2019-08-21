@@ -47,6 +47,7 @@ import {
   filterData,
   openBasicModal,
   closeBasicModal,
+  addMasterListItems,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -113,15 +114,6 @@ export const CustomerInvoicePage = ({
 
   const onDeleteCancel = () => {
     dispatch(deselectAll());
-  };
-
-  const onAddMasterItems = () => {
-    runWithLoadingIndicator(() => {
-      database.write(() => {
-        transaction.addItemsFromMasterList(database);
-        database.save('Transaction', transaction);
-      });
-    });
   };
 
   const onSearchChange = searchTerm => {
@@ -290,7 +282,7 @@ export const CustomerInvoicePage = ({
       />
       <PageButton
         text={buttonStrings.add_master_list_items}
-        onPress={onAddMasterItems}
+        onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Transaction')))}
         isDisabled={transaction.isFinalised}
       />
     </View>
@@ -373,7 +365,7 @@ export const CustomerInvoicePage = ({
       <PageContentModal
         isOpen={modalIsOpen && !transaction.isFinalised}
         onClose={() => dispatch(closeBasicModal())}
-        title={getModalTitle()}
+        title={getModalTitle(modalKey)}
       >
         {renderModalContent()}
       </PageContentModal>
