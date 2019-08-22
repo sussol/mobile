@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { AppRegistry } from 'react-native';
+import { AppRegistry, YellowBox } from 'react-native';
 import { Provider } from 'react-redux';
 import { ErrorHandler } from 'redux-persist-error-handler';
 import { Client as BugsnagClient } from 'bugsnag-react-native';
@@ -25,4 +25,5 @@ function App() {
   );
 }
 
+YellowBox.ignoreWarnings(['Setting a timer']);
 AppRegistry.registerComponent(appName, () => App);
