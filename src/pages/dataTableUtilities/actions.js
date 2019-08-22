@@ -8,7 +8,7 @@
  */
 
 export const editTotalQuantity = (value, rowKey, columnKey) => ({
-  type: 'editCell',
+  type: 'editTotalQuantity',
   value,
   rowKey,
   columnKey,
@@ -76,4 +76,10 @@ export const editPageObject = (value, pageObjectType, field) => ({
   pageObjectType,
   value,
   field,
+});
+
+export const deleteItemsById = (pageObjectType, object) => ({
+  type: 'deleteItemsById',
+  pageObjectType,
+  object,
 });
