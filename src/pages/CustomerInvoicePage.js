@@ -3,14 +3,14 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useMemo, useLayoutEffect } from 'react';
+import React, { useCallback, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 // eslint-disable-next-line no-unused-vars
 import { createRecord } from '../database';
-import { debounce, MODAL_KEYS, getModalTitle } from '../utilities';
+import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
@@ -76,22 +76,25 @@ export const CustomerInvoicePage = ({
   routeName,
 }) => {
   const startTime = Date.now();
-  const [tableState, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
-    pageObject: transaction,
-    backingData: transaction.items,
-    data: transaction.items.sorted('item.name').slice(),
-    database,
-    keyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalIsOpen: false,
-    modalKey: '',
-    hasSelection: false,
-  });
+  const [tableState, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(
+    routeName,
+    {
+      pageObject: transaction,
+      backingData: transaction.items,
+      data: transaction.items.sorted('item.name').slice(),
+      database,
+      keyExtractor,
+      dataState: new Map(),
+      currentFocusedRowKey: null,
+      searchTerm: '',
+      filterDataKeys: ['item.name'],
+      sortBy: 'itemName',
+      isAscending: true,
+      modalIsOpen: false,
+      modalKey: '',
+      hasSelection: false,
+    }
+  );
 
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
   const {
@@ -106,16 +109,6 @@ export const CustomerInvoicePage = ({
     pageObject,
     hasSelection,
   } = tableState;
-
-  const onDeleteCancel = () => {
-    dispatch(deselectAll());
-  };
-
-  const onSearchChange = searchTerm => {
-    dispatch(filterData(searchTerm));
-  };
-
-  const searchBarDispatch = useMemo(() => debounce(onSearchChange, 500), []);
 
   const renderPageInfo = useCallback(
     () => (
@@ -313,7 +306,7 @@ export const CustomerInvoicePage = ({
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={searchBarDispatch}
+            onChange={value => debouncedDispatch(filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
@@ -331,7 +324,7 @@ export const CustomerInvoicePage = ({
       <BottomConfirmModal
         isOpen={hasSelection && !transaction.isFinalised}
         questionText={modalStrings.remove_these_items}
-        onCancel={onDeleteCancel}
+        onCancel={() => dispatch(deselectAll())}
         onConfirm={() => dispatch(deleteItemsById('Transaction'))}
         confirmText={modalStrings.remove}
       />
