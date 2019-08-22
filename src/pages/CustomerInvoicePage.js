@@ -19,9 +19,6 @@ import {
   PageButton,
   PageInfo,
   TextEditor,
-  SortAscIcon,
-  SortNeutralIcon,
-  SortDescIcon,
   CheckedComponent,
   UncheckedComponent,
   DisabledCheckedComponent,
@@ -33,8 +30,7 @@ import {
   Cell,
   EditableCell,
   CheckableCell,
-  HeaderCell,
-  HeaderRow,
+  DataTableHeaderRow,
 } from '../widgets/DataTable';
 
 import {
@@ -253,38 +249,14 @@ export const CustomerInvoicePage = ({
     </View>
   );
 
-  const renderHeader = useCallback(
-    () => (
-      <HeaderRow
-        renderCells={() =>
-          columns.map(({ key, title, sortable, width, alignText }, index) => {
-            const sortDirection = isAscending ? 'ASC' : 'DESC';
-            const directionForThisColumn = key === sortBy ? sortDirection : null;
-            const isLastCell = index === columns.length - 1;
-            const { headerCells, cellText } = newDataTableStyles;
-            return (
-              <HeaderCell
-                key={key}
-                title={title}
-                SortAscComponent={SortAscIcon}
-                SortDescComponent={SortDescIcon}
-                SortNeutralComponent={SortNeutralIcon}
-                columnKey={key}
-                onPressAction={sortable ? sortData : null}
-                dispatch={instantDebouncedDispatch}
-                sortDirection={directionForThisColumn}
-                sortable={sortable}
-                width={width}
-                containerStyle={headerCells[alignText || 'left']}
-                textStyle={cellText[alignText || 'left']}
-                isLastCell={isLastCell}
-              />
-            );
-          })
-        }
-      />
-    ),
-    [sortBy, isAscending]
+  const renderHeader = () => (
+    <DataTableHeaderRow
+      columns={columns}
+      dispatch={instantDebouncedDispatch}
+      sortAction={sortData}
+      isAscending={isAscending}
+      sortBy={sortBy}
+    />
   );
 
   const {
