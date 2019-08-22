@@ -13,12 +13,6 @@ import {
 import { CHANGE_TYPES, generateUUID } from '../database';
 import { deleteRecord, mergeRecords } from '../database/utilities';
 import { SETTINGS_KEYS } from '../settings';
-import {
-  createOptionsInternalRecord,
-  createPeriodInternalRecord,
-  createPeriodScheduleInternalRecord,
-  createUnitInternalRecord,
-} from './createInternalRecord';
 
 const { THIS_STORE_ID, THIS_STORE_TAGS, THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
 
@@ -684,22 +678,41 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Period': {
-      const period = database.update(recordType, createPeriodInternalRecord(record, database));
+      const period = database.update(recordType, {
+        id: record.ID,
+        startDate: record.startDate ? parseDate(record.startDate) : new Date(),
+        endDate: record.endDate ? parseDate(record.endDate) : new Date(),
+        name: record.name,
+        periodSchedule: database.getOrCreate('PeriodSchedule', record.periodScheduleID),
+      });
       period.periodSchedule.addPeriodIfUnique(period);
       break;
     }
     case 'PeriodSchedule': {
-      database.update(recordType, createPeriodScheduleInternalRecord(record));
+      database.update(recordType, {
+        id: record.ID,
+        name: record.name,
+      });
       break;
     }
     case 'Options': {
       if (record.type === 'stocktakeLineAdjustment') {
-        database.update(recordType, createOptionsInternalRecord(record));
+        database.update(recordType, {
+          id: record.ID,
+          title: record.title,
+          type: record.type,
+          isActive: parseBoolean(record.isActive),
+        });
       }
       break;
     }
     case 'Unit': {
-      database.update(recordType, createUnitInternalRecord(record));
+      database.update(recordType, {
+        id: record.ID,
+        units: record.units,
+        orderNumber: parseNumber(record.order_number),
+        comment: record.comment,
+      });
       break;
     }
 
