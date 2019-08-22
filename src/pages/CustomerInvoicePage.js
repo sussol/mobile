@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useLayoutEffect } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -75,7 +75,6 @@ export const CustomerInvoicePage = ({
   runWithLoadingIndicator,
   routeName,
 }) => {
-  const startTime = Date.now();
   const [tableState, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(
     routeName,
     {
@@ -287,12 +286,6 @@ export const CustomerInvoicePage = ({
     ),
     [sortBy, isAscending]
   );
-
-  useLayoutEffect(() => {
-    console.log('===============Layout time=====================');
-    console.log(Date.now() - startTime);
-    console.log('====================================');
-  });
 
   const {
     newPageTopSectionContainer,
