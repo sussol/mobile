@@ -33,7 +33,8 @@ import { FinaliseModal, LoginModal } from './widgets/modals';
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema, UIDatabase } from './database';
+import { Database, UIDatabase } from './database';
+import { schema } from './database/schema';
 
 import globalStyles, {
   dataTableColors,
