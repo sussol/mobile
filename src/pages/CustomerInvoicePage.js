@@ -46,11 +46,12 @@ import {
   deselectAll,
   sortData,
   filterData,
-  openBasicModal,
   closeBasicModal,
   addMasterListItems,
   addItem,
   editPageObject,
+  deleteItemsById,
+  openBasicModal,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -105,8 +106,6 @@ export const CustomerInvoicePage = ({
     pageObject,
     hasSelection,
   } = tableState;
-
-  const onDeleteConfirm = () => {};
 
   const onDeleteCancel = () => {
     dispatch(deselectAll());
@@ -333,7 +332,7 @@ export const CustomerInvoicePage = ({
         isOpen={hasSelection && !transaction.isFinalised}
         questionText={modalStrings.remove_these_items}
         onCancel={onDeleteCancel}
-        onConfirm={onDeleteConfirm}
+        onConfirm={() => dispatch(deleteItemsById('Transaction'))}
         confirmText={modalStrings.remove}
       />
       <PageContentModal
