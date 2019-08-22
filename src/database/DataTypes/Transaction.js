@@ -256,6 +256,7 @@ export class Transaction extends Realm.Object {
    * @param   {Array.<string>}  itemIds
    */
   removeItemsById(database, itemIds) {
+    if (!this.items.length) return;
     const itemsToDelete = [];
     for (let i = 0; i < itemIds.length; i += 1) {
       const transactionItem = this.items.find(testItem => testItem.id === itemIds[i]);
