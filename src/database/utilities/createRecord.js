@@ -6,17 +6,8 @@
 import { generateUUID } from 'react-native-database';
 
 import { formatDateAndTime } from '../../utilities';
-
+import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
-
-export const NUMBER_SEQUENCE_KEYS = {
-  CUSTOMER_INVOICE_NUMBER: 'customer_invoice_serial_number',
-  INVENTORY_ADJUSTMENT_SERIAL_NUMBER: 'inventory_adjustment_serial_number',
-  REQUISITION_SERIAL_NUMBER: 'requisition_serial_number',
-  REQUISITION_REQUESTER_REFERENCE: 'requisition_requester_reference',
-  STOCKTAKE_SERIAL_NUMBER: 'stocktake_serial_number',
-  SUPPLIER_INVOICE_NUMBER: 'supplier_invoice_serial_number',
-};
 
 // Get the next highest number in an existing number sequence.
 export const getNextNumber = (database, sequenceKey) => {
