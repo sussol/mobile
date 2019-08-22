@@ -350,3 +350,36 @@ export const editPageObject = (state, action) => {
 
   return { ...state, modalIsOpen: false };
 };
+
+/**
+ * Deletes the selected RequisitionItems or
+ * TransactionItems held in state. Where each selected
+ * item is indicated by DataState[rowKey].isSelected.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ */
+export const deleteItemsById = (state, action) => {
+  const { database, pageObject, dataState, hasSelection, backingData } = state;
+  const { pageObjectType } = action;
+
+  if (!hasSelection) return state;
+
+  const itemsById = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
+
+  database.write(() => {
+    pageObject.removeItemsById(database, itemsById);
+    database.save(pageObjectType, pageObject);
+  });
+
+  const newDataState = new Map();
+  const newData = backingData.slice();
+
+  return {
+    ...state,
+    data: newData,
+    dataState: newDataState,
+    hasSelection: false,
+    modalIsOpen: false,
+  };
+};
