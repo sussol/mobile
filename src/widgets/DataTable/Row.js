@@ -15,9 +15,11 @@ import { View } from 'react-native';
  *                          `(rowKey, columnKey) => {...}`
  * @param {object} viewStyle Style object for the wrapping View component
  */
-const Row = React.memo(({ rowData, rowState, rowKey, renderCells, style }) => {
-  console.log('=================================');
-  console.log(`Row: ${rowKey}`);
+const Row = React.memo(({ rowData, rowState, rowKey, renderCells, style, debug }) => {
+  if (debug) {
+    console.log('=================================');
+    console.log(`Row: ${rowKey}`);
+  }
   return <View style={style}>{renderCells(rowData, rowState, rowKey)}</View>;
 });
 
@@ -27,11 +29,13 @@ Row.propTypes = {
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   renderCells: PropTypes.func.isRequired,
   style: PropTypes.object,
+  debug: PropTypes.bool,
 };
 
 Row.defaultProps = {
   rowState: null,
   style: {},
+  debug: false,
 };
 
 export default Row;

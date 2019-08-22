@@ -15,9 +15,8 @@ import { getAdjustedStyle } from './utilities';
  * @param {Bool}          isLastCell Indicator for if this cell is the last
  *                                   in a row. Removing the borderRight if true.
  */
-const Cell = React.memo(({ value, textStyle, viewStyle, width, isLastCell }) => {
-  console.log(`- Cell: ${value}`);
-
+const Cell = React.memo(({ value, textStyle, viewStyle, width, isLastCell, debug }) => {
+  if (debug) console.log(`- Cell: ${value}`);
   const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
 
   return (
@@ -33,6 +32,7 @@ Cell.propTypes = {
   viewStyle: PropTypes.object,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,
+  debug: PropTypes.bool,
 };
 
 Cell.defaultProps = {
@@ -41,6 +41,7 @@ Cell.defaultProps = {
   viewStyle: {},
   width: 0,
   isLastCell: false,
+  debug: false,
 };
 
 export default Cell;

@@ -35,9 +35,10 @@ const TouchableCell = React.memo(
     width,
     textStyle,
     isLastCell,
+    debug,
     ...otherProps
   }) => {
-    console.log(`- TouchableCell: ${rowKey},${columnKey}`);
+    if (debug) console.log(`- TouchableCell: ${rowKey},${columnKey}`);
 
     const onPress = () => {
       dispatch(onPressAction(rowKey, columnKey));
@@ -68,15 +69,17 @@ TouchableCell.propTypes = {
   textStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
   width: PropTypes.number,
+  debug: PropTypes.bool,
 };
 
 TouchableCell.defaultProps = {
   value: '',
   containerStyle: {},
   textStyle: {},
-  isLastCell: false,
   TouchableComponent: null,
+  isLastCell: false,
   width: 0,
+  debug: false,
 };
 
 export default TouchableCell;

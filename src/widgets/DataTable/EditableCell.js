@@ -49,13 +49,14 @@ const EditableCell = React.memo(
     textViewStyle,
     isLastCell,
     width,
+    debug,
   }) => {
     const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
 
     const focusCell = () => dispatch(focusAction(rowKey, columnKey));
     const focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey));
 
-    console.log(`- EditableCell: ${value}`);
+    if (debug) console.log(`- EditableCell: ${value}`);
 
     const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
     const internalTextStyle = getAdjustedStyle(textStyle, width);
@@ -114,19 +115,21 @@ EditableCell.propTypes = {
   textInputStyle: PropTypes.object,
   textViewStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
+  debug: PropTypes.bool,
 };
 
 EditableCell.defaultProps = {
   value: '',
   disabled: false,
   isFocused: false,
-  width: 0,
   touchableStyle: {},
   viewStyle: {},
   textStyle: {},
   textInputStyle: {},
   textViewStyle: {},
   isLastCell: false,
+  width: 0,
+  debug: false,
 };
 
 export default EditableCell;
