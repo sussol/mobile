@@ -1,7 +1,7 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, TouchableWithoutFeedback, Text, TextInput, StyleSheet } from 'react-native';
+import { View, TouchableWithoutFeedback, Text, TextInput } from 'react-native';
 
 import Cell from './Cell';
 import { dataTableColors } from '../../globalStyles/index';
@@ -23,10 +23,13 @@ import { getAdjustedStyle } from './utilities';
  *                          `(rowKey, columnKey) => {...}`
  * @param {func} focusNextAction Action creator for handling focusing of this cell.
  *                          `(rowKey, columnKey) => {...}`
- * @param {func} dispatch Reducer dispatch callback for handling actions
- * @param {Object} touchableStyle Style object for the wrapping Touchable component
- * @param {Object} viewStyle Style object for the wrapping View component
- * @param {Object} textStyle Style object for the inner Text component
+ * @param {func}  dispatch Reducer dispatch callback for handling actions
+ * @param {Object}  touchableStyle Style object for the wrapping Touchable component
+ * @param {Object}  viewStyle Style object for the wrapping View component
+ * @param {Object}  textStyle Style object for the inner Text component
+ * @param {Number}  width Optional flex property to inject into styles.
+ * @param {Bool}  isLastCell Indicator for if this cell is the last
+ *                                   in a row. Removing the borderRight if true.
  */
 const EditableCell = React.memo(
   ({
@@ -94,20 +97,6 @@ const EditableCell = React.memo(
   }
 );
 
-const defaultStyles = StyleSheet.create({
-  viewStyle: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  textStyle: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  touchableStyle: {},
-  textInputStyle: {},
-  textViewStyle: {},
-});
-
 EditableCell.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -132,11 +121,11 @@ EditableCell.defaultProps = {
   disabled: false,
   isFocused: false,
   width: 0,
-  touchableStyle: defaultStyles.touchableStyle,
-  viewStyle: defaultStyles.viewStyle,
-  textStyle: defaultStyles.textStyle,
-  textInputStyle: defaultStyles.textInputStyle,
-  textViewStyle: defaultStyles.textInputStyle,
+  touchableStyle: {},
+  viewStyle: {},
+  textStyle: {},
+  textInputStyle: {},
+  textViewStyle: {},
   isLastCell: false,
 };
 
