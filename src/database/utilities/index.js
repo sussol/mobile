@@ -11,8 +11,6 @@ export {
   NUMBER_SEQUENCE_KEYS,
 } from './createRecord';
 export { deleteRecord } from './deleteRecord';
-// eslint-disable-next-line import/no-cycle
-export { mergeRecords } from './mergeRecords';
 
 // eslint-disable-next-line import/no-cycle
 export { getTotal, addBatchToParent, millisecondsToDays } from './utilities';
