@@ -9,6 +9,7 @@
  * createOrUpdateRecord in incomingSyncUtils.
  */
 
+// eslint-disable-next-line import/no-cycle
 import { parseBoolean, parseDate, parseNumber } from './incomingSyncUtils';
 
 export const createPeriodInternalRecord = (record, database) => ({
