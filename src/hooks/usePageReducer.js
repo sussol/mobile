@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { useReducer, useCallback } from 'react';
+import { useReducer, useCallback, useMemo } from 'react';
 import getReducer from '../pages/dataTableUtilities/reducer/getReducer';
 import getColumns from '../pages/dataTableUtilities/columns';
 import getPageInfo from '../pages/dataTableUtilities/pageInfo';
@@ -12,8 +12,9 @@ import { debounce } from '../utilities/index';
 /**
  * useReducer wrapper for pages within the app. Creates a
  * composed reducer through getReducer for a particular
- * page as well as fetching the required columns and inserting
- * them into the initial state of the component.
+ * page as well as fetching the required data table columns
+ * and page info columns and inserting them into the initial
+ * state of the component.
  *
  * Returns the current state as well as three dispatchers for
  * actions to the reducer - a regular dispatch and two debounced
@@ -33,7 +34,7 @@ const usePageReducer = (
 ) => {
   const columns = getColumns(page);
   const pageInfo = getPageInfo(page);
-  const memoizedReducer = useCallback(getReducer(page), []);
+  const memoizedReducer = useMemo(() => getReducer(page), []);
   const [state, dispatch] = useReducer(memoizedReducer, {
     ...initialState,
     columns,
