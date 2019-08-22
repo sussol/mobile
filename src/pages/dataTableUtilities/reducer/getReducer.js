@@ -30,6 +30,7 @@ import {
   addMasterListItems,
   addItem,
   editPageObject,
+  deleteItemsById,
 } from './reducerMethods';
 
 /**
@@ -53,6 +54,7 @@ const customerInvoice = {
   addMasterListItems,
   addItem,
   editPageObject,
+  deleteItemsById,
 };
 
 const PAGE_REDUCERS = {
