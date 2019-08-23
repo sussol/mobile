@@ -71,11 +71,16 @@ export const addItem = (item, addedItemType) => ({
   addedItemType,
 });
 
-export const editPageObject = (value, pageObjectType, field) => ({
-  type: 'editPageObject',
+export const editTheirRef = (value, pageObjectType) => ({
+  type: 'editTheirRef',
   pageObjectType,
   value,
-  field,
+});
+
+export const editComment = (value, pageObjectType) => ({
+  type: 'editComment',
+  pageObjectType,
+  value,
 });
 
 export const deleteItemsById = (pageObjectType, object) => ({
