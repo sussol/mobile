@@ -312,7 +312,7 @@ export const addMasterListItems = (state, action) => {
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
- * Action: { type: 'adadItem', item, addedItemType }
+ * Action: { type: 'addItem', item, addedItemType }
  */
 export const addItem = (state, action) => {
   const { database, pageObject, data } = state;
