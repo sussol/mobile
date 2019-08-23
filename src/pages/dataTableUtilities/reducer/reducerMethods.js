@@ -419,3 +419,17 @@ export const deleteItemsById = (state, action) => {
     modalKey: '',
   };
 };
+
+/**
+ * Simply refresh's the data object in state to
+ * correctly match the backingData when side effects
+ * such as finalizing manipulate the state of a page
+ * from outside the reducer. Should only be used when
+ * there are no other options.
+ *
+ * @param {Object} state  The current state
+ */
+export const refreshData = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData.slice() };
+};
