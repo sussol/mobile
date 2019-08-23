@@ -75,8 +75,8 @@ export const CustomerInvoicePage = ({
     routeName,
     {
       pageObject: transaction,
-      backingData: transaction.items,
-      data: transaction.items.sorted('item.name').slice(),
+      backingData: transaction.items.sorted('item.name'),
+      data: transaction.items.slice(),
       database,
       keyExtractor,
       dataState: new Map(),
