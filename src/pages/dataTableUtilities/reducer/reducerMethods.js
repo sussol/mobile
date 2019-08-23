@@ -396,7 +396,7 @@ export const editComment = (state, action) => {
  * @param {Object} action The action to act upon
  */
 export const deleteItemsById = (state, action) => {
-  const { database, pageObject, dataState, hasSelection, backingData } = state;
+  const { database, pageObject, data, dataState, hasSelection } = state;
   const { pageObjectType } = action;
 
   if (!hasSelection) return state;
@@ -409,7 +409,7 @@ export const deleteItemsById = (state, action) => {
   });
 
   const newDataState = new Map();
-  const newData = backingData.slice();
+  const newData = data.filter(item => item.isValid());
 
   return {
     ...state,
