@@ -273,7 +273,7 @@ export const sortData = (state, action) => {
  */
 export const openBasicModal = (state, action) => {
   const { modalKey } = action;
-  return { ...state, modalIsOpen: true, modalKey };
+  return { ...state, modalKey };
 };
 
 /**
@@ -283,7 +283,7 @@ export const openBasicModal = (state, action) => {
  * @param {Object} state  The current state
  * Action: { type: 'closeBasicModal' }
  */
-export const closeBasicModal = state => ({ ...state, modalIsOpen: false, modalKey: '' });
+export const closeBasicModal = state => ({ ...state, modalKey: '' });
 
 /**
  * Adds all items from a master list to the pageObject held
@@ -324,9 +324,9 @@ export const addItem = (state, action) => {
     addedItem = createRecord(database, addedItemType, pageObject, item);
   });
 
-  if (addedItem) return { ...state, data: [addedItem, ...data], modalIsOpen: false };
+  if (addedItem) return { ...state, data: [addedItem, ...data], modalKey: '' };
 
-  return { ...state, modalIsOpen: false };
+  return { ...state, modalKey: '' };
 };
 
 /**
@@ -348,7 +348,7 @@ export const editPageObject = (state, action) => {
     });
   }
 
-  return { ...state, modalIsOpen: false };
+  return { ...state, modalKey: '' };
 };
 
 /**
@@ -380,6 +380,6 @@ export const deleteItemsById = (state, action) => {
     data: newData,
     dataState: newDataState,
     hasSelection: false,
-    modalIsOpen: false,
+    modalKey: '',
   };
 };
