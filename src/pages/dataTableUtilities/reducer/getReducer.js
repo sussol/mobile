@@ -29,7 +29,8 @@ import {
   closeBasicModal,
   addMasterListItems,
   addItem,
-  editPageObject,
+  editTheirRef,
+  editComment,
   deleteItemsById,
 } from './reducerMethods';
 
@@ -53,7 +54,8 @@ const customerInvoice = {
   closeBasicModal,
   addMasterListItems,
   addItem,
-  editPageObject,
+  editTheirRef,
+  editComment,
   deleteItemsById,
 };
 
