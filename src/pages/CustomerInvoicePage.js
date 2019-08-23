@@ -32,7 +32,6 @@ import {
   CheckableCell,
   DataTableHeaderRow,
 } from '../widgets/DataTable';
-
 import {
   editTotalQuantity,
   focusCell,
@@ -45,7 +44,8 @@ import {
   closeBasicModal,
   addMasterListItems,
   addItem,
-  editPageObject,
+  editComment,
+  editTheirRef,
   deleteItemsById,
   openBasicModal,
 } from './dataTableUtilities/actions';
@@ -218,14 +218,14 @@ export const CustomerInvoicePage = ({
         return (
           <TextEditor
             text={comment}
-            onEndEditing={value => dispatch(editPageObject(value, 'Transaction', 'comment'))}
+            onEndEditing={value => dispatch(editComment(value, 'Transaction'))}
           />
         );
       case THEIR_REF_EDIT:
         return (
           <TextEditor
             text={theirRef}
-            onEndEditing={value => dispatch(editPageObject(value, 'Transaction', 'theirRef'))}
+            onEndEditing={value => dispatch(editTheirRef(value, 'Transaction'))}
           />
         );
     }
