@@ -24,6 +24,7 @@ import { newDataTableStyles } from '../../globalStyles';
  */
 const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch, sortAction }) => (
   <HeaderRow
+    style={newDataTableStyles.headerRow}
     renderCells={() =>
       columns.map(({ key, title, sortable, width, alignText }, index) => {
         const sortDirection = isAscending ? 'ASC' : 'DESC';
