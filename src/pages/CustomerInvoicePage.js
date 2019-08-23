@@ -85,7 +85,6 @@ export const CustomerInvoicePage = ({
       filterDataKeys: ['item.name'],
       sortBy: 'itemName',
       isAscending: true,
-      modalIsOpen: false,
       modalKey: '',
       hasSelection: false,
     }
@@ -98,7 +97,6 @@ export const CustomerInvoicePage = ({
     sortBy,
     isAscending,
     columns,
-    modalIsOpen,
     modalKey,
     pageInfo,
     pageObject,
@@ -294,7 +292,7 @@ export const CustomerInvoicePage = ({
         confirmText={modalStrings.remove}
       />
       <PageContentModal
-        isOpen={modalIsOpen && !transaction.isFinalised}
+        isOpen={!!modalKey && !transaction.isFinalised}
         onClose={() => dispatch(closeBasicModal())}
         title={getModalTitle(modalKey)}
       >
