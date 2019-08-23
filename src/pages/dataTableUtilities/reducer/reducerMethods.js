@@ -365,10 +365,10 @@ export const deleteItemsById = (state, action) => {
 
   if (!hasSelection) return state;
 
-  const itemsById = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
+  const itemsIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
   database.write(() => {
-    pageObject.removeItemsById(database, itemsById);
+    pageObject.removeItemsById(database, itemsIds);
     database.save(pageObjectType, pageObject);
   });
 
