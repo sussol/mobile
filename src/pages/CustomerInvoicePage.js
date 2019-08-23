@@ -48,6 +48,7 @@ import {
   editTheirRef,
   deleteItemsById,
   openBasicModal,
+  refreshData,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -101,7 +102,13 @@ export const CustomerInvoicePage = ({
     pageInfo,
     pageObject,
     hasSelection,
+    backingData,
   } = tableState;
+
+  // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
+  // Since this does not manipulate the state through the reducer, data object does not get
+  // updated.
+  if (transaction.isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
   const renderPageInfo = useCallback(
     () => (
