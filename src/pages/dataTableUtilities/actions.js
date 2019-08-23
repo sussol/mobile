@@ -88,3 +88,7 @@ export const deleteItemsById = (pageObjectType, object) => ({
   pageObjectType,
   object,
 });
+
+export const refreshData = () => ({
+  type: 'refreshData',
+});
