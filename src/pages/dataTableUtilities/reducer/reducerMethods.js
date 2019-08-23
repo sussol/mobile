@@ -330,25 +330,61 @@ export const addItem = (state, action) => {
 };
 
 /**
- * Edits the passed pageObject field with the value supplied.
- * Used for simple value setting i.e. comments.
+ * Reducer helper method for editing a non-setter field on a
+ * realm object. Should be called by more explicit reducer
+ * methods and not exported to avoid misuse. To create a reducer
+ * method for setting a simple value for a realm object, create a
+ * more explicit reducer method with logic specific to that field
+ * contained, and call this method. See editTheirRef.
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
  * Action: { type: 'editPageObject', value, field, pageObjectType }
  */
-export const editPageObject = (state, action) => {
+const editPageObject = (state, action) => {
   const { database, pageObject } = state;
   const { value, pageObjectType, field } = action;
 
-  if (pageObject[field] !== value) {
-    database.write(() => {
-      pageObject[field] = value;
-      database.save(pageObjectType, pageObject);
-    });
-  }
+  database.write(() => {
+    pageObject[field] = value;
+    database.save(pageObjectType, pageObject);
+  });
 
   return { ...state, modalKey: '' };
+};
+
+/**
+ * Edits the passed pageObject 'theirRef' field with the value supplied.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'editPageObject', value, pageObjectType }
+ */
+export const editTheirRef = (state, action) => {
+  const { pageObject } = state;
+  const { value } = action;
+
+  const { theirRef } = pageObject;
+
+  if (theirRef !== value) return { ...editPageObject(state, { ...action, field: 'theirRef' }) };
+  return state;
+};
+
+/**
+ * Edits the passed pageObject 'comment' field with the value supplied.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'editPageObject', value, pageObjectType }
+ */
+export const editComment = (state, action) => {
+  const { pageObject } = state;
+  const { value } = action;
+
+  const { comment } = pageObject;
+
+  if (comment !== value) return { ...editPageObject(state, { ...action, field: 'comment' }) };
+  return state;
 };
 
 /**
