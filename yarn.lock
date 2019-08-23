@@ -6897,10 +6897,10 @@ react-native-data-table@^0.2.0, react-native-data-table@^0.2.1:
   dependencies:
     react-native-vector-icons "^4.4.2"
 
-react-native-database@^0.3.2:
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/react-native-database/-/react-native-database-0.3.2.tgz#b2a6cfb12155e05b723bdd1179a0530cc7417997"
-  integrity sha512-hCqtmBk+LbTRXbv4hCntGg4xOXEKYg8RgSeSY9tIwfGTTsuOGtcaTGS4eolFLIeoojEBOqBATLC9ulCrzpCMjw==
+react-native-database@^0.3.3:
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/react-native-database/-/react-native-database-0.3.3.tgz#fa3f0589fc17c4723ba85274587e856b84646b3c"
+  integrity sha512-QzrkDGVKtwNyE2sAnDGfw6B2MYgQH0K32h//zbdtP5fMyVJzErXfVGhwWE1SadG89QhObhpOa+W1IIDJlZcYtw==
   dependencies:
     react-native-uuid "^1.4.8"
 
