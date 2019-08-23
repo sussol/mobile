@@ -32,6 +32,7 @@ import {
   editTheirRef,
   editComment,
   deleteItemsById,
+  refreshData,
 } from './reducerMethods';
 
 /**
@@ -57,6 +58,7 @@ const customerInvoice = {
   editTheirRef,
   editComment,
   deleteItemsById,
+  refreshData,
 };
 
 const PAGE_REDUCERS = {
