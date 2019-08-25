@@ -5,7 +5,6 @@
 
 /* eslint-disable import/prefer-default-export */
 import { parsePositiveInteger, newSortDataBy } from '../../../utilities';
-import { createRecord } from '../../../database/utilities/index';
 
 /**
  * Immutably clears the current focus
@@ -308,18 +307,10 @@ export const addMasterListItems = state => {
  * Action: { type: 'addItem', item, addedItemType }
  */
 export const addItem = (state, action) => {
-  const { database, pageObject, data } = state;
-  const { item, addedItemType } = action;
-  let addedItem;
+  const { data } = state;
+  const { item } = action;
 
-  database.write(() => {
-    if (pageObject.hasItem(item)) return;
-    addedItem = createRecord(database, addedItemType, pageObject, item);
-  });
-
-  if (addedItem) return { ...state, data: [addedItem, ...data], modalKey: '' };
-
-  return { ...state, modalKey: '' };
+  return { ...state, data: [item, ...data], modalKey: '' };
 };
 
 /**

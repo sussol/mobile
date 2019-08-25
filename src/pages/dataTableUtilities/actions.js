@@ -2,6 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+import { createRecord } from '../../database/utilities/index';
 
 /**
  * Actions for use with a data table reducer
@@ -70,11 +71,18 @@ export const addMasterListItems = objectType => (dispatch, state) => {
   dispatch({ type: 'addMasterListItems', objectType });
 };
 
-export const addItem = (item, addedItemType) => ({
-  type: 'addItem',
-  item,
-  addedItemType,
-});
+export const addItem = (item, addedItemType) => (dispatch, state) => {
+  const { database, pageObject } = state;
+  let addedItem;
+
+  database.write(() => {
+    if (pageObject.hasItem(item)) return;
+    addedItem = createRecord(database, addedItemType, pageObject, item);
+  });
+
+  if (addedItem) dispatch({ type: 'addItem', item: addedItem });
+  else dispatch(closeBasicModal());
+};
 
 export const editTheirRef = (value, pageObjectType) => (dispatch, state) => {
   const { database, pageObject } = state;
