@@ -41,13 +41,18 @@ const usePageReducer = (
     pageInfo,
   });
 
-  const debouncedDispatch = useCallback(debounce(dispatch, debounceTimeout), []);
+  const thunkDispatcher = action => {
+    if (typeof action === 'function') action(dispatch, state);
+    dispatch(action);
+  };
+
+  const debouncedDispatch = useCallback(debounce(thunkDispatcher, debounceTimeout), []);
   const instantDebouncedDispatch = useCallback(
-    debounce(dispatch, instantDebounceTimeout, true),
+    debounce(thunkDispatcher, instantDebounceTimeout, true),
     []
   );
 
-  return [state, dispatch, instantDebouncedDispatch, debouncedDispatch];
+  return [state, thunkDispatcher, instantDebouncedDispatch, debouncedDispatch];
 };
 
 export default usePageReducer;
