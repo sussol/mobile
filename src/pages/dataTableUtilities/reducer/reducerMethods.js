@@ -292,15 +292,8 @@ export const closeBasicModal = state => ({ ...state, modalKey: '' });
  * @param {Object} action The action to act upon
  * Action: { type: 'addMasterListItems', objectType }
  */
-export const addMasterListItems = (state, action) => {
-  const { pageObject, database, backingData } = state;
-  const { objectType } = action;
-
-  database.write(() => {
-    pageObject.addItemsFromMasterList(database);
-    database.save(objectType, pageObject);
-  });
-
+export const addMasterListItems = state => {
+  const { backingData } = state;
   const newData = backingData.slice();
 
   return { ...state, data: newData };
@@ -341,17 +334,7 @@ export const addItem = (state, action) => {
  * @param {Object} action The action to act upon
  * Action: { type: 'editPageObject', value, field, pageObjectType }
  */
-const editPageObject = (state, action) => {
-  const { database, pageObject } = state;
-  const { value, pageObjectType, field } = action;
-
-  database.write(() => {
-    pageObject[field] = value;
-    database.save(pageObjectType, pageObject);
-  });
-
-  return { ...state, modalKey: '' };
-};
+const editPageObject = state => ({ ...state, modalKey: '' });
 
 /**
  * Edits the passed pageObject 'theirRef' field with the value supplied.
@@ -395,18 +378,8 @@ export const editComment = (state, action) => {
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
  */
-export const deleteItemsById = (state, action) => {
-  const { database, pageObject, data, dataState, hasSelection } = state;
-  const { pageObjectType } = action;
-
-  if (!hasSelection) return state;
-
-  const itemsIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
-
-  database.write(() => {
-    pageObject.removeItemsById(database, itemsIds);
-    database.save(pageObjectType, pageObject);
-  });
+export const deleteItemsById = state => {
+  const { data } = state;
 
   const newDataState = new Map();
   const newData = data.filter(item => item.isValid());
