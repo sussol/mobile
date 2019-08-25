@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -110,13 +110,10 @@ export const CustomerInvoicePage = ({
   // updated.
   if (transaction.isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
+  const pageInfoColumns = useMemo(() => pageInfo(pageObject, dispatch), []);
+
   const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={pageInfo(pageObject, dispatch)}
-        isEditingDisabled={transaction.isFinalised}
-      />
-    ),
+    () => <PageInfo columns={pageInfoColumns} isEditingDisabled={transaction.isFinalised} />,
     []
   );
 
