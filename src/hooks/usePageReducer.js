@@ -16,6 +16,11 @@ import { debounce } from '../utilities/index';
  * and page info columns and inserting them into the initial
  * state of the component.
  *
+ * Dispatch returned from useReducer is wrapped allowing the use
+ * of thunks. Actions can return either a plain object or a function.
+ * If a function is returned, it is called, rather than dispatched,
+ * allowing actions to perform side-effects.
+ *
  * Returns the current state as well as three dispatchers for
  * actions to the reducer - a regular dispatch and two debounced
  * dispatchers - which group sequential calls within the timeout
@@ -32,8 +37,8 @@ const usePageReducer = (
   debounceTimeout = 250,
   instantDebounceTimeout = 250
 ) => {
-  const columns = getColumns(page);
-  const pageInfo = getPageInfo(page);
+  const columns = useMemo(() => getColumns(page), [page]);
+  const pageInfo = useMemo(() => getPageInfo(page), [page]);
   const memoizedReducer = useMemo(() => getReducer(page), []);
   const [state, dispatch] = useReducer(memoizedReducer, {
     ...initialState,
