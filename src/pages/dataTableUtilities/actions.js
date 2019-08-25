@@ -60,10 +60,15 @@ export const closeBasicModal = () => ({
   type: 'closeBasicModal',
 });
 
-export const addMasterListItems = objectType => ({
-  type: 'addMasterListItems',
-  objectType,
-});
+export const addMasterListItems = objectType => (dispatch, state) => {
+  const { pageObject, database } = state;
+
+  database.write(() => {
+    pageObject.addItemsFromMasterList(database);
+    database.save(objectType, pageObject);
+  });
+  dispatch({ type: 'addMasterListItems', objectType });
+};
 
 export const addItem = (item, addedItemType) => ({
   type: 'addItem',
@@ -71,23 +76,51 @@ export const addItem = (item, addedItemType) => ({
   addedItemType,
 });
 
-export const editTheirRef = (value, pageObjectType) => ({
-  type: 'editTheirRef',
-  pageObjectType,
-  value,
-});
+export const editTheirRef = (value, pageObjectType) => (dispatch, state) => {
+  const { database, pageObject } = state;
 
-export const editComment = (value, pageObjectType) => ({
-  type: 'editComment',
-  pageObjectType,
-  value,
-});
+  const { theirRef } = pageObject;
 
-export const deleteItemsById = (pageObjectType, object) => ({
-  type: 'deleteItemsById',
-  pageObjectType,
-  object,
-});
+  if (theirRef !== value) {
+    database.write(() => {
+      database.update(pageObjectType, {
+        ...pageObject,
+        theirRef: value,
+      });
+    });
+  }
+
+  dispatch(closeBasicModal());
+};
+
+export const editComment = (value, pageObjectType) => (dispatch, state) => {
+  const { database, pageObject } = state;
+  const { comment } = pageObject;
+
+  if (comment !== value) {
+    database.write(() => {
+      database.update(pageObjectType, {
+        ...pageObject,
+        comment: value,
+      });
+    });
+  }
+
+  dispatch(closeBasicModal());
+};
+
+export const deleteItemsById = pageObjectType => (dispatch, state) => {
+  const { dataState, database, pageObject } = state;
+
+  const itemsIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
+
+  database.write(() => {
+    pageObject.removeItemsById(database, itemsIds);
+    database.save(pageObjectType, pageObject);
+  });
+
+  dispatch({ type: 'deleteItemsById' });
+};
 
 export const refreshData = () => ({
   type: 'refreshData',
