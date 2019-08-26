@@ -72,24 +72,21 @@ export const CustomerInvoicePage = ({
   runWithLoadingIndicator,
   routeName,
 }) => {
-  const [tableState, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(
-    routeName,
-    {
-      pageObject: transaction,
-      backingData: transaction.items,
-      data: transaction.items.sorted('item.name').slice(),
-      database,
-      keyExtractor,
-      dataState: new Map(),
-      currentFocusedRowKey: null,
-      searchTerm: '',
-      filterDataKeys: ['item.name'],
-      sortBy: 'itemName',
-      isAscending: true,
-      modalKey: '',
-      hasSelection: false,
-    }
-  );
+  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+    pageObject: transaction,
+    backingData: transaction.items,
+    data: transaction.items.sorted('item.name').slice(),
+    database,
+    keyExtractor,
+    dataState: new Map(),
+    currentFocusedRowKey: null,
+    searchTerm: '',
+    filterDataKeys: ['item.name'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+  });
 
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
   const {
@@ -103,7 +100,7 @@ export const CustomerInvoicePage = ({
     pageObject,
     hasSelection,
     backingData,
-  } = tableState;
+  } = state;
 
   const { isFinalised } = transaction;
 
