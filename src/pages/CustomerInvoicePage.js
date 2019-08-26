@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -105,16 +105,16 @@ export const CustomerInvoicePage = ({
     backingData,
   } = tableState;
 
+  const { isFinalised } = transaction;
+
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
   // Since this does not manipulate the state through the reducer, data object does not get
   // updated.
   if (transaction.isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
-  const pageInfoColumns = useMemo(() => pageInfo(pageObject, dispatch), []);
-
   const renderPageInfo = useCallback(
-    () => <PageInfo columns={pageInfoColumns} isEditingDisabled={transaction.isFinalised} />,
-    []
+    () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
+    [modalKey]
   );
 
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
