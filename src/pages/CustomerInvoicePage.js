@@ -102,16 +102,16 @@ export const CustomerInvoicePage = ({
     backingData,
   } = state;
 
-  const { isFinalised } = transaction;
+  const { isFinalised, comment, theirRef } = pageObject;
 
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
   // Since this does not manipulate the state through the reducer, data object does not get
   // updated.
-  if (transaction.isFinalised && data.length !== backingData.length) dispatch(refreshData());
+  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
-    [modalKey]
+    [comment, theirRef]
   );
 
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
@@ -200,7 +200,6 @@ export const CustomerInvoicePage = ({
   );
 
   const renderModalContent = () => {
-    const { comment, theirRef } = transaction;
     switch (modalKey) {
       default:
       case ITEM_SELECT:
@@ -238,12 +237,12 @@ export const CustomerInvoicePage = ({
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
         onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
-        isDisabled={transaction.isFinalised}
+        isDisabled={isFinalised}
       />
       <PageButton
         text={buttonStrings.add_master_list_items}
         onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Transaction')))}
-        isDisabled={transaction.isFinalised}
+        isDisabled={isFinalised}
       />
     </View>
   );
@@ -286,14 +285,14 @@ export const CustomerInvoicePage = ({
         keyExtractor={keyExtractor}
       />
       <BottomConfirmModal
-        isOpen={hasSelection && !transaction.isFinalised}
+        isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
         onCancel={() => dispatch(deselectAll())}
         onConfirm={() => dispatch(deleteItemsById('Transaction'))}
         confirmText={modalStrings.remove}
       />
       <PageContentModal
-        isOpen={!!modalKey && !transaction.isFinalised}
+        isOpen={!!modalKey}
         onClose={() => dispatch(closeBasicModal())}
         title={getModalTitle(modalKey)}
       >
