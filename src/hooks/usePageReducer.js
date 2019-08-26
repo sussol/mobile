@@ -48,7 +48,7 @@ const usePageReducer = (
 
   const thunkDispatcher = action => {
     if (typeof action === 'function') action(dispatch, state);
-    dispatch(action);
+    else dispatch(action);
   };
 
   const debouncedDispatch = useCallback(debounce(thunkDispatcher, debounceTimeout), []);
