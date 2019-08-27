@@ -5,12 +5,13 @@ import DeviceInfo from 'react-native-device-info';
 import { SETTINGS_KEYS } from './index';
 import { MILLISECONDS_PER_DAY } from '../database/utilities';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
+import { UIDatabase } from '../database';
 
 const DEFAULT_AMC_MONTHS_LOOKBACK = 3; // three months
 
 export class MobileAppSettings extends Settings {
-  constructor(database) {
-    super(database);
+  constructor() {
+    super(UIDatabase);
     this.load();
     this.set(SETTINGS_KEYS.HARDWARE_UUID, DeviceInfo.getUniqueID());
     this.refreshGlobals();
@@ -62,4 +63,4 @@ export class MobileAppSettings extends Settings {
   }
 }
 
-export default MobileAppSettings;
+export default new MobileAppSettings();
