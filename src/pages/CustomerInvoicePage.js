@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -75,7 +75,10 @@ export const CustomerInvoicePage = ({
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     pageObject: transaction,
     backingData: transaction.items,
-    data: transaction.items.sorted('item.name').slice(),
+    data: [
+      ...transaction.items.sorted('item.name').slice(),
+      ...transaction.items.sorted('item.name').slice(),
+    ],
     database,
     keyExtractor,
     dataState: new Map(),
@@ -257,6 +260,13 @@ export const CustomerInvoicePage = ({
     />
   );
 
+  const [renderTable, setRenderTable] = useState(false);
+  useEffect(() => {
+    setInterval(() => {
+      setRenderTable(yee => !yee);
+    }, 750);
+  }, []);
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -277,13 +287,15 @@ export const CustomerInvoicePage = ({
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
-      <DataTable
-        data={data}
-        extraData={dataState}
-        renderRow={renderRow}
-        renderHeader={renderHeader}
-        keyExtractor={keyExtractor}
-      />
+      {renderTable && (
+        <DataTable
+          data={data}
+          extraData={dataState}
+          renderRow={renderRow}
+          renderHeader={renderHeader}
+          keyExtractor={keyExtractor}
+        />
+      )}
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
