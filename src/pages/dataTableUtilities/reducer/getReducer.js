@@ -25,6 +25,14 @@ import {
   deselectAll,
   focusCell,
   sortData,
+  openBasicModal,
+  closeBasicModal,
+  addMasterListItems,
+  addItem,
+  editTheirRef,
+  editComment,
+  deleteItemsById,
+  refreshData,
 } from './reducerMethods';
 
 /**
@@ -43,6 +51,14 @@ const customerInvoice = {
   selectRow,
   deselectRow,
   deselectAll,
+  openBasicModal,
+  closeBasicModal,
+  addMasterListItems,
+  addItem,
+  editTheirRef,
+  editComment,
+  deleteItemsById,
+  refreshData,
 };
 
 const PAGE_REDUCERS = {

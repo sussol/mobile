@@ -3,14 +3,15 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
+// eslint-disable-next-line no-unused-vars
 import { createRecord } from '../database';
-import { formatDate, debounce } from '../utilities';
-import { buttonStrings, modalStrings, pageInfoStrings } from '../localization';
+import { MODAL_KEYS, getModalTitle } from '../utilities';
+import { buttonStrings, modalStrings } from '../localization';
 
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import {
@@ -18,9 +19,6 @@ import {
   PageButton,
   PageInfo,
   TextEditor,
-  SortAscIcon,
-  SortNeutralIcon,
-  SortDescIcon,
   CheckedComponent,
   UncheckedComponent,
   DisabledCheckedComponent,
@@ -32,10 +30,8 @@ import {
   Cell,
   EditableCell,
   CheckableCell,
-  HeaderCell,
-  HeaderRow,
+  DataTableHeaderRow,
 } from '../widgets/DataTable';
-
 import {
   editTotalQuantity,
   focusCell,
@@ -45,17 +41,19 @@ import {
   deselectAll,
   sortData,
   filterData,
+  closeBasicModal,
+  addMasterListItems,
+  addItem,
+  editComment,
+  editTheirRef,
+  deleteItemsById,
+  openBasicModal,
+  refreshData,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
-
-const MODAL_KEYS = {
-  COMMENT_EDIT: 'commentEdit',
-  THEIR_REF_EDIT: 'theirRefEdit',
-  ITEM_SELECT: 'itemSelect',
-};
 
 const keyExtractor = item => item.id;
 
@@ -74,7 +72,8 @@ export const CustomerInvoicePage = ({
   runWithLoadingIndicator,
   routeName,
 }) => {
-  const [tableState, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+    pageObject: transaction,
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
     database,
@@ -85,109 +84,35 @@ export const CustomerInvoicePage = ({
     filterDataKeys: ['item.name'],
     sortBy: 'itemName',
     isAscending: true,
+    modalKey: '',
+    hasSelection: false,
   });
 
-  const [modalKey, setModalKey] = useState(null);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-  const { data, dataState, sortBy, isAscending, columns } = tableState;
-  let isSelection = false;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    modalKey,
+    pageInfo,
+    pageObject,
+    hasSelection,
+    backingData,
+  } = state;
 
-  // eslint-disable-next-line no-restricted-syntax
-  for (const row of dataState.values()) {
-    if (row.isSelected) {
-      isSelection = true;
-      break;
-    }
-  }
+  const { isFinalised, comment, theirRef } = pageObject;
 
-  const openItemSelector = () => {
-    setModalKey(ITEM_SELECT);
-    setModalIsOpen(true);
-  };
+  // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
+  // Since this does not manipulate the state through the reducer, data object does not get
+  // updated.
+  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
-  const openCommentEditor = () => {
-    setModalKey(COMMENT_EDIT);
-    setModalIsOpen(true);
-  };
-
-  const openTheirRefEditor = () => {
-    setModalKey(THEIR_REF_EDIT);
-    setModalIsOpen(true);
-  };
-
-  const closeModal = () => setModalIsOpen(false);
-
-  const getModalTitle = () => {
-    switch (modalKey) {
-      default:
-      case ITEM_SELECT:
-        return modalStrings.search_for_an_item_to_add;
-      case COMMENT_EDIT:
-        return modalStrings.edit_the_invoice_comment;
-      case THEIR_REF_EDIT:
-        return modalStrings.edit_their_reference;
-    }
-  };
-
-  const onDeleteConfirm = () => {};
-
-  const onDeleteCancel = () => {
-    dispatch(deselectAll());
-  };
-
-  const onAddMasterItems = () => {
-    runWithLoadingIndicator(() => {
-      database.write(() => {
-        transaction.addItemsFromMasterList(database);
-        database.save('Transaction', transaction);
-      });
-    });
-  };
-
-  const onSearchChange = searchTerm => {
-    dispatch(filterData(searchTerm));
-  };
-
-  const searchBarDispatch = useMemo(() => debounce(onSearchChange, 500), []);
-
-  const renderPageInfo = () => {
-    const infoColumns = [
-      [
-        {
-          title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(transaction.entryDate) || 'N/A',
-        },
-        {
-          title: `${pageInfoStrings.confirm_date}:`,
-          info: formatDate(transaction.confirmDate),
-        },
-        {
-          title: `${pageInfoStrings.entered_by}:`,
-          info: transaction.enteredBy && transaction.enteredBy.username,
-        },
-      ],
-      [
-        {
-          title: `${pageInfoStrings.customer}:`,
-          info: transaction.otherParty && transaction.otherParty.name,
-        },
-        {
-          title: `${pageInfoStrings.their_ref}:`,
-          info: transaction.theirRef,
-          onPress: openTheirRefEditor,
-          editableType: 'text',
-        },
-        {
-          title: `${pageInfoStrings.comment}:`,
-          info: transaction.comment,
-          onPress: openCommentEditor,
-          editableType: 'text',
-        },
-      ],
-    ];
-    return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
-  };
+  const renderPageInfo = useCallback(
+    () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
+    [comment, theirRef]
+  );
 
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
     const {
@@ -284,14 +209,7 @@ export const CustomerInvoicePage = ({
             queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
             queryStringSecondary="name CONTAINS[c] $0"
             sortByString="name"
-            onSelect={item => {
-              database.write(() => {
-                if (!transaction.hasItem(item)) {
-                  createRecord(database, 'TransactionItem', transaction, item);
-                }
-              });
-              closeModal();
-            }}
+            onSelect={item => dispatch(addItem(item, 'TransactionItem'))}
             renderLeftText={item => `${item.name}`}
             renderRightText={item => `${item.totalQuantity}`}
           />
@@ -299,31 +217,15 @@ export const CustomerInvoicePage = ({
       case COMMENT_EDIT:
         return (
           <TextEditor
-            text={transaction.comment}
-            onEndEditing={newComment => {
-              if (newComment !== transaction.comment) {
-                database.write(() => {
-                  transaction.comment = newComment;
-                  database.save('Transaction', transaction);
-                });
-              }
-              closeModal();
-            }}
+            text={comment}
+            onEndEditing={value => dispatch(editComment(value, 'Transaction'))}
           />
         );
       case THEIR_REF_EDIT:
         return (
           <TextEditor
-            text={transaction.theirRef}
-            onEndEditing={newTheirRef => {
-              if (newTheirRef !== transaction.theirRef) {
-                database.write(() => {
-                  transaction.theirRef = newTheirRef;
-                  database.save('Transaction', transaction);
-                });
-              }
-              closeModal();
-            }}
+            text={theirRef}
+            onEndEditing={value => dispatch(editTheirRef(value, 'Transaction'))}
           />
         );
     }
@@ -334,50 +236,25 @@ export const CustomerInvoicePage = ({
       <PageButton
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
-        onPress={openItemSelector}
-        isDisabled={transaction.isFinalised}
+        onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
+        isDisabled={isFinalised}
       />
       <PageButton
         text={buttonStrings.add_master_list_items}
-        onPress={onAddMasterItems}
-        isDisabled={transaction.isFinalised}
+        onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Transaction')))}
+        isDisabled={isFinalised}
       />
     </View>
   );
 
-  const renderHeader = useCallback(
-    () => (
-      <HeaderRow
-        style={newDataTableStyles.headerRow}
-        renderCells={() =>
-          columns.map(({ key, title, sortable, width, alignText }, index) => {
-            const sortDirection = isAscending ? 'ASC' : 'DESC';
-            const directionForThisColumn = key === sortBy ? sortDirection : null;
-            const isLastCell = index === columns.length - 1;
-            const { headerCells, cellText } = newDataTableStyles;
-            return (
-              <HeaderCell
-                key={key}
-                title={title}
-                SortAscComponent={SortAscIcon}
-                SortDescComponent={SortDescIcon}
-                SortNeutralComponent={SortNeutralIcon}
-                columnKey={key}
-                onPressAction={sortable ? sortData : null}
-                dispatch={instantDebouncedDispatch}
-                sortDirection={directionForThisColumn}
-                sortable={sortable}
-                width={width}
-                containerStyle={headerCells[alignText || 'left']}
-                textStyle={cellText[alignText || 'left']}
-                isLastCell={isLastCell}
-              />
-            );
-          })
-        }
-      />
-    ),
-    [sortBy, isAscending]
+  const renderHeader = () => (
+    <DataTableHeaderRow
+      columns={columns}
+      dispatch={instantDebouncedDispatch}
+      sortAction={sortData}
+      isAscending={isAscending}
+      sortBy={sortBy}
+    />
   );
 
   const {
@@ -392,7 +269,7 @@ export const CustomerInvoicePage = ({
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={searchBarDispatch}
+            onChange={value => debouncedDispatch(filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
@@ -408,16 +285,16 @@ export const CustomerInvoicePage = ({
         keyExtractor={keyExtractor}
       />
       <BottomConfirmModal
-        isOpen={isSelection && !transaction.isFinalised}
+        isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={onDeleteCancel}
-        onConfirm={onDeleteConfirm}
+        onCancel={() => dispatch(deselectAll())}
+        onConfirm={() => dispatch(deleteItemsById('Transaction'))}
         confirmText={modalStrings.remove}
       />
       <PageContentModal
-        isOpen={modalIsOpen && !transaction.isFinalised}
-        onClose={closeModal}
-        title={getModalTitle()}
+        isOpen={!!modalKey}
+        onClose={() => dispatch(closeBasicModal())}
+        title={getModalTitle(modalKey)}
       >
         {renderModalContent()}
       </PageContentModal>

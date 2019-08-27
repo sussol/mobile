@@ -170,7 +170,7 @@ export const selectRow = (state, action) => {
     isSelected: true,
   });
 
-  return { ...state, dataState: newDataState };
+  return { ...state, dataState: newDataState, hasSelection: true };
 };
 
 /**
@@ -191,7 +191,16 @@ export const deselectRow = (state, action) => {
     isSelected: false,
   });
 
-  return { ...state, dataState: newDataState };
+  let hasSelection = false;
+  // eslint-disable-next-line no-restricted-syntax
+  for (const row of newDataState.values()) {
+    if (row.isSelected) {
+      hasSelection = true;
+      break;
+    }
+  }
+
+  return { ...state, dataState: newDataState, hasSelection };
 };
 
 /**
@@ -212,7 +221,7 @@ export const deselectAll = state => {
       });
     }
   }
-  return { ...state, dataState: newDataState };
+  return { ...state, dataState: newDataState, hasSelection: false };
 };
 
 /**
@@ -251,4 +260,140 @@ export const sortData = (state, action) => {
 
   const newData = newSortDataBy(data, newSortBy, columnKeyToDataType[newSortBy], newIsAscending);
   return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
+};
+
+/**
+ * Opens a basic modal which does not require any other value
+ * to be set upon opening. i.e. text editors
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'openBasicModal', modalKey }
+ */
+export const openBasicModal = (state, action) => {
+  const { modalKey } = action;
+  return { ...state, modalKey };
+};
+
+/**
+ * Sets the modal open state to false, closing any
+ * modal that is open.
+ *
+ * @param {Object} state  The current state
+ * Action: { type: 'closeBasicModal' }
+ */
+export const closeBasicModal = state => ({ ...state, modalKey: '' });
+
+/**
+ * Adds all items from a master list to the pageObject held
+ * in state - either a Requisition or Transaction.
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'addMasterListItems', objectType }
+ */
+export const addMasterListItems = state => {
+  const { backingData } = state;
+  const newData = backingData.slice();
+
+  return { ...state, data: newData };
+};
+
+/**
+ * Creates an Item (Either Requisition or Transaction), and appends
+ * this item to the data array for a page.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'addItem', item, addedItemType }
+ */
+export const addItem = (state, action) => {
+  const { data } = state;
+  const { item } = action;
+
+  return { ...state, data: [item, ...data], modalKey: '' };
+};
+
+/**
+ * Reducer helper method for editing a non-setter field on a
+ * realm object. Should be called by more explicit reducer
+ * methods and not exported to avoid misuse. To create a reducer
+ * method for setting a simple value for a realm object, create a
+ * more explicit reducer method with logic specific to that field
+ * contained, and call this method. See editTheirRef.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'editPageObject', value, field, pageObjectType }
+ */
+const editPageObject = state => ({ ...state, modalKey: '' });
+
+/**
+ * Edits the passed pageObject 'theirRef' field with the value supplied.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'editPageObject', value, pageObjectType }
+ */
+export const editTheirRef = (state, action) => {
+  const { pageObject } = state;
+  const { value } = action;
+
+  const { theirRef } = pageObject;
+
+  if (theirRef !== value) return { ...editPageObject(state, { ...action, field: 'theirRef' }) };
+  return state;
+};
+
+/**
+ * Edits the passed pageObject 'comment' field with the value supplied.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: { type: 'editPageObject', value, pageObjectType }
+ */
+export const editComment = (state, action) => {
+  const { pageObject } = state;
+  const { value } = action;
+
+  const { comment } = pageObject;
+
+  if (comment !== value) return { ...editPageObject(state, { ...action, field: 'comment' }) };
+  return state;
+};
+
+/**
+ * Deletes the selected RequisitionItems or
+ * TransactionItems held in state. Where each selected
+ * item is indicated by DataState[rowKey].isSelected.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ */
+export const deleteItemsById = state => {
+  const { data } = state;
+
+  const newDataState = new Map();
+  const newData = data.filter(item => item.isValid());
+
+  return {
+    ...state,
+    data: newData,
+    dataState: newDataState,
+    hasSelection: false,
+    modalKey: '',
+  };
+};
+
+/**
+ * Simply refresh's the data object in state to
+ * correctly match the backingData when side effects
+ * such as finalizing manipulate the state of a page
+ * from outside the reducer. Should only be used when
+ * there are no other options.
+ *
+ * @param {Object} state  The current state
+ */
+export const refreshData = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData.slice() };
 };

@@ -6,5 +6,16 @@ import Row from './Row';
 import HeaderRow from './HeaderRow';
 import HeaderCell from './HeaderCell';
 import DataTable from './DataTable';
+import DataTableHeaderRow from './DataTableHeaderRow';
 
-export { DataTable, Cell, EditableCell, CheckableCell, TouchableCell, Row, HeaderRow, HeaderCell };
+export {
+  DataTable,
+  Cell,
+  DataTableHeaderRow,
+  EditableCell,
+  CheckableCell,
+  TouchableCell,
+  Row,
+  HeaderRow,
+  HeaderCell,
+};
