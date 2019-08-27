@@ -60,11 +60,20 @@ const keyExtractor = item => item.id;
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
  *
- * @prop {transaction} prop0
- * @prop {database} prop0
- * @prop {genericTablePageStyles} prop0
- * @prop {runWithLoadingIndicator} prop0
- * @prop {topRoute} prop0
+ * State:
+ * Uses a reducer to manage state with `backingData` being a realm results
+ * of items to display. `data` is a plain JS array of realm objects. data is
+ * hydrated from the `backingData` for displaying in the interface.
+ * i.e: When filtering, data is populated from filtered items of `backingData`.
+ *
+ * dataState is a simple map of objects corresponding to a row being displayed,
+ * holding the state of a given row. Each object has the shape :
+ * { isSelected, isFocused, isDisabled },
+ *
+ * @prop {Object} transaction The realm transaction object for this invoice.
+ * @prop {Object} database  App-wide database interface.
+ * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
+ * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerInvoicePage = ({
   transaction,
@@ -101,12 +110,11 @@ export const CustomerInvoicePage = ({
     hasSelection,
     backingData,
   } = state;
-
   const { isFinalised, comment, theirRef } = pageObject;
 
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
-  // Since this does not manipulate the state through the reducer, data object does not get
-  // updated.
+  // Since this does not manipulate the state through the reducer, state is not updated (in
+  // particular `data`) so a manual syncing of `backingData` and `data` needs to occur.
   if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
   const renderPageInfo = useCallback(
@@ -244,21 +252,24 @@ export const CustomerInvoicePage = ({
     }
   };
 
-  const renderButtons = () => (
-    <View style={globalStyles.verticalContainer}>
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_item}
-        onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
-        isDisabled={isFinalised}
-      />
-      <PageButton
-        text={buttonStrings.add_master_list_items}
-        onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Transaction')))}
-        isDisabled={isFinalised}
-      />
-    </View>
-  );
+  const renderButtons = () => {
+    const { verticalContainer, topButton } = globalStyles;
+    return (
+      <View style={verticalContainer}>
+        <PageButton
+          style={topButton}
+          text={buttonStrings.new_item}
+          onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
+          isDisabled={isFinalised}
+        />
+        <PageButton
+          text={buttonStrings.add_master_list_items}
+          onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Transaction')))}
+          isDisabled={isFinalised}
+        />
+      </View>
+    );
+  };
 
   const renderHeader = () => (
     <DataTableHeaderRow
