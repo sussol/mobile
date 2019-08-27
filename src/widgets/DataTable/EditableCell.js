@@ -51,12 +51,11 @@ const EditableCell = React.memo(
     width,
     debug,
   }) => {
-    const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
+    if (debug) console.log(`- EditableCell: ${value}`);
 
+    const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
     const focusCell = () => dispatch(focusAction(rowKey, columnKey));
     const focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey));
-
-    if (debug) console.log(`- EditableCell: ${value}`);
 
     const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
     const internalTextStyle = getAdjustedStyle(textStyle, width);
