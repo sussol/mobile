@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -75,10 +75,7 @@ export const CustomerInvoicePage = ({
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     pageObject: transaction,
     backingData: transaction.items,
-    data: [
-      ...transaction.items.sorted('item.name').slice(),
-      ...transaction.items.sorted('item.name').slice(),
-    ],
+    data: transaction.items.sorted('item.name').slice(),
     database,
     keyExtractor,
     dataState: new Map(),
@@ -116,6 +113,15 @@ export const CustomerInvoicePage = ({
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
     [comment, theirRef]
   );
+
+  const getItemLayout = useCallback((item, index) => {
+    const { height } = newDataTableStyles.row;
+    return {
+      length: height,
+      offset: height * index,
+      index,
+    };
+  }, []);
 
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
     const {
@@ -260,13 +266,6 @@ export const CustomerInvoicePage = ({
     />
   );
 
-  const [renderTable, setRenderTable] = useState(false);
-  useEffect(() => {
-    setInterval(() => {
-      setRenderTable(yee => !yee);
-    }, 750);
-  }, []);
-
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -287,15 +286,14 @@ export const CustomerInvoicePage = ({
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
-      {renderTable && (
-        <DataTable
-          data={data}
-          extraData={dataState}
-          renderRow={renderRow}
-          renderHeader={renderHeader}
-          keyExtractor={keyExtractor}
-        />
-      )}
+      <DataTable
+        data={data}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+      />
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}

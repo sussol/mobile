@@ -15,21 +15,7 @@ import { View } from 'react-native';
  *                          `(rowKey, columnKey) => {...}`
  * @param {object} viewStyle Style object for the wrapping View component
  */
-// let renderCount = 0;
-// let totalTime = 0;
 const Row = React.memo(({ rowData, rowState, rowKey, renderCells, style, debug }) => {
-  // const start = Date.now();
-  // useLayoutEffect(() => {
-  //   if (renderCount === 200) {
-  //     console.log('===========================================');
-  //     console.log(`${renderCount} row avg time: ${totalTime / renderCount}ms`);
-  //     console.log('===========================================');
-  //     renderCount += 1;
-  //   } else {
-  //     totalTime += Date.now() - start;
-  //     renderCount += 1;
-  //   }
-  // }, []);
   if (debug) {
     console.log('=================================');
     console.log(`Row: ${rowKey}`);
