@@ -65,6 +65,7 @@ const CheckableCell = React.memo(
         containerStyle={containerStyle}
         width={width}
         isLastCell={isLastCell}
+        isDisabled={isDisabled}
       />
     );
   }
