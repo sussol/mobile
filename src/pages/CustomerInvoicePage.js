@@ -10,8 +10,6 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
-// eslint-disable-next-line no-unused-vars
-import { createRecord } from '../database';
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 
