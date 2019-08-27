@@ -126,13 +126,13 @@ export const CustomerInvoicePage = ({
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
     const {
       cellContainer,
-      editableCellText,
       editableCellTextView,
       cellText,
       touchableCellContainer,
     } = newDataTableStyles;
     return columns.map(({ key: colKey, type, width, alignText }, index) => {
       const isLastCell = index === columns.length - 1;
+      const isDisabled = isFinalised || (rowState && rowState.disabled);
       switch (type) {
         case 'editable':
           return (
@@ -143,14 +143,14 @@ export const CustomerInvoicePage = ({
               columnKey={colKey}
               editAction={editTotalQuantity}
               isFocused={colKey === (rowState && rowState.focusedColumn)}
-              disabled={rowState && rowState.disabled}
+              isDisabled={isDisabled}
               focusAction={focusCell}
               focusNextAction={focusNext}
               dispatch={dispatch}
               width={width}
               viewStyle={cellContainer[alignText || 'left']}
               textInputStyle={cellText[alignText || 'left']}
-              textStyle={editableCellText}
+              textStyle={cellText[alignText || 'left']}
               textViewStyle={editableCellTextView}
               isLastCell={isLastCell}
               debug
