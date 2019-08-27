@@ -1,7 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage';
 
-export { MobileAppSettings } from './MobileAppSettings';
-
 export const SETTINGS_KEYS = {
   APP_VERSION: 'AppVersion',
   CURRENT_LANGUAGE: 'CurrentLanguage',

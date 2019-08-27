@@ -25,7 +25,7 @@ import { Scheduler } from 'sussol-utilities';
 import { NavigationActions } from 'react-navigation';
 
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
-import { MobileAppSettings } from './settings';
+import { MobileAppSettings } from './settings/MobileAppSettings';
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
 import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
@@ -33,7 +33,8 @@ import { FinaliseModal, LoginModal } from './widgets/modals';
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema, UIDatabase } from './database';
+import { Database, UIDatabase } from './database';
+import { schema } from './database/schema';
 
 import globalStyles, {
   dataTableColors,

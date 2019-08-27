@@ -3,14 +3,12 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-export { createRecord } from './createRecord';
+export { createRecord, getNextNumber, getNumberSequence, reuseNumber } from './createRecord';
 export { deleteRecord } from './deleteRecord';
-export { mergeRecords } from './mergeRecords';
-export {
-  getNextNumber,
-  getNumberSequence,
-  NUMBER_SEQUENCE_KEYS,
-  reuseNumber,
-} from './numberSequenceUtilities';
 export { getTotal, addBatchToParent, millisecondsToDays } from './utilities';
-export const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+export {
+  MILLISECONDS_PER_MINUTE,
+  MILLISECONDS_PER_HOUR,
+  MILLISECONDS_PER_DAY,
+  NUMBER_SEQUENCE_KEYS,
+} from './constants';
