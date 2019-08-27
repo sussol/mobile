@@ -5,6 +5,5 @@
 
 export { Database, CHANGE_TYPES, generateUUID } from 'react-native-database';
 
-export { schema } from './schema';
 export { UIDatabase } from './UIDatabase';
 export { createRecord, getNumberSequence, NUMBER_SEQUENCE_KEYS } from './utilities';
