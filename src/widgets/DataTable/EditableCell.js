@@ -36,7 +36,7 @@ const EditableCell = React.memo(
     value,
     rowKey,
     columnKey,
-    disabled,
+    isDisabled,
     isFocused,
     editAction,
     focusAction,
@@ -62,8 +62,17 @@ const EditableCell = React.memo(
     const internalTextStyle = getAdjustedStyle(textStyle, width);
 
     // Render a plain Cell if disabled.
-    if (disabled) {
-      return <Cell viewStyle={internalViewStyle} textStyle={internalTextStyle} value={value} />;
+    if (isDisabled) {
+      return (
+        <Cell
+          key={columnKey}
+          viewStyle={viewStyle}
+          textStyle={textStyle}
+          value={value}
+          width={width}
+          isLastCell={isLastCell}
+        />
+      );
     }
 
     // Too many TextInputs causes React Native to crash, so only
@@ -102,7 +111,7 @@ EditableCell.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  disabled: PropTypes.bool,
+  isDisabled: PropTypes.bool,
   isFocused: PropTypes.bool,
   editAction: PropTypes.func.isRequired,
   focusAction: PropTypes.func.isRequired,
@@ -120,7 +129,7 @@ EditableCell.propTypes = {
 
 EditableCell.defaultProps = {
   value: '',
-  disabled: false,
+  isDisabled: false,
   isFocused: false,
   touchableStyle: {},
   viewStyle: {},
