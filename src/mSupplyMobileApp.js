@@ -201,9 +201,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     const { dispatch, finaliseItem, navigationState, syncState } = this.props;
-    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
-    console.log('rendering msupply');
-    console.log('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^');
     const {
       confirmFinalise,
       currentUser,
