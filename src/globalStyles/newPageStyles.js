@@ -35,7 +35,7 @@ const newPageStyles = {
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    width: 500,
+    flex: 2,
     paddingHorizontal: 10,
   },
   newPageTopRightSectionContainer: {
