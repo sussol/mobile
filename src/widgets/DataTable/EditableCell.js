@@ -50,6 +50,7 @@ const EditableCell = React.memo(
     isLastCell,
     width,
     debug,
+    keyboardType,
   }) => {
     if (debug) console.log(`- EditableCell: ${value}`);
 
@@ -100,6 +101,8 @@ const EditableCell = React.memo(
           autoFocus={isFocused}
           onSubmitEditing={focusNextCell}
           underlineColorAndroid={dataTableColors.editableCellUnderline}
+          keyboardType={keyboardType}
+          selectTextOnFocus
         />
       </View>
     );
@@ -124,6 +127,7 @@ EditableCell.propTypes = {
   textViewStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
+  keyboardType: PropTypes.string,
 };
 
 EditableCell.defaultProps = {
@@ -138,6 +142,7 @@ EditableCell.defaultProps = {
   isLastCell: false,
   width: 0,
   debug: false,
+  keyboardType: 'numeric',
 };
 
 export default EditableCell;
