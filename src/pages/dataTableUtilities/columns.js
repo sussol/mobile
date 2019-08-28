@@ -7,10 +7,12 @@ import { tableStrings } from '../../localization';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
+  supplierInvoice: [1, 3, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
+  supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'expiryDate', 'remove'],
 };
 
 const COLUMNS = () => ({
@@ -41,6 +43,12 @@ const COLUMNS = () => ({
     key: 'remove',
     type: 'checkable',
     title: tableStrings.remove,
+    alignText: 'center',
+  },
+  expiryDate: {
+    key: 'expiryDate',
+    width: 1,
+    title: tableStrings.batch_expiry,
     alignText: 'center',
   },
 });
