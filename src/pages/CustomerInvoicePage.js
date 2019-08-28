@@ -134,6 +134,7 @@ export const CustomerInvoicePage = ({
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
     const {
       cellContainer,
+      editableCellText,
       editableCellTextView,
       cellText,
       touchableCellContainer,
@@ -158,10 +159,11 @@ export const CustomerInvoicePage = ({
               width={width}
               viewStyle={cellContainer[alignText || 'left']}
               textInputStyle={cellText[alignText || 'left']}
-              textStyle={cellText[alignText || 'left']}
+              textStyle={editableCellText}
               textViewStyle={editableCellTextView}
               isLastCell={isLastCell}
               debug
+              keyboardType="numeric"
             />
           );
         case 'checkable':
