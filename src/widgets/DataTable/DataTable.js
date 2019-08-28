@@ -19,7 +19,12 @@ import { StyleSheet, VirtualizedList, VirtualizedListPropTypes } from 'react-nat
 const DataTable = React.memo(({ renderRow, renderHeader, style, ...otherProps }) => (
   <>
     {renderHeader()}
-    <VirtualizedList style={style} renderItem={renderRow} {...otherProps} />
+    <VirtualizedList
+      keyboardShouldPersistTaps="always"
+      style={style}
+      renderItem={renderRow}
+      {...otherProps}
+    />
   </>
 ));
 
