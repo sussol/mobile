@@ -12,7 +12,7 @@ import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
-
+import { UIDatabase } from '../database';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import {
   AutocompleteSelector,
@@ -71,21 +71,14 @@ const keyExtractor = item => item.id;
  * { isSelected, isFocused, isDisabled },
  *
  * @prop {Object} transaction The realm transaction object for this invoice.
- * @prop {Object} database  App-wide database interface.
  * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const CustomerInvoicePage = ({
-  transaction,
-  database,
-  runWithLoadingIndicator,
-  routeName,
-}) => {
+export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     pageObject: transaction,
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
-    database,
     keyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
@@ -228,7 +221,7 @@ export const CustomerInvoicePage = ({
       case ITEM_SELECT:
         return (
           <AutocompleteSelector
-            options={database.objects('Item')}
+            options={UIDatabase.objects('Item')}
             queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
             queryStringSecondary="name CONTAINS[c] $0"
             sortByString="name"
@@ -330,7 +323,6 @@ export const CustomerInvoicePage = ({
 };
 
 CustomerInvoicePage.propTypes = {
-  database: PropTypes.object.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
   transaction: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
