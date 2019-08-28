@@ -51,15 +51,21 @@ const EditableCell = React.memo(
     width,
     debug,
     keyboardType,
+    placeholder,
   }) => {
     if (debug) console.log(`- EditableCell: ${value}`);
+
+    const usingPlaceholder = placeholder && !value;
+    const textStyleWithAdjustedColour = usingPlaceholder
+      ? { ...textStyle, color: '#CDCDCD' }
+      : textStyle;
 
     const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
     const focusCell = () => dispatch(focusAction(rowKey, columnKey));
     const focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey));
 
     const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
-    const internalTextStyle = getAdjustedStyle(textStyle, width);
+    const internalTextStyle = getAdjustedStyle(textStyleWithAdjustedColour, width);
 
     // Render a plain Cell if disabled.
     if (isDisabled) {
@@ -80,11 +86,13 @@ const EditableCell = React.memo(
     // Use TouchableWithoutFeedback because we want the appearance and
     // feedback to resemble a TextInput regardless of focus.
     if (!isFocused) {
+      const text = usingPlaceholder ? placeholder : value;
+
       return (
         <TouchableWithoutFeedback style={touchableStyle} onPress={focusCell}>
           <View style={internalViewStyle}>
             <View style={textViewStyle}>
-              <Text style={internalTextStyle}>{value}</Text>
+              <Text style={internalTextStyle}>{text}</Text>
             </View>
           </View>
         </TouchableWithoutFeedback>
@@ -95,8 +103,9 @@ const EditableCell = React.memo(
     return (
       <View style={internalViewStyle}>
         <TextInput
+          placeholder={placeholder}
           style={textInputStyle}
-          value={String(value)}
+          value={placeholder && !value ? '' : String(value)}
           onChangeText={onEdit}
           autoFocus={isFocused}
           onSubmitEditing={focusNextCell}
@@ -127,7 +136,15 @@ EditableCell.propTypes = {
   textViewStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
-  keyboardType: PropTypes.string,
+  placeholder: PropTypes.string,
+  keyboardType: PropTypes.string.oneOf([
+    'default',
+    'number-pad',
+    'decimal-pad',
+    'numeric',
+    'email-address',
+    'phone-pad',
+  ]),
 };
 
 EditableCell.defaultProps = {
@@ -143,6 +160,7 @@ EditableCell.defaultProps = {
   width: 0,
   debug: false,
   keyboardType: 'numeric',
+  placeholder: '',
 };
 
 export default EditableCell;
