@@ -114,6 +114,15 @@ export const CustomerInvoicePage = ({
     [comment, theirRef]
   );
 
+  const getItemLayout = useCallback((item, index) => {
+    const { height } = newDataTableStyles.row;
+    return {
+      length: height,
+      offset: height * index,
+      index,
+    };
+  }, []);
+
   const renderCells = useCallback((rowData, rowState = {}, rowKey) => {
     const {
       cellContainer,
@@ -144,6 +153,7 @@ export const CustomerInvoicePage = ({
               textStyle={editableCellText}
               textViewStyle={editableCellTextView}
               isLastCell={isLastCell}
+              debug
             />
           );
         case 'checkable':
@@ -164,6 +174,7 @@ export const CustomerInvoicePage = ({
               containerStyle={touchableCellContainer}
               width={width}
               isLastCell={isLastCell}
+              debug
             />
           );
         default:
@@ -175,6 +186,7 @@ export const CustomerInvoicePage = ({
               viewStyle={cellContainer[alignText || 'left']}
               textStyle={cellText[alignText || 'left']}
               isLastCell={isLastCell}
+              debug
             />
           );
       }
@@ -193,6 +205,7 @@ export const CustomerInvoicePage = ({
           rowKey={rowKey}
           renderCells={renderCells}
           style={index % 2 === 0 ? alternateRow : row}
+          debug
         />
       );
     },
@@ -283,6 +296,7 @@ export const CustomerInvoicePage = ({
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
       />
       <BottomConfirmModal
         isOpen={hasSelection}

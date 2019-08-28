@@ -16,12 +16,15 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
  * @param {object} rowState State to pass to renderCells callBack
  * @param {func} onPress function to call on pressing the row.
  * @param {object} viewStyle Style object for the wrapping View component
+ * @param {boolean} debug Set to `true` to console.log(`Row: ${rowKey}`)
  * @param {func} renderCells renderProp callBack for rendering cells based on rowData and rowState
  *                          `(rowKey, columnKey) => {...}`
  */
-const Row = React.memo(({ rowData, rowState, rowKey, renderCells, style, onPress }) => {
-  console.log('=================================');
-  console.log(`Row: ${rowKey}`);
+const Row = React.memo(({ rowData, rowState, rowKey, renderCells, style, onPress, debug }) => {
+  if (debug) {
+    console.log('=================================');
+    console.log(`Row: ${rowKey}`);
+  }
   const Container = onPress ? TouchableOpacity : View;
   return (
     <Container onPress={onPress} style={style}>
@@ -37,12 +40,14 @@ Row.propTypes = {
   renderCells: PropTypes.func.isRequired,
   style: PropTypes.object,
   onPress: PropTypes.func,
+  debug: PropTypes.bool,
 };
 
 Row.defaultProps = {
   rowState: null,
   style: {},
   onPress: null,
+  debug: false,
 };
 
 export default Row;

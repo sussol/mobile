@@ -35,14 +35,20 @@ DataTable.propTypes = {
   renderHeader: PropTypes.func,
   getItem: PropTypes.func,
   getItemCount: PropTypes.func,
+  initialNumToRender: PropTypes.number,
+  removeClippedSubviews: PropTypes.bool,
+  windowSize: PropTypes.number,
   style: PropTypes.object,
 };
 
 DataTable.defaultProps = {
-  getItem: (items, index) => items[index],
-  getItemCount: items => items.length,
   renderHeader: null,
   style: defaultStyles.virtualizedList,
+  getItem: (items, index) => items[index],
+  getItemCount: items => items.length,
+  initialNumToRender: 20,
+  removeClippedSubviews: true,
+  windowSize: 11,
 };
 
 export default DataTable;

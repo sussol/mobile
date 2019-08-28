@@ -42,8 +42,9 @@ const CheckableCell = React.memo(
     containerStyle,
     width,
     isLastCell,
+    debug,
   }) => {
-    console.log(`- CheckableCell: ${rowKey},${columnKey}`);
+    if (debug) console.log(`- CheckableCell: ${rowKey},${columnKey}`);
 
     const onPressAction = isChecked ? onUncheckAction : onCheckAction;
 
@@ -88,6 +89,7 @@ CheckableCell.propTypes = {
   containerStyle: PropTypes.object,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,
+  debug: PropTypes.bool,
 };
 
 CheckableCell.defaultProps = {
@@ -98,6 +100,7 @@ CheckableCell.defaultProps = {
   containerStyle: defaultStyles.containerStyle,
   width: 0,
   isLastCell: false,
+  debug: false,
 };
 
 export default CheckableCell;
