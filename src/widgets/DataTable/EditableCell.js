@@ -137,7 +137,7 @@ EditableCell.propTypes = {
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
-  keyboardType: PropTypes.string.oneOf([
+  keyboardType: PropTypes.oneOf([
     'default',
     'number-pad',
     'decimal-pad',
