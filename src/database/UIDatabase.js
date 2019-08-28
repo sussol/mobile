@@ -1,3 +1,4 @@
+/* eslint-disable import/no-mutable-exports */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -28,7 +29,7 @@ const translateToCoreDatabaseType = type => {
   }
 };
 
-export class UIDatabase {
+class UIDatabase {
   constructor(database) {
     this.database = database;
     this.EXPORT_DIRECTORY = '/Download/mSupplyMobile_data';
@@ -172,4 +173,13 @@ export class UIDatabase {
   }
 }
 
-export default UIDatabase;
+let UIDatabaseInstance;
+
+export const getUIDatabaseInstance = database => {
+  if (!UIDatabaseInstance) {
+    UIDatabaseInstance = new UIDatabase(database);
+  }
+  return UIDatabaseInstance;
+};
+
+export default getUIDatabaseInstance;
