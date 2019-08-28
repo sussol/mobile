@@ -29,6 +29,7 @@ const { THEIR_REF_EDIT, COMMENT_EDIT } = MODAL_KEYS;
 
 const PER_PAGE_INFO_COLUMNS = {
   customerInvoice: [['entryDate', 'confirmDate', 'enteredBy'], ['customer', 'theirRef', 'comment']],
+  supplierInvoice: [['entryDate', 'confirmDate'], ['otherParty', 'theirRef', 'comment']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
@@ -59,6 +60,10 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
     info: pageObject.comment,
     onPress: () => dispatch(openBasicModal(COMMENT_EDIT)),
     editableType: 'text',
+  },
+  otherParty: {
+    title: `${pageInfoStrings.supplier}:`,
+    info: pageObject.otherParty && pageObject.otherParty.name,
   },
 });
 
