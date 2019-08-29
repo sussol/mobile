@@ -20,7 +20,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 const DataTable = React.memo(({ renderRow, renderHeader, style, ...otherProps }) => (
   <>
     {renderHeader()}
-    <KeyboardAwareScrollView style={style} enabled behaviour="padding" keyboardVerticalOffset={500}>
+    <KeyboardAwareScrollView style={style} enabled behaviour="padding">
       <VirtualizedList
         keyboardShouldPersistTaps="always"
         style={style}
