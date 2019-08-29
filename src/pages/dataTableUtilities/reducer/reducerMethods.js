@@ -315,7 +315,7 @@ export const addItem = (state, action) => {
   const { data } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '', sortBy: '', isAscending: null };
+  return { ...state, data: [item, ...data], modalKey: '', sortBy: '' };
 };
 
 /**
