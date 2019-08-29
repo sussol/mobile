@@ -52,11 +52,18 @@ const newDataTableStyles = {
       color: DARK_GREY,
     },
   },
+  editableCellUnfocused: {
+    textAlign: 'right',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: DARK_GREY,
+  },
   editableCellText: {
     textAlign: 'right',
     fontFamily: APP_FONT_FAMILY,
     fontSize: APP_GENERAL_FONT_SIZE,
     color: DARK_GREY,
+    marginRight: 20,
   },
   editableCellTextView: {
     borderBottomColor: '#cbcbcb',
