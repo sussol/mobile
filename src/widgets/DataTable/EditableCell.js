@@ -92,7 +92,7 @@ const EditableCell = React.memo(
         <TouchableWithoutFeedback style={touchableStyle} onPress={focusCell}>
           <View style={internalViewStyle}>
             <View style={textViewStyle}>
-              <Text ellipsizeMode="tail" numberOfLines={2} style={internalTextStyle}>
+              <Text ellipsizeMode="tail" numberOfLines={1} style={internalTextStyle}>
                 {text}
               </Text>
             </View>
