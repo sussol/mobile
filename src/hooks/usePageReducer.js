@@ -48,7 +48,7 @@ const usePageReducer = (
     pageInfo,
   });
 
-  // Reference to the current state object, indepdent of closures.
+  // Reference to the current state object, independent of closures.
   const stateRef = useRef(pageState);
   const getState = () => stateRef.current;
 
