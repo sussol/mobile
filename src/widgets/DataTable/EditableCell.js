@@ -52,20 +52,14 @@ const EditableCell = React.memo(
     debug,
     keyboardType,
     placeholder,
+    placeholderColour,
+    cellTextStyle,
   }) => {
     if (debug) console.log(`- EditableCell: ${value}`);
-
     const usingPlaceholder = placeholder && !value;
-    const textStyleWithAdjustedColour = usingPlaceholder
-      ? { ...textStyle, color: '#CDCDCD' }
-      : textStyle;
-
     const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
     const focusCell = () => dispatch(focusAction(rowKey, columnKey));
     const focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey));
-
-    const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
-    const internalTextStyle = getAdjustedStyle(textStyleWithAdjustedColour, width);
 
     // Render a plain Cell if disabled.
     if (isDisabled) {
@@ -73,7 +67,7 @@ const EditableCell = React.memo(
         <Cell
           key={columnKey}
           viewStyle={viewStyle}
-          textStyle={textStyle}
+          textStyle={cellTextStyle}
           value={value}
           width={width}
           isLastCell={isLastCell}
@@ -81,18 +75,23 @@ const EditableCell = React.memo(
       );
     }
 
+    const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
+
     // Too many TextInputs causes React Native to crash, so only
     // truly mount the TextInput when the Cell is focused.
     // Use TouchableWithoutFeedback because we want the appearance and
     // feedback to resemble a TextInput regardless of focus.
     if (!isFocused) {
       const text = usingPlaceholder ? placeholder : value;
-
+      const internalTextStyle = getAdjustedStyle(textStyle, width);
+      const unfocusedTextStyle = usingPlaceholder
+        ? { ...internalTextStyle, color: placeholderColour }
+        : internalTextStyle;
       return (
         <TouchableWithoutFeedback style={touchableStyle} onPress={focusCell}>
           <View style={internalViewStyle}>
             <View style={textViewStyle}>
-              <Text ellipsizeMode="tail" numberOfLines={1} style={internalTextStyle}>
+              <Text ellipsizeMode="tail" numberOfLines={1} style={unfocusedTextStyle}>
                 {text}
               </Text>
             </View>
@@ -101,13 +100,18 @@ const EditableCell = React.memo(
       );
     }
 
+    const internalTextStyle = getAdjustedStyle(textInputStyle, width);
+    const focusedTextStyle = usingPlaceholder
+      ? { ...internalTextStyle, color: placeholderColour }
+      : { ...internalTextStyle };
+
     // Render a Cell with a textInput.
     return (
       <View style={internalViewStyle}>
         <TextInput
           placeholder={placeholder}
-          style={textInputStyle}
-          value={placeholder && !value ? '' : String(value)}
+          style={focusedTextStyle}
+          value={usingPlaceholder ? '' : String(value)}
           onChangeText={onEdit}
           autoFocus={isFocused}
           onSubmitEditing={focusNextCell}
@@ -131,6 +135,7 @@ EditableCell.propTypes = {
   focusNextAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   touchableStyle: PropTypes.object,
+  cellTextStyle: PropTypes.object,
   viewStyle: PropTypes.object,
   textStyle: PropTypes.object,
   width: PropTypes.number,
@@ -139,6 +144,7 @@ EditableCell.propTypes = {
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
+  placeholderColour: PropTypes.string,
   keyboardType: PropTypes.oneOf([
     'default',
     'number-pad',
@@ -156,6 +162,7 @@ EditableCell.defaultProps = {
   touchableStyle: {},
   viewStyle: {},
   textStyle: {},
+  cellTextStyle: {},
   textInputStyle: {},
   textViewStyle: {},
   isLastCell: false,
@@ -163,6 +170,7 @@ EditableCell.defaultProps = {
   debug: false,
   keyboardType: 'numeric',
   placeholder: '',
+  placeholderColour: '#CDCDCD',
 };
 
 export default EditableCell;
