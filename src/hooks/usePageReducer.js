@@ -3,14 +3,15 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { useReducer, useCallback, useMemo } from 'react';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import getReducer from '../pages/dataTableUtilities/reducer/getReducer';
 import getColumns from '../pages/dataTableUtilities/columns';
 import getPageInfo from '../pages/dataTableUtilities/pageInfo';
 import { debounce } from '../utilities/index';
 
 /**
- * useReducer wrapper for pages within the app. Creates a
+ * Wrapper around useState, reimplementing useReducer with
+ * thunks. For pages within the app - creates a
  * composed reducer through getReducer for a particular
  * page as well as fetching the required data table columns
  * and page info columns and inserting them into the initial
@@ -40,16 +41,26 @@ const usePageReducer = (
   const columns = useMemo(() => getColumns(page), [page]);
   const pageInfo = useMemo(() => getPageInfo(page), [page]);
   const memoizedReducer = useMemo(() => getReducer(page), []);
-  const [state, dispatch] = useReducer(memoizedReducer, {
+
+  const [pageState, setPageState] = useState({
     ...initialState,
     columns,
     pageInfo,
   });
 
-  const thunkDispatcher = action => {
-    if (typeof action === 'function') action(dispatch, state);
-    else dispatch(action);
+  // Reference to the current state object, indepdent of closures.
+  const stateRef = useRef(pageState);
+  const getState = () => stateRef.current;
+
+  // Basic dispatch function.
+  const dispatch = action => {
+    const newState = memoizedReducer(getState(), action);
+    setPageState(newState);
+    stateRef.current = newState;
   };
+
+  const thunkDispatcher = action =>
+    typeof action === 'function' ? action(thunkDispatcher, getState) : dispatch(action);
 
   const debouncedDispatch = useCallback(debounce(thunkDispatcher, debounceTimeout), []);
   const instantDebouncedDispatch = useCallback(
@@ -57,7 +68,7 @@ const usePageReducer = (
     []
   );
 
-  return [state, thunkDispatcher, instantDebouncedDispatch, debouncedDispatch];
+  return [pageState, thunkDispatcher, instantDebouncedDispatch, debouncedDispatch];
 };
 
 export default usePageReducer;
