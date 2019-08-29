@@ -9,8 +9,8 @@ import { parsePositiveInteger } from '../../utilities';
  * Actions for use with a data table reducer
  */
 
-export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, state) => {
-  const { data, keyExtractor } = state;
+export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
@@ -73,8 +73,8 @@ export const closeBasicModal = () => ({
   type: 'closeBasicModal',
 });
 
-export const addMasterListItems = objectType => (dispatch, state) => {
-  const { pageObject } = state;
+export const addMasterListItems = objectType => (dispatch, getState) => {
+  const { pageObject } = getState();
 
   UIDatabase.write(() => {
     pageObject.addItemsFromMasterList(UIDatabase);
@@ -83,8 +83,8 @@ export const addMasterListItems = objectType => (dispatch, state) => {
   dispatch({ type: 'addMasterListItems', objectType });
 };
 
-export const addItem = (item, addedItemType) => (dispatch, state) => {
-  const { pageObject } = state;
+export const addItem = (item, addedItemType) => (dispatch, getState) => {
+  const { pageObject } = getState();
   let addedItem;
 
   UIDatabase.write(() => {
@@ -96,8 +96,8 @@ export const addItem = (item, addedItemType) => (dispatch, state) => {
   else dispatch(closeBasicModal());
 };
 
-export const editTheirRef = (value, pageObjectType) => (dispatch, state) => {
-  const { pageObject } = state;
+export const editTheirRef = (value, pageObjectType) => (dispatch, getState) => {
+  const { pageObject } = getState();
 
   const { theirRef } = pageObject;
 
@@ -113,8 +113,8 @@ export const editTheirRef = (value, pageObjectType) => (dispatch, state) => {
   dispatch(closeBasicModal());
 };
 
-export const editComment = (value, pageObjectType) => (dispatch, state) => {
-  const { pageObject } = state;
+export const editComment = (value, pageObjectType) => (dispatch, getState) => {
+  const { pageObject } = getState();
   const { comment } = pageObject;
 
   if (comment !== value) {
@@ -129,8 +129,8 @@ export const editComment = (value, pageObjectType) => (dispatch, state) => {
   dispatch(closeBasicModal());
 };
 
-export const deleteItemsById = pageObjectType => (dispatch, state) => {
-  const { dataState, pageObject } = state;
+export const deleteItemsById = pageObjectType => (dispatch, getState) => {
+  const { dataState, pageObject } = getState();
 
   const itemsIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
