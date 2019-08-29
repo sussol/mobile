@@ -112,7 +112,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
-    [comment, theirRef]
+    [comment, theirRef, isFinalised]
   );
 
   const getItemLayout = useCallback((item, index) => {
