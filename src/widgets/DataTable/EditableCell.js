@@ -36,7 +36,7 @@ const EditableCell = React.memo(
     value,
     rowKey,
     columnKey,
-    disabled,
+    isDisabled,
     isFocused,
     editAction,
     focusAction,
@@ -50,48 +50,74 @@ const EditableCell = React.memo(
     isLastCell,
     width,
     debug,
+    keyboardType,
+    placeholder,
+    placeholderColour,
+    cellTextStyle,
   }) => {
+    if (debug) console.log(`- EditableCell: ${value}`);
+    const usingPlaceholder = placeholder && !value;
     const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
-
     const focusCell = () => dispatch(focusAction(rowKey, columnKey));
     const focusNextCell = () => dispatch(focusNextAction(rowKey, columnKey));
 
-    if (debug) console.log(`- EditableCell: ${value}`);
+    // Render a plain Cell if disabled.
+    if (isDisabled) {
+      return (
+        <Cell
+          key={columnKey}
+          viewStyle={viewStyle}
+          textStyle={cellTextStyle}
+          value={value}
+          width={width}
+          isLastCell={isLastCell}
+        />
+      );
+    }
 
     const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
-    const internalTextStyle = getAdjustedStyle(textStyle, width);
-
-    // Render a plain Cell if disabled.
-    if (disabled) {
-      return <Cell viewStyle={internalViewStyle} textStyle={internalTextStyle} value={value} />;
-    }
 
     // Too many TextInputs causes React Native to crash, so only
     // truly mount the TextInput when the Cell is focused.
     // Use TouchableWithoutFeedback because we want the appearance and
     // feedback to resemble a TextInput regardless of focus.
     if (!isFocused) {
+      const text = usingPlaceholder ? placeholder : value;
+      const internalTextStyle = getAdjustedStyle(textStyle, width);
+      const unfocusedTextStyle = usingPlaceholder
+        ? { ...internalTextStyle, color: placeholderColour }
+        : internalTextStyle;
       return (
         <TouchableWithoutFeedback style={touchableStyle} onPress={focusCell}>
           <View style={internalViewStyle}>
             <View style={textViewStyle}>
-              <Text style={internalTextStyle}>{value}</Text>
+              <Text ellipsizeMode="tail" numberOfLines={1} style={unfocusedTextStyle}>
+                {text}
+              </Text>
             </View>
           </View>
         </TouchableWithoutFeedback>
       );
     }
 
+    const internalTextStyle = getAdjustedStyle(textInputStyle, width);
+    const focusedTextStyle = usingPlaceholder
+      ? { ...internalTextStyle, color: placeholderColour }
+      : { ...internalTextStyle };
+
     // Render a Cell with a textInput.
     return (
       <View style={internalViewStyle}>
         <TextInput
-          style={textInputStyle}
-          value={String(value)}
+          placeholder={placeholder}
+          style={focusedTextStyle}
+          value={usingPlaceholder ? '' : String(value)}
           onChangeText={onEdit}
           autoFocus={isFocused}
           onSubmitEditing={focusNextCell}
           underlineColorAndroid={dataTableColors.editableCellUnderline}
+          keyboardType={keyboardType}
+          selectTextOnFocus
         />
       </View>
     );
@@ -102,13 +128,14 @@ EditableCell.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  disabled: PropTypes.bool,
+  isDisabled: PropTypes.bool,
   isFocused: PropTypes.bool,
   editAction: PropTypes.func.isRequired,
   focusAction: PropTypes.func.isRequired,
   focusNextAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   touchableStyle: PropTypes.object,
+  cellTextStyle: PropTypes.object,
   viewStyle: PropTypes.object,
   textStyle: PropTypes.object,
   width: PropTypes.number,
@@ -116,20 +143,34 @@ EditableCell.propTypes = {
   textViewStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
+  placeholder: PropTypes.string,
+  placeholderColour: PropTypes.string,
+  keyboardType: PropTypes.oneOf([
+    'default',
+    'number-pad',
+    'decimal-pad',
+    'numeric',
+    'email-address',
+    'phone-pad',
+  ]),
 };
 
 EditableCell.defaultProps = {
   value: '',
-  disabled: false,
+  isDisabled: false,
   isFocused: false,
   touchableStyle: {},
   viewStyle: {},
   textStyle: {},
+  cellTextStyle: {},
   textInputStyle: {},
   textViewStyle: {},
   isLastCell: false,
   width: 0,
   debug: false,
+  keyboardType: 'numeric',
+  placeholder: '',
+  placeholderColour: '#CDCDCD',
 };
 
 export default EditableCell;

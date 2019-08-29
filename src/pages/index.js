@@ -5,10 +5,7 @@
 
 import React from 'react';
 
-import {
-  CustomerInvoicePage,
-  checkForFinaliseError as checkForCustomerInvoiceError,
-} from './CustomerInvoicePage';
+import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
@@ -35,6 +32,7 @@ import {
   checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
 } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
+import { checkForCustomerInvoiceError } from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
 

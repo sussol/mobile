@@ -1,7 +1,8 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TouchableOpacity, Text, TouchableOpacityPropTypes } from 'react-native';
+import { Text, TouchableOpacity, TouchableOpacityPropTypes, View } from 'react-native';
+
 import { getAdjustedStyle } from './utilities';
 
 /**
@@ -36,6 +37,7 @@ const TouchableCell = React.memo(
     textStyle,
     isLastCell,
     debug,
+    isDisabled,
     ...otherProps
   }) => {
     if (debug) console.log(`- TouchableCell: ${rowKey},${columnKey}`);
@@ -45,7 +47,7 @@ const TouchableCell = React.memo(
     };
 
     const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
-    const Container = TouchableComponent || TouchableOpacity;
+    const Container = isDisabled ? View : TouchableComponent || TouchableOpacity;
     const content = renderChildren ? renderChildren(value) : <Text style={textStyle}>{value}</Text>;
 
     return (
@@ -70,6 +72,7 @@ TouchableCell.propTypes = {
   isLastCell: PropTypes.bool,
   width: PropTypes.number,
   debug: PropTypes.bool,
+  isDisabled: PropTypes.bool,
 };
 
 TouchableCell.defaultProps = {
@@ -80,6 +83,7 @@ TouchableCell.defaultProps = {
   isLastCell: false,
   width: 0,
   debug: false,
+  isDisabled: false,
 };
 
 export default TouchableCell;

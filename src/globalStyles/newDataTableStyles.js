@@ -52,11 +52,32 @@ const newDataTableStyles = {
       color: DARK_GREY,
     },
   },
+  editableCellUnfocused: {
+    right: {
+      textAlign: 'right',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+    center: {
+      textAlign: 'center',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+    left: {
+      textAlign: 'left',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+  },
   editableCellText: {
     textAlign: 'right',
     fontFamily: APP_FONT_FAMILY,
     fontSize: APP_GENERAL_FONT_SIZE,
     color: DARK_GREY,
+    marginRight: 20,
   },
   editableCellTextView: {
     borderBottomColor: '#cbcbcb',

@@ -3,8 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/* eslint-disable import/prefer-default-export */
-import { parsePositiveInteger, newSortDataBy } from '../../../utilities';
+import { newSortDataBy } from '../../../utilities';
 
 /**
  * Immutably clears the current focus
@@ -91,15 +90,8 @@ export const filterData = (state, action) => {
 };
 
 export const editTotalQuantity = (state, action) => {
-  const { value, rowKey } = action;
-  const { data, database, dataState, keyExtractor } = state;
-
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
-  database.write(() => {
-    objectToEdit.setTotalQuantity(database, parsePositiveInteger(Number(value)));
-    database.save('TransactionItem', objectToEdit);
-  });
+  const { rowKey } = action;
+  const { dataState } = state;
 
   // Change object reference of row in `dataState` to trigger rerender of that row.
   // Realm object reference in `data` can't be affected in any tidy manner.
@@ -292,8 +284,21 @@ export const closeBasicModal = state => ({ ...state, modalKey: '' });
  * Action: { type: 'addMasterListItems', objectType }
  */
 export const addMasterListItems = state => {
-  const { backingData } = state;
-  const newData = backingData.slice();
+  const { backingData, isAscending, sortBy } = state;
+
+  const columnKeyToDataType = {
+    itemCode: 'string',
+    itemName: 'string',
+    availableQuantity: 'number',
+    totalQuantity: 'number',
+  };
+
+  const newData = newSortDataBy(
+    backingData.slice(),
+    sortBy,
+    columnKeyToDataType[sortBy],
+    isAscending
+  );
 
   return { ...state, data: newData };
 };
@@ -310,7 +315,7 @@ export const addItem = (state, action) => {
   const { data } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '' };
+  return { ...state, data: [item, ...data], modalKey: '', sortBy: '' };
 };
 
 /**

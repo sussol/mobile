@@ -7,6 +7,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import { StyleSheet, VirtualizedList, VirtualizedListPropTypes } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 /**
  * Base DataTable component. Thin wrapper around VirtualizedList, providing
@@ -19,7 +20,14 @@ import { StyleSheet, VirtualizedList, VirtualizedListPropTypes } from 'react-nat
 const DataTable = React.memo(({ renderRow, renderHeader, style, ...otherProps }) => (
   <>
     {renderHeader()}
-    <VirtualizedList style={style} renderItem={renderRow} {...otherProps} />
+    <KeyboardAwareScrollView style={style} enabled behaviour="padding">
+      <VirtualizedList
+        keyboardShouldPersistTaps="always"
+        style={style}
+        renderItem={renderRow}
+        {...otherProps}
+      />
+    </KeyboardAwareScrollView>
   </>
 ));
 

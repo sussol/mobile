@@ -2,18 +2,30 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-import { createRecord } from '../../database/utilities/index';
+import { UIDatabase, createRecord } from '../../database';
+import { parsePositiveInteger } from '../../utilities';
 
 /**
  * Actions for use with a data table reducer
  */
 
-export const editTotalQuantity = (value, rowKey, columnKey) => ({
-  type: 'editTotalQuantity',
-  value,
-  rowKey,
-  columnKey,
-});
+export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+    UIDatabase.save('TransactionItem', objectToEdit);
+  });
+
+  dispatch({
+    type: 'editTotalQuantity',
+    value,
+    rowKey,
+    columnKey,
+  });
+};
 
 export const focusCell = (rowKey, columnKey) => ({
   type: 'focusCell',
@@ -61,37 +73,37 @@ export const closeBasicModal = () => ({
   type: 'closeBasicModal',
 });
 
-export const addMasterListItems = objectType => (dispatch, state) => {
-  const { pageObject, database } = state;
+export const addMasterListItems = objectType => (dispatch, getState) => {
+  const { pageObject } = getState();
 
-  database.write(() => {
-    pageObject.addItemsFromMasterList(database);
-    database.save(objectType, pageObject);
+  UIDatabase.write(() => {
+    pageObject.addItemsFromMasterList(UIDatabase);
+    UIDatabase.save(objectType, pageObject);
   });
   dispatch({ type: 'addMasterListItems', objectType });
 };
 
-export const addItem = (item, addedItemType) => (dispatch, state) => {
-  const { database, pageObject } = state;
+export const addItem = (item, addedItemType) => (dispatch, getState) => {
+  const { pageObject } = getState();
   let addedItem;
 
-  database.write(() => {
+  UIDatabase.write(() => {
     if (pageObject.hasItem(item)) return;
-    addedItem = createRecord(database, addedItemType, pageObject, item);
+    addedItem = createRecord(UIDatabase, addedItemType, pageObject, item);
   });
 
   if (addedItem) dispatch({ type: 'addItem', item: addedItem });
   else dispatch(closeBasicModal());
 };
 
-export const editTheirRef = (value, pageObjectType) => (dispatch, state) => {
-  const { database, pageObject } = state;
+export const editTheirRef = (value, pageObjectType) => (dispatch, getState) => {
+  const { pageObject } = getState();
 
   const { theirRef } = pageObject;
 
   if (theirRef !== value) {
-    database.write(() => {
-      database.update(pageObjectType, {
+    UIDatabase.write(() => {
+      UIDatabase.update(pageObjectType, {
         ...pageObject,
         theirRef: value,
       });
@@ -101,13 +113,13 @@ export const editTheirRef = (value, pageObjectType) => (dispatch, state) => {
   dispatch(closeBasicModal());
 };
 
-export const editComment = (value, pageObjectType) => (dispatch, state) => {
-  const { database, pageObject } = state;
+export const editComment = (value, pageObjectType) => (dispatch, getState) => {
+  const { pageObject } = getState();
   const { comment } = pageObject;
 
   if (comment !== value) {
-    database.write(() => {
-      database.update(pageObjectType, {
+    UIDatabase.write(() => {
+      UIDatabase.update(pageObjectType, {
         ...pageObject,
         comment: value,
       });
@@ -117,14 +129,14 @@ export const editComment = (value, pageObjectType) => (dispatch, state) => {
   dispatch(closeBasicModal());
 };
 
-export const deleteItemsById = pageObjectType => (dispatch, state) => {
-  const { dataState, database, pageObject } = state;
+export const deleteItemsById = pageObjectType => (dispatch, getState) => {
+  const { dataState, pageObject } = getState();
 
   const itemsIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
-  database.write(() => {
-    pageObject.removeItemsById(database, itemsIds);
-    database.save(pageObjectType, pageObject);
+  UIDatabase.write(() => {
+    pageObject.removeItemsById(UIDatabase, itemsIds);
+    UIDatabase.save(pageObjectType, pageObject);
   });
 
   dispatch({ type: 'deleteItemsById' });

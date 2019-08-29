@@ -21,7 +21,9 @@ const Cell = React.memo(({ value, textStyle, viewStyle, width, isLastCell, debug
 
   return (
     <View style={internalViewStyle}>
-      <Text style={textStyle}>{value}</Text>
+      <Text ellipsizeMode="tail" numberOfLines={1} style={textStyle}>
+        {value}
+      </Text>
     </View>
   );
 });
