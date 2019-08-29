@@ -136,7 +136,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       } = newDataTableStyles;
       return columns.map(({ key: colKey, type, width, alignText }, index) => {
         const isLastCell = index === columns.length - 1;
-        const isDisabled = isFinalised || (rowState && rowState.disabled);
+        const isDisabled = isFinalised || (rowState && rowState.isDisabled);
         switch (type) {
           case 'editable':
             return (
