@@ -158,7 +158,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
                 debug
                 keyboardType="numeric"
                 textInputStyle={cellText[alignText || 'left']}
-                textStyle={editableCellUnfocused}
+                textStyle={editableCellUnfocused[alignText || 'left']}
                 cellTextStyle={editableCellText}
               />
             );
