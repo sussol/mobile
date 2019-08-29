@@ -284,8 +284,21 @@ export const closeBasicModal = state => ({ ...state, modalKey: '' });
  * Action: { type: 'addMasterListItems', objectType }
  */
 export const addMasterListItems = state => {
-  const { backingData } = state;
-  const newData = backingData.slice();
+  const { backingData, isAscending, sortBy } = state;
+
+  const columnKeyToDataType = {
+    itemCode: 'string',
+    itemName: 'string',
+    availableQuantity: 'number',
+    totalQuantity: 'number',
+  };
+
+  const newData = newSortDataBy(
+    backingData.slice(),
+    sortBy,
+    columnKeyToDataType[sortBy],
+    isAscending
+  );
 
   return { ...state, data: newData };
 };
