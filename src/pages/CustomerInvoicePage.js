@@ -129,6 +129,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       const {
         cellContainer,
         editableCellText,
+        editableCellUnfocused,
         editableCellTextView,
         cellText,
         touchableCellContainer,
@@ -152,12 +153,13 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
                 dispatch={dispatch}
                 width={width}
                 viewStyle={cellContainer[alignText || 'left']}
-                textInputStyle={cellText[alignText || 'left']}
-                textStyle={editableCellText}
                 textViewStyle={editableCellTextView}
                 isLastCell={isLastCell}
                 debug
                 keyboardType="numeric"
+                textInputStyle={cellText[alignText || 'left']}
+                textStyle={editableCellUnfocused}
+                cellTextStyle={editableCellText}
               />
             );
           case 'checkable':
