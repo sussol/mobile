@@ -61,8 +61,21 @@ const customerInvoice = {
   refreshData,
 };
 
+const supplierInvoice = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  filterData,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  openBasicModal,
+  editTheirRef,
+  editComment,
+  refreshData,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
+  supplierInvoice,
 };
 
 const getReducer = page => {
