@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { BACKGROUND_COLOR, BLUE_WHITE, DARK_GREY } from './colors';
+import { BACKGROUND_COLOR, BLUE_WHITE, DARK_GREY, LIGHT_GREY } from './colors';
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
 
 const newDataTableStyles = {
@@ -145,6 +145,36 @@ const newDataTableStyles = {
       alignItems: 'center',
       justifyContent: 'center',
     },
+  },
+  expiryBatchTextView: {
+    borderBottomColor: '#cbcbcb',
+    borderBottomWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
+    width: '88%',
+    maxHeight: '65%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  expiryBatchViewStyle: {
+    borderRightWidth: 2,
+    borderColor: '#ecf3fc',
+    flex: 1,
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
+  expiryBatchText: {
+    textAlign: 'center',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: DARK_GREY,
+  },
+  expiryBatchPlaceholderText: {
+    textAlign: 'center',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: LIGHT_GREY,
   },
 };
 
