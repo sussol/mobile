@@ -140,7 +140,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
                 viewStyle={cellContainer[alignText || 'left']}
                 textViewStyle={editableCellTextView}
                 isLastCell={isLastCell}
-                debug
                 keyboardType="numeric"
                 textInputStyle={cellText[alignText || 'left']}
                 textStyle={editableCellUnfocused[alignText || 'left']}
@@ -165,7 +164,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
                 containerStyle={touchableCellContainer}
                 width={width}
                 isLastCell={isLastCell}
-                debug
               />
             );
           case 'date':
@@ -182,14 +180,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
                 focusNextAction={focusNext}
                 dispatch={dispatch}
                 width={width}
-                viewStyle={cellContainer[alignText || 'left']}
-                textViewStyle={editableCellTextView}
                 isLastCell={isLastCell}
-                debug
-                keyboardType="numeric"
-                textInputStyle={cellText[alignText || 'left']}
-                textStyle={editableCellUnfocused[alignText || 'left']}
-                cellTextStyle={editableCellText}
               />
             );
           default:
@@ -201,7 +192,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
                 viewStyle={cellContainer[alignText || 'left']}
                 textStyle={cellText[alignText || 'left']}
                 isLastCell={isLastCell}
-                debug
               />
             );
         }
