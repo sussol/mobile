@@ -166,7 +166,7 @@ export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
   });
 };
 
-export const editTransactionBatchQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+export const editTransactionBatchQuantity = (value, rowKey) => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   if (!value) return;
@@ -178,11 +178,7 @@ export const editTransactionBatchQuantity = (value, rowKey, columnKey) => (dispa
     UIDatabase.save('TransactionBatch', objectToEdit);
   });
 
-  dispatch({
-    type: 'editTotalQuantity',
-    rowKey,
-    columnKey,
-  });
+  dispatch({ type: 'editTotalQuantity', rowKey });
 };
 
 export const deleteTransactionBatchesById = pageObjectType => (dispatch, getState) => {
@@ -196,4 +192,18 @@ export const deleteTransactionBatchesById = pageObjectType => (dispatch, getStat
   });
 
   dispatch({ type: 'deleteBatchesById' });
+};
+
+export const addTransactionBatch = item => (dispatch, getState) => {
+  const { pageObject } = getState();
+  let addedTransactionBatch;
+
+  UIDatabase.write(() => {
+    const transItem = createRecord(UIDatabase, 'TransactionItem', pageObject, item);
+    const itemBatch = createRecord(UIDatabase, 'ItemBatch', item, '');
+    addedTransactionBatch = createRecord(UIDatabase, 'TransactionBatch', transItem, itemBatch);
+  });
+
+  if (addedTransactionBatch) dispatch({ type: 'addItem', item: addedTransactionBatch });
+  else dispatch(closeBasicModal());
 };
