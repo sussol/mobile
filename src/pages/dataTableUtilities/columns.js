@@ -7,7 +7,7 @@ import { tableStrings } from '../../localization';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
-  supplierInvoice: [1, 3, 1, 1, 1],
+  supplierInvoice: [2, 4, 2, 2, 1],
 };
 
 const PAGE_COLUMNS = {
