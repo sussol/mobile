@@ -97,14 +97,9 @@ export const editTotalQuantity = (state, action) => {
   // Realm object reference in `data` can't be affected in any tidy manner.
   const newDataState = new Map(dataState);
   const nextRowState = newDataState.get(rowKey);
-  newDataState.set(rowKey, {
-    ...nextRowState,
-  });
+  newDataState.set(rowKey, { ...nextRowState });
 
-  return {
-    ...state,
-    dataState: newDataState,
-  };
+  return { ...state, dataState: newDataState };
 };
 
 /**
