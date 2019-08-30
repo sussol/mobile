@@ -231,7 +231,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
 
   const renderModalContent = () => {
     switch (modalKey) {
-      default:
       case ITEM_SELECT:
         return (
           <AutocompleteSelector
@@ -258,6 +257,8 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
             onEndEditing={value => dispatch(editTheirRef(value, 'Transaction'))}
           />
         );
+      default:
+        return null;
     }
   };
 
