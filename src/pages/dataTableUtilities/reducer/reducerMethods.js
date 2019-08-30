@@ -402,3 +402,31 @@ export const refreshData = state => {
   const { backingData } = state;
   return { ...state, data: backingData.slice() };
 };
+
+export const editExpiryDate = (state, action) => {
+  const { rowKey } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  return { ...state, dataState: newDataState };
+};
+
+export const deleteBatchesById = state => {
+  const { data } = state;
+
+  const newDataState = new Map();
+  const newData = data.filter(item => item.isValid());
+
+  return {
+    ...state,
+    data: newData,
+    dataState: newDataState,
+    hasSelection: false,
+    modalKey: '',
+  };
+};
