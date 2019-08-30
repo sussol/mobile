@@ -74,10 +74,11 @@ export const filterData = (state, action) => {
     itemName: 'string',
     availableQuantity: 'number',
     totalQuantity: 'number',
+    expiryDate: 'date',
   };
 
   const queryString = filterDataKeys
-    .map(filterTerm => `${filterTerm} BEGINSWITH[c]  $0`)
+    .map(filterTerm => `${filterTerm} CONTAINS[c]  $0`)
     .join(' OR ');
 
   const newData = newSortDataBy(
@@ -239,6 +240,7 @@ export const sortData = (state, action) => {
     itemName: 'string',
     availableQuantity: 'number',
     totalQuantity: 'number',
+    expiryDate: 'date',
   };
 
   // If the new sortBy is the same as the sortBy in state, then invert isAscending
@@ -286,6 +288,7 @@ export const addMasterListItems = state => {
     itemName: 'string',
     availableQuantity: 'number',
     totalQuantity: 'number',
+    expiryDate: 'date',
   };
 
   const newData = newSortDataBy(
