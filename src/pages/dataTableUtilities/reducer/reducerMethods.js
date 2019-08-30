@@ -70,6 +70,7 @@ export const filterData = (state, action) => {
   const { searchTerm } = action;
 
   const columnKeyToDataType = {
+    serialNumber: 'number',
     itemCode: 'string',
     itemName: 'string',
     availableQuantity: 'number',
