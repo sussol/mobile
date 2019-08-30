@@ -46,7 +46,7 @@ const COLUMNS = () => ({
     alignText: 'center',
   },
   editableExpiryDate: {
-    key: 'editableExpiryDate',
+    key: 'expiryDate',
     type: 'date',
     title: tableStrings.batch_expiry,
     alignText: 'center',
