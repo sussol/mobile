@@ -46,6 +46,10 @@ import {
   editTheirRef,
   openBasicModal,
   refreshData,
+  editTransactionBatchQuantity,
+  deleteTransactionBatchesById,
+  editTransactionBatchExpiryDate,
+  addTransactionBatch,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -60,13 +64,13 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     backingData: transaction.getTransactionBatches(UIDatabase),
     data: transaction
       .getTransactionBatches(UIDatabase)
-      .sorted('itemBatch.item.name')
+      .sorted('itemName')
       .slice(),
     keyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
-    filterDataKeys: ['itemBatch.item.name'],
+    filterDataKeys: ['itemName'],
     sortBy: 'itemName',
     isAscending: true,
     modalKey: '',
@@ -126,7 +130,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
                 value={rowData[colKey]}
                 rowKey={rowKey}
                 columnKey={colKey}
-                editAction={null}
+                editAction={editTransactionBatchQuantity}
                 isFocused={colKey === (rowState && rowState.focusedColumn)}
                 isDisabled={isDisabled}
                 focusAction={focusCell}
@@ -171,7 +175,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
                 value={rowData[colKey]}
                 rowKey={rowKey}
                 columnKey={colKey}
-                editAction={null}
+                editAction={editTransactionBatchExpiryDate}
                 isFocused={colKey === (rowState && rowState.focusedColumn)}
                 isDisabled={isDisabled}
                 focusAction={focusCell}
@@ -235,7 +239,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
             queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
             queryStringSecondary="name CONTAINS[c] $0"
             sortByString="name"
-            onSelect={null}
+            onSelect={item => dispatch(addTransactionBatch(item))}
             renderLeftText={item => `${item.name}`}
             renderRightText={item => `${item.totalQuantity}`}
           />
@@ -313,7 +317,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
         onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => null}
+        onConfirm={() => dispatch(deleteTransactionBatchesById('Transaction'))}
         confirmText={modalStrings.remove}
       />
       <PageContentModal
