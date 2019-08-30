@@ -9,13 +9,19 @@ import PropTypes from 'prop-types';
 import { View, TouchableWithoutFeedback, Text, TextInput } from 'react-native';
 import { useExpiryDateMask } from '../hooks/useExpiryDateMask';
 import Cell from './DataTable/Cell';
-import { dataTableColors } from '../globalStyles/index';
+import { dataTableColors, newDataTableStyles } from '../globalStyles/index';
 import { getAdjustedStyle } from './DataTable/utilities';
 import { parseExpiryDate, formatExpiryDate } from '../utilities';
 
 /**
- * Renders a cell that on press or focus contains a TextInput for
- * editing values.
+ * Renders an expiry date cell, managing its own state and not submitting
+ * a date to be committed to the underlying model until a valid date has
+ * been submitted.
+ *
+ * Similar to EditableCell, this component renders a Cell when disabled,
+ * a Text wrapped in a TouchableComponent when un-focused and a TextInput
+ * when focused - A workaround for react-native crashes when large numbers
+ * of TextInput components are rendered.
  *
  * @param {string|number} value The value to render in cell
  * @param {string|number} rowKey Unique key associated to row cell is in
@@ -30,13 +36,9 @@ import { parseExpiryDate, formatExpiryDate } from '../utilities';
  * @param {func} focusNextAction Action creator for handling focusing of this cell.
  *                          `(rowKey, columnKey) => {...}`
  * @param {func}  dispatch Reducer dispatch callback for handling actions
- * @param {Object}  touchableStyle Style object for the wrapping Touchable component
- * @param {Object}  viewStyle Style object for the wrapping View component
- * @param {Object}  textStyle Style object for the inner Text component
  * @param {Number}  width Optional flex property to inject into styles.
  * @param {Bool}  isLastCell Indicator for if this cell is the last
  *                                   in a row. Removing the borderRight if true.
- * @param {Object}  cellTextStyle Styles to pass as textStyle to Cell, when disabled.
  * @param {String}  placeholder String to display when the cell is empty.
  * @
  *
@@ -52,30 +54,24 @@ export const NewExpiryDateInput = React.memo(
     focusAction,
     focusNextAction,
     dispatch,
-    touchableStyle,
-    viewStyle,
-    textInputStyle,
-    textStyle,
-    textViewStyle,
     isLastCell,
     width,
     debug,
     placeholder,
-    cellTextStyle,
   }) => {
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
+    // Customhook managing the editing of an expiry date to stay valid.
     const [expiryDate, finalseExpiryDate, setExpiryDate] = useExpiryDateMask(
       formatExpiryDate(value)
     );
 
-    const usingPlaceholder = placeholder && !expiryDate;
-
-    const focusCell = () => dispatch(focusAction(rowKey, columnKey));
-
+    // Helpers controlling the submitting of the expiry date. Losing focus/submitting
+    // Handed similarly, but losing focus will not auto focus the next cell. Changes
+    // to the underlying model are not committed until a valid date is entered.
     const finishEditingExpiryDate = () => {
       finalseExpiryDate();
-      dispatch(editAction(parseExpiryDate(expiryDate)));
+      dispatch(editAction(parseExpiryDate(expiryDate), rowKey, columnKey));
     };
 
     const onSubmit = () => {
@@ -83,21 +79,31 @@ export const NewExpiryDateInput = React.memo(
       dispatch(focusNextAction(focusNextAction(rowKey, columnKey)));
     };
 
+    const usingPlaceholder = placeholder && !expiryDate;
+    const {
+      expiryBatchTextView,
+      expiryBatchViewStyle,
+      expiryBatchText,
+      expiryBatchPlaceholderText,
+    } = newDataTableStyles;
+
+    const textStyle = usingPlaceholder ? expiryBatchPlaceholderText : expiryBatchText;
+
     // Render a plain Cell if disabled.
     if (isDisabled) {
       return (
         <Cell
           key={columnKey}
-          viewStyle={viewStyle}
-          textStyle={cellTextStyle}
-          value={expiryDate}
+          viewStyle={expiryBatchViewStyle}
+          textStyle={textStyle}
+          value={usingPlaceholder ? 'N/A' : expiryDate}
           width={width}
           isLastCell={isLastCell}
         />
       );
     }
 
-    const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
+    const internalViewStyle = getAdjustedStyle(expiryBatchViewStyle, width, isLastCell);
 
     // Too many TextInputs causes React Native to crash, so only
     // truly mount the TextInput when the Cell is focused.
@@ -105,13 +111,12 @@ export const NewExpiryDateInput = React.memo(
     // feedback to resemble a TextInput regardless of focus.
     if (!isFocused) {
       const text = usingPlaceholder ? placeholder : expiryDate;
-      const internalTextStyle = getAdjustedStyle(textStyle, width);
-      const unfocusedTextStyle = usingPlaceholder ? { ...internalTextStyle } : internalTextStyle;
+
       return (
-        <TouchableWithoutFeedback style={touchableStyle} onPress={focusCell}>
+        <TouchableWithoutFeedback onPress={dispatch(focusAction(rowKey, columnKey))}>
           <View style={internalViewStyle}>
-            <View style={textViewStyle}>
-              <Text ellipsizeMode="tail" numberOfLines={1} style={unfocusedTextStyle}>
+            <View style={expiryBatchTextView}>
+              <Text ellipsizeMode="tail" numberOfLines={1} style={textStyle}>
                 {text}
               </Text>
             </View>
@@ -120,16 +125,12 @@ export const NewExpiryDateInput = React.memo(
       );
     }
 
-    const internalTextStyle = getAdjustedStyle(textInputStyle, width);
-    // first had a colour
-    const focusedTextStyle = usingPlaceholder ? { ...internalTextStyle } : { ...internalTextStyle };
-
     // Render a Cell with a textInput.
     return (
       <View style={internalViewStyle}>
         <TextInput
           placeholder={placeholder}
-          style={focusedTextStyle}
+          style={textStyle}
           value={expiryDate}
           onChangeText={setExpiryDate}
           autoFocus={isFocused}
@@ -154,13 +155,7 @@ NewExpiryDateInput.propTypes = {
   focusAction: PropTypes.func.isRequired,
   focusNextAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
-  touchableStyle: PropTypes.object,
-  cellTextStyle: PropTypes.object,
-  viewStyle: PropTypes.object,
-  textStyle: PropTypes.object,
   width: PropTypes.number,
-  textInputStyle: PropTypes.object,
-  textViewStyle: PropTypes.object,
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
@@ -171,16 +166,9 @@ NewExpiryDateInput.defaultProps = {
   isDisabled: false,
   isFocused: false,
   isLastCell: false,
-  touchableStyle: {},
-  viewStyle: {},
-  textStyle: {},
-  cellTextStyle: {},
-  textInputStyle: {},
-  textViewStyle: {},
-
   width: 0,
   debug: false,
-  placeholder: 'MM / YYYY',
+  placeholder: 'mm/yyyy',
 };
 
 export default NewExpiryDateInput;
