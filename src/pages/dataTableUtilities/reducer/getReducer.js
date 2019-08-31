@@ -95,6 +95,7 @@ const supplierRequisitions = {
   filterData,
   selectRow,
   deselectRow,
+  deselectAll,
   openBasicModal,
   closeBasicModal,
 };
