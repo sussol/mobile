@@ -507,17 +507,3 @@ export const resetStocktake = state => {
 
   return { ...state, data: backingData.slice(), modalKey: '', modalValue: null };
 };
-
-export const hideOverStocked = state => {
-  const { backingData } = state;
-
-  const newData = backingData.filter(requisitionItem => requisitionItem.isLessThanThresholdMOS);
-
-  return { ...state, data: newData };
-};
-
-export const showOverStocked = state => {
-  const { backingData } = state;
-
-  return { ...state, data: backingData.slice() };
-};
