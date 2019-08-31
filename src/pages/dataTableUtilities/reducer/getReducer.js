@@ -34,6 +34,10 @@ import {
   deleteRecordsById,
   refreshData,
   editBatchExpiry,
+  useSuggestedQuantities,
+  createAutomaticOrder,
+  hideOverStocked,
+  showOverStocked,
 } from './reducerMethods';
 
 /**
@@ -115,6 +119,10 @@ const supplierRequisition = {
   refreshData,
   addMasterListItems,
   addItem,
+  createAutomaticOrder,
+  useSuggestedQuantities,
+  hideOverStocked,
+  showOverStocked,
 };
 
 const PAGE_REDUCERS = {

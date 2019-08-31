@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -32,6 +32,8 @@ import {
   addItem,
   createAutomaticOrder,
   useSuggestedQuantities,
+  hideOverStocked,
+  showOverStocked,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -71,6 +73,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     isAscending: true,
     modalKey: '',
     hasSelection: false,
+    showAllStock: false,
   });
 
   const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
@@ -85,8 +88,13 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     pageObject,
     hasSelection,
     backingData,
+    showAllStock,
   } = state;
   const { isFinalised, comment, theirRef, program } = pageObject;
+
+  useEffect(() => {
+    if (!showAllStock) dispatch(hideOverStocked());
+  }, []);
 
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
   // Since this does not manipulate the state through the reducer, state is not updated (in
@@ -195,17 +203,16 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 
   const ThresholdMOSToggle = useCallback(() => {
-    const onPress = () => null;
     const toggleProps = [
       {
         text: programStrings.hide_over_stocked,
-        isOn: true,
-        onPress,
+        isOn: !showAllStock,
+        onPress: () => dispatch(hideOverStocked()),
       },
       {
         text: programStrings.show_over_stocked,
-        isOn: !true,
-        onPress,
+        isOn: showAllStock,
+        onPress: () => runWithLoadingIndicator(() => dispatch(showOverStocked())),
       },
     ];
     return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
@@ -334,3 +341,5 @@ SupplierRequisitionPage.propTypes = {
   requisition: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
 };
+
+console.disableYellowBox = true;
