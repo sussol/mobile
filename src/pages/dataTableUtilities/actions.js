@@ -307,3 +307,11 @@ export const useSuggestedQuantities = pageObjectType => (dispatch, getState) => 
 
   dispatch({ type: 'createAutomaticOrder' });
 };
+
+export const hideOverStocked = () => ({
+  type: 'hideOverStocked',
+});
+
+export const showOverStocked = () => ({
+  type: 'showOverStocked',
+});
