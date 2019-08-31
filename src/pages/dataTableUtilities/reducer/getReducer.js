@@ -137,6 +137,7 @@ const supplierRequisitions = {
   deselectRow,
   openBasicModal,
   closeBasicModal,
+  refreshData,
 };
 
 const PAGE_REDUCERS = {
