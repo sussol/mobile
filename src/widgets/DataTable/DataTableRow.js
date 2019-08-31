@@ -40,7 +40,7 @@ import {
  * @param {Func} getAction  Function to return an action for a cell
  *                          (colKey, propName) => actionObject
  */
-export const DataTableRow = React.memo(
+const DataTableRow = React.memo(
   ({
     rowData,
     rowState,

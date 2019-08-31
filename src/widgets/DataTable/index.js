@@ -7,6 +7,7 @@ import HeaderRow from './HeaderRow';
 import HeaderCell from './HeaderCell';
 import DataTable from './DataTable';
 import DataTableHeaderRow from './DataTableHeaderRow';
+import DataTableRow from './DataTableRow';
 
 export {
   DataTable,
@@ -18,4 +19,5 @@ export {
   Row,
   HeaderRow,
   HeaderCell,
+  DataTableRow,
 };
