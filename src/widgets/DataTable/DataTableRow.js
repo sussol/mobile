@@ -52,6 +52,7 @@ const DataTableRow = React.memo(
     focusCellAction,
     focusNextAction,
     getAction,
+    onPress,
   }) => {
     // Key of the current column focused.
     const focusedColumnKey = rowState && rowState.focusedColumn;
@@ -155,6 +156,7 @@ const DataTableRow = React.memo(
 
     return (
       <Row
+        onPress={onPress}
         style={style}
         renderCells={renderCells}
         debug
@@ -171,8 +173,10 @@ DataTableRow.defaultProps = {
   focusCellAction: null,
   focusNextAction: null,
   getAction: null,
+  onPress: null,
 };
 DataTableRow.propTypes = {
+  onPress: PropTypes.func,
   rowData: PropTypes.object.isRequired,
   rowState: PropTypes.object.isRequired,
   rowKey: PropTypes.string.isRequired,
