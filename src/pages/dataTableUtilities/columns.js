@@ -10,6 +10,7 @@ const PAGE_COLUMN_WIDTHS = {
   supplierInvoice: [2, 4, 2, 2, 1],
   customerInvoices: [1.5, 2.5, 2, 3, 1],
   supplierRequisitions: [1.5, 2, 1, 1, 1, 1],
+  supplierRequisition: [1.4, 3.5, 2, 1.5, 2, 2, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -22,6 +23,15 @@ const PAGE_COLUMNS = {
     'numberOfItems',
     'entryDate',
     'status',
+    'remove',
+  ],
+  supplierRequisition: [
+    'itemCode',
+    'itemName',
+    'ourStockOnHand',
+    'monthlyUsage',
+    'suggestedQuantity',
+    'requiredQuantity',
     'remove',
   ],
 };
@@ -104,6 +114,40 @@ const COLUMNS = () => ({
     key: 'status',
     title: tableStrings.status,
     sortable: true,
+  },
+  ourStockOnHand: {
+    key: 'ourStockOnHand',
+    title: tableStrings.current_stock,
+    sortable: true,
+    alignText: 'right',
+  },
+  monthlyUsage: {
+    key: 'monthlyUsage',
+    title: tableStrings.monthly_usage,
+    sortable: true,
+    alignText: 'right',
+  },
+  suggestedQuantity: {
+    key: 'suggestedQuantity',
+    title: tableStrings.suggested_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  requiredQuantity: {
+    key: 'requiredQuantity',
+    title: tableStrings.required_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  price: {
+    key: 'price',
+    title: tableStrings.price,
+    alignText: 'center',
+  },
+  unit: {
+    key: 'unit',
+    title: tableStrings.unit,
+    alignText: 'center',
   },
 });
 
