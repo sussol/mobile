@@ -30,4 +30,5 @@ export {
   UncheckedComponent,
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
+  CloseIcon,
 } from './icons';
