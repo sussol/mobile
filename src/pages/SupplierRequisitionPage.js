@@ -332,3 +332,5 @@ SupplierRequisitionPage.propTypes = {
   requisition: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
 };
+
+console.disableYellowBox = true;
