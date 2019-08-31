@@ -91,7 +91,7 @@ const COLUMNS = () => ({
   supplierName: {
     key: 'supplierName',
     title: tableStrings.supplier,
-    sortable: false,
+    sortable: true,
   },
   entryDate: {
     type: 'entryDate',
