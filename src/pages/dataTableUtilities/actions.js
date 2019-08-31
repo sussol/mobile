@@ -4,6 +4,8 @@
  */
 import { UIDatabase, createRecord } from '../../database';
 import { parsePositiveInteger } from '../../utilities';
+import Settings from '../../settings/MobileAppSettings';
+import { SETTINGS_KEYS } from '../../settings/index';
 
 /**
  * Actions for use with a data table reducer
@@ -76,8 +78,13 @@ export const closeBasicModal = () => ({
 export const addMasterListItems = objectType => (dispatch, getState) => {
   const { pageObject } = getState();
 
+  const thisStore = UIDatabase.objects('Name').filtered(
+    'id == $0',
+    Settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+  )[0];
+
   UIDatabase.write(() => {
-    pageObject.addItemsFromMasterList(UIDatabase);
+    pageObject.addItemsFromMasterList(UIDatabase, thisStore);
     UIDatabase.save(objectType, pageObject);
   });
   dispatch({ type: 'addMasterListItems', objectType });
@@ -273,3 +280,30 @@ export const addTransactionBatch = item => (dispatch, getState) => {
 
 export const completeCreatingNewRecord = () => ({ type: 'completeCreatingNewRecord' });
 export const newSupplierRequisition = () => ({ type: 'newSupplierRequisition' });
+
+export const createAutomaticOrder = pageObjectType => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  const thisStore = UIDatabase.objects('Name').filtered(
+    'id == $0',
+    Settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+  )[0];
+
+  UIDatabase.write(() => {
+    pageObject.createAutomaticOrder(UIDatabase, thisStore);
+    UIDatabase.save(pageObjectType, pageObject);
+  });
+
+  dispatch({ type: 'createAutomaticOrder' });
+};
+
+export const useSuggestedQuantities = pageObjectType => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  UIDatabase.write(() => {
+    pageObject.setRequestedToSuggested(UIDatabase);
+    UIDatabase.save(pageObjectType, pageObject);
+  });
+
+  dispatch({ type: 'createAutomaticOrder' });
+};
