@@ -111,11 +111,24 @@ const supplierRequisitions = {
   closeBasicModal,
 };
 
+const supplierRequisition = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  filterData,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  openBasicModal,
+  closeBasicModal,
+  editTheirRef,
+  editComment,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
   supplierInvoice,
   supplierRequisitions,
+  supplierRequisition,
 };
 
 const getReducer = page => {
