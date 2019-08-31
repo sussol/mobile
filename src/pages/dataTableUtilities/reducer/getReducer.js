@@ -34,6 +34,9 @@ import {
   deleteRecordsById,
   refreshData,
   editBatchExpiry,
+  deleteRequisitions,
+  newSupplierRequisition,
+  completeCreatingNewRecord,
 } from './reducerMethods';
 
 /**
@@ -98,6 +101,10 @@ const supplierRequisitions = {
   deselectAll,
   openBasicModal,
   closeBasicModal,
+  newSupplierRequisition,
+  deleteRequisitions,
+  completeCreatingNewRecord,
+  refreshData,
 };
 
 const PAGE_REDUCERS = {
