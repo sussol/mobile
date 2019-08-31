@@ -91,18 +91,6 @@ const supplierInvoice = {
   deleteRecordsById,
 };
 
-const supplierRequisitions = {
-  sortData,
-  filterData,
-  selectRow,
-  deselectRow,
-  deselectAll,
-  openBasicModal,
-  closeBasicModal,
-  refreshData,
-  deleteRecordsById,
-};
-
 const supplierRequisition = {
   ...BASE_TABLE_PAGE_REDUCER,
   filterData,
@@ -140,6 +128,15 @@ const programSupplierRequisition = {
   hideOverStocked,
   showOverStocked,
   editField,
+};
+
+const supplierRequisitions = {
+  sortData,
+  filterData,
+  selectRow,
+  deselectRow,
+  openBasicModal,
+  closeBasicModal,
 };
 
 const PAGE_REDUCERS = {
