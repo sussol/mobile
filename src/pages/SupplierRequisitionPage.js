@@ -11,9 +11,9 @@ import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
+import { buttonStrings, modalStrings, programStrings } from '../localization';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo } from '../widgets';
+import { PageButton, PageInfo, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import {
@@ -83,7 +83,7 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
     hasSelection,
     backingData,
   } = state;
-  const { isFinalised, comment, theirRef } = pageObject;
+  const { isFinalised, comment, theirRef, program } = pageObject;
 
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
   // Since this does not manipulate the state through the reducer, state is not updated (in
@@ -139,49 +139,94 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
     [data, dataState]
   );
 
-  const renderButtons = () => {
-    const { verticalContainer } = globalStyles;
-    const UseSuggestedQuantitiesButton = () => (
-      <PageButton
-        // ...(program ? { marginLeft: 5 } : {}),
-        style={{ ...globalStyles.topButton }}
-        text={buttonStrings.use_suggested_quantities}
-        onPress={null}
-        isDisabled={isFinalised}
-      />
-    );
-    const CreateAutomaticOrderButton = () => (
+  const AddMasterListItemsButton = useCallback(
+    () => (
       <PageButton
         style={globalStyles.leftButton}
-        text={buttonStrings.create_automatic_order}
+        text={buttonStrings.add_master_list_items}
         onPress={null}
         isDisabled={isFinalised}
       />
-    );
+    ),
+    []
+  );
 
-    const AddNewItemButton = () => (
+  const AddNewItemButton = useCallback(
+    () => (
       <PageButton
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
         onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
         isDisabled={isFinalised}
       />
-    );
+    ),
+    []
+  );
 
-    const AddMasterListItemsButton = () => (
+  const CreateAutomaticOrderButton = useCallback(
+    () => (
       <PageButton
-        text={buttonStrings.add_master_list_items}
+        style={{ ...globalStyles.leftButton, marginLeft: 5 }}
+        text={buttonStrings.create_automatic_order}
         onPress={null}
         isDisabled={isFinalised}
       />
-    );
+    ),
+    []
+  );
+
+  const UseSuggestedQuantitiesButton = useCallback(
+    () => (
+      <View>
+        <PageButton
+          // ...(program ? { marginLeft: 5 } : {}),
+          style={{ ...globalStyles.topButton, marginLeft: 5 }}
+          text={buttonStrings.use_suggested_quantities}
+          onPress={null}
+          isDisabled={isFinalised}
+        />
+      </View>
+    ),
+    []
+  );
+
+  const ThresholdMOSToggle = useCallback(() => {
+    const onPress = () => null;
+    const toggleProps = [
+      {
+        text: programStrings.hide_over_stocked,
+        isOn: true,
+        onPress,
+      },
+      {
+        text: programStrings.show_over_stocked,
+        isOn: !true,
+        onPress,
+      },
+    ];
+    return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
+  }, []);
+
+  const ViewRegimenDataButton = useCallback(
+    () => (
+      <View>
+        <PageButton
+          style={{ ...globalStyles.topButton }}
+          text={buttonStrings.view_regimen_data}
+          onPress={() => null}
+        />
+      </View>
+    ),
+    []
+  );
+
+  const GeneralButtons = useCallback(() => {
+    const { verticalContainer } = globalStyles;
 
     return (
       <>
         <View style={verticalContainer}>
-          <View style={globalStyles.horizontalContainer}>
-            <UseSuggestedQuantitiesButton />
-          </View>
+          <UseSuggestedQuantitiesButton />
           <CreateAutomaticOrderButton />
         </View>
         <View style={globalStyles.verticalContainer}>
@@ -190,7 +235,24 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
         </View>
       </>
     );
-  };
+  }, []);
+
+  const ProgramButtons = useCallback(() => {
+    const { verticalContainer, horizontalContainer } = globalStyles;
+    return (
+      <>
+        <View style={verticalContainer}>
+          <View style={horizontalContainer}>
+            <UseSuggestedQuantitiesButton />
+            <ViewRegimenDataButton />
+          </View>
+          <View style={verticalContainer}>
+            <ThresholdMOSToggle />
+          </View>
+        </View>
+      </>
+    );
+  }, []);
 
   const renderHeader = () => (
     <DataTableHeaderRow
@@ -233,7 +295,9 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
             placeholder=""
           />
         </View>
-        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={newPageTopRightSectionContainer}>
+          {program ? <ProgramButtons /> : <GeneralButtons />}
+        </View>
       </View>
       <DataTable
         data={data}
