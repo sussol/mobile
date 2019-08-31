@@ -289,6 +289,10 @@ export class Requisition extends Realm.Object {
     database.delete('RequisitionItem', itemsToPrune);
   }
 
+  get supplierName() {
+    return (this.otherStoreName && this.otherStoreName.name) || 'N/A';
+  }
+
   /**
    * Finalise this requisition.
    *

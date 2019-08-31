@@ -151,6 +151,7 @@ const DataTableRow = React.memo(
                 isLastCell={isLastCell}
               />
             );
+
           case 'entryDate':
             return (
               <Cell
