@@ -21,6 +21,7 @@ import {
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
 } from '../icons';
+import { formatStatus } from '../../utilities/index';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -135,6 +136,29 @@ const DataTableRow = React.memo(
                 focusNextAction={focusNextAction}
                 dispatch={dispatch}
                 width={width}
+                isLastCell={isLastCell}
+              />
+            );
+
+          case 'status':
+            return (
+              <Cell
+                key={columnKey}
+                value={formatStatus(rowData[columnKey])}
+                width={width}
+                viewStyle={cellContainer[cellAlignment]}
+                textStyle={cellText[cellAlignment]}
+                isLastCell={isLastCell}
+              />
+            );
+          case 'entryDate':
+            return (
+              <Cell
+                key={columnKey}
+                value={rowData[columnKey] && rowData[columnKey].toDateString()}
+                width={width}
+                viewStyle={cellContainer[cellAlignment]}
+                textStyle={cellText[cellAlignment]}
                 isLastCell={isLastCell}
               />
             );
