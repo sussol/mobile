@@ -88,6 +88,7 @@ const localStyles = StyleSheet.create({
     backgroundColor: DARKER_GREY,
     marginLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
     marginRight: PAGE_CONTENT_PADDING_HORIZONTAL,
+    marginBottom: PAGE_CONTENT_PADDING_HORIZONTAL,
     marginTop: 56,
     opacity: 0.94,
     paddingBottom: 10,
