@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy, MODAL_KEYS } from '../../../utilities';
+import { newSortDataBy } from '../../../utilities';
 
 /**
  * Immutably clears the current focus
