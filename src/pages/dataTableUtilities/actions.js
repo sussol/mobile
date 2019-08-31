@@ -315,3 +315,17 @@ export const hideOverStocked = () => ({
 export const showOverStocked = () => ({
   type: 'showOverStocked',
 });
+
+export const editMonthsOfSupply = (value, pageObjectType) => (dispatch, getState) => {
+  const { pageObject } = getState();
+  const { monthsToSupply } = pageObject;
+
+  if (monthsToSupply !== value) {
+    UIDatabase.write(() => {
+      pageObject.monthsToSupply = value;
+      UIDatabase.save(pageObjectType, pageObject);
+    });
+  }
+
+  dispatch(closeBasicModal());
+};

@@ -34,6 +34,7 @@ import {
   useSuggestedQuantities,
   hideOverStocked,
   showOverStocked,
+  editMonthsOfSupply,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -76,7 +77,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     showAllStock: false,
   });
 
-  const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
+  const { ITEM_SELECT, REQUISITION_COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
   const {
     data,
     dataState,
@@ -190,7 +191,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     () => (
       <View>
         <PageButton
-          style={{ ...globalStyles.topButton, marginLeft: 5 }}
+          style={globalStyles.topButton}
           text={buttonStrings.use_suggested_quantities}
           onPress={() =>
             runWithLoadingIndicator(() => dispatch(useSuggestedQuantities('Requisition')))
@@ -279,7 +280,9 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     switch (modalKey) {
       case ITEM_SELECT:
         return value => dispatch(addItem(value, 'RequisitionItem'));
-      case COMMENT_EDIT:
+      case MONTHS_SELECT:
+        return value => dispatch(editMonthsOfSupply(value, 'Requisition'));
+      case REQUISITION_COMMENT_EDIT:
         return value => dispatch(editComment(value, 'Requisition'));
       default:
         return null;
