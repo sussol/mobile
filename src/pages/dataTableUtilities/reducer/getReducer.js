@@ -102,15 +102,6 @@ const supplierRequisitions = {
   deleteRecordsById,
 };
 
-const supplierRequisitions = {
-  sortData,
-  filterData,
-  selectRow,
-  deselectRow,
-  openBasicModal,
-  closeBasicModal,
-};
-
 const supplierRequisition = {
   ...BASE_TABLE_PAGE_REDUCER,
   filterData,
@@ -122,6 +113,8 @@ const supplierRequisition = {
   editTheirRef,
   editComment,
   refreshData,
+  addMasterListItems,
+  addItem,
 };
 
 const PAGE_REDUCERS = {
