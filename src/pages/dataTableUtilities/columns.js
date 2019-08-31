@@ -9,7 +9,7 @@ const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
   supplierInvoice: [2, 4, 2, 2, 1],
   customerInvoices: [1.5, 2.5, 2, 3, 1],
-  supplierRequisitions: [1.5, 2, 1, 1, 1],
+  supplierRequisitions: [1.5, 2, 1, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -19,8 +19,8 @@ const PAGE_COLUMNS = {
   supplierRequisitions: [
     'serialNumber',
     'supplierName',
-    'entryDate',
     'numberOfItems',
+    'entryDate',
     'status',
     'remove',
   ],
@@ -94,6 +94,7 @@ const COLUMNS = () => ({
     sortable: false,
   },
   entryDate: {
+    type: 'entryDate',
     key: 'entryDate',
     title: tableStrings.entered_date,
     sortable: true,
@@ -105,6 +106,7 @@ const COLUMNS = () => ({
     alignText: 'right',
   },
   status: {
+    type: 'status',
     key: 'status',
     title: tableStrings.status,
     sortable: true,
