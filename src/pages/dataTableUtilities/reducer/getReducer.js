@@ -90,10 +90,20 @@ const supplierInvoice = {
   editBatchExpiry,
 };
 
+const supplierRequisitions = {
+  sortData,
+  filterData,
+  selectRow,
+  deselectRow,
+  openBasicModal,
+  closeBasicModal,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
   supplierInvoice,
+  supplierRequisitions,
 };
 
 const getReducer = page => {
