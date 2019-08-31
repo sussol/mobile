@@ -10,29 +10,34 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import Settings from '../settings/MobileAppSettings';
+import { BottomConfirmModal, DataTablePageModal, ByProgramModal } from '../widgets/modals';
 import { PageButton } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import {
   sortData,
   filterData,
-  openBasicModal,
   selectRow,
   deselectRow,
   deselectAll,
   closeBasicModal,
+  deleteRequisitions,
+  newSupplierRequisition,
+  completeCreatingNewRecord,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
+import { createSupplierRequisition } from '../navigation/actions';
+
 const keyExtractor = item => item.id;
 
-export const SupplierRequisitionsPage = ({ routeName }) => {
+export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     backingData: UIDatabase.objects('RequestRequisition'),
     data: UIDatabase.objects('RequestRequisition')
@@ -46,11 +51,14 @@ export const SupplierRequisitionsPage = ({ routeName }) => {
     isAscending: true,
     modalKey: '',
     hasSelection: false,
+    currentUser,
+    reduxDispatch,
+    usingPrograms: getAllPrograms(Settings, UIDatabase).length > 0,
   });
 
   const { data, dataState, sortBy, isAscending, columns, modalKey, hasSelection } = state;
 
-  const { SELECT_SUPPLIER } = MODAL_KEYS;
+  const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
 
   const getItemLayout = useCallback((_, index) => {
     const { height } = newDataTableStyles.row;
@@ -97,14 +105,29 @@ export const SupplierRequisitionsPage = ({ routeName }) => {
       <View style={verticalContainer}>
         <PageButton
           style={topButton}
-          text={buttonStrings.new_item}
-          onPress={() => dispatch(openBasicModal(SELECT_SUPPLIER))}
+          text={buttonStrings.new_requisition}
+          onPress={() => dispatch(newSupplierRequisition())}
         />
       </View>
     );
   };
 
-  const getModalOnSelect = () => null;
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case SELECT_SUPPLIER:
+        return otherStoreName => {
+          reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
+          dispatch(completeCreatingNewRecord());
+        };
+      case PROGRAM_REQUISITION:
+        return requisitionParameters => {
+          reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
+          dispatch(completeCreatingNewRecord());
+        };
+      default:
+        return null;
+    }
+  };
 
   const renderHeader = () => (
     <DataTableHeaderRow
@@ -147,19 +170,33 @@ export const SupplierRequisitionsPage = ({ routeName }) => {
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
         onCancel={() => dispatch(deselectAll())}
-        onConfirm={null}
+        onConfirm={() => dispatch(deleteRequisitions())}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
-        isOpen={!!modalKey}
+        isOpen={!!modalKey && modalKey !== PROGRAM_REQUISITION}
         modalKey={modalKey}
         onClose={() => dispatch(closeBasicModal())}
-        confirmAction={getModalOnSelect()}
+        onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
+      {modalKey === PROGRAM_REQUISITION && (
+        <ByProgramModal
+          isOpen={modalKey === PROGRAM_REQUISITION}
+          onConfirm={getModalOnSelect()}
+          onCancel={() => dispatch(closeBasicModal())}
+          database={UIDatabase}
+          type="requisition"
+          settings={Settings}
+        />
+      )}
     </DataTablePageView>
   );
 };
 
-SupplierRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };
+SupplierRequisitionsPage.propTypes = {
+  routeName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired,
+};
