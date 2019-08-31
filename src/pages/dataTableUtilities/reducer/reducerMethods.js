@@ -393,11 +393,6 @@ export const editField = (state, action) => {
   return { ...state, dataState: newDataState };
 };
 
-export const createAutomaticOrder = state => {
-  const { backingData } = state;
-  return { ...state, data: backingData.slice() };
-};
-
 export const useSuggestedQuantities = state => {
   const { backingData } = state;
   return { ...state, data: backingData.slice() };
