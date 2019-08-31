@@ -9,12 +9,21 @@ const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
   supplierInvoice: [2, 4, 2, 2, 1],
   customerInvoices: [1.5, 2.5, 2, 3, 1],
+  supplierRequisitions: [1.5, 2, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
   supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'editableExpiryDate', 'remove'],
   customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'comment', 'delete'],
+  supplierRequisitions: [
+    'serialNumber',
+    'supplierName',
+    'entryDate',
+    'numberOfItems',
+    'status',
+    'remove',
+  ],
 };
 
 const COLUMNS = () => ({
@@ -78,6 +87,27 @@ const COLUMNS = () => ({
     type: 'checkable',
     title: tableStrings.delete,
     alignText: 'center',
+  },
+  supplierName: {
+    key: 'supplierName',
+    title: tableStrings.supplier,
+    sortable: false,
+  },
+  entryDate: {
+    key: 'entryDate',
+    title: tableStrings.entered_date,
+    sortable: true,
+  },
+  numberOfItems: {
+    key: 'numberOfItems',
+    title: tableStrings.items,
+    sortable: true,
+    alignText: 'right',
+  },
+  status: {
+    key: 'status',
+    title: tableStrings.status,
+    sortable: true,
   },
 });
 
