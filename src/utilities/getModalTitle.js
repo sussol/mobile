@@ -12,6 +12,7 @@ export const MODAL_KEYS = {
   ITEM_SELECT: 'itemSelect',
   SELECT_CUSTOMER: 'selectCustomer',
   SELECT_SUPPLIER: 'selectSupplier',
+  PROGRAM_REQUISITION: 'programRequisition',
 };
 
 export const getModalTitle = modalKey => {
