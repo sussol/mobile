@@ -121,6 +121,7 @@ const supplierRequisition = {
   closeBasicModal,
   editTheirRef,
   editComment,
+  refreshData,
 };
 
 const PAGE_REDUCERS = {
