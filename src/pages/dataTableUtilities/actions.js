@@ -380,3 +380,11 @@ export const resetStocktake = () => (dispatch, getState) => {
 
   dispatch({ type: 'resetStocktake' });
 };
+
+export const hideOverStocked = () => ({
+  type: 'hideOverStocked',
+});
+
+export const showOverStocked = () => ({
+  type: 'showOverStocked',
+});
