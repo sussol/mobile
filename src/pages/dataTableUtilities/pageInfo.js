@@ -25,7 +25,7 @@ import { MODAL_KEYS } from '../../utilities/getModalTitle';
  * required pageInfo columns for the page.
  */
 
-const { THEIR_REF_EDIT, COMMENT_EDIT, SELECT_MONTHS_TO_SUPPLY } = MODAL_KEYS;
+const { THEIR_REF_EDIT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
 
 const PER_PAGE_INFO_COLUMNS = {
   customerInvoice: [['entryDate', 'confirmDate', 'enteredBy'], ['customer', 'theirRef', 'comment']],
@@ -64,7 +64,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   },
   otherParty: {
     title: `${pageInfoStrings.supplier}:`,
-    info: pageObject.otherParty && pageObject.otherParty.name,
+    info: pageObject.supplierName,
   },
   program: {
     title: `${programStrings.program}:`,
@@ -77,7 +77,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   monthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
-    onPress: () => dispatch(openBasicModal(SELECT_MONTHS_TO_SUPPLY)),
+    onPress: () => dispatch(openBasicModal(MONTHS_SELECT)),
     editableType: 'selectable',
   },
 });
