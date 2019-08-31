@@ -102,6 +102,15 @@ const supplierRequisitions = {
   deleteRecordsById,
 };
 
+const supplierRequisitions = {
+  sortData,
+  filterData,
+  selectRow,
+  deselectRow,
+  openBasicModal,
+  closeBasicModal,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
