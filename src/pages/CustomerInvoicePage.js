@@ -10,11 +10,10 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
-import { MODAL_KEYS, getModalTitle } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
-import { UIDatabase } from '../database';
-import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
-import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, PageInfo } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import {
@@ -28,7 +27,6 @@ import {
   filterData,
   closeBasicModal,
   addMasterListItems,
-  addItem,
   editComment,
   editTheirRef,
   deleteItemsById,
@@ -144,38 +142,6 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     [data, dataState]
   );
 
-  const renderModalContent = () => {
-    switch (modalKey) {
-      default:
-      case ITEM_SELECT:
-        return (
-          <AutocompleteSelector
-            options={UIDatabase.objects('Item')}
-            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
-            queryStringSecondary="name CONTAINS[c] $0"
-            sortByString="name"
-            onSelect={item => dispatch(addItem(item, 'TransactionItem'))}
-            renderLeftText={item => `${item.name}`}
-            renderRightText={item => `${item.totalQuantity}`}
-          />
-        );
-      case COMMENT_EDIT:
-        return (
-          <TextEditor
-            text={comment}
-            onEndEditing={value => dispatch(editComment(value, 'Transaction'))}
-          />
-        );
-      case THEIR_REF_EDIT:
-        return (
-          <TextEditor
-            text={theirRef}
-            onEndEditing={value => dispatch(editTheirRef(value, 'Transaction'))}
-          />
-        );
-    }
-  };
-
   const renderButtons = () => {
     const { verticalContainer, topButton } = globalStyles;
     return (
@@ -204,6 +170,19 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       sortBy={sortBy}
     />
   );
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case ITEM_SELECT:
+        return value => dispatch(editComment(value, 'Transaction'));
+      case COMMENT_EDIT:
+        return value => dispatch(editComment(value, 'Transaction'));
+      case THEIR_REF_EDIT:
+        return value => dispatch(editTheirRef(value, 'Transaction'));
+      default:
+        return null;
+    }
+  };
 
   const {
     newPageTopSectionContainer,
@@ -240,13 +219,15 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         onConfirm={() => dispatch(deleteItemsById('Transaction'))}
         confirmText={modalStrings.remove}
       />
-      <PageContentModal
+      <DataTablePageModal
+        fullScreen={false}
         isOpen={!!modalKey}
+        modalKey={modalKey}
         onClose={() => dispatch(closeBasicModal())}
-        title={getModalTitle(modalKey)}
-      >
-        {renderModalContent()}
-      </PageContentModal>
+        confirmAction={getModalOnSelect()}
+        dispatch={dispatch}
+        currentValue={pageObject[modalKey]}
+      />
     </DataTablePageView>
   );
 };
