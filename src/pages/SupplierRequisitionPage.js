@@ -23,12 +23,15 @@ import {
   deselectAll,
   openBasicModal,
   closeBasicModal,
-  editTheirRef,
   editComment,
   focusNext,
   focusCell,
   sortData,
   refreshData,
+  addMasterListItems,
+  addItem,
+  createAutomaticOrder,
+  useSuggestedQuantities,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -54,7 +57,7 @@ const keyExtractor = item => item.id;
  * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const SupplierRequisitionPage = ({ requisition, routeName }) => {
+export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     pageObject: requisition,
     backingData: requisition.items,
@@ -70,7 +73,7 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
     hasSelection: false,
   });
 
-  const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+  const { ITEM_SELECT, COMMENT_EDIT } = MODAL_KEYS;
   const {
     data,
     dataState,
@@ -144,7 +147,7 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
       <PageButton
         style={globalStyles.leftButton}
         text={buttonStrings.add_master_list_items}
-        onPress={null}
+        onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Requisition')))}
         isDisabled={isFinalised}
       />
     ),
@@ -168,7 +171,7 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
       <PageButton
         style={{ ...globalStyles.leftButton, marginLeft: 5 }}
         text={buttonStrings.create_automatic_order}
-        onPress={null}
+        onPress={() => runWithLoadingIndicator(() => dispatch(createAutomaticOrder('Requisition')))}
         isDisabled={isFinalised}
       />
     ),
@@ -179,10 +182,11 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
     () => (
       <View>
         <PageButton
-          // ...(program ? { marginLeft: 5 } : {}),
           style={{ ...globalStyles.topButton, marginLeft: 5 }}
           text={buttonStrings.use_suggested_quantities}
-          onPress={null}
+          onPress={() =>
+            runWithLoadingIndicator(() => dispatch(useSuggestedQuantities('Requisition')))
+          }
           isDisabled={isFinalised}
         />
       </View>
@@ -267,11 +271,9 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
   const getModalOnSelect = () => {
     switch (modalKey) {
       case ITEM_SELECT:
-        return value => dispatch(editComment(value, 'Transaction'));
+        return value => dispatch(addItem(value, 'RequisitionItem'));
       case COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Transaction'));
-      case THEIR_REF_EDIT:
-        return value => dispatch(editTheirRef(value, 'Transaction'));
+        return value => dispatch(editComment(value, 'Requisition'));
       default:
         return null;
     }
@@ -319,7 +321,7 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={() => dispatch(closeBasicModal())}
-        confirmAction={getModalOnSelect()}
+        onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={pageObject[modalKey]}
       />
@@ -328,6 +330,7 @@ export const SupplierRequisitionPage = ({ requisition, routeName }) => {
 };
 
 SupplierRequisitionPage.propTypes = {
+  runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
 };
