@@ -33,7 +33,7 @@ import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
-import { createSupplierRequisition } from '../navigation/actions';
+import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 
 const keyExtractor = item => item.id;
 
@@ -93,6 +93,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
+          onPress={() => reduxDispatch(gotoSupplierRequisition(item))}
         />
       );
     },
