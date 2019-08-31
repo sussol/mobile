@@ -23,7 +23,14 @@ import { modalStrings } from '../../localization';
  * @prop {String} modalKey     The title to show in within the modal.
  * @prop {String} currentValue The current value a modal should be i.e. theirRef/comment
  */
-const DataTablePageModal = ({ fullScreen, isOpen, onClose, modalKey, onSelect, currentValue }) => {
+export const DataTablePageModal = ({
+  fullScreen,
+  isOpen,
+  onClose,
+  modalKey,
+  onSelect,
+  currentValue,
+}) => {
   const ModalContent = () => {
     switch (modalKey) {
       case MODAL_KEYS.ITEM_SELECT:
