@@ -11,6 +11,7 @@ import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
+import { ToggleSelector } from '../ToggleSelector';
 import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
 import Settings from '../../settings/MobileAppSettings';
@@ -84,6 +85,14 @@ export const DataTablePageModal = ({
             database={UIDatabase}
             type="requisition"
             settings={Settings}
+          />
+        );
+      case MODAL_KEYS.MONTHS_SELECT:
+        return (
+          <ToggleSelector
+            options={[1, 2, 3, 4, 5, 6]}
+            onSelect={onSelect}
+            selected={currentValue}
           />
         );
       default:

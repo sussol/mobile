@@ -9,16 +9,19 @@ export const MODAL_KEYS = {
   SELECT_CUSTOMER: 'selectCustomer',
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
+  REQUISITION_COMMENT_EDIT: 'comment',
   ITEM_SELECT: 'itemSelect',
   SELECT_SUPPLIER: 'selectSupplier',
   PROGRAM_REQUISITION: 'programRequisition',
-  SELECT_MONTHS_TO_SUPPLY: 'selectMonthsToSupply',
+  MONTHS_SELECT: 'monthsToSupply',
 };
 
 export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
+      return modalStrings.edit_the_requisition_comment;
     case MODAL_KEYS.ITEM_SELECT:
       return modalStrings.search_for_an_item_to_add;
     case MODAL_KEYS.COMMENT_EDIT:
