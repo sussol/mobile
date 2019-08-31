@@ -236,6 +236,27 @@ export const deleteRequisitions = () => (dispatch, getState) => {
   dispatch({ type: 'deleteRecordsById' });
 };
 
+export const deleteRequisitions = () => (dispatch, getState) => {
+  const { dataState, backingData } = getState();
+
+  const requisitionIds = Array.from(dataState.keys()).filter(
+    rowKey => dataState.get(rowKey).isSelected
+  );
+
+  const requisitionsToDelete = requisitionIds.reduce((acc, requisitionId) => {
+    const requisition = backingData.filtered('id = $0', requisitionId)[0];
+    const shouldDelete = requisition && requisition.isValid() && !requisition.isFinalised;
+    if (shouldDelete) return [...acc, requisition];
+    return acc;
+  }, []);
+
+  UIDatabase.write(() => {
+    UIDatabase.delete('Requisition', requisitionsToDelete);
+  });
+
+  dispatch({ type: 'deleteRequisitions' });
+};
+
 export const addTransactionBatch = item => (dispatch, getState) => {
   const { pageObject } = getState();
   let addedTransactionBatch;
@@ -249,3 +270,6 @@ export const addTransactionBatch = item => (dispatch, getState) => {
   if (addedTransactionBatch) dispatch({ type: 'addItem', item: addedTransactionBatch });
   else dispatch(closeBasicModal());
 };
+
+export const completeCreatingNewRecord = () => ({ type: 'completeCreatingNewRecord' });
+export const newSupplierRequisition = () => ({ type: 'newSupplierRequisition' });
