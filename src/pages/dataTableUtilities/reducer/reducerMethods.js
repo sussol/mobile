@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy } from '../../../utilities';
+import { newSortDataBy, MODAL_KEYS } from '../../../utilities';
 
 /**
  * Immutably clears the current focus
@@ -390,4 +390,32 @@ export const editBatchExpiry = (state, action) => {
   newDataState.set(rowKey, { ...nextRowState });
 
   return { ...state, dataState: newDataState };
+};
+
+export const newSupplierRequisition = state => {
+  const { usingPrograms, backingData } = state;
+  const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
+  const modalKey = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
+
+  return { ...state, data: backingData.slice(), modalKey };
+};
+
+export const completeCreatingNewRecord = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData.slice(), modalKey: '' };
+};
+
+export const deleteRequisitions = state => {
+  const { data } = state;
+
+  const newDataState = new Map();
+  const newData = data.filter(item => item.isValid());
+
+  return {
+    ...state,
+    data: newData,
+    dataState: newDataState,
+    hasSelection: false,
+    modalKey: '',
+  };
 };
