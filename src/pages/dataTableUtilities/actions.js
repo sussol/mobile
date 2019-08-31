@@ -308,11 +308,3 @@ export const editRequiredQuantity = (value, rowKey) => (dispatch, getState) => {
 
   dispatch(editField(rowKey));
 };
-
-export const hideOverStocked = () => ({
-  type: 'hideOverStocked',
-});
-
-export const showOverStocked = () => ({
-  type: 'showOverStocked',
-});
