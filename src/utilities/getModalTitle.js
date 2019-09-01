@@ -16,6 +16,7 @@ export const MODAL_KEYS = {
   MONTHS_SELECT: 'monthsToSupply',
   VIEW_REGIMEN_DATA: 'viewRegimenData',
   SELECT_MONTHS_TO_SUPPLY: 'selectMonthsToSupply',
+  PROGRAM_STOCKTAKE: 'programStocktake',
 };
 
 export const getModalTitle = modalKey => {
