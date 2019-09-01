@@ -192,6 +192,25 @@ const stocktakeEditor = {
   resetStocktake,
 };
 
+const programSupplierRequisition = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  filterData,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  openBasicModal,
+  closeBasicModal,
+  editTheirRef,
+  editComment,
+  refreshData,
+  addMasterListItems,
+  addItem,
+  createAutomaticOrder,
+  useSuggestedQuantities,
+  hideOverStocked,
+  showOverStocked,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
