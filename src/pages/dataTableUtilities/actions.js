@@ -308,3 +308,15 @@ export const editRequiredQuantity = (value, rowKey) => (dispatch, getState) => {
 
   dispatch(editField(rowKey));
 };
+
+export const selectAll = () => ({
+  type: 'selectAll',
+});
+
+export const hideStockOut = () => ({
+  type: 'hideStockOut',
+});
+
+export const showStockOut = () => ({
+  type: 'showStockOut',
+});

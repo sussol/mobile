@@ -166,7 +166,7 @@ export const deselectRow = (state, action) => {
     }
   }
 
-  return { ...state, dataState: newDataState, hasSelection };
+  return { ...state, dataState: newDataState, hasSelection, allSelected: false };
 };
 
 /**
@@ -187,7 +187,7 @@ export const deselectAll = state => {
       });
     }
   }
-  return { ...state, dataState: newDataState, hasSelection: false };
+  return { ...state, dataState: newDataState, hasSelection: false, allSelected: false };
 };
 
 /**
