@@ -14,6 +14,7 @@ const PAGE_COLUMN_WIDTHS = {
   programSupplierRequisition: [1.5, 3.5, 0.5, 0.5, 2, 1.5, 2, 2, 1],
   stocktakes: [6, 2, 2, 1],
   stocktakeManager: [2, 6, 1],
+  stocktakeEditor: [1, 2.8, 1.2, 1.2, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -50,6 +51,13 @@ const PAGE_COLUMNS = {
   ],
   stocktakes: ['name', 'createdDate', 'status', 'remove'],
   stocktakeManager: ['code', 'name', 'selected'],
+  stocktakeEditor: [
+    'itemCode',
+    'itemName',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+  ],
 };
 
 const COLUMNS = () => ({
@@ -180,6 +188,24 @@ const COLUMNS = () => ({
     type: 'checkable',
     title: tableStrings.selected,
     alignText: 'center',
+  },
+  difference: {
+    key: 'difference',
+    title: tableStrings.difference,
+    sortable: true,
+    alignText: 'right',
+  },
+  countedTotalQuantity: {
+    key: 'countedTotalQuantity',
+    title: tableStrings.actual_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  snapshotTotalQuantity: {
+    key: 'snapshotTotalQuantity',
+    title: tableStrings.snapshot_quantity,
+    sortable: true,
+    alignText: 'right',
   },
 });
 
