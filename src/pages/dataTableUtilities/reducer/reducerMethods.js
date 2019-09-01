@@ -407,11 +407,11 @@ export const hideOverStocked = state => {
 
   const newData = backingData.filter(requisitionItem => requisitionItem.isLessThanThresholdMOS);
 
-  return { ...state, data: newData };
+  return { ...state, data: newData, showAllStock: false };
 };
 
 export const showOverStocked = state => {
   const { backingData } = state;
 
-  return { ...state, data: backingData.slice() };
+  return { ...state, data: backingData.slice(), showAllStock: true };
 };

@@ -217,7 +217,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       },
     ];
     return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
-  }, []);
+  }, [showAllStock]);
 
   const ViewRegimenDataButton = useCallback(
     () => (
@@ -264,7 +264,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         </View>
       </>
     );
-  }, []);
+  }, [showAllStock]);
 
   const renderHeader = () => (
     <DataTableHeaderRow
