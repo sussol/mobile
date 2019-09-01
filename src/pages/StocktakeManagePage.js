@@ -5,34 +5,30 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
 import { BottomModal } from '../widgets/modals';
-import { PageButton, TextInput, OnePressButton } from '../widgets';
+import { ToggleBar, TextInput, OnePressButton } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import {
   sortData,
   filterData,
   selectRow,
   deselectRow,
-  // deselectAll,
-  // closeBasicModal,
-  // deleteRequisitions,
+  selectAll,
+  deselectAll,
+  hideStockOut,
+  showStockOut,
+  selectByIds,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
-
-// import {
-//   gotoStocktakeManagePage,
-//   createStocktake,
-//   gotoStocktakeEditPage,
-// } from '../navigation/actions';
 
 const keyExtractor = item => item.id;
 
@@ -51,9 +47,24 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
     sortBy: 'name',
     isAscending: true,
     hasSelection: false,
+    allSelected: false,
+    showAll: true,
   });
 
-  const { data, dataState, sortBy, isAscending, columns, hasSelection } = state;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    hasSelection,
+    showAll,
+    allSelected,
+  } = state;
+
+  useEffect(() => {
+    if (stocktake) dispatch(selectByIds(stocktake.items.map(item => item.item.id)));
+  }, []);
 
   const getItemLayout = useCallback((_, index) => {
     const { height } = newDataTableStyles.row;
@@ -74,6 +85,28 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
     }
   });
 
+  const Toggle = () => (
+    <ToggleBar
+      style={globalStyles.toggleBar}
+      textOffStyle={globalStyles.toggleText}
+      textOnStyle={globalStyles.toggleTextSelected}
+      toggleOffStyle={globalStyles.toggleOption}
+      toggleOnStyle={globalStyles.toggleOptionSelected}
+      toggles={[
+        {
+          text: buttonStrings.hide_stockouts,
+          onPress: () => (showAll ? dispatch(hideStockOut()) : dispatch(showStockOut())),
+          isOn: !showAll,
+        },
+        {
+          text: buttonStrings.all_items_selected,
+          onPress: () => (allSelected ? dispatch(deselectAll()) : dispatch(selectAll())),
+          isOn: allSelected,
+        },
+      ]}
+    />
+  );
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -92,17 +125,8 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
         />
       );
     },
-    [data, dataState]
+    [data, dataState, showAll]
   );
-
-  const renderButtons = () => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton style={topButton} text={buttonStrings.new_stocktake} onPress={null} />
-      </View>
-    );
-  };
 
   const renderHeader = () => (
     <DataTableHeaderRow
@@ -131,7 +155,9 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
             placeholder=""
           />
         </View>
-        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={newPageTopRightSectionContainer}>
+          <Toggle />
+        </View>
       </View>
       <DataTable
         data={data}
