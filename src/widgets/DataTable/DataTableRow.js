@@ -122,7 +122,7 @@ const DataTableRow = React.memo(
               />
             );
 
-          case 'date':
+          case 'editableDate':
             return (
               <NewExpiryDateInput
                 key={columnKey}
@@ -152,7 +152,7 @@ const DataTableRow = React.memo(
               />
             );
 
-          case 'entryDate':
+          case 'date':
             return (
               <Cell
                 key={columnKey}
