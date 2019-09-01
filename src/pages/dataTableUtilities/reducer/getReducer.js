@@ -36,6 +36,10 @@ import {
   hideOverStocked,
   showOverStocked,
   editField,
+  // selectAll,
+  // hideStockOut,
+  // showStockOut,
+  selectByIds,
 } from './reducerMethods';
 
 /**
@@ -159,6 +163,7 @@ const stocktakeManager = {
   // selectAll,
   // hideStockOut,
   // showStockOut,
+  selectByIds,
 };
 
 const PAGE_REDUCERS = {

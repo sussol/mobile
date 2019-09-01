@@ -320,3 +320,8 @@ export const hideStockOut = () => ({
 export const showStockOut = () => ({
   type: 'showStockOut',
 });
+
+export const selectByIds = itemIds => ({
+  type: 'selectById',
+  itemIds,
+});
