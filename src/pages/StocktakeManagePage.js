@@ -23,12 +23,13 @@ import {
   deselectAll,
   hideStockOut,
   showStockOut,
-  selectByIds,
+  selectItems,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
+import { createStocktake, addItemsToStocktake } from '../navigation/actions';
 
 const keyExtractor = item => item.id;
 
@@ -49,6 +50,7 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
     hasSelection: false,
     allSelected: false,
     showAll: true,
+    name: stocktake ? stocktake.name : '',
   });
 
   const {
@@ -60,10 +62,11 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
     hasSelection,
     showAll,
     allSelected,
+    name,
   } = state;
 
   useEffect(() => {
-    if (stocktake) dispatch(selectByIds(stocktake.items.map(item => item.item.id)));
+    if (stocktake) dispatch(selectItems(stocktake.itemsInStocktake));
   }, []);
 
   const getItemLayout = useCallback((_, index) => {
@@ -125,7 +128,7 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
         />
       );
     },
-    [data, dataState, showAll]
+    [data, dataState, showAll, hasSelection]
   );
 
   const renderHeader = () => (
@@ -137,6 +140,16 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
       sortBy={sortBy}
     />
   );
+
+  const confirmStocktake = () => {
+    const itemIds = Array.from(dataState.keys()).filter(id => id);
+
+    const updateExistingStocktake = () => reduxDispatch(addItemsToStocktake(stocktake, itemIds));
+    const createNewStocktake = () => reduxDispatch(createStocktake({ name, itemIds }));
+
+    if (stocktake) return updateExistingStocktake();
+    return createNewStocktake();
+  };
 
   const {
     newPageTopSectionContainer,
@@ -180,14 +193,14 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
           underlineColorAndroid="transparent"
           placeholderTextColor="white"
           placeholder={modalStrings.give_your_stocktake_a_name}
-          value="hehe"
+          value={name}
           onChangeText={null}
         />
         <OnePressButton
           style={[globalStyles.button, globalStyles.modalOrangeButton]}
           textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-          text={!stocktake ? modalStrings.create : modalStrings.confirm}
-          onPress={null}
+          text={stocktake ? modalStrings.confirm : modalStrings.create}
+          onPress={confirmStocktake}
         />
       </BottomModal>
     </DataTablePageView>
