@@ -168,6 +168,13 @@ const stocktakeManager = {
   editName,
 };
 
+const stocktakeEditor = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  sortData,
+  filterData,
+  editComment,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
@@ -177,6 +184,7 @@ const PAGE_REDUCERS = {
   programSupplierRequisition,
   stocktakes,
   stocktakeManager,
+  stocktakeEditor,
 };
 
 const getReducer = page => {
