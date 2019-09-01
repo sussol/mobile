@@ -78,7 +78,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     showAllStock: !(routeName === 'programSupplierRequisition'),
   });
 
-  const { ITEM_SELECT, REQUISITION_COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
+  const { ITEM_SELECT, REQUISITION_COMMENT_EDIT, MONTHS_SELECT, VIEW_REGIMEN_DATA } = MODAL_KEYS;
   const {
     data,
     dataState,
@@ -226,7 +226,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <PageButton
           style={{ ...globalStyles.topButton }}
           text={buttonStrings.view_regimen_data}
-          onPress={() => null}
+          onPress={() => dispatch(openBasicModal(VIEW_REGIMEN_DATA))}
         />
       </View>
     ),
@@ -335,6 +335,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={pageObject[modalKey]}
+        modalObject={pageObject}
       />
     </DataTablePageView>
   );

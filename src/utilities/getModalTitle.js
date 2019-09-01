@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { modalStrings } from '../localization';
+import { modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
   SELECT_CUSTOMER: 'selectCustomer',
@@ -14,6 +14,7 @@ export const MODAL_KEYS = {
   SELECT_SUPPLIER: 'selectSupplier',
   PROGRAM_REQUISITION: 'programRequisition',
   MONTHS_SELECT: 'monthsToSupply',
+  VIEW_REGIMEN_DATA: 'viewRegimenData',
 };
 
 export const getModalTitle = modalKey => {
@@ -32,5 +33,7 @@ export const getModalTitle = modalKey => {
       return modalStrings.search_for_the_customer;
     case MODAL_KEYS.SELECT_SUPPLIER:
       return modalStrings.search_for_the_supplier;
+    case MODAL_KEYS.VIEW_REGIMEN_DATA:
+      return buttonStrings.view_regimen_data;
   }
 };

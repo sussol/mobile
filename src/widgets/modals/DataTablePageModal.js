@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -16,6 +17,14 @@ import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
 import Settings from '../../settings/MobileAppSettings';
 
+import { RequisitionRegimenModalTable } from '../../pages/expansions/RequisitionRegimenModalTable';
+import {
+  dataTableColors,
+  dataTableStyles,
+  pageStyles,
+  SUSSOL_ORANGE,
+} from '../../globalStyles/index';
+
 /**
  * Wrapper around ModalContainer, containing common modals used in various
  * DataTable pages.
@@ -33,6 +42,7 @@ export const DataTablePageModal = ({
   modalKey,
   onSelect,
   currentValue,
+  modalObject,
 }) => {
   const ModalContent = () => {
     switch (modalKey) {
@@ -95,6 +105,20 @@ export const DataTablePageModal = ({
             selected={currentValue}
           />
         );
+
+      case MODAL_KEYS.VIEW_REGIMEN_DATA:
+        return (
+          <RequisitionRegimenModalTable
+            database={UIDatabase}
+            requisition={modalObject}
+            genericTablePageStyles={{
+              searchBarColor: SUSSOL_ORANGE,
+              colors: dataTableColors,
+              dataTableStyles,
+              pageStyles,
+            }}
+          />
+        );
       default:
         return null;
     }
@@ -117,9 +141,11 @@ DataTablePageModal.defaultProps = {
   modalKey: '',
   onSelect: null,
   currentValue: '',
+  modalObject: null,
 };
 
 DataTablePageModal.propTypes = {
+  modalObject: PropTypes.object,
   fullScreen: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
