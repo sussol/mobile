@@ -507,3 +507,30 @@ export const resetStocktake = state => {
 
   return { ...state, data: backingData.slice(), modalKey: '', modalValue: null };
 };
+
+export const selectAll = state => {
+  const { data, keyExtractor } = state;
+
+  const newDataState = new Map();
+
+  data.forEach(datum => {
+    const rowKey = keyExtractor(datum);
+    newDataState.set(rowKey, { isSelected: true });
+  });
+
+  return { ...state, dataState: newDataState, hasSelection: true, allSelected: true };
+};
+
+export const hideStockOut = state => {
+  const { backingData } = state;
+
+  const newData = backingData.filter(item => item.totalQuantity);
+
+  return { ...state, data: newData, showAll: false };
+};
+
+export const showStockOut = state => {
+  const { backingData } = state;
+
+  return { ...state, data: backingData.slice(), showAll: true };
+};
