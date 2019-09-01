@@ -74,7 +74,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     isAscending: true,
     modalKey: '',
     hasSelection: false,
-    showAllStock: false,
+    showAllStock: !(routeName === 'programSupplierRequisition'),
   });
 
   const { ITEM_SELECT, REQUISITION_COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
