@@ -156,14 +156,16 @@ const COLUMNS = () => ({
   },
   name: {
     key: 'name',
-    title: 'name',
+    title: tableStrings.name,
     alignText: 'left',
+    sortable: true,
   },
   createdDate: {
     key: 'createdDate',
     type: 'date',
-    title: 'date',
+    title: tableStrings.created_date,
     alignText: 'left',
+    sortable: true,
   },
 });
 

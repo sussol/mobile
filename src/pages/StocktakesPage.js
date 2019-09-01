@@ -102,7 +102,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     const { verticalContainer, topButton } = globalStyles;
     return (
       <View style={verticalContainer}>
-        <PageButton style={topButton} text={buttonStrings.new_requisition} onPress={null} />
+        <PageButton
+          style={topButton}
+          text={buttonStrings.new_stocktake}
+          // onPress={() => dispatch(openBasicModal(PROGRAM_STOCKTAKE))}
+        />
       </View>
     );
   };
@@ -182,7 +186,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
           onConfirm={getModalOnSelect()}
           onCancel={() => dispatch(closeBasicModal())}
           database={UIDatabase}
-          type="requisition"
+          type="stocktake"
           settings={Settings}
         />
       )}
