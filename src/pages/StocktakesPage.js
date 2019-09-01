@@ -31,7 +31,11 @@ import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
-import { createSupplierRequisition } from '../navigation/actions';
+import {
+  gotoStocktakeManagePage,
+  createStocktake,
+  gotoStocktakeEditPage,
+} from '../navigation/actions';
 
 const keyExtractor = item => item.id;
 
@@ -54,9 +58,18 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     usingPrograms: getAllPrograms(Settings, UIDatabase).length > 0,
   });
 
-  const { data, dataState, sortBy, isAscending, columns, modalKey, hasSelection } = state;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    modalKey,
+    hasSelection,
+    usingPrograms,
+  } = state;
 
-  const { SELECT_SUPPLIER, PROGRAM_STOCKTAKE } = MODAL_KEYS;
+  const { PROGRAM_STOCKTAKE } = MODAL_KEYS;
 
   const getItemLayout = useCallback((_, index) => {
     const { height } = newDataTableStyles.row;
@@ -82,6 +95,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
       const { row, alternateRow } = newDataTableStyles;
+
       return (
         <DataTableRow
           rowData={data[index]}
@@ -91,12 +105,17 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
-          onPress={null}
+          onPress={() => reduxDispatch(gotoStocktakeEditPage(item))}
         />
       );
     },
     [data, dataState]
   );
+
+  const newStocktake = () => {
+    if (usingPrograms) return dispatch(openBasicModal(PROGRAM_STOCKTAKE));
+    return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
+  };
 
   const renderButtons = () => {
     const { verticalContainer, topButton } = globalStyles;
@@ -105,7 +124,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
         <PageButton
           style={topButton}
           text={buttonStrings.new_stocktake}
-          // onPress={() => dispatch(openBasicModal(PROGRAM_STOCKTAKE))}
+          onPress={() => newStocktake()}
         />
       </View>
     );
@@ -113,14 +132,9 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case SELECT_SUPPLIER:
-        return otherStoreName => {
-          reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
-          // dispatch(completeCreatingNewRecord());
-        };
       case PROGRAM_STOCKTAKE:
-        return requisitionParameters => {
-          reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
+        return ({ name, program }) => {
+          reduxDispatch(createStocktake({ program, stocktakeName: name, currentUser }));
           // dispatch(completeCreatingNewRecord());
         };
       default:
