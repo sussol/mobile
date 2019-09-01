@@ -174,6 +174,9 @@ const stocktakeManager = {
   deselectRow,
   sortData,
   filterData,
+  selectAll,
+  hideStockOut,
+  showStockOut,
 };
 
 const PAGE_REDUCERS = {
