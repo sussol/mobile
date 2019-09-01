@@ -35,7 +35,7 @@ import { SETTINGS_KEYS } from '../settings/index';
  */
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
-    routeName: 'supplierRequisition',
+    routeName: !requisition.program ? 'supplierRequisition' : 'programSupplierRequisition',
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,
