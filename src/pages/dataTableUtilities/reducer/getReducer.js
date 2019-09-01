@@ -38,6 +38,7 @@ import {
   createAutomaticOrder,
   hideOverStocked,
   showOverStocked,
+  editRequiredQuantity,
 } from './reducerMethods';
 
 /**
@@ -123,6 +124,7 @@ const supplierRequisition = {
   useSuggestedQuantities,
   hideOverStocked,
   showOverStocked,
+  editRequiredQuantity,
   deleteItemsById,
 };
 
@@ -144,6 +146,7 @@ const programSupplierRequisition = {
   hideOverStocked,
   showOverStocked,
   deleteItemsById,
+  editRequiredQuantity,
 };
 
 const PAGE_REDUCERS = {

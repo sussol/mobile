@@ -329,3 +329,21 @@ export const editMonthsOfSupply = (value, pageObjectType) => (dispatch, getState
 
   dispatch(closeBasicModal());
 };
+
+export const editRequiredQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.requiredQuantity = parsePositiveInteger(Number(value));
+    UIDatabase.save('RequisitionItem', objectToEdit);
+  });
+
+  dispatch({
+    type: 'editRequiredQuantity',
+    value,
+    rowKey,
+    columnKey,
+  });
+};

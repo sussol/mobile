@@ -36,6 +36,7 @@ import {
   showOverStocked,
   editMonthsOfSupply,
   deleteItemsById,
+  editRequiredQuantity,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -92,6 +93,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     backingData,
     showAllStock,
   } = state;
+
   const { isFinalised, comment, theirRef, program } = pageObject;
 
   useEffect(() => {
@@ -119,8 +121,8 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
-      case 'totalQuantity':
-        return null;
+      case 'requiredQuantity':
+        return editRequiredQuantity;
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
         return deselectRow;

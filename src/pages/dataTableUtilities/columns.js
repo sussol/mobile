@@ -146,6 +146,7 @@ const COLUMNS = () => ({
     alignText: 'right',
   },
   requiredQuantity: {
+    type: 'editable',
     key: 'requiredQuantity',
     title: tableStrings.required_quantity,
     sortable: true,
