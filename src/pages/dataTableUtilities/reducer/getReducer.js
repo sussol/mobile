@@ -150,6 +150,14 @@ const stocktakes = {
   sortData,
 };
 
+const stocktakeManager = {
+  selectRow,
+  deselectAll,
+  deselectRow,
+  sortData,
+  filterData,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
@@ -158,6 +166,7 @@ const PAGE_REDUCERS = {
   supplierRequisition,
   programSupplierRequisition,
   stocktakes,
+  stocktakeManager,
 };
 
 const getReducer = page => {
