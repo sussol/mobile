@@ -416,3 +416,9 @@ export const selectItems = (state, action) => {
     hasSelection: true,
   };
 };
+
+export const editName = (state, action) => {
+  const { value } = action;
+
+  return { ...state, name: value };
+};

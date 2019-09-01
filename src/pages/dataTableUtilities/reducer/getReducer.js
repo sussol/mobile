@@ -40,6 +40,8 @@ import {
   // hideStockOut,
   // showStockOut,
   // selectByIds,
+  selectItems,
+  editName,
 } from './reducerMethods';
 
 /**
@@ -160,10 +162,11 @@ const stocktakeManager = {
   deselectRow,
   sortData,
   filterData,
-  // selectAll,
-  // hideStockOut,
-  // showStockOut,
-  // selectItems,
+  selectAll,
+  hideStockOut,
+  showStockOut,
+  selectItems,
+  editName,
 };
 
 const PAGE_REDUCERS = {

@@ -325,3 +325,8 @@ export const selectItems = items => ({
   type: 'selectItems',
   items,
 });
+
+export const editName = value => ({
+  type: 'editName',
+  value,
+});
