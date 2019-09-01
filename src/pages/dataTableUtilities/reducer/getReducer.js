@@ -148,7 +148,6 @@ const stocktakes = {
   deselectAll,
   deselectRow,
   sortData,
-  completeCreatingNewRecord,
 };
 
 const PAGE_REDUCERS = {

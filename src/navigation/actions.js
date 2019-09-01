@@ -33,6 +33,35 @@ import { SETTINGS_KEYS } from '../settings/index';
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
+export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
+  NavigationActions.navigate({
+    routeName: 'stocktakeManager',
+    params: {
+      title: stocktake ? stocktakeName : navStrings.new_stocktake,
+      stocktakeName,
+      stocktake,
+    },
+  });
+
+export const gotoStocktakeEditPage = stocktake =>
+  NavigationActions.navigate({
+    routeName: 'stocktakeEditor',
+    params: {
+      title: navStrings.stocktake,
+      stocktake,
+    },
+  });
+
+export const createStocktake = ({ currentUser, stocktakeName, program }) => dispatch => {
+  let stocktake;
+  UIDatabase.write(() => {
+    stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, stocktakeName, program);
+    if (program) stocktake.addItemsFromProgram(UIDatabase);
+  });
+
+  dispatch(gotoStocktakeEditPage(stocktake));
+};
+
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
     routeName: !requisition.program ? 'supplierRequisition' : 'programSupplierRequisition',
