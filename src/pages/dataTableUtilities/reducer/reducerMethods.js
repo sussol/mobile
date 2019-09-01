@@ -401,6 +401,13 @@ export const refreshData = state => {
   return { ...state, data: backingData.slice() };
 };
 
+/**
+ * Edits an expiry date for a Row in a DataTable.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: {type: 'editExpiryDate', rowKey }
+ */
 export const editExpiryDate = (state, action) => {
   const { rowKey } = action;
   const { dataState } = state;
@@ -414,6 +421,14 @@ export const editExpiryDate = (state, action) => {
   return { ...state, dataState: newDataState };
 };
 
+/**
+ * Reducer method called after the side effect of deleting.
+ * Ensures all objects in the data array are valid realm
+ * objects.
+ *
+ * @param {Object} state  The current state
+ * Action: { type: 'deleteBatchesById' }
+ */
 export const deleteBatchesById = state => {
   const { data } = state;
 
