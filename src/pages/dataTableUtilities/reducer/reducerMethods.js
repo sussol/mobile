@@ -507,22 +507,3 @@ export const resetStocktake = state => {
 
   return { ...state, data: backingData.slice(), modalKey: '', modalValue: null };
 };
-
-export const selectByIds = (state, action) => {
-  const { dataState, keyExtractor } = state;
-  const { itemIds } = action;
-
-  const newDataState = new Map(dataState);
-  itemIds.forEach(id => {
-    const rowKey = keyExtractor(id);
-    newDataState.set(keyExtractor(id), { ...dataState.get(rowKey), isSelected: true });
-  });
-
-  return {
-    ...state,
-    dataState: newDataState,
-    showAll: false,
-    allSelected: false,
-    hasSelection: true,
-  };
-};
