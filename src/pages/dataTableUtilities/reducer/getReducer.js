@@ -168,6 +168,14 @@ const stocktakeManager = {
   editName,
 };
 
+const stocktakeManager = {
+  selectRow,
+  deselectAll,
+  deselectRow,
+  sortData,
+  filterData,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
