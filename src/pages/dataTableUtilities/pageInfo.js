@@ -36,6 +36,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['program', 'orderType', 'entryDate', 'enteredBy'],
     ['period', 'otherParty', 'programMonthsToSupply', 'comment'],
   ],
+  stocktakeEditor: [['stocktakeName', 'comment']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
@@ -92,6 +93,12 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   programMonthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
+  },
+  stocktakeName: {
+    title: `${pageInfoStrings.stocktake_name}:`,
+    info: pageObject.name,
+    onPress: null,
+    editableType: 'text',
   },
 });
 
