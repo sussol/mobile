@@ -1,6 +1,13 @@
 /* eslint-disable import/prefer-default-export */
 import { useState } from 'react';
 
+/**
+ * Simple custom hook which manages the state of input for an
+ * expiry date in the form mm/yy[yy] such that the entered date
+ * always stays valid.
+ *
+ * @param {String} initialState Initial state of the expiry date
+ */
 export const useExpiryDateMask = initialState => {
   const [date, setDate] = useState(initialState);
 
