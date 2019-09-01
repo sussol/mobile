@@ -12,6 +12,7 @@ const PAGE_COLUMN_WIDTHS = {
   supplierRequisitions: [1.5, 2, 1, 1, 1, 1],
   supplierRequisition: [1.4, 3.5, 2, 1.5, 2, 2, 1],
   programSupplierRequisition: [1.5, 3.5, 0.5, 0.5, 2, 1.5, 2, 2, 1],
+  stocktakes: [6, 2, 2, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -46,6 +47,7 @@ const PAGE_COLUMNS = {
     'requiredQuantity',
     'remove',
   ],
+  stocktakes: ['name', 'createdDate', 'status', 'remove'],
 };
 
 const COLUMNS = () => ({
@@ -95,12 +97,12 @@ const COLUMNS = () => ({
   },
   editableExpiryDate: {
     key: 'expiryDate',
-    type: 'date',
+    type: 'editableDate',
     title: tableStrings.batch_expiry,
     alignText: 'center',
   },
   entryDate: {
-    type: 'entryDate',
+    type: 'date',
     key: 'entryDate',
     title: tableStrings.entered_date,
     sortable: true,
@@ -151,6 +153,17 @@ const COLUMNS = () => ({
     key: 'unit',
     title: tableStrings.unit,
     alignText: 'center',
+  },
+  name: {
+    key: 'name',
+    title: 'name',
+    alignText: 'left',
+  },
+  createdDate: {
+    key: 'createdDate',
+    type: 'date',
+    title: 'date',
+    alignText: 'left',
   },
 });
 

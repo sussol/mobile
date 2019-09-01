@@ -140,6 +140,15 @@ const supplierRequisitions = {
   refreshData,
 };
 
+const stocktakes = {
+  openBasicModal,
+  closeBasicModal,
+  filterData,
+  selectRow,
+  deselectAll,
+  deselectRow,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
@@ -147,6 +156,7 @@ const PAGE_REDUCERS = {
   supplierRequisitions,
   supplierRequisition,
   programSupplierRequisition,
+  stocktakes,
 };
 
 const getReducer = page => {
