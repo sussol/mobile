@@ -13,6 +13,7 @@ const PAGE_COLUMN_WIDTHS = {
   supplierRequisition: [1.4, 3.5, 2, 1.5, 2, 2, 1],
   programSupplierRequisition: [1.5, 3.5, 0.5, 0.5, 2, 1.5, 2, 2, 1],
   stocktakes: [6, 2, 2, 1],
+  stocktakeManager: [2, 6, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -48,6 +49,7 @@ const PAGE_COLUMNS = {
     'remove',
   ],
   stocktakes: ['name', 'createdDate', 'status', 'remove'],
+  stocktakeManager: ['code', 'name', 'selected'],
 };
 
 const COLUMNS = () => ({
@@ -166,6 +168,12 @@ const COLUMNS = () => ({
     title: tableStrings.created_date,
     alignText: 'left',
     sortable: true,
+  },
+  selected: {
+    key: 'selected',
+    type: 'checkable',
+    title: tableStrings.selected,
+    alignText: 'center',
   },
 });
 
