@@ -113,7 +113,7 @@ export const NewExpiryDateInput = React.memo(
       const text = usingPlaceholder ? placeholder : expiryDate;
 
       return (
-        <TouchableWithoutFeedback onPress={dispatch(focusAction(rowKey, columnKey))}>
+        <TouchableWithoutFeedback onPress={() => dispatch(focusAction(rowKey, columnKey))}>
           <View style={internalViewStyle}>
             <View style={expiryBatchTextView}>
               <Text ellipsizeMode="tail" numberOfLines={1} style={textStyle}>
