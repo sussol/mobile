@@ -398,14 +398,14 @@ export const useSuggestedQuantities = state => {
   return { ...state, data: backingData.slice() };
 };
 
-export const selectByIds = (state, action) => {
+export const selectItems = (state, action) => {
   const { dataState, keyExtractor } = state;
-  const { itemIds } = action;
+  const { items } = action;
 
   const newDataState = new Map(dataState);
-  itemIds.forEach(id => {
-    const rowKey = keyExtractor(id);
-    newDataState.set(keyExtractor(id), { ...dataState.get(rowKey), isSelected: true });
+  items.forEach(item => {
+    const rowKey = keyExtractor(item);
+    newDataState.set(rowKey, { ...dataState.get(rowKey), isSelected: true });
   });
 
   return {

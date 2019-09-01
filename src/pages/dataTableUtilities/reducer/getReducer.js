@@ -39,7 +39,7 @@ import {
   // selectAll,
   // hideStockOut,
   // showStockOut,
-  selectByIds,
+  // selectByIds,
 } from './reducerMethods';
 
 /**
@@ -163,7 +163,7 @@ const stocktakeManager = {
   // selectAll,
   // hideStockOut,
   // showStockOut,
-  selectByIds,
+  // selectItems,
 };
 
 const PAGE_REDUCERS = {

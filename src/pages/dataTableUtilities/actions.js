@@ -321,7 +321,7 @@ export const showStockOut = () => ({
   type: 'showStockOut',
 });
 
-export const selectByIds = itemIds => ({
-  type: 'selectById',
-  itemIds,
+export const selectItems = items => ({
+  type: 'selectItems',
+  items,
 });
