@@ -11,8 +11,8 @@ import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
-import { BottomModal } from '../widgets/modals';
-import { ToggleBar, TextInput, OnePressButton } from '../widgets';
+import { BottomTextEditor } from '../widgets/modals';
+import { ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import {
   sortData,
@@ -24,6 +24,7 @@ import {
   hideStockOut,
   showStockOut,
   selectItems,
+  editName,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -33,8 +34,12 @@ import { createStocktake, addItemsToStocktake } from '../navigation/actions';
 
 const keyExtractor = item => item.id;
 
-// eslint-disable-next-line no-unused-vars
-export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stocktake }) => {
+export const StocktakeManagePage = ({
+  routeName,
+  dispatch: reduxDispatch,
+  stocktake,
+  runWithLoadingIndicator,
+}) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     pageObject: stocktake,
     backingData: UIDatabase.objects('Item'),
@@ -145,10 +150,13 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
     const itemIds = Array.from(dataState.keys()).filter(id => id);
 
     const updateExistingStocktake = () => reduxDispatch(addItemsToStocktake(stocktake, itemIds));
-    const createNewStocktake = () => reduxDispatch(createStocktake({ name, itemIds }));
+    const createNewStocktake = () =>
+      reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
 
-    if (stocktake) return updateExistingStocktake();
-    return createNewStocktake();
+    runWithLoadingIndicator(() => {
+      if (stocktake) return updateExistingStocktake();
+      return createNewStocktake();
+    });
   };
 
   const {
@@ -180,34 +188,20 @@ export const StocktakeManagePage = ({ routeName, dispatch: reduxDispatch, stockt
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
       />
-      <BottomModal
-        isOpen={!(stocktake && stocktake.isFinalised) && hasSelection}
-        style={{
-          justifyContent: 'space-between',
-          paddingLeft: 20,
-        }}
-      >
-        <TextInput
-          style={globalStyles.modalTextInput}
-          textStyle={globalStyles.modalText}
-          underlineColorAndroid="transparent"
-          placeholderTextColor="white"
-          placeholder={modalStrings.give_your_stocktake_a_name}
-          value={name}
-          onChangeText={null}
-        />
-        <OnePressButton
-          style={[globalStyles.button, globalStyles.modalOrangeButton]}
-          textStyle={[globalStyles.buttonText, globalStyles.modalButtonText]}
-          text={stocktake ? modalStrings.confirm : modalStrings.create}
-          onPress={confirmStocktake}
-        />
-      </BottomModal>
+      <BottomTextEditor
+        isOpen={hasSelection}
+        buttonText={stocktake ? modalStrings.confirm : modalStrings.create}
+        value={name}
+        placeholder={modalStrings.give_your_stocktake_a_name}
+        onConfirm={confirmStocktake}
+        onChangeText={value => dispatch(editName(value))}
+      />
     </DataTablePageView>
   );
 };
 
 StocktakeManagePage.propTypes = {
+  runWithLoadingIndicator: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   stocktake: PropTypes.object.isRequired,
