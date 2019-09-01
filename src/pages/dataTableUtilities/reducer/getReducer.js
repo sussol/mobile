@@ -150,6 +150,15 @@ const stocktakes = {
   sortData,
 };
 
+const stocktakes = {
+  openBasicModal,
+  closeBasicModal,
+  filterData,
+  selectRow,
+  deselectAll,
+  deselectRow,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
