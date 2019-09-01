@@ -11,6 +11,7 @@ const PAGE_COLUMN_WIDTHS = {
   customerInvoices: [1.5, 2.5, 2, 3, 1],
   supplierRequisitions: [1.5, 2, 1, 1, 1, 1],
   supplierRequisition: [1.4, 3.5, 2, 1.5, 2, 2, 1],
+  programSupplierRequisition: [1.5, 3.5, 0.5, 0.5, 2, 1.5, 2, 2, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -28,6 +29,17 @@ const PAGE_COLUMNS = {
   supplierRequisition: [
     'itemCode',
     'itemName',
+    'ourStockOnHand',
+    'monthlyUsage',
+    'suggestedQuantity',
+    'requiredQuantity',
+    'remove',
+  ],
+  programSupplierRequisition: [
+    'itemCode',
+    'itemName',
+    'unit',
+    'price',
     'ourStockOnHand',
     'monthlyUsage',
     'suggestedQuantity',

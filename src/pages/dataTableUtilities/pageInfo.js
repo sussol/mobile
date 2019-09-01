@@ -1,3 +1,4 @@
+/* eslint-disable dot-notation */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -31,6 +32,10 @@ const PER_PAGE_INFO_COLUMNS = {
   customerInvoice: [['entryDate', 'confirmDate', 'enteredBy'], ['customer', 'theirRef', 'comment']],
   supplierInvoice: [['entryDate', 'confirmDate'], ['otherParty', 'theirRef', 'comment']],
   supplierRequisition: [['entryDate', 'enteredBy'], ['otherParty', 'monthsToSupply', 'comment']],
+  programSupplierRequisition: [
+    ['program', 'orderType', 'entryDate', 'enteredBy'],
+    ['period', 'otherParty', 'programMonthsToSupply', 'comment'],
+  ],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
@@ -80,13 +85,22 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
     onPress: () => dispatch(openBasicModal(MONTHS_SELECT)),
     editableType: 'selectable',
   },
+  period: {
+    title: `${programStrings.period}:`,
+    info: pageObject.period && `${pageObject.period.name} -- ${pageObject.period.toString()}`,
+  },
+  programMonthsToSupply: {
+    title: `${pageInfoStrings.months_stock_required}:`,
+    info: pageObject.monthsToSupply,
+  },
 });
 
 const getPageInfo = page => {
   const pageInfoColumns = PER_PAGE_INFO_COLUMNS[page];
+
   if (!pageInfoColumns) return null;
-  return (pageObject, dispatch) => {
-    const pageInfoRows = PAGE_INFO_ROWS(pageObject, dispatch);
+  return (pageObjectParameter, dispatch) => {
+    const pageInfoRows = PAGE_INFO_ROWS(pageObjectParameter, dispatch);
     return pageInfoColumns.map(pageInfoColumn =>
       pageInfoColumn.map(pageInfoKey => pageInfoRows[pageInfoKey])
     );
