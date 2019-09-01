@@ -87,7 +87,6 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
       const { row, alternateRow } = newDataTableStyles;
-
       return (
         <DataTableRow
           rowData={data[index]}
