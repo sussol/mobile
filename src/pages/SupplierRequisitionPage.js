@@ -35,6 +35,7 @@ import {
   hideOverStocked,
   showOverStocked,
   editMonthsOfSupply,
+  deleteItemsById,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -323,7 +324,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
         onCancel={() => dispatch(deselectAll())}
-        onConfirm={null}
+        onConfirm={() => dispatch(deleteItemsById('Requisition'))}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal

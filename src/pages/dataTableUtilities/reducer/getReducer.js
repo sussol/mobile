@@ -123,6 +123,7 @@ const supplierRequisition = {
   useSuggestedQuantities,
   hideOverStocked,
   showOverStocked,
+  deleteItemsById,
 };
 
 const programSupplierRequisition = {
@@ -142,6 +143,7 @@ const programSupplierRequisition = {
   useSuggestedQuantities,
   hideOverStocked,
   showOverStocked,
+  deleteItemsById,
 };
 
 const PAGE_REDUCERS = {
