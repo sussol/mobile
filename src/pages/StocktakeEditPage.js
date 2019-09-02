@@ -38,6 +38,7 @@ import {
 
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
+import { gotoStocktakeManagePage } from '../navigation/actions';
 
 const keyExtractor = item => item.id;
 
@@ -58,7 +59,7 @@ const keyExtractor = item => item.id;
  * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const StocktakeEditPage = ({ stocktake, routeName }) => {
+export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatch }) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     pageObject: stocktake,
     backingData: stocktake.items,
@@ -191,7 +192,9 @@ export const StocktakeEditPage = ({ stocktake, routeName }) => {
           {!program && (
             <PageButton
               text={buttonStrings.manage_stocktake}
-              onPress={null}
+              onPress={() =>
+                reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }))
+              }
               isDisabled={isFinalised}
             />
           )}
