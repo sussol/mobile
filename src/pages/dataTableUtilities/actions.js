@@ -335,7 +335,7 @@ export const editName = value => ({
   value,
 });
 
-export const editCountedTotalQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+export const editCountedTotalQuantity = (value, rowKey) => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
@@ -346,7 +346,7 @@ export const editCountedTotalQuantity = (value, rowKey, columnKey) => (dispatch,
     type: 'editCountedTotalQuantity',
     value,
     rowKey,
-    columnKey,
+    objectToEdit,
   });
 };
 
@@ -362,6 +362,8 @@ export const closeStocktakeBatchModal = () => ({
 
 export const openModal = (modalKey, value) => {
   switch (modalKey) {
+    case MODAL_KEYS.STOCKTAKE_REASON:
+      return { type: 'openStocktakeReasonsModal', rowKey: value };
     case EDIT_STOCKTAKE_BATCH:
       return { type: 'openStocktakeBatchModal', rowKey: value };
     case STOCKTAKE_COMMENT_EDIT:
@@ -379,4 +381,12 @@ export const resetStocktake = () => (dispatch, getState) => {
   pageObject.resetStocktake(UIDatabase);
 
   dispatch({ type: 'resetStocktake' });
+};
+
+export const applyReason = value => (dispatch, getState) => {
+  const { modalValue } = getState();
+
+  modalValue.applyReasonToBatches(UIDatabase, value);
+
+  dispatch({ type: 'applyReason' });
 };
