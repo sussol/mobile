@@ -16,13 +16,16 @@ export const MODAL_KEYS = {
   MONTHS_SELECT: 'monthsToSupply',
   VIEW_REGIMEN_DATA: 'viewRegimenData',
   PROGRAM_STOCKTAKE: 'programStocktake',
-  STOCKTAKE_EDIT_COMMENT: 'comment',
+  STOCKTAKE_COMMENT_EDIT: 'stocktakeComment',
+  EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
 };
 
 export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
+      return modalStrings.edit_the_stocktake_comment;
     case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
       return modalStrings.edit_the_requisition_comment;
     case MODAL_KEYS.ITEM_SELECT:
