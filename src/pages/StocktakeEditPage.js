@@ -7,7 +7,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -32,8 +32,8 @@ import {
   refreshData,
   deleteItemsById,
   editCountedTotalQuantity,
-  openStocktakeBatchModal,
   closeStocktakeBatchModal,
+  openModal,
 } from './dataTableUtilities/actions';
 
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -64,7 +64,6 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
     pageObject: stocktake,
     backingData: stocktake.items,
     data: stocktake.items.sorted('item.name').slice(),
-    currentStocktakeItem: null,
     keyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
@@ -73,10 +72,11 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
     sortBy: 'itemName',
     isAscending: true,
     modalKey: '',
+    modalValue: null,
     hasSelection: false,
   });
 
-  const { STOCKTAKE_COMMENT_EDIT, EDIT_STOCKTAKE_BATCH } = MODAL_KEYS;
+  const { STOCKTAKE_COMMENT_EDIT, EDIT_STOCKTAKE_BATCH, STOCKTAKE_OUTDATED_ITEM } = MODAL_KEYS;
   const {
     data,
     dataState,
@@ -89,9 +89,12 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
     hasSelection,
     backingData,
     currentStocktakeItem,
+    modalValue,
   } = state;
 
   const { isFinalised, comment, program } = pageObject;
+
+  useEffect(() => dispatch(openModal(STOCKTAKE_OUTDATED_ITEM)), []);
 
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
   // Since this does not manipulate the state through the reducer, state is not updated (in
@@ -103,7 +106,7 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
     [comment, isFinalised]
   );
 
-  const getItemLayout = useCallback((item, index) => {
+  const getItemLayout = useCallback((_, index) => {
     const { height } = newDataTableStyles.row;
     return {
       length: height,
@@ -117,7 +120,7 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
       case 'countedTotalQuantity':
         return editCountedTotalQuantity;
       case 'modalControl':
-        return openStocktakeBatchModal;
+        return rowKey => openModal(EDIT_STOCKTAKE_BATCH, rowKey);
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
         return deselectRow;
@@ -222,7 +225,7 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
         onClose={() => dispatch(closeBasicModal())}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
-        currentValue={pageObject[modalKey]}
+        currentValue={modalValue}
         modalObject={currentStocktakeItem}
       />
     </DataTablePageView>
