@@ -241,6 +241,7 @@ export const sortData = (state, action) => {
   const { data, isAscending, sortBy } = state;
   const { sortBy: newSortBy } = action;
   const columnKeyToDataType = {
+    serialNumber: 'number',
     itemCode: 'string',
     itemName: 'string',
     availableQuantity: 'number',
@@ -368,18 +369,18 @@ export const editComment = (state, action) => {
 };
 
 /**
- * Deletes the selected RequisitionItems or
- * TransactionItems held in state. Where each selected
- * item is indicated by DataState[rowKey].isSelected.
+ * Removes the selected records from state. Where each selected
+ * record is indicated by DataState[rowKey].isSelected. Thunks should have
+ * handled the actual deleting of records before this is dispatched.
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
  */
-export const deleteItemsById = state => {
+export const deleteRecordsById = state => {
   const { data } = state;
 
   const newDataState = new Map();
-  const newData = data.filter(item => item.isValid());
+  const newData = data.filter(record => record.isValid());
 
   return {
     ...state,
