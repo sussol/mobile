@@ -42,6 +42,14 @@ import { parseExpiryDate, formatExpiryDate } from '../utilities';
  * @param {String}  placeholder String to display when the cell is empty.
  *
  */
+
+const {
+  expiryBatchTextView,
+  expiryBatchView,
+  expiryBatchText,
+  expiryBatchPlaceholderText,
+} = newDataTableStyles;
+
 export const NewExpiryDateInput = React.memo(
   ({
     value,
@@ -79,12 +87,6 @@ export const NewExpiryDateInput = React.memo(
     };
 
     const usingPlaceholder = placeholder && !expiryDate;
-    const {
-      expiryBatchTextView,
-      expiryBatchViewStyle,
-      expiryBatchText,
-      expiryBatchPlaceholderText,
-    } = newDataTableStyles;
 
     const textStyle = usingPlaceholder ? expiryBatchPlaceholderText : expiryBatchText;
 
@@ -93,7 +95,7 @@ export const NewExpiryDateInput = React.memo(
       return (
         <Cell
           key={columnKey}
-          viewStyle={expiryBatchViewStyle}
+          viewStyle={expiryBatchView}
           textStyle={textStyle}
           value={usingPlaceholder ? 'N/A' : expiryDate}
           width={width}
@@ -102,7 +104,7 @@ export const NewExpiryDateInput = React.memo(
       );
     }
 
-    const internalViewStyle = getAdjustedStyle(expiryBatchViewStyle, width, isLastCell);
+    const internalViewStyle = getAdjustedStyle(expiryBatchView, width, isLastCell);
 
     // Too many TextInputs causes React Native to crash, so only
     // truly mount the TextInput when the Cell is focused.

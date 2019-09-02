@@ -157,7 +157,7 @@ const newDataTableStyles = {
     alignItems: 'center',
     alignSelf: 'center',
   },
-  expiryBatchViewStyle: {
+  expiryBatchView: {
     borderRightWidth: 2,
     borderColor: '#ecf3fc',
     flex: 1,
