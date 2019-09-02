@@ -29,7 +29,7 @@ import {
   closeBasicModal,
   deleteTransactionsById,
 } from './dataTableUtilities/actions';
-import { newSortDataBy } from '../utilities';
+import { MODAL_KEYS, newSortDataBy } from '../utilities';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
@@ -63,7 +63,7 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
   const renderNewInvoiceButton = () => (
     <PageButton
       text={buttonStrings.new_invoice}
-      onPress={() => dispatch(openBasicModal('Anything will do'))}
+      onPress={() => dispatch(openBasicModal(MODAL_KEYS.SELECT_CUSTOMER))}
     />
   );
 
