@@ -18,6 +18,7 @@ export const MODAL_KEYS = {
   PROGRAM_STOCKTAKE: 'programStocktake',
   STOCKTAKE_COMMENT_EDIT: 'stocktakeComment',
   EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
+  STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
 };
 
 export const getModalTitle = modalKey => {
