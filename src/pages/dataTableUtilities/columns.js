@@ -31,13 +31,6 @@ const COLUMNS = () => ({
     title: tableStrings.status,
     sortable: true,
   },
-  entryDate: {
-    // TODO: unbork it
-    key: 'entryDate',
-    type: 'date',
-    title: tableStrings.entered_date,
-    sortable: true,
-  },
   comment: {
     key: 'comment',
     title: tableStrings.comment,
