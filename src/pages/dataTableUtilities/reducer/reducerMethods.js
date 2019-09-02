@@ -3,8 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy } from '../../../utilities';
-import { MODAL_KEYS } from '../../../utilities/getModalTitle';
+import { newSortDataBy, MODAL_KEYS, formatErrorItemNames } from '../../../utilities';
 
 /**
  * Immutably clears the current focus
@@ -334,7 +333,7 @@ export const editComment = (state, action) => {
 
   const { comment } = pageObject;
 
-  if (comment !== value) return { ...editPageObject(state, { ...action, field: 'comment' }) };
+  if (comment !== value) return { ...state, modalKey: '', modalValue: null };
   return state;
 };
 
@@ -465,9 +464,11 @@ export const openStocktakeBatchModal = (state, action) => {
   const { rowKey } = action;
   const { data } = state;
 
+  const stocktakeBatchToEdit = data.find(({ id }) => id === rowKey);
+
   return {
     ...state,
-    currentStocktakeItem: data.find(({ id }) => id === rowKey),
+    modalValue: stocktakeBatchToEdit,
     modalKey: MODAL_KEYS.EDIT_STOCKTAKE_BATCH,
   };
 };
@@ -475,4 +476,28 @@ export const openStocktakeBatchModal = (state, action) => {
 export const closeStocktakeBatchModal = state => {
   const { backingData } = state;
   return { ...state, data: backingData.slice(), modalKey: '' };
+};
+
+export const openModal = (state, action) => {
+  const { modalKey, value } = action;
+  return { ...state, modalKey, modalValue: value };
+};
+
+export const openCommentModal = state => {
+  const { pageObject } = state;
+
+  const { comment } = pageObject;
+
+  return { ...state, modalKey: MODAL_KEYS.STOCKTAKE_COMMENT_EDIT, modalValue: comment };
+};
+
+export const openStocktakeOutdatedItems = state => {
+  const { pageObject } = state;
+  const { itemsOutdated } = pageObject;
+
+  return {
+    ...state,
+    modalValue: formatErrorItemNames(itemsOutdated),
+    modalKey: MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM,
+  };
 };
