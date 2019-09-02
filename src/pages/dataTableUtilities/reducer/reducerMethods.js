@@ -69,14 +69,6 @@ export const filterData = (state, action) => {
   const { backingData, filterDataKeys, sortBy, isAscending } = state;
   const { searchTerm } = action;
 
-  const columnKeyToDataType = {
-    serialNumber: 'number',
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-  };
-
   const queryString = filterDataKeys
     .map(filterTerm => `${filterTerm} BEGINSWITH[c]  $0`)
     .join(' OR ');
@@ -84,7 +76,6 @@ export const filterData = (state, action) => {
   const newData = newSortDataBy(
     backingData.filtered(queryString, searchTerm).slice(),
     sortBy,
-    columnKeyToDataType[sortBy],
     isAscending
   );
   return { ...state, data: newData };
@@ -240,19 +231,12 @@ export const focusCell = (state, action) => {
 export const sortData = (state, action) => {
   const { data, isAscending, sortBy } = state;
   const { sortBy: newSortBy } = action;
-  const columnKeyToDataType = {
-    serialNumber: 'number',
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-  };
 
   // If the new sortBy is the same as the sortBy in state, then invert isAscending
   // that was set by the last sortBy action. Otherwise, default to true.
   const newIsAscending = newSortBy === sortBy ? !isAscending : true;
 
-  const newData = newSortDataBy(data, newSortBy, columnKeyToDataType[newSortBy], newIsAscending);
+  const newData = newSortDataBy(data, newSortBy, newIsAscending);
   return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
 };
 
@@ -288,19 +272,7 @@ export const closeBasicModal = state => ({ ...state, modalKey: '' });
 export const addMasterListItems = state => {
   const { backingData, isAscending, sortBy } = state;
 
-  const columnKeyToDataType = {
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-  };
-
-  const newData = newSortDataBy(
-    backingData.slice(),
-    sortBy,
-    columnKeyToDataType[sortBy],
-    isAscending
-  );
+  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
 
   return { ...state, data: newData };
 };

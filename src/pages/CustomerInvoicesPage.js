@@ -29,6 +29,7 @@ import {
   closeBasicModal,
   deleteTransactionsById,
 } from './dataTableUtilities/actions';
+import { newSortDataBy } from '../utilities';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
@@ -40,13 +41,13 @@ const initialState = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   return {
     backingData,
-    data: backingData.sorted('serialNumber').slice(),
+    data: newSortDataBy(backingData.slice(), 'serialNumber', false),
     keyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['otherParty.name'],
     sortBy: 'serialNumber',
-    isAscending: true,
+    isAscending: false,
     modalKey: '',
     hasSelection: false,
   };
