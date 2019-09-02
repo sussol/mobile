@@ -4,6 +4,7 @@
  */
 
 import { newSortDataBy, MODAL_KEYS, formatErrorItemNames } from '../../../utilities';
+import { UIDatabase } from '../../../database/index';
 
 /**
  * Immutably clears the current focus
@@ -506,4 +507,48 @@ export const resetStocktake = state => {
   const { backingData } = state;
 
   return { ...state, data: backingData.slice(), modalKey: '', modalValue: null };
+};
+
+export const editCountedTotalQuantityWithReason = (state, action) => {
+  const { rowKey, objectToEdit } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  const { enforceReason } = objectToEdit;
+
+  if (!enforceReason) objectToEdit.applyReasonToBatches(UIDatabase);
+
+  return {
+    ...state,
+    dataState: newDataState,
+    modalValue: objectToEdit,
+    modalKey: enforceReason ? MODAL_KEYS.ENFORCE_STOCKTAKE_REASON : '',
+  };
+};
+
+export const openStocktakeReasonsModal = (state, action) => {
+  const { keyExtractor, data } = state;
+  const { rowKey } = action;
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  return { ...state, modalKey: MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, modalValue: objectToEdit };
+};
+
+export const applyReason = state => {
+  const { dataState, modalValue, keyExtractor } = state;
+
+  const newDataState = new Map(dataState);
+
+  const rowKey = keyExtractor(modalValue);
+  const dataStateToUpdate = dataState.get(keyExtractor(modalValue));
+
+  newDataState.set(rowKey, { ...dataStateToUpdate });
+
+  return { ...state, dataState: newDataState, modalKey: '', modalValue: null };
 };
