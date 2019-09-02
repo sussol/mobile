@@ -24,6 +24,7 @@ import {
   pageStyles,
   SUSSOL_ORANGE,
 } from '../../globalStyles/index';
+import NewSocktakeBatchModal from './NewStocktakeBatchModal';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
@@ -58,7 +59,7 @@ export const DataTablePageModal = ({
             renderRightText={item => `${item.totalQuantity}`}
           />
         );
-
+      case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       case MODAL_KEYS.COMMENT_EDIT:
         return <TextEditor text={currentValue} onEndEditing={onSelect} />;
 
@@ -120,6 +121,20 @@ export const DataTablePageModal = ({
               dataTableStyles,
               pageStyles,
             }}
+          />
+        );
+      case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
+        return (
+          <NewSocktakeBatchModal
+            stocktakeItem={currentValue}
+            database={UIDatabase}
+            genericTablePageStyles={{
+              searchBarColor: SUSSOL_ORANGE,
+              colors: dataTableColors,
+              dataTableStyles,
+              pageStyles,
+            }}
+            onConfirm={onSelect}
           />
         );
       default:
