@@ -26,7 +26,7 @@ import { MODAL_KEYS } from '../../utilities/getModalTitle';
  * required pageInfo columns for the page.
  */
 
-const { THEIR_REF_EDIT, COMMENT_EDIT, MONTHS_SELECT } = MODAL_KEYS;
+const { THEIR_REF_EDIT, COMMENT_EDIT, MONTHS_SELECT, STOCKTAKE_COMMENT_EDIT } = MODAL_KEYS;
 
 const PER_PAGE_INFO_COLUMNS = {
   customerInvoice: [['entryDate', 'confirmDate', 'enteredBy'], ['customer', 'theirRef', 'comment']],
@@ -36,7 +36,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['program', 'orderType', 'entryDate', 'enteredBy'],
     ['period', 'otherParty', 'programMonthsToSupply', 'comment'],
   ],
-  stocktakeEditor: [['stocktakeName', 'comment']],
+  stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
@@ -98,6 +98,12 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
     title: `${pageInfoStrings.stocktake_name}:`,
     info: pageObject.name,
     onPress: null,
+    editableType: 'text',
+  },
+  stocktakeComment: {
+    title: `${pageInfoStrings.comment}:`,
+    info: pageObject.comment,
+    onPress: () => dispatch(openBasicModal(STOCKTAKE_COMMENT_EDIT)),
     editableType: 'text',
   },
 });
