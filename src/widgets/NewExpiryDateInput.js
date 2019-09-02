@@ -61,7 +61,7 @@ export const NewExpiryDateInput = React.memo(
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
     // Customhook managing the editing of an expiry date to stay valid.
-    const [expiryDate, finaliseExpiryDate, setExpiryDate] = useExpiryDateMask(
+    const [expiryDate, setExpiryDate, finaliseExpiryDate] = useExpiryDateMask(
       formatExpiryDate(value)
     );
 

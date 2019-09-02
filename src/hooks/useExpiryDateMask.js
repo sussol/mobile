@@ -57,5 +57,5 @@ export const useExpiryDateMask = initialState => {
     return setDate(`${month}/${prependedYear}`);
   };
 
-  return [date, finaliseDate, checkAndSetDate];
+  return [date, checkAndSetDate, finaliseDate];
 };
