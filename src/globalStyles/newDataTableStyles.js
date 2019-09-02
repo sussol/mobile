@@ -176,6 +176,21 @@ const newDataTableStyles = {
     fontSize: APP_GENERAL_FONT_SIZE,
     color: LIGHT_GREY,
   },
+  dropDownCellTextContainer: { flex: 2, justfyContent: 'center', alignItems: 'center' },
+  dropDownCellIconContainer: { flex: 1, justfyContent: 'center', alignItems: 'center' },
+  dropDownFont: {
+    marginLeft: 20,
+    textAlign: 'left',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: DARK_GREY,
+  },
+  dropDownPlaceholderFont: {
+    textAlign: 'center',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: LIGHT_GREY,
+  },
 };
 
 export default newDataTableStyles;
