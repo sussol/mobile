@@ -83,7 +83,7 @@ export const NewExpiryDateInput = React.memo(
 
     const onSubmit = () => {
       finishEditingExpiryDate();
-      dispatch(focusNextAction(focusNextAction(rowKey, columnKey)));
+      dispatch(focusNextAction(rowKey, columnKey));
     };
 
     const usingPlaceholder = placeholder && !expiryDate;
