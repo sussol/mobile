@@ -7,12 +7,12 @@ import { tableStrings } from '../../localization';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
-  customerInvoices: [1.5, 2.5, 2, 2, 3, 1],
+  customerInvoices: [1.5, 2.5, 2, 3, 1],
 };
 
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
-  customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'entryDate', 'comment', 'delete'],
+  customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'comment', 'delete'],
 };
 
 const COLUMNS = () => ({
@@ -32,7 +32,9 @@ const COLUMNS = () => ({
     sortable: true,
   },
   entryDate: {
+    // TODO: unbork it
     key: 'entryDate',
+    type: 'date',
     title: tableStrings.entered_date,
     sortable: true,
   },
