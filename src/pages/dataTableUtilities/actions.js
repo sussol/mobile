@@ -330,3 +330,24 @@ export const editName = value => ({
   type: 'editName',
   value,
 });
+
+export const editCountedTotalQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+
+  dispatch({
+    type: 'editCountedTotalQuantity',
+    value,
+    rowKey,
+    columnKey,
+  });
+};
+
+export const openStocktakeBatchModal = (rowKey, columnKey) => ({
+  type: 'openStocktakeBatchModal',
+  rowKey,
+  columnKey,
+});
