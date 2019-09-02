@@ -203,7 +203,7 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
         getItemLayout={getItemLayout}
       />
       <BottomConfirmModal
-        isOpen={hasSelection} // TODO
+        isOpen={hasSelection}
         questionText={modalStrings.delete_these_invoices}
         onCancel={() => dispatch(deselectAll())}
         onConfirm={() => dispatch(deleteTransactionsById())}
