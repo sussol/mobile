@@ -19,6 +19,8 @@ export const MODAL_KEYS = {
   STOCKTAKE_COMMENT_EDIT: 'stocktakeComment',
   EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
+  STOCKTAKE_REASON: 'stocktakeReason',
+  ENFORCE_STOCKTAKE_REASON: 'enforceStocktakeReason',
 };
 
 export const getModalTitle = modalKey => {
@@ -41,5 +43,8 @@ export const getModalTitle = modalKey => {
       return modalStrings.search_for_the_supplier;
     case MODAL_KEYS.VIEW_REGIMEN_DATA:
       return buttonStrings.view_regimen_data;
+    case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
+    case MODAL_KEYS.STOCKTAKE_REASON:
+      return modalStrings.select_a_reason;
   }
 };
