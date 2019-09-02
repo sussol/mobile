@@ -7,6 +7,10 @@ import { parsePositiveInteger } from '../../utilities';
 import Settings from '../../settings/MobileAppSettings';
 import { SETTINGS_KEYS } from '../../settings/index';
 
+import { MODAL_KEYS } from '../../utilities/getModalTitle';
+
+const { STOCKTAKE_OUTDATED_ITEM, EDIT_STOCKTAKE_BATCH, STOCKTAKE_COMMENT_EDIT } = MODAL_KEYS;
+
 /**
  * Actions for use with a data table reducer
  */
@@ -355,3 +359,16 @@ export const openStocktakeBatchModal = (rowKey, columnKey) => ({
 export const closeStocktakeBatchModal = () => ({
   type: 'closeStocktakeBatchModal',
 });
+
+export const openModal = (modalKey, value) => {
+  switch (modalKey) {
+    case EDIT_STOCKTAKE_BATCH:
+      return { type: 'openStocktakeBatchModal', rowKey: value };
+    case STOCKTAKE_COMMENT_EDIT:
+      return { type: 'openCommentModal' };
+    case STOCKTAKE_OUTDATED_ITEM:
+      return { type: 'openStocktakeOutdatedItems' };
+    default:
+      return { type: 'openBasicModal', modalKey };
+  }
+};
