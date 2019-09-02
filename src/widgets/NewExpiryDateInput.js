@@ -40,7 +40,6 @@ import { parseExpiryDate, formatExpiryDate } from '../utilities';
  * @param {Bool}  isLastCell Indicator for if this cell is the last
  *                                   in a row. Removing the borderRight if true.
  * @param {String}  placeholder String to display when the cell is empty.
- * @
  *
  */
 export const NewExpiryDateInput = React.memo(
