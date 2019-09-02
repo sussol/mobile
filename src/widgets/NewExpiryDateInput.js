@@ -61,7 +61,7 @@ export const NewExpiryDateInput = React.memo(
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
     // Customhook managing the editing of an expiry date to stay valid.
-    const [expiryDate, finalseExpiryDate, setExpiryDate] = useExpiryDateMask(
+    const [expiryDate, finaliseExpiryDate, setExpiryDate] = useExpiryDateMask(
       formatExpiryDate(value)
     );
 
@@ -69,7 +69,7 @@ export const NewExpiryDateInput = React.memo(
     // Handed similarly, but losing focus will not auto focus the next cell. Changes
     // to the underlying model are not committed until a valid date is entered.
     const finishEditingExpiryDate = () => {
-      finalseExpiryDate();
+      finaliseExpiryDate();
       dispatch(editAction(parseExpiryDate(expiryDate), rowKey, columnKey));
     };
 
