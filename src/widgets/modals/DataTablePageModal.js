@@ -126,7 +126,7 @@ export const DataTablePageModal = ({
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
         return (
           <NewSocktakeBatchModal
-            stocktakeItem={currentValue}
+            stocktakeItem={modalObject}
             database={UIDatabase}
             genericTablePageStyles={{
               searchBarColor: SUSSOL_ORANGE,
