@@ -6,7 +6,7 @@
 import { pageInfoStrings, programStrings } from '../../localization';
 import { formatDate } from '../../utilities';
 
-import { openBasicModal } from './actions';
+import { openBasicModal, openModal } from './actions';
 
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
 
@@ -103,7 +103,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   stocktakeComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(openBasicModal(STOCKTAKE_COMMENT_EDIT)),
+    onPress: () => dispatch(openModal(STOCKTAKE_COMMENT_EDIT)),
     editableType: 'text',
   },
 });
