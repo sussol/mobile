@@ -42,6 +42,8 @@ import {
   selectItems,
   editName,
   editCountedTotalQuantity,
+  openStocktakeBatchModal,
+  closeStocktakeBatchModal,
 } from './reducerMethods';
 
 /**
@@ -178,6 +180,8 @@ const stocktakeEditor = {
   closeBasicModal,
   editCountedTotalQuantity,
   refreshData,
+  openStocktakeBatchModal,
+  closeStocktakeBatchModal,
 };
 
 const PAGE_REDUCERS = {

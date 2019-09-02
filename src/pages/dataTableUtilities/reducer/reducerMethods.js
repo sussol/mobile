@@ -471,3 +471,8 @@ export const openStocktakeBatchModal = (state, action) => {
     modalKey: MODAL_KEYS.EDIT_STOCKTAKE_BATCH,
   };
 };
+
+export const closeStocktakeBatchModal = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData.slice(), modalKey: '' };
+};

@@ -351,3 +351,7 @@ export const openStocktakeBatchModal = (rowKey, columnKey) => ({
   rowKey,
   columnKey,
 });
+
+export const closeStocktakeBatchModal = () => ({
+  type: 'closeStocktakeBatchModal',
+});
