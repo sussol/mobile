@@ -14,7 +14,7 @@ const PAGE_COLUMN_WIDTHS = {
   programSupplierRequisition: [1.5, 3.5, 0.5, 0.5, 2, 1.5, 2, 2, 1],
   stocktakes: [6, 2, 2, 1],
   stocktakeManager: [2, 6, 1],
-  stocktakeEditor: [1, 2.8, 1.2, 1.2, 1],
+  stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
 };
 
 const PAGE_COLUMNS = {
@@ -57,6 +57,7 @@ const PAGE_COLUMNS = {
     'snapshotTotalQuantity',
     'countedTotalQuantity',
     'difference',
+    'modalControl',
   ],
 };
 
@@ -196,6 +197,7 @@ const COLUMNS = () => ({
     alignText: 'right',
   },
   countedTotalQuantity: {
+    type: 'editable',
     key: 'countedTotalQuantity',
     title: tableStrings.actual_quantity,
     sortable: true,
@@ -206,6 +208,13 @@ const COLUMNS = () => ({
     title: tableStrings.snapshot_quantity,
     sortable: true,
     alignText: 'right',
+  },
+  modalControl: {
+    key: 'modalControl',
+    type: 'modalControl',
+    title: tableStrings.batches,
+    sortable: false,
+    alignText: 'center',
   },
 });
 
