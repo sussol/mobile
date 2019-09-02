@@ -41,6 +41,7 @@ import {
   showStockOut,
   selectItems,
   editName,
+  editCountedTotalQuantity,
 } from './reducerMethods';
 
 /**
@@ -173,6 +174,10 @@ const stocktakeEditor = {
   sortData,
   filterData,
   editComment,
+  openBasicModal,
+  closeBasicModal,
+  editCountedTotalQuantity,
+  refreshData,
 };
 
 const PAGE_REDUCERS = {

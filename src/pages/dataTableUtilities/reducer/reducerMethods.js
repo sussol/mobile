@@ -4,6 +4,7 @@
  */
 
 import { newSortDataBy } from '../../../utilities';
+import { MODAL_KEYS } from '../../../utilities/getModalTitle';
 
 /**
  * Immutably clears the current focus
@@ -447,3 +448,26 @@ export const hideStockOut = state => {
 };
 
 export const showStockOut = state => ({ ...refreshData(state), showAll: true, searchTerm: '' });
+export const editCountedTotalQuantity = (state, action) => {
+  const { rowKey } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  return { ...state, dataState: newDataState };
+};
+
+export const openStocktakeBatchModal = (state, action) => {
+  const { rowKey } = action;
+  const { data } = state;
+
+  return {
+    ...state,
+    currentStocktakeItem: data.find(({ id }) => id === rowKey),
+    modalKey: MODAL_KEYS.EDIT_STOCKTAKE_BATCH,
+  };
+};
