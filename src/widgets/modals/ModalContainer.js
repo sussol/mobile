@@ -9,7 +9,12 @@ import { StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native';
 
 import { CloseIcon } from '../icons';
 
-import { APP_FONT_FAMILY, PAGE_CONTENT_PADDING_HORIZONTAL, DARKER_GREY } from '../../globalStyles';
+import {
+  APP_FONT_FAMILY,
+  FULL_SCREEN_MODAL_MARGIN,
+  PAGE_CONTENT_PADDING_HORIZONTAL,
+  DARKER_GREY,
+} from '../../globalStyles';
 
 /**
  * A modal that can be displayed over the page content container, rendering any children
@@ -20,7 +25,7 @@ import { APP_FONT_FAMILY, PAGE_CONTENT_PADDING_HORIZONTAL, DARKER_GREY } from '.
  * @prop {String}           title      The title to show in within the modal.
  * @prop {React.Element}    children   The components to render within the modal
  */
-const ModalContainer = ({ fullScreen, isVisible, onClose, title, children }) => {
+const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCancel }) => {
   const {
     contentContainer,
     modalContainer,
@@ -31,9 +36,11 @@ const ModalContainer = ({ fullScreen, isVisible, onClose, title, children }) => 
     fullScreenChildrenContainer,
     flexSpacer,
     closeButton,
+    fullScreenContentContainer,
   } = localStyles;
 
-  const internalChildrenContainer = fullScreen ? childrenContainer : fullScreenChildrenContainer;
+  const internalChildrenContainer = fullScreen ? fullScreenChildrenContainer : childrenContainer;
+  const internalContentContainer = fullScreen ? fullScreenContentContainer : contentContainer;
 
   const CloseButton = () => (
     <TouchableOpacity onPress={onClose} style={closeButton}>
@@ -44,8 +51,12 @@ const ModalContainer = ({ fullScreen, isVisible, onClose, title, children }) => 
   const TitleBar = () => (
     <View style={titleBar}>
       <View style={flexSpacer} />
-      <Text style={titleFont}>{title}</Text>
-      <View style={closeButtonContainer}>{onClose && <CloseButton />}</View>
+      {!!title && <Text style={titleFont}>{title}</Text>}
+      {onClose && !noCancel && (
+        <View style={closeButtonContainer}>
+          <CloseButton />
+        </View>
+      )}
     </View>
   );
 
@@ -54,11 +65,11 @@ const ModalContainer = ({ fullScreen, isVisible, onClose, title, children }) => 
       <Modal
         visible={isVisible}
         animationType="slide"
-        fullScreen={false}
+        fullScreen={fullScreen}
         transparent={true}
         hardwareAccelerated={true}
       >
-        <View style={contentContainer}>
+        <View style={internalContentContainer}>
           <TitleBar />
           <View style={internalChildrenContainer}>{children}</View>
         </View>
@@ -69,20 +80,24 @@ const ModalContainer = ({ fullScreen, isVisible, onClose, title, children }) => 
 
 export default ModalContainer;
 
+ModalContainer.defaultProps = {
+  fullScreen: false,
+  title: '',
+  noCancel: false,
+};
+
 ModalContainer.propTypes = {
   fullScreen: PropTypes.bool,
   isVisible: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
   children: PropTypes.oneOfType([PropTypes.arrayOf(PropTypes.node), PropTypes.node]).isRequired,
-};
-
-ModalContainer.defaultProps = {
-  fullScreen: false,
+  noCancel: PropTypes.bool,
 };
 
 const localStyles = StyleSheet.create({
   modalContainer: { backgroundColor: DARKER_GREY },
+
   contentContainer: {
     flex: 1,
     backgroundColor: DARKER_GREY,
@@ -93,15 +108,27 @@ const localStyles = StyleSheet.create({
     opacity: 0.94,
     paddingBottom: 10,
   },
+  fullScreenContentContainer: {
+    flex: 1,
+    backgroundColor: DARKER_GREY,
+    marginLeft: FULL_SCREEN_MODAL_MARGIN,
+    marginRight: FULL_SCREEN_MODAL_MARGIN,
+    marginBottom: FULL_SCREEN_MODAL_MARGIN,
+    marginTop: FULL_SCREEN_MODAL_MARGIN,
+    opacity: 0.94,
+    paddingBottom: 10,
+  },
   fullScreenChildrenContainer: {
     flex: 1,
     alignItems: 'stretch',
     paddingLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
     paddingRight: PAGE_CONTENT_PADDING_HORIZONTAL,
+    opacity: 0.94,
   },
   childrenContainer: {
     flex: 1,
-    alignItems: 'stretch',
+    paddingLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
+    paddingRight: PAGE_CONTENT_PADDING_HORIZONTAL,
   },
   flexSpacer: {
     flex: 1,
