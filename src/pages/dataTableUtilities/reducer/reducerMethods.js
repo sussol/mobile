@@ -392,6 +392,14 @@ export const editBatchExpiry = (state, action) => {
   return { ...state, dataState: newDataState };
 };
 
+/**
+ * Opens the correct modal for creating a new requisition,
+ * dependent on if the current store is using programs,
+ * or not.
+ *
+ * @param {Object} state  The current state
+ * Action: { type: 'newSupplierRequisition }
+ */
 export const newSupplierRequisition = state => {
   const { usingPrograms, backingData } = state;
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
@@ -400,22 +408,16 @@ export const newSupplierRequisition = state => {
   return { ...state, data: backingData.slice(), modalKey };
 };
 
+/**
+ * Closes the currently open modal and refreshes
+ * the current data from backingData. Use cases
+ * include creating a new invoice - close the modal
+ * and refresh daata before navigating to it.
+ *
+ * @param {Object} state  The current state
+ * Action: {type: 'completeCreatingNewRecord'}
+ */
 export const completeCreatingNewRecord = state => {
   const { backingData } = state;
   return { ...state, data: backingData.slice(), modalKey: '' };
-};
-
-export const deleteRequisitions = state => {
-  const { data } = state;
-
-  const newDataState = new Map();
-  const newData = data.filter(item => item.isValid());
-
-  return {
-    ...state,
-    data: newData,
-    dataState: newDataState,
-    hasSelection: false,
-    modalKey: '',
-  };
 };
