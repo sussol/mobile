@@ -1,252 +1,236 @@
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
+import { SearchBar } from 'react-native-ui-components';
+
+import { MODAL_KEYS, getModalTitle } from '../utilities';
+import { buttonStrings, modalStrings } from '../localization';
+import { UIDatabase } from '../database';
+
+import {
+  focusCell,
+  focusNext,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  sortData,
+  filterData,
+  closeBasicModal,
+  editComment,
+  editTheirRef,
+  openBasicModal,
+  refreshData,
+  editTransactionBatchQuantity,
+  deleteTransactionBatchesById,
+  editTransactionBatchExpiryDate,
+  addTransactionBatch,
+} from './dataTableUtilities/actions';
+import usePageReducer from '../hooks/usePageReducer';
 
 import {
   AutocompleteSelector,
   PageButton,
   PageInfo,
   TextEditor,
-  ExpiryTextInput,
+  CheckedComponent,
+  UncheckedComponent,
+  DisabledCheckedComponent,
+  DisabledUncheckedComponent,
+  NewExpiryDateInput,
 } from '../widgets';
-import { GenericPage } from './GenericPage';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+import {
+  DataTable,
+  Row,
+  Cell,
+  EditableCell,
+  CheckableCell,
+  DataTableHeaderRow,
+} from '../widgets/DataTable';
+import DataTablePageView from './containers/DataTablePageView';
 
-import { createRecord } from '../database';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 
-import globalStyles, { dataTableStyles } from '../globalStyles';
+const keyExtractor = item => item.id;
 
-const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
+export const SupplierInvoicePage = ({ routeName, transaction }) => {
+  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+    pageObject: transaction,
+    backingData: transaction.getTransactionBatches(UIDatabase),
+    data: transaction
+      .getTransactionBatches(UIDatabase)
+      .sorted('itemName')
+      .slice(),
+    keyExtractor,
+    dataState: new Map(),
+    currentFocusedRowKey: null,
+    searchTerm: '',
+    filterDataKeys: ['itemName'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+  });
 
-const MODAL_KEYS = {
-  COMMENT_EDIT: 'commentEdit',
-  THEIR_REF_EDIT: 'theirRefEdit',
-  ITEM_SELECT: 'itemSelect',
-};
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    modalKey,
+    pageInfo,
+    pageObject,
+    hasSelection,
+    backingData,
+  } = state;
 
-const SORT_DATA_TYPES = {
-  itemName: 'string',
-  itemCode: 'string',
-  batch: 'string',
-  totalQuantity: 'number',
-  packSize: 'number',
-};
+  const { isFinalised, comment, theirRef } = pageObject;
+  const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
 
-export class SupplierInvoicePage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.dataFilters = {
-      searchKey: '',
-      sortBy: 'itemName',
-      isAscending: true,
+  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
+
+  const getItemLayout = useCallback((_, index) => {
+    const { height } = newDataTableStyles.row;
+    return {
+      length: height,
+      offset: height * index,
+      index,
     };
-    this.state = {
-      modalKey: null,
-      modalIsOpen: false,
-      selection: [],
-    };
-  }
+  }, []);
 
-  // Delete transaction batch then delete transaction item if no more transaction batches remain.
-  onDeleteConfirm = () => {
-    const { selection } = this.state;
-    const { transaction, database } = this.props;
-    database.write(() => transaction.removeTransactionBatchesById(database, selection));
-    this.setState({ selection: [] }, this.refreshData);
-  };
+  const renderPageInfo = useCallback(
+    () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
+    [comment, theirRef, isFinalised]
+  );
 
-  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
+  const renderCells = useCallback(
+    (rowData, rowState = {}, rowKey) => {
+      const {
+        cellContainer,
+        editableCellText,
+        editableCellUnfocused,
+        editableCellTextView,
+        cellText,
+        touchableCellContainer,
+      } = newDataTableStyles;
+      return columns.map(({ key: colKey, type, width, alignText }, index) => {
+        const isLastCell = index === columns.length - 1;
+        const isDisabled = isFinalised || (rowState && rowState.isDisabled);
+        switch (type) {
+          case 'editable':
+            return (
+              <EditableCell
+                key={colKey}
+                value={rowData[colKey]}
+                rowKey={rowKey}
+                columnKey={colKey}
+                editAction={editTransactionBatchQuantity}
+                isFocused={colKey === (rowState && rowState.focusedColumn)}
+                isDisabled={isDisabled}
+                focusAction={focusCell}
+                focusNextAction={focusNext}
+                dispatch={dispatch}
+                width={width}
+                viewStyle={cellContainer[alignText || 'left']}
+                textViewStyle={editableCellTextView}
+                isLastCell={isLastCell}
+                keyboardType="numeric"
+                textInputStyle={cellText[alignText || 'left']}
+                textStyle={editableCellUnfocused[alignText || 'left']}
+                cellTextStyle={editableCellText}
+              />
+            );
+          case 'checkable':
+            return (
+              <CheckableCell
+                key={colKey}
+                rowKey={rowKey}
+                columnKey={colKey}
+                isChecked={rowState && rowState.isSelected}
+                isDisabled={isDisabled}
+                CheckedComponent={CheckedComponent}
+                UncheckedComponent={UncheckedComponent}
+                DisabledCheckedComponent={DisabledCheckedComponent}
+                DisabledUncheckedComponent={DisabledUncheckedComponent}
+                onCheckAction={selectRow}
+                onUncheckAction={deselectRow}
+                dispatch={dispatch}
+                containerStyle={touchableCellContainer}
+                width={width}
+                isLastCell={isLastCell}
+              />
+            );
+          case 'date':
+            return (
+              <NewExpiryDateInput
+                key={colKey}
+                value={rowData[colKey]}
+                rowKey={rowKey}
+                columnKey={colKey}
+                editAction={editTransactionBatchExpiryDate}
+                isFocused={colKey === (rowState && rowState.focusedColumn)}
+                isDisabled={isDisabled}
+                focusAction={focusCell}
+                focusNextAction={focusNext}
+                dispatch={dispatch}
+                width={width}
+                isLastCell={isLastCell}
+              />
+            );
+          default:
+            return (
+              <Cell
+                key={colKey}
+                value={rowData[colKey]}
+                width={width}
+                viewStyle={cellContainer[alignText || 'left']}
+                textStyle={cellText[alignText || 'left']}
+                isLastCell={isLastCell}
+              />
+            );
+        }
+      });
+    },
+    [isFinalised]
+  );
 
-  onSelectionChange = newSelection => this.setState({ selection: newSelection });
-
-  /**
-   * Respond to the user editing fields.
-   *
-   * @param   {string}  key               Key of edited field.
-   * @param   {object}  transactionBatch  The transaction batch from the row being edited.
-   * @param   {string}  newValue          The value the user entered in the cell.
-   * @return  {none}
-   */
-  onEndEditing = (key, transactionBatch, newValue) => {
-    const { database } = this.props;
-    database.write(() => {
-      switch (key) {
-        case 'totalQuantity':
-          // Should edit |numberOfPacks| directly if |packSize| becomes an editable column
-          // that represents the number of packs counted.
-          transactionBatch.setTotalQuantity(database, parsePositiveInteger(newValue));
-          break;
-        case 'expiryDate':
-          transactionBatch.expiryDate = newValue;
-          break;
-        default:
-          break;
-      }
-      database.save('TransactionBatch', transactionBatch);
-    });
-  };
-
-  getModalTitle = () => {
-    const { modalKey } = this.state;
-
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-    switch (modalKey) {
-      default:
-      case ITEM_SELECT:
-        return modalStrings.search_for_an_item_to_add;
-      case COMMENT_EDIT:
-        return modalStrings.edit_the_invoice_comment;
-      case THEIR_REF_EDIT:
-        return modalStrings.edit_their_reference;
-    }
-  };
-
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  };
-
-  /**
-   * Returns updated data fitlered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const { database, transaction } = this.props;
-    const transactionBatches = transaction
-      .getTransactionBatches(database)
-      .filtered('itemName BEGINSWITH[c] $0', searchTerm);
-
-    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
-
-    this.setState({
-      data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
-    });
-  };
-
-  addNewLine = item => {
-    const { database, transaction } = this.props;
-    database.write(() => {
-      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
-      createRecord(
-        database,
-        'TransactionBatch',
-        transactionItem,
-        createRecord(database, 'ItemBatch', item, '')
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      const { row, alternateRow } = newDataTableStyles;
+      return (
+        <Row
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          renderCells={renderCells}
+          style={index % 2 === 0 ? alternateRow : row}
+          debug
+        />
       );
-    });
-  };
+    },
+    [data, dataState, renderCells]
+  );
 
-  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
-
-  closeModal = () => this.setState({ modalIsOpen: false });
-
-  openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
-
-  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
-
-  openTheirRefEditor = () => this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-
-  renderPageInfo = () => {
-    const { transaction } = this.props;
-    const infoColumns = [
-      [
-        {
-          title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(transaction.entryDate) || 'N/A',
-        },
-        {
-          title: `${pageInfoStrings.confirm_date}:`,
-          info: formatDate(transaction.confirmDate),
-        },
-      ],
-      [
-        {
-          title: `${pageInfoStrings.supplier}:`,
-          info: transaction.otherParty && transaction.otherParty.name,
-        },
-        {
-          title: `${pageInfoStrings.their_ref}:`,
-          info: transaction.theirRef,
-          onPress: this.openTheirRefEditor,
-          editableType: 'text',
-        },
-        {
-          title: `${pageInfoStrings.comment}:`,
-          info: transaction.comment,
-          onPress: this.openCommentEditor,
-          editableType: 'text',
-        },
-      ],
-    ];
-    return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
-  };
-
-  renderCell = (key, transactionBatch) => {
-    const { transaction } = this.props;
-
-    const isEditable = !transaction.isFinalised;
-    const type = isEditable ? 'editable' : 'text';
-    const editableCell = {
-      type,
-      cellContents: String(transactionBatch[key]),
-    };
-
-    switch (key) {
-      default:
-        return {
-          cellContents: transactionBatch[key],
-        };
-      case 'totalQuantity':
-        return editableCell;
-      case 'expiryDate': {
-        return (
-          <ExpiryTextInput
-            key={transactionBatch.id}
-            isEditable={isEditable}
-            onEndEditing={newValue => this.onEndEditing(key, transactionBatch, newValue)}
-            text={transactionBatch[key]}
-            style={dataTableStyles.text}
-          />
-        );
-      }
-      case 'remove':
-        return {
-          type: 'checkable',
-          icon: 'md-remove-circle',
-          isDisabled: transaction.isFinalised,
-        };
-    }
-  };
-
-  renderModalContent = () => {
-    const { database, transaction } = this.props;
-    const { modalKey } = this.state;
-
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-
+  const renderModalContent = () => {
     switch (modalKey) {
-      default:
       case ITEM_SELECT:
         return (
           <AutocompleteSelector
-            options={database.objects('Item')}
+            options={UIDatabase.objects('Item')}
             queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
             queryStringSecondary="name CONTAINS[c] $0"
             sortByString="name"
-            onSelect={item => {
-              this.addNewLine(item);
-              this.refreshData();
-              this.closeModal();
-            }}
+            onSelect={item => dispatch(addTransactionBatch(item))}
             renderLeftText={item => `${item.name}`}
             renderRightText={item => `${item.totalQuantity}`}
           />
@@ -254,145 +238,93 @@ export class SupplierInvoicePage extends React.Component {
       case COMMENT_EDIT:
         return (
           <TextEditor
-            text={transaction.comment}
-            onEndEditing={newComment => {
-              if (newComment !== transaction.comment) {
-                database.write(() => {
-                  transaction.comment = newComment;
-                  database.save('Transaction', transaction);
-                });
-              }
-              this.closeModal();
-            }}
+            text={comment}
+            onEndEditing={value => dispatch(editComment(value, 'Transaction'))}
           />
         );
       case THEIR_REF_EDIT:
         return (
           <TextEditor
-            text={transaction.theirRef}
-            onEndEditing={newTheirRef => {
-              if (newTheirRef !== transaction.theirRef) {
-                database.write(() => {
-                  transaction.theirRef = newTheirRef;
-                  database.save('Transaction', transaction);
-                });
-              }
-              this.closeModal();
-            }}
+            text={theirRef}
+            onEndEditing={value => dispatch(editTheirRef(value, 'Transaction'))}
           />
         );
+      default:
+        return null;
     }
   };
 
-  renderAddBatchButton = () => {
-    const { transaction } = this.props;
-
+  const renderButtons = () => {
+    const { verticalContainer, topButton } = globalStyles;
     return (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_line}
-        onPress={this.openItemSelector}
-        isDisabled={transaction.isFinalised}
-      />
+      <View style={verticalContainer}>
+        <PageButton
+          style={topButton}
+          text={buttonStrings.new_item}
+          onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
+          isDisabled={isFinalised}
+        />
+      </View>
     );
   };
 
-  render() {
-    const { database, genericTablePageStyles, transaction, topRoute } = this.props;
-    const { data, modalIsOpen, selection } = this.state;
+  const renderHeader = () => (
+    <DataTableHeaderRow
+      columns={columns}
+      dispatch={instantDebouncedDispatch}
+      sortAction={sortData}
+      isAscending={isAscending}
+      sortBy={sortBy}
+    />
+  );
 
-    return (
-      <GenericPage
+  const {
+    newPageTopSectionContainer,
+    newPageTopLeftSectionContainer,
+    newPageTopRightSectionContainer,
+    searchBar,
+  } = newPageStyles;
+  return (
+    <DataTablePageView>
+      <View style={newPageTopSectionContainer}>
+        <View style={newPageTopLeftSectionContainer}>
+          {renderPageInfo()}
+          <SearchBar
+            onChange={value => debouncedDispatch(filterData(value))}
+            style={searchBar}
+            color={SUSSOL_ORANGE}
+            placeholder=""
+          />
+        </View>
+        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+      </View>
+      <DataTable
         data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderAddBatchButton}
-        onEndEditing={this.onEndEditing}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 3,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'totalQuantity',
-            width: 1,
-            title: tableStrings.quantity,
-            alignText: 'right',
-          },
-          {
-            key: 'expiryDate',
-            width: 1,
-            title: tableStrings.batch_expiry,
-            alignText: 'center',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType="Transaction"
-        database={database}
-        selection={selection}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+      />
+      <BottomConfirmModal
+        isOpen={hasSelection}
+        questionText={modalStrings.remove_these_items}
+        onCancel={() => dispatch(deselectAll())}
+        onConfirm={() => dispatch(deleteTransactionBatchesById('Transaction'))}
+        confirmText={modalStrings.remove}
+      />
+      <PageContentModal
+        isOpen={!!modalKey}
+        onClose={() => dispatch(closeBasicModal())}
+        title={getModalTitle(modalKey)}
       >
-        <BottomConfirmModal
-          isOpen={selection.length > 0 && !transaction.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.remove}
-        />
-        <PageContentModal
-          isOpen={modalIsOpen && !transaction.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
-      </GenericPage>
-    );
-  }
-}
+        {renderModalContent()}
+      </PageContentModal>
+    </DataTablePageView>
+  );
+};
 
-/**
- * Check whether a given transaction is safe to be finalised. If safe to finalise,
- * return null, else return an appropriate error message.
- *
- * @param   {object}  transaction  The transaction to check.
- * @return  {string}               Error message if unsafe to finalise, else null.
- */
-export function checkForFinaliseError(transaction) {
-  if (!transaction.isExternalSupplierInvoice) return null;
-  if (transaction.items.length === 0) {
-    return modalStrings.add_at_least_one_item_before_finalising;
-  }
-  if (transaction.totalQuantity === 0) {
-    return modalStrings.stock_quantity_greater_then_zero;
-  }
-
-  return null;
-}
-
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
 SupplierInvoicePage.propTypes = {
-  database: PropTypes.object,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
-  transaction: PropTypes.object,
+  routeName: PropTypes.string.isRequired,
+  transaction: PropTypes.object.isRequired,
 };
