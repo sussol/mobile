@@ -46,6 +46,7 @@ const sortKeyToType = {
   serialNumber: 'number',
   availableQuantity: 'number',
   totalQuantity: 'number',
+  editableExpiryDate: 'date',
 };
 
 /**

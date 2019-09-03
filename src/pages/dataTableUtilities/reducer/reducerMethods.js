@@ -73,12 +73,12 @@ export const filterData = (state, action) => {
     .map(filterTerm => `${filterTerm} CONTAINS[c]  $0`)
     .join(' OR ');
 
-  const newData = newSortDataBy(
-    backingData.filtered(queryString, searchTerm).slice(),
-    sortBy,
-    isAscending
-  );
-  return { ...state, data: newData };
+  const filteredData = backingData.filtered(queryString, searchTerm).slice();
+
+  return {
+    ...state,
+    data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+  };
 };
 
 export const editTotalQuantity = (state, action) => {
@@ -284,7 +284,7 @@ export const addItem = (state, action) => {
   const { data } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '', sortBy: '' };
+  return { ...state, data: [item, ...data], modalKey: '', sortBy: '', searchTerm: '' };
 };
 
 /**
@@ -377,9 +377,9 @@ export const refreshData = state => {
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
- * Action: {type: 'editExpiryDate', rowKey }
+ * Action: {type: 'editBatchExpiry', rowKey }
  */
-export const editExpiryDate = (state, action) => {
+export const editBatchExpiry = (state, action) => {
   const { rowKey } = action;
   const { dataState } = state;
 
@@ -390,27 +390,4 @@ export const editExpiryDate = (state, action) => {
   newDataState.set(rowKey, { ...nextRowState });
 
   return { ...state, dataState: newDataState };
-};
-
-/**
- * Reducer method called after the side effect of deleting.
- * Ensures all objects in the data array are valid realm
- * objects.
- *
- * @param {Object} state  The current state
- * Action: { type: 'deleteBatchesById' }
- */
-export const deleteBatchesById = state => {
-  const { data } = state;
-
-  const newDataState = new Map();
-  const newData = data.filter(item => item.isValid());
-
-  return {
-    ...state,
-    data: newData,
-    dataState: newDataState,
-    hasSelection: false,
-    modalKey: '',
-  };
 };

@@ -147,7 +147,7 @@ export const NewExpiryDateInput = React.memo(
 );
 
 NewExpiryDateInput.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  value: PropTypes.instanceOf(Date),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isDisabled: PropTypes.bool,
