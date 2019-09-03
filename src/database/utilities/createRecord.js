@@ -109,7 +109,7 @@ const createNumberToReuse = (database, numberSequence, number) => {
  */
 const createInventoryAdjustment = (database, user, date, isAddition) => {
   const { INVENTORY_ADJUSTMENT_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
-  database.create('Transaction', {
+  return database.create('Transaction', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, INVENTORY_ADJUSTMENT_SERIAL_NUMBER),
     entryDate: date,

@@ -3,8 +3,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity, View } from 'react-native';
 
 /**
  * Renders a row of children as outputted by renderCells render prop
