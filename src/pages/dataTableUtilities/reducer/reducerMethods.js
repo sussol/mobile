@@ -391,26 +391,3 @@ export const editExpiryDate = (state, action) => {
 
   return { ...state, dataState: newDataState };
 };
-
-/**
- * Reducer method called after the side effect of deleting.
- * Ensures all objects in the data array are valid realm
- * objects.
- *
- * @param {Object} state  The current state
- * Action: { type: 'deleteBatchesById' }
- */
-export const deleteBatchesById = state => {
-  const { data } = state;
-
-  const newDataState = new Map();
-  const newData = data.filter(item => item.isValid());
-
-  return {
-    ...state,
-    data: newData,
-    dataState: newDataState,
-    hasSelection: false,
-    modalKey: '',
-  };
-};

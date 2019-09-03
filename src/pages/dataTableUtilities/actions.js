@@ -212,7 +212,7 @@ export const deleteTransactionBatchesById = pageObjectType => (dispatch, getStat
     UIDatabase.save(pageObjectType, pageObject);
   });
 
-  dispatch({ type: 'deleteBatchesById' });
+  dispatch({ type: 'deleteRecordsById' });
 };
 
 export const addTransactionBatch = item => (dispatch, getState) => {
