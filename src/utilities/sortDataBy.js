@@ -38,33 +38,43 @@ export const sortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
   return sortedData;
 };
 
+const sortKeyToType = {
+  otherPartyName: 'string',
+  itemCode: 'string',
+  itemName: 'string',
+  status: 'string',
+  serialNumber: 'number',
+  availableQuantity: 'number',
+  totalQuantity: 'number',
+};
+
 /**
  * Sorts an array of objects, returning a new array.
  * Sorts strings, numbers, dates or booleans.
- * Types: 'string', 'number', 'date', 'boolean'.
  * @param  {Array}   data          Array of objects to sort
- * @param  {String}  sortBy        Key for the field to sort by
- * @param  {String}  sortDataType  The type of data to sort
+ * @param  {String}  sortKey       Key for the field to sort by
  * @param  {Boolean} isAscending   True if ascending, false otherwise.
  * @return {Array}   A new array of sorted data
  */
-export const newSortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
-  switch (sortDataType) {
+export const newSortDataBy = (data, sortKey, isAscending = true, sortDataType) => {
+  const sortType = sortDataType || sortKeyToType[sortKey];
+
+  switch (sortType) {
     case 'string':
-      if (isAscending) return [...data.sort((a, b) => a[sortBy].localeCompare(b[sortBy]))];
-      return [...data.sort((a, b) => b[sortBy].localeCompare(a[sortBy]))];
+      if (isAscending) return [...data.sort((a, b) => a[sortKey].localeCompare(b[sortKey]))];
+      return [...data.sort((a, b) => b[sortKey].localeCompare(a[sortKey]))];
     case 'number':
       // Casts to number to cover cases where the property is a string (e.g. |serialNumber|).
-      if (isAscending) return [...data.sort((a, b) => Number(a[sortBy]) - Number(b[sortBy]))];
-      return [...data.sort((a, b) => Number(b[sortBy]) - Number(a[sortBy]))];
+      if (isAscending) return [...data.sort((a, b) => Number(a[sortKey]) - Number(b[sortKey]))];
+      return [...data.sort((a, b) => Number(b[sortKey]) - Number(a[sortKey]))];
     case 'date':
-      if (isAscending) return [...data.sort((a, b) => new Date(b[sortBy]) - new Date(a[sortBy]))];
-      return [...data.sort((a, b) => new Date(a[sortBy]) - new Date(b[sortBy]))];
+      if (isAscending) return [...data.sort((a, b) => new Date(b[sortKey]) - new Date(a[sortKey]))];
+      return [...data.sort((a, b) => new Date(a[sortKey]) - new Date(b[sortKey]))];
     case 'boolean':
-      if (isAscending) return [...data.sort((a, b) => b[sortBy] - a[sortBy])];
-      return [...data.sort((a, b) => a[sortBy] - b[sortBy])];
+      if (isAscending) return [...data.sort((a, b) => b[sortKey] - a[sortKey])];
+      return [...data.sort((a, b) => a[sortKey] - b[sortKey])];
     default:
-      throw new Error('Invalid sortDataType');
+      throw new Error(`sortType for the field '${sortKey}' not defined`);
   }
 };
 

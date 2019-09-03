@@ -41,13 +41,13 @@ import {
   deselectAll,
   sortData,
   filterData,
-  closeBasicModal,
   addMasterListItems,
   addItem,
   editComment,
   editTheirRef,
-  deleteItemsById,
   openBasicModal,
+  closeBasicModal,
+  deleteItemsById,
   refreshData,
 } from './dataTableUtilities/actions';
 
