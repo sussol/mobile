@@ -233,7 +233,7 @@ export const deleteRequisitions = () => (dispatch, getState) => {
     UIDatabase.delete('Requisition', requisitionsToDelete);
   });
 
-  dispatch({ type: 'deleteRequisitions' });
+  dispatch({ type: 'deleteRecordsById' });
 };
 
 export const addTransactionBatch = item => (dispatch, getState) => {

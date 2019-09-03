@@ -37,6 +37,23 @@ import { createSupplierRequisition, gotoSupplierRequisition } from '../navigatio
 
 const keyExtractor = item => item.id;
 
+/**
+ * Renders a mSupply mobile page with a list of supplier requisitions.
+ *
+ * State:
+ * Uses a reducer to manage state with `backingData` being a realm results
+ * of items to display. `data` is a plain JS array of realm objects. data is
+ * hydrated from `backingData` to display in the interface.
+ * i.e: When filtering, data is populated from filtered items of `backingData`.
+ *
+ * dataState is a simple map of objects corresponding to a row being displayed,
+ * holding the state of a given row. Each object has the shape :
+ * { isSelected, isFocused },
+ *
+ * @prop {Object} transaction The realm transaction object for this invoice.
+ * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
+ * @prop {String} routeName The current route name for the top of the navigation stack.
+ */
 export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     backingData: UIDatabase.objects('RequestRequisition'),
