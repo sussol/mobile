@@ -15,7 +15,7 @@ export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getSta
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
   UIDatabase.write(() => {
-    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
     UIDatabase.save('TransactionItem', objectToEdit);
   });
 
