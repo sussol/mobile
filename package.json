@@ -24,7 +24,8 @@
     "build": "cd android && ./gradlew assembleRelease",
     "lint": "eslint src",
     "export": "./dev_scripts/export.sh",
-    "uninstall": "./dev_scripts/uninstall.sh"
+    "uninstall": "./dev_scripts/uninstall.sh",
+    "clean-mac-cache": "rm -rf $TMPDIR/react-native-packager-* && rm -rf $TMPDIR/metro-bundler-* && watchman watch-del-all && rm -rf node_modules/ && yarn cache clean && yarn install"
   },
   "jest": {
     "preset": "react-native"
