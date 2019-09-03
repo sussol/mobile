@@ -13,26 +13,7 @@ import { SearchBar } from 'react-native-ui-components';
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
-import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
-import {
-  AutocompleteSelector,
-  PageButton,
-  PageInfo,
-  TextEditor,
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
-  NewExpiryDateInput,
-} from '../widgets';
-import {
-  DataTable,
-  Row,
-  Cell,
-  EditableCell,
-  CheckableCell,
-  DataTableHeaderRow,
-} from '../widgets/DataTable';
+
 import {
   focusCell,
   focusNext,
@@ -51,10 +32,31 @@ import {
   editTransactionBatchExpiryDate,
   addTransactionBatch,
 } from './dataTableUtilities/actions';
+import usePageReducer from '../hooks/usePageReducer';
+
+import {
+  AutocompleteSelector,
+  PageButton,
+  PageInfo,
+  TextEditor,
+  CheckedComponent,
+  UncheckedComponent,
+  DisabledCheckedComponent,
+  DisabledUncheckedComponent,
+  NewExpiryDateInput,
+} from '../widgets';
+import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+import {
+  DataTable,
+  Row,
+  Cell,
+  EditableCell,
+  CheckableCell,
+  DataTableHeaderRow,
+} from '../widgets/DataTable';
+import DataTablePageView from './containers/DataTablePageView';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
 
 const keyExtractor = item => item.id;
 
