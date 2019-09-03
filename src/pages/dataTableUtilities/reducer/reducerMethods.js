@@ -501,3 +501,9 @@ export const openStocktakeOutdatedItems = state => {
     modalKey: MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM,
   };
 };
+
+export const resetStocktake = state => {
+  const { backingData } = state;
+
+  return { ...state, data: backingData.slice(), modalKey: '', modalValue: null };
+};

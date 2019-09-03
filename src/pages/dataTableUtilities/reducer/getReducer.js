@@ -44,9 +44,10 @@ import {
   editCountedTotalQuantity,
   openStocktakeBatchModal,
   closeStocktakeBatchModal,
-  // openModal,
-  // openCommentModal,
-  // openStocktakeOutdatedItems,
+  openModal,
+  openCommentModal,
+  openStocktakeOutdatedItems,
+  resetStocktake,
 } from './reducerMethods';
 
 /**
@@ -185,9 +186,10 @@ const stocktakeEditor = {
   refreshData,
   openStocktakeBatchModal,
   closeStocktakeBatchModal,
-  // openModal,
-  // openCommentModal,
-  // openStocktakeOutdatedItems,
+  openModal,
+  openCommentModal,
+  openStocktakeOutdatedItems,
+  resetStocktake,
 };
 
 const PAGE_REDUCERS = {
