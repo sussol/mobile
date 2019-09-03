@@ -31,7 +31,7 @@ import {
   addItem,
   editTheirRef,
   editComment,
-  deleteItemsById,
+  deleteRecordsById,
   refreshData,
 } from './reducerMethods';
 
@@ -57,12 +57,24 @@ const customerInvoice = {
   addItem,
   editTheirRef,
   editComment,
-  deleteItemsById,
+  deleteRecordsById,
   refreshData,
+};
+
+const customerInvoices = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  filterData,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  openBasicModal,
+  closeBasicModal,
+  deleteRecordsById,
 };
 
 const PAGE_REDUCERS = {
   customerInvoice,
+  customerInvoices,
 };
 
 const getReducer = page => {
