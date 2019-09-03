@@ -181,7 +181,7 @@ export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
   });
 
   dispatch({
-    type: 'editExpiryBatch',
+    type: 'editBatchExpiry',
     rowKey,
     columnKey,
   });

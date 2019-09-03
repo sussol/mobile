@@ -377,9 +377,9 @@ export const refreshData = state => {
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
- * Action: {type: 'editExpiryDate', rowKey }
+ * Action: {type: 'editBatchExpiry', rowKey }
  */
-export const editExpiryDate = (state, action) => {
+export const editBatchExpiry = (state, action) => {
   const { rowKey } = action;
   const { dataState } = state;
 

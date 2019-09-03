@@ -33,6 +33,7 @@ import {
   editComment,
   deleteRecordsById,
   refreshData,
+  editBatchExpiry,
 } from './reducerMethods';
 
 /**
@@ -86,6 +87,7 @@ const supplierInvoice = {
   addItem,
   editTotalQuantity,
   deleteRecordsById,
+  editBatchExpiry,
 };
 
 const PAGE_REDUCERS = {
