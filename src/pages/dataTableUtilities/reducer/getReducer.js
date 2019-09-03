@@ -70,6 +70,7 @@ const customerInvoices = {
   openBasicModal,
   closeBasicModal,
   deleteRecordsById,
+  refreshData,
 };
 
 const PAGE_REDUCERS = {
