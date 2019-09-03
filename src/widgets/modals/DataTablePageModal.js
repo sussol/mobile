@@ -13,7 +13,7 @@ import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
 import { ToggleSelector } from '../ToggleSelector';
-// import { NewConfirmModal } from './NewConfirmMo/da';
+import { NewConfirmModal } from './NewConfirmModal';
 import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
 import Settings from '../../settings/MobileAppSettings';
@@ -143,16 +143,16 @@ export const DataTablePageModal = ({
             onConfirm={onSelect}
           />
         );
-      // case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
-      //   return (
-      //     <NewConfirmModal
-      //       coverScreen
-      //       noCancel
-      //       isOpen={isOpen}
-      //       questionText={`${modalStrings.stocktake_invalid_stock} ${currentValue}`}
-      //       onConfirm={() => {}}
-      //     />
-      //   );
+      case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
+        return (
+          <NewConfirmModal
+            coverScreen
+            noCancel
+            isOpen={isOpen}
+            questionText={`${modalStrings.stocktake_invalid_stock} ${currentValue}`}
+            onConfirm={onSelect}
+          />
+        );
       default:
         return null;
     }
