@@ -16,6 +16,7 @@ import { UIDatabase } from '../database';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
 import {
   focusCell,
   focusNext,
@@ -32,9 +33,9 @@ import {
   editTransactionBatchExpiryDate,
   addTransactionBatch,
 } from './dataTableUtilities/actions';
+import usePageReducer from '../hooks/usePageReducer';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
 const keyExtractor = item => item.id;

@@ -69,25 +69,16 @@ export const filterData = (state, action) => {
   const { backingData, filterDataKeys, sortBy, isAscending } = state;
   const { searchTerm } = action;
 
-  const columnKeyToDataType = {
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-    expiryDate: 'date',
-  };
-
   const queryString = filterDataKeys
     .map(filterTerm => `${filterTerm} CONTAINS[c]  $0`)
     .join(' OR ');
 
-  const newData = newSortDataBy(
-    backingData.filtered(queryString, searchTerm).slice(),
-    sortBy,
-    columnKeyToDataType[sortBy],
-    isAscending
-  );
-  return { ...state, data: newData };
+  const filteredData = backingData.filtered(queryString, searchTerm).slice();
+
+  return {
+    ...state,
+    data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+  };
 };
 
 export const editTotalQuantity = (state, action) => {
@@ -235,19 +226,12 @@ export const focusCell = (state, action) => {
 export const sortData = (state, action) => {
   const { data, isAscending, sortBy } = state;
   const { sortBy: newSortBy } = action;
-  const columnKeyToDataType = {
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-    expiryDate: 'date',
-  };
 
   // If the new sortBy is the same as the sortBy in state, then invert isAscending
   // that was set by the last sortBy action. Otherwise, default to true.
   const newIsAscending = newSortBy === sortBy ? !isAscending : true;
 
-  const newData = newSortDataBy(data, newSortBy, columnKeyToDataType[newSortBy], newIsAscending);
+  const newData = newSortDataBy(data, newSortBy, newIsAscending);
   return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
 };
 
@@ -283,20 +267,7 @@ export const closeBasicModal = state => ({ ...state, modalKey: '' });
 export const addMasterListItems = state => {
   const { backingData, isAscending, sortBy } = state;
 
-  const columnKeyToDataType = {
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-    expiryDate: 'date',
-  };
-
-  const newData = newSortDataBy(
-    backingData.slice(),
-    sortBy,
-    columnKeyToDataType[sortBy],
-    isAscending
-  );
+  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
 
   return { ...state, data: newData };
 };
@@ -313,7 +284,7 @@ export const addItem = (state, action) => {
   const { data } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '', sortBy: '' };
+  return { ...state, data: [item, ...data], modalKey: '', sortBy: '', searchTerm: '' };
 };
 
 /**
@@ -365,18 +336,18 @@ export const editComment = (state, action) => {
 };
 
 /**
- * Deletes the selected RequisitionItems or
- * TransactionItems held in state. Where each selected
- * item is indicated by DataState[rowKey].isSelected.
+ * Removes the selected records from state. Where each selected
+ * record is indicated by DataState[rowKey].isSelected. Thunks should have
+ * handled the actual deleting of records before this is dispatched.
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
  */
-export const deleteItemsById = state => {
+export const deleteRecordsById = state => {
   const { data } = state;
 
   const newDataState = new Map();
-  const newData = data.filter(item => item.isValid());
+  const newData = data.filter(record => record.isValid());
 
   return {
     ...state,
@@ -401,7 +372,14 @@ export const refreshData = state => {
   return { ...state, data: backingData.slice() };
 };
 
-export const editExpiryDate = (state, action) => {
+/**
+ * Edits an expiry date for a Row in a DataTable.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: {type: 'editBatchExpiry', rowKey }
+ */
+export const editBatchExpiry = (state, action) => {
   const { rowKey } = action;
   const { dataState } = state;
 
@@ -412,19 +390,4 @@ export const editExpiryDate = (state, action) => {
   newDataState.set(rowKey, { ...nextRowState });
 
   return { ...state, dataState: newDataState };
-};
-
-export const deleteBatchesById = state => {
-  const { data } = state;
-
-  const newDataState = new Map();
-  const newData = data.filter(item => item.isValid());
-
-  return {
-    ...state,
-    data: newData,
-    dataState: newDataState,
-    hasSelection: false,
-    modalKey: '',
-  };
 };

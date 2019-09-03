@@ -25,12 +25,12 @@ import {
   deselectAll,
   sortData,
   filterData,
-  closeBasicModal,
   addMasterListItems,
   editComment,
   editTheirRef,
-  deleteItemsById,
   openBasicModal,
+  closeBasicModal,
+  deleteItemsById,
   refreshData,
 } from './dataTableUtilities/actions';
 

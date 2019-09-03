@@ -15,7 +15,7 @@ export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getSta
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
   UIDatabase.write(() => {
-    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
     UIDatabase.save('TransactionItem', objectToEdit);
   });
 
@@ -139,7 +139,28 @@ export const deleteItemsById = pageObjectType => (dispatch, getState) => {
     UIDatabase.save(pageObjectType, pageObject);
   });
 
-  dispatch({ type: 'deleteItemsById' });
+  dispatch({ type: 'deleteRecordsById' });
+};
+
+export const deleteTransactionsById = () => (dispatch, getState) => {
+  const { dataState, backingData } = getState();
+
+  const transactionIds = Array.from(dataState.keys()).filter(
+    rowKey => dataState.get(rowKey).isSelected
+  );
+
+  const transactionsToDelete = transactionIds.reduce((acc, transactionId) => {
+    const transaction = backingData.filtered('id = $0', transactionId)[0];
+    const shouldDelete = transaction && transaction.isValid() && !transaction.isFinalised;
+    if (shouldDelete) return [...acc, transaction];
+    return acc;
+  }, []);
+
+  UIDatabase.write(() => {
+    UIDatabase.delete('Transaction', transactionsToDelete);
+  });
+
+  dispatch({ type: 'deleteRecordsById' });
 };
 
 export const refreshData = () => ({
@@ -160,7 +181,7 @@ export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
   });
 
   dispatch({
-    type: 'editExpiryBatch',
+    type: 'editBatchExpiry',
     rowKey,
     columnKey,
   });
@@ -191,7 +212,7 @@ export const deleteTransactionBatchesById = pageObjectType => (dispatch, getStat
     UIDatabase.save(pageObjectType, pageObject);
   });
 
-  dispatch({ type: 'deleteBatchesById' });
+  dispatch({ type: 'deleteRecordsById' });
 };
 
 export const addTransactionBatch = item => (dispatch, getState) => {
