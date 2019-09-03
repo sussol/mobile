@@ -46,9 +46,9 @@ export const useExpiryDateMask = initialState => {
     return testString(value) ? setDate(value) : setDate(date);
   };
 
-  // Finalises an expiry date to be in the format MM/YYYY if the user has emtered
+  // Finalises an expiry date to be in the format MM/YYYY if the user has entered
   // MM/Y MM/YY MM/YYY by placing a potentially incorrect year in the 20th century.
-  const finalisedate = () => {
+  const finaliseDate = () => {
     // If the expiry date isn't in at least the form MM/Y - reset.
     if (date.length < 4) return setDate('');
 
@@ -57,5 +57,5 @@ export const useExpiryDateMask = initialState => {
     return setDate(`${month}/${prependedYear}`);
   };
 
-  return [date, finalisedate, checkAndSetDate];
+  return [date, checkAndSetDate, finaliseDate];
 };

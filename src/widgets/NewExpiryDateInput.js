@@ -40,9 +40,16 @@ import { parseExpiryDate, formatExpiryDate } from '../utilities';
  * @param {Bool}  isLastCell Indicator for if this cell is the last
  *                                   in a row. Removing the borderRight if true.
  * @param {String}  placeholder String to display when the cell is empty.
- * @
  *
  */
+
+const {
+  expiryBatchTextView,
+  expiryBatchView,
+  expiryBatchText,
+  expiryBatchPlaceholderText,
+} = newDataTableStyles;
+
 export const NewExpiryDateInput = React.memo(
   ({
     value,
@@ -62,7 +69,7 @@ export const NewExpiryDateInput = React.memo(
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
     // Customhook managing the editing of an expiry date to stay valid.
-    const [expiryDate, finalseExpiryDate, setExpiryDate] = useExpiryDateMask(
+    const [expiryDate, setExpiryDate, finaliseExpiryDate] = useExpiryDateMask(
       formatExpiryDate(value)
     );
 
@@ -70,22 +77,16 @@ export const NewExpiryDateInput = React.memo(
     // Handed similarly, but losing focus will not auto focus the next cell. Changes
     // to the underlying model are not committed until a valid date is entered.
     const finishEditingExpiryDate = () => {
-      finalseExpiryDate();
+      finaliseExpiryDate();
       dispatch(editAction(parseExpiryDate(expiryDate), rowKey, columnKey));
     };
 
     const onSubmit = () => {
       finishEditingExpiryDate();
-      dispatch(focusNextAction(focusNextAction(rowKey, columnKey)));
+      dispatch(focusNextAction(rowKey, columnKey));
     };
 
     const usingPlaceholder = placeholder && !expiryDate;
-    const {
-      expiryBatchTextView,
-      expiryBatchViewStyle,
-      expiryBatchText,
-      expiryBatchPlaceholderText,
-    } = newDataTableStyles;
 
     const textStyle = usingPlaceholder ? expiryBatchPlaceholderText : expiryBatchText;
 
@@ -94,7 +95,7 @@ export const NewExpiryDateInput = React.memo(
       return (
         <Cell
           key={columnKey}
-          viewStyle={expiryBatchViewStyle}
+          viewStyle={expiryBatchView}
           textStyle={textStyle}
           value={usingPlaceholder ? 'N/A' : expiryDate}
           width={width}
@@ -103,7 +104,7 @@ export const NewExpiryDateInput = React.memo(
       );
     }
 
-    const internalViewStyle = getAdjustedStyle(expiryBatchViewStyle, width, isLastCell);
+    const internalViewStyle = getAdjustedStyle(expiryBatchView, width, isLastCell);
 
     // Too many TextInputs causes React Native to crash, so only
     // truly mount the TextInput when the Cell is focused.
