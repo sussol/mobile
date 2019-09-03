@@ -73,12 +73,12 @@ export const filterData = (state, action) => {
     .map(filterTerm => `${filterTerm} CONTAINS[c]  $0`)
     .join(' OR ');
 
-  const newData = newSortDataBy(
-    backingData.filtered(queryString, searchTerm).slice(),
-    sortBy,
-    isAscending
-  );
-  return { ...state, data: newData };
+  const filteredData = backingData.filtered(queryString, searchTerm).slice();
+
+  return {
+    ...state,
+    data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+  };
 };
 
 export const editTotalQuantity = (state, action) => {
@@ -284,7 +284,7 @@ export const addItem = (state, action) => {
   const { data } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '', sortBy: '' };
+  return { ...state, data: [item, ...data], modalKey: '', sortBy: '', searchTerm: '' };
 };
 
 /**
