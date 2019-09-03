@@ -71,6 +71,7 @@ const COLUMNS = () => ({
     key: 'expiryDate',
     type: 'date',
     title: tableStrings.batch_expiry,
+    sortable: true,
   },
   delete: {
     key: 'delete',
