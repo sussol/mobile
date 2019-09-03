@@ -34,6 +34,7 @@ import {
   editCountedTotalQuantity,
   closeStocktakeBatchModal,
   openModal,
+  resetStocktake,
 } from './dataTableUtilities/actions';
 
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -59,7 +60,12 @@ const keyExtractor = item => item.id;
  * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatch }) => {
+export const StocktakeEditPage = ({
+  runWithLoadingIndicator,
+  stocktake,
+  routeName,
+  dispatch: reduxDispatch,
+}) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     pageObject: stocktake,
     backingData: stocktake.items,
@@ -94,7 +100,9 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
 
   const { isFinalised, comment, program } = pageObject;
 
-  useEffect(() => dispatch(openModal(STOCKTAKE_OUTDATED_ITEM)), []);
+  useEffect(() => {
+    if (stocktake.itemsOutdated.length) dispatch(openModal(STOCKTAKE_OUTDATED_ITEM));
+  }, []);
 
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
   // Since this does not manipulate the state through the reducer, state is not updated (in
@@ -168,6 +176,8 @@ export const StocktakeEditPage = ({ stocktake, routeName, dispatch: reduxDispatc
         return value => dispatch(editComment(value, 'Stocktake'));
       case EDIT_STOCKTAKE_BATCH:
         return () => dispatch(closeStocktakeBatchModal());
+      case STOCKTAKE_OUTDATED_ITEM:
+        return () => runWithLoadingIndicator(() => dispatch(resetStocktake()));
       default:
         return null;
     }
