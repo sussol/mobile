@@ -372,3 +372,11 @@ export const openModal = (modalKey, value) => {
       return { type: 'openBasicModal', modalKey };
   }
 };
+
+export const resetStocktake = () => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  pageObject.resetStocktake(UIDatabase);
+
+  dispatch({ type: 'resetStocktake' });
+};
