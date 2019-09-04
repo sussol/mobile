@@ -225,7 +225,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={() => dispatch(closeBasicModal())}
-        confirmAction={getModalOnSelect()}
+        onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={pageObject[modalKey]}
       />
