@@ -174,11 +174,12 @@ DataTableRow.defaultProps = {
   focusNextAction: null,
   getAction: null,
   onPress: null,
+  rowState: null,
 };
 DataTableRow.propTypes = {
   onPress: PropTypes.func,
   rowData: PropTypes.object.isRequired,
-  rowState: PropTypes.object.isRequired,
+  rowState: PropTypes.object,
   rowKey: PropTypes.string.isRequired,
   style: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
