@@ -15,7 +15,7 @@ export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getSta
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
   UIDatabase.write(() => {
-    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
     UIDatabase.save('TransactionItem', objectToEdit);
   });
 
@@ -166,3 +166,65 @@ export const deleteTransactionsById = () => (dispatch, getState) => {
 export const refreshData = () => ({
   type: 'refreshData',
 });
+
+export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
+  dispatch,
+  getState
+) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.expiryDate = newDate;
+    UIDatabase.save('TransactionBatch', objectToEdit);
+  });
+
+  dispatch({
+    type: 'editBatchExpiry',
+    rowKey,
+    columnKey,
+  });
+};
+
+export const editTransactionBatchQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  if (!value) return;
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+    UIDatabase.save('TransactionBatch', objectToEdit);
+  });
+
+  dispatch({ type: 'editTotalQuantity', rowKey });
+};
+
+export const deleteTransactionBatchesById = pageObjectType => (dispatch, getState) => {
+  const { dataState, pageObject } = getState();
+
+  const itemsIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
+
+  UIDatabase.write(() => {
+    pageObject.removeTransactionBatchesById(UIDatabase, itemsIds);
+    UIDatabase.save(pageObjectType, pageObject);
+  });
+
+  dispatch({ type: 'deleteRecordsById' });
+};
+
+export const addTransactionBatch = item => (dispatch, getState) => {
+  const { pageObject } = getState();
+  let addedTransactionBatch;
+
+  UIDatabase.write(() => {
+    const transItem = createRecord(UIDatabase, 'TransactionItem', pageObject, item);
+    const itemBatch = createRecord(UIDatabase, 'ItemBatch', item, '');
+    addedTransactionBatch = createRecord(UIDatabase, 'TransactionBatch', transItem, itemBatch);
+  });
+
+  if (addedTransactionBatch) dispatch({ type: 'addItem', item: addedTransactionBatch });
+  else dispatch(closeBasicModal());
+};

@@ -7,11 +7,13 @@ import { tableStrings } from '../../localization';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
+  supplierInvoice: [2, 4, 2, 2, 1],
   customerInvoices: [1.5, 2.5, 2, 3, 1],
 };
 
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
+  supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'editableExpiryDate', 'remove'],
   customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'comment', 'delete'],
 };
 
@@ -63,6 +65,12 @@ const COLUMNS = () => ({
     key: 'remove',
     type: 'checkable',
     title: tableStrings.remove,
+    alignText: 'center',
+  },
+  editableExpiryDate: {
+    key: 'expiryDate',
+    type: 'date',
+    title: tableStrings.batch_expiry,
     alignText: 'center',
   },
   delete: {
