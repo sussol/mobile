@@ -8,7 +8,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
+
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 
 import { MODAL_KEYS, getModalTitle } from '../utilities';
@@ -45,6 +45,7 @@ import {
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
   NewExpiryDateInput,
+  SearchBar,
 } from '../widgets';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import {
@@ -62,7 +63,7 @@ import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '
 const keyExtractor = item => item.id;
 
 export const SupplierInvoicePage = ({ routeName, transaction }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     pageObject: transaction,
     backingData: transaction.getTransactionBatches(UIDatabase),
     data: transaction
@@ -91,6 +92,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     pageObject,
     hasSelection,
     backingData,
+    searchTerm,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
@@ -284,10 +286,11 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={value => dispatch(filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
