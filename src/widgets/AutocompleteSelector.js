@@ -125,7 +125,7 @@ export default AutocompleteSelector;
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
 AutocompleteSelector.propTypes = {
-  options: PropTypes.object.isRequired,
+  options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   queryString: PropTypes.string.isRequired,
   queryStringSecondary: PropTypes.string,
   sortByString: PropTypes.string.isRequired,
