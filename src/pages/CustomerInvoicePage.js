@@ -12,7 +12,7 @@ import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
-import { DEFAULT_KEY_EXTRACTOR, DEFAULT_GET_ITEM_LAYOUT } from './dataTableUtilities/utilities';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import { UIDatabase } from '../database';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import {
@@ -78,7 +78,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     pageObject: transaction,
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
-    keyExtractor: DEFAULT_KEY_EXTRACTOR,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
@@ -272,7 +272,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     />
   );
 
-  const getItemLayout = useCallback(DEFAULT_GET_ITEM_LAYOUT, []);
+  const memoizedGetItemLayout = useCallback(getItemLayout, []);
 
   const {
     newPageTopSectionContainer,
@@ -300,7 +300,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
+        getItemLayout={memoizedGetItemLayout}
       />
       <BottomConfirmModal
         isOpen={hasSelection}

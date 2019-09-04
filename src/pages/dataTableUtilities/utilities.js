@@ -14,7 +14,7 @@ import newDataTableStyles from '../../globalStyles/newDataTableStyles';
  * Should be memoized in a component for use.
  * @param {Number} index index of a row in VirtualizedList.
  */
-export const DEFAULT_GET_ITEM_LAYOUT = (_, index) => {
+export const getItemLayout = (_, index) => {
   const { height } = newDataTableStyles.row;
   return {
     length: height,
@@ -28,4 +28,4 @@ export const DEFAULT_GET_ITEM_LAYOUT = (_, index) => {
  *
  * @param {Object} item Any item to extract a key from.
  */
-export const DEFAULT_KEY_EXTRACTOR = item => item.id;
+export const recordKeyExtractor = item => item.id;
