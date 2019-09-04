@@ -23,6 +23,7 @@ import {
   UncheckedComponent,
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
+  SearchBar,
 } from '../widgets';
 import {
   DataTable,
@@ -54,7 +55,6 @@ import {
 import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
-import { SearchBar } from '../widgets/SearchBar';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -90,6 +90,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   });
 
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+
   const {
     data,
     dataState,
@@ -104,6 +105,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     keyExtractor,
     searchTerm,
   } = state;
+
   const { isFinalised, comment, theirRef } = pageObject;
 
   // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
