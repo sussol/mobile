@@ -8,7 +8,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
@@ -52,9 +51,10 @@ import {
   refreshData,
 } from './dataTableUtilities/actions';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
+import { SearchBar } from '../widgets/SearchBar';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -74,7 +74,7 @@ import DataTablePageView from './containers/DataTablePageView';
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     pageObject: transaction,
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
@@ -102,6 +102,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     hasSelection,
     backingData,
     keyExtractor,
+    searchTerm,
   } = state;
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -286,10 +287,9 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={value => dispatch(filterData(value))}
             style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
