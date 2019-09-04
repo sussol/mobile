@@ -21,10 +21,7 @@ import {
 } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
-import {
-  SupplierInvoicePage,
-  checkForFinaliseError as checkForSupplierInvoiceError,
-} from './SupplierInvoicePage';
+import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
 import {
@@ -32,7 +29,7 @@ import {
   checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
 } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
-import { checkForCustomerInvoiceError } from '../utilities';
+import { checkForCustomerInvoiceError, checkForSupplierInvoiceError } from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
 

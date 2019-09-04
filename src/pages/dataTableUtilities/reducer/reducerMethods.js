@@ -70,15 +70,15 @@ export const filterData = (state, action) => {
   const { searchTerm } = action;
 
   const queryString = filterDataKeys
-    .map(filterTerm => `${filterTerm} BEGINSWITH[c]  $0`)
+    .map(filterTerm => `${filterTerm} CONTAINS[c]  $0`)
     .join(' OR ');
 
-  const newData = newSortDataBy(
-    backingData.filtered(queryString, searchTerm).slice(),
-    sortBy,
-    isAscending
-  );
-  return { ...state, data: newData };
+  const filteredData = backingData.filtered(queryString, searchTerm).slice();
+
+  return {
+    ...state,
+    data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+  };
 };
 
 export const editTotalQuantity = (state, action) => {
@@ -89,14 +89,9 @@ export const editTotalQuantity = (state, action) => {
   // Realm object reference in `data` can't be affected in any tidy manner.
   const newDataState = new Map(dataState);
   const nextRowState = newDataState.get(rowKey);
-  newDataState.set(rowKey, {
-    ...nextRowState,
-  });
+  newDataState.set(rowKey, { ...nextRowState });
 
-  return {
-    ...state,
-    dataState: newDataState,
-  };
+  return { ...state, dataState: newDataState };
 };
 
 /**
@@ -289,7 +284,7 @@ export const addItem = (state, action) => {
   const { data } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '', sortBy: '' };
+  return { ...state, data: [item, ...data], modalKey: '', sortBy: '', searchTerm: '' };
 };
 
 /**
@@ -375,4 +370,24 @@ export const deleteRecordsById = state => {
 export const refreshData = state => {
   const { backingData } = state;
   return { ...state, data: backingData.slice() };
+};
+
+/**
+ * Edits an expiry date for a Row in a DataTable.
+ *
+ * @param {Object} state  The current state
+ * @param {Object} action The action to act upon
+ * Action: {type: 'editBatchExpiry', rowKey }
+ */
+export const editBatchExpiry = (state, action) => {
+  const { rowKey } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  return { ...state, dataState: newDataState };
 };
