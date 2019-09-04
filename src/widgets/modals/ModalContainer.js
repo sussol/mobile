@@ -66,7 +66,7 @@ const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCan
         visible={isVisible}
         animationType="slide"
         fullScreen={fullScreen}
-        transparent={true}
+        transparent
         hardwareAccelerated={true}
       >
         <View style={internalContentContainer}>
