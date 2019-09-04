@@ -32,6 +32,7 @@ import {
   closeBasicModal,
   deleteItemsById,
   refreshData,
+  addItem,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -174,7 +175,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const getModalOnSelect = () => {
     switch (modalKey) {
       case ITEM_SELECT:
-        return value => dispatch(editComment(value, 'Transaction'));
+        return item => dispatch(addItem(item, 'TransactionItem'));
       case COMMENT_EDIT:
         return value => dispatch(editComment(value, 'Transaction'));
       case THEIR_REF_EDIT:
