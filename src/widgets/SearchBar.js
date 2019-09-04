@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useMemo } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
@@ -17,14 +17,17 @@ import { debounce } from '../utilities/index';
  * Simple search bar - essentially a wrapper around a text input
  * with a magnifying glass icon and clear button.
  *
- * @param {String} color        Color of the entire component (monochrome only).
- * @param {String} onChangeText Callback for changing text (debounced).
- * @param {String} value        Text value of the search input.
- * @param {String} placeholder  Placeholder value.
- * @param {String} autoFocus
- * @param {String} textInputStyle
- * @param {String} viewStyle
- * @param {String} debounceTimeout
+ * Debounces input by the user, such that the onChangeText callback
+ * is only invoked once every `debounceTimeout`
+ *
+ * @param {String} color           Color of the entire component (monochrome only).
+ * @param {String} onChangeText    Callback for changing text (debounced).
+ * @param {String} value           Text value of the search input.
+ * @param {String} placeholder     Placeholder value.
+ * @param {String} autoFocus       Autofocus this component on mounting.
+ * @param {String} textInputStyle  Style of the TextInput component.
+ * @param {String} viewStyle       Style of the wrapping View component.
+ * @param {String} debounceTimeout Time in milliseconds to debounce the onChangeText callback.
  */
 export const SearchBar = ({
   color,
@@ -37,13 +40,32 @@ export const SearchBar = ({
   debounceTimeout,
   ...textInputProps
 }) => {
+  const [textValue, setTextValue] = useState('');
+
+  // Set the internal text value if it differs from the passed
+  // value. Keeping the search bar text input up to date with
+  // user input while debouncing actual filtering of data.
+  useEffect(() => {
+    if (value !== textValue) setTextValue(value);
+  }, [value]);
+
   const internalViewStyle = { ...viewStyle, borderColor: color };
   const internalTextStyle = { ...textInputStyle, color };
 
-  const debouncedCallback = useMemo(
-    () => newValue => debounce(onChangeText(newValue), debounceTimeout),
-    [onChangeText]
+  // For Debouncing to funtion, need to use the same function as the
+  // last call. Memoize this to keep the reference semi-stable. Keeping
+  // this reference is an optimization, not a requirement so can change.
+  const debouncedCallback = useCallback(
+    debounce(newValue => onChangeText(newValue), debounceTimeout),
+    []
   );
+
+  // On text change, set the internal text value, and call the debounced
+  // callback. Keep the users input upto date, but optimize filtering.
+  const onChangeTextCallback = useCallback(newValue => {
+    setTextValue(newValue);
+    debouncedCallback(newValue);
+  }, []);
 
   return (
     <View style={internalViewStyle}>
@@ -51,16 +73,16 @@ export const SearchBar = ({
       <TextInput
         {...textInputProps}
         style={internalTextStyle}
-        value={value}
+        value={textValue}
         underlineColorAndroid="transparent"
         placeholderTextColor={color}
         placeholder={placeholder}
-        onChangeText={debouncedCallback}
+        onChangeText={onChangeTextCallback}
         autoFocus={autoFocus}
         selectTextOnFocus
       />
-      {!!value && (
-        <TouchableOpacity onPress={() => onChangeText('')}>
+      {!!textValue && (
+        <TouchableOpacity onPress={() => onChangeTextCallback('')}>
           <Cancel color={color} size={20} />
         </TouchableOpacity>
       )}
