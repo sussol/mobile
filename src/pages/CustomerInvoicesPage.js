@@ -10,7 +10,7 @@ import { SearchBar } from 'react-native-ui-components';
 
 import { UIDatabase, createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings } from '../localization';
-import { DEFAULT_KEY_EXTRACTOR, DEFAULT_GET_ITEM_LAYOUT } from './dataTableUtilities/utilities';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import { BottomConfirmModal, SelectModal } from '../widgets/modals';
 import {
   PageButton,
@@ -41,7 +41,7 @@ const initialState = () => {
   return {
     backingData,
     data: newSortDataBy(backingData.slice(), 'serialNumber', false),
-    keyExtractor: DEFAULT_KEY_EXTRACTOR,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['otherParty.name'],
@@ -174,7 +174,7 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
     [data, dataState, renderCells]
   );
 
-  const getItemLayout = useCallback(DEFAULT_GET_ITEM_LAYOUT, []);
+  const memoizedGetItemLayout = useCallback(getItemLayout, []);
 
   const {
     newPageTopSectionContainer,
@@ -201,7 +201,7 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
+        getItemLayout={memoizedGetItemLayout}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
