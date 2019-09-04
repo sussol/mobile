@@ -12,6 +12,7 @@ import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import { UIDatabase } from '../database';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
@@ -40,8 +41,6 @@ import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
-const keyExtractor = item => item.id;
-
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
  *
@@ -64,7 +63,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     pageObject: transaction,
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
@@ -87,6 +86,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     pageObject,
     hasSelection,
     backingData,
+    keyExtractor,
   } = state;
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -99,15 +99,6 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
     [comment, theirRef, isFinalised]
   );
-
-  const getItemLayout = useCallback((item, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
-  }, []);
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -205,6 +196,8 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     />
   );
 
+  const memoizedGetItemLayout = useCallback(getItemLayout, []);
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -231,7 +224,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
+        getItemLayout={memoizedGetItemLayout}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
