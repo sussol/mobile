@@ -10,6 +10,7 @@ import { SearchBar } from 'react-native-ui-components';
 
 import { UIDatabase, createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings } from '../localization';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import { BottomConfirmModal, SelectModal } from '../widgets/modals';
 import {
   PageButton,
@@ -35,14 +36,12 @@ import DataTablePageView from './containers/DataTablePageView';
 
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 
-const keyExtractor = item => item.id;
-
 const initialState = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   return {
     backingData,
     data: newSortDataBy(backingData.slice(), 'serialNumber', false),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['otherParty.name'],
@@ -58,7 +57,16 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
     routeName,
     initialState()
   );
-  const { data, dataState, sortBy, isAscending, columns, modalKey, hasSelection } = state;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    modalKey,
+    hasSelection,
+    keyExtractor,
+  } = state;
 
   const renderNewInvoiceButton = () => (
     <PageButton
@@ -92,15 +100,6 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
     });
     navigateToInvoice(invoice);
   };
-
-  const getItemLayout = useCallback((item, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
-  }, []);
 
   const renderHeader = () => (
     <DataTableHeaderRow
@@ -175,6 +174,8 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
     [data, dataState, renderCells]
   );
 
+  const memoizedGetItemLayout = useCallback(getItemLayout, []);
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -200,7 +201,7 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
+        getItemLayout={memoizedGetItemLayout}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
