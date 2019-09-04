@@ -9,6 +9,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
@@ -68,7 +69,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       .getTransactionBatches(UIDatabase)
       .sorted('itemName')
       .slice(),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
@@ -96,15 +97,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
 
   if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
-
-  const getItemLayout = useCallback((_, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
-  }, []);
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
@@ -278,6 +270,8 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     />
   );
 
+  const memoizedGetItemLayout = useCallback(getItemLayout, []);
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -304,7 +298,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
-        getItemLayout={getItemLayout}
+        getItemLayout={memoizedGetItemLayout}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
