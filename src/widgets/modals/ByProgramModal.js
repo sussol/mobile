@@ -55,7 +55,7 @@ const modalProps = ({ dispatch, program, orderType }) => ({
       const { maxOrdersPerPeriod } = orderType;
       const requisitionsInPeriod = item.requisitionsForOrderType(program, orderType);
       const periodText = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
-      return `${item.toString()} - ${periodText}`;
+      return `${item} - ${periodText}`;
     },
   },
 });
