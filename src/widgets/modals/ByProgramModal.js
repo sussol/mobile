@@ -78,9 +78,9 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
   // data which is stored is COMPLETE and steps which can't be done yet are INCOMPLETE.
   const getStatusCallback = key =>
     steps.reduceRight((status, value, i) => {
+      if (state[key]) return 'COMPLETE';
       const previousStepIsCurrent = state[value] && steps[i + 1] === key;
       const firstStepIsCurrent = status === 'INCOMPLETE' && steps[0] === key;
-      if (state[key]) return 'COMPLETE';
       if (previousStepIsCurrent || firstStepIsCurrent) return 'CURRENT';
       return status;
     }, 'INCOMPLETE');
