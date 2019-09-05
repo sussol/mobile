@@ -219,14 +219,12 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
   const { isModalOpen } = state;
   const { isOpen, onCancel } = props;
   const { currentKey } = state;
+  const Steps = steps.map(stepKey => <Step key={stepKey} {...stepProps[stepKey]} />);
+
   return (
     <PageContentModal isOpen={isOpen} style={modalStyle} swipeToClose={false} onClose={onCancel}>
       <ProgramToggleBar />
-
-      {steps.map(stepKey => (
-        <Step key={stepKey} {...stepProps[stepKey]} />
-      ))}
-
+      <Steps />
       <PageButton
         text="OK"
         onPress={onCreate}
