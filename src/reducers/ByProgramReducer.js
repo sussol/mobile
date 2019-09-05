@@ -14,6 +14,7 @@ export const initialState = ({ type }) => ({
   isProgramBased: true,
   isModalOpen: false,
   steps: STEPS[type].true,
+  transactionType: type,
 });
 
 /**
@@ -34,14 +35,21 @@ const actions = {
 
 const STEPS = {
   requisition: {
-    true: ['program', 'supplier', 'orderType', 'period'],
-    false: ['supplier'],
+    program: ['program', 'supplier', 'orderType', 'period'],
+    general: ['supplier'],
   },
   stocktake: {
-    true: ['program', 'name'],
-    false: ['name'],
+    program: ['program', 'name'],
+    general: ['name'],
   },
 };
+
+const TYPES = {
+  PROGRAM: 'program',
+  GENERAL: 'general',
+};
+
+const getType = ({ isProgramBased }) => (isProgramBased ? TYPES.PROGRAM : TYPES.GENERAL);
 
 /**
  * Action Creators for ByProgramReducer
@@ -153,8 +161,8 @@ export const byProgramReducer = (state, action) => {
         modalData: value,
       };
     case actions.SET_TOGGLE: {
-      const { isProgramBased } = state;
-      const steps = STEPS[value][!isProgramBased];
+      const { isProgramBased, transactionType } = state;
+      const steps = STEPS[transactionType][getType(state)];
       return {
         ...state,
         program: null,

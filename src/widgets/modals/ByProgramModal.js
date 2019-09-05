@@ -60,13 +60,15 @@ const modalProps = ({ dispatch, program, orderType }) => ({
   },
 });
 
-export const ByProgramModal = ({ settings, database, type, onConfirm, ...props }) => {
-  const [state, dispatch] = useReducer(byProgramReducer, {}, () => initialState({ type }));
+export const ByProgramModal = ({ settings, database, transactionType, onConfirm, ...props }) => {
+  const [state, dispatch] = useReducer(byProgramReducer, {}, () =>
+    initialState({ transactionType })
+  );
   const { steps, modalData, program, orderType, period, supplier, storeTags, name } = state;
-  const strings = useMemo(() => getLocalizedStrings({ type }), [type]);
+  const strings = useMemo(() => getLocalizedStrings({ transactionType }), [transactionType]);
   const mounting = () => {
     dispatch(setStoreTags(settings.get(THIS_STORE_TAGS)));
-    dispatch(setSteps(type));
+    dispatch(setSteps(transactionType));
   };
   useEffect(mounting, []);
 
@@ -109,7 +111,7 @@ export const ByProgramModal = ({ settings, database, type, onConfirm, ...props }
   // Closed the currently ooen modal
   const onCloseModal = () => dispatch(setModalClosed());
   // Switches from program <-> general, resetting the state.
-  const onToggle = () => dispatch(setToggle(type));
+  const onToggle = () => dispatch(setToggle());
   const onCreate = () => onConfirm({ otherStoreName: supplier, program, period, orderType, name });
   /** Inner components */
 
@@ -261,21 +263,21 @@ const localStyles = StyleSheet.create({
   },
 });
 
-const getTitleString = type =>
-  `${type === 'stocktake' ? programStrings.stock_take : navStrings.requisition} ${
+const getTitleString = transactionType =>
+  `${transactionType === 'stocktake' ? programStrings.stock_take : navStrings.requisition} ${
     programStrings.details
   }`;
 
-const getProgramToggle = type =>
-  type === 'stocktake' ? programStrings.program_stocktake : programStrings.program_order;
+const getProgramToggle = transactionType =>
+  transactionType === 'stocktake' ? programStrings.program_stocktake : programStrings.program_order;
 
-const getGeneralToggle = type =>
-  type === 'stocktake' ? programStrings.general_stocktake : programStrings.general_order;
+const getGeneralToggle = transactionType =>
+  transactionType === 'stocktake' ? programStrings.general_stocktake : programStrings.general_order;
 
-const getLocalizedStrings = ({ type } = {}) => ({
-  title: getTitleString(type),
-  programToggleText: getProgramToggle(type),
-  generalToggleText: getGeneralToggle(type),
+const getLocalizedStrings = ({ transactionType } = {}) => ({
+  title: getTitleString(transactionType),
+  programToggleText: getProgramToggle(transactionType),
+  generalToggleText: getGeneralToggle(transactionType),
   maxMOS: programStrings.max_mos,
   threshMOS: programStrings.threshold_mos,
   maxOPP: programStrings.max_orders_per_period,
@@ -283,7 +285,7 @@ const getLocalizedStrings = ({ type } = {}) => ({
 });
 
 ByProgramModal.defaultProps = {
-  type: 'requisition',
+  transactionType: 'requisition',
 };
 
 ByProgramModal.propTypes = {
@@ -292,7 +294,7 @@ ByProgramModal.propTypes = {
   onConfirm: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   database: PropTypes.object.isRequired,
-  type: PropTypes.string,
+  transactionType: PropTypes.string,
 };
 
 export default ByProgramModal;
