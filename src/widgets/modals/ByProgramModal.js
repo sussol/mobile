@@ -135,20 +135,20 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
   // Modal component, for user selection
   const ByProgramSelector = () => {
     const { isModalOpen, currentKey } = state;
+    const Selector = (
+      <AutocompleteSelector
+        queryString="code CONTAINS[c] $0"
+        sortByString="name"
+        primaryFilterProperty="name"
+        renderLeftText={item => `${item.name}`}
+        options={modalData}
+        {...modalProps({ dispatch, program, orderType })[currentKey]}
+      />
+    );
+    const Editor = <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />;
     return (
       <PageContentModal isOpen={isModalOpen} onClose={onCloseModal} coverScreen>
-        {currentKey !== 'name' ? (
-          <AutocompleteSelector
-            queryString="code CONTAINS[c] $0"
-            sortByString="name"
-            primaryFilterProperty="name"
-            renderLeftText={item => `${item.name}`}
-            options={modalData}
-            {...modalProps({ dispatch, program, orderType })[currentKey]}
-          />
-        ) : (
-          <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
-        )}
+        {currentKey !== 'name' ? <Selector /> : <Editor />}
       </PageContentModal>
     );
   };
