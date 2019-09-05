@@ -4,7 +4,7 @@
  * Initializer for state/resetter
  */
 
-export const initialState = ({ type }) => ({
+export const initialState = ({ transactionType }) => ({
   program: null,
   supplier: null,
   period: null,
@@ -13,8 +13,8 @@ export const initialState = ({ type }) => ({
   currentKey: 'program',
   isProgramBased: true,
   isModalOpen: false,
-  steps: STEPS[type].true,
-  transactionType: type,
+  steps: STEPS[transactionType][getType({ isProgramBased: true })],
+  transactionType,
 });
 
 /**
