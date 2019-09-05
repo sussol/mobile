@@ -101,7 +101,6 @@ export const setStoreTags = value => ({
  */
 export const byProgramReducer = (state, action) => {
   const { type, value } = action;
-  //   console.log(action);
   switch (type) {
     case actions.SELECT_PROGRAM:
       return {
