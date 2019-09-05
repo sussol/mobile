@@ -6757,14 +6757,13 @@ react-native-fs@^2.13.3:
     base-64 "^0.1.0"
     utf8 "^2.1.1"
 
-react-native-generic-table-page@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.4.0.tgz#f81b2ec033b84be55d881e6527fa351a83aac1a8"
-  integrity sha512-Rb8FTGHS0+jWulzlIAKrP8LtHjr49hS+FMVseBlpz8Xup1zDGZiQbTJasyUUVld4bhhEI6Q8Qh7JMpRQw1RV3w==
+react-native-generic-table-page@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.4.1.tgz#dd0597ef0514551866be648bbef457d74c5e94ce"
+  integrity sha512-yna7CrMUhCfDwrBfjQl3/2BsOK6rsUF9kbHo44yuHFPkEQLoCiaG3+Xj38uS8uNycnve6R4Px0xRZFv8nY1Gjg==
   dependencies:
     deep-equal "^1.0.1"
     react-native-data-table "^0.2.0"
-    react-native-keyboard-aware-scroll-view "^0.8.0"
     react-native-ui-components "^0.5.0"
 
 react-native-gesture-handler@^1.0.15, react-native-gesture-handler@~1.0.14:
@@ -6775,19 +6774,6 @@ react-native-gesture-handler@^1.0.15, react-native-gesture-handler@~1.0.14:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
     prop-types "^15.5.10"
-
-react-native-iphone-x-helper@^1.0.3:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.2.0.tgz#9f8a376eb00bc712115abff4420318a0063fa796"
-  integrity sha512-xIeTo4s77wwKgBZLVRIZC9tM9/PkXS46Ul76NXmvmixEb3ZwqGdQesR3zRiLMOoIdfOURB6N9bba9po7+x9Bag==
-
-react-native-keyboard-aware-scroll-view@^0.8.0:
-  version "0.8.0"
-  resolved "https://registry.yarnpkg.com/react-native-keyboard-aware-scroll-view/-/react-native-keyboard-aware-scroll-view-0.8.0.tgz#00bcaa38c91323913bb7a733059ad2bc4875f88c"
-  integrity sha512-gPfhgHQI/z7Cc5aeNOEmK0b250QkAeU6V+4oH8EC7mmFneEKn6MAIDjpoiwqt6bV+lFJPABXfx9MtrRmtCeJ/Q==
-  dependencies:
-    prop-types "^15.6.2"
-    react-native-iphone-x-helper "^1.0.3"
 
 react-native-localization@^2.0.3:
   version "2.0.3"
