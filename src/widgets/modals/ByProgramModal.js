@@ -220,6 +220,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
   const { isOpen, onCancel } = props;
   const { currentKey } = state;
   const Steps = steps.map(stepKey => <Step key={stepKey} {...stepProps[stepKey]} />);
+  const isDisabled = !(steps[steps.length - 1] === currentKey);
 
   return (
     <PageContentModal isOpen={isOpen} style={modalStyle} swipeToClose={false} onClose={onCancel}>
@@ -228,7 +229,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
       <PageButton
         text="OK"
         onPress={onCreate}
-        isDisabled={!(steps[steps.length - 1] === currentKey)}
+        isDisabled={isDisabled}
         disabledColor={WARM_GREY}
         style={okButton}
         textStyle={pageButtonTextStyle}
