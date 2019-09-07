@@ -162,7 +162,8 @@ export const byProgramReducer = (state, action) => {
       };
     case actions.SET_TOGGLE: {
       const { isProgramBased, transactionType } = state;
-      const steps = STEPS[transactionType][getType({ isProgramBased: !isProgramBased })];
+      const newIsProgramBasaed = !isProgramBased;
+      const steps = STEPS[transactionType][getType({ isProgramBased: newIsProgramBasaed })];
       return {
         ...state,
         program: null,
@@ -170,7 +171,7 @@ export const byProgramReducer = (state, action) => {
         orderType: null,
         period: null,
         name: '',
-        isProgramBased: !isProgramBased,
+        isProgramBased: newIsProgramBasaed,
         steps,
         complete: false,
         currentKey: null,
