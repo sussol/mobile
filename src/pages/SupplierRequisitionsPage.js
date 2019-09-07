@@ -25,7 +25,6 @@ import {
   deselectAll,
   closeBasicModal,
   deleteRequisitions,
-  completeCreatingNewRecord,
   openBasicModal,
 } from './dataTableUtilities/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
@@ -124,12 +123,12 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       case SELECT_SUPPLIER:
         return otherStoreName => {
           reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
-          dispatch(completeCreatingNewRecord());
+          dispatch(closeBasicModal());
         };
       case PROGRAM_REQUISITION:
         return requisitionParameters => {
           reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
-          dispatch(completeCreatingNewRecord());
+          dispatch(closeBasicModal());
         };
       default:
         return null;

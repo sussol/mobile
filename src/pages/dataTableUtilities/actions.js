@@ -249,5 +249,3 @@ export const addTransactionBatch = item => (dispatch, getState) => {
   if (addedTransactionBatch) dispatch({ type: 'addItem', item: addedTransactionBatch });
   else dispatch(closeBasicModal());
 };
-
-export const completeCreatingNewRecord = () => ({ type: 'completeCreatingNewRecord' });

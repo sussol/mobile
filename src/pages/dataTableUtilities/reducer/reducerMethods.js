@@ -391,17 +391,3 @@ export const editBatchExpiry = (state, action) => {
 
   return { ...state, dataState: newDataState };
 };
-
-/**
- * Closes the currently open modal and refreshes
- * the current data from backingData. Use cases
- * include creating a new invoice - close the modal
- * and refresh daata before navigating to it.
- *
- * @param {Object} state  The current state
- * Action: {type: 'completeCreatingNewRecord'}
- */
-export const completeCreatingNewRecord = state => {
-  const { backingData } = state;
-  return { ...state, data: backingData.slice(), modalKey: '' };
-};
