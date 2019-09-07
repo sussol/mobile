@@ -11,7 +11,9 @@ import { SETTINGS_KEYS } from '../../settings/index';
  * Actions for use with a data table reducer
  */
 
-export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+export const editField = rowKey => ({ type: 'editField', rowKey });
+
+export const editTotalQuantity = (value, rowKey) => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
@@ -21,12 +23,7 @@ export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getSta
     UIDatabase.save('TransactionItem', objectToEdit);
   });
 
-  dispatch({
-    type: 'editTotalQuantity',
-    value,
-    rowKey,
-    columnKey,
-  });
+  dispatch(editField(rowKey));
 };
 
 export const focusCell = (rowKey, columnKey) => ({
@@ -174,10 +171,7 @@ export const refreshData = () => ({
   type: 'refreshData',
 });
 
-export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
-  dispatch,
-  getState
-) => {
+export const editTransactionBatchExpiryDate = (newDate, rowKey) => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
@@ -187,11 +181,7 @@ export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
     UIDatabase.save('TransactionBatch', objectToEdit);
   });
 
-  dispatch({
-    type: 'editBatchExpiry',
-    rowKey,
-    columnKey,
-  });
+  dispatch(editField(rowKey));
 };
 
 export const editTransactionBatchQuantity = (value, rowKey) => (dispatch, getState) => {
@@ -206,7 +196,7 @@ export const editTransactionBatchQuantity = (value, rowKey) => (dispatch, getSta
     UIDatabase.save('TransactionBatch', objectToEdit);
   });
 
-  dispatch({ type: 'editTotalQuantity', rowKey });
+  dispatch(editField(rowKey));
 };
 
 export const deleteTransactionBatchesById = pageObjectType => (dispatch, getState) => {
@@ -257,9 +247,6 @@ export const addTransactionBatch = item => (dispatch, getState) => {
   else dispatch(closeBasicModal());
 };
 
-export const completeCreatingNewRecord = () => ({ type: 'completeCreatingNewRecord' });
-export const newSupplierRequisition = () => ({ type: 'newSupplierRequisition' });
-
 export const createAutomaticOrder = pageObjectType => (dispatch, getState) => {
   const { pageObject } = getState();
 
@@ -309,7 +296,7 @@ export const editMonthsOfSupply = (value, pageObjectType) => (dispatch, getState
   dispatch(closeBasicModal());
 };
 
-export const editRequiredQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+export const editRequiredQuantity = (value, rowKey) => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
@@ -319,10 +306,5 @@ export const editRequiredQuantity = (value, rowKey, columnKey) => (dispatch, get
     UIDatabase.save('RequisitionItem', objectToEdit);
   });
 
-  dispatch({
-    type: 'editRequiredQuantity',
-    value,
-    rowKey,
-    columnKey,
-  });
+  dispatch(editField(rowKey));
 };

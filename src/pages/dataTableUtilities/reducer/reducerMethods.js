@@ -81,19 +81,6 @@ export const filterData = (state, action) => {
   };
 };
 
-export const editTotalQuantity = (state, action) => {
-  const { rowKey } = action;
-  const { dataState } = state;
-
-  // Change object reference of row in `dataState` to trigger rerender of that row.
-  // Realm object reference in `data` can't be affected in any tidy manner.
-  const newDataState = new Map(dataState);
-  const nextRowState = newDataState.get(rowKey);
-  newDataState.set(rowKey, { ...nextRowState });
-
-  return { ...state, dataState: newDataState };
-};
-
 /**
  * Focus the next appropriate cell after the current cell provided in action
  * @param {Object} state  The current state
@@ -375,26 +362,6 @@ export const refreshData = state => {
   return { ...state, data: newData };
 };
 
-/**
- * Edits an expiry date for a Row in a DataTable.
- *
- * @param {Object} state  The current state
- * @param {Object} action The action to act upon
- * Action: {type: 'editBatchExpiry', rowKey }
- */
-export const editBatchExpiry = (state, action) => {
-  const { rowKey } = action;
-  const { dataState } = state;
-
-  // Change object reference of row in `dataState` to trigger rerender of that row.
-  // Realm object reference in `data` can't be affected in any tidy manner.
-  const newDataState = new Map(dataState);
-  const nextRowState = newDataState.get(rowKey);
-  newDataState.set(rowKey, { ...nextRowState });
-
-  return { ...state, dataState: newDataState };
-};
-
 export const createAutomaticOrder = state => {
   const { backingData, sortBy, isAscending } = state;
 
@@ -411,15 +378,9 @@ export const hideOverStocked = state => {
   return { ...state, data: newData, showAllStock: false };
 };
 
-export const showOverStocked = state => {
-  const { backingData, sortBy, isAscending } = state;
+export const showOverStocked = state => ({ ...refreshData(state), showAllStock: true });
 
-  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
-
-  return { ...state, data: newData, showAllStock: true };
-};
-
-export const editRequiredQuantity = (state, action) => {
+export const editField = (state, action) => {
   const { rowKey } = action;
   const { dataState } = state;
 

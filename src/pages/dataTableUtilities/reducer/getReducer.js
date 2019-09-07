@@ -18,7 +18,6 @@
 
 import {
   filterData,
-  editTotalQuantity,
   focusNextCell,
   selectRow,
   deselectRow,
@@ -33,11 +32,10 @@ import {
   editComment,
   deleteRecordsById,
   refreshData,
-  editBatchExpiry,
   createAutomaticOrder,
   hideOverStocked,
   showOverStocked,
-  editRequiredQuantity,
+  editField,
 } from './reducerMethods';
 
 /**
@@ -52,7 +50,7 @@ const BASE_TABLE_PAGE_REDUCER = {
 const customerInvoice = {
   ...BASE_TABLE_PAGE_REDUCER,
   filterData,
-  editTotalQuantity,
+  editField,
   selectRow,
   deselectRow,
   deselectAll,
@@ -89,9 +87,8 @@ const supplierInvoice = {
   editComment,
   refreshData,
   addItem,
-  editTotalQuantity,
+  editField,
   deleteRecordsById,
-  editBatchExpiry,
 };
 
 const supplierRequisitions = {
@@ -122,7 +119,7 @@ const supplierRequisition = {
   createAutomaticOrder,
   hideOverStocked,
   showOverStocked,
-  editRequiredQuantity,
+  editField,
   deleteRecordsById,
 };
 
@@ -142,7 +139,7 @@ const programSupplierRequisition = {
   createAutomaticOrder,
   hideOverStocked,
   showOverStocked,
-  editRequiredQuantity,
+  editField,
 };
 
 const PAGE_REDUCERS = {
