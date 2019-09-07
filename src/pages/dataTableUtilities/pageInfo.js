@@ -87,7 +87,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   },
   period: {
     title: `${programStrings.period}:`,
-    info: pageObject.period && `${pageObject.period.name} -- ${pageObject.period.toString()}`,
+    info: pageObject.period && pageObject.period.toInfoString(),
   },
   programMonthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
