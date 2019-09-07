@@ -27,7 +27,6 @@ import {
   focusNext,
   focusCell,
   sortData,
-  refreshData,
   addMasterListItems,
   addItem,
   createAutomaticOrder,
@@ -39,14 +38,13 @@ import {
   deleteItemsById,
 } from './dataTableUtilities/actions';
 
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
-const keyExtractor = item => item.id;
-
 /**
- * Renders a mSupply mobile page with customer invoice loaded for editing
+ * Renders a mSupply mobile page with a supplier requisition loaded for editing
  *
  * State:
  * Uses a reducer to manage state with `backingData` being a realm results
@@ -56,10 +54,10 @@ const keyExtractor = item => item.id;
  *
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
- * { isSelected, isFocused, isDisabled },
+ * { isSelected, isDisabled },
  *
- * @prop {Object} transaction The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
+ * @prop {Object} requisition The realm transaction object for this invoice.
+ * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
@@ -67,7 +65,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     pageObject: requisition,
     backingData: requisition.items,
     data: requisition.items.sorted('item.name').slice(),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
@@ -90,8 +88,8 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     pageInfo,
     pageObject,
     hasSelection,
-    backingData,
     showAllStock,
+    keyExtractor,
   } = state;
 
   const { isFinalised, comment, theirRef, program } = pageObject;
@@ -100,24 +98,10 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     if (!showAllStock) dispatch(hideOverStocked());
   }, []);
 
-  // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
-  // Since this does not manipulate the state through the reducer, state is not updated (in
-  // particular `data`) so a manual syncing of `backingData` and `data` needs to occur.
-  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
-
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
     [comment, theirRef, isFinalised]
   );
-
-  const getItemLayout = useCallback((item, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
-  }, []);
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -348,5 +332,3 @@ SupplierRequisitionPage.propTypes = {
   requisition: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
 };
-
-console.disableYellowBox = true;
