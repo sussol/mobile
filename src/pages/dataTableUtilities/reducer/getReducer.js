@@ -34,8 +34,6 @@ import {
   deleteRecordsById,
   refreshData,
   editBatchExpiry,
-  newSupplierRequisition,
-  completeCreatingNewRecord,
 } from './reducerMethods';
 
 /**
@@ -100,8 +98,6 @@ const supplierRequisitions = {
   deselectAll,
   openBasicModal,
   closeBasicModal,
-  newSupplierRequisition,
-  completeCreatingNewRecord,
   refreshData,
   deleteRecordsById,
 };
