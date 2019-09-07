@@ -60,7 +60,7 @@ const modalProps = ({ dispatch, program, orderType }) => ({
   },
 });
 
-export const ByProgramModal = ({ settings, database, transactionType, onConfirm, ...props }) => {
+export const ByProgramModal = ({ settings, database, transactionType, onConfirm }) => {
   const [state, dispatch] = useReducer(byProgramReducer, {}, () =>
     initialState({ transactionType })
   );
@@ -217,17 +217,17 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
   };
 
   /** Render */
-  const { modalStyle, okButton, pageButtonTextStyle } = localStyles;
+  const { okButton, pageButtonTextStyle } = localStyles;
   const { isModalOpen } = state;
-  const { isOpen, onCancel } = props;
   const { currentKey } = state;
-  const Steps = () => steps.map(stepKey => <Step key={stepKey} {...stepProps[stepKey]} />);
   const isDisabled = !(steps[steps.length - 1] === currentKey);
 
   return (
-    <PageContentModal isOpen={isOpen} style={modalStyle} swipeToClose={false} onClose={onCancel}>
+    <>
       <ProgramToggleBar />
-      <Steps />
+      {steps.map(stepKey => (
+        <Step key={stepKey} {...stepProps[stepKey]} />
+      ))}
       <PageButton
         text="OK"
         onPress={onCreate}
@@ -237,7 +237,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
         textStyle={pageButtonTextStyle}
       />
       {isModalOpen && <ByProgramSelector />}
-    </PageContentModal>
+    </>
   );
 };
 
@@ -290,8 +290,6 @@ ByProgramModal.defaultProps = {
 };
 
 ByProgramModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onCancel: PropTypes.func.isRequired,
   onConfirm: PropTypes.func.isRequired,
   settings: PropTypes.object.isRequired,
   database: PropTypes.object.isRequired,

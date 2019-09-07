@@ -97,7 +97,6 @@ ModalContainer.propTypes = {
 
 const localStyles = StyleSheet.create({
   modalContainer: { backgroundColor: DARKER_GREY },
-
   contentContainer: {
     flex: 1,
     backgroundColor: DARKER_GREY,

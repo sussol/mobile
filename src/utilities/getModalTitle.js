@@ -10,7 +10,6 @@ export const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
   ITEM_SELECT: 'itemSelect',
-  SELECT_CUSTOMER: 'selectCustomer',
   SELECT_SUPPLIER: 'selectSupplier',
   PROGRAM_REQUISITION: 'programRequisition',
 };
@@ -18,6 +17,7 @@ export const MODAL_KEYS = {
 export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
+      return '';
     case MODAL_KEYS.ITEM_SELECT:
       return modalStrings.search_for_an_item_to_add;
     case MODAL_KEYS.COMMENT_EDIT:
