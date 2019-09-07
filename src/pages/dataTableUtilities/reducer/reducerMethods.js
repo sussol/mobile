@@ -392,8 +392,3 @@ export const editField = (state, action) => {
 
   return { ...state, dataState: newDataState };
 };
-
-export const useSuggestedQuantities = state => {
-  const { backingData } = state;
-  return { ...state, data: backingData.slice() };
-};

@@ -15,7 +15,6 @@ export const MODAL_KEYS = {
   PROGRAM_REQUISITION: 'programRequisition',
   MONTHS_SELECT: 'monthsToSupply',
   VIEW_REGIMEN_DATA: 'viewRegimenData',
-  SELECT_MONTHS_TO_SUPPLY: 'selectMonthsToSupply',
   PROGRAM_STOCKTAKE: 'programStocktake',
 };
 
