@@ -53,6 +53,8 @@ const sortKeyToType = {
   monthlyUsage: 'number',
   suggestedQuantity: 'number',
   requiredQuantity: 'number',
+  createdDate: 'date',
+  name: 'string',
 };
 
 /**

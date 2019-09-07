@@ -125,8 +125,8 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   const getModalOnSelect = () => {
     switch (modalKey) {
       case PROGRAM_STOCKTAKE:
-        return ({ name, program }) => {
-          reduxDispatch(createStocktake({ program, stocktakeName: name, currentUser }));
+        return ({ stocktakeName, program }) => {
+          reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
           dispatch(closeBasicModal());
         };
       default:
@@ -180,7 +180,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       />
       <DataTablePageModal
         fullScreen={false}
-        isOpen={!!modalKey && modalKey !== PROGRAM_STOCKTAKE}
+        isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={() => dispatch(closeBasicModal())}
         onSelect={getModalOnSelect()}

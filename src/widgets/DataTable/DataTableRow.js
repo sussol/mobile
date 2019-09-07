@@ -72,7 +72,7 @@ const DataTableRow = React.memo(
       // Map each column to an appropriate cell for a given row.
       return columns.map(({ key: columnKey, type, width, alignText }, index) => {
         const isLastCell = index === columns.length - 1;
-        const isDisabled = isFinalised || (rowState && rowState.isDisabled);
+        const isDisabled = isFinalised || (rowState && rowState.isDisabled) || rowData.isFinalised;
         const isFocused = focusedColumnKey === columnKey;
         const cellAlignment = alignText || 'left';
 

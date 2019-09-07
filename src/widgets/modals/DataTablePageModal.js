@@ -95,7 +95,7 @@ export const DataTablePageModal = ({
           <ByProgramModal
             onConfirm={onSelect}
             database={UIDatabase}
-            type={MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'}
+            transactionType={MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'}
             settings={Settings}
           />
         );
