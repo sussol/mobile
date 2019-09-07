@@ -251,4 +251,3 @@ export const addTransactionBatch = item => (dispatch, getState) => {
 };
 
 export const completeCreatingNewRecord = () => ({ type: 'completeCreatingNewRecord' });
-export const newSupplierRequisition = () => ({ type: 'newSupplierRequisition' });

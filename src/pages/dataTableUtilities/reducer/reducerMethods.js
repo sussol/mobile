@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy, MODAL_KEYS } from '../../../utilities';
+import { newSortDataBy } from '../../../utilities';
 
 /**
  * Immutably clears the current focus
@@ -390,22 +390,6 @@ export const editBatchExpiry = (state, action) => {
   newDataState.set(rowKey, { ...nextRowState });
 
   return { ...state, dataState: newDataState };
-};
-
-/**
- * Opens the correct modal for creating a new requisition,
- * dependent on if the current store is using programs,
- * or not.
- *
- * @param {Object} state  The current state
- * Action: { type: 'newSupplierRequisition }
- */
-export const newSupplierRequisition = state => {
-  const { usingPrograms, backingData } = state;
-  const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
-  const modalKey = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
-
-  return { ...state, data: backingData.slice(), modalKey };
 };
 
 /**

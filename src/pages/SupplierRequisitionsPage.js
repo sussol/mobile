@@ -25,8 +25,8 @@ import {
   deselectAll,
   closeBasicModal,
   deleteRequisitions,
-  newSupplierRequisition,
   completeCreatingNewRecord,
+  openBasicModal,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -69,13 +69,13 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     modalKey: '',
     hasSelection: false,
     currentUser,
-    reduxDispatch,
-    usingPrograms: getAllPrograms(Settings, UIDatabase).length > 0,
   });
 
   const { data, dataState, sortBy, isAscending, columns, modalKey, hasSelection } = state;
 
+  const usingPrograms = useCallback(getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
+  const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
   const getItemLayout = useCallback((_, index) => {
     const { height } = newDataTableStyles.row;
@@ -124,7 +124,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
         <PageButton
           style={topButton}
           text={buttonStrings.new_requisition}
-          onPress={() => dispatch(newSupplierRequisition())}
+          onPress={() => dispatch(openBasicModal(NEW_REQUISITON))}
         />
       </View>
     );
