@@ -125,7 +125,6 @@ const supplierRequisition = {
   hideOverStocked,
   showOverStocked,
   editRequiredQuantity,
-  deleteItemsById,
 };
 
 const programSupplierRequisition = {
@@ -145,7 +144,6 @@ const programSupplierRequisition = {
   useSuggestedQuantities,
   hideOverStocked,
   showOverStocked,
-  deleteItemsById,
   editRequiredQuantity,
 };
 

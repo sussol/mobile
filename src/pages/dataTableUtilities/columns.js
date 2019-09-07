@@ -99,11 +99,6 @@ const COLUMNS = () => ({
     title: tableStrings.batch_expiry,
     alignText: 'center',
   },
-  serialNumber: {
-    key: 'serialNumber',
-    title: tableStrings.requisition_number,
-    sortable: true,
-  },
   supplierName: {
     key: 'supplierName',
     title: tableStrings.supplier,
