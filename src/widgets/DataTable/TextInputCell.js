@@ -42,17 +42,17 @@ const TextInputCell = React.memo(
     placeholderColour,
     editAction,
     dispatch,
-    viewStyle,
-    textInputStyle,
     isLastCell,
     width,
     debug,
     keyboardType,
     placeholder,
-    cellTextStyle,
     getRef,
     focusNextCell,
     refIndex,
+    viewStyle,
+    textInputStyle,
+    cellTextStyle,
   }) => {
     if (debug) console.log(`- TextInputCell: ${value}`);
     const usingPlaceholder = placeholder && !value;
