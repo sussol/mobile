@@ -10,6 +10,8 @@ export const MODAL_KEYS = {
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
   ITEM_SELECT: 'itemSelect',
+  SELECT_CUSTOMER: 'selectCustomer',
+  SELECT_SUPPLIER: 'selectSupplier',
 };
 
 export const getModalTitle = modalKey => {
@@ -21,5 +23,9 @@ export const getModalTitle = modalKey => {
       return modalStrings.edit_the_invoice_comment;
     case MODAL_KEYS.THEIR_REF_EDIT:
       return modalStrings.edit_their_reference;
+    case MODAL_KEYS.SELECT_CUSTOMER:
+      return modalStrings.search_for_the_customer;
+    case MODAL_KEYS.SELECT_SUPPLIER:
+      return modalStrings.search_for_the_supplier;
   }
 };
