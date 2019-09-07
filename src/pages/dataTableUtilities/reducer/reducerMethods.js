@@ -395,29 +395,7 @@ export const editBatchExpiry = (state, action) => {
 export const createAutomaticOrder = state => {
   const { backingData, sortBy, isAscending } = state;
 
-  const columnKeyToDataType = {
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-    expiryDate: 'date',
-    serialNumber: 'number',
-    numberOfItems: 'number',
-    status: 'string',
-    entryDate: 'date',
-    supplierName: 'string',
-    ourStockOnHand: 'number',
-    monthlyUsage: 'number',
-    suggestedQuantity: 'number',
-    requiredQuantity: 'number',
-  };
-
-  const newData = newSortDataBy(
-    backingData.slice(),
-    sortBy,
-    columnKeyToDataType[sortBy],
-    isAscending
-  );
+  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
 
   return { ...state, data: newData };
 };
@@ -438,29 +416,7 @@ export const hideOverStocked = state => {
 export const showOverStocked = state => {
   const { backingData, sortBy, isAscending } = state;
 
-  const columnKeyToDataType = {
-    itemCode: 'string',
-    itemName: 'string',
-    availableQuantity: 'number',
-    totalQuantity: 'number',
-    expiryDate: 'date',
-    serialNumber: 'number',
-    numberOfItems: 'number',
-    status: 'string',
-    entryDate: 'date',
-    supplierName: 'string',
-    ourStockOnHand: 'number',
-    monthlyUsage: 'number',
-    suggestedQuantity: 'number',
-    requiredQuantity: 'number',
-  };
-
-  const newData = newSortDataBy(
-    backingData.slice(),
-    sortBy,
-    columnKeyToDataType[sortBy],
-    isAscending
-  );
+  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
 
   return { ...state, data: newData, showAllStock: true };
 };
