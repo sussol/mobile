@@ -14,7 +14,7 @@ import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { BottomConfirmModal, DataTablePageModal, ByProgramModal } from '../widgets/modals';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import {
@@ -25,8 +25,9 @@ import {
   deselectAll,
   closeBasicModal,
   deleteRequisitions,
+  openBasicModal,
 } from './dataTableUtilities/actions';
-
+import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
@@ -45,7 +46,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     data: UIDatabase.objects('Stocktake')
       .sorted('createdDate', false)
       .slice(),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['name'],
@@ -70,15 +71,6 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   } = state;
 
   const { PROGRAM_STOCKTAKE } = MODAL_KEYS;
-
-  const getItemLayout = useCallback((_, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
-  }, []);
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -135,7 +127,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       case PROGRAM_STOCKTAKE:
         return ({ name, program }) => {
           reduxDispatch(createStocktake({ program, stocktakeName: name, currentUser }));
-          // dispatch(completeCreatingNewRecord());
+          dispatch(closeBasicModal());
         };
       default:
         return null;
@@ -194,16 +186,6 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
-      {modalKey === PROGRAM_STOCKTAKE && (
-        <ByProgramModal
-          isOpen={modalKey === PROGRAM_STOCKTAKE}
-          onConfirm={getModalOnSelect()}
-          onCancel={() => dispatch(closeBasicModal())}
-          database={UIDatabase}
-          type="stocktake"
-          settings={Settings}
-        />
-      )}
     </DataTablePageView>
   );
 };

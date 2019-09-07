@@ -88,15 +88,18 @@ export const DataTablePageModal = ({
             onSelect={onSelect}
           />
         );
+
+      case MODAL_KEYS.PROGRAM_STOCKTAKE:
       case MODAL_KEYS.PROGRAM_REQUISITION:
         return (
           <ByProgramModal
             onConfirm={onSelect}
             database={UIDatabase}
-            type="requisition"
+            type={MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'}
             settings={Settings}
           />
         );
+
       case MODAL_KEYS.MONTHS_SELECT:
         return (
           <ToggleSelector
