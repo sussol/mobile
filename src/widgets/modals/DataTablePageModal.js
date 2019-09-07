@@ -10,8 +10,10 @@ import ModalContainer from './ModalContainer';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
+import { ByProgramModal } from './ByProgramModal';
 import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
+import Settings from '../../settings/MobileAppSettings';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
@@ -75,7 +77,15 @@ export const DataTablePageModal = ({
             onSelect={onSelect}
           />
         );
-
+      case MODAL_KEYS.PROGRAM_REQUISITION:
+        return (
+          <ByProgramModal
+            onConfirm={onSelect}
+            database={UIDatabase}
+            type="requisition"
+            settings={Settings}
+          />
+        );
       default:
         return null;
     }
