@@ -35,8 +35,8 @@ import {
   hideOverStocked,
   showOverStocked,
   editMonthsOfSupply,
-  deleteItemsById,
   editRequiredQuantity,
+  deleteItemsById,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';

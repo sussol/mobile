@@ -148,10 +148,6 @@ export class Transaction extends Realm.Object {
     return this.otherParty ? this.otherParty.name : '';
   }
 
-  get supplierName() {
-    return this.otherParty ? this.otherParty.name : 'N/A';
-  }
-
   /**
    * Set other party to this transaction.
    *
