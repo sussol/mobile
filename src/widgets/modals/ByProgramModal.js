@@ -135,7 +135,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
   // Modal component, for user selection
   const ByProgramSelector = () => {
     const { isModalOpen, currentKey } = state;
-    const Selector = (
+    const Selector = () => (
       <AutocompleteSelector
         queryString="code CONTAINS[c] $0"
         sortByString="name"
@@ -145,7 +145,9 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
         {...modalProps({ dispatch, program, orderType })[currentKey]}
       />
     );
-    const Editor = <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />;
+    const Editor = () => (
+      <TextEditor text={name} onEndEditing={value => dispatch(setName(value))} />
+    );
     return (
       <PageContentModal isOpen={isModalOpen} onClose={onCloseModal} coverScreen>
         {currentKey !== 'name' ? <Selector /> : <Editor />}
@@ -219,7 +221,7 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm,
   const { isModalOpen } = state;
   const { isOpen, onCancel } = props;
   const { currentKey } = state;
-  const Steps = steps.map(stepKey => <Step key={stepKey} {...stepProps[stepKey]} />);
+  const Steps = () => steps.map(stepKey => <Step key={stepKey} {...stepProps[stepKey]} />);
   const isDisabled = !(steps[steps.length - 1] === currentKey);
 
   return (
