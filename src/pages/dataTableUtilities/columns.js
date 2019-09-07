@@ -18,7 +18,7 @@ const PAGE_COLUMNS = {
   customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'comment', 'delete'],
   supplierRequisitions: [
     'serialNumber',
-    'supplierName',
+    'otherPartyName',
     'numberOfItems',
     'entryDate',
     'status',
@@ -35,11 +35,6 @@ const COLUMNS = () => ({
   otherPartyName: {
     key: 'otherPartyName',
     title: tableStrings.customer,
-    sortable: true,
-  },
-  status: {
-    key: 'status',
-    title: tableStrings.status,
     sortable: true,
   },
   comment: {
@@ -87,11 +82,6 @@ const COLUMNS = () => ({
     type: 'checkable',
     title: tableStrings.delete,
     alignText: 'center',
-  },
-  supplierName: {
-    key: 'supplierName',
-    title: tableStrings.supplier,
-    sortable: true,
   },
   entryDate: {
     type: 'entryDate',
