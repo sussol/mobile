@@ -14,7 +14,7 @@ import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { BottomConfirmModal, DataTablePageModal, ByProgramModal } from '../widgets/modals';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import {
@@ -193,22 +193,12 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       />
       <DataTablePageModal
         fullScreen={false}
-        isOpen={!!modalKey && modalKey !== PROGRAM_REQUISITION}
+        isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={() => dispatch(closeBasicModal())}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
-      {modalKey === PROGRAM_REQUISITION && (
-        <ByProgramModal
-          isOpen={modalKey === PROGRAM_REQUISITION}
-          onConfirm={getModalOnSelect()}
-          onCancel={() => dispatch(closeBasicModal())}
-          database={UIDatabase}
-          type="requisition"
-          settings={Settings}
-        />
-      )}
     </DataTablePageView>
   );
 };
