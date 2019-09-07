@@ -256,7 +256,7 @@ export class StocktakesPage extends React.Component {
           onConfirm={this.onConfirmProgramStocktake}
           onCancel={this.onCancelByProgram}
           database={database}
-          type="stocktake"
+          transactionType="stocktake"
           settings={settings}
         />
       </GenericPage>
