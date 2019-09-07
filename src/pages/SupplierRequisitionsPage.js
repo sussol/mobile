@@ -28,14 +28,12 @@ import {
   completeCreatingNewRecord,
   openBasicModal,
 } from './dataTableUtilities/actions';
-
+import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
-
-const keyExtractor = item => item.id;
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -60,7 +58,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     data: UIDatabase.objects('RequestRequisition')
       .sorted('serialNumber')
       .slice(),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['serialNumber'],
@@ -77,15 +75,6 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
   const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
-  const getItemLayout = useCallback((_, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
-  }, []);
-
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
@@ -99,7 +88,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
-      const rowKey = keyExtractor(item);
+      const rowKey = recordKeyExtractor(item);
       const { row, alternateRow } = newDataTableStyles;
       return (
         <DataTableRow
@@ -181,7 +170,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
         extraData={dataState}
         renderRow={renderRow}
         renderHeader={renderHeader}
-        keyExtractor={keyExtractor}
+        keyExtractor={recordKeyExtractor}
         getItemLayout={getItemLayout}
       />
       <BottomConfirmModal
