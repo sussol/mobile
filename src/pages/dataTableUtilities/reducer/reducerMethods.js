@@ -368,8 +368,11 @@ export const deleteRecordsById = state => {
  * @param {Object} state  The current state
  */
 export const refreshData = state => {
-  const { backingData } = state;
-  return { ...state, data: backingData.slice() };
+  const { backingData, sortBy, isAscending } = state;
+
+  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
+
+  return { ...state, data: newData };
 };
 
 /**
@@ -398,11 +401,6 @@ export const createAutomaticOrder = state => {
   const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
 
   return { ...state, data: newData };
-};
-
-export const useSuggestedQuantities = state => {
-  const { backingData } = state;
-  return { ...state, data: backingData.slice() };
 };
 
 export const hideOverStocked = state => {

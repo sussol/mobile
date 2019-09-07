@@ -284,7 +284,7 @@ export const useSuggestedQuantities = pageObjectType => (dispatch, getState) => 
     UIDatabase.save(pageObjectType, pageObject);
   });
 
-  dispatch({ type: 'createAutomaticOrder' });
+  dispatch({ type: 'refreshData' });
 };
 
 export const hideOverStocked = () => ({
