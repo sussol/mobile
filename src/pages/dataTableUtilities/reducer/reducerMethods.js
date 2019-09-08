@@ -190,6 +190,21 @@ export const deselectAll = state => {
   return { ...state, dataState: newDataState, hasSelection: false, allSelected: false };
 };
 
+export const selectAll = state => {
+  const { data, dataState, keyExtractor } = state;
+  const newDataState = new Map(dataState);
+
+  data.forEach(item => {
+    const rowKey = keyExtractor(item);
+    newDataState.set(rowKey, {
+      ...newDataState.get(rowKey),
+      isSelected: true,
+    });
+  });
+
+  return { ...state, dataState: newDataState, hasSelection: true, allSelected: true };
+};
+
 /**
  * Focuses the cell provided in the action passed
  * @param {Object} state  The current state
@@ -411,7 +426,7 @@ export const selectItems = (state, action) => {
   return {
     ...state,
     dataState: newDataState,
-    showAll: false,
+    showAll: true,
     allSelected: false,
     hasSelection: true,
   };
@@ -422,3 +437,13 @@ export const editName = (state, action) => {
 
   return { ...state, name: value };
 };
+
+export const hideStockOut = state => {
+  const { backingData } = state;
+
+  const newData = backingData.filter(item => item.hasStock);
+
+  return { ...state, data: newData, showAll: false, searchTerm: '' };
+};
+
+export const showStockOut = state => ({ ...refreshData(state), showAll: true, searchTerm: '' });
