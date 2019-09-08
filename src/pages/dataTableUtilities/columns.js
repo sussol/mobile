@@ -231,7 +231,6 @@ const COLUMNS = () => ({
     type: 'reason',
     key: 'mostUsedReasonTitle',
     title: tableStrings.reason,
-    sortable: true,
     alignText: 'right',
   },
 });
