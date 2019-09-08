@@ -31,8 +31,7 @@ import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 import { createStocktake, addItemsToStocktake } from '../navigation/actions';
-
-const keyExtractor = item => item.id;
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 
 export const StocktakeManagePage = ({
   routeName,
@@ -46,7 +45,7 @@ export const StocktakeManagePage = ({
     data: UIDatabase.objects('Item')
       .sorted('name')
       .slice(),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['name', 'code'],
@@ -68,19 +67,13 @@ export const StocktakeManagePage = ({
     showAll,
     allSelected,
     name,
+    keyExtractor,
   } = state;
 
+  // On navigating to this screen, if a stocktake is passed through, update the selection with
+  // the items already in the stocktake.
   useEffect(() => {
     if (stocktake) dispatch(selectItems(stocktake.itemsInStocktake));
-  }, []);
-
-  const getItemLayout = useCallback((_, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
   }, []);
 
   const getAction = useCallback((colKey, propName) => {
