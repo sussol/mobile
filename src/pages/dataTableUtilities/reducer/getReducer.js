@@ -36,10 +36,9 @@ import {
   hideOverStocked,
   showOverStocked,
   editField,
-  // selectAll,
-  // hideStockOut,
-  // showStockOut,
-  // selectByIds,
+  selectAll,
+  hideStockOut,
+  showStockOut,
   selectItems,
   editName,
 } from './reducerMethods';
