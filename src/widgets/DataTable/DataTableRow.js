@@ -179,7 +179,6 @@ const DataTableRow = React.memo(
                 dispatch={dispatch}
                 width={width}
                 isLastCell={isLastCell}
-                isDisabled={isDisabled}
                 containerStyle={{
                   justifyContent: 'center',
                   flexDirection: 'row',

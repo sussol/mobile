@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unused-prop-types */
-/* eslint-disable react/prop-types */
 /* eslint-disable react/forbid-prop-types */
 /* eslint-disable import/prefer-default-export */
 /**
@@ -13,8 +11,8 @@ import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { buttonStrings } from '../localization';
+import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import DataTablePageView from './containers/DataTablePageView';
@@ -23,28 +21,23 @@ import {
   filterData,
   selectRow,
   deselectRow,
-  deselectAll,
   closeBasicModal,
   editComment,
   focusNext,
   focusCell,
   sortData,
-  refreshData,
-  deleteItemsById,
   editCountedTotalQuantity,
   closeStocktakeBatchModal,
   openModal,
   resetStocktake,
 } from './dataTableUtilities/actions';
-
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import { gotoStocktakeManagePage } from '../navigation/actions';
 
-const keyExtractor = item => item.id;
-
 /**
- * Renders a mSupply mobile page with customer invoice loaded for editing
+ * Renders a mSupply page with a stocktake loaded for editing
  *
  * State:
  * Uses a reducer to manage state with `backingData` being a realm results
@@ -56,9 +49,11 @@ const keyExtractor = item => item.id;
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
  *
- * @prop {Object} transaction The realm transaction object for this invoice.
+ * @prop {Object} stocktake The realm transaction object for this invoice.
  * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
+ * @prop {Func}   dispatch  Redux store dispatch function.
+ *
  */
 export const StocktakeEditPage = ({
   runWithLoadingIndicator,
@@ -70,7 +65,7 @@ export const StocktakeEditPage = ({
     pageObject: stocktake,
     backingData: stocktake.items,
     data: stocktake.items.sorted('item.name').slice(),
-    keyExtractor,
+    keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
     searchTerm: '',
@@ -79,7 +74,6 @@ export const StocktakeEditPage = ({
     isAscending: true,
     modalKey: '',
     modalValue: null,
-    hasSelection: false,
   });
 
   const { STOCKTAKE_COMMENT_EDIT, EDIT_STOCKTAKE_BATCH, STOCKTAKE_OUTDATED_ITEM } = MODAL_KEYS;
@@ -92,36 +86,23 @@ export const StocktakeEditPage = ({
     modalKey,
     pageInfo,
     pageObject,
-    hasSelection,
-    backingData,
     currentStocktakeItem,
     modalValue,
+    keyExtractor,
   } = state;
 
   const { isFinalised, comment, program } = pageObject;
 
   useEffect(() => {
-    if (stocktake.itemsOutdated.length) dispatch(openModal(STOCKTAKE_OUTDATED_ITEM));
+    if (stocktake.itemsOutdated.length && !isFinalised) {
+      dispatch(openModal(STOCKTAKE_OUTDATED_ITEM));
+    }
   }, []);
-
-  // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
-  // Since this does not manipulate the state through the reducer, state is not updated (in
-  // particular `data`) so a manual syncing of `backingData` and `data` needs to occur.
-  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
     [comment, isFinalised]
   );
-
-  const getItemLayout = useCallback((_, index) => {
-    const { height } = newDataTableStyles.row;
-    return {
-      length: height,
-      offset: height * index,
-      index,
-    };
-  }, []);
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -221,13 +202,6 @@ export const StocktakeEditPage = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
       />
-      <BottomConfirmModal
-        isOpen={hasSelection}
-        questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteItemsById('Requisition'))}
-        confirmText={modalStrings.remove}
-      />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
@@ -244,8 +218,7 @@ export const StocktakeEditPage = ({
 
 StocktakeEditPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  requisition: PropTypes.object.isRequired,
+  stocktake: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
-
-console.disableYellowBox = true;
