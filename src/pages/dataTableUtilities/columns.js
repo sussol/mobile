@@ -156,6 +156,12 @@ const COLUMNS = () => ({
     title: tableStrings.unit,
     alignText: 'center',
   },
+  code: {
+    key: 'code',
+    title: tableStrings.code,
+    alignText: 'left',
+    sortable: true,
+  },
   name: {
     key: 'name',
     title: tableStrings.name,
