@@ -1,9 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
 
-import React from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { TouchableOpacity, View } from 'react-native';
+
+import RefContext from './RefContext';
 
 /**
  * Renders a row of children as outputted by renderCells render prop
@@ -33,41 +35,25 @@ import { TouchableOpacity, View } from 'react-native';
  * @param {func} onPress function to call on pressing the row.
  * @param {object} viewStyle Style object for the wrapping View component
  * @param {boolean} debug Set to `true` to console.log(`Row: ${rowKey}`)
- * @param {func}  getCellRef function passed from DataTable - see above.
- * @param {func}  adjustToTop function passed from DataTable, scrolling this row to the top.
- * @param {func}  focusNextCell function passed from DataTable - see above.
  * @param {number}  rowIndex  index of this row within DataTable.
  * @param {func} renderCells renderProp callBack for rendering cells based on rowData and rowState
  *                          `(rowKey, columnKey) => {...}`
  */
 const Row = React.memo(
-  ({
-    rowData,
-    rowState,
-    rowKey,
-    renderCells,
-    style,
-    onPress,
-    debug,
-    focusNextCell,
-    rowIndex,
-    getCellRef,
-    adjustToTop,
-  }) => {
+  ({ rowData, rowState, rowKey, renderCells, style, onPress, debug, rowIndex }) => {
     if (debug) {
       console.log('=================================');
       console.log(`Row: ${rowKey}`);
     }
+
+    const { adjustToTop } = useContext(RefContext);
+
+    const onFocus = () => adjustToTop(rowIndex);
+
     const Container = onPress ? TouchableOpacity : View;
     return (
-      <Container
-        onPress={onPress}
-        style={style}
-        onFocus={() => {
-          adjustToTop(rowIndex);
-        }}
-      >
-        {renderCells(rowData, rowState, rowKey, rowIndex, getCellRef, focusNextCell)}
+      <Container onPress={onPress} style={style} onFocus={onFocus}>
+        {renderCells(rowData, rowState, rowKey, rowIndex)}
       </Container>
     );
   }
@@ -81,10 +67,7 @@ Row.propTypes = {
   style: PropTypes.object,
   onPress: PropTypes.func,
   debug: PropTypes.bool,
-  focusNextCell: PropTypes.func,
   rowIndex: PropTypes.number.isRequired,
-  getCellRef: PropTypes.func,
-  adjustToTop: PropTypes.func,
 };
 
 Row.defaultProps = {
@@ -92,9 +75,6 @@ Row.defaultProps = {
   style: {},
   onPress: null,
   debug: true,
-  focusNextCell: null,
-  getCellRef: null,
-  adjustToTop: null,
 };
 
 export default Row;
