@@ -38,9 +38,11 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
   // Array of column keys for determining ref indicies.
   const editableColumnKeys = useMemo(
     () =>
-      columns.reduce((acc, column) => {
-        if (column.type === 'editable' || column.type === 'date') return [...acc, column.key];
-        return acc;
+      columns.reduce((columnKeys, column) => {
+        if (column.type === 'editable' || column.type === 'date') {
+          return [...columnKeys, column.key];
+        }
+        return columnKeys;
       }, []),
     [columns]
   );
