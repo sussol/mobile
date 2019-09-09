@@ -107,6 +107,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
           isFinalised={isFinalised}
           dispatch={dispatch}
           getAction={getAction}
+          rowIndex={index}
         />
       );
     },

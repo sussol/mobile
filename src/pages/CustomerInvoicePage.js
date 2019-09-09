@@ -125,6 +125,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
           isFinalised={isFinalised}
           dispatch={dispatch}
           getAction={getAction}
+          rowIndex={index}
         />
       );
     },
