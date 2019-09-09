@@ -67,10 +67,6 @@ export const NewExpiryDateInput = React.memo(
 
     const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
 
-    console.log('#################################');
-    console.log(columnKey);
-    console.log('#################################');
-
     const refIndex = getRefIndex(rowIndex, columnKey);
 
     // Customhook managing the editing of an expiry date to stay valid.
