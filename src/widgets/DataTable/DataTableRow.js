@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import { newDataTableStyles } from '../../globalStyles';
 
 import Row from './Row';
-import EditableCell from './EditableCell';
 import Cell from './Cell';
 import CheckableCell from './CheckableCell';
 import { NewExpiryDateInput } from '../NewExpiryDateInput';
@@ -21,6 +20,7 @@ import {
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
 } from '../icons';
+import TextInputCell from './TextInputCell';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -28,17 +28,15 @@ import {
  * will generate the appropriate cell for a given columnKey.
  * Doesn't need to be used, but is a convenience component.
  *
- * @param {Object} rowData  Data object for a row i.e. ItemBatch object
- * @param {Object} rowState State object for a row, see: Row.js
- * @param {Object} style    Style object the be passed to inner Row
- * @param {String} rowKey   Unique key for a row
- * @param {Array} columns   Array of column objects, see: columns.js
- * @param {Bool} isFinalised    Boolean indicating if the DataTable page is finalised.
- * @param {Func} focusCellAction    Action for focusing a cell.
- * @param {Func} focusNextAction    Action for focusing the next cell.
- * @param {Func} dispatch   Dispatch function for containing reducer.
- * @param {Func} getAction  Function to return an action for a cell
- *                          (colKey, propName) => actionObject
+ * @param {Object} rowData     Data object for a row i.e. ItemBatch object
+ * @param {Object} rowState    State object for a row, see: Row.js
+ * @param {Object} style       Style object the be passed to inner Row
+ * @param {String} rowKey      Unique key for a row
+ * @param {Array}  columns     Array of column objects, see: columns.js
+ * @param {Bool}   isFinalised Boolean indicating if the DataTable page is finalised.
+ * @param {Func}   dispatch    Dispatch function for containing reducer.
+ * @param {Func}   getAction   Function to return an action for a cell
+ *                             (colKey, propName) => actionObject
  */
 const DataTableRow = React.memo(
   ({
@@ -49,10 +47,9 @@ const DataTableRow = React.memo(
     columns,
     isFinalised,
     dispatch,
-    focusCellAction,
-    focusNextAction,
     getAction,
     onPress,
+    rowIndex,
   }) => {
     // Key of the current column focused.
     const focusedColumnKey = rowState && rowState.focusedColumn;
@@ -74,11 +71,10 @@ const DataTableRow = React.memo(
         const isDisabled = isFinalised || (rowState && rowState.isDisabled);
         const isFocused = focusedColumnKey === columnKey;
         const cellAlignment = alignText || 'left';
-
         switch (type) {
           case 'editable':
             return (
-              <EditableCell
+              <TextInputCell
                 key={columnKey}
                 value={rowData[columnKey]}
                 rowKey={rowKey}
@@ -86,8 +82,6 @@ const DataTableRow = React.memo(
                 editAction={getAction(columnKey)}
                 isFocused={isFocused}
                 isDisabled={isDisabled}
-                focusAction={focusCellAction}
-                focusNextAction={focusNextAction}
                 dispatch={dispatch}
                 width={width}
                 viewStyle={cellContainer[cellAlignment]}
@@ -97,6 +91,7 @@ const DataTableRow = React.memo(
                 textInputStyle={cellText[cellAlignment]}
                 textStyle={editableCellUnfocused[cellAlignment]}
                 cellTextStyle={editableCellText}
+                rowIndex={rowIndex}
               />
             );
 
@@ -131,11 +126,10 @@ const DataTableRow = React.memo(
                 editAction={getAction(columnKey)}
                 isFocused={isFocused}
                 isDisabled={isDisabled}
-                focusAction={focusCellAction}
-                focusNextAction={focusNextAction}
                 dispatch={dispatch}
                 width={width}
                 isLastCell={isLastCell}
+                rowIndex={rowIndex}
               />
             );
 
@@ -163,6 +157,7 @@ const DataTableRow = React.memo(
         rowKey={rowKey}
         rowData={rowData}
         rowState={rowState}
+        rowIndex={rowIndex}
       />
     );
   }
@@ -170,12 +165,11 @@ const DataTableRow = React.memo(
 
 DataTableRow.defaultProps = {
   isFinalised: false,
-  focusCellAction: null,
-  focusNextAction: null,
   getAction: null,
   onPress: null,
   rowState: null,
 };
+
 DataTableRow.propTypes = {
   onPress: PropTypes.func,
   rowData: PropTypes.object.isRequired,
@@ -185,9 +179,8 @@ DataTableRow.propTypes = {
   columns: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired,
   isFinalised: PropTypes.bool,
-  focusCellAction: PropTypes.func,
-  focusNextAction: PropTypes.func,
   getAction: PropTypes.func,
+  rowIndex: PropTypes.number.isRequired,
 };
 
 export default DataTableRow;
