@@ -43,6 +43,7 @@ import RefContext from './DataTable/RefContext';
  * @param {String}  placeholder String to display when the cell is empty.
  * @param {func} editAction Action creator for handling editing of this cell.
  *                          `(newValue, rowKey, columnKey) => {...}`
+ * @param {String} underlineColor    Underline colour of TextInput on Android.
  *
  */
 
@@ -62,6 +63,7 @@ export const NewExpiryDateInput = React.memo(
     debug,
     placeholder,
     rowIndex,
+    underlineColor,
   }) => {
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
 
@@ -119,7 +121,7 @@ export const NewExpiryDateInput = React.memo(
           onChangeText={setExpiryDate}
           onSubmitEditing={onSubmit}
           onEndEditing={finishEditingExpiryDate}
-          underlineColorAndroid="#CDCDCD"
+          underlineColorAndroid={underlineColor}
           keyboardType="numeric"
           blurOnSubmit={false}
         />
@@ -141,6 +143,7 @@ NewExpiryDateInput.propTypes = {
   placeholder: PropTypes.string,
   rowIndex: PropTypes.number.isRequired,
   placeholderColour: PropTypes.string,
+  underlineColor: PropTypes.string,
 };
 
 NewExpiryDateInput.defaultProps = {
@@ -151,6 +154,7 @@ NewExpiryDateInput.defaultProps = {
   debug: false,
   placeholder: 'mm/yyyy',
   placeholderColour: '#CDCDCD',
+  underlineColor: '#CDCDCD',
 };
 
 export default NewExpiryDateInput;

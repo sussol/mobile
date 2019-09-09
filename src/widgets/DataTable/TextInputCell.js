@@ -30,6 +30,7 @@ import { getAdjustedStyle } from './utilities';
  *                                   removing the borderRight,
  * @param {func}  editAction         Action creator for handling editing of this cell.
  *                                   `(newValue, rowKey, columnKey) => {...}`
+ * @param {String} underlineColor    Underline colour of TextInput on Android.
  */
 const TextInputCell = React.memo(
   ({
@@ -49,6 +50,7 @@ const TextInputCell = React.memo(
     rowIndex,
     textInputStyle,
     cellTextStyle,
+    underlineColor,
   }) => {
     if (debug) console.log(`- TextInputCell: ${value}`);
 
@@ -88,7 +90,7 @@ const TextInputCell = React.memo(
           placeholderTextColor={placeholderColour}
           onChangeText={onEdit}
           onSubmitEditing={focusNext}
-          underlineColorAndroid="#CDCDCD"
+          underlineColorAndroid={underlineColor}
           keyboardType={keyboardType}
           blurOnSubmit={false}
         />
@@ -113,6 +115,7 @@ TextInputCell.propTypes = {
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
   rowIndex: PropTypes.number.isRequired,
+  underlineColor: PropTypes.string,
   keyboardType: PropTypes.oneOf([
     'default',
     'number-pad',
@@ -135,6 +138,7 @@ TextInputCell.defaultProps = {
   keyboardType: 'numeric',
   placeholder: '',
   placeholderColour: '#CDCDCD',
+  underlineColor: '#CDCDCD',
 };
 
 export default TextInputCell;
