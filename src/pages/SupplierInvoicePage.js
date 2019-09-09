@@ -19,8 +19,6 @@ import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widge
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import {
-  focusCell,
-  focusNext,
   deselectAll,
   sortData,
   filterData,
@@ -108,8 +106,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
           columns={columns}
           isFinalised={isFinalised}
           dispatch={dispatch}
-          focusCellAction={focusCell}
-          focusNextAction={focusNext}
           getAction={getAction}
         />
       );
@@ -203,6 +199,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={memoizedGetItemLayout}
+        columns={columns}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
