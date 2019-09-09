@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { View, TextInput } from 'react-native';
 
 import Cell from './Cell';
+import RefContext from './RefContext';
 
 import { getAdjustedStyle } from './utilities';
 
@@ -11,27 +12,24 @@ import { getAdjustedStyle } from './utilities';
  * Renders a cell that on press or focus contains a TextInput for
  * editing values.
  *
- * @param {string|number} value The value to render in cell
- * @param {string|number} rowKey Unique key associated to row cell is in
- * @param {string|number} columnKey Unique key associated to column cell is in
- * @param {bool} isDisabled If `true` will render a plain Cell element with no interaction
+ * @param {string|number} value      The value to render in cell
+ * @param {string|number} rowKey     Unique key associated to row cell is in
+ * @param {string|number} columnKey  Unique key associated to column cell is in
+ * @param {bool} isDisabled          If `true` will render a plain Cell element with no interaction
  * @param {String} placeholderColour Placholder text colour
- * @param {func} editAction Action creator for handling editing of this cell.
- *                          `(newValue, rowKey, columnKey) => {...}`
- * @param {func}  dispatch Reducer dispatch callback for handling actions
- * @param {Object}  viewStyle Style object for the wrapping View component
- * @param {Object}  textStyle Style object for the inner Text component
- * @param {Object}  textInputStyle  Style object for TextInput component.
- * @param {Bool}  isLastCell Indicator if this cell is last in a row, removing the borderRight,
- * @param {Number}  width Optional flex property to inject into styles.
- * @param {bool}    debug Logs rendering of this component.
- * @param {string}  keyboardType Type of keyboard for the TextInput.
- * @param {string}  placeholder placeholder text
- * @param {Object} cellTextStyle text style for the disabled Cell component.
- * @param {Func}    getRef function returning a ref for this cell. See DataTable.js
- * @param {Func}    focusNextCell Functioning to focus the next cell. See DataTable.js
- * @param {Func}    refIndex      reference index for this cell. See Row.js
- *
+ * @param {func}  dispatch           Reducer dispatch callback for handling actions
+ * @param {Object}  viewStyle        Style object for the wrapping View component
+ * @param {Object}  textStyle        Style object for the inner Text component
+ * @param {Object}  textInputStyle   Style object for TextInput component.
+ * @param {Number}  width            Optional flex property to inject into styles.
+ * @param {bool}    debug            Logs rendering of this component.
+ * @param {string}  keyboardType     Type of keyboard for the TextInput.
+ * @param {string}  placeholder      placeholder text
+ * @param {Object} cellTextStyle     text style for the disabled Cell component.
+ * @param {Bool}  isLastCell         Indicator if this cell is last in a row,
+ *                                   removing the borderRight,
+ * @param {func}  editAction         Action creator for handling editing of this cell.
+ *                                   `(newValue, rowKey, columnKey) => {...}`
  */
 const TextInputCell = React.memo(
   ({
@@ -47,15 +45,17 @@ const TextInputCell = React.memo(
     debug,
     keyboardType,
     placeholder,
-    getRef,
-    focusNextCell,
-    refIndex,
     viewStyle,
+    rowIndex,
     textInputStyle,
     cellTextStyle,
   }) => {
     if (debug) console.log(`- TextInputCell: ${value}`);
+
     const usingPlaceholder = placeholder && !value;
+
+    const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
+    const refIndex = getRefIndex(rowIndex, columnKey);
 
     const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
     const focusNext = () => focusNextCell(refIndex);
@@ -81,7 +81,7 @@ const TextInputCell = React.memo(
     return (
       <View style={internalViewStyle}>
         <TextInput
-          ref={getRef(refIndex)}
+          ref={getCellRef(refIndex)}
           placeholder={placeholder}
           style={internalTextStyle}
           value={usingPlaceholder ? '' : String(value)}
@@ -112,6 +112,7 @@ TextInputCell.propTypes = {
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
+  rowIndex: PropTypes.number.isRequired,
   keyboardType: PropTypes.oneOf([
     'default',
     'number-pad',
@@ -120,9 +121,6 @@ TextInputCell.propTypes = {
     'email-address',
     'phone-pad',
   ]),
-  getRef: PropTypes.func.isRequired,
-  focusNextCell: PropTypes.func.isRequired,
-  refIndex: PropTypes.func.isRequired,
 };
 
 TextInputCell.defaultProps = {
