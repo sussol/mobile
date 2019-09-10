@@ -16,8 +16,7 @@ import { navigationStyles } from './navigationStyles';
 import {
   pageStyles,
   expansionPageStyles,
-  // TODO: fix missing export.
-  // PAGE_TOP_LEFT_WIDTH.
+  FULL_SCREEN_MODAL_MARGIN,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
@@ -55,8 +54,7 @@ export {
   dataTableColors,
   pageStyles,
   expansionPageStyles,
-  // TODO: fix missing export.
-  // PAGE_TOP_LEFT_WIDTH
+  FULL_SCREEN_MODAL_MARGIN,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,

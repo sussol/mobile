@@ -249,7 +249,7 @@ export class SupplierRequisitionsPage extends React.Component {
             onConfirm={this.onNewRequisition}
             onCancel={this.onNewRequisition}
             database={database}
-            type="requisition"
+            transactionType="requisition"
             settings={settings}
           />
         )}

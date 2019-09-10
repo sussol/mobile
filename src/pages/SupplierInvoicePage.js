@@ -14,12 +14,13 @@ import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilitie
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
+import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+import { AutocompleteSelector, PageButton, PageInfo, TextEditor, SearchBar } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import {
   focusCell,
   focusNext,
-  selectRow,
-  deselectRow,
   deselectAll,
   sortData,
   filterData,
@@ -35,30 +36,8 @@ import {
 } from './dataTableUtilities/actions';
 import usePageReducer from '../hooks/usePageReducer';
 
-import {
-  AutocompleteSelector,
-  PageButton,
-  PageInfo,
-  TextEditor,
-  CheckedComponent,
-  UncheckedComponent,
-  DisabledCheckedComponent,
-  DisabledUncheckedComponent,
-  NewExpiryDateInput,
-  SearchBar,
-} from '../widgets';
-import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
-import {
-  DataTable,
-  Row,
-  Cell,
-  EditableCell,
-  CheckableCell,
-  DataTableHeaderRow,
-} from '../widgets/DataTable';
-import DataTablePageView from './containers/DataTablePageView';
-
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import DataTablePageView from './containers/DataTablePageView';
 
 const keyExtractor = item => item.id;
 
@@ -105,96 +84,16 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     [comment, theirRef, isFinalised]
   );
 
-  const renderCells = useCallback(
-    (rowData, rowState = {}, rowKey) => {
-      const {
-        cellContainer,
-        editableCellText,
-        editableCellUnfocused,
-        editableCellTextView,
-        cellText,
-        touchableCellContainer,
-      } = newDataTableStyles;
-      return columns.map(({ key: colKey, type, width, alignText }, index) => {
-        const isLastCell = index === columns.length - 1;
-        const isDisabled = isFinalised || (rowState && rowState.isDisabled);
-        switch (type) {
-          case 'editable':
-            return (
-              <EditableCell
-                key={colKey}
-                value={rowData[colKey]}
-                rowKey={rowKey}
-                columnKey={colKey}
-                editAction={editTransactionBatchQuantity}
-                isFocused={colKey === (rowState && rowState.focusedColumn)}
-                isDisabled={isDisabled}
-                focusAction={focusCell}
-                focusNextAction={focusNext}
-                dispatch={dispatch}
-                width={width}
-                viewStyle={cellContainer[alignText || 'left']}
-                textViewStyle={editableCellTextView}
-                isLastCell={isLastCell}
-                keyboardType="numeric"
-                textInputStyle={cellText[alignText || 'left']}
-                textStyle={editableCellUnfocused[alignText || 'left']}
-                cellTextStyle={editableCellText}
-              />
-            );
-          case 'checkable':
-            return (
-              <CheckableCell
-                key={colKey}
-                rowKey={rowKey}
-                columnKey={colKey}
-                isChecked={rowState && rowState.isSelected}
-                isDisabled={isDisabled}
-                CheckedComponent={CheckedComponent}
-                UncheckedComponent={UncheckedComponent}
-                DisabledCheckedComponent={DisabledCheckedComponent}
-                DisabledUncheckedComponent={DisabledUncheckedComponent}
-                onCheckAction={selectRow}
-                onUncheckAction={deselectRow}
-                dispatch={dispatch}
-                containerStyle={touchableCellContainer}
-                width={width}
-                isLastCell={isLastCell}
-              />
-            );
-          case 'date':
-            return (
-              <NewExpiryDateInput
-                key={colKey}
-                value={rowData[colKey]}
-                rowKey={rowKey}
-                columnKey={colKey}
-                editAction={editTransactionBatchExpiryDate}
-                isFocused={colKey === (rowState && rowState.focusedColumn)}
-                isDisabled={isDisabled}
-                focusAction={focusCell}
-                focusNextAction={focusNext}
-                dispatch={dispatch}
-                width={width}
-                isLastCell={isLastCell}
-              />
-            );
-          default:
-            return (
-              <Cell
-                key={colKey}
-                value={rowData[colKey]}
-                width={width}
-                viewStyle={cellContainer[alignText || 'left']}
-                textStyle={cellText[alignText || 'left']}
-                isLastCell={isLastCell}
-              />
-            );
-        }
-      });
-    },
-    [isFinalised]
-  );
+  const getAction = useCallback(columnKey => {
+    switch (columnKey) {
+      case 'totalQuantity':
+        return editTransactionBatchQuantity;
+      case 'expiryDate':
+        return editTransactionBatchExpiryDate;
+      default:
+        return null;
+    }
+  });
 
   const renderRow = useCallback(
     listItem => {
@@ -202,17 +101,21 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       const rowKey = keyExtractor(item);
       const { row, alternateRow } = newDataTableStyles;
       return (
-        <Row
+        <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          renderCells={renderCells}
           style={index % 2 === 0 ? alternateRow : row}
-          debug
+          columns={columns}
+          isFinalised={isFinalised}
+          dispatch={dispatch}
+          focusCellAction={focusCell}
+          focusNextAction={focusNext}
+          getAction={getAction}
         />
       );
     },
-    [data, dataState, renderCells]
+    [data, dataState]
   );
 
   const renderModalContent = () => {

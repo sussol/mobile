@@ -38,3 +38,5 @@ MagnifyingGlass.defaultProps = { size: 40, color: SUSSOL_ORANGE };
 export const Cancel = ({ color, size }) => <EntypoIcon name="cross" color={color} size={size} />;
 Cancel.propTypes = { size: PropTypes.number, color: PropTypes.string };
 Cancel.defaultProps = { size: 40, color: SUSSOL_ORANGE };
+const closeIconStyle = { color: 'white' };
+export const CloseIcon = () => <IonIcon name="md-close" size={36} style={closeIconStyle} />;
