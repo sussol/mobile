@@ -68,6 +68,7 @@ export const CustomerInvoicesPage = ({
     searchTerm,
   } = state;
 
+  // Refresh data on navigating back to this page.
   useNavigationFocusRefresh(dispatch, navigation);
 
   // On Press Handlers
@@ -128,7 +129,7 @@ export const CustomerInvoicesPage = ({
           dispatch={dispatch}
           getAction={getAction}
           rowIndex={index}
-          onPress={onNavigateToInvoice}
+          onPress={onNavigateToInvoice(item)}
         />
       );
     },
