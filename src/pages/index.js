@@ -17,7 +17,7 @@ import {
 import { StockPage } from './StockPage';
 import {
   StocktakeEditPage,
-  checkForFinaliseError as checkForStocktakeFinaliseError,
+  // checkForFinaliseError as checkForStocktakeFinaliseError,
 } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
@@ -71,7 +71,7 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_customer_requisition',
   },
   stocktakeEditor: {
-    checkForError: checkForStocktakeFinaliseError,
+    // checkForError: checkForStocktakeFinaliseError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
     finaliseText: 'finalise_stocktake',
