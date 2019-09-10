@@ -1,17 +1,23 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-/* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, TouchableWithoutFeedback, Text, TextInput } from 'react-native';
-import { useExpiryDateMask } from '../hooks/useExpiryDateMask';
+
+import { View, TextInput } from 'react-native';
+
 import Cell from './DataTable/Cell';
-import { dataTableColors, newDataTableStyles } from '../globalStyles/index';
-import { getAdjustedStyle } from './DataTable/utilities';
+
+import { useExpiryDateMask } from '../hooks/useExpiryDateMask';
+
+import { newDataTableStyles } from '../globalStyles/index';
 import { parseExpiryDate, formatExpiryDate } from '../utilities';
+
+import { getAdjustedStyle } from './DataTable/utilities';
+import RefContext from './DataTable/RefContext';
 
 /**
  * Renders an expiry date cell, managing its own state and not submitting
@@ -29,26 +35,19 @@ import { parseExpiryDate, formatExpiryDate } from '../utilities';
  * @param {bool} disabled If `true` will render a plain Cell element with no interaction
  * @param {bool} isFocused If `false` will TouchableOpacity that dispatches a focusAction
  *                         when pressed. When `true` will render a TextInput with focus
- * @param {func} editAction Action creator for handling editing of this cell.
- *                          `(newValue, rowKey, columnKey) => {...}`
- * @param {func} focusAction Action creator for handling focusing of this cell.
- *                          `(rowKey, columnKey) => {...}`
- * @param {func} focusNextAction Action creator for handling focusing of this cell.
- *                          `(rowKey, columnKey) => {...}`
+
  * @param {func}  dispatch Reducer dispatch callback for handling actions
  * @param {Number}  width Optional flex property to inject into styles.
  * @param {Bool}  isLastCell Indicator for if this cell is the last
  *                                   in a row. Removing the borderRight if true.
  * @param {String}  placeholder String to display when the cell is empty.
+ * @param {func} editAction Action creator for handling editing of this cell.
+ *                          `(newValue, rowKey, columnKey) => {...}`
+ * @param {String} underlineColor    Underline colour of TextInput on Android.
  *
  */
 
-const {
-  expiryBatchTextView,
-  expiryBatchView,
-  expiryBatchText,
-  expiryBatchPlaceholderText,
-} = newDataTableStyles;
+const { expiryBatchView, expiryBatchText, expiryBatchPlaceholderText } = newDataTableStyles;
 
 export const NewExpiryDateInput = React.memo(
   ({
@@ -56,17 +55,21 @@ export const NewExpiryDateInput = React.memo(
     rowKey,
     columnKey,
     isDisabled,
-    isFocused,
+    placeholderColour,
     editAction,
-    focusAction,
-    focusNextAction,
     dispatch,
     isLastCell,
     width,
     debug,
     placeholder,
+    rowIndex,
+    underlineColor,
   }) => {
     if (debug) console.log(`- ExpiryTextInputCell: ${value}`);
+
+    const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
+
+    const refIndex = getRefIndex(rowIndex, columnKey);
 
     // Customhook managing the editing of an expiry date to stay valid.
     const [expiryDate, setExpiryDate, finaliseExpiryDate] = useExpiryDateMask(
@@ -83,7 +86,7 @@ export const NewExpiryDateInput = React.memo(
 
     const onSubmit = () => {
       finishEditingExpiryDate();
-      dispatch(focusNextAction(rowKey, columnKey));
+      focusNextCell(refIndex);
     };
 
     const usingPlaceholder = placeholder && !expiryDate;
@@ -106,40 +109,21 @@ export const NewExpiryDateInput = React.memo(
 
     const internalViewStyle = getAdjustedStyle(expiryBatchView, width, isLastCell);
 
-    // Too many TextInputs causes React Native to crash, so only
-    // truly mount the TextInput when the Cell is focused.
-    // Use TouchableWithoutFeedback because we want the appearance and
-    // feedback to resemble a TextInput regardless of focus.
-    if (!isFocused) {
-      const text = usingPlaceholder ? placeholder : expiryDate;
-
-      return (
-        <TouchableWithoutFeedback onPress={() => dispatch(focusAction(rowKey, columnKey))}>
-          <View style={internalViewStyle}>
-            <View style={expiryBatchTextView}>
-              <Text ellipsizeMode="tail" numberOfLines={1} style={textStyle}>
-                {text}
-              </Text>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      );
-    }
-
     // Render a Cell with a textInput.
     return (
       <View style={internalViewStyle}>
         <TextInput
+          ref={getCellRef(refIndex)}
           placeholder={placeholder}
           style={textStyle}
           value={expiryDate}
+          placeholderTextColor={placeholderColour}
           onChangeText={setExpiryDate}
-          autoFocus={isFocused}
           onSubmitEditing={onSubmit}
           onEndEditing={finishEditingExpiryDate}
-          underlineColorAndroid={dataTableColors.editableCellUnderline}
+          underlineColorAndroid={underlineColor}
           keyboardType="numeric"
-          selectTextOnFocus
+          blurOnSubmit={false}
         />
       </View>
     );
@@ -151,25 +135,26 @@ NewExpiryDateInput.propTypes = {
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isDisabled: PropTypes.bool,
-  isFocused: PropTypes.bool,
   editAction: PropTypes.func.isRequired,
-  focusAction: PropTypes.func.isRequired,
-  focusNextAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
   placeholder: PropTypes.string,
+  rowIndex: PropTypes.number.isRequired,
+  placeholderColour: PropTypes.string,
+  underlineColor: PropTypes.string,
 };
 
 NewExpiryDateInput.defaultProps = {
   value: '',
   isDisabled: false,
-  isFocused: false,
   isLastCell: false,
   width: 0,
   debug: false,
   placeholder: 'mm/yyyy',
+  placeholderColour: '#CDCDCD',
+  underlineColor: '#CDCDCD',
 };
 
 export default NewExpiryDateInput;

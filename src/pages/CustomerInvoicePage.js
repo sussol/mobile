@@ -19,8 +19,6 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import {
   editTotalQuantity,
-  focusCell,
-  focusNext,
   selectRow,
   deselectRow,
   deselectAll,
@@ -124,9 +122,8 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
           columns={columns}
           isFinalised={isFinalised}
           dispatch={dispatch}
-          focusCellAction={focusCell}
-          focusNextAction={focusNext}
           getAction={getAction}
+          rowIndex={index}
         />
       );
     },
@@ -202,6 +199,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={memoizedGetItemLayout}
+        columns={columns}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
