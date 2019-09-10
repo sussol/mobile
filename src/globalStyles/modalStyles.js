@@ -26,6 +26,8 @@ export const modalStyles = {
     paddingRight: 5,
     borderColor: BACKGROUND_COLOR,
     marginRight: 10,
+    color: 'white',
+    fontFamily: APP_FONT_FAMILY,
   },
   modalText: {
     color: 'white',

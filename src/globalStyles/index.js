@@ -16,10 +16,10 @@ import { navigationStyles } from './navigationStyles';
 import {
   pageStyles,
   expansionPageStyles,
-  FULL_SCREEN_MODAL_MARGIN,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
+  FULL_SCREEN_MODAL_MARGIN,
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
 import newPageStyles from './newPageStyles';

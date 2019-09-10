@@ -1,271 +1,200 @@
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
+import { SearchBar } from 'react-native-ui-components';
 
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { buttonStrings, modalStrings } from '../localization';
+import { UIDatabase } from '../database';
+import Settings from '../settings/MobileAppSettings';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton } from '../widgets';
-import { GenericPage } from './GenericPage';
-import { BottomConfirmModal, ByProgramModal, SelectModal } from '../widgets/modals';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import {
+  sortData,
+  filterData,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  closeBasicModal,
+  deleteRequisitions,
+  openBasicModal,
+} from './dataTableUtilities/actions';
+import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import usePageReducer from '../hooks/usePageReducer';
+import DataTablePageView from './containers/DataTablePageView';
 
-import { createRecord } from '../database';
-import { SETTINGS_KEYS } from '../settings';
-import { formatStatus, sortDataBy, getAllPrograms } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-
-const { THIS_STORE_CUSTOM_DATA } = SETTINGS_KEYS;
-
-const DATA_TYPES_SYNCHRONISED = ['Requisition'];
+import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 
 /**
- * Renders the page for displaying supplier requisitions (requests from this store to a
- * supplying store).
+ * Renders a mSupply mobile page with a list of supplier requisitions.
  *
- * @prop {Realm}         database     App database.
- * @prop {func}          navigateTo   CallBack for navigation stack.
- * @prop {Realm.Object}  currentUser  User object representing the current user logged in.
+ * State:
+ * Uses a reducer to manage state with `backingData` being a realm results
+ * of items to display. `data` is a plain JS array of realm objects. data is
+ * hydrated from `backingData` to display in the interface.
+ * i.e: When filtering, data is populated from filtered items of `backingData`.
+ *
+ * dataState is a simple map of objects corresponding to a row being displayed,
+ * holding the state of a given row. Each object has the shape :
+ * { isSelected, isFocused },
+ *
+ * @prop {Object} transaction The realm transaction object for this invoice.
+ * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
+ * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export class SupplierRequisitionsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      selection: [],
-      isCreatingRequisition: false,
-      byProgramModalOpen: false,
-      usesPrograms: false,
-    };
-    this.requisitions = props.database.objects('RequestRequisition');
-    this.dataFilters = {
-      searchTerm: '',
-      sortBy: 'serialNumber',
-      isAscending: false,
-    };
-  }
+export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
+  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+    backingData: UIDatabase.objects('RequestRequisition'),
+    data: UIDatabase.objects('RequestRequisition')
+      .sorted('serialNumber')
+      .slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['serialNumber'],
+    sortBy: 'serialNumber',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+    currentUser,
+  });
 
-  componentDidMount() {
-    const { settings, database } = this.props;
-    this.setState({ usesPrograms: getAllPrograms(settings, database).length > 0 });
-  }
+  const { data, dataState, sortBy, isAscending, columns, modalKey, hasSelection } = state;
 
-  onDelete = shouldConfirm => () => {
-    const { selection } = this.state;
-    const { database } = this.props;
+  const usingPrograms = useCallback(getAllPrograms(Settings, UIDatabase).length > 0, []);
+  const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
+  const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
-    if (shouldConfirm) {
-      database.write(() => {
-        const requisitionsToDelete = [];
-        for (let i = 0; i < selection.length; i += 1) {
-          const requisition = this.requisitions.find(
-            currentRequisition => currentRequisition.id === selection[i]
-          );
-          if (requisition.isValid() && !requisition.isFinalised) {
-            requisitionsToDelete.push(requisition);
-          }
-        }
-        database.delete('Requisition', requisitionsToDelete);
-      });
-    }
-
-    this.setState({ selection: [] });
-    this.refreshData();
-  };
-
-  onNewRequisition = requisitionValues => {
-    const { database, currentUser, settings } = this.props;
-
-    let requisition;
-    if (!requisitionValues) {
-      this.setState({ byProgramModalOpen: false, isCreatingRequisition: false });
-      return;
-    }
-    database.write(() => {
-      let customData = {};
-      try {
-        customData = JSON.parse(settings.get(THIS_STORE_CUSTOM_DATA));
-      } catch (e) {
-        //
-      }
-      const monthsLeadTime = customData.monthsLeadTime ? Number(customData.monthsLeadTime.data) : 0;
-
-      requisition = createRecord(database, 'Requisition', currentUser, {
-        ...requisitionValues,
-        monthsLeadTime,
-      });
-      if (requisition.program) requisition.addItemsFromProgram(database);
-    });
-    this.navigateToRequisition(requisition);
-  };
-
-  onRowPress = requisition => this.navigateToRequisition(requisition);
-
-  onSelectionChange = newSelection => this.setState({ selection: newSelection });
-
-  navigateToRequisition = requisition => {
-    const { navigateTo } = this.props;
-    // Clear any requsitions selected to delete.
-    this.setState({ selection: [], byProgramModalOpen: false });
-    navigateTo('supplierRequisition', `${navStrings.requisition} ${requisition.serialNumber}`, {
-      requisition,
-    });
-  };
-
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  };
-
-  /**
-   * Returns updated data filtered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
-    let sortDataType;
-    switch (sortBy) {
-      case 'serialNumber':
-      case 'numberOfItems':
-        sortDataType = 'number';
-        break;
+  const getAction = useCallback((colKey, propName) => {
+    switch (colKey) {
+      case 'remove':
+        if (propName === 'onCheckAction') return selectRow;
+        return deselectRow;
       default:
-        sortDataType = 'realm';
+        return null;
     }
-    this.setState({
-      data: sortDataBy(data, sortBy, sortDataType, isAscending),
-    });
+  });
+
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = recordKeyExtractor(item);
+      const { row, alternateRow } = newDataTableStyles;
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          style={index % 2 === 0 ? alternateRow : row}
+          columns={columns}
+          dispatch={dispatch}
+          getAction={getAction}
+          onPress={() => reduxDispatch(gotoSupplierRequisition(item))}
+        />
+      );
+    },
+    [data, dataState]
+  );
+
+  const renderButtons = () => {
+    const { verticalContainer, topButton } = globalStyles;
+    return (
+      <View style={verticalContainer}>
+        <PageButton
+          style={topButton}
+          text={buttonStrings.new_requisition}
+          onPress={() => dispatch(openBasicModal(NEW_REQUISITON))}
+        />
+      </View>
+    );
   };
 
-  renderCell = (key, requisition) => {
-    switch (key) {
-      case 'entryDate':
-        return requisition.entryDate.toDateString();
-      case 'supplierName':
-        return requisition.otherStoreName ? requisition.otherStoreName.name : '';
-      case 'status':
-        return formatStatus(requisition.status);
-      case 'delete':
-        return {
-          type: 'checkable',
-          icon: 'md-remove-circle',
-          isDisabled: requisition.isFinalised,
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case SELECT_SUPPLIER:
+        return otherStoreName => {
+          reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
+          dispatch(closeBasicModal());
+        };
+      case PROGRAM_REQUISITION:
+        return requisitionParameters => {
+          reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
+          dispatch(closeBasicModal());
         };
       default:
-        return requisition[key];
+        return null;
     }
   };
 
-  renderNewRequisitionButton = () => {
-    const { usesPrograms } = this.state;
-    const newState = usesPrograms ? { byProgramModalOpen: true } : { isCreatingRequisition: true };
-    return (
-      <PageButton text={buttonStrings.new_requisition} onPress={() => this.setState(newState)} />
-    );
-  };
+  const renderHeader = () => (
+    <DataTableHeaderRow
+      columns={columns}
+      dispatch={instantDebouncedDispatch}
+      sortAction={sortData}
+      isAscending={isAscending}
+      sortBy={sortBy}
+    />
+  );
 
-  render() {
-    const { database, genericTablePageStyles, topRoute, settings } = this.props;
-    const { data, isCreatingRequisition, selection, byProgramModalOpen } = this.state;
-    return (
-      <GenericPage
-        data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopRightComponent={this.renderNewRequisitionButton}
-        onRowPress={this.onRowPress}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'serialNumber',
-            width: 1.5,
-            title: tableStrings.requisition_number,
-            sortable: true,
-          },
-          {
-            key: 'supplierName',
-            width: 2,
-            title: tableStrings.supplier,
-            sortable: false,
-          },
-          {
-            key: 'entryDate',
-            width: 1,
-            title: tableStrings.entered_date,
-            sortable: true,
-          },
-          {
-            key: 'numberOfItems',
-            width: 1,
-            title: tableStrings.items,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'status',
-            width: 1,
-            title: tableStrings.status,
-            sortable: true,
-          },
-          {
-            key: 'delete',
-            width: 1,
-            title: tableStrings.delete,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={database}
-        selection={selection}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
-      >
-        <BottomConfirmModal
-          isOpen={selection.length > 0}
-          questionText={modalStrings.delete_these_invoices}
-          onCancel={this.onDelete(false)}
-          onConfirm={this.onDelete(true)}
-          confirmText={modalStrings.delete}
-        />
-
-        <SelectModal
-          isOpen={isCreatingRequisition}
-          options={database.objects('InternalSupplier')}
-          placeholderText={modalStrings.start_typing_to_select_supplier}
-          queryString="name BEGINSWITH[c] $0"
-          sortByString="name"
-          onSelect={name => this.onNewRequisition({ otherStoreName: name })}
-          onClose={() => this.onNewRequisition()}
-          title={modalStrings.search_for_the_supplier}
-        />
-
-        {byProgramModalOpen && (
-          <ByProgramModal
-            isOpen={byProgramModalOpen}
-            onConfirm={this.onNewRequisition}
-            onCancel={this.onNewRequisition}
-            database={database}
-            transactionType="requisition"
-            settings={settings}
+  const {
+    newPageTopSectionContainer,
+    newPageTopLeftSectionContainer,
+    newPageTopRightSectionContainer,
+    searchBar,
+  } = newPageStyles;
+  return (
+    <DataTablePageView>
+      <View style={newPageTopSectionContainer}>
+        <View style={newPageTopLeftSectionContainer}>
+          <SearchBar
+            onChange={value => debouncedDispatch(filterData(value))}
+            style={searchBar}
+            color={SUSSOL_ORANGE}
+            placeholder=""
           />
-        )}
-      </GenericPage>
-    );
-  }
-}
-
-export default SupplierRequisitionsPage;
-
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
-SupplierRequisitionsPage.propTypes = {
-  database: PropTypes.object.isRequired,
-  currentUser: PropTypes.object.isRequired,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
-  navigateTo: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
+        </View>
+        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+      </View>
+      <DataTable
+        data={data}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={recordKeyExtractor}
+        getItemLayout={getItemLayout}
+      />
+      <BottomConfirmModal
+        isOpen={hasSelection}
+        questionText={modalStrings.remove_these_items}
+        onCancel={() => dispatch(deselectAll())}
+        onConfirm={() => dispatch(deleteRequisitions())}
+        confirmText={modalStrings.remove}
+      />
+      <DataTablePageModal
+        fullScreen={false}
+        isOpen={!!modalKey}
+        modalKey={modalKey}
+        onClose={() => dispatch(closeBasicModal())}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
+      />
+    </DataTablePageView>
+  );
 };
+
+SupplierRequisitionsPage.propTypes = {
+  routeName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired,
+};
+
+SupplierRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };

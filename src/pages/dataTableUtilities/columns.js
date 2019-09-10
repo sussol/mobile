@@ -4,17 +4,72 @@
  */
 
 import { tableStrings } from '../../localization';
+import { UIDatabase } from '../../database/index';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
   supplierInvoice: [2, 4, 2, 2, 1],
   customerInvoices: [1.5, 2.5, 2, 3, 1],
+  supplierRequisitions: [1.5, 2, 1, 1, 1, 1],
+  supplierRequisition: [1.4, 3.5, 2, 1.5, 2, 2, 1],
+  programSupplierRequisition: [1.5, 3.5, 0.5, 0.5, 2, 1.5, 2, 2, 1],
+  stocktakes: [6, 2, 2, 1],
+  stocktakeManager: [2, 6, 1],
+  stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
+  stocktakeEditorReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
 };
 
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
   supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'editableExpiryDate', 'remove'],
   customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'comment', 'delete'],
+  supplierRequisitions: [
+    'serialNumber',
+    'otherPartyName',
+    'numberOfItems',
+    'entryDate',
+    'status',
+    'remove',
+  ],
+  supplierRequisition: [
+    'itemCode',
+    'itemName',
+    'ourStockOnHand',
+    'monthlyUsage',
+    'suggestedQuantity',
+    'requiredQuantity',
+    'remove',
+  ],
+  programSupplierRequisition: [
+    'itemCode',
+    'itemName',
+    'unit',
+    'price',
+    'ourStockOnHand',
+    'monthlyUsage',
+    'suggestedQuantity',
+    'requiredQuantity',
+    'remove',
+  ],
+  stocktakes: ['name', 'createdDate', 'status', 'remove'],
+  stocktakeManager: ['code', 'name', 'selected'],
+  stocktakeEditor: [
+    'itemCode',
+    'itemName',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+    'modalControl',
+  ],
+  stocktakeEditorReasons: [
+    'itemCode',
+    'itemName',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+    'reason',
+    'modalControl',
+  ],
 };
 
 const COLUMNS = () => ({
@@ -26,11 +81,6 @@ const COLUMNS = () => ({
   otherPartyName: {
     key: 'otherPartyName',
     title: tableStrings.customer,
-    sortable: true,
-  },
-  status: {
-    key: 'status',
-    title: tableStrings.status,
     sortable: true,
   },
   comment: {
@@ -69,21 +119,144 @@ const COLUMNS = () => ({
   },
   editableExpiryDate: {
     key: 'expiryDate',
-    type: 'date',
+    type: 'editableDate',
     title: tableStrings.batch_expiry,
     alignText: 'center',
   },
-  delete: {
-    key: 'delete',
-    type: 'checkable',
-    title: tableStrings.delete,
+  entryDate: {
+    type: 'date',
+    key: 'entryDate',
+    title: tableStrings.entered_date,
+    sortable: true,
+  },
+  numberOfItems: {
+    key: 'numberOfItems',
+    title: tableStrings.items,
+    sortable: true,
+    alignText: 'right',
+  },
+  status: {
+    type: 'status',
+    key: 'status',
+    title: tableStrings.status,
+    sortable: true,
+  },
+  ourStockOnHand: {
+    key: 'ourStockOnHand',
+    title: tableStrings.current_stock,
+    sortable: true,
+    alignText: 'right',
+  },
+  monthlyUsage: {
+    key: 'monthlyUsage',
+    title: tableStrings.monthly_usage,
+    sortable: true,
+    alignText: 'right',
+  },
+  suggestedQuantity: {
+    key: 'suggestedQuantity',
+    title: tableStrings.suggested_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  requiredQuantity: {
+    type: 'editable',
+    key: 'requiredQuantity',
+    title: tableStrings.required_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  price: {
+    key: 'price',
+    title: tableStrings.price,
     alignText: 'center',
+  },
+  unit: {
+    key: 'unit',
+    title: tableStrings.unit,
+    alignText: 'center',
+  },
+  code: {
+    key: 'code',
+    title: tableStrings.code,
+    alignText: 'left',
+    sortable: true,
+  },
+  name: {
+    key: 'name',
+    title: tableStrings.name,
+    alignText: 'left',
+    sortable: true,
+  },
+  createdDate: {
+    key: 'createdDate',
+    type: 'date',
+    title: tableStrings.created_date,
+    alignText: 'left',
+    sortable: true,
+  },
+  selected: {
+    key: 'selected',
+    type: 'checkable',
+    title: tableStrings.selected,
+    alignText: 'center',
+  },
+  difference: {
+    key: 'difference',
+    title: tableStrings.difference,
+    sortable: true,
+    alignText: 'right',
+  },
+  countedTotalQuantity: {
+    type: 'editable',
+    key: 'countedTotalQuantity',
+    title: tableStrings.actual_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  snapshotTotalQuantity: {
+    key: 'snapshotTotalQuantity',
+    title: tableStrings.snapshot_quantity,
+    sortable: true,
+    alignText: 'right',
+  },
+  modalControl: {
+    key: 'modalControl',
+    type: 'modalControl',
+    title: tableStrings.batches,
+    sortable: false,
+    alignText: 'center',
+  },
+  reason: {
+    type: 'reason',
+    key: 'mostUsedReasonTitle',
+    title: tableStrings.reason,
+    alignText: 'right',
   },
 });
 
 const getColumns = page => {
-  const columnKeys = PAGE_COLUMNS[page];
-  const widths = PAGE_COLUMN_WIDTHS[page];
+  let columnKeys;
+  let widths;
+
+  switch (page) {
+    case 'stocktakeEditor':
+      {
+        const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
+        if (usesReasons) {
+          columnKeys = PAGE_COLUMNS.stocktakeEditorReasons;
+          widths = PAGE_COLUMN_WIDTHS.stocktakeEditorReasons;
+        } else {
+          columnKeys = PAGE_COLUMNS[page];
+          widths = PAGE_COLUMN_WIDTHS[page];
+        }
+      }
+      break;
+    default:
+      columnKeys = PAGE_COLUMNS[page];
+      widths = PAGE_COLUMN_WIDTHS[page];
+  }
+
   if (!columnKeys) return [];
   if (!(columnKeys.length === widths.length)) return [];
   const columns = COLUMNS();
