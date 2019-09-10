@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -10,7 +11,7 @@ import { View } from 'react-native';
 import { UIDatabase } from '../database';
 import { buttonStrings, modalStrings } from '../localization';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
-import { BottomConfirmModal, SelectModal } from '../widgets/modals';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import {
@@ -70,20 +71,14 @@ export const CustomerInvoicesPage = ({
   useNavigationFocusRefresh(dispatch, navigation);
 
   // On Press Handlers
-  const onFilterData = useCallback(value => dispatch(filterData(value)), []);
-  const onNewInvoice = useCallback(() => dispatch(openBasicModal(MODAL_KEYS.SELECT_CUSTOMER)), []);
-  const onRemoveInvoices = useCallback(() => dispatch(deleteTransactionsById()), []);
-  const onCancelRemoval = useCallback(() => dispatch(deselectAll()), []);
-  const onNavigateToInvoice = useCallback(
-    invoice => () => reduxDispatch(gotoCustomerInvoice(invoice)),
-    []
-  );
-  const onCreateInvoice = useCallback(otherParty => {
-    reduxDispatch(createCustomerInvoice(otherParty, currentUser));
-    dispatch(closeBasicModal());
-  }, []);
+  const onFilterData = value => dispatch(filterData(value));
+  const onNewInvoice = () => dispatch(openBasicModal(MODAL_KEYS.SELECT_CUSTOMER));
+  const onRemoveInvoices = () => dispatch(deleteTransactionsById());
+  const onCancelRemoval = () => dispatch(deselectAll());
+  // Method is memoized in DataTableRow component - cannot memoize the returned closure.
+  const onNavigateToInvoice = invoice => () => reduxDispatch(gotoCustomerInvoice(invoice));
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
@@ -91,7 +86,19 @@ export const CustomerInvoicesPage = ({
       default:
         return null;
     }
-  });
+  };
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_CUSTOMER:
+        return otherParty => {
+          reduxDispatch(createCustomerInvoice(otherParty, currentUser));
+          dispatch(closeBasicModal());
+        };
+      default:
+        return null;
+    }
+  };
 
   const renderHeader = useCallback(
     () => (
@@ -121,7 +128,7 @@ export const CustomerInvoicesPage = ({
           dispatch={dispatch}
           getAction={getAction}
           rowIndex={index}
-          onPress={onNavigateToInvoice(item)}
+          onPress={onNavigateToInvoice}
         />
       );
     },
@@ -169,15 +176,13 @@ export const CustomerInvoicesPage = ({
         onConfirm={onRemoveInvoices}
         confirmText={modalStrings.delete}
       />
-      <SelectModal
+      <DataTablePageModal
+        fullScreen={false}
         isOpen={!!modalKey}
-        options={UIDatabase.objects('Customer')}
-        placeholderText={modalStrings.start_typing_to_select_customer}
-        queryString="name BEGINSWITH[c] $0"
-        sortByString="name"
-        onSelect={onCreateInvoice}
+        modalKey={modalKey}
         onClose={() => dispatch(closeBasicModal())}
-        title={modalStrings.search_for_the_customer}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
       />
     </DataTablePageView>
   );
@@ -185,7 +190,6 @@ export const CustomerInvoicesPage = ({
 
 export default CustomerInvoicesPage;
 
-/* eslint-disable react/require-default-props, react/forbid-prop-types */
 CustomerInvoicesPage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
