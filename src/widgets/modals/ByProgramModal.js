@@ -112,7 +112,8 @@ export const ByProgramModal = ({ settings, database, transactionType, onConfirm 
   const onCloseModal = () => dispatch(setModalClosed());
   // Switches from program <-> general, resetting the state.
   const onToggle = () => dispatch(setToggle());
-  const onCreate = () => onConfirm({ otherStoreName: supplier, program, period, orderType, name });
+  const onCreate = () =>
+    onConfirm({ otherStoreName: supplier, program, period, orderType, stocktakeName: name });
   /** Inner components */
 
   // Togglebar for switching between general <-> program. Resets state on toggle.

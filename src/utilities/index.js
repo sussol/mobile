@@ -22,3 +22,5 @@ export {
   checkForSupplierInvoiceError,
   checkForSupplierRequisitionError,
 } from './finalisation';
+
+export { formatErrorItemNames } from './formatters';

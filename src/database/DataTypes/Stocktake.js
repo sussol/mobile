@@ -88,6 +88,14 @@ export class Stocktake extends Realm.Object {
     });
   }
 
+  get itemsInStocktake() {
+    return this.items.reduce((acc, stocktakeItem) => {
+      const { item } = stocktakeItem;
+      if (item) return [...acc, item];
+      return acc;
+    }, []);
+  }
+
   /**
    * Get if stocktake is confirmed.
    *
@@ -156,6 +164,14 @@ export class Stocktake extends Realm.Object {
     database.write(() => {
       stocktakeItems.forEach(stocktakeItem => {
         stocktakeItem.reset(database);
+      });
+    });
+  }
+
+  resetStocktake(database) {
+    database.write(() => {
+      this.itemsOutdated.forEach(outdatedItem => {
+        outdatedItem.reset(database);
       });
     });
   }

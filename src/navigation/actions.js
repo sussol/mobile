@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { createRecord } from '../database/utilities/index';
@@ -33,6 +33,50 @@ import { SETTINGS_KEYS } from '../settings/index';
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
+export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
+  NavigationActions.navigate({
+    routeName: 'stocktakeManager',
+    params: {
+      title: stocktake ? stocktakeName : navStrings.new_stocktake,
+      stocktakeName,
+      stocktake,
+    },
+  });
+
+export const addItemsToStocktake = (stocktake, itemIds) => dispatch => {
+  UIDatabase.write(() => {
+    stocktake.setItemsByID(UIDatabase, itemIds);
+    UIDatabase.save('Stocktake', stocktake);
+  });
+
+  dispatch(gotoStocktakeEditPage(stocktake));
+};
+
+export const gotoStocktakeEditPage = stocktake =>
+  NavigationActions.navigate({
+    routeName: 'stocktakeEditor',
+    params: {
+      title: navStrings.stocktake,
+      stocktake,
+    },
+  });
+
+export const createStocktake = ({ currentUser, stocktakeName, program, itemIds }) => dispatch => {
+  let stocktake;
+  UIDatabase.write(() => {
+    stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, stocktakeName, program);
+    if (program) stocktake.addItemsFromProgram(UIDatabase);
+    else if (itemIds) stocktake.setItemsByID(UIDatabase, itemIds);
+  });
+
+  const replaceAction = StackActions.replace({
+    routeName: 'stocktakeEditor',
+    params: { stocktake, title: navStrings.stocktake },
+  });
+
+  dispatch(replaceAction);
+};
+
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
     routeName: !requisition.program ? 'supplierRequisition' : 'programSupplierRequisition',

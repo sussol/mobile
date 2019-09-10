@@ -8,7 +8,7 @@ import React from 'react';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 
-import { dataTableColors } from '../globalStyles';
+import { dataTableColors, SUSSOL_ORANGE } from '../globalStyles';
 
 export const SortAscIcon = <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
 export const SortNeutralIcon = <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
@@ -28,3 +28,7 @@ export const DisabledUncheckedComponent = (
 
 const closeIconStyle = { color: 'white' };
 export const CloseIcon = () => <IonIcon name="md-close" size={36} style={closeIconStyle} />;
+
+export const OpenModal = () => <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />;
+
+export const Expand = () => <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />;

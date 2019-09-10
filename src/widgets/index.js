@@ -31,4 +31,6 @@ export {
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
   CloseIcon,
+  OpenModal,
+  Expand,
 } from './icons';
