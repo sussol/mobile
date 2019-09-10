@@ -14,7 +14,7 @@ export { NavigationBar } from './NavigationBar';
 export { OnePressButton } from './OnePressButton';
 export { PageButton } from './PageButton';
 export { PageInfo } from './PageInfo';
-export { SequentialSteps } from './SequentialSteps';
+export { Step } from './Step';
 export { Spinner } from './Spinner';
 export { SyncState } from './SyncState';
 export { TextEditor } from './TextEditor';
@@ -30,4 +30,5 @@ export {
   UncheckedComponent,
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
+  CloseIcon,
 } from './icons';

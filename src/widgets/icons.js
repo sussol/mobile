@@ -25,3 +25,6 @@ export const DisabledCheckedComponent = (
 export const DisabledUncheckedComponent = (
   <IonIcon name="md-radio-button-off" size={15} color={dataTableColors.checkableCellDisabled} />
 );
+
+const closeIconStyle = { color: 'white' };
+export const CloseIcon = () => <IonIcon name="md-close" size={36} style={closeIconStyle} />;

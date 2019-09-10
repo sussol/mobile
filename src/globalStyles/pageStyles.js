@@ -9,6 +9,7 @@ import { APP_FONT_FAMILY } from './fonts';
 export const PAGE_CONTENT_PADDING_HORIZONTAL = 20;
 export const PAGE_CONTENT_PADDING_TOP = 10;
 export const PAGE_CONTENT_PADDING_BOTTOM = 20;
+export const FULL_SCREEN_MODAL_MARGIN = 8;
 
 export const pageStyles = {
   container: {
