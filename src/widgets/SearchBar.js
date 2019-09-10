@@ -52,7 +52,7 @@ export const SearchBar = ({
   const internalViewStyle = { ...viewStyle, borderColor: color };
   const internalTextStyle = { ...textInputStyle, color };
 
-  // For Debouncing to funtion, need to use the same function as the
+  // To debounce a function, need to use the same function as the
   // last call. Memoize this to keep the reference semi-stable. Keeping
   // this reference is an optimization, not a requirement so can change.
   const debouncedCallback = useCallback(
