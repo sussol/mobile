@@ -127,6 +127,14 @@ export class Requisition extends Realm.Object {
   }
 
   /**
+   * Gets the other party (supplier or customer) name.
+   * @return {String}
+   */
+  get otherPartyName() {
+    return (this.otherStoreName && this.otherStoreName.name) || '';
+  }
+
+  /**
    * Set the days to supply of this requisition in months.
    *
    * @param  {number}  months

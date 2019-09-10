@@ -52,10 +52,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
     stocktake_invalid_stock:
-      // eslint-disable-next-line no-multi-str
-      'Stock on hand for these item(s) have changed since this stocktake was last opened \
-       (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" \
-       and "Actual Quantity" will be reset',
+      'Stock on hand for these item(s) have changed since this stocktake was last opened (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" and "Actual Quantity" will be reset',
     select_a_reason: 'Select a reason',
   },
   fr: {

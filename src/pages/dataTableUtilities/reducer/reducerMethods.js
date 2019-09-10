@@ -3,7 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy } from '../../../utilities';
+import { newSortDataBy, MODAL_KEYS, formatErrorItemNames } from '../../../utilities';
+import { UIDatabase } from '../../../database/index';
 
 /**
  * Immutably clears the current focus
@@ -78,20 +79,8 @@ export const filterData = (state, action) => {
   return {
     ...state,
     data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+    searchTerm,
   };
-};
-
-export const editTotalQuantity = (state, action) => {
-  const { rowKey } = action;
-  const { dataState } = state;
-
-  // Change object reference of row in `dataState` to trigger rerender of that row.
-  // Realm object reference in `data` can't be affected in any tidy manner.
-  const newDataState = new Map(dataState);
-  const nextRowState = newDataState.get(rowKey);
-  newDataState.set(rowKey, { ...nextRowState });
-
-  return { ...state, dataState: newDataState };
 };
 
 /**
@@ -179,7 +168,7 @@ export const deselectRow = (state, action) => {
     }
   }
 
-  return { ...state, dataState: newDataState, hasSelection };
+  return { ...state, dataState: newDataState, hasSelection, allSelected: false };
 };
 
 /**
@@ -200,7 +189,22 @@ export const deselectAll = state => {
       });
     }
   }
-  return { ...state, dataState: newDataState, hasSelection: false };
+  return { ...state, dataState: newDataState, hasSelection: false, allSelected: false };
+};
+
+export const selectAll = state => {
+  const { data, dataState, keyExtractor } = state;
+  const newDataState = new Map(dataState);
+
+  data.forEach(item => {
+    const rowKey = keyExtractor(item);
+    newDataState.set(rowKey, {
+      ...newDataState.get(rowKey),
+      isSelected: true,
+    });
+  });
+
+  return { ...state, dataState: newDataState, hasSelection: true, allSelected: true };
 };
 
 /**
@@ -274,17 +278,24 @@ export const addMasterListItems = state => {
 
 /**
  * Creates an Item (Either Requisition or Transaction), and appends
- * this item to the data array for a page.
+ * this item to the data array for a page.  Adds this item to the
+ * head of the list. Resets any sorting or filtering.
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
  * Action: { type: 'addItem', item, addedItemType }
  */
 export const addItem = (state, action) => {
-  const { data } = state;
+  const { backingData } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '', sortBy: '', searchTerm: '' };
+  return {
+    ...state,
+    data: [item, ...backingData.slice(0, backingData.length - 1)],
+    modalKey: '',
+    sortBy: '',
+    searchTerm: '',
+  };
 };
 
 /**
@@ -331,7 +342,7 @@ export const editComment = (state, action) => {
 
   const { comment } = pageObject;
 
-  if (comment !== value) return { ...editPageObject(state, { ...action, field: 'comment' }) };
+  if (comment !== value) return { ...state, modalKey: '', modalValue: null };
   return state;
 };
 
@@ -368,18 +379,32 @@ export const deleteRecordsById = state => {
  * @param {Object} state  The current state
  */
 export const refreshData = state => {
-  const { backingData } = state;
-  return { ...state, data: backingData.slice() };
+  const { backingData, sortBy, isAscending } = state;
+
+  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
+
+  return { ...state, data: newData };
 };
 
-/**
- * Edits an expiry date for a Row in a DataTable.
- *
- * @param {Object} state  The current state
- * @param {Object} action The action to act upon
- * Action: {type: 'editBatchExpiry', rowKey }
- */
-export const editBatchExpiry = (state, action) => {
+export const createAutomaticOrder = state => {
+  const { backingData, sortBy, isAscending } = state;
+
+  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
+
+  return { ...state, data: newData };
+};
+
+export const hideOverStocked = state => {
+  const { backingData } = state;
+
+  const newData = backingData.filter(requisitionItem => requisitionItem.isLessThanThresholdMOS);
+
+  return { ...state, data: newData, showAllStock: false };
+};
+
+export const showOverStocked = state => ({ ...refreshData(state), showAllStock: true });
+
+export const editField = (state, action) => {
   const { rowKey } = action;
   const { dataState } = state;
 
@@ -390,4 +415,148 @@ export const editBatchExpiry = (state, action) => {
   newDataState.set(rowKey, { ...nextRowState });
 
   return { ...state, dataState: newDataState };
+};
+
+export const useSuggestedQuantities = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData.slice() };
+};
+
+export const selectItems = (state, action) => {
+  const { dataState, keyExtractor } = state;
+  const { items } = action;
+
+  const newDataState = new Map(dataState);
+  items.forEach(item => {
+    const rowKey = keyExtractor(item);
+    newDataState.set(rowKey, { ...dataState.get(rowKey), isSelected: true });
+  });
+
+  return {
+    ...state,
+    dataState: newDataState,
+    showAll: true,
+    allSelected: false,
+    hasSelection: true,
+  };
+};
+
+export const editName = (state, action) => {
+  const { value } = action;
+
+  return { ...state, name: value };
+};
+
+export const hideStockOut = state => {
+  const { backingData } = state;
+
+  const newData = backingData.filter(item => item.hasStock);
+
+  return { ...state, data: newData, showAll: false, searchTerm: '' };
+};
+
+export const showStockOut = state => ({ ...refreshData(state), showAll: true, searchTerm: '' });
+export const editCountedTotalQuantity = (state, action) => {
+  const { rowKey } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  return { ...state, dataState: newDataState };
+};
+
+export const openStocktakeBatchModal = (state, action) => {
+  const { rowKey } = action;
+  const { data } = state;
+
+  const stocktakeBatchToEdit = data.find(({ id }) => id === rowKey);
+
+  return {
+    ...state,
+    modalValue: stocktakeBatchToEdit,
+    modalKey: MODAL_KEYS.EDIT_STOCKTAKE_BATCH,
+  };
+};
+
+export const closeStocktakeBatchModal = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData.slice(), modalKey: '' };
+};
+
+export const openModal = (state, action) => {
+  const { modalKey, value } = action;
+  return { ...state, modalKey, modalValue: value };
+};
+
+export const openCommentModal = state => {
+  const { pageObject } = state;
+
+  const { comment } = pageObject;
+
+  return { ...state, modalKey: MODAL_KEYS.STOCKTAKE_COMMENT_EDIT, modalValue: comment };
+};
+
+export const openStocktakeOutdatedItems = state => {
+  const { pageObject } = state;
+  const { itemsOutdated } = pageObject;
+
+  return {
+    ...state,
+    modalValue: formatErrorItemNames(itemsOutdated),
+    modalKey: MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM,
+  };
+};
+
+export const resetStocktake = state => {
+  const { backingData } = state;
+
+  return { ...state, data: backingData.slice(), modalKey: '', modalValue: null };
+};
+
+export const editCountedTotalQuantityWithReason = (state, action) => {
+  const { rowKey, objectToEdit } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  const { enforceReason } = objectToEdit;
+
+  if (!enforceReason) objectToEdit.applyReasonToBatches(UIDatabase);
+
+  return {
+    ...state,
+    dataState: newDataState,
+    modalValue: objectToEdit,
+    modalKey: enforceReason ? MODAL_KEYS.ENFORCE_STOCKTAKE_REASON : '',
+  };
+};
+
+export const openStocktakeReasonsModal = (state, action) => {
+  const { keyExtractor, data } = state;
+  const { rowKey } = action;
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  return { ...state, modalKey: MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, modalValue: objectToEdit };
+};
+
+export const applyReason = state => {
+  const { dataState, modalValue, keyExtractor } = state;
+
+  const newDataState = new Map(dataState);
+
+  const rowKey = keyExtractor(modalValue);
+  const dataStateToUpdate = dataState.get(keyExtractor(modalValue));
+
+  newDataState.set(rowKey, { ...dataStateToUpdate });
+
+  return { ...state, dataState: newDataState, modalKey: '', modalValue: null };
 };

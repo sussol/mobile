@@ -8,12 +8,11 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo } from '../widgets';
+import { PageButton, PageInfo, SearchBar } from '../widgets';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
@@ -31,13 +30,13 @@ import {
   openBasicModal,
   closeBasicModal,
   deleteItemsById,
-  refreshData,
   addItem,
 } from './dataTableUtilities/actions';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
+import { useDatabaseChangeListener } from '../hooks/useDatabaseChangeListener';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -57,7 +56,7 @@ import DataTablePageView from './containers/DataTablePageView';
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     pageObject: transaction,
     backingData: transaction.items,
     data: transaction.items.sorted('item.name').slice(),
@@ -73,6 +72,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   });
 
   const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+
   const {
     data,
     dataState,
@@ -83,15 +83,13 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     pageInfo,
     pageObject,
     hasSelection,
-    backingData,
     keyExtractor,
+    searchTerm,
   } = state;
+
   const { isFinalised, comment, theirRef } = pageObject;
 
-  // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
-  // Since this does not manipulate the state through the reducer, state is not updated (in
-  // particular `data`) so a manual syncing of `backingData` and `data` needs to occur.
-  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
+  useDatabaseChangeListener(dispatch, pageObject, 'Transaction');
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
@@ -187,10 +185,9 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={value => dispatch(filterData(value))}
             style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>

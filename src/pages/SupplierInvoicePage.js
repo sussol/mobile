@@ -8,17 +8,19 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
+
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 
 import { MODAL_KEYS, getModalTitle } from '../utilities';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
 import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
-import { AutocompleteSelector, PageButton, PageInfo, TextEditor } from '../widgets';
+import { AutocompleteSelector, PageButton, PageInfo, TextEditor, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import {
+  selectRow,
+  deselectRow,
   deselectAll,
   sortData,
   filterData,
@@ -40,7 +42,7 @@ import DataTablePageView from './containers/DataTablePageView';
 const keyExtractor = item => item.id;
 
 export const SupplierInvoicePage = ({ routeName, transaction }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     pageObject: transaction,
     backingData: transaction.getTransactionBatches(UIDatabase),
     data: transaction
@@ -69,6 +71,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     pageObject,
     hasSelection,
     backingData,
+    searchTerm,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
@@ -81,12 +84,15 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     [comment, theirRef, isFinalised]
   );
 
-  const getAction = useCallback(columnKey => {
+  const getAction = useCallback((columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
         return editTransactionBatchQuantity;
       case 'expiryDate':
         return editTransactionBatchExpiryDate;
+      case 'remove':
+        if (propName === 'onCheckAction') return selectRow;
+        return deselectRow;
       default:
         return null;
     }
@@ -185,10 +191,11 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={value => dispatch(filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>

@@ -1,11 +1,12 @@
+/* eslint-disable dot-notation */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-import { pageInfoStrings } from '../../localization';
+import { pageInfoStrings, programStrings } from '../../localization';
 import { formatDate } from '../../utilities';
 
-import { openBasicModal } from './actions';
+import { openBasicModal, openModal } from './actions';
 
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
 
@@ -25,11 +26,17 @@ import { MODAL_KEYS } from '../../utilities/getModalTitle';
  * required pageInfo columns for the page.
  */
 
-const { THEIR_REF_EDIT, COMMENT_EDIT } = MODAL_KEYS;
+const { THEIR_REF_EDIT, COMMENT_EDIT, MONTHS_SELECT, STOCKTAKE_COMMENT_EDIT } = MODAL_KEYS;
 
 const PER_PAGE_INFO_COLUMNS = {
   customerInvoice: [['entryDate', 'confirmDate', 'enteredBy'], ['customer', 'theirRef', 'comment']],
   supplierInvoice: [['entryDate', 'confirmDate'], ['otherParty', 'theirRef', 'comment']],
+  supplierRequisition: [['entryDate', 'enteredBy'], ['otherParty', 'monthsToSupply', 'comment']],
+  programSupplierRequisition: [
+    ['program', 'orderType', 'entryDate', 'enteredBy'],
+    ['period', 'otherParty', 'programMonthsToSupply', 'comment'],
+  ],
+  stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
@@ -63,15 +70,50 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   },
   otherParty: {
     title: `${pageInfoStrings.supplier}:`,
-    info: pageObject.otherParty && pageObject.otherParty.name,
+    info: pageObject.supplierName,
+  },
+  program: {
+    title: `${programStrings.program}:`,
+    info: pageObject.program && pageObject.program.name,
+  },
+  orderType: {
+    title: `${programStrings.order_type}:`,
+    info: pageObject.orderType,
+  },
+  monthsToSupply: {
+    title: `${pageInfoStrings.months_stock_required}:`,
+    info: pageObject.monthsToSupply,
+    onPress: () => dispatch(openBasicModal(MONTHS_SELECT)),
+    editableType: 'selectable',
+  },
+  period: {
+    title: `${programStrings.period}:`,
+    info: pageObject.period && pageObject.period.toInfoString(),
+  },
+  programMonthsToSupply: {
+    title: `${pageInfoStrings.months_stock_required}:`,
+    info: pageObject.monthsToSupply,
+  },
+  stocktakeName: {
+    title: `${pageInfoStrings.stocktake_name}:`,
+    info: pageObject.name,
+    onPress: null,
+    editableType: 'text',
+  },
+  stocktakeComment: {
+    title: `${pageInfoStrings.comment}:`,
+    info: pageObject.comment,
+    onPress: () => dispatch(openModal(STOCKTAKE_COMMENT_EDIT)),
+    editableType: 'text',
   },
 });
 
 const getPageInfo = page => {
   const pageInfoColumns = PER_PAGE_INFO_COLUMNS[page];
+
   if (!pageInfoColumns) return null;
-  return (pageObject, dispatch) => {
-    const pageInfoRows = PAGE_INFO_ROWS(pageObject, dispatch);
+  return (pageObjectParameter, dispatch) => {
+    const pageInfoRows = PAGE_INFO_ROWS(pageObjectParameter, dispatch);
     return pageInfoColumns.map(pageInfoColumn =>
       pageInfoColumn.map(pageInfoKey => pageInfoRows[pageInfoKey])
     );

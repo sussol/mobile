@@ -39,14 +39,26 @@ export const sortDataBy = (data, sortBy, sortDataType, isAscending = true) => {
 };
 
 const sortKeyToType = {
-  otherPartyName: 'string',
   itemCode: 'string',
   itemName: 'string',
-  status: 'string',
-  serialNumber: 'number',
   availableQuantity: 'number',
   totalQuantity: 'number',
-  editableExpiryDate: 'date',
+  expiryDate: 'date',
+  serialNumber: 'number',
+  numberOfItems: 'number',
+  status: 'string',
+  entryDate: 'date',
+  otherPartyName: 'string',
+  ourStockOnHand: 'number',
+  monthlyUsage: 'number',
+  suggestedQuantity: 'number',
+  requiredQuantity: 'number',
+  createdDate: 'date',
+  name: 'string',
+  code: 'string',
+  snapshotTotalQuantity: 'number',
+  countedTotalQuantity: 'number',
+  difference: 'number',
 };
 
 /**

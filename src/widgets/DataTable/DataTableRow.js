@@ -11,7 +11,11 @@ import { newDataTableStyles } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
+
 import CheckableCell from './CheckableCell';
+import TouchableCell from './TouchableCell';
+import DropDownCell from '../DropDownCell';
+
 import { NewExpiryDateInput } from '../NewExpiryDateInput';
 
 import {
@@ -19,8 +23,11 @@ import {
   UncheckedComponent,
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
+  OpenModal,
 } from '../icons';
 import TextInputCell from './TextInputCell';
+
+import { formatStatus } from '../../utilities/index';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -68,7 +75,7 @@ const DataTableRow = React.memo(
       // Map each column to an appropriate cell for a given row.
       return columns.map(({ key: columnKey, type, width, alignText }, index) => {
         const isLastCell = index === columns.length - 1;
-        const isDisabled = isFinalised || (rowState && rowState.isDisabled);
+        const isDisabled = isFinalised || (rowState && rowState.isDisabled) || rowData.isFinalised;
         const isFocused = focusedColumnKey === columnKey;
         const cellAlignment = alignText || 'left';
         switch (type) {
@@ -116,7 +123,7 @@ const DataTableRow = React.memo(
               />
             );
 
-          case 'date':
+          case 'editableDate':
             return (
               <NewExpiryDateInput
                 key={columnKey}
@@ -130,6 +137,64 @@ const DataTableRow = React.memo(
                 width={width}
                 isLastCell={isLastCell}
                 rowIndex={rowIndex}
+              />
+            );
+
+          case 'status':
+            return (
+              <Cell
+                key={columnKey}
+                value={formatStatus(rowData[columnKey])}
+                width={width}
+                viewStyle={cellContainer[cellAlignment]}
+                textStyle={cellText[cellAlignment]}
+                isLastCell={isLastCell}
+              />
+            );
+
+          case 'date':
+            return (
+              <Cell
+                key={columnKey}
+                value={rowData[columnKey] && rowData[columnKey].toDateString()}
+                width={width}
+                viewStyle={cellContainer[cellAlignment]}
+                textStyle={cellText[cellAlignment]}
+                isLastCell={isLastCell}
+              />
+            );
+
+          case 'modalControl':
+            return (
+              <TouchableCell
+                key={columnKey}
+                renderChildren={OpenModal}
+                rowKey={rowKey}
+                columnKey={columnKey}
+                onPressAction={getAction(columnKey)}
+                dispatch={dispatch}
+                width={width}
+                isLastCell={isLastCell}
+                containerStyle={{
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              />
+            );
+
+          case 'reason':
+            return (
+              <DropDownCell
+                isDisabled={isFinalised}
+                dispatch={dispatch}
+                onPressAction={getAction(columnKey)}
+                rowKey={rowKey}
+                columnKey={columnKey}
+                value={rowData[columnKey]}
+                isLastCell={false}
+                width={width}
+                debug
               />
             );
 
