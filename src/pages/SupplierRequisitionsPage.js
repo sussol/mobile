@@ -196,3 +196,5 @@ SupplierRequisitionsPage.propTypes = {
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
 };
+
+SupplierRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };

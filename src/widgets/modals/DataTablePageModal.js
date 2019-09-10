@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -11,9 +12,21 @@ import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
+import { ToggleSelector } from '../ToggleSelector';
+import { NewConfirmModal } from './NewConfirmModal';
+import { GenericChoiceList } from '../GenericChoiceList';
 import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
 import Settings from '../../settings/MobileAppSettings';
+
+import { RequisitionRegimenModalTable } from '../../pages/expansions/RequisitionRegimenModalTable';
+import {
+  dataTableColors,
+  dataTableStyles,
+  pageStyles,
+  SUSSOL_ORANGE,
+} from '../../globalStyles/index';
+import NewSocktakeBatchModal from './NewStocktakeBatchModal';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
@@ -25,6 +38,12 @@ import Settings from '../../settings/MobileAppSettings';
  * @prop {String} modalKey     The title to show in within the modal.
  * @prop {String} currentValue The current value a modal should be i.e. theirRef/comment
  */
+
+const ADDITIONAL_MODAL_PROPS = {
+  [MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM]: { noCancel: true, fullScreen: true },
+  [MODAL_KEYS.ENFORCE_STOCKTAKE_REASON]: { noCancel: true, fullScreen: true },
+};
+
 export const DataTablePageModal = ({
   fullScreen,
   isOpen,
@@ -32,6 +51,7 @@ export const DataTablePageModal = ({
   modalKey,
   onSelect,
   currentValue,
+  modalObject,
 }) => {
   const ModalContent = () => {
     switch (modalKey) {
@@ -47,7 +67,7 @@ export const DataTablePageModal = ({
             renderRightText={item => `${item.totalQuantity}`}
           />
         );
-
+      case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       case MODAL_KEYS.COMMENT_EDIT:
         return <TextEditor text={currentValue} onEndEditing={onSelect} />;
 
@@ -77,13 +97,72 @@ export const DataTablePageModal = ({
             onSelect={onSelect}
           />
         );
+
+      case MODAL_KEYS.PROGRAM_STOCKTAKE:
       case MODAL_KEYS.PROGRAM_REQUISITION:
         return (
           <ByProgramModal
             onConfirm={onSelect}
             database={UIDatabase}
-            type="requisition"
+            transactionType={MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'}
             settings={Settings}
+          />
+        );
+
+      case MODAL_KEYS.MONTHS_SELECT:
+        return (
+          <ToggleSelector
+            options={[1, 2, 3, 4, 5, 6]}
+            onSelect={onSelect}
+            selected={currentValue}
+          />
+        );
+
+      case MODAL_KEYS.VIEW_REGIMEN_DATA:
+        return (
+          <RequisitionRegimenModalTable
+            database={UIDatabase}
+            requisition={modalObject}
+            genericTablePageStyles={{
+              searchBarColor: SUSSOL_ORANGE,
+              colors: dataTableColors,
+              dataTableStyles,
+              pageStyles,
+            }}
+          />
+        );
+      case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
+        return (
+          <NewSocktakeBatchModal
+            stocktakeItem={currentValue}
+            database={UIDatabase}
+            genericTablePageStyles={{
+              searchBarColor: SUSSOL_ORANGE,
+              colors: dataTableColors,
+              dataTableStyles,
+              pageStyles,
+            }}
+            onConfirm={onSelect}
+          />
+        );
+      case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
+        return (
+          <NewConfirmModal
+            coverScreen
+            noCancel
+            isOpen={isOpen}
+            questionText={`${modalStrings.stocktake_invalid_stock} ${currentValue}`}
+            onConfirm={onSelect}
+          />
+        );
+      case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
+      case MODAL_KEYS.STOCKTAKE_REASON:
+        return (
+          <GenericChoiceList
+            data={UIDatabase.objects('StocktakeReasons')}
+            highlightValue={currentValue.mostUsedReasonTitle}
+            keyToDisplay="title"
+            onPress={onSelect}
           />
         );
       default:
@@ -97,6 +176,7 @@ export const DataTablePageModal = ({
       isVisible={isOpen}
       onClose={onClose}
       title={getModalTitle(modalKey)}
+      {...ADDITIONAL_MODAL_PROPS[modalKey]}
     >
       <ModalContent />
     </ModalContainer>
@@ -108,9 +188,11 @@ DataTablePageModal.defaultProps = {
   modalKey: '',
   onSelect: null,
   currentValue: '',
+  modalObject: null,
 };
 
 DataTablePageModal.propTypes = {
+  modalObject: PropTypes.object,
   fullScreen: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,

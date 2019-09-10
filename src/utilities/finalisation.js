@@ -42,3 +42,22 @@ export function checkForSupplierInvoiceError(transaction) {
 
   return null;
 }
+
+/**
+ * Check whether a given requisition is safe to be finalised. Return null if safe,
+ * else return an appropriate error message.
+ *
+ * @param   {object}  requisition  The requisition to check.
+ * @return  {string}               Null if safe to finalise, else an error message.
+ */
+export function checkForSupplierRequisitionError(requisition) {
+  if (requisition.items.length === 0) {
+    return modalStrings.add_at_least_one_item_before_finalising;
+  }
+
+  if (requisition.totalRequiredQuantity === 0) {
+    return modalStrings.record_stock_required_before_finalising;
+  }
+
+  return null;
+}

@@ -4,12 +4,20 @@
  */
 import { UIDatabase, createRecord } from '../../database';
 import { parsePositiveInteger } from '../../utilities';
+import Settings from '../../settings/MobileAppSettings';
+import { SETTINGS_KEYS } from '../../settings/index';
+
+import { MODAL_KEYS } from '../../utilities/getModalTitle';
+
+const { STOCKTAKE_OUTDATED_ITEM, EDIT_STOCKTAKE_BATCH, STOCKTAKE_COMMENT_EDIT } = MODAL_KEYS;
 
 /**
  * Actions for use with a data table reducer
  */
 
-export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getState) => {
+export const editField = rowKey => ({ type: 'editField', rowKey });
+
+export const editTotalQuantity = (value, rowKey) => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
@@ -19,12 +27,7 @@ export const editTotalQuantity = (value, rowKey, columnKey) => (dispatch, getSta
     UIDatabase.save('TransactionItem', objectToEdit);
   });
 
-  dispatch({
-    type: 'editTotalQuantity',
-    value,
-    rowKey,
-    columnKey,
-  });
+  dispatch(editField(rowKey));
 };
 
 export const focusCell = (rowKey, columnKey) => ({
@@ -76,8 +79,13 @@ export const closeBasicModal = () => ({
 export const addMasterListItems = objectType => (dispatch, getState) => {
   const { pageObject } = getState();
 
+  const thisStore = UIDatabase.objects('Name').filtered(
+    'id == $0',
+    Settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+  )[0];
+
   UIDatabase.write(() => {
-    pageObject.addItemsFromMasterList(UIDatabase);
+    pageObject.addItemsFromMasterList(UIDatabase, thisStore);
     UIDatabase.save(objectType, pageObject);
   });
   dispatch({ type: 'addMasterListItems', objectType });
@@ -167,10 +175,7 @@ export const refreshData = () => ({
   type: 'refreshData',
 });
 
-export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
-  dispatch,
-  getState
-) => {
+export const editTransactionBatchExpiryDate = (newDate, rowKey) => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
@@ -180,11 +185,7 @@ export const editTransactionBatchExpiryDate = (newDate, rowKey, columnKey) => (
     UIDatabase.save('TransactionBatch', objectToEdit);
   });
 
-  dispatch({
-    type: 'editBatchExpiry',
-    rowKey,
-    columnKey,
-  });
+  dispatch(editField(rowKey));
 };
 
 export const editTransactionBatchQuantity = (value, rowKey) => (dispatch, getState) => {
@@ -199,7 +200,7 @@ export const editTransactionBatchQuantity = (value, rowKey) => (dispatch, getSta
     UIDatabase.save('TransactionBatch', objectToEdit);
   });
 
-  dispatch({ type: 'editTotalQuantity', rowKey });
+  dispatch(editField(rowKey));
 };
 
 export const deleteTransactionBatchesById = pageObjectType => (dispatch, getState) => {
@@ -248,4 +249,144 @@ export const addTransactionBatch = item => (dispatch, getState) => {
 
   if (addedTransactionBatch) dispatch({ type: 'addItem', item: addedTransactionBatch });
   else dispatch(closeBasicModal());
+};
+
+export const createAutomaticOrder = pageObjectType => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  const thisStore = UIDatabase.objects('Name').filtered(
+    'id == $0',
+    Settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+  )[0];
+
+  UIDatabase.write(() => {
+    pageObject.createAutomaticOrder(UIDatabase, thisStore);
+    UIDatabase.save(pageObjectType, pageObject);
+  });
+
+  dispatch({ type: 'createAutomaticOrder' });
+};
+
+export const useSuggestedQuantities = pageObjectType => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  UIDatabase.write(() => {
+    pageObject.setRequestedToSuggested(UIDatabase);
+    UIDatabase.save(pageObjectType, pageObject);
+  });
+
+  dispatch({ type: 'refreshData' });
+};
+
+export const hideOverStocked = () => ({
+  type: 'hideOverStocked',
+});
+
+export const showOverStocked = () => ({
+  type: 'showOverStocked',
+});
+
+export const editMonthsOfSupply = (value, pageObjectType) => (dispatch, getState) => {
+  const { pageObject } = getState();
+  const { monthsToSupply } = pageObject;
+
+  if (monthsToSupply !== value) {
+    UIDatabase.write(() => {
+      pageObject.monthsToSupply = value;
+      UIDatabase.save(pageObjectType, pageObject);
+    });
+  }
+
+  dispatch(closeBasicModal());
+};
+
+export const editRequiredQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.requiredQuantity = parsePositiveInteger(Number(value));
+    UIDatabase.save('RequisitionItem', objectToEdit);
+  });
+
+  dispatch(editField(rowKey));
+};
+
+export const selectAll = () => ({
+  type: 'selectAll',
+});
+
+export const hideStockOut = () => ({
+  type: 'hideStockOut',
+});
+
+export const showStockOut = () => ({
+  type: 'showStockOut',
+});
+
+export const selectItems = items => ({
+  type: 'selectItems',
+  items,
+});
+
+export const editName = value => ({
+  type: 'editName',
+  value,
+});
+
+export const editCountedTotalQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+
+  dispatch({
+    type: 'editCountedTotalQuantity',
+    value,
+    rowKey,
+    objectToEdit,
+  });
+};
+
+export const openStocktakeBatchModal = (rowKey, columnKey) => ({
+  type: 'openStocktakeBatchModal',
+  rowKey,
+  columnKey,
+});
+
+export const closeStocktakeBatchModal = () => ({
+  type: 'closeStocktakeBatchModal',
+});
+
+export const openModal = (modalKey, value) => {
+  switch (modalKey) {
+    case MODAL_KEYS.STOCKTAKE_REASON:
+      return { type: 'openStocktakeReasonsModal', rowKey: value };
+    case EDIT_STOCKTAKE_BATCH:
+      return { type: 'openStocktakeBatchModal', rowKey: value };
+    case STOCKTAKE_COMMENT_EDIT:
+      return { type: 'openCommentModal' };
+    case STOCKTAKE_OUTDATED_ITEM:
+      return { type: 'openStocktakeOutdatedItems' };
+    default:
+      return { type: 'openBasicModal', modalKey };
+  }
+};
+
+export const resetStocktake = () => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  pageObject.resetStocktake(UIDatabase);
+
+  dispatch({ type: 'resetStocktake' });
+};
+
+export const applyReason = value => (dispatch, getState) => {
+  const { modalValue } = getState();
+
+  modalValue.applyReasonToBatches(UIDatabase, value);
+
+  dispatch({ type: 'applyReason' });
 };

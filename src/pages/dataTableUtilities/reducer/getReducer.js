@@ -18,7 +18,6 @@
 
 import {
   filterData,
-  editTotalQuantity,
   focusNextCell,
   selectRow,
   deselectRow,
@@ -33,8 +32,27 @@ import {
   editComment,
   deleteRecordsById,
   refreshData,
-  editBatchExpiry,
+  createAutomaticOrder,
+  hideOverStocked,
+  showOverStocked,
+  editField,
+  selectAll,
+  hideStockOut,
+  showStockOut,
+  selectItems,
+  editName,
+  editCountedTotalQuantity,
+  openStocktakeBatchModal,
+  closeStocktakeBatchModal,
+  openModal,
+  openCommentModal,
+  openStocktakeOutdatedItems,
+  resetStocktake,
+  editCountedTotalQuantityWithReason,
+  applyReason,
+  openStocktakeReasonsModal,
 } from './reducerMethods';
+import { UIDatabase } from '../../../database/index';
 
 /**
  * Used for actions that should be in all pages using a data table.
@@ -48,7 +66,7 @@ const BASE_TABLE_PAGE_REDUCER = {
 const customerInvoice = {
   ...BASE_TABLE_PAGE_REDUCER,
   filterData,
-  editTotalQuantity,
+  editField,
   selectRow,
   deselectRow,
   deselectAll,
@@ -85,9 +103,47 @@ const supplierInvoice = {
   editComment,
   refreshData,
   addItem,
-  editTotalQuantity,
+  editField,
   deleteRecordsById,
-  editBatchExpiry,
+};
+
+const supplierRequisition = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  filterData,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  openBasicModal,
+  closeBasicModal,
+  editTheirRef,
+  editComment,
+  refreshData,
+  addMasterListItems,
+  addItem,
+  createAutomaticOrder,
+  hideOverStocked,
+  showOverStocked,
+  editField,
+  deleteRecordsById,
+};
+
+const programSupplierRequisition = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  filterData,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  openBasicModal,
+  closeBasicModal,
+  editTheirRef,
+  editComment,
+  refreshData,
+  addMasterListItems,
+  addItem,
+  createAutomaticOrder,
+  hideOverStocked,
+  showOverStocked,
+  editField,
 };
 
 const supplierRequisitions = {
@@ -95,11 +151,56 @@ const supplierRequisitions = {
   filterData,
   selectRow,
   deselectRow,
-  deselectAll,
   openBasicModal,
   closeBasicModal,
   refreshData,
-  deleteRecordsById,
+};
+
+const stocktakes = {
+  openBasicModal,
+  closeBasicModal,
+  filterData,
+  selectRow,
+  deselectAll,
+  deselectRow,
+  sortData,
+};
+
+const stocktakeManager = {
+  selectRow,
+  deselectAll,
+  deselectRow,
+  sortData,
+  filterData,
+  selectAll,
+  hideStockOut,
+  showStockOut,
+  selectItems,
+  editName,
+};
+
+const stocktakeEditor = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  sortData,
+  filterData,
+  editComment,
+  openBasicModal,
+  closeBasicModal,
+  editCountedTotalQuantity,
+  refreshData,
+  openStocktakeBatchModal,
+  closeStocktakeBatchModal,
+  openModal,
+  openCommentModal,
+  openStocktakeOutdatedItems,
+  resetStocktake,
+};
+
+const stocktakeEditorReasons = {
+  ...stocktakeEditor,
+  editCountedTotalQuantity: editCountedTotalQuantityWithReason,
+  applyReason,
+  openStocktakeReasonsModal,
 };
 
 const PAGE_REDUCERS = {
@@ -107,10 +208,27 @@ const PAGE_REDUCERS = {
   customerInvoices,
   supplierInvoice,
   supplierRequisitions,
+  supplierRequisition,
+  programSupplierRequisition,
+  stocktakes,
+  stocktakeManager,
+  stocktakeEditor,
+  stocktakeEditorReasons,
 };
 
 const getReducer = page => {
-  const reducer = PAGE_REDUCERS[page];
+  let reducer;
+  switch (page) {
+    case 'stocktakeEditor':
+      {
+        const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
+        reducer = usesReasons ? PAGE_REDUCERS.stocktakeEditorReasons : PAGE_REDUCERS[page];
+      }
+      break;
+    default:
+      reducer = PAGE_REDUCERS[page];
+  }
+
   return (state, action) => {
     const { type } = action;
     if (!reducer[type]) return state;
