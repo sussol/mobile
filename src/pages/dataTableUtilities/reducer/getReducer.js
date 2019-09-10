@@ -89,6 +89,7 @@ const customerInvoices = {
   openBasicModal,
   closeBasicModal,
   deleteRecordsById,
+  refreshData,
 };
 
 const supplierInvoice = {
