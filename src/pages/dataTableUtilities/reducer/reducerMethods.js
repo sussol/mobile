@@ -275,7 +275,8 @@ export const addMasterListItems = state => {
 
 /**
  * Creates an Item (Either Requisition or Transaction), and appends
- * this item to the data array for a page.
+ * this item to the data array for a page.  Adds this item to the
+ * head of the list. Resets any sorting or filtering.
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
