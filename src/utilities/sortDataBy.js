@@ -55,6 +55,10 @@ const sortKeyToType = {
   requiredQuantity: 'number',
   createdDate: 'date',
   name: 'string',
+  code: 'string',
+  snapshotTotalQuantity: 'number',
+  countedTotalQuantity: 'number',
+  difference: 'number',
 };
 
 /**
