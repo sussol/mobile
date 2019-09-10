@@ -40,3 +40,7 @@ Cancel.propTypes = { size: PropTypes.number, color: PropTypes.string };
 Cancel.defaultProps = { size: 40, color: SUSSOL_ORANGE };
 const closeIconStyle = { color: 'white' };
 export const CloseIcon = () => <IonIcon name="md-close" size={36} style={closeIconStyle} />;
+
+export const OpenModal = () => <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />;
+
+export const Expand = () => <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />;

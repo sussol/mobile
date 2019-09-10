@@ -32,13 +32,13 @@ import {
   openBasicModal,
   closeBasicModal,
   deleteItemsById,
-  refreshData,
   addItem,
 } from './dataTableUtilities/actions';
 
 import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
+import { useDatabaseChangeListener } from '../hooks/useDatabaseChangeListener';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -85,17 +85,13 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     pageInfo,
     pageObject,
     hasSelection,
-    backingData,
     keyExtractor,
     searchTerm,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
 
-  // Transaction is impure - finalization logic prunes items, deleting them from the transaction.
-  // Since this does not manipulate the state through the reducer, state is not updated (in
-  // particular `data`) so a manual syncing of `backingData` and `data` needs to occur.
-  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
+  useDatabaseChangeListener(dispatch, pageObject, 'Transaction');
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,

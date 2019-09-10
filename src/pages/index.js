@@ -24,12 +24,13 @@ import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
-import {
-  SupplierRequisitionPage,
-  checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
-} from './SupplierRequisitionPage';
+import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
-import { checkForCustomerInvoiceError, checkForSupplierInvoiceError } from '../utilities';
+import {
+  checkForCustomerInvoiceError,
+  checkForSupplierInvoiceError,
+  checkForSupplierRequisitionError,
+} from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
 
@@ -48,6 +49,7 @@ export const PAGES = {
   supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
   supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
   supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
+  programSupplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
   supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
 };
 
@@ -77,7 +79,13 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_stocktake',
   },
   supplierRequisition: {
-    checkForError: checkForSupplierRequisitionFinaliseError,
+    checkForError: checkForSupplierRequisitionError,
+    recordType: 'Requisition',
+    recordToFinaliseKey: 'requisition',
+    finaliseText: 'finalise_supplier_requisition',
+  },
+  programSupplierRequisition: {
+    checkForError: checkForSupplierRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_supplier_requisition',

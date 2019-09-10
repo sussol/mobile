@@ -21,6 +21,8 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import {
   focusCell,
   focusNext,
+  selectRow,
+  deselectRow,
   deselectAll,
   sortData,
   filterData,
@@ -84,12 +86,15 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     [comment, theirRef, isFinalised]
   );
 
-  const getAction = useCallback(columnKey => {
+  const getAction = useCallback((columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
         return editTransactionBatchQuantity;
       case 'expiryDate':
         return editTransactionBatchExpiryDate;
+      case 'remove':
+        if (propName === 'onCheckAction') return selectRow;
+        return deselectRow;
       default:
         return null;
     }

@@ -34,6 +34,8 @@ import { MODAL_KEYS, newSortDataBy } from '../utilities';
 import usePageReducer from '../hooks/usePageReducer';
 import DataTablePageView from './containers/DataTablePageView';
 
+import { useNavigationFocusRefresh } from '../hooks/useNavigationFocusRefresh';
+
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 
 const initialState = () => {
@@ -52,7 +54,7 @@ const initialState = () => {
   };
 };
 
-export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => {
+export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName, navigation }) => {
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, initialState());
   const {
     data,
@@ -65,6 +67,8 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName }) => 
     keyExtractor,
     searchTerm,
   } = state;
+
+  useNavigationFocusRefresh(dispatch, navigation);
 
   const renderNewInvoiceButton = () => (
     <PageButton
@@ -229,4 +233,5 @@ CustomerInvoicesPage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   navigateTo: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,
+  navigation: PropTypes.object.isRequired,
 };

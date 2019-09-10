@@ -40,6 +40,7 @@ const extractPropsForPage = props => {
     ...restOfNavigationState,
     navigateTo,
     ...restOfProps,
+    navigation,
   };
 };
 
