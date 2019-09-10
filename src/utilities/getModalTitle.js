@@ -6,7 +6,6 @@
 import { modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
-  SELECT_CUSTOMER: 'selectCustomer',
   COMMENT_EDIT: 'commentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
   REQUISITION_COMMENT_EDIT: 'comment',
