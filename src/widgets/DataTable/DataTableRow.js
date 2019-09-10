@@ -10,9 +10,12 @@ import PropTypes from 'prop-types';
 import { newDataTableStyles } from '../../globalStyles';
 
 import Row from './Row';
-import EditableCell from './EditableCell';
 import Cell from './Cell';
+import EditableCell from './EditableCell';
 import CheckableCell from './CheckableCell';
+import TouchableCell from './TouchableCell';
+import DropDownCell from '../DropDownCell';
+
 import { NewExpiryDateInput } from '../NewExpiryDateInput';
 
 import {
@@ -20,7 +23,9 @@ import {
   UncheckedComponent,
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
+  OpenModal,
 } from '../icons';
+
 import { formatStatus } from '../../utilities/index';
 
 /**
@@ -161,6 +166,40 @@ const DataTableRow = React.memo(
                 viewStyle={cellContainer[cellAlignment]}
                 textStyle={cellText[cellAlignment]}
                 isLastCell={isLastCell}
+              />
+            );
+
+          case 'modalControl':
+            return (
+              <TouchableCell
+                key={columnKey}
+                renderChildren={OpenModal}
+                rowKey={rowKey}
+                columnKey={columnKey}
+                onPressAction={getAction(columnKey)}
+                dispatch={dispatch}
+                width={width}
+                isLastCell={isLastCell}
+                containerStyle={{
+                  justifyContent: 'center',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              />
+            );
+
+          case 'reason':
+            return (
+              <DropDownCell
+                isDisabled={isFinalised}
+                dispatch={dispatch}
+                onPressAction={getAction(columnKey)}
+                rowKey={rowKey}
+                columnKey={columnKey}
+                value={rowData[columnKey]}
+                isLastCell={false}
+                width={width}
+                debug
               />
             );
 

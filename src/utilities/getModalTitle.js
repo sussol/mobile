@@ -16,12 +16,19 @@ export const MODAL_KEYS = {
   MONTHS_SELECT: 'monthsToSupply',
   VIEW_REGIMEN_DATA: 'viewRegimenData',
   PROGRAM_STOCKTAKE: 'programStocktake',
+  STOCKTAKE_COMMENT_EDIT: 'stocktakeComment',
+  EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
+  STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
+  STOCKTAKE_REASON: 'stocktakeReason',
+  ENFORCE_STOCKTAKE_REASON: 'enforceStocktakeReason',
 };
 
 export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
+      return modalStrings.edit_the_stocktake_comment;
     case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
       return modalStrings.edit_the_requisition_comment;
     case MODAL_KEYS.ITEM_SELECT:
@@ -36,5 +43,8 @@ export const getModalTitle = modalKey => {
       return modalStrings.search_for_the_supplier;
     case MODAL_KEYS.VIEW_REGIMEN_DATA:
       return buttonStrings.view_regimen_data;
+    case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
+    case MODAL_KEYS.STOCKTAKE_REASON:
+      return modalStrings.select_a_reason;
   }
 };

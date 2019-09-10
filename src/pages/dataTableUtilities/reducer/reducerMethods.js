@@ -3,7 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy } from '../../../utilities';
+import { newSortDataBy, MODAL_KEYS, formatErrorItemNames } from '../../../utilities';
+import { UIDatabase } from '../../../database/index';
 
 /**
  * Immutably clears the current focus
@@ -333,7 +334,7 @@ export const editComment = (state, action) => {
 
   const { comment } = pageObject;
 
-  if (comment !== value) return { ...editPageObject(state, { ...action, field: 'comment' }) };
+  if (comment !== value) return { ...state, modalKey: '', modalValue: null };
   return state;
 };
 
@@ -447,3 +448,107 @@ export const hideStockOut = state => {
 };
 
 export const showStockOut = state => ({ ...refreshData(state), showAll: true, searchTerm: '' });
+export const editCountedTotalQuantity = (state, action) => {
+  const { rowKey } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  return { ...state, dataState: newDataState };
+};
+
+export const openStocktakeBatchModal = (state, action) => {
+  const { rowKey } = action;
+  const { data } = state;
+
+  const stocktakeBatchToEdit = data.find(({ id }) => id === rowKey);
+
+  return {
+    ...state,
+    modalValue: stocktakeBatchToEdit,
+    modalKey: MODAL_KEYS.EDIT_STOCKTAKE_BATCH,
+  };
+};
+
+export const closeStocktakeBatchModal = state => {
+  const { backingData } = state;
+  return { ...state, data: backingData.slice(), modalKey: '' };
+};
+
+export const openModal = (state, action) => {
+  const { modalKey, value } = action;
+  return { ...state, modalKey, modalValue: value };
+};
+
+export const openCommentModal = state => {
+  const { pageObject } = state;
+
+  const { comment } = pageObject;
+
+  return { ...state, modalKey: MODAL_KEYS.STOCKTAKE_COMMENT_EDIT, modalValue: comment };
+};
+
+export const openStocktakeOutdatedItems = state => {
+  const { pageObject } = state;
+  const { itemsOutdated } = pageObject;
+
+  return {
+    ...state,
+    modalValue: formatErrorItemNames(itemsOutdated),
+    modalKey: MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM,
+  };
+};
+
+export const resetStocktake = state => {
+  const { backingData } = state;
+
+  return { ...state, data: backingData.slice(), modalKey: '', modalValue: null };
+};
+
+export const editCountedTotalQuantityWithReason = (state, action) => {
+  const { rowKey, objectToEdit } = action;
+  const { dataState } = state;
+
+  // Change object reference of row in `dataState` to trigger rerender of that row.
+  // Realm object reference in `data` can't be affected in any tidy manner.
+  const newDataState = new Map(dataState);
+  const nextRowState = newDataState.get(rowKey);
+  newDataState.set(rowKey, { ...nextRowState });
+
+  const { enforceReason } = objectToEdit;
+
+  if (!enforceReason) objectToEdit.applyReasonToBatches(UIDatabase);
+
+  return {
+    ...state,
+    dataState: newDataState,
+    modalValue: objectToEdit,
+    modalKey: enforceReason ? MODAL_KEYS.ENFORCE_STOCKTAKE_REASON : '',
+  };
+};
+
+export const openStocktakeReasonsModal = (state, action) => {
+  const { keyExtractor, data } = state;
+  const { rowKey } = action;
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  return { ...state, modalKey: MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, modalValue: objectToEdit };
+};
+
+export const applyReason = state => {
+  const { dataState, modalValue, keyExtractor } = state;
+
+  const newDataState = new Map(dataState);
+
+  const rowKey = keyExtractor(modalValue);
+  const dataStateToUpdate = dataState.get(keyExtractor(modalValue));
+
+  newDataState.set(rowKey, { ...dataStateToUpdate });
+
+  return { ...state, dataState: newDataState, modalKey: '', modalValue: null };
+};

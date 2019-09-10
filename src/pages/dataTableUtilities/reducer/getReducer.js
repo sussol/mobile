@@ -41,7 +41,18 @@ import {
   showStockOut,
   selectItems,
   editName,
+  editCountedTotalQuantity,
+  openStocktakeBatchModal,
+  closeStocktakeBatchModal,
+  openModal,
+  openCommentModal,
+  openStocktakeOutdatedItems,
+  resetStocktake,
+  editCountedTotalQuantityWithReason,
+  applyReason,
+  openStocktakeReasonsModal,
 } from './reducerMethods';
+import { UIDatabase } from '../../../database/index';
 
 /**
  * Used for actions that should be in all pages using a data table.
@@ -168,6 +179,30 @@ const stocktakeManager = {
   editName,
 };
 
+const stocktakeEditor = {
+  ...BASE_TABLE_PAGE_REDUCER,
+  sortData,
+  filterData,
+  editComment,
+  openBasicModal,
+  closeBasicModal,
+  editCountedTotalQuantity,
+  refreshData,
+  openStocktakeBatchModal,
+  closeStocktakeBatchModal,
+  openModal,
+  openCommentModal,
+  openStocktakeOutdatedItems,
+  resetStocktake,
+};
+
+const stocktakeEditorReasons = {
+  ...stocktakeEditor,
+  editCountedTotalQuantity: editCountedTotalQuantityWithReason,
+  applyReason,
+  openStocktakeReasonsModal,
+};
+
 const PAGE_REDUCERS = {
   customerInvoice,
   customerInvoices,
@@ -177,10 +212,23 @@ const PAGE_REDUCERS = {
   programSupplierRequisition,
   stocktakes,
   stocktakeManager,
+  stocktakeEditor,
+  stocktakeEditorReasons,
 };
 
 const getReducer = page => {
-  const reducer = PAGE_REDUCERS[page];
+  let reducer;
+  switch (page) {
+    case 'stocktakeEditor':
+      {
+        const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
+        reducer = usesReasons ? PAGE_REDUCERS.stocktakeEditorReasons : PAGE_REDUCERS[page];
+      }
+      break;
+    default:
+      reducer = PAGE_REDUCERS[page];
+  }
+
   return (state, action) => {
     const { type } = action;
     if (!reducer[type]) return state;

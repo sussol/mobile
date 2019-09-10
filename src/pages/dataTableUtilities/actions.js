@@ -7,6 +7,10 @@ import { parsePositiveInteger } from '../../utilities';
 import Settings from '../../settings/MobileAppSettings';
 import { SETTINGS_KEYS } from '../../settings/index';
 
+import { MODAL_KEYS } from '../../utilities/getModalTitle';
+
+const { STOCKTAKE_OUTDATED_ITEM, EDIT_STOCKTAKE_BATCH, STOCKTAKE_COMMENT_EDIT } = MODAL_KEYS;
+
 /**
  * Actions for use with a data table reducer
  */
@@ -330,3 +334,59 @@ export const editName = value => ({
   type: 'editName',
   value,
 });
+
+export const editCountedTotalQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+
+  dispatch({
+    type: 'editCountedTotalQuantity',
+    value,
+    rowKey,
+    objectToEdit,
+  });
+};
+
+export const openStocktakeBatchModal = (rowKey, columnKey) => ({
+  type: 'openStocktakeBatchModal',
+  rowKey,
+  columnKey,
+});
+
+export const closeStocktakeBatchModal = () => ({
+  type: 'closeStocktakeBatchModal',
+});
+
+export const openModal = (modalKey, value) => {
+  switch (modalKey) {
+    case MODAL_KEYS.STOCKTAKE_REASON:
+      return { type: 'openStocktakeReasonsModal', rowKey: value };
+    case EDIT_STOCKTAKE_BATCH:
+      return { type: 'openStocktakeBatchModal', rowKey: value };
+    case STOCKTAKE_COMMENT_EDIT:
+      return { type: 'openCommentModal' };
+    case STOCKTAKE_OUTDATED_ITEM:
+      return { type: 'openStocktakeOutdatedItems' };
+    default:
+      return { type: 'openBasicModal', modalKey };
+  }
+};
+
+export const resetStocktake = () => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  pageObject.resetStocktake(UIDatabase);
+
+  dispatch({ type: 'resetStocktake' });
+};
+
+export const applyReason = value => (dispatch, getState) => {
+  const { modalValue } = getState();
+
+  modalValue.applyReasonToBatches(UIDatabase, value);
+
+  dispatch({ type: 'applyReason' });
+};

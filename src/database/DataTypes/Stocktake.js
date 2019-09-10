@@ -168,6 +168,14 @@ export class Stocktake extends Realm.Object {
     });
   }
 
+  resetStocktake(database) {
+    database.write(() => {
+      this.itemsOutdated.forEach(outdatedItem => {
+        outdatedItem.reset(database);
+      });
+    });
+  }
+
   /**
    * Get or create reducing invoice for this stocktake.
    *
