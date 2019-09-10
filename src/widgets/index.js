@@ -22,6 +22,7 @@ export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
 export { NewExpiryDateInput } from './NewExpiryDateInput';
+export { SearchBar } from './SearchBar';
 export {
   SortAscIcon,
   SortNeutralIcon,
@@ -30,6 +31,7 @@ export {
   UncheckedComponent,
   DisabledCheckedComponent,
   DisabledUncheckedComponent,
+  Cancel,
   CloseIcon,
   OpenModal,
   Expand,

@@ -6,7 +6,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
 import { UIDatabase, createRecord } from '../database';
 import { buttonStrings, modalStrings, navStrings } from '../localization';
@@ -14,6 +13,7 @@ import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilitie
 import { BottomConfirmModal, SelectModal } from '../widgets/modals';
 import {
   PageButton,
+  SearchBar,
   CheckedComponent,
   UncheckedComponent,
   DisabledCheckedComponent,
@@ -55,10 +55,7 @@ const initialState = () => {
 };
 
 export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName, navigation }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(
-    routeName,
-    initialState()
-  );
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, initialState());
   const {
     data,
     dataState,
@@ -68,6 +65,7 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName, navig
     modalKey,
     hasSelection,
     keyExtractor,
+    searchTerm,
   } = state;
 
   useNavigationFocusRefresh(dispatch, navigation);
@@ -191,10 +189,10 @@ export const CustomerInvoicesPage = ({ currentUser, navigateTo, routeName, navig
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
-            style={searchBar}
+            onChangeText={value => dispatch(filterData(value))}
             color={SUSSOL_ORANGE}
-            placeholder=""
+            value={searchTerm}
+            style={searchBar}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderNewInvoiceButton()}</View>

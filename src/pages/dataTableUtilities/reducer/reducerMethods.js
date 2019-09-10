@@ -79,6 +79,7 @@ export const filterData = (state, action) => {
   return {
     ...state,
     data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+    searchTerm,
   };
 };
 
@@ -277,17 +278,24 @@ export const addMasterListItems = state => {
 
 /**
  * Creates an Item (Either Requisition or Transaction), and appends
- * this item to the data array for a page.
+ * this item to the data array for a page.  Adds this item to the
+ * head of the list. Resets any sorting or filtering.
  *
  * @param {Object} state  The current state
  * @param {Object} action The action to act upon
  * Action: { type: 'addItem', item, addedItemType }
  */
 export const addItem = (state, action) => {
-  const { data } = state;
+  const { backingData } = state;
   const { item } = action;
 
-  return { ...state, data: [item, ...data], modalKey: '', sortBy: '', searchTerm: '' };
+  return {
+    ...state,
+    data: [item, ...backingData.slice(0, backingData.length - 1)],
+    modalKey: '',
+    sortBy: '',
+    searchTerm: '',
+  };
 };
 
 /**
