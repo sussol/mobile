@@ -9,7 +9,7 @@ import { UIDatabase } from '../../database/index';
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
   supplierInvoice: [2, 4, 2, 2, 1],
-  customerInvoices: [1.5, 2.5, 2, 3, 1],
+  customerInvoices: [1.5, 2.5, 2, 1.5, 3, 1],
   supplierRequisitions: [1.5, 2, 1, 1, 1, 1],
   supplierRequisition: [1.4, 3.5, 2, 1.5, 2, 2, 1],
   programSupplierRequisition: [1.5, 3.5, 0.5, 0.5, 2, 1.5, 2, 2, 1],
@@ -22,7 +22,7 @@ const PAGE_COLUMN_WIDTHS = {
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
   supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'editableExpiryDate', 'remove'],
-  customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'comment', 'delete'],
+  customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'entryDate', 'comment', 'remove'],
   supplierRequisitions: [
     'serialNumber',
     'otherPartyName',
