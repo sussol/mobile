@@ -30,6 +30,7 @@ import {
   closeStocktakeBatchModal,
   openModal,
   resetStocktake,
+  applyReason,
 } from './dataTableUtilities/actions';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -76,7 +77,13 @@ export const StocktakeEditPage = ({
     modalValue: null,
   });
 
-  const { STOCKTAKE_COMMENT_EDIT, EDIT_STOCKTAKE_BATCH, STOCKTAKE_OUTDATED_ITEM } = MODAL_KEYS;
+  const {
+    STOCKTAKE_COMMENT_EDIT,
+    EDIT_STOCKTAKE_BATCH,
+    STOCKTAKE_OUTDATED_ITEM,
+    STOCKTAKE_REASON,
+    ENFORCE_STOCKTAKE_REASON,
+  } = MODAL_KEYS;
   const {
     data,
     dataState,
@@ -113,6 +120,8 @@ export const StocktakeEditPage = ({
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
         return deselectRow;
+      case 'mostUsedReasonTitle':
+        return rowKey => openModal(STOCKTAKE_REASON, rowKey);
       default:
         return null;
     }
@@ -159,6 +168,9 @@ export const StocktakeEditPage = ({
         return () => dispatch(closeStocktakeBatchModal());
       case STOCKTAKE_OUTDATED_ITEM:
         return () => runWithLoadingIndicator(() => dispatch(resetStocktake()));
+      case ENFORCE_STOCKTAKE_REASON:
+      case STOCKTAKE_REASON:
+        return ({ item }) => dispatch(applyReason(item));
       default:
         return null;
     }

@@ -14,6 +14,7 @@ import Cell from './Cell';
 import EditableCell from './EditableCell';
 import CheckableCell from './CheckableCell';
 import TouchableCell from './TouchableCell';
+import DropDownCell from '../DropDownCell';
 
 import { NewExpiryDateInput } from '../NewExpiryDateInput';
 
@@ -184,6 +185,21 @@ const DataTableRow = React.memo(
                   flexDirection: 'row',
                   alignItems: 'center',
                 }}
+              />
+            );
+
+          case 'reason':
+            return (
+              <DropDownCell
+                isDisabled={isFinalised}
+                dispatch={dispatch}
+                onPressAction={getAction(columnKey)}
+                rowKey={rowKey}
+                columnKey={columnKey}
+                value={rowData[columnKey]}
+                isLastCell={false}
+                width={width}
+                debug
               />
             );
 
