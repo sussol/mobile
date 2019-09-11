@@ -18,38 +18,6 @@ import { openModal, closeModal } from './pageActions';
 export const refreshRow = rowKey => ({ type: ACTIONS.REFRESH_ROW, payload: { rowKey } });
 
 /**
- * Edits the field `totalQuantity` of a rows underlying data object.
- *
- * @param {String|Number} value      The new value to set (parsed as a positive integer)
- * @param {String}        rowKey     The key of the row to edit.
- * @param {String}        objectType The Type of the underlying data i.e. StocktakeBatch.
- */
-export const editTotalQuantity = (value, rowKey, objectType) => (dispatch, getState) => {
-  const { data, keyExtractor } = getState();
-
-  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
-
-  UIDatabase.write(() => {
-    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
-    UIDatabase.save(objectType, objectToEdit);
-  });
-
-  dispatch(refreshRow(rowKey));
-};
-
-/**
- * Edits a TransactionBatch's totalQuantity field.
- *
- * @param {String|Number} value      The new value to set (parsed as a positive integer)
- * @param {String}        rowKey     The key of the row to edit.
- */
-export const editTransactionBatchTotalQuantity = (value, rowKey) =>
-  editTotalQuantity(value, rowKey, 'TransactionBatch');
-
-export const editTransactionItemTotalQuantity = (value, rowKey) =>
-  editTotalQuantity(value, rowKey, 'TransactionItem');
-
-/**
  * Edits a rows underlying `expiryDate` field.
  *
  * @param {Date}    newDate     The new date to set as the expiry.
@@ -70,9 +38,25 @@ export const editExpiryDate = (newDate, rowKey, objectType) => (dispatch, getSta
 };
 
 /**
- * Edits a TransactionBatch Expiry Date field.
- * @param {Date}    newDate     The new date to set as the expiry.
- * @param {String}  rowKey      Key of the row to edit.
+ * Edits the field `totalQuantity` of a rows underlying data object.
+ *
+ * @param {String|Number} value      The new value to set (parsed as a positive integer)
+ * @param {String}        rowKey     The key of the row to edit.
+ */
+export const editTotalQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.setTotalQuantity(UIDatabase, parsePositiveInteger(value));
+  });
+
+  dispatch(refreshRow(rowKey));
+};
+
+/**
+ * Wrapper around editExpiryDate.
  */
 export const editTransactionBatchExpiryDate = (newDate, rowKey) =>
   editExpiryDate(newDate, rowKey, 'TransactionBatch');
@@ -98,6 +82,12 @@ export const editRequiredQuantity = (value, rowKey, objectType) => (dispatch, ge
 };
 
 /**
+ * Wrapper around editRequiredQuantity.
+ */
+export const editRequisitionItemRequiredQuantity = (value, rowKey) =>
+  editRequiredQuantity(value, rowKey, 'RequisitionItem');
+
+/**
  * Edits a rows underlying `suggestedQuantity` field.
  *
  * @param {String|Number}   value       The new value to set as the required quantity.
@@ -109,19 +99,10 @@ export const editSuppliedQuantity = (value, rowKey) => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  UIDatabase.write(() => objectToEdit.setSuppliedQuantity(UIDatabase, value));
+  UIDatabase.write(() => objectToEdit.setSuppliedQuantity(UIDatabase, parsePositiveInteger(value)));
 
   dispatch(refreshRow(rowKey));
 };
-
-/**
- * Edits a RequisitionItem Required quantity field.
- *
- * @param {Date}    value       The new value to set as the required quantity.
- * @param {String}  rowKey      Key of the row to edit.
- */
-export const editRequisitionItemRequiredQuantity = (value, rowKey) =>
-  editRequiredQuantity(value, rowKey, 'RequisitionItem');
 
 /**
  * Edits a rows underlying countedTotalQuantity field.
@@ -134,7 +115,7 @@ export const editCountedQuantity = (value, rowKey) => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
+  objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(value));
 
   dispatch(refreshRow(rowKey));
 };
