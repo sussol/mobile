@@ -25,7 +25,7 @@ import {
   deselectAll,
   selectAll,
   selectItems,
-  deleteSelectedItems,
+  deleteRecords,
 } from './rowReducers';
 import {
   hideStockOut,
@@ -53,7 +53,7 @@ const customerInvoice = {
   openModal,
   closeModal,
   addRecord,
-  deleteSelectedItems,
+  deleteRecords,
   refreshData,
   refreshRow,
 };
@@ -66,7 +66,7 @@ const customerInvoices = {
   deselectAll,
   openModal,
   closeModal,
-  deleteSelectedItems,
+  deleteRecords,
   refreshData,
 };
 
@@ -80,7 +80,7 @@ const supplierInvoice = {
   openModal,
   refreshData,
   addRecord,
-  deleteSelectedItems,
+  deleteRecords,
   refreshRow,
 };
 
@@ -95,7 +95,7 @@ const supplierRequisition = {
   refreshData,
   addRecord,
   hideOverStocked,
-  deleteSelectedItems,
+  deleteRecords,
   refreshRow,
 };
 
@@ -110,7 +110,7 @@ const programSupplierRequisition = {
   refreshData,
   addRecord,
   hideOverStocked,
-  deleteSelectedItems,
+  deleteRecords,
   refreshRow,
 };
 
@@ -122,7 +122,7 @@ const supplierRequisitions = {
   openModal,
   closeModal,
   refreshData,
-  deleteSelectedItems,
+  deleteRecords,
 };
 
 const stocktakes = {
@@ -133,7 +133,7 @@ const stocktakes = {
   deselectAll,
   deselectRow,
   sortData,
-  deleteSelectedItems,
+  deleteRecords,
 };
 
 const stocktakeManager = {
