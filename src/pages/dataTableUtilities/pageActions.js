@@ -18,6 +18,14 @@ import { ACTIONS } from './constants';
 const refreshData = () => ({ type: ACTIONS.REFRESH_DATA });
 
 /**
+ * Edits the name field in the current store.
+ * use case: Stocktake naming.
+ *
+ * @param {String} value New name value to set.
+ */
+export const editName = value => ({ type: 'editName', payload: { value } });
+
+/**
  * Closes a modal by unsetting the modalKey aand modalValue (if used).
  */
 export const closeModal = () => ({ type: ACTIONS.CLOSE_MODAL });
@@ -48,8 +56,7 @@ export const openModal = (modalKey, value) => {
     case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
     case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
     case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
-    case MODAL_KEYS.TRANSACTION_THEIR_REF_EDIT:
-    case MODAL_KEYS.REQUISITION_THEIR_REF_EDIT:
+    case MODAL_KEYS.THEIR_REF_EDIT:
     default:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey } };
   }
@@ -99,7 +106,7 @@ export const editComment = (value, pageObjectType) => (dispatch, getState) => {
  *
  * @param {Number} value  New months of supply value.
  */
-export const editMonthsOfSupply = value => (dispatch, getState) => {
+export const editMonthsToSupply = value => (dispatch, getState) => {
   const { pageObject } = getState();
 
   const { monthsToSupply } = pageObject;
