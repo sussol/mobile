@@ -6,7 +6,7 @@
 import { pageInfoStrings, programStrings } from '../../localization';
 import { formatDate } from '../../utilities';
 
-import { openBasicModal, openModal } from './actions';
+import { openModal } from './pageActions';
 
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
 
@@ -26,15 +26,19 @@ import { MODAL_KEYS } from '../../utilities/getModalTitle';
  * required pageInfo columns for the page.
  */
 
-const { THEIR_REF_EDIT, COMMENT_EDIT, MONTHS_SELECT, STOCKTAKE_COMMENT_EDIT } = MODAL_KEYS;
-
 const PER_PAGE_INFO_COLUMNS = {
-  customerInvoice: [['entryDate', 'confirmDate', 'enteredBy'], ['customer', 'theirRef', 'comment']],
-  supplierInvoice: [['entryDate', 'confirmDate'], ['otherParty', 'theirRef', 'comment']],
-  supplierRequisition: [['entryDate', 'enteredBy'], ['otherParty', 'monthsToSupply', 'comment']],
+  customerInvoice: [
+    ['entryDate', 'confirmDate', 'enteredBy'],
+    ['customer', 'theirRef', 'transactionComment'],
+  ],
+  supplierInvoice: [['entryDate', 'confirmDate'], ['otherParty', 'theirRef', 'transactionComment']],
+  supplierRequisition: [
+    ['entryDate', 'enteredBy'],
+    ['otherParty', 'monthsToSupply', 'requisitionComment'],
+  ],
   programSupplierRequisition: [
     ['program', 'orderType', 'entryDate', 'enteredBy'],
-    ['period', 'otherParty', 'programMonthsToSupply', 'comment'],
+    ['period', 'otherParty', 'programMonthsToSupply', 'requisitionComment'],
   ],
   stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
 };
@@ -59,13 +63,25 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   theirRef: {
     title: `${pageInfoStrings.their_ref}:`,
     info: pageObject.theirRef,
-    onPress: () => dispatch(openBasicModal(THEIR_REF_EDIT)),
+    onPress: () => dispatch(openModal(MODAL_KEYS.THEIR_REF_EDIT)),
     editableType: 'text',
   },
-  comment: {
+  transactionComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(openBasicModal(COMMENT_EDIT)),
+    onPress: () => dispatch(openModal(MODAL_KEYS.TRANSACTION_COMMENT_EDIT)),
+    editableType: 'text',
+  },
+  stocktakeComment: {
+    title: `${pageInfoStrings.comment}:`,
+    info: pageObject.comment,
+    onPress: () => dispatch(openModal(MODAL_KEYS.STOCKTAKE_COMMENT_EDIT)),
+    editableType: 'text',
+  },
+  requisitionComment: {
+    title: `${pageInfoStrings.comment}:`,
+    info: pageObject.comment,
+    onPress: () => dispatch(openModal(MODAL_KEYS.REQUISITION_COMMENT_EDIT)),
     editableType: 'text',
   },
   otherParty: {
@@ -83,7 +99,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   monthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
-    onPress: () => dispatch(openBasicModal(MONTHS_SELECT)),
+    onPress: () => dispatch(openModal(MODAL_KEYS.SELECT_MONTH)),
     editableType: 'selectable',
   },
   period: {
@@ -98,12 +114,6 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
     title: `${pageInfoStrings.stocktake_name}:`,
     info: pageObject.name,
     onPress: null,
-    editableType: 'text',
-  },
-  stocktakeComment: {
-    title: `${pageInfoStrings.comment}:`,
-    info: pageObject.comment,
-    onPress: () => dispatch(openModal(STOCKTAKE_COMMENT_EDIT)),
     editableType: 'text',
   },
 });
