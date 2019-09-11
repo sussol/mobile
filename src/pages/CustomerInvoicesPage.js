@@ -72,6 +72,7 @@ export const CustomerInvoicesPage = ({
   useNavigationFocusRefresh(dispatch, navigation);
 
   // On Press Handlers
+  const closeModal = () => dispatch(closeBasicModal());
   const onFilterData = value => dispatch(filterData(value));
   const onNewInvoice = () => dispatch(openBasicModal(MODAL_KEYS.SELECT_CUSTOMER));
   const onRemoveInvoices = () => dispatch(deleteTransactionsById());
@@ -94,7 +95,7 @@ export const CustomerInvoicesPage = ({
       case MODAL_KEYS.SELECT_CUSTOMER:
         return otherParty => {
           reduxDispatch(createCustomerInvoice(otherParty, currentUser));
-          dispatch(closeBasicModal());
+          closeModal();
         };
       default:
         return null;
@@ -181,7 +182,7 @@ export const CustomerInvoicesPage = ({
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={closeModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
