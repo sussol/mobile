@@ -1,20 +1,10 @@
-import { UIDatabase } from '../../database/index';
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-const ACTIONS = {
-  FOCUS_CELL: 'focusCell',
-  FOCUS_NEXT: 'focusNext',
-  SELECT_ROW: 'selectRow',
-  SELECT_ALL: 'selectAll',
-  SELECT_ITEMS: 'selectItems',
-  DESELECT_ROW: 'deselectRow',
-  DESELECT_ALL: 'deselectAll',
-  DELETE_RECORDS: 'deleteSelectedItems',
-};
+import { UIDatabase } from '../../database/index';
+import { ACTIONS } from './constants';
 
 /**
  * Uses the stores dataState map to set a row/column
