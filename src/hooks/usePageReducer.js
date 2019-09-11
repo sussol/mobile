@@ -35,6 +35,7 @@ import { debounce } from '../utilities/index';
 const usePageReducer = (
   page,
   initialState,
+  initializer,
   debounceTimeout = 250,
   instantDebounceTimeout = 250
 ) => {
@@ -43,7 +44,7 @@ const usePageReducer = (
   const memoizedReducer = useMemo(() => getReducer(page), []);
 
   const [pageState, setPageState] = useState({
-    ...initialState,
+    ...(initializer ? initializer() : initialState),
     columns,
     pageInfo,
   });

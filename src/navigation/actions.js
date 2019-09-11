@@ -124,3 +124,51 @@ export const createSupplierRequisition = ({
 
   dispatch(gotoSupplierRequisition(requisition));
 };
+
+/**
+ * Action creator for navigating to a customer invoice. Ensures the CI is at least
+ * confirmed before navigating as if this is not enforced, it is possible for
+ * a particular item being issued across multiple invoices in larger quantities
+ * than are available.
+ *
+ * @param {Object} transaction The CI to navigate to.
+ * @param {Object} dispatch    Redux dispatch method.
+ */
+export const gotoCustomerInvoice = transaction => dispatch => {
+  const { isConfirmed, isFinalised } = transaction;
+
+  // Customer invoices are generally created with the status confirmed. This handles unexpected
+  // cases of an incoming sycned invoice with status 'nw' or 'sg'.
+  if (!isConfirmed && !isFinalised) {
+    UIDatabase.write(() => {
+      transaction.confirm(UIDatabase);
+      UIDatabase.save('Transaction', transaction);
+    });
+  }
+
+  const navigationAction = NavigationActions.navigate({
+    routeName: 'customerInvoice',
+    params: {
+      title: `${navStrings.invoice} ${transaction.serialNumber}`,
+      transaction,
+    },
+  });
+
+  dispatch(navigationAction);
+};
+
+/**
+ * Action creator which first creates a customer invoice, and then navigates to it
+ * for editing.
+ *
+ * @param {Object} otherParty     The other party of the invoice (Customer)
+ * @param {Object} currentUser    The currently logged in user.
+ */
+export const createCustomerInvoice = (otherParty, currentUser) => dispatch => {
+  let newCustomerInvoice;
+  UIDatabase.write(() => {
+    newCustomerInvoice = createRecord(UIDatabase, 'CustomerInvoice', otherParty, currentUser);
+  });
+
+  dispatch(gotoCustomerInvoice(newCustomerInvoice));
+};
