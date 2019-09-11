@@ -21,7 +21,7 @@ export const ACTIONS = {
   // rowAction constants
   REFRESH_ROW: 'refreshRow',
   EDIT_TOTAL_QUANTITY: 'editTotalQuantity',
-  EDIT_COUNTED_QUANTITY: 'editCountedTotalQuantity',
+  EDIT_COUNTED_QUANTITY: 'editCountedQuantity',
   EDIT_REQUIRED_QUANTITY: 'editRequiredQuantity',
   EDIT_EXPIRY_DATE: 'editExpiryDate',
   ENFORCE_REASON: 'enforceReasonChoice',
