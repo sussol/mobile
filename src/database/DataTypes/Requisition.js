@@ -277,7 +277,8 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Sets all requisition items requested quantities to the suggested quantity.
+   * Sets all requisition items requested quantities related to this requisition
+   * to their suggested quantity.
    */
   setRequestedToSuggested(database) {
     if (!this.isRequest) {
@@ -291,7 +292,7 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Sets all requisition items to the suggested quantity.
+   * Sets all requisition items related to this requisition to their suggested quantity.
    *
    * RequisitionItem Throws an error if this requisition is finalised or is a request.
    */
@@ -303,7 +304,8 @@ export class Requisition extends Realm.Object {
   }
 
   /**
-   * Sets all requisition items supplied quantity to the requested/required quantity.
+   * Sets all requisition items supplied quantity, related to this requisition
+   * to their requested/required quantity.
    *
    * RequisitionItem Throws an error if this requisition is finalised or is a request.
    */
