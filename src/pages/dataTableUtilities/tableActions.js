@@ -4,7 +4,8 @@
  */
 
 import { UIDatabase } from '../../database/index';
-import Settings, { SETTINGS_KEYS } from '../../settings';
+import { SETTINGS_KEYS } from '../../settings';
+import Settings from '../../settings/MobileAppSettings';
 import { createRecord } from '../../database/utilities/index';
 import { closeModal } from './pageActions';
 import { ACTIONS } from './constants';
@@ -46,13 +47,6 @@ export const refreshData = () => ({ type: ACTIONS.REFRESH_DATA });
 export const hideOverStocked = () => ({ type: ACTIONS.HIDE_OVER_STOCKED });
 
 /**
- * Shows all items, regardless of current stock on hand, toggles
- * showAll to true and removes the current search filtering. Sort is
- * kept stable.
- */
-export const showOverStocked = () => ({ type: ACTIONS.REFRESH_DATA });
-
-/**
  * Hides all items which have a current stock on hand less than 0.
  */
 export const hideStockOut = () => ({ type: ACTIONS.HIDE_STOCK_OUT });
@@ -62,7 +56,14 @@ export const hideStockOut = () => ({ type: ACTIONS.HIDE_STOCK_OUT });
  * showAll to true and removes the current search filtering. Sort is
  * kept stable.
  */
-export const showStockOut = () => ({ type: ACTIONS.REFRESH_DATA });
+export const showOverStocked = () => refreshData();
+
+/**
+ * Shows all items, regardless of current stock on hand, toggles
+ * showAll to true and removes the current search filtering. Sort is
+ * kept stable.
+ */
+export const showStockOut = () => refreshData();
 
 /**
  * Adds all items from master lists, according to the type of pageObject.
@@ -84,7 +85,8 @@ export const addMasterListItems = objectType => (dispatch, getState) => {
     pageObject.addItemsFromMasterList(UIDatabase, thisStore);
     UIDatabase.save(objectType, pageObject);
   });
-  dispatch({ type: 'addMasterListItems', objectType });
+
+  dispatch(refreshData());
 };
 
 /**
@@ -105,7 +107,7 @@ export const addItem = (item, addedItemType) => (dispatch, getState) => {
   if (!pageObject.hasItem(item)) {
     UIDatabase.write(() => {
       const addedItem = createRecord(UIDatabase, addedItemType, pageObject, item);
-      dispatch({ type: ACTIONS.ADD_RECORD, payload: { item: addedItem } });
+      dispatch({ type: ACTIONS.ADD_RECORD, payload: { record: addedItem } });
     });
   } else {
     dispatch(closeModal());
@@ -134,7 +136,7 @@ export const addTransactionBatch = item => (dispatch, getState) => {
     const transItem = createRecord(UIDatabase, 'TransactionItem', pageObject, item);
     const itemBatch = createRecord(UIDatabase, 'ItemBatch', item, '');
     const addedBatch = createRecord(UIDatabase, 'TransactionBatch', transItem, itemBatch);
-    dispatch({ type: ACTIONS.ADD_RECORD, payload: { item: addedBatch } });
+    dispatch({ type: ACTIONS.ADD_RECORD, payload: { record: addedBatch } });
   });
 };
 
@@ -154,20 +156,45 @@ export const createAutomaticOrder = () => (dispatch, getState) => {
     UIDatabase.save('Requisition', pageObject);
   });
 
-  dispatch({ type: ACTIONS.REFRESH_DATA });
+  dispatch(refreshData());
 };
 
 /**
  * Sets all requested quantities to the suggested quantity for
  * a requisition.
  */
-export const useSuggestedQuantities = () => (dispatch, getState) => {
+export const setRequestedToSuggested = () => (dispatch, getState) => {
   const { pageObject } = getState();
 
   UIDatabase.write(() => {
     pageObject.setRequestedToSuggested(UIDatabase);
-    UIDatabase.save('Requisition', pageObject);
   });
 
-  dispatch({ type: ACTIONS.REFRESH_DATA });
+  dispatch(refreshData());
+};
+
+/**
+ * Sets all rows `suppliedQuantity` to `requestedQuantity`.
+ */
+export const setSuppliedToRequested = () => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  UIDatabase.write(() => {
+    pageObject.setSuppliedToRequested();
+  });
+
+  dispatch(refreshData());
+};
+
+/**
+ * Sets all rows `suppliedQuantity` to `suggestedQuantity`.
+ */
+export const setSuppliedToSuggested = () => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  UIDatabase.write(() => {
+    pageObject.setSuppliedToSuggested();
+  });
+
+  dispatch(refreshData());
 };
