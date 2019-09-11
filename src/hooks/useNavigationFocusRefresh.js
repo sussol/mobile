@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { refreshData } from '../pages/dataTableUtilities/actions';
+import { refreshData } from '../pages/dataTableUtilities/tableActions';
 
 /**
  * Simple custom hook which subscribes to navigation focus event,
