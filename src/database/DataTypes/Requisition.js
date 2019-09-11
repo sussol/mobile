@@ -7,6 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
+import UIDatabase from '../UIDatabase';
 
 /**
  * A requisition.
@@ -275,10 +276,41 @@ export class Requisition extends Realm.Object {
     database.delete('RequisitionItem', itemsToDelete);
   }
 
+  /**
+   * Sets all requisition items requested quantities to the suggested quantity.
+   */
   setRequestedToSuggested(database) {
+    if (!this.isRequest) {
+      throw new Error('Cannot set the requested quantity of a response requisition');
+    }
+
     this.items.forEach(requisitionItem => {
       requisitionItem.requiredQuantity = requisitionItem.suggestedQuantity;
       database.save('RequisitionItem', requisitionItem);
+    });
+  }
+
+  /**
+   * Sets all requisition items to the suggested quantity.
+   *
+   * RequisitionItem Throws an error if this requisition is finalised or is a request.
+   */
+  setSuppliedToSuggested() {
+    this.items.forEach(requisitionItem => {
+      const { suggestedQuantity } = requisitionItem;
+      requisitionItem.setSuppliedQuantity(UIDatabase, suggestedQuantity);
+    });
+  }
+
+  /**
+   * Sets all requisition items supplied quantity to the requested/required quantity.
+   *
+   * RequisitionItem Throws an error if this requisition is finalised or is a request.
+   */
+  setSuppliedToRequested() {
+    this.items.forEach(requisitionItem => {
+      const { requiredQuantity } = requisitionItem;
+      requisitionItem.setSuppliedQuantity(UIDatabase, requiredQuantity);
     });
   }
 
