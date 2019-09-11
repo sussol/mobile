@@ -199,7 +199,7 @@ export const selectItems = (state, action) => {
  * record is indicated by DataState[rowKey].isSelected. Thunks should have
  * handled the actual deleting of records before this is dispatched.
  */
-export const deleteSelectedItems = state => {
+export const deleteRecords = state => {
   const { data } = state;
 
   const newDataState = new Map();

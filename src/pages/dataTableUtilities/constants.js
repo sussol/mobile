@@ -17,6 +17,7 @@ export const ACTIONS = {
   // pageAction constants
   OPEN_MODAL: 'openModal',
   CLOSE_MODAL: 'closeModal',
+  EDIT_NAME: 'editName',
 
   // rowAction constants
   REFRESH_ROW: 'refreshRow',
@@ -34,5 +35,5 @@ export const ACTIONS = {
   SELECT_ITEMS: 'selectItems',
   DESELECT_ROW: 'deselectRow',
   DESELECT_ALL: 'deselectAll',
-  DELETE_RECORDS: 'deleteSelectedItems',
+  DELETE_RECORDS: 'deleteRecords',
 };
