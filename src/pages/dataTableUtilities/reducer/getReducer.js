@@ -16,68 +16,46 @@
  *
  */
 
+import { UIDatabase } from '../../../database/index';
+
+import { refreshRow } from './cellReducers';
 import {
-  filterData,
-  focusNextCell,
   selectRow,
   deselectRow,
   deselectAll,
-  focusCell,
-  sortData,
-  openBasicModal,
-  closeBasicModal,
-  addMasterListItems,
-  addItem,
-  editTheirRef,
-  editComment,
-  deleteRecordsById,
-  refreshData,
-  createAutomaticOrder,
-  hideOverStocked,
-  showOverStocked,
-  editField,
   selectAll,
-  hideStockOut,
-  showStockOut,
   selectItems,
-  editName,
-  editCountedTotalQuantity,
-  openStocktakeBatchModal,
-  closeStocktakeBatchModal,
-  openModal,
-  openCommentModal,
-  openStocktakeOutdatedItems,
-  resetStocktake,
-  editCountedTotalQuantityWithReason,
-  applyReason,
-  openStocktakeReasonsModal,
-} from './reducerMethods';
-import { UIDatabase } from '../../../database/index';
+  deleteSelectedItems,
+} from './rowReducers';
+import {
+  hideStockOut,
+  addRecord,
+  hideOverStocked,
+  refreshData,
+  filterData,
+  sortData,
+} from './tableReducers';
+import { editName, openModal, closeModal } from './pageReducers';
 
 /**
  * Used for actions that should be in all pages using a data table.
  */
 const BASE_TABLE_PAGE_REDUCER = {
-  focusNextCell,
-  focusCell,
   sortData,
 };
 
 const customerInvoice = {
   ...BASE_TABLE_PAGE_REDUCER,
   filterData,
-  editField,
   selectRow,
   deselectRow,
   deselectAll,
-  openBasicModal,
-  closeBasicModal,
-  addMasterListItems,
-  addItem,
-  editTheirRef,
-  editComment,
-  deleteRecordsById,
+  openModal,
+  closeModal,
+  addRecord,
+  deleteSelectedItems,
   refreshData,
+  refreshRow,
 };
 
 const customerInvoices = {
@@ -86,9 +64,9 @@ const customerInvoices = {
   selectRow,
   deselectRow,
   deselectAll,
-  openBasicModal,
-  closeBasicModal,
-  deleteRecordsById,
+  openModal,
+  closeModal,
+  deleteSelectedItems,
   refreshData,
 };
 
@@ -98,14 +76,12 @@ const supplierInvoice = {
   selectRow,
   deselectRow,
   deselectAll,
-  closeBasicModal,
-  openBasicModal,
-  editTheirRef,
-  editComment,
+  closeModal,
+  openModal,
   refreshData,
-  addItem,
-  editField,
-  deleteRecordsById,
+  addRecord,
+  deleteSelectedItems,
+  refreshRow,
 };
 
 const supplierRequisition = {
@@ -114,18 +90,13 @@ const supplierRequisition = {
   selectRow,
   deselectRow,
   deselectAll,
-  openBasicModal,
-  closeBasicModal,
-  editTheirRef,
-  editComment,
+  openModal,
+  closeModal,
   refreshData,
-  addMasterListItems,
-  addItem,
-  createAutomaticOrder,
+  addRecord,
   hideOverStocked,
-  showOverStocked,
-  editField,
-  deleteRecordsById,
+  deleteSelectedItems,
+  refreshRow,
 };
 
 const programSupplierRequisition = {
@@ -134,17 +105,13 @@ const programSupplierRequisition = {
   selectRow,
   deselectRow,
   deselectAll,
-  openBasicModal,
-  closeBasicModal,
-  editTheirRef,
-  editComment,
+  openModal,
+  closeModal,
   refreshData,
-  addMasterListItems,
-  addItem,
-  createAutomaticOrder,
+  addRecord,
   hideOverStocked,
-  showOverStocked,
-  editField,
+  deleteSelectedItems,
+  refreshRow,
 };
 
 const supplierRequisitions = {
@@ -152,19 +119,21 @@ const supplierRequisitions = {
   filterData,
   selectRow,
   deselectRow,
-  openBasicModal,
-  closeBasicModal,
+  openModal,
+  closeModal,
   refreshData,
+  deleteSelectedItems,
 };
 
 const stocktakes = {
-  openBasicModal,
-  closeBasicModal,
+  openModal,
+  closeModal,
   filterData,
   selectRow,
   deselectAll,
   deselectRow,
   sortData,
+  deleteSelectedItems,
 };
 
 const stocktakeManager = {
@@ -175,33 +144,23 @@ const stocktakeManager = {
   filterData,
   selectAll,
   hideStockOut,
-  showStockOut,
   selectItems,
   editName,
+  refreshData,
 };
 
 const stocktakeEditor = {
   ...BASE_TABLE_PAGE_REDUCER,
   sortData,
   filterData,
-  editComment,
-  openBasicModal,
-  closeBasicModal,
-  editCountedTotalQuantity,
-  refreshData,
-  openStocktakeBatchModal,
-  closeStocktakeBatchModal,
   openModal,
-  openCommentModal,
-  openStocktakeOutdatedItems,
-  resetStocktake,
+  closeModal,
+  refreshData,
+  refreshRow,
 };
 
 const stocktakeEditorReasons = {
   ...stocktakeEditor,
-  editCountedTotalQuantity: editCountedTotalQuantityWithReason,
-  applyReason,
-  openStocktakeReasonsModal,
 };
 
 const PAGE_REDUCERS = {
