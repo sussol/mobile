@@ -23,7 +23,7 @@ const refreshData = () => ({ type: ACTIONS.REFRESH_DATA });
  *
  * @param {String} value New name value to set.
  */
-export const editName = value => ({ type: 'editName', payload: { value } });
+export const editName = value => ({ type: ACTIONS.EDIT_NAME, payload: { value } });
 
 /**
  * Closes a modal by unsetting the modalKey aand modalValue (if used).
@@ -66,7 +66,7 @@ export const openModal = (modalKey, value) => {
  * Edits the `theirRef` field of a pageObject.
  *
  * @param {String} value          New theifRef value.
- * @param {String} pageObjectType PageObject type to edit i.e. Requisition.
+ * @param {String} pageObjectType PageObject type to edit i.e. Transaction.
  */
 export const editTheirRef = (value, pageObjectType) => (dispatch, getState) => {
   const { pageObject } = getState();
@@ -84,11 +84,13 @@ export const editTheirRef = (value, pageObjectType) => (dispatch, getState) => {
 
 /**
  * Edits the `comment` field of a `pageObject`.
+ *
  * @param {String} value          New comment value.
- * @param {String} pageObjectType Type of the pageObject to edit i.e. Requisition.
+ * @param {String} pageObjectType Type of the pageObject to edit i.e. Transaction.
  */
 export const editComment = (value, pageObjectType) => (dispatch, getState) => {
   const { pageObject } = getState();
+
   const { comment } = pageObject;
 
   if (comment !== value) {
@@ -117,6 +119,7 @@ export const editMonthsToSupply = value => (dispatch, getState) => {
       UIDatabase.save('Requisition', pageObject);
     });
 
+    // Update suggested quantities when the monthsToSupply changes.
     dispatch(refreshData());
   }
 
@@ -124,7 +127,7 @@ export const editMonthsToSupply = value => (dispatch, getState) => {
 };
 
 /**
- * Resets a Stocktake
+ * Resets a Stocktake - refreshing all snapshot quantities.
  *
  * use case: Snapshot quantities need to be refreshed if they are
  *           outdated when revisiting an un-finalised Stocktake.
