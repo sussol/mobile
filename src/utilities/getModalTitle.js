@@ -6,16 +6,18 @@
 import { modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
-  COMMENT_EDIT: 'commentEdit',
-  THEIR_REF_EDIT: 'theirRefEdit',
-  REQUISITION_COMMENT_EDIT: 'comment',
-  ITEM_SELECT: 'itemSelect',
+  STOCKTAKE_COMMENT_EDIT: 'stocktakeCommentEdit',
+  TRANSACTION_COMMENT_EDIT: 'transactionCommentEdit',
+  REQUISITION_COMMENT_EDIT: 'requisitionCommentEdit',
+  TRANSACTION_THEIR_REF_EDIT: 'transactionTheirRefEdit',
+  REQUISITION_THEIR_REF_EDIT: 'requisitionTheirRefEdit',
+  SELECT_ITEM: 'selectItem',
+  SELECT_MONTH: 'selectMonth',
+  SELECT_CUSTOMER: 'selectCustomer',
   SELECT_SUPPLIER: 'selectSupplier',
   PROGRAM_REQUISITION: 'programRequisition',
-  MONTHS_SELECT: 'monthsToSupply',
-  VIEW_REGIMEN_DATA: 'viewRegimenData',
   PROGRAM_STOCKTAKE: 'programStocktake',
-  STOCKTAKE_COMMENT_EDIT: 'stocktakeComment',
+  VIEW_REGIMEN_DATA: 'viewRegimenData',
   EDIT_STOCKTAKE_BATCH: 'editStocktakeBatch',
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
   STOCKTAKE_REASON: 'stocktakeReason',
@@ -30,10 +32,10 @@ export const getModalTitle = modalKey => {
       return modalStrings.edit_the_stocktake_comment;
     case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
       return modalStrings.edit_the_requisition_comment;
-    case MODAL_KEYS.ITEM_SELECT:
-      return modalStrings.search_for_an_item_to_add;
-    case MODAL_KEYS.COMMENT_EDIT:
+    case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
       return modalStrings.edit_the_invoice_comment;
+    case MODAL_KEYS.SELECT_ITEM:
+      return modalStrings.search_for_an_item_to_add;
     case MODAL_KEYS.THEIR_REF_EDIT:
       return modalStrings.edit_their_reference;
     case MODAL_KEYS.SELECT_CUSTOMER:
