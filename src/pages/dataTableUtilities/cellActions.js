@@ -6,7 +6,7 @@
 import { UIDatabase } from '../../database';
 import { parsePositiveInteger, MODAL_KEYS } from '../../utilities';
 import { ACTIONS } from './constants';
-import { openModal } from './actions';
+import { openModal, closeModal } from './pageActions';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -45,6 +45,9 @@ export const editTotalQuantity = (value, rowKey, objectType) => (dispatch, getSt
  */
 export const editTransactionBatchTotalQuantity = (value, rowKey) =>
   editTotalQuantity(value, rowKey, 'TransactionBatch');
+
+export const editTransactionItemTotalQuantity = (value, rowKey) =>
+  editTotalQuantity(value, rowKey, 'TransactionItem');
 
 /**
  * Edits a rows underlying `expiryDate` field.
@@ -95,6 +98,23 @@ export const editRequiredQuantity = (value, rowKey, objectType) => (dispatch, ge
 };
 
 /**
+ * Edits a rows underlying `suggestedQuantity` field.
+ *
+ * @param {String|Number}   value       The new value to set as the required quantity.
+ * @param {String}          rowKey      Key of the row to edit.
+ * @param {String}          objectType  Type of object to edit i.e. 'RequisitionItem'
+ */
+export const editSuppliedQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => objectToEdit.setSuppliedQuantity(UIDatabase, value));
+
+  dispatch(refreshRow(rowKey));
+};
+
+/**
  * Edits a RequisitionItem Required quantity field.
  *
  * @param {Date}    value       The new value to set as the required quantity.
@@ -116,7 +136,7 @@ export const editCountedQuantity = (value, rowKey) => (dispatch, getState) => {
 
   objectToEdit.setCountedTotalQuantity(UIDatabase, parsePositiveInteger(Number(value)));
 
-  dispatch(refreshRow());
+  dispatch(refreshRow(rowKey));
 };
 
 /**
@@ -126,7 +146,7 @@ export const editCountedQuantity = (value, rowKey) => (dispatch, getState) => {
  *
  * @param {String} rowKey Key of the row to enforce a reason on
  */
-export const enforceReasonChoice = rowKey => (getState, dispatch) => {
+export const enforceReasonChoice = rowKey => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
@@ -148,8 +168,8 @@ export const enforceReasonChoice = rowKey => (getState, dispatch) => {
  * @param {String}          rowKey Key of the row to edit.
  */
 export const editStocktakeBatchCountedQuantity = (value, rowKey) => dispatch => {
-  dispatch({ type: ACTIONS.EDIT_COUNTED_QUANTITY, payload: { value, rowKey } });
-  dispatch({ type: ACTIONS.ENFORCE_REASON, payload: { rowKey } });
+  dispatch(editCountedQuantity(value, rowKey));
+  dispatch(enforceReasonChoice(rowKey));
 };
 
 /**
@@ -157,14 +177,14 @@ export const editStocktakeBatchCountedQuantity = (value, rowKey) => dispatch => 
  *
  * @param {String} rowKey   Key for the row to edit.
  */
-export const removeReason = rowKey => (getState, dispatch) => {
+export const removeReason = rowKey => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  objectToEdit.applyReason(UIDatabase);
+  objectToEdit.applyReasonToBatches(UIDatabase);
 
-  dispatch(refreshRow());
+  dispatch(refreshRow(rowKey));
 };
 
 /**
@@ -174,9 +194,12 @@ export const removeReason = rowKey => (getState, dispatch) => {
  * @param {Realm.Option} value Reason to apply to the underlying rorw.
  */
 export const applyReason = value => (dispatch, getState) => {
-  const { modalValue } = getState();
+  const { modalValue, keyExtractor } = getState();
 
   modalValue.applyReasonToBatches(UIDatabase, value);
 
-  dispatch(refreshRow());
+  const rowKey = keyExtractor(modalValue);
+
+  dispatch(closeModal());
+  dispatch(refreshRow(rowKey));
 };
