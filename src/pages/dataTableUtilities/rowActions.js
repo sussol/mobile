@@ -89,6 +89,26 @@ export const selectItems = items => ({
 });
 
 /**
+ * Removes all batches which are selected from the underlying pageObject.
+ * use case: Removing a selection of items from a Transaction, Requisition
+ * or Stocktake.
+ *
+ * @param {String} pageObjectType Type of the underlying pageObject, i.e. Transaction.
+ */
+export const deleteSelectedBatches = pageObjectType => (dispatch, getState) => {
+  const { dataState, pageObject } = getState();
+
+  const itemIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
+
+  UIDatabase.write(() => {
+    pageObject.removeTransactionBatchesById(UIDatabase, itemIds);
+    UIDatabase.save(pageObjectType, pageObject);
+  });
+
+  dispatch({ type: ACTIONS.DELETE_RECORDS });
+};
+
+/**
  * Removes all items which are selected from the underlying pageObject.
  * use case: Removing a selection of items from a Transaction, Requisition
  * or Stocktake.
@@ -120,7 +140,7 @@ export const deleteSelectedRecords = recordType => (dispatch, getState) => {
   const recordIds = Array.from(dataState.keys()).filter(rowKey => dataState.get(rowKey).isSelected);
 
   const transactionsToDelete = recordIds.reduce((acc, recordId) => {
-    const record = backingData.filtered('id = $0', recordId)[0];
+    const record = backingData.filtered('id == $0', recordId)[0];
     const shouldDelete = record && record.isValid() && !record.isFinalised;
     if (shouldDelete) return [...acc, record];
     return acc;
@@ -139,7 +159,7 @@ export const deleteSelectedRecords = recordType => (dispatch, getState) => {
 export const deleteTransactions = () => deleteSelectedRecords('Transaction');
 export const deleteRequisitions = () => deleteSelectedRecords('Requisition');
 export const deleteStocktakes = () => deleteSelectedRecords('Stocktake');
-export const deleteTransactionItems = () => deleteSelectedItems('TransactionItem');
-export const deleteTransactionBatches = () => deleteSelectedItems('TransactionBatch');
-export const deleteRequisitionItems = () => deleteSelectedItems('RequisitionItem');
-export const deleteStocktakeItems = () => deleteSelectedItems('StocktakeItem');
+export const deleteTransactionItems = () => deleteSelectedItems('Transaction');
+export const deleteRequisitionItems = () => deleteSelectedItems('Requisition');
+export const deleteStocktakeItems = () => deleteSelectedItems('Stocktake');
+export const deleteTransactionBatches = () => deleteSelectedBatches('Transaction');
