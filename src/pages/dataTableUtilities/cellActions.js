@@ -4,16 +4,9 @@
  */
 
 import { UIDatabase } from '../../database';
-import { parsePositiveInteger } from '../../utilities';
-
-const ACTIONS = {
-  REFRESH_ROW: 'refreshRow',
-  EDIT_TOTAL_QUANTITY: 'editTotalQuantity',
-  EDIT_COUNTED_QUANTITY: 'editCountedTotalQuantity',
-  EDIT_REQUIRED_QUANTITY: 'editRequiredQuantity',
-  EDIT_EXPIRY_DATE: 'editExpiryDate',
-  ENFORCE_REASON: 'enforceReasonChoice',
-};
+import { parsePositiveInteger, MODAL_KEYS } from '../../utilities';
+import { ACTIONS } from './constants';
+import { openModal } from './actions';
 
 /**
  * Refreshes a row in the DataTable component.
@@ -141,10 +134,10 @@ export const enforceReasonChoice = rowKey => (getState, dispatch) => {
   const { enforceReason } = objectToEdit;
 
   if (enforceReason) {
-    // Open modal
+    dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey));
+  } else {
+    dispatch(removeReason(rowKey));
   }
-
-  dispatch(removeReason(rowKey));
 };
 
 /**
