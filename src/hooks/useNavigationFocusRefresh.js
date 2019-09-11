@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { refreshData } from '../pages/dataTableUtilities/actions';
 
 /**
@@ -14,6 +14,7 @@ import { refreshData } from '../pages/dataTableUtilities/actions';
  * stack and returning to a page whose state has been altered but
  * the UI has not updated/re-rendered.
  *
+ * - Using this hook will REFRESH ALL DATA on navigating to this page.
  * - ENSURE THE CALLING SCREEN HAS A `refreshData` REDUCER CASE.
  * - Only events for the calling page are subscribed to.
  * - Initial navigation focus event is NOT captured.
@@ -22,18 +23,23 @@ import { refreshData } from '../pages/dataTableUtilities/actions';
  * @param {Object} navigation react-navigation navigator object.
  */
 export const useNavigationFocusRefresh = (dispatch, navigation) => {
-  const [subscription, setSubscription] = useState(null);
+  const subscription = useRef(null);
 
-  const unSubscribe = () => subscription.remove();
+  const subscribe = () => {
+    if (subscription.current) return;
+    subscription.current = navigation.addListener('willFocus', () => dispatch(refreshData()));
+  };
 
-  // On-mount, On-unmount effect, subscribing/unsubscribing to willFocus navigation
-  // events.
+  const unSubscribe = () => {
+    if (!subscription.current) return;
+    subscription.current.remove();
+  };
+
+  // On-mount, On-unmount effect, subscribing/unsubscribing to willFocus navigation events.
   useEffect(() => {
-    const newSubscription = navigation.addListener('willFocus', () => dispatch(refreshData()));
-    setSubscription(newSubscription);
-
-    return () => subscription.remove();
+    subscribe();
+    return unSubscribe;
   }, []);
 
-  return [subscription, unSubscribe];
+  return [subscription, subscribe, unSubscribe];
 };

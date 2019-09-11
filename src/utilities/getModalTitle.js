@@ -10,6 +10,7 @@ export const MODAL_KEYS = {
   THEIR_REF_EDIT: 'theirRefEdit',
   REQUISITION_COMMENT_EDIT: 'comment',
   ITEM_SELECT: 'itemSelect',
+  SELECT_CUSTOMER: 'selectCustomer',
   SELECT_SUPPLIER: 'selectSupplier',
   PROGRAM_REQUISITION: 'programRequisition',
   MONTHS_SELECT: 'monthsToSupply',
