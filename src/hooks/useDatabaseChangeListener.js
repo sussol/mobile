@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { CHANGE_TYPES } from 'react-native-database';
 
-import { refreshData } from '../pages/dataTableUtilities/tableActions';
+import { refreshData } from '../pages/dataTableUtilities';
 import { UIDatabase } from '../database';
 
 /**

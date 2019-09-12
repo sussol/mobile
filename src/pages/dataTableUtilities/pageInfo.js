@@ -6,7 +6,7 @@
 import { pageInfoStrings, programStrings } from '../../localization';
 import { formatDate } from '../../utilities';
 
-import { openModal } from './pageActions';
+import { openModal } from './actions';
 
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
 
