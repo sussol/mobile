@@ -55,7 +55,9 @@ export const filterData = (state, action) => {
 export const refreshData = state => {
   const { backingData, sortBy, isAscending } = state;
 
-  const newData = newSortDataBy(backingData.slice(), sortBy, isAscending);
+  const newData = sortBy
+    ? newSortDataBy(backingData.slice(), sortBy, isAscending)
+    : backingData.slice();
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
 };
@@ -68,7 +70,7 @@ export const hideOverStocked = state => {
 
   const newData = backingData.filter(item => item.isLessThanThresholdMOS);
 
-  return { ...state, data: newData, showAllStock: false };
+  return { ...state, data: newData, showAll: false };
 };
 
 /**

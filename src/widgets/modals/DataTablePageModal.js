@@ -51,7 +51,6 @@ export const DataTablePageModal = ({
   modalKey,
   onSelect,
   currentValue,
-  modalObject,
 }) => {
   const ModalContent = () => {
     switch (modalKey) {
@@ -123,7 +122,7 @@ export const DataTablePageModal = ({
         return (
           <RequisitionRegimenModalTable
             database={UIDatabase}
-            requisition={modalObject}
+            requisition={currentValue}
             genericTablePageStyles={{
               searchBarColor: SUSSOL_ORANGE,
               colors: dataTableColors,
@@ -199,7 +198,7 @@ DataTablePageModal.propTypes = {
   onClose: PropTypes.func.isRequired,
   modalKey: PropTypes.string,
   onSelect: PropTypes.func,
-  currentValue: PropTypes.string,
+  currentValue: PropTypes.any,
 };
 
 export default DataTablePageModal;
