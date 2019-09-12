@@ -36,6 +36,7 @@ import {
   getItemLayout,
   editRequisitionItemRequiredQuantity,
 } from './dataTableUtilities';
+
 import { usePageReducer } from '../hooks';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -43,11 +44,14 @@ import { buttonStrings, modalStrings, programStrings } from '../localization';
 
 const stateInitialiser = requisition => {
   const { program, items: backingData } = requisition;
+  const showAll = !!program;
 
   return {
     pageObject: requisition,
     backingData,
-    data: backingData.sorted('item.name').slice(),
+    data: showAll
+      ? backingData.filter(item => item.isLessThanThresholdMOS)
+      : backingData.sorted('item.name').slice(),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
@@ -57,7 +61,7 @@ const stateInitialiser = requisition => {
     isAscending: true,
     modalKey: '',
     hasSelection: false,
-    showAll: !program,
+    showAll,
     modalValue: null,
   };
 };
