@@ -4,3 +4,5 @@
  */
 
 export * from './actions';
+
+export { recordKeyExtractor, getItemLayout } from './utilities';
