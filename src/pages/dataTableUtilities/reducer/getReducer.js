@@ -24,7 +24,7 @@ import {
   deselectRow,
   deselectAll,
   selectAll,
-  selectItems,
+  selectRows,
   deleteRecords,
 } from './rowReducers';
 import {
@@ -144,7 +144,7 @@ const stocktakeManager = {
   filterData,
   selectAll,
   hideStockOut,
-  selectItems,
+  selectRows,
   editName,
   refreshData,
 };

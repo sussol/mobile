@@ -173,7 +173,7 @@ export const selectAll = state => {
  * Sets the rowState of each of the array of items from the undering data
  * in the current store within dataState to true.
  */
-export const selectItems = (state, action) => {
+export const selectRows = (state, action) => {
   const { dataState, keyExtractor } = state;
   const { payload } = action;
   const { items } = payload;
