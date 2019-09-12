@@ -37,21 +37,21 @@ import {
   editRequisitionItemRequiredQuantity,
 } from './dataTableUtilities';
 
-import { usePageReducer } from '../hooks';
+import { usePageReducer, useDatabaseChangeListener } from '../hooks';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 
 const stateInitialiser = requisition => {
   const { program, items: backingData } = requisition;
-  const showAll = !!program;
+  const showAll = !program;
 
   return {
     pageObject: requisition,
     backingData,
     data: showAll
-      ? backingData.filter(item => item.isLessThanThresholdMOS)
-      : backingData.sorted('item.name').slice(),
+      ? backingData.sorted('item.name').slice()
+      : backingData.filter(item => item.isLessThanThresholdMOS),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     currentFocusedRowKey: null,
@@ -106,6 +106,9 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     modalValue,
     searchTerm,
   } = state;
+
+  // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
+  useDatabaseChangeListener(dispatch, requisition, 'Requisition');
 
   const { isFinalised, comment, theirRef, program } = pageObject;
 
