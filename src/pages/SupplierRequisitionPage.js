@@ -320,7 +320,6 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
-        modalObject={pageObject}
       />
     </DataTablePageView>
   );
