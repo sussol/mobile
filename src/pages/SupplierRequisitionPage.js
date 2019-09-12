@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -41,6 +41,27 @@ import { usePageReducer } from '../hooks';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 
+const stateInitialiser = requisition => {
+  const { program, items: backingData } = requisition;
+
+  return {
+    pageObject: requisition,
+    backingData,
+    data: backingData.sorted('item.name').slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    currentFocusedRowKey: null,
+    searchTerm: '',
+    filterDataKeys: ['item.name'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+    showAll: !program,
+    modalValue: null,
+  };
+};
+
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
  *
@@ -59,22 +80,12 @@ import { buttonStrings, modalStrings, programStrings } from '../localization';
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
-    pageObject: requisition,
-    backingData: requisition.items,
-    data: requisition.items.sorted('item.name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    showAllStock: !(routeName === 'programSupplierRequisition'),
-    modalValue: null,
-  });
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    requisition
+  );
 
   const {
     data,
@@ -86,17 +97,13 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     pageInfo,
     pageObject,
     hasSelection,
-    showAllStock,
+    showAll,
     keyExtractor,
     modalValue,
     searchTerm,
   } = state;
 
   const { isFinalised, comment, theirRef, program } = pageObject;
-
-  useEffect(() => {
-    if (!showAllStock) dispatch(hideOverStocked());
-  }, []);
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
@@ -114,6 +121,19 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         return null;
     }
   });
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_ITEM:
+        return value => dispatch(addRequisitionItem(value));
+      case MODAL_KEYS.SELECT_MONTH:
+        return value => dispatch(editMonthsToSupply(value, 'Requisition'));
+      case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
+        return value => dispatch(editComment(value, 'Requisition'));
+      default:
+        return null;
+    }
+  };
 
   const renderRow = useCallback(
     listItem => {
@@ -135,6 +155,16 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       );
     },
     [data, dataState]
+  );
+
+  const renderHeader = () => (
+    <DataTableHeaderRow
+      columns={columns}
+      dispatch={instantDebouncedDispatch}
+      sortAction={sortData}
+      isAscending={isAscending}
+      sortBy={sortBy}
+    />
   );
 
   const AddMasterListItemsButton = useCallback(
@@ -191,17 +221,17 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     const toggleProps = [
       {
         text: programStrings.hide_over_stocked,
-        isOn: !showAllStock,
+        isOn: !showAll,
         onPress: () => dispatch(hideOverStocked()),
       },
       {
         text: programStrings.show_over_stocked,
-        isOn: showAllStock,
+        isOn: showAll,
         onPress: () => runWithLoadingIndicator(() => dispatch(showOverStocked())),
       },
     ];
     return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
-  }, [showAllStock]);
+  }, [showAll]);
 
   const ViewRegimenDataButton = useCallback(
     () => (
@@ -248,30 +278,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         </View>
       </>
     );
-  }, [showAllStock]);
-
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
-  );
-
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case MODAL_KEYS.SELECT_ITEM:
-        return value => dispatch(addRequisitionItem(value));
-      case MODAL_KEYS.SELECT_MONTH:
-        return value => dispatch(editMonthsToSupply(value, 'Requisition'));
-      case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Requisition'));
-      default:
-        return null;
-    }
-  };
+  }, [showAll]);
 
   const {
     newPageTopSectionContainer,
@@ -285,7 +292,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChangeText={value => debouncedDispatch(filterData(value))}
+            onChangeText={value => filterData(value)}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""

@@ -36,6 +36,7 @@ export const usePageReducer = (
   page,
   initialState,
   initializer,
+  pageObject,
   debounceTimeout = 250,
   instantDebounceTimeout = 250
 ) => {
@@ -44,7 +45,7 @@ export const usePageReducer = (
   const memoizedReducer = useMemo(() => getReducer(page), []);
 
   const [pageState, setPageState] = useState({
-    ...(initializer ? initializer() : initialState),
+    ...(initializer ? initializer(pageObject) : initialState),
     columns,
     pageInfo,
   });
