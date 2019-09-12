@@ -83,16 +83,18 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
   const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
-  const onPressRow = () => rowData => reduxDispatch(gotoSupplierRequisition(rowData));
+  const onPressRow = rowData => () => reduxDispatch(gotoSupplierRequisition(rowData));
   const onConfirmDelete = () => dispatch(deleteRequisitions());
   const onCancelDelete = () => dispatch(deselectAll());
   const onSearchFiltering = value => dispatch(filterData(value));
   const onNewRequisition = () => dispatch(openModal(NEW_REQUISITON));
   const onCloseModal = () => dispatch(closeModal());
+
   const onCreateRequisition = otherStoreName => {
     reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
     onCloseModal();
   };
+
   const onCreateProgramRequisition = requisitionParameters => {
     reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
     dispatch(closeModal());
@@ -133,7 +135,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
-          onPress={onPressRow}
+          onPress={onPressRow(item)}
           rowIndex={index}
         />
       );
