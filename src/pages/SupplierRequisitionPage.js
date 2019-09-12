@@ -89,6 +89,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     showAllStock,
     keyExtractor,
     modalValue,
+    searchTerm,
   } = state;
 
   const { isFinalised, comment, theirRef, program } = pageObject;
@@ -284,10 +285,11 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={value => debouncedDispatch(filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>
