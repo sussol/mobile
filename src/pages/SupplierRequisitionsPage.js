@@ -8,31 +8,31 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton } from '../widgets';
-import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { usePageReducer } from '../hooks';
+import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import {
-  sortData,
-  filterData,
   selectRow,
   deselectRow,
   deselectAll,
-  closeBasicModal,
   deleteRequisitions,
-  openBasicModal,
-} from './dataTableUtilities/actions';
-import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
+  sortData,
+  filterData,
+  openModal,
+  closeModal,
+  getItemLayout,
+  recordKeyExtractor,
+} from './dataTableUtilities';
 
-import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { buttonStrings, modalStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -52,7 +52,7 @@ import { createSupplierRequisition, gotoSupplierRequisition } from '../navigatio
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     backingData: UIDatabase.objects('RequestRequisition'),
     data: UIDatabase.objects('RequestRequisition')
       .sorted('serialNumber')
@@ -68,11 +68,22 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     currentUser,
   });
 
-  const { data, dataState, sortBy, isAscending, columns, modalKey, hasSelection } = state;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    modalKey,
+    hasSelection,
+    searchTerm,
+  } = state;
 
   const usingPrograms = useCallback(getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
   const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
+
+  const onSearchFiltering = value => dispatch(filterData(value));
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -112,7 +123,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
         <PageButton
           style={topButton}
           text={buttonStrings.new_requisition}
-          onPress={() => dispatch(openBasicModal(NEW_REQUISITON))}
+          onPress={() => dispatch(openModal(NEW_REQUISITON))}
         />
       </View>
     );
@@ -123,12 +134,12 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       case SELECT_SUPPLIER:
         return otherStoreName => {
           reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
-          dispatch(closeBasicModal());
+          dispatch(closeModal());
         };
       case PROGRAM_REQUISITION:
         return requisitionParameters => {
           reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
-          dispatch(closeBasicModal());
+          dispatch(closeModal());
         };
       default:
         return null;
@@ -156,9 +167,10 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={onSearchFiltering}
             style={searchBar}
             color={SUSSOL_ORANGE}
+            value={searchTerm}
             placeholder=""
           />
         </View>
@@ -183,7 +195,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={() => dispatch(closeModal())}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
