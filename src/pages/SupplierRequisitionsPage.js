@@ -15,7 +15,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { MODAL_KEYS, getAllPrograms, newSortDataBy } from '../utilities';
 import { usePageReducer } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import {
@@ -34,6 +34,23 @@ import {
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
+const initialiseState = () => {
+  const backingData = UIDatabase.objects('RequestRequisition');
+  const data = newSortDataBy(backingData.slice(), 'serialNumber');
+  return {
+    backingData,
+    data,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
+    sortBy: 'serialNumber',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+  };
+};
+
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
  *
@@ -47,26 +64,12 @@ import { buttonStrings, modalStrings } from '../localization';
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused },
  *
- * @prop {Object} transaction The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
+ * @prop {String} routeName     The current route name for the top of the navigation stack.
+ * @prop {Object} currentUser   The currently logged in user.
+ * @prop {Func}   reduxDispatch Dispatch method for the app-wide redux store.
  */
 export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
-    backingData: UIDatabase.objects('RequestRequisition'),
-    data: UIDatabase.objects('RequestRequisition')
-      .sorted('serialNumber')
-      .slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
-    sortBy: 'serialNumber',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    currentUser,
-  });
+  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
 
   const {
     data,
@@ -147,7 +150,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
+        dispatch={debouncedDispatch}
         sortAction={sortData}
         isAscending={isAscending}
         sortBy={sortBy}
