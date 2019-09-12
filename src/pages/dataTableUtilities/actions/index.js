@@ -53,6 +53,9 @@ export {
   setRequestedToSuggested,
   setSuppliedToRequested,
   setSuppliedToSuggested,
+  addRequisitionItem,
+  addStocktakeItem,
+  addTransactionItem,
 } from './tableActions';
 
 export {
