@@ -7,14 +7,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { newPageStyles } from '../../globalStyles';
+import { newPageStyles } from '../globalStyles';
 
 const { newPageContentContainer, newContainer } = newPageStyles;
 
 /**
  * Simple container for a standard data table page.
  */
-const DataTablePageView = props => {
+export const DataTablePageView = props => {
   const { children } = props;
   return (
     <View style={newPageContentContainer}>
