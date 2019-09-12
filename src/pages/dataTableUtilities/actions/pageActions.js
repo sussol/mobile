@@ -3,8 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { UIDatabase } from '../../database/index';
-import { MODAL_KEYS } from '../../utilities';
+import { UIDatabase } from '../../../database/index';
+import { MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
 
 /**

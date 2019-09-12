@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { UIDatabase } from '../../database/index';
+import { UIDatabase } from '../../../database/index';
 import { ACTIONS } from './constants';
 
 /**
@@ -84,7 +84,7 @@ export const selectAll = () => ({
  * @param {Array} items Row data objects to be set as selected.
  */
 export const selectItems = items => ({
-  type: ACTIONS.SELECT_ITEMS,
+  type: ACTIONS.SELECT_ROWS,
   payload: { items },
 });
 

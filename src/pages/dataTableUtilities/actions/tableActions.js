@@ -3,10 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { UIDatabase } from '../../database/index';
-import { SETTINGS_KEYS } from '../../settings';
-import Settings from '../../settings/MobileAppSettings';
-import { createRecord } from '../../database/utilities/index';
+import { UIDatabase } from '../../../database/index';
+import { SETTINGS_KEYS } from '../../../settings';
+import Settings from '../../../settings/MobileAppSettings';
+import { createRecord } from '../../../database/utilities/index';
 import { closeModal } from './pageActions';
 import { ACTIONS } from './constants';
 
