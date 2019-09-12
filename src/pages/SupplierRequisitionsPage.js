@@ -60,7 +60,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['serialNumber'],
+    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
     sortBy: 'serialNumber',
     isAscending: true,
     modalKey: '',
