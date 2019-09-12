@@ -16,7 +16,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { MODAL_KEYS, getAllPrograms, newSortDataBy } from '../utilities';
-import { usePageReducer } from '../hooks';
+import { usePageReducer, useNavigationFocusRefresh, useDatabaseListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import {
   selectRow,
@@ -29,6 +29,7 @@ import {
   closeModal,
   getItemLayout,
   recordKeyExtractor,
+  refreshData,
 } from './dataTableUtilities';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
@@ -67,8 +68,14 @@ const initialiseState = () => {
  * @prop {String} routeName     The current route name for the top of the navigation stack.
  * @prop {Object} currentUser   The currently logged in user.
  * @prop {Func}   reduxDispatch Dispatch method for the app-wide redux store.
+ * @prop {Object} navigation    Reference to the main application stack navigator.
  */
-export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
+export const SupplierRequisitionsPage = ({
+  routeName,
+  currentUser,
+  dispatch: reduxDispatch,
+  navigation,
+}) => {
   const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
 
   const {
@@ -81,6 +88,12 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     hasSelection,
     searchTerm,
   } = state;
+
+  // Custom hook to refresh data on this page when becoming the head of the stack again.
+  useNavigationFocusRefresh(dispatch, navigation);
+
+  // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
+  useDatabaseListener(() => dispatch(refreshData()), 'Requisition');
 
   const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
@@ -225,6 +238,7 @@ SupplierRequisitionsPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
 
 SupplierRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };
