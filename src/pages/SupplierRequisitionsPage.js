@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -79,13 +79,26 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     searchTerm,
   } = state;
 
-  const usingPrograms = useCallback(getAllPrograms(Settings, UIDatabase).length > 0, []);
+  const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
   const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
+  const onPressRow = () => rowData => reduxDispatch(gotoSupplierRequisition(rowData));
+  const onConfirmDelete = () => dispatch(deleteRequisitions());
+  const onCancelDelete = () => dispatch(deselectAll());
   const onSearchFiltering = value => dispatch(filterData(value));
+  const onNewRequisition = () => dispatch(openModal(NEW_REQUISITON));
+  const onCloseModal = () => dispatch(closeModal());
+  const onCreateRequisition = otherStoreName => {
+    reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
+    onCloseModal();
+  };
+  const onCreateProgramRequisition = requisitionParameters => {
+    reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
+    dispatch(closeModal());
+  };
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
@@ -93,7 +106,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       default:
         return null;
     }
-  });
+  };
 
   const renderRow = useCallback(
     listItem => {
@@ -109,51 +122,48 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
-          onPress={() => reduxDispatch(gotoSupplierRequisition(item))}
+          onPress={onPressRow}
         />
       );
     },
     [data, dataState]
   );
 
-  const renderButtons = () => {
+  const PageButtons = useCallback(() => {
     const { verticalContainer, topButton } = globalStyles;
     return (
       <View style={verticalContainer}>
         <PageButton
           style={topButton}
           text={buttonStrings.new_requisition}
-          onPress={() => dispatch(openModal(NEW_REQUISITON))}
+          onPress={onNewRequisition}
         />
       </View>
     );
-  };
+  });
 
   const getModalOnSelect = () => {
     switch (modalKey) {
       case SELECT_SUPPLIER:
-        return otherStoreName => {
-          reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
-          dispatch(closeModal());
-        };
+        return onCreateRequisition;
       case PROGRAM_REQUISITION:
-        return requisitionParameters => {
-          reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
-          dispatch(closeModal());
-        };
+        return onCreateProgramRequisition;
       default:
         return null;
     }
   };
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
   );
 
   const {
@@ -174,7 +184,9 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
             placeholder=""
           />
         </View>
-        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={newPageTopRightSectionContainer}>
+          <PageButtons />
+        </View>
       </View>
       <DataTable
         data={data}
@@ -187,15 +199,15 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteRequisitions())}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
