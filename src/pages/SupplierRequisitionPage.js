@@ -25,8 +25,8 @@ import {
   addMasterListItems,
   addRequisitionItem,
   createAutomaticOrder,
-  setRequestedToSuggested,
   hideOverStocked,
+  setRequestedToSuggested,
   showOverStocked,
   editComment,
   openModal,
@@ -112,12 +112,34 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
 
   const { isFinalised, comment, theirRef, program } = pageObject;
 
+  // On click handlers
+  const onCloseModal = () => dispatch(closeModal());
+  const onSelectItem = () => dispatch(openModal(MODAL_KEYS.SELECT_ITEM));
+  const onViewRegimenData = () => dispatch(openModal(MODAL_KEYS.VIEW_REGIMEN_DATA));
+
+  const onConfirmDelete = () => dispatch(deleteRequisitionItems());
+  const onCancelDelete = () => dispatch(deselectAll());
+
+  const onAddItem = value => dispatch(addRequisitionItem(value));
+  const onEditMonth = value => dispatch(editMonthsToSupply(value, 'Requisition'));
+  const onEditComment = value => dispatch(editComment(value, 'Requisition'));
+
+  const onFilterData = value => filterData(value);
+  const onHideOverStocked = () => dispatch(hideOverStocked());
+  const onShowOverStocked = () => runWithLoadingIndicator(() => dispatch(showOverStocked()));
+  const onSetRequestedToSuggested = () =>
+    runWithLoadingIndicator(() => dispatch(setRequestedToSuggested()));
+  const onCreateAutomaticOrder = () =>
+    runWithLoadingIndicator(() => dispatch(createAutomaticOrder()));
+  const onAddFromMasterList = () =>
+    runWithLoadingIndicator(() => dispatch(addMasterListItems('Requisition')));
+
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
     [comment, theirRef, isFinalised]
   );
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
         return editRequisitionItemRequiredQuantity;
@@ -127,16 +149,16 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       default:
         return null;
     }
-  });
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return value => dispatch(addRequisitionItem(value));
+        return onAddItem;
       case MODAL_KEYS.SELECT_MONTH:
-        return value => dispatch(editMonthsToSupply(value, 'Requisition'));
+        return onEditMonth;
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Requisition'));
+        return onEditComment;
       default:
         return null;
     }
@@ -164,14 +186,17 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     [data, dataState]
   );
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
   );
 
   const AddMasterListItemsButton = useCallback(
@@ -179,7 +204,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <PageButton
         style={globalStyles.leftButton}
         text={buttonStrings.add_master_list_items}
-        onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Requisition')))}
+        onPress={onAddFromMasterList}
         isDisabled={isFinalised}
       />
     ),
@@ -191,7 +216,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <PageButton
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
-        onPress={() => dispatch(openModal(MODAL_KEYS.SELECT_ITEM))}
+        onPress={onSelectItem}
         isDisabled={isFinalised}
       />
     ),
@@ -203,7 +228,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <PageButton
         style={{ ...globalStyles.leftButton, marginLeft: 5 }}
         text={buttonStrings.create_automatic_order}
-        onPress={() => runWithLoadingIndicator(() => dispatch(createAutomaticOrder()))}
+        onPress={onCreateAutomaticOrder}
         isDisabled={isFinalised}
       />
     ),
@@ -216,7 +241,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <PageButton
           style={globalStyles.topButton}
           text={buttonStrings.use_suggested_quantities}
-          onPress={() => runWithLoadingIndicator(() => dispatch(setRequestedToSuggested()))}
+          onPress={onSetRequestedToSuggested}
           isDisabled={isFinalised}
         />
       </View>
@@ -229,12 +254,12 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       {
         text: programStrings.hide_over_stocked,
         isOn: !showAll,
-        onPress: () => dispatch(hideOverStocked()),
+        onPress: onHideOverStocked,
       },
       {
         text: programStrings.show_over_stocked,
         isOn: showAll,
-        onPress: () => runWithLoadingIndicator(() => dispatch(showOverStocked())),
+        onPress: onShowOverStocked,
       },
     ];
     return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
@@ -246,7 +271,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <PageButton
           style={{ ...globalStyles.topButton }}
           text={buttonStrings.view_regimen_data}
-          onPress={() => dispatch(openModal(MODAL_KEYS.VIEW_REGIMEN_DATA))}
+          onPress={onViewRegimenData}
         />
       </View>
     ),
@@ -299,7 +324,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChangeText={value => filterData(value)}
+            onChangeText={onFilterData}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
@@ -322,15 +347,15 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteRequisitionItems())}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
