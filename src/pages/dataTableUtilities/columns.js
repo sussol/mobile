@@ -80,7 +80,7 @@ const COLUMNS = () => ({
   },
   supplier: {
     key: 'otherPartyName',
-    title: tableStrings.suplier,
+    title: tableStrings.supplier,
     sortable: true,
   },
   customer: {

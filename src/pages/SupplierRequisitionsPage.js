@@ -123,6 +123,7 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
           dispatch={dispatch}
           getAction={getAction}
           onPress={onPressRow}
+          rowIndex={index}
         />
       );
     },
