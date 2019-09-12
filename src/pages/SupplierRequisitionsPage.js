@@ -108,6 +108,17 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     }
   };
 
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case SELECT_SUPPLIER:
+        return onCreateRequisition;
+      case PROGRAM_REQUISITION:
+        return onCreateProgramRequisition;
+      default:
+        return null;
+    }
+  };
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -130,30 +141,6 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     [data, dataState]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_requisition}
-          onPress={onNewRequisition}
-        />
-      </View>
-    );
-  });
-
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case SELECT_SUPPLIER:
-        return onCreateRequisition;
-      case PROGRAM_REQUISITION:
-        return onCreateProgramRequisition;
-      default:
-        return null;
-    }
-  };
-
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
@@ -166,6 +153,19 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
     ),
     [sortBy, isAscending]
   );
+
+  const PageButtons = useCallback(() => {
+    const { verticalContainer, topButton } = globalStyles;
+    return (
+      <View style={verticalContainer}>
+        <PageButton
+          style={topButton}
+          text={buttonStrings.new_requisition}
+          onPress={onNewRequisition}
+        />
+      </View>
+    );
+  }, []);
 
   const {
     newPageTopSectionContainer,
