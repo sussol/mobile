@@ -15,29 +15,9 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
-import {
-  selectRow,
-  deselectRow,
-  deselectAll,
-  deleteRequisitionItems,
-  filterData,
-  sortData,
-  addMasterListItems,
-  addRequisitionItem,
-  createAutomaticOrder,
-  hideOverStocked,
-  setRequestedToSuggested,
-  showOverStocked,
-  editComment,
-  openModal,
-  closeModal,
-  editMonthsToSupply,
-  recordKeyExtractor,
-  getItemLayout,
-  editRequisitionItemRequiredQuantity,
-} from './dataTableUtilities';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
-import { usePageReducer, useDatabaseChangeListener } from '../hooks';
+import { usePageReducer, useRecordListener } from '../hooks';
 
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
@@ -96,56 +76,63 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
-    pageInfo,
     pageObject,
     hasSelection,
     showAll,
     keyExtractor,
     modalValue,
     searchTerm,
+    PageActions,
+    columns,
+    getPageInfoColumns,
   } = state;
 
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useDatabaseChangeListener(dispatch, requisition, 'Requisition');
+  useRecordListener(() => dispatch(PageActions.refreshData()), requisition, 'Requisition');
 
   const { isFinalised, comment, theirRef, program } = pageObject;
 
   // On click handlers
-  const onCloseModal = () => dispatch(closeModal());
-  const onSelectItem = () => dispatch(openModal(MODAL_KEYS.SELECT_ITEM));
-  const onViewRegimenData = () => dispatch(openModal(MODAL_KEYS.VIEW_REGIMEN_DATA));
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onSelectItem = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
+  const onViewRegimenData = () => dispatch(PageActions.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA));
 
-  const onConfirmDelete = () => dispatch(deleteRequisitionItems());
-  const onCancelDelete = () => dispatch(deselectAll());
+  const onConfirmDelete = () => dispatch(PageActions.deleteRequisitionItems());
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
 
-  const onAddItem = value => dispatch(addRequisitionItem(value));
-  const onEditMonth = value => dispatch(editMonthsToSupply(value, 'Requisition'));
-  const onEditComment = value => dispatch(editComment(value, 'Requisition'));
+  const onAddItem = value => dispatch(PageActions.addRequisitionItem(value));
+  const onEditMonth = value => dispatch(PageActions.editMonthsToSupply(value, 'Requisition'));
+  const onEditComment = value => dispatch(PageActions.editComment(value, 'Requisition'));
 
-  const onFilterData = value => filterData(value);
-  const onHideOverStocked = () => dispatch(hideOverStocked());
-  const onShowOverStocked = () => runWithLoadingIndicator(() => dispatch(showOverStocked()));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onHideOverStocked = () => dispatch(PageActions.hideOverStocked());
+  const onShowOverStocked = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.showOverStocked()));
   const onSetRequestedToSuggested = () =>
-    runWithLoadingIndicator(() => dispatch(setRequestedToSuggested()));
+    runWithLoadingIndicator(() => dispatch(PageActions.setRequestedToSuggested()));
   const onCreateAutomaticOrder = () =>
-    runWithLoadingIndicator(() => dispatch(createAutomaticOrder()));
+    runWithLoadingIndicator(() => dispatch(PageActions.createAutomaticOrder()));
   const onAddFromMasterList = () =>
-    runWithLoadingIndicator(() => dispatch(addMasterListItems('Requisition')));
+    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Requisition')));
 
   const renderPageInfo = useCallback(
-    () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
+    () => (
+      <PageInfo
+        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
+        isEditingDisabled={isFinalised}
+      />
+    ),
     [comment, theirRef, isFinalised]
   );
 
   const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
-        return editRequisitionItemRequiredQuantity;
+        return PageActions.editRequisitionItemRequiredQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
@@ -191,7 +178,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <DataTableHeaderRow
         columns={columns}
         dispatch={instantDebouncedDispatch}
-        sortAction={sortData}
+        sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
       />
