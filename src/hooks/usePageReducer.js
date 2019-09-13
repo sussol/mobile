@@ -5,11 +5,12 @@
 
 import { useRef, useState, useCallback, useMemo } from 'react';
 
-import getColumns from '../pages/dataTableUtilities/columns';
-import getPageInfo from '../pages/dataTableUtilities/pageInfo';
-import { getPageActions } from '../pages/dataTableUtilities/actions/index';
-
-import { DataTablePageReducer } from '../pages/dataTableUtilities/reducer/DataTablePageReducer';
+import {
+  DataTablePageReducer,
+  getPageActions,
+  getColumns,
+  getPageInfoColumns,
+} from '../pages/dataTableUtilities';
 
 import { debounce } from '../utilities/index';
 
@@ -45,14 +46,14 @@ export const usePageReducer = (
   instantDebounceTimeout = 250
 ) => {
   const columns = useMemo(() => getColumns(page), [page]);
-  const pageInfo = useMemo(() => getPageInfo(page), [page]);
-
+  const pageInfoColumns = useMemo(() => getPageInfoColumns(page), [page]);
   const PageActions = useMemo(() => getPageActions(page), [page]);
 
   const [pageState, setPageState] = useState({
     ...(initializer ? initializer(pageObject) : initialState),
     columns,
-    pageInfo,
+    getPageInfoColumns: pageInfoColumns,
+    PageActions,
   });
 
   // Reference to the current state object, independent of closures.
@@ -75,7 +76,7 @@ export const usePageReducer = (
     []
   );
 
-  return [pageState, PageActions, thunkDispatcher, instantDebouncedDispatch, debouncedDispatch];
+  return [pageState, thunkDispatcher, instantDebouncedDispatch, debouncedDispatch];
 };
 
 export default usePageReducer;
