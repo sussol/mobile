@@ -27,6 +27,7 @@ import { debounce } from '../utilities';
 export const useDatabaseListener = (callback, dataTypes) => {
   // Reference for being subscribed
   const isSubscribed = useRef(false);
+
   // Debounced callback, only calling 10 seconds after the last invocation
   const debouncedCallback = debounce(callback, 10000);
 
