@@ -9,18 +9,18 @@ import { UIDatabase } from '../database';
  * Custom hook for subscribing to database changes for a particular record which
  * should trigger the callback.
  *
- * Subscribes to the database, retrieving all events which occur. Events are filtered
+ * Subscribes to the database, BEING CALLED ON ALL EVENTS which occur. Events are filtered
  * by recordType, change type and ID of the record causing the event. If these all match,
- * check the particular keys which should cause a dispatch.
+ * check the particular keys which should cause a callback.
  *
- * Use case: Finalizing an invoice prunes items. This side-effect does not go through the
+ * Use case: Finalizing an invoice prunes items - this side-effect does not go through the
  * reducer and leaves state inconsistent.
  *
  * @param {Func}    callback             callback to invoke on receiving the event.
  * @param {Object}  recordToListenFor    An object in the database to listen to.
  * @param {String}  recordTypeToListFor  The object type to listen to.
- * @return {Array}
  *
+ * @return {Array}
  * subscription - boolean indicating if currently subscribed
  * subscribe    - function to subscribe, if not already
  * unSubscribe  - function to unSubscribe, if already subscribed
