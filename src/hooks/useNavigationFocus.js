@@ -5,29 +5,27 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { refreshData } from '../pages/dataTableUtilities';
 
 /**
  * Simple custom hook which subscribes to navigation focus event,
- * (navigating to a page), which will refresh data on that page
- * when navigating to it. Main use case is popping a page from the
- * stack and returning to a page whose state has been altered but
- * the UI has not updated/re-rendered.
+ * (navigating to a page), which will invoke the passed callback
+ * when navigating to it.
  *
- * - Using this hook will REFRESH ALL DATA on navigating to this page.
- * - ENSURE THE CALLING SCREEN HAS A `refreshData` REDUCER CASE.
+ * Main use case is popping a page from the stack and returning to
+ * a page whose state has been altered but the UI has not updated.
+ *
  * - Only events for the calling page are subscribed to.
  * - Initial navigation focus event is NOT captured.
  *
- * @param {Func}   dispatch   Page reducer
+ * @param {Func}   callback   callback to invoke on focusing the subscribed screen.
  * @param {Object} navigation react-navigation navigator object.
  */
-export const useNavigationFocusRefresh = (dispatch, navigation) => {
+export const useNavigationFocus = (callback, navigation) => {
   const subscription = useRef(null);
 
   const subscribe = () => {
     if (subscription.current) return;
-    subscription.current = navigation.addListener('willFocus', () => dispatch(refreshData()));
+    subscription.current = navigation.addListener('willFocus', callback);
   };
 
   const unSubscribe = () => {
