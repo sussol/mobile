@@ -213,3 +213,12 @@ export const deleteRecords = state => {
     modalKey: '',
   };
 };
+
+export const RowReducerLookup = {
+  selectRow,
+  deselectRow,
+  deselectAll,
+  selectAll,
+  selectRows,
+  deleteRecords,
+};

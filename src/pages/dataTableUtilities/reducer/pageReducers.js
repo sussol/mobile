@@ -89,3 +89,5 @@ export const openModal = (state, action) => {
  * modal that is open.
  */
 export const closeModal = state => ({ ...state, modalKey: '', modalValue: null });
+
+export const PageReducerLookup = { editName, openModal, closeModal };

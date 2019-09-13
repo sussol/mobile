@@ -21,3 +21,7 @@ export const refreshRow = (state, action) => {
 
   return { ...state, dataState: newDataState };
 };
+
+export const CellReducerLookup = {
+  refreshRow,
+};

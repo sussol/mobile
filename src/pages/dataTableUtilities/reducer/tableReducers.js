@@ -103,3 +103,12 @@ export const addRecord = (state, action) => {
     searchTerm: '',
   };
 };
+
+export const TableReducerLookup = {
+  hideStockOut,
+  addRecord,
+  hideOverStocked,
+  refreshData,
+  filterData,
+  sortData,
+};
