@@ -6,8 +6,6 @@
 import { pageInfoStrings, programStrings } from '../../localization';
 import { formatDate } from '../../utilities';
 
-import { openModal } from './actions';
-
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
 
 /**
@@ -43,7 +41,7 @@ const PER_PAGE_INFO_COLUMNS = {
   stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
 };
 
-const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
+const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
   entryDate: {
     title: `${pageInfoStrings.entry_date}:`,
     info: formatDate(pageObject.entryDate) || 'N/A',
@@ -63,25 +61,25 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   theirRef: {
     title: `${pageInfoStrings.their_ref}:`,
     info: pageObject.theirRef,
-    onPress: () => dispatch(openModal(MODAL_KEYS.THEIR_REF_EDIT)),
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.THEIR_REF_EDIT)),
     editableType: 'text',
   },
   transactionComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(openModal(MODAL_KEYS.TRANSACTION_COMMENT_EDIT)),
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.TRANSACTION_COMMENT_EDIT)),
     editableType: 'text',
   },
   stocktakeComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(openModal(MODAL_KEYS.STOCKTAKE_COMMENT_EDIT)),
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_COMMENT_EDIT)),
     editableType: 'text',
   },
   requisitionComment: {
     title: `${pageInfoStrings.comment}:`,
     info: pageObject.comment,
-    onPress: () => dispatch(openModal(MODAL_KEYS.REQUISITION_COMMENT_EDIT)),
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.REQUISITION_COMMENT_EDIT)),
     editableType: 'text',
   },
   otherParty: {
@@ -99,7 +97,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   monthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
-    onPress: () => dispatch(openModal(MODAL_KEYS.SELECT_MONTH)),
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_MONTH)),
     editableType: 'selectable',
   },
   period: {
@@ -118,7 +116,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   },
 });
 
-const getPageInfo = page => {
+const getPageInfoColumns = page => {
   const pageInfoColumns = PER_PAGE_INFO_COLUMNS[page];
 
   if (!pageInfoColumns) return null;
@@ -130,4 +128,4 @@ const getPageInfo = page => {
   };
 };
 
-export default getPageInfo;
+export default getPageInfoColumns;
