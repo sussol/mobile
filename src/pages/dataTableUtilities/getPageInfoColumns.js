@@ -120,8 +120,8 @@ const getPageInfoColumns = page => {
   const pageInfoColumns = PER_PAGE_INFO_COLUMNS[page];
 
   if (!pageInfoColumns) return null;
-  return (pageObjectParameter, dispatch) => {
-    const pageInfoRows = PAGE_INFO_ROWS(pageObjectParameter, dispatch);
+  return (pageObjectParameter, dispatch, PageActions) => {
+    const pageInfoRows = PAGE_INFO_ROWS(pageObjectParameter, dispatch, PageActions);
     return pageInfoColumns.map(pageInfoColumn =>
       pageInfoColumn.map(pageInfoKey => pageInfoRows[pageInfoKey])
     );
