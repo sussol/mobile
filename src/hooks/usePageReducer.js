@@ -15,25 +15,30 @@ import {
 import { debounce } from '../utilities/index';
 
 /**
- * Wrapper around useState, reimplementing useReducer with
- * thunks. For pages within the app - creates a
- * composed reducer through getReducer for a particular
- * page as well as fetching the required data table columns
- * and page info columns and inserting them into the initial
- * state of the component.
+ * Wrapper around useState, reimplementing useReducer with thunks.
+ *
+ * For DataTable pages within the app. Injects the initial state passed
+ * with three fields:
+ *
+ * columns: an array of column objects defining the DataTable for the page.
+ * getPageInfoColumns: closure function, returning an array of objects for
+ *                     the pages PageInfo component.
+ * PageActions: Object of composed ActionCreators for an individual page.
  *
  * Dispatch returned from useReducer is wrapped allowing the use
- * of thunks. Actions can return either a plain object or a function.
+ * of thunks. Action creators can return either a plain object or a function.
  * If a function is returned, it is called, rather than dispatched,
  * allowing actions to perform side-effects.
  *
- * Returns the current state as well as three dispatchers for
- * actions to the reducer - a regular dispatch and two debounced
- * dispatchers - which group sequential calls within the timeout
- * period, call either the last invocation or the first within
- * the timeout period.
+ * Returns the current state as well as three dispatchers for actions to the
+ * reducer - a thunk dispatch (as above) and two debounced dispatchers - which
+ * group sequential calls within a timeout period, calling either the last
+ * invocation or the first within the timeout period.
+ *
  * @param {String} page                   routeName for the current page.
  * @param {Object} initialState           Initial state of the reducer
+ * @param {Func}   initializer            Function to generate the initial state (optional)
+ * @param {Object} pageObject             base PageObject for the page i.e. a Requisition.
  * @param {Number} debounceTimeout        Timeout period for a regular debounce
  * @param {Number} instantDebounceTimeout Timeout period for an instant debounce
  */
