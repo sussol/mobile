@@ -32,7 +32,7 @@ import { debounce } from '../utilities/index';
  * @param {Number} debounceTimeout        Timeout period for a regular debounce
  * @param {Number} instantDebounceTimeout Timeout period for an instant debounce
  */
-const usePageReducer = (
+export const usePageReducer = (
   page,
   initialState,
   initializer,

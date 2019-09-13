@@ -1,5 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { useEffect, useRef } from 'react';
+
+import { UIDatabase } from '../database';
 import { debounce } from '../utilities';
 
 /**
@@ -22,7 +24,7 @@ import { debounce } from '../utilities';
  * subscribe - function to subscribe, if not already
  * unSubscribe - function to unSubscribe, if already subscribed
  */
-export const useDatabaseListener = ({ callback, dataTypes, database }) => {
+export const useDatabaseListener = (callback, dataTypes) => {
   // Reference for being subscribed
   const isSubscribed = useRef(false);
   // Debounced callback, only calling 10 seconds after the last invocation
@@ -31,12 +33,12 @@ export const useDatabaseListener = ({ callback, dataTypes, database }) => {
   const subscribe = () => {
     if (isSubscribed.current) return null;
     isSubscribed.current = true;
-    return database.addListener(filterResults);
+    return UIDatabase.addListener(filterResults);
   };
 
   const unSubscribe = callbackId => {
     if (!isSubscribed.current) return;
-    database.removeListener(callbackId);
+    UIDatabase.removeListener(callbackId);
     isSubscribed.current = false;
   };
 

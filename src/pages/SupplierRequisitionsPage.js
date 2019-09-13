@@ -5,34 +5,52 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton } from '../widgets';
-import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { MODAL_KEYS, getAllPrograms, newSortDataBy } from '../utilities';
+import { usePageReducer, useNavigationFocusRefresh, useDatabaseListener } from '../hooks';
+import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import {
-  sortData,
-  filterData,
   selectRow,
   deselectRow,
   deselectAll,
-  closeBasicModal,
   deleteRequisitions,
-  openBasicModal,
-} from './dataTableUtilities/actions';
-import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
+  sortData,
+  filterData,
+  openModal,
+  closeModal,
+  getItemLayout,
+  recordKeyExtractor,
+  refreshData,
+} from './dataTableUtilities';
 
-import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { buttonStrings, modalStrings } from '../localization';
+
+const initialiseState = () => {
+  const backingData = UIDatabase.objects('RequestRequisition');
+  const data = newSortDataBy(backingData.slice(), 'serialNumber');
+  return {
+    backingData,
+    data,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
+    sortBy: 'serialNumber',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+  };
+};
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -47,34 +65,58 @@ import { createSupplierRequisition, gotoSupplierRequisition } from '../navigatio
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused },
  *
- * @prop {Object} transaction The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
+ * @prop {String} routeName     The current route name for the top of the navigation stack.
+ * @prop {Object} currentUser   The currently logged in user.
+ * @prop {Func}   reduxDispatch Dispatch method for the app-wide redux store.
+ * @prop {Object} navigation    Reference to the main application stack navigator.
  */
-export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
-    backingData: UIDatabase.objects('RequestRequisition'),
-    data: UIDatabase.objects('RequestRequisition')
-      .sorted('serialNumber')
-      .slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['serialNumber'],
-    sortBy: 'serialNumber',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    currentUser,
-  });
+export const SupplierRequisitionsPage = ({
+  routeName,
+  currentUser,
+  dispatch: reduxDispatch,
+  navigation,
+}) => {
+  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
 
-  const { data, dataState, sortBy, isAscending, columns, modalKey, hasSelection } = state;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    columns,
+    modalKey,
+    hasSelection,
+    searchTerm,
+  } = state;
 
-  const usingPrograms = useCallback(getAllPrograms(Settings, UIDatabase).length > 0, []);
+  // Custom hook to refresh data on this page when becoming the head of the stack again.
+  useNavigationFocusRefresh(dispatch, navigation);
+
+  // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
+  useDatabaseListener(() => dispatch(refreshData()), 'Requisition');
+
+  const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
   const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
-  const getAction = useCallback((colKey, propName) => {
+  const onPressRow = rowData => () => reduxDispatch(gotoSupplierRequisition(rowData));
+  const onConfirmDelete = () => dispatch(deleteRequisitions());
+  const onCancelDelete = () => dispatch(deselectAll());
+  const onSearchFiltering = value => dispatch(filterData(value));
+  const onNewRequisition = () => dispatch(openModal(NEW_REQUISITON));
+  const onCloseModal = () => dispatch(closeModal());
+
+  const onCreateRequisition = otherStoreName => {
+    reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
+    onCloseModal();
+  };
+
+  const onCreateProgramRequisition = requisitionParameters => {
+    reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
+    dispatch(closeModal());
+  };
+
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
@@ -82,7 +124,18 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       default:
         return null;
     }
-  });
+  };
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case SELECT_SUPPLIER:
+        return onCreateRequisition;
+      case PROGRAM_REQUISITION:
+        return onCreateProgramRequisition;
+      default:
+        return null;
+    }
+  };
 
   const renderRow = useCallback(
     listItem => {
@@ -98,52 +151,39 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
-          onPress={() => reduxDispatch(gotoSupplierRequisition(item))}
+          onPress={onPressRow(item)}
+          rowIndex={index}
         />
       );
     },
     [data, dataState]
   );
 
-  const renderButtons = () => {
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={debouncedDispatch}
+        sortAction={sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
+  );
+
+  const PageButtons = useCallback(() => {
     const { verticalContainer, topButton } = globalStyles;
     return (
       <View style={verticalContainer}>
         <PageButton
           style={topButton}
           text={buttonStrings.new_requisition}
-          onPress={() => dispatch(openBasicModal(NEW_REQUISITON))}
+          onPress={onNewRequisition}
         />
       </View>
     );
-  };
-
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case SELECT_SUPPLIER:
-        return otherStoreName => {
-          reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
-          dispatch(closeBasicModal());
-        };
-      case PROGRAM_REQUISITION:
-        return requisitionParameters => {
-          reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
-          dispatch(closeBasicModal());
-        };
-      default:
-        return null;
-    }
-  };
-
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
-  );
+  }, []);
 
   const {
     newPageTopSectionContainer,
@@ -156,13 +196,16 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={onSearchFiltering}
             style={searchBar}
             color={SUSSOL_ORANGE}
+            value={searchTerm}
             placeholder=""
           />
         </View>
-        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={newPageTopRightSectionContainer}>
+          <PageButtons />
+        </View>
       </View>
       <DataTable
         data={data}
@@ -175,15 +218,15 @@ export const SupplierRequisitionsPage = ({ routeName, currentUser, dispatch: red
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteRequisitions())}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
@@ -195,6 +238,7 @@ SupplierRequisitionsPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
 
 SupplierRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };

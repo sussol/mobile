@@ -23,6 +23,7 @@ export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
 export { NewExpiryDateInput } from './NewExpiryDateInput';
 export { SearchBar } from './SearchBar';
+export { DataTablePageView } from './DataTablePageView';
 export {
   SortAscIcon,
   SortNeutralIcon,

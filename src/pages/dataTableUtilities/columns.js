@@ -22,10 +22,10 @@ const PAGE_COLUMN_WIDTHS = {
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
   supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'editableExpiryDate', 'remove'],
-  customerInvoices: ['serialNumber', 'otherPartyName', 'status', 'entryDate', 'comment', 'remove'],
+  customerInvoices: ['serialNumber', 'customer', 'status', 'entryDate', 'comment', 'remove'],
   supplierRequisitions: [
     'serialNumber',
-    'otherPartyName',
+    'supplier',
     'numberOfItems',
     'entryDate',
     'status',
@@ -78,7 +78,12 @@ const COLUMNS = () => ({
     title: tableStrings.invoice_number,
     sortable: true,
   },
-  otherPartyName: {
+  supplier: {
+    key: 'otherPartyName',
+    title: tableStrings.supplier,
+    sortable: true,
+  },
+  customer: {
     key: 'otherPartyName',
     title: tableStrings.customer,
     sortable: true,
