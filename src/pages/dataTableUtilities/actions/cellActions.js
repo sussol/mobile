@@ -121,18 +121,6 @@ export const editCountedQuantity = (value, rowKey) => (dispatch, getState) => {
 };
 
 /**
- * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
- * reason also.
- *
- * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
- * @param {String}          rowKey Key of the row to edit.
- */
-export const editStocktakeBatchCountedQuantity = (value, rowKey) => dispatch => {
-  dispatch(editCountedQuantity(value, rowKey));
-  dispatch(enforceReasonChoice(rowKey));
-};
-
-/**
  * Removes a reason from a rows underlying data.
  *
  * @param {String} rowKey   Key for the row to edit.
@@ -183,4 +171,43 @@ export const applyReason = value => (dispatch, getState) => {
 
   dispatch(closeModal());
   dispatch(refreshRow(rowKey));
+};
+
+export const CellActionsLookup = {
+  refreshRow,
+  editExpiryDate,
+  editTransactionBatchExpiryDate,
+  editTotalQuantity,
+  editSuppliedQuantity,
+  editRequiredQuantity,
+  editRequisitionItemRequiredQuantity,
+  editCountedQuantity,
+  removeReason,
+  enforceReasonChoice,
+  applyReason,
+};
+
+/**
+ * =====================================================================
+ *
+ *                             Overrides
+ *
+ * Below are actions which are overrides of base actions.
+ *
+ * Example: editCountedQuantityWithReason overrides editCountedQuantity
+ * for a stocktakeEditPage when reasons are defined.
+ *
+ * =====================================================================
+ */
+
+/**
+ * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
+ * reason also.
+ *
+ * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
+ * @param {String}          rowKey Key of the row to edit.
+ */
+export const editCountedQuantityWithReason = (value, rowKey) => dispatch => {
+  dispatch(editCountedQuantity(value, rowKey));
+  dispatch(enforceReasonChoice(rowKey));
 };

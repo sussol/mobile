@@ -140,3 +140,13 @@ export const resetStocktake = () => (dispatch, getState) => {
   dispatch(refreshData());
   dispatch(closeModal());
 };
+
+export const PageActionsLookup = {
+  editName,
+  closeModal,
+  openModal,
+  editTheirRef,
+  editComment,
+  editMonthsToSupply,
+  resetStocktake,
+};

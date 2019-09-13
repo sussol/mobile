@@ -198,3 +198,23 @@ export const setSuppliedToSuggested = () => (dispatch, getState) => {
 
   dispatch(refreshData());
 };
+
+export const TableActionsLookup = {
+  sortData,
+  filterData,
+  refreshData,
+  hideOverStocked,
+  hideStockOut,
+  showOverStocked,
+  showStockOut,
+  addMasterListItems,
+  addItem,
+  addTransactionBatch,
+  createAutomaticOrder,
+  setRequestedToSuggested,
+  setSuppliedToRequested,
+  setSuppliedToSuggested,
+  addRequisitionItem,
+  addStocktakeItem,
+  addTransactionItem,
+};

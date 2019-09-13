@@ -163,3 +163,23 @@ export const deleteTransactionItems = () => deleteSelectedItems('Transaction');
 export const deleteRequisitionItems = () => deleteSelectedItems('Requisition');
 export const deleteStocktakeItems = () => deleteSelectedItems('Stocktake');
 export const deleteTransactionBatches = () => deleteSelectedBatches('Transaction');
+
+export const RowActionsLookup = {
+  focusCell,
+  focusNext,
+  selectRow,
+  deselectRow,
+  deselectAll,
+  selectAll,
+  selectItems,
+  deleteSelectedBatches,
+  deleteSelectedItems,
+  deleteSelectedRecords,
+  deleteTransactions,
+  deleteRequisitions,
+  deleteStocktakes,
+  deleteTransactionItems,
+  deleteRequisitionItems,
+  deleteStocktakeItems,
+  deleteTransactionBatches,
+};
