@@ -4,9 +4,13 @@
  */
 
 import { useRef, useState, useCallback, useMemo } from 'react';
-import getReducer from '../pages/dataTableUtilities/reducer/getReducer';
+
 import getColumns from '../pages/dataTableUtilities/columns';
 import getPageInfo from '../pages/dataTableUtilities/pageInfo';
+import { getPageActions } from '../pages/dataTableUtilities/actions/index';
+
+import { DataTablePageReducer } from '../pages/dataTableUtilities/reducer/DataTablePageReducer';
+
 import { debounce } from '../utilities/index';
 
 /**
@@ -42,7 +46,8 @@ export const usePageReducer = (
 ) => {
   const columns = useMemo(() => getColumns(page), [page]);
   const pageInfo = useMemo(() => getPageInfo(page), [page]);
-  const memoizedReducer = useMemo(() => getReducer(page), []);
+
+  const PageActions = useMemo(() => getPageActions(page), [page]);
 
   const [pageState, setPageState] = useState({
     ...(initializer ? initializer(pageObject) : initialState),
@@ -56,7 +61,7 @@ export const usePageReducer = (
 
   // Basic dispatch function.
   const dispatch = action => {
-    const newState = memoizedReducer(getState(), action);
+    const newState = DataTablePageReducer(getState(), action);
     setPageState(newState);
     stateRef.current = newState;
   };
@@ -70,7 +75,7 @@ export const usePageReducer = (
     []
   );
 
-  return [pageState, thunkDispatcher, instantDebouncedDispatch, debouncedDispatch];
+  return [pageState, PageActions, thunkDispatcher, instantDebouncedDispatch, debouncedDispatch];
 };
 
 export default usePageReducer;
