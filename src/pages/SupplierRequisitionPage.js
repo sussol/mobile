@@ -5,43 +5,66 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS } from '../utilities';
-import { buttonStrings, modalStrings, programStrings } from '../localization';
+
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
 import {
-  filterData,
   selectRow,
   deselectRow,
   deselectAll,
-  openBasicModal,
-  closeBasicModal,
-  editComment,
-  focusNext,
-  focusCell,
+  deleteRequisitionItems,
+  filterData,
   sortData,
   addMasterListItems,
-  addItem,
+  addRequisitionItem,
   createAutomaticOrder,
-  useSuggestedQuantities,
   hideOverStocked,
+  setRequestedToSuggested,
   showOverStocked,
-  editMonthsOfSupply,
-  editRequiredQuantity,
-  deleteItemsById,
-} from './dataTableUtilities/actions';
+  editComment,
+  openModal,
+  closeModal,
+  editMonthsToSupply,
+  recordKeyExtractor,
+  getItemLayout,
+  editRequisitionItemRequiredQuantity,
+} from './dataTableUtilities';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
+import { usePageReducer, useDatabaseChangeListener } from '../hooks';
+
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
+import { buttonStrings, modalStrings, programStrings } from '../localization';
+
+const stateInitialiser = requisition => {
+  const { program, items: backingData } = requisition;
+  const showAll = !program;
+
+  return {
+    pageObject: requisition,
+    backingData,
+    data: showAll
+      ? backingData.sorted('item.name').slice()
+      : backingData.filter(item => item.isLessThanThresholdMOS),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    currentFocusedRowKey: null,
+    searchTerm: '',
+    filterDataKeys: ['item.name'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+    showAll,
+    modalValue: null,
+  };
+};
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -61,23 +84,13 @@ import DataTablePageView from './containers/DataTablePageView';
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
-    pageObject: requisition,
-    backingData: requisition.items,
-    data: requisition.items.sorted('item.name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    showAllStock: !(routeName === 'programSupplierRequisition'),
-  });
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    requisition
+  );
 
-  const { ITEM_SELECT, REQUISITION_COMMENT_EDIT, MONTHS_SELECT, VIEW_REGIMEN_DATA } = MODAL_KEYS;
   const {
     data,
     dataState,
@@ -88,32 +101,68 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     pageInfo,
     pageObject,
     hasSelection,
-    showAllStock,
+    showAll,
     keyExtractor,
+    modalValue,
+    searchTerm,
   } = state;
+
+  // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
+  useDatabaseChangeListener(dispatch, requisition, 'Requisition');
 
   const { isFinalised, comment, theirRef, program } = pageObject;
 
-  useEffect(() => {
-    if (!showAllStock) dispatch(hideOverStocked());
-  }, []);
+  // On click handlers
+  const onCloseModal = () => dispatch(closeModal());
+  const onSelectItem = () => dispatch(openModal(MODAL_KEYS.SELECT_ITEM));
+  const onViewRegimenData = () => dispatch(openModal(MODAL_KEYS.VIEW_REGIMEN_DATA));
+
+  const onConfirmDelete = () => dispatch(deleteRequisitionItems());
+  const onCancelDelete = () => dispatch(deselectAll());
+
+  const onAddItem = value => dispatch(addRequisitionItem(value));
+  const onEditMonth = value => dispatch(editMonthsToSupply(value, 'Requisition'));
+  const onEditComment = value => dispatch(editComment(value, 'Requisition'));
+
+  const onFilterData = value => filterData(value);
+  const onHideOverStocked = () => dispatch(hideOverStocked());
+  const onShowOverStocked = () => runWithLoadingIndicator(() => dispatch(showOverStocked()));
+  const onSetRequestedToSuggested = () =>
+    runWithLoadingIndicator(() => dispatch(setRequestedToSuggested()));
+  const onCreateAutomaticOrder = () =>
+    runWithLoadingIndicator(() => dispatch(createAutomaticOrder()));
+  const onAddFromMasterList = () =>
+    runWithLoadingIndicator(() => dispatch(addMasterListItems('Requisition')));
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
     [comment, theirRef, isFinalised]
   );
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
-        return editRequiredQuantity;
+        return editRequisitionItemRequiredQuantity;
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
         return deselectRow;
       default:
         return null;
     }
-  });
+  };
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_ITEM:
+        return onAddItem;
+      case MODAL_KEYS.SELECT_MONTH:
+        return onEditMonth;
+      case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
+        return onEditComment;
+      default:
+        return null;
+    }
+  };
 
   const renderRow = useCallback(
     listItem => {
@@ -129,13 +178,25 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
           columns={columns}
           isFinalised={isFinalised}
           dispatch={dispatch}
-          focusCellAction={focusCell}
-          focusNextAction={focusNext}
           getAction={getAction}
+          rowIndex={index}
         />
       );
     },
     [data, dataState]
+  );
+
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
   );
 
   const AddMasterListItemsButton = useCallback(
@@ -143,7 +204,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <PageButton
         style={globalStyles.leftButton}
         text={buttonStrings.add_master_list_items}
-        onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Requisition')))}
+        onPress={onAddFromMasterList}
         isDisabled={isFinalised}
       />
     ),
@@ -155,7 +216,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <PageButton
         style={globalStyles.topButton}
         text={buttonStrings.new_item}
-        onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
+        onPress={onSelectItem}
         isDisabled={isFinalised}
       />
     ),
@@ -167,7 +228,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       <PageButton
         style={{ ...globalStyles.leftButton, marginLeft: 5 }}
         text={buttonStrings.create_automatic_order}
-        onPress={() => runWithLoadingIndicator(() => dispatch(createAutomaticOrder('Requisition')))}
+        onPress={onCreateAutomaticOrder}
         isDisabled={isFinalised}
       />
     ),
@@ -180,9 +241,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <PageButton
           style={globalStyles.topButton}
           text={buttonStrings.use_suggested_quantities}
-          onPress={() =>
-            runWithLoadingIndicator(() => dispatch(useSuggestedQuantities('Requisition')))
-          }
+          onPress={onSetRequestedToSuggested}
           isDisabled={isFinalised}
         />
       </View>
@@ -194,17 +253,17 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     const toggleProps = [
       {
         text: programStrings.hide_over_stocked,
-        isOn: !showAllStock,
-        onPress: () => dispatch(hideOverStocked()),
+        isOn: !showAll,
+        onPress: onHideOverStocked,
       },
       {
         text: programStrings.show_over_stocked,
-        isOn: showAllStock,
-        onPress: () => runWithLoadingIndicator(() => dispatch(showOverStocked())),
+        isOn: showAll,
+        onPress: onShowOverStocked,
       },
     ];
     return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
-  }, [showAllStock]);
+  }, [showAll]);
 
   const ViewRegimenDataButton = useCallback(
     () => (
@@ -212,7 +271,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <PageButton
           style={{ ...globalStyles.topButton }}
           text={buttonStrings.view_regimen_data}
-          onPress={() => dispatch(openBasicModal(VIEW_REGIMEN_DATA))}
+          onPress={onViewRegimenData}
         />
       </View>
     ),
@@ -251,30 +310,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         </View>
       </>
     );
-  }, [showAllStock]);
-
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
-  );
-
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case ITEM_SELECT:
-        return value => dispatch(addItem(value, 'RequisitionItem'));
-      case MONTHS_SELECT:
-        return value => dispatch(editMonthsOfSupply(value, 'Requisition'));
-      case REQUISITION_COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Requisition'));
-      default:
-        return null;
-    }
-  };
+  }, [showAll]);
 
   const {
     newPageTopSectionContainer,
@@ -288,10 +324,11 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={onFilterData}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>
@@ -305,23 +342,23 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
+        columns={columns}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteItemsById('Requisition'))}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
-        currentValue={pageObject[modalKey]}
-        modalObject={pageObject}
+        currentValue={modalValue}
       />
     </DataTablePageView>
   );

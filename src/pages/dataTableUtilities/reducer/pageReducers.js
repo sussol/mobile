@@ -24,6 +24,12 @@ export const openModal = (state, action) => {
   const { modalKey } = payload;
 
   switch (modalKey) {
+    case MODAL_KEYS.VIEW_REGIMEN_DATA: {
+      const { pageObject } = state;
+
+      return { ...state, modalKey, modalValue: pageObject };
+    }
+
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.STOCKTAKE_REASON: {
@@ -64,7 +70,7 @@ export const openModal = (state, action) => {
       return { ...state, modalKey, modalValue: theirRef };
     }
 
-    case MODAL_KEYS.MONTHS_SELECT: {
+    case MODAL_KEYS.SELECT_MONTH: {
       const { pageObject } = state;
 
       const { monthsToSupply } = pageObject;
@@ -82,4 +88,4 @@ export const openModal = (state, action) => {
  * Sets the modal open state to false, closing any
  * modal that is open.
  */
-export const closeModal = state => ({ ...state, modalKey: '', modalValue: '' });
+export const closeModal = state => ({ ...state, modalKey: '', modalValue: null });

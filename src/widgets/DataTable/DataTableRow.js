@@ -198,17 +198,21 @@ const DataTableRow = React.memo(
               />
             );
 
-          default:
+          default: {
+            const value = rowData[columnKey];
+            const displayValue = typeof value === 'number' ? Math.round(value) : value;
+
             return (
               <Cell
                 key={columnKey}
-                value={rowData[columnKey]}
+                value={displayValue}
                 width={width}
                 viewStyle={cellContainer[cellAlignment]}
                 textStyle={cellText[cellAlignment]}
                 isLastCell={isLastCell}
               />
             );
+          }
         }
       });
     }, [isFinalised, focusedColumnKey, rowState]);

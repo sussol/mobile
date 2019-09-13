@@ -86,7 +86,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch) => ({
   },
   otherParty: {
     title: `${pageInfoStrings.supplier}:`,
-    info: pageObject.supplierName,
+    info: pageObject.otherPartyName,
   },
   program: {
     title: `${programStrings.program}:`,
