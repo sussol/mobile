@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -23,7 +24,7 @@ import { UIDatabase } from '../../../database/index';
 /**
  * Standard base page actions.
  */
-export const BasePageActions = {
+const BasePageActions = {
   ...CellActionsLookup,
   ...RowActionsLookup,
   ...TableActionsLookup,
@@ -33,12 +34,12 @@ export const BasePageActions = {
 /**
  * Actions for `stocktakeEditPage` when reasons are defined.
  */
-export const stocktakeEditorWithReasons = {
+const stocktakeEditorWithReasons = {
   ...BasePageActions,
   editCountedQuantity: editCountedQuantityWithReason,
 };
 
-export const PAGE_ACTIONS = {
+const PAGE_ACTIONS = {
   BasePageActions,
   stocktakeEditorWithReasons,
 };
