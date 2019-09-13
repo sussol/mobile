@@ -42,6 +42,8 @@ import { formatStatus } from '../../utilities/index';
  * @param {Array}  columns     Array of column objects, see: columns.js
  * @param {Bool}   isFinalised Boolean indicating if the DataTable page is finalised.
  * @param {Func}   dispatch    Dispatch function for containing reducer.
+ * @param {Func}   rowIndex    index of this row.
+ * @param {Func}   onPress     On press callback for the row itself.
  * @param {Func}   getAction   Function to return an action for a cell
  *                             (colKey, propName) => actionObject
  */
@@ -58,10 +60,7 @@ const DataTableRow = React.memo(
     onPress,
     rowIndex,
   }) => {
-    // Key of the current column focused.
-    const focusedColumnKey = rowState && rowState.focusedColumn;
-
-    // Callback for rendering a row of cells. A cell is
+    // Callback for rendering a row of cells.
     const renderCells = useCallback(() => {
       const {
         cellText,
@@ -74,12 +73,19 @@ const DataTableRow = React.memo(
 
       // Map each column to an appropriate cell for a given row.
       return columns.map(({ key: columnKey, type, width, alignText }, index) => {
+        // Indicator if the right hand border should be removed from styles for this cell.
         const isLastCell = index === columns.length - 1;
+
+        // This cell is disabled if the pageObject is finalised, the row has been explicitly set
+        // as disabled, or the rowData is disabled (i.e. data is an invoice),
         const isDisabled = isFinalised || (rowState && rowState.isDisabled) || rowData.isFinalised;
-        const isFocused = focusedColumnKey === columnKey;
+
+        // Alignment of this particular column. Default to left hand ide.
         const cellAlignment = alignText || 'left';
+
         switch (type) {
-          case 'editable':
+          case 'editableString':
+          case 'editableNumeric':
             return (
               <TextInputCell
                 key={columnKey}
@@ -87,17 +93,32 @@ const DataTableRow = React.memo(
                 rowKey={rowKey}
                 columnKey={columnKey}
                 editAction={getAction(columnKey)}
-                isFocused={isFocused}
                 isDisabled={isDisabled}
                 dispatch={dispatch}
                 width={width}
                 viewStyle={cellContainer[cellAlignment]}
                 textViewStyle={editableCellTextView}
                 isLastCell={isLastCell}
-                keyboardType="numeric"
+                keyboardType={type === 'editableNumeric' ? 'numeric' : 'default'}
                 textInputStyle={cellText[cellAlignment]}
                 textStyle={editableCellUnfocused[cellAlignment]}
                 cellTextStyle={editableCellText}
+                rowIndex={rowIndex}
+              />
+            );
+
+          case 'editableDate':
+            return (
+              <NewExpiryDateInput
+                key={columnKey}
+                value={rowData[columnKey]}
+                rowKey={rowKey}
+                columnKey={columnKey}
+                editAction={getAction(columnKey)}
+                isDisabled={isDisabled}
+                dispatch={dispatch}
+                width={width}
+                isLastCell={isLastCell}
                 rowIndex={rowIndex}
               />
             );
@@ -123,34 +144,33 @@ const DataTableRow = React.memo(
               />
             );
 
-          case 'editableDate':
-            return (
-              <NewExpiryDateInput
-                key={columnKey}
-                value={rowData[columnKey]}
-                rowKey={rowKey}
-                columnKey={columnKey}
-                editAction={getAction(columnKey)}
-                isFocused={isFocused}
-                isDisabled={isDisabled}
-                dispatch={dispatch}
-                width={width}
-                isLastCell={isLastCell}
-                rowIndex={rowIndex}
-              />
-            );
-
-          case 'status':
+          case 'string': {
+            const value = rowData[columnKey];
+            const displayValue = columnKey === 'status' ? formatStatus(value) : value;
             return (
               <Cell
                 key={columnKey}
-                value={formatStatus(rowData[columnKey])}
+                value={displayValue}
                 width={width}
                 viewStyle={cellContainer[cellAlignment]}
                 textStyle={cellText[cellAlignment]}
                 isLastCell={isLastCell}
               />
             );
+          }
+
+          case 'numeric': {
+            return (
+              <Cell
+                key={columnKey}
+                value={Math.round(rowData[columnKey])}
+                width={width}
+                viewStyle={cellContainer[cellAlignment]}
+                textStyle={cellText[cellAlignment]}
+                isLastCell={isLastCell}
+              />
+            );
+          }
 
           case 'date':
             return (
@@ -164,7 +184,7 @@ const DataTableRow = React.memo(
               />
             );
 
-          case 'modalControl':
+          case 'icon':
             return (
               <TouchableCell
                 key={columnKey}
@@ -183,7 +203,7 @@ const DataTableRow = React.memo(
               />
             );
 
-          case 'reason':
+          case 'dropDown':
             return (
               <DropDownCell
                 isDisabled={isFinalised}
@@ -192,20 +212,16 @@ const DataTableRow = React.memo(
                 rowKey={rowKey}
                 columnKey={columnKey}
                 value={rowData[columnKey]}
-                isLastCell={false}
+                isLastCell={isLastCell}
                 width={width}
-                debug
               />
             );
 
           default: {
-            const value = rowData[columnKey];
-            const displayValue = typeof value === 'number' ? Math.round(value) : value;
-
             return (
               <Cell
                 key={columnKey}
-                value={displayValue}
+                value={rowData[columnKey]}
                 width={width}
                 viewStyle={cellContainer[cellAlignment]}
                 textStyle={cellText[cellAlignment]}
@@ -215,7 +231,7 @@ const DataTableRow = React.memo(
           }
         }
       });
-    }, [isFinalised, focusedColumnKey, rowState]);
+    }, [isFinalised, rowState]);
 
     const onPressCallback = useCallback(onPress, []);
 
