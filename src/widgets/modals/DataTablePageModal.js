@@ -55,7 +55,7 @@ export const DataTablePageModal = ({
 }) => {
   const ModalContent = () => {
     switch (modalKey) {
-      case MODAL_KEYS.ITEM_SELECT:
+      case MODAL_KEYS.SELECT_ITEM:
         return (
           <AutocompleteSelector
             options={UIDatabase.objects('Item')}
@@ -68,7 +68,8 @@ export const DataTablePageModal = ({
           />
         );
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
-      case MODAL_KEYS.COMMENT_EDIT:
+      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
+      case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
         return <TextEditor text={currentValue} onEndEditing={onSelect} />;
 
       case MODAL_KEYS.THEIR_REF_EDIT:
@@ -109,7 +110,7 @@ export const DataTablePageModal = ({
           />
         );
 
-      case MODAL_KEYS.MONTHS_SELECT:
+      case MODAL_KEYS.SELECT_MONTH:
         return (
           <ToggleSelector
             options={[1, 2, 3, 4, 5, 6]}
