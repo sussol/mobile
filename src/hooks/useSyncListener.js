@@ -24,7 +24,7 @@ import { debounce } from '../utilities';
  * subscribe - function to subscribe, if not already
  * unSubscribe - function to unSubscribe, if already subscribed
  */
-export const useDatabaseListener = (callback, dataTypes) => {
+export const useSyncListener = (callback, dataTypes) => {
   // Reference for being subscribed
   const isSubscribed = useRef(false);
 

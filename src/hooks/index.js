@@ -4,7 +4,7 @@
  */
 
 export { useRecordListener } from './useRecordListener';
-export { useDatabaseListener } from './useDatabaseListener';
+export { useSyncListener } from './useSyncListener';
 export { useExpiryDateMask } from './useExpiryDateMask';
 export { useNavigationFocus } from './useNavigationFocus';
 export { usePageReducer } from './usePageReducer';
