@@ -48,14 +48,17 @@ export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
  *
  * @param {Object} stocktake  The requisition to navigate to.
  */
-export const gotoStocktakeEditPage = stocktake =>
-  NavigationActions.navigate({
-    routeName: 'stocktakeEditor',
+export const gotoStocktakeEditPage = stocktake => {
+  const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
+
+  return NavigationActions.navigate({
+    routeName: usesReasons ? 'stocktakeEditorWithReasons' : 'stocktakeEditor',
     params: {
       title: navStrings.stocktake,
       stocktake,
     },
   });
+};
 
 /**
  * Action creator for navigating to a customer invoice. Ensures the CI is at least
