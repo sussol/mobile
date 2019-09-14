@@ -88,6 +88,11 @@ export class Stocktake extends Realm.Object {
     });
   }
 
+  /**
+   * Returns an Array of item objects that are currently in the stocktae.
+   *
+   * @return {Array} Realm.Item objects current in the stocktake.
+   */
   get itemsInStocktake() {
     return this.items.reduce((acc, stocktakeItem) => {
       const { item } = stocktakeItem;
