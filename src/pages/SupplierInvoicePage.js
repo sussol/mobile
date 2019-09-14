@@ -9,35 +9,42 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
-
-import { MODAL_KEYS, getModalTitle } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
-import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
-import { AutocompleteSelector, PageButton, PageInfo, TextEditor, SearchBar } from '../widgets';
+
+import { MODAL_KEYS } from '../utilities';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import {
   selectRow,
   deselectRow,
   deselectAll,
-  sortData,
+  deleteTransactionBatches,
+} from './dataTableUtilities/actions/rowActions';
+
+import {
+  addTransactionBatch,
   filterData,
-  closeBasicModal,
+  sortData,
+} from './dataTableUtilities/actions/tableActions';
+import {
   editComment,
   editTheirRef,
-  openBasicModal,
-  refreshData,
-  editTransactionBatchQuantity,
-  deleteTransactionBatchesById,
+  openModal,
+  closeModal,
+} from './dataTableUtilities/actions/pageActions';
+import {
+  editTotalQuantity,
   editTransactionBatchExpiryDate,
-  addTransactionBatch,
-} from './dataTableUtilities/actions';
-import usePageReducer from '../hooks/usePageReducer';
+} from './dataTableUtilities/actions/cellActions';
 
+import { usePageReducer } from '../hooks/usePageReducer';
+
+import { buttonStrings, modalStrings } from '../localization';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import DataTablePageView from './containers/DataTablePageView';
 
 const keyExtractor = item => item.id;
 
@@ -70,14 +77,10 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     pageInfo,
     pageObject,
     hasSelection,
-    backingData,
     searchTerm,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
-  const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-
-  if (isFinalised && data.length !== backingData.length) dispatch(refreshData());
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
@@ -87,7 +90,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const getAction = useCallback((columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
-        return editTransactionBatchQuantity;
+        return editTotalQuantity;
       case 'expiryDate':
         return editTransactionBatchExpiryDate;
       case 'remove':
@@ -120,39 +123,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     [data, dataState]
   );
 
-  const renderModalContent = () => {
-    switch (modalKey) {
-      case ITEM_SELECT:
-        return (
-          <AutocompleteSelector
-            options={UIDatabase.objects('Item')}
-            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
-            queryStringSecondary="name CONTAINS[c] $0"
-            sortByString="name"
-            onSelect={item => dispatch(addTransactionBatch(item))}
-            renderLeftText={item => `${item.name}`}
-            renderRightText={item => `${item.totalQuantity}`}
-          />
-        );
-      case COMMENT_EDIT:
-        return (
-          <TextEditor
-            text={comment}
-            onEndEditing={value => dispatch(editComment(value, 'Transaction'))}
-          />
-        );
-      case THEIR_REF_EDIT:
-        return (
-          <TextEditor
-            text={theirRef}
-            onEndEditing={value => dispatch(editTheirRef(value, 'Transaction'))}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   const renderButtons = () => {
     const { verticalContainer, topButton } = globalStyles;
     return (
@@ -160,7 +130,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         <PageButton
           style={topButton}
           text={buttonStrings.new_item}
-          onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
+          onPress={() => dispatch(openModal(MODAL_KEYS.SELECT_ITEM))}
           isDisabled={isFinalised}
         />
       </View>
@@ -178,6 +148,19 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   );
 
   const memoizedGetItemLayout = useCallback(getItemLayout, []);
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_ITEM:
+        return item => dispatch(addTransactionBatch(item));
+      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
+        return value => dispatch(editComment(value, 'Transaction'));
+      case MODAL_KEYS.THEIR_REF_EDIT:
+        return value => dispatch(editTheirRef(value, 'Transaction'));
+      default:
+        return null;
+    }
+  };
 
   const {
     newPageTopSectionContainer,
@@ -213,16 +196,17 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
         onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteTransactionBatchesById('Transaction'))}
+        onConfirm={() => dispatch(deleteTransactionBatches())}
         confirmText={modalStrings.remove}
       />
-      <PageContentModal
+      <DataTablePageModal
+        fullScreen={false}
         isOpen={!!modalKey}
-        onClose={() => dispatch(closeBasicModal())}
-        title={getModalTitle(modalKey)}
-      >
-        {renderModalContent()}
-      </PageContentModal>
+        modalKey={modalKey}
+        onClose={() => dispatch(closeModal())}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
+      />
     </DataTablePageView>
   );
 };
