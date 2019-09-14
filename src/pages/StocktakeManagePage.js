@@ -9,17 +9,16 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
-import { buttonStrings, modalStrings } from '../localization';
+
 import { UIDatabase } from '../database';
+
+import { usePageReducer } from '../hooks/usePageReducer';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+
 import { BottomTextEditor } from '../widgets/modals';
 import { ToggleBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import { usePageReducer } from '../hooks/usePageReducer';
-
-import { createStocktake, addItemsToStocktake } from '../navigation/actions';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import {
   filterData,
   sortData,
@@ -33,7 +32,11 @@ import {
   deselectAll,
   selectItems,
 } from './dataTableUtilities/actions/rowActions';
+import { createStocktake, addItemsToStocktake } from '../navigation/actions';
 import { editName } from './dataTableUtilities/actions/pageActions';
+
+import { buttonStrings, modalStrings } from '../localization';
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 
 export const StocktakeManagePage = ({
   routeName,
