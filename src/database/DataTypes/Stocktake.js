@@ -173,15 +173,6 @@ export class Stocktake extends Realm.Object {
    * @param  {Realm}                  database
    * @param  {Array.<StocktakeItem>}  stocktakeItems  Items to reset.
    */
-  // eslint-disable-next-line class-methods-use-this
-  resetStocktakeItems(database, stocktakeItems) {
-    database.write(() => {
-      stocktakeItems.forEach(stocktakeItem => {
-        stocktakeItem.reset(database);
-      });
-    });
-  }
-
   resetStocktake(database) {
     database.write(() => {
       this.itemsOutdated.forEach(outdatedItem => {
