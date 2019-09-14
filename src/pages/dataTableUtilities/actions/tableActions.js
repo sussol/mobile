@@ -66,6 +66,15 @@ export const showOverStocked = () => refreshData();
 export const showStockOut = () => refreshData();
 
 /**
+ *  Wrapper around hideStockout and showStockout. Determines which
+ *  should be dispatched.
+ */
+export const toggleStockOut = showAll => {
+  if (showAll) return hideStockOut();
+  return showStockOut();
+};
+
+/**
  * Adds all items from master lists, according to the type of pageObject.
  * i.e. a CustomerInvoice adds items from all of the custoemrs masterlists.
  * where as a Supplier Requisition adds items from all of this stores
