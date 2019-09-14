@@ -62,8 +62,6 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     PageActions,
   } = state;
 
-  const { PROGRAM_STOCKTAKE } = MODAL_KEYS;
-
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
@@ -97,7 +95,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   );
 
   const newStocktake = () => {
-    if (usingPrograms) return dispatch(PageActions.openModal(PROGRAM_STOCKTAKE));
+    if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
     return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
   };
 
@@ -116,7 +114,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case PROGRAM_STOCKTAKE:
+      case MODAL_KEYS.PROGRAM_STOCKTAKE:
         return ({ stocktakeName, program }) => {
           reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
           dispatch(PageActions.closeModal());
