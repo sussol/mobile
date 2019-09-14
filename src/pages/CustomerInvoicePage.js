@@ -20,6 +20,21 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles, { newPageStyles } from '../globalStyles';
 
+const stateInitialiser = pageObject => ({
+  pageObject,
+  backingData: pageObject.items,
+  data: pageObject.items.sorted('item.name').slice(),
+  keyExtractor: recordKeyExtractor,
+  dataState: new Map(),
+  searchTerm: '',
+  filterDataKeys: ['item.name'],
+  sortBy: 'itemName',
+  isAscending: true,
+  modalKey: '',
+  modalValue: null,
+  hasSelection: false,
+});
+
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
  *
@@ -38,21 +53,12 @@ import globalStyles, { newPageStyles } from '../globalStyles';
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
-    pageObject: transaction,
-    backingData: transaction.items,
-    data: transaction.items.sorted('item.name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    modalValue: null,
-  });
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    transaction
+  );
 
   const {
     data,
