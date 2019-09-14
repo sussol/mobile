@@ -19,15 +19,6 @@ import { PageButton, PageInfo, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { gotoStocktakeManagePage } from '../navigation/actions';
-import { filterData, sortData } from './dataTableUtilities/actions/tableActions';
-import { selectRow, deselectRow } from './dataTableUtilities/actions/rowActions';
-import {
-  closeModal,
-  openModal,
-  editComment,
-  resetStocktake,
-} from './dataTableUtilities/actions/pageActions';
-import { applyReason, editCountedQuantity } from './dataTableUtilities/actions/cellActions';
 
 import { buttonStrings } from '../localization';
 import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
@@ -83,31 +74,32 @@ export const StocktakeEditPage = ({
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
-    getPageInfoColumns,
     pageObject,
     currentStocktakeItem,
     modalValue,
     keyExtractor,
     PageActions,
+    columns,
+    getPageInfoColumns,
   } = state;
 
   const { isFinalised, comment, program } = pageObject;
 
   useEffect(() => {
-    if (stocktake.isOutdated) dispatch(openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
+    if (stocktake.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
   }, []);
 
-  const onFilterData = value => dispatch(filterData(value));
-  const onEditBatch = rowKey => openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
-  const onEditReason = rowKey => openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
-  const onEditComment = value => dispatch(editComment(value, 'Stocktake'));
-  const onCloseModal = () => dispatch(closeModal());
-  const onResetStocktake = () => runWithLoadingIndicator(() => dispatch(resetStocktake()));
-  const onApplyReason = ({ item }) => dispatch(applyReason(item));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onEditBatch = rowKey => PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
+  const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
+  const onEditComment = value => dispatch(PageActions.editComment(value, 'Stocktake'));
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
 
+  const onResetStocktake = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
   const onManageStocktake = () =>
     reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }));
 
@@ -124,12 +116,12 @@ export const StocktakeEditPage = ({
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
-        return editCountedQuantity;
+        return PageActions.editCountedQuantity;
       case 'batch':
         return onEditBatch;
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       case 'mostUsedReasonTitle':
         return onEditReason;
       default:
@@ -178,7 +170,7 @@ export const StocktakeEditPage = ({
       <DataTableHeaderRow
         columns={columns}
         dispatch={instantDebouncedDispatch}
-        sortAction={sortData}
+        sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
       />
