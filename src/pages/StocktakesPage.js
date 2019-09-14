@@ -30,7 +30,7 @@ import {
 } from '../navigation/actions';
 
 export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     backingData: UIDatabase.objects('Stocktake'),
     data: UIDatabase.objects('Stocktake')
       .sorted('createdDate', false)
@@ -68,6 +68,17 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   // Listen to navigation focusing this page - fresh if so.
   useNavigationFocus(callback, navigation);
 
+  const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+
+  const onNewStocktake = () => {
+    if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
+    return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
+  };
+
   const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
@@ -83,16 +94,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       case MODAL_KEYS.PROGRAM_STOCKTAKE:
         return ({ stocktakeName, program }) => {
           reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
-          dispatch(PageActions.closeModal());
+          onCloseModal();
         };
       default:
         return null;
     }
-  };
-
-  const newStocktake = () => {
-    if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
-    return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
   };
 
   const renderRow = useCallback(
@@ -110,7 +116,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
-          onPress={() => reduxDispatch(gotoStocktakeEditPage(item))}
+          onPress={onRowPress}
         />
       );
     },
@@ -131,11 +137,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     const { verticalContainer, topButton } = globalStyles;
     return (
       <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_stocktake}
-          onPress={() => newStocktake()}
-        />
+        <PageButton style={topButton} text={buttonStrings.new_stocktake} onPress={onNewStocktake} />
       </View>
     );
   };
@@ -151,7 +153,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChangeText={value => debouncedDispatch(PageActions.filterData(value))}
+            onChangeText={onFilterData}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
@@ -171,15 +173,15 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(PageActions.deselectAll())}
-        onConfirm={() => dispatch(PageActions.deleteStocktakes())}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(PageActions.closeModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
