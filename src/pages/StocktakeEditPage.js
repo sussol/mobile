@@ -70,13 +70,12 @@ export const StocktakeEditPage = ({
   );
 
   const {
+    pageObject,
     data,
     dataState,
     sortBy,
     isAscending,
     modalKey,
-    pageObject,
-    currentStocktakeItem,
     modalValue,
     keyExtractor,
     PageActions,
@@ -234,7 +233,6 @@ export const StocktakeEditPage = ({
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
-        modalObject={currentStocktakeItem}
       />
     </DataTablePageView>
   );
