@@ -39,21 +39,25 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
   const editableColumnKeys = useMemo(
     () =>
       columns.reduce((columnKeys, column) => {
-        if (column.type === 'editable' || column.type === 'date') {
-          return [...columnKeys, column.key];
-        }
+        const { editable } = column;
+        if (editable) return [...columnKeys, column.key];
         return columnKeys;
       }, []),
     [columns]
   );
+  const numberOfEditableColumns = editableColumnKeys.length;
+  const numberOfRows = data.length;
+  const numberOfEditableCells = numberOfEditableColumns * numberOfRows;
 
-  // Number of rows * number of editable columns = number of refs needed for focusing.
-  const numberOfEditableCells = data.length * editableColumnKeys.length;
-  // Array for each editable cell. Needs to be stable, but updates shouldn't caused re-renders.
+  // Array for each editable cell. Needs to be stable, but updates shouldn't cause re-renders.
   const cellRefs = useRef(Array.from({ length: numberOfEditableCells }));
 
-  const getRefIndex = (rowIndex, columnKey) =>
-    rowIndex * editableColumnKeys.length + editableColumnKeys.findIndex(key => columnKey === key);
+  // Passes a cell it's ref index.
+  const getRefIndex = (rowIndex, columnKey) => {
+    const columnIndex = editableColumnKeys.findIndex(key => columnKey === key);
+
+    return rowIndex * numberOfEditableColumns + columnIndex;
+  };
 
   // Callback for an editable cell. Lazily creating refs.
   const getCellRef = refIndex => {
@@ -61,12 +65,14 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
 
     const newRef = React.createRef();
     cellRefs.current[refIndex] = newRef;
+
     return newRef;
   };
 
   // Focuses the next editable cell in the list. Back to the top on last row.
   const focusNextCell = refIndex => {
     const cellRef = getCellRef((refIndex + 1) % numberOfEditableCells);
+
     cellRef.current.focus();
   };
 
@@ -83,7 +89,7 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
       focusNextCell,
       adjustToTop,
     }),
-    []
+    [numberOfEditableCells]
   );
 
   return (
