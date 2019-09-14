@@ -23,29 +23,37 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
+const stateInitialiser = pageObject => {
+  const backingData = UIDatabase.objects('Item');
+  return {
+    pageObject,
+    backingData,
+    data: backingData.sorted('name').slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['name', 'code'],
+    name: pageObject ? pageObject.name : '',
+    sortBy: 'name',
+    isAscending: true,
+    hasSelection: false,
+    allSelected: false,
+    showAll: true,
+  };
+};
+
 export const StocktakeManagePage = ({
   routeName,
   dispatch: reduxDispatch,
   stocktake,
   runWithLoadingIndicator,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
-    pageObject: stocktake,
-    backingData: UIDatabase.objects('Item'),
-    data: UIDatabase.objects('Item')
-      .sorted('name')
-      .slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name', 'code'],
-    sortBy: 'name',
-    isAscending: true,
-    hasSelection: false,
-    allSelected: false,
-    showAll: true,
-    name: stocktake ? stocktake.name : '',
-  });
+  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    stocktake
+  );
 
   const {
     data,
@@ -81,10 +89,10 @@ export const StocktakeManagePage = ({
   const onNameChange = value => dispatch(PageActions.editName(value));
   const onSelectAll = () => dispatch(PageActions.toggleAllSelected(allSelected));
   const onHideStock = () => dispatch(PageActions.toggleStockOut(showAll));
-  const onConfirmStocktake = () => {
-    const itemIds = Array.from(dataState.keys()).filter(id => id);
 
+  const onConfirmStocktake = () => {
     runWithLoadingIndicator(() => {
+      const itemIds = Array.from(dataState.keys()).filter(id => id);
       if (stocktake) return reduxDispatch(addItemsToStocktake(stocktake, itemIds));
       return reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
     });
