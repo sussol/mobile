@@ -9,29 +9,26 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { UIDatabase } from '../database';
-import { buttonStrings, modalStrings } from '../localization';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
+import { MODAL_KEYS, newSortDataBy } from '../utilities';
+import { usePageReducer, useNavigationFocus } from '../hooks';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
+
+import { PageButton, SearchBar, DataTablePageView } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
 import {
   selectRow,
   deselectRow,
   deselectAll,
-  sortData,
-  filterData,
-  openBasicModal,
-  closeBasicModal,
-  deleteTransactionsById,
-} from './dataTableUtilities/actions';
-import { MODAL_KEYS, newSortDataBy } from '../utilities';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
+  deleteTransactions,
+} from './dataTableUtilities/actions/rowActions';
+import { sortData, filterData } from './dataTableUtilities/actions/tableActions';
+import { openModal, closeModal } from './dataTableUtilities/actions/pageActions';
 
-import { useNavigationFocusRefresh } from '../hooks/useNavigationFocusRefresh';
-
+import { buttonStrings, modalStrings } from '../localization';
 import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
 const initializer = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
@@ -69,13 +66,13 @@ export const CustomerInvoicesPage = ({
   } = state;
 
   // Refresh data on navigating back to this page.
-  useNavigationFocusRefresh(dispatch, navigation);
+  useNavigationFocus(dispatch, navigation);
 
   // On Press Handlers
-  const closeModal = () => dispatch(closeBasicModal());
+  const onCloseModal = () => dispatch(closeModal());
   const onFilterData = value => dispatch(filterData(value));
-  const onNewInvoice = () => dispatch(openBasicModal(MODAL_KEYS.SELECT_CUSTOMER));
-  const onRemoveInvoices = () => dispatch(deleteTransactionsById());
+  const onNewInvoice = () => dispatch(openModal(MODAL_KEYS.SELECT_CUSTOMER));
+  const onRemoveInvoices = () => dispatch(deleteTransactions());
   const onCancelRemoval = () => dispatch(deselectAll());
   // Method is memoized in DataTableRow component - cannot memoize the returned closure.
   const onNavigateToInvoice = invoice => () => reduxDispatch(gotoCustomerInvoice(invoice));
@@ -95,7 +92,7 @@ export const CustomerInvoicesPage = ({
       case MODAL_KEYS.SELECT_CUSTOMER:
         return otherParty => {
           reduxDispatch(createCustomerInvoice(otherParty, currentUser));
-          closeModal();
+          onCloseModal();
         };
       default:
         return null;
@@ -182,7 +179,7 @@ export const CustomerInvoicesPage = ({
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={closeModal}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
