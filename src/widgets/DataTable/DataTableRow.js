@@ -231,7 +231,7 @@ const DataTableRow = React.memo(
           }
         }
       });
-    }, [isFinalised, rowState]);
+    }, [isFinalised, rowState, rowData, rowIndex]);
 
     const onPressCallback = useCallback(onPress, []);
 
