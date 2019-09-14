@@ -18,17 +18,8 @@ import { PageButton, SearchBar, DataTablePageView } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import {
-  selectRow,
-  deselectRow,
-  deselectAll,
-  deleteTransactions,
-} from './dataTableUtilities/actions/rowActions';
-import { sortData, filterData } from './dataTableUtilities/actions/tableActions';
-import { openModal, closeModal } from './dataTableUtilities/actions/pageActions';
-
 import { buttonStrings, modalStrings } from '../localization';
-import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
 const initializer = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
@@ -58,30 +49,38 @@ export const CustomerInvoicesPage = ({
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
     hasSelection,
     keyExtractor,
     searchTerm,
+    columns,
+    PageActions,
   } = state;
 
   // Refresh data on navigating back to this page.
   useNavigationFocus(dispatch, navigation);
 
-  // On Press Handlers
-  const onCloseModal = () => dispatch(closeModal());
-  const onFilterData = value => dispatch(filterData(value));
-  const onNewInvoice = () => dispatch(openModal(MODAL_KEYS.SELECT_CUSTOMER));
-  const onRemoveInvoices = () => dispatch(deleteTransactions());
-  const onCancelRemoval = () => dispatch(deselectAll());
-  // Method is memoized in DataTableRow component - cannot memoize the returned closure.
-  const onNavigateToInvoice = invoice => () => reduxDispatch(gotoCustomerInvoice(invoice));
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER));
+  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+
+  const onNavigateToInvoice = useCallback(
+    invoice => reduxDispatch(gotoCustomerInvoice(invoice)),
+    []
+  );
+
+  const onCreateInvoice = otherParty => {
+    reduxDispatch(createCustomerInvoice(otherParty, currentUser));
+    onCloseModal();
+  };
 
   const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
@@ -90,48 +89,43 @@ export const CustomerInvoicesPage = ({
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_CUSTOMER:
-        return otherParty => {
-          reduxDispatch(createCustomerInvoice(otherParty, currentUser));
-          onCloseModal();
-        };
+        return onCreateInvoice;
       default:
         return null;
     }
   };
+
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          columns={columns}
+          dispatch={dispatch}
+          getAction={getAction}
+          rowIndex={index}
+          onPress={onNavigateToInvoice}
+        />
+      );
+    },
+    [data, dataState]
+  );
 
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
         columns={columns}
         dispatch={instantDebouncedDispatch}
-        sortAction={sortData}
+        sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
       />
     ),
     [sortBy, isAscending]
-  );
-
-  const renderRow = useCallback(
-    listItem => {
-      const { item, index } = listItem;
-      const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
-      return (
-        <DataTableRow
-          rowData={data[index]}
-          rowState={dataState.get(rowKey)}
-          rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
-          columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
-          rowIndex={index}
-          onPress={onNavigateToInvoice(item)}
-        />
-      );
-    },
-    [data, dataState]
   );
 
   const NewInvoiceButton = () => (
@@ -171,8 +165,8 @@ export const CustomerInvoicesPage = ({
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.delete_these_invoices}
-        onCancel={onCancelRemoval}
-        onConfirm={onRemoveInvoices}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.delete}
       />
       <DataTablePageModal
