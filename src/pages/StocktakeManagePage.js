@@ -12,7 +12,7 @@ import { SearchBar } from 'react-native-ui-components';
 
 import { UIDatabase } from '../database';
 
-import { usePageReducer } from '../hooks/usePageReducer';
+import { usePageReducer } from '../hooks';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { createStocktake, addItemsToStocktake } from '../navigation/actions';
 
@@ -21,7 +21,7 @@ import { ToggleBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 
 export const StocktakeManagePage = ({
   routeName,
@@ -57,6 +57,7 @@ export const StocktakeManagePage = ({
     allSelected,
     name,
     keyExtractor,
+    searchTerm,
     PageActions,
     columns,
   } = state;
@@ -79,22 +80,15 @@ export const StocktakeManagePage = ({
 
   const Toggle = () => (
     <ToggleBar
-      style={globalStyles.toggleBar}
-      textOffStyle={globalStyles.toggleText}
-      textOnStyle={globalStyles.toggleTextSelected}
-      toggleOffStyle={globalStyles.toggleOption}
-      toggleOnStyle={globalStyles.toggleOptionSelected}
       toggles={[
         {
           text: buttonStrings.hide_stockouts,
-          onPress: () =>
-            showAll ? dispatch(PageActions.hideStockOut()) : dispatch(PageActions.showStockOut()),
+          onPress: () => dispatch(PageActions.toggleStockOut(showAll)),
           isOn: !showAll,
         },
         {
           text: buttonStrings.all_items_selected,
-          onPress: () =>
-            allSelected ? dispatch(PageActions.deselectAll()) : dispatch(PageActions.selectAll()),
+          onPress: () => dispatch(PageActions.toggleAllSelected(allSelected)),
           isOn: allSelected,
         },
       ]}
@@ -156,10 +150,11 @@ export const StocktakeManagePage = ({
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChange={value => debouncedDispatch(PageActions.filterData(value))}
+            onChangeText={value => debouncedDispatch(PageActions.filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>

@@ -181,6 +181,7 @@ export const RowActionsLookup = {
   deselectRow,
   deselectAll,
   selectAll,
+  toggleAllSelected,
   selectItems,
   deleteSelectedBatches,
   deleteSelectedItems,

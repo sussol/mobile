@@ -217,6 +217,7 @@ export const TableActionsLookup = {
   hideStockOut,
   showOverStocked,
   showStockOut,
+  toggleStockOut,
   addMasterListItems,
   addItem,
   addTransactionBatch,
