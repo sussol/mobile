@@ -21,7 +21,7 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
 import {
   gotoStocktakeManagePage,
@@ -105,14 +105,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
-
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
