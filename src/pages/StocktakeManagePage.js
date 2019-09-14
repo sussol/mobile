@@ -78,22 +78,18 @@ export const StocktakeManagePage = ({
     }
   });
 
-  const Toggle = () => (
-    <ToggleBar
-      toggles={[
-        {
-          text: buttonStrings.hide_stockouts,
-          onPress: () => dispatch(PageActions.toggleStockOut(showAll)),
-          isOn: !showAll,
-        },
-        {
-          text: buttonStrings.all_items_selected,
-          onPress: () => dispatch(PageActions.toggleAllSelected(allSelected)),
-          isOn: allSelected,
-        },
-      ]}
-    />
-  );
+  const confirmStocktake = () => {
+    const itemIds = Array.from(dataState.keys()).filter(id => id);
+
+    const updateExistingStocktake = () => reduxDispatch(addItemsToStocktake(stocktake, itemIds));
+    const createNewStocktake = () =>
+      reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
+
+    runWithLoadingIndicator(() => {
+      if (stocktake) return updateExistingStocktake();
+      return createNewStocktake();
+    });
+  };
 
   const renderRow = useCallback(
     listItem => {
@@ -116,28 +112,38 @@ export const StocktakeManagePage = ({
     [data, dataState, showAll, hasSelection]
   );
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={PageActions.sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    []
   );
 
-  const confirmStocktake = () => {
-    const itemIds = Array.from(dataState.keys()).filter(id => id);
-
-    const updateExistingStocktake = () => reduxDispatch(addItemsToStocktake(stocktake, itemIds));
-    const createNewStocktake = () =>
-      reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
-
-    runWithLoadingIndicator(() => {
-      if (stocktake) return updateExistingStocktake();
-      return createNewStocktake();
-    });
-  };
+  const Toggle = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          {
+            text: buttonStrings.hide_stockouts,
+            onPress: () => dispatch(PageActions.toggleStockOut(showAll)),
+            isOn: !showAll,
+          },
+          {
+            text: buttonStrings.all_items_selected,
+            onPress: () => dispatch(PageActions.toggleAllSelected(allSelected)),
+            isOn: allSelected,
+          },
+        ]}
+      />
+    ),
+    [showAll, allSelected]
+  );
 
   const {
     newPageTopSectionContainer,
