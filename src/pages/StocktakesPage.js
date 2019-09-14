@@ -62,7 +62,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     PageActions,
   } = state;
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -70,7 +70,24 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       default:
         return null;
     }
-  });
+  };
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.PROGRAM_STOCKTAKE:
+        return ({ stocktakeName, program }) => {
+          reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
+          dispatch(PageActions.closeModal());
+        };
+      default:
+        return null;
+    }
+  };
+
+  const newStocktake = () => {
+    if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
+    return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
+  };
 
   const renderRow = useCallback(
     listItem => {
@@ -94,10 +111,15 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     [data, dataState]
   );
 
-  const newStocktake = () => {
-    if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
-    return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
-  };
+  const renderHeader = () => (
+    <DataTableHeaderRow
+      columns={columns}
+      dispatch={instantDebouncedDispatch}
+      sortAction={PageActions.sortData}
+      isAscending={isAscending}
+      sortBy={sortBy}
+    />
+  );
 
   const renderButtons = () => {
     const { verticalContainer, topButton } = globalStyles;
@@ -111,28 +133,6 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       </View>
     );
   };
-
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case MODAL_KEYS.PROGRAM_STOCKTAKE:
-        return ({ stocktakeName, program }) => {
-          reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
-          dispatch(PageActions.closeModal());
-        };
-      default:
-        return null;
-    }
-  };
-
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={PageActions.sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
-  );
 
   const {
     newPageTopSectionContainer,
