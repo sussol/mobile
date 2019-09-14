@@ -48,195 +48,191 @@ import { formatStatus } from '../../utilities/index';
  *                             (colKey, propName) => actionObject
  */
 const DataTableRow = React.memo(
-  ({
-    rowData,
-    rowState,
-    rowKey,
-    style,
-    columns,
-    isFinalised,
-    dispatch,
-    getAction,
-    onPress,
-    rowIndex,
-  }) => {
+  ({ rowData, rowState, rowKey, columns, isFinalised, dispatch, getAction, onPress, rowIndex }) => {
+    const {
+      cellText,
+      cellContainer,
+      touchableCellContainer,
+      editableCellText,
+      editableCellTextView,
+      editableCellUnfocused,
+      alternateRow,
+      row,
+    } = newDataTableStyles;
+
+    const rowStyle = rowIndex % 2 === 0 ? alternateRow : row;
+
     // Callback for rendering a row of cells.
-    const renderCells = useCallback(() => {
-      const {
-        cellText,
-        cellContainer,
-        touchableCellContainer,
-        editableCellText,
-        editableCellTextView,
-        editableCellUnfocused,
-      } = newDataTableStyles;
+    const renderCells = useCallback(
+      () =>
+        // Map each column to an appropriate cell for a given row.
+        columns.map(({ key: columnKey, type, width, alignText }, index) => {
+          // Indicator if the right hand border should be removed from styles for this cell.
+          const isLastCell = index === columns.length - 1;
 
-      // Map each column to an appropriate cell for a given row.
-      return columns.map(({ key: columnKey, type, width, alignText }, index) => {
-        // Indicator if the right hand border should be removed from styles for this cell.
-        const isLastCell = index === columns.length - 1;
+          // This cell is disabled if the pageObject is finalised, the row has been explicitly set
+          // as disabled, or the rowData is disabled (i.e. data is an invoice),
+          const isDisabled =
+            isFinalised || (rowState && rowState.isDisabled) || rowData.isFinalised;
 
-        // This cell is disabled if the pageObject is finalised, the row has been explicitly set
-        // as disabled, or the rowData is disabled (i.e. data is an invoice),
-        const isDisabled = isFinalised || (rowState && rowState.isDisabled) || rowData.isFinalised;
+          // Alignment of this particular column. Default to left hand ide.
+          const cellAlignment = alignText || 'left';
 
-        // Alignment of this particular column. Default to left hand ide.
-        const cellAlignment = alignText || 'left';
+          switch (type) {
+            case 'editableString':
+            case 'editableNumeric':
+              return (
+                <TextInputCell
+                  key={columnKey}
+                  value={rowData[columnKey]}
+                  rowKey={rowKey}
+                  columnKey={columnKey}
+                  editAction={getAction(columnKey)}
+                  isDisabled={isDisabled}
+                  dispatch={dispatch}
+                  width={width}
+                  viewStyle={cellContainer[cellAlignment]}
+                  textViewStyle={editableCellTextView}
+                  isLastCell={isLastCell}
+                  keyboardType={type === 'editableNumeric' ? 'numeric' : 'default'}
+                  textInputStyle={cellText[cellAlignment]}
+                  textStyle={editableCellUnfocused[cellAlignment]}
+                  cellTextStyle={editableCellText}
+                  rowIndex={rowIndex}
+                />
+              );
 
-        switch (type) {
-          case 'editableString':
-          case 'editableNumeric':
-            return (
-              <TextInputCell
-                key={columnKey}
-                value={rowData[columnKey]}
-                rowKey={rowKey}
-                columnKey={columnKey}
-                editAction={getAction(columnKey)}
-                isDisabled={isDisabled}
-                dispatch={dispatch}
-                width={width}
-                viewStyle={cellContainer[cellAlignment]}
-                textViewStyle={editableCellTextView}
-                isLastCell={isLastCell}
-                keyboardType={type === 'editableNumeric' ? 'numeric' : 'default'}
-                textInputStyle={cellText[cellAlignment]}
-                textStyle={editableCellUnfocused[cellAlignment]}
-                cellTextStyle={editableCellText}
-                rowIndex={rowIndex}
-              />
-            );
+            case 'editableDate':
+              return (
+                <NewExpiryDateInput
+                  key={columnKey}
+                  value={rowData[columnKey]}
+                  rowKey={rowKey}
+                  columnKey={columnKey}
+                  editAction={getAction(columnKey)}
+                  isDisabled={isDisabled}
+                  dispatch={dispatch}
+                  width={width}
+                  isLastCell={isLastCell}
+                  rowIndex={rowIndex}
+                />
+              );
 
-          case 'editableDate':
-            return (
-              <NewExpiryDateInput
-                key={columnKey}
-                value={rowData[columnKey]}
-                rowKey={rowKey}
-                columnKey={columnKey}
-                editAction={getAction(columnKey)}
-                isDisabled={isDisabled}
-                dispatch={dispatch}
-                width={width}
-                isLastCell={isLastCell}
-                rowIndex={rowIndex}
-              />
-            );
+            case 'checkable':
+              return (
+                <CheckableCell
+                  key={columnKey}
+                  rowKey={rowKey}
+                  columnKey={columnKey}
+                  isChecked={rowState && rowState.isSelected}
+                  isDisabled={isDisabled}
+                  CheckedComponent={CheckedComponent}
+                  UncheckedComponent={UncheckedComponent}
+                  DisabledCheckedComponent={DisabledCheckedComponent}
+                  DisabledUncheckedComponent={DisabledUncheckedComponent}
+                  onCheckAction={getAction(columnKey, 'onCheckAction')}
+                  onUncheckAction={getAction(columnKey, 'onUncheckAction')}
+                  dispatch={dispatch}
+                  containerStyle={touchableCellContainer}
+                  width={width}
+                  isLastCell={isLastCell}
+                />
+              );
 
-          case 'checkable':
-            return (
-              <CheckableCell
-                key={columnKey}
-                rowKey={rowKey}
-                columnKey={columnKey}
-                isChecked={rowState && rowState.isSelected}
-                isDisabled={isDisabled}
-                CheckedComponent={CheckedComponent}
-                UncheckedComponent={UncheckedComponent}
-                DisabledCheckedComponent={DisabledCheckedComponent}
-                DisabledUncheckedComponent={DisabledUncheckedComponent}
-                onCheckAction={getAction(columnKey, 'onCheckAction')}
-                onUncheckAction={getAction(columnKey, 'onUncheckAction')}
-                dispatch={dispatch}
-                containerStyle={touchableCellContainer}
-                width={width}
-                isLastCell={isLastCell}
-              />
-            );
+            case 'string': {
+              const value = rowData[columnKey];
+              const displayValue = columnKey === 'status' ? formatStatus(value) : value;
+              return (
+                <Cell
+                  key={columnKey}
+                  value={displayValue}
+                  width={width}
+                  viewStyle={cellContainer[cellAlignment]}
+                  textStyle={cellText[cellAlignment]}
+                  isLastCell={isLastCell}
+                />
+              );
+            }
 
-          case 'string': {
-            const value = rowData[columnKey];
-            const displayValue = columnKey === 'status' ? formatStatus(value) : value;
-            return (
-              <Cell
-                key={columnKey}
-                value={displayValue}
-                width={width}
-                viewStyle={cellContainer[cellAlignment]}
-                textStyle={cellText[cellAlignment]}
-                isLastCell={isLastCell}
-              />
-            );
+            case 'numeric': {
+              return (
+                <Cell
+                  key={columnKey}
+                  value={Math.round(rowData[columnKey])}
+                  width={width}
+                  viewStyle={cellContainer[cellAlignment]}
+                  textStyle={cellText[cellAlignment]}
+                  isLastCell={isLastCell}
+                />
+              );
+            }
+
+            case 'date':
+              return (
+                <Cell
+                  key={columnKey}
+                  value={rowData[columnKey] && rowData[columnKey].toDateString()}
+                  width={width}
+                  viewStyle={cellContainer[cellAlignment]}
+                  textStyle={cellText[cellAlignment]}
+                  isLastCell={isLastCell}
+                />
+              );
+
+            case 'icon':
+              return (
+                <TouchableCell
+                  key={columnKey}
+                  renderChildren={OpenModal}
+                  rowKey={rowKey}
+                  columnKey={columnKey}
+                  onPressAction={getAction(columnKey)}
+                  dispatch={dispatch}
+                  width={width}
+                  isLastCell={isLastCell}
+                  containerStyle={{
+                    justifyContent: 'center',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                />
+              );
+
+            case 'dropDown':
+              return (
+                <DropDownCell
+                  isDisabled={isFinalised}
+                  dispatch={dispatch}
+                  onPressAction={getAction(columnKey)}
+                  rowKey={rowKey}
+                  columnKey={columnKey}
+                  value={rowData[columnKey]}
+                  isLastCell={isLastCell}
+                  width={width}
+                />
+              );
+
+            default: {
+              return (
+                <Cell
+                  key={columnKey}
+                  value={rowData[columnKey]}
+                  width={width}
+                  viewStyle={cellContainer[cellAlignment]}
+                  textStyle={cellText[cellAlignment]}
+                  isLastCell={isLastCell}
+                />
+              );
+            }
           }
-
-          case 'numeric': {
-            return (
-              <Cell
-                key={columnKey}
-                value={Math.round(rowData[columnKey])}
-                width={width}
-                viewStyle={cellContainer[cellAlignment]}
-                textStyle={cellText[cellAlignment]}
-                isLastCell={isLastCell}
-              />
-            );
-          }
-
-          case 'date':
-            return (
-              <Cell
-                key={columnKey}
-                value={rowData[columnKey] && rowData[columnKey].toDateString()}
-                width={width}
-                viewStyle={cellContainer[cellAlignment]}
-                textStyle={cellText[cellAlignment]}
-                isLastCell={isLastCell}
-              />
-            );
-
-          case 'icon':
-            return (
-              <TouchableCell
-                key={columnKey}
-                renderChildren={OpenModal}
-                rowKey={rowKey}
-                columnKey={columnKey}
-                onPressAction={getAction(columnKey)}
-                dispatch={dispatch}
-                width={width}
-                isLastCell={isLastCell}
-                containerStyle={{
-                  justifyContent: 'center',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              />
-            );
-
-          case 'dropDown':
-            return (
-              <DropDownCell
-                isDisabled={isFinalised}
-                dispatch={dispatch}
-                onPressAction={getAction(columnKey)}
-                rowKey={rowKey}
-                columnKey={columnKey}
-                value={rowData[columnKey]}
-                isLastCell={isLastCell}
-                width={width}
-              />
-            );
-
-          default: {
-            return (
-              <Cell
-                key={columnKey}
-                value={rowData[columnKey]}
-                width={width}
-                viewStyle={cellContainer[cellAlignment]}
-                textStyle={cellText[cellAlignment]}
-                isLastCell={isLastCell}
-              />
-            );
-          }
-        }
-      });
-    }, [isFinalised, rowState, rowData, rowIndex]);
+        }),
+      [isFinalised, rowState, rowData, rowIndex]
+    );
 
     return (
       <Row
         onPress={onPress}
-        style={style}
+        style={rowStyle}
         renderCells={renderCells}
         debug
         rowKey={rowKey}
@@ -260,7 +256,6 @@ DataTableRow.propTypes = {
   rowData: PropTypes.object.isRequired,
   rowState: PropTypes.object,
   rowKey: PropTypes.string.isRequired,
-  style: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   dispatch: PropTypes.func.isRequired,
   isFinalised: PropTypes.bool,

@@ -20,7 +20,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 const initialiseState = () => {
@@ -130,13 +130,11 @@ export const SupplierRequisitionsPage = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = recordKeyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}

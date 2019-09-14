@@ -19,7 +19,7 @@ import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 
 const stateInitialiser = requisition => {
@@ -155,13 +155,12 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
+
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           isFinalised={isFinalised}
           dispatch={dispatch}
