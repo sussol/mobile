@@ -21,7 +21,7 @@ import { ToggleBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
 export const StocktakeManagePage = ({
   routeName,
@@ -78,16 +78,15 @@ export const StocktakeManagePage = ({
     }
   });
 
-  const confirmStocktake = () => {
+  const onNameChange = value => dispatch(PageActions.editName(value));
+  const onSelectAll = () => dispatch(PageActions.toggleAllSelected(allSelected));
+  const onHideStock = () => dispatch(PageActions.toggleStockOut(showAll));
+  const onConfirmStocktake = () => {
     const itemIds = Array.from(dataState.keys()).filter(id => id);
 
-    const updateExistingStocktake = () => reduxDispatch(addItemsToStocktake(stocktake, itemIds));
-    const createNewStocktake = () =>
-      reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
-
     runWithLoadingIndicator(() => {
-      if (stocktake) return updateExistingStocktake();
-      return createNewStocktake();
+      if (stocktake) return reduxDispatch(addItemsToStocktake(stocktake, itemIds));
+      return reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
     });
   };
 
@@ -95,17 +94,15 @@ export const StocktakeManagePage = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
-
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
+          rowIndex={index}
         />
       );
     },
@@ -129,16 +126,8 @@ export const StocktakeManagePage = ({
     () => (
       <ToggleBar
         toggles={[
-          {
-            text: buttonStrings.hide_stockouts,
-            onPress: () => dispatch(PageActions.toggleStockOut(showAll)),
-            isOn: !showAll,
-          },
-          {
-            text: buttonStrings.all_items_selected,
-            onPress: () => dispatch(PageActions.toggleAllSelected(allSelected)),
-            isOn: allSelected,
-          },
+          { text: buttonStrings.hide_stockouts, onPress: onHideStock, isOn: !showAll },
+          { text: buttonStrings.all_items_selected, onPress: onSelectAll, isOn: allSelected },
         ]}
       />
     ),
@@ -163,10 +152,12 @@ export const StocktakeManagePage = ({
             value={searchTerm}
           />
         </View>
+
         <View style={newPageTopRightSectionContainer}>
           <Toggle />
         </View>
       </View>
+
       <DataTable
         data={data}
         extraData={dataState}
@@ -175,13 +166,14 @@ export const StocktakeManagePage = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
       />
+
       <BottomTextEditor
         isOpen={hasSelection}
         buttonText={stocktake ? modalStrings.confirm : modalStrings.create}
         value={name}
         placeholder={modalStrings.give_your_stocktake_a_name}
-        onConfirm={confirmStocktake}
-        onChangeText={value => dispatch(PageActions.editName(value))}
+        onConfirm={onConfirmStocktake}
+        onChangeText={onNameChange}
       />
     </DataTablePageView>
   );
