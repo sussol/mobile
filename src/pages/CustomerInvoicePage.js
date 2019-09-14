@@ -17,27 +17,6 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import {
-  selectRow,
-  deselectRow,
-  deselectAll,
-  deleteTransactionItems,
-} from './dataTableUtilities/actions/rowActions';
-
-import {
-  addTransactionItem,
-  addMasterListItems,
-  filterData,
-  sortData,
-} from './dataTableUtilities/actions/tableActions';
-import {
-  editComment,
-  editTheirRef,
-  openModal,
-  closeModal,
-} from './dataTableUtilities/actions/pageActions';
-import { editTotalQuantity } from './dataTableUtilities/actions/cellActions';
-
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
 
@@ -78,38 +57,59 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const {
     data,
     dataState,
+    pageObject,
     sortBy,
     isAscending,
-    columns,
     modalKey,
-    pageInfo,
-    pageObject,
     hasSelection,
     keyExtractor,
     searchTerm,
     modalValue,
+    columns,
+    PageActions,
+    getPageInfoColumns,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
 
+  // Listen for this invoice being finalised which will prune items and cause side effects
+  // outside of the reducer. Reconcile differences when triggered.
   useRecordListener(dispatch, pageObject, 'Transaction');
 
   const renderPageInfo = useCallback(
-    () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
+    () => (
+      <PageInfo
+        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
+        isEditingDisabled={isFinalised}
+      />
+    ),
     [comment, theirRef, isFinalised]
   );
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
-        return editTotalQuantity;
+        return PageActions.editTotalQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
   });
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_ITEM:
+        return item => dispatch(PageActions.addTransactionItem(item));
+      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
+        return value => dispatch(PageActions.editComment(value, 'Transaction'));
+      case MODAL_KEYS.THEIR_REF_EDIT:
+        return value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
+      default:
+        return null;
+    }
+  };
 
   const renderRow = useCallback(
     listItem => {
@@ -140,41 +140,32 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         <PageButton
           style={topButton}
           text={buttonStrings.new_item}
-          onPress={() => dispatch(openModal(MODAL_KEYS.SELECT_ITEM))}
+          onPress={() => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM))}
           isDisabled={isFinalised}
         />
         <PageButton
           text={buttonStrings.add_master_list_items}
-          onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Transaction')))}
+          onPress={() =>
+            runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')))
+          }
           isDisabled={isFinalised}
         />
       </View>
     );
   };
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
   );
-
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case MODAL_KEYS.SELECT_ITEM:
-        return item => dispatch(addTransactionItem(item));
-      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Transaction'));
-      case MODAL_KEYS.THEIR_REF_EDIT:
-        return value => dispatch(editTheirRef(value, 'Transaction'));
-      default:
-        return null;
-    }
-  };
-  const memoizedGetItemLayout = useCallback(getItemLayout, []);
 
   const {
     newPageTopSectionContainer,
@@ -188,7 +179,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChangeText={value => dispatch(filterData(value))}
+            onChangeText={value => dispatch(PageActions.filterData(value))}
             style={searchBar}
             value={searchTerm}
           />
@@ -201,21 +192,21 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
-        getItemLayout={memoizedGetItemLayout}
+        getItemLayout={getItemLayout}
         columns={columns}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteTransactionItems())}
+        onCancel={() => dispatch(PageActions.deselectAll())}
+        onConfirm={() => dispatch(PageActions.deleteTransactionItems())}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeModal())}
+        onClose={() => dispatch(PageActions.closeModal())}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
