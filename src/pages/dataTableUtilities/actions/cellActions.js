@@ -130,7 +130,7 @@ export const removeReason = rowKey => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  objectToEdit.applyReasonToBatches(UIDatabase);
+  objectToEdit.applyReason(UIDatabase);
 
   dispatch(refreshRow(rowKey));
 };
@@ -165,7 +165,7 @@ export const enforceReasonChoice = rowKey => (dispatch, getState) => {
 export const applyReason = value => (dispatch, getState) => {
   const { modalValue, keyExtractor } = getState();
 
-  modalValue.applyReasonToBatches(UIDatabase, value);
+  modalValue.applyReason(UIDatabase, value);
 
   const rowKey = keyExtractor(modalValue);
 

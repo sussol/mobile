@@ -308,7 +308,7 @@ export class StocktakeItem extends Realm.Object {
    * @param {Realm}   database
    * @param {Options} option
    */
-  applyReasonToBatches(database, option) {
+  applyReason(database, option) {
     this.batches.forEach(batch => {
       const { id, countedTotalQuantity, snapshotTotalQuantity } = batch;
       let batchOption = option;
