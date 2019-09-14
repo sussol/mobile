@@ -57,7 +57,7 @@ export const StocktakeEditPage = ({
   routeName,
   dispatch: reduxDispatch,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
     pageObject: stocktake,
     backingData: stocktake.items,
     data: stocktake.items.sorted('item.name').slice(),
@@ -96,6 +96,17 @@ export const StocktakeEditPage = ({
     }
   }, []);
 
+  const onFilterData = value => dispatch(filterData(value));
+  const onEditBatch = rowKey => openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
+  const onEditReason = rowKey => openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
+  const onEditComment = value => dispatch(editComment(value, 'Stocktake'));
+  const onCloseModal = () => dispatch(closeModal());
+  const onResetStocktake = () => runWithLoadingIndicator(() => dispatch(resetStocktake()));
+  const onApplyReason = ({ item }) => dispatch(applyReason(item));
+
+  const onManageStocktake = () =>
+    reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }));
+
   const renderPageInfo = useCallback(
     () => (
       <PageInfo
@@ -110,13 +121,13 @@ export const StocktakeEditPage = ({
     switch (colKey) {
       case 'countedTotalQuantity':
         return editCountedQuantity;
-      case 'modalControl':
-        return rowKey => openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
+      case 'batch':
+        return onEditBatch;
       case 'remove':
         if (propName === 'onCheckAction') return selectRow;
         return deselectRow;
       case 'mostUsedReasonTitle':
-        return rowKey => openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
+        return onEditReason;
       default:
         return null;
     }
@@ -125,14 +136,14 @@ export const StocktakeEditPage = ({
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Stocktake'));
+        return onEditComment;
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
-        return () => dispatch(closeModal());
+        return onCloseModal;
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
-        return () => runWithLoadingIndicator(() => dispatch(resetStocktake()));
+        return onResetStocktake;
       case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
       case MODAL_KEYS.STOCKTAKE_REASON:
-        return ({ item }) => dispatch(applyReason(item));
+        return onApplyReason;
       default:
         return null;
     }
@@ -142,7 +153,6 @@ export const StocktakeEditPage = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-
       return (
         <DataTableRow
           rowData={data[index]}
@@ -172,22 +182,24 @@ export const StocktakeEditPage = ({
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(
-    () => (
+  const PageButtons = useCallback(() => {
+    const ManageStocktake = () => (
+      <PageButton
+        text={buttonStrings.manage_stocktake}
+        onPress={onManageStocktake}
+        isDisabled={isFinalised}
+      />
+    );
+
+    // Program stocktakes do not have a ManageStocktake button.
+    const Child = program ? () => null : ManageStocktake;
+
+    return (
       <View style={newPageTopRightSectionContainer}>
-        {!program && (
-          <PageButton
-            text={buttonStrings.manage_stocktake}
-            onPress={() =>
-              reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }))
-            }
-            isDisabled={isFinalised}
-          />
-        )}
+        <Child />
       </View>
-    ),
-    [program]
-  );
+    );
+  }, [program]);
 
   const {
     newPageTopSectionContainer,
@@ -201,7 +213,7 @@ export const StocktakeEditPage = ({
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChange={onFilterData}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
@@ -222,7 +234,7 @@ export const StocktakeEditPage = ({
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
