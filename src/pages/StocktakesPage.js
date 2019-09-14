@@ -18,16 +18,6 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import {
-  selectRow,
-  deselectRow,
-  deselectAll,
-  deleteStocktakes,
-} from './dataTableUtilities/actions/rowActions';
-
-import { filterData, sortData } from './dataTableUtilities/actions/tableActions';
-import { openModal, closeModal } from './dataTableUtilities/actions/pageActions';
-
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
 import { usePageReducer } from '../hooks/usePageReducer';
@@ -62,11 +52,12 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
     hasSelection,
     usingPrograms,
     keyExtractor,
+    columns,
+    PageActions,
   } = state;
 
   const { PROGRAM_STOCKTAKE } = MODAL_KEYS;
@@ -74,8 +65,8 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
@@ -104,7 +95,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   );
 
   const newStocktake = () => {
-    if (usingPrograms) return dispatch(openModal(PROGRAM_STOCKTAKE));
+    if (usingPrograms) return dispatch(PageActions.openModal(PROGRAM_STOCKTAKE));
     return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
   };
 
@@ -126,7 +117,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       case PROGRAM_STOCKTAKE:
         return ({ stocktakeName, program }) => {
           reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
-          dispatch(closeModal());
+          dispatch(PageActions.closeModal());
         };
       default:
         return null;
@@ -137,7 +128,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     <DataTableHeaderRow
       columns={columns}
       dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
+      sortAction={PageActions.sortData}
       isAscending={isAscending}
       sortBy={sortBy}
     />
@@ -154,7 +145,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChange={value => debouncedDispatch(PageActions.filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
@@ -173,15 +164,15 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteStocktakes())}
+        onCancel={() => dispatch(PageActions.deselectAll())}
+        onConfirm={() => dispatch(PageActions.deleteStocktakes())}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeModal())}
+        onClose={() => dispatch(PageActions.closeModal())}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
