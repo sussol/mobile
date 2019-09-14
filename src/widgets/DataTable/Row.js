@@ -1,6 +1,6 @@
 /* eslint-disable react/forbid-prop-types */
 
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import { TouchableOpacity, View } from 'react-native';
@@ -47,12 +47,12 @@ const Row = React.memo(
     }
 
     const { adjustToTop } = useContext(RefContext);
-
+    const onPressRow = useCallback(() => onPress(rowData));
     const onFocus = () => adjustToTop(rowIndex);
 
     const Container = onPress ? TouchableOpacity : View;
     return (
-      <Container onPress={onPress} style={style} onFocus={onFocus}>
+      <Container onPress={onPressRow} style={style} onFocus={onFocus}>
         {renderCells(rowData, rowState, rowKey, rowIndex)}
       </Container>
     );

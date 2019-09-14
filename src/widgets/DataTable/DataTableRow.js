@@ -233,11 +233,9 @@ const DataTableRow = React.memo(
       });
     }, [isFinalised, rowState, rowData, rowIndex]);
 
-    const onPressCallback = useCallback(onPress, []);
-
     return (
       <Row
-        onPress={onPressCallback}
+        onPress={onPress}
         style={style}
         renderCells={renderCells}
         debug
