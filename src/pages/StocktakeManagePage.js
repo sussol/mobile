@@ -12,26 +12,28 @@ import { SearchBar } from 'react-native-ui-components';
 import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
 import { BottomTextEditor } from '../widgets/modals';
-import { ToggleBar } from '../widgets';
+import { ToggleBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
+import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { usePageReducer } from '../hooks/usePageReducer';
+
+import { createStocktake, addItemsToStocktake } from '../navigation/actions';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import {
-  sortData,
   filterData,
+  sortData,
+  hideStockOut,
+  showStockOut,
+} from './dataTableUtilities/actions/tableActions';
+import {
   selectRow,
   deselectRow,
   selectAll,
   deselectAll,
-  hideStockOut,
-  showStockOut,
   selectItems,
-  editName,
-} from './dataTableUtilities/actions';
-
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
-import { createStocktake, addItemsToStocktake } from '../navigation/actions';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
+} from './dataTableUtilities/actions/rowActions';
+import { editName } from './dataTableUtilities/actions/pageActions';
 
 export const StocktakeManagePage = ({
   routeName,
@@ -193,9 +195,13 @@ export const StocktakeManagePage = ({
   );
 };
 
+StocktakeManagePage.defaultProps = {
+  stocktake: null,
+};
+
 StocktakeManagePage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
-  stocktake: PropTypes.object.isRequired,
+  stocktake: PropTypes.object,
 };
