@@ -8,7 +8,6 @@ import { CellActionsLookup, editCountedQuantityWithReason } from './cellActions'
 import { RowActionsLookup } from './rowActions';
 import { TableActionsLookup } from './tableActions';
 import { PageActionsLookup } from './pageActions';
-import { UIDatabase } from '../../../database/index';
 
 /**
  * Serves a page the actions it requires given it's routeName.
@@ -39,8 +38,12 @@ const stocktakeEditorWithReasons = {
   editCountedQuantity: editCountedQuantityWithReason,
 };
 
-const PAGE_ACTIONS = {
-  BasePageActions,
+/**
+ * If actions need to be overriden for a particular routeName,
+ * adding them here will pass that new set of actions to the
+ * screen when navigating.
+ */
+const NON_DEFAULT_PAGE_ACTIONS = {
   stocktakeEditorWithReasons,
 };
 
@@ -49,15 +52,4 @@ const PAGE_ACTIONS = {
  *
  * @param {String} routeName Name of the route being navigated to.
  */
-export const getPageActions = routeName => {
-  switch (routeName) {
-    case 'stocktakeEditor': {
-      const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
-      return usesReasons ? PAGE_ACTIONS.stocktakeEditorWithReasons : PAGE_ACTIONS.BasePageActions;
-    }
-
-    default: {
-      return PAGE_ACTIONS.BasePageActions;
-    }
-  }
-};
+export const getPageActions = routeName => NON_DEFAULT_PAGE_ACTIONS[routeName] || BasePageActions;

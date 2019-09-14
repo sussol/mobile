@@ -4,7 +4,6 @@
  */
 
 import { tableStrings } from '../../localization';
-import { UIDatabase } from '../../database/index';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
@@ -16,7 +15,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakes: [6, 2, 2, 1],
   stocktakeManager: [2, 6, 1],
   stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
-  stocktakeEditorReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
+  stocktakeEditorWithReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
 };
 
 const PAGE_COLUMNS = {
@@ -61,7 +60,7 @@ const PAGE_COLUMNS = {
     'difference',
     'batches',
   ],
-  stocktakeEditorReasons: [
+  stocktakeEditorWithReasons: [
     'itemCode',
     'itemName',
     'snapshotTotalQuantity',
@@ -323,33 +322,15 @@ const COLUMNS = () => ({
     type: 'dropDown',
     key: 'mostUsedReasonTitle',
     title: tableStrings.reason,
-    alignText: 'right',
+    alignText: 'center',
     sortable: false,
     editable: false,
   },
 });
 
 const getColumns = page => {
-  let columnKeys;
-  let widths;
-
-  switch (page) {
-    case 'stocktakeEditor':
-      {
-        const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
-        if (usesReasons) {
-          columnKeys = PAGE_COLUMNS.stocktakeEditorReasons;
-          widths = PAGE_COLUMN_WIDTHS.stocktakeEditorReasons;
-        } else {
-          columnKeys = PAGE_COLUMNS[page];
-          widths = PAGE_COLUMN_WIDTHS[page];
-        }
-      }
-      break;
-    default:
-      columnKeys = PAGE_COLUMNS[page];
-      widths = PAGE_COLUMN_WIDTHS[page];
-  }
+  const widths = PAGE_COLUMN_WIDTHS[page];
+  const columnKeys = PAGE_COLUMNS[page];
 
   if (!columnKeys) return [];
   if (!(columnKeys.length === widths.length)) return [];

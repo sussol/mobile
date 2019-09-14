@@ -39,6 +39,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['period', 'otherParty', 'programMonthsToSupply', 'requisitionComment'],
   ],
   stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
+  stocktakeEditorWithReasons: [['stocktakeName', 'stocktakeComment']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
