@@ -10,7 +10,7 @@ import { View } from 'react-native';
 
 import { UIDatabase } from '../database';
 import { MODAL_KEYS, newSortDataBy } from '../utilities';
-import { usePageReducer, useNavigationFocus } from '../hooks';
+import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
@@ -57,8 +57,11 @@ export const CustomerInvoicesPage = ({
     PageActions,
   } = state;
 
-  // Refresh data on navigating back to this page.
-  useNavigationFocus(dispatch, navigation);
+  // Listen to changes from sync and navigation events re-focusing this screen,
+  // such that any side effects that occur trigger a reconcilitation of data.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useNavigationFocus(refreshCallback, navigation);
+  useSyncListener(refreshCallback, ['Transaction']);
 
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onFilterData = value => dispatch(PageActions.filterData(value));
