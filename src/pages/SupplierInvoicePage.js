@@ -12,7 +12,7 @@ import { View } from 'react-native';
 import { UIDatabase } from '../database';
 
 import { MODAL_KEYS } from '../utilities';
-import { usePageReducer } from '../hooks';
+import { usePageReducer, useRecordListener } from '../hooks';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
@@ -22,19 +22,14 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
-const keyExtractor = item => item.id;
-
-export const SupplierInvoicePage = ({ routeName, transaction }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
-    pageObject: transaction,
-    backingData: transaction.getTransactionBatches(UIDatabase),
-    data: transaction
-      .getTransactionBatches(UIDatabase)
-      .sorted('itemName')
-      .slice(),
+const stateInitialiser = pageObject => {
+  const backingData = pageObject.getTransactionBatches(UIDatabase);
+  return {
+    pageObject,
+    backingData,
+    data: backingData.sorted('itemName').slice(),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
-    currentFocusedRowKey: null,
     searchTerm: '',
     filterDataKeys: ['itemName'],
     sortBy: 'itemName',
@@ -42,12 +37,22 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     modalKey: '',
     modalValue: null,
     hasSelection: false,
-  });
+  };
+};
+
+export const SupplierInvoicePage = ({ routeName, transaction }) => {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    transaction
+  );
 
   const {
     pageObject,
     data,
     dataState,
+    keyExtractor,
     sortBy,
     isAscending,
     modalKey,
@@ -58,6 +63,10 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     columns,
     getPageInfoColumns,
   } = state;
+
+  // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useRecordListener(refreshCallback, pageObject, 'Transaction');
 
   const { isFinalised, comment, theirRef } = pageObject;
 
