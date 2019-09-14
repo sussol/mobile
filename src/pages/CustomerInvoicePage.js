@@ -10,33 +10,36 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo, SearchBar } from '../widgets';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
+import { useRecordListener, usePageReducer } from '../hooks';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import {
-  editTotalQuantity,
   selectRow,
   deselectRow,
   deselectAll,
-  sortData,
-  filterData,
+  deleteTransactionItems,
+} from './dataTableUtilities/actions/rowActions';
+
+import {
+  addTransactionItem,
   addMasterListItems,
+  filterData,
+  sortData,
+} from './dataTableUtilities/actions/tableActions';
+import {
   editComment,
   editTheirRef,
-  openBasicModal,
-  closeBasicModal,
-  deleteItemsById,
-  addItem,
-} from './dataTableUtilities/actions';
+  openModal,
+  closeModal,
+} from './dataTableUtilities/actions/pageActions';
+import { editTotalQuantity } from './dataTableUtilities/actions/cellActions';
 
+import { buttonStrings, modalStrings } from '../localization';
 import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
-import { useDatabaseChangeListener } from '../hooks/useDatabaseChangeListener';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -69,9 +72,8 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     isAscending: true,
     modalKey: '',
     hasSelection: false,
+    modalValue: null,
   });
-
-  const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
 
   const {
     data,
@@ -85,11 +87,12 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     hasSelection,
     keyExtractor,
     searchTerm,
+    modalValue,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
 
-  useDatabaseChangeListener(dispatch, pageObject, 'Transaction');
+  useRecordListener(dispatch, pageObject, 'Transaction');
 
   const renderPageInfo = useCallback(
     () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
@@ -137,7 +140,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         <PageButton
           style={topButton}
           text={buttonStrings.new_item}
-          onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
+          onPress={() => dispatch(openModal(MODAL_KEYS.SELECT_ITEM))}
           isDisabled={isFinalised}
         />
         <PageButton
@@ -161,11 +164,11 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case ITEM_SELECT:
-        return item => dispatch(addItem(item, 'TransactionItem'));
-      case COMMENT_EDIT:
+      case MODAL_KEYS.SELECT_ITEM:
+        return item => dispatch(addTransactionItem(item));
+      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
         return value => dispatch(editComment(value, 'Transaction'));
-      case THEIR_REF_EDIT:
+      case MODAL_KEYS.THEIR_REF_EDIT:
         return value => dispatch(editTheirRef(value, 'Transaction'));
       default:
         return null;
@@ -205,17 +208,17 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
         onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteItemsById('Transaction'))}
+        onConfirm={() => dispatch(deleteTransactionItems())}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={() => dispatch(closeModal())}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
-        currentValue={pageObject[modalKey]}
+        currentValue={modalValue}
       />
     </DataTablePageView>
   );
