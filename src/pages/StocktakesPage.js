@@ -10,17 +10,19 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { usePageReducer } from '../hooks';
+import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
+
 import { PageButton, DataTablePageView } from '../widgets';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
+import { buttonStrings, modalStrings } from '../localization';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import { usePageReducer } from '../hooks/usePageReducer';
 
 import {
   gotoStocktakeManagePage,
