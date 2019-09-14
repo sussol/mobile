@@ -66,8 +66,9 @@ export const showOverStocked = () => refreshData();
 export const showStockOut = () => refreshData();
 
 /**
- *  Wrapper around hideStockout and showStockout. Determines which
- *  should be dispatched.
+ * Wrapper around hideStockout and showStockout. Determines which
+ * should be dispatched.
+ * @param {Bool} showAll Indicator whether all rows are currently showing.
  */
 export const toggleStockOut = showAll => {
   if (showAll) return hideStockOut();
