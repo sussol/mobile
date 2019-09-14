@@ -29,12 +29,11 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
-    backingData: UIDatabase.objects('Stocktake'),
-    data: UIDatabase.objects('Stocktake')
-      .sorted('createdDate', false)
-      .slice(),
+const stateInitialiser = () => {
+  const backingData = UIDatabase.objects('Stocktake');
+  return {
+    backingData,
+    data: backingData.sorted('createdDate', false).slice(),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -43,10 +42,16 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    currentUser,
-    reduxDispatch,
     usingPrograms: getAllPrograms(Settings, UIDatabase).length > 0,
-  });
+  };
+};
+
+export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser
+  );
 
   const {
     data,
@@ -120,24 +125,27 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     [data, dataState]
   );
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={PageActions.sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
   );
 
-  const renderButtons = () => {
+  const PageButtons = useCallback(() => {
     const { verticalContainer, topButton } = globalStyles;
     return (
       <View style={verticalContainer}>
         <PageButton style={topButton} text={buttonStrings.new_stocktake} onPress={onNewStocktake} />
       </View>
     );
-  };
+  }, []);
 
   const {
     newPageTopSectionContainer,
@@ -157,7 +165,9 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
             value={searchTerm}
           />
         </View>
-        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={newPageTopRightSectionContainer}>
+          <PageButtons />
+        </View>
       </View>
       <DataTable
         data={data}
