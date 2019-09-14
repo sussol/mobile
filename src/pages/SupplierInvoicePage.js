@@ -40,24 +40,35 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     sortBy: 'itemName',
     isAscending: true,
     modalKey: '',
+    modalValue: null,
     hasSelection: false,
   });
 
   const {
+    pageObject,
     data,
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
-    getPageInfoColumns,
-    pageObject,
+    modalValue,
     hasSelection,
     searchTerm,
     PageActions,
+    columns,
+    getPageInfoColumns,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
+
+  const onAddItem = item => dispatch(PageActions.addTransactionBatch(item));
+  const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
+  const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
+  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
+  const onCloseModal = () => dispatch(PageActions.closeModal());
 
   const renderPageInfo = useCallback(
     () => (
@@ -86,11 +97,14 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return item => dispatch(PageActions.addTransactionBatch(item));
+        return onAddItem;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
-        return value => dispatch(PageActions.editComment(value, 'Transaction'));
+        console.log('#################################');
+        console.log('COMMENT EDIT');
+        console.log('#################################');
+        return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
-        return value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
+        return onEditTheirRef;
       default:
         return null;
     }
@@ -123,7 +137,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         <PageButton
           style={topButton}
           text={buttonStrings.new_item}
-          onPress={() => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM))}
+          onPress={onNewInvoice}
           isDisabled={isFinalised}
         />
       </View>
@@ -140,7 +154,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         sortBy={sortBy}
       />
     ),
-    []
+    [sortBy, isAscending]
   );
 
   const {
@@ -155,7 +169,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChangeText={value => dispatch(PageActions.filterData(value))}
+            onChangeText={onFilterData}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
@@ -178,17 +192,18 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(PageActions.deselectAll())}
-        onConfirm={() => dispatch(PageActions.deleteTransactionBatches())}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(PageActions.closeModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
+        currentValue={modalValue}
       />
     </DataTablePageView>
   );
