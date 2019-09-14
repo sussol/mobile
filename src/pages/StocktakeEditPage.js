@@ -32,6 +32,20 @@ import { applyReason, editCountedQuantity } from './dataTableUtilities/actions/c
 import { buttonStrings } from '../localization';
 import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
+const stateInitialiser = pageObject => ({
+  pageObject,
+  backingData: pageObject.items,
+  data: pageObject.items.sorted('item.name').slice(),
+  keyExtractor: recordKeyExtractor,
+  dataState: new Map(),
+  searchTerm: '',
+  filterDataKeys: ['item.name'],
+  sortBy: 'itemName',
+  isAscending: true,
+  modalKey: '',
+  modalValue: null,
+});
+
 /**
  * Renders a mSupply page with a stocktake loaded for editing
  *
@@ -57,20 +71,12 @@ export const StocktakeEditPage = ({
   routeName,
   dispatch: reduxDispatch,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
-    pageObject: stocktake,
-    backingData: stocktake.items,
-    data: stocktake.items.sorted('item.name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    modalValue: null,
-  });
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    stocktake
+  );
 
   const {
     data,
