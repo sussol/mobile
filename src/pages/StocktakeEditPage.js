@@ -94,6 +94,7 @@ export const StocktakeEditPage = ({
   useRecordListener(refreshCallback, pageObject, 'Stocktake');
   useNavigationFocus(refreshCallback, navigation);
 
+  // If the Stocktake is outdated, force a reset of the stocktake on mount.
   useEffect(() => {
     if (stocktake.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
   }, []);
