@@ -18,7 +18,7 @@ import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { newPageStyles } from '../globalStyles';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -74,7 +74,20 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
 
   // Listen for this invoice being finalised which will prune items and cause side effects
   // outside of the reducer. Reconcile differences when triggered.
-  useRecordListener(dispatch, pageObject, 'Transaction');
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useRecordListener(refreshCallback, pageObject, 'Transaction');
+
+  const onAddItem = item => dispatch(PageActions.addTransactionItem(item));
+  const onNewRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
+  const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
+  const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+
+  const onAddMasterList = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
 
   const renderPageInfo = useCallback(
     () => (
@@ -101,11 +114,11 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return item => dispatch(PageActions.addTransactionItem(item));
+        return onAddItem;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
-        return value => dispatch(PageActions.editComment(value, 'Transaction'));
+        return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
-        return value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
+        return onEditTheirRef;
       default:
         return null;
     }
@@ -115,13 +128,11 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           isFinalised={isFinalised}
           dispatch={dispatch}
@@ -138,16 +149,14 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     return (
       <View style={verticalContainer}>
         <PageButton
-          style={topButton}
+          style={{ ...topButton, marginLeft: 0 }}
           text={buttonStrings.new_item}
-          onPress={() => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM))}
+          onPress={onNewRow}
           isDisabled={isFinalised}
         />
         <PageButton
           text={buttonStrings.add_master_list_items}
-          onPress={() =>
-            runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')))
-          }
+          onPress={onAddMasterList}
           isDisabled={isFinalised}
         />
       </View>
@@ -178,11 +187,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
-          <SearchBar
-            onChangeText={value => dispatch(PageActions.filterData(value))}
-            style={searchBar}
-            value={searchTerm}
-          />
+          <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
@@ -198,15 +203,15 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(PageActions.deselectAll())}
-        onConfirm={() => dispatch(PageActions.deleteTransactionItems())}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(PageActions.closeModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
