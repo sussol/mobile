@@ -70,10 +70,10 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
 
   const { isFinalised, comment, theirRef } = pageObject;
 
-  const onAddItem = item => dispatch(PageActions.addTransactionBatch(item));
+  const onAddBatch = item => dispatch(PageActions.addTransactionBatch(item));
   const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
   const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
-  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
+  const onAddRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
@@ -106,7 +106,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return onAddItem;
+        return onAddBatch;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
@@ -143,7 +143,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         <PageButton
           style={topButton}
           text={buttonStrings.new_item}
-          onPress={onNewInvoice}
+          onPress={onAddRow}
           isDisabled={isFinalised}
         />
       </View>
