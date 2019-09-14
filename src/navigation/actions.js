@@ -230,7 +230,7 @@ export const createSupplierInvoice = (otherParty, currentUser) => dispatch => {
     newCustomerInvoice = createRecord(UIDatabase, 'SupplierInvoice', otherParty, currentUser);
   });
 
-  dispatch(gotoCustomerInvoice(newCustomerInvoice));
+  dispatch(gotoSupplierInvoice(newCustomerInvoice));
 };
 
 /**
