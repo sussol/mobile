@@ -99,9 +99,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       case MODAL_KEYS.SELECT_ITEM:
         return onAddItem;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
-        console.log('#################################');
-        console.log('COMMENT EDIT');
-        console.log('#################################');
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
         return onEditTheirRef;
