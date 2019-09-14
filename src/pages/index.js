@@ -44,6 +44,7 @@ export const PAGES = {
   root: props => <PageContainer page={MenuPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
+  stocktakeEditorWithReasons: props => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
   stocktakes: props => <PageContainer page={StocktakesPage} {...props} />,
   supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
