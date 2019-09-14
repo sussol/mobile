@@ -33,7 +33,7 @@ const stateInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
   return {
     backingData,
-    data: backingData.sorted('createdDate', false).slice(),
+    data: backingData.sorted('createdDate', true).slice(),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -119,6 +119,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
           dispatch={dispatch}
           getAction={getAction}
           onPress={onRowPress}
+          rowIndex={index}
         />
       );
     },
