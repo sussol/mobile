@@ -201,6 +201,7 @@ const DataTableRow = React.memo(
             case 'dropDown':
               return (
                 <DropDownCell
+                  key={columnKey}
                   isDisabled={isFinalised}
                   dispatch={dispatch}
                   onPressAction={getAction(columnKey)}
