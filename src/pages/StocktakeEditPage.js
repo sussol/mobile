@@ -72,7 +72,6 @@ export const StocktakeEditPage = ({
     modalValue: null,
   });
 
-  const { STOCKTAKE_OUTDATED_ITEM } = MODAL_KEYS;
   const {
     data,
     dataState,
@@ -91,7 +90,7 @@ export const StocktakeEditPage = ({
   const { isFinalised, comment, program } = pageObject;
 
   useEffect(() => {
-    if (stocktake.isOutdated) dispatch(openModal(STOCKTAKE_OUTDATED_ITEM));
+    if (stocktake.isOutdated) dispatch(openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
   }, []);
 
   const onFilterData = value => dispatch(filterData(value));
