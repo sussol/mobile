@@ -100,6 +100,7 @@ export const StocktakeEditPage = ({
   const onCloseModal = () => dispatch(closeModal());
   const onResetStocktake = () => runWithLoadingIndicator(() => dispatch(resetStocktake()));
   const onApplyReason = ({ item }) => dispatch(applyReason(item));
+  const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
 
   const onManageStocktake = () =>
     reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }));
@@ -135,7 +136,7 @@ export const StocktakeEditPage = ({
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
-        return onCloseModal;
+        return onConfirmBatchEdit;
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return onResetStocktake;
       case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
@@ -231,7 +232,7 @@ export const StocktakeEditPage = ({
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={onCloseModal}
+        onClose={modalKey === MODAL_KEYS.EDIT_STOCKTAKE_BATCH ? onConfirmBatchEdit : onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
