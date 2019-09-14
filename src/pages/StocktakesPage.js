@@ -13,7 +13,7 @@ import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 
 import { MODAL_KEYS, getAllPrograms } from '../utilities';
-import { usePageReducer } from '../hooks';
+import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar } from '../widgets';
@@ -29,7 +29,7 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
+export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
     backingData: UIDatabase.objects('Stocktake'),
     data: UIDatabase.objects('Stocktake')
@@ -61,6 +61,12 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     columns,
     PageActions,
   } = state;
+
+  const callback = useCallback(() => dispatch(PageActions.refreshData()), []);
+  // Listen to sync changing stocktake data - refresh if there are any.
+  useSyncListener(callback, ['Stocktake']);
+  // Listen to navigation focusing this page - fresh if so.
+  useNavigationFocus(callback, navigation);
 
   const getAction = (colKey, propName) => {
     switch (colKey) {
@@ -185,4 +191,5 @@ StocktakesPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
