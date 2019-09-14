@@ -22,6 +22,7 @@ import { gotoStocktakeManagePage } from '../navigation/actions';
 
 import { buttonStrings } from '../localization';
 import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import { useRecordListener, useNavigationFocus } from '../hooks/index';
 
 const stateInitialiser = pageObject => ({
   pageObject,
@@ -51,9 +52,10 @@ const stateInitialiser = pageObject => ({
  * { isSelected, isFocused, isDisabled },
  *
  * @prop {Object} stocktake The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
+ * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  * @prop {Func}   dispatch  Redux store dispatch function.
+ * @prop {Object} navigation App-wide stack navigator reference
  *
  */
 export const StocktakeEditPage = ({
@@ -61,6 +63,7 @@ export const StocktakeEditPage = ({
   stocktake,
   routeName,
   dispatch: reduxDispatch,
+  navigation,
 }) => {
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
     routeName,
@@ -84,6 +87,12 @@ export const StocktakeEditPage = ({
   } = state;
 
   const { isFinalised, comment, program } = pageObject;
+
+  // Listen to the stocktake become the top of the stack or being finalised,
+  // as these events are side-effects. Refreshing makes the state consistent again.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useRecordListener(refreshCallback, pageObject, 'Stocktake');
+  useNavigationFocus(refreshCallback, navigation);
 
   useEffect(() => {
     if (stocktake.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
@@ -243,4 +252,5 @@ StocktakeEditPage.propTypes = {
   stocktake: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
 };
