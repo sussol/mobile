@@ -14,7 +14,7 @@ import { UIDatabase } from '../database';
 
 import { usePageReducer } from '../hooks';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
-import { createStocktake, addItemsToStocktake } from '../navigation/actions';
+import { createStocktake, updateStocktake } from '../navigation/actions';
 
 import { BottomTextEditor } from '../widgets/modals';
 import { ToggleBar, DataTablePageView } from '../widgets';
@@ -93,7 +93,7 @@ export const StocktakeManagePage = ({
   const onConfirmStocktake = () => {
     runWithLoadingIndicator(() => {
       const itemIds = Array.from(dataState.keys()).filter(id => id);
-      if (stocktake) return reduxDispatch(addItemsToStocktake(stocktake, itemIds));
+      if (stocktake) return reduxDispatch(updateStocktake(stocktake, itemIds));
       return reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
     });
   };

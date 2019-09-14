@@ -22,9 +22,9 @@ import { SETTINGS_KEYS } from '../settings/index';
  *
  * NavigationActions.navigate() - accepts an object as the payload, which should
  * have the fields:
- * - `routeName` (See: pages/index - PAGES - keys are routeNames )
- * - `params` (See: Pages/pageContainer and pages/index FINALISABLE_PAGES for requirements)
  *
+ * - `routeName` (See: pages/index - PAGES - keys are routeNames)
+ * - `params` (See: Pages/pageContainer and pages/index FINALISABLE_PAGES for requirements)
  *
  */
 
@@ -43,15 +43,11 @@ export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
     },
   });
 
-export const addItemsToStocktake = (stocktake, itemIds) => dispatch => {
-  UIDatabase.write(() => {
-    stocktake.setItemsByID(UIDatabase, itemIds);
-    UIDatabase.save('Stocktake', stocktake);
-  });
-
-  dispatch(gotoStocktakeEditPage(stocktake));
-};
-
+/**
+ * Navigate to the StocktakeEditPage.
+ *
+ * @param {Object} stocktake  The requisition to navigate to.
+ */
 export const gotoStocktakeEditPage = stocktake =>
   NavigationActions.navigate({
     routeName: 'stocktakeEditor',
@@ -60,70 +56,6 @@ export const gotoStocktakeEditPage = stocktake =>
       stocktake,
     },
   });
-
-export const createStocktake = ({ currentUser, stocktakeName, program, itemIds }) => dispatch => {
-  let stocktake;
-  UIDatabase.write(() => {
-    stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, stocktakeName, program);
-    if (program) stocktake.addItemsFromProgram(UIDatabase);
-    else if (itemIds) stocktake.setItemsByID(UIDatabase, itemIds);
-  });
-
-  const replaceAction = StackActions.replace({
-    routeName: 'stocktakeEditor',
-    params: { stocktake, title: navStrings.stocktake },
-  });
-
-  dispatch(replaceAction);
-};
-
-export const gotoSupplierRequisition = requisition =>
-  NavigationActions.navigate({
-    routeName: !requisition.program ? 'supplierRequisition' : 'programSupplierRequisition',
-    params: {
-      title: `${navStrings.requisition} ${requisition.serialNumber}`,
-      requisition,
-    },
-  });
-
-/**
- * Action creator for creating, and navigating to a Supplier Requsition.
- * Requisition is created by a thunk initially.
- *
- * @param {String} CurrentUser The currently logged in user.
- * @param {Object} requisitionParameters Parameters for the to-be-created object.
- * RequisitionParameters can be any fields in Requisition.js to pass to createRecord.
- */
-export const createSupplierRequisition = ({
-  currentUser,
-  ...requisitionParameters
-}) => dispatch => {
-  // Fetch this stores custom data to find if this store has customized
-  // monthsLeadTime.
-  const customData = Settings.get(SETTINGS_KEYS.THIS_STORE_CUSTOM_DATA);
-
-  // CustomDataa is a stringified JSON object.
-  const parsedCustomData = customData ? JSON.parse(customData) : '';
-
-  // Months lead time has an effect on daysToSupply for a requisition.
-  const monthsLeadTime = parsedCustomData.monthsLeadTime
-    ? Number(customData.monthsLeadTime.data)
-    : 0;
-
-  // Create the requisition. If a program was supplied, add items from that
-  // program, otherwise just navigate to it.
-  let requisition;
-  UIDatabase.write(() => {
-    requisition = createRecord(UIDatabase, 'Requisition', currentUser, {
-      ...requisitionParameters,
-      monthsLeadTime,
-    });
-
-    if (requisition.program) requisition.addItemsFromProgram(UIDatabase);
-  });
-
-  dispatch(gotoSupplierRequisition(requisition));
-};
 
 /**
  * Action creator for navigating to a customer invoice. Ensures the CI is at least
@@ -158,6 +90,83 @@ export const gotoCustomerInvoice = transaction => dispatch => {
 };
 
 /**
+ * Navigate to the SupplierRequisitionPage.
+ *
+ * @param {Object} requisition  SupplierRequisition to navigate to.
+ */
+export const gotoSupplierRequisition = requisition =>
+  NavigationActions.navigate({
+    routeName: !requisition.program ? 'supplierRequisition' : 'programSupplierRequisition',
+    params: {
+      title: `${navStrings.requisition} ${requisition.serialNumber}`,
+      requisition,
+    },
+  });
+
+/**
+ * Action creator for creating, and navigating to a Supplier Requsition.
+ * Requisition is created by a thunk initially.
+ *
+ * @param {String} CurrentUser The currently logged in user.
+ * @param {Object} requisitionParameters Parameters for the to-be-created object.
+ * RequisitionParameters can be any fields in Requisition.js to pass to createRecord.
+ */
+export const createSupplierRequisition = ({
+  currentUser,
+  ...requisitionParameters
+}) => dispatch => {
+  // Fetch this stores custom data to find if this store has customized
+  // monthsLeadTime.
+  const customData = Settings.get(SETTINGS_KEYS.THIS_STORE_CUSTOM_DATA);
+
+  // CustomData is a stringified JSON object.
+  const parsedCustomData = customData ? JSON.parse(customData) : '';
+
+  // Months lead time has an effect on daysToSupply for a requisition.
+  const monthsLeadTime = parsedCustomData.monthsLeadTime
+    ? Number(customData.monthsLeadTime.data)
+    : 0;
+
+  // Create the requisition. If a program was supplied, add items from that
+  // program, otherwise just navigate to it.
+  let requisition;
+  UIDatabase.write(() => {
+    requisition = createRecord(UIDatabase, 'Requisition', currentUser, {
+      ...requisitionParameters,
+      monthsLeadTime,
+    });
+
+    if (requisition.program) requisition.addItemsFromProgram(UIDatabase);
+  });
+
+  dispatch(gotoSupplierRequisition(requisition));
+};
+
+/**
+ * Creates a stocktake and replaces the current route in the StackNavigator which
+ * would be a StocktakeManagePage, with a StocktakeEditPage, with the newly
+ * created Stocktake.
+ *
+ * @param {Object} StocktakeParameters  Parameters for the stocktake to create.
+ */
+export const createStocktake = ({ currentUser, stocktakeName, program, itemIds }) => dispatch => {
+  let stocktake;
+
+  UIDatabase.write(() => {
+    stocktake = createRecord(UIDatabase, 'Stocktake', currentUser, stocktakeName, program);
+    if (program) stocktake.addItemsFromProgram(UIDatabase);
+    else if (itemIds) stocktake.setItemsByID(UIDatabase, itemIds);
+  });
+
+  const replaceAction = StackActions.replace({
+    routeName: 'stocktakeEditor',
+    params: { stocktake, title: navStrings.stocktake },
+  });
+
+  dispatch(replaceAction);
+};
+
+/**
  * Action creator which first creates a customer invoice, and then navigates to it
  * for editing.
  *
@@ -171,4 +180,21 @@ export const createCustomerInvoice = (otherParty, currentUser) => dispatch => {
   });
 
   dispatch(gotoCustomerInvoice(newCustomerInvoice));
+};
+
+/**
+ * Updates a Stocktake with the passed array of itemIDs and navigates to a
+ * StocktakeEditPage.
+ *
+ * @param {Object} stocktake realm Stocktake object
+ * @param {Array}  itemIds   Array of item id strings that should be the new
+ *                           Items in the stocktake.
+ */
+export const updateStocktake = (stocktake, itemIds) => dispatch => {
+  UIDatabase.write(() => {
+    stocktake.setItemsByID(UIDatabase, itemIds);
+    UIDatabase.save('Stocktake', stocktake);
+  });
+
+  dispatch(gotoStocktakeEditPage(stocktake));
 };
