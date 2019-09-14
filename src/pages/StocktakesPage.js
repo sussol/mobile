@@ -15,30 +15,28 @@ import { buttonStrings, modalStrings } from '../localization';
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton } from '../widgets';
+import { PageButton, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
 import {
-  sortData,
-  filterData,
   selectRow,
   deselectRow,
   deselectAll,
-  closeBasicModal,
-  deleteRequisitions,
-  openBasicModal,
-} from './dataTableUtilities/actions';
+  deleteStocktakes,
+} from './dataTableUtilities/actions/rowActions';
+
+import { filterData, sortData } from './dataTableUtilities/actions/tableActions';
+import { openModal, closeModal } from './dataTableUtilities/actions/pageActions';
+
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities/utilities';
 import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
+import { usePageReducer } from '../hooks/usePageReducer';
 
 import {
   gotoStocktakeManagePage,
   createStocktake,
   gotoStocktakeEditPage,
 } from '../navigation/actions';
-
-const keyExtractor = item => item.id;
 
 export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch }) => {
   const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
@@ -68,6 +66,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     modalKey,
     hasSelection,
     usingPrograms,
+    keyExtractor,
   } = state;
 
   const { PROGRAM_STOCKTAKE } = MODAL_KEYS;
@@ -105,7 +104,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   );
 
   const newStocktake = () => {
-    if (usingPrograms) return dispatch(openBasicModal(PROGRAM_STOCKTAKE));
+    if (usingPrograms) return dispatch(openModal(PROGRAM_STOCKTAKE));
     return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
   };
 
@@ -127,7 +126,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       case PROGRAM_STOCKTAKE:
         return ({ stocktakeName, program }) => {
           reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
-          dispatch(closeBasicModal());
+          dispatch(closeModal());
         };
       default:
         return null;
@@ -175,14 +174,14 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
         onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteRequisitions())}
+        onConfirm={() => dispatch(deleteStocktakes())}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={() => dispatch(closeModal())}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />
