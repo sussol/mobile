@@ -91,9 +91,7 @@ export const StocktakeEditPage = ({
   const { isFinalised, comment, program } = pageObject;
 
   useEffect(() => {
-    if (stocktake.itemsOutdated.length && !isFinalised) {
-      dispatch(openModal(STOCKTAKE_OUTDATED_ITEM));
-    }
+    if (stocktake.isOutdated) dispatch(openModal(STOCKTAKE_OUTDATED_ITEM));
   }, []);
 
   const onFilterData = value => dispatch(filterData(value));
