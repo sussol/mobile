@@ -50,9 +50,9 @@ export const usePageReducer = (
   debounceTimeout = 250,
   instantDebounceTimeout = 250
 ) => {
-  const columns = useMemo(() => getColumns(page), [page]);
-  const pageInfoColumns = useMemo(() => getPageInfoColumns(page), [page]);
-  const PageActions = useMemo(() => getPageActions(page), [page]);
+  const columns = useMemo(() => getColumns(page), []);
+  const pageInfoColumns = useMemo(() => getPageInfoColumns(page), []);
+  const PageActions = useMemo(() => getPageActions(page), []);
 
   const [pageState, setPageState] = useState({
     ...(initializer ? initializer(pageObject) : initialState),
@@ -66,14 +66,16 @@ export const usePageReducer = (
   const getState = () => stateRef.current;
 
   // Basic dispatch function.
-  const dispatch = action => {
+  const dispatch = useCallback(action => {
     const newState = DataTablePageReducer(getState(), action);
     setPageState(newState);
     stateRef.current = newState;
-  };
+  });
 
-  const thunkDispatcher = action =>
-    typeof action === 'function' ? action(thunkDispatcher, getState) : dispatch(action);
+  const thunkDispatcher = useCallback(
+    action => (typeof action === 'function' ? action(thunkDispatcher, getState) : dispatch(action)),
+    []
+  );
 
   const debouncedDispatch = useCallback(debounce(thunkDispatcher, debounceTimeout), []);
   const instantDebouncedDispatch = useCallback(
