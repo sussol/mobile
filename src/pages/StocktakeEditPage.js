@@ -122,7 +122,7 @@ export const StocktakeEditPage = ({
     [comment, isFinalised]
   );
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
         return PageActions.editCountedQuantity;
@@ -136,7 +136,7 @@ export const StocktakeEditPage = ({
       default:
         return null;
     }
-  });
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
