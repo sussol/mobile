@@ -96,7 +96,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
  */
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
-    routeName: !requisition.program ? 'supplierRequisition' : 'programSupplierRequisition',
+    routeName: !requisition.program ? 'supplierRequisition' : 'supplierRequisitionWithProgram',
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,

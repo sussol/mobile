@@ -49,7 +49,9 @@ export const PAGES = {
   supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
   supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
   supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
-  programSupplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
+  supplierRequisitionWithProgram: props => (
+    <PageContainer page={SupplierRequisitionPage} {...props} />
+  ),
   supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
 };
 
@@ -84,7 +86,7 @@ export const FINALISABLE_PAGES = {
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_supplier_requisition',
   },
-  programSupplierRequisition: {
+  supplierRequisitionWithProgram: {
     checkForError: checkForSupplierRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',

@@ -34,7 +34,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'enteredBy'],
     ['otherParty', 'monthsToSupply', 'requisitionComment'],
   ],
-  programSupplierRequisition: [
+  supplierRequisitionWithProgram: [
     ['program', 'orderType', 'entryDate', 'enteredBy'],
     ['period', 'otherParty', 'programMonthsToSupply', 'requisitionComment'],
   ],
