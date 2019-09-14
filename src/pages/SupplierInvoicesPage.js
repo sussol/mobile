@@ -44,6 +44,7 @@ export const SupplierInvoicesPage = ({
   dispatch: reduxDispatch,
 }) => {
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {}, initializer);
+
   const {
     data,
     dataState,
@@ -65,7 +66,7 @@ export const SupplierInvoicesPage = ({
 
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER));
+  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_SUPPLIER));
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
 
@@ -91,7 +92,7 @@ export const SupplierInvoicesPage = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_CUSTOMER:
+      case MODAL_KEYS.SELECT_SUPPLIER:
         return onCreateInvoice;
       default:
         return null;
