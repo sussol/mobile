@@ -30,7 +30,7 @@ import {
 import { applyReason, editCountedQuantity } from './dataTableUtilities/actions/cellActions';
 
 import { buttonStrings } from '../localization';
-import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -122,38 +122,6 @@ export const StocktakeEditPage = ({
     }
   });
 
-  const renderRow = useCallback(
-    listItem => {
-      const { item, index } = listItem;
-      const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
-      return (
-        <DataTableRow
-          rowData={data[index]}
-          rowState={dataState.get(rowKey)}
-          rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
-          columns={columns}
-          isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
-          rowIndex={index}
-        />
-      );
-    },
-    [data, dataState]
-  );
-
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
-  );
-
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
@@ -169,6 +137,57 @@ export const StocktakeEditPage = ({
         return null;
     }
   };
+
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          columns={columns}
+          isFinalised={isFinalised}
+          dispatch={dispatch}
+          getAction={getAction}
+          rowIndex={index}
+        />
+      );
+    },
+    [data, dataState]
+  );
+
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
+  );
+
+  const PageButtons = useCallback(
+    () => (
+      <View style={newPageTopRightSectionContainer}>
+        {!program && (
+          <PageButton
+            text={buttonStrings.manage_stocktake}
+            onPress={() =>
+              reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }))
+            }
+            isDisabled={isFinalised}
+          />
+        )}
+      </View>
+    ),
+    [program]
+  );
 
   const {
     newPageTopSectionContainer,
@@ -188,17 +207,7 @@ export const StocktakeEditPage = ({
             placeholder=""
           />
         </View>
-        <View style={newPageTopRightSectionContainer}>
-          {!program && (
-            <PageButton
-              text={buttonStrings.manage_stocktake}
-              onPress={() =>
-                reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }))
-              }
-              isDisabled={isFinalised}
-            />
-          )}
-        </View>
+        <PageButtons />
       </View>
       <DataTable
         data={data}
