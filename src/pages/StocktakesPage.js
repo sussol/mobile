@@ -8,7 +8,6 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
@@ -17,7 +16,7 @@ import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { usePageReducer } from '../hooks';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { PageButton, DataTablePageView } from '../widgets';
+import { PageButton, DataTablePageView, SearchBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -54,6 +53,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     dataState,
     sortBy,
     isAscending,
+    searchTerm,
     modalKey,
     hasSelection,
     usingPrograms,
@@ -147,10 +147,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChange={value => debouncedDispatch(PageActions.filterData(value))}
+            onChangeText={value => debouncedDispatch(PageActions.filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
+            value={searchTerm}
           />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
