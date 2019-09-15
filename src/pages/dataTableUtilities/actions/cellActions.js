@@ -18,6 +18,33 @@ import { openModal, closeModal } from './pageActions';
 export const refreshRow = rowKey => ({ type: ACTIONS.REFRESH_ROW, payload: { rowKey } });
 
 /**
+ * Edits a rows underlying `batch` field.
+ *
+ * @param {Date}    value       The new batch name value.
+ * @param {String}  rowKey      Key of the row to edit.
+ * @param {String}  objectType  Type of object to edit i.e. 'TransactionBatch'
+ */
+export const editBatchName = (value, rowKey, objectType) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  const { batch } = objectToEdit;
+
+  if (value !== batch) {
+    UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
+
+    dispatch(refreshRow(rowKey));
+  }
+};
+
+/**
+ * Wrapper around editBatchName for StocktakeBatches
+ */
+export const editStocktakeBatchName = (value, rowKey) =>
+  editBatchName(value, rowKey, 'StocktakeBatch');
+
+/**
  * Edits a rows underlying `expiryDate` field.
  *
  * @param {Date}    newDate     The new date to set as the expiry.
@@ -42,6 +69,9 @@ export const editExpiryDate = (newDate, rowKey, objectType) => (dispatch, getSta
  */
 export const editTransactionBatchExpiryDate = (newDate, rowKey) =>
   editExpiryDate(newDate, rowKey, 'TransactionBatch');
+
+export const editStocktakeBatchExpiryDate = (newDate, rowKey) =>
+  editExpiryDate(newDate, rowKey, 'StocktakeBatch');
 
 /**
  * Edits the field `totalQuantity` of a rows underlying data object.
@@ -177,6 +207,7 @@ export const CellActionsLookup = {
   refreshRow,
   editExpiryDate,
   editTransactionBatchExpiryDate,
+  editStocktakeBatchExpiryDate,
   editTotalQuantity,
   editSuppliedQuantity,
   editRequiredQuantity,
@@ -185,6 +216,8 @@ export const CellActionsLookup = {
   removeReason,
   enforceReasonChoice,
   applyReason,
+  editBatchName,
+  editStocktakeBatchName,
 };
 
 /**
