@@ -4,7 +4,11 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { CellActionsLookup, editCountedQuantityWithReason } from './cellActions';
+import {
+  CellActionsLookup,
+  editCountedQuantityWithReason,
+  editStocktakeBatchCountedQuantityWithReason,
+} from './cellActions';
 import { RowActionsLookup } from './rowActions';
 import { TableActionsLookup } from './tableActions';
 import { PageActionsLookup } from './pageActions';
@@ -38,6 +42,11 @@ const stocktakeEditorWithReasons = {
   editCountedQuantity: editCountedQuantityWithReason,
 };
 
+const stocktakeBatchEditModalWithReasons = {
+  ...BasePageActions,
+  editCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
+};
+
 /**
  * If actions need to be overriden for a particular routeName,
  * adding them here will pass that new set of actions to the
@@ -45,6 +54,7 @@ const stocktakeEditorWithReasons = {
  */
 const NON_DEFAULT_PAGE_ACTIONS = {
   stocktakeEditorWithReasons,
+  stocktakeBatchEditModalWithReasons,
 };
 
 /**
