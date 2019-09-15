@@ -132,9 +132,9 @@ DataTable.defaultProps = {
   style: defaultStyles.virtualizedList,
   getItem: (items, index) => items[index],
   getItemCount: items => items.length,
-  initialNumToRender: 20,
+  initialNumToRender: 1,
   removeClippedSubviews: true,
-  windowSize: 4,
+  windowSize: 2,
   columns: [],
 };
 

@@ -160,7 +160,6 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
         getItemLayout={getItemLayout}
         columns={columns}
         windowSize={1}
-        initialNumToRender={1}
       />
       <ModalContainer
         fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
