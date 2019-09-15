@@ -56,7 +56,7 @@ const initialiseState = () => {
 export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
   const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
 
-  const { data, sortBy, isAscending, searchTerm, PageActions, columns } = state;
+  const { data, sortBy, isAscending, searchTerm, PageActions, columns, keyExtractor } = state;
 
   const refreshCallback = () => dispatch(PageActions.refreshData(), []);
   // Custom hook to refresh data on this page when becoming the head of the stack again.
@@ -70,7 +70,7 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
-      const rowKey = recordKeyExtractor(item);
+      const rowKey = keyExtractor(item);
       return (
         <DataTableRow
           rowData={data[index]}
