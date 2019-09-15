@@ -22,11 +22,11 @@ const PAGE_COLUMN_WIDTHS = {
 
 const PAGE_COLUMNS = {
   customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
-  customerInvoices: ['serialNumber', 'customer', 'status', 'entryDate', 'comment', 'remove'],
+  customerInvoices: ['invoiceNumber', 'customer', 'status', 'entryDate', 'comment', 'remove'],
   supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'expiryDate', 'remove'],
-  supplierInvoices: ['serialNumber', 'supplier', 'status', 'entryDate', 'comment', 'remove'],
+  supplierInvoices: ['invoiceNumber', 'supplier', 'status', 'entryDate', 'comment', 'remove'],
   supplierRequisitions: [
-    'serialNumber',
+    'requisitionNumber',
     'supplier',
     'numberOfItems',
     'entryDate',
@@ -72,15 +72,22 @@ const PAGE_COLUMNS = {
     'reason',
     'batches',
   ],
-  customerRequisitions: ['serialNumber', 'supplier', 'numberOfItems', 'entryDate', 'status'],
+  customerRequisitions: ['requisitionNumber', 'supplier', 'numberOfItems', 'entryDate', 'status'],
 };
 
 const COLUMNS = () => ({
   // CODE COLUMNS
-  serialNumber: {
+  invoiceNumber: {
     type: 'string',
     key: 'serialNumber',
     title: tableStrings.invoice_number,
+    sortable: true,
+    editable: false,
+  },
+  requisitionNumber: {
+    type: 'string',
+    key: 'serialNumber',
+    title: tableStrings.requisition_number,
     sortable: true,
     editable: false,
   },
