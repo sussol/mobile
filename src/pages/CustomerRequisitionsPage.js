@@ -35,7 +35,6 @@ const initialiseState = () => {
     filterDataKeys: ['serialNumber', 'otherStoreName.name'],
     sortBy: 'serialNumber',
     isAscending: true,
-    modalKey: '',
     hasSelection: false,
   };
 };
