@@ -151,6 +151,25 @@ export const editCountedQuantity = (value, rowKey) => (dispatch, getState) => {
 };
 
 /**
+ * Edits a StocktakeBatches underlying `countedTotalQuantity`
+ *
+ * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
+ * @param {String}          rowKey Key of the row to edit.
+ */
+export const editStocktakeBatchCountedQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.countedTotalQuantity = value;
+    UIDatabase.save('StocktakeBatch', UIDatabase);
+  });
+
+  dispatch(refreshRow(rowKey));
+};
+
+/**
  * Removes a reason from a rows underlying data.
  *
  * @param {String} rowKey   Key for the row to edit.
@@ -213,6 +232,7 @@ export const CellActionsLookup = {
   editRequiredQuantity,
   editRequisitionItemRequiredQuantity,
   editCountedQuantity,
+  editStocktakeBatchCountedQuantity,
   removeReason,
   enforceReasonChoice,
   applyReason,
@@ -242,5 +262,17 @@ export const CellActionsLookup = {
  */
 export const editCountedQuantityWithReason = (value, rowKey) => dispatch => {
   dispatch(editCountedQuantity(value, rowKey));
+  dispatch(enforceReasonChoice(rowKey));
+};
+
+/**
+ * Wrapper around `editStocktakeBatchCountedQuantity`, splitting the action to enforce a
+ * reason also.
+ *
+ * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
+ * @param {String}          rowKey Key of the row to edit.
+ */
+export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey) => dispatch => {
+  dispatch(editStocktakeBatchCountedQuantity(value, rowKey));
   dispatch(enforceReasonChoice(rowKey));
 };
