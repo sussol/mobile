@@ -40,7 +40,7 @@ const PAGE_COLUMNS = {
     'ourStockOnHand',
     'monthlyUsage',
     'suggestedQuantity',
-    'requiredQuantity',
+    'editableRequiredQuantity',
     'remove',
   ],
   supplierRequisitionWithProgram: [
@@ -51,7 +51,7 @@ const PAGE_COLUMNS = {
     'ourStockOnHand',
     'monthlyUsage',
     'suggestedQuantity',
-    'requiredQuantity',
+    'editableRequiredQuantity',
     'remove',
   ],
   stocktakes: ['name', 'createdDate', 'status', 'remove'],
@@ -78,12 +78,11 @@ const PAGE_COLUMNS = {
     'itemCode',
     'itemName',
     'ourStockOnHand',
-    'stockOnHand',
     'theirStockOnHand',
     'monthlyUsage',
     'suggestedQuantity',
+    'requiredQuantity',
     'suppliedQuantity',
-    'remove',
   ],
 };
 
@@ -224,6 +223,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  requiredQuantity: {
+    type: 'numeric',
+    key: 'requiredQuantity',
+    title: tableStrings.required_quantity,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
   difference: {
     type: 'numeric',
     key: 'difference',
@@ -259,7 +266,7 @@ const COLUMNS = () => ({
 
   // EDITABLE NUMERIC COLUMNS
 
-  requiredQuantity: {
+  editableRequiredQuantity: {
     type: 'editableNumeric',
     key: 'requiredQuantity',
     title: tableStrings.required_quantity,
@@ -284,7 +291,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   suppliedQuantity: {
-    type: 'numeric',
+    type: 'editableNumeric',
     key: 'suppliedQuantity',
     title: tableStrings.supply_quantity,
     alignText: 'right',
