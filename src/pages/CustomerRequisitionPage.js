@@ -25,7 +25,7 @@ import { buttonStrings } from '../localization';
 const stateInitialiser = pageObject => ({
   pageObject,
   backingData: pageObject.items,
-  data: pageObject.item.sorted('item.name').slice(),
+  data: pageObject.items.sorted('item.name').slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   searchTerm: '',
@@ -62,6 +62,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
 
   const {
     data,
+    dataState,
     sortBy,
     isAscending,
     modalKey,
@@ -136,7 +137,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         />
       );
     },
-    [data]
+    [data, dataState]
   );
 
   const renderHeader = useCallback(
