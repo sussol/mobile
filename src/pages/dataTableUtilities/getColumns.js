@@ -17,7 +17,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeManager: [2, 6, 1],
   stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
   stocktakeEditorWithReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
-  customerRequisitions: [1.5, 2, 1, 1, 1, 1],
+  customerRequisitions: [1.5, 2, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -72,14 +72,7 @@ const PAGE_COLUMNS = {
     'reason',
     'batches',
   ],
-  customerRequisitions: [
-    'serialNumber',
-    'supplier',
-    'numberOfItems',
-    'entryDate',
-    'status',
-    'remove',
-  ],
+  customerRequisitions: ['serialNumber', 'supplier', 'numberOfItems', 'entryDate', 'status'],
 };
 
 const COLUMNS = () => ({
