@@ -9,7 +9,6 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { BottomConfirmModal } from '../widgets/modals';
 import { SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -20,8 +19,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
-import { modalStrings } from '../localization';
+import { newPageStyles } from '../globalStyles';
 
 const initialiseState = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
@@ -30,12 +28,10 @@ const initialiseState = () => {
     backingData,
     data,
     keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['serialNumber', 'otherStoreName.name'],
     sortBy: 'serialNumber',
     isAscending: true,
-    hasSelection: false,
   };
 };
 
@@ -60,37 +56,16 @@ const initialiseState = () => {
 export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
   const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
 
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    hasSelection,
-    searchTerm,
-    PageActions,
-    columns,
-  } = state;
+  const { data, sortBy, isAscending, searchTerm, PageActions, columns } = state;
 
+  const refreshCallback = () => dispatch(PageActions.refreshData(), []);
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  const callback = () => dispatch(PageActions.refreshData(), []);
-  useNavigationFocus(callback, navigation);
+  useNavigationFocus(refreshCallback, navigation);
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useSyncListener(callback, 'Requisition');
+  useSyncListener(refreshCallback, 'Requisition');
 
   const onPressRow = useCallback(rowData => reduxDispatch(gotoCustomerRequisition(rowData)), []);
-  const onConfirmDelete = () => dispatch(PageActions.deleteRequisitions());
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onSearchFiltering = value => dispatch(PageActions.filterData(value));
-
-  const getAction = (colKey, propName) => {
-    switch (colKey) {
-      case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
-      default:
-        return null;
-    }
-  };
 
   const renderRow = useCallback(
     listItem => {
@@ -99,17 +74,15 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
       return (
         <DataTableRow
           rowData={data[index]}
-          rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
           dispatch={dispatch}
-          getAction={getAction}
           onPress={onPressRow}
           rowIndex={index}
         />
       );
     },
-    [data, dataState]
+    [data]
   );
 
   const renderHeader = useCallback(
@@ -125,34 +98,18 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     [sortBy, isAscending]
   );
 
-  const { newPageTopSectionContainer, newPageTopLeftSectionContainer, searchBar } = newPageStyles;
+  const { newPageTopSectionContainer } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
-          <SearchBar
-            onChangeText={onSearchFiltering}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            value={searchTerm}
-            placeholder=""
-          />
-        </View>
+        <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
       </View>
       <DataTable
         data={data}
-        extraData={dataState}
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={recordKeyExtractor}
         getItemLayout={getItemLayout}
-      />
-      <BottomConfirmModal
-        isOpen={hasSelection}
-        questionText={modalStrings.remove_these_items}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
-        confirmText={modalStrings.remove}
       />
     </DataTablePageView>
   );
