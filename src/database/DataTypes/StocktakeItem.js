@@ -298,7 +298,7 @@ export class StocktakeItem extends Realm.Object {
   createNewBatch(database) {
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
-    createRecord(database, 'StocktakeBatch', this, itemBatch, true);
+    return createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 
   /**
