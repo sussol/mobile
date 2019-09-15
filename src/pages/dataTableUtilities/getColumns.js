@@ -72,7 +72,7 @@ const PAGE_COLUMNS = {
     'reason',
     'batches',
   ],
-  customerRequisitions: ['requisitionNumber', 'supplier', 'numberOfItems', 'entryDate', 'status'],
+  customerRequisitions: ['requisitionNumber', 'customer', 'numberOfItems', 'entryDate', 'status'],
 };
 
 const COLUMNS = () => ({
