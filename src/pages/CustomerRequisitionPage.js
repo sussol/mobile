@@ -87,9 +87,9 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onFilterData = value => dispatch(PageActions.filterData(value));
 
   const onSetSuppliedToRequested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setRequestedToSuggested()));
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested()));
   const onSetSuppliedToSuggested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setRequestedToSuggested()));
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
 
   const renderPageInfo = useCallback(
     () => (
