@@ -139,6 +139,20 @@ export const gotoSupplierRequisition = requisition =>
   });
 
 /**
+ * Navigate to the CustomerRequisitionPage.
+ *
+ * @param {Object} requisition  Customer requisition to navigate to.
+ */
+export const gotoCustomerRequisition = requisition =>
+  NavigationActions.navigate({
+    routeName: 'customerRequisition',
+    params: {
+      title: `${navStrings.requisition} ${requisition.serialNumber}`,
+      requisition,
+    },
+  });
+
+/**
  * Action creator for creating, and navigating to a Supplier Requsition.
  * Requisition is created by a thunk initially.
  *
