@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -53,8 +53,9 @@ const stateInitialiser = pageObject => ({
  *
  */
 export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
+  const usingReasons = useMemo(() => UIDatabase.objects('StocktakeReasons').length > 0, []);
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    'stocktakeBatchEditModalWithReasons',
+    usingReasons ? 'stocktakeBatchEditModalWithReasons' : 'stocktakeBatchEditModal',
     {},
     stateInitialiser,
     stocktakeItem
@@ -160,6 +161,7 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
         getItemLayout={getItemLayout}
         columns={columns}
         windowSize={1}
+        initialNumToRender={0}
       />
       <ModalContainer
         fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
@@ -168,7 +170,7 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
       >
         <GenericChoiceList
           data={UIDatabase.objects('StocktakeReasons')}
-          highlightValue={modalValue}
+          highlightValue={(modalValue && modalValue.reasonTitle) || ''}
           keyToDisplay="title"
           onPress={onApplyReason}
         />
