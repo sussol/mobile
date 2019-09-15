@@ -376,7 +376,7 @@ const COLUMNS = () => ({
   },
   reason: {
     type: 'dropDown',
-    key: 'mostUsedReasonTitle',
+    key: 'reasonTitle',
     title: tableStrings.reason,
     alignText: 'center',
     sortable: false,

@@ -158,7 +158,7 @@ export const DataTablePageModal = ({
         return (
           <GenericChoiceList
             data={UIDatabase.objects('StocktakeReasons')}
-            highlightValue={currentValue.mostUsedReasonTitle}
+            highlightValue={currentValue.reasonTitle}
             keyToDisplay="title"
             onPress={onSelect}
           />

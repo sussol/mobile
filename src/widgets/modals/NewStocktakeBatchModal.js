@@ -36,7 +36,8 @@ const stateInitialiser = pageObject => ({
 });
 
 /**
- * Renders a mSupply page with a stocktake loaded for editing
+ * Renders a stateful modal with a stocktake item and it's batches loaded
+ * for editing.
  *
  * State:
  * Uses a reducer to manage state with `backingData` being a realm results
@@ -48,16 +49,12 @@ const stateInitialiser = pageObject => ({
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
  *
- * @prop {Object} stocktake The realm transaction object for this invoice.
- * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
- * @prop {Func}   dispatch  Redux store dispatch function.
- * @prop {Object} navigation App-wide stack navigator reference
+ * @prop {Object} stocktakeItem The realm transaction object for this invoice.
  *
  */
 export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    'stocktakeBatchEditModal',
+    'stocktakeBatchEditModalWithReasons',
     {},
     stateInitialiser,
     stocktakeItem
@@ -94,7 +91,7 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
         return PageActions.editStocktakeBatchCountedQuantity;
       case 'expiryDate':
         return PageActions.editStocktakeBatchExpiryDate;
-      case 'mostUsedReasonTitle':
+      case 'reasonTitle':
         return onEditReason;
       default:
         return null;
@@ -162,6 +159,8 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
         columns={columns}
+        windowSize={1}
+        initialNumToRender={1}
       />
       <ModalContainer
         fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
