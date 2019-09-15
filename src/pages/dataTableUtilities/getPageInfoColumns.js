@@ -36,10 +36,11 @@ const PER_PAGE_INFO_COLUMNS = {
   ],
   supplierRequisitionWithProgram: [
     ['program', 'orderType', 'entryDate', 'enteredBy'],
-    ['period', 'otherParty', 'programMonthsToSupply', 'requisitionComment'],
+    ['period', 'otherParty', 'editableMonthsToSupply', 'requisitionComment'],
   ],
   stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
   stocktakeEditorWithReasons: [['stocktakeName', 'stocktakeComment']],
+  customerRequisition: [['monthsToSupply', 'entryDate'], ['customer', 'requisitionComment']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
@@ -95,7 +96,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
     title: `${programStrings.order_type}:`,
     info: pageObject.orderType,
   },
-  monthsToSupply: {
+  editableMonthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
     onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_MONTH)),
@@ -105,7 +106,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
     title: `${programStrings.period}:`,
     info: pageObject.period && pageObject.period.toInfoString(),
   },
-  programMonthsToSupply: {
+  monthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
   },
