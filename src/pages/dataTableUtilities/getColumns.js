@@ -196,6 +196,7 @@ const COLUMNS = () => ({
     key: 'batch',
     title: tableStrings.batch_name,
     alignText: 'center',
+    editable: true,
   },
 
   // NUMERIC COLUMNS
