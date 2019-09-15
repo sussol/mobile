@@ -44,7 +44,7 @@ const stocktakeEditorWithReasons = {
 
 const stocktakeBatchEditModalWithReasons = {
   ...BasePageActions,
-  editCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
+  editStocktakeBatchCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
 };
 
 /**
