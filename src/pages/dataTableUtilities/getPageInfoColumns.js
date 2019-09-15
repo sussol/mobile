@@ -58,7 +58,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
   },
   customer: {
     title: `${pageInfoStrings.customer}:`,
-    info: pageObject.otherParty && pageObject.otherParty.name,
+    info: pageObject.otherPartyName,
   },
   theirRef: {
     title: `${pageInfoStrings.their_ref}:`,
