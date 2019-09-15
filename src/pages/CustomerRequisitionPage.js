@@ -29,7 +29,7 @@ const stateInitialiser = pageObject => ({
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   searchTerm: '',
-  filterDataKeys: ['item.name'],
+  filterDataKeys: ['item.name', 'item.code'],
   sortBy: 'itemName',
   isAscending: true,
   modalKey: '',

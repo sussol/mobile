@@ -73,7 +73,7 @@ const PAGE_COLUMNS = {
     'reason',
     'batches',
   ],
-  customerRequisitions: ['serialNumber', 'customer', 'numberOfItems', 'entryDate', 'status'],
+  customerRequisitions: ['requisitionNumber', 'customer', 'numberOfItems', 'entryDate', 'status'],
   customerRequisition: [
     'itemCode',
     'itemName',
