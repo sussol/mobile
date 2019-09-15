@@ -142,7 +142,7 @@ export class StocktakeItem extends Realm.Object {
    * Returns the title of the most common option within this stocktakeItem's batches
    * @return {string} The title of the reason with the highest frequency
    */
-  get mostUsedReasonTitle() {
+  get reasonTitle() {
     if (!this.batches.length) return '';
 
     // Mapping table for ranking reasons by usage
