@@ -7,7 +7,7 @@ import Realm from 'realm';
 import { complement } from 'set-manipulator';
 
 import { createRecord, getTotal } from '../utilities';
-import UIDatabase from '../UIDatabase';
+import { UIDatabase } from '..';
 
 /**
  * A requisition.
