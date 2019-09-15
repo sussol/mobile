@@ -18,6 +18,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
   stocktakeEditorWithReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
   customerRequisitions: [1.5, 2, 1, 1, 1],
+  customerRequisition: [1.5, 4, 1.5, 1.5, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
@@ -72,7 +73,18 @@ const PAGE_COLUMNS = {
     'reason',
     'batches',
   ],
-  customerRequisitions: ['requisitionNumber', 'customer', 'numberOfItems', 'entryDate', 'status'],
+  customerRequisitions: ['serialNumber', 'supplier', 'numberOfItems', 'entryDate', 'status'],
+  customerRequisition: [
+    'itemCode',
+    'itemName',
+    'ourStockOnHand',
+    'stockOnHand',
+    'theirStockOnHand',
+    'monthlyUsage',
+    'suggestedQuantity',
+    'suppliedQuantity',
+    'remove',
+  ],
 };
 
 const COLUMNS = () => ({
@@ -196,6 +208,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  theirStockOnHand: {
+    type: 'numeric',
+    key: 'stockOnHand',
+    title: tableStrings.their_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
   suggestedQuantity: {
     type: 'numeric',
     key: 'suggestedQuantity',
@@ -216,14 +236,6 @@ const COLUMNS = () => ({
     type: 'numeric',
     key: 'snapshotTotalQuantity',
     title: tableStrings.snapshot_quantity,
-    alignText: 'right',
-    sortable: true,
-    editable: false,
-  },
-  theirStockOnHand: {
-    type: 'numeric',
-    key: 'stockOnHand',
-    title: tableStrings.their_stock,
     alignText: 'right',
     sortable: true,
     editable: false,
@@ -267,6 +279,14 @@ const COLUMNS = () => ({
     type: 'editableNumeric',
     key: 'totalQuantity',
     title: tableStrings.quantity,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+  suppliedQuantity: {
+    type: 'numeric',
+    key: 'suppliedQuantity',
+    title: tableStrings.supply_quantity,
     alignText: 'right',
     sortable: true,
     editable: true,
