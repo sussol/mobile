@@ -19,6 +19,8 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeEditorWithReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
   customerRequisitions: [1.5, 2, 1, 1, 1],
   customerRequisition: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
+  stocktakeBatchEditModal: [1, 1, 1, 1, 1],
+  stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -83,6 +85,21 @@ const PAGE_COLUMNS = {
     'suggestedQuantity',
     'requiredQuantity',
     'suppliedQuantity',
+  ],
+  stocktakeBatchEditModal: [
+    'batchName',
+    'expiryDate',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+  ],
+  stocktakeBatchEditModalWithReasons: [
+    'batchName',
+    'expiryDate',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+    'reason',
   ],
 };
 
