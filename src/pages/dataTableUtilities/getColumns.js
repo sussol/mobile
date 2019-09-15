@@ -18,7 +18,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
   stocktakeEditorWithReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
   customerRequisitions: [1.5, 2, 1, 1, 1],
-  customerRequisition: [1.5, 4, 1.5, 1.5, 2, 2, 2, 2],
+  customerRequisition: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
 };
 
 const PAGE_COLUMNS = {
