@@ -27,17 +27,29 @@ const {
  * @param {String}  value           Text value for this cell.
  * @param {Bool}    isLastCell      Indicator whether this cell is the last cell in a row.
  * @param {Number}  width           Flex width of this cell.
+ * @param {String}  placeholder     Text to display when no value is selected.
  * @param {Bool}    debug           Indicator whether logging should occur for this cell.
  */
 const DropDownCell = React.memo(
-  ({ isDisabled, dispatch, onPressAction, rowKey, columnKey, value, isLastCell, width, debug }) => {
+  ({
+    isDisabled,
+    dispatch,
+    onPressAction,
+    rowKey,
+    columnKey,
+    value,
+    isLastCell,
+    width,
+    placeholder,
+    debug,
+  }) => {
     const internalFontStyle = value ? dropDownFont : dropDownPlaceholderFont;
 
     const TouchableChild = () => (
       <View style={{ flexDirection: 'row' }}>
         <View style={dropDownCellTextContainer}>
           <Text numberOfLines={1} ellipsizeMode="tail" style={internalFontStyle}>
-            {value || 'N/A'}
+            {value || placeholder}
           </Text>
         </View>
         {!!value && (
@@ -71,6 +83,7 @@ DropDownCell.defaultProps = {
   isDisabled: false,
   value: '',
   isLastCell: false,
+  placeholder: 'N/A',
   debug: false,
 };
 DropDownCell.propTypes = {
@@ -83,4 +96,5 @@ DropDownCell.propTypes = {
   value: PropTypes.string,
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,
+  placeholder: PropTypes.string,
 };

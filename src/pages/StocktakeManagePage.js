@@ -9,29 +9,38 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
-import { buttonStrings, modalStrings } from '../localization';
-import { UIDatabase } from '../database';
-import { BottomTextEditor } from '../widgets/modals';
-import { ToggleBar } from '../widgets';
-import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import {
-  sortData,
-  filterData,
-  selectRow,
-  deselectRow,
-  selectAll,
-  deselectAll,
-  hideStockOut,
-  showStockOut,
-  selectItems,
-  editName,
-} from './dataTableUtilities/actions';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
-import { createStocktake, addItemsToStocktake } from '../navigation/actions';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
+import { UIDatabase } from '../database';
+
+import { usePageReducer } from '../hooks';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { createStocktake, updateStocktake } from '../navigation/actions';
+
+import { BottomTextEditor } from '../widgets/modals';
+import { ToggleBar, DataTablePageView } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
+import { buttonStrings, modalStrings } from '../localization';
+import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+
+const stateInitialiser = pageObject => {
+  const backingData = UIDatabase.objects('Item');
+  return {
+    pageObject,
+    backingData,
+    data: backingData.sorted('name').slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['name', 'code'],
+    name: pageObject ? pageObject.name : '',
+    sortBy: 'name',
+    isAscending: true,
+    hasSelection: false,
+    allSelected: false,
+    showAll: true,
+  };
+};
 
 export const StocktakeManagePage = ({
   routeName,
@@ -39,118 +48,99 @@ export const StocktakeManagePage = ({
   stocktake,
   runWithLoadingIndicator,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
-    pageObject: stocktake,
-    backingData: UIDatabase.objects('Item'),
-    data: UIDatabase.objects('Item')
-      .sorted('name')
-      .slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name', 'code'],
-    sortBy: 'name',
-    isAscending: true,
-    hasSelection: false,
-    allSelected: false,
-    showAll: true,
-    name: stocktake ? stocktake.name : '',
-  });
+  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    stocktake
+  );
 
   const {
     data,
     dataState,
     sortBy,
     isAscending,
-    columns,
     hasSelection,
     showAll,
     allSelected,
     name,
     keyExtractor,
+    searchTerm,
+    PageActions,
+    columns,
   } = state;
 
   // On navigating to this screen, if a stocktake is passed through, update the selection with
   // the items already in the stocktake.
   useEffect(() => {
-    if (stocktake) dispatch(selectItems(stocktake.itemsInStocktake));
+    if (stocktake) dispatch(PageActions.selectItems(stocktake.itemsInStocktake));
   }, []);
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'selected':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
   });
 
-  const Toggle = () => (
-    <ToggleBar
-      style={globalStyles.toggleBar}
-      textOffStyle={globalStyles.toggleText}
-      textOnStyle={globalStyles.toggleTextSelected}
-      toggleOffStyle={globalStyles.toggleOption}
-      toggleOnStyle={globalStyles.toggleOptionSelected}
-      toggles={[
-        {
-          text: buttonStrings.hide_stockouts,
-          onPress: () => (showAll ? dispatch(hideStockOut()) : dispatch(showStockOut())),
-          isOn: !showAll,
-        },
-        {
-          text: buttonStrings.all_items_selected,
-          onPress: () => (allSelected ? dispatch(deselectAll()) : dispatch(selectAll())),
-          isOn: allSelected,
-        },
-      ]}
-    />
-  );
+  const onNameChange = value => dispatch(PageActions.editName(value));
+  const onSelectAll = () => dispatch(PageActions.toggleAllSelected(allSelected));
+  const onHideStock = () => dispatch(PageActions.toggleStockOut(showAll));
+
+  const onConfirmStocktake = () => {
+    runWithLoadingIndicator(() => {
+      const itemIds = Array.from(dataState.keys()).filter(id => id);
+      if (stocktake) return reduxDispatch(updateStocktake(stocktake, itemIds));
+      return reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
+    });
+  };
 
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
-
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
+          rowIndex={index}
         />
       );
     },
     [data, dataState, showAll, hasSelection]
   );
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    []
   );
 
-  const confirmStocktake = () => {
-    const itemIds = Array.from(dataState.keys()).filter(id => id);
-
-    const updateExistingStocktake = () => reduxDispatch(addItemsToStocktake(stocktake, itemIds));
-    const createNewStocktake = () =>
-      reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
-
-    runWithLoadingIndicator(() => {
-      if (stocktake) return updateExistingStocktake();
-      return createNewStocktake();
-    });
-  };
+  const Toggle = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          { text: buttonStrings.hide_stockouts, onPress: onHideStock, isOn: !showAll },
+          { text: buttonStrings.all_items_selected, onPress: onSelectAll, isOn: allSelected },
+        ]}
+      />
+    ),
+    [showAll, allSelected]
+  );
 
   const {
     newPageTopSectionContainer,
@@ -163,16 +153,19 @@ export const StocktakeManagePage = ({
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChangeText={value => debouncedDispatch(PageActions.filterData(value))}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
+            value={searchTerm}
           />
         </View>
+
         <View style={newPageTopRightSectionContainer}>
           <Toggle />
         </View>
       </View>
+
       <DataTable
         data={data}
         extraData={dataState}
@@ -181,21 +174,26 @@ export const StocktakeManagePage = ({
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
       />
+
       <BottomTextEditor
         isOpen={hasSelection}
         buttonText={stocktake ? modalStrings.confirm : modalStrings.create}
         value={name}
         placeholder={modalStrings.give_your_stocktake_a_name}
-        onConfirm={confirmStocktake}
-        onChangeText={value => dispatch(editName(value))}
+        onConfirm={onConfirmStocktake}
+        onChangeText={onNameChange}
       />
     </DataTablePageView>
   );
+};
+
+StocktakeManagePage.defaultProps = {
+  stocktake: null,
 };
 
 StocktakeManagePage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
-  stocktake: PropTypes.object.isRequired,
+  stocktake: PropTypes.object,
 };
