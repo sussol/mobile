@@ -19,6 +19,9 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeEditorWithReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
   customerRequisitions: [1.5, 2, 1, 1, 1],
   customerRequisition: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
+  stocktakeBatchEditModal: [1, 1, 1, 1, 1],
+  stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
+  regimenDataModal: [4, 1, 5],
 };
 
 const PAGE_COLUMNS = {
@@ -84,6 +87,22 @@ const PAGE_COLUMNS = {
     'requiredQuantity',
     'suppliedQuantity',
   ],
+  stocktakeBatchEditModal: [
+    'batchName',
+    'expiryDate',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+  ],
+  stocktakeBatchEditModalWithReasons: [
+    'batchName',
+    'expiryDate',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+    'reason',
+  ],
+  regimenDataModal: ['question', 'editableValue', 'editableComment'],
 };
 
 const COLUMNS = () => ({
@@ -171,6 +190,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  question: {
+    type: 'string',
+    key: 'name',
+    title: 'Question',
+    textAlign: 'left',
+    sortable: false,
+    editable: false,
+  },
 
   // EDITABLE STRING COLUMNS
 
@@ -179,6 +206,23 @@ const COLUMNS = () => ({
     key: 'batch',
     title: tableStrings.batch_name,
     alignText: 'center',
+    editable: true,
+  },
+  editableComment: {
+    type: 'editableString',
+    key: 'comment',
+    title: tableStrings.comment,
+    textAlign: 'right',
+    sortable: false,
+    editable: true,
+  },
+  editableValue: {
+    type: 'editableString',
+    key: 'value',
+    title: 'Value',
+    textAlign: 'right',
+    sortable: false,
+    editable: true,
   },
 
   // NUMERIC COLUMNS
@@ -358,7 +402,7 @@ const COLUMNS = () => ({
   },
   reason: {
     type: 'dropDown',
-    key: 'mostUsedReasonTitle',
+    key: 'reasonTitle',
     title: tableStrings.reason,
     alignText: 'center',
     sortable: false,

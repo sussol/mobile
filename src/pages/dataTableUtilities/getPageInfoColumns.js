@@ -3,7 +3,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-import { pageInfoStrings, programStrings } from '../../localization';
+import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { formatDate } from '../../utilities';
 
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
@@ -41,6 +41,8 @@ const PER_PAGE_INFO_COLUMNS = {
   stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
   stocktakeEditorWithReasons: [['stocktakeName', 'stocktakeComment']],
   customerRequisition: [['monthsToSupply', 'entryDate'], ['customer', 'requisitionComment']],
+  stocktakeBatchEditModal: [['itemName']],
+  stocktakeBatchEditModalWithReasons: [['itemName']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
@@ -115,6 +117,11 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
     info: pageObject.name,
     onPress: null,
     editableType: 'text',
+  },
+  itemName: {
+    title: `${tableStrings.item_name}`,
+    info: pageObject.itemName,
+    onPress: null,
   },
 });
 
