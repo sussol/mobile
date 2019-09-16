@@ -26,9 +26,7 @@ export const modalStrings = new LocalizedStrings({
     finalise_customer_invoice: 'Finalise will lock this invoice permanently.',
     finalise_supplier_requisition: 'Finalise will send this requisition and lock it permanently.',
     finalise_customer_requisition:
-      // eslint-disable-next-line no-multi-str
-      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this\
-       requisition permanently.',
+      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this requisition permanently.',
     finalise_stocktake: 'Finalise will adjust inventory and lock this stocktake permanently.',
     finalise_supplier_invoice: 'Finalise will adjust inventory and lock this invoice permanently.',
     following_items_reduced_more_than_available_stock:
