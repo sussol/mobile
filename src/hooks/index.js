@@ -3,8 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-export { useDatabaseChangeListener } from './useDatabaseChangeListener';
-export { useDatabaseListener } from './useDatabaseListener';
+export { useRecordListener } from './useRecordListener';
+export { useSyncListener } from './useSyncListener';
 export { useExpiryDateMask } from './useExpiryDateMask';
-export { useNavigationFocusRefresh } from './useNavigationFocusRefresh';
+export { useNavigationFocus } from './useNavigationFocus';
 export { usePageReducer } from './usePageReducer';

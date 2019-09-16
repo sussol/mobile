@@ -1,149 +1,124 @@
+/* eslint-disable import/prefer-default-export */
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 
-import { GenericPage } from './GenericPage';
+import { SearchBar, DataTablePageView } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { formatStatus, sortDataBy } from '../utilities';
-import { navStrings, tableStrings } from '../localization';
+import { UIDatabase } from '../database';
 
-const DATA_TYPES_SYNCHRONISED = ['Requisition'];
+import { newSortDataBy } from '../utilities';
+import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
+import { gotoCustomerRequisition } from '../navigation/actions';
+import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
+
+import { newPageStyles } from '../globalStyles';
+
+const initialiseState = () => {
+  const backingData = UIDatabase.objects('ResponseRequisition');
+  const data = newSortDataBy(backingData.slice(), 'serialNumber');
+  return {
+    backingData,
+    data,
+    keyExtractor: recordKeyExtractor,
+    searchTerm: '',
+    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
+    sortBy: 'serialNumber',
+    isAscending: true,
+  };
+};
 
 /**
- * Renders the page for displaying customer requisitions (requests from a customer to this store)
+ * Renders a mSupply mobile page with a list of Customer requisitions.
  *
- * @prop  {Realm}         database     App wide database.
- * @prop  {func}          navigateTo   CallBack for navigation stack.
- * @prop  {Realm.Object}  currentUser  User object representing the currently logged in user.
+ * State:
+ * Uses a reducer to manage state with `backingData` being a realm results
+ * of items to display. `data` is a plain JS array of realm objects. data is
+ * hydrated from `backingData` to display in the interface.
+ * i.e: When filtering, data is populated from filtered items of `backingData`.
+ *
+ * dataState is a simple map of objects corresponding to a row being displayed,
+ * holding the state of a given row. Each object has the shape :
+ * { isSelected, isFocused },
+ *
+ * @prop {String} routeName     The current route name for the top of the navigation stack.
+ * @prop {Object} currentUser   The currently logged in user.
+ * @prop {Func}   reduxDispatch Dispatch method for the app-wide redux store.
+ * @prop {Object} navigation    Reference to the main application stack navigator.
  */
-export class CustomerRequisitionsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.requisitions = props.database.objects('ResponseRequisition');
-    this.state = {};
-    this.dataFilters = {
-      searchTerm: '',
-      sortBy: 'serialNumber',
-      isAscending: false,
-    };
-  }
+export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
+  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
 
-  onRowPress = requisition => this.navigateToRequisition(requisition);
+  const { data, sortBy, isAscending, searchTerm, PageActions, columns, keyExtractor } = state;
 
-  navigateToRequisition = requisition => {
-    const { navigateTo } = this.props;
+  const refreshCallback = () => dispatch(PageActions.refreshData(), []);
+  // Custom hook to refresh data on this page when becoming the head of the stack again.
+  useNavigationFocus(refreshCallback, navigation);
+  // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
+  useSyncListener(refreshCallback, 'Requisition');
 
-    navigateTo('customerRequisition', `${navStrings.requisition} ${requisition.serialNumber}`, {
-      requisition,
-    });
-  };
+  const onPressRow = useCallback(rowData => reduxDispatch(gotoCustomerRequisition(rowData)), []);
+  const onSearchFiltering = value => dispatch(PageActions.filterData(value));
 
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  };
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowKey={rowKey}
+          columns={columns}
+          dispatch={dispatch}
+          onPress={onPressRow}
+          rowIndex={index}
+        />
+      );
+    },
+    [data]
+  );
 
-  /**
-   * Returns updated data filtered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = this.requisitions.filtered('serialNumber BEGINSWITH $0', searchTerm);
-    let sortDataType;
-    switch (sortBy) {
-      case 'serialNumber':
-      case 'numberOfItems':
-        sortDataType = 'number';
-        break;
-      default:
-        sortDataType = 'realm';
-    }
-    this.setState({
-      data: sortDataBy(data, sortBy, sortDataType, isAscending),
-    });
-  };
-
-  renderCell = (key, requisition) => {
-    switch (key) {
-      case 'entryDate':
-        return requisition.entryDate.toDateString();
-      case 'customerName':
-        return requisition.otherStoreName ? requisition.otherStoreName.name : '';
-      case 'status':
-        return formatStatus(requisition.status);
-      default:
-        return requisition[key];
-    }
-  };
-
-  render() {
-    const { data } = this.state;
-    const { database, genericTablePageStyles, topRoute } = this.props;
-
-    return (
-      <GenericPage
-        data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        onRowPress={this.onRowPress}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'serialNumber',
-            width: 1.5,
-            title: tableStrings.requisition_number,
-            sortable: true,
-          },
-          {
-            key: 'customerName',
-            width: 2,
-            title: tableStrings.customer,
-            sortable: false,
-          },
-          {
-            key: 'entryDate',
-            width: 1,
-            title: tableStrings.entered_date,
-            sortable: true,
-          },
-          {
-            key: 'numberOfItems',
-            width: 1,
-            title: tableStrings.items,
-            sortable: true,
-            alignText: 'right',
-          },
-          {
-            key: 'status',
-            width: 1,
-            title: tableStrings.status,
-            sortable: true,
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={database}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={debouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
       />
-    );
-  }
-}
+    ),
+    [sortBy, isAscending]
+  );
 
-export default CustomerRequisitionsPage;
-
-/* eslint-disable react/require-default-props, react/forbid-prop-types */
-CustomerRequisitionsPage.propTypes = {
-  database: PropTypes.object.isRequired,
-  currentUser: PropTypes.object.isRequired,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
-  navigateTo: PropTypes.func.isRequired,
+  const { newPageTopSectionContainer } = newPageStyles;
+  return (
+    <DataTablePageView>
+      <View style={newPageTopSectionContainer}>
+        <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
+      </View>
+      <DataTable
+        data={data}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={recordKeyExtractor}
+        getItemLayout={getItemLayout}
+      />
+    </DataTablePageView>
+  );
 };
+
+CustomerRequisitionsPage.propTypes = {
+  routeName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
+};
+
+CustomerRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };

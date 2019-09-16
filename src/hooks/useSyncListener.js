@@ -9,24 +9,31 @@ import { debounce } from '../utilities';
  * Takes a callback to call when a notified of a particular
  * subscribed event. An array of data types to subscribe to
  * and the database to listen to changes.
+ *
  * When a component calling this method unmounts, changes will
  * be unsubscribed.
- * Callback is debounced, only being called after 10seconds of the
+ *
+ * Callback is debounced, only being called after 10 seconds of the
  * last sync notification.
+ *
  * Filtering is done in this hook, only notifying of sync changes
  * for record types passed in dataTypes
+ *
  * @param {Func}   callback  A function to call when notified of changes.
  * @param {Array}  dataTypes Record types to listen to changes for.
  * @param {Object} database  Database to subscribe to.
  * Example dataTypes: ['Item', 'ItemBatch'] - must be in realm schema.
+ *
  * @return {Array}
+ *
  * isSubscribed - boolean indicating if currently subscribed
  * subscribe - function to subscribe, if not already
  * unSubscribe - function to unSubscribe, if already subscribed
  */
-export const useDatabaseListener = (callback, dataTypes) => {
+export const useSyncListener = (callback, dataTypes) => {
   // Reference for being subscribed
   const isSubscribed = useRef(false);
+
   // Debounced callback, only calling 10 seconds after the last invocation
   const debouncedCallback = debounce(callback, 10000);
 

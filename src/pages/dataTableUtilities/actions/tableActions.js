@@ -34,6 +34,17 @@ export const filterData = searchTerm => ({
 });
 
 /**
+ * Adds a record to the current stores `data`. Prepends the
+ * added record.
+ *
+ * @param {Any} record A record to add to the current data.
+ */
+export const addRecord = record => ({
+  type: ACTIONS.ADD_RECORD,
+  payload: { record },
+});
+
+/**
  * Refreshes the underlying data array by slicing backingData.
  * BackingData is a live realm collection which side effects i.e.
  * finalising can make out of sync with the data array used for display.
@@ -64,6 +75,16 @@ export const showOverStocked = () => refreshData();
  * kept stable.
  */
 export const showStockOut = () => refreshData();
+
+/**
+ * Wrapper around hideStockout and showStockout. Determines which
+ * should be dispatched.
+ * @param {Bool} showAll Indicator whether all rows are currently showing.
+ */
+export const toggleStockOut = showAll => {
+  if (showAll) return hideStockOut();
+  return showStockOut();
+};
 
 /**
  * Adds all items from master lists, according to the type of pageObject.
@@ -107,7 +128,7 @@ export const addItem = (item, addedItemType) => (dispatch, getState) => {
   if (!pageObject.hasItem(item)) {
     UIDatabase.write(() => {
       const addedItem = createRecord(UIDatabase, addedItemType, pageObject, item);
-      dispatch({ type: ACTIONS.ADD_RECORD, payload: { record: addedItem } });
+      dispatch(addRecord(addedItem));
     });
   } else {
     dispatch(closeModal());
@@ -136,7 +157,22 @@ export const addTransactionBatch = item => (dispatch, getState) => {
     const transItem = createRecord(UIDatabase, 'TransactionItem', pageObject, item);
     const itemBatch = createRecord(UIDatabase, 'ItemBatch', item, '');
     const addedBatch = createRecord(UIDatabase, 'TransactionBatch', transItem, itemBatch);
-    dispatch({ type: ACTIONS.ADD_RECORD, payload: { record: addedBatch } });
+    dispatch(addRecord(addedBatch));
+  });
+};
+
+/**
+ * Creates a stocktake batch and ItemBatch associated with the stores
+ * pageObject - assumed to be a StocktakeItem.
+ *
+ * use case: StocktakeEditBatchModal adding empty batches.
+ */
+export const addStocktakeBatch = () => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  UIDatabase.write(() => {
+    const addedBatch = pageObject.createNewBatch(UIDatabase);
+    dispatch(addRecord(addedBatch));
   });
 };
 
@@ -197,4 +233,26 @@ export const setSuppliedToSuggested = () => (dispatch, getState) => {
   });
 
   dispatch(refreshData());
+};
+
+export const TableActionsLookup = {
+  sortData,
+  filterData,
+  refreshData,
+  hideOverStocked,
+  hideStockOut,
+  showOverStocked,
+  showStockOut,
+  toggleStockOut,
+  addMasterListItems,
+  addItem,
+  addTransactionBatch,
+  createAutomaticOrder,
+  setRequestedToSuggested,
+  setSuppliedToRequested,
+  setSuppliedToSuggested,
+  addRequisitionItem,
+  addStocktakeItem,
+  addTransactionItem,
+  addStocktakeBatch,
 };

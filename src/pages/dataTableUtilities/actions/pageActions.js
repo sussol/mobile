@@ -31,6 +31,22 @@ export const editName = value => ({ type: ACTIONS.EDIT_NAME, payload: { value } 
 export const closeModal = () => ({ type: ACTIONS.CLOSE_MODAL });
 
 /**
+ * Splitter action creator, assumes the current modalValue is an instance
+ * of some rowData - extracting the key and refreshing the row before
+ * closing the modal.
+ * use case: opening a stocktake batch and refreshing the stocktake edit page row.
+ */
+export const closeAndRefresh = () => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = getState();
+
+  const rowKey = keyExtractor(modalValue);
+
+  // Avoiding refresh row dependency cycle.
+  dispatch({ type: ACTIONS.REFRESH_ROW, payload: { rowKey } });
+  dispatch(closeModal());
+};
+
+/**
  * Opens a modal given a modal key. Can pass an optional value
  * to set as `modalValue`
  *
@@ -139,4 +155,15 @@ export const resetStocktake = () => (dispatch, getState) => {
 
   dispatch(refreshData());
   dispatch(closeModal());
+};
+
+export const PageActionsLookup = {
+  editName,
+  closeModal,
+  openModal,
+  editTheirRef,
+  editComment,
+  editMonthsToSupply,
+  resetStocktake,
+  closeAndRefresh,
 };

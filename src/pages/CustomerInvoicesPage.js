@@ -9,29 +9,17 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { UIDatabase } from '../database';
-import { buttonStrings, modalStrings } from '../localization';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, SearchBar } from '../widgets';
-import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import {
-  selectRow,
-  deselectRow,
-  deselectAll,
-  sortData,
-  filterData,
-  openBasicModal,
-  closeBasicModal,
-  deleteTransactionsById,
-} from './dataTableUtilities/actions';
 import { MODAL_KEYS, newSortDataBy } from '../utilities';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
-
-import { useNavigationFocusRefresh } from '../hooks/useNavigationFocusRefresh';
-
-import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
+
+import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
+import { buttonStrings, modalStrings } from '../localization';
+import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 
 const initializer = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
@@ -61,30 +49,41 @@ export const CustomerInvoicesPage = ({
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
     hasSelection,
     keyExtractor,
     searchTerm,
+    columns,
+    PageActions,
   } = state;
 
-  // Refresh data on navigating back to this page.
-  useNavigationFocusRefresh(dispatch, navigation);
+  // Listen to changes from sync and navigation events re-focusing this screen,
+  // such that any side effects that occur trigger a reconcilitation of data.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useNavigationFocus(refreshCallback, navigation);
+  useSyncListener(refreshCallback, ['Transaction']);
 
-  // On Press Handlers
-  const closeModal = () => dispatch(closeBasicModal());
-  const onFilterData = value => dispatch(filterData(value));
-  const onNewInvoice = () => dispatch(openBasicModal(MODAL_KEYS.SELECT_CUSTOMER));
-  const onRemoveInvoices = () => dispatch(deleteTransactionsById());
-  const onCancelRemoval = () => dispatch(deselectAll());
-  // Method is memoized in DataTableRow component - cannot memoize the returned closure.
-  const onNavigateToInvoice = invoice => () => reduxDispatch(gotoCustomerInvoice(invoice));
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER));
+  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+
+  const onNavigateToInvoice = useCallback(
+    invoice => reduxDispatch(gotoCustomerInvoice(invoice)),
+    []
+  );
+
+  const onCreateInvoice = otherParty => {
+    reduxDispatch(createCustomerInvoice(otherParty, currentUser));
+    onCloseModal();
+  };
 
   const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
@@ -93,48 +92,43 @@ export const CustomerInvoicesPage = ({
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_CUSTOMER:
-        return otherParty => {
-          reduxDispatch(createCustomerInvoice(otherParty, currentUser));
-          closeModal();
-        };
+        return onCreateInvoice;
       default:
         return null;
     }
   };
+
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          columns={columns}
+          dispatch={dispatch}
+          getAction={getAction}
+          rowIndex={index}
+          onPress={onNavigateToInvoice}
+        />
+      );
+    },
+    [data, dataState]
+  );
 
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
         columns={columns}
         dispatch={instantDebouncedDispatch}
-        sortAction={sortData}
+        sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
       />
     ),
     [sortBy, isAscending]
-  );
-
-  const renderRow = useCallback(
-    listItem => {
-      const { item, index } = listItem;
-      const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
-      return (
-        <DataTableRow
-          rowData={data[index]}
-          rowState={dataState.get(rowKey)}
-          rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
-          columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
-          rowIndex={index}
-          onPress={onNavigateToInvoice(item)}
-        />
-      );
-    },
-    [data, dataState]
   );
 
   const NewInvoiceButton = () => (
@@ -174,15 +168,15 @@ export const CustomerInvoicesPage = ({
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.delete_these_invoices}
-        onCancel={onCancelRemoval}
-        onConfirm={onRemoveInvoices}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.delete}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={closeModal}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
       />

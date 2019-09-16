@@ -11,31 +11,32 @@ import { View } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS } from '../utilities';
-import { buttonStrings } from '../localization';
-import { DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo } from '../widgets';
-import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
-import DataTablePageView from './containers/DataTablePageView';
+import { usePageReducer } from '../hooks/usePageReducer';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
-import {
-  filterData,
-  selectRow,
-  deselectRow,
-  closeBasicModal,
-  editComment,
-  focusNext,
-  focusCell,
-  sortData,
-  editCountedTotalQuantity,
-  closeStocktakeBatchModal,
-  openModal,
-  resetStocktake,
-  applyReason,
-} from './dataTableUtilities/actions';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
-import { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
+import { DataTablePageModal } from '../widgets/modals';
+import { PageButton, PageInfo, DataTablePageView } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
+
 import { gotoStocktakeManagePage } from '../navigation/actions';
+
+import { buttonStrings } from '../localization';
+import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import { useRecordListener, useNavigationFocus } from '../hooks/index';
+
+const stateInitialiser = pageObject => ({
+  pageObject,
+  backingData: pageObject.items,
+  data: pageObject.items.sorted('item.name').slice(),
+  keyExtractor: recordKeyExtractor,
+  dataState: new Map(),
+  searchTerm: '',
+  filterDataKeys: ['item.name'],
+  sortBy: 'itemName',
+  isAscending: true,
+  modalKey: '',
+  modalValue: null,
+});
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -51,9 +52,10 @@ import { gotoStocktakeManagePage } from '../navigation/actions';
  * { isSelected, isFocused, isDisabled },
  *
  * @prop {Object} stocktake The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
+ * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  * @prop {Func}   dispatch  Redux store dispatch function.
+ * @prop {Object} navigation App-wide stack navigator reference
  *
  */
 export const StocktakeEditPage = ({
@@ -61,120 +63,148 @@ export const StocktakeEditPage = ({
   stocktake,
   routeName,
   dispatch: reduxDispatch,
+  navigation,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(routeName, {
-    pageObject: stocktake,
-    backingData: stocktake.items,
-    data: stocktake.items.sorted('item.name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    modalValue: null,
-  });
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    stocktake
+  );
 
   const {
-    STOCKTAKE_COMMENT_EDIT,
-    EDIT_STOCKTAKE_BATCH,
-    STOCKTAKE_OUTDATED_ITEM,
-    STOCKTAKE_REASON,
-    ENFORCE_STOCKTAKE_REASON,
-  } = MODAL_KEYS;
-  const {
+    pageObject,
     data,
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
-    pageInfo,
-    pageObject,
-    currentStocktakeItem,
     modalValue,
     keyExtractor,
+    PageActions,
+    columns,
+    getPageInfoColumns,
   } = state;
 
   const { isFinalised, comment, program } = pageObject;
 
+  // Listen to the stocktake become the top of the stack or being finalised,
+  // as these events are side-effects. Refreshing makes the state consistent again.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useRecordListener(refreshCallback, pageObject, 'Stocktake');
+  useNavigationFocus(refreshCallback, navigation);
+
+  // If the Stocktake is outdated, force a reset of the stocktake on mount.
   useEffect(() => {
-    if (stocktake.itemsOutdated.length && !isFinalised) {
-      dispatch(openModal(STOCKTAKE_OUTDATED_ITEM));
-    }
+    if (stocktake.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
   }, []);
 
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onEditBatch = rowKey => PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
+  const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
+  const onEditComment = value => dispatch(PageActions.editComment(value, 'Stocktake'));
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
+  const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
+
+  const onResetStocktake = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
+  const onManageStocktake = () =>
+    reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }));
+
   const renderPageInfo = useCallback(
-    () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
+    () => (
+      <PageInfo
+        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
+        isEditingDisabled={isFinalised}
+      />
+    ),
     [comment, isFinalised]
   );
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
-        return editCountedTotalQuantity;
-      case 'modalControl':
-        return rowKey => openModal(EDIT_STOCKTAKE_BATCH, rowKey);
+        return PageActions.editCountedQuantity;
+      case 'batch':
+        return onEditBatch;
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
-      case 'mostUsedReasonTitle':
-        return rowKey => openModal(STOCKTAKE_REASON, rowKey);
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
+      case 'reasonTitle':
+        return onEditReason;
       default:
         return null;
     }
-  });
+  };
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
+        return onEditComment;
+      case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
+        return onConfirmBatchEdit;
+      case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
+        return onResetStocktake;
+      case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
+      case MODAL_KEYS.STOCKTAKE_REASON:
+        return onApplyReason;
+      default:
+        return null;
+    }
+  };
 
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           isFinalised={isFinalised}
           dispatch={dispatch}
-          focusCellAction={focusCell}
-          focusNextAction={focusNext}
           getAction={getAction}
+          rowIndex={index}
         />
       );
     },
     [data, dataState]
   );
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
   );
 
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case STOCKTAKE_COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Stocktake'));
-      case EDIT_STOCKTAKE_BATCH:
-        return () => dispatch(closeStocktakeBatchModal());
-      case STOCKTAKE_OUTDATED_ITEM:
-        return () => runWithLoadingIndicator(() => dispatch(resetStocktake()));
-      case ENFORCE_STOCKTAKE_REASON:
-      case STOCKTAKE_REASON:
-        return ({ item }) => dispatch(applyReason(item));
-      default:
-        return null;
-    }
-  };
+  const PageButtons = useCallback(() => {
+    const ManageStocktake = () => (
+      <PageButton
+        text={buttonStrings.manage_stocktake}
+        onPress={onManageStocktake}
+        isDisabled={isFinalised}
+      />
+    );
+
+    // Program stocktakes do not have a ManageStocktake button.
+    const Child = program ? () => null : ManageStocktake;
+
+    return (
+      <View style={newPageTopRightSectionContainer}>
+        <Child />
+      </View>
+    );
+  }, [program]);
 
   const {
     newPageTopSectionContainer,
@@ -188,23 +218,13 @@ export const StocktakeEditPage = ({
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar
-            onChange={value => debouncedDispatch(filterData(value))}
+            onChange={onFilterData}
             style={searchBar}
             color={SUSSOL_ORANGE}
             placeholder=""
           />
         </View>
-        <View style={newPageTopRightSectionContainer}>
-          {!program && (
-            <PageButton
-              text={buttonStrings.manage_stocktake}
-              onPress={() =>
-                reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }))
-              }
-              isDisabled={isFinalised}
-            />
-          )}
-        </View>
+        <PageButtons />
       </View>
       <DataTable
         data={data}
@@ -213,16 +233,16 @@ export const StocktakeEditPage = ({
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
+        columns={columns}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={modalKey === MODAL_KEYS.EDIT_STOCKTAKE_BATCH ? onConfirmBatchEdit : onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
         currentValue={modalValue}
-        modalObject={currentStocktakeItem}
       />
     </DataTablePageView>
   );
@@ -233,4 +253,5 @@ StocktakeEditPage.propTypes = {
   stocktake: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
 };

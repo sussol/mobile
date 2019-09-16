@@ -18,6 +18,33 @@ import { openModal, closeModal } from './pageActions';
 export const refreshRow = rowKey => ({ type: ACTIONS.REFRESH_ROW, payload: { rowKey } });
 
 /**
+ * Edits a rows underlying `batch` field.
+ *
+ * @param {Date}    value       The new batch name value.
+ * @param {String}  rowKey      Key of the row to edit.
+ * @param {String}  objectType  Type of object to edit i.e. 'TransactionBatch'
+ */
+export const editBatchName = (value, rowKey, objectType) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  const { batch } = objectToEdit;
+
+  if (value !== batch) {
+    UIDatabase.write(() => UIDatabase.update(objectType, { ...objectToEdit, batch: value }));
+
+    dispatch(refreshRow(rowKey));
+  }
+};
+
+/**
+ * Wrapper around editBatchName for StocktakeBatches
+ */
+export const editStocktakeBatchName = (value, rowKey) =>
+  editBatchName(value, rowKey, 'StocktakeBatch');
+
+/**
  * Edits a rows underlying `expiryDate` field.
  *
  * @param {Date}    newDate     The new date to set as the expiry.
@@ -42,6 +69,9 @@ export const editExpiryDate = (newDate, rowKey, objectType) => (dispatch, getSta
  */
 export const editTransactionBatchExpiryDate = (newDate, rowKey) =>
   editExpiryDate(newDate, rowKey, 'TransactionBatch');
+
+export const editStocktakeBatchExpiryDate = (newDate, rowKey) =>
+  editExpiryDate(newDate, rowKey, 'StocktakeBatch');
 
 /**
  * Edits the field `totalQuantity` of a rows underlying data object.
@@ -121,15 +151,22 @@ export const editCountedQuantity = (value, rowKey) => (dispatch, getState) => {
 };
 
 /**
- * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
- * reason also.
+ * Edits a StocktakeBatches underlying `countedTotalQuantity`
  *
  * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
  * @param {String}          rowKey Key of the row to edit.
  */
-export const editStocktakeBatchCountedQuantity = (value, rowKey) => dispatch => {
-  dispatch(editCountedQuantity(value, rowKey));
-  dispatch(enforceReasonChoice(rowKey));
+export const editStocktakeBatchCountedQuantity = (value, rowKey) => (dispatch, getState) => {
+  const { data, keyExtractor } = getState();
+
+  const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+
+  UIDatabase.write(() => {
+    objectToEdit.countedTotalQuantity = value;
+    UIDatabase.save('StocktakeBatch', UIDatabase);
+  });
+
+  dispatch(refreshRow(rowKey));
 };
 
 /**
@@ -142,7 +179,7 @@ export const removeReason = rowKey => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  objectToEdit.applyReasonToBatches(UIDatabase);
+  objectToEdit.applyReason(UIDatabase);
 
   dispatch(refreshRow(rowKey));
 };
@@ -177,10 +214,65 @@ export const enforceReasonChoice = rowKey => (dispatch, getState) => {
 export const applyReason = value => (dispatch, getState) => {
   const { modalValue, keyExtractor } = getState();
 
-  modalValue.applyReasonToBatches(UIDatabase, value);
+  modalValue.applyReason(UIDatabase, value);
 
   const rowKey = keyExtractor(modalValue);
 
   dispatch(closeModal());
   dispatch(refreshRow(rowKey));
+};
+
+export const CellActionsLookup = {
+  refreshRow,
+  editExpiryDate,
+  editTransactionBatchExpiryDate,
+  editStocktakeBatchExpiryDate,
+  editTotalQuantity,
+  editSuppliedQuantity,
+  editRequiredQuantity,
+  editRequisitionItemRequiredQuantity,
+  editCountedQuantity,
+  editStocktakeBatchCountedQuantity,
+  removeReason,
+  enforceReasonChoice,
+  applyReason,
+  editBatchName,
+  editStocktakeBatchName,
+};
+
+/**
+ * =====================================================================
+ *
+ *                             Overrides
+ *
+ * Below are actions which are overrides of base actions.
+ *
+ * Example: editCountedQuantityWithReason overrides editCountedQuantity
+ * for a stocktakeEditPage when reasons are defined.
+ *
+ * =====================================================================
+ */
+
+/**
+ * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
+ * reason also.
+ *
+ * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
+ * @param {String}          rowKey Key of the row to edit.
+ */
+export const editCountedQuantityWithReason = (value, rowKey) => dispatch => {
+  dispatch(editCountedQuantity(value, rowKey));
+  dispatch(enforceReasonChoice(rowKey));
+};
+
+/**
+ * Wrapper around `editStocktakeBatchCountedQuantity`, splitting the action to enforce a
+ * reason also.
+ *
+ * @param {String|Number}   value  New value for the underlying `countedTotalQuantity` field
+ * @param {String}          rowKey Key of the row to edit.
+ */
+export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey) => dispatch => {
+  dispatch(editStocktakeBatchCountedQuantity(value, rowKey));
+  dispatch(enforceReasonChoice(rowKey));
 };

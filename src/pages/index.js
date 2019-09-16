@@ -15,10 +15,7 @@ import {
   checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
 } from './CustomerRequisitionPage';
 import { StockPage } from './StockPage';
-import {
-  StocktakeEditPage,
-  // checkForFinaliseError as checkForStocktakeFinaliseError,
-} from './StocktakeEditPage';
+import { StocktakeEditPage } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
@@ -30,6 +27,7 @@ import {
   checkForCustomerInvoiceError,
   checkForSupplierInvoiceError,
   checkForSupplierRequisitionError,
+  checkForStocktakeError,
 } from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
@@ -44,12 +42,15 @@ export const PAGES = {
   root: props => <PageContainer page={MenuPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
+  stocktakeEditorWithReasons: props => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
   stocktakes: props => <PageContainer page={StocktakesPage} {...props} />,
   supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
   supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
   supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
-  programSupplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
+  supplierRequisitionWithProgram: props => (
+    <PageContainer page={SupplierRequisitionPage} {...props} />
+  ),
   supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
 };
 
@@ -73,7 +74,13 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_customer_requisition',
   },
   stocktakeEditor: {
-    // checkForError: checkForStocktakeFinaliseError,
+    checkForError: checkForStocktakeError,
+    recordType: 'Stocktake',
+    recordToFinaliseKey: 'stocktake',
+    finaliseText: 'finalise_stocktake',
+  },
+  stocktakeEditorWithReasons: {
+    checkForError: checkForStocktakeError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
     finaliseText: 'finalise_stocktake',
@@ -84,7 +91,7 @@ export const FINALISABLE_PAGES = {
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_supplier_requisition',
   },
-  programSupplierRequisition: {
+  supplierRequisitionWithProgram: {
     checkForError: checkForSupplierRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',

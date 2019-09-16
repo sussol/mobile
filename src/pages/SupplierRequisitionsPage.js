@@ -16,23 +16,11 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { MODAL_KEYS, getAllPrograms, newSortDataBy } from '../utilities';
-import { usePageReducer, useNavigationFocusRefresh, useDatabaseListener } from '../hooks';
+import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
-import {
-  selectRow,
-  deselectRow,
-  deselectAll,
-  deleteRequisitions,
-  sortData,
-  filterData,
-  openModal,
-  closeModal,
-  getItemLayout,
-  recordKeyExtractor,
-  refreshData,
-} from './dataTableUtilities';
+import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 const initialiseState = () => {
@@ -83,44 +71,45 @@ export const SupplierRequisitionsPage = ({
     dataState,
     sortBy,
     isAscending,
-    columns,
     modalKey,
     hasSelection,
     searchTerm,
+    PageActions,
+    columns,
   } = state;
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  useNavigationFocusRefresh(dispatch, navigation);
-
+  const callback = () => dispatch(PageActions.refreshData(), []);
+  useNavigationFocus(callback, navigation);
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useDatabaseListener(() => dispatch(refreshData()), 'Requisition');
+  useSyncListener(callback, 'Requisition');
 
   const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
   const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
-  const onPressRow = rowData => () => reduxDispatch(gotoSupplierRequisition(rowData));
-  const onConfirmDelete = () => dispatch(deleteRequisitions());
-  const onCancelDelete = () => dispatch(deselectAll());
-  const onSearchFiltering = value => dispatch(filterData(value));
-  const onNewRequisition = () => dispatch(openModal(NEW_REQUISITON));
-  const onCloseModal = () => dispatch(closeModal());
+  const onPressRow = useCallback(rowData => reduxDispatch(gotoSupplierRequisition(rowData)), []);
+  const onConfirmDelete = () => dispatch(PageActions.deleteRequisitions());
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onSearchFiltering = value => dispatch(PageActions.filterData(value));
+  const onNewRequisition = () => dispatch(PageActions.openModal(NEW_REQUISITON));
+  const onCloseModal = () => dispatch(PageActions.closeModal());
 
   const onCreateRequisition = otherStoreName => {
-    reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
     onCloseModal();
+    reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
   };
 
   const onCreateProgramRequisition = requisitionParameters => {
+    onCloseModal();
     reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
-    dispatch(closeModal());
   };
 
   const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
@@ -141,17 +130,15 @@ export const SupplierRequisitionsPage = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = recordKeyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
-          onPress={onPressRow(item)}
+          onPress={onPressRow}
           rowIndex={index}
         />
       );
@@ -164,7 +151,7 @@ export const SupplierRequisitionsPage = ({
       <DataTableHeaderRow
         columns={columns}
         dispatch={debouncedDispatch}
-        sortAction={sortData}
+        sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
       />

@@ -3,30 +3,29 @@ import { useEffect, useState } from 'react';
 
 import { CHANGE_TYPES } from 'react-native-database';
 
-import { refreshData } from '../pages/dataTableUtilities';
 import { UIDatabase } from '../database';
 
 /**
  * Custom hook for subscribing to database changes for a particular record which
- * should cause a refresh, or some other action dispatched.
+ * should trigger the callback.
  *
- * Subscribes to the database, retrieving all events which occur. Events are filtered
+ * Subscribes to the database, BEING CALLED ON ALL EVENTS which occur. Events are filtered
  * by recordType, change type and ID of the record causing the event. If these all match,
- * check the particular keys which should cause a dispatch.
+ * check the particular keys which should cause a callback.
  *
- * Use case: Finalizing an invoice prunes items. This side-effect does not go through the
+ * Use case: Finalizing an invoice prunes items - this side-effect does not go through the
  * reducer and leaves state inconsistent.
  *
- * @param {Func}    dispatch             Page dispatch function.
+ * @param {Func}    callback             callback to invoke on receiving the event.
  * @param {Object}  recordToListenFor    An object in the database to listen to.
  * @param {String}  recordTypeToListFor  The object type to listen to.
- * @return {Array}
  *
+ * @return {Array}
  * subscription - boolean indicating if currently subscribed
  * subscribe    - function to subscribe, if not already
  * unSubscribe  - function to unSubscribe, if already subscribed
  */
-export const useDatabaseChangeListener = (dispatch, recordToListenFor, recordTypeToListenFor) => {
+export const useRecordListener = (callback, recordToListenFor, recordTypeToListenFor) => {
   const [subscription, setSubscription] = useState(null);
 
   // Subscribing to the database notifies of all changes made. Filter
@@ -47,7 +46,7 @@ export const useDatabaseChangeListener = (dispatch, recordToListenFor, recordTyp
     // ---- Additional checks should go here -----
     if (!record.isFinalised) return null;
 
-    return dispatch(refreshData());
+    return callback();
   };
 
   // Subscribe to the database using the inner filter callback.
