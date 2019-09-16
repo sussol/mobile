@@ -91,7 +91,7 @@ GenericChoiceList.defaultProps = {
 GenericChoiceList.propTypes = {
   keyToDisplay: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
-  data: PropTypes.array.isRequired,
+  data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   highlightIndex: PropTypes.number,
   highlightValue: PropTypes.string,
 };

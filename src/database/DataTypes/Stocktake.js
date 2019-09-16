@@ -89,6 +89,15 @@ export class Stocktake extends Realm.Object {
   }
 
   /**
+   * Returns if this stocktakes snapshot quantities are outdated.
+   *
+   * @return {Bool} Indicator if this stocktake is outdated.
+   */
+  get isOutdated() {
+    return this.itemsOutdated.length > 0 && !this.isFinalised;
+  }
+
+  /**
    * Returns an Array of item objects that are currently in the stocktae.
    *
    * @return {Array} Realm.Item objects current in the stocktake.
@@ -164,15 +173,6 @@ export class Stocktake extends Realm.Object {
    * @param  {Realm}                  database
    * @param  {Array.<StocktakeItem>}  stocktakeItems  Items to reset.
    */
-  // eslint-disable-next-line class-methods-use-this
-  resetStocktakeItems(database, stocktakeItems) {
-    database.write(() => {
-      stocktakeItems.forEach(stocktakeItem => {
-        stocktakeItem.reset(database);
-      });
-    });
-  }
-
   resetStocktake(database) {
     database.write(() => {
       this.itemsOutdated.forEach(outdatedItem => {
