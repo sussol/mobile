@@ -15,10 +15,7 @@ import {
   checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
 } from './CustomerRequisitionPage';
 import { StockPage } from './StockPage';
-import {
-  StocktakeEditPage,
-  // checkForFinaliseError as checkForStocktakeFinaliseError,
-} from './StocktakeEditPage';
+import { StocktakeEditPage } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
 import { SupplierInvoicePage } from './SupplierInvoicePage';
@@ -30,6 +27,7 @@ import {
   checkForCustomerInvoiceError,
   checkForSupplierInvoiceError,
   checkForSupplierRequisitionError,
+  checkForStocktakeError,
 } from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
@@ -76,7 +74,13 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_customer_requisition',
   },
   stocktakeEditor: {
-    // checkForError: checkForStocktakeFinaliseError,
+    checkForError: checkForStocktakeError,
+    recordType: 'Stocktake',
+    recordToFinaliseKey: 'stocktake',
+    finaliseText: 'finalise_stocktake',
+  },
+  stocktakeEditorWithReasons: {
+    checkForError: checkForStocktakeError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
     finaliseText: 'finalise_stocktake',
