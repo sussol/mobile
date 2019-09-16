@@ -142,7 +142,7 @@ export class StocktakeItem extends Realm.Object {
    * Returns the title of the most common option within this stocktakeItem's batches
    * @return {string} The title of the reason with the highest frequency
    */
-  get mostUsedReasonTitle() {
+  get reasonTitle() {
     if (!this.batches.length) return '';
 
     // Mapping table for ranking reasons by usage
@@ -298,7 +298,7 @@ export class StocktakeItem extends Realm.Object {
   createNewBatch(database) {
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
-    createRecord(database, 'StocktakeBatch', this, itemBatch, true);
+    return createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 
   /**
