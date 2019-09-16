@@ -48,14 +48,17 @@ export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
  *
  * @param {Object} stocktake  The requisition to navigate to.
  */
-export const gotoStocktakeEditPage = stocktake =>
-  NavigationActions.navigate({
-    routeName: 'stocktakeEditor',
+export const gotoStocktakeEditPage = stocktake => {
+  const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
+
+  return NavigationActions.navigate({
+    routeName: usesReasons ? 'stocktakeEditorWithReasons' : 'stocktakeEditor',
     params: {
       title: navStrings.stocktake,
       stocktake,
     },
   });
+};
 
 /**
  * Action creator for navigating to a customer invoice. Ensures the CI is at least
@@ -90,13 +93,59 @@ export const gotoCustomerInvoice = transaction => dispatch => {
 };
 
 /**
+ * Action creator for navigating to a SupplierInvoice. Ensures the SI is finalised, if
+ * confirmed before navigating. This should not occur, but if this is not enforced, a
+ * user can reduce the amount of stock in a SI which has been used in a CI, which causes
+ * inventory adjustments instantly.
+ *
+ * @param {Object} transaction The SI to navigate to.
+ * @param {Object} dispatch    Redux dispatch method.
+ */
+export const gotoSupplierInvoice = transaction => dispatch => {
+  const { isConfirmed } = transaction;
+
+  // Supplier invoices are `new` or `finalised`. Ensure any `confirmed` invoices are
+  // `finalised` before navigating.
+  if (isConfirmed) {
+    UIDatabase.write(() => {
+      transaction.finalise(UIDatabase);
+      UIDatabase.save('Transaction', transaction);
+    });
+  }
+
+  const navigationAction = NavigationActions.navigate({
+    routeName: 'supplierInvoice',
+    params: {
+      title: `${navStrings.invoice} ${transaction.serialNumber}`,
+      transaction,
+    },
+  });
+
+  dispatch(navigationAction);
+};
+
+/**
  * Navigate to the SupplierRequisitionPage.
  *
  * @param {Object} requisition  SupplierRequisition to navigate to.
  */
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
-    routeName: !requisition.program ? 'supplierRequisition' : 'programSupplierRequisition',
+    routeName: !requisition.program ? 'supplierRequisition' : 'supplierRequisitionWithProgram',
+    params: {
+      title: `${navStrings.requisition} ${requisition.serialNumber}`,
+      requisition,
+    },
+  });
+
+/**
+ * Navigate to the CustomerRequisitionPage.
+ *
+ * @param {Object} requisition  Customer requisition to navigate to.
+ */
+export const gotoCustomerRequisition = requisition =>
+  NavigationActions.navigate({
+    routeName: 'customerRequisition',
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,
@@ -180,6 +229,22 @@ export const createCustomerInvoice = (otherParty, currentUser) => dispatch => {
   });
 
   dispatch(gotoCustomerInvoice(newCustomerInvoice));
+};
+
+/**
+ * Action creator which first creates a supplier invoice, and then navigates to it
+ * for editing.
+ *
+ * @param {Object} otherParty     The other party of the invoice (Supplier)
+ * @param {Object} currentUser    The currently logged in user.
+ */
+export const createSupplierInvoice = (otherParty, currentUser) => dispatch => {
+  let newCustomerInvoice;
+  UIDatabase.write(() => {
+    newCustomerInvoice = createRecord(UIDatabase, 'SupplierInvoice', otherParty, currentUser);
+  });
+
+  dispatch(gotoSupplierInvoice(newCustomerInvoice));
 };
 
 /**

@@ -122,7 +122,7 @@ export const StocktakeEditPage = ({
     [comment, isFinalised]
   );
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
         return PageActions.editCountedQuantity;
@@ -131,12 +131,12 @@ export const StocktakeEditPage = ({
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
         return PageActions.deselectRow;
-      case 'mostUsedReasonTitle':
+      case 'reasonTitle':
         return onEditReason;
       default:
         return null;
     }
-  });
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
