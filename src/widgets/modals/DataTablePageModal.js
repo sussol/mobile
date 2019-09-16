@@ -13,13 +13,13 @@ import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
 import { ToggleSelector } from '../ToggleSelector';
+import { RegimenDataModal } from './RegimenDataModal';
 import { NewConfirmModal } from './NewConfirmModal';
 import { GenericChoiceList } from '../GenericChoiceList';
 import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
 import Settings from '../../settings/MobileAppSettings';
 
-import { RequisitionRegimenModalTable } from '../../pages/expansions/RequisitionRegimenModalTable';
 import {
   dataTableColors,
   dataTableStyles,
@@ -118,7 +118,7 @@ export const DataTablePageModal = ({
 
       case MODAL_KEYS.VIEW_REGIMEN_DATA:
         return (
-          <RequisitionRegimenModalTable
+          <RegimenDataModal
             database={UIDatabase}
             requisition={currentValue}
             genericTablePageStyles={{

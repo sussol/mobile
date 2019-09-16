@@ -21,6 +21,7 @@ const PAGE_COLUMN_WIDTHS = {
   customerRequisition: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
+  regimenDataModal: [4, 1, 5],
 };
 
 const PAGE_COLUMNS = {
@@ -101,6 +102,7 @@ const PAGE_COLUMNS = {
     'difference',
     'reason',
   ],
+  regimenDataModal: ['question', 'editableValue', 'editableComment'],
 };
 
 const COLUMNS = () => ({
@@ -188,6 +190,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  question: {
+    type: 'string',
+    key: 'name',
+    title: 'Question',
+    textAlign: 'left',
+    sortable: false,
+    editable: false,
+  },
 
   // EDITABLE STRING COLUMNS
 
@@ -196,6 +206,22 @@ const COLUMNS = () => ({
     key: 'batch',
     title: tableStrings.batch_name,
     alignText: 'center',
+    editable: true,
+  },
+  editableComment: {
+    type: 'editableString',
+    key: 'comment',
+    title: tableStrings.comment,
+    textAlign: 'right',
+    sortable: false,
+    editable: true,
+  },
+  editableValue: {
+    type: 'editableString',
+    key: 'value',
+    title: 'Value',
+    textAlign: 'right',
+    sortable: false,
     editable: true,
   },
 
