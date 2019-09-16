@@ -6917,14 +6917,13 @@ react-native-fs@^2.13.3:
     base-64 "^0.1.0"
     utf8 "^2.1.1"
 
-react-native-generic-table-page@^0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.4.0.tgz#f81b2ec033b84be55d881e6527fa351a83aac1a8"
-  integrity sha512-Rb8FTGHS0+jWulzlIAKrP8LtHjr49hS+FMVseBlpz8Xup1zDGZiQbTJasyUUVld4bhhEI6Q8Qh7JMpRQw1RV3w==
+react-native-generic-table-page@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-generic-table-page/-/react-native-generic-table-page-0.4.1.tgz#dd0597ef0514551866be648bbef457d74c5e94ce"
+  integrity sha512-yna7CrMUhCfDwrBfjQl3/2BsOK6rsUF9kbHo44yuHFPkEQLoCiaG3+Xj38uS8uNycnve6R4Px0xRZFv8nY1Gjg==
   dependencies:
     deep-equal "^1.0.1"
     react-native-data-table "^0.2.0"
-    react-native-keyboard-aware-scroll-view "^0.8.0"
     react-native-ui-components "^0.5.0"
 
 react-native-gesture-handler@^1.3.0:
