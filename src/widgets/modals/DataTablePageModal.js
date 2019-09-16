@@ -13,13 +13,13 @@ import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
 import { ToggleSelector } from '../ToggleSelector';
+import { RegimenDataModal } from './RegimenDataModal';
 import { NewConfirmModal } from './NewConfirmModal';
 import { GenericChoiceList } from '../GenericChoiceList';
 import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
 import Settings from '../../settings/MobileAppSettings';
 
-import { RequisitionRegimenModalTable } from '../../pages/expansions/RequisitionRegimenModalTable';
 import {
   dataTableColors,
   dataTableStyles,
@@ -66,12 +66,10 @@ export const DataTablePageModal = ({
             renderRightText={item => `${item.totalQuantity}`}
           />
         );
+      case MODAL_KEYS.THEIR_REF_EDIT:
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
-        return <TextEditor text={currentValue} onEndEditing={onSelect} />;
-
-      case MODAL_KEYS.THEIR_REF_EDIT:
         return <TextEditor text={currentValue} onEndEditing={onSelect} />;
 
       case MODAL_KEYS.SELECT_CUSTOMER:
@@ -120,7 +118,7 @@ export const DataTablePageModal = ({
 
       case MODAL_KEYS.VIEW_REGIMEN_DATA:
         return (
-          <RequisitionRegimenModalTable
+          <RegimenDataModal
             database={UIDatabase}
             requisition={currentValue}
             genericTablePageStyles={{
@@ -160,7 +158,7 @@ export const DataTablePageModal = ({
         return (
           <GenericChoiceList
             data={UIDatabase.objects('StocktakeReasons')}
-            highlightValue={currentValue.mostUsedReasonTitle}
+            highlightValue={currentValue.reasonTitle}
             keyToDisplay="title"
             onPress={onSelect}
           />

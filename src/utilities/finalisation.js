@@ -5,6 +5,7 @@
  */
 
 import { modalStrings } from '../localization';
+import { formatErrorItemNames } from './formatters';
 
 /**
  * Check whether a given customer invoice is safe to be finalised. If safe to finalise,
@@ -61,3 +62,27 @@ export function checkForSupplierRequisitionError(requisition) {
 
   return null;
 }
+
+/**
+ * Check whether a given stocktake is safe to be finalised.
+ * If stocktake is safe to finalise, return null, else return an appropriate error
+ * message.
+ *
+ * @param  {object}  stocktake  The stocktake to check.
+ * @return {string}             Null if safe to be finalised, else an error message.
+ */
+export const checkForStocktakeError = stocktake => {
+  const { hasSomeCountedItems, itemsBelowMinimum } = stocktake;
+
+  if (!hasSomeCountedItems) {
+    return modalStrings.stocktake_no_counted_items;
+  }
+
+  if (itemsBelowMinimum.length > 0) {
+    return (
+      modalStrings.following_items_reduced_more_than_available_stock +
+      formatErrorItemNames(itemsBelowMinimum)
+    );
+  }
+  return null;
+};

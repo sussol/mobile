@@ -248,14 +248,14 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         onPress: onShowOverStocked,
       },
     ];
-    return <ToggleBar style={globalStyles.toggleBar} toggles={toggleProps} />;
+    return <ToggleBar toggles={toggleProps} />;
   }, [showAll]);
 
   const ViewRegimenDataButton = useCallback(
     () => (
       <View>
         <PageButton
-          style={{ ...globalStyles.topButton }}
+          style={globalStyles.topButton}
           text={buttonStrings.view_regimen_data}
           onPress={onViewRegimenData}
         />

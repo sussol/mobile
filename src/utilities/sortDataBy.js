@@ -59,6 +59,8 @@ const sortKeyToType = {
   snapshotTotalQuantity: 'number',
   countedTotalQuantity: 'number',
   difference: 'number',
+  stockOnHand: 'number',
+  suppliedQuantity: 'number',
 };
 
 /**
