@@ -108,12 +108,12 @@ const localStyles = StyleSheet.create({
   toggleOffStyle: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 140,
+    width: 142,
   },
   toggleOnStyle: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 140,
+    width: 142,
     backgroundColor: 'rgb(114, 211, 242)',
   },
 });

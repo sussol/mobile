@@ -1,4 +1,5 @@
 import Realm from 'realm';
+
 import { createRecord } from '../utilities';
 
 /**
@@ -131,6 +132,13 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
+   * @return {String} this batches reason title, or an empty string.
+   */
+  get reasonTitle() {
+    return (this.option && this.option.title) || '';
+  }
+
+  /**
    * Set counted total quantity.
    *
    * @param  {number}  quantity
@@ -138,6 +146,16 @@ export class StocktakeBatch extends Realm.Object {
   set countedTotalQuantity(quantity) {
     // Handle packsize of 0.
     this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+  }
+
+  /**
+   * Applies a reason to this batch
+   */
+  applyReason(database, reason) {
+    database.write(() => {
+      this.option = reason;
+      database.save('StocktakeBatch', this);
+    });
   }
 
   /**
