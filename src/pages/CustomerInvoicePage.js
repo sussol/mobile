@@ -10,33 +10,30 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../utilities';
-import { buttonStrings, modalStrings } from '../localization';
-import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo, SearchBar } from '../widgets';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
+import { useRecordListener, usePageReducer } from '../hooks';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import {
-  editTotalQuantity,
-  selectRow,
-  deselectRow,
-  deselectAll,
-  sortData,
-  filterData,
-  addMasterListItems,
-  editComment,
-  editTheirRef,
-  openBasicModal,
-  closeBasicModal,
-  deleteItemsById,
-  addItem,
-} from './dataTableUtilities/actions';
+import { buttonStrings, modalStrings } from '../localization';
+import globalStyles, { newPageStyles } from '../globalStyles';
 
-import globalStyles, { newDataTableStyles, newPageStyles } from '../globalStyles';
-import usePageReducer from '../hooks/usePageReducer';
-import DataTablePageView from './containers/DataTablePageView';
-import { useDatabaseChangeListener } from '../hooks/useDatabaseChangeListener';
+const stateInitialiser = pageObject => ({
+  pageObject,
+  backingData: pageObject.items,
+  data: pageObject.items.sorted('item.name').slice(),
+  keyExtractor: recordKeyExtractor,
+  dataState: new Map(),
+  searchTerm: '',
+  filterDataKeys: ['item.name'],
+  sortBy: 'itemName',
+  isAscending: true,
+  modalKey: '',
+  modalValue: null,
+  hasSelection: false,
+});
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -56,69 +53,92 @@ import { useDatabaseChangeListener } from '../hooks/useDatabaseChangeListener';
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {
-    pageObject: transaction,
-    backingData: transaction.items,
-    data: transaction.items.sorted('item.name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-  });
-
-  const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser,
+    transaction
+  );
 
   const {
     data,
     dataState,
+    pageObject,
     sortBy,
     isAscending,
-    columns,
     modalKey,
-    pageInfo,
-    pageObject,
     hasSelection,
     keyExtractor,
     searchTerm,
+    modalValue,
+    columns,
+    PageActions,
+    getPageInfoColumns,
   } = state;
 
   const { isFinalised, comment, theirRef } = pageObject;
 
-  useDatabaseChangeListener(dispatch, pageObject, 'Transaction');
+  // Listen for this invoice being finalised which will prune items and cause side effects
+  // outside of the reducer. Reconcile differences when triggered.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useRecordListener(refreshCallback, pageObject, 'Transaction');
+
+  const onAddItem = item => dispatch(PageActions.addTransactionItem(item));
+  const onNewRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
+  const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
+  const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+
+  const onAddMasterList = () =>
+    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
 
   const renderPageInfo = useCallback(
-    () => <PageInfo columns={pageInfo(pageObject, dispatch)} isEditingDisabled={isFinalised} />,
+    () => (
+      <PageInfo
+        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
+        isEditingDisabled={isFinalised}
+      />
+    ),
     [comment, theirRef, isFinalised]
   );
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
-        return editTotalQuantity;
+        return PageActions.editTotalQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return selectRow;
-        return deselectRow;
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
         return null;
     }
   });
 
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_ITEM:
+        return onAddItem;
+      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
+        return onEditComment;
+      case MODAL_KEYS.THEIR_REF_EDIT:
+        return onEditTheirRef;
+      default:
+        return null;
+    }
+  };
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
       const rowKey = keyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           isFinalised={isFinalised}
           dispatch={dispatch}
@@ -135,43 +155,32 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     return (
       <View style={verticalContainer}>
         <PageButton
-          style={topButton}
+          style={{ ...topButton, marginLeft: 0 }}
           text={buttonStrings.new_item}
-          onPress={() => dispatch(openBasicModal(ITEM_SELECT))}
+          onPress={onNewRow}
           isDisabled={isFinalised}
         />
         <PageButton
           text={buttonStrings.add_master_list_items}
-          onPress={() => runWithLoadingIndicator(() => dispatch(addMasterListItems('Transaction')))}
+          onPress={onAddMasterList}
           isDisabled={isFinalised}
         />
       </View>
     );
   };
 
-  const renderHeader = () => (
-    <DataTableHeaderRow
-      columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={sortData}
-      isAscending={isAscending}
-      sortBy={sortBy}
-    />
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
   );
-
-  const getModalOnSelect = () => {
-    switch (modalKey) {
-      case ITEM_SELECT:
-        return item => dispatch(addItem(item, 'TransactionItem'));
-      case COMMENT_EDIT:
-        return value => dispatch(editComment(value, 'Transaction'));
-      case THEIR_REF_EDIT:
-        return value => dispatch(editTheirRef(value, 'Transaction'));
-      default:
-        return null;
-    }
-  };
-  const memoizedGetItemLayout = useCallback(getItemLayout, []);
 
   const {
     newPageTopSectionContainer,
@@ -184,11 +193,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
-          <SearchBar
-            onChangeText={value => dispatch(filterData(value))}
-            style={searchBar}
-            value={searchTerm}
-          />
+          <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
@@ -198,24 +203,24 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         renderRow={renderRow}
         renderHeader={renderHeader}
         keyExtractor={keyExtractor}
-        getItemLayout={memoizedGetItemLayout}
+        getItemLayout={getItemLayout}
         columns={columns}
       />
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={() => dispatch(deselectAll())}
-        onConfirm={() => dispatch(deleteItemsById('Transaction'))}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
-        onClose={() => dispatch(closeBasicModal())}
+        onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
-        currentValue={pageObject[modalKey]}
+        currentValue={modalValue}
       />
     </DataTablePageView>
   );

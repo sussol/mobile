@@ -131,7 +131,7 @@ export const StocktakeEditPage = ({
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
         return PageActions.deselectRow;
-      case 'mostUsedReasonTitle':
+      case 'reasonTitle':
         return onEditReason;
       default:
         return null;
