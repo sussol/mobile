@@ -94,7 +94,7 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
 
   return (
     <RefContext.Provider value={contextValue}>
-      {renderHeader()}
+      {renderHeader && renderHeader()}
       <VirtualizedList
         ref={virtualizedListRef}
         keyboardDismissMode="none"
@@ -132,9 +132,9 @@ DataTable.defaultProps = {
   style: defaultStyles.virtualizedList,
   getItem: (items, index) => items[index],
   getItemCount: items => items.length,
-  initialNumToRender: 20,
+  initialNumToRender: 10,
   removeClippedSubviews: true,
-  windowSize: 4,
+  windowSize: 2,
   columns: [],
 };
 

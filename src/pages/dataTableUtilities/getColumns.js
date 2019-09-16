@@ -18,6 +18,10 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
   stocktakeEditorWithReasons: [1, 2.8, 1.2, 1.2, 1, 1, 0.8],
   customerRequisitions: [1.5, 2, 1, 1, 1],
+  customerRequisition: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
+  stocktakeBatchEditModal: [1, 1, 1, 1, 1],
+  stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
+  regimenDataModal: [4, 1, 5],
 };
 
 const PAGE_COLUMNS = {
@@ -39,7 +43,7 @@ const PAGE_COLUMNS = {
     'ourStockOnHand',
     'monthlyUsage',
     'suggestedQuantity',
-    'requiredQuantity',
+    'editableRequiredQuantity',
     'remove',
   ],
   supplierRequisitionWithProgram: [
@@ -50,7 +54,7 @@ const PAGE_COLUMNS = {
     'ourStockOnHand',
     'monthlyUsage',
     'suggestedQuantity',
-    'requiredQuantity',
+    'editableRequiredQuantity',
     'remove',
   ],
   stocktakes: ['name', 'createdDate', 'status', 'remove'],
@@ -73,6 +77,32 @@ const PAGE_COLUMNS = {
     'batches',
   ],
   customerRequisitions: ['requisitionNumber', 'customer', 'numberOfItems', 'entryDate', 'status'],
+  customerRequisition: [
+    'itemCode',
+    'itemName',
+    'ourStockOnHand',
+    'theirStockOnHand',
+    'monthlyUsage',
+    'suggestedQuantity',
+    'requiredQuantity',
+    'suppliedQuantity',
+  ],
+  stocktakeBatchEditModal: [
+    'batchName',
+    'expiryDate',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+  ],
+  stocktakeBatchEditModalWithReasons: [
+    'batchName',
+    'expiryDate',
+    'snapshotTotalQuantity',
+    'countedTotalQuantity',
+    'difference',
+    'reason',
+  ],
+  regimenDataModal: ['question', 'editableValue', 'editableComment'],
 };
 
 const COLUMNS = () => ({
@@ -160,6 +190,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  question: {
+    type: 'string',
+    key: 'name',
+    title: 'Question',
+    textAlign: 'left',
+    sortable: false,
+    editable: false,
+  },
 
   // EDITABLE STRING COLUMNS
 
@@ -168,6 +206,23 @@ const COLUMNS = () => ({
     key: 'batch',
     title: tableStrings.batch_name,
     alignText: 'center',
+    editable: true,
+  },
+  editableComment: {
+    type: 'editableString',
+    key: 'comment',
+    title: tableStrings.comment,
+    textAlign: 'right',
+    sortable: false,
+    editable: true,
+  },
+  editableValue: {
+    type: 'editableString',
+    key: 'value',
+    title: 'Value',
+    textAlign: 'right',
+    sortable: false,
+    editable: true,
   },
 
   // NUMERIC COLUMNS
@@ -196,10 +251,26 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  theirStockOnHand: {
+    type: 'numeric',
+    key: 'stockOnHand',
+    title: tableStrings.their_stock,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
   suggestedQuantity: {
     type: 'numeric',
     key: 'suggestedQuantity',
     title: tableStrings.suggested_quantity,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+  requiredQuantity: {
+    type: 'numeric',
+    key: 'requiredQuantity',
+    title: tableStrings.required_quantity,
     alignText: 'right',
     sortable: true,
     editable: false,
@@ -216,14 +287,6 @@ const COLUMNS = () => ({
     type: 'numeric',
     key: 'snapshotTotalQuantity',
     title: tableStrings.snapshot_quantity,
-    alignText: 'right',
-    sortable: true,
-    editable: false,
-  },
-  theirStockOnHand: {
-    type: 'numeric',
-    key: 'stockOnHand',
-    title: tableStrings.their_stock,
     alignText: 'right',
     sortable: true,
     editable: false,
@@ -247,7 +310,7 @@ const COLUMNS = () => ({
 
   // EDITABLE NUMERIC COLUMNS
 
-  requiredQuantity: {
+  editableRequiredQuantity: {
     type: 'editableNumeric',
     key: 'requiredQuantity',
     title: tableStrings.required_quantity,
@@ -267,6 +330,14 @@ const COLUMNS = () => ({
     type: 'editableNumeric',
     key: 'totalQuantity',
     title: tableStrings.quantity,
+    alignText: 'right',
+    sortable: true,
+    editable: true,
+  },
+  suppliedQuantity: {
+    type: 'editableNumeric',
+    key: 'suppliedQuantity',
+    title: tableStrings.supply_quantity,
     alignText: 'right',
     sortable: true,
     editable: true,
@@ -331,7 +402,7 @@ const COLUMNS = () => ({
   },
   reason: {
     type: 'dropDown',
-    key: 'mostUsedReasonTitle',
+    key: 'reasonTitle',
     title: tableStrings.reason,
     alignText: 'center',
     sortable: false,
