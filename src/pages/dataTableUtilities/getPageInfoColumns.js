@@ -3,7 +3,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
-import { pageInfoStrings, programStrings } from '../../localization';
+import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { formatDate } from '../../utilities';
 
 import { MODAL_KEYS } from '../../utilities/getModalTitle';
@@ -34,11 +34,15 @@ const PER_PAGE_INFO_COLUMNS = {
     ['entryDate', 'enteredBy'],
     ['otherParty', 'monthsToSupply', 'requisitionComment'],
   ],
-  programSupplierRequisition: [
+  supplierRequisitionWithProgram: [
     ['program', 'orderType', 'entryDate', 'enteredBy'],
-    ['period', 'otherParty', 'programMonthsToSupply', 'requisitionComment'],
+    ['period', 'otherParty', 'editableMonthsToSupply', 'requisitionComment'],
   ],
   stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
+  stocktakeEditorWithReasons: [['stocktakeName', 'stocktakeComment']],
+  customerRequisition: [['monthsToSupply', 'entryDate'], ['customer', 'requisitionComment']],
+  stocktakeBatchEditModal: [['itemName']],
+  stocktakeBatchEditModalWithReasons: [['itemName']],
 };
 
 const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
@@ -56,7 +60,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
   },
   customer: {
     title: `${pageInfoStrings.customer}:`,
-    info: pageObject.otherParty && pageObject.otherParty.name,
+    info: pageObject.otherPartyName,
   },
   theirRef: {
     title: `${pageInfoStrings.their_ref}:`,
@@ -94,7 +98,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
     title: `${programStrings.order_type}:`,
     info: pageObject.orderType,
   },
-  monthsToSupply: {
+  editableMonthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
     onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_MONTH)),
@@ -104,7 +108,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
     title: `${programStrings.period}:`,
     info: pageObject.period && pageObject.period.toInfoString(),
   },
-  programMonthsToSupply: {
+  monthsToSupply: {
     title: `${pageInfoStrings.months_stock_required}:`,
     info: pageObject.monthsToSupply,
   },
@@ -113,6 +117,11 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
     info: pageObject.name,
     onPress: null,
     editableType: 'text',
+  },
+  itemName: {
+    title: `${tableStrings.item_name}`,
+    info: pageObject.itemName,
+    onPress: null,
   },
 });
 

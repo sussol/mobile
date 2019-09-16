@@ -16,11 +16,11 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
 import { MODAL_KEYS, getAllPrograms, newSortDataBy } from '../utilities';
-import { usePageReducer, useNavigationFocus, useDatabaseListener } from '../hooks';
+import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { SUSSOL_ORANGE, newDataTableStyles, newPageStyles } from '../globalStyles';
+import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 const initialiseState = () => {
@@ -79,17 +79,16 @@ export const SupplierRequisitionsPage = ({
   } = state;
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  const callback = () => dispatch(PageActions.refreshData());
+  const callback = () => dispatch(PageActions.refreshData(), []);
   useNavigationFocus(callback, navigation);
-
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useDatabaseListener(callback, 'Requisition');
+  useSyncListener(callback, 'Requisition');
 
   const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
   const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
 
-  const onPressRow = rowData => () => reduxDispatch(gotoSupplierRequisition(rowData));
+  const onPressRow = useCallback(rowData => reduxDispatch(gotoSupplierRequisition(rowData)), []);
   const onConfirmDelete = () => dispatch(PageActions.deleteRequisitions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onSearchFiltering = value => dispatch(PageActions.filterData(value));
@@ -97,13 +96,13 @@ export const SupplierRequisitionsPage = ({
   const onCloseModal = () => dispatch(PageActions.closeModal());
 
   const onCreateRequisition = otherStoreName => {
-    reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
     onCloseModal();
+    reduxDispatch(createSupplierRequisition({ otherStoreName, currentUser }));
   };
 
   const onCreateProgramRequisition = requisitionParameters => {
-    reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
     onCloseModal();
+    reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
   };
 
   const getAction = (colKey, propName) => {
@@ -131,17 +130,15 @@ export const SupplierRequisitionsPage = ({
     listItem => {
       const { item, index } = listItem;
       const rowKey = recordKeyExtractor(item);
-      const { row, alternateRow } = newDataTableStyles;
       return (
         <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          style={index % 2 === 0 ? alternateRow : row}
           columns={columns}
           dispatch={dispatch}
           getAction={getAction}
-          onPress={onPressRow(item)}
+          onPress={onPressRow}
           rowIndex={index}
         />
       );

@@ -52,11 +52,7 @@ const ModalContainer = ({ fullScreen, isVisible, onClose, title, children, noCan
     <View style={titleBar}>
       <View style={flexSpacer} />
       {!!title && <Text style={titleFont}>{title}</Text>}
-      {onClose && !noCancel && (
-        <View style={closeButtonContainer}>
-          <CloseButton />
-        </View>
-      )}
+      <View style={closeButtonContainer}>{onClose && !noCancel && <CloseButton />}</View>
     </View>
   );
 
@@ -120,10 +116,8 @@ const localStyles = StyleSheet.create({
   },
   fullScreenChildrenContainer: {
     flex: 1,
-    alignItems: 'stretch',
     paddingLeft: PAGE_CONTENT_PADDING_HORIZONTAL,
     paddingRight: PAGE_CONTENT_PADDING_HORIZONTAL,
-    opacity: 0.94,
   },
   childrenContainer: {
     flex: 1,

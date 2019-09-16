@@ -78,6 +78,16 @@ export const selectAll = () => ({
 });
 
 /**
+ * Wrapper around deselectAll and selectAll, determining which should
+ * be dispatched.
+ * @param {Bool} allSelected indicator whether all items are currently selected.
+ */
+export const toggleAllSelected = allSelected => {
+  if (allSelected) return deselectAll();
+  return selectAll();
+};
+
+/**
  * Sets all rowState objects within the passed items array,
  * in the stores dataState map to isSelected
  *
@@ -171,6 +181,7 @@ export const RowActionsLookup = {
   deselectRow,
   deselectAll,
   selectAll,
+  toggleAllSelected,
   selectItems,
   deleteSelectedBatches,
   deleteSelectedItems,
