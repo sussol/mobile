@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -349,6 +347,14 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.NUMERIC,
     key: COLUMN_KEYS.MONTHLY_USAGE,
     title: tableStrings.monthly_usage,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
+  totalQuantity: {
+    type: 'numeric',
+    key: 'totalQuantity',
+    title: tableStrings.quantity,
     alignText: 'right',
     sortable: true,
     editable: false,
