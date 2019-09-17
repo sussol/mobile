@@ -12,12 +12,12 @@ import { View, ScrollView, TouchableOpacity } from 'react-native';
 
 import Modal from 'react-native-modalbox';
 
-import { formatExpiryDate } from '../utilities';
+import { formatExpiryDate } from '../../utilities';
 
-import { PageInfo, CloseIcon } from '.';
+import { PageInfo, CloseIcon } from '..';
 
-import { tableStrings, generalStrings } from '../localization/index';
-import { DARKER_GREY, SUSSOL_ORANGE } from '../globalStyles';
+import { tableStrings, generalStrings } from '../../localization/index';
+import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
 
 /**
  * Modal like component. Opens a small pop-over at the bottom of the screen
