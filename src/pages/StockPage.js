@@ -38,7 +38,7 @@ const stateInitialiser = () => {
 };
 
 /**
- * Renders a mSupply mobile page with customer invoice loaded for editing
+ * Renders a mSupply mobile page with Items and their stock levels.
  *
  * State:
  * Uses a reducer to manage state with `backingData` being a realm results
@@ -50,9 +50,7 @@ const stateInitialiser = () => {
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
  *
- * @prop {Object} transaction The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
+ * @prop {Object} routeName Name of the current route.
  */
 export const StockPage = ({ routeName }) => {
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
