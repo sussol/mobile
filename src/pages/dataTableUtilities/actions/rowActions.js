@@ -51,6 +51,11 @@ export const selectRow = rowKey => ({
   payload: { rowKey },
 });
 
+export const selectOneRow = rowKey => ({
+  type: ACTIONS.SELECT_ONE_ROW,
+  payload: { rowKey },
+});
+
 /**
  * Uses the stores dataState map to remove a rows
  * isSelected state.
@@ -193,4 +198,5 @@ export const RowActionsLookup = {
   deleteRequisitionItems,
   deleteStocktakeItems,
   deleteTransactionBatches,
+  selectOneRow,
 };
