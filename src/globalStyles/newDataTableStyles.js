@@ -110,6 +110,12 @@ const newDataTableStyles = {
     flexDirection: 'row',
     height: 45,
   },
+  selectedRow: {
+    backgroundColor: LIGHT_GREY,
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
+  },
   headerRow: {
     backgroundColor: 'white',
     flexDirection: 'row',
