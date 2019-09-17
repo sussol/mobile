@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -149,16 +150,17 @@ export const PageInfo = props => {
 
 export default PageInfo;
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
 PageInfo.propTypes = {
   columns: PropTypes.array.isRequired,
   isEditingDisabled: PropTypes.bool,
-  titleColor: DARK_GREY,
-  infoColor: SUSSOL_ORANGE,
+  titleColor: PropTypes.string,
+  infoColor: PropTypes.string,
 };
 
 PageInfo.defaultProps = {
   isEditingDisabled: false,
+  infoColor: SUSSOL_ORANGE,
+  titleColor: DARK_GREY,
 };
 
 const localStyles = StyleSheet.create({
