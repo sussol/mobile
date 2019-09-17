@@ -1,166 +1,151 @@
+/* eslint-disable react/forbid-prop-types */
+/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 
-import { Expansion } from 'react-native-data-table';
+import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
+import { UIDatabase } from '../database';
 
-import { GenericPage } from './GenericPage';
+import { DataTable, Row, Cell, DataTableHeaderRow } from '../widgets/DataTable';
 
-import { tableStrings } from '../localization';
-import { formatExpiryDate, sortDataBy } from '../utilities';
-import { PageInfo } from '../widgets';
+import { newDataTableStyles } from '../globalStyles';
+import { usePageReducer } from '../hooks';
 
-import { dataTableStyles } from '../globalStyles';
+import { DataTablePageView, SearchBar } from '../widgets';
 
-const DATA_TYPES_SYNCHRONISED = ['Item', 'ItemBatch', 'ItemCategory'];
+import { ItemDetails } from '../widgets/ItemDetails';
+
+const initialState = () => {
+  const backingData = UIDatabase.objects('Item').sorted('name');
+
+  return {
+    backingData,
+    data: backingData.slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name'],
+    sortBy: 'itemName',
+    isAscending: true,
+    selectedRow: null,
+  };
+};
 
 /**
- * Renders the page for all Items and their stock, with expansion of further details.
- * @prop   {Realm}          database    App wide database.
- * @prop   {func}           navigateTo  CallBack for navigation stack.
- * @state  {Realm.Results}  items       Contains all items stored in the local database.
+ * Renders a mSupply mobile page with customer invoice loaded for editing
+ *
+ * State:
+ * Uses a reducer to manage state with `backingData` being a realm results
+ * of items to display. `data` is a plain JS array of realm objects. data is
+ * hydrated from the `backingData` for displaying in the interface.
+ * i.e: When filtering, data is populated from filtered items of `backingData`.
+ *
+ * dataState is a simple map of objects corresponding to a row being displayed,
+ * holding the state of a given row. Each object has the shape :
+ * { isSelected, isFocused, isDisabled },
+ *
+ * @prop {Object} transaction The realm transaction object for this invoice.
+ * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
+ * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export class StockPage extends React.Component {
-  constructor(props) {
-    super(props);
+export const StockPage = ({ routeName }) => {
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, initialState());
 
-    const { database } = props;
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    selectedRow,
+    searchTerm,
+    keyExtractor,
+    columns,
+    PageActions,
+  } = state;
 
-    this.state = {
-      items: database.objects('Item').filtered('crossReferenceItem == null'),
-    };
-
-    this.dataFilters = {
-      searchTerm: '',
-      sortBy: 'name',
-      isAscending: true,
-    };
-  }
-
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  };
-
-  /**
-   * Returns updated data filtered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    const { items } = this.state;
-
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const data = items.filtered('name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0', searchTerm);
-
-    let sortDataType;
-    switch (sortBy) {
-      case 'totalQuantity':
-        sortDataType = 'number';
-        break;
-      default:
-        sortDataType = 'realm';
-    }
-    this.setState({
-      data: sortDataBy(data, sortBy, sortDataType, isAscending),
+  const renderCells = useCallback(rowData => {
+    const { cellContainer, cellText } = newDataTableStyles;
+    return columns.map(({ key: colKey, width, alignText }, index) => {
+      const isLastCell = index === columns.length - 1;
+      return (
+        <Cell
+          key={colKey}
+          value={rowData[colKey]}
+          width={width}
+          viewStyle={cellContainer[alignText || 'left']}
+          textStyle={cellText[alignText || 'left']}
+          isLastCell={isLastCell}
+          debug
+        />
+      );
     });
-  };
+  });
 
-  renderCell = (key, item) => item[key];
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = recordKeyExtractor(item);
 
-  renderExpansion = item => {
-    const batchInfo = item.batchesWithStock.map(ItemBatch => {
-      const quantityInfo = `  ${tableStrings.quantity}: ${ItemBatch.numberOfPacks}`;
-      const expiryInfo = ItemBatch.expiryDate
-        ? `  ${tableStrings.batch_expiry}: ${formatExpiryDate(ItemBatch.expiryDate)},`
-        : '';
-      const nameInfo = ItemBatch.batch ? `  ${ItemBatch.batch},` : '';
+      return (
+        <Row
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          renderCells={renderCells}
+          onPress={({ id }) => dispatch(PageActions.selectOneRow(id))}
+        />
+      );
+    },
+    [data, dataState, renderCells]
+  );
 
-      return {
-        title: `${tableStrings.batch}:`,
-        info: `${nameInfo}${expiryInfo}${quantityInfo}`,
-      };
-    });
+  const renderHeader = () => (
+    <DataTableHeaderRow
+      columns={columns}
+      dispatch={instantDebouncedDispatch}
+      sortAction={PageActions.sortData}
+      isAscending={isAscending}
+      sortBy={sortBy}
+    />
+  );
 
-    const { dailyUsage } = item;
-    const infoColumns = [
-      [
-        {
-          title: `${tableStrings.category}:`,
-          info: item.categoryName,
-        },
-        {
-          title: `${tableStrings.department}:`,
-          info: item.departmentName,
-        },
-        dailyUsage && {
-          title: `${tableStrings.monthly_usage_s}`,
-          info: Math.round(dailyUsage * 30),
-        },
-      ],
-      batchInfo,
-    ];
-
-    return (
-      <Expansion style={dataTableStyles.expansion}>
-        <PageInfo columns={infoColumns} />
-      </Expansion>
-    );
-  };
-
-  render() {
-    const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data } = this.state;
-
-    return (
-      <GenericPage
-        data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderExpansion={this.renderExpansion}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'code',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'name',
-            width: 5,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'totalQuantity',
-            width: 1,
-            title: tableStrings.stock_on_hand,
-            sortable: true,
-            alignText: 'right',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={database}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
+  return (
+    <DataTablePageView>
+      <View
+        style={{
+          flex: 1,
+          flexDirection: 'row',
+        }}
+      >
+        <View style={{ flex: 5, justifyContent: 'flex-end', marginBottom: 20, paddingLeft: 20 }}>
+          <SearchBar onChange={value => PageActions.filterData(value)} value={searchTerm} />
+        </View>
+      </View>
+      <View style={{ flex: 4 }}>
+        <DataTable
+          data={data}
+          extraData={dataState}
+          renderRow={renderRow}
+          renderHeader={renderHeader}
+          keyExtractor={keyExtractor}
+          getItemLayout={getItemLayout}
+        />
+      </View>
+      <ItemDetails
+        isOpen={!!selectedRow}
+        item={selectedRow}
+        onClose={() => dispatch(PageActions.deselectRow(selectedRow.id))}
       />
-    );
-  }
-}
+    </DataTablePageView>
+  );
+};
 
-export default StockPage;
-
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
 StockPage.propTypes = {
-  database: PropTypes.object,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
-  navigateTo: PropTypes.func.isRequired,
+  routeName: PropTypes.string.isRequired,
 };
