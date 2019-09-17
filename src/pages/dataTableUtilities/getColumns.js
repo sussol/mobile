@@ -5,6 +5,18 @@
 
 import { tableStrings } from '../../localization';
 
+const COLUMN_TYPES = {
+  STRING: 0,
+  NUMERIC: 1,
+  DATE: 2,
+  STRING_EDITABLE: 3,
+  NUMERIC_EDITABLE: 4,
+  DATE_EDITABLE: 5,
+  CHECKABLE: 6,
+  ICON: 7,
+  DROP_DOWN: 8,
+};
+
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
   supplierInvoice: [2, 4, 2, 2, 1],
@@ -108,28 +120,28 @@ const PAGE_COLUMNS = {
 const COLUMNS = () => ({
   // CODE COLUMNS
   invoiceNumber: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'serialNumber',
     title: tableStrings.invoice_number,
     sortable: true,
     editable: false,
   },
   requisitionNumber: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'serialNumber',
     title: tableStrings.requisition_number,
     sortable: true,
     editable: false,
   },
   itemCode: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'itemCode',
     title: tableStrings.item_code,
     sortable: true,
     editable: false,
   },
   code: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'code',
     title: tableStrings.code,
     alignText: 'left',
@@ -140,14 +152,14 @@ const COLUMNS = () => ({
   // STRING COLUMNS
 
   itemName: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'itemName',
     title: tableStrings.item_name,
     sortable: true,
     editable: false,
   },
   name: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'name',
     title: tableStrings.name,
     alignText: 'left',
@@ -155,28 +167,28 @@ const COLUMNS = () => ({
     editable: false,
   },
   supplier: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'otherPartyName',
     title: tableStrings.supplier,
     sortable: true,
     editable: false,
   },
   customer: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'otherPartyName',
     title: tableStrings.customer,
     sortable: true,
     editable: false,
   },
   comment: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'comment',
     title: tableStrings.comment,
     lines: 2,
     editable: false,
   },
   unit: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'unit',
     title: tableStrings.unit,
     alignText: 'center',
@@ -184,14 +196,14 @@ const COLUMNS = () => ({
     editable: false,
   },
   status: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'status',
     title: tableStrings.status,
     sortable: true,
     editable: false,
   },
   question: {
-    type: 'string',
+    type: COLUMN_TYPES.STRING,
     key: 'name',
     title: 'Question',
     textAlign: 'left',
@@ -202,14 +214,14 @@ const COLUMNS = () => ({
   // EDITABLE STRING COLUMNS
 
   batchName: {
-    type: 'editableString',
+    type: COLUMN_TYPES.STRING_EDITABLE,
     key: 'batch',
     title: tableStrings.batch_name,
     alignText: 'center',
     editable: true,
   },
   editableComment: {
-    type: 'editableString',
+    type: COLUMN_TYPES.STRING_EDITABLE,
     key: 'comment',
     title: tableStrings.comment,
     textAlign: 'right',
@@ -217,7 +229,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   editableValue: {
-    type: 'editableString',
+    type: COLUMN_TYPES.STRING_EDITABLE,
     key: 'value',
     title: 'Value',
     textAlign: 'right',
@@ -228,7 +240,7 @@ const COLUMNS = () => ({
   // NUMERIC COLUMNS
 
   availableQuantity: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'availableQuantity',
     title: tableStrings.available_stock,
     alignText: 'right',
@@ -236,7 +248,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   numberOfItems: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'numberOfItems',
     title: tableStrings.items,
     alignText: 'right',
@@ -244,7 +256,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   ourStockOnHand: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'ourStockOnHand',
     title: tableStrings.current_stock,
     alignText: 'right',
@@ -252,7 +264,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   theirStockOnHand: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'stockOnHand',
     title: tableStrings.their_stock,
     alignText: 'right',
@@ -260,7 +272,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   suggestedQuantity: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'suggestedQuantity',
     title: tableStrings.suggested_quantity,
     alignText: 'right',
@@ -268,7 +280,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   requiredQuantity: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'requiredQuantity',
     title: tableStrings.required_quantity,
     alignText: 'right',
@@ -276,7 +288,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   difference: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'difference',
     title: tableStrings.difference,
     alignText: 'right',
@@ -284,7 +296,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   snapshotTotalQuantity: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'snapshotTotalQuantity',
     title: tableStrings.snapshot_quantity,
     alignText: 'right',
@@ -292,7 +304,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   price: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'price',
     title: tableStrings.price,
     alignText: 'center',
@@ -300,7 +312,7 @@ const COLUMNS = () => ({
     sortable: true,
   },
   monthlyUsage: {
-    type: 'numeric',
+    type: COLUMN_TYPES.NUMERIC,
     key: 'monthlyUsage',
     title: tableStrings.monthly_usage,
     alignText: 'right',
@@ -311,7 +323,7 @@ const COLUMNS = () => ({
   // EDITABLE NUMERIC COLUMNS
 
   editableRequiredQuantity: {
-    type: 'editableNumeric',
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
     key: 'requiredQuantity',
     title: tableStrings.required_quantity,
     alignText: 'right',
@@ -319,7 +331,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   countedTotalQuantity: {
-    type: 'editableNumeric',
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
     key: 'countedTotalQuantity',
     title: tableStrings.actual_quantity,
     alignText: 'right',
@@ -327,7 +339,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   totalQuantity: {
-    type: 'editableNumeric',
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
     key: 'totalQuantity',
     title: tableStrings.quantity,
     alignText: 'right',
@@ -335,7 +347,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   suppliedQuantity: {
-    type: 'editableNumeric',
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
     key: 'suppliedQuantity',
     title: tableStrings.supply_quantity,
     alignText: 'right',
@@ -346,7 +358,7 @@ const COLUMNS = () => ({
   // DATE COLUMNS
 
   createdDate: {
-    type: 'date',
+    type: COLUMN_TYPES.DATE,
     key: 'createdDate',
     title: tableStrings.created_date,
     alignText: 'left',
@@ -354,7 +366,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   entryDate: {
-    type: 'date',
+    type: COLUMN_TYPES.DATE,
     key: 'entryDate',
     title: tableStrings.entered_date,
     sortable: true,
@@ -363,7 +375,7 @@ const COLUMNS = () => ({
 
   // EDITABLE DATE COLUMNS
   expiryDate: {
-    type: 'editableDate',
+    type: COLUMN_TYPES.DATE,
     key: 'expiryDate',
     title: tableStrings.batch_expiry,
     alignText: 'center',
@@ -373,7 +385,7 @@ const COLUMNS = () => ({
 
   // CHECKABLE COLUMNS
   remove: {
-    type: 'checkable',
+    type: COLUMN_TYPES.CHECKABLE,
     key: 'remove',
     title: tableStrings.remove,
     alignText: 'center',
@@ -382,7 +394,7 @@ const COLUMNS = () => ({
   },
 
   selected: {
-    type: 'checkable',
+    type: COLUMN_TYPES.CHECKABLE,
     key: 'selected',
     title: tableStrings.selected,
     alignText: 'center',
@@ -393,7 +405,7 @@ const COLUMNS = () => ({
   // MISC COLUMNS
 
   batches: {
-    type: 'icon',
+    type: COLUMN_TYPES.ICON,
     key: 'batch',
     title: tableStrings.batches,
     sortable: false,
@@ -401,7 +413,7 @@ const COLUMNS = () => ({
     editable: false,
   },
   reason: {
-    type: 'dropDown',
+    type: COLUMN_TYPES.DROP_DOWN,
     key: 'reasonTitle',
     title: tableStrings.reason,
     alignText: 'center',
