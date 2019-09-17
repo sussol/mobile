@@ -84,22 +84,20 @@ export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
   const { modalContainer, scrollView, scrollViewContentContainer } = localStyles;
   return (
     <Modal style={modalContainer} isOpen={isOpen} {...modalProps}>
-      <TouchableOpacity onPress={onClose}>
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10 }}>
-          <TouchableOpacity onPress={onClose}>
-            <CloseIcon />
-          </TouchableOpacity>
-        </View>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10 }}>
+        <TouchableOpacity onPress={onClose}>
+          <CloseIcon />
+        </TouchableOpacity>
+      </View>
 
-        <ScrollView
-          indicatorStyle="white"
-          contentContainerStyle={scrollViewContentContainer}
-          style={scrollView}
-        >
-          <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
-          <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
-        </ScrollView>
-      </TouchableOpacity>
+      <ScrollView
+        indicatorStyle="white"
+        contentContainerStyle={scrollViewContentContainer}
+        style={scrollView}
+      >
+        <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
+        <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
+      </ScrollView>
     </Modal>
   );
 };
