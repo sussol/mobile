@@ -109,7 +109,7 @@ ItemDetails.defaultProps = {
 ItemDetails.propTypes = {
   item: PropTypes.object,
   onClose: PropTypes.func.isRequired,
-  isOpen: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
   swipeToClose: PropTypes.bool,
   backdropPressToClose: PropTypes.bool,
   position: PropTypes.string,
