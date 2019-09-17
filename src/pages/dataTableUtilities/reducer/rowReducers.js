@@ -227,15 +227,18 @@ export const selectOneRow = (state, action) => {
 
   const newDataState = new Map(dataState);
 
+  // If there is a selectedRow already, remove it.
   if (oldSelectedRow) {
     const oldSelectedRowKey = keyExtractor(oldSelectedRow);
     const oldSelectedRowState = newDataState.get(oldSelectedRowKey);
     newDataState.set(oldSelectedRowKey, { ...oldSelectedRowState, isSelected: false });
   }
 
+  // Update the state for the newly selected row
   const newSelectedRowState = newDataState.get(newSelectedRowKey);
   newDataState.set(newSelectedRowKey, { ...newSelectedRowState, isSelected: true });
 
+  // Find the corresponding rowData
   const newSelectedRow = data.find(row => keyExtractor(row) === newSelectedRowKey);
 
   return { ...state, dataState: newDataState, selectedRow: newSelectedRow };
