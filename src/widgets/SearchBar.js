@@ -28,6 +28,7 @@ import { debounce } from '../utilities/index';
  * @param {String} textInputStyle  Style of the TextInput component.
  * @param {String} viewStyle       Style of the wrapping View component.
  * @param {String} debounceTimeout Time in milliseconds to debounce the onChangeText callback.
+ * @param {Func}   onFocusOrBlur   Callback for onBlur and onFocus events.
  */
 export const SearchBar = ({
   color,
@@ -38,6 +39,7 @@ export const SearchBar = ({
   textInputStyle,
   viewStyle,
   debounceTimeout,
+  onFocusOrBlur,
   ...textInputProps
 }) => {
   const [textValue, setTextValue] = useState('');
@@ -79,6 +81,8 @@ export const SearchBar = ({
         placeholder={placeholder}
         onChangeText={onChangeTextCallback}
         autoFocus={autoFocus}
+        onFocus={onFocusOrBlur}
+        onBlur={onFocusOrBlur}
         selectTextOnFocus
       />
       {!!textValue && (
@@ -113,6 +117,7 @@ SearchBar.defaultProps = {
   value: '',
   placeholder: '',
   autoFocus: false,
+  onFocusOrBlur: null,
 };
 
 SearchBar.propTypes = {
@@ -124,4 +129,5 @@ SearchBar.propTypes = {
   autoFocus: PropTypes.bool,
   textInputStyle: PropTypes.object,
   viewStyle: PropTypes.object,
+  onFocusOrBlur: PropTypes.func,
 };
