@@ -26,6 +26,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
+  stock: [1, 4, 1],
 };
 
 const PAGE_COLUMNS = {
