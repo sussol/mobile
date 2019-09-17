@@ -16,9 +16,18 @@ import { formatExpiryDate } from '../utilities';
 
 import { PageInfo, CloseIcon } from '.';
 
-import { tableStrings } from '../localization/index';
+import { tableStrings, generalStrings } from '../localization/index';
 import { DARKER_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
+/**
+ * Modal like component. Opens a small pop-over at the bottom of the screen
+ * displaying item details.
+ *
+ * @param {Bool}   isOpen     Indicator if this modal is open.
+ * @param {Object} item       Realm Item object to display details for.
+ * @param {Func}   onClose    Callback for closing the modal.
+ * @param {Any}    modalProps Any additional props for the modal component.
+ */
 export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
   if (!item) return null;
 
@@ -42,7 +51,8 @@ export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
       const title = headers[field];
 
       const data = itemBatch[field];
-      const info = (formatters[field] && formatters[field](data)) || data || 'N/A';
+      const info =
+        (formatters[field] && formatters[field](data)) || data || generalStrings.not_available;
 
       return getRow(title, info);
     });
@@ -58,8 +68,14 @@ export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
   const getItemInfo = () => {
     const { categoryName, departmentName, monthlyUsage } = item;
 
-    const categoryRow = { title: `${tableStrings.category}:`, info: categoryName || 'N/A' };
-    const departmentRow = { title: `${tableStrings.department}:`, info: departmentName || 'N/A' };
+    const categoryRow = {
+      title: `${tableStrings.category}:`,
+      info: categoryName || generalStrings.not_available,
+    };
+    const departmentRow = {
+      title: `${tableStrings.department}:`,
+      info: departmentName || generalStrings.not_available,
+    };
     const usageRow = { title: `${tableStrings.monthly_usage_s}:`, info: Math.round(monthlyUsage) };
 
     return [[categoryRow, departmentRow, usageRow]];
