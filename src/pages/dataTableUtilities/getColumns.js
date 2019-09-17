@@ -5,7 +5,7 @@
 
 import { tableStrings } from '../../localization';
 
-const COLUMN_TYPES = {
+const COLUMN_TYPES = Object.freeze({
   STRING: 0,
   NUMERIC: 1,
   DATE: 2,
@@ -15,7 +15,7 @@ const COLUMN_TYPES = {
   CHECKABLE: 6,
   ICON: 7,
   DROP_DOWN: 8,
-};
+});
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
