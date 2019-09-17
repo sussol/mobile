@@ -148,6 +148,13 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * @return {Number} this items monthly usage based on a 30 day month.
+   */
+  get monthlyUsage() {
+    return this.dailyUsage * 30;
+  }
+
+  /**
    * Get number of batches associated with item that have stock.
    *
    * @return  {number}
