@@ -29,6 +29,8 @@ import TextInputCell from './TextInputCell';
 
 import { formatStatus } from '../../utilities/index';
 
+import COLUMN_TYPES from './types';
+
 /**
  * Wrapper component for a mSupply DataTable page row.
  * Wraps Row component with a contained RenderCells, which
@@ -79,8 +81,8 @@ const DataTableRow = React.memo(
           const cellAlignment = alignText || 'left';
 
           switch (type) {
-            case 'editableString':
-            case 'editableNumeric':
+            case COLUMN_TYPES.STRING_EDITABLE:
+            case COLUMN_TYPES.NUMERIC_EDITABLE:
               return (
                 <TextInputCell
                   key={columnKey}
@@ -94,7 +96,11 @@ const DataTableRow = React.memo(
                   viewStyle={cellContainer[cellAlignment]}
                   textViewStyle={editableCellTextView}
                   isLastCell={isLastCell}
-                  keyboardType={type === 'editableNumeric' ? 'numeric' : 'default'}
+                  keyboardType={
+                    type === COLUMN_TYPES.NUMERIC_EDITABLE
+                      ? COLUMN_TYPES.NUMERIC_EDITABLE
+                      : 'default'
+                  }
                   textInputStyle={cellText[cellAlignment]}
                   textStyle={editableCellUnfocused[cellAlignment]}
                   cellTextStyle={editableCellText}
@@ -102,7 +108,7 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case 'editableDate':
+            case COLUMN_TYPES.DATE_EDITABLE:
               return (
                 <NewExpiryDateInput
                   key={columnKey}
@@ -118,7 +124,7 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case 'checkable':
+            case COLUMN_TYPES.CHECKABLE:
               return (
                 <CheckableCell
                   key={columnKey}
@@ -139,7 +145,7 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case 'string': {
+            case COLUMN_TYPES.STRING: {
               const value = rowData[columnKey];
               const displayValue = columnKey === 'status' ? formatStatus(value) : value;
               return (
@@ -154,7 +160,7 @@ const DataTableRow = React.memo(
               );
             }
 
-            case 'numeric': {
+            case COLUMN_TYPES.NUMERIC: {
               return (
                 <Cell
                   key={columnKey}
@@ -167,7 +173,7 @@ const DataTableRow = React.memo(
               );
             }
 
-            case 'date':
+            case COLUMN_TYPES.DATE:
               return (
                 <Cell
                   key={columnKey}
@@ -179,7 +185,7 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case 'icon':
+            case COLUMN_TYPES.ICON:
               return (
                 <TouchableCell
                   key={columnKey}
@@ -198,7 +204,7 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case 'dropDown':
+            case COLUMN_TYPES.DROP_DOWN:
               return (
                 <DropDownCell
                   key={columnKey}

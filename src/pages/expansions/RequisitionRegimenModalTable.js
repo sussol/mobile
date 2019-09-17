@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import { GenericPage } from '../GenericPage';
 import { expansionPageStyles } from '../../globalStyles';
 
+import COLUMN_TYPES from '../../widgets/DataTable/types';
+
 /**
  * Renders page to be displayed in StocktakeEditPage -> expansion.
  *
@@ -52,7 +54,7 @@ export class RequisitionRegimenModalTable extends React.Component {
         return {
           type: isEditable ? 'editable' : 'text',
           cellContents: regimenRow.value || '',
-          keyboardType: regimenRow.type === 'string' ? 'default' : null,
+          keyboardType: regimenRow.type === COLUMN_TYPES.STRING ? 'default' : null,
         };
       }
       case 'comment': {

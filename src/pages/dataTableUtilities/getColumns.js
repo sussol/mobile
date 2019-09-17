@@ -5,17 +5,7 @@
 
 import { tableStrings } from '../../localization';
 
-const COLUMN_TYPES = Object.freeze({
-  STRING: 0,
-  NUMERIC: 1,
-  DATE: 2,
-  STRING_EDITABLE: 3,
-  NUMERIC_EDITABLE: 4,
-  DATE_EDITABLE: 5,
-  CHECKABLE: 6,
-  ICON: 7,
-  DROP_DOWN: 8,
-});
+import COLUMN_TYPES from '../../widgets/DataTable/types';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
