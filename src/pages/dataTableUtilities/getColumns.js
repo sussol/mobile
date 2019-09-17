@@ -26,9 +26,9 @@ const PAGE_COLUMN_WIDTHS = {
 };
 
 const PAGE_COLUMNS = {
-  customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
+  customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'editableTotalQuantity', 'remove'],
   customerInvoices: ['invoiceNumber', 'customer', 'status', 'entryDate', 'comment', 'remove'],
-  supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'expiryDate', 'remove'],
+  supplierInvoice: ['itemCode', 'itemName', 'editableTotalQuantity', 'expiryDate', 'remove'],
   supplierInvoices: ['invoiceNumber', 'supplier', 'status', 'entryDate', 'comment', 'remove'],
   supplierRequisitions: [
     'requisitionNumber',
@@ -309,6 +309,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  totalQuantity: {
+    type: 'numeric',
+    key: 'totalQuantity',
+    title: tableStrings.quantity,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
 
   // EDITABLE NUMERIC COLUMNS
 
@@ -328,7 +336,7 @@ const COLUMNS = () => ({
     sortable: true,
     editable: true,
   },
-  totalQuantity: {
+  editableTotalQuantity: {
     type: 'editableNumeric',
     key: 'totalQuantity',
     title: tableStrings.quantity,
