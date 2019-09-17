@@ -12,16 +12,16 @@ import { View } from 'react-native';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
 import { UIDatabase } from '../database';
 
-import { DataTable, Row, Cell, DataTableHeaderRow } from '../widgets/DataTable';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { newDataTableStyles } from '../globalStyles';
-import { usePageReducer } from '../hooks';
+import { newPageStyles } from '../globalStyles';
+import { usePageReducer, useSyncListener } from '../hooks';
 
 import { DataTablePageView, SearchBar } from '../widgets';
 
-import { ItemDetails } from '../widgets/ItemDetails';
+import { ItemDetails } from '../widgets/modals/ItemDetails';
 
-const initialState = () => {
+const stateInitialiser = () => {
   const backingData = UIDatabase.objects('Item').sorted('name');
 
   return {
@@ -55,7 +55,11 @@ const initialState = () => {
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const StockPage = ({ routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, initialState());
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    routeName,
+    {},
+    stateInitialiser
+  );
 
   const {
     data,
@@ -69,40 +73,32 @@ export const StockPage = ({ routeName }) => {
     PageActions,
   } = state;
 
-  const renderCells = useCallback(rowData => {
-    const { cellContainer, cellText } = newDataTableStyles;
-    return columns.map(({ key: colKey, width, alignText }, index) => {
-      const isLastCell = index === columns.length - 1;
-      return (
-        <Cell
-          key={colKey}
-          value={rowData[colKey]}
-          width={width}
-          viewStyle={cellContainer[alignText || 'left']}
-          textStyle={cellText[alignText || 'left']}
-          isLastCell={isLastCell}
-          debug
-        />
-      );
-    });
-  });
+  //  Refresh data on retrieving item or itembatch records from sync.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useSyncListener(refreshCallback, ['Item', 'ItemBatch']);
+
+  const onSelectRow = useCallback(({ id }) => dispatch(PageActions.selectOneRow(id)), []);
+  const onDeselectRow = () => dispatch(PageActions.deselectRow(selectedRow.id));
+  const onFilterData = value => PageActions.filterData(value);
 
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
-      const rowKey = recordKeyExtractor(item);
-
+      const rowKey = keyExtractor(item);
       return (
-        <Row
+        <DataTableRow
           rowData={data[index]}
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
-          renderCells={renderCells}
-          onPress={({ id }) => dispatch(PageActions.selectOneRow(id))}
+          columns={columns}
+          isFinalised={false}
+          dispatch={dispatch}
+          rowIndex={index}
+          onPress={onSelectRow}
         />
       );
     },
-    [data, dataState, renderCells]
+    [data, dataState]
   );
 
   const renderHeader = () => (
@@ -115,33 +111,28 @@ export const StockPage = ({ routeName }) => {
     />
   );
 
+  const { newPageTopSectionContainer } = newPageStyles;
   return (
     <DataTablePageView>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: 'row',
-        }}
-      >
-        <View style={{ flex: 5, justifyContent: 'flex-end', marginBottom: 20, paddingLeft: 20 }}>
-          <SearchBar onChange={value => PageActions.filterData(value)} value={searchTerm} />
-        </View>
-      </View>
-      <View style={{ flex: 4 }}>
-        <DataTable
-          data={data}
-          extraData={dataState}
-          renderRow={renderRow}
-          renderHeader={renderHeader}
-          keyExtractor={keyExtractor}
-          getItemLayout={getItemLayout}
+      <View style={newPageTopSectionContainer}>
+        <SearchBar
+          onChangeText={onFilterData}
+          value={searchTerm}
+          onFocusOrBlur={selectedRow && onDeselectRow}
         />
       </View>
-      <ItemDetails
-        isOpen={!!selectedRow}
-        item={selectedRow}
-        onClose={() => dispatch(PageActions.deselectRow(selectedRow.id))}
+
+      <DataTable
+        data={data}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+        columns={columns}
       />
+
+      <ItemDetails isOpen={!!selectedRow} item={selectedRow} onClose={onDeselectRow} />
     </DataTablePageView>
   );
 };
