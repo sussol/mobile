@@ -136,6 +136,10 @@ class UIDatabase {
     }
   }
 
+  get(...args) {
+    return this.database.get(...args);
+  }
+
   addListener(...args) {
     return this.database.addListener(...args);
   }
@@ -174,6 +178,11 @@ class UIDatabase {
 
   write(...args) {
     return this.database.write(...args);
+  }
+
+  getSetting(key) {
+    const setting = this.database.get('Setting', key, 'key');
+    return setting && setting.value;
   }
 }
 
