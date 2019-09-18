@@ -8,7 +8,6 @@
 import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
 import { UIDatabase } from '../database';
 
@@ -17,11 +16,11 @@ import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
 
 import { BottomTextEditor } from '../widgets/modals';
-import { ToggleBar, DataTablePageView } from '../widgets';
+import { ToggleBar, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import { newPageStyles } from '../globalStyles';
 
 const stateInitialiser = pageObject => {
   const backingData = UIDatabase.objects('Item');
@@ -48,7 +47,7 @@ export const StocktakeManagePage = ({
   stocktake,
   runWithLoadingIndicator,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch, debouncedDispatch] = usePageReducer(
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
     routeName,
     {},
     stateInitialiser,
@@ -86,6 +85,7 @@ export const StocktakeManagePage = ({
     }
   };
 
+  const onFilterData = value => dispatch(PageActions.filterData(value));
   const onNameChange = value => dispatch(PageActions.editName(value));
   const onSelectAll = () => dispatch(PageActions.toggleAllSelected(allSelected));
   const onHideStock = () => dispatch(PageActions.toggleStockOut(showAll));
@@ -146,19 +146,12 @@ export const StocktakeManagePage = ({
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <SearchBar
-            onChangeText={value => debouncedDispatch(PageActions.filterData(value))}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
-            value={searchTerm}
-          />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
 
         <View style={newPageTopRightSectionContainer}>

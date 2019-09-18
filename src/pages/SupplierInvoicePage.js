@@ -20,7 +20,7 @@ import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import globalStyles, { newPageStyles } from '../globalStyles';
 
 const stateInitialiser = pageObject => {
   const backingData = pageObject.getTransactionBatches(UIDatabase);
@@ -167,20 +167,13 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
-          <SearchBar
-            onChangeText={onFilterData}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
-            value={searchTerm}
-          />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
           <PageButtons />

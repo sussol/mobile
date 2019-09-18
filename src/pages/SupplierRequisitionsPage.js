@@ -20,7 +20,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import globalStyles, { newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 const initialiseState = () => {
@@ -176,19 +176,12 @@ export const SupplierRequisitionsPage = ({
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <SearchBar
-            onChangeText={onSearchFiltering}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            value={searchTerm}
-            placeholder=""
-          />
+          <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
           <PageButtons />

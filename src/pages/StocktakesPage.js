@@ -21,7 +21,7 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import globalStyles, { newPageStyles } from '../globalStyles';
 
 import {
   gotoStocktakeManagePage,
@@ -152,19 +152,12 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <SearchBar
-            onChangeText={onFilterData}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
-            value={searchTerm}
-          />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
           <PageButtons />

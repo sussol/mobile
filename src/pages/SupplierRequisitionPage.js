@@ -19,7 +19,7 @@ import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
-import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import globalStyles, { newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
 
 const stateInitialiser = requisition => {
@@ -302,20 +302,13 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
-          <SearchBar
-            onChangeText={onFilterData}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
-            value={searchTerm}
-          />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
           {program ? <ProgramButtons /> : <GeneralButtons />}
