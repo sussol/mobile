@@ -33,7 +33,10 @@ const stateInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
   return {
     backingData,
-    data: backingData.sorted('createdDate', true).slice(),
+    data: backingData
+      .filtered('status != $0', 'finalised')
+      .sorted('createdDate', true)
+      .slice(),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -65,6 +68,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     keyExtractor,
     columns,
     PageActions,
+    showFinalised,
   } = state;
 
   const refreshCallback = useCallback(() => dispatch(PageActions.refreshData()), []);
@@ -153,13 +157,13 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       toggles={[
         {
           text: buttonStrings.current,
-          onPress: () => {},
-          isOn: true,
+          onPress: () => dispatch(PageActions.showNotFinalised()),
+          isOn: !showFinalised,
         },
         {
           text: buttonStrings.past,
-          onPress: () => {},
-          isOn: !false,
+          onPress: () => dispatch(PageActions.showFinalised()),
+          isOn: showFinalised,
         },
       ]}
     />
