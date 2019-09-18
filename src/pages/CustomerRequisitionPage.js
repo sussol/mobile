@@ -53,11 +53,10 @@ const stateInitialiser = pageObject => ({
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
+  const initialState = { page: routeName, pageObject: requisition };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    requisition
+    initialState,
+    stateInitialiser
   );
 
   const {

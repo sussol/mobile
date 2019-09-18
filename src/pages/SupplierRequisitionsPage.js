@@ -64,7 +64,8 @@ export const SupplierRequisitionsPage = ({
   dispatch: reduxDispatch,
   navigation,
 }) => {
-  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
+  const initialState = { page: routeName };
+  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState, initialiseState);
 
   const {
     data,

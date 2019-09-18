@@ -50,9 +50,9 @@ const stateInitialiser = () => {
 };
 
 export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
+  const initialState = { page: routeName };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
+    initialState,
     stateInitialiser
   );
 

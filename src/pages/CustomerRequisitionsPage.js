@@ -21,7 +21,7 @@ import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
 import { newPageStyles } from '../globalStyles';
 
-const initialiseState = () => {
+const stateInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
   const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
   return {
@@ -54,7 +54,8 @@ const initialiseState = () => {
  * @prop {Object} navigation    Reference to the main application stack navigator.
  */
 export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
-  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
+  const initialState = { page: routeName };
+  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState, stateInitialiser);
 
   const { data, sortBy, isAscending, searchTerm, PageActions, columns, keyExtractor } = state;
 

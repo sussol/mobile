@@ -47,11 +47,10 @@ export const StocktakeManagePage = ({
   stocktake,
   runWithLoadingIndicator,
 }) => {
+  const initialState = { page: routeName, pageObject: stocktake };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    stocktake
+    initialState,
+    stateInitialiser
   );
 
   const {

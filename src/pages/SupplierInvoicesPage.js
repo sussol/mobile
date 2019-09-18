@@ -21,7 +21,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import { newPageStyles } from '../globalStyles';
 
-const initializer = () => {
+const stateInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierInvoice');
   return {
     backingData,
@@ -43,7 +43,11 @@ export const SupplierInvoicesPage = ({
   navigation,
   dispatch: reduxDispatch,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {}, initializer);
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
+    initialState,
+    stateInitialiser
+  );
 
   const {
     data,

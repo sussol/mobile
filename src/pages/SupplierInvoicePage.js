@@ -41,11 +41,10 @@ const stateInitialiser = pageObject => {
 };
 
 export const SupplierInvoicePage = ({ routeName, transaction }) => {
+  const initialState = { page: routeName, pageObject: transaction };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    transaction
+    initialState,
+    stateInitialiser
   );
 
   const {

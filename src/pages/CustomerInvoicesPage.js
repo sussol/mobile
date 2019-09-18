@@ -43,7 +43,8 @@ export const CustomerInvoicesPage = ({
   navigation,
   dispatch: reduxDispatch,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {}, initializer);
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState, initializer);
   const {
     data,
     dataState,

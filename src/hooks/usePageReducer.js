@@ -43,13 +43,12 @@ import { debounce } from '../utilities/index';
  * @param {Number} instantDebounceTimeout Timeout period for an instant debounce
  */
 export const usePageReducer = (
-  page,
   initialState,
   initializer,
-  pageObject,
   debounceTimeout = 250,
   instantDebounceTimeout = 250
 ) => {
+  const { page, pageObject } = initialState;
   const columns = useMemo(() => getColumns(page), []);
   const pageInfoColumns = useMemo(() => getPageInfoColumns(page), []);
   const PageActions = useMemo(() => getPageActions(page), []);

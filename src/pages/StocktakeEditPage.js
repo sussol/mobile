@@ -64,11 +64,10 @@ export const StocktakeEditPage = ({
   dispatch: reduxDispatch,
   navigation,
 }) => {
+  const initialState = { page: routeName, pageObject: stocktake };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    stocktake
+    initialState,
+    stateInitialiser
   );
 
   const {
