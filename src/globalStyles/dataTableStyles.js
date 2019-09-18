@@ -18,7 +18,7 @@ import { APP_FONT_FAMILY } from './fonts';
 export const dataTableColors = {
   checkableCellDisabled: LIGHT_GREY,
   checkableCellChecked: SUSSOL_ORANGE,
-  checkableCellUnchecked: WARM_GREY,
+  checkableCellUnchecked: DARK_GREY,
   editableCellUnderline: WARM_GREY,
 };
 
