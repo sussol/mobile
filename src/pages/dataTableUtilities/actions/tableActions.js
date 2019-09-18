@@ -73,6 +73,16 @@ export const showFinalised = () => ({ type: ACTIONS.SHOW_FINALISED });
 export const showNotFinalised = () => ({ type: ACTIONS.SHOW_NOT_FINALISED });
 
 /**
+ * Wrapper around showFinalised/showNotFinalised to toggle between. Determines the
+ * correct action to dispatch.
+ *
+ * @param {Bool} showFinalised Indicator wheter finalised rows are currently displayed.
+ */
+export const toggleShowFinalised = showingFinalised => {
+  if (showingFinalised) return showNotFinalised();
+  return showFinalised();
+};
+/**
  * Shows all items, regardless of current stock on hand, toggles
  * showAll to true and removes the current search filtering. Sort is
  * kept stable.
@@ -252,6 +262,7 @@ export const TableActionsLookup = {
   hideOverStocked,
   showNotFinalised,
   showFinalised,
+  toggleShowFinalised,
   hideStockOut,
   showOverStocked,
   showStockOut,
