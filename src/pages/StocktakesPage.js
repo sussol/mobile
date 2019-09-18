@@ -153,7 +153,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     );
   }, []);
 
-  const renderToggleBar = useCallback(
+  const PastCurrentToggleBar = useCallback(
     () => (
       <ToggleBar
         toggles={[
@@ -174,7 +174,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          {renderToggleBar()}
+          <PastCurrentToggleBar />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
