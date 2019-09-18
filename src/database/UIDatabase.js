@@ -182,7 +182,7 @@ class UIDatabase {
 
   getSetting(key) {
     const setting = this.database.get('Setting', key, 'key');
-    return setting && setting.value;
+    return (setting && setting.value) || '';
   }
 }
 
