@@ -53,6 +53,9 @@ export class Stocktake extends Realm.Object {
 
   /**
    * Sets the stocktake items attached to this stocktake based on item id.
+   * Only items which are passed in `itemIds` are set to the stocktake. Any
+   * items currently in the stocktake which are not passed are removed, and
+   * any extras are added.
    *
    * @param   {Realm}           database
    * @param   {Array.<string>}  itemIds

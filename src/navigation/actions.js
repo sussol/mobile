@@ -207,12 +207,12 @@ export const createStocktake = ({ currentUser, stocktakeName, program, itemIds }
     else if (itemIds) stocktake.setItemsByID(UIDatabase, itemIds);
   });
 
-  const replaceAction = StackActions.replace({
+  const stackReplacementAction = StackActions.replace({
     routeName: 'stocktakeEditor',
     params: { stocktake, title: navStrings.stocktake },
   });
 
-  dispatch(replaceAction);
+  dispatch(stackReplacementAction);
 };
 
 /**

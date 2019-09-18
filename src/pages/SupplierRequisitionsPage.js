@@ -20,7 +20,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import globalStyles, { newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 const initialiseState = () => {
@@ -79,10 +79,10 @@ export const SupplierRequisitionsPage = ({
   } = state;
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  const callback = () => dispatch(PageActions.refreshData(), []);
-  useNavigationFocus(callback, navigation);
+  const refreshCallback = () => dispatch(PageActions.refreshData(), []);
+  useNavigationFocus(refreshCallback, navigation);
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useSyncListener(callback, 'Requisition');
+  useSyncListener(refreshCallback, 'Requisition');
 
   const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
@@ -176,19 +176,12 @@ export const SupplierRequisitionsPage = ({
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <SearchBar
-            onChangeText={onSearchFiltering}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            value={searchTerm}
-            placeholder=""
-          />
+          <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
           <PageButtons />

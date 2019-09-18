@@ -8,20 +8,19 @@
 import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
 
 import { MODAL_KEYS } from '../utilities';
 import { usePageReducer } from '../hooks/usePageReducer';
 import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
-import { PageButton, PageInfo, DataTablePageView } from '../widgets';
+import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { gotoStocktakeManagePage } from '../navigation/actions';
 
 import { buttonStrings } from '../localization';
-import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import { newPageStyles } from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
 
 const stateInitialiser = pageObject => ({
@@ -76,6 +75,7 @@ export const StocktakeEditPage = ({
     pageObject,
     data,
     dataState,
+    searchTerm,
     sortBy,
     isAscending,
     modalKey,
@@ -196,33 +196,20 @@ export const StocktakeEditPage = ({
       />
     );
 
-    // Program stocktakes do not have a ManageStocktake button.
-    const Child = program ? () => null : ManageStocktake;
-
-    return (
-      <View style={newPageTopRightSectionContainer}>
-        <Child />
-      </View>
-    );
+    return <View style={newPageTopRightSectionContainer}>{program ? null : ManageStocktake}</View>;
   }, [program]);
 
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
           {renderPageInfo()}
-          <SearchBar
-            onChange={onFilterData}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
-          />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <PageButtons />
       </View>

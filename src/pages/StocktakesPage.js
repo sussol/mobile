@@ -21,7 +21,7 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import globalStyles, { newPageStyles } from '../globalStyles';
 
 import {
   gotoStocktakeManagePage,
@@ -67,11 +67,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     PageActions,
   } = state;
 
-  const callback = useCallback(() => dispatch(PageActions.refreshData()), []);
+  const refreshCallback = useCallback(() => dispatch(PageActions.refreshData()), []);
   // Listen to sync changing stocktake data - refresh if there are any.
-  useSyncListener(callback, ['Stocktake']);
+  useSyncListener(refreshCallback, ['Stocktake']);
   // Listen to navigation focusing this page - fresh if so.
-  useNavigationFocus(callback, navigation);
+  useNavigationFocus(refreshCallback, navigation);
 
   const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
   const onFilterData = value => dispatch(PageActions.filterData(value));
@@ -152,19 +152,12 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <SearchBar
-            onChangeText={onFilterData}
-            style={searchBar}
-            color={SUSSOL_ORANGE}
-            placeholder=""
-            value={searchTerm}
-          />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
           <PageButtons />

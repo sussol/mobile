@@ -19,7 +19,7 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import { SUSSOL_ORANGE, newPageStyles } from '../globalStyles';
+import { newPageStyles } from '../globalStyles';
 
 const initializer = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
@@ -139,18 +139,12 @@ export const CustomerInvoicesPage = ({
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
     newPageTopRightSectionContainer,
-    searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <SearchBar
-            onChangeText={onFilterData}
-            color={SUSSOL_ORANGE}
-            value={searchTerm}
-            style={searchBar}
-          />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
           <NewInvoiceButton />

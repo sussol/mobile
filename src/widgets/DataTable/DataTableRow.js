@@ -61,6 +61,7 @@ const DataTableRow = React.memo(
       selectedRow: selectedRowStyle,
       alternateRow: alternateRowStyle,
       row: basicRowStyle,
+      iconCell,
     } = newDataTableStyles;
 
     const { isSelected = false } = rowState || {};
@@ -199,11 +200,7 @@ const DataTableRow = React.memo(
                   dispatch={dispatch}
                   width={width}
                   isLastCell={isLastCell}
-                  containerStyle={{
-                    justifyContent: 'center',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                  }}
+                  containerStyle={iconCell}
                 />
               );
 
