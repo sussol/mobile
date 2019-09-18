@@ -105,7 +105,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     [comment, theirRef, isFinalised]
   );
 
-  const getAction = useCallback((colKey, propName) => {
+  const getAction = (colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
         return PageActions.editTotalQuantity;
@@ -115,7 +115,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       default:
         return null;
     }
-  });
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
