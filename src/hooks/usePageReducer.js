@@ -70,7 +70,7 @@ export const usePageReducer = (
     const newState = DataTablePageReducer(getState(), action);
     setPageState(newState);
     stateRef.current = newState;
-  });
+  }, []);
 
   const thunkDispatcher = useCallback(
     action => (typeof action === 'function' ? action(thunkDispatcher, getState) : dispatch(action)),

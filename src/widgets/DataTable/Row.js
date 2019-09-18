@@ -47,7 +47,7 @@ const Row = React.memo(
     }
 
     const { adjustToTop } = useContext(RefContext);
-    const onPressRow = useCallback(() => onPress(rowData));
+    const onPressRow = useCallback(() => onPress(rowData), []);
     const onFocus = () => adjustToTop(rowIndex);
 
     const Container = onPress ? TouchableOpacity : View;

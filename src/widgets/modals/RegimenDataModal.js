@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useEffect, useReducer } from 'react';
+import React, { useCallback, useEffect, useReducer } from 'react';
 import PropTypes from 'prop-types';
 
 import { DataTablePageView } from '..';
@@ -97,7 +97,7 @@ export const RegimenDataModal = ({ requisition }) => {
     );
   };
 
-  const renderHeader = () => <DataTableHeaderRow columns={columns} />;
+  const renderHeader = useCallback(() => <DataTableHeaderRow columns={columns} />, []);
 
   return (
     <DataTablePageView>
