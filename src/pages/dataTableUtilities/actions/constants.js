@@ -13,6 +13,8 @@ export const ACTIONS = {
   ADD_RECORD: 'addRecord',
   HIDE_OVER_STOCKED: 'hideOverStocked',
   HIDE_STOCK_OUT: 'hideStockOut',
+  SHOW_FINALISED: 'showFinalised',
+  SHOW_NOT_FINALISED: 'showNotFinalised',
 
   // pageAction constants
   OPEN_MODAL: 'openModal',
