@@ -1,7 +1,14 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Text, TouchableOpacity, TouchableOpacityPropTypes, View } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  TouchableOpacityPropTypes,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 import { getAdjustedStyle } from './utilities';
 
@@ -42,12 +49,19 @@ const TouchableCell = React.memo(
   }) => {
     if (debug) console.log(`- TouchableCell: ${rowKey},${columnKey}`);
 
-    const onPress = () => {
-      dispatch(onPressAction(rowKey, columnKey));
-    };
+    const onPress = () => dispatch(onPressAction(rowKey, columnKey));
+
+    // TouchableWithoutFeedback doesn't have a style prop. View doesn't have an onPress
+    // Prop. This hack ensures events don't propogate to the parent, styling stays consistent
+    // and no feedback (i.e. gesture echo) is given to the user.
+    const TouchableNoFeedback = ({ children, style }) => (
+      <TouchableWithoutFeedback onPress={() => {}}>
+        <View style={style}>{children}</View>
+      </TouchableWithoutFeedback>
+    );
 
     const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
-    const Container = isDisabled ? View : TouchableComponent || TouchableOpacity;
+    const Container = isDisabled ? TouchableNoFeedback : TouchableComponent || TouchableOpacity;
     const content = renderChildren ? renderChildren(value) : <Text style={textStyle}>{value}</Text>;
 
     return (
