@@ -197,6 +197,11 @@ const newDataTableStyles = {
     fontSize: APP_GENERAL_FONT_SIZE,
     color: LIGHT_GREY,
   },
+  iconCell: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 };
 
 export default newDataTableStyles;
