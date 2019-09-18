@@ -2,12 +2,12 @@ import Realm from 'realm';
 
 import { complement } from 'set-manipulator';
 
-import { NUMBER_SEQUENCE_KEYS } from '../index';
 import {
   addBatchToParent,
   createRecord,
   getTotal,
   reuseNumber as reuseSerialNumber,
+  NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
 
 /**

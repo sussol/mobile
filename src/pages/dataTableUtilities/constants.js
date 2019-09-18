@@ -44,7 +44,7 @@ export const COLUMN_KEYS = {
   SUGGESTED_QUANTITY: 'suggestedQuantity',
   SUPPLIED_QUANTITY: 'suppliedQuantity',
   TOTAL_QUANTITY: 'totalQuantity',
-  UNIT: 'unit',
+  UNIT: 'unitString',
   VALUE: 'value',
 };
 
