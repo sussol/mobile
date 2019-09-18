@@ -82,6 +82,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
@@ -152,21 +153,16 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     );
   }, []);
 
-  const renderToggleBar = () => (
-    <ToggleBar
-      toggles={[
-        {
-          text: buttonStrings.current,
-          onPress: () => dispatch(PageActions.showNotFinalised()),
-          isOn: !showFinalised,
-        },
-        {
-          text: buttonStrings.past,
-          onPress: () => dispatch(PageActions.showFinalised()),
-          isOn: showFinalised,
-        },
-      ]}
-    />
+  const renderToggleBar = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+        ]}
+      />
+    ),
+    [showFinalised]
   );
 
   const {
