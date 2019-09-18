@@ -56,14 +56,16 @@ const DataTableRow = React.memo(
       editableCellText,
       editableCellTextView,
       editableCellUnfocused,
-      selectedRow,
-      alternateRow,
-      row,
+      selectedRow: selectedRowStyle,
+      alternateRow: alternateRowStyle,
+      row: basicRowStyle,
     } = newDataTableStyles;
 
     const { isSelected = false } = rowState || {};
     // If the row is selected, use selectedRow style, otherwise alternate row style on index.
-    const rowStyle = isSelected ? selectedRow : (rowIndex % 2 === 0 && alternateRow) || row;
+    const rowStyle = isSelected
+      ? selectedRowStyle
+      : (rowIndex % 2 === 0 && alternateRowStyle) || basicRowStyle;
 
     // Callback for rendering a row of cells.
     const renderCells = useCallback(
