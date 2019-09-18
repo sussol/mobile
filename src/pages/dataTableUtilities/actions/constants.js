@@ -28,13 +28,13 @@ export const ACTIONS = {
   EDIT_REQUIRED_QUANTITY: 'editRequiredQuantity',
   EDIT_EXPIRY_DATE: 'editExpiryDate',
   ENFORCE_REASON: 'enforceReasonChoice',
-  SELECT_ONE_ROW: 'selectOneRow',
 
   // cellAction constants
   FOCUS_CELL: 'focusCell',
   FOCUS_NEXT: 'focusNext',
   SELECT_ROW: 'selectRow',
   SELECT_ALL: 'selectAll',
+  SELECT_ONE_ROW: 'selectOneRow',
   SELECT_ROWS: 'selectRows',
   DESELECT_ROW: 'deselectRow',
   DESELECT_ALL: 'deselectAll',
