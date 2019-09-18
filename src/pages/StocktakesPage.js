@@ -16,7 +16,7 @@ import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { PageButton, DataTablePageView, SearchBar } from '../widgets';
+import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -148,6 +148,23 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     );
   }, []);
 
+  const renderToggleBar = () => (
+    <ToggleBar
+      toggles={[
+        {
+          text: buttonStrings.current,
+          onPress: () => {},
+          isOn: true,
+        },
+        {
+          text: buttonStrings.past,
+          onPress: () => {},
+          isOn: !false,
+        },
+      ]}
+    />
+  );
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -157,6 +174,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
+          {renderToggleBar()}
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
