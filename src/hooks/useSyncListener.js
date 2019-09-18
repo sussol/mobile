@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { useEffect, useRef } from 'react';
 
-import { UIDatabase } from '../database';
+import BaseDatabase from '../database/BaseDatabase';
 import { debounce } from '../utilities';
 
 /**
@@ -40,12 +40,12 @@ export const useSyncListener = (callback, dataTypes) => {
   const subscribe = () => {
     if (isSubscribed.current) return null;
     isSubscribed.current = true;
-    return UIDatabase.addListener(filterResults);
+    return BaseDatabase.addListener(filterResults);
   };
 
   const unSubscribe = callbackId => {
     if (!isSubscribed.current) return;
-    UIDatabase.removeListener(callbackId);
+    BaseDatabase.removeListener(callbackId);
     isSubscribed.current = false;
   };
 
