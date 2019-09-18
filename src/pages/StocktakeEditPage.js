@@ -196,14 +196,7 @@ export const StocktakeEditPage = ({
       />
     );
 
-    // Program stocktakes do not have a ManageStocktake button.
-    const Child = program ? () => null : ManageStocktake;
-
-    return (
-      <View style={newPageTopRightSectionContainer}>
-        <Child />
-      </View>
-    );
+    return <View style={newPageTopRightSectionContainer}>{program ? null : ManageStocktake}</View>;
   }, [program]);
 
   const {
