@@ -1,4 +1,7 @@
-// @ts-check
+/**
+ * mSupply Mobile
+ * Sustainable Solutions (NZ) Ltd. 2019
+ */
 
 export const COLUMN_TYPES = {
   CHECKABLE: 'checkable',
