@@ -14,5 +14,6 @@ export { recordKeyExtractor, getItemLayout } from './utilities';
 
 import getColumns from './getColumns';
 import getPageInfoColumns from './getPageInfoColumns';
+import getPageInitialiser from './getPageInitialiser';
 
-export { getColumns, getPageInfoColumns };
+export { getColumns, getPageInfoColumns, getPageInitialiser };

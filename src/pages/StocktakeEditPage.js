@@ -11,7 +11,7 @@ import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../utilities';
 import { usePageReducer } from '../hooks/usePageReducer';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
@@ -22,20 +22,6 @@ import { gotoStocktakeManagePage } from '../navigation/actions';
 import { buttonStrings } from '../localization';
 import { newPageStyles } from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
-
-const stateInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-});
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -65,10 +51,7 @@ export const StocktakeEditPage = ({
   navigation,
 }) => {
   const initialState = { page: routeName, pageObject: stocktake };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    initialState,
-    stateInitialiser
-  );
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     pageObject,

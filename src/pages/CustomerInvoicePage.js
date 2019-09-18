@@ -11,7 +11,7 @@ import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../utilities';
 import { useRecordListener, usePageReducer } from '../hooks';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
@@ -19,21 +19,6 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles, { newPageStyles } from '../globalStyles';
-
-const stateInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-  hasSelection: false,
-});
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -54,10 +39,7 @@ const stateInitialiser = pageObject => ({
  */
 export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
   const initialState = { page: routeName, pageObject: transaction };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    initialState,
-    stateInitialiser
-  );
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,

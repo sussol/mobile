@@ -9,12 +9,9 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { UIDatabase } from '../database';
-import Settings from '../settings/MobileAppSettings';
-
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
-import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
@@ -29,32 +26,9 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-const stateInitialiser = () => {
-  const backingData = UIDatabase.objects('Stocktake');
-  return {
-    backingData,
-    data: backingData
-      .filtered('status != $0', 'finalised')
-      .sorted('createdDate', true)
-      .slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name'],
-    sortBy: 'createdDate',
-    isAscending: false,
-    modalKey: '',
-    hasSelection: false,
-    usingPrograms: getAllPrograms(Settings, UIDatabase).length > 0,
-  };
-};
-
 export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
   const initialState = { page: routeName };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    initialState,
-    stateInitialiser
-  );
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
