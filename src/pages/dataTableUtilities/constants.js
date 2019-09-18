@@ -61,6 +61,7 @@ export const COLUMN_NAMES = {
   EDITABLE_COMMENT: 'editableComment',
   EDITABLE_REQUIRED_QUANTITY: 'editableRequiredQuantity',
   EDITABLE_VALUE: 'editableValue',
+  EDITABLE_TOTAL_QUANTITY: 'editableTotalQuantity',
   ENTRY_DATE: 'entryDate',
   EXPIRY_DATE: 'expiryDate',
   INVOICE_NUMBER: 'invoiceNumber',

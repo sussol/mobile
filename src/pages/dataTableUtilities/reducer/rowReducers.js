@@ -134,7 +134,7 @@ export const deselectRow = (state, action) => {
     }
   }
 
-  return { ...state, dataState: newDataState, hasSelection, allSelected: false };
+  return { ...state, dataState: newDataState, hasSelection, allSelected: false, selectedRow: null };
 };
 
 /**
@@ -214,8 +214,39 @@ export const deleteRecords = state => {
   };
 };
 
+/**
+ * Selects a row. Removes any existing selections to ensure only one
+ * row is selected at a time by using the selectRow state field. If
+ * `selectRow` action is used, multiple rows can be selected at one time.
+ */
+export const selectOneRow = (state, action) => {
+  const { selectedRow: oldSelectedRow, data, dataState, keyExtractor } = state;
+  const { payload } = action;
+
+  const { rowKey: newSelectedRowKey } = payload;
+
+  const newDataState = new Map(dataState);
+
+  // If there is a selectedRow already, remove it.
+  if (oldSelectedRow) {
+    const oldSelectedRowKey = keyExtractor(oldSelectedRow);
+    const oldSelectedRowState = newDataState.get(oldSelectedRowKey);
+    newDataState.set(oldSelectedRowKey, { ...oldSelectedRowState, isSelected: false });
+  }
+
+  // Update the state for the newly selected row
+  const newSelectedRowState = newDataState.get(newSelectedRowKey);
+  newDataState.set(newSelectedRowKey, { ...newSelectedRowState, isSelected: true });
+
+  // Find the corresponding rowData
+  const newSelectedRow = data.find(row => keyExtractor(row) === newSelectedRowKey);
+
+  return { ...state, dataState: newDataState, selectedRow: newSelectedRow };
+};
+
 export const RowReducerLookup = {
   selectRow,
+  selectOneRow,
   deselectRow,
   deselectAll,
   selectAll,

@@ -1,5 +1,3 @@
-// @ts-check
-
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -26,6 +24,7 @@ const PAGE_COLUMN_WIDTHS = {
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
+  stock: [1, 4, 1],
 };
 
 const PAGE_COLUMNS = {
@@ -33,7 +32,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.AVAILABLE_QUANTITY,
-    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
     COLUMN_NAMES.REMOVE,
   ],
   customerInvoices: [
@@ -47,7 +46,7 @@ const PAGE_COLUMNS = {
   supplierInvoice: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
-    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
     COLUMN_NAMES.EXPIRY_DATE,
     COLUMN_NAMES.REMOVE,
   ],
@@ -148,6 +147,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.EDITABLE_VALUE,
     COLUMN_NAMES.EDITABLE_COMMENT,
   ],
+  stock: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
 };
 
 const COLUMNS = () => ({
@@ -352,6 +352,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  [COLUMN_NAMES.TOTAL_QUANTITY]: {
+    type: 'numeric',
+    key: 'totalQuantity',
+    title: tableStrings.quantity,
+    alignText: 'right',
+    sortable: true,
+    editable: false,
+  },
 
   // EDITABLE NUMERIC COLUMNS
 
@@ -371,7 +379,7 @@ const COLUMNS = () => ({
     sortable: true,
     editable: true,
   },
-  [COLUMN_NAMES.TOTAL_QUANTITY]: {
+  [COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY]: {
     type: COLUMN_TYPES.NUMERIC_EDITABLE,
     key: COLUMN_KEYS.TOTAL_QUANTITY,
     title: tableStrings.quantity,

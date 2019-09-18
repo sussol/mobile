@@ -26,6 +26,7 @@ export const ACTIONS = {
   EDIT_REQUIRED_QUANTITY: 'editRequiredQuantity',
   EDIT_EXPIRY_DATE: 'editExpiryDate',
   ENFORCE_REASON: 'enforceReasonChoice',
+  SELECT_ONE_ROW: 'selectOneRow',
 
   // cellAction constants
   FOCUS_CELL: 'focusCell',
