@@ -67,11 +67,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     PageActions,
   } = state;
 
-  const callback = useCallback(() => dispatch(PageActions.refreshData()), []);
+  const refreshCallback = useCallback(() => dispatch(PageActions.refreshData()), []);
   // Listen to sync changing stocktake data - refresh if there are any.
-  useSyncListener(callback, ['Stocktake']);
+  useSyncListener(refreshCallback, ['Stocktake']);
   // Listen to navigation focusing this page - fresh if so.
-  useNavigationFocus(callback, navigation);
+  useNavigationFocus(refreshCallback, navigation);
 
   const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
   const onFilterData = value => dispatch(PageActions.filterData(value));

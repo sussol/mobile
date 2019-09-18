@@ -79,10 +79,10 @@ export const SupplierRequisitionsPage = ({
   } = state;
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  const callback = () => dispatch(PageActions.refreshData(), []);
-  useNavigationFocus(callback, navigation);
+  const refreshCallback = () => dispatch(PageActions.refreshData(), []);
+  useNavigationFocus(refreshCallback, navigation);
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useSyncListener(callback, 'Requisition');
+  useSyncListener(refreshCallback, 'Requisition');
 
   const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
   const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
