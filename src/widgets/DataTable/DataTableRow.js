@@ -27,9 +27,9 @@ import {
 } from '../icons';
 import TextInputCell from './TextInputCell';
 
-import { formatStatus } from '../../utilities/index';
+import { formatStatus } from '../../utilities';
 
-import { COLUMN_TYPES } from '../../pages/dataTableUtilities/constants';
+import { COLUMN_TYPES } from '../../pages/dataTableUtilities';
 
 /**
  * Wrapper component for a mSupply DataTable page row.

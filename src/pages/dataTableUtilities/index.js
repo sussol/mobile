@@ -8,6 +8,8 @@ export { getPageActions } from './actions';
 
 export { DataTablePageReducer } from './reducer';
 
+export { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS } from './constants';
+
 export { recordKeyExtractor, getItemLayout } from './utilities';
 
 import getColumns from './getColumns';
