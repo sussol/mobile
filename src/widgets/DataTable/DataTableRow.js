@@ -29,7 +29,7 @@ import TextInputCell from './TextInputCell';
 
 import { formatStatus } from '../../utilities/index';
 
-import COLUMN_TYPES from './types';
+import { COLUMN_TYPES } from '../../pages/dataTableUtilities/constants';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
