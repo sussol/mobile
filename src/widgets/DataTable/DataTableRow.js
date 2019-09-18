@@ -97,9 +97,7 @@ const DataTableRow = React.memo(
                   textViewStyle={editableCellTextView}
                   isLastCell={isLastCell}
                   keyboardType={
-                    type === COLUMN_TYPES.NUMERIC_EDITABLE
-                      ? COLUMN_TYPES.NUMERIC_EDITABLE
-                      : 'default'
+                    type === COLUMN_TYPES.NUMERIC ? COLUMN_TYPES.NUMERIC_EDITABLE : 'default'
                   }
                   textInputStyle={cellText[cellAlignment]}
                   textStyle={editableCellUnfocused[cellAlignment]}
