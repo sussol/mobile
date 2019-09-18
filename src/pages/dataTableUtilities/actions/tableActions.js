@@ -63,6 +63,16 @@ export const hideOverStocked = () => ({ type: ACTIONS.HIDE_OVER_STOCKED });
 export const hideStockOut = () => ({ type: ACTIONS.HIDE_STOCK_OUT });
 
 /**
+ * Hides all rows which have a status of finalised.
+ */
+export const showFinalised = () => ({ type: ACTIONS.SHOW_FINALISED });
+
+/**
+ * Shows all rows which do not have the status of finalised.
+ */
+export const showNotFinalised = () => ({ type: ACTIONS.SHOW_NOT_FINALISED });
+
+/**
  * Shows all items, regardless of current stock on hand, toggles
  * showAll to true and removes the current search filtering. Sort is
  * kept stable.
@@ -240,6 +250,8 @@ export const TableActionsLookup = {
   filterData,
   refreshData,
   hideOverStocked,
+  showNotFinalised,
+  showFinalised,
   hideStockOut,
   showOverStocked,
   showStockOut,
