@@ -1,9 +1,13 @@
+// @ts-check
+
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
 import { tableStrings } from '../../localization';
+
+import { COLUMN_TYPES, COLUMN_NAMES, COLUMN_KEYS } from './constants';
 
 const PAGE_COLUMN_WIDTHS = {
   customerInvoice: [2, 4, 2, 2, 1],
@@ -25,112 +29,153 @@ const PAGE_COLUMN_WIDTHS = {
 };
 
 const PAGE_COLUMNS = {
-  customerInvoice: ['itemCode', 'itemName', 'availableQuantity', 'totalQuantity', 'remove'],
-  customerInvoices: ['invoiceNumber', 'customer', 'status', 'entryDate', 'comment', 'remove'],
-  supplierInvoice: ['itemCode', 'itemName', 'totalQuantity', 'expiryDate', 'remove'],
-  supplierInvoices: ['invoiceNumber', 'supplier', 'status', 'entryDate', 'comment', 'remove'],
+  customerInvoice: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.AVAILABLE_QUANTITY,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.REMOVE,
+  ],
+  customerInvoices: [
+    COLUMN_NAMES.INVOICE_NUMBER,
+    COLUMN_NAMES.CUSTOMER,
+    COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.ENTRY_DATE,
+    COLUMN_NAMES.COMMENT,
+    COLUMN_NAMES.REMOVE,
+  ],
+  supplierInvoice: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.TOTAL_QUANTITY,
+    COLUMN_NAMES.EXPIRY_DATE,
+    COLUMN_NAMES.REMOVE,
+  ],
+  supplierInvoices: [
+    COLUMN_NAMES.INVOICE_NUMBER,
+    COLUMN_NAMES.SUPPLIER,
+    COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.ENTRY_DATE,
+    COLUMN_NAMES.COMMENT,
+    COLUMN_NAMES.REMOVE,
+  ],
   supplierRequisitions: [
-    'requisitionNumber',
-    'supplier',
-    'numberOfItems',
-    'entryDate',
-    'status',
-    'remove',
+    COLUMN_NAMES.REQUISITION_NUMBER,
+    COLUMN_NAMES.SUPPLIER,
+    COLUMN_NAMES.NUMBER_OF_ITEMS,
+    COLUMN_NAMES.ENTRY_DATE,
+    COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.REMOVE,
   ],
   supplierRequisition: [
-    'itemCode',
-    'itemName',
-    'ourStockOnHand',
-    'monthlyUsage',
-    'suggestedQuantity',
-    'editableRequiredQuantity',
-    'remove',
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.OUR_STOCK_ON_HAND,
+    COLUMN_NAMES.MONTHLY_USAGE,
+    COLUMN_NAMES.SUGGESTED_QUANTITY,
+    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
+    COLUMN_NAMES.REMOVE,
   ],
   supplierRequisitionWithProgram: [
-    'itemCode',
-    'itemName',
-    'unit',
-    'price',
-    'ourStockOnHand',
-    'monthlyUsage',
-    'suggestedQuantity',
-    'editableRequiredQuantity',
-    'remove',
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.UNIT,
+    COLUMN_NAMES.PRICE,
+    COLUMN_NAMES.OUR_STOCK_ON_HAND,
+    COLUMN_NAMES.MONTHLY_USAGE,
+    COLUMN_NAMES.SUGGESTED_QUANTITY,
+    COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
+    COLUMN_NAMES.REMOVE,
   ],
-  stocktakes: ['name', 'createdDate', 'status', 'remove'],
-  stocktakeManager: ['code', 'name', 'selected'],
+  stocktakes: [
+    COLUMN_NAMES.NAME,
+    COLUMN_NAMES.CREATED_DATE,
+    COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.REMOVE,
+  ],
+  stocktakeManager: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.SELECTED],
   stocktakeEditor: [
-    'itemCode',
-    'itemName',
-    'snapshotTotalQuantity',
-    'countedTotalQuantity',
-    'difference',
-    'batches',
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DIFFERENCE,
+    COLUMN_NAMES.BATCHES,
   ],
   stocktakeEditorWithReasons: [
-    'itemCode',
-    'itemName',
-    'snapshotTotalQuantity',
-    'countedTotalQuantity',
-    'difference',
-    'reason',
-    'batches',
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DIFFERENCE,
+    COLUMN_NAMES.REASON,
+    COLUMN_NAMES.BATCHES,
   ],
-  customerRequisitions: ['requisitionNumber', 'customer', 'numberOfItems', 'entryDate', 'status'],
+  customerRequisitions: [
+    COLUMN_NAMES.REQUISITION_NUMBER,
+    COLUMN_NAMES.CUSTOMER,
+    COLUMN_NAMES.NUMBER_OF_ITEMS,
+    COLUMN_NAMES.ENTRY_DATE,
+    COLUMN_NAMES.STATUS,
+  ],
   customerRequisition: [
-    'itemCode',
-    'itemName',
-    'ourStockOnHand',
-    'theirStockOnHand',
-    'monthlyUsage',
-    'suggestedQuantity',
-    'requiredQuantity',
-    'suppliedQuantity',
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.OUR_STOCK_ON_HAND,
+    COLUMN_NAMES.THEIR_STOCK_ON_HAND,
+    COLUMN_NAMES.MONTHLY_USAGE,
+    COLUMN_NAMES.SUGGESTED_QUANTITY,
+    COLUMN_NAMES.REQUIRED_QUANTITY,
+    COLUMN_NAMES.SUPPLIED_QUANTITY,
   ],
   stocktakeBatchEditModal: [
-    'batchName',
-    'expiryDate',
-    'snapshotTotalQuantity',
-    'countedTotalQuantity',
-    'difference',
+    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.EXPIRY_DATE,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DIFFERENCE,
   ],
   stocktakeBatchEditModalWithReasons: [
-    'batchName',
-    'expiryDate',
-    'snapshotTotalQuantity',
-    'countedTotalQuantity',
-    'difference',
-    'reason',
+    COLUMN_NAMES.BATCH_NAME,
+    COLUMN_NAMES.EXPIRY_DATE,
+    COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
+    COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
+    COLUMN_NAMES.DIFFERENCE,
+    COLUMN_NAMES.REASON,
   ],
-  regimenDataModal: ['question', 'editableValue', 'editableComment'],
+  regimenDataModal: [
+    COLUMN_NAMES.QUESTION,
+    COLUMN_NAMES.EDITABLE_VALUE,
+    COLUMN_NAMES.EDITABLE_COMMENT,
+  ],
 };
 
 const COLUMNS = () => ({
   // CODE COLUMNS
-  invoiceNumber: {
-    type: 'string',
-    key: 'serialNumber',
+  [COLUMN_NAMES.INVOICE_NUMBER]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.SERIAL_NUMBER,
     title: tableStrings.invoice_number,
     sortable: true,
     editable: false,
   },
-  requisitionNumber: {
-    type: 'string',
-    key: 'serialNumber',
+  [COLUMN_NAMES.REQUISITION_NUMBER]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.SERIAL_NUMBER,
     title: tableStrings.requisition_number,
     sortable: true,
     editable: false,
   },
-  itemCode: {
-    type: 'string',
-    key: 'itemCode',
+  [COLUMN_NAMES.ITEM_CODE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.ITEM_CODE,
     title: tableStrings.item_code,
     sortable: true,
     editable: false,
   },
-  code: {
-    type: 'string',
-    key: 'code',
+  [COLUMN_NAMES.CODE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.CODE,
     title: tableStrings.code,
     alignText: 'left',
     sortable: true,
@@ -139,61 +184,61 @@ const COLUMNS = () => ({
 
   // STRING COLUMNS
 
-  itemName: {
-    type: 'string',
-    key: 'itemName',
+  [COLUMN_NAMES.ITEM_NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.ITEM_NAME,
     title: tableStrings.item_name,
     sortable: true,
     editable: false,
   },
-  name: {
-    type: 'string',
-    key: 'name',
+  [COLUMN_NAMES.NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.NAME,
     title: tableStrings.name,
     alignText: 'left',
     sortable: true,
     editable: false,
   },
-  supplier: {
-    type: 'string',
-    key: 'otherPartyName',
+  [COLUMN_NAMES.SUPPLIER]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.OTHER_PARTY_NAME,
     title: tableStrings.supplier,
     sortable: true,
     editable: false,
   },
-  customer: {
-    type: 'string',
-    key: 'otherPartyName',
+  [COLUMN_NAMES.CUSTOMER]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.OTHER_PARTY_NAME,
     title: tableStrings.customer,
     sortable: true,
     editable: false,
   },
-  comment: {
-    type: 'string',
-    key: 'comment',
+  [COLUMN_NAMES.COMMENT]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.COMMENT,
     title: tableStrings.comment,
     lines: 2,
     editable: false,
   },
-  unit: {
-    type: 'string',
-    key: 'unit',
+  [COLUMN_NAMES.UNIT]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.UNIT,
     title: tableStrings.unit,
     alignText: 'center',
     sortable: false,
     editable: false,
   },
-  status: {
-    type: 'string',
-    key: 'status',
+  [COLUMN_NAMES.STATUS]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.STATUS,
     title: tableStrings.status,
     sortable: true,
     editable: false,
   },
-  question: {
-    type: 'string',
-    key: 'name',
-    title: 'Question',
+  [COLUMN_NAMES.QUESTION]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.NAME,
+    title: 'question',
     textAlign: 'left',
     sortable: false,
     editable: false,
@@ -201,25 +246,25 @@ const COLUMNS = () => ({
 
   // EDITABLE STRING COLUMNS
 
-  batchName: {
-    type: 'editableString',
-    key: 'batch',
+  [COLUMN_NAMES.BATCH_NAME]: {
+    type: COLUMN_TYPES.STRING_EDITABLE,
+    key: COLUMN_KEYS.BATCH,
     title: tableStrings.batch_name,
     alignText: 'center',
     editable: true,
   },
-  editableComment: {
-    type: 'editableString',
-    key: 'comment',
+  [COLUMN_NAMES.EDITABLE_COMMENT]: {
+    type: COLUMN_TYPES.STRING_EDITABLE,
+    key: COLUMN_KEYS.COMMENT,
     title: tableStrings.comment,
     textAlign: 'right',
     sortable: false,
     editable: true,
   },
-  editableValue: {
-    type: 'editableString',
-    key: 'value',
-    title: 'Value',
+  [COLUMN_NAMES.EDITABLE_VALUE]: {
+    type: COLUMN_TYPES.STRING_EDITABLE,
+    key: COLUMN_KEYS.VALUE,
+    title: 'value',
     textAlign: 'right',
     sortable: false,
     editable: true,
@@ -227,81 +272,81 @@ const COLUMNS = () => ({
 
   // NUMERIC COLUMNS
 
-  availableQuantity: {
-    type: 'numeric',
-    key: 'availableQuantity',
+  [COLUMN_NAMES.AVAILABLE_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.AVAILABLE_QUANTITY,
     title: tableStrings.available_stock,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  numberOfItems: {
-    type: 'numeric',
-    key: 'numberOfItems',
+  [COLUMN_NAMES.NUMBER_OF_ITEMS]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.NUMBER_OF_ITEMS,
     title: tableStrings.items,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  ourStockOnHand: {
-    type: 'numeric',
-    key: 'ourStockOnHand',
+  [COLUMN_NAMES.OUR_STOCK_ON_HAND]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.OUR_STOCK_ON_HAND,
     title: tableStrings.current_stock,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  theirStockOnHand: {
-    type: 'numeric',
-    key: 'stockOnHand',
+  [COLUMN_NAMES.THEIR_STOCK_ON_HAND]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.STOCK_ON_HAND,
     title: tableStrings.their_stock,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  suggestedQuantity: {
-    type: 'numeric',
-    key: 'suggestedQuantity',
+  [COLUMN_NAMES.SUGGESTED_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.SUGGESTED_QUANTITY,
     title: tableStrings.suggested_quantity,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  requiredQuantity: {
-    type: 'numeric',
-    key: 'requiredQuantity',
+  [COLUMN_NAMES.REQUIRED_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.REQUIRED_QUANTITY,
     title: tableStrings.required_quantity,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  difference: {
-    type: 'numeric',
-    key: 'difference',
+  [COLUMN_NAMES.DIFFERENCE]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.DIFFERENCE,
     title: tableStrings.difference,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  snapshotTotalQuantity: {
-    type: 'numeric',
-    key: 'snapshotTotalQuantity',
+  [COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.SNAPSHOT_TOTAL_QUANTITY,
     title: tableStrings.snapshot_quantity,
     alignText: 'right',
     sortable: true,
     editable: false,
   },
-  price: {
-    type: 'numeric',
-    key: 'price',
+  [COLUMN_NAMES.PRICE]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.PRICE,
     title: tableStrings.price,
     alignText: 'center',
     editable: false,
     sortable: true,
   },
-  monthlyUsage: {
-    type: 'numeric',
-    key: 'monthlyUsage',
+  [COLUMN_NAMES.MONTHLY_USAGE]: {
+    type: COLUMN_TYPES.NUMERIC,
+    key: COLUMN_KEYS.MONTHLY_USAGE,
     title: tableStrings.monthly_usage,
     alignText: 'right',
     sortable: true,
@@ -310,33 +355,33 @@ const COLUMNS = () => ({
 
   // EDITABLE NUMERIC COLUMNS
 
-  editableRequiredQuantity: {
-    type: 'editableNumeric',
-    key: 'requiredQuantity',
+  [COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    key: COLUMN_KEYS.REQUIRED_QUANTITY,
     title: tableStrings.required_quantity,
     alignText: 'right',
     sortable: true,
     editable: true,
   },
-  countedTotalQuantity: {
-    type: 'editableNumeric',
-    key: 'countedTotalQuantity',
+  [COLUMN_NAMES.COUNTED_TOTAL_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    key: COLUMN_KEYS.COUNTED_TOTAL_QUANTITY,
     title: tableStrings.actual_quantity,
     alignText: 'right',
     sortable: true,
     editable: true,
   },
-  totalQuantity: {
-    type: 'editableNumeric',
-    key: 'totalQuantity',
+  [COLUMN_NAMES.TOTAL_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    key: COLUMN_KEYS.TOTAL_QUANTITY,
     title: tableStrings.quantity,
     alignText: 'right',
     sortable: true,
     editable: true,
   },
-  suppliedQuantity: {
-    type: 'editableNumeric',
-    key: 'suppliedQuantity',
+  [COLUMN_NAMES.SUPPLIED_QUANTITY]: {
+    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    key: COLUMN_KEYS.SUPPLIED_QUANTITY,
     title: tableStrings.supply_quantity,
     alignText: 'right',
     sortable: true,
@@ -345,26 +390,26 @@ const COLUMNS = () => ({
 
   // DATE COLUMNS
 
-  createdDate: {
-    type: 'date',
-    key: 'createdDate',
+  [COLUMN_NAMES.CREATED_DATE]: {
+    type: COLUMN_TYPES.DATE,
+    key: COLUMN_KEYS.CREATED_DATE,
     title: tableStrings.created_date,
     alignText: 'left',
     sortable: true,
     editable: false,
   },
-  entryDate: {
-    type: 'date',
-    key: 'entryDate',
+  [COLUMN_NAMES.ENTRY_DATE]: {
+    type: COLUMN_TYPES.DATE,
+    key: COLUMN_KEYS.ENTRY_DATE,
     title: tableStrings.entered_date,
     sortable: true,
     editable: false,
   },
 
   // EDITABLE DATE COLUMNS
-  expiryDate: {
-    type: 'editableDate',
-    key: 'expiryDate',
+  [COLUMN_NAMES.EXPIRY_DATE]: {
+    type: COLUMN_TYPES.DATE,
+    key: COLUMN_KEYS.EXPIRY_DATE,
     title: tableStrings.batch_expiry,
     alignText: 'center',
     sortable: false,
@@ -372,18 +417,18 @@ const COLUMNS = () => ({
   },
 
   // CHECKABLE COLUMNS
-  remove: {
-    type: 'checkable',
-    key: 'remove',
+  [COLUMN_NAMES.REMOVE]: {
+    type: COLUMN_TYPES.CHECKABLE,
+    key: COLUMN_KEYS.REMOVE,
     title: tableStrings.remove,
     alignText: 'center',
     sortable: false,
     editable: false,
   },
 
-  selected: {
-    type: 'checkable',
-    key: 'selected',
+  [COLUMN_NAMES.SELECTED]: {
+    type: COLUMN_TYPES.CHECKABLE,
+    key: COLUMN_KEYS.SELECTED,
     title: tableStrings.selected,
     alignText: 'center',
     sortable: false,
@@ -392,17 +437,17 @@ const COLUMNS = () => ({
 
   // MISC COLUMNS
 
-  batches: {
-    type: 'icon',
-    key: 'batch',
+  [COLUMN_NAMES.BATCHES]: {
+    type: COLUMN_TYPES.ICON,
+    key: COLUMN_KEYS.BATCH,
     title: tableStrings.batches,
     sortable: false,
     alignText: 'center',
     editable: false,
   },
-  reason: {
-    type: 'dropDown',
-    key: 'reasonTitle',
+  [COLUMN_NAMES.REASON]: {
+    type: COLUMN_TYPES.DROP_DOWN,
+    key: COLUMN_KEYS.REASON_TITLE,
     title: tableStrings.reason,
     alignText: 'center',
     sortable: false,
