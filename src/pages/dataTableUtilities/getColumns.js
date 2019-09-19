@@ -47,7 +47,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
-    COLUMN_NAMES.EXPIRY_DATE,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.REMOVE,
   ],
   supplierInvoices: [
@@ -129,14 +129,14 @@ const PAGE_COLUMNS = {
   ],
   stocktakeBatchEditModal: [
     COLUMN_NAMES.BATCH_NAME,
-    COLUMN_NAMES.EXPIRY_DATE,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
     COLUMN_NAMES.DIFFERENCE,
   ],
   stocktakeBatchEditModalWithReasons: [
     COLUMN_NAMES.BATCH_NAME,
-    COLUMN_NAMES.EXPIRY_DATE,
+    COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
     COLUMN_NAMES.SNAPSHOT_TOTAL_QUANTITY,
     COLUMN_NAMES.COUNTED_TOTAL_QUANTITY,
     COLUMN_NAMES.DIFFERENCE,
@@ -247,14 +247,14 @@ const COLUMNS = () => ({
   // EDITABLE STRING COLUMNS
 
   [COLUMN_NAMES.BATCH_NAME]: {
-    type: COLUMN_TYPES.STRING_EDITABLE,
+    type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.BATCH,
     title: tableStrings.batch_name,
     alignText: 'center',
     editable: true,
   },
   [COLUMN_NAMES.EDITABLE_COMMENT]: {
-    type: COLUMN_TYPES.STRING_EDITABLE,
+    type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.COMMENT,
     title: tableStrings.comment,
     textAlign: 'right',
@@ -262,7 +262,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   [COLUMN_NAMES.EDITABLE_VALUE]: {
-    type: COLUMN_TYPES.STRING_EDITABLE,
+    type: COLUMN_TYPES.EDITABLE_STRING,
     key: COLUMN_KEYS.VALUE,
     title: 'value',
     textAlign: 'right',
@@ -364,7 +364,7 @@ const COLUMNS = () => ({
   // EDITABLE NUMERIC COLUMNS
 
   [COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY]: {
-    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.REQUIRED_QUANTITY,
     title: tableStrings.required_quantity,
     alignText: 'right',
@@ -372,7 +372,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   [COLUMN_NAMES.COUNTED_TOTAL_QUANTITY]: {
-    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.COUNTED_TOTAL_QUANTITY,
     title: tableStrings.actual_quantity,
     alignText: 'right',
@@ -380,7 +380,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   [COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY]: {
-    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.TOTAL_QUANTITY,
     title: tableStrings.quantity,
     alignText: 'right',
@@ -388,7 +388,7 @@ const COLUMNS = () => ({
     editable: true,
   },
   [COLUMN_NAMES.SUPPLIED_QUANTITY]: {
-    type: COLUMN_TYPES.NUMERIC_EDITABLE,
+    type: COLUMN_TYPES.EDITABLE_NUMERIC,
     key: COLUMN_KEYS.SUPPLIED_QUANTITY,
     title: tableStrings.supply_quantity,
     alignText: 'right',
@@ -415,8 +415,8 @@ const COLUMNS = () => ({
   },
 
   // EDITABLE DATE COLUMNS
-  [COLUMN_NAMES.EXPIRY_DATE]: {
-    type: COLUMN_TYPES.DATE,
+  [COLUMN_NAMES.EDITABLE_EXPIRY_DATE]: {
+    type: COLUMN_TYPES.EDITABLE_EXPIRY_DATE,
     key: COLUMN_KEYS.EXPIRY_DATE,
     title: tableStrings.batch_expiry,
     alignText: 'center',

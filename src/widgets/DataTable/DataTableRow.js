@@ -87,8 +87,8 @@ const DataTableRow = React.memo(
           const cellAlignment = alignText || 'left';
 
           switch (type) {
-            case COLUMN_TYPES.STRING_EDITABLE:
-            case COLUMN_TYPES.NUMERIC_EDITABLE:
+            case COLUMN_TYPES.EDITABLE_STRING:
+            case COLUMN_TYPES.EDITABLE_NUMERIC:
               return (
                 <TextInputCell
                   key={columnKey}
@@ -103,7 +103,7 @@ const DataTableRow = React.memo(
                   textViewStyle={editableCellTextView}
                   isLastCell={isLastCell}
                   keyboardType={
-                    type === COLUMN_TYPES.NUMERIC ? COLUMN_TYPES.NUMERIC_EDITABLE : 'default'
+                    type === COLUMN_TYPES.NUMERIC ? COLUMN_TYPES.EDITABLE_NUMERIC : 'default'
                   }
                   textInputStyle={cellText[cellAlignment]}
                   textStyle={editableCellUnfocused[cellAlignment]}
@@ -112,7 +112,7 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case COLUMN_TYPES.DATE_EDITABLE:
+            case COLUMN_TYPES.EXPIRY_DATE_EDITABLE:
               return (
                 <NewExpiryDateInput
                   key={columnKey}
