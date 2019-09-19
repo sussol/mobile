@@ -63,6 +63,30 @@ export const refreshData = state => {
 };
 
 /**
+ * Filters `backingData` by status, setting `data` as all elements whose
+ * status is finalised.
+ */
+export const showFinalised = state => {
+  const { backingData } = state;
+
+  const newData = backingData.filtered('status == $0', 'finalised');
+
+  return { ...state, data: newData, showFinalised: true };
+};
+
+/**
+ * Filters `backingData` by status, setting `data` as all elements whose
+ * status is not finalised.
+ */
+export const showNotFinalised = state => {
+  const { backingData } = state;
+
+  const newData = backingData.filtered('status != $0', 'finalised');
+
+  return { ...state, data: newData, showFinalised: false };
+};
+
+/**
  * Filters backingData by the elements isLessThanThresholdMOS field.
  */
 export const hideOverStocked = state => {
@@ -106,6 +130,8 @@ export const addRecord = (state, action) => {
 
 export const TableReducerLookup = {
   hideStockOut,
+  showNotFinalised,
+  showFinalised,
   addRecord,
   hideOverStocked,
   refreshData,

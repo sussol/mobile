@@ -13,6 +13,8 @@ export const ACTIONS = {
   ADD_RECORD: 'addRecord',
   HIDE_OVER_STOCKED: 'hideOverStocked',
   HIDE_STOCK_OUT: 'hideStockOut',
+  SHOW_FINALISED: 'showFinalised',
+  SHOW_NOT_FINALISED: 'showNotFinalised',
 
   // pageAction constants
   OPEN_MODAL: 'openModal',
@@ -26,13 +28,13 @@ export const ACTIONS = {
   EDIT_REQUIRED_QUANTITY: 'editRequiredQuantity',
   EDIT_EXPIRY_DATE: 'editExpiryDate',
   ENFORCE_REASON: 'enforceReasonChoice',
-  SELECT_ONE_ROW: 'selectOneRow',
 
   // cellAction constants
   FOCUS_CELL: 'focusCell',
   FOCUS_NEXT: 'focusNext',
   SELECT_ROW: 'selectRow',
   SELECT_ALL: 'selectAll',
+  SELECT_ONE_ROW: 'selectOneRow',
   SELECT_ROWS: 'selectRows',
   DESELECT_ROW: 'deselectRow',
   DESELECT_ALL: 'deselectAll',

@@ -16,7 +16,7 @@ import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { PageButton, DataTablePageView, SearchBar } from '../widgets';
+import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -33,7 +33,10 @@ const stateInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
   return {
     backingData,
-    data: backingData.sorted('createdDate', true).slice(),
+    data: backingData
+      .filtered('status != $0', 'finalised')
+      .sorted('createdDate', true)
+      .slice(),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -65,6 +68,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     keyExtractor,
     columns,
     PageActions,
+    showFinalised,
   } = state;
 
   const refreshCallback = useCallback(() => dispatch(PageActions.refreshData()), []);
@@ -78,6 +82,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
@@ -148,6 +153,18 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     );
   }, []);
 
+  const PastCurrentToggleBar = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+        ]}
+      />
+    ),
+    [showFinalised]
+  );
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -157,6 +174,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
+          <PastCurrentToggleBar />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
