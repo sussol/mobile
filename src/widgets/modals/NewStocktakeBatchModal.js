@@ -11,7 +11,7 @@ import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../../utilities';
 import { usePageReducer } from '../../hooks';
-import { recordKeyExtractor, getItemLayout } from '../../pages/dataTableUtilities';
+import { getItemLayout } from '../../pages/dataTableUtilities';
 
 import { GenericChoiceList } from '../GenericChoiceList';
 import { PageInfo, DataTablePageView, PageButton } from '..';
@@ -22,18 +22,6 @@ import { newPageStyles } from '../../globalStyles';
 import { UIDatabase } from '../../database';
 import ModalContainer from './ModalContainer';
 import { buttonStrings } from '../../localization/index';
-
-const stateInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.batches,
-  data: pageObject.batches.slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-});
 
 /**
  * Renders a stateful modal with a stocktake item and it's batches loaded
@@ -54,12 +42,13 @@ const stateInitialiser = pageObject => ({
  */
 export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
   const usingReasons = useMemo(() => UIDatabase.objects('StocktakeReasons').length > 0, []);
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    usingReasons ? 'stocktakeBatchEditModalWithReasons' : 'stocktakeBatchEditModal',
-    {},
-    stateInitialiser,
-    stocktakeItem
-  );
+
+  const initialState = {
+    page: usingReasons ? 'stocktakeBatchEditModalWithReasons' : 'stocktakeBatchEditModal',
+    pageObject: stocktakeItem,
+  };
+
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     pageObject,

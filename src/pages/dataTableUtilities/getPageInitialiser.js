@@ -102,6 +102,18 @@ const stocktakesInitialiser = () => {
   };
 };
 
+const stocktakeBatchInitialiser = pageObject => ({
+  pageObject,
+  backingData: pageObject.batches,
+  data: pageObject.batches.slice(),
+  keyExtractor: recordKeyExtractor,
+  dataState: new Map(),
+  sortBy: 'itemName',
+  isAscending: true,
+  modalKey: '',
+  modalValue: null,
+});
+
 const stocktakeManagerInitialiser = pageObject => {
   const backingData = UIDatabase.objects('Item');
   return {
@@ -216,6 +228,8 @@ const pageInitialisers = {
   customerRequisition: customerRequisitionInitialiser,
   customerRequisitions: customerRequisitionsInitialiser,
   stock: stockInitialiser,
+  stocktakeBatchEditModal: stocktakeBatchInitialiser,
+  stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
