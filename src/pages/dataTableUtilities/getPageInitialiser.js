@@ -9,10 +9,16 @@ import Settings from '../../settings/MobileAppSettings';
 import { newSortDataBy, getAllPrograms } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 
-const customerInvoiceInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
+/**
+ * Gets data for initialising a customer invoice page from an associated transaction.
+ *
+ * @param    {Transaction}  transaction
+ * @returns  {object}
+ */
+const customerInvoiceInitialiser = transaction => ({
+  transaction,
+  backingData: transaction.items,
+  data: transaction.items.sorted('item.name').slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   searchTerm: '',
@@ -24,6 +30,11 @@ const customerInvoiceInitialiser = pageObject => ({
   hasSelection: false,
 });
 
+/**
+ * Gets data for initialising a customer invoices page.
+ *
+ * @returns  {object}
+ */
 const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   return {
@@ -40,10 +51,16 @@ const customerInvoicesInitialiser = () => {
   };
 };
 
-const customerRequisitionInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
+/**
+ * Gets data for initialising a customer requisition page from an associated requisition.
+ *
+ * @param    {Requisition}  requisition
+ * @returns  {object}
+ */
+const customerRequisitionInitialiser = requisition => ({
+  requisition,
+  backingData: requisition.items,
+  data: requisition.items.sorted('item.name').slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   searchTerm: '',
@@ -53,6 +70,11 @@ const customerRequisitionInitialiser = pageObject => ({
   modalKey: '',
 });
 
+/**
+ * Gets data for initialising a customer requisitions page.
+ *
+ * @returns  {object}
+ */
 const customerRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
   const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
@@ -67,6 +89,11 @@ const customerRequisitionsInitialiser = () => {
   };
 };
 
+/**
+ * Gets data for initialising a stock page.
+ *
+ * @returns  {object}
+ */
 const stockInitialiser = () => {
   const backingData = UIDatabase.objects('Item').sorted('name');
   return {
@@ -82,6 +109,11 @@ const stockInitialiser = () => {
   };
 };
 
+/**
+ * Gets data for initialising a stocktakes page.
+ *
+ * @returns  {object}
+ */
 const stocktakesInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
   return {
@@ -102,10 +134,16 @@ const stocktakesInitialiser = () => {
   };
 };
 
-const stocktakeBatchInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.batches,
-  data: pageObject.batches.slice(),
+/**
+ * Gets data for initialising a stocktake batch page from an associated stocktake item.
+ *
+ * @param    {StocktakeItem}  stocktakeItem
+ * @returns  {object}
+ */
+const stocktakeBatchInitialiser = stocktakeItem => ({
+  stocktakeItem,
+  backingData: stocktakeItem.batches,
+  data: stocktakeItem.batches.slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   sortBy: 'itemName',
@@ -114,17 +152,23 @@ const stocktakeBatchInitialiser = pageObject => ({
   modalValue: null,
 });
 
-const stocktakeManagerInitialiser = pageObject => {
+/**
+ * Gets data for initialising a manage stocktake page from an associated stocktake item.
+ *
+ * @param    {Stocktake}  stocktake
+ * @returns  {object}
+ */
+const stocktakeManagerInitialiser = stocktake => {
   const backingData = UIDatabase.objects('Item');
   return {
-    pageObject,
+    stocktake,
     backingData,
     data: backingData.sorted('name').slice(),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
     filterDataKeys: ['name', 'code'],
-    name: pageObject ? pageObject.name : '',
+    name: stocktake ? stocktake.name : '',
     sortBy: 'name',
     isAscending: true,
     hasSelection: false,
@@ -133,10 +177,16 @@ const stocktakeManagerInitialiser = pageObject => {
   };
 };
 
-const stocktakeEditorInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
+/**
+ * Gets data for initialising an edit stocktake page from an associated stocktake item.
+ *
+ * @param    {Stocktake}  stocktake
+ * @returns  {object}
+ */
+const stocktakeEditorInitialiser = stocktake => ({
+  stocktake,
+  backingData: stocktake.items,
+  data: stocktake.items.sorted('item.name').slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   searchTerm: '',
@@ -147,10 +197,16 @@ const stocktakeEditorInitialiser = pageObject => ({
   modalValue: null,
 });
 
-const supplierInvoiceInitialiser = pageObject => {
-  const backingData = pageObject.getTransactionBatches(UIDatabase);
+/**
+ * Gets data for initialising a supplier invoice page from an associated transaction item.
+ *
+ * @param    {Transaction}  transaction
+ * @returns  {object}
+ */
+const supplierInvoiceInitialiser = transaction => {
+  const backingData = transaction.getTransactionBatches(UIDatabase);
   return {
-    pageObject,
+    transaction,
     backingData,
     data: backingData.sorted('itemName').slice(),
     keyExtractor: recordKeyExtractor,
@@ -165,6 +221,11 @@ const supplierInvoiceInitialiser = pageObject => {
   };
 };
 
+/**
+ * Gets data for initialising a supplier invoices page.
+ *
+ * @returns  {object}
+ */
 const supplierInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierInvoice');
   return {
@@ -181,6 +242,12 @@ const supplierInvoicesInitialiser = () => {
   };
 };
 
+/**
+ * Gets data for initialising a supplier requisition page from an associated requisition.
+ *
+ * @param    {Requisition}  requisition
+ * @returns  {object}
+ */
 const supplierRequisitionInitialiser = requisition => {
   const { program, items: backingData } = requisition;
   const showAll = !program;
@@ -205,6 +272,11 @@ const supplierRequisitionInitialiser = requisition => {
   };
 };
 
+/**
+ * Gets data for initialising a supplier requisitions page.
+ *
+ * @returns  {object}
+ */
 const supplierRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
   const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
@@ -239,6 +311,12 @@ const pageInitialisers = {
   supplierRequisitions: supplierRequisitionsInitialiser,
 };
 
+/**
+ * A wrapper for mapping pages to initialisation functions.
+ *
+ * @param    {object}    A mapper from page names to initialisation functions.
+ * @returns  {Function}  A lookup function for retrieving page initialisers.
+ */
 const getPageInitialiser = pageToInitialiser => page => pageToInitialiser[page];
 
 export default getPageInitialiser(pageInitialisers);
