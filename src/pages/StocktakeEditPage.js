@@ -188,7 +188,7 @@ export const StocktakeEditPage = ({
   );
 
   const PageButtons = useCallback(() => {
-    const ManageStocktake = () => (
+    const ManageStocktake = (
       <PageButton
         text={buttonStrings.manage_stocktake}
         onPress={onManageStocktake}
