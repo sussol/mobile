@@ -52,8 +52,7 @@ export const useRecordListener = (callback, recordToListenFor, recordTypeToListe
   // Subscribe to the database using the inner filter callback.
   const subscribe = () => {
     if (subscription.current) return null;
-    const x = UIDatabase.addListener(filterResults);
-    return x;
+    return UIDatabase.addListener(filterResults);
   };
 
   // Unsubscribe from changes to the database.
