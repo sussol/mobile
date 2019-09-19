@@ -45,6 +45,7 @@ import { debounce } from '../utilities/index';
  */
 export const usePageReducer = (
   initialState,
+  initialiser,
   debounceTimeout = 250,
   instantDebounceTimeout = 250
 ) => {
@@ -52,10 +53,10 @@ export const usePageReducer = (
   const columns = useMemo(() => getColumns(page), []);
   const pageInfoColumns = useMemo(() => getPageInfoColumns(page), []);
   const PageActions = useMemo(() => getPageActions(page), []);
-  const initialiser = useMemo(() => getPageInitialiser(page), []);
+  const pageInitialiser = useMemo(() => initialiser || getPageInitialiser(page), []);
 
   const [pageState, setPageState] = useState({
-    ...(initialiser ? initialiser(pageObject) : initialState),
+    ...(pageInitialiser ? pageInitialiser(pageObject) : initialState),
     columns,
     getPageInfoColumns: pageInfoColumns,
     PageActions,
