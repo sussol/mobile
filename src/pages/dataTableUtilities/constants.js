@@ -5,13 +5,13 @@
 
 export const COLUMN_TYPES = {
   CHECKABLE: 'checkable',
-  DATE_EDITABLE: 'editableDate',
+  EDITABLE_EXPIRY_DATE: 'editableExpiryDate',
   DATE: 'date',
   DROP_DOWN: 'dropdown',
   ICON: 'icon',
-  NUMERIC_EDITABLE: 'editableNumeric',
+  EDITABLE_NUMERIC: 'editableNumeric',
   NUMERIC: 'numeric',
-  STRING_EDITABLE: 'editableString',
+  EDITABLE_STRING: 'editableString',
   STRING: 'string',
 };
 
@@ -63,7 +63,7 @@ export const COLUMN_NAMES = {
   EDITABLE_VALUE: 'editableValue',
   EDITABLE_TOTAL_QUANTITY: 'editableTotalQuantity',
   ENTRY_DATE: 'entryDate',
-  EXPIRY_DATE: 'expiryDate',
+  EDITABLE_EXPIRY_DATE: 'editableExpiryDate',
   INVOICE_NUMBER: 'invoiceNumber',
   ITEM_CODE: 'itemCode',
   ITEM_NAME: 'itemName',
