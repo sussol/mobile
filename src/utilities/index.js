@@ -22,6 +22,7 @@ export {
   checkForSupplierInvoiceError,
   checkForSupplierRequisitionError,
   checkForStocktakeError,
+  checkForCustomerRequisitionError,
 } from './finalisation';
 
 export { formatErrorItemNames } from './formatters';
