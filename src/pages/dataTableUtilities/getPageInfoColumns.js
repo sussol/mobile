@@ -4,9 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
-import { formatDate } from '../../utilities';
-
-import { MODAL_KEYS } from '../../utilities/getModalTitle';
+import { MODAL_KEYS, formatDate } from '../../utilities';
 
 /**
  * PageInfo rows/columns for use with the PageInfo component.
@@ -32,11 +30,11 @@ const PER_PAGE_INFO_COLUMNS = {
   supplierInvoice: [['entryDate', 'confirmDate'], ['otherParty', 'theirRef', 'transactionComment']],
   supplierRequisition: [
     ['entryDate', 'enteredBy'],
-    ['otherParty', 'monthsToSupply', 'requisitionComment'],
+    ['otherParty', 'editableMonthsToSupply', 'requisitionComment'],
   ],
   supplierRequisitionWithProgram: [
     ['program', 'orderType', 'entryDate', 'enteredBy'],
-    ['period', 'otherParty', 'editableMonthsToSupply', 'requisitionComment'],
+    ['period', 'otherParty', 'monthsToSupply', 'requisitionComment'],
   ],
   stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
   stocktakeEditorWithReasons: [['stocktakeName', 'stocktakeComment']],
