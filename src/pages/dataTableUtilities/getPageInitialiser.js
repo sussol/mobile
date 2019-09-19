@@ -67,6 +67,21 @@ const customerRequisitionsInitialiser = () => {
   };
 };
 
+const stockInitialiser = () => {
+  const backingData = UIDatabase.objects('Item').sorted('name');
+  return {
+    backingData,
+    data: backingData.slice(),
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['name'],
+    sortBy: 'name',
+    isAscending: true,
+    selectedRow: null,
+  };
+};
+
 const stocktakesInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
   return {
@@ -200,6 +215,7 @@ const pageInitialisers = {
   customerInvoices: customerInvoicesInitialiser,
   customerRequisition: customerRequisitionInitialiser,
   customerRequisitions: customerRequisitionsInitialiser,
+  stock: stockInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
