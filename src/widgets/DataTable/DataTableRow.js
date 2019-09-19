@@ -112,7 +112,7 @@ const DataTableRow = React.memo(
                 />
               );
 
-            case COLUMN_TYPES.EXPIRY_DATE_EDITABLE:
+            case COLUMN_TYPES.EDITABLE_EXPIRY_DATE:
               return (
                 <NewExpiryDateInput
                   key={columnKey}
