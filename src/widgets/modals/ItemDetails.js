@@ -29,8 +29,6 @@ import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
  * @param {Any}    modalProps Any additional props for the modal component.
  */
 export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
-  if (!item) return null;
-
   const headers = {
     batch: 'Batch',
     expiryDate: 'Expiry',
@@ -81,23 +79,27 @@ export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
     return [[categoryRow, departmentRow, usageRow]];
   };
 
-  const { modalContainer, scrollView, scrollViewContentContainer } = localStyles;
+  const { modalContainer, scrollView, scrollViewContentContainer, headerRow } = localStyles;
   return (
     <Modal style={modalContainer} isOpen={isOpen} {...modalProps}>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10 }}>
-        <TouchableOpacity onPress={onClose}>
-          <CloseIcon />
-        </TouchableOpacity>
-      </View>
+      {isOpen && item && (
+        <>
+          <View style={headerRow}>
+            <TouchableOpacity onPress={onClose}>
+              <CloseIcon />
+            </TouchableOpacity>
+          </View>
 
-      <ScrollView
-        indicatorStyle="white"
-        contentContainerStyle={scrollViewContentContainer}
-        style={scrollView}
-      >
-        <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
-        <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
-      </ScrollView>
+          <ScrollView
+            indicatorStyle="white"
+            contentContainerStyle={scrollViewContentContainer}
+            style={scrollView}
+          >
+            <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getItemInfo()} />
+            <PageInfo titleColor={SUSSOL_ORANGE} infoColor="white" columns={getBatchInfo()} />
+          </ScrollView>
+        </>
+      )}
     </Modal>
   );
 };
