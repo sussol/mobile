@@ -25,7 +25,7 @@ import { buttonStrings, modalStrings } from '../localization';
 
 const initialiseState = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber');
+  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
   return {
     backingData,
     data,
@@ -34,7 +34,7 @@ const initialiseState = () => {
     searchTerm: '',
     filterDataKeys: ['serialNumber', 'otherStoreName.name'],
     sortBy: 'serialNumber',
-    isAscending: true,
+    isAscending: false,
     modalKey: '',
     hasSelection: false,
   };

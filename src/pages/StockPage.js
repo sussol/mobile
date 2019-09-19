@@ -30,8 +30,8 @@ const stateInitialiser = () => {
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
+    filterDataKeys: ['name'],
+    sortBy: 'name',
     isAscending: true,
     selectedRow: null,
   };
@@ -77,7 +77,7 @@ export const StockPage = ({ routeName }) => {
 
   const onSelectRow = useCallback(({ id }) => dispatch(PageActions.selectOneRow(id)), []);
   const onDeselectRow = () => dispatch(PageActions.deselectRow(selectedRow.id));
-  const onFilterData = value => PageActions.filterData(value);
+  const onFilterData = value => dispatch(PageActions.filterData(value));
 
   const renderRow = useCallback(
     listItem => {
