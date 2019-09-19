@@ -195,22 +195,20 @@ const supplierRequisitionsInitialiser = () => {
   };
 };
 
-const getPageInitialiser = page => {
-  const pageToInitialiser = {
-    customerInvoice: customerInvoiceInitialiser,
-    customerInvoices: customerInvoicesInitialiser,
-    customerRequisition: customerRequisitionInitialiser,
-    customerRequisitions: customerRequisitionsInitialiser,
-    stocktakeEditor: stocktakeEditorInitialiser,
-    stocktakeManager: stocktakeManagerInitialiser,
-    stocktakes: stocktakesInitialiser,
-    supplierInvoice: supplierInvoiceInitialiser,
-    supplierInvoices: supplierInvoicesInitialiser,
-    supplierRequisition: supplierRequisitionInitialiser,
-    supplierRequisitions: supplierRequisitionsInitialiser,
-  };
-
-  return pageToInitialiser[page];
+const pageInitialisers = {
+  customerInvoice: customerInvoiceInitialiser,
+  customerInvoices: customerInvoicesInitialiser,
+  customerRequisition: customerRequisitionInitialiser,
+  customerRequisitions: customerRequisitionsInitialiser,
+  stocktakeEditor: stocktakeEditorInitialiser,
+  stocktakeManager: stocktakeManagerInitialiser,
+  stocktakes: stocktakesInitialiser,
+  supplierInvoice: supplierInvoiceInitialiser,
+  supplierInvoices: supplierInvoicesInitialiser,
+  supplierRequisition: supplierRequisitionInitialiser,
+  supplierRequisitions: supplierRequisitionsInitialiser,
 };
 
-export default getPageInitialiser;
+const getPageInitialiser = pageToInitialiser => page => pageToInitialiser[page];
+
+export default getPageInitialiser(pageInitialisers);
