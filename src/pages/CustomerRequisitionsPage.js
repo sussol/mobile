@@ -12,28 +12,11 @@ import { View } from 'react-native';
 import { SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { UIDatabase } from '../database';
-
-import { newSortDataBy } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
 import { newPageStyles } from '../globalStyles';
-
-const initialiseState = () => {
-  const backingData = UIDatabase.objects('ResponseRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
-  return {
-    backingData,
-    data,
-    keyExtractor: recordKeyExtractor,
-    searchTerm: '',
-    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
-    sortBy: 'serialNumber',
-    isAscending: false,
-  };
-};
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -54,7 +37,8 @@ const initialiseState = () => {
  * @prop {Object} navigation    Reference to the main application stack navigator.
  */
 export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
-  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
+  const initialState = { page: routeName };
+  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
 
   const { data, sortBy, isAscending, searchTerm, PageActions, columns, keyExtractor } = state;
 

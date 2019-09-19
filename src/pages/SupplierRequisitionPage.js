@@ -15,36 +15,12 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
 import globalStyles, { newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
-
-const stateInitialiser = requisition => {
-  const { program, items: backingData } = requisition;
-  const showAll = !program;
-
-  return {
-    pageObject: requisition,
-    backingData,
-    data: showAll
-      ? backingData.sorted('item.name').slice()
-      : backingData.filter(item => item.isLessThanThresholdMOS),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    showAll,
-    modalValue: null,
-  };
-};
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -64,12 +40,8 @@ const stateInitialiser = requisition => {
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    requisition
-  );
+  const initialState = { page: routeName, pageObject: requisition };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,

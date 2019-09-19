@@ -8,10 +8,9 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { UIDatabase } from '../database';
-import { MODAL_KEYS, newSortDataBy } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 import { gotoSupplierInvoice, createSupplierInvoice } from '../navigation/actions';
 
 import { PageButton, SearchBar, DataTablePageView } from '../widgets';
@@ -21,29 +20,14 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import { newPageStyles } from '../globalStyles';
 
-const initializer = () => {
-  const backingData = UIDatabase.objects('SupplierInvoice');
-  return {
-    backingData,
-    data: newSortDataBy(backingData.slice(), 'serialNumber', false),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['otherParty.name'],
-    sortBy: 'serialNumber',
-    isAscending: false,
-    modalKey: '',
-    hasSelection: false,
-  };
-};
-
 export const SupplierInvoicesPage = ({
   currentUser,
   routeName,
   navigation,
   dispatch: reduxDispatch,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {}, initializer);
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,

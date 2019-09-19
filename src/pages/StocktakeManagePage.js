@@ -9,10 +9,8 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { UIDatabase } from '../database';
-
 import { usePageReducer } from '../hooks';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
 
 import { BottomTextEditor } from '../widgets/modals';
@@ -22,37 +20,14 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import { newPageStyles } from '../globalStyles';
 
-const stateInitialiser = pageObject => {
-  const backingData = UIDatabase.objects('Item');
-  return {
-    pageObject,
-    backingData,
-    data: backingData.sorted('name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name', 'code'],
-    name: pageObject ? pageObject.name : '',
-    sortBy: 'name',
-    isAscending: true,
-    hasSelection: false,
-    allSelected: false,
-    showAll: true,
-  };
-};
-
 export const StocktakeManagePage = ({
   routeName,
   dispatch: reduxDispatch,
   stocktake,
   runWithLoadingIndicator,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    stocktake
-  );
+  const initialState = { page: routeName, pageObject: stocktake };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,

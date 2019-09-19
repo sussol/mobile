@@ -9,8 +9,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
-import { UIDatabase } from '../database';
+import { getItemLayout } from './dataTableUtilities/utilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -20,22 +19,6 @@ import { usePageReducer, useSyncListener } from '../hooks';
 import { DataTablePageView, SearchBar } from '../widgets';
 
 import { ItemDetails } from '../widgets/modals/ItemDetails';
-
-const stateInitialiser = () => {
-  const backingData = UIDatabase.objects('Item').sorted('name');
-
-  return {
-    backingData,
-    data: backingData.slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name'],
-    sortBy: 'name',
-    isAscending: true,
-    selectedRow: null,
-  };
-};
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -53,11 +36,8 @@ const stateInitialiser = () => {
  * @prop {Object} routeName Name of the current route.
  */
 export const StockPage = ({ routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser
-  );
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,

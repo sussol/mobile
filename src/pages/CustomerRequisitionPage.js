@@ -15,25 +15,12 @@ import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, SearchBar } from '../widgets';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
 import globalStyles, { newPageStyles } from '../globalStyles';
 import { buttonStrings } from '../localization';
-
-const stateInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name', 'item.code'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-});
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -53,12 +40,8 @@ const stateInitialiser = pageObject => ({
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    requisition
-  );
+  const initialState = { page: routeName, pageObject: requisition };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,

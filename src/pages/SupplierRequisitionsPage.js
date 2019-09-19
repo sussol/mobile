@@ -15,30 +15,13 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { MODAL_KEYS, getAllPrograms, newSortDataBy } from '../utilities';
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
 import globalStyles, { newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
-
-const initialiseState = () => {
-  const backingData = UIDatabase.objects('RequestRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
-  return {
-    backingData,
-    data,
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
-    sortBy: 'serialNumber',
-    isAscending: false,
-    modalKey: '',
-    hasSelection: false,
-  };
-};
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -64,7 +47,9 @@ export const SupplierRequisitionsPage = ({
   dispatch: reduxDispatch,
   navigation,
 }) => {
-  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
+  const initialState = { page: routeName };
+
+  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
