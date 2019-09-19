@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { CHANGE_TYPES } from 'react-native-database';
 
@@ -26,7 +26,7 @@ import { UIDatabase } from '../database';
  * unSubscribe  - function to unSubscribe, if already subscribed
  */
 export const useRecordListener = (callback, recordToListenFor, recordTypeToListenFor) => {
-  const [subscription, setSubscription] = useState(null);
+  const subscription = useRef();
 
   // Subscribing to the database notifies of all changes made. Filter
   // notifications by sync causation and by the record types provided.
@@ -51,20 +51,21 @@ export const useRecordListener = (callback, recordToListenFor, recordTypeToListe
 
   // Subscribe to the database using the inner filter callback.
   const subscribe = () => {
-    if (subscription) return null;
-    return UIDatabase.addListener(filterResults);
+    if (subscription.current) return null;
+    const x = UIDatabase.addListener(filterResults);
+    return x;
   };
 
   // Unsubscribe from changes to the database.
   const unSubscribe = callbackId => {
-    if (!subscription) return null;
+    if (!subscription.current) return null;
     return UIDatabase.removeListener(callbackId);
   };
 
   // Subscribe to the database on first invocation. Unsubscribe on unmounting
   useEffect(() => {
     const callbackId = subscribe();
-    setSubscription(callbackId);
+    subscription.current = callbackId;
     return () => unSubscribe(callbackId);
   }, []);
 
