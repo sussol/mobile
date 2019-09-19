@@ -16,13 +16,13 @@ import { recordKeyExtractor } from './utilities';
  * @returns  {object}
  */
 const customerInvoiceInitialiser = transaction => ({
-  transaction,
+  pageObject: transaction,
   backingData: transaction.items,
   data: transaction.items.sorted('item.name').slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   searchTerm: '',
-  filterDataKeys: ['item.name'],
+  filterDataKeys: ['item.name', 'item.code'],
   sortBy: 'itemName',
   isAscending: true,
   modalKey: '',
@@ -58,7 +58,7 @@ const customerInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const customerRequisitionInitialiser = requisition => ({
-  requisition,
+  pageObject: requisition,
   backingData: requisition.items,
   data: requisition.items.sorted('item.name').slice(),
   keyExtractor: recordKeyExtractor,
@@ -68,6 +68,7 @@ const customerRequisitionInitialiser = requisition => ({
   sortBy: 'itemName',
   isAscending: true,
   modalKey: '',
+  modalValue: null,
 });
 
 /**
@@ -83,7 +84,7 @@ const customerRequisitionsInitialiser = () => {
     data,
     keyExtractor: recordKeyExtractor,
     searchTerm: '',
-    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
+    filterDataKeys: ['serialNumber'],
     sortBy: 'serialNumber',
     isAscending: false,
   };
@@ -102,7 +103,7 @@ const stockInitialiser = () => {
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['name'],
+    filterDataKeys: ['name', 'code'],
     sortBy: 'name',
     isAscending: true,
     selectedRow: null,
@@ -125,7 +126,7 @@ const stocktakesInitialiser = () => {
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['name'],
+    filterDataKeys: ['name', 'serialNumber'],
     sortBy: 'createdDate',
     isAscending: false,
     modalKey: '',
@@ -184,13 +185,13 @@ const stocktakeManagerInitialiser = stocktake => {
  * @returns  {object}
  */
 const stocktakeEditorInitialiser = stocktake => ({
-  stocktake,
+  pageObject: stocktake,
   backingData: stocktake.items,
   data: stocktake.items.sorted('item.name').slice(),
   keyExtractor: recordKeyExtractor,
   dataState: new Map(),
   searchTerm: '',
-  filterDataKeys: ['item.name'],
+  filterDataKeys: ['item.name', 'item.code'],
   sortBy: 'itemName',
   isAscending: true,
   modalKey: '',
@@ -206,7 +207,7 @@ const stocktakeEditorInitialiser = stocktake => ({
 const supplierInvoiceInitialiser = transaction => {
   const backingData = transaction.getTransactionBatches(UIDatabase);
   return {
-    transaction,
+    pageObject: transaction,
     backingData,
     data: backingData.sorted('itemName').slice(),
     keyExtractor: recordKeyExtractor,
@@ -234,7 +235,7 @@ const supplierInvoicesInitialiser = () => {
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['otherParty.name'],
+    filterDataKeys: ['serialNumber'],
     sortBy: 'serialNumber',
     isAscending: false,
     modalKey: '',
@@ -260,9 +261,8 @@ const supplierRequisitionInitialiser = requisition => {
       : backingData.filter(item => item.isLessThanThresholdMOS),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
-    currentFocusedRowKey: null,
     searchTerm: '',
-    filterDataKeys: ['item.name'],
+    filterDataKeys: ['item.name, item.code'],
     sortBy: 'itemName',
     isAscending: true,
     modalKey: '',
@@ -286,7 +286,7 @@ const supplierRequisitionsInitialiser = () => {
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
+    filterDataKeys: ['serialNumber'],
     sortBy: 'serialNumber',
     isAscending: false,
     modalKey: '',
