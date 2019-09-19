@@ -71,9 +71,11 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
 
   // Focuses the next editable cell in the list. On the last row, dismiss the keyboard.
   const focusNextCell = refIndex => {
-    if (refIndex + 1 === numberOfEditableCells) return Keyboard.dismiss();
+    const lastRefIndex = numberOfEditableCells - 1;
+    if (refIndex === lastRefIndex) return Keyboard.dismiss();
 
-    const cellRef = getCellRef((refIndex + 1) % numberOfEditableCells);
+    const nextCellRef = (refIndex + 1) % numberOfEditableCells;
+    const cellRef = getCellRef(nextCellRef);
 
     return cellRef.current.focus();
   };
