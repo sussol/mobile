@@ -86,3 +86,13 @@ export const checkForStocktakeError = stocktake => {
   }
   return null;
 };
+
+/**
+ * A customer requisition is only created through sync, not through actions
+ * on a store in the app. The requisition SHOULD be valid. If it is not,
+ * no items or requested quantities etc can be entered to make it valid. If
+ * a check for these conditions was made and finalizing was not possible, the
+ * user could do nothing with the requisition, so just allowing finalizing.
+ * @return {Null}
+ */
+export const checkForCustomerRequisitionError = () => null;

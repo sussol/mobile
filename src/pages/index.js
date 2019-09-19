@@ -10,10 +10,7 @@ import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
-import {
-  CustomerRequisitionPage,
-  checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
-} from './CustomerRequisitionPage';
+import { CustomerRequisitionPage } from './CustomerRequisitionPage';
 import { StockPage } from './StockPage';
 import { StocktakeEditPage } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
@@ -28,6 +25,7 @@ import {
   checkForSupplierInvoiceError,
   checkForSupplierRequisitionError,
   checkForStocktakeError,
+  checkForCustomerRequisitionError,
 } from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
@@ -68,7 +66,7 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_customer_invoice',
   },
   customerRequisition: {
-    checkForError: checkForCustomerRequisitionFinaliseError,
+    checkForError: checkForCustomerRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_customer_requisition',
