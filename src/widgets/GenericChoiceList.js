@@ -12,7 +12,8 @@ import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native
 import { COMPONENT_HEIGHT } from '../globalStyles';
 
 /**
- * Generic choice list for use within a PageContentModal. Similar style as LanguageModal.
+ * Generic choice list for use within a PageContentModal.
+ *
  * On selecting a choice, returns the object which was selected, the index/row
  * within the data array and the field which was displayed to the user.
  * @prop  {array}   data            Array of objects from which a choice must be made from
@@ -107,4 +108,3 @@ GenericChoiceList.propTypes = {
 };
 
 export default GenericChoiceList;
-console.disableYellowBox = true;
