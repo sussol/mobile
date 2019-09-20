@@ -32,7 +32,13 @@ export class GenericChoiceList extends React.PureComponent {
   };
 
   renderRow = ({ item, index }) => {
-    const { onPress, keyToDisplay, highlightIndex, highlightValue } = this.props;
+    const {
+      onPress,
+      keyToDisplay,
+      highlightIndex,
+      highlightValue,
+      renderLeftComponent,
+    } = this.props;
     const { row, text } = localStyles;
 
     let shouldHighlight = false;
@@ -41,9 +47,11 @@ export class GenericChoiceList extends React.PureComponent {
 
     const rowStyle = shouldHighlight ? { ...row, backgroundColor: '#E95C30' } : row;
     const textStyle = shouldHighlight ? { ...text, color: '#FFF' } : text;
+
     return (
       <TouchableOpacity onPress={() => onPress({ item, index, keyToDisplay })}>
         <View style={rowStyle}>
+          {renderLeftComponent ? renderLeftComponent(item) : null}
           <Text style={textStyle}>{keyToDisplay ? item[keyToDisplay] : item}</Text>
         </View>
       </TouchableOpacity>
@@ -86,6 +94,7 @@ const localStyles = StyleSheet.create({
 GenericChoiceList.defaultProps = {
   highlightIndex: 0,
   highlightValue: null,
+  renderLeftComponent: null,
 };
 
 GenericChoiceList.propTypes = {
@@ -94,6 +103,8 @@ GenericChoiceList.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
   highlightIndex: PropTypes.number,
   highlightValue: PropTypes.string,
+  renderLeftComponent: PropTypes.func,
 };
 
 export default GenericChoiceList;
+console.disableYellowBox = true;
