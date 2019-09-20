@@ -16,35 +16,28 @@ export { syncStrings } from './syncStrings';
 export { validationStrings } from './validationStrings';
 export { programStrings } from './programStrings';
 
-export const LANGUAGES = {
-  ENGLISH: {
-    CODE: 'gb',
-    NAME: 'English',
-  },
-  KIRIBATI: {
-    CODE: 'gil',
-    NAME: 'te taetae ni Kiribati',
-  },
-  FRENCH: {
-    CODE: 'fr',
-    NAME: 'French',
-  },
-  TETUM: {
-    CODE: 'tl',
-    NAME: 'Tetum',
-  },
-  LAOS: {
-    CODE: 'la',
-    NAME: 'Laos',
-  },
+export const LANGUAGE_CODES = {
+  ENGLISH: 'gb',
+  KIRIBATI: 'gil',
+  FRENCH: 'fr',
+  TETUM: 'tl',
+  LAOS: 'la',
+};
+
+export const LANGUAGE_NAMES = {
+  [LANGUAGE_CODES.ENGLISH]: 'English',
+  [LANGUAGE_CODES.KIRIBATI]: 'te taetae ni Kiribati',
+  [LANGUAGE_CODES.FRENCH]: 'French',
+  [LANGUAGE_CODES.TETUM]: 'Tetum',
+  [LANGUAGE_CODES.LAOS]: 'Laos',
 };
 
 export const LANGUAGE_CHOICE = [
-  { code: LANGUAGES.ENGLISH.CODE, name: LANGUAGES.ENGLISH.NAME },
-  { code: LANGUAGES.FRENCH.CODE, name: LANGUAGES.FRENCH.NAME },
-  { code: LANGUAGES.KIRIBATI.CODE, name: LANGUAGES.KIRIBATI.NAME },
-  { code: LANGUAGES.LAOS.CODE, name: LANGUAGES.LAOS.NAME },
-  { code: LANGUAGES.TETUM.CODE, name: LANGUAGES.TETUM.NAME },
+  { code: LANGUAGE_CODES.ENGLISH, name: LANGUAGE_NAMES[LANGUAGE_CODES.ENGLISH] },
+  { code: LANGUAGE_CODES.FRENCH, name: LANGUAGE_NAMES[LANGUAGE_CODES.FRENCH] },
+  { code: LANGUAGE_CODES.KIRIBATI, name: LANGUAGE_NAMES[LANGUAGE_CODES.KIRIBATI] },
+  { code: LANGUAGE_CODES.LAOS, name: LANGUAGE_NAMES[LANGUAGE_CODES.LAOS] },
+  { code: LANGUAGE_CODES.TETUM, name: LANGUAGE_NAMES[LANGUAGE_CODES.TETUM] },
 ];
 
-export const DEFAULT_LANGUAGE = LANGUAGES.ENGLISH.CODE;
+export const DEFAULT_LANGUAGE = LANGUAGE_CODES.ENGLISH;
