@@ -3,14 +3,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import { LANGUAGE_CODES } from '../localization/index';
+
 import { KiribatiFlag, EnglishFlag, LaosFlag, TetumFlag, FrenchFlag } from './images';
 
 const LANGUAGE_TO_FLAG = {
-  fr: FrenchFlag,
-  tl: TetumFlag,
-  gb: EnglishFlag,
-  gil: KiribatiFlag,
-  la: LaosFlag,
+  [LANGUAGE_CODES.FRENCH]: FrenchFlag,
+  [LANGUAGE_CODES.TETUM]: TetumFlag,
+  [LANGUAGE_CODES.ENGLISH]: EnglishFlag,
+  [LANGUAGE_CODES.KIRIBATI]: KiribatiFlag,
+  [LANGUAGE_CODES.LAOS]: LaosFlag,
 };
 
 export const Flag = ({ style, flag }) => {
