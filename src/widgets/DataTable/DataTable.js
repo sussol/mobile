@@ -6,7 +6,7 @@
 
 import PropTypes from 'prop-types';
 import React, { useMemo, useRef, useCallback } from 'react';
-import { StyleSheet, VirtualizedList, VirtualizedListPropTypes } from 'react-native';
+import { StyleSheet, VirtualizedList, VirtualizedListPropTypes, Keyboard } from 'react-native';
 import RefContext from './RefContext';
 
 /**
@@ -69,11 +69,15 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
     return newRef;
   };
 
-  // Focuses the next editable cell in the list. Back to the top on last row.
+  // Focuses the next editable cell in the list. On the last row, dismiss the keyboard.
   const focusNextCell = refIndex => {
-    const cellRef = getCellRef((refIndex + 1) % numberOfEditableCells);
+    const lastRefIndex = numberOfEditableCells - 1;
+    if (refIndex === lastRefIndex) return Keyboard.dismiss();
 
-    cellRef.current.focus();
+    const nextCellRef = (refIndex + 1) % numberOfEditableCells;
+    const cellRef = getCellRef(nextCellRef);
+
+    return cellRef.current.focus();
   };
 
   // Adjusts the passed row to the top of the list.
