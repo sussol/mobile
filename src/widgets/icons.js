@@ -20,7 +20,7 @@ export const CheckedComponent = (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
 );
 export const UncheckedComponent = (
-  <IonIcon name="md-radio-button-off" size={15} color={dataTableColors.checkableCellUnchecked} />
+  <IonIcon name="md-radio-button-off" size={15} color={SUSSOL_ORANGE} />
 );
 export const DisabledCheckedComponent = (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
