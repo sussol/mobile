@@ -110,7 +110,7 @@ export class LoginModal extends React.Component {
     this.setState({ isLanguageModalOpen: false });
   };
 
-  renderFlag = ({ code }) => <Flag flag={code} />;
+  renderFlag = ({ code }) => <Flag countryCode={code} />;
 
   render() {
     const { isAuthenticated, settings } = this.props;
