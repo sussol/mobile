@@ -15,10 +15,17 @@ const LANGUAGE_TO_FLAG = {
   [LANGUAGE_CODES.LAOS]: LaosFlag,
 };
 
-export const Flag = ({ style, flag }) => {
-  const FlagImage = LANGUAGE_TO_FLAG[flag];
+/**
+ * Simple component rendering a flag image given the country code.
+ * See localization/index - LANGUAGE_CODES
+ *
+ * @param {Object} Style       Style object for the flag Image component
+ * @param {String} countryCode The country code whose flag should be used.
+ */
+export const Flag = ({ style, countryCode }) => {
+  const FlagImage = LANGUAGE_TO_FLAG[countryCode];
   return <FlagImage style={style} />;
 };
 
 Flag.defaultProps = { style: { width: 55, height: 33 } };
-Flag.propTypes = { style: PropTypes.object, flag: PropTypes.string.isRequired };
+Flag.propTypes = { style: PropTypes.object, countryCode: PropTypes.string.isRequired };
