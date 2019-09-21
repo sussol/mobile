@@ -34,9 +34,7 @@ export const filterData = (state, action) => {
   const { payload } = action;
   const { searchTerm } = payload;
 
-  const queryString = filterDataKeys
-    .map(filterTerm => `${filterTerm} CONTAINS[c]  $0`)
-    .join(' OR ');
+  const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
 
   const filteredData = backingData.filtered(queryString, searchTerm).slice();
 
@@ -55,9 +53,23 @@ export const filterData = (state, action) => {
 export const refreshData = state => {
   const { backingData, sortBy, isAscending } = state;
 
-  const newData = sortBy
-    ? newSortDataBy(backingData.slice(), sortBy, isAscending)
-    : backingData.slice();
+  const backingDataArray = backingData.slice();
+  const newData = sortBy ? newSortDataBy(backingDataArray, sortBy, isAscending) : backingDataArray;
+
+  return { ...state, data: newData, searchTerm: '', showAll: true };
+};
+
+/**
+ * Override for refreshData for pages which use a finalised toggle,
+ * which will display either finalised records, or unfinalised.
+ */
+export const refreshDataWithFinalisedToggle = state => {
+  const { backingData, sortBy, isAscending, showFinalised } = state;
+
+  const finalisedCondition = showFinalised ? '==' : '!=';
+  const filteredData = backingData.filtered(`status ${finalisedCondition} $0`, 'finalised');
+
+  const newData = sortBy ? newSortDataBy(filteredData.slice(), sortBy, isAscending) : filteredData;
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
 };
