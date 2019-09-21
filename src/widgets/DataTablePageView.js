@@ -13,7 +13,10 @@ const { newPageContentContainer, newContainer } = newPageStyles;
 
 const dismiss = () => Keyboard.dismiss();
 /**
- * Simple container for a standard data table page.
+ * Simple template container for a standard data table page.
+ * Handles placement of content and wraps the page with a
+ * Touchable, dismissing the keyboard when an event propogates
+ * to this level.
  */
 export const DataTablePageView = props => {
   const { children } = props;
