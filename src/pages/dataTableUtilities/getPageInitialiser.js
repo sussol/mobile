@@ -258,15 +258,12 @@ const supplierInvoicesInitialiser = () => {
  */
 const supplierRequisitionInitialiser = requisition => {
   const { items: backingData } = requisition;
-  const filteredData = backingData
-    .filtered('status != $0', 'finalised')
-    .sorted('item.name')
-    .slice();
+  const sortedData = backingData.sorted('item.name').slice();
 
   return {
     pageObject: requisition,
     backingData,
-    data: filteredData,
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
