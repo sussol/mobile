@@ -81,7 +81,7 @@ export const refreshDataWithFinalisedToggle = state => {
 export const showFinalised = state => {
   const { backingData } = state;
 
-  const newData = backingData.filtered('status == $0', 'finalised');
+  const newData = backingData.filtered('status == $0', 'finalised').slice();
 
   return { ...state, data: newData, showFinalised: true };
 };
@@ -93,7 +93,7 @@ export const showFinalised = state => {
 export const showNotFinalised = state => {
   const { backingData } = state;
 
-  const newData = backingData.filtered('status != $0', 'finalised');
+  const newData = backingData.filtered('status != $0', 'finalised').slice();
 
   return { ...state, data: newData, showFinalised: false };
 };
