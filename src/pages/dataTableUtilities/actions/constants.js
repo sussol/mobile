@@ -15,6 +15,7 @@ export const ACTIONS = {
   HIDE_STOCK_OUT: 'hideStockOut',
   SHOW_FINALISED: 'showFinalised',
   SHOW_NOT_FINALISED: 'showNotFinalised',
+  REFRESH_DATA_WITH_FINALISED_TOGGLE: 'refreshDataWithFinalisedToggle',
 
   // pageAction constants
   OPEN_MODAL: 'openModal',
