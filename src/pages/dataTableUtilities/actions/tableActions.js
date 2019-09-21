@@ -279,3 +279,20 @@ export const TableActionsLookup = {
   addTransactionItem,
   addStocktakeBatch,
 };
+
+/**
+ * =====================================================================
+ *
+ *                             Overrides
+ *
+ * Below are actions which are overrides of base actions.
+ *
+ * Example: editCountedQuantityWithReason overrides editCountedQuantity
+ * for a stocktakeEditPage when reasons are defined.
+ *
+ * =====================================================================
+ */
+
+export const refreshDataWithFinalisedToggle = () => ({
+  type: ACTIONS.REFRESH_DATA_WITH_FINALISED_TOGGLE,
+});
