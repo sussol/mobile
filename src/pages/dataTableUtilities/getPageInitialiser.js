@@ -303,11 +303,13 @@ const pageInitialisers = {
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
+  stocktakeEditorWithReasons: stocktakeEditorInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
   supplierInvoice: supplierInvoiceInitialiser,
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
+  supplierRequisitionWithProgram: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
 };
 
