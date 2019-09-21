@@ -18,16 +18,21 @@ export const SortAscIcon = <FAIcon name="sort-asc" size={15} style={{ marginRigh
 export const SortNeutralIcon = <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
 export const SortDescIcon = <FAIcon name="sort-desc" size={15} style={{ marginRight: 10 }} />;
 
-export const CheckedComponent = (
+export const CheckedComponent = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellChecked} />
 );
-export const UncheckedComponent = (
+
+export const UncheckedComponent = () => (
   <IonIcon name="md-radio-button-off" size={15} color={SUSSOL_ORANGE} />
 );
-export const DisabledCheckedComponent = (
+
+export const DisabledCheckedComponent = () => (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
 );
-export const DisabledUncheckedComponent = <MaterialIcon name="cancel" size={15} />;
+
+export const DisabledUncheckedComponent = () => <MaterialIcon name="cancel" size={15} />;
+
+export const OpenModal = () => <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />;
 
 export const MagnifyingGlass = React.memo(({ size, color }) => (
   <EvilIcon name="search" size={size} color={color} />
@@ -43,5 +48,3 @@ export const CloseIcon = React.memo(() => <IonIcon name="md-close" size={36} col
 export const Expand = React.memo(() => (
   <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />
 ));
-
-export const OpenModal = () => <FAIcon name="angle-double-up" size={20} color={SUSSOL_ORANGE} />;

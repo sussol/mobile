@@ -48,12 +48,9 @@ const CheckableCell = React.memo(
 
     const onPressAction = isChecked ? onUncheckAction : onCheckAction;
 
-    const renderCheck = () => {
-      if (isDisabled) {
-        return isChecked ? DisabledCheckedComponent : DisabledUncheckedComponent;
-      }
-      return isChecked ? CheckedComponent : UncheckedComponent;
-    };
+    const renderCheck = isChecked
+      ? (isDisabled && DisabledCheckedComponent) || CheckedComponent
+      : (isDisabled && DisabledUncheckedComponent) || UncheckedComponent;
 
     return (
       <TouchableCell
@@ -80,10 +77,10 @@ CheckableCell.propTypes = {
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isChecked: PropTypes.bool,
   isDisabled: PropTypes.bool,
-  CheckedComponent: PropTypes.element.isRequired,
-  UncheckedComponent: PropTypes.element.isRequired,
-  DisabledCheckedComponent: PropTypes.element,
-  DisabledUncheckedComponent: PropTypes.element,
+  CheckedComponent: PropTypes.func.isRequired,
+  UncheckedComponent: PropTypes.func.isRequired,
+  DisabledCheckedComponent: PropTypes.func,
+  DisabledUncheckedComponent: PropTypes.func,
   onCheckAction: PropTypes.func.isRequired,
   onUncheckAction: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
