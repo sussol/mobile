@@ -6,12 +6,8 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-import { View } from 'react-native';
+import { FlatList, View, VirtualizedList, Text, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
-
-import { Cell, DataTable, Header, HeaderCell, Row } from 'react-native-data-table';
-
-import { ListView } from 'realm/react-native';
 
 import globalStyles from '../globalStyles';
 import { UIDatabase } from '../database/index';
@@ -80,29 +76,83 @@ const OBJECT_FIELDS = {
   },
 };
 
-const getColumnKeys = ({ databaseObject }) => OBJECT_FIELDS[databaseObject];
+const toCapitalCase = value => value.charAt(0).toUpperCase() + value.slice(1);
 
-const toUpperCase = value => value.charAt(0).toUpperCase() + value.slice(1);
+const parseString = value => String(value);
+const parseNumber = value => String(value);
+const parseObject = value => value.id;
+const parseList = value => value.length;
+const parseBoolean = value => toCapitalCase(String(value));
+const parseDate = value => value.toString();
 
 const parseCell = (value, type) => {
   if (value === null || value === undefined) return 'N/A';
   switch (type) {
     case 'string':
-      return String(value);
+      return parseString(value);
     case 'number':
-      return String(value);
+      return parseNumber(value);
     case 'object':
-      return value.id;
+      return parseObject(value);
     case 'list':
-      return value.length;
+      return parseList(value);
     case 'boolean':
-      return toUpperCase(String(value));
+      return parseBoolean(value);
     case 'date':
-      return value.toString();
+      return parseDate(value);
     default:
       return '';
   }
 };
+
+const getInitialState = database => {
+  const objectString = 'Requisition';
+  const objectData = database.objects(objectString);
+  const searchString = '';
+  const filterString = '';
+  const filteredData = objectData;
+  return { objectString, objectData, searchString, filterString, filteredData };
+};
+
+const getUpdatedState = (database, state) => {
+  const { objectString, objectData, searchString, filterString, filteredData } = state;
+  const newState = { searchString, filterString };
+  const updateObject = searchString !== objectString && OBJECT_TYPES.indexOf(searchString) >= 0;
+  newState.objectString = updateObject ? searchString : objectString;
+  newState.objectData = updateObject ? database.objects(newState.objectString) : objectData;
+  if (filterString === '') {
+    newState.filteredData = newState.objectData;
+  } else {
+    try {
+      newState.filteredData = newState.objectData.filtered(filterString);
+    } catch (err) {
+      newState.filteredData = updateObject ? newState.objectData : filteredData;
+    }
+  }
+
+  return newState;
+};
+
+const ExplorerTable = ({
+  headerData,
+  data,
+  onSearchChange,
+  onFilterChange,
+  renderHeaderRow,
+  renderRow,
+}) => (
+  <View style={[globalStyles.container]}>
+    <SearchBar onChange={onSearchChange} placeholder="Table name" />
+    <SearchBar onChange={onFilterChange} placeholder="Filter string" />
+    <FlatList data={headerData} renderItem={renderHeaderRow} />
+    <VirtualizedList
+      data={data}
+      getItem={(d, i) => d[i]}
+      getItemCount={d => d.length}
+      renderItem={renderRow}
+    />
+  </View>
+);
 
 /**
  * A page to explore the contents of the local database. Allows searching for any
@@ -115,109 +165,73 @@ const parseCell = (value, type) => {
  * @state  {Realm.Results}        data           Holds the data that gets put into the dataSource.
  */
 export const RealmExplorer = ({ database }) => {
-  const initialState = {
-    databaseObject: 'Requisition',
-    data: database.objects('Requisition'),
-    dataSource: new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-    }),
-    unfilteredData: null,
+  const [state, setState] = useState(getInitialState(database));
+
+  const onSearchChange = searchString => {
+    setState({ ...state, searchString });
   };
-
-  const [state, setState] = useState(initialState);
-
-  const { databaseObject, data, dataSource, unfilteredData } = state;
-
-  useEffect(() => {
-    setState({
-      databaseObject,
-      data,
-      dataSource: dataSource.cloneWithRows(data),
-      unfilteredData: data,
-    });
-  }, []);
 
   const onFilterChange = filterString => {
-    if (!unfilteredData) return;
-    let updatedData = null;
-    if (filterString === '') {
-      updatedData = unfilteredData;
-    } else {
-      try {
-        updatedData = unfilteredData.filtered(filterString);
-      } catch (err) {
-        // Silently ignore errors.
-      }
-    }
-    if (updatedData) {
-      setState({
-        databaseObject,
-        data: updatedData,
-        dataSource: dataSource.cloneWithRows(updatedData),
-        unfilteredData,
-      });
-    }
+    setState({ ...state, filterString });
   };
 
-  const onSearchChange = searchTerm => {
-    if (OBJECT_TYPES.indexOf(searchTerm) < 0) return;
-    const updatedData = database.objects(searchTerm);
-    setState({
-      databaseObject: searchTerm,
-      data: updatedData,
-      dataSource: dataSource.cloneWithRows(updatedData),
-      unfilteredData: updatedData,
-    });
+  useEffect(() => setState(getUpdatedState(database, state)), [
+    state.searchString,
+    state.filterString,
+  ]);
+
+  const objectFields = OBJECT_FIELDS[state.objectString];
+
+  const renderHeaderRow = ({ item: headerRow }) => {
+    const cells = Object.keys(headerRow).map(columnKey => (
+      <View style={styles.cell}>
+        <Text>{columnKey}</Text>
+      </View>
+    ));
+    return <View style={styles.row}>{cells}</View>;
   };
 
-  const renderHeader = () => {
-    if (data && data.length > 0) {
-      const columnKeys = getColumnKeys(state);
-      const headerCells = Object.keys(columnKeys).map(columnKey => (
-        <HeaderCell
-          key={columnKey}
-          style={globalStyles.headerCell}
-          textStyle={globalStyles.text}
-          width={1}
-          text={columnKey}
-        />
-      ));
-      return <Header style={globalStyles.header}>{headerCells}</Header>;
-    }
-    return <Header style={globalStyles.header} />;
-  };
-
-  const renderRow = row => {
-    const columnKeys = getColumnKeys(state);
-    const cells = Object.entries(columnKeys).map(([columnKey, columnType]) => {
+  const renderRow = ({ item: row }) => {
+    const cells = Object.entries(objectFields).map(([columnKey, columnType]) => {
       const cell = row[columnKey];
       const cellValue = parseCell(cell, columnType);
       return (
-        <Cell key={columnKey} style={globalStyles.cell} textStyle={globalStyles.text} width={1}>
-          {cellValue}
-        </Cell>
+        <View style={styles.cell}>
+          <Text>{cellValue}</Text>
+        </View>
       );
     });
-    return <Row style={globalStyles.row}>{cells}</Row>;
+    return <View style={styles.row}>{cells}</View>;
   };
 
   return (
-    <View style={[globalStyles.container]}>
-      <SearchBar onChange={onSearchChange} placeholder="Table Name" />
-      <SearchBar onChange={onFilterChange} placeholder="Filter" />
-      <DataTable
-        style={globalStyles.container}
-        listViewStyle={globalStyles.container}
-        dataSource={dataSource}
-        renderRow={renderRow}
-        renderHeader={renderHeader}
-      />
-    </View>
+    <ExplorerTable
+      headerData={[objectFields]}
+      data={state.filteredData}
+      onSearchChange={onSearchChange}
+      onFilterChange={onFilterChange}
+      renderHeaderRow={renderHeaderRow}
+      renderRow={renderRow}
+    />
   );
 };
 
-export default RealmExplorer;
+const styles = StyleSheet.create({
+  cell: {
+    flex: 1,
+  },
+  row: {
+    flex: 1,
+    flexBasis: 0,
+    flexDirection: 'row',
+    flexGrow: 1,
+    flexWrap: 'nowrap',
+    justifyContent: 'space-between',
+  },
+});
 
 RealmExplorer.propTypes = {
   database: PropTypes.instanceOf(UIDatabase).isRequired,
 };
+
+export default RealmExplorer;
