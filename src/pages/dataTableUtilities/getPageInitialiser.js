@@ -37,9 +37,14 @@ const customerInvoiceInitialiser = transaction => ({
  */
 const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
+  // const data = backingData.filtered('status != $0', 'finalised');
   return {
     backingData,
-    data: newSortDataBy(backingData.slice(), 'serialNumber', false),
+    data: newSortDataBy(
+      backingData.filtered('status != $0', 'finalised').slice(),
+      'serialNumber',
+      false
+    ),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -184,19 +189,24 @@ const stocktakeManagerInitialiser = stocktake => {
  * @param    {Stocktake}  stocktake
  * @returns  {object}
  */
-const stocktakeEditorInitialiser = stocktake => ({
-  pageObject: stocktake,
-  backingData: stocktake.items,
-  data: stocktake.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name', 'item.code'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-});
+const stocktakeEditorInitialiser = stocktake => {
+  const { items: backingData } = stocktake;
+  const filteredData = backingData.sorted('item.name').filtered('status != $0', 'finalised');
+
+  return {
+    pageObject: stocktake,
+    backingData: stocktake.items,
+    data: filteredData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name', 'item.code'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+  };
+};
 
 /**
  * Gets data for initialising a supplier invoice page from an associated transaction item.
@@ -229,9 +239,10 @@ const supplierInvoiceInitialiser = transaction => {
  */
 const supplierInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierInvoice');
+  const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   return {
     backingData,
-    data: newSortDataBy(backingData.slice(), 'serialNumber', false),
+    data: newSortDataBy(filteredData, 'serialNumber', false),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -250,19 +261,47 @@ const supplierInvoicesInitialiser = () => {
  * @returns  {object}
  */
 const supplierRequisitionInitialiser = requisition => {
+  const { items: backingData } = requisition;
+  const filteredData = backingData
+    .filtered('status != $0', 'finalised')
+    .sorted('item.name')
+    .slice();
+
+  return {
+    pageObject: requisition,
+    backingData,
+    data: filteredData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name', 'item.code'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    hasSelection: false,
+    modalValue: null,
+  };
+};
+
+/**
+ * Gets data for initialising a supplier requisition page from an associated requisition
+ * which has a related program.
+ *
+ * @param    {Requisition}  requisition
+ * @returns  {object}
+ */
+const supplierRequisitionWithProgramInitialiser = requisition => {
   const { program, items: backingData } = requisition;
   const showAll = !program;
 
   return {
     pageObject: requisition,
     backingData,
-    data: showAll
-      ? backingData.sorted('item.name').slice()
-      : backingData.filter(item => item.isLessThanThresholdMOS),
+    data: backingData.filter(item => item.isLessThanThresholdMOS),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
-    filterDataKeys: ['item.name, item.code'],
+    filterDataKeys: ['item.name', 'item.code'],
     sortBy: 'itemName',
     isAscending: true,
     modalKey: '',
@@ -279,10 +318,13 @@ const supplierRequisitionInitialiser = requisition => {
  */
 const supplierRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
+
+  const filteredData = backingData.filtered('status != $0', 'finalised').slice();
+  const sortedData = newSortDataBy(filteredData, 'serialNumber', false);
+
   return {
     backingData,
-    data,
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -308,6 +350,7 @@ const pageInitialisers = {
   supplierInvoice: supplierInvoiceInitialiser,
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
+  supplierRequisitionWithProgram: supplierRequisitionWithProgramInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
 };
 
