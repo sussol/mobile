@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { UIDatabase } from '../database';
@@ -61,6 +61,7 @@ export const SupplierRequisitionsPage = ({
     searchTerm,
     PageActions,
     columns,
+    showFinalised,
   } = state;
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
@@ -79,6 +80,7 @@ export const SupplierRequisitionsPage = ({
   const onSearchFiltering = value => dispatch(PageActions.filterData(value));
   const onNewRequisition = () => dispatch(PageActions.openModal(NEW_REQUISITON));
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onCreateRequisition = otherStoreName => {
     onCloseModal();
@@ -157,6 +159,18 @@ export const SupplierRequisitionsPage = ({
     );
   }, []);
 
+  const PastCurrentToggleBar = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+        ]}
+      />
+    ),
+    [showFinalised]
+  );
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -166,6 +180,7 @@ export const SupplierRequisitionsPage = ({
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
+          <PastCurrentToggleBar />
           <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>

@@ -13,7 +13,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
-import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -39,6 +39,7 @@ export const CustomerInvoicesPage = ({
     searchTerm,
     columns,
     PageActions,
+    showFinalised,
   } = state;
 
   // Listen to changes from sync and navigation events re-focusing this screen,
@@ -52,6 +53,7 @@ export const CustomerInvoicesPage = ({
   const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER));
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onNavigateToInvoice = useCallback(
     invoice => reduxDispatch(gotoCustomerInvoice(invoice)),
@@ -119,6 +121,18 @@ export const CustomerInvoicesPage = ({
     <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
   );
 
+  const PastCurrentToggleBar = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+        ]}
+      />
+    ),
+    [showFinalised]
+  );
+
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -128,6 +142,7 @@ export const CustomerInvoicesPage = ({
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
+          <PastCurrentToggleBar />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
