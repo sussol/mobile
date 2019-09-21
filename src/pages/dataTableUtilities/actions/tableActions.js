@@ -296,3 +296,8 @@ export const TableActionsLookup = {
 export const refreshDataWithFinalisedToggle = () => ({
   type: ACTIONS.REFRESH_DATA_WITH_FINALISED_TOGGLE,
 });
+
+export const filterDataWithFinalisedToggle = searchTerm => ({
+  type: ACTIONS.FILTER_DATA_WITH_FINALISED_TOGGLE,
+  payload: { searchTerm },
+});

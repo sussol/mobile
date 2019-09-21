@@ -10,7 +10,11 @@ import {
   editStocktakeBatchCountedQuantityWithReason,
 } from './cellActions';
 import { RowActionsLookup } from './rowActions';
-import { TableActionsLookup, refreshDataWithFinalisedToggle } from './tableActions';
+import {
+  TableActionsLookup,
+  refreshDataWithFinalisedToggle,
+  filterDataWithFinalisedToggle,
+} from './tableActions';
 import { PageActionsLookup } from './pageActions';
 
 /**
@@ -47,26 +51,31 @@ const stocktakeBatchEditModalWithReasons = {
 const stocktakes = {
   ...BasePageActions,
   refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
 };
 
 const customerInvoices = {
   ...BasePageActions,
   refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
 };
 
 const customerRequisitions = {
   ...BasePageActions,
   refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
 };
 
 const supplierInvoices = {
   ...BasePageActions,
   refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
 };
 
 const supplierRequisitions = {
   ...BasePageActions,
   refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
 };
 
 /**

@@ -16,6 +16,7 @@ export const ACTIONS = {
   SHOW_FINALISED: 'showFinalised',
   SHOW_NOT_FINALISED: 'showNotFinalised',
   REFRESH_DATA_WITH_FINALISED_TOGGLE: 'refreshDataWithFinalisedToggle',
+  FILTER_DATA_WITH_FINALISED_TOGGLE: 'filterDataWithFinalisedToggle',
 
   // pageAction constants
   OPEN_MODAL: 'openModal',
