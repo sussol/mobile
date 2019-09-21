@@ -72,6 +72,33 @@ export const filterDataWithFinalisedToggle = (state, action) => {
 };
 
 /**
+ * Filters the backingData with REALM - first applying show/hide over stock filtering
+ * toggle. Sorting is held stable.
+ *
+ */
+export const filterDataWithOverStockToggle = (state, action) => {
+  const { backingData, filterDataKeys, sortBy, isAscending, showAll } = state;
+  const { payload } = action;
+  const { searchTerm } = payload;
+
+  // Apply query filtering
+  const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
+  const queryFilteredData = backingData.filtered(queryString, searchTerm).slice();
+
+  // Filter by toggle status - showing or not showing over stocked records.
+  const stockFilteredData = !showAll
+    ? queryFilteredData.slice().filter(item => item.isLessThanThresholdMOS)
+    : queryFilteredData.slice();
+
+  // Sort the data by the current sorting parameters.
+  const sortedData = sortBy
+    ? newSortDataBy(stockFilteredData, sortBy, isAscending)
+    : stockFilteredData;
+
+  return { ...state, data: sortedData, searchTerm };
+};
+
+/**
  * Simply refresh's the data object in state to correctly match the
  * backingData. Used for when side effects such as finalizing manipulate
  * the state of a page from outside the reducer.
@@ -181,4 +208,5 @@ export const TableReducerLookup = {
   sortData,
   refreshDataWithFinalisedToggle,
   filterDataWithFinalisedToggle,
+  filterDataWithOverStockToggle,
 };

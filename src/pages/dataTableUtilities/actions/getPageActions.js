@@ -14,6 +14,7 @@ import {
   TableActionsLookup,
   refreshDataWithFinalisedToggle,
   filterDataWithFinalisedToggle,
+  filterDataWithOverStockToggle,
 } from './tableActions';
 import { PageActionsLookup } from './pageActions';
 
@@ -78,6 +79,11 @@ const supplierRequisitions = {
   filterData: filterDataWithFinalisedToggle,
 };
 
+const supplierRequisitionWithProgram = {
+  ...BasePageActions,
+  filterData: filterDataWithOverStockToggle,
+};
+
 /**
  * If actions need to be overriden for a particular routeName,
  * adding them here will pass that new set of actions to the
@@ -91,6 +97,7 @@ const NON_DEFAULT_PAGE_ACTIONS = {
   supplierInvoices,
   supplierRequisitions,
   stocktakes,
+  supplierRequisitionWithProgram,
 };
 
 /**
