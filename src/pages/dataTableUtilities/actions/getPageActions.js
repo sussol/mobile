@@ -10,7 +10,7 @@ import {
   editStocktakeBatchCountedQuantityWithReason,
 } from './cellActions';
 import { RowActionsLookup } from './rowActions';
-import { TableActionsLookup } from './tableActions';
+import { TableActionsLookup, refreshDataWithFinalisedToggle } from './tableActions';
 import { PageActionsLookup } from './pageActions';
 
 /**
@@ -34,9 +34,6 @@ const BasePageActions = {
   ...PageActionsLookup,
 };
 
-/**
- * Actions for `stocktakeEditPage` when reasons are defined.
- */
 const stocktakeEditorWithReasons = {
   ...BasePageActions,
   editCountedQuantity: editCountedQuantityWithReason,
@@ -47,6 +44,31 @@ const stocktakeBatchEditModalWithReasons = {
   editStocktakeBatchCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
 };
 
+const stocktakes = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+};
+
+const customerInvoices = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+};
+
+const customerRequisitions = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+};
+
+const supplierInvoices = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+};
+
+const supplierRequisitions = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+};
+
 /**
  * If actions need to be overriden for a particular routeName,
  * adding them here will pass that new set of actions to the
@@ -55,6 +77,11 @@ const stocktakeBatchEditModalWithReasons = {
 const NON_DEFAULT_PAGE_ACTIONS = {
   stocktakeEditorWithReasons,
   stocktakeBatchEditModalWithReasons,
+  customerInvoices,
+  customerRequisitions,
+  supplierInvoices,
+  supplierRequisitions,
+  stocktakes,
 };
 
 /**
