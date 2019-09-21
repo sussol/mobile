@@ -90,7 +90,7 @@ export const SearchBarComponent = ({
       />
       {!!textValue && (
         <TouchableOpacity onPress={() => onChangeTextCallback('')}>
-          <Cancel color={color} size={20} />
+          <Cancel />
         </TouchableOpacity>
       )}
     </View>
