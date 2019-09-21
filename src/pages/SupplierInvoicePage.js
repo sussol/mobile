@@ -61,7 +61,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     isFinalised,
   ]);
 
-  const getAction = (columnKey, propName) => {
+  const getAction = useCallback((columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
         return PageActions.editTotalQuantity;
@@ -73,7 +73,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {

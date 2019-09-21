@@ -94,7 +94,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     isFinalised,
   ]);
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
         return PageActions.editRequisitionItemRequiredQuantity;
@@ -104,7 +104,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {

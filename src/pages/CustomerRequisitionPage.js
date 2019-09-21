@@ -79,14 +79,14 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     isFinalised,
   ]);
 
-  const getAction = colKey => {
+  const getAction = useCallback(colKey => {
     switch (colKey) {
       case 'suppliedQuantity':
         return PageActions.editSuppliedQuantity;
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {

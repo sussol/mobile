@@ -50,7 +50,7 @@ export const StocktakeManagePage = ({
     if (stocktake) dispatch(PageActions.selectItems(stocktake.itemsInStocktake));
   }, []);
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'selected':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -58,7 +58,7 @@ export const StocktakeManagePage = ({
       default:
         return null;
     }
-  };
+  }, []);
 
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onNameChange = value => dispatch(PageActions.editName(value));
