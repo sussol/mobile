@@ -10,6 +10,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons';
 import FAIcon from 'react-native-vector-icons/FontAwesome';
 import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
+import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { SUSSOL_ORANGE, dataTableColors } from '../globalStyles';
 
@@ -25,9 +26,7 @@ export const UncheckedComponent = (
 export const DisabledCheckedComponent = (
   <IonIcon name="md-radio-button-on" size={15} color={dataTableColors.checkableCellDisabled} />
 );
-export const DisabledUncheckedComponent = (
-  <IonIcon name="md-radio-button-off" size={15} color={dataTableColors.checkableCellDisabled} />
-);
+export const DisabledUncheckedComponent = <MaterialIcon name="cancel" size={15} />;
 
 export const MagnifyingGlass = ({ size, color }) => (
   <EvilIcon name="search" size={size} color={color} />
