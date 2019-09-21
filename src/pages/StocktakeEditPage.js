@@ -94,15 +94,10 @@ export const StocktakeEditPage = ({
   const onManageStocktake = () =>
     reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }));
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    isFinalised,
+  ]);
 
   const getAction = (colKey, propName) => {
     switch (colKey) {
@@ -190,7 +185,7 @@ export const StocktakeEditPage = ({
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          {renderPageInfo()}
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <PageButtons />

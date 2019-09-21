@@ -74,15 +74,10 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onSetSuppliedToSuggested = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    isFinalised,
+  ]);
 
   const getAction = colKey => {
     switch (colKey) {
@@ -176,7 +171,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          {renderPageInfo()}
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
