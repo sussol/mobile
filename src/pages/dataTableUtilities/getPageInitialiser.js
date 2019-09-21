@@ -37,14 +37,10 @@ const customerInvoiceInitialiser = transaction => ({
  */
 const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
-  // const data = backingData.filtered('status != $0', 'finalised');
+  const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   return {
     backingData,
-    data: newSortDataBy(
-      backingData.filtered('status != $0', 'finalised').slice(),
-      'serialNumber',
-      false
-    ),
+    data: newSortDataBy(filteredData, 'serialNumber', false),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
