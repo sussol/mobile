@@ -142,7 +142,7 @@ const stocktakesInitialiser = () => {
  * @returns  {object}
  */
 const stocktakeBatchInitialiser = stocktakeItem => ({
-  stocktakeItem,
+  pageObject: stocktakeItem,
   backingData: stocktakeItem.batches,
   data: stocktakeItem.batches.slice(),
   keyExtractor: recordKeyExtractor,
