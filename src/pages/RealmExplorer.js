@@ -138,17 +138,20 @@ const ExplorerTable = ({
   data,
   onSearchChange,
   onFilterChange,
+  headerRowKeyExtractor,
+  rowKeyExtractor,
   renderHeaderRow,
   renderRow,
 }) => (
   <View style={[globalStyles.container]}>
     <SearchBar onChange={onSearchChange} placeholder="Table name" />
     <SearchBar onChange={onFilterChange} placeholder="Filter string" />
-    <FlatList data={headerData} renderItem={renderHeaderRow} />
+    <FlatList data={headerData} keyExtractor={headerRowKeyExtractor} renderItem={renderHeaderRow} />
     <VirtualizedList
       data={data}
       getItem={(d, i) => d[i]}
       getItemCount={d => d.length}
+      keyExtractor={rowKeyExtractor}
       renderItem={renderRow}
     />
   </View>
@@ -182,6 +185,8 @@ export const RealmExplorer = ({ database }) => {
 
   const objectFields = OBJECT_FIELDS[state.objectString];
 
+  const headerRowKeyExtractor = (_, index) => index.toString();
+  const rowKeyExtractor = ({ id }) => id;
   const renderHeaderRow = ({ item: headerRow }) => {
     const cells = Object.keys(headerRow).map(columnKey => (
       <View style={styles.cell}>
@@ -210,6 +215,8 @@ export const RealmExplorer = ({ database }) => {
       data={state.filteredData}
       onSearchChange={onSearchChange}
       onFilterChange={onFilterChange}
+      headerRowKeyExtractor={headerRowKeyExtractor}
+      rowKeyExtractor={rowKeyExtractor}
       renderHeaderRow={renderHeaderRow}
       renderRow={renderRow}
     />
