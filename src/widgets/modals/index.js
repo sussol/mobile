@@ -12,7 +12,6 @@ export { FinaliseModal } from './FinaliseModal';
 export { LoginModal } from './LoginModal';
 export { PageContentModal } from './PageContentModal';
 export { SelectModal } from './SelectModal';
-export { StocktakeBatchModal } from './StocktakeBatchModal';
 export { DataTablePageModal } from './DataTablePageModal';
 export { BottomTextEditor } from './BottomTextEditor';
 export { NewConfirmModal } from './NewConfirmModal';
