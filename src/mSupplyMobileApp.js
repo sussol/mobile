@@ -37,13 +37,7 @@ import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
-import globalStyles, {
-  dataTableColors,
-  dataTableStyles,
-  pageStyles,
-  textStyles,
-  SUSSOL_ORANGE,
-} from './globalStyles';
+import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -242,12 +236,6 @@ class MSupplyMobileAppContainer extends React.Component {
             routeName: navigationState.routes[navigationState.index].routeName,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
             isInAdminMode,
-            genericTablePageStyles: {
-              searchBarColor: SUSSOL_ORANGE,
-              dataTableStyles,
-              pageStyles,
-              colors: dataTableColors,
-            },
           }}
         />
         <FinaliseModal
