@@ -15,20 +15,26 @@ import { recordKeyExtractor } from './utilities';
  * @param    {Transaction}  transaction
  * @returns  {object}
  */
-const customerInvoiceInitialiser = transaction => ({
-  pageObject: transaction,
-  backingData: transaction.items,
-  data: transaction.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name', 'item.code'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-  hasSelection: false,
-});
+const customerInvoiceInitialiser = transaction => {
+  const { items: backingData } = transaction;
+
+  const sortedData = backingData.sorted('item.name').slice();
+
+  return {
+    pageObject: transaction,
+    backingData,
+    data: sortedData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name', 'item.code'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+    hasSelection: false,
+  };
+};
 
 /**
  * Gets data for initialising a customer invoices page.
@@ -38,9 +44,11 @@ const customerInvoiceInitialiser = transaction => ({
 const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
+  const sortedData = newSortDataBy(filteredData, 'serialNumber', false);
+
   return {
     backingData,
-    data: newSortDataBy(filteredData, 'serialNumber', false),
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -58,19 +66,24 @@ const customerInvoicesInitialiser = () => {
  * @param    {Requisition}  requisition
  * @returns  {object}
  */
-const customerRequisitionInitialiser = requisition => ({
-  pageObject: requisition,
-  backingData: requisition.items,
-  data: requisition.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name', 'item.code'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-});
+const customerRequisitionInitialiser = requisition => {
+  const { items: backingData } = requisition;
+  const sortedData = backingData.sorted('item.name').slice();
+
+  return {
+    pageObject: requisition,
+    backingData: requisition.items,
+    data: sortedData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name', 'item.code'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+  };
+};
 
 /**
  * Gets data for initialising a customer requisitions page.
@@ -79,10 +92,11 @@ const customerRequisitionInitialiser = requisition => ({
  */
 const customerRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
+  const sortedData = newSortDataBy(backingData.slice(), 'serialNumber', false);
+
   return {
     backingData,
-    data,
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     searchTerm: '',
     filterDataKeys: ['serialNumber'],
@@ -98,6 +112,7 @@ const customerRequisitionsInitialiser = () => {
  */
 const stockInitialiser = () => {
   const backingData = UIDatabase.objects('Item').sorted('name');
+
   return {
     backingData,
     data: backingData.slice(),
@@ -118,12 +133,16 @@ const stockInitialiser = () => {
  */
 const stocktakesInitialiser = () => {
   const backingData = UIDatabase.objects('Stocktake');
+
+  const filteredData = backingData.filtered('status != $0', 'finalised');
+  const sortedData = filteredData.sorted('createdDate', true).slice();
+
+  // Determine if programs are being used so the manage stocktake button can be hidden.
+  const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
+
   return {
     backingData,
-    data: backingData
-      .filtered('status != $0', 'finalised')
-      .sorted('createdDate', true)
-      .slice(),
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -132,7 +151,7 @@ const stocktakesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
-    usingPrograms: getAllPrograms(Settings, UIDatabase).length > 0,
+    usingPrograms,
   };
 };
 
@@ -143,7 +162,7 @@ const stocktakesInitialiser = () => {
  * @returns  {object}
  */
 const stocktakeBatchInitialiser = stocktakeItem => ({
-  stocktakeItem,
+  pageObject: stocktakeItem,
   backingData: stocktakeItem.batches,
   data: stocktakeItem.batches.slice(),
   keyExtractor: recordKeyExtractor,
@@ -162,6 +181,7 @@ const stocktakeBatchInitialiser = stocktakeItem => ({
  */
 const stocktakeManagerInitialiser = stocktake => {
   const backingData = UIDatabase.objects('Item');
+
   return {
     stocktake,
     backingData,
@@ -187,12 +207,12 @@ const stocktakeManagerInitialiser = stocktake => {
  */
 const stocktakeEditorInitialiser = stocktake => {
   const { items: backingData } = stocktake;
-  const filteredData = backingData.sorted('item.name').filtered('status != $0', 'finalised');
+  const sortedData = backingData.sorted('item.name');
 
   return {
     pageObject: stocktake,
-    backingData: stocktake.items,
-    data: filteredData,
+    backingData,
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -212,10 +232,13 @@ const stocktakeEditorInitialiser = stocktake => {
  */
 const supplierInvoiceInitialiser = transaction => {
   const backingData = transaction.getTransactionBatches(UIDatabase);
+
+  const sortedData = backingData.sorted('itemName').slice();
+
   return {
     pageObject: transaction,
     backingData,
-    data: backingData.sorted('itemName').slice(),
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -338,6 +361,7 @@ const pageInitialisers = {
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
+  stocktakeEditorWithReasons: stocktakeEditorInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
   supplierInvoice: supplierInvoiceInitialiser,
