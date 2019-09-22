@@ -11,7 +11,7 @@ export const PAGE_CONTENT_PADDING_TOP = 10;
 export const PAGE_CONTENT_PADDING_BOTTOM = 20;
 
 const newPageStyles = {
-  newPageContentContainer: {
+  pageContentContainer: {
     flex: 1,
     paddingTop: PAGE_CONTENT_PADDING_TOP,
     paddingHorizontal: PAGE_CONTENT_PADDING_HORIZONTAL,
