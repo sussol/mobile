@@ -123,7 +123,7 @@ export const SupplierInvoicesPage = ({
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
+    pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
@@ -131,7 +131,7 @@ export const SupplierInvoicesPage = ({
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           <NewInvoiceButton />
         </View>
       </View>

@@ -38,7 +38,7 @@ const newPageStyles = {
     flex: 2,
     paddingHorizontal: 10,
   },
-  newPageTopRightSectionContainer: {
+  pageTopRightSectionContainer: {
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'flex-end',

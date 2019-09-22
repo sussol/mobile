@@ -166,7 +166,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
+    pageTopRightSectionContainer,
     searchBar,
   } = newPageStyles;
   return (
@@ -176,7 +176,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
           {renderPageInfo()}
           <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={pageTopRightSectionContainer}>{renderButtons()}</View>
       </View>
       <DataTable
         data={data}

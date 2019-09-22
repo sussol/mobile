@@ -160,7 +160,7 @@ export const SupplierRequisitionsPage = ({
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
+    pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
@@ -168,7 +168,7 @@ export const SupplierRequisitionsPage = ({
         <View style={newPageTopLeftSectionContainer}>
           <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           <PageButtons />
         </View>
       </View>

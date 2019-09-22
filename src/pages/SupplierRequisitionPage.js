@@ -273,7 +273,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
+    pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
@@ -282,7 +282,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
           {renderPageInfo()}
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           {program ? <ProgramButtons /> : <GeneralButtons />}
         </View>
       </View>

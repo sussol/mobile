@@ -170,7 +170,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
+    pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
@@ -179,7 +179,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
           {renderPageInfo()}
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           <PageButtons />
         </View>
       </View>

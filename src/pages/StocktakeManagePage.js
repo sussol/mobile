@@ -120,7 +120,7 @@ export const StocktakeManagePage = ({
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
+    pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
@@ -129,7 +129,7 @@ export const StocktakeManagePage = ({
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
 
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           <Toggle />
         </View>
       </View>

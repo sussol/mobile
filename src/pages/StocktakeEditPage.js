@@ -178,13 +178,13 @@ export const StocktakeEditPage = ({
       />
     );
 
-    return <View style={newPageTopRightSectionContainer}>{program ? null : ManageStocktake}</View>;
+    return <View style={pageTopRightSectionContainer}>{program ? null : ManageStocktake}</View>;
   }, [program]);
 
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
+    pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
