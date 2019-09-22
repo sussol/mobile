@@ -82,10 +82,10 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     [sortBy, isAscending]
   );
 
-  const { newPageTopSectionContainer } = newPageStyles;
+  const { pageTopSectionContainer } = newPageStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
+      <View style={pageTopSectionContainer}>
         <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
       </View>
       <DataTable

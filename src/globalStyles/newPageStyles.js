@@ -24,7 +24,7 @@ const newPageStyles = {
     borderColor: 'rgba(0, 0, 0, 0.1)',
     backgroundColor: '#ecf3fc',
   },
-  newPageTopSectionContainer: {
+  pageTopSectionContainer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'space-between',

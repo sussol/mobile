@@ -89,10 +89,10 @@ export const StockPage = ({ routeName }) => {
     />
   );
 
-  const { newPageTopSectionContainer } = newPageStyles;
+  const { pageTopSectionContainer } = newPageStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
+      <View style={pageTopSectionContainer}>
         <SearchBar
           onChangeText={onFilterData}
           value={searchTerm}
