@@ -130,19 +130,8 @@ export const DataTablePageModal = ({
           />
         );
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
-        return (
-          <NewSocktakeBatchModal
-            stocktakeItem={currentValue}
-            database={UIDatabase}
-            genericTablePageStyles={{
-              searchBarColor: SUSSOL_ORANGE,
-              colors: dataTableColors,
-              dataTableStyles,
-              pageStyles,
-            }}
-            onConfirm={onSelect}
-          />
-        );
+        return <NewSocktakeBatchModal stocktakeItem={currentValue} />;
+
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return (
           <NewConfirmModal
