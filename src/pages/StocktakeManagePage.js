@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -105,15 +105,11 @@ export const StocktakeManagePage = ({
     [sortBy, isAscending]
   );
 
-  const Toggle = useCallback(
-    () => (
-      <ToggleBar
-        toggles={[
-          { text: buttonStrings.hide_stockouts, onPress: onHideStock, isOn: !showAll },
-          { text: buttonStrings.all_items_selected, onPress: onSelectAll, isOn: allSelected },
-        ]}
-      />
-    ),
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.hide_stockouts, onPress: onHideStock, isOn: !showAll },
+      { text: buttonStrings.all_items_selected, onPress: onSelectAll, isOn: allSelected },
+    ],
     [showAll, allSelected]
   );
 
@@ -130,7 +126,7 @@ export const StocktakeManagePage = ({
         </View>
 
         <View style={newPageTopRightSectionContainer}>
-          <Toggle />
+          <ToggleBar toggles={toggles} />
         </View>
       </View>
 
