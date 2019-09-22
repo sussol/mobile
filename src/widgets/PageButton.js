@@ -29,7 +29,8 @@ export function PageButtonComponent(props) {
   );
 }
 
-const propsAreEqual = () => true;
+const propsAreEqual = ({ isDisabled: prevIsDisabled }, { isDisabled: nextIsDisabled }) =>
+  prevIsDisabled === nextIsDisabled;
 
 export const PageButton = React.memo(PageButtonComponent, propsAreEqual);
 
