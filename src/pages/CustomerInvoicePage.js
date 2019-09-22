@@ -131,25 +131,6 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     [data, dataState]
   );
 
-  const renderButtons = () => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={{ ...topButton, marginLeft: 0 }}
-          text={buttonStrings.new_item}
-          onPress={onNewRow}
-          isDisabled={isFinalised}
-        />
-        <PageButton
-          text={buttonStrings.add_master_list_items}
-          onPress={onAddMasterList}
-          isDisabled={isFinalised}
-        />
-      </View>
-    );
-  };
-
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
@@ -163,6 +144,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     [sortBy, isAscending]
   );
 
+  const { verticalContainer, topButton } = globalStyles;
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -176,7 +158,21 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
           {renderPageInfo()}
           <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>{renderButtons()}</View>
+        <View style={newPageTopRightSectionContainer}>
+          <View style={verticalContainer}>
+            <PageButton
+              style={{ ...topButton, marginLeft: 0 }}
+              text={buttonStrings.new_item}
+              onPress={onNewRow}
+              isDisabled={isFinalised}
+            />
+            <PageButton
+              text={buttonStrings.add_master_list_items}
+              onPress={onAddMasterList}
+              isDisabled={isFinalised}
+            />
+          </View>
+        </View>
       </View>
       <DataTable
         data={data}
