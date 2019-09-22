@@ -130,13 +130,13 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
 
   const {
     newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
+    pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>{renderPageInfo()}</View>
+        <View style={pageTopLeftSectionContainer}>{renderPageInfo()}</View>
         <View style={pageTopRightSectionContainer}>
           <PageButtons />
         </View>

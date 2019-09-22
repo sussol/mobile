@@ -31,7 +31,7 @@ const newPageStyles = {
     paddingHorizontal: 10,
     paddingVertical: 10,
   },
-  newPageTopLeftSectionContainer: {
+  pageTopLeftSectionContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'space-between',

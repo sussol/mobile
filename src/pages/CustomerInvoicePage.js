@@ -165,14 +165,14 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
 
   const {
     newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
+    pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
     searchBar,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
           {renderPageInfo()}
           <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
         </View>

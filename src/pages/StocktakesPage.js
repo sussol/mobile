@@ -141,13 +141,13 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
 
   const {
     newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
+    pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
   } = newPageStyles;
   return (
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
           <PastCurrentToggleBar />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
