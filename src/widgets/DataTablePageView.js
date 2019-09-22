@@ -9,7 +9,7 @@ import { View } from 'react-native';
 
 import { newPageStyles } from '../globalStyles';
 
-const { newPageContentContainer, newContainer } = newPageStyles;
+const { newPageContentContainer, container } = newPageStyles;
 
 /**
  * Simple container for a standard data table page.
@@ -18,7 +18,7 @@ export const DataTablePageView = props => {
   const { children } = props;
   return (
     <View style={newPageContentContainer}>
-      <View style={newContainer}>{children}</View>
+      <View style={container}>{children}</View>
     </View>
   );
 };

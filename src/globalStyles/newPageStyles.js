@@ -18,7 +18,7 @@ const newPageStyles = {
     paddingBottom: PAGE_CONTENT_PADDING_BOTTOM,
     backgroundColor: '#f8fbfe',
   },
-  newContainer: {
+  container: {
     flex: 1,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.1)',
