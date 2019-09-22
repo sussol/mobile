@@ -185,7 +185,7 @@ export const RealmExplorer = ({ database }) => {
   const renderHeaderRow = ({ item: headerRow }) => {
     const cells = Object.keys(headerRow).map(columnKey => (
       <View style={styles.cell}>
-        <Text>{columnKey}</Text>
+        <Text style={styles.cellText}>{columnKey}</Text>
       </View>
     ));
     return <View style={styles.row}>{cells}</View>;
@@ -197,7 +197,7 @@ export const RealmExplorer = ({ database }) => {
       const cellValue = parseCell(cell, columnType);
       return (
         <View style={styles.cell}>
-          <Text>{cellValue}</Text>
+          <Text style={styles.cellText}>{cellValue}</Text>
         </View>
       );
     });
@@ -219,6 +219,9 @@ export const RealmExplorer = ({ database }) => {
 const styles = StyleSheet.create({
   cell: {
     flex: 1,
+  },
+  cellText: {
+    textAlign: 'center',
   },
   row: {
     flex: 1,
