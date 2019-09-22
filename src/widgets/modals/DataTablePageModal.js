@@ -20,12 +20,6 @@ import { UIDatabase } from '../../database';
 import { modalStrings } from '../../localization';
 import Settings from '../../settings/MobileAppSettings';
 
-import {
-  dataTableColors,
-  dataTableStyles,
-  pageStyles,
-  SUSSOL_ORANGE,
-} from '../../globalStyles/index';
 import NewSocktakeBatchModal from './NewStocktakeBatchModal';
 
 /**
@@ -117,18 +111,8 @@ export const DataTablePageModal = ({
         );
 
       case MODAL_KEYS.VIEW_REGIMEN_DATA:
-        return (
-          <RegimenDataModal
-            database={UIDatabase}
-            requisition={currentValue}
-            genericTablePageStyles={{
-              searchBarColor: SUSSOL_ORANGE,
-              colors: dataTableColors,
-              dataTableStyles,
-              pageStyles,
-            }}
-          />
-        );
+        return <RegimenDataModal requisition={currentValue} />;
+
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
         return <NewSocktakeBatchModal stocktakeItem={currentValue} />;
 
