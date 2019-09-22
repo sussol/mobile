@@ -6,7 +6,6 @@
 export { Button, ProgressBar } from 'react-native-ui-components';
 
 export { AutocompleteSelector } from './AutocompleteSelector';
-export { ExpiryTextInput } from './ExpiryTextInput';
 export { FinaliseButton } from './FinaliseButton';
 export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
