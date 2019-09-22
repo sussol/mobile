@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -157,58 +157,44 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     [sortBy, isAscending]
   );
 
-  const AddMasterListItemsButton = useCallback(
-    () => (
-      <PageButton
-        style={globalStyles.leftButton}
-        text={buttonStrings.add_master_list_items}
-        onPress={onAddFromMasterList}
-        isDisabled={isFinalised}
-      />
-    ),
-    []
+  const AddMasterListItemsButton = () => (
+    <PageButton
+      style={globalStyles.leftButton}
+      text={buttonStrings.add_master_list_items}
+      onPress={onAddFromMasterList}
+      isDisabled={isFinalised}
+    />
   );
 
-  const AddNewItemButton = useCallback(
-    () => (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_item}
-        onPress={onSelectItem}
-        isDisabled={isFinalised}
-      />
-    ),
-    []
+  const AddNewItemButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.new_item}
+      onPress={onSelectItem}
+      isDisabled={isFinalised}
+    />
   );
 
-  const CreateAutomaticOrderButton = useCallback(
-    () => (
-      <PageButton
-        style={{ ...globalStyles.leftButton, marginLeft: 5 }}
-        text={buttonStrings.create_automatic_order}
-        onPress={onCreateAutomaticOrder}
-        isDisabled={isFinalised}
-      />
-    ),
-    []
+  const CreateAutomaticOrderButton = () => (
+    <PageButton
+      style={{ ...globalStyles.leftButton, marginLeft: 5 }}
+      text={buttonStrings.create_automatic_order}
+      onPress={onCreateAutomaticOrder}
+      isDisabled={isFinalised}
+    />
   );
 
-  const UseSuggestedQuantitiesButton = useCallback(
-    () => (
-      <View>
-        <PageButton
-          style={globalStyles.topButton}
-          text={buttonStrings.use_suggested_quantities}
-          onPress={onSetRequestedToSuggested}
-          isDisabled={isFinalised}
-        />
-      </View>
-    ),
-    []
+  const UseSuggestedQuantitiesButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.use_suggested_quantities}
+      onPress={onSetRequestedToSuggested}
+      isDisabled={isFinalised}
+    />
   );
 
-  const ThresholdMOSToggle = useCallback(() => {
-    const toggleProps = [
+  const toggles = useMemo(
+    () => [
       {
         text: programStrings.hide_over_stocked,
         isOn: !showAll,
@@ -219,26 +205,22 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         isOn: showAll,
         onPress: onShowOverStocked,
       },
-    ];
-    return <ToggleBar toggles={toggleProps} />;
-  }, [showAll]);
+    ],
+    [showAll]
+  );
 
-  const ViewRegimenDataButton = useCallback(
-    () => (
-      <View>
-        <PageButton
-          style={globalStyles.topButton}
-          text={buttonStrings.view_regimen_data}
-          onPress={onViewRegimenData}
-        />
-      </View>
-    ),
-    []
+  const ThresholdMOSToggle = () => <ToggleBar toggles={toggles} />;
+
+  const ViewRegimenDataButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.view_regimen_data}
+      onPress={onViewRegimenData}
+    />
   );
 
   const GeneralButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
-
     return (
       <>
         <View style={verticalContainer}>
@@ -251,7 +233,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         </View>
       </>
     );
-  }, []);
+  }, [isFinalised]);
 
   const ProgramButtons = useCallback(() => {
     const { verticalContainer, horizontalContainer } = globalStyles;
@@ -262,13 +244,11 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
             <UseSuggestedQuantitiesButton />
             <ViewRegimenDataButton />
           </View>
-          <View style={verticalContainer}>
-            <ThresholdMOSToggle />
-          </View>
+          <ThresholdMOSToggle />
         </View>
       </>
     );
-  }, [showAll]);
+  }, [showAll, isFinalised]);
 
   const {
     newPageTopSectionContainer,
