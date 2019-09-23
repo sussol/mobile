@@ -14,31 +14,29 @@ import { UIDatabase } from '../database/index';
 
 import { schema } from '../database/schema';
 
-// eslint-disable-next-line no-shadow
+const REALM_TYPES = {
+  boolean: ['bool'],
+  date: ['date'],
+  number: ['int', 'float', 'double'],
+  string: ['string'],
+  array: ['list'],
+  object: ['object'],
+};
+
+const typeMapper = new Map(
+  Object.entries(REALM_TYPES)
+    .map(([type, realmTypes]) => realmTypes.map(realmType => [realmType, type]))
+    .flat()
+);
+
 const getObjectTypes = ({ schema: objectSchemas }) =>
   objectSchemas.map(({ schema: objectSchema }) => objectSchema.name);
 
 const parseType = realmType => {
   const { type } = realmType;
   if (type) return parseType(type);
-  switch (realmType) {
-    case 'bool':
-      return 'boolean';
-    case 'int':
-      return 'number';
-    case 'float':
-      return 'number';
-    case 'double':
-      return 'number';
-    case 'string':
-      return 'string';
-    case 'date':
-      return 'date';
-    case 'list':
-      return 'array';
-    default:
-      return 'object';
-  }
+  const parsedType = typeMapper.get(realmType);
+  return parsedType;
 };
 
 const getObjectFields = ({ schema: objectSchemas }) =>
