@@ -14,12 +14,11 @@ import { loadingIndicatorStyles } from './loadingIndicatorStyles';
 import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
 import {
-  pageStyles,
-  expansionPageStyles,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
   FULL_SCREEN_MODAL_MARGIN,
+  pageStyles,
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
 import newPageStyles from './newPageStyles';
@@ -52,8 +51,6 @@ export {
   newDataTableStyles,
   dataTableStyles,
   dataTableColors,
-  pageStyles,
-  expansionPageStyles,
   FULL_SCREEN_MODAL_MARGIN,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
