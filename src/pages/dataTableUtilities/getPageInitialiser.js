@@ -6,7 +6,7 @@
 import { UIDatabase } from '../../database';
 import Settings from '../../settings/MobileAppSettings';
 
-import { newSortDataBy, getAllPrograms } from '../../utilities';
+import { sortDataBy, getAllPrograms } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 
 /**
@@ -39,7 +39,7 @@ const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   return {
     backingData,
-    data: newSortDataBy(backingData.slice(), 'serialNumber', false),
+    data: sortDataBy(backingData.slice(), 'serialNumber', false),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -78,7 +78,7 @@ const customerRequisitionInitialiser = requisition => ({
  */
 const customerRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
+  const data = sortDataBy(backingData.slice(), 'serialNumber', false);
   return {
     backingData,
     data,
@@ -231,7 +231,7 @@ const supplierInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierInvoice');
   return {
     backingData,
-    data: newSortDataBy(backingData.slice(), 'serialNumber', false),
+    data: sortDataBy(backingData.slice(), 'serialNumber', false),
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -279,7 +279,7 @@ const supplierRequisitionInitialiser = requisition => {
  */
 const supplierRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
+  const data = sortDataBy(backingData.slice(), 'serialNumber', false);
   return {
     backingData,
     data,

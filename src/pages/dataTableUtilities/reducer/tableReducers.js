@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy } from '../../../utilities';
+import { sortDataBy } from '../../../utilities';
 
 /**
  * Sorts the current set of data by the provided
@@ -20,7 +20,7 @@ export const sortData = (state, action) => {
   // that was set by the last sortBy action. Otherwise, default to true.
   const newIsAscending = newSortBy === sortBy ? !isAscending : true;
 
-  const newData = newSortDataBy(data, newSortBy, newIsAscending);
+  const newData = sortDataBy(data, newSortBy, newIsAscending);
 
   return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
 };
@@ -42,7 +42,7 @@ export const filterData = (state, action) => {
 
   return {
     ...state,
-    data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+    data: sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData,
     searchTerm,
   };
 };
@@ -56,7 +56,7 @@ export const refreshData = state => {
   const { backingData, sortBy, isAscending } = state;
 
   const newData = sortBy
-    ? newSortDataBy(backingData.slice(), sortBy, isAscending)
+    ? sortDataBy(backingData.slice(), sortBy, isAscending)
     : backingData.slice();
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
