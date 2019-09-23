@@ -13,7 +13,7 @@ import Cell from './DataTable/Cell';
 
 import { useExpiryDateMask } from '../hooks/useExpiryDateMask';
 
-import { newDataTableStyles } from '../globalStyles/index';
+import { dataTableStyles } from '../globalStyles/index';
 import { parseExpiryDate, formatExpiryDate } from '../utilities';
 
 import { getAdjustedStyle } from './DataTable/utilities';
@@ -47,7 +47,7 @@ import RefContext from './DataTable/RefContext';
  *
  */
 
-const { expiryBatchView, expiryBatchText, expiryBatchPlaceholderText } = newDataTableStyles;
+const { expiryBatchView, expiryBatchText, expiryBatchPlaceholderText } = dataTableStyles;
 
 export const NewExpiryDateInput = React.memo(
   ({
