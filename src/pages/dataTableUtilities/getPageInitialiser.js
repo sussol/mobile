@@ -38,6 +38,7 @@ const customerInvoiceInitialiser = transaction => {
 
 /**
  * Gets data for initialising a customer invoices page.
+ * Invoices shown initially are unfinalised and sorted by serial number.
  *
  * @returns  {object}
  */
@@ -128,6 +129,7 @@ const stockInitialiser = () => {
 
 /**
  * Gets data for initialising a stocktakes page.
+ * Initial data is unfinalised stocktakes, sorted by creation date.
  *
  * @returns  {object}
  */
@@ -253,15 +255,19 @@ const supplierInvoiceInitialiser = transaction => {
 
 /**
  * Gets data for initialising a supplier invoices page.
+ * Data is initially unfinalised and sorted by serial number.
  *
  * @returns  {object}
  */
 const supplierInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierInvoice');
+
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
+  const sortedData = newSortDataBy(filteredData, 'serialNumber', false);
+
   return {
     backingData,
-    data: newSortDataBy(filteredData, 'serialNumber', false),
+    data: sortedData,
     keyExtractor: recordKeyExtractor,
     dataState: new Map(),
     searchTerm: '',
@@ -329,6 +335,7 @@ const supplierRequisitionWithProgramInitialiser = requisition => {
 
 /**
  * Gets data for initialising a supplier requisitions page.
+ * Initial data are unfinalised requisitions, sorted by serial number.
  *
  * @returns  {object}
  */
