@@ -34,9 +34,7 @@ export const filterData = (state, action) => {
   const { payload } = action;
   const { searchTerm } = payload;
 
-  const queryString = filterDataKeys
-    .map(filterTerm => `${filterTerm} CONTAINS[c]  $0`)
-    .join(' OR ');
+  const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
 
   const filteredData = backingData.filtered(queryString, searchTerm).slice();
 
@@ -48,6 +46,59 @@ export const filterData = (state, action) => {
 };
 
 /**
+ * Filters the backingData with REALM - first applying the finalised filtering
+ * returning a JS array. Sorting is held stable.
+ *
+ */
+export const filterDataWithFinalisedToggle = (state, action) => {
+  const { backingData, filterDataKeys, sortBy, isAscending, showFinalised } = state;
+  const { payload } = action;
+  const { searchTerm } = payload;
+
+  // Filter by toggle status - showing or not showing finalised records.
+  const finalisedCondition = showFinalised ? '==' : '!=';
+  const statusFilteredData = backingData.filtered(`status ${finalisedCondition} $0`, 'finalised');
+
+  // Apply query filtering
+  const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
+  const queryFilteredData = statusFilteredData.filtered(queryString, searchTerm).slice();
+
+  // Sort the data by the current sorting parameters.
+  const sortedData = sortBy
+    ? newSortDataBy(queryFilteredData, sortBy, isAscending)
+    : statusFilteredData;
+
+  return { ...state, data: sortedData, searchTerm };
+};
+
+/**
+ * Filters the backingData with REALM - first applying show/hide over stock filtering
+ * toggle. Sorting is held stable.
+ *
+ */
+export const filterDataWithOverStockToggle = (state, action) => {
+  const { backingData, filterDataKeys, sortBy, isAscending, showAll } = state;
+  const { payload } = action;
+  const { searchTerm } = payload;
+
+  // Apply query filtering
+  const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
+  const queryFilteredData = backingData.filtered(queryString, searchTerm).slice();
+
+  // Filter by toggle status - showing or not showing over stocked records.
+  const stockFilteredData = !showAll
+    ? queryFilteredData.slice().filter(item => item.isLessThanThresholdMOS)
+    : queryFilteredData.slice();
+
+  // Sort the data by the current sorting parameters.
+  const sortedData = sortBy
+    ? newSortDataBy(stockFilteredData, sortBy, isAscending)
+    : stockFilteredData;
+
+  return { ...state, data: sortedData, searchTerm };
+};
+
+/**
  * Simply refresh's the data object in state to correctly match the
  * backingData. Used for when side effects such as finalizing manipulate
  * the state of a page from outside the reducer.
@@ -55,9 +106,23 @@ export const filterData = (state, action) => {
 export const refreshData = state => {
   const { backingData, sortBy, isAscending } = state;
 
-  const newData = sortBy
-    ? newSortDataBy(backingData.slice(), sortBy, isAscending)
-    : backingData.slice();
+  const backingDataArray = backingData.slice();
+  const newData = sortBy ? newSortDataBy(backingDataArray, sortBy, isAscending) : backingDataArray;
+
+  return { ...state, data: newData, searchTerm: '', showAll: true };
+};
+
+/**
+ * Override for refreshData for pages which use a finalised toggle,
+ * which will display either finalised records, or unfinalised.
+ */
+export const refreshDataWithFinalisedToggle = state => {
+  const { backingData, sortBy, isAscending, showFinalised } = state;
+
+  const finalisedCondition = showFinalised ? '==' : '!=';
+  const filteredData = backingData.filtered(`status ${finalisedCondition} $0`, 'finalised');
+
+  const newData = sortBy ? newSortDataBy(filteredData.slice(), sortBy, isAscending) : filteredData;
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
 };
@@ -67,11 +132,13 @@ export const refreshData = state => {
  * status is finalised.
  */
 export const showFinalised = state => {
-  const { backingData } = state;
+  const { backingData, sortBy, isAscending } = state;
 
-  const newData = backingData.filtered('status == $0', 'finalised');
+  const filteredData = backingData.filtered('status == $0', 'finalised').slice();
 
-  return { ...state, data: newData, showFinalised: true };
+  const sortedData = sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData;
+
+  return { ...state, data: sortedData, showFinalised: true, searchTerm: '' };
 };
 
 /**
@@ -79,11 +146,13 @@ export const showFinalised = state => {
  * status is not finalised.
  */
 export const showNotFinalised = state => {
-  const { backingData } = state;
+  const { backingData, sortBy, isAscending } = state;
 
-  const newData = backingData.filtered('status != $0', 'finalised');
+  const filteredData = backingData.filtered('status != $0', 'finalised').slice();
 
-  return { ...state, data: newData, showFinalised: false };
+  const sortedData = sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData;
+
+  return { ...state, data: sortedData, showFinalised: false };
 };
 
 /**
@@ -137,4 +206,7 @@ export const TableReducerLookup = {
   refreshData,
   filterData,
   sortData,
+  refreshDataWithFinalisedToggle,
+  filterDataWithFinalisedToggle,
+  filterDataWithOverStockToggle,
 };

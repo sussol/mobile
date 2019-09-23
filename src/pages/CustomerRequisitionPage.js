@@ -131,37 +131,6 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     [sortBy, isAscending]
   );
 
-  const UseSuggestedQuantitiesButton = () => (
-    <View>
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.use_suggested_quantities}
-        onPress={onSetSuppliedToSuggested}
-        isDisabled={isFinalised}
-      />
-    </View>
-  );
-
-  const UseRequestedQuantitiesButton = () => (
-    <PageButton
-      style={globalStyles.topButton}
-      text={buttonStrings.use_requested_quantities}
-      onPress={onSetSuppliedToRequested}
-      isDisabled={requisition.isFinalised}
-    />
-  );
-
-  const PageButtons = useCallback(() => {
-    const { verticalContainer } = globalStyles;
-
-    return (
-      <View style={verticalContainer}>
-        <UseRequestedQuantitiesButton />
-        <UseSuggestedQuantitiesButton />
-      </View>
-    );
-  }, []);
-
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -175,7 +144,18 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.use_requested_quantities}
+            onPress={onSetSuppliedToRequested}
+            isDisabled={requisition.isFinalised}
+          />
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.use_suggested_quantities}
+            onPress={onSetSuppliedToSuggested}
+            isDisabled={isFinalised}
+          />
         </View>
       </View>
       <DataTable

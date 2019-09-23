@@ -5,7 +5,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -18,7 +18,7 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { newPageStyles } from '../globalStyles';
+import { newPageStyles } from '../globalStyles';
 
 import {
   gotoStocktakeManagePage,
@@ -118,24 +118,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton style={topButton} text={buttonStrings.new_stocktake} onPress={onNewStocktake} />
-      </View>
-    );
-  }, []);
-
-  const PastCurrentToggleBar = useCallback(
-    () => (
-      <ToggleBar
-        toggles={[
-          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
-        ]}
-      />
-    ),
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
     [showFinalised]
   );
 
@@ -148,11 +135,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <PastCurrentToggleBar />
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+          <PageButton text={buttonStrings.new_stocktake} onPress={onNewStocktake} />
         </View>
       </View>
       <DataTable

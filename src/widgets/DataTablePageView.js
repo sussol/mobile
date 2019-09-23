@@ -5,21 +5,27 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, Keyboard, TouchableWithoutFeedback } from 'react-native';
 
 import { newPageStyles } from '../globalStyles';
 
 const { newPageContentContainer, newContainer } = newPageStyles;
 
+const dismiss = () => Keyboard.dismiss();
 /**
- * Simple container for a standard data table page.
+ * Simple template container for a standard data table page.
+ * Handles placement of content and wraps the page with a
+ * Touchable, dismissing the keyboard when an event propogates
+ * to this level.
  */
 export const DataTablePageView = props => {
   const { children } = props;
   return (
-    <View style={newPageContentContainer}>
-      <View style={newContainer}>{children}</View>
-    </View>
+    <TouchableWithoutFeedback onPress={dismiss}>
+      <View style={newPageContentContainer}>
+        <View style={newContainer}>{children}</View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

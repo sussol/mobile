@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -13,7 +13,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
-import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -39,6 +39,7 @@ export const CustomerInvoicesPage = ({
     searchTerm,
     columns,
     PageActions,
+    showFinalised,
   } = state;
 
   // Listen to changes from sync and navigation events re-focusing this screen,
@@ -52,6 +53,7 @@ export const CustomerInvoicesPage = ({
   const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER));
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onNavigateToInvoice = useCallback(
     invoice => reduxDispatch(gotoCustomerInvoice(invoice)),
@@ -62,6 +64,14 @@ export const CustomerInvoicesPage = ({
     reduxDispatch(createCustomerInvoice(otherParty, currentUser));
     onCloseModal();
   };
+
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
+    [showFinalised]
+  );
 
   const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
@@ -115,10 +125,6 @@ export const CustomerInvoicesPage = ({
     [sortBy, isAscending]
   );
 
-  const NewInvoiceButton = () => (
-    <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
-  );
-
   const {
     newPageTopSectionContainer,
     newPageTopLeftSectionContainer,
@@ -128,10 +134,11 @@ export const CustomerInvoicesPage = ({
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
-          <NewInvoiceButton />
+          <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
         </View>
       </View>
       <DataTable
