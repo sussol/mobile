@@ -112,39 +112,17 @@ const getUpdatedState = (database, state) => {
   return newState;
 };
 
-const ExplorerTable = ({
-  headerData,
-  data,
-  onSearchChange,
-  onFilterChange,
-  headerRowKeyExtractor,
-  rowKeyExtractor,
-  renderHeaderRow,
-  renderRow,
-}) => (
-  <View style={[globalStyles.container]}>
-    <SearchBar onChange={onSearchChange} placeholder="Table name" />
-    <SearchBar onChange={onFilterChange} placeholder="Filter string" />
-    <FlatList data={headerData} keyExtractor={headerRowKeyExtractor} renderItem={renderHeaderRow} />
-    <VirtualizedList
-      data={data}
-      getItem={(d, i) => d[i]}
-      getItemCount={d => d.length}
-      keyExtractor={rowKeyExtractor}
-      renderItem={renderRow}
-    />
-  </View>
-);
-
 /**
- * A page to explore the contents of the local database. Allows searching for any
- * database object type, and will show the related data in a table.
+ * A page for displaying objects in the local database. Includes search and filtering functionality.
  *
- * @prop   {UIDatabase}           database       App wide database.
- * @state  {string}               databaseObject Currently selected object.
- * @state  {ListView.DataSource}  dataSource     DataTable input, used to update rows being
- *                                               rendered.
- * @state  {Realm.Results}        data           Holds the data that gets put into the dataSource.
+ * @prop   {UIDatabase}     database       App wide database.
+ * @state  {string}         objectString   Current database object.
+ * @state  {string}         searchString   Current search string. Used to update current object.
+ * @state  {string}         filterString   Current filter string. Used to update filtered data.
+ * @state  {Realm.Results}  objectData     Reference to current database object results. Used to
+ *                                         roll back filter state when filter is reset.
+ * @state  {Realm.Results}  filteredData   Reference to current database object results after filter
+ *                                         has been applied. Displayed to the user.
  */
 export const RealmExplorer = ({ database }) => {
   const [state, setState] = useState(getInitialState(database));
@@ -167,8 +145,9 @@ export const RealmExplorer = ({ database }) => {
   const headerRowKeyExtractor = (_, index) => index.toString();
   const rowKeyExtractor = ({ id }) => id;
 
-  const renderHeaderRow = ({ item: headerRow }) => {
-    const cells = Object.keys(headerRow).map(columnKey => (
+  const renderHeaderRow = headerRow => {
+    const { item } = headerRow;
+    const cells = Object.keys(item).map(columnKey => (
       <View style={styles.cell}>
         <Text style={styles.cellText}>{columnKey}</Text>
       </View>
@@ -176,9 +155,10 @@ export const RealmExplorer = ({ database }) => {
     return <View style={styles.row}>{cells}</View>;
   };
 
-  const renderRow = ({ item: row }) => {
+  const renderRow = row => {
+    const { item } = row;
     const cells = Object.entries(objectFields).map(([columnKey, columnType]) => {
-      const cell = row[columnKey];
+      const cell = item[columnKey];
       const cellValue = parseCell(cell, columnType);
       return (
         <View style={styles.cell}>
@@ -189,17 +169,26 @@ export const RealmExplorer = ({ database }) => {
     return <View style={styles.row}>{cells}</View>;
   };
 
+  const headerData = [objectFields];
+  const data = state.filteredData;
+
   return (
-    <ExplorerTable
-      headerData={[objectFields]}
-      data={state.filteredData}
-      onSearchChange={onSearchChange}
-      onFilterChange={onFilterChange}
-      headerRowKeyExtractor={headerRowKeyExtractor}
-      rowKeyExtractor={rowKeyExtractor}
-      renderHeaderRow={renderHeaderRow}
-      renderRow={renderRow}
-    />
+    <View style={[globalStyles.container]}>
+      <SearchBar onChange={onSearchChange} placeholder="Table name" />
+      <SearchBar onChange={onFilterChange} placeholder="Filter string" />
+      <FlatList
+        data={headerData}
+        keyExtractor={headerRowKeyExtractor}
+        renderItem={renderHeaderRow}
+      />
+      <VirtualizedList
+        data={data}
+        getItem={(d, i) => d[i]}
+        getItemCount={d => d.length}
+        keyExtractor={rowKeyExtractor}
+        renderItem={renderRow}
+      />
+    </View>
   );
 };
 
