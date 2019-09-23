@@ -20,7 +20,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import { newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 /**
@@ -146,28 +146,11 @@ export const SupplierRequisitionsPage = ({
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_requisition}
-          onPress={onNewRequisition}
-        />
-      </View>
-    );
-  }, []);
-
-  const PastCurrentToggleBar = useCallback(
-    () => (
-      <ToggleBar
-        toggles={[
-          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
-        ]}
-      />
-    ),
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
     [showFinalised]
   );
 
@@ -180,11 +163,11 @@ export const SupplierRequisitionsPage = ({
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <PastCurrentToggleBar />
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+          <PageButton text={buttonStrings.new_requisition} onPress={onNewRequisition} />
         </View>
       </View>
       <DataTable
@@ -203,7 +186,6 @@ export const SupplierRequisitionsPage = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}

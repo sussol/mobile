@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -118,19 +118,11 @@ export const SupplierInvoicesPage = ({
     [sortBy, isAscending]
   );
 
-  const NewInvoiceButton = () => (
-    <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
-  );
-
-  const PastCurrentToggleBar = useCallback(
-    () => (
-      <ToggleBar
-        toggles={[
-          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
-        ]}
-      />
-    ),
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
     [showFinalised]
   );
 
@@ -143,11 +135,11 @@ export const SupplierInvoicesPage = ({
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          <PastCurrentToggleBar />
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
-          <NewInvoiceButton />
+          <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
         </View>
       </View>
       <DataTable
