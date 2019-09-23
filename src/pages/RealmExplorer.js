@@ -14,262 +14,55 @@ import { UIDatabase } from '../database/index';
 
 import { schema } from '../database/schema';
 
-const getObjectTypes = ({ schema }) => schema.map(object => object.name);
+// eslint-disable-next-line no-shadow
+const getObjectTypes = ({ schema: objectSchemas }) =>
+  objectSchemas.map(({ schema: objectSchema }) => objectSchema.name);
+
+const parseType = realmType => {
+  const { type } = realmType;
+  if (type) return parseType(type);
+  switch (realmType) {
+    case 'bool':
+      return 'boolean';
+    case 'int':
+      return 'number';
+    case 'float':
+      return 'number';
+    case 'double':
+      return 'number';
+    case 'string':
+      return 'string';
+    case 'date':
+      return 'date';
+    case 'list':
+      return 'array';
+    default:
+      return 'object';
+  }
+};
+
+const getObjectFields = ({ schema: objectSchemas }) =>
+  objectSchemas
+    .map(({ schema: objectSchema }) => {
+      const { name, properties } = objectSchema;
+      const fields = Object.entries(properties)
+        .map(([field, type]) => ({
+          [field]: parseType(type),
+        }))
+        .reduce((acc, field) => ({ ...acc, ...field }), {});
+      return { [name]: fields };
+    })
+    .reduce((acc, object) => ({ ...acc, ...object }));
 
 const OBJECT_TYPES = getObjectTypes(schema);
-
-// TODO: parse object fields from schema.
-const OBJECT_FIELDS = {
-  Address: {
-    id: 'string',
-    line1: 'string',
-    line2: 'string',
-    line3: 'string',
-    line4: 'string',
-    zipCode: 'string',
-  },
-  Requisition: {
-    id: 'string',
-    status: 'string',
-    thresholdMOS: 'number',
-    type: 'string',
-    entryDate: 'date',
-    daysToSupply: 'number',
-    serialNumber: 'string',
-    requesterReference: 'string',
-    comment: 'string',
-    enteredBy: 'object',
-    items: 'list',
-    linkedTransaction: 'object',
-    program: 'object',
-    period: 'object',
-    otherStoreName: 'object',
-    CustomData: 'string',
-  },
-  Transaction: {
-    id: 'string',
-    serialNumber: 'string',
-    otherParty: 'object',
-    comment: 'string',
-    entryDate: 'date',
-    type: 'string',
-    status: 'string',
-    confirmDate: 'date',
-    enteredBy: 'object',
-    theirRef: 'string',
-    category: 'object',
-    items: 'list',
-    linkedRequisition: 'object',
-  },
-  Item: {
-    id: 'string',
-    code: 'string',
-    name: 'string',
-    defaultPackSize: 'number',
-    batches: 'list',
-    department: 'object',
-    description: 'string',
-    category: 'object',
-    defaultPrice: 'number',
-    isVisible: 'boolean',
-    crossReferenceItem: 'object',
-    unit: 'object',
-  },
-  ItemBatch: {
-    id: 'string',
-    item: 'object',
-    packSize: 'number',
-    numberOfPacks: 'number',
-    expiryDate: 'date',
-    batch: 'string',
-    costPrice: 'number',
-    sellPrice: 'number',
-    supplier: 'object',
-    donor: 'object',
-    transactionBatches: 'list',
-  },
-  ItemCategory: {
-    id: 'string',
-    name: 'string',
-    parentCategory: 'object',
-  },
-  ItemDepartment: {
-    id: 'string',
-    name: 'string',
-    parentDepartment: 'object',
-  },
-  ItemStoreJoin: {
-    id: 'string',
-    itemId: 'string',
-    joinsThisStore: 'bool',
-  },
-  MasterList: {
-    id: 'string',
-    name: 'string',
-    note: 'string',
-    items: 'list',
-    programSettings: 'string',
-    isProgram: 'boolean',
-  },
-  MasterListItem: {
-    id: 'string',
-    masterList: 'object',
-    item: 'object',
-    imprestQuantity: 'number',
-    price: 'number',
-  },
-  MasterListNameJoin: {
-    id: 'string',
-    masterList: 'object',
-    name: 'object',
-  },
-  Name: {
-    id: 'string',
-    name: 'string',
-    code: 'string',
-    phoneNumber: 'string',
-    billingAddress: 'object',
-    emailAddress: 'string',
-    type: 'string',
-    isCustomer: 'boolean',
-    isSupplier: 'boolean',
-    isManufacturer: 'boolean',
-    masterLists: 'list',
-    transactions: 'list',
-    isVisible: 'boolean',
-    supplyingStoreId: 'string',
-  },
-  NameStoreJoin: {
-    id: 'string',
-    nameId: 'string',
-    joinsThisStore: 'boolean',
-  },
-  Options: {
-    id: 'string',
-    title: 'string',
-    type: 'string',
-    isActive: 'boolean',
-  },
-  Period: {
-    id: 'string',
-    startDate: 'date',
-    endDate: 'date',
-    name: 'string',
-    periodSchedule: 'object',
-    requisitions: 'list',
-  },
-  PeriodSchedule: {
-    id: 'string',
-    name: 'string',
-    periods: 'list',
-  },
-  RequisitionItem: {
-    id: 'string',
-    requisition: 'object',
-    item: 'object',
-    stockOnHand: 'number',
-    dailyUsage: 'number',
-    imprestQuantity: 'number',
-    requiredQuantity: 'number',
-    suppliedQuantity: 'number',
-    comment: 'string',
-    sortIndex: 'number',
-    option: 'object',
-  },
-  Setting: {
-    key: 'string', 
-    value: 'string',
-    user: 'object',
-  },
-  Stocktake: {
-    id: 'string',
-    name: 'string',
-    createdDate: 'date',
-    stocktakeDate: 'date',
-    status: 'string',
-    createdBy: 'object',
-    finalisedBy: 'object',
-    comment: 'string',
-    serialNumber: 'string',
-    items: 'list',
-    additions: 'object',
-    reductions: 'object',
-    program: 'object',
-  },
-  StocktakeBatch: {
-    id: 'string',
-    stocktake: 'object',
-    itemBatch: 'object',
-    snapshotNumberOfPacks: 'number',
-    packSize: 'number',
-    expiryDate: 'date',
-    batch: 'string',
-    costPrice: 'number',
-    sellPrice: 'number',
-    countedNumberOfPacks: 'number',
-    sortIndex: 'number',
-    option: 'object',
-  },
-  StocktakeItem: {
-    id: 'string',
-    item: 'Item',
-    stocktake: 'object',
-    batches: 'list',
-  },
-  SyncOut: {
-    id: 'string',
-    changeTime: 'number',
-    changeType: 'string',
-    recordType: 'string',
-    recordId: 'string',
-  },
-  TransactionBatch: {
-    itemId: 'string',
-    itemName: 'string',
-    itemBatch: 'object',
-    batch: 'string',
-    expiryDate: 'date',
-    packSize: 'number',
-    numberOfPacks: 'number',
-    numberOfPacksSent: 'number',
-    transaction: 'object',
-    note: 'string',
-    costPrice: 'number',
-    sellPrice: 'number',
-    donor: 'object',
-    sortIndex: 'number',
-  },
-  TransactionCategory: {
-    id: 'string',
-    name: 'string',
-    code: 'string',
-    type: 'string',
-    parentCategory: 'object',
-  },
-  TransactionItem: {
-    id: 'string',
-    item: 'object',
-    transaction: 'object',
-    batches: 'list',
-  },
-  User: {
-    id: 'string',
-    username: 'string',
-    lastLogin: 'date',
-    firstName: 'string',
-    lastName: 'string',
-    email: 'string',
-    passwordHash: 'string',
-    salt: 'string',
-  },
-};
+const OBJECT_FIELDS = getObjectFields(schema);
 
 const toCapitalCase = value => value.charAt(0).toUpperCase() + value.slice(1);
 
 const parseString = value => String(value);
 const parseNumber = value => String(value);
 const parseObject = value => value.id;
-const parseList = value => value.length;
+const parseArray = value => value.length;
 const parseBoolean = value => toCapitalCase(String(value));
 const parseDate = value => value.toString();
 
@@ -282,8 +75,8 @@ const parseCell = (value, type) => {
       return parseNumber(value);
     case 'object':
       return parseObject(value);
-    case 'list':
-      return parseList(value);
+    case 'array':
+      return parseArray(value);
     case 'boolean':
       return parseBoolean(value);
     case 'date':
