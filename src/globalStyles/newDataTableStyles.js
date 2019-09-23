@@ -3,10 +3,24 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { BACKGROUND_COLOR, BLUE_WHITE, DARK_GREY, LIGHT_GREY } from './colors';
+import {
+  BACKGROUND_COLOR,
+  BLUE_WHITE,
+  DARK_GREY,
+  LIGHT_GREY,
+  SUSSOL_ORANGE,
+  WARM_GREY,
+} from './colors';
 import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
 
-const newDataTableStyles = {
+export const dataTableColors = {
+  checkableCellDisabled: LIGHT_GREY,
+  checkableCellChecked: SUSSOL_ORANGE,
+  checkableCellUnchecked: WARM_GREY,
+  editableCellUnderline: WARM_GREY,
+};
+
+export const newDataTableStyles = {
   cellContainer: {
     left: {
       borderRightWidth: 2,
