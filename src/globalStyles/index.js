@@ -21,7 +21,6 @@ import {
   pageStyles,
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
-import newPageStyles from './newPageStyles';
 import newDataTableStyles from './newDataTableStyles';
 
 export {
@@ -47,7 +46,6 @@ export { textStyles } from './textStyles';
 
 export {
   COMPONENT_HEIGHT,
-  newPageStyles,
   newDataTableStyles,
   dataTableStyles,
   dataTableColors,
