@@ -8,7 +8,7 @@ import HeaderCell from './HeaderCell';
 
 import { SortAscIcon, SortNeutralIcon, SortDescIcon } from '../icons';
 
-import { newDataTableStyles } from '../../globalStyles';
+import { dataTableStyles } from '../../globalStyles';
 
 /**
  * Simple wrapper around HeaderRow component. Applies mSupply styles and extracts
@@ -22,37 +22,40 @@ import { newDataTableStyles } from '../../globalStyles';
  *
  *
  */
-const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch, sortAction }) => (
-  <HeaderRow
-    style={newDataTableStyles.headerRow}
-    renderCells={() =>
-      columns.map(({ key, title, sortable, width, alignText }, index) => {
-        const sortDirection = isAscending ? 'ASC' : 'DESC';
-        const directionForThisColumn = key === sortBy ? sortDirection : null;
-        const isLastCell = index === columns.length - 1;
-        const { headerCells, cellText } = newDataTableStyles;
-        return (
-          <HeaderCell
-            key={key}
-            title={title}
-            SortAscComponent={SortAscIcon}
-            SortDescComponent={SortDescIcon}
-            SortNeutralComponent={SortNeutralIcon}
-            columnKey={key}
-            onPressAction={sortable ? sortAction : null}
-            dispatch={dispatch}
-            sortDirection={directionForThisColumn}
-            sortable={sortable}
-            width={width}
-            containerStyle={headerCells[alignText || 'left']}
-            textStyle={cellText[alignText || 'left']}
-            isLastCell={isLastCell}
-          />
-        );
-      })
-    }
-  />
-));
+const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch, sortAction }) => {
+  const { headerRow, headerCells, cellText } = dataTableStyles;
+  return (
+    <HeaderRow
+      style={headerRow}
+      renderCells={() =>
+        columns.map(({ key, title, sortable, width, alignText }, index) => {
+          const sortDirection = isAscending ? 'ASC' : 'DESC';
+          const directionForThisColumn = key === sortBy ? sortDirection : null;
+          const isLastCell = index === columns.length - 1;
+
+          return (
+            <HeaderCell
+              key={key}
+              title={title}
+              SortAscComponent={SortAscIcon}
+              SortDescComponent={SortDescIcon}
+              SortNeutralComponent={SortNeutralIcon}
+              columnKey={key}
+              onPressAction={sortable ? sortAction : null}
+              dispatch={dispatch}
+              sortDirection={directionForThisColumn}
+              sortable={sortable}
+              width={width}
+              containerStyle={headerCells[alignText || 'left']}
+              textStyle={cellText[alignText || 'left']}
+              isLastCell={isLastCell}
+            />
+          );
+        })
+      }
+    />
+  );
+});
 
 DataTableHeaderRow.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object),
