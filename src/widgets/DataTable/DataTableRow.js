@@ -16,7 +16,7 @@ import CheckableCell from './CheckableCell';
 import TouchableCell from './TouchableCell';
 import DropDownCell from '../DropDownCell';
 
-import { NewExpiryDateInput } from '../NewExpiryDateInput';
+import { ExpiryDateInput } from '../ExpiryDateInput';
 
 import {
   CheckedComponent,
@@ -114,7 +114,7 @@ const DataTableRow = React.memo(
 
             case COLUMN_TYPES.EDITABLE_EXPIRY_DATE:
               return (
-                <NewExpiryDateInput
+                <ExpiryDateInput
                   key={columnKey}
                   value={rowData[columnKey]}
                   rowKey={rowKey}

@@ -20,7 +20,7 @@ export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
-export { NewExpiryDateInput } from './NewExpiryDateInput';
+export { ExpiryDateInput } from './ExpiryDateInput';
 export { SearchBar } from './SearchBar';
 export { DataTablePageView } from './DataTablePageView';
 export { Flag } from './Flag';
