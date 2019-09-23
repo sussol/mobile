@@ -12,7 +12,7 @@ import { Button } from 'react-native-ui-components';
 import globalStyles from '../globalStyles';
 
 // A generic button for use on pages
-export function PageButton(props) {
+export function PageButtonComponent(props) {
   const { style, textStyle, isDisabled, ...buttonProps } = props;
 
   const defaultButtonStyle = [globalStyles.button];
@@ -29,10 +29,15 @@ export function PageButton(props) {
   );
 }
 
+const propsAreEqual = ({ isDisabled: prevIsDisabled }, { isDisabled: nextIsDisabled }) =>
+  prevIsDisabled === nextIsDisabled;
+
+export const PageButton = React.memo(PageButtonComponent, propsAreEqual);
+
 export default PageButton;
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
-PageButton.propTypes = {
+PageButtonComponent.propTypes = {
   style: ViewPropTypes.style,
   textStyle: Text.propTypes.style,
   onPress: PropTypes.func,

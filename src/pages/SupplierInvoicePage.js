@@ -18,7 +18,7 @@ import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { newPageStyles } from '../globalStyles';
+import { newPageStyles } from '../globalStyles';
 
 export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const initialState = { page: routeName, pageObject: transaction };
@@ -112,20 +112,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     [data, dataState]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_item}
-          onPress={onAddRow}
-          isDisabled={isFinalised}
-        />
-      </View>
-    );
-  }, []);
-
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
@@ -152,7 +138,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+          <PageButton text={buttonStrings.new_item} onPress={onAddRow} isDisabled={isFinalised} />
         </View>
       </View>
       <DataTable

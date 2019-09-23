@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { UIDatabase } from '../database';
@@ -20,7 +20,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import { newPageStyles } from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 /**
@@ -61,6 +61,7 @@ export const SupplierRequisitionsPage = ({
     searchTerm,
     PageActions,
     columns,
+    showFinalised,
   } = state;
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
@@ -79,6 +80,7 @@ export const SupplierRequisitionsPage = ({
   const onSearchFiltering = value => dispatch(PageActions.filterData(value));
   const onNewRequisition = () => dispatch(PageActions.openModal(NEW_REQUISITON));
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onCreateRequisition = otherStoreName => {
     onCloseModal();
@@ -144,18 +146,13 @@ export const SupplierRequisitionsPage = ({
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_requisition}
-          onPress={onNewRequisition}
-        />
-      </View>
-    );
-  }, []);
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
+    [showFinalised]
+  );
 
   const {
     newPageTopSectionContainer,
@@ -166,10 +163,11 @@ export const SupplierRequisitionsPage = ({
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+          <PageButton text={buttonStrings.new_requisition} onPress={onNewRequisition} />
         </View>
       </View>
       <DataTable
@@ -188,7 +186,6 @@ export const SupplierRequisitionsPage = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
