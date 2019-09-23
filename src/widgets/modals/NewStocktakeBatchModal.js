@@ -17,7 +17,7 @@ import { GenericChoiceList } from '../GenericChoiceList';
 import { PageInfo, DataTablePageView, PageButton } from '..';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../DataTable';
 
-import { newPageStyles } from '../../globalStyles';
+import globalStyles from '../../globalStyles';
 
 import { UIDatabase } from '../../database';
 import ModalContainer from './ModalContainer';
@@ -132,7 +132,7 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
-  } = newPageStyles;
+  } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>

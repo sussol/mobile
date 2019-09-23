@@ -20,7 +20,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 /**
@@ -161,7 +161,7 @@ export const SupplierRequisitionsPage = ({
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
-  } = newPageStyles;
+  } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>

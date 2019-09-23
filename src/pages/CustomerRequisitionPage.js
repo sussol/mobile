@@ -19,7 +19,7 @@ import { getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
 
 /**
@@ -171,7 +171,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
-  } = newPageStyles;
+  } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>

@@ -18,7 +18,7 @@ import { ToggleBar, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
 export const StocktakeManagePage = ({
   routeName,
@@ -121,7 +121,7 @@ export const StocktakeManagePage = ({
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
-  } = newPageStyles;
+  } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>

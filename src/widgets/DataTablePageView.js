@@ -7,9 +7,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
-const { pageContentContainer, container } = newPageStyles;
+const { pageContentContainer, container } = globalStyles;
 
 /**
  * Simple container for a standard data table page.

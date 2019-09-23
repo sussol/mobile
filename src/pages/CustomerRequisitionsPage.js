@@ -16,7 +16,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -82,7 +82,7 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     [sortBy, isAscending]
   );
 
-  const { pageTopSectionContainer } = newPageStyles;
+  const { pageTopSectionContainer } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>

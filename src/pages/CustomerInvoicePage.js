@@ -18,7 +18,7 @@ import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
 /**
  * Renders a mSupply mobile page with customer invoice loaded for editing
@@ -168,7 +168,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
     searchBar,
-  } = newPageStyles;
+  } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
