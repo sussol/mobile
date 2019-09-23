@@ -24,6 +24,7 @@ export { ToggleSelector } from './ToggleSelector';
 export { NewExpiryDateInput } from './NewExpiryDateInput';
 export { SearchBar } from './SearchBar';
 export { DataTablePageView } from './DataTablePageView';
+export { Flag } from './Flag';
 export {
   SortAscIcon,
   SortNeutralIcon,
@@ -37,3 +38,4 @@ export {
   OpenModal,
   Expand,
 } from './icons';
+export { KiribatiFlag, EnglishFlag, LaosFlag, TetumFlag, FrenchFlag } from './images';
