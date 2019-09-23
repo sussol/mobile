@@ -21,7 +21,7 @@ import {
   pageStyles,
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
-import { newDataTableStyles, dataTableColors } from './newDataTableStyles';
+import { dataTableStyles, dataTableColors } from './dataTableStyles';
 
 export {
   BACKGROUND_COLOR,
@@ -46,7 +46,7 @@ export { textStyles } from './textStyles';
 
 export {
   COMPONENT_HEIGHT,
-  newDataTableStyles,
+  dataTableStyles,
   dataTableColors,
   FULL_SCREEN_MODAL_MARGIN,
   PAGE_CONTENT_PADDING_BOTTOM,
