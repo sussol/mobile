@@ -40,7 +40,7 @@ import { buttonStrings } from '../../localization/index';
  * @prop {Object} stocktakeItem The realm transaction object for this invoice.
  *
  */
-export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
+export const StocktakeBatchModal = ({ stocktakeItem }) => {
   const usingReasons = useMemo(() => UIDatabase.objects('StocktakeReasons').length > 0, []);
 
   const initialState = {
@@ -168,8 +168,8 @@ export const NewStocktakeBatchModal = ({ stocktakeItem }) => {
   );
 };
 
-NewStocktakeBatchModal.propTypes = {
+StocktakeBatchModal.propTypes = {
   stocktakeItem: PropTypes.object.isRequired,
 };
 
-export default NewStocktakeBatchModal;
+export default StocktakeBatchModal;

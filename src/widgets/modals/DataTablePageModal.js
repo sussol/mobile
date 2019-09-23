@@ -7,8 +7,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ModalContainer from './ModalContainer';
+import { UIDatabase } from '../../database';
+import Settings from '../../settings/MobileAppSettings';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
+
+import ModalContainer from './ModalContainer';
 import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
@@ -16,11 +19,9 @@ import { ToggleSelector } from '../ToggleSelector';
 import { RegimenDataModal } from './RegimenDataModal';
 import { NewConfirmModal } from './NewConfirmModal';
 import { GenericChoiceList } from '../GenericChoiceList';
-import { UIDatabase } from '../../database';
-import { modalStrings } from '../../localization';
-import Settings from '../../settings/MobileAppSettings';
+import { StocktakeBatchModal } from './StocktakeBatchModal';
 
-import NewSocktakeBatchModal from './NewStocktakeBatchModal';
+import { modalStrings } from '../../localization';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
@@ -114,7 +115,7 @@ export const DataTablePageModal = ({
         return <RegimenDataModal requisition={currentValue} />;
 
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
-        return <NewSocktakeBatchModal stocktakeItem={currentValue} />;
+        return <StocktakeBatchModal stocktakeItem={currentValue} />;
 
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return (
