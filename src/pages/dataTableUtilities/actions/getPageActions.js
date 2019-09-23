@@ -10,7 +10,12 @@ import {
   editStocktakeBatchCountedQuantityWithReason,
 } from './cellActions';
 import { RowActionsLookup } from './rowActions';
-import { TableActionsLookup } from './tableActions';
+import {
+  TableActionsLookup,
+  refreshDataWithFinalisedToggle,
+  filterDataWithFinalisedToggle,
+  filterDataWithOverStockToggle,
+} from './tableActions';
 import { PageActionsLookup } from './pageActions';
 
 /**
@@ -34,9 +39,6 @@ const BasePageActions = {
   ...PageActionsLookup,
 };
 
-/**
- * Actions for `stocktakeEditPage` when reasons are defined.
- */
 const stocktakeEditorWithReasons = {
   ...BasePageActions,
   editCountedQuantity: editCountedQuantityWithReason,
@@ -47,6 +49,41 @@ const stocktakeBatchEditModalWithReasons = {
   editStocktakeBatchCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
 };
 
+const stocktakes = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
+};
+
+const customerInvoices = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
+};
+
+const customerRequisitions = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
+};
+
+const supplierInvoices = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
+};
+
+const supplierRequisitions = {
+  ...BasePageActions,
+  refreshData: refreshDataWithFinalisedToggle,
+  filterData: filterDataWithFinalisedToggle,
+};
+
+const supplierRequisitionWithProgram = {
+  ...BasePageActions,
+  filterData: filterDataWithOverStockToggle,
+};
+
 /**
  * If actions need to be overriden for a particular routeName,
  * adding them here will pass that new set of actions to the
@@ -55,6 +92,12 @@ const stocktakeBatchEditModalWithReasons = {
 const NON_DEFAULT_PAGE_ACTIONS = {
   stocktakeEditorWithReasons,
   stocktakeBatchEditModalWithReasons,
+  customerInvoices,
+  customerRequisitions,
+  supplierInvoices,
+  supplierRequisitions,
+  stocktakes,
+  supplierRequisitionWithProgram,
 };
 
 /**

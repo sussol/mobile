@@ -9,7 +9,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { SearchBar, DataTablePageView } from '../widgets';
+import { SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
@@ -17,6 +17,7 @@ import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
+import { buttonStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -40,7 +41,16 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
   const initialState = { page: routeName };
   const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
 
-  const { data, sortBy, isAscending, searchTerm, PageActions, columns, keyExtractor } = state;
+  const {
+    data,
+    sortBy,
+    isAscending,
+    searchTerm,
+    PageActions,
+    columns,
+    keyExtractor,
+    showFinalised,
+  } = state;
 
   const refreshCallback = () => dispatch(PageActions.refreshData(), []);
   // Custom hook to refresh data on this page when becoming the head of the stack again.
@@ -49,7 +59,8 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
   useSyncListener(refreshCallback, 'Requisition');
 
   const onPressRow = useCallback(rowData => reduxDispatch(gotoCustomerRequisition(rowData)), []);
-  const onSearchFiltering = value => dispatch(PageActions.filterData(value));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const renderRow = useCallback(
     listItem => {
@@ -82,11 +93,26 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     [sortBy, isAscending]
   );
 
-  const { pageTopSectionContainer } = globalStyles;
+  const PastCurrentToggleBar = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+        ]}
+      />
+    ),
+    [showFinalised]
+  );
+
+  const { pageTopSectionContainer, pageTopLeftSectionContainer } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
-        <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
+        <View style={pageTopLeftSectionContainer}>
+          <PastCurrentToggleBar />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+        </View>
       </View>
       <DataTable
         data={data}

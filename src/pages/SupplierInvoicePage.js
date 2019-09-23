@@ -112,20 +112,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     [data, dataState]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_item}
-          onPress={onAddRow}
-          isDisabled={isFinalised}
-        />
-      </View>
-    );
-  }, []);
-
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
@@ -152,7 +138,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
-          <PageButtons />
+          <PageButton text={buttonStrings.new_item} onPress={onAddRow} isDisabled={isFinalised} />
         </View>
       </View>
       <DataTable

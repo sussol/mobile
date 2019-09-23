@@ -169,18 +169,6 @@ export const StocktakeEditPage = ({
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(() => {
-    const ManageStocktake = (
-      <PageButton
-        text={buttonStrings.manage_stocktake}
-        onPress={onManageStocktake}
-        isDisabled={isFinalised}
-      />
-    );
-
-    return <View style={pageTopRightSectionContainer}>{program ? null : ManageStocktake}</View>;
-  }, [program]);
-
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
@@ -193,7 +181,15 @@ export const StocktakeEditPage = ({
           {renderPageInfo()}
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <PageButtons />
+        <View style={pageTopRightSectionContainer}>
+          {!program && (
+            <PageButton
+              text={buttonStrings.manage_stocktake}
+              onPress={onManageStocktake}
+              isDisabled={isFinalised}
+            />
+          )}
+        </View>
       </View>
       <DataTable
         data={data}

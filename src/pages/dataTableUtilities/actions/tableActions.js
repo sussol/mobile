@@ -73,16 +73,6 @@ export const showFinalised = () => ({ type: ACTIONS.SHOW_FINALISED });
 export const showNotFinalised = () => ({ type: ACTIONS.SHOW_NOT_FINALISED });
 
 /**
- * Wrapper around showFinalised/showNotFinalised to toggle between. Determines the
- * correct action to dispatch.
- *
- * @param {Bool} showFinalised Indicator wheter finalised rows are currently displayed.
- */
-export const toggleShowFinalised = showingFinalised => {
-  if (showingFinalised) return showNotFinalised();
-  return showFinalised();
-};
-/**
  * Shows all items, regardless of current stock on hand, toggles
  * showAll to true and removes the current search filtering. Sort is
  * kept stable.
@@ -95,6 +85,17 @@ export const showOverStocked = () => refreshData();
  * kept stable.
  */
 export const showStockOut = () => refreshData();
+
+/**
+ * Wrapper around showFinalised/showNotFinalised to toggle between. Determines the
+ * correct action to dispatch.
+ *
+ * @param {Bool} showFinalised Indicator wheter finalised rows are currently displayed.
+ */
+export const toggleShowFinalised = showingFinalised => {
+  if (showingFinalised) return showNotFinalised();
+  return showFinalised();
+};
 
 /**
  * Wrapper around hideStockout and showStockout. Determines which
@@ -279,3 +280,30 @@ export const TableActionsLookup = {
   addTransactionItem,
   addStocktakeBatch,
 };
+
+/**
+ * =====================================================================
+ *
+ *                             Overrides
+ *
+ * Below are actions which are overrides of base actions.
+ *
+ * Example: editCountedQuantityWithReason overrides editCountedQuantity
+ * for a stocktakeEditPage when reasons are defined.
+ *
+ * =====================================================================
+ */
+
+export const refreshDataWithFinalisedToggle = () => ({
+  type: ACTIONS.REFRESH_DATA_WITH_FINALISED_TOGGLE,
+});
+
+export const filterDataWithFinalisedToggle = searchTerm => ({
+  type: ACTIONS.FILTER_DATA_WITH_FINALISED_TOGGLE,
+  payload: { searchTerm },
+});
+
+export const filterDataWithOverStockToggle = searchTerm => ({
+  type: ACTIONS.FILTER_DATA_WITH_OVER_STOCK_TOGGLE,
+  payload: { searchTerm },
+});
