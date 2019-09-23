@@ -14,8 +14,10 @@ import PropTypes from 'prop-types';
  * Prop. This hack ensures events don't propogate to the parent, styling stays consistent
  * and no feedback (i.e. gesture echo) is given to the user.
  */
-const TouchableNoFeedback = ({ children, style }) => (
-  <TouchableWithoutFeedback onPress={() => {}}>
+const onPressNoOp = () => {};
+
+const TouchableNoFeedback = ({ children, style, ...touchableProps }) => (
+  <TouchableWithoutFeedback onPress={onPressNoOp} {...touchableProps}>
     <View style={style}>{children}</View>
   </TouchableWithoutFeedback>
 );
