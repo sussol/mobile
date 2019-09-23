@@ -14,30 +14,49 @@ import { UIDatabase } from '../database/index';
 
 import { schema } from '../database/schema';
 
+const TYPES = {
+  BOOLEAN: 'boolean',
+  DATE: 'date',
+  NUMBER: 'number',
+  STRING: 'string',
+  ARRAY: 'array',
+  OBJECT: 'object',
+};
+
 const REALM_TYPES = {
-  boolean: ['bool'],
-  date: ['date'],
-  number: ['int', 'float', 'double'],
-  string: ['string'],
-  array: ['list'],
-  object: ['object'],
+  BOOL: 'bool',
+  DATE: 'date',
+  DOUBLE: 'double',
+  FLOAT: 'float',
+  INT: 'int',
+  LIST: 'list',
+  OBJECT: 'object',
+  STRING: 'string',
+};
+
+const TYPE_MAPPINGS = {
+  [TYPES.BOOLEAN]: [REALM_TYPES.BOOL],
+  [TYPES.DATE]: [REALM_TYPES.DATE],
+  [TYPES.NUMBER]: [REALM_TYPES.INT, REALM_TYPES.FLOAT, REALM_TYPES.DOUBLE],
+  [TYPES.STRING]: [REALM_TYPES.STRING],
+  [TYPES.ARRAY]: [REALM_TYPES.LIST],
+  [TYPES.OBJECT]: [REALM_TYPES.OBJECT],
 };
 
 const typeMapper = new Map(
-  Object.entries(REALM_TYPES)
+  Object.entries(TYPE_MAPPINGS)
     .map(([type, realmTypes]) => realmTypes.map(realmType => [realmType, type]))
     .flat()
 );
 
-const getObjectTypes = ({ schema: objectSchemas }) =>
-  objectSchemas.map(({ schema: objectSchema }) => objectSchema.name);
-
 const parseType = realmType => {
   const { type } = realmType;
   if (type) return parseType(type);
-  const parsedType = typeMapper.get(realmType);
-  return parsedType;
+  return typeMapper.get(realmType) || TYPES.OBJECT;
 };
+
+const getObjectTypes = ({ schema: objectSchemas }) =>
+  objectSchemas.map(({ schema: objectSchema }) => objectSchema.name);
 
 const getObjectFields = ({ schema: objectSchemas }) =>
   objectSchemas
@@ -67,17 +86,17 @@ const parseDate = value => value.toString();
 const parseCell = (value, type) => {
   if (value === null || value === undefined) return 'N/A';
   switch (type) {
-    case 'string':
+    case TYPES.STRING:
       return parseString(value);
-    case 'number':
+    case TYPES.NUMBER:
       return parseNumber(value);
-    case 'object':
+    case TYPES.OBJECT:
       return parseObject(value);
-    case 'array':
+    case TYPES.ARRAY:
       return parseArray(value);
-    case 'boolean':
+    case TYPES.BOOLEAN:
       return parseBoolean(value);
-    case 'date':
+    case TYPES.DATE:
       return parseDate(value);
     default:
       return '';
@@ -85,9 +104,9 @@ const parseCell = (value, type) => {
 };
 
 const getInitialState = database => {
-  const objectString = 'Requisition';
+  const [objectString] = OBJECT_TYPES;
   const objectData = database.objects(objectString);
-  const searchString = '';
+  const searchString = objectString;
   const filterString = '';
   const filteredData = objectData;
   return { objectString, objectData, searchString, filterString, filteredData };
@@ -169,12 +188,12 @@ export const RealmExplorer = ({ database }) => {
     return <View style={styles.row}>{cells}</View>;
   };
 
+  const { filteredData, searchString } = state;
   const headerData = [objectFields];
-  const data = state.filteredData;
 
   return (
     <View style={[globalStyles.container]}>
-      <SearchBar onChange={onSearchChange} placeholder="Table name" />
+      <SearchBar value={searchString} onChange={onSearchChange} placeholder="Table name" />
       <SearchBar onChange={onFilterChange} placeholder="Filter string" />
       <FlatList
         data={headerData}
@@ -182,7 +201,7 @@ export const RealmExplorer = ({ database }) => {
         renderItem={renderHeaderRow}
       />
       <VirtualizedList
-        data={data}
+        data={filteredData}
         getItem={(d, i) => d[i]}
         getItemCount={d => d.length}
         keyExtractor={rowKeyExtractor}
