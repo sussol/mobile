@@ -67,11 +67,9 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
   const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
+  const onAddBatch = () => dispatch(PageActions.addStocktakeBatch());
 
-  const renderPageInfo = useCallback(
-    () => <PageInfo columns={getPageInfoColumns(pageObject, dispatch, PageActions)} />,
-    []
-  );
+  const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 
   const getAction = colKey => {
     switch (colKey) {
@@ -120,13 +118,13 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
     [sortBy, isAscending]
   );
 
-  const PageButtons = () => (
-    <PageButton
-      text={buttonStrings.add_batch}
-      onPress={() => dispatch(PageActions.addStocktakeBatch())}
-      isDisabled={stocktakeItem.stocktake.isFinalised}
-    />
-  );
+  const PageButtons = () => {
+    const { stocktake = {} } = stocktakeItem;
+    const { isFinalised = false } = stocktake;
+    return (
+      <PageButton text={buttonStrings.add_batch} onPress={onAddBatch} isDisabled={isFinalised} />
+    );
+  };
 
   const {
     pageTopSectionContainer,
@@ -136,7 +134,9 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
-        <View style={pageTopLeftSectionContainer}>{renderPageInfo()}</View>
+        <View style={pageTopLeftSectionContainer}>
+          <PageInfo columns={toggles} />
+        </View>
         <View style={pageTopRightSectionContainer}>
           <PageButtons />
         </View>
