@@ -115,20 +115,11 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * Returns whether or not a reason should be applied to this
-   * stocktake batch.
-   * @return {bool}
+   * Returns if this batch has a reason applied. Simple getter
+   * matching StocktakeItem interface for ease of use.
    */
-  get shouldHaveReason() {
-    return this.countedTotalQuantity !== this.snapshotTotalQuantity;
-  }
-
-  /**
-   * Returns a boolean indicator whether a reason needs to be
-   * enforced on this stock take batch
-   */
-  get enforceReason() {
-    return this.shouldHaveReason && !this.hasAnyReason;
+  get hasReason() {
+    return !!this.option;
   }
 
   /**
