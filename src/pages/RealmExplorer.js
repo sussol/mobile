@@ -114,7 +114,8 @@ const getInitialState = database => {
 const getUpdatedState = (database, state) => {
   const { realmObjectString, realmObjectData, searchString, filterString, filteredData } = state;
   const newState = { searchString, filterString };
-  const updateObject = searchString !== realmObjectString && REALM_OBJECTS.indexOf(searchString) >= 0;
+  const updateObject =
+    searchString !== realmObjectString && REALM_OBJECTS.indexOf(searchString) >= 0;
   newState.realmObjectString = updateObject ? searchString : realmObjectString;
   newState.realmObjectData = updateObject
     ? database.objects(newState.realmObjectString)
@@ -132,13 +133,27 @@ const getUpdatedState = (database, state) => {
   return newState;
 };
 
-const renderHeader = objectFields => {
-  const headerCells = Object.keys(objectFields).map(columnKey => (
+const getHeaderRenderer = realmObjectFields => () => {
+  const headerCells = Object.keys(realmObjectFields).map(columnKey => (
     <View key={columnKey} style={styles.cell}>
       <Text style={styles.cellText}>{columnKey}</Text>
     </View>
   ));
   return <View style={styles.row}>{headerCells}</View>;
+};
+
+const getRowRenderer = realmObjectFields => row => {
+  const { item } = row;
+  const cells = Object.entries(realmObjectFields).map(([columnKey, columnType]) => {
+    const cell = item[columnKey];
+    const cellValue = parseCell(cell, columnType);
+    return (
+      <View style={styles.cell}>
+        <Text style={styles.cellText}>{cellValue}</Text>
+      </View>
+    );
+  });
+  return <View style={styles.row}>{cells}</View>;
 };
 
 /**
@@ -171,36 +186,21 @@ export const RealmExplorer = () => {
 
   const realmObjectFields = REALM_OBJECTS_FIELDS[state.realmObjectString];
 
-  const rowKeyExtractor = ({ id }) => id;
-
-  const renderRow = row => {
-    const { item } = row;
-    const cells = Object.entries(objectFields).map(([columnKey, columnType]) => {
-      const cell = item[columnKey];
-      const cellValue = parseCell(cell, columnType);
-      return (
-        <View style={styles.cell}>
-          <Text style={styles.cellText}>{cellValue}</Text>
-        </View>
-      );
-    });
-    return <View style={styles.row}>{cells}</View>;
-  };
-
   const { filteredData, searchString } = state;
 
-  const header = useCallback(() => renderHeader(objectFields), [objectFields]);
+  const renderHeader = useCallback(getHeaderRenderer(realmObjectFields), [realmObjectFields]);
+  const renderRow = useCallback(getRowRenderer(realmObjectFields), [realmObjectFields]);
 
   return (
     <View style={[globalStyles.container]}>
       <SearchBar value={searchString} onChange={onSearchChange} placeholder="Table name" />
       <SearchBar onChange={onFilterChange} placeholder="Filter string" />
       <VirtualizedList
-        ListHeaderComponent={header}
+        ListHeaderComponent={renderHeader}
         data={filteredData}
         getItem={(d, i) => d[i]}
         getItemCount={d => d.length}
-        keyExtractor={rowKeyExtractor}
+        keyExtractor={({ id }) => id}
         renderItem={renderRow}
       />
     </View>
