@@ -8,6 +8,7 @@ import HeaderCell from './HeaderCell';
 import DataTable from './DataTable';
 import DataTableHeaderRow from './DataTableHeaderRow';
 import DataTableRow from './DataTableRow';
+import TouchableNoFeedback from './TouchableNoFeedback';
 
 export {
   DataTable,
@@ -20,4 +21,5 @@ export {
   HeaderRow,
   HeaderCell,
   DataTableRow,
+  TouchableNoFeedback,
 };

@@ -143,7 +143,7 @@ DataTable.defaultProps = {
   getItemCount: items => items.length,
   initialNumToRender: 10,
   removeClippedSubviews: true,
-  windowSize: 2,
+  windowSize: 3,
   columns: [],
 };
 

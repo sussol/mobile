@@ -3,7 +3,9 @@
 import React, { useContext, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+
+import TouchableNoFeedback from './TouchableNoFeedback';
 
 import RefContext from './RefContext';
 
@@ -47,10 +49,10 @@ const Row = React.memo(
     }
 
     const { adjustToTop } = useContext(RefContext);
-    const onPressRow = useCallback(() => onPress(rowData), []);
+    const onPressRow = useCallback(() => onPress(rowData), [onPress]);
     const onFocus = () => adjustToTop(rowIndex);
 
-    const Container = onPress ? TouchableOpacity : View;
+    const Container = onPress ? TouchableOpacity : TouchableNoFeedback;
     return (
       <Container onPress={onPressRow} style={style} onFocus={onFocus}>
         {renderCells(rowData, rowState, rowKey, rowIndex)}
