@@ -92,7 +92,7 @@ export const SupplierRequisitionsPage = ({
     reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
   };
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -100,7 +100,7 @@ export const SupplierRequisitionsPage = ({
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {

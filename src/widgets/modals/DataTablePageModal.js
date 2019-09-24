@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -31,6 +32,9 @@ import NewSocktakeBatchModal from './NewStocktakeBatchModal';
 /**
  * Wrapper around ModalContainer, containing common modals used in various
  * DataTable pages.
+ *
+ * NOTE: Exported component is MEMOIZED - see below for propsAreEqual implementation.
+ *
  * @prop {Bool}   fullScreen   Force the modal to cover the entire screen.
  * @prop {Bool}   isOpen       Whether the modal is open
  * @prop {Func}   onClose      A function to call if the close x is pressed
@@ -44,7 +48,7 @@ const ADDITIONAL_MODAL_PROPS = {
   [MODAL_KEYS.ENFORCE_STOCKTAKE_REASON]: { noCancel: true, fullScreen: true },
 };
 
-export const DataTablePageModal = ({
+const DataTablePageModalComponent = ({
   fullScreen,
   isOpen,
   onClose,
@@ -183,7 +187,14 @@ export const DataTablePageModal = ({
   );
 };
 
-DataTablePageModal.defaultProps = {
+/**
+ * Only re-render this component when the isOpen prop changes.
+ */
+const propsAreEqual = ({ isOpen: prevIsOpen }, { isOpen: nextIsOpen }) => prevIsOpen === nextIsOpen;
+
+export const DataTablePageModal = React.memo(DataTablePageModalComponent, propsAreEqual);
+
+DataTablePageModalComponent.defaultProps = {
   fullScreen: false,
   modalKey: '',
   onSelect: null,
@@ -191,7 +202,7 @@ DataTablePageModal.defaultProps = {
   modalObject: null,
 };
 
-DataTablePageModal.propTypes = {
+DataTablePageModalComponent.propTypes = {
   modalObject: PropTypes.object,
   fullScreen: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
@@ -200,5 +211,3 @@ DataTablePageModal.propTypes = {
   onSelect: PropTypes.func,
   currentValue: PropTypes.any,
 };
-
-export default DataTablePageModal;

@@ -55,17 +55,13 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
   const onCloseModal = () => dispatch(PageActions.closeModal());
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, theirRef, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    theirRef,
+    isFinalised,
+  ]);
 
-  const getAction = (columnKey, propName) => {
+  const getAction = useCallback((columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
         return PageActions.editTotalQuantity;
@@ -77,7 +73,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -134,7 +130,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     <DataTablePageView>
       <View style={newPageTopSectionContainer}>
         <View style={newPageTopLeftSectionContainer}>
-          {renderPageInfo()}
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={newPageTopRightSectionContainer}>
