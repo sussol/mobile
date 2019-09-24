@@ -209,7 +209,7 @@ const stocktakeManagerInitialiser = stocktake => {
  */
 const stocktakeEditorInitialiser = stocktake => {
   const { items: backingData } = stocktake;
-  const sortedData = backingData.sorted('item.name');
+  const sortedData = backingData.sorted('item.name').slice();
 
   return {
     pageObject: stocktake,
