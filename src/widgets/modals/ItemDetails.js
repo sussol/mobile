@@ -28,7 +28,7 @@ import { DARKER_GREY, SUSSOL_ORANGE } from '../../globalStyles';
  * @param {Func}   onClose    Callback for closing the modal.
  * @param {Any}    modalProps Any additional props for the modal component.
  */
-export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
+export const ItemDetailsComponent = ({ isOpen, item, onClose, ...modalProps }) => {
   const headers = {
     batch: 'Batch',
     expiryDate: 'Expiry',
@@ -104,6 +104,21 @@ export const ItemDetails = ({ isOpen, item, onClose, ...modalProps }) => {
   );
 };
 
+/**
+ * This component re-renders only when isOpen changes, or the underlying
+ * item object changes.
+ */
+const propsAreEqual = (
+  { item: prevItem, isOpen: prevIsOpen },
+  { item: nextItem, isOpen: nextIsOpen }
+) => {
+  const itemsEqual = prevItem === nextItem;
+  const isOpenEqual = prevIsOpen === nextIsOpen;
+  return itemsEqual && isOpenEqual;
+};
+
+export const ItemDetails = React.memo(ItemDetailsComponent, propsAreEqual);
+
 const localStyles = {
   scrollView: {
     height: 170,
@@ -116,7 +131,7 @@ const localStyles = {
   headerRow: { flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10 },
 };
 
-ItemDetails.defaultProps = {
+ItemDetailsComponent.defaultProps = {
   item: null,
   swipeToClose: false,
   backdropPressToClose: false,
@@ -124,7 +139,7 @@ ItemDetails.defaultProps = {
   backdrop: false,
 };
 
-ItemDetails.propTypes = {
+ItemDetailsComponent.propTypes = {
   item: PropTypes.object,
   onClose: PropTypes.func.isRequired,
   isOpen: PropTypes.bool.isRequired,

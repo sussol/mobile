@@ -63,7 +63,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
   };
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -71,7 +71,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {

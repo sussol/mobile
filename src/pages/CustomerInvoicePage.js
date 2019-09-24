@@ -76,17 +76,13 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const onAddMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, theirRef, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    theirRef,
+    isFinalised,
+  ]);
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
         return PageActions.editTotalQuantity;
@@ -96,7 +92,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -114,6 +110,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
+
       const rowKey = keyExtractor(item);
       return (
         <DataTableRow
@@ -155,7 +152,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
-          {renderPageInfo()}
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>

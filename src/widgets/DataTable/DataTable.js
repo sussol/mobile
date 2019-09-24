@@ -96,6 +96,11 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
     [numberOfEditableCells]
   );
 
+  const renderItem = useCallback(
+    rowItem => renderRow(rowItem, focusNextCell, getCellRef, adjustToTop),
+    [renderRow]
+  );
+
   return (
     <RefContext.Provider value={contextValue}>
       {renderHeader && renderHeader()}
@@ -105,7 +110,7 @@ const DataTable = React.memo(({ renderRow, renderHeader, style, data, columns, .
         data={data}
         keyboardShouldPersistTaps="always"
         style={style}
-        renderItem={rowItem => renderRow(rowItem, focusNextCell, getCellRef, adjustToTop)}
+        renderItem={renderItem}
         {...otherProps}
       />
     </RefContext.Provider>

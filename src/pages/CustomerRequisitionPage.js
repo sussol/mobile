@@ -74,24 +74,19 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onSetSuppliedToSuggested = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    isFinalised,
+  ]);
 
-  const getAction = colKey => {
+  const getAction = useCallback(colKey => {
     switch (colKey) {
       case 'suppliedQuantity':
         return PageActions.editSuppliedQuantity;
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -145,7 +140,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
-          {renderPageInfo()}
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
