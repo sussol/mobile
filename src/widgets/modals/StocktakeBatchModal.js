@@ -64,6 +64,9 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
     getPageInfoColumns,
   } = state;
 
+  const { stocktake = {} } = stocktakeItem;
+  const { isFinalised = false } = stocktake;
+
   const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
@@ -118,14 +121,6 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
     [sortBy, isAscending]
   );
 
-  const PageButtons = () => {
-    const { stocktake = {} } = stocktakeItem;
-    const { isFinalised = false } = stocktake;
-    return (
-      <PageButton text={buttonStrings.add_batch} onPress={onAddBatch} isDisabled={isFinalised} />
-    );
-  };
-
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
@@ -138,7 +133,11 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
           <PageInfo columns={toggles} />
         </View>
         <View style={pageTopRightSectionContainer}>
-          <PageButtons />
+          <PageButton
+            text={buttonStrings.add_batch}
+            onPress={onAddBatch}
+            isDisabled={isFinalised}
+          />
         </View>
       </View>
       <DataTable
