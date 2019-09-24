@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { View, VirtualizedList, Text, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -111,26 +111,32 @@ const getInitialState = database => {
   return { realmObjectString, realmObjectData, searchString, filterString, filteredData };
 };
 
-const getUpdatedState = (database, state) => {
-  const { realmObjectString, realmObjectData, searchString, filterString, filteredData } = state;
-  const newState = { searchString, filterString };
+const searchData = (newSearchString, state) => {
+  const { realmObjectString, realmObjectData } = state;
   const updateObject =
-    searchString !== realmObjectString && REALM_OBJECTS.indexOf(searchString) >= 0;
-  newState.realmObjectString = updateObject ? searchString : realmObjectString;
-  newState.realmObjectData = updateObject
-    ? database.objects(newState.realmObjectString)
+    newSearchString !== realmObjectString && REALM_OBJECTS.indexOf(newSearchString) >= 0;
+  const newRealmObjectString = updateObject ? newSearchString : realmObjectString;
+  const newRealmObjectData = updateObject
+    ? UIDatabase.objects(newRealmObjectString)
     : realmObjectData;
-  if (filterString === '') {
-    newState.filteredData = newState.realmObjectData;
-  } else {
-    try {
-      newState.filteredData = newState.realmObjectData.filtered(filterString);
-    } catch (err) {
-      newState.filteredData = updateObject ? newState.realmObjectData : filteredData;
-    }
-  }
+  return {
+    ...state,
+    realmObjectString: newRealmObjectString,
+    realmObjectData: newRealmObjectData,
+    searchString: newSearchString,
+    filteredData: newRealmObjectData,
+  };
+};
 
-  return newState;
+const filterData = (newFilterString, state) => {
+  const { realmObjectData } = state;
+  try {
+    const newFilteredData =
+      newFilterString === '' ? realmObjectData : realmObjectData.filtered(newFilterString);
+    return { ...state, filterString: newFilterString, filteredData: newFilteredData };
+  } catch (err) {
+    return { ...state };
+  }
 };
 
 const getHeaderRenderer = realmObjectFields => () => {
@@ -171,25 +177,20 @@ const getRowRenderer = realmObjectFields => row => {
 export const RealmExplorer = () => {
   const [state, setState] = useState(getInitialState(UIDatabase));
 
-  const onSearchChange = searchString => {
-    setState({ ...state, searchString });
-  };
+  const { realmObjectString, searchString, filteredData } = state;
 
-  const onFilterChange = filterString => {
-    setState({ ...state, filterString });
-  };
-
-  useEffect(() => setState(getUpdatedState(UIDatabase, state)), [
-    state.searchString,
-    state.filterString,
-  ]);
-
-  const realmObjectFields = REALM_OBJECTS_FIELDS[state.realmObjectString];
-
-  const { filteredData, searchString } = state;
+  const realmObjectFields = REALM_OBJECTS_FIELDS[realmObjectString];
 
   const renderHeader = useCallback(getHeaderRenderer(realmObjectFields), [realmObjectFields]);
   const renderRow = useCallback(getRowRenderer(realmObjectFields), [realmObjectFields]);
+  const onSearchChange = useCallback(
+    newSearchString => setState(prevState => searchData(newSearchString, prevState)),
+    []
+  );
+  const onFilterChange = useCallback(
+    newFilterString => setState(prevState => filterData(newFilterString, prevState)),
+    []
+  );
 
   return (
     <View style={[globalStyles.container]}>
