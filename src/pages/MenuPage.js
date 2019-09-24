@@ -9,8 +9,10 @@ import PropTypes from 'prop-types';
 import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { BadgeSet } from '../widgets';
 
-import { navStrings } from '../localization';
+import { navStrings, generalStrings } from '../localization';
+
 import { SETTINGS_KEYS } from '../settings';
 
 import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
@@ -20,6 +22,48 @@ const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 export class MenuPage extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      customerRequisition: [
+        {
+          count: 0,
+          type: 'unfinalised',
+          title: `${
+            generalStrings.unfinalised
+          } ${generalStrings.customerRequisitions.toLowerCase()}`,
+        },
+      ],
+      supplierRequisition: [
+        {
+          count: 0,
+          type: 'unfinalised',
+          title: `${
+            generalStrings.unfinalised
+          } ${generalStrings.supplierRequisitions.toLowerCase()}`,
+        },
+      ],
+      supplierInvoice: [
+        {
+          count: 0,
+          type: 'unfinalised',
+          title: `${generalStrings.unfinalised} ${generalStrings.supplierInvoices.toLowerCase()}`,
+        },
+      ],
+      customerInvoice: [
+        {
+          count: 0,
+          type: 'unfinalised',
+          title: `${generalStrings.unfinalised} ${generalStrings.customerInvoices.toLowerCase()}`,
+        },
+      ],
+      stocktakes: [
+        {
+          count: 0,
+          type: 'unfinalised',
+          title: `${generalStrings.unfinalised} ${generalStrings.stocktakes.toLowerCase()}`,
+        },
+      ],
+    };
+
     this.databaseListenerId = null;
   }
 
@@ -32,11 +76,89 @@ export class MenuPage extends React.Component {
     );
   }
 
+  componentWillReceiveProps(props) {
+    // eslint-disable-next-line react/prop-types
+    const { topRoute } = props;
+    if (topRoute) this.refreshData();
+  }
+
   componentWillUnmount() {
     const { database } = this.props;
 
     database.removeListener(this.databaseListenerId);
   }
+
+  refreshData = () => {
+    const { database } = this.props;
+
+    // this.setState({
+    //   customerInvoice: {
+    //     finalised: {
+    //       count: database.objects('CustomerInvoice').filtered('status != "finalised"').length,
+    //     },
+    //   },
+    // });
+
+    this.setState(prevState => ({
+      customerRequisition: prevState.customerRequisition.map(obj => {
+        // eslint-disable-next-line default-case
+        switch (obj.type) {
+          case 'unfinalised':
+            return {
+              ...obj,
+              count: database.objects('ResponseRequisition').filtered('status != "finalised"')
+                .length,
+            };
+        }
+        return null;
+      }),
+      supplierRequisition: prevState.supplierRequisition.map(obj => {
+        // eslint-disable-next-line default-case
+        switch (obj.type) {
+          case 'unfinalised':
+            return {
+              ...obj,
+              count: database.objects('RequestRequisition').filtered('status != "finalised"')
+                .length,
+            };
+        }
+        return null;
+      }),
+      supplierInvoice: prevState.supplierInvoice.map(obj => {
+        // eslint-disable-next-line default-case
+        switch (obj.type) {
+          case 'unfinalised':
+            return {
+              ...obj,
+              count: database.objects('SupplierInvoice').filtered('status != "finalised"').length,
+            };
+        }
+        return null;
+      }),
+      stocktakes: prevState.stocktakes.map(obj => {
+        // eslint-disable-next-line default-case
+        switch (obj.type) {
+          case 'unfinalised':
+            return {
+              ...obj,
+              count: database.objects('Stocktake').filtered('status != "finalised"').length,
+            };
+        }
+        return null;
+      }),
+      customerInvoice: prevState.customerInvoice.map(obj => {
+        // eslint-disable-next-line default-case
+        switch (obj.type) {
+          case 'unfinalised':
+            return {
+              ...obj,
+              count: database.objects('CustomerInvoice').filtered('status != "finalised"').length,
+            };
+        }
+        return null;
+      }),
+    }));
+  };
 
   exportData = async () => {
     const { settings, database } = this.props;
@@ -54,6 +176,14 @@ export class MenuPage extends React.Component {
 
   render() {
     const { isInAdminMode, logOut, navigateTo } = this.props;
+    const {
+      customerInvoice,
+      customerRequisition,
+      supplierRequisition,
+      supplierInvoice,
+      stocktakes,
+    } = this.state;
+
     return (
       <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
         <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
@@ -64,18 +194,22 @@ export class MenuPage extends React.Component {
               // eslint-disable-next-line global-require
               source={require('../images/menu_people.png')}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.customer_invoices}
-              onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.customer_requisitions}
-              onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
-            />
+            <BadgeSet info={customerInvoice} mainWrapperStyle={localStyles.badgeSetWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.customer_invoices}
+                onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
+              />
+            </BadgeSet>
+            <BadgeSet info={customerRequisition} mainWrapperStyle={localStyles.badgeSetWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.customer_requisitions}
+                onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
+              />
+            </BadgeSet>
           </View>
 
           <View style={[localStyles.container, localStyles.centralContainer]}>
@@ -85,18 +219,22 @@ export class MenuPage extends React.Component {
               // eslint-disable-next-line global-require
               source={require('../images/menu_truck.png')}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.supplier_invoices}
-              onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.supplier_requisitions}
-              onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
-            />
+            <BadgeSet info={supplierInvoice} mainWrapperStyle={localStyles.badgeSetWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.supplier_invoices}
+                onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
+              />
+            </BadgeSet>
+            <BadgeSet info={supplierRequisition} mainWrapperStyle={localStyles.badgeSetWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.supplier_requisitions}
+                onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
+              />
+            </BadgeSet>
             {isInAdminMode && (
               <Button
                 style={globalStyles.menuButton}
@@ -120,12 +258,14 @@ export class MenuPage extends React.Component {
               text={navStrings.current_stock}
               onPress={() => navigateTo('stock', navStrings.current_stock)}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.stocktakes}
-              onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
-            />
+            <BadgeSet info={stocktakes} mainWrapperStyle={localStyles.badgeSetWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.stocktakes}
+                onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
+              />
+            </BadgeSet>
             {isInAdminMode && (
               <Button
                 style={globalStyles.menuButton}

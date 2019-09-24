@@ -21,3 +21,4 @@ export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
+export { BadgeSet } from './BadgeSet';
