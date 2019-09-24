@@ -54,10 +54,10 @@ const parseType = realmType => {
   return typeMapper.get(realmType) || TYPES.OBJECT;
 };
 
-const getObjectTypes = ({ schema: objectSchemas }) =>
+const getRealmObjects = ({ schema: objectSchemas }) =>
   objectSchemas.map(({ schema: objectSchema }) => objectSchema.name);
 
-const getObjectFields = ({ schema: objectSchemas }) =>
+const getRealmObjectsFields = ({ schema: objectSchemas }) =>
   objectSchemas
     .map(({ schema: objectSchema }) => {
       const { name, properties } = objectSchema;
@@ -70,8 +70,8 @@ const getObjectFields = ({ schema: objectSchemas }) =>
     })
     .reduce((acc, object) => ({ ...acc, ...object }));
 
-const OBJECT_TYPES = getObjectTypes(schema);
-const OBJECT_FIELDS = getObjectFields(schema);
+const REALM_OBJECTS = getRealmObjects(schema);
+const REALM_OBJECTS_FIELDS = getRealmObjectsFields(schema);
 
 const toCapitalCase = value => value.charAt(0).toUpperCase() + value.slice(1);
 
@@ -103,27 +103,29 @@ const parseCell = (value, type) => {
 };
 
 const getInitialState = database => {
-  const [objectString] = OBJECT_TYPES;
-  const objectData = database.objects(objectString);
-  const searchString = objectString;
+  const [realmObjectString] = REALM_OBJECTS;
+  const realmObjectData = database.objects(realmObjectString);
+  const searchString = realmObjectString;
   const filterString = '';
-  const filteredData = objectData;
-  return { objectString, objectData, searchString, filterString, filteredData };
+  const filteredData = realmObjectData;
+  return { realmObjectString, realmObjectData, searchString, filterString, filteredData };
 };
 
 const getUpdatedState = (database, state) => {
-  const { objectString, objectData, searchString, filterString, filteredData } = state;
+  const { realmObjectString, realmObjectData, searchString, filterString, filteredData } = state;
   const newState = { searchString, filterString };
-  const updateObject = searchString !== objectString && OBJECT_TYPES.indexOf(searchString) >= 0;
-  newState.objectString = updateObject ? searchString : objectString;
-  newState.objectData = updateObject ? database.objects(newState.objectString) : objectData;
+  const updateObject = searchString !== realmObjectString && REALM_OBJECTS.indexOf(searchString) >= 0;
+  newState.realmObjectString = updateObject ? searchString : realmObjectString;
+  newState.realmObjectData = updateObject
+    ? database.objects(newState.realmObjectString)
+    : realmObjectData;
   if (filterString === '') {
-    newState.filteredData = newState.objectData;
+    newState.filteredData = newState.realmObjectData;
   } else {
     try {
-      newState.filteredData = newState.objectData.filtered(filterString);
+      newState.filteredData = newState.realmObjectData.filtered(filterString);
     } catch (err) {
-      newState.filteredData = updateObject ? newState.objectData : filteredData;
+      newState.filteredData = updateObject ? newState.realmObjectData : filteredData;
     }
   }
 
@@ -143,10 +145,10 @@ const renderHeader = objectFields => {
  * A page for displaying objects in the local database. Includes search and filtering functionality.
  *
  * @prop   {UIDatabase}     database       App wide database.
- * @state  {string}         objectString   Current database object.
+ * @state  {string}         realmObjectString   Current database object.
  * @state  {string}         searchString   Current search string. Used to update current object.
  * @state  {string}         filterString   Current filter string. Used to update filtered data.
- * @state  {Realm.Results}  objectData     Reference to current database object results. Used to
+ * @state  {Realm.Results}  realmObjectData     Reference to current database object results. Used to
  *                                         roll back filter state when filter is reset.
  * @state  {Realm.Results}  filteredData   Reference to current database object results after filter
  *                                         has been applied. Displayed to the user.
@@ -167,7 +169,7 @@ export const RealmExplorer = () => {
     state.filterString,
   ]);
 
-  const objectFields = OBJECT_FIELDS[state.objectString];
+  const realmObjectFields = REALM_OBJECTS_FIELDS[state.realmObjectString];
 
   const rowKeyExtractor = ({ id }) => id;
 
