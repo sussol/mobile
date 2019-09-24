@@ -4,7 +4,6 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
 
 import { View, VirtualizedList, Text, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
@@ -152,8 +151,8 @@ const renderHeader = objectFields => {
  * @state  {Realm.Results}  filteredData   Reference to current database object results after filter
  *                                         has been applied. Displayed to the user.
  */
-export const RealmExplorer = ({ database }) => {
-  const [state, setState] = useState(getInitialState(database));
+export const RealmExplorer = () => {
+  const [state, setState] = useState(getInitialState(UIDatabase));
 
   const onSearchChange = searchString => {
     setState({ ...state, searchString });
@@ -163,7 +162,7 @@ export const RealmExplorer = ({ database }) => {
     setState({ ...state, filterString });
   };
 
-  useEffect(() => setState(getUpdatedState(database, state)), [
+  useEffect(() => setState(getUpdatedState(UIDatabase, state)), [
     state.searchString,
     state.filterString,
   ]);
@@ -222,9 +221,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 });
-
-RealmExplorer.propTypes = {
-  database: PropTypes.instanceOf(UIDatabase).isRequired,
-};
 
 export default RealmExplorer;
