@@ -3,10 +3,10 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { FlatList, View, VirtualizedList, Text, StyleSheet } from 'react-native';
+import { View, VirtualizedList, Text, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-ui-components';
 
 import globalStyles from '../globalStyles';
@@ -131,6 +131,15 @@ const getUpdatedState = (database, state) => {
   return newState;
 };
 
+const renderHeader = objectFields => {
+  const headerCells = Object.keys(objectFields).map(columnKey => (
+    <View key={columnKey} style={styles.cell}>
+      <Text style={styles.cellText}>{columnKey}</Text>
+    </View>
+  ));
+  return <View style={styles.row}>{headerCells}</View>;
+};
+
 /**
  * A page for displaying objects in the local database. Includes search and filtering functionality.
  *
@@ -161,18 +170,7 @@ export const RealmExplorer = ({ database }) => {
 
   const objectFields = OBJECT_FIELDS[state.objectString];
 
-  const headerRowKeyExtractor = (_, index) => index.toString();
   const rowKeyExtractor = ({ id }) => id;
-
-  const renderHeaderRow = headerRow => {
-    const { item } = headerRow;
-    const cells = Object.keys(item).map(columnKey => (
-      <View style={styles.cell}>
-        <Text style={styles.cellText}>{columnKey}</Text>
-      </View>
-    ));
-    return <View style={styles.row}>{cells}</View>;
-  };
 
   const renderRow = row => {
     const { item } = row;
@@ -189,18 +187,15 @@ export const RealmExplorer = ({ database }) => {
   };
 
   const { filteredData, searchString } = state;
-  const headerData = [objectFields];
+
+  const header = useCallback(() => renderHeader(objectFields), [objectFields]);
 
   return (
     <View style={[globalStyles.container]}>
       <SearchBar value={searchString} onChange={onSearchChange} placeholder="Table name" />
       <SearchBar onChange={onFilterChange} placeholder="Filter string" />
-      <FlatList
-        data={headerData}
-        keyExtractor={headerRowKeyExtractor}
-        renderItem={renderHeaderRow}
-      />
       <VirtualizedList
+        ListHeaderComponent={header}
         data={filteredData}
         getItem={(d, i) => d[i]}
         getItemCount={d => d.length}
