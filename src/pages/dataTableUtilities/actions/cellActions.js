@@ -185,9 +185,11 @@ export const removeReason = rowKey => (dispatch, getState) => {
 };
 
 /**
- * Checks if a rows enforceReason field is true, if so, transforms
- * the action to open a fullScreen reasons modal, otherwise, remove
- * any reasons applied.
+ * Handles reason logic for a particular object (stocktakeBatch or
+ * StocktakeItem) - if there is a difference (between snapshot and
+ * countedTotalQuantity) - then a reason should be related to this
+ * object. If there is already a reason, do nothing. If there is no
+ * difference, but a reason has been previously applied, remove it.
  *
  * @param {String} rowKey Key of the row to enforce a reason on
  */
@@ -196,13 +198,16 @@ export const enforceReasonChoice = rowKey => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  const { enforceReason } = objectToEdit;
+  const { difference, hasReason } = objectToEdit;
 
-  if (enforceReason) {
-    dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey));
-  } else {
-    dispatch(removeReason(rowKey));
-  }
+  // If there is no difference and no reason, do nothing.
+  if (!difference && !hasReason) return;
+
+  // If there is no difference, but a reason, remove it.
+  if (!difference && hasReason) dispatch(removeReason(rowKey));
+
+  // If there is a difference, and no reason, enforce it.
+  if (!hasReason) dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey));
 };
 
 /**
