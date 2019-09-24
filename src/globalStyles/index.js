@@ -9,21 +9,19 @@ import { appStyles, COMPONENT_HEIGHT } from './appStyles';
 import { authStyles } from './authStyles';
 import { buttonStyles } from './buttonStyles';
 import { confirmModalStyles } from './confirmModalStyles';
-import { dataTableStyles, dataTableColors } from './dataTableStyles';
+
 import { loadingIndicatorStyles } from './loadingIndicatorStyles';
 import { modalStyles } from './modalStyles';
 import { navigationStyles } from './navigationStyles';
 import {
-  pageStyles,
-  expansionPageStyles,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,
   PAGE_CONTENT_PADDING_HORIZONTAL,
   FULL_SCREEN_MODAL_MARGIN,
+  pageStyles,
 } from './pageStyles';
 import { toggleBarStyles } from './toggleBarStyles';
-import newPageStyles from './newPageStyles';
-import newDataTableStyles from './newDataTableStyles';
+import { dataTableStyles, dataTableColors } from './dataTableStyles';
 
 export {
   BACKGROUND_COLOR,
@@ -48,12 +46,8 @@ export { textStyles } from './textStyles';
 
 export {
   COMPONENT_HEIGHT,
-  newPageStyles,
-  newDataTableStyles,
   dataTableStyles,
   dataTableColors,
-  pageStyles,
-  expansionPageStyles,
   FULL_SCREEN_MODAL_MARGIN,
   PAGE_CONTENT_PADDING_BOTTOM,
   PAGE_CONTENT_PADDING_TOP,

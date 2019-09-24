@@ -13,7 +13,7 @@ import { getItemLayout } from './dataTableUtilities/utilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { usePageReducer, useSyncListener } from '../hooks';
 
 import { DataTablePageView, SearchBar } from '../widgets';
@@ -89,10 +89,10 @@ export const StockPage = ({ routeName }) => {
     />
   );
 
-  const { newPageTopSectionContainer } = newPageStyles;
+  const { pageTopSectionContainer } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
+      <View style={pageTopSectionContainer}>
         <SearchBar
           onChangeText={onFilterData}
           value={searchTerm}

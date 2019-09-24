@@ -20,7 +20,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
 
 /**
@@ -155,18 +155,18 @@ export const SupplierRequisitionsPage = ({
   );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
           <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           <PageButton text={buttonStrings.new_requisition} onPress={onNewRequisition} />
         </View>
       </View>

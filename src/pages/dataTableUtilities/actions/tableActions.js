@@ -14,7 +14,7 @@ import { ACTIONS } from './constants';
  * Sorts the underlying data array by the key provided. Determines
  * direction by the previous direction.
  *
- * @param {String} sortBy Key to sortBy - see utilities/sortDataBy.js
+ * @param {String} sortBy Key to sortBy - see utilities/sortData.js
  */
 export const sortData = sortBy => ({
   type: ACTIONS.SORT_DATA,

@@ -5,14 +5,15 @@ import { View, Text } from 'react-native';
 
 import TouchableCell from './DataTable/TouchableCell';
 import { Expand } from './icons';
-import { newDataTableStyles } from '../globalStyles/index';
+import { dataTableStyles } from '../globalStyles/index';
 
 const {
   dropDownCellTextContainer,
   dropDownCellIconContainer,
   dropDownFont,
   dropDownPlaceholderFont,
-} = newDataTableStyles;
+  touchableCellContainer,
+} = dataTableStyles;
 
 /**
  * Simple wrapper around TouchableCell which renders a small amount of text and
@@ -72,7 +73,7 @@ const DropDownCell = React.memo(
         isDisabled={!value || isDisabled}
         width={width}
         renderChildren={TouchableChild}
-        containerStyle={newDataTableStyles.touchableCellContainer}
+        containerStyle={touchableCellContainer}
       />
     );
   }

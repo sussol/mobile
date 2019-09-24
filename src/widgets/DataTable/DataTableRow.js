@@ -7,7 +7,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 
-import { newDataTableStyles } from '../../globalStyles';
+import { dataTableStyles } from '../../globalStyles';
 
 import Row from './Row';
 import Cell from './Cell';
@@ -16,7 +16,7 @@ import CheckableCell from './CheckableCell';
 import TouchableCell from './TouchableCell';
 import DropDownCell from '../DropDownCell';
 
-import { NewExpiryDateInput } from '../NewExpiryDateInput';
+import { ExpiryDateInput } from '../ExpiryDateInput';
 
 import {
   CheckedComponent,
@@ -62,7 +62,7 @@ const DataTableRow = React.memo(
       alternateRow: alternateRowStyle,
       row: basicRowStyle,
       iconCell,
-    } = newDataTableStyles;
+    } = dataTableStyles;
 
     const { isSelected = false } = rowState || {};
     // If the row is selected, use selectedRow style, otherwise alternate row style on index.
@@ -114,7 +114,7 @@ const DataTableRow = React.memo(
 
             case COLUMN_TYPES.EDITABLE_EXPIRY_DATE:
               return (
-                <NewExpiryDateInput
+                <ExpiryDateInput
                   key={columnKey}
                   value={rowData[columnKey]}
                   rowKey={rowKey}

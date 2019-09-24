@@ -6,7 +6,6 @@
 export { Button, ProgressBar } from 'react-native-ui-components';
 
 export { AutocompleteSelector } from './AutocompleteSelector';
-export { ExpiryTextInput } from './ExpiryTextInput';
 export { FinaliseButton } from './FinaliseButton';
 export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
@@ -21,7 +20,7 @@ export { TextEditor } from './TextEditor';
 export { TextInput } from './TextInput';
 export { ToggleBar } from './ToggleBar';
 export { ToggleSelector } from './ToggleSelector';
-export { NewExpiryDateInput } from './NewExpiryDateInput';
+export { ExpiryDateInput } from './ExpiryDateInput';
 export { SearchBar } from './SearchBar';
 export { DataTablePageView } from './DataTablePageView';
 export { Flag } from './Flag';

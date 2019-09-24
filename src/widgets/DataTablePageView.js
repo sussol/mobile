@@ -7,9 +7,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Keyboard, TouchableWithoutFeedback } from 'react-native';
 
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
-const { newPageContentContainer, newContainer } = newPageStyles;
+const { pageContentContainer, container } = globalStyles;
 
 const dismiss = () => Keyboard.dismiss();
 /**
@@ -22,8 +22,8 @@ export const DataTablePageView = props => {
   const { children } = props;
   return (
     <TouchableWithoutFeedback onPress={dismiss}>
-      <View style={newPageContentContainer}>
-        <View style={newContainer}>{children}</View>
+      <View style={pageContentContainer}>
+        <View style={container}>{children}</View>
       </View>
     </TouchableWithoutFeedback>
   );

@@ -19,7 +19,7 @@ import { getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
 
 /**
@@ -132,18 +132,18 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           <PageButton
             style={globalStyles.topButton}
             text={buttonStrings.use_requested_quantities}

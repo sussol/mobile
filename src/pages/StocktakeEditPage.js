@@ -20,7 +20,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { gotoStocktakeManagePage } from '../navigation/actions';
 
 import { buttonStrings } from '../localization';
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
 
 /**
@@ -165,18 +165,18 @@ export const StocktakeEditPage = ({
   );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           {!program && (
             <PageButton
               text={buttonStrings.manage_stocktake}

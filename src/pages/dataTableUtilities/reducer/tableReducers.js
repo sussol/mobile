@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { newSortDataBy } from '../../../utilities';
+import { sortDataBy } from '../../../utilities';
 
 /**
  * Sorts the current set of data by the provided
@@ -20,7 +20,7 @@ export const sortData = (state, action) => {
   // that was set by the last sortBy action. Otherwise, default to true.
   const newIsAscending = newSortBy === sortBy ? !isAscending : true;
 
-  const newData = newSortDataBy(data, newSortBy, newIsAscending);
+  const newData = sortDataBy(data, newSortBy, newIsAscending);
 
   return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
 };
@@ -40,7 +40,7 @@ export const filterData = (state, action) => {
 
   return {
     ...state,
-    data: sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData,
+    data: sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData,
     searchTerm,
   };
 };
@@ -65,7 +65,7 @@ export const filterDataWithFinalisedToggle = (state, action) => {
 
   // Sort the data by the current sorting parameters.
   const sortedData = sortBy
-    ? newSortDataBy(queryFilteredData, sortBy, isAscending)
+    ? sortDataBy(queryFilteredData, sortBy, isAscending)
     : statusFilteredData;
 
   return { ...state, data: sortedData, searchTerm };
@@ -92,7 +92,7 @@ export const filterDataWithOverStockToggle = (state, action) => {
 
   // Sort the data by the current sorting parameters.
   const sortedData = sortBy
-    ? newSortDataBy(stockFilteredData, sortBy, isAscending)
+    ? sortDataBy(stockFilteredData, sortBy, isAscending)
     : stockFilteredData;
 
   return { ...state, data: sortedData, searchTerm };
@@ -107,7 +107,7 @@ export const refreshData = state => {
   const { backingData, sortBy, isAscending } = state;
 
   const backingDataArray = backingData.slice();
-  const newData = sortBy ? newSortDataBy(backingDataArray, sortBy, isAscending) : backingDataArray;
+  const newData = sortBy ? sortDataBy(backingDataArray, sortBy, isAscending) : backingDataArray;
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
 };
@@ -122,7 +122,7 @@ export const refreshDataWithFinalisedToggle = state => {
   const finalisedCondition = showFinalised ? '==' : '!=';
   const filteredData = backingData.filtered(`status ${finalisedCondition} $0`, 'finalised');
 
-  const newData = sortBy ? newSortDataBy(filteredData.slice(), sortBy, isAscending) : filteredData;
+  const newData = sortBy ? sortDataBy(filteredData.slice(), sortBy, isAscending) : filteredData;
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
 };
@@ -136,7 +136,7 @@ export const showFinalised = state => {
 
   const filteredData = backingData.filtered('status == $0', 'finalised').slice();
 
-  const sortedData = sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData;
+  const sortedData = sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData;
 
   return { ...state, data: sortedData, showFinalised: true, searchTerm: '' };
 };
@@ -150,7 +150,7 @@ export const showNotFinalised = state => {
 
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
 
-  const sortedData = sortBy ? newSortDataBy(filteredData, sortBy, isAscending) : filteredData;
+  const sortedData = sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData;
 
   return { ...state, data: sortedData, showFinalised: false };
 };

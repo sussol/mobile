@@ -6,7 +6,7 @@
 import { UIDatabase } from '../../database';
 import Settings from '../../settings/MobileAppSettings';
 
-import { newSortDataBy, getAllPrograms } from '../../utilities';
+import { sortDataBy, getAllPrograms } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
 
 /**
@@ -45,7 +45,7 @@ const customerInvoiceInitialiser = transaction => {
 const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
-  const sortedData = newSortDataBy(filteredData, 'serialNumber', false);
+  const sortedData = sortDataBy(filteredData, 'serialNumber', false);
 
   return {
     backingData,
@@ -93,7 +93,7 @@ const customerRequisitionInitialiser = requisition => {
  */
 const customerRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
-  const sortedData = newSortDataBy(backingData.slice(), 'serialNumber', false);
+  const sortedData = sortDataBy(backingData.slice(), 'serialNumber', false);
 
   return {
     backingData,
@@ -263,7 +263,7 @@ const supplierInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('SupplierInvoice');
 
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
-  const sortedData = newSortDataBy(filteredData, 'serialNumber', false);
+  const sortedData = sortDataBy(filteredData, 'serialNumber', false);
 
   return {
     backingData,
@@ -343,7 +343,7 @@ const supplierRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('RequestRequisition');
 
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
-  const sortedData = newSortDataBy(filteredData, 'serialNumber', false);
+  const sortedData = sortDataBy(filteredData, 'serialNumber', false);
 
   return {
     backingData,

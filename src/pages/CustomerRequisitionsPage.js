@@ -16,7 +16,7 @@ import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
 
 /**
@@ -105,11 +105,11 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     [showFinalised]
   );
 
-  const { newPageTopSectionContainer, newPageTopLeftSectionContainer } = newPageStyles;
+  const { pageTopSectionContainer, pageTopLeftSectionContainer } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
           <PastCurrentToggleBar />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
