@@ -4,14 +4,14 @@
  */
 
 import React, { useState, useCallback } from 'react';
-
 import { View, VirtualizedList, Text, StyleSheet } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
+
+import { UIDatabase } from '../database/index';
+import { schema } from '../database/schema';
+
+import { SearchBar } from '../widgets';
 
 import globalStyles from '../globalStyles';
-import { UIDatabase } from '../database/index';
-
-import { schema } from '../database/schema';
 
 const TYPES = {
   BOOLEAN: 'boolean',
@@ -177,7 +177,7 @@ const getRowRenderer = realmObjectFields => row => {
 export const RealmExplorer = () => {
   const [state, setState] = useState(getInitialState(UIDatabase));
 
-  const { realmObjectString, searchString, filteredData } = state;
+  const { realmObjectString, searchString, filterString, filteredData } = state;
 
   const realmObjectFields = REALM_OBJECTS_FIELDS[realmObjectString];
 
@@ -194,8 +194,8 @@ export const RealmExplorer = () => {
 
   return (
     <View style={[globalStyles.container]}>
-      <SearchBar value={searchString} onChange={onSearchChange} placeholder="Table name" />
-      <SearchBar onChange={onFilterChange} placeholder="Filter string" />
+      <SearchBar value={searchString} onChangeText={onSearchChange} placeholder="Table name" />
+      <SearchBar value={filterString} onChangeText={onFilterChange} placeholder="Filter string" />
       <VirtualizedList
         ListHeaderComponent={renderHeader}
         data={filteredData}
