@@ -194,7 +194,7 @@ export const RealmExplorer = () => {
 
   return (
     <View style={[globalStyles.container]}>
-      <SearchBar value={searchString} onChangeText={onSearchChange} placeholder="Table name" />
+      <SearchBar value={searchString} onChangeText={onSearchChange} placeholder="Object string" />
       <SearchBar value={filterString} onChangeText={onFilterChange} placeholder="Filter string" />
       <VirtualizedList
         ListHeaderComponent={renderHeader}
