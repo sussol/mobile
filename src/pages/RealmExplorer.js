@@ -135,7 +135,7 @@ const filterData = (newFilterString, state) => {
       newFilterString === '' ? realmObjectData : realmObjectData.filtered(newFilterString);
     return { ...state, filterString: newFilterString, filteredData: newFilteredData };
   } catch (err) {
-    return { ...state };
+    return { ...state, filterString: newFilterString };
   }
 };
 
@@ -165,14 +165,14 @@ const getRowRenderer = realmObjectFields => row => {
 /**
  * A page for displaying objects in the local database. Includes search and filtering functionality.
  *
- * @prop   {UIDatabase}     database       App wide database.
- * @state  {string}         realmObjectString   Current database object.
- * @state  {string}         searchString   Current search string. Used to update current object.
- * @state  {string}         filterString   Current filter string. Used to update filtered data.
- * @state  {Realm.Results}  realmObjectData     Reference to current database object results. Used to
- *                                         roll back filter state when filter is reset.
- * @state  {Realm.Results}  filteredData   Reference to current database object results after filter
- *                                         has been applied. Displayed to the user.
+ * @prop   {UIDatabase}     database           App wide database.
+ * @state  {string}         realmObjectString  Current database object.
+ * @state  {string}         searchString       Current search string. Used to update current object.
+ * @state  {string}         filterString       Current filter string. Used to update filtered data.
+ * @state  {Realm.Results}  realmObjectData    Reference to current database object results. Used to
+ *                                             roll back filter state when filter is reset.
+ * @state  {Realm.Results}  filteredData       Reference to current database object results after
+ *                                             filter has been applied. Displayed to the user.
  */
 export const RealmExplorer = () => {
   const [state, setState] = useState(getInitialState(UIDatabase));
