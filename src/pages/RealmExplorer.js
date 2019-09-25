@@ -161,6 +161,9 @@ const getRowRenderer = realmObjectFields => row => {
   });
   return <View style={styles.row}>{cells}</View>;
 };
+const getItem = (data, index) => data[index];
+const getItemCount = data => data.length;
+const keyExtractor = ({ id }) => id;
 
 /**
  * A page for displaying objects in the local database. Includes search and filtering functionality.
@@ -199,9 +202,9 @@ export const RealmExplorer = () => {
       <VirtualizedList
         ListHeaderComponent={renderHeader}
         data={filteredData}
-        getItem={(d, i) => d[i]}
-        getItemCount={d => d.length}
-        keyExtractor={({ id }) => id}
+        getItem={getItem}
+        getItemCount={getItemCount}
+        keyExtractor={keyExtractor}
         renderItem={renderRow}
       />
     </View>
