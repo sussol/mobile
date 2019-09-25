@@ -102,44 +102,49 @@ const parseCell = (value, type) => {
   }
 };
 
-const getInitialState = database => {
-  const [realmObjectString] = REALM_OBJECTS;
-  const realmObjectData = database.objects(realmObjectString);
-  const searchString = realmObjectString;
-  const filterString = '';
-  const filteredData = realmObjectData;
-  return { realmObjectString, realmObjectData, searchString, filterString, filteredData };
+const getRealmData = objectString =>
+  REALM_OBJECTS.indexOf(objectString) >= 0 ? UIDatabase.objects(objectString) : [];
+
+const getInitialState = () => {
+  const objectString = '';
+  const searchData = getRealmData(objectString);
+  return { searchData, objectString, filterString: objectString, filteredData: searchData };
 };
 
-const searchData = (newSearchString, state) => {
-  const { realmObjectString, realmObjectData } = state;
-  const updateObject =
-    newSearchString !== realmObjectString && REALM_OBJECTS.indexOf(newSearchString) >= 0;
-  const newRealmObjectString = updateObject ? newSearchString : realmObjectString;
-  const newRealmObjectData = updateObject
-    ? UIDatabase.objects(newRealmObjectString)
-    : realmObjectData;
+const searchData = (newObjectString, state) => {
+  const { objectString } = state;
+  const updateObjectString = newObjectString !== objectString;
+  if (!updateObjectString) return { ...state };
+  const newSearchData = getRealmData(newObjectString);
   return {
     ...state,
-    realmObjectString: newRealmObjectString,
-    realmObjectData: newRealmObjectData,
-    searchString: newSearchString,
-    filteredData: newRealmObjectData,
+    searchData: newSearchData,
+    objectString: newObjectString,
+    filteredData: newSearchData,
   };
 };
 
+const getSearchBarRenderer = onSearchChange => ({ objectString }) => (
+  <SearchBar value={objectString} onChangeText={onSearchChange} placeholder="Object string" />
+);
+
 const filterData = (newFilterString, state) => {
-  const { realmObjectData } = state;
+  const { searchData } = state;
   try {
     const newFilteredData =
-      newFilterString === '' ? realmObjectData : realmObjectData.filtered(newFilterString);
+      newFilterString === '' ? searchData : searchData.filtered(newFilterString);
     return { ...state, filterString: newFilterString, filteredData: newFilteredData };
   } catch (err) {
     return { ...state, filterString: newFilterString };
   }
 };
 
+const getFilterBarRenderer = onFilterChange => ({ filterString }) => (
+  <SearchBar value={filterString} onChangeText={onFilterChange} placeholder="Filter string" />
+);
+
 const getHeaderRenderer = realmObjectFields => () => {
+  if (!realmObjectFields) return null;
   const headerCells = Object.keys(realmObjectFields).map(columnKey => (
     <View key={columnKey} style={styles.cell}>
       <Text style={styles.cellText}>{columnKey}</Text>
@@ -148,8 +153,8 @@ const getHeaderRenderer = realmObjectFields => () => {
   return <View style={styles.row}>{headerCells}</View>;
 };
 
-const getRowRenderer = realmObjectFields => row => {
-  const { item } = row;
+const getRowRenderer = realmObjectFields => ({ item }) => {
+  if (!realmObjectFields) return null;
   const cells = Object.entries(realmObjectFields).map(([columnKey, columnType]) => {
     const cell = item[columnKey];
     const cellValue = parseCell(cell, columnType);
@@ -161,33 +166,43 @@ const getRowRenderer = realmObjectFields => row => {
   });
   return <View style={styles.row}>{cells}</View>;
 };
+
 const getItem = (data, index) => data[index];
 const getItemCount = data => data.length;
 const keyExtractor = ({ id }) => id;
 
+const getTableRenderer = realmObjectFields => ({ data }) => {
+  if (!realmObjectFields) return null;
+  const TableHeader = getHeaderRenderer(realmObjectFields);
+  const TableRow = getRowRenderer(realmObjectFields);
+  return (
+    <VirtualizedList
+      ListHeaderComponent={TableHeader}
+      data={data}
+      getItem={getItem}
+      getItemCount={getItemCount}
+      keyExtractor={keyExtractor}
+      renderItem={TableRow}
+    />
+  );
+};
+
 /**
  * A page for displaying objects in the local database. Includes search and filtering functionality.
  *
- * @prop   {UIDatabase}     database           App wide database.
- * @state  {string}         realmObjectString  Current database object.
- * @state  {string}         searchString       Current search string. Used to update current object.
- * @state  {string}         filterString       Current filter string. Used to update filtered data.
- * @state  {Realm.Results}  realmObjectData    Reference to current database object results. Used to
- *                                             roll back filter state when filter is reset.
- * @state  {Realm.Results}  filteredData       Reference to current database object results after
- *                                             filter has been applied. Displayed to the user.
+ * @prop   {UIDatabase}     database      App wide database.
+ * @state  {string}         objectString  Current search string. Used to update current object.
+ * @state  {string}         filterString  Current filter string. Used to update filtered data.
+ * @state  {Realm.Results}  objectData    Reference to current database object results. Used to roll
+ *                                        back filter state when filter is reset.
+ * @state  {Realm.Results}  filteredData  Reference to current database object results after filter
+ *                                        has been applied. Displayed to the user.
  */
 export const RealmExplorer = () => {
-  const [state, setState] = useState(getInitialState(UIDatabase));
+  const [state, setState] = useState(getInitialState());
 
-  const { realmObjectString, searchString, filterString, filteredData } = state;
-
-  const realmObjectFields = REALM_OBJECTS_FIELDS[realmObjectString];
-
-  const renderHeader = useCallback(getHeaderRenderer(realmObjectFields), [realmObjectFields]);
-  const renderRow = useCallback(getRowRenderer(realmObjectFields), [realmObjectFields]);
   const onSearchChange = useCallback(
-    newSearchString => setState(prevState => searchData(newSearchString, prevState)),
+    newObjectString => setState(prevState => searchData(newObjectString, prevState)),
     []
   );
   const onFilterChange = useCallback(
@@ -195,18 +210,18 @@ export const RealmExplorer = () => {
     []
   );
 
+  const { objectString, filterString, filteredData } = state;
+  const realmObjectFields = REALM_OBJECTS_FIELDS[objectString];
+
+  const RealmSearchBar = useCallback(getSearchBarRenderer(onSearchChange), [onSearchChange]);
+  const RealmFilterBar = useCallback(getFilterBarRenderer(onFilterChange), [onFilterChange]);
+  const RealmTable = useCallback(getTableRenderer(realmObjectFields), [realmObjectFields]);
+
   return (
     <View style={[globalStyles.container]}>
-      <SearchBar value={searchString} onChangeText={onSearchChange} placeholder="Object string" />
-      <SearchBar value={filterString} onChangeText={onFilterChange} placeholder="Filter string" />
-      <VirtualizedList
-        ListHeaderComponent={renderHeader}
-        data={filteredData}
-        getItem={getItem}
-        getItemCount={getItemCount}
-        keyExtractor={keyExtractor}
-        renderItem={renderRow}
-      />
+      <RealmSearchBar searchString={objectString} />
+      <RealmFilterBar filterString={filterString} />
+      <RealmTable data={filteredData} />
     </View>
   );
 };
