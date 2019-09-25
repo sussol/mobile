@@ -154,7 +154,7 @@ const getRowRenderer = realmObjectFields => row => {
     const cell = item[columnKey];
     const cellValue = parseCell(cell, columnType);
     return (
-      <View style={styles.cell}>
+      <View key={columnKey} style={styles.cell}>
         <Text style={styles.cellText}>{cellValue}</Text>
       </View>
     );
