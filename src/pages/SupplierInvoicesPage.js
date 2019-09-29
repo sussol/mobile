@@ -1,41 +1,23 @@
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { UIDatabase } from '../database';
-import { MODAL_KEYS, newSortDataBy } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 import { gotoSupplierInvoice, createSupplierInvoice } from '../navigation/actions';
 
-import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import { newPageStyles } from '../globalStyles';
-
-const initializer = () => {
-  const backingData = UIDatabase.objects('SupplierInvoice');
-  return {
-    backingData,
-    data: newSortDataBy(backingData.slice(), 'serialNumber', false),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['otherParty.name'],
-    sortBy: 'serialNumber',
-    isAscending: false,
-    modalKey: '',
-    hasSelection: false,
-  };
-};
+import globalStyles from '../globalStyles';
 
 export const SupplierInvoicesPage = ({
   currentUser,
@@ -43,7 +25,8 @@ export const SupplierInvoicesPage = ({
   navigation,
   dispatch: reduxDispatch,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(routeName, {}, initializer);
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -56,6 +39,7 @@ export const SupplierInvoicesPage = ({
     searchTerm,
     columns,
     PageActions,
+    showFinalised,
   } = state;
 
   // Listen to changes from sync and navigation events re-focusing this screen,
@@ -69,6 +53,7 @@ export const SupplierInvoicesPage = ({
   const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_SUPPLIER));
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onNavigateToInvoice = useCallback(
     invoice => reduxDispatch(gotoSupplierInvoice(invoice)),
@@ -80,7 +65,7 @@ export const SupplierInvoicesPage = ({
     onCloseModal();
   };
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -88,7 +73,7 @@ export const SupplierInvoicesPage = ({
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -132,23 +117,28 @@ export const SupplierInvoicesPage = ({
     [sortBy, isAscending]
   );
 
-  const NewInvoiceButton = () => (
-    <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
+    [showFinalised]
   );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
-          <NewInvoiceButton />
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
         </View>
       </View>
       <DataTable
@@ -181,6 +171,7 @@ export const SupplierInvoicesPage = ({
 
 export default SupplierInvoicesPage;
 
+/* eslint-disable react/forbid-prop-types */
 SupplierInvoicesPage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,

@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -9,33 +7,16 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities/utilities';
-import { UIDatabase } from '../database';
+import { getItemLayout } from './dataTableUtilities/utilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { usePageReducer, useSyncListener } from '../hooks';
 
 import { DataTablePageView, SearchBar } from '../widgets';
 
 import { ItemDetails } from '../widgets/modals/ItemDetails';
-
-const stateInitialiser = () => {
-  const backingData = UIDatabase.objects('Item').sorted('name');
-
-  return {
-    backingData,
-    data: backingData.slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name'],
-    sortBy: 'name',
-    isAscending: true,
-    selectedRow: null,
-  };
-};
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -53,11 +34,8 @@ const stateInitialiser = () => {
  * @prop {Object} routeName Name of the current route.
  */
 export const StockPage = ({ routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser
-  );
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -109,10 +87,10 @@ export const StockPage = ({ routeName }) => {
     />
   );
 
-  const { newPageTopSectionContainer } = newPageStyles;
+  const { pageTopSectionContainer } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
+      <View style={pageTopSectionContainer}>
         <SearchBar
           onChangeText={onFilterData}
           value={searchTerm}

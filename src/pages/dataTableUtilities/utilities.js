@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import newDataTableStyles from '../../globalStyles/newDataTableStyles';
+import { dataTableStyles } from '../../globalStyles';
 
 /**
  * Utility methods used for DataTable pages.s
@@ -15,7 +15,7 @@ import newDataTableStyles from '../../globalStyles/newDataTableStyles';
  * @param {Number} index index of a row in VirtualizedList.
  */
 export const getItemLayout = (_, index) => {
-  const { height } = newDataTableStyles.row;
+  const { height } = dataTableStyles.row;
   return {
     length: height,
     offset: height * index,

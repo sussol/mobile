@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -15,25 +13,12 @@ import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, SearchBar } from '../widgets';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
-
-const stateInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name', 'item.code'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-});
 
 /**
  * Renders a mSupply mobile page with a customer requisition loaded for editing
@@ -53,12 +38,8 @@ const stateInitialiser = pageObject => ({
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    requisition
-  );
+  const initialState = { page: routeName, pageObject: requisition };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -91,24 +72,19 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onSetSuppliedToSuggested = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    isFinalised,
+  ]);
 
-  const getAction = colKey => {
+  const getAction = useCallback(colKey => {
     switch (colKey) {
       case 'suppliedQuantity':
         return PageActions.editSuppliedQuantity;
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -153,51 +129,31 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     [sortBy, isAscending]
   );
 
-  const UseSuggestedQuantitiesButton = () => (
-    <View>
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.use_suggested_quantities}
-        onPress={onSetSuppliedToSuggested}
-        isDisabled={isFinalised}
-      />
-    </View>
-  );
-
-  const UseRequestedQuantitiesButton = () => (
-    <PageButton
-      style={globalStyles.topButton}
-      text={buttonStrings.use_requested_quantities}
-      onPress={onSetSuppliedToRequested}
-      isDisabled={requisition.isFinalised}
-    />
-  );
-
-  const PageButtons = useCallback(() => {
-    const { verticalContainer } = globalStyles;
-
-    return (
-      <View style={verticalContainer}>
-        <UseRequestedQuantitiesButton />
-        <UseSuggestedQuantitiesButton />
-      </View>
-    );
-  }, []);
-
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
-          {renderPageInfo()}
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+        <View style={pageTopRightSectionContainer}>
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.use_requested_quantities}
+            onPress={onSetSuppliedToRequested}
+            isDisabled={requisition.isFinalised}
+          />
+          <PageButton
+            style={globalStyles.topButton}
+            text={buttonStrings.use_suggested_quantities}
+            onPress={onSetSuppliedToSuggested}
+            isDisabled={isFinalised}
+          />
         </View>
       </View>
       <DataTable
@@ -221,6 +177,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 CustomerRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,

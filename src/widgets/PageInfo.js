@@ -111,7 +111,7 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, color, rowData, row
  *                            col1: row1 col2: row1
  *                            col1: row2 col2: row2
  */
-export const PageInfo = props => {
+const PageInfoComponent = props => {
   const { columns, isEditingDisabled, titleColor, infoColor } = props;
 
   return (
@@ -148,16 +148,18 @@ export const PageInfo = props => {
   );
 };
 
+export const PageInfo = React.memo(PageInfoComponent);
+
 export default PageInfo;
 
-PageInfo.propTypes = {
+PageInfoComponent.propTypes = {
   columns: PropTypes.array.isRequired,
   isEditingDisabled: PropTypes.bool,
   titleColor: PropTypes.string,
   infoColor: PropTypes.string,
 };
 
-PageInfo.defaultProps = {
+PageInfoComponent.defaultProps = {
   isEditingDisabled: false,
   infoColor: SUSSOL_ORANGE,
   titleColor: DARK_GREY,

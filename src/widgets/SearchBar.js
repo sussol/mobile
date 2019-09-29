@@ -18,7 +18,10 @@ import { debounce } from '../utilities/index';
  * with a magnifying glass icon and clear button.
  *
  * Debounces input by the user, such that the onChangeText callback
- * is only invoked once every `debounceTimeout`
+ * is only invoked once every `debounceTimeout`.
+ *
+ * NOTE: This component is exported MEMOIZED. See below for propsAreEqual
+ * implementation.
  *
  * @param {String} color           Color of the entire component (monochrome only).
  * @param {String} onChangeText    Callback for changing text (debounced).
@@ -30,7 +33,7 @@ import { debounce } from '../utilities/index';
  * @param {String} debounceTimeout Time in milliseconds to debounce the onChangeText callback.
  * @param {Func}   onFocusOrBlur   Callback for onBlur and onFocus events.
  */
-export const SearchBar = ({
+export const SearchBarComponent = ({
   color,
   onChangeText,
   value,
@@ -87,12 +90,19 @@ export const SearchBar = ({
       />
       {!!textValue && (
         <TouchableOpacity onPress={() => onChangeTextCallback('')}>
-          <Cancel color={color} size={20} />
+          <Cancel />
         </TouchableOpacity>
       )}
     </View>
   );
 };
+
+/**
+ * Only re-render this component when the value prop changes.
+ */
+const propsAreEqual = ({ value: prevValue }, { value: nextValue }) => prevValue === nextValue;
+
+export const SearchBar = React.memo(SearchBarComponent, propsAreEqual);
 
 const defaultStyles = StyleSheet.create({
   container: {
@@ -109,7 +119,7 @@ const defaultStyles = StyleSheet.create({
   },
 });
 
-SearchBar.defaultProps = {
+SearchBarComponent.defaultProps = {
   debounceTimeout: 250,
   textInputStyle: defaultStyles.textInput,
   viewStyle: defaultStyles.container,
@@ -120,7 +130,7 @@ SearchBar.defaultProps = {
   onFocusOrBlur: null,
 };
 
-SearchBar.propTypes = {
+SearchBarComponent.propTypes = {
   color: PropTypes.string,
   debounceTimeout: PropTypes.number,
   onChangeText: PropTypes.func.isRequired,

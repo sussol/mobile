@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -9,31 +7,15 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { SearchBar, DataTablePageView } from '../widgets';
+import { SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { UIDatabase } from '../database';
-
-import { newSortDataBy } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import { newPageStyles } from '../globalStyles';
-
-const initialiseState = () => {
-  const backingData = UIDatabase.objects('ResponseRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
-  return {
-    backingData,
-    data,
-    keyExtractor: recordKeyExtractor,
-    searchTerm: '',
-    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
-    sortBy: 'serialNumber',
-    isAscending: false,
-  };
-};
+import globalStyles from '../globalStyles';
+import { buttonStrings } from '../localization';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -54,9 +36,19 @@ const initialiseState = () => {
  * @prop {Object} navigation    Reference to the main application stack navigator.
  */
 export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
-  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
+  const initialState = { page: routeName };
+  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
 
-  const { data, sortBy, isAscending, searchTerm, PageActions, columns, keyExtractor } = state;
+  const {
+    data,
+    sortBy,
+    isAscending,
+    searchTerm,
+    PageActions,
+    columns,
+    keyExtractor,
+    showFinalised,
+  } = state;
 
   const refreshCallback = () => dispatch(PageActions.refreshData(), []);
   // Custom hook to refresh data on this page when becoming the head of the stack again.
@@ -65,7 +57,8 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
   useSyncListener(refreshCallback, 'Requisition');
 
   const onPressRow = useCallback(rowData => reduxDispatch(gotoCustomerRequisition(rowData)), []);
-  const onSearchFiltering = value => dispatch(PageActions.filterData(value));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const renderRow = useCallback(
     listItem => {
@@ -98,11 +91,26 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     [sortBy, isAscending]
   );
 
-  const { newPageTopSectionContainer } = newPageStyles;
+  const PastCurrentToggleBar = useCallback(
+    () => (
+      <ToggleBar
+        toggles={[
+          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+        ]}
+      />
+    ),
+    [showFinalised]
+  );
+
+  const { pageTopSectionContainer, pageTopLeftSectionContainer } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <PastCurrentToggleBar />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+        </View>
       </View>
       <DataTable
         data={data}
@@ -115,6 +123,7 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 CustomerRequisitionsPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,

@@ -13,7 +13,7 @@ import Cell from './DataTable/Cell';
 
 import { useExpiryDateMask } from '../hooks/useExpiryDateMask';
 
-import { newDataTableStyles } from '../globalStyles/index';
+import { dataTableStyles } from '../globalStyles/index';
 import { parseExpiryDate, formatExpiryDate } from '../utilities';
 
 import { getAdjustedStyle } from './DataTable/utilities';
@@ -47,9 +47,9 @@ import RefContext from './DataTable/RefContext';
  *
  */
 
-const { expiryBatchView, expiryBatchText, expiryBatchPlaceholderText } = newDataTableStyles;
+const { expiryBatchView, expiryBatchText, expiryBatchPlaceholderText } = dataTableStyles;
 
-export const NewExpiryDateInput = React.memo(
+export const ExpiryDateInput = React.memo(
   ({
     value,
     rowKey,
@@ -130,7 +130,7 @@ export const NewExpiryDateInput = React.memo(
   }
 );
 
-NewExpiryDateInput.propTypes = {
+ExpiryDateInput.propTypes = {
   value: PropTypes.instanceOf(Date),
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
@@ -146,7 +146,7 @@ NewExpiryDateInput.propTypes = {
   underlineColor: PropTypes.string,
 };
 
-NewExpiryDateInput.defaultProps = {
+ExpiryDateInput.defaultProps = {
   value: '',
   isDisabled: false,
   isLastCell: false,
@@ -157,4 +157,4 @@ NewExpiryDateInput.defaultProps = {
   underlineColor: '#CDCDCD',
 };
 
-export default NewExpiryDateInput;
+export default ExpiryDateInput;

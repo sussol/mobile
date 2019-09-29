@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
@@ -7,8 +8,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ModalContainer from './ModalContainer';
+import { UIDatabase } from '../../database';
+import Settings from '../../settings/MobileAppSettings';
 import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
+
+import ModalContainer from './ModalContainer';
 import { AutocompleteSelector } from '../AutocompleteSelector';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
@@ -16,21 +20,16 @@ import { ToggleSelector } from '../ToggleSelector';
 import { RegimenDataModal } from './RegimenDataModal';
 import { NewConfirmModal } from './NewConfirmModal';
 import { GenericChoiceList } from '../GenericChoiceList';
-import { UIDatabase } from '../../database';
-import { modalStrings } from '../../localization';
-import Settings from '../../settings/MobileAppSettings';
+import { StocktakeBatchModal } from './StocktakeBatchModal';
 
-import {
-  dataTableColors,
-  dataTableStyles,
-  pageStyles,
-  SUSSOL_ORANGE,
-} from '../../globalStyles/index';
-import NewSocktakeBatchModal from './NewStocktakeBatchModal';
+import { modalStrings } from '../../localization';
 
 /**
  * Wrapper around ModalContainer, containing common modals used in various
  * DataTable pages.
+ *
+ * NOTE: Exported component is MEMOIZED - see below for propsAreEqual implementation.
+ *
  * @prop {Bool}   fullScreen   Force the modal to cover the entire screen.
  * @prop {Bool}   isOpen       Whether the modal is open
  * @prop {Func}   onClose      A function to call if the close x is pressed
@@ -44,7 +43,7 @@ const ADDITIONAL_MODAL_PROPS = {
   [MODAL_KEYS.ENFORCE_STOCKTAKE_REASON]: { noCancel: true, fullScreen: true },
 };
 
-export const DataTablePageModal = ({
+const DataTablePageModalComponent = ({
   fullScreen,
   isOpen,
   onClose,
@@ -102,7 +101,9 @@ export const DataTablePageModal = ({
           <ByProgramModal
             onConfirm={onSelect}
             database={UIDatabase}
-            transactionType={MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'}
+            transactionType={
+              modalKey === MODAL_KEYS.PROGRAM_STOCKTAKE ? 'stocktake' : 'requisition'
+            }
             settings={Settings}
           />
         );
@@ -117,32 +118,11 @@ export const DataTablePageModal = ({
         );
 
       case MODAL_KEYS.VIEW_REGIMEN_DATA:
-        return (
-          <RegimenDataModal
-            database={UIDatabase}
-            requisition={currentValue}
-            genericTablePageStyles={{
-              searchBarColor: SUSSOL_ORANGE,
-              colors: dataTableColors,
-              dataTableStyles,
-              pageStyles,
-            }}
-          />
-        );
+        return <RegimenDataModal requisition={currentValue} />;
+
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
-        return (
-          <NewSocktakeBatchModal
-            stocktakeItem={currentValue}
-            database={UIDatabase}
-            genericTablePageStyles={{
-              searchBarColor: SUSSOL_ORANGE,
-              colors: dataTableColors,
-              dataTableStyles,
-              pageStyles,
-            }}
-            onConfirm={onSelect}
-          />
-        );
+        return <StocktakeBatchModal stocktakeItem={currentValue} />;
+
       case MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM:
         return (
           <NewConfirmModal
@@ -181,7 +161,14 @@ export const DataTablePageModal = ({
   );
 };
 
-DataTablePageModal.defaultProps = {
+/**
+ * Only re-render this component when the isOpen prop changes.
+ */
+const propsAreEqual = ({ isOpen: prevIsOpen }, { isOpen: nextIsOpen }) => prevIsOpen === nextIsOpen;
+
+export const DataTablePageModal = React.memo(DataTablePageModalComponent, propsAreEqual);
+
+DataTablePageModalComponent.defaultProps = {
   fullScreen: false,
   modalKey: '',
   onSelect: null,
@@ -189,7 +176,7 @@ DataTablePageModal.defaultProps = {
   modalObject: null,
 };
 
-DataTablePageModal.propTypes = {
+DataTablePageModalComponent.propTypes = {
   modalObject: PropTypes.object,
   fullScreen: PropTypes.bool,
   isOpen: PropTypes.bool.isRequired,
@@ -198,5 +185,3 @@ DataTablePageModal.propTypes = {
   onSelect: PropTypes.func,
   currentValue: PropTypes.any,
 };
-
-export default DataTablePageModal;

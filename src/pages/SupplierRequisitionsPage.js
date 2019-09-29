@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -10,35 +8,18 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
-import { PageButton, SearchBar, DataTablePageView } from '../widgets';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { MODAL_KEYS, getAllPrograms, newSortDataBy } from '../utilities';
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
-
-const initialiseState = () => {
-  const backingData = UIDatabase.objects('RequestRequisition');
-  const data = newSortDataBy(backingData.slice(), 'serialNumber', false);
-  return {
-    backingData,
-    data,
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['serialNumber', 'otherStoreName.name'],
-    sortBy: 'serialNumber',
-    isAscending: false,
-    modalKey: '',
-    hasSelection: false,
-  };
-};
 
 /**
  * Renders a mSupply mobile page with a list of supplier requisitions.
@@ -64,7 +45,9 @@ export const SupplierRequisitionsPage = ({
   dispatch: reduxDispatch,
   navigation,
 }) => {
-  const [state, dispatch, debouncedDispatch] = usePageReducer(routeName, {}, initialiseState);
+  const initialState = { page: routeName };
+
+  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -76,6 +59,7 @@ export const SupplierRequisitionsPage = ({
     searchTerm,
     PageActions,
     columns,
+    showFinalised,
   } = state;
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
@@ -94,6 +78,7 @@ export const SupplierRequisitionsPage = ({
   const onSearchFiltering = value => dispatch(PageActions.filterData(value));
   const onNewRequisition = () => dispatch(PageActions.openModal(NEW_REQUISITON));
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
   const onCreateRequisition = otherStoreName => {
     onCloseModal();
@@ -105,7 +90,7 @@ export const SupplierRequisitionsPage = ({
     reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
   };
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -113,7 +98,7 @@ export const SupplierRequisitionsPage = ({
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -159,32 +144,28 @@ export const SupplierRequisitionsPage = ({
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_requisition}
-          onPress={onNewRequisition}
-        />
-      </View>
-    );
-  }, []);
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
+    [showFinalised]
+  );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_requisition} onPress={onNewRequisition} />
         </View>
       </View>
       <DataTable
@@ -203,7 +184,6 @@ export const SupplierRequisitionsPage = ({
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
-        fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
         onClose={onCloseModal}
@@ -214,6 +194,7 @@ export const SupplierRequisitionsPage = ({
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 SupplierRequisitionsPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,

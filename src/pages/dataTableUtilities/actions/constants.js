@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -15,6 +14,9 @@ export const ACTIONS = {
   HIDE_STOCK_OUT: 'hideStockOut',
   SHOW_FINALISED: 'showFinalised',
   SHOW_NOT_FINALISED: 'showNotFinalised',
+  REFRESH_DATA_WITH_FINALISED_TOGGLE: 'refreshDataWithFinalisedToggle',
+  FILTER_DATA_WITH_FINALISED_TOGGLE: 'filterDataWithFinalisedToggle',
+  FILTER_DATA_WITH_OVER_STOCK_TOGGLE: 'filterDataWithOverStockToggle',
 
   // pageAction constants
   OPEN_MODAL: 'openModal',

@@ -1,27 +1,22 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { UIDatabase } from '../database';
-import Settings from '../settings/MobileAppSettings';
-
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
-import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 
 import {
   gotoStocktakeManagePage,
@@ -29,32 +24,9 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-const stateInitialiser = () => {
-  const backingData = UIDatabase.objects('Stocktake');
-  return {
-    backingData,
-    data: backingData
-      .filtered('status != $0', 'finalised')
-      .sorted('createdDate', true)
-      .slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name'],
-    sortBy: 'createdDate',
-    isAscending: false,
-    modalKey: '',
-    hasSelection: false,
-    usingPrograms: getAllPrograms(Settings, UIDatabase).length > 0,
-  };
-};
-
 export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser
-  );
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -89,7 +61,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
   };
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -97,7 +69,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -144,41 +116,28 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton style={topButton} text={buttonStrings.new_stocktake} onPress={onNewStocktake} />
-      </View>
-    );
-  }, []);
-
-  const PastCurrentToggleBar = useCallback(
-    () => (
-      <ToggleBar
-        toggles={[
-          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
-        ]}
-      />
-    ),
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
     [showFinalised]
   );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
-          <PastCurrentToggleBar />
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_stocktake} onPress={onNewStocktake} />
         </View>
       </View>
       <DataTable
@@ -208,6 +167,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 StocktakesPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,

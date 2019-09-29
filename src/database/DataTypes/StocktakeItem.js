@@ -173,26 +173,8 @@ export class StocktakeItem extends Realm.Object {
    * Returns a boolean indicator on whether one of the batches
    * of this stocktake item has an option applied, or not.
    */
-  get hasAnyReason() {
+  get hasReason() {
     return this.batches.some(({ option }) => !!option);
-  }
-
-  /**
-   * Returns true if the snapshot and counted quantities differ.
-   * Does not account for if reasons are used by the user, caller
-   * needs to account for this.
-   * @return {bool}
-   */
-  get shouldHaveReason() {
-    return this.batches.some(({ shouldHaveReason }) => shouldHaveReason);
-  }
-
-  /**
-   * Returns a boolean indicator whether a reason needs to be enforced
-   * on this stocktake line item.
-   */
-  get enforceReason() {
-    return this.shouldHaveReason && !this.hasAnyReason;
   }
 
   /**

@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -11,7 +9,7 @@ import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../utilities';
 import { usePageReducer } from '../hooks/usePageReducer';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, DataTablePageView, SearchBar } from '../widgets';
@@ -20,22 +18,8 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { gotoStocktakeManagePage } from '../navigation/actions';
 
 import { buttonStrings } from '../localization';
-import { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { useRecordListener, useNavigationFocus } from '../hooks/index';
-
-const stateInitialiser = pageObject => ({
-  pageObject,
-  backingData: pageObject.items,
-  data: pageObject.items.sorted('item.name').slice(),
-  keyExtractor: recordKeyExtractor,
-  dataState: new Map(),
-  searchTerm: '',
-  filterDataKeys: ['item.name'],
-  sortBy: 'itemName',
-  isAscending: true,
-  modalKey: '',
-  modalValue: null,
-});
 
 /**
  * Renders a mSupply page with a stocktake loaded for editing
@@ -64,12 +48,8 @@ export const StocktakeEditPage = ({
   dispatch: reduxDispatch,
   navigation,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    stocktake
-  );
+  const initialState = { page: routeName, pageObject: stocktake };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     pageObject,
@@ -112,17 +92,12 @@ export const StocktakeEditPage = ({
   const onManageStocktake = () =>
     reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }));
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    isFinalised,
+  ]);
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
         return PageActions.editCountedQuantity;
@@ -136,7 +111,7 @@ export const StocktakeEditPage = ({
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -187,31 +162,27 @@ export const StocktakeEditPage = ({
     [sortBy, isAscending]
   );
 
-  const PageButtons = useCallback(() => {
-    const ManageStocktake = (
-      <PageButton
-        text={buttonStrings.manage_stocktake}
-        onPress={onManageStocktake}
-        isDisabled={isFinalised}
-      />
-    );
-
-    return <View style={newPageTopRightSectionContainer}>{program ? null : ManageStocktake}</View>;
-  }, [program]);
-
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
-          {renderPageInfo()}
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <PageButtons />
+        <View style={pageTopRightSectionContainer}>
+          {!program && (
+            <PageButton
+              text={buttonStrings.manage_stocktake}
+              onPress={onManageStocktake}
+              isDisabled={isFinalised}
+            />
+          )}
+        </View>
       </View>
       <DataTable
         data={data}
@@ -235,6 +206,7 @@ export const StocktakeEditPage = ({
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 StocktakeEditPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   stocktake: PropTypes.object.isRequired,

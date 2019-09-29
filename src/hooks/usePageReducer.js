@@ -10,6 +10,7 @@ import {
   getPageActions,
   getColumns,
   getPageInfoColumns,
+  getPageInitialiser,
 } from '../pages/dataTableUtilities';
 
 import { debounce } from '../utilities/index';
@@ -37,25 +38,25 @@ import { debounce } from '../utilities/index';
  *
  * @param {String} page                   routeName for the current page.
  * @param {Object} initialState           Initial state of the reducer
- * @param {Func}   initializer            Function to generate the initial state (optional)
+ * @param {Func}   initialiser            Function to generate the initial state (optional)
  * @param {Object} pageObject             base PageObject for the page i.e. a Requisition.
  * @param {Number} debounceTimeout        Timeout period for a regular debounce
  * @param {Number} instantDebounceTimeout Timeout period for an instant debounce
  */
 export const usePageReducer = (
-  page,
   initialState,
-  initializer,
-  pageObject,
+  initialiser,
   debounceTimeout = 250,
   instantDebounceTimeout = 250
 ) => {
+  const { page, pageObject } = initialState;
   const columns = useMemo(() => getColumns(page), []);
   const pageInfoColumns = useMemo(() => getPageInfoColumns(page), []);
   const PageActions = useMemo(() => getPageActions(page), []);
+  const pageInitialiser = useMemo(() => initialiser || getPageInitialiser(page), []);
 
   const [pageState, setPageState] = useState({
-    ...(initializer ? initializer(pageObject) : initialState),
+    ...(pageInitialiser ? pageInitialiser(pageObject) : initialState),
     columns,
     getPageInfoColumns: pageInfoColumns,
     PageActions,

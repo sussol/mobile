@@ -276,5 +276,3 @@ const propTypes = {
     item: PropTypes.shape({ id: PropTypes.string.isRequired }).isRequired,
   },
 };
-
-export default RealmExplorer;

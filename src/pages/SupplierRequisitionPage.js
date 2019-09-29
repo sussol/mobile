@@ -1,11 +1,9 @@
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
@@ -15,36 +13,12 @@ import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { usePageReducer, useRecordListener } from '../hooks';
 
-import globalStyles, { newPageStyles } from '../globalStyles';
+import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
-
-const stateInitialiser = requisition => {
-  const { program, items: backingData } = requisition;
-  const showAll = !program;
-
-  return {
-    pageObject: requisition,
-    backingData,
-    data: showAll
-      ? backingData.sorted('item.name').slice()
-      : backingData.filter(item => item.isLessThanThresholdMOS),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    currentFocusedRowKey: null,
-    searchTerm: '',
-    filterDataKeys: ['item.name'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    hasSelection: false,
-    showAll,
-    modalValue: null,
-  };
-};
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -64,12 +38,8 @@ const stateInitialiser = requisition => {
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    requisition
-  );
+  const initialState = { page: routeName, pageObject: requisition };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -116,17 +86,13 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onAddFromMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Requisition')));
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, theirRef, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    theirRef,
+    isFinalised,
+  ]);
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
         return PageActions.editRequisitionItemRequiredQuantity;
@@ -136,7 +102,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -185,58 +151,44 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     [sortBy, isAscending]
   );
 
-  const AddMasterListItemsButton = useCallback(
-    () => (
-      <PageButton
-        style={globalStyles.leftButton}
-        text={buttonStrings.add_master_list_items}
-        onPress={onAddFromMasterList}
-        isDisabled={isFinalised}
-      />
-    ),
-    []
+  const AddMasterListItemsButton = () => (
+    <PageButton
+      style={globalStyles.leftButton}
+      text={buttonStrings.add_master_list_items}
+      onPress={onAddFromMasterList}
+      isDisabled={isFinalised}
+    />
   );
 
-  const AddNewItemButton = useCallback(
-    () => (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_item}
-        onPress={onSelectItem}
-        isDisabled={isFinalised}
-      />
-    ),
-    []
+  const AddNewItemButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.new_item}
+      onPress={onSelectItem}
+      isDisabled={isFinalised}
+    />
   );
 
-  const CreateAutomaticOrderButton = useCallback(
-    () => (
-      <PageButton
-        style={{ ...globalStyles.leftButton, marginLeft: 5 }}
-        text={buttonStrings.create_automatic_order}
-        onPress={onCreateAutomaticOrder}
-        isDisabled={isFinalised}
-      />
-    ),
-    []
+  const CreateAutomaticOrderButton = () => (
+    <PageButton
+      style={{ ...globalStyles.leftButton, marginLeft: 5 }}
+      text={buttonStrings.create_automatic_order}
+      onPress={onCreateAutomaticOrder}
+      isDisabled={isFinalised}
+    />
   );
 
-  const UseSuggestedQuantitiesButton = useCallback(
-    () => (
-      <View>
-        <PageButton
-          style={globalStyles.topButton}
-          text={buttonStrings.use_suggested_quantities}
-          onPress={onSetRequestedToSuggested}
-          isDisabled={isFinalised}
-        />
-      </View>
-    ),
-    []
+  const UseSuggestedQuantitiesButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.use_suggested_quantities}
+      onPress={onSetRequestedToSuggested}
+      isDisabled={isFinalised}
+    />
   );
 
-  const ThresholdMOSToggle = useCallback(() => {
-    const toggleProps = [
+  const toggles = useMemo(
+    () => [
       {
         text: programStrings.hide_over_stocked,
         isOn: !showAll,
@@ -247,26 +199,22 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         isOn: showAll,
         onPress: onShowOverStocked,
       },
-    ];
-    return <ToggleBar toggles={toggleProps} />;
-  }, [showAll]);
+    ],
+    [showAll]
+  );
 
-  const ViewRegimenDataButton = useCallback(
-    () => (
-      <View>
-        <PageButton
-          style={globalStyles.topButton}
-          text={buttonStrings.view_regimen_data}
-          onPress={onViewRegimenData}
-        />
-      </View>
-    ),
-    []
+  const ThresholdMOSToggle = () => <ToggleBar toggles={toggles} />;
+
+  const ViewRegimenDataButton = () => (
+    <PageButton
+      style={globalStyles.topButton}
+      text={buttonStrings.view_regimen_data}
+      onPress={onViewRegimenData}
+    />
   );
 
   const GeneralButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
-
     return (
       <>
         <View style={verticalContainer}>
@@ -279,7 +227,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         </View>
       </>
     );
-  }, []);
+  }, [isFinalised]);
 
   const ProgramButtons = useCallback(() => {
     const { verticalContainer, horizontalContainer } = globalStyles;
@@ -290,27 +238,25 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
             <UseSuggestedQuantitiesButton />
             <ViewRegimenDataButton />
           </View>
-          <View style={verticalContainer}>
-            <ThresholdMOSToggle />
-          </View>
+          <ThresholdMOSToggle />
         </View>
       </>
     );
-  }, [showAll]);
+  }, [showAll, isFinalised]);
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
-          {renderPageInfo()}
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
+        <View style={pageTopRightSectionContainer}>
           {program ? <ProgramButtons /> : <GeneralButtons />}
         </View>
       </View>
@@ -343,6 +289,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 SupplierRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,

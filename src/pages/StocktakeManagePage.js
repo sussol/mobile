@@ -1,18 +1,14 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { UIDatabase } from '../database';
-
 import { usePageReducer } from '../hooks';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
 
 import { BottomTextEditor } from '../widgets/modals';
@@ -20,26 +16,7 @@ import { ToggleBar, DataTablePageView, SearchBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import { newPageStyles } from '../globalStyles';
-
-const stateInitialiser = pageObject => {
-  const backingData = UIDatabase.objects('Item');
-  return {
-    pageObject,
-    backingData,
-    data: backingData.sorted('name').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['name', 'code'],
-    name: pageObject ? pageObject.name : '',
-    sortBy: 'name',
-    isAscending: true,
-    hasSelection: false,
-    allSelected: false,
-    showAll: true,
-  };
-};
+import globalStyles from '../globalStyles';
 
 export const StocktakeManagePage = ({
   routeName,
@@ -47,12 +24,8 @@ export const StocktakeManagePage = ({
   stocktake,
   runWithLoadingIndicator,
 }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    stocktake
-  );
+  const initialState = { page: routeName, pageObject: stocktake };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -75,7 +48,7 @@ export const StocktakeManagePage = ({
     if (stocktake) dispatch(PageActions.selectItems(stocktake.itemsInStocktake));
   }, []);
 
-  const getAction = (colKey, propName) => {
+  const getAction = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'selected':
         if (propName === 'onCheckAction') return PageActions.selectRow;
@@ -83,7 +56,7 @@ export const StocktakeManagePage = ({
       default:
         return null;
     }
-  };
+  }, []);
 
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onNameChange = value => dispatch(PageActions.editName(value));
@@ -130,32 +103,28 @@ export const StocktakeManagePage = ({
     [sortBy, isAscending]
   );
 
-  const Toggle = useCallback(
-    () => (
-      <ToggleBar
-        toggles={[
-          { text: buttonStrings.hide_stockouts, onPress: onHideStock, isOn: !showAll },
-          { text: buttonStrings.all_items_selected, onPress: onSelectAll, isOn: allSelected },
-        ]}
-      />
-    ),
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.hide_stockouts, onPress: onHideStock, isOn: !showAll },
+      { text: buttonStrings.all_items_selected, onPress: onSelectAll, isOn: allSelected },
+    ],
     [showAll, allSelected]
   );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
 
-        <View style={newPageTopRightSectionContainer}>
-          <Toggle />
+        <View style={pageTopRightSectionContainer}>
+          <ToggleBar toggles={toggles} />
         </View>
       </View>
 
@@ -184,6 +153,7 @@ StocktakeManagePage.defaultProps = {
   stocktake: null,
 };
 
+/* eslint-disable react/forbid-prop-types */
 StocktakeManagePage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,

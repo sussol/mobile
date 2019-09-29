@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -9,44 +7,20 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { UIDatabase } from '../database';
-
 import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useRecordListener } from '../hooks';
-import { recordKeyExtractor, getItemLayout } from './dataTableUtilities';
+import { getItemLayout } from './dataTableUtilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
-import globalStyles, { newPageStyles } from '../globalStyles';
-
-const stateInitialiser = pageObject => {
-  const backingData = pageObject.getTransactionBatches(UIDatabase);
-  return {
-    pageObject,
-    backingData,
-    data: backingData.sorted('itemName').slice(),
-    keyExtractor: recordKeyExtractor,
-    dataState: new Map(),
-    searchTerm: '',
-    filterDataKeys: ['itemName'],
-    sortBy: 'itemName',
-    isAscending: true,
-    modalKey: '',
-    modalValue: null,
-    hasSelection: false,
-  };
-};
+import globalStyles from '../globalStyles';
 
 export const SupplierInvoicePage = ({ routeName, transaction }) => {
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(
-    routeName,
-    {},
-    stateInitialiser,
-    transaction
-  );
+  const initialState = { page: routeName, pageObject: transaction };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
   const {
     pageObject,
@@ -79,17 +53,13 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
   const onCloseModal = () => dispatch(PageActions.closeModal());
 
-  const renderPageInfo = useCallback(
-    () => (
-      <PageInfo
-        columns={getPageInfoColumns(pageObject, dispatch, PageActions)}
-        isEditingDisabled={isFinalised}
-      />
-    ),
-    [comment, theirRef, isFinalised]
-  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    theirRef,
+    isFinalised,
+  ]);
 
-  const getAction = (columnKey, propName) => {
+  const getAction = useCallback((columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
         return PageActions.editTotalQuantity;
@@ -101,7 +71,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
       default:
         return null;
     }
-  };
+  }, []);
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -136,20 +106,6 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     [data, dataState]
   );
 
-  const PageButtons = useCallback(() => {
-    const { verticalContainer, topButton } = globalStyles;
-    return (
-      <View style={verticalContainer}>
-        <PageButton
-          style={topButton}
-          text={buttonStrings.new_item}
-          onPress={onAddRow}
-          isDisabled={isFinalised}
-        />
-      </View>
-    );
-  }, []);
-
   const renderHeader = useCallback(
     () => (
       <DataTableHeaderRow
@@ -164,19 +120,19 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   );
 
   const {
-    newPageTopSectionContainer,
-    newPageTopLeftSectionContainer,
-    newPageTopRightSectionContainer,
-  } = newPageStyles;
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
   return (
     <DataTablePageView>
-      <View style={newPageTopSectionContainer}>
-        <View style={newPageTopLeftSectionContainer}>
-          {renderPageInfo()}
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
-        <View style={newPageTopRightSectionContainer}>
-          <PageButtons />
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_item} onPress={onAddRow} isDisabled={isFinalised} />
         </View>
       </View>
       <DataTable
@@ -208,6 +164,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 SupplierInvoicePage.propTypes = {
   routeName: PropTypes.string.isRequired,
   transaction: PropTypes.object.isRequired,
