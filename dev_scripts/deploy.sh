@@ -3,7 +3,7 @@
 # mSupply Mobile
 # Sustainable Solutions (NZ) Ltd. 2019.
 #
-# Uninstall mobile app.
+# Deploy mobile app.
 
 APK_DIR="android/app/build/outputs/apk/release/"
 APK_VERSION="mSupplyMobile-2_3_6-universal-release"
