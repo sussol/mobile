@@ -41,9 +41,9 @@ const modalProps = ({ dispatch, program, orderType }) => ({
     onSelect: value => dispatch(selectOrderType(value)),
     renderRightText: item => {
       const { maxMOS, maxOPP, threshMOS } = getLocalizedStrings();
-      const { maxOrdersPerPeriod: maxOrders, maxMOS: itemMOS } = item;
-      const mosText = `${maxMOS}: ${item.maxMOS}`;
-      const thresholdText = `${threshMOS}: ${itemMOS}`;
+      const { maxOrdersPerPeriod: maxOrders, maxMOS: itemMOS, thresholdMOS: itemThreshMOS } = item;
+      const mosText = `${maxMOS}: ${itemMOS}`;
+      const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
       const maxOrdersText = `${maxOPP}: ${maxOrders}`;
       return `${mosText} - ${thresholdText} - ${maxOrdersText}`;
     },
