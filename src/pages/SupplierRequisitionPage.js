@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -291,6 +289,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 SupplierRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   requisition: PropTypes.object.isRequired,

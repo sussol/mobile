@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -200,6 +198,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 CustomerInvoicePage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   transaction: PropTypes.object.isRequired,

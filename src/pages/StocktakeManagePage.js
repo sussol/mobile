@@ -1,5 +1,3 @@
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -155,6 +153,7 @@ StocktakeManagePage.defaultProps = {
   stocktake: null,
 };
 
+/* eslint-disable react/forbid-prop-types */
 StocktakeManagePage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,

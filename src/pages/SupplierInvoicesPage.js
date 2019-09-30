@@ -1,4 +1,3 @@
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -172,6 +171,7 @@ export const SupplierInvoicesPage = ({
 
 export default SupplierInvoicesPage;
 
+/* eslint-disable react/forbid-prop-types */
 SupplierInvoicesPage.propTypes = {
   currentUser: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,

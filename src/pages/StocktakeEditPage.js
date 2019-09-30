@@ -1,5 +1,3 @@
-/* eslint-disable react/forbid-prop-types */
-/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -208,6 +206,7 @@ export const StocktakeEditPage = ({
   );
 };
 
+/* eslint-disable react/forbid-prop-types */
 StocktakeEditPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   stocktake: PropTypes.object.isRequired,
