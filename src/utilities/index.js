@@ -15,3 +15,4 @@ export { createReducer, REHYDRATE } from './createReducer';
 export { getAllPeriodsForProgram, getAllPrograms } from './byProgram';
 export { requestPermission } from './requestPermission';
 export { backupValidation } from './fileSystem';
+export { renderNode } from './renderNode';
