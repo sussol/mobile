@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet, View, TouchableHighlight, Text } from 'react-native';
-import { Badge } from 'react-native-elements';
 import Popover from 'react-native-popover-view';
+import Badge from './Badge';
 import { SUSSOL_ORANGE } from '../globalStyles';
 
 export class BadgeSet extends React.PureComponent {
