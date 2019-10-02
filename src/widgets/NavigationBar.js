@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/* eslint-disable react/forbid-prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -11,67 +13,36 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { textStyles } from '../globalStyles';
 import { BadgeSet } from './BadgeSet';
-import { generalStrings } from '../localization';
-import { getDataTypeFromRouteName } from '../navigation/selectors';
 
-export class NavigationBar extends React.Component {
-  state = {
-    badge: [{ title: '', type: 'unfinalised', Count: 0 }],
-  };
+const NavigationBar = props => {
+  const { routeName, onPressBack, LeftComponent, CentreComponent, RightComponent } = props;
 
-  componentWillReceiveProps(props) {
-    const dataType = getDataTypeFromRouteName(props);
-    if (dataType !== '') this.refreshData(dataType);
-  }
-
-  refreshData = dataType => {
-    const { database, routeName } = this.props;
-
-    this.setState({
-      badge: [
-        {
-          count:
-            dataType !== ''
-              ? database.objects(dataType).filtered('status != "finalised"').length
-              : 0,
-          type: 'unfinalised',
-          title: `${generalStrings.unfinalised} ${generalStrings[routeName]}`,
-        },
-      ],
-    });
-  };
-
-  render() {
-    const { onPressBack, LeftComponent, CentreComponent, RightComponent } = this.props;
-    const { badge } = this.state;
-    return (
-      <View style={localStyles.container}>
-        <View style={localStyles.leftSection}>
-          <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
-            {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
-          </TouchableOpacity>
-          {LeftComponent && (
-            <BadgeSet
-              info={badge}
-              popoverPosition="bottom"
-              mainWrapperStyle={localStyles.badgeSetWrapper}
-            >
-              <LeftComponent />
-            </BadgeSet>
-          )}
-        </View>
-        <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
-        <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
+  return (
+    <View style={localStyles.container}>
+      <View style={localStyles.leftSection}>
+        <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
+          {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
+        </TouchableOpacity>
+        {LeftComponent && (
+          <BadgeSet
+            routeName={routeName}
+            popoverPosition="bottom"
+            mainWrapperStyle={localStyles.badgeSetWrapper}
+          >
+            <LeftComponent />
+          </BadgeSet>
+        )}
       </View>
-    );
-  }
-}
+      <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
+      <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
+    </View>
+  );
+};
 
+export { NavigationBar };
 export default NavigationBar;
 
-/* eslint-disable react/forbid-prop-types */
 NavigationBar.propTypes = {
-  database: PropTypes.object.isRequired,
   onPressBack: PropTypes.func,
   LeftComponent: PropTypes.any,
   CentreComponent: PropTypes.any,

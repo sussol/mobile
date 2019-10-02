@@ -4,12 +4,30 @@ import { StyleSheet, View, TouchableHighlight, Text } from 'react-native';
 import Popover from 'react-native-popover-view';
 import Badge from './Badge';
 import { SUSSOL_ORANGE } from '../globalStyles';
+import { generalStrings } from '../localization';
+import { routeList } from '../navigation/selectors';
+import { UIDatabase } from '../database';
 
 export class BadgeSet extends React.PureComponent {
   state = {
     isPopOverVisible: false,
     rect: {},
   };
+
+  getMyInfo() {
+    const { routeName } = this.props;
+    const dataType = routeName in routeList ? routeList[routeName] : '';
+
+    return [
+      {
+        count:
+          dataType !== ''
+            ? UIDatabase.objects(dataType).filtered('status != "finalised"').length
+            : 0,
+        title: `${generalStrings.unfinalised} ${generalStrings[routeName]}`,
+      },
+    ];
+  }
 
   showPopover() {
     // Open popover and determine where to open it on canvas
@@ -25,9 +43,8 @@ export class BadgeSet extends React.PureComponent {
     this.setState({ isPopOverVisible: false });
   }
 
-  renderInfo() {
-    const { info } = this.props;
-
+  // eslint-disable-next-line class-methods-use-this
+  renderInfo(info) {
     // Create a list of text components' fragment with info array row data
     return info.map((item, key) => {
       if (item.count <= 0 || item.text === '') return null;
@@ -42,8 +59,9 @@ export class BadgeSet extends React.PureComponent {
   }
 
   render() {
-    const { children, info, mainWrapperStyle, popoverPosition } = this.props;
+    const { children, mainWrapperStyle, popoverPosition } = this.props;
     const { isPopOverVisible, rect } = this.state;
+    const info = this.getMyInfo();
 
     // Get total of all the count variables in the info array. We want to show it on the badge
     const pendingCount = info.reduce((total, item) => total + (item.count || 0), 0);
@@ -79,7 +97,7 @@ export class BadgeSet extends React.PureComponent {
               backgroundStyle={{ backgroundColor: 'transparent' }}
               placement={popoverPosition}
             >
-              <Text>{this.renderInfo()}</Text>
+              <Text>{this.renderInfo(info)}</Text>
             </Popover>
           </View>
         )}
@@ -91,8 +109,9 @@ export class BadgeSet extends React.PureComponent {
 export default BadgeSet;
 
 BadgeSet.propTypes = {
+  // eslint-disable-next-line react/forbid-prop-types
+  routeName: PropTypes.object.isRequired,
   children: PropTypes.element.isRequired,
-  info: PropTypes.shape.isRequired,
   mainWrapperStyle: PropTypes.element,
   popoverPosition: PropTypes.string,
 };

@@ -16,7 +16,4 @@ const getCurrentRouteName = state =>
 const getCurrentParams = state =>
   state.routes[state.index] ? state.routes[state.index].params : undefined;
 
-const getDataTypeFromRouteName = props =>
-  props.routeName in routeList ? routeList[props.routeName] : '';
-
-export { routeList, getCurrentRouteName, getCurrentParams, getDataTypeFromRouteName };
+export { routeList, getCurrentRouteName, getCurrentParams };
