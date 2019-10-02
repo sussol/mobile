@@ -63,7 +63,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.scheduler.schedule(() => {
       const { currentUser } = this.state;
       if (currentUser !== null) {
-        // Only reauthenticate if currently logged in.
+        // Only re-authenticate if currently logged in.
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
@@ -128,7 +128,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
-    // We here set up an asyncronous promise that will be resolved after a timeout
+    // We here set up an asynchronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay for the javascript thread
     // to unblock and allow the spinner animation to start up. The |functionToRun| should
     // not be run inside a |setTimeout| as that relegates to a lower priority, resulting

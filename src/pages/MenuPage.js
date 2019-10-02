@@ -91,14 +91,6 @@ export class MenuPage extends React.Component {
   refreshData = () => {
     const { database } = this.props;
 
-    // this.setState({
-    //   customerInvoice: {
-    //     finalised: {
-    //       count: database.objects('CustomerInvoice').filtered('status != "finalised"').length,
-    //     },
-    //   },
-    // });
-
     this.setState(prevState => ({
       customerRequisition: prevState.customerRequisition.map(obj => {
         // eslint-disable-next-line default-case
