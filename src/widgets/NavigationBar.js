@@ -12,30 +12,16 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { textStyles } from '../globalStyles';
 import { BadgeSet } from './BadgeSet';
 import { generalStrings } from '../localization';
+import { getDataTypeFromRouteName } from '../navigation/selectors';
 
 export class NavigationBar extends React.Component {
   state = {
     badge: [{ title: '', type: 'unfinalised', Count: 0 }],
   };
 
-  routeList = {
-    customerRequisitions: 'ResponseRequisition',
-    supplierRequisitions: 'RequestRequisition',
-    supplierInvoices: 'SupplierInvoice',
-    stocktakes: 'Stocktake',
-    customerInvoices: 'CustomerInvoice',
-  };
-
   componentWillReceiveProps(props) {
-    if (props.routeName in this.routeList) {
-      const dataType = this.getDataTypeFromRouteName(props);
-      this.refreshData(dataType);
-    }
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  getDataTypeFromRouteName(props) {
-    return props.routeName in this.routeList ? this.routeList[props.routeName] : '';
+    const dataType = getDataTypeFromRouteName(props);
+    if (dataType !== '') this.refreshData(dataType);
   }
 
   refreshData = dataType => {
