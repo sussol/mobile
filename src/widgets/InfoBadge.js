@@ -71,7 +71,7 @@ export class InfoBadge extends React.PureComponent {
                     (item.count > 0 || item.text) && (
                       // eslint-disable-next-line react/no-array-index-key
                       <Text key={key}>
-                        {item.title}: {item.count || item.text}
+                        {item.title} : {item.count || item.text}
                         {key === info.length - 1 ? '' : '\n'}
                       </Text>
                     )
