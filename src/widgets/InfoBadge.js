@@ -3,31 +3,14 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View, TouchableHighlight, Text } from 'react-native';
 import Popover from 'react-native-popover-view';
 import Badge from './Badge';
+import { getBadgeData } from '../utilities/getBadgeData';
 import { SUSSOL_ORANGE } from '../globalStyles';
-import { generalStrings } from '../localization';
-import { routeList } from '../navigation/selectors';
-import { UIDatabase } from '../database';
 
 export class InfoBadge extends React.PureComponent {
   state = {
     isPopOverVisible: false,
     rect: {},
   };
-
-  getMyInfo() {
-    const { routeName } = this.props;
-    const dataType = routeName in routeList ? routeList[routeName] : '';
-
-    return [
-      {
-        count:
-          dataType !== ''
-            ? UIDatabase.objects(dataType).filtered('status != "finalised"').length
-            : 0,
-        title: `${generalStrings.unfinalised} ${generalStrings[routeName]}`,
-      },
-    ];
-  }
 
   showPopover() {
     // Open popover and determine where to open it on canvas
@@ -44,9 +27,9 @@ export class InfoBadge extends React.PureComponent {
   }
 
   render() {
-    const { children, mainWrapperStyle, popoverPosition } = this.props;
+    const { children, mainWrapperStyle, popoverPosition, routeName } = this.props;
     const { isPopOverVisible, rect } = this.state;
-    const info = this.getMyInfo();
+    const info = getBadgeData(routeName);
 
     // Get total of all the count variables in the info array. We want to show it on the badge
     const pendingCount = info.reduce((total, item) => total + (item.count || 0), 0);
@@ -82,15 +65,14 @@ export class InfoBadge extends React.PureComponent {
               backgroundStyle={{ backgroundColor: 'transparent' }}
               placement={popoverPosition}
             >
-              <Text>
+              <Text style={localStyles.badgeTextStyle}>
                 {info.map(
                   (item, key) =>
-                    item.count > 0 &&
-                    item.text !== '' && (
+                    (item.count > 0 || item.text) && (
                       // eslint-disable-next-line react/no-array-index-key
-                      <Text key={key} style={localStyles.badgeTextStyle}>
-                        {key === 0 ? '' : '\n'}
-                        {item.title} : {item.count || item.text}
+                      <Text key={key}>
+                        {item.title}: {item.count || item.text}
+                        {key === info.length - 1 ? '' : '\n'}
                       </Text>
                     )
                 )}
