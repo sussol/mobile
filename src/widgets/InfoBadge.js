@@ -8,7 +8,7 @@ import { generalStrings } from '../localization';
 import { routeList } from '../navigation/selectors';
 import { UIDatabase } from '../database';
 
-export class BadgeSet extends React.PureComponent {
+export class InfoBadge extends React.PureComponent {
   state = {
     isPopOverVisible: false,
     rect: {},
@@ -106,9 +106,9 @@ export class BadgeSet extends React.PureComponent {
   }
 }
 
-export default BadgeSet;
+export default InfoBadge;
 
-BadgeSet.propTypes = {
+InfoBadge.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   routeName: PropTypes.object.isRequired,
   children: PropTypes.element.isRequired,
@@ -116,7 +116,7 @@ BadgeSet.propTypes = {
   popoverPosition: PropTypes.string,
 };
 
-BadgeSet.defaultProps = {
+InfoBadge.defaultProps = {
   mainWrapperStyle: {},
   popoverPosition: 'auto',
 };

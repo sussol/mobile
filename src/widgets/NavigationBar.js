@@ -12,7 +12,7 @@ import { Platform, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { textStyles } from '../globalStyles';
-import { BadgeSet } from './BadgeSet';
+import { InfoBadge } from './InfoBadge';
 
 const NavigationBar = props => {
   const { routeName, onPressBack, LeftComponent, CentreComponent, RightComponent } = props;
@@ -24,13 +24,13 @@ const NavigationBar = props => {
           {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
         </TouchableOpacity>
         {LeftComponent && (
-          <BadgeSet
+          <InfoBadge
             routeName={routeName}
             popoverPosition="bottom"
-            mainWrapperStyle={localStyles.badgeSetWrapper}
+            mainWrapperStyle={localStyles.InfoBadgeWrapper}
           >
             <LeftComponent />
-          </BadgeSet>
+          </InfoBadge>
         )}
       </View>
       <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
@@ -97,7 +97,7 @@ const localStyles = StyleSheet.create({
     ...sectionStyle,
     justifyContent: 'flex-end',
   },
-  badgeSetWrapper: {
+  InfoBadgeWrapper: {
     right: -60,
   },
 });
