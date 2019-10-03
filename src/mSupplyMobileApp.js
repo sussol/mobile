@@ -235,7 +235,6 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
-          database={UIDatabase}
           routeName={this.getCurrentRouteName(navigationState)}
           onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
           LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
