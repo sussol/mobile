@@ -88,7 +88,7 @@ export class InfoBadge extends React.PureComponent {
                     item.count > 0 &&
                     item.text !== '' && (
                       // eslint-disable-next-line react/no-array-index-key
-                      <Text key={key} style={{ color: '#FFF', fontSize: 12 }}>
+                      <Text key={key} style={localStyles.badgeTextStyle}>
                         {key === 0 ? '' : '\n'}
                         {item.title} : {item.count || item.text}
                       </Text>
@@ -139,5 +139,9 @@ const localStyles = StyleSheet.create({
   badgeFontStyle: {
     fontSize: 10,
     color: '#FFF',
+  },
+  badgeTextStyle: {
+    color: '#FFF',
+    fontSize: 12,
   },
 });
