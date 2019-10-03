@@ -43,21 +43,6 @@ export class InfoBadge extends React.PureComponent {
     this.setState({ isPopOverVisible: false });
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  renderInfo(info) {
-    // Create a list of text components' fragment with info array row data
-    return info.map((item, key) => {
-      if (item.count <= 0 || item.text === '') return null;
-
-      return (
-        <Text style={{ color: '#FFF', fontSize: 12 }}>
-          {key === 0 ? '' : '\n'}
-          {item.title} : {item.count || item.text}
-        </Text>
-      );
-    });
-  }
-
   render() {
     const { children, mainWrapperStyle, popoverPosition } = this.props;
     const { isPopOverVisible, rect } = this.state;
@@ -97,7 +82,19 @@ export class InfoBadge extends React.PureComponent {
               backgroundStyle={{ backgroundColor: 'transparent' }}
               placement={popoverPosition}
             >
-              <Text>{this.renderInfo(info)}</Text>
+              <Text>
+                {info.map(
+                  (item, key) =>
+                    item.count > 0 &&
+                    item.text !== '' && (
+                      // eslint-disable-next-line react/no-array-index-key
+                      <Text key={key} style={{ color: '#FFF', fontSize: 12 }}>
+                        {key === 0 ? '' : '\n'}
+                        {item.title} : {item.count || item.text}
+                      </Text>
+                    )
+                )}
+              </Text>
             </Popover>
           </View>
         )}
@@ -110,9 +107,10 @@ export default InfoBadge;
 
 InfoBadge.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
-  routeName: PropTypes.object.isRequired,
+  routeName: PropTypes.string.isRequired,
   children: PropTypes.element.isRequired,
-  mainWrapperStyle: PropTypes.element,
+  // eslint-disable-next-line react/forbid-prop-types
+  mainWrapperStyle: PropTypes.object,
   popoverPosition: PropTypes.string,
 };
 
