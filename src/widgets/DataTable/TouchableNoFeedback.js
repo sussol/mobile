@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 const onPressNoOp = () => {};
 
 const TouchableNoFeedback = ({ children, style, ...touchableProps }) => (
-  <TouchableWithoutFeedback onPress={onPressNoOp} {...touchableProps}>
+  <TouchableWithoutFeedback {...touchableProps} onPress={onPressNoOp}>
     <View style={style}>{children}</View>
   </TouchableWithoutFeedback>
 );
