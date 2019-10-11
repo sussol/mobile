@@ -158,7 +158,7 @@ export class Stocktake extends Realm.Object {
    * @return  {boolean}
    */
   get hasSomeCountedItems() {
-    return this.items.some(item => item.hasCountedBatches);
+    return this.items.some(item => item.hasBeenCounted);
   }
 
   /**
@@ -257,7 +257,7 @@ export class Stocktake extends Realm.Object {
     // Prune any stocktake item that has not had a quantity change.
     database.delete(
       'StocktakeItem',
-      this.items.filter(stocktakeItem => !stocktakeItem.hasCountedBatches)
+      this.items.filter(stocktakeItem => !stocktakeItem.hasBeenCounted)
     );
 
     // Get every batch associated with this stocktake.
