@@ -39,12 +39,13 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * Get total quantity in batch.
+   * Get the total countedQuantity for this batch. If nothing has been
+   * counted, return 0.
    *
    * @return  {number}
    */
   get countedTotalQuantity() {
-    if (this.countedNumberOfPacks === null) return this.snapshotTotalQuantity;
+    if (this.countedNumberOfPacks === null) return 0;
     return this.countedNumberOfPacks * this.packSize;
   }
 
