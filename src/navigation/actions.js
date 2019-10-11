@@ -258,7 +258,7 @@ export const createSupplierInvoice = (otherParty, currentUser) => dispatch => {
  */
 export const updateStocktake = (stocktake, itemIds, name = '') => dispatch => {
   UIDatabase.write(() => {
-    if (!name) stocktake.name = name;
+    if (name) stocktake.name = name;
 
     stocktake.setItemsByID(UIDatabase, itemIds);
     UIDatabase.save('Stocktake', stocktake);
