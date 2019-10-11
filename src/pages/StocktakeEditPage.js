@@ -79,6 +79,7 @@ export const StocktakeEditPage = ({
     if (stocktake.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
   }, []);
 
+  const onEditName = value => dispatch(PageActions.editPageObjectName(value, 'Stocktake'));
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onEditBatch = rowKey => PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
   const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
@@ -95,6 +96,7 @@ export const StocktakeEditPage = ({
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     isFinalised,
+    pageObject.name,
   ]);
 
   const getAction = useCallback((colKey, propName) => {
@@ -115,6 +117,8 @@ export const StocktakeEditPage = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
+      case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
+        return onEditName;
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
