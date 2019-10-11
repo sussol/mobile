@@ -79,6 +79,29 @@ export const openModal = (modalKey, value) => {
 };
 
 /**
+ * Edits the `name` field of a pageObject.
+ *
+ * @param {String} value          New name value.
+ * @param {String} pageObjectType PageObject type to edit i.e. Transaction.
+ */
+export const editPageObjectName = (value, pageObjectType) => (dispatch, getState) => {
+  const { pageObject } = getState();
+
+  const { name } = pageObject;
+
+  if (name !== value) {
+    UIDatabase.write(() => {
+      UIDatabase.update(pageObjectType, {
+        ...pageObject,
+        name: value,
+      });
+    });
+  }
+
+  dispatch(closeModal());
+};
+
+/**
  * Edits the `theirRef` field of a pageObject.
  *
  * @param {String} value          New theifRef value.
@@ -166,4 +189,5 @@ export const PageActionsLookup = {
   editMonthsToSupply,
   resetStocktake,
   closeAndRefresh,
+  editPageObjectName,
 };
