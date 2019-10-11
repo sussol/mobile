@@ -254,9 +254,12 @@ export const createSupplierInvoice = (otherParty, currentUser) => dispatch => {
  * @param {Object} stocktake realm Stocktake object
  * @param {Array}  itemIds   Array of item id strings that should be the new
  *                           Items in the stocktake.
+ *  * @param {String} name   Name of the stocktake for updating. Cannot update to remove completely.
  */
-export const updateStocktake = (stocktake, itemIds) => dispatch => {
+export const updateStocktake = (stocktake, itemIds, name = '') => dispatch => {
   UIDatabase.write(() => {
+    if (!name) stocktake.name = name;
+
     stocktake.setItemsByID(UIDatabase, itemIds);
     UIDatabase.save('Stocktake', stocktake);
   });
