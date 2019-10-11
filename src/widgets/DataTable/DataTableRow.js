@@ -29,7 +29,8 @@ import TextInputCell from './TextInputCell';
 
 import { formatStatus } from '../../utilities';
 
-import { COLUMN_TYPES } from '../../pages/dataTableUtilities';
+import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
+import { tableStrings } from '../../localization/index';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -88,7 +89,15 @@ const DataTableRow = React.memo(
 
           switch (type) {
             case COLUMN_TYPES.EDITABLE_STRING:
-            case COLUMN_TYPES.EDITABLE_NUMERIC:
+            case COLUMN_TYPES.EDITABLE_NUMERIC: {
+              // Special condition for stocktake counted total quantity cells.
+              // Use the placeholder 'Not counted' when a stocktake item or batch
+              // has not been counted yet.
+              let placeholder = '';
+              if (columnKey === COLUMN_NAMES.COUNTED_TOTAL_QUANTITY) {
+                placeholder = rowData.hasBeenCounted ? '' : tableStrings.not_counted;
+              }
+
               return (
                 <TextInputCell
                   key={columnKey}
@@ -102,16 +111,15 @@ const DataTableRow = React.memo(
                   viewStyle={cellContainer[cellAlignment]}
                   textViewStyle={editableCellTextView}
                   isLastCell={isLastCell}
-                  keyboardType={
-                    type === COLUMN_TYPES.NUMERIC ? COLUMN_TYPES.EDITABLE_NUMERIC : 'default'
-                  }
+                  keyboardType={type === COLUMN_TYPES.EDITABLE_NUMERIC ? 'numeric' : 'default'}
                   textInputStyle={cellText[cellAlignment]}
                   textStyle={editableCellUnfocused[cellAlignment]}
                   cellTextStyle={editableCellText}
                   rowIndex={rowIndex}
+                  placeholder={placeholder}
                 />
               );
-
+            }
             case COLUMN_TYPES.EDITABLE_EXPIRY_DATE:
               return (
                 <ExpiryDateInput
