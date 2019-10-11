@@ -65,7 +65,7 @@ export const StocktakeManagePage = ({
 
   const onConfirmStocktake = () => {
     runWithLoadingIndicator(() => {
-      const itemIds = Array.from(dataState.keys()).filter(id => id);
+      const itemIds = Array.from(dataState.keys()).filter(id => dataState.get(id).isSelected && id);
       if (stocktake) return reduxDispatch(updateStocktake(stocktake, itemIds, name));
       return reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
     });
@@ -138,7 +138,7 @@ export const StocktakeManagePage = ({
       />
 
       <BottomTextEditor
-        isOpen={hasSelection}
+        isOpen
         buttonText={stocktake ? modalStrings.confirm : modalStrings.create}
         value={name}
         placeholder={modalStrings.give_your_stocktake_a_name}
