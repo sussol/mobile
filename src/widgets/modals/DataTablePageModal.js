@@ -65,6 +65,7 @@ const DataTablePageModalComponent = ({
             renderRightText={item => `${item.totalQuantity}`}
           />
         );
+      case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
       case MODAL_KEYS.THEIR_REF_EDIT:
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:

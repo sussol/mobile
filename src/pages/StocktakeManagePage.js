@@ -66,7 +66,7 @@ export const StocktakeManagePage = ({
   const onConfirmStocktake = () => {
     runWithLoadingIndicator(() => {
       const itemIds = Array.from(dataState.keys()).filter(id => id);
-      if (stocktake) return reduxDispatch(updateStocktake(stocktake, itemIds));
+      if (stocktake) return reduxDispatch(updateStocktake(stocktake, itemIds, name));
       return reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
     });
   };

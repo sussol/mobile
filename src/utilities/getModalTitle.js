@@ -7,6 +7,7 @@ import { modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
   STOCKTAKE_COMMENT_EDIT: 'stocktakeCommentEdit',
+  STOCKTAKE_NAME_EDIT: 'stocktakeNameEdit',
   TRANSACTION_COMMENT_EDIT: 'transactionCommentEdit',
   REQUISITION_COMMENT_EDIT: 'requisitionCommentEdit',
   THEIR_REF_EDIT: 'theirRefEdit',
@@ -27,6 +28,8 @@ export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
+      return modalStrings.edit_the_stocktake_name;
     case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       return modalStrings.edit_the_stocktake_comment;
     case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
