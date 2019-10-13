@@ -61,7 +61,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
   useRecordListener(() => dispatch(PageActions.refreshData()), requisition, 'Requisition');
 
-  const { isFinalised, comment, theirRef, program } = pageObject;
+  const { isFinalised, comment, theirRef, program, daysToSupply } = pageObject;
 
   // On click handlers
   const onCloseModal = () => dispatch(PageActions.closeModal());
@@ -90,6 +90,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     comment,
     theirRef,
     isFinalised,
+    daysToSupply,
   ]);
 
   const getAction = useCallback((colKey, propName) => {
