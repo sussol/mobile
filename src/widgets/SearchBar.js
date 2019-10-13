@@ -106,8 +106,8 @@ const propsAreEqual = (
   { value: nextValue, onFocusOrBlur: nextOnFocusOrBlur }
 ) => {
   const valuesAreEqual = prevValue === nextValue;
-  const onFocusOrBlueAreEqual = prevOnFocusOrBlur === nextOnFocusOrBlur;
-  return valuesAreEqual && onFocusOrBlueAreEqual;
+  const onFocusOrBlurAreEqual = prevOnFocusOrBlur === nextOnFocusOrBlur;
+  return valuesAreEqual && onFocusOrBlurAreEqual;
 };
 
 export const SearchBar = React.memo(SearchBarComponent, propsAreEqual);
