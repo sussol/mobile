@@ -113,7 +113,7 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, PageActions) => ({
   stocktakeName: {
     title: `${pageInfoStrings.stocktake_name}:`,
     info: pageObject.name,
-    onPress: null,
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_NAME_EDIT)),
     editableType: 'text',
   },
   itemName: {

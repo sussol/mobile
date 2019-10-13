@@ -30,6 +30,13 @@ export const openModal = (state, action) => {
       return { ...state, modalKey, modalValue: pageObject };
     }
 
+    case MODAL_KEYS.STOCKTAKE_NAME_EDIT: {
+      const { pageObject } = state;
+      const { name } = pageObject;
+
+      return { ...state, modalKey, modalValue: name };
+    }
+
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.STOCKTAKE_REASON: {
