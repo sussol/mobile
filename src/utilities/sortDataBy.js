@@ -48,11 +48,11 @@ export const sortDataBy = (data, sortKey, isAscending = true, sortDataType) => {
       if (isAscending) return [...data.sort((a, b) => Number(a[sortKey]) - Number(b[sortKey]))];
       return [...data.sort((a, b) => Number(b[sortKey]) - Number(a[sortKey]))];
     case 'date':
-      if (isAscending) return [...data.sort((a, b) => new Date(b[sortKey]) - new Date(a[sortKey]))];
-      return [...data.sort((a, b) => new Date(a[sortKey]) - new Date(b[sortKey]))];
+      if (isAscending) return [...data.sort((a, b) => new Date(a[sortKey]) - new Date(b[sortKey]))];
+      return [...data.sort((a, b) => new Date(b[sortKey]) - new Date(a[sortKey]))];
     case 'boolean':
-      if (isAscending) return [...data.sort((a, b) => b[sortKey] - a[sortKey])];
-      return [...data.sort((a, b) => a[sortKey] - b[sortKey])];
+      if (isAscending) return [...data.sort((a, b) => a[sortKey] - b[sortKey])];
+      return [...data.sort((a, b) => b[sortKey] - a[sortKey])];
     default:
       throw new Error(`sortType for the field '${sortKey}' not defined`);
   }

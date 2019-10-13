@@ -93,7 +93,9 @@ const customerRequisitionInitialiser = requisition => {
  */
 const customerRequisitionsInitialiser = () => {
   const backingData = UIDatabase.objects('ResponseRequisition');
-  const sortedData = sortDataBy(backingData.slice(), 'serialNumber', false);
+
+  const filteredData = backingData.filtered('status != $0', 'finalised');
+  const sortedData = sortDataBy(filteredData.slice(), 'serialNumber', false);
 
   return {
     backingData,
