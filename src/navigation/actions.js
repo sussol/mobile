@@ -37,7 +37,7 @@ export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
   NavigationActions.navigate({
     routeName: 'stocktakeManager',
     params: {
-      title: stocktake ? stocktakeName : navStrings.new_stocktake,
+      title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
     },
