@@ -29,8 +29,8 @@ import {
   ToggleSelector,
   ToggleBar,
 } from '../widgets';
-import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 
+import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
 import globalStyles from '../globalStyles';
 
 const DATA_TYPES_SYNCHRONISED = ['RequisitionItem', 'Item', 'ItemBatch'];
@@ -118,9 +118,9 @@ const getColumns = () => ({
     alignText: 'center',
   },
   unit: {
-    key: tableStrings.unit,
+    key: 'unit',
     width: 1,
-    title: 'UNIT',
+    title: tableStrings.unit,
     alignText: 'center',
   },
 });

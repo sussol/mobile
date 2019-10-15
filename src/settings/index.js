@@ -1,6 +1,4 @@
-import { AsyncStorage } from 'react-native';
-
-export { MobileAppSettings } from './MobileAppSettings';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export const SETTINGS_KEYS = {
   APP_VERSION: 'AppVersion',
