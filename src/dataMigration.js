@@ -195,7 +195,7 @@ const dataMigrations = [
   // of a ItemBatch was correctly synced out, maintaining it's supplier field.
   // This migration code
   {
-    version: '2.3.6',
+    version: '3.0.0',
     migrate: database => {
       const supplierInvoiceType = 'supplier_invoice';
       const finalisedStatus = 'finalised';
