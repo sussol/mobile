@@ -41,17 +41,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       
       List<ReactPackage> packages = new PackageList(this).getPackages();
-      packages.add(new RNDeviceInfo());
-      packages.add(new MainReactPackage());
-      packages.add(new AsyncStoragePackage());
-      packages.add(new RNScreensPackage());
-      packages.add(new RNGestureHandlerPackage());
-      packages.add(new RealmReactPackage());
-      packages.add(new VectorIconsPackage());
-      packages.add(new ReactNativeLocalizationPackage());
-      packages.add(new RNFSPackage());
-      packages.add(BugsnagReactNative.getPackage());
-
       return packages;
     }
   
