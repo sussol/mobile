@@ -58,7 +58,7 @@
     "react": "16.9.0",
     "react-native": "0.61.2",
     "react-native-database": "^0.3.3",
-    "react-native-device-info": "^2.1.3",
+    "react-native-device-info": "4.0.1-beta.1",
     "react-native-fs": "2.14.1",
     "react-native-gesture-handler": "1.3.0",
     "react-native-localization": "2.1.2",
