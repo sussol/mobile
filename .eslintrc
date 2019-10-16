@@ -19,8 +19,10 @@
         "objects": "always-multiline"
       }
     ],
+    "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
     "function-paren-newline": "off",
     "implicit-arrow-linebreak": "off",
+    "import/prefer-default-export": "off",
     "indent": ["error", 2, { "SwitchCase": 1 }],
     "max-len": ["error", { "code": 100, "ignoreTemplateLiterals": true }],
     "no-confusing-arrow": "off",

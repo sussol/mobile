@@ -3,276 +3,174 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 
-import { GenericPage } from './GenericPage';
+import { MODAL_KEYS } from '../utilities';
+import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
+import { getItemLayout } from './dataTableUtilities';
 
-import { PageButton, ToggleBar } from '../widgets';
-import { ByProgramModal, BottomConfirmModal } from '../widgets/modals';
+import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { createRecord } from '../database/utilities/index';
-import { formatStatus, getAllPrograms } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
-
+import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
-const DATA_TYPES_SYNCHRONISED = ['Stocktake'];
+import {
+  gotoStocktakeManagePage,
+  createStocktake,
+  gotoStocktakeEditPage,
+} from '../navigation/actions';
 
-/**
- * Renders the page for displaying stocktakes.
- *
- * @prop  {Realm}         database    App wide database.
- * @prop  {func}          navigateTo  CallBack for navigation stack.
- * @state {Realm.Results} stocktakes  Result object containing all items.
- */
+export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
+  const initialState = { page: routeName };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
-export class StocktakesPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.dataFilters = {
-      searchTerm: '',
-      sortBy: 'createdDate',
-      isAscending: false,
-    };
-    this.state = {
-      showCurrent: true,
-      selection: [],
-      usesPrograms: false,
-      byProgramModalOpen: false,
-    };
-    this.stocktakes = props.database.objects('Stocktake');
-  }
+  const {
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    searchTerm,
+    modalKey,
+    hasSelection,
+    usingPrograms,
+    keyExtractor,
+    columns,
+    PageActions,
+    showFinalised,
+  } = state;
 
-  componentDidMount() {
-    const { settings, database } = this.props;
-    this.setState({ usesPrograms: getAllPrograms(settings, database).length > 0 });
-  }
+  const refreshCallback = useCallback(() => dispatch(PageActions.refreshData()), []);
+  // Listen to sync changing stocktake data - refresh if there are any.
+  useSyncListener(refreshCallback, ['Stocktake']);
+  // Listen to navigation focusing this page - fresh if so.
+  useNavigationFocus(refreshCallback, navigation);
 
-  createNewStocktake = properties => {
-    const { currentUser, database } = this.props;
-    const { steps, program } = properties;
-    const stocktakeName = steps[1].name;
-    let stocktake;
+  const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
-    database.write(() => {
-      stocktake = createRecord(database, 'Stocktake', currentUser, stocktakeName, program);
-      stocktake.addItemsFromProgram(database);
-    });
-    return stocktake;
+  const onNewStocktake = () => {
+    if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
+    return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
   };
 
-  onConfirmProgramStocktake = programValues => {
-    const { runWithLoadingIndicator, navigateTo } = this.props;
-    const { program, name: stocktakeName } = programValues;
-    runWithLoadingIndicator(() => {
-      if (program && program.name) {
-        const stocktake = this.createNewStocktake(programValues);
-        navigateTo('stocktakeEditor', navStrings.stocktake, { stocktake });
-      } else {
-        navigateTo('stocktakeManager', navStrings.new_stocktake, { stocktakeName });
-      }
-    });
-  };
-
-  onRowPress = stocktake => {
-    const { navigateTo } = this.props;
-
-    this.clearSelection();
-    navigateTo('stocktakeEditor', navStrings.stocktake, {
-      stocktake,
-    });
-  };
-
-  onNewStockTake = () => {
-    const { navigateTo } = this.props;
-    const { usesPrograms } = this.state;
-    this.clearSelection();
-
-    if (!usesPrograms) {
-      navigateTo('stocktakeManager', navStrings.new_stocktake);
-    } else {
-      this.setState({ byProgramModalOpen: true });
-    }
-  };
-
-  onDeleteConfirm = () => {
-    const { selection } = this.state;
-    const { database } = this.props;
-    database.write(() => {
-      const stocktakesToDelete = [];
-      for (let i = 0; i < selection.length; i += 1) {
-        const stocktake = this.stocktakes.find(s => s.id === selection[i]);
-        if (stocktake.isValid() && !stocktake.isFinalised) {
-          stocktakesToDelete.push(stocktake);
-        }
-      }
-      database.delete('Stocktake', stocktakesToDelete);
-    });
-    this.clearSelection(true);
-  };
-
-  onToggleStatusFilter = isCurrent => {
-    this.setState({ showCurrent: isCurrent }, this.refreshData);
-  };
-
-  onSelectionChange = newSelection => {
-    this.setState({ selection: newSelection });
-  };
-
-  clearSelection = shouldRefreshData => {
-    this.setState({ selection: [] }, () => shouldRefreshData && this.refreshData());
-  };
-
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  };
-
-  /**
-   * Returns updated data filtered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    const { showCurrent } = this.state;
-
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const toggleFilter = showCurrent ? 'status != "finalised"' : 'status == "finalised"';
-    const data = this.stocktakes
-      .filtered(toggleFilter)
-      .filtered('name BEGINSWITH[c] $0 OR serialNumber BEGINSWITH[c] $0', searchTerm)
-      .sorted(sortBy, !isAscending); // |!isAscending| reverses sort order if |isAscending| is true.
-    this.setState({ data });
-  };
-
-  renderCell = (key, stocktake) => {
-    switch (key) {
+  const getAction = useCallback((colKey, propName) => {
+    switch (colKey) {
+      case 'remove':
+        if (propName === 'onCheckAction') return PageActions.selectRow;
+        return PageActions.deselectRow;
       default:
-      case 'name':
-        return stocktake.name;
-      case 'createdDate':
-        return stocktake.createdDate.toDateString();
-      case 'status':
-        return formatStatus(stocktake.status);
-      case 'selected':
-        return {
-          type: 'checkable',
-          icon: 'md-remove-circle',
-          isDisabled: stocktake.isFinalised,
+        return null;
+    }
+  }, []);
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.PROGRAM_STOCKTAKE:
+        return ({ stocktakeName, program }) => {
+          reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
+          onCloseModal();
         };
+      default:
+        return null;
     }
   };
 
-  renderToggleBar = () => {
-    const { showCurrent } = this.state;
-
-    return (
-      <ToggleBar
-        style={globalStyles.toggleBar}
-        textOffStyle={globalStyles.toggleText}
-        textOnStyle={globalStyles.toggleTextSelected}
-        toggleOffStyle={globalStyles.toggleOption}
-        toggleOnStyle={globalStyles.toggleOptionSelected}
-        toggles={[
-          {
-            text: buttonStrings.current,
-            onPress: () => this.onToggleStatusFilter(true),
-            isOn: showCurrent,
-          },
-          {
-            text: buttonStrings.past,
-            onPress: () => this.onToggleStatusFilter(false),
-            isOn: !showCurrent,
-          },
-        ]}
-      />
-    );
-  };
-
-  onCancelByProgram = () => {
-    this.setState({ byProgramModalOpen: false });
-  };
-
-  renderNewStocktakeButton = () => (
-    <PageButton text={buttonStrings.new_stocktake} onPress={this.onNewStockTake} />
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          columns={columns}
+          dispatch={dispatch}
+          getAction={getAction}
+          onPress={onRowPress}
+          rowIndex={index}
+        />
+      );
+    },
+    [data, dataState]
   );
 
-  render() {
-    const { database, genericTablePageStyles, topRoute, settings } = this.props;
-    const { data, selection, showCurrent, byProgramModalOpen } = this.state;
-    return (
-      <GenericPage
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
+  );
+
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
+    [showFinalised]
+  );
+
+  const {
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
+  return (
+    <DataTablePageView>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+        </View>
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_stocktake} onPress={onNewStocktake} />
+        </View>
+      </View>
+      <DataTable
         data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderToggleBar}
-        renderTopRightComponent={this.renderNewStocktakeButton}
-        onRowPress={this.onRowPress}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'name',
-            width: 6,
-            title: tableStrings.name,
-          },
-          {
-            key: 'createdDate',
-            width: 2,
-            title: tableStrings.created_date,
-            sortable: true,
-          },
-          {
-            key: 'status',
-            width: 2,
-            title: tableStrings.status,
-            sortable: true,
-          },
-          {
-            key: 'selected',
-            width: 1,
-            title: tableStrings.delete,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={database}
-        selection={selection}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
-      >
-        <BottomConfirmModal
-          isOpen={selection.length > 0 && showCurrent}
-          questionText={modalStrings.delete_these_stocktakes}
-          onCancel={() => this.clearSelection(true)}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.delete}
-        />
-        <ByProgramModal
-          isOpen={byProgramModalOpen}
-          onConfirm={this.onConfirmProgramStocktake}
-          onCancel={this.onCancelByProgram}
-          database={database}
-          transactionType="stocktake"
-          settings={settings}
-        />
-      </GenericPage>
-    );
-  }
-}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+      />
+      <BottomConfirmModal
+        isOpen={hasSelection}
+        questionText={modalStrings.remove_these_items}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
+        confirmText={modalStrings.remove}
+      />
+      <DataTablePageModal
+        fullScreen={false}
+        isOpen={!!modalKey}
+        modalKey={modalKey}
+        onClose={onCloseModal}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
+      />
+    </DataTablePageView>
+  );
+};
 
-export default StocktakesPage;
-
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
+/* eslint-disable react/forbid-prop-types */
 StocktakesPage.propTypes = {
-  database: PropTypes.object,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
-  navigateTo: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
+  routeName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.object.isRequired,
-  runWithLoadingIndicator: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
 };

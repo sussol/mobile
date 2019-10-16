@@ -142,7 +142,7 @@ export class StocktakeItem extends Realm.Object {
    * Returns the title of the most common option within this stocktakeItem's batches
    * @return {string} The title of the reason with the highest frequency
    */
-  get mostUsedReasonTitle() {
+  get reasonTitle() {
     if (!this.batches.length) return '';
 
     // Mapping table for ranking reasons by usage
@@ -173,26 +173,8 @@ export class StocktakeItem extends Realm.Object {
    * Returns a boolean indicator on whether one of the batches
    * of this stocktake item has an option applied, or not.
    */
-  get hasAnyReason() {
+  get hasReason() {
     return this.batches.some(({ option }) => !!option);
-  }
-
-  /**
-   * Returns true if the snapshot and counted quantities differ.
-   * Does not account for if reasons are used by the user, caller
-   * needs to account for this.
-   * @return {bool}
-   */
-  get shouldHaveReason() {
-    return this.batches.some(({ shouldHaveReason }) => shouldHaveReason);
-  }
-
-  /**
-   * Returns a boolean indicator whether a reason needs to be enforced
-   * on this stocktake line item.
-   */
-  get enforceReason() {
-    return this.shouldHaveReason && !this.hasAnyReason;
   }
 
   /**
@@ -298,7 +280,7 @@ export class StocktakeItem extends Realm.Object {
   createNewBatch(database) {
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
-    createRecord(database, 'StocktakeBatch', this, itemBatch, true);
+    return createRecord(database, 'StocktakeBatch', this, itemBatch, true);
   }
 
   /**
@@ -308,7 +290,7 @@ export class StocktakeItem extends Realm.Object {
    * @param {Realm}   database
    * @param {Options} option
    */
-  applyReasonToBatches(database, option) {
+  applyReason(database, option) {
     this.batches.forEach(batch => {
       const { id, countedTotalQuantity, snapshotTotalQuantity } = batch;
       let batchOption = option;

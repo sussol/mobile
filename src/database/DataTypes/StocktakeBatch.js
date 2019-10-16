@@ -1,4 +1,5 @@
 import Realm from 'realm';
+
 import { createRecord } from '../utilities';
 
 /**
@@ -114,20 +115,18 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * Returns whether or not a reason should be applied to this
-   * stocktake batch.
-   * @return {bool}
+   * Returns if this batch has a reason applied. Simple getter
+   * matching StocktakeItem interface for ease of use.
    */
-  get shouldHaveReason() {
-    return this.countedTotalQuantity !== this.snapshotTotalQuantity;
+  get hasReason() {
+    return !!this.option;
   }
 
   /**
-   * Returns a boolean indicator whether a reason needs to be
-   * enforced on this stock take batch
+   * @return {String} this batches reason title, or an empty string.
    */
-  get enforceReason() {
-    return this.shouldHaveReason && !this.hasAnyReason;
+  get reasonTitle() {
+    return (this.option && this.option.title) || '';
   }
 
   /**
@@ -138,6 +137,16 @@ export class StocktakeBatch extends Realm.Object {
   set countedTotalQuantity(quantity) {
     // Handle packsize of 0.
     this.countedNumberOfPacks = this.packSize ? quantity / this.packSize : 0;
+  }
+
+  /**
+   * Applies a reason to this batch
+   */
+  applyReason(database, reason) {
+    database.write(() => {
+      this.option = reason;
+      database.save('StocktakeBatch', this);
+    });
   }
 
   /**
