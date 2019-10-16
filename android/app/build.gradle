@@ -195,7 +195,6 @@ android {
 
 dependencies {
     implementation project(':realm')
-    implementation project(':react-native-vector-icons')
     implementation project(':react-native-localization')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
