@@ -79,7 +79,7 @@
     "sussol-utilities": "^0.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.0",
+    "@babel/core": "^7.6.4",
     "babel-eslint": "^10.0.2",
     "babel-jest": "^24.0.0",
     "babel-polyfill": "^6.26.0",
