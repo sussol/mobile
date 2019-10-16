@@ -52,7 +52,7 @@ public class MainApplication extends Application implements ReactApplication {
       packages.add(new RNFSPackage());
       packages.add(BugsnagReactNative.getPackage());
 
-      return packages
+      return packages;
     }
   
     @Override
