@@ -13,7 +13,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import com.facebook.react.ReactApplication;
-import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import com.bugsnag.BugsnagReactNative;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
