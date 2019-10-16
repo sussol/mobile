@@ -194,7 +194,6 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-screens')
     implementation project(':realm')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-localization')
