@@ -60,7 +60,7 @@ export const programStrings = new LocalizedStrings({
     program_order: 'Commande par programme',
     general_stocktake: 'Inventaire général',
     general_order: 'Commande Générale',
-    program_stocktake: 'Inventaire général',
+    program_stocktake: 'Inventaire par\n programme',
   },
   gil: {
     select_a_program: 'Select a program',
