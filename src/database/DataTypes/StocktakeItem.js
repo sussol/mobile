@@ -170,11 +170,15 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Returns a boolean indicator on whether one of the batches
-   * of this stocktake item has an option applied, or not.
+   * Returns an indicator that all batches related to this item have a correct
+   * reason/option applied. A correct reason being a `positiveInventoryAdjustment`
+   * for positive differences and vice versa for negative differences and no reason
+   * when there is no difference.
    */
-  get hasReason() {
-    return this.batches.some(({ option }) => !!option);
+  get validateReason() {
+    return this.batches.every(
+      ({ validateReason: batchHasValidatedReason }) => batchHasValidatedReason
+    );
   }
 
   /**
@@ -284,20 +288,31 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
+   * Removes reasons from related batches if they have no difference between
+   * snapshot and counted quantity.
+   *
+   * @param {Realm} database App-wide database interface
+   */
+  removeReason(database) {
+    this.batches.forEach(batch => {
+      const { difference } = this;
+
+      if (difference) return;
+
+      batch.removeReason(database);
+    });
+  }
+
+  /**
    * Applies the given Options object to all stocktake batches associated to
    * this stocktake item, if there is a difference between countedTotalQuantity
    * and snapshotTotalQuantity.
-   * @param {Realm}   database
-   * @param {Options} option
+   * @param {Realm}   database App-wide database interface.
+   * @param {Options} option   Option object to apply.
    */
   applyReason(database, option) {
     this.batches.forEach(batch => {
-      const { id, countedTotalQuantity, snapshotTotalQuantity } = batch;
-      let batchOption = option;
-      if (countedTotalQuantity === snapshotTotalQuantity) batchOption = null;
-      database.write(() => {
-        database.update('StocktakeBatch', { id, option: batchOption });
-      });
+      batch.applyReason(database, option);
     });
   }
 }
