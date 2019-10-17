@@ -135,15 +135,21 @@ const DataTablePageModalComponent = ({
           />
         );
       case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
-      case MODAL_KEYS.STOCKTAKE_REASON:
+      case MODAL_KEYS.STOCKTAKE_REASON: {
+        const { difference, reasonTitle } = currentValue;
+        const reasonsSelection =
+          difference > 0
+            ? UIDatabase.objects('PositiveAdjustmentReason')
+            : UIDatabase.objects('NegativeAdjustmentReason');
         return (
           <GenericChoiceList
-            data={UIDatabase.objects('StocktakeReasons')}
-            highlightValue={currentValue.reasonTitle}
+            data={reasonsSelection}
+            highlightValue={reasonTitle}
             keyToDisplay="title"
             onPress={onSelect}
           />
         );
+      }
       default:
         return null;
     }

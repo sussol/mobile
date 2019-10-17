@@ -49,7 +49,9 @@ export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
  * @param {Object} stocktake  The requisition to navigate to.
  */
 export const gotoStocktakeEditPage = stocktake => {
-  const usesReasons = UIDatabase.objects('StocktakeReasons').length > 0;
+  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
+  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
+  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
 
   return NavigationActions.navigate({
     routeName: usesReasons ? 'stocktakeEditorWithReasons' : 'stocktakeEditor',
