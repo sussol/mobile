@@ -69,8 +69,9 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
     getPageInfoColumns,
   } = state;
 
-  const { stocktake = {}, difference } = stocktakeItem;
+  const { stocktake = {} } = stocktakeItem;
   const { isFinalised = false } = stocktake;
+  const { difference = 0 } = modalValue || {};
 
   const reasonsSelection =
     difference > 0
