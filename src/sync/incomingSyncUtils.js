@@ -698,14 +698,12 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
       break;
     }
     case 'Options': {
-      if (record.type === 'stocktakeLineAdjustment') {
-        database.update(recordType, {
-          id: record.ID,
-          title: record.title,
-          type: record.type,
-          isActive: parseBoolean(record.isActive),
-        });
-      }
+      database.update(recordType, {
+        id: record.ID,
+        title: record.title,
+        type: record.type,
+        isActive: parseBoolean(record.isActive),
+      });
       break;
     }
     case 'Unit': {
