@@ -22,7 +22,6 @@ public class MainApplication extends Application implements ReactApplication {
 
     @Override
     protected List<ReactPackage> getPackages() {
-      
       List<ReactPackage> packages = new PackageList(this).getPackages();
       return packages;
     }
