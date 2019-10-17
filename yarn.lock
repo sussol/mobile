@@ -6753,10 +6753,10 @@ react-native-database@^0.3.3:
   dependencies:
     react-native-uuid "^1.4.8"
 
-react-native-device-info@4.0.1-beta.1:
-  version "4.0.1-beta.1"
-  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-4.0.1-beta.1.tgz#109333b2b81eab53e2d96cfa3cb07cb9671cc957"
-  integrity sha512-ALxoRB87tNZ3MC90o8/otvkETWjvn/F5+FAkUtoEpNXLoCsgyQjg4QIEERjltyV5t2TlesCZv4alnsHYG6e8Fw==
+react-native-device-info@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-4.0.1.tgz#bade972e7a995ac187a82745a458cba98b72dea0"
+  integrity sha512-a0Q/gwy1oQhu17CeMq9xMZ3Sl9foaj8hFwVuy9jieqkkoQwkHnPDI+R7bEW0MNMgUCPPrzzXvka+FLGOWVqacg==
 
 react-native-fs@2.14.1:
   version "2.14.1"
