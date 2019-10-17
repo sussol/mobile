@@ -80,7 +80,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.6.4",
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "babel-jest": "^24.0.0",
     "babel-preset-react-native": "^4.0.1",
     "eslint": "^5.16",
