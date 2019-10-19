@@ -14,7 +14,7 @@ const PAGE_COLUMN_WIDTHS = {
   customerInvoices: [1.5, 2.5, 2, 1.5, 3, 1],
   supplierRequisitions: [1.5, 2, 1, 1, 1, 1],
   supplierRequisition: [1.4, 3.5, 2, 1.5, 2, 2, 1],
-  supplierRequisitionWithProgram: [1.5, 3.5, 1, 1, 2, 1.5, 2, 2, 1],
+  supplierRequisitionWithProgram: [1.5, 4, 1.5, 1, 2, 1.5, 2, 2],
   stocktakes: [6, 2, 2, 1],
   stocktakeManager: [2, 6, 1],
   stocktakeEditor: [1, 2.8, 1.2, 1.2, 1, 0.8],
@@ -84,7 +84,6 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.MONTHLY_USAGE,
     COLUMN_NAMES.SUGGESTED_QUANTITY,
     COLUMN_NAMES.EDITABLE_REQUIRED_QUANTITY,
-    COLUMN_NAMES.REMOVE,
   ],
   stocktakes: [
     COLUMN_NAMES.NAME,
