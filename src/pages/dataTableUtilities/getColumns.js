@@ -38,8 +38,8 @@ const PAGE_COLUMNS = {
   customerInvoices: [
     COLUMN_NAMES.INVOICE_NUMBER,
     COLUMN_NAMES.CUSTOMER,
-    COLUMN_NAMES.STATUS,
     COLUMN_NAMES.ENTRY_DATE,
+    COLUMN_NAMES.STATUS,
     COLUMN_NAMES.COMMENT,
     COLUMN_NAMES.REMOVE,
   ],
@@ -53,8 +53,8 @@ const PAGE_COLUMNS = {
   supplierInvoices: [
     COLUMN_NAMES.INVOICE_NUMBER,
     COLUMN_NAMES.SUPPLIER,
-    COLUMN_NAMES.STATUS,
     COLUMN_NAMES.ENTRY_DATE,
+    COLUMN_NAMES.STATUS,
     COLUMN_NAMES.COMMENT,
     COLUMN_NAMES.REMOVE,
   ],
@@ -232,7 +232,7 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.STATUS,
     title: tableStrings.status,
-    sortable: true,
+    sortable: false,
     editable: false,
   },
   [COLUMN_NAMES.QUESTION]: {
