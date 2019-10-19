@@ -19,7 +19,11 @@ const dismiss = () => Keyboard.dismiss();
  * to this level.
  */
 export const DataTablePageView = React.memo(({ children, captureUncaughtGestures }) => {
+  // Use a Fragment over TouchableWithoutFeedback so no gesture events are caught.
+  // Frament over a view as TouchableWithoutFeedback does not have implicit styling, a View does.
   const Container = captureUncaughtGestures ? TouchableWithoutFeedback : Fragment;
+
+  // Fragements can only have key or children props
   const containerProps = captureUncaughtGestures ? { onPress: dismiss } : {};
 
   return (
