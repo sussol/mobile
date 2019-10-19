@@ -17,14 +17,15 @@ export class PeriodSchedule extends Realm.Object {
    * Finds the related periods for this periodSchedule, which
    * are available to use for the given orderType -- they have
    * less related requisitions to than orderType.maxOrdersPerPeriod.
+   * If the ordertype is an emergency order type, return all periods.
    * @param {MasterList}  program    The related program
    * @param {object}      orderType  The maxOrdersPerPeriod of the orderType
    */
   getPeriodsForOrderType(program, orderType) {
-    const periods = this.periods.filter(
+    if (orderType.isEmergency) return this.periods.slice();
+    return this.periods.filter(
       period => period.requisitionsForOrderType(program, orderType) < orderType.maxOrdersPerPeriod
     );
-    return periods;
   }
 
   /**
