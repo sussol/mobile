@@ -33,6 +33,7 @@ export const programStrings = new LocalizedStrings({
     general_stocktake: 'General stocktake',
     program_stocktake: 'Program stocktake',
     general_order: 'General order',
+    emergency_orders: 'Emergency orders',
   },
   fr: {
     select_a_program: 'Sélectionnez un programme',
