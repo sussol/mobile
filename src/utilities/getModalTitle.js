@@ -28,6 +28,8 @@ export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.SELECT_MONTH:
+      return modalStrings.select_the_number_of_months_stock_required;
     case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
       return modalStrings.edit_the_stocktake_name;
     case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
