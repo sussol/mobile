@@ -89,7 +89,7 @@ export const StockPage = ({ routeName }) => {
 
   const { pageTopSectionContainer } = globalStyles;
   return (
-    <DataTablePageView>
+    <DataTablePageView captureUncaughtGestures={false}>
       <View style={pageTopSectionContainer}>
         <SearchBar
           onChangeText={onFilterData}
