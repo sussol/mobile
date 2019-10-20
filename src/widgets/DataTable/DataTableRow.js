@@ -30,7 +30,7 @@ import TextInputCell from './TextInputCell';
 import { formatStatus } from '../../utilities';
 
 import { COLUMN_TYPES, COLUMN_NAMES } from '../../pages/dataTableUtilities';
-import { tableStrings } from '../../localization/index';
+import { generalStrings, tableStrings } from '../../localization/index';
 
 /**
  * Wrapper component for a mSupply DataTable page row.
@@ -173,10 +173,18 @@ const DataTableRow = React.memo(
             }
 
             case COLUMN_TYPES.NUMERIC: {
+              // Special condition for stocktake difference cells.
+              // Use the placeholder 'Not counted' when a stocktake item or batch
+              // has not been counted yet.
+              const value =
+                columnKey === COLUMN_NAMES.DIFFERENCE && !rowData.hasBeenCounted
+                  ? generalStrings.not_available
+                  : Math.round(rowData[columnKey]);
+
               return (
                 <Cell
                   key={columnKey}
-                  value={Math.round(rowData[columnKey])}
+                  value={value}
                   width={width}
                   viewStyle={cellContainer[cellAlignment]}
                   textStyle={cellText[cellAlignment]}
