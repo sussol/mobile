@@ -13,10 +13,16 @@ const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 
 const translateToCoreDatabaseType = type => {
   switch (type) {
+    case 'AggregatedSensorLog':
+      return 'SensorLog';
     case 'CustomerInvoice':
     case 'SupplierInvoice':
       return 'Transaction';
     case 'Customer':
+    case 'Fridge':
+      return 'Location';
+    case 'FridgeLocationType':
+      return 'LocationType';
     case 'Supplier':
     case 'InternalSupplier':
     case 'ExternalSupplier':
@@ -97,11 +103,17 @@ class UIDatabase {
     const thisStoreNameId = thisStoreNameIdSetting && thisStoreNameIdSetting.value;
 
     switch (type) {
+      case 'AggregatedSensorLog':
+        return results.filtered("aggregation != null && aggregation != ''");
       case 'CustomerInvoice':
         // Only show invoices generated from requisitions once finalised.
         return results.filtered(
           'type == "customer_invoice" AND (linkedRequisition == null OR status == "finalised")'
         );
+      case 'Fridge':
+        return results.filtered('locationType.description CONTAINS[c] "fridge"');
+      case 'FridgeLocationType':
+        return results.filtered('description CONTAINS[c] "fridge"');
       case 'SupplierInvoice':
         return results.filtered(
           'type == "supplier_invoice" AND otherParty.type != "inventory_adjustment"'
