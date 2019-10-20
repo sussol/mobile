@@ -137,21 +137,19 @@ export class StocktakeBatch extends Realm.Object {
    * while no difference requires there to be no option applied.
    */
   get validateReason() {
-    const { difference, option, hasPositiveAdjustment, hasNegativeAdjustment } = this;
-
     // Short circuits for simple cases
-    if (!difference && !option) return true;
-    if (difference && !option) return false;
+    if (!this.difference && !this.option) return true;
+    if (this.difference && !this.option) return false;
 
     // Determine the validity of the reason state where there is a difference
     // and the batch already has a option.
-    const { type } = option;
+    const { type } = this.option;
 
     const positiveAdjustmentReason = type === 'positiveInventoryAdjustment';
     const negativeAdjustmentReason = type === 'negativeInventoryAdjustment';
 
-    const correctPositiveReason = positiveAdjustmentReason && hasPositiveAdjustment;
-    const correctNegativeReason = negativeAdjustmentReason && hasNegativeAdjustment;
+    const correctPositiveReason = positiveAdjustmentReason && this.hasPositiveAdjustment;
+    const correctNegativeReason = negativeAdjustmentReason && this.hasNegativeAdjustment;
 
     return correctNegativeReason || correctPositiveReason;
   }
@@ -178,8 +176,7 @@ export class StocktakeBatch extends Realm.Object {
    * @param {Realm} database App-wide database interface.
    */
   removeReason(database) {
-    const { option, difference } = this;
-    if (!option && !difference) return;
+    if (!this.option && !this.difference) return;
     database.write(() => {
       this.option = null;
       database.save('StocktakeBatch', this);
@@ -193,16 +190,14 @@ export class StocktakeBatch extends Realm.Object {
    * @param {Option} newOption New option to apply
    */
   applyReason(database, newOption) {
-    const { difference, hasPositiveAdjustment } = this;
-
     const { type: newOptionType } = newOption || {};
     const isPositiveAdjustmentReason = newOptionType === 'positiveInventoryAdjustment';
 
     database.write(() => {
       // If this batch does not have an adjustment, remove the reason.
-      if (!difference) this.option = null;
+      if (!this.difference) this.option = null;
       // Otherwise if the adjustment type and reason types match, apply the reason.
-      else if (hasPositiveAdjustment === isPositiveAdjustmentReason) this.option = newOption;
+      else if (this.hasPositiveAdjustment === isPositiveAdjustmentReason) this.option = newOption;
       database.save('StocktakeBatch', this);
     });
   }
