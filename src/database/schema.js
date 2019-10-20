@@ -21,6 +21,7 @@ import {
   Requisition,
   RequisitionItem,
   Setting,
+  SensorLogItemBatchJoin,
   Stocktake,
   StocktakeBatch,
   StocktakeItem,
@@ -75,6 +76,16 @@ Setting.schema = {
     key: 'string', // Includes the user's UUID if it is per-user.
     value: 'string',
     user: { type: 'User', optional: true },
+  },
+};
+
+SensorLogItemBatchJoin.schema = {
+  name: 'SensorLogItemBatchJoin',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    itemBatch: 'ItemBatch',
+    sensorLog: 'SensorLog',
   },
 };
 
@@ -143,6 +154,7 @@ export const schema = {
     Requisition,
     RequisitionItem,
     Setting,
+    SensorLogItemBatchJoin,
     SyncOut,
     Stocktake,
     StocktakeItem,

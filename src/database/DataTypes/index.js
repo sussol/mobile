@@ -9,6 +9,7 @@ export class Address extends Realm.Object {}
 export class ItemCategory extends Realm.Object {}
 export class ItemDepartment extends Realm.Object {}
 export class Setting extends Realm.Object {}
+export class SensorLogItemBatchJoin extends Realm.Object {}
 export class SyncOut extends Realm.Object {}
 export class TransactionCategory extends Realm.Object {}
 export class User extends Realm.Object {}
