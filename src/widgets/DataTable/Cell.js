@@ -13,20 +13,23 @@ import { getAdjustedStyle } from './utilities';
  * @param {Object}        textStyle  Style object for the inner Text
  * @param {Number}        width      optional flex property to inject into styles.
  * @param {Bool}          isLastCell Indicator for if this cell is the last
+ * @param {Number}        maxLiens   Maximum number of lines for the Text component
  *                                   in a row. Removing the borderRight if true.
  */
-const Cell = React.memo(({ value, textStyle, viewStyle, width, isLastCell, debug }) => {
-  if (debug) console.log(`- Cell: ${value}`);
-  const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
+const Cell = React.memo(
+  ({ value, textStyle, viewStyle, width, isLastCell, numberOfLines, debug }) => {
+    if (debug) console.log(`- Cell: ${value}`);
+    const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
 
-  return (
-    <View style={internalViewStyle}>
-      <Text ellipsizeMode="tail" numberOfLines={1} style={textStyle}>
-        {value}
-      </Text>
-    </View>
-  );
-});
+    return (
+      <View style={internalViewStyle}>
+        <Text ellipsizeMode="tail" numberOfLines={numberOfLines} style={textStyle}>
+          {value}
+        </Text>
+      </View>
+    );
+  }
+);
 
 Cell.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -34,6 +37,7 @@ Cell.propTypes = {
   viewStyle: PropTypes.object,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,
+  numberOfLines: PropTypes.number,
   debug: PropTypes.bool,
 };
 
@@ -43,6 +47,7 @@ Cell.defaultProps = {
   viewStyle: {},
   width: 0,
   isLastCell: false,
+  numberOfLines: 2,
   debug: false,
 };
 
