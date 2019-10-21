@@ -57,7 +57,7 @@ export const programStrings = new LocalizedStrings({
     not_applicable: 'Pas applicable',
     hide_over_stocked: 'Masquer les\nproduits surstocké',
     show_over_stocked: 'Afficher les\nproduits surstocké',
-    program_order: 'Commande par programme',
+    program_order: 'Commande par\nprogramme',
     general_stocktake: 'Inventaire général',
     general_order: 'Commande Générale',
     program_stocktake: 'Inventaire par\n programme',

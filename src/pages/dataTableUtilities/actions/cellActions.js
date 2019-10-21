@@ -179,7 +179,7 @@ export const removeReason = rowKey => (dispatch, getState) => {
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
-  objectToEdit.applyReason(UIDatabase);
+  objectToEdit.removeReason(UIDatabase);
 
   dispatch(refreshRow(rowKey));
 };
@@ -188,7 +188,10 @@ export const removeReason = rowKey => (dispatch, getState) => {
  * Handles reason logic for a particular object (stocktakeBatch or
  * StocktakeItem) - if there is a difference (between snapshot and
  * countedTotalQuantity) - then a reason should be related to this
- * object. If there is already a reason, do nothing. If there is no
+ * object. For negative adjustments, a negativeInventoryAdjustment
+ * reason should be applied. If positive, a positiveInventoryAdjustment.
+ * A correct reason
+ * If there is already a reason, do nothing. If there is no
  * difference, but a reason has been previously applied, remove it.
  *
  * @param {String} rowKey Key of the row to enforce a reason on
@@ -197,17 +200,16 @@ export const enforceReasonChoice = rowKey => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  if (!objectToEdit) return null;
 
-  const { difference, hasReason } = objectToEdit;
+  const { difference } = objectToEdit;
+  // If there's no difference, just remove the reason
+  if (!difference) return dispatch(removeReason(rowKey));
 
-  // If there is no difference and no reason, do nothing.
-  if (!difference && !hasReason) return;
+  const { validateReason } = objectToEdit;
+  if (!validateReason) return dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey));
 
-  // If there is no difference, but a reason, remove it.
-  if (!difference && hasReason) dispatch(removeReason(rowKey));
-
-  // If there is a difference, and no reason, enforce it.
-  if (!hasReason) dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey));
+  return null;
 };
 
 /**

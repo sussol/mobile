@@ -17,6 +17,7 @@ import { GenericChoiceList, Flag } from '..';
 import ModalContainer from './ModalContainer';
 
 import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
+import { getModalTitle, MODAL_KEYS } from '../../utilities/index';
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -217,7 +218,11 @@ export class LoginModal extends React.Component {
             </Icon.Button>
             <Text style={globalStyles.authWindowButtonText}>v{appVersion}</Text>
           </View>
-          <ModalContainer isVisible={isLanguageModalOpen} onClose={this.onCloseModal}>
+          <ModalContainer
+            isVisible={isLanguageModalOpen}
+            onClose={this.onCloseModal}
+            title={getModalTitle(MODAL_KEYS.SELECT_LANGUAGE)}
+          >
             <GenericChoiceList
               data={LANGUAGE_CHOICE}
               keyToDisplay="name"
