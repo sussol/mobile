@@ -200,6 +200,7 @@ export const enforceReasonChoice = rowKey => (dispatch, getState) => {
   const { data, keyExtractor } = getState();
 
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
+  if (!objectToEdit) return null;
 
   const { difference } = objectToEdit;
   // If there's no difference, just remove the reason
