@@ -41,7 +41,12 @@ import { buttonStrings } from '../../localization/index';
  *
  */
 export const StocktakeBatchModal = ({ stocktakeItem }) => {
-  const usingReasons = useMemo(() => UIDatabase.objects('StocktakeReasons').length > 0, []);
+  const usingReasons = useMemo(
+    () =>
+      UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
+      UIDatabase.objects('PositiveAdjustmentReason').length > 0,
+    []
+  );
 
   const initialState = {
     page: usingReasons ? 'stocktakeBatchEditModalWithReasons' : 'stocktakeBatchEditModal',
@@ -66,6 +71,12 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
 
   const { stocktake = {} } = stocktakeItem;
   const { isFinalised = false } = stocktake;
+  const { difference = 0 } = modalValue || {};
+
+  const reasonsSelection =
+    difference > 0
+      ? UIDatabase.objects('PositiveAdjustmentReason')
+      : UIDatabase.objects('NegativeAdjustmentReason');
 
   const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
   const onCloseModal = () => dispatch(PageActions.closeModal());
@@ -157,7 +168,7 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
         onClose={onCloseModal}
       >
         <GenericChoiceList
-          data={UIDatabase.objects('StocktakeReasons')}
+          data={reasonsSelection}
           highlightValue={(modalValue && modalValue.reasonTitle) || ''}
           keyToDisplay="title"
           onPress={onApplyReason}

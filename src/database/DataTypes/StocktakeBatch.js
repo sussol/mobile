@@ -116,11 +116,43 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * Returns if this batch has a reason applied. Simple getter
-   * matching StocktakeItem interface for ease of use.
+   * Indicator that this batch has a positive difference in snapshot and
+   * counted quantity.
    */
-  get hasReason() {
-    return !!this.option;
+  get hasPositiveAdjustment() {
+    return this.difference > 0;
+  }
+
+  /**
+   * Indicator that this batch has a negative difference in snapshot and
+   * counted quantity.
+   */
+  get hasNegativeAdjustment() {
+    return this.difference < 0;
+  }
+
+  /**
+   * Returns an indicator that this batches reason/option state is valid.
+   * Valid being: negative differences require a negativeInventoryAdjustment
+   * option. Positive differences require a positiveInventoryAdjustment option
+   * while no difference requires there to be no option applied.
+   */
+  get validateReason() {
+    // Short circuits for simple cases
+    if (!this.difference && !this.option) return true;
+    if (this.difference && !this.option) return false;
+
+    // Determine the validity of the reason state where there is a difference
+    // and the batch already has a option.
+    const { type } = this.option;
+
+    const positiveAdjustmentReason = type === 'positiveInventoryAdjustment';
+    const negativeAdjustmentReason = type === 'negativeInventoryAdjustment';
+
+    const correctPositiveReason = positiveAdjustmentReason && this.hasPositiveAdjustment;
+    const correctNegativeReason = negativeAdjustmentReason && this.hasNegativeAdjustment;
+
+    return correctNegativeReason || correctPositiveReason;
   }
 
   /**
@@ -141,12 +173,43 @@ export class StocktakeBatch extends Realm.Object {
   }
 
   /**
-   * Applies a reason to this batch
+   * Removes a reason from this batch if it already has a reason and difference.
+   * @param {Realm} database App-wide database interface.
    */
-  applyReason(database, reason) {
+  removeReason(database) {
+    if (this.option && this.difference) {
+      database.write(() => {
+        this.option = null;
+        database.save('StocktakeBatch', this);
+      });
+    }
+  }
+
+  /**
+   * Applies a reason to this batch after it has been validated as a valid reason
+   *
+   * @param {Realm} database App-wide database interface
+   * @param {Option} newOption New option to apply
+   */
+  applyReason(database, newOption) {
+    const { type: newOptionType } = newOption || {};
+
+    const isPositiveAdjustmentReason = newOptionType === 'positiveInventoryAdjustment';
+    const isNegativeAdjustmentReason = newOptionType === 'negativeInventoryAdjustment';
+
+    // Valid adjustments are when this batch has a difference in snapshot quantity and
+    // counted quantity and if the difference is positive, the reason must be a positive
+    // reason also (and vice-versa for negatives)
+    const isValidPositiveAdjustment =
+      !!this.difference && this.hasPositiveAdjustment && isPositiveAdjustmentReason;
+    const isValidNegativeAdjustment =
+      !!this.difference && this.hasNegativeAdjustment && isNegativeAdjustmentReason;
+
     database.write(() => {
-      this.option = reason;
-      database.save('StocktakeBatch', this);
+      database.update('StocktakeBatch', {
+        ...this,
+        option: isValidPositiveAdjustment || isValidNegativeAdjustment ? newOption : null,
+      });
     });
   }
 

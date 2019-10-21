@@ -24,7 +24,8 @@ const translateToCoreDatabaseType = type => {
     case 'RequestRequisition':
     case 'ResponseRequisition':
       return 'Requisition';
-    case 'StocktakeReasons':
+    case 'NegativeAdjustmentReason':
+    case 'PositiveAdjustmentReason':
       return 'Options';
     default:
       return type;
@@ -129,8 +130,10 @@ class UIDatabase {
         return results.filtered('type == "request"');
       case 'ResponseRequisition':
         return results.filtered('serialNumber != "-1" AND type == "response"');
-      case 'StocktakeReasons':
-        return results.filtered('type == $0 && isActive == true', 'stocktakeLineAdjustment');
+      case 'NegativeAdjustmentReason':
+        return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
+      case 'PositiveAdjustmentReason':
+        return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
       default:
         return results;
     }
