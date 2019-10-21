@@ -53,7 +53,7 @@ export const dataTableStyles = {
       color: DARK_GREY,
     },
     right: {
-      marginRight: 20,
+      marginRight: 10,
       textAlign: 'right',
       fontFamily: APP_FONT_FAMILY,
       fontSize: APP_GENERAL_FONT_SIZE,
