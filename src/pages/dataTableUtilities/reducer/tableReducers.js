@@ -36,7 +36,7 @@ export const filterData = (state, action) => {
 
   const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
 
-  const filteredData = backingData.filtered(queryString, searchTerm).slice();
+  const filteredData = backingData.filtered(queryString, searchTerm.trim()).slice();
 
   return {
     ...state,
@@ -61,7 +61,7 @@ export const filterDataWithFinalisedToggle = (state, action) => {
 
   // Apply query filtering
   const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
-  const queryFilteredData = statusFilteredData.filtered(queryString, searchTerm).slice();
+  const queryFilteredData = statusFilteredData.filtered(queryString, searchTerm.trim()).slice();
 
   // Sort the data by the current sorting parameters.
   const sortedData = sortBy
@@ -83,7 +83,7 @@ export const filterDataWithOverStockToggle = (state, action) => {
 
   // Apply query filtering
   const queryString = filterDataKeys.map(filterTerm => `${filterTerm} CONTAINS[c] $0`).join(' OR ');
-  const queryFilteredData = backingData.filtered(queryString, searchTerm).slice();
+  const queryFilteredData = backingData.filtered(queryString, searchTerm.trim()).slice();
 
   // Filter by toggle status - showing or not showing over stocked records.
   const stockFilteredData = !showAll
