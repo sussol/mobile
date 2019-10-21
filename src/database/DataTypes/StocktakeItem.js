@@ -307,9 +307,7 @@ export class StocktakeItem extends Realm.Object {
    * @param {Options} option   Option object to apply.
    */
   applyReason(database, option) {
-    this.batches.forEach(batch => {
-      batch.applyReason(database, option);
-    });
+    this.batches.forEach(batch => batch.applyReason(database, option));
   }
 }
 
