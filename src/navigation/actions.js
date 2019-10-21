@@ -9,6 +9,7 @@ import Settings from '../settings/MobileAppSettings';
 import { createRecord } from '../database/utilities/index';
 import { navStrings } from '../localization/index';
 import { SETTINGS_KEYS } from '../settings/index';
+import { getCurrentRouteName } from './selectors';
 
 /**
  * Navigation Action Creators.
@@ -48,18 +49,24 @@ export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
  *
  * @param {Object} stocktake  The requisition to navigate to.
  */
-export const gotoStocktakeEditPage = stocktake => {
+export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
+  const { nav } = getState();
+
+  const currentRouteName = getCurrentRouteName(nav);
+
   const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
   const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
   const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
 
-  return NavigationActions.navigate({
+  const navigationActionCreator =
+    currentRouteName === 'stocktakes' ? NavigationActions.navigate : StackActions.replace;
+
+  const navigationParameters = {
     routeName: usesReasons ? 'stocktakeEditorWithReasons' : 'stocktakeEditor',
-    params: {
-      title: navStrings.stocktake,
-      stocktake,
-    },
-  });
+    params: { title: navStrings.stocktake, stocktake },
+  };
+
+  dispatch(navigationActionCreator(navigationParameters));
 };
 
 /**
@@ -209,12 +216,9 @@ export const createStocktake = ({ currentUser, stocktakeName, program, itemIds }
     else if (itemIds) stocktake.setItemsByID(UIDatabase, itemIds);
   });
 
-  const stackReplacementAction = StackActions.replace({
-    routeName: 'stocktakeEditor',
-    params: { stocktake, title: navStrings.stocktake },
-  });
+  const nextAction = program || itemIds ? gotoStocktakeEditPage : gotoStocktakeManagePage;
 
-  dispatch(stackReplacementAction);
+  dispatch(nextAction(stocktake));
 };
 
 /**
