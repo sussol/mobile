@@ -295,11 +295,7 @@ export class StocktakeItem extends Realm.Object {
    */
   removeReason(database) {
     this.batches.forEach(batch => {
-      const { difference } = this;
-
-      if (difference) return;
-
-      batch.removeReason(database);
+      if (!this.difference) batch.removeReason(database);
     });
   }
 
