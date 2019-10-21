@@ -16,18 +16,20 @@ import { getAdjustedStyle } from './utilities';
  * @param {Number}        maxLiens   Maximum number of lines for the Text component
  *                                   in a row. Removing the borderRight if true.
  */
-const Cell = React.memo(({ value, textStyle, viewStyle, width, isLastCell, maxLines, debug }) => {
-  if (debug) console.log(`- Cell: ${value}`);
-  const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
+const Cell = React.memo(
+  ({ value, textStyle, viewStyle, width, isLastCell, numberOfLines, debug }) => {
+    if (debug) console.log(`- Cell: ${value}`);
+    const internalViewStyle = getAdjustedStyle(viewStyle, width, isLastCell);
 
-  return (
-    <View style={internalViewStyle}>
-      <Text ellipsizeMode="tail" numberOfLines={maxLines} style={textStyle}>
-        {value}
-      </Text>
-    </View>
-  );
-});
+    return (
+      <View style={internalViewStyle}>
+        <Text ellipsizeMode="tail" numberOfLines={numberOfLines} style={textStyle}>
+          {value}
+        </Text>
+      </View>
+    );
+  }
+);
 
 Cell.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
@@ -35,7 +37,7 @@ Cell.propTypes = {
   viewStyle: PropTypes.object,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,
-  maxLines: PropTypes.number,
+  numberOfLines: PropTypes.number,
   debug: PropTypes.bool,
 };
 
@@ -45,7 +47,7 @@ Cell.defaultProps = {
   viewStyle: {},
   width: 0,
   isLastCell: false,
-  maxLines: 2,
+  numberOfLines: 2,
   debug: false,
 };
 
