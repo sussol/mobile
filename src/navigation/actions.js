@@ -34,7 +34,7 @@ import { getCurrentRouteName } from './selectors';
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
-export const gotoStocktakeManagePage = ({ stocktake, stocktakeName }) =>
+export const gotoStocktakeManagePage = (stocktakeName, stocktake) =>
   NavigationActions.navigate({
     routeName: 'stocktakeManager',
     params: {
@@ -219,9 +219,9 @@ export const createStocktake = ({ currentUser, stocktakeName, program, itemIds }
 
   // If creating a Stocktake with a program or with a list of itemIds, navigate to
   // the StocktakeEditPage. Otherwise, navigate to the StocktakeManagePage.
-  const nextAction = program || itemIds ? gotoStocktakeEditPage : gotoStocktakeManagePage;
-
-  dispatch(nextAction(stocktake));
+  return program || itemIds
+    ? dispatch(gotoStocktakeEditPage(stocktake))
+    : dispatch(gotoStocktakeManagePage(stocktakeName, stocktake));
 };
 
 /**

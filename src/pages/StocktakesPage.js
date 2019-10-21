@@ -58,7 +58,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
-    return reduxDispatch(gotoStocktakeManagePage({ stocktakeName: '' }));
+    return reduxDispatch(gotoStocktakeManagePage(''));
   };
 
   const getAction = useCallback((colKey, propName) => {
