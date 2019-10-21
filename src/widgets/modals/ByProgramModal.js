@@ -41,10 +41,19 @@ const modalProps = ({ dispatch, program, orderType }) => ({
     onSelect: value => dispatch(selectOrderType(value)),
     renderRightText: item => {
       const { maxMOS, maxOPP, threshMOS } = getLocalizedStrings();
-      const { maxOrdersPerPeriod: maxOrders, maxMOS: itemMOS, thresholdMOS: itemThreshMOS } = item;
+      const {
+        maxOrdersPerPeriod: maxOrders,
+        maxMOS: itemMOS,
+        thresholdMOS: itemThreshMOS,
+        isEmergency,
+      } = item;
+
       const mosText = `${maxMOS}: ${itemMOS}`;
       const thresholdText = `${threshMOS}: ${itemThreshMOS}`;
-      const maxOrdersText = `${maxOPP}: ${maxOrders}`;
+      const maxOrdersText = isEmergency
+        ? programStrings.emergency_orders
+        : `${maxOPP}: ${maxOrders}`;
+
       return `${mosText} - ${thresholdText} - ${maxOrdersText}`;
     },
   },
@@ -52,9 +61,15 @@ const modalProps = ({ dispatch, program, orderType }) => ({
     onSelect: value => dispatch(selectPeriod(value)),
     renderRightText: item => {
       const { requisitions } = getLocalizedStrings();
-      const { maxOrdersPerPeriod } = orderType;
+      const { maxOrdersPerPeriod, isEmergency } = orderType;
+
       const requisitionsInPeriod = item.requisitionsForOrderType(program, orderType);
-      const periodText = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
+      const requisitionsCount = `${requisitionsInPeriod}/${maxOrdersPerPeriod} ${requisitions}`;
+
+      const periodText = isEmergency
+        ? `${requisitionsInPeriod} ${programStrings.emergency_orders}`
+        : requisitionsCount;
+
       return `${item} - ${periodText}`;
     },
   },
