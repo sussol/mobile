@@ -202,12 +202,10 @@ export const enforceReasonChoice = rowKey => (dispatch, getState) => {
   const objectToEdit = data.find(row => keyExtractor(row) === rowKey);
 
   const { difference } = objectToEdit;
-
   // If there's no difference, just remove the reason
   if (!difference) return dispatch(removeReason(rowKey));
 
   const { validateReason } = objectToEdit;
-
   if (!validateReason) return dispatch(openModal(MODAL_KEYS.ENFORCE_STOCKTAKE_REASON, rowKey));
 
   return null;
