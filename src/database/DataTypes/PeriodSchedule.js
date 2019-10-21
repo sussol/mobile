@@ -24,10 +24,10 @@ export class PeriodSchedule extends Realm.Object {
   getPeriodsForOrderType(program, orderType) {
     const { isEmergency } = orderType || {};
 
-    const periodsFilter = period =>
+    const filterValidPeriods = period =>
       period.requisitionsForOrderType(program, orderType) < orderType.maxOrdersPerPeriod;
 
-    return isEmergency ? this.periods.slice() : this.periods.filter(periodsFilter);
+    return isEmergency ? this.periods.slice() : this.periods.filter(filterValidPeriods);
   }
 
   /**
