@@ -221,9 +221,16 @@ const dataMigrations = [
           const { transaction } = supplierInvoiceTransactionBatches[0];
           // If somehow the transaction batch doesn't have a transaction, return
           if (!transaction) return;
-          const { otherParty: supplier } = transaction;
-          if (!supplier) return;
-          database.update('ItemBatch', { id, supplier });
+          const { otherParty: transactionsSupplier } = transaction;
+          const { supplier: currentSupplier } = batch;
+          // If the transaction doesn't have a supplier, early exit
+          if (!transactionsSupplier) return;
+          const { id: transactionsSupplierId } = transactionsSupplier;
+          const { id: currentSuppliersId } = currentSupplier || {};
+          // Only update an item batch if the transaction supplier differs from the batches
+          if (currentSuppliersId !== transactionsSupplierId) {
+            database.update('ItemBatch', { id, supplier: transactionsSupplier });
+          }
         });
       });
     },
