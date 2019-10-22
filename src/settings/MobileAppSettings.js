@@ -13,7 +13,7 @@ export class MobileAppSettings extends Settings {
   constructor() {
     super(UIDatabase);
     this.load();
-    this.set(SETTINGS_KEYS.HARDWARE_UUID, DeviceInfo.getUniqueID());
+    this.set(SETTINGS_KEYS.HARDWARE_UUID, DeviceInfo.getUniqueId());
     this.refreshGlobals();
   }
 
