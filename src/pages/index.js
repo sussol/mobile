@@ -5,36 +5,28 @@
 
 import React from 'react';
 
-import {
-  CustomerInvoicePage,
-  checkForFinaliseError as checkForCustomerInvoiceError,
-} from './CustomerInvoicePage';
+import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
-import {
-  CustomerRequisitionPage,
-  checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
-} from './CustomerRequisitionPage';
+import { CustomerRequisitionPage } from './CustomerRequisitionPage';
 import { StockPage } from './StockPage';
-import {
-  StocktakeEditPage,
-  checkForFinaliseError as checkForStocktakeFinaliseError,
-} from './StocktakeEditPage';
+import { StocktakeEditPage } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
-import {
-  SupplierInvoicePage,
-  checkForFinaliseError as checkForSupplierInvoiceError,
-} from './SupplierInvoicePage';
+import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
-import {
-  SupplierRequisitionPage,
-  checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
-} from './SupplierRequisitionPage';
+import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
+import {
+  checkForCustomerInvoiceError,
+  checkForSupplierInvoiceError,
+  checkForSupplierRequisitionError,
+  checkForStocktakeError,
+  checkForCustomerRequisitionError,
+} from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
 
@@ -48,11 +40,15 @@ export const PAGES = {
   root: props => <PageContainer page={MenuPage} {...props} />,
   stock: props => <PageContainer page={StockPage} {...props} />,
   stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
+  stocktakeEditorWithReasons: props => <PageContainer page={StocktakeEditPage} {...props} />,
   stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
   stocktakes: props => <PageContainer page={StocktakesPage} {...props} />,
   supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
   supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
   supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
+  supplierRequisitionWithProgram: props => (
+    <PageContainer page={SupplierRequisitionPage} {...props} />
+  ),
   supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
 };
 
@@ -70,19 +66,31 @@ export const FINALISABLE_PAGES = {
     finaliseText: 'finalise_customer_invoice',
   },
   customerRequisition: {
-    checkForError: checkForCustomerRequisitionFinaliseError,
+    checkForError: checkForCustomerRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_customer_requisition',
   },
   stocktakeEditor: {
-    checkForError: checkForStocktakeFinaliseError,
+    checkForError: checkForStocktakeError,
+    recordType: 'Stocktake',
+    recordToFinaliseKey: 'stocktake',
+    finaliseText: 'finalise_stocktake',
+  },
+  stocktakeEditorWithReasons: {
+    checkForError: checkForStocktakeError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
     finaliseText: 'finalise_stocktake',
   },
   supplierRequisition: {
-    checkForError: checkForSupplierRequisitionFinaliseError,
+    checkForError: checkForSupplierRequisitionError,
+    recordType: 'Requisition',
+    recordToFinaliseKey: 'requisition',
+    finaliseText: 'finalise_supplier_requisition',
+  },
+  supplierRequisitionWithProgram: {
+    checkForError: checkForSupplierRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_supplier_requisition',

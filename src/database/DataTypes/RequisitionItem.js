@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -5,8 +6,11 @@
 
 import Realm from 'realm';
 
-import { Requisition } from './Requisition';
 import { parsePositiveInteger } from '../../utilities';
+
+import { UIDatabase } from '..';
+
+import { SETTINGS_KEYS } from '../../settings';
 
 /**
  * A requisition item (i.e. a requisition line).
@@ -119,8 +123,33 @@ export class RequisitionItem extends Realm.Object {
    * Gets the unit string for this requisition items related item.
    * @return {string}
    */
-  get itemUnit() {
+  get unitString() {
     return this.item.unitString;
+  }
+
+  /**
+   * Gets the price of this requisition item as the maximum price of all
+   * MasterListItems for MasterLists which are related to this store.
+   */
+  get price() {
+    // Get this stores Name record.
+    const thisStoresNameId = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+    const thisStoresName = UIDatabase.get('Name', thisStoresNameId);
+
+    // Get all MasterList IDs related to this store.
+    const masterListIds = UIDatabase.objects('MasterListNameJoin')
+      .filtered('name == $0', thisStoresName)
+      .map(({ masterList }) => masterList.id);
+
+    // Query string: Query for all MasterList.IDs related to this store and this item.
+    const queryString = `${masterListIds
+      .map(id => `masterList.id == '${id}'`)
+      .join(' OR ')} AND item = $0`;
+
+    // Return the maximum price of all MasterListItems.
+    return UIDatabase.objects('MasterListItem')
+      .filtered(queryString, this.item)
+      .max('price');
   }
 
   /**
@@ -165,5 +194,3 @@ RequisitionItem.schema = {
     option: { type: 'Options', optional: true },
   },
 };
-
-export default Requisition;

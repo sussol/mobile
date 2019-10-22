@@ -3,17 +3,15 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { Dimensions } from 'react-native';
-
 import {
   BACKGROUND_COLOR,
   BLUE_WHITE,
-  LIGHT_GREY,
-  WARM_GREY,
   DARK_GREY,
+  LIGHT_GREY,
   SUSSOL_ORANGE,
+  WARM_GREY,
 } from './colors';
-import { APP_FONT_FAMILY } from './fonts';
+import { APP_FONT_FAMILY, APP_GENERAL_FONT_SIZE } from './fonts';
 
 export const dataTableColors = {
   checkableCellDisabled: LIGHT_GREY,
@@ -23,56 +21,201 @@ export const dataTableColors = {
 };
 
 export const dataTableStyles = {
-  text: {
+  cellContainer: {
+    left: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'left',
+    },
+    right: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'right',
+    },
+    center: {
+      borderRightWidth: 2,
+      borderColor: '#ecf3fc',
+      flex: 1,
+      justifyContent: 'center',
+      textAlign: 'center',
+    },
+  },
+  cellText: {
+    left: {
+      marginLeft: 20,
+      textAlign: 'left',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+    right: {
+      marginRight: 10,
+      textAlign: 'right',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+    center: {
+      textAlign: 'center',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+  },
+  editableCellUnfocused: {
+    right: {
+      textAlign: 'right',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+    center: {
+      textAlign: 'center',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+    left: {
+      textAlign: 'left',
+      fontFamily: APP_FONT_FAMILY,
+      fontSize: APP_GENERAL_FONT_SIZE,
+      color: DARK_GREY,
+    },
+  },
+  editableCellText: {
+    textAlign: 'right',
     fontFamily: APP_FONT_FAMILY,
-    fontSize: Dimensions.get('window').width / 100,
+    fontSize: APP_GENERAL_FONT_SIZE,
     color: DARK_GREY,
+    marginRight: 20,
   },
-  header: {
-    backgroundColor: 'white',
+  editableCellTextView: {
+    borderBottomColor: '#cbcbcb',
+    borderBottomWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
+    width: '88%',
+    maxHeight: '65%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    marginRight: 20,
   },
-  headerCell: {
-    height: 40,
+  touchableCellContainer: {
     borderRightWidth: 2,
-    borderBottomWidth: 2,
-    backgroundColor: 'white',
-    borderColor: BLUE_WHITE,
+    borderColor: '#ecf3fc',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   row: {
     backgroundColor: BACKGROUND_COLOR,
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
   },
-  expansion: {
-    padding: 15,
-    borderTopWidth: 2,
-    borderBottomWidth: 2,
-    borderColor: BLUE_WHITE,
+  alternateRow: {
+    backgroundColor: 'white',
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
   },
-  expansionWithInnerPage: {
-    padding: 2,
-    paddingBottom: 5,
-    borderTopWidth: 2,
-    borderBottomWidth: 2,
-    borderColor: BLUE_WHITE,
+  selectedRow: {
+    backgroundColor: LIGHT_GREY,
+    flex: 1,
+    flexDirection: 'row',
+    height: 45,
   },
-  cell: {
+  headerRow: {
+    backgroundColor: 'white',
+    flexDirection: 'row',
+  },
+  headerCells: {
+    left: {
+      height: 40,
+      borderRightWidth: 2,
+      borderBottomWidth: 2,
+      backgroundColor: 'white',
+      borderColor: BLUE_WHITE,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    right: {
+      height: 40,
+      borderRightWidth: 2,
+      borderBottomWidth: 2,
+      backgroundColor: 'white',
+      borderColor: BLUE_WHITE,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+    },
+    center: {
+      height: 40,
+      borderRightWidth: 2,
+      borderBottomWidth: 2,
+      backgroundColor: 'white',
+      borderColor: BLUE_WHITE,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  },
+  expiryBatchTextView: {
+    borderBottomColor: '#cbcbcb',
+    borderBottomWidth: 1,
+    flex: 1,
+    flexDirection: 'row',
+    width: '88%',
+    maxHeight: '65%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
+  expiryBatchView: {
     borderRightWidth: 2,
-    borderColor: BLUE_WHITE,
-  },
-  rightMostCell: {
-    borderRightWidth: 0,
-  },
-  checkableCell: {
+    borderColor: '#ecf3fc',
+    flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    textAlign: 'center',
   },
-  button: {
-    alignItems: 'center',
+  expiryBatchText: {
+    textAlign: 'center',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: DARK_GREY,
+  },
+  expiryBatchPlaceholderText: {
+    textAlign: 'center',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: LIGHT_GREY,
+  },
+  dropDownCellTextContainer: { flex: 2, justfyContent: 'center', alignItems: 'center' },
+  dropDownCellIconContainer: { flex: 1, justfyContent: 'center', alignItems: 'center' },
+  dropDownFont: {
+    marginLeft: 20,
+    textAlign: 'left',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: DARK_GREY,
+  },
+  dropDownPlaceholderFont: {
+    textAlign: 'center',
+    fontFamily: APP_FONT_FAMILY,
+    fontSize: APP_GENERAL_FONT_SIZE,
+    color: LIGHT_GREY,
+  },
+  iconCell: {
     justifyContent: 'center',
-    height: 30,
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 15,
-    margin: 5,
-    borderColor: SUSSOL_ORANGE,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 };
+
+export default dataTableStyles;

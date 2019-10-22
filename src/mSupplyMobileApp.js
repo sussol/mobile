@@ -25,29 +25,19 @@ import { Scheduler } from 'sussol-utilities';
 import { NavigationActions } from 'react-navigation';
 
 import { FirstUsePage, FINALISABLE_PAGES } from './pages';
-import { MobileAppSettings } from './settings';
+
 import { Synchroniser, PostSyncProcessor, SyncModal } from './sync';
-import {
-  FinaliseButton,
-  FinaliseModal,
-  LoginModal,
-  NavigationBar,
-  SyncState,
-  Spinner,
-} from './widgets';
+import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
+import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
-import { Database, schema, UIDatabase } from './database';
+import Settings from './settings/MobileAppSettings';
+import Database from './database/BaseDatabase';
+import { UIDatabase } from './database';
 
-import globalStyles, {
-  dataTableColors,
-  dataTableStyles,
-  pageStyles,
-  textStyles,
-  SUSSOL_ORANGE,
-} from './globalStyles';
+import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -55,19 +45,12 @@ const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 class MSupplyMobileAppContainer extends React.Component {
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
-    const database = new Database(schema);
-    this.database = new UIDatabase(database);
-    this.settings = new MobileAppSettings(this.database);
-    migrateDataToVersion(this.database, this.settings);
-    this.userAuthenticator = new UserAuthenticator(this.database, this.settings);
-    const syncAuthenticator = new SyncAuthenticator(this.settings);
-    this.synchroniser = new Synchroniser(
-      database,
-      syncAuthenticator,
-      this.settings,
-      props.dispatch
-    );
-    this.postSyncProcessor = new PostSyncProcessor(this.database, this.settings);
+
+    migrateDataToVersion(UIDatabase, Settings);
+    this.userAuthenticator = new UserAuthenticator(UIDatabase, Settings);
+    const syncAuthenticator = new SyncAuthenticator(Settings);
+    this.synchroniser = new Synchroniser(Database, syncAuthenticator, Settings, props.dispatch);
+    this.postSyncProcessor = new PostSyncProcessor(UIDatabase, Settings);
     this.scheduler = new Scheduler();
     const isInitialised = this.synchroniser.isInitialised();
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
@@ -126,7 +109,7 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   runWithLoadingIndicator = async functionToRun => {
-    this.database.isLoading = true;
+    UIDatabase.isLoading = true;
     // We here set up an asyncronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay for the javascript thread
     // to unblock and allow the spinner animation to start up. The |functionToRun| should
@@ -137,7 +120,7 @@ class MSupplyMobileAppContainer extends React.Component {
     });
     functionToRun();
     this.setState({ isLoading: false });
-    this.database.isLoading = false;
+    UIDatabase.isLoading = false;
   };
 
   synchronise = async () => {
@@ -212,7 +195,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
   render() {
     const { dispatch, finaliseItem, navigationState, syncState } = this.props;
-
     const {
       confirmFinalise,
       currentUser,
@@ -240,7 +222,6 @@ class MSupplyMobileAppContainer extends React.Component {
           CentreComponent={this.renderLogo}
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
-
         <ReduxNavigator
           ref={navigator => {
             this.navigator = navigator;
@@ -248,22 +229,17 @@ class MSupplyMobileAppContainer extends React.Component {
           state={navigationState}
           dispatch={dispatch}
           screenProps={{
-            database: this.database,
-            settings: this.settings,
+            database: UIDatabase,
+            settings: Settings,
             logOut: this.logOut,
             currentUser,
+            routeName: navigationState.routes[navigationState.index].routeName,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
             isInAdminMode,
-            genericTablePageStyles: {
-              searchBarColor: SUSSOL_ORANGE,
-              dataTableStyles,
-              pageStyles,
-              colors: dataTableColors,
-            },
           }}
         />
         <FinaliseModal
-          database={this.database}
+          database={UIDatabase}
           isOpen={confirmFinalise}
           onClose={() => this.setState({ confirmFinalise: false })}
           finaliseItem={finaliseItem}
@@ -271,7 +247,7 @@ class MSupplyMobileAppContainer extends React.Component {
           runWithLoadingIndicator={this.runWithLoadingIndicator}
         />
         <SyncModal
-          database={this.database}
+          database={UIDatabase}
           isOpen={syncModalIsOpen}
           state={syncState}
           onPressManualSync={this.synchronise}
@@ -279,7 +255,7 @@ class MSupplyMobileAppContainer extends React.Component {
         />
         <LoginModal
           authenticator={this.userAuthenticator}
-          settings={this.settings}
+          settings={Settings}
           isAuthenticated={currentUser !== null}
           onAuthentication={this.onAuthentication}
         />

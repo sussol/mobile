@@ -26,9 +26,7 @@ export const modalStrings = new LocalizedStrings({
     finalise_customer_invoice: 'Finalise will lock this invoice permanently.',
     finalise_supplier_requisition: 'Finalise will send this requisition and lock it permanently.',
     finalise_customer_requisition:
-      // eslint-disable-next-line no-multi-str
-      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this\
-       requisition permanently.',
+      'Finalise will generate a finalised customer invoice, adjust inventory, and lock this requisition permanently.',
     finalise_stocktake: 'Finalise will adjust inventory and lock this stocktake permanently.',
     finalise_supplier_invoice: 'Finalise will adjust inventory and lock this invoice permanently.',
     following_items_reduced_more_than_available_stock:
@@ -52,10 +50,7 @@ export const modalStrings = new LocalizedStrings({
     stock_quantity_greater_then_zero: 'Stock quantity must be greater then zero before finalising',
     stocktake_no_counted_items: "Can't finalise a stocktake with no counted items",
     stocktake_invalid_stock:
-      // eslint-disable-next-line no-multi-str
-      'Stock on hand for these item(s) have changed since this stocktake was last opened \
-       (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" \
-       and "Actual Quantity" will be reset',
+      'Stock on hand for these item(s) have changed since this stocktake was last opened (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" and "Actual Quantity" will be reset',
     select_a_reason: 'Select a reason',
   },
   fr: {

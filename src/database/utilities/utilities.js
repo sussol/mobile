@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { MILLISECONDS_PER_DAY } from './index';
+import { MILLISECONDS_PER_DAY } from './constants';
 
 // Return the sum of the given key across the given records.
 export const getTotal = (records, key) => records.reduce((sum, record) => sum + record[key], 0);

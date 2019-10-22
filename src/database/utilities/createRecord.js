@@ -5,19 +5,37 @@
 
 import { generateUUID } from 'react-native-database';
 
-import { getNextNumber, NUMBER_SEQUENCE_KEYS } from './numberSequenceUtilities';
 import { formatDateAndTime } from '../../utilities';
-
+import { NUMBER_SEQUENCE_KEYS } from './constants';
 import { generalStrings } from '../../localization';
 
-const {
-  CUSTOMER_INVOICE_NUMBER,
-  INVENTORY_ADJUSTMENT_SERIAL_NUMBER,
-  REQUISITION_SERIAL_NUMBER,
-  REQUISITION_REQUESTER_REFERENCE,
-  STOCKTAKE_SERIAL_NUMBER,
-  SUPPLIER_INVOICE_NUMBER,
-} = NUMBER_SEQUENCE_KEYS;
+// Get the next highest number in an existing number sequence.
+export const getNextNumber = (database, sequenceKey) => {
+  const numberSequence = getNumberSequence(database, sequenceKey);
+  const number = numberSequence.getNextNumber(database);
+  database.save('NumberSequence', numberSequence);
+  return String(number);
+};
+
+// Put a number back into a sequence for reuse.
+export const reuseNumber = (database, sequenceKey, number) => {
+  const numberSequence = getNumberSequence(database, sequenceKey);
+  numberSequence.reuseNumber(database, parseInt(number, 10));
+  database.save('NumberSequence', numberSequence);
+};
+
+export const getNumberSequence = (database, sequenceKey) => {
+  const sequenceResults = database
+    .objects('NumberSequence')
+    .filtered('sequenceKey == $0', sequenceKey);
+  if (sequenceResults.length > 1) {
+    throw new Error(`More than one ${sequenceKey} sequence`);
+  }
+  if (sequenceResults.length <= 0) {
+    return createRecord(database, 'NumberSequence', sequenceKey);
+  }
+  return sequenceResults[0];
+};
 
 /**
  * Create a customer invoice associated with a given customer.
@@ -27,6 +45,7 @@ const {
  * @return  {Transaction}
  */
 const createCustomerInvoice = (database, customer, user) => {
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
   const invoice = database.create('Transaction', {
     id: generateUUID(),
@@ -88,8 +107,9 @@ const createNumberToReuse = (database, numberSequence, number) => {
  *                                     else, adjustment is a decrease.
  * @return  {Transaction}
  */
-const createInventoryAdjustment = (database, user, date, isAddition) =>
-  database.create('Transaction', {
+const createInventoryAdjustment = (database, user, date, isAddition) => {
+  const { INVENTORY_ADJUSTMENT_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  return database.create('Transaction', {
     id: generateUUID(),
     serialNumber: getNextNumber(database, INVENTORY_ADJUSTMENT_SERIAL_NUMBER),
     entryDate: date,
@@ -100,6 +120,7 @@ const createInventoryAdjustment = (database, user, date, isAddition) =>
     enteredBy: user,
     otherParty: database.objects('Name').find(name => name.type === 'inventory_adjustment'),
   });
+};
 
 /**
  * Create a new empty batch for a given item.
@@ -142,7 +163,8 @@ const createRequisition = (
   user,
   { otherStoreName, program, period, orderType = {}, monthsLeadTime = 0 }
 ) => {
-  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType;
+  const { REQUISITION_REQUESTER_REFERENCE, REQUISITION_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const { name: orderTypeName, maxMOS, thresholdMOS } = orderType || {};
   const regimenData =
     program && program.parsedProgramSettings ? program.parsedProgramSettings.regimenData : null;
   const daysToSupply = ((monthsLeadTime || 0) + (maxMOS || 1)) * 30;
@@ -212,6 +234,7 @@ const createRequisitionItem = (database, requisition, item, dailyUsage) => {
  * @return  {Stocktake}
  */
 const createStocktake = (database, user, stocktakeName, program) => {
+  const { STOCKTAKE_SERIAL_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const date = new Date();
   const serialNumber = getNextNumber(database, STOCKTAKE_SERIAL_NUMBER);
   const title = program ? program.name : generalStrings.stocktake;
@@ -292,6 +315,7 @@ const createStocktakeBatch = (database, stocktakeItem, itemBatch) => {
  * @return  {Transaction}
  */
 const createSupplierInvoice = (database, supplier, user) => {
+  const { SUPPLIER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
 
   const invoice = database.create('Transaction', {

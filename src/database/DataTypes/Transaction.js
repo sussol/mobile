@@ -2,12 +2,12 @@ import Realm from 'realm';
 
 import { complement } from 'set-manipulator';
 
-import { NUMBER_SEQUENCE_KEYS } from '../index';
 import {
   addBatchToParent,
   createRecord,
   getTotal,
   reuseNumber as reuseSerialNumber,
+  NUMBER_SEQUENCE_KEYS,
 } from '../utilities';
 
 /**
@@ -395,6 +395,8 @@ export class Transaction extends Realm.Object {
       itemBatch.batch = this.adjustBatchName(batch);
       itemBatch.costPrice = packedToOneCostPrice;
       itemBatch.sellPrice = packedToOneSellPrice;
+      if (isIncomingInvoice) itemBatch.supplier = this.otherParty;
+
       database.save('ItemBatch', itemBatch);
     });
 

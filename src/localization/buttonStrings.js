@@ -27,9 +27,9 @@ export const buttonStrings = new LocalizedStrings({
     view_regimen_data: 'View Regimen Data',
   },
   fr: {
-    // TODO: view_regimen_data
+    view_regimen_data: 'Données de régimes',
     add_batch: 'Ajouter un lot',
-    add_master_list_items: "Ajouter une liste-Maître d'articles ?",
+    add_master_list_items: 'Ajouter à partir des\nlistes maîtres',
     all_items_selected: 'Tout les articles sélectionnés',
     create_automatic_order: 'Créer une commande automatiquement',
     current: 'Actuel',

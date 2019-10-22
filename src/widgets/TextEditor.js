@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
-import { TextInput } from './index';
+import { TextInput } from './TextInput';
 
 import { buttonStrings } from '../localization';
 import globalStyles from '../globalStyles';
