@@ -57,6 +57,15 @@ export class Item extends Realm.Object {
   }
 
   /**
+   * Returns an indicator if this item has stock on hand, or not.
+   *
+   * @return {number}
+   */
+  get hasStock() {
+    return this.totalQuantity > 0;
+  }
+
+  /**
    * Get daily usage of item.
    *
    * @return  {number}
@@ -136,6 +145,13 @@ export class Item extends Realm.Object {
    */
   get batchesWithStock() {
     return this.batches.filtered('numberOfPacks > 0');
+  }
+
+  /**
+   * @return {Number} this items monthly usage based on a 30 day month.
+   */
+  get monthlyUsage() {
+    return this.dailyUsage * 30;
   }
 
   /**

@@ -24,6 +24,9 @@ const translateToCoreDatabaseType = type => {
     case 'RequestRequisition':
     case 'ResponseRequisition':
       return 'Requisition';
+    case 'NegativeAdjustmentReason':
+    case 'PositiveAdjustmentReason':
+      return 'Options';
     default:
       return type;
   }
@@ -127,9 +130,17 @@ class UIDatabase {
         return results.filtered('type == "request"');
       case 'ResponseRequisition':
         return results.filtered('serialNumber != "-1" AND type == "response"');
+      case 'NegativeAdjustmentReason':
+        return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
+      case 'PositiveAdjustmentReason':
+        return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
       default:
         return results;
     }
+  }
+
+  get(...args) {
+    return this.database.get(...args);
   }
 
   addListener(...args) {
@@ -170,6 +181,11 @@ class UIDatabase {
 
   write(...args) {
     return this.database.write(...args);
+  }
+
+  getSetting(key) {
+    const setting = this.database.get('Setting', key, 'key');
+    return (setting && setting.value) || '';
   }
 }
 

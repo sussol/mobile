@@ -37,8 +37,12 @@ export class Period extends Realm.Object {
     this.requisitions.push(requisition);
   }
 
+  toInfoString() {
+    return `${this.name} (${this})`;
+  }
+
   toString() {
-    return `${this.startDate.toLocaleDateString()} - ${this.endDate.toLocaleDateString()} `;
+    return `${this.startDate.toLocaleDateString()} - ${this.endDate.toLocaleDateString()}`;
   }
 }
 

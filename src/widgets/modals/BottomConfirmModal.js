@@ -14,7 +14,7 @@ import { modalStrings } from '../../localization';
 
 import globalStyles, { SUSSOL_ORANGE } from '../../globalStyles';
 
-export const BottomConfirmModal = props => {
+export const BottomConfirmModalComponent = props => {
   const {
     onCancel,
     onConfirm,
@@ -44,9 +44,16 @@ export const BottomConfirmModal = props => {
   );
 };
 
+/**
+ * Only re-render this component when isOpen prop changes.
+ */
+const propsAreEqual = ({ isOpen: prevIsOpen }, { isOpen: nextIsOpen }) => prevIsOpen === nextIsOpen;
+
+export const BottomConfirmModal = React.memo(BottomConfirmModalComponent, propsAreEqual);
+
 export default BottomConfirmModal;
 
-BottomConfirmModal.propTypes = {
+BottomConfirmModalComponent.propTypes = {
   style: ViewPropTypes.style,
   isOpen: PropTypes.bool.isRequired,
   questionText: PropTypes.string.isRequired,
@@ -55,7 +62,7 @@ BottomConfirmModal.propTypes = {
   cancelText: PropTypes.string,
   confirmText: PropTypes.string,
 };
-BottomConfirmModal.defaultProps = {
+BottomConfirmModalComponent.defaultProps = {
   style: {},
   cancelText: modalStrings.cancel,
   confirmText: modalStrings.confirm,
