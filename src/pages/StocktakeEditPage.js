@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -66,7 +67,7 @@ export const StocktakeEditPage = ({
     getPageInfoColumns,
   } = state;
 
-  const { isFinalised, comment, program } = pageObject;
+  const { isFinalised, comment, program, name } = pageObject;
 
   // Listen to the stocktake become the top of the stack or being finalised,
   // as these events are side-effects. Refreshing makes the state consistent again.
@@ -87,16 +88,14 @@ export const StocktakeEditPage = ({
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
-
+  const onManageStocktake = () => reduxDispatch(gotoStocktakeManagePage(name, stocktake));
   const onResetStocktake = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
-  const onManageStocktake = () =>
-    reduxDispatch(gotoStocktakeManagePage({ stocktake, stocktakeName: stocktake.name }));
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     isFinalised,
-    pageObject.name,
+    name,
   ]);
 
   const getAction = useCallback((colKey, propName) => {
@@ -210,7 +209,6 @@ export const StocktakeEditPage = ({
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
 StocktakeEditPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   stocktake: PropTypes.object.isRequired,
