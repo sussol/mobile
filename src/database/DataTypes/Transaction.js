@@ -395,7 +395,7 @@ export class Transaction extends Realm.Object {
       itemBatch.batch = this.adjustBatchName(batch);
       itemBatch.costPrice = packedToOneCostPrice;
       itemBatch.sellPrice = packedToOneSellPrice;
-      itemBatch.supplier = this.otherParty;
+      if (isIncomingInvoice) itemBatch.supplier = this.otherParty;
       database.save('ItemBatch', itemBatch);
     });
 
