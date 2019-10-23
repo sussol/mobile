@@ -36,6 +36,7 @@ export class LoginModal extends React.Component {
     this.errorTimeoutId = null;
   }
 
+  // eslint-disable-next-line camelcase, react/sort-comp
   UNSAFE_componentWillReceiveProps(nextProps) {
     const { authStatus } = this.state;
 
@@ -47,6 +48,7 @@ export class LoginModal extends React.Component {
     }
   }
 
+  // eslint-disable-next-line camelcase
   UNSAFE_componentWillUpdate() {
     if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }

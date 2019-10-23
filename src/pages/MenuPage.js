@@ -23,6 +23,7 @@ export class MenuPage extends React.Component {
     this.databaseListenerId = null;
   }
 
+  // eslint-disable-next-line camelcase, react/sort-comp
   UNSAFE_componentWillMount() {
     const { database } = this.props;
 
