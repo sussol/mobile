@@ -36,7 +36,7 @@ export class LoginModal extends React.Component {
     this.errorTimeoutId = null;
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { authStatus } = this.state;
 
     if (authStatus === 'authenticated' && !nextProps.isAuthenticated) {
@@ -47,7 +47,7 @@ export class LoginModal extends React.Component {
     }
   }
 
-  componentWillUpdate() {
+  UNSAFE_componentWillUpdate() {
     if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 

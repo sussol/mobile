@@ -20,7 +20,7 @@ export class Spinner extends React.Component {
     this.startSpinning();
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (nextProps.isSpinning) this.startSpinning();
     else this.stopSpinning();
   }

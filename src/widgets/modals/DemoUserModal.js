@@ -33,7 +33,7 @@ export class DemoUserModal extends React.Component {
     this.errorTimeoutId = null;
   }
 
-  componentWillUpdate() {
+  UNSAFE_componentWillUpdate() {
     if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 

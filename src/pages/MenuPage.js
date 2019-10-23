@@ -23,7 +23,7 @@ export class MenuPage extends React.Component {
     this.databaseListenerId = null;
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     const { database } = this.props;
 
     this.databaseListenerId = database.addListener(
