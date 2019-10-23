@@ -7,6 +7,8 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
+import { Transaction } from '../database/DataTypes/Transaction';
+
 import { MODAL_KEYS } from '../utilities';
 import { useRecordListener, usePageReducer } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
@@ -31,7 +33,7 @@ import globalStyles from '../globalStyles';
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
  *
- * @prop {Object} transaction The realm transaction object for this invoice.
+ * @prop {Transaction} transaction The realm transaction object for this invoice.
  * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
@@ -198,9 +200,8 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
 CustomerInvoicePage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  transaction: PropTypes.object.isRequired,
+  transaction: PropTypes.instanceOf(Transaction).isRequired,
   routeName: PropTypes.string.isRequired,
 };
