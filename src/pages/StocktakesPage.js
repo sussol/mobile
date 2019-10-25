@@ -6,6 +6,9 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { navigation } from 'react-navigation';
+
+import { User } from '../database/DataTypes';
 
 import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
@@ -24,7 +27,12 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
+export const StocktakesPage = ({
+  routeName,
+  currentUser,
+  dispatch: reduxDispatch,
+  navigation: reactNavigation,
+}) => {
   const initialState = { page: routeName };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
@@ -47,7 +55,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   // Listen to sync changing stocktake data - refresh if there are any.
   useSyncListener(refreshCallback, ['Stocktake']);
   // Listen to navigation focusing this page - fresh if so.
-  useNavigationFocus(refreshCallback, navigation);
+  useNavigationFocus(refreshCallback, reactNavigation);
 
   const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
   const onFilterData = value => dispatch(PageActions.filterData(value));
@@ -167,10 +175,9 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
 StocktakesPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
-  currentUser: PropTypes.object.isRequired,
-  navigation: PropTypes.object.isRequired,
+  currentUser: PropTypes.instanceOf(User).isRequired,
+  navigation: PropTypes.instanceOf(navigation).isRequired,
 };
