@@ -7,6 +7,8 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
+import { Stocktake } from '../database/DataTypes/Stocktake';
+
 import { usePageReducer } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
@@ -149,14 +151,13 @@ export const StocktakeManagePage = ({
   );
 };
 
-StocktakeManagePage.defaultProps = {
-  stocktake: null,
-};
-
-/* eslint-disable react/forbid-prop-types */
 StocktakeManagePage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
-  stocktake: PropTypes.object,
+  stocktake: PropTypes.instanceOf(Stocktake),
+};
+
+StocktakeManagePage.defaultProps = {
+  stocktake: null,
 };
