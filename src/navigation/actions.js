@@ -31,6 +31,17 @@ import { ROUTES } from './constants';
  */
 
 /**
+ * Pushes the Realm explorer route onto the main navigation stack.
+ */
+export const gotoRealmExplorer = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.REALM_EXPLORER,
+    params: {
+      title: 'Database Contents',
+    },
+  });
+
+/**
  * Pushes the Customer Invoices route onto the main navigation stack.
  */
 export const gotoCustomerInvoices = () =>
