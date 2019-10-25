@@ -7,11 +7,14 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
+import { navigation } from 'react-navigation';
+
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { UIDatabase } from '../database';
+import { User } from '../database/DataTypes';
 import Settings from '../settings/MobileAppSettings';
 import { MODAL_KEYS, getAllPrograms } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
@@ -43,7 +46,7 @@ export const SupplierRequisitionsPage = ({
   routeName,
   currentUser,
   dispatch: reduxDispatch,
-  navigation,
+  navigation: reactNavigation,
 }) => {
   const initialState = { page: routeName };
 
@@ -64,7 +67,7 @@ export const SupplierRequisitionsPage = ({
 
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   const refreshCallback = () => dispatch(PageActions.refreshData(), []);
-  useNavigationFocus(refreshCallback, navigation);
+  useNavigationFocus(refreshCallback, reactNavigation);
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
   useSyncListener(refreshCallback, 'Requisition');
 
@@ -194,12 +197,11 @@ export const SupplierRequisitionsPage = ({
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
 SupplierRequisitionsPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
-  currentUser: PropTypes.object.isRequired,
-  navigation: PropTypes.object.isRequired,
+  currentUser: PropTypes.instanceOf(User).isRequired,
+  navigation: PropTypes.instanceOf(navigation).isRequired,
 };
 
 SupplierRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };
