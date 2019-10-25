@@ -7,6 +7,8 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
+import { Requisition } from '../database/DataTypes/Requisition';
+
 import { MODAL_KEYS } from '../utilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
@@ -290,9 +292,8 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
 SupplierRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  requisition: PropTypes.object.isRequired,
+  requisition: PropTypes.instanceOf(Requisition).isRequired,
   routeName: PropTypes.string.isRequired,
 };
