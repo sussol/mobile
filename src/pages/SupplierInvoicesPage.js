@@ -6,6 +6,9 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { navigation } from 'react-navigation';
+
+import { User } from '../database/DataTypes';
 
 import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
@@ -22,7 +25,7 @@ import globalStyles from '../globalStyles';
 export const SupplierInvoicesPage = ({
   currentUser,
   routeName,
-  navigation,
+  navigation: reactNavigation,
   dispatch: reduxDispatch,
 }) => {
   const initialState = { page: routeName };
@@ -45,7 +48,7 @@ export const SupplierInvoicesPage = ({
   // Listen to changes from sync and navigation events re-focusing this screen,
   // such that any side effects that occur trigger a reconcilitation of data.
   const refreshCallback = () => dispatch(PageActions.refreshData());
-  useNavigationFocus(refreshCallback, navigation);
+  useNavigationFocus(refreshCallback, reactNavigation);
   useSyncListener(refreshCallback, ['Transaction']);
 
   const onCloseModal = () => dispatch(PageActions.closeModal());
@@ -171,10 +174,9 @@ export const SupplierInvoicesPage = ({
 
 export default SupplierInvoicesPage;
 
-/* eslint-disable react/forbid-prop-types */
 SupplierInvoicesPage.propTypes = {
-  currentUser: PropTypes.object.isRequired,
+  currentUser: PropTypes.instanceOf(User).isRequired,
   routeName: PropTypes.string.isRequired,
-  navigation: PropTypes.object.isRequired,
+  navigation: PropTypes.instanceOf(navigation).isRequired,
   dispatch: PropTypes.func.isRequired,
 };
