@@ -7,6 +7,8 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
+import { Transaction } from '../database/DataTypes/Transaction';
+
 import { MODAL_KEYS } from '../utilities';
 import { usePageReducer, useRecordListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
@@ -164,8 +166,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
 SupplierInvoicePage.propTypes = {
   routeName: PropTypes.string.isRequired,
-  transaction: PropTypes.object.isRequired,
+  transaction: PropTypes.instanceOf(Transaction).isRequired,
 };
