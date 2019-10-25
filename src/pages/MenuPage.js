@@ -5,6 +5,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
@@ -17,26 +18,10 @@ import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from 
 
 const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 
-export class MenuPage extends React.Component {
+class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.databaseListenerId = null;
-  }
-
-  // eslint-disable-next-line camelcase, react/sort-comp
-  UNSAFE_componentWillMount() {
-    const { database } = this.props;
-
-    this.databaseListenerId = database.addListener(
-      // Ensure that language changes in login modal are re-rendered onto the MenuPage.
-      (_, recordType) => recordType === 'Setting' && this.forceUpdate()
-    );
-  }
-
-  componentWillUnmount() {
-    const { database } = this.props;
-
-    database.removeListener(this.databaseListenerId);
   }
 
   exportData = async () => {
@@ -154,10 +139,10 @@ export class MenuPage extends React.Component {
   }
 }
 
-export default MenuPage;
+export const MenuPage = connect()(Menu);
 
 /* eslint-disable react/require-default-props, react/forbid-prop-types */
-MenuPage.propTypes = {
+Menu.propTypes = {
   database: PropTypes.object.isRequired,
   isInAdminMode: PropTypes.bool,
   logOut: PropTypes.func.isRequired,
