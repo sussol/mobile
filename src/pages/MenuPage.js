@@ -10,7 +10,7 @@ import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { UIDatabasePropType } from '../database';
+import { UIDatabaseType } from '../database';
 
 import { navStrings } from '../localization';
 import { SETTINGS_KEYS, SETTINGS_TYPES } from '../settings';
@@ -158,7 +158,7 @@ export class MenuPage extends React.Component {
 export default MenuPage;
 
 MenuPage.propTypes = {
-  database: UIDatabasePropType.isRequired,
+  database: UIDatabaseType.isRequired,
   isInAdminMode: PropTypes.bool,
   logOut: PropTypes.func.isRequired,
   navigateTo: PropTypes.func.isRequired,
