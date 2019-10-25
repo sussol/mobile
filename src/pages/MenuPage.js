@@ -10,8 +10,10 @@ import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+import { UIDatabasePropType } from '../database';
+
 import { navStrings } from '../localization';
-import { SETTINGS_KEYS } from '../settings';
+import { SETTINGS_KEYS, SETTINGS_TYPES } from '../settings';
 
 import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
 
@@ -155,13 +157,16 @@ export class MenuPage extends React.Component {
 
 export default MenuPage;
 
-/* eslint-disable react/require-default-props, react/forbid-prop-types */
 MenuPage.propTypes = {
-  database: PropTypes.object.isRequired,
+  database: UIDatabasePropType.isRequired,
   isInAdminMode: PropTypes.bool,
   logOut: PropTypes.func.isRequired,
   navigateTo: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
+  settings: PropTypes.shape(SETTINGS_TYPES).isRequired,
+};
+
+MenuPage.defaultProps = {
+  isInAdminMode: false,
 };
 
 const localStyles = StyleSheet.create({

@@ -198,4 +198,13 @@ export const getUIDatabaseInstance = database => {
   return UIDatabaseInstance;
 };
 
+export const UIDatabasePropType = (props, propName, componentName) => {
+  const { [propName]: prop } = props;
+  if (propName === 'database') {
+    if (prop === UIDatabase) return null;
+    return new TypeError(`Invalid database in ${componentName}`);
+  }
+  return null;
+};
+
 export default getUIDatabaseInstance;
