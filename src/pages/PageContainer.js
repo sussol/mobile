@@ -16,10 +16,8 @@ const extractPropsForPage = props => {
   const { currentRouteName, screenProps, navigation, ...restOfProps } = props;
   const { state } = navigation;
   const { params, routeName: thisPageRouteName, ...restOfNavigationState } = state;
-  const isCurrentRoute = thisPageRouteName === currentRouteName;
 
   return {
-    topRoute: isCurrentRoute,
     ...screenProps,
     ...params,
     ...restOfNavigationState,
