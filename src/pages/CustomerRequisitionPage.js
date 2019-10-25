@@ -7,6 +7,8 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
+import { Requisition } from '../database/DataTypes/Requisition';
+
 import { MODAL_KEYS } from '../utilities';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -177,9 +179,8 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
 CustomerRequisitionPage.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  requisition: PropTypes.object.isRequired,
+  requisition: PropTypes.instanceOf(Requisition).isRequired,
   routeName: PropTypes.string.isRequired,
 };
