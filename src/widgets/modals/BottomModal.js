@@ -12,7 +12,8 @@ import Modal from 'react-native-modalbox';
 import { DARKER_GREY } from '../../globalStyles/index';
 
 export class BottomModal extends React.Component {
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { isOpen } = this.props;
     const { isOpen: willOpen } = nextProps;
 
