@@ -82,13 +82,19 @@ export const StocktakeEditPage = ({
 
   const onEditName = value => dispatch(PageActions.editPageObjectName(value, 'Stocktake'));
   const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onEditBatch = rowKey => PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
-  const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
+  const onEditBatch = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey));
+  const onEditReason = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
   const onEditComment = value => dispatch(PageActions.editComment(value, 'Stocktake'));
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
   const onManageStocktake = () => reduxDispatch(gotoStocktakeManagePage(name, stocktake));
+  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
+  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+  const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editCountedQuantity(newValue, rowKey, columnKey));
   const onResetStocktake = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
 
@@ -98,15 +104,15 @@ export const StocktakeEditPage = ({
     name,
   ]);
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
-        return PageActions.editCountedQuantity;
+        return onEditCountedQuantity;
       case 'batch':
         return onEditBatch;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       case 'reasonTitle':
         return onEditReason;
       default:
@@ -143,8 +149,7 @@ export const StocktakeEditPage = ({
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
