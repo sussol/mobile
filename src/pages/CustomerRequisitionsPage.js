@@ -69,7 +69,6 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
           rowData={data[index]}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
           onPress={onPressRow}
           rowIndex={index}
         />
