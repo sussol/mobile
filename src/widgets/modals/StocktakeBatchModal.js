@@ -78,27 +78,34 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
       ? UIDatabase.objects('PositiveAdjustmentReason')
       : UIDatabase.objects('NegativeAdjustmentReason');
 
-  const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onAddBatch = () => dispatch(PageActions.addStocktakeBatch());
+  const onEditBatch = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey));
+  const onEditReason = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
+  const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+  const onEditDate = (date, rowKey, columnKey) =>
+    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
 
   const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 
-  const getAction = colKey => {
+  const getCallback = useCallback(colKey => {
     switch (colKey) {
-      case 'batch':
-        return PageActions.editStocktakeBatchName;
       case 'countedTotalQuantity':
-        return PageActions.editStocktakeBatchCountedQuantity;
+        return onEditCountedQuantity;
+      case 'batch':
+        return onEditBatch;
       case 'expiryDate':
-        return PageActions.editStocktakeBatchExpiryDate;
+        return onEditDate;
       case 'reasonTitle':
         return onEditReason;
       default:
         return null;
     }
-  };
+  }, []);
 
   const renderRow = useCallback(
     listItem => {
@@ -110,8 +117,7 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
