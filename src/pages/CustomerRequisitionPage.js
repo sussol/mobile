@@ -66,7 +66,8 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onAddItem = value => dispatch(PageActions.addRequisitionItem(value));
   const onEditComment = value => dispatch(PageActions.editComment(value, 'Requisition'));
   const onFilterData = value => dispatch(PageActions.filterData(value));
-
+  const onEditSuppliedQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editSuppliedQuantity(newValue, rowKey, columnKey));
   const onSetSuppliedToRequested = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested()));
   const onSetSuppliedToSuggested = () =>
@@ -77,10 +78,10 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     isFinalised,
   ]);
 
-  const getAction = useCallback(colKey => {
+  const getCallback = useCallback(colKey => {
     switch (colKey) {
       case 'suppliedQuantity':
-        return PageActions.editSuppliedQuantity;
+        return onEditSuppliedQuantity;
       default:
         return null;
     }
@@ -107,8 +108,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
