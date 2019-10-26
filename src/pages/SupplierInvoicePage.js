@@ -52,6 +52,12 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
+  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+  const onEditDate = (date, rowKey, columnKey) =>
+    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
+  const onEditTotalQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editTotalQuantity(newValue, rowKey, columnKey));
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
@@ -59,15 +65,15 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     isFinalised,
   ]);
 
-  const getAction = useCallback((columnKey, propName) => {
+  const getCallback = useCallback((columnKey, propName) => {
     switch (columnKey) {
       case 'totalQuantity':
-        return PageActions.editTotalQuantity;
+        return onEditTotalQuantity;
       case 'expiryDate':
-        return PageActions.editTransactionBatchExpiryDate;
+        return onEditDate;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -97,8 +103,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
