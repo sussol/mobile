@@ -81,8 +81,8 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onAddBatch = () => dispatch(PageActions.addStocktakeBatch());
-  const onEditBatch = rowKey =>
-    dispatch(PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey));
+  const onEditBatch = (value, rowKey, columnKey) =>
+    dispatch(PageActions.editStocktakeBatchName(value, rowKey, columnKey));
   const onEditReason = rowKey =>
     dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
   const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
