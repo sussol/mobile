@@ -17,7 +17,6 @@ import { getAdjustedStyle } from './utilities';
  * @param {string|number} columnKey  Unique key associated to column cell is in
  * @param {bool} isDisabled          If `true` will render a plain Cell element with no interaction
  * @param {String} placeholderColour Placholder text colour
- * @param {func}  dispatch           Reducer dispatch callback for handling actions
  * @param {Object}  viewStyle        Style object for the wrapping View component
  * @param {Object}  textStyle        Style object for the inner Text component
  * @param {Object}  textInputStyle   Style object for TextInput component.
@@ -28,8 +27,7 @@ import { getAdjustedStyle } from './utilities';
  * @param {Object} cellTextStyle     text style for the disabled Cell component.
  * @param {Bool}  isLastCell         Indicator if this cell is last in a row,
  *                                   removing the borderRight,
- * @param {func}  editAction         Action creator for handling editing of this cell.
- *                                   `(newValue, rowKey, columnKey) => {...}`
+ * @param {Func}  onChangeText       Callback for the onChangeText event.
  * @param {String} underlineColor    Underline colour of TextInput on Android.
  */
 const TextInputCell = React.memo(
@@ -39,8 +37,7 @@ const TextInputCell = React.memo(
     columnKey,
     isDisabled,
     placeholderColour,
-    editAction,
-    dispatch,
+    onChangeText,
     isLastCell,
     width,
     debug,
@@ -59,7 +56,7 @@ const TextInputCell = React.memo(
     const { focusNextCell, getRefIndex, getCellRef } = React.useContext(RefContext);
     const refIndex = getRefIndex(rowIndex, columnKey);
 
-    const onEdit = newValue => dispatch(editAction(newValue, rowKey, columnKey));
+    const onEdit = newValue => onChangeText(newValue, rowKey, columnKey);
     const focusNext = () => focusNextCell(refIndex);
 
     // Render a plain Cell if disabled.
@@ -105,8 +102,7 @@ TextInputCell.propTypes = {
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isDisabled: PropTypes.bool,
   placeholderColour: PropTypes.string,
-  editAction: PropTypes.func.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  onChangeText: PropTypes.func.isRequired,
   cellTextStyle: PropTypes.object,
   viewStyle: PropTypes.object,
   width: PropTypes.number,
