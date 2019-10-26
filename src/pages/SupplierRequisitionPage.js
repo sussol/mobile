@@ -86,6 +86,11 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onAddFromMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Requisition')));
 
+  const onEditRequiredQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, columnKey));
+  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
+  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     theirRef,
@@ -93,13 +98,13 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     daysToSupply,
   ]);
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
-        return PageActions.editRequisitionItemRequiredQuantity;
+        return onEditRequiredQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -130,8 +135,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
