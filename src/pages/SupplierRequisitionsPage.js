@@ -79,6 +79,8 @@ export const SupplierRequisitionsPage = ({
   const onNewRequisition = () => dispatch(PageActions.openModal(NEW_REQUISITON));
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
+  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
+  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
 
   const onCreateRequisition = otherStoreName => {
     onCloseModal();
@@ -90,11 +92,11 @@ export const SupplierRequisitionsPage = ({
     reduxDispatch(createSupplierRequisition({ ...requisitionParameters, currentUser }));
   };
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -121,8 +123,7 @@ export const SupplierRequisitionsPage = ({
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           onPress={onPressRow}
           rowIndex={index}
         />
