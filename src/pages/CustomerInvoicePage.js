@@ -70,6 +70,10 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
+  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+  const onEditTotalQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editTotalQuantity(newValue, rowKey, columnKey));
 
   const onAddMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
@@ -80,13 +84,13 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     isFinalised,
   ]);
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
-        return PageActions.editTotalQuantity;
+        return onEditTotalQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -117,8 +121,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
