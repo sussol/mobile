@@ -5,7 +5,7 @@
  */
 import { pageInfoStrings, programStrings, tableStrings } from '../../localization';
 import { MODAL_KEYS, formatDate } from '../../utilities';
-
+import { ROUTES } from '../../navigation/constants';
 /**
  * PageInfo rows/columns for use with the PageInfo component.
  *
@@ -23,22 +23,28 @@ import { MODAL_KEYS, formatDate } from '../../utilities';
  */
 
 const PER_PAGE_INFO_COLUMNS = {
-  customerInvoice: [
+  [ROUTES.CUSTOMER_INVOICE]: [
     ['entryDate', 'confirmDate', 'enteredBy'],
     ['customer', 'theirRef', 'transactionComment'],
   ],
-  supplierInvoice: [['entryDate', 'confirmDate'], ['otherParty', 'theirRef', 'transactionComment']],
-  supplierRequisition: [
+  [ROUTES.SUPPLIER_INVOICE]: [
+    ['entryDate', 'confirmDate'],
+    ['otherParty', 'theirRef', 'transactionComment'],
+  ],
+  [ROUTES.SUPPLIER_REQUISITION]: [
     ['entryDate', 'enteredBy'],
     ['otherParty', 'editableMonthsToSupply', 'requisitionComment'],
   ],
-  supplierRequisitionWithProgram: [
+  [ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM]: [
     ['program', 'orderType', 'entryDate', 'enteredBy'],
     ['period', 'otherParty', 'monthsToSupply', 'requisitionComment'],
   ],
-  stocktakeEditor: [['stocktakeName', 'stocktakeComment']],
-  stocktakeEditorWithReasons: [['stocktakeName', 'stocktakeComment']],
-  customerRequisition: [['monthsToSupply', 'entryDate'], ['customer', 'requisitionComment']],
+  [ROUTES.STOCKTAKE_EDITOR]: [['stocktakeName', 'stocktakeComment']],
+  [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: [['stocktakeName', 'stocktakeComment']],
+  [ROUTES.CUSTOMER_REQUISITION]: [
+    ['monthsToSupply', 'entryDate'],
+    ['customer', 'requisitionComment'],
+  ],
   stocktakeBatchEditModal: [['itemName']],
   stocktakeBatchEditModalWithReasons: [['itemName']],
 };
