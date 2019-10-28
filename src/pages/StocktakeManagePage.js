@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,8 +7,8 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { usePageReducer } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
 
@@ -18,34 +19,27 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
-export const StocktakeManagePage = ({
-  routeName,
-  dispatch: reduxDispatch,
-  stocktake,
+export const StocktakeManage = ({
+  dispatch,
   runWithLoadingIndicator,
+  data,
+  pageObject,
+  dataState,
+  sortBy,
+  isAscending,
+  hasSelection,
+  showAll,
+  allSelected,
+  name,
+  keyExtractor,
+  searchTerm,
+  PageActions,
+  columns,
 }) => {
-  const initialState = { page: routeName, pageObject: stocktake };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    hasSelection,
-    showAll,
-    allSelected,
-    name,
-    keyExtractor,
-    searchTerm,
-    PageActions,
-    columns,
-  } = state;
-
   // On navigating to this screen, if a stocktake is passed through, update the selection with
   // the items already in the stocktake.
   useEffect(() => {
-    if (stocktake) dispatch(PageActions.selectItems(stocktake.itemsInStocktake));
+    if (pageObject) dispatch(PageActions.selectItems(pageObject.itemsInStocktake));
   }, []);
 
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
@@ -69,8 +63,8 @@ export const StocktakeManagePage = ({
   const onConfirmStocktake = () => {
     runWithLoadingIndicator(() => {
       const itemIds = Array.from(dataState.keys()).filter(id => dataState.get(id).isSelected && id);
-      if (stocktake) return reduxDispatch(updateStocktake(stocktake, itemIds, name));
-      return reduxDispatch(createStocktake({ stocktakeName: name, itemIds }));
+      if (pageObject) return dispatch(updateStocktake(pageObject, itemIds, name));
+      return dispatch(createStocktake({ stocktakeName: name, itemIds }));
     });
   };
 
@@ -96,7 +90,7 @@ export const StocktakeManagePage = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
+        dispatch={dispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
@@ -141,7 +135,7 @@ export const StocktakeManagePage = ({
 
       <BottomTextEditor
         isOpen
-        buttonText={stocktake ? modalStrings.confirm : modalStrings.create}
+        buttonText={pageObject ? modalStrings.confirm : modalStrings.create}
         value={name}
         placeholder={modalStrings.give_your_stocktake_a_name}
         onConfirm={onConfirmStocktake}
@@ -151,14 +145,28 @@ export const StocktakeManagePage = ({
   );
 };
 
-StocktakeManagePage.defaultProps = {
-  stocktake: null,
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { stocktakeManager } = pages;
+  return stocktakeManager;
 };
 
-/* eslint-disable react/forbid-prop-types */
-StocktakeManagePage.propTypes = {
-  runWithLoadingIndicator: PropTypes.func.isRequired,
-  routeName: PropTypes.string.isRequired,
+export const StocktakeManagePage = connect(mapStateToProps)(StocktakeManage);
+
+StocktakeManage.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  stocktake: PropTypes.object,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  runWithLoadingIndicator: PropTypes.func.isRequired,
+  showAll: PropTypes.bool.isRequired,
+  allSelected: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired,
+  pageObject: PropTypes.object.isRequired,
 };
