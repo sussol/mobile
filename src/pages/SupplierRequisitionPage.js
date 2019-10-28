@@ -86,10 +86,10 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onAddFromMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Requisition')));
 
-  const onEditRequiredQuantity = (newValue, rowKey, columnKey) =>
-    dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey, columnKey));
-  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
-  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+  const onEditRequiredQuantity = (newValue, rowKey) =>
+    dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,

@@ -55,8 +55,8 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
-  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
-  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));

@@ -52,12 +52,12 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
   const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
-  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
-  const onEditDate = (date, rowKey, columnKey) =>
-    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
-  const onEditTotalQuantity = (newValue, rowKey, columnKey) =>
-    dispatch(PageActions.editTotalQuantity(newValue, rowKey, columnKey));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+  const onEditDate = (date, rowKey) =>
+    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey));
+  const onEditTotalQuantity = (newValue, rowKey) =>
+    dispatch(PageActions.editTotalQuantity(newValue, rowKey));
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
