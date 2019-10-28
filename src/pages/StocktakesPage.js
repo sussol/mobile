@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,9 +7,10 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
+import { useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
 import { PageButton, DataTablePageView, SearchBar, ToggleBar } from '../widgets';
@@ -24,32 +26,30 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
-  const initialState = { page: routeName };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    searchTerm,
-    modalKey,
-    hasSelection,
-    usingPrograms,
-    keyExtractor,
-    columns,
-    PageActions,
-    showFinalised,
-  } = state;
-
+export const Stocktakes = ({
+  currentUser,
+  dispatch,
+  navigation,
+  data,
+  dataState,
+  sortBy,
+  isAscending,
+  searchTerm,
+  modalKey,
+  hasSelection,
+  usingPrograms,
+  keyExtractor,
+  columns,
+  PageActions,
+  showFinalised,
+}) => {
   const refreshCallback = useCallback(() => dispatch(PageActions.refreshData()), []);
   // Listen to sync changing stocktake data - refresh if there are any.
   useSyncListener(refreshCallback, ['Stocktake']);
   // Listen to navigation focusing this page - fresh if so.
   useNavigationFocus(refreshCallback, navigation);
 
-  const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
+  const onRowPress = useCallback(stocktake => dispatch(gotoStocktakeEditPage(stocktake)), []);
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
@@ -60,7 +60,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
-    return reduxDispatch(gotoStocktakeManagePage(''));
+    return dispatch(gotoStocktakeManagePage(''));
   };
 
   const getCallback = useCallback((colKey, propName) => {
@@ -77,7 +77,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     switch (modalKey) {
       case MODAL_KEYS.PROGRAM_STOCKTAKE:
         return ({ stocktakeName, program }) => {
-          reduxDispatch(createStocktake({ program, stocktakeName, currentUser }));
+          dispatch(createStocktake({ program, stocktakeName, currentUser }));
           onCloseModal();
         };
       default:
@@ -108,7 +108,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
+        dispatch={dispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
@@ -168,10 +168,32 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
-StocktakesPage.propTypes = {
-  routeName: PropTypes.string.isRequired,
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { stocktakes } = pages;
+  return stocktakes;
+};
+
+export const StocktakesPage = connect(mapStateToProps)(Stocktakes);
+
+Stocktakes.defaultProps = {
+  showFinalised: false,
+};
+
+Stocktakes.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  currentUser: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  showFinalised: PropTypes.bool,
+  modalKey: PropTypes.string.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  usingPrograms: PropTypes.bool.isRequired,
+  currentUser: PropTypes.object.isRequired,
 };
