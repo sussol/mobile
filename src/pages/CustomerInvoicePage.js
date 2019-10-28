@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,9 +7,10 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { useRecordListener, usePageReducer } from '../hooks';
+import { useRecordListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
@@ -35,33 +37,29 @@ import globalStyles from '../globalStyles';
  * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
-  const initialState = { page: routeName, pageObject: transaction };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    pageObject,
-    sortBy,
-    isAscending,
-    modalKey,
-    hasSelection,
-    keyExtractor,
-    searchTerm,
-    modalValue,
-    columns,
-    PageActions,
-    getPageInfoColumns,
-  } = state;
-
+export const CustomerInvoice = ({
+  runWithLoadingIndicator,
+  dispatch,
+  data,
+  dataState,
+  pageObject,
+  sortBy,
+  isAscending,
+  modalKey,
+  hasSelection,
+  keyExtractor,
+  searchTerm,
+  modalValue,
+  columns,
+  PageActions,
+  getPageInfoColumns,
+}) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
   // Listen for this invoice being finalised which will prune items and cause side effects
   // outside of the reducer. Reconcile differences when triggered.
   const refreshCallback = () => dispatch(PageActions.refreshData());
   useRecordListener(refreshCallback, pageObject, 'Transaction');
-
   const onAddItem = item => dispatch(PageActions.addTransactionItem(item));
   const onNewRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
   const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
@@ -133,7 +131,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
+        dispatch={dispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
@@ -201,9 +199,32 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
-CustomerInvoicePage.propTypes = {
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { customerInvoice } = pages;
+  return customerInvoice;
+};
+
+export const CustomerInvoicePage = connect(mapStateToProps)(CustomerInvoice);
+
+CustomerInvoice.defaultProps = {
+  modalValue: null,
+};
+
+CustomerInvoice.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  transaction: PropTypes.object.isRequired,
-  routeName: PropTypes.string.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  pageObject: PropTypes.object.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
+  columns: PropTypes.array.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
 };
