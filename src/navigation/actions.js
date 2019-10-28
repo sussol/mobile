@@ -119,6 +119,7 @@ export const gotoStocktakeManagePage = (stocktakeName, stocktake) =>
       title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
+      pageObject: stocktake,
     },
   });
 
@@ -142,7 +143,7 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
 
   const navigationParameters = {
     routeName: usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR,
-    params: { title: navStrings.stocktake, stocktake },
+    params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
   };
 
   dispatch(navigationActionCreator(navigationParameters));
@@ -174,6 +175,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
     params: {
       title: `${navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
+      pageObject: transaction,
     },
   });
 
@@ -206,6 +208,7 @@ export const gotoSupplierInvoice = transaction => dispatch => {
     params: {
       title: `${navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
+      pageObject: transaction,
     },
   });
 
@@ -225,6 +228,7 @@ export const gotoSupplierRequisition = requisition =>
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,
+      pageObject: requisition,
     },
   });
 
@@ -239,6 +243,7 @@ export const gotoCustomerRequisition = requisition =>
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,
+      pageObject: requisition,
     },
   });
 
