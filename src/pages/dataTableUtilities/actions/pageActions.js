@@ -6,6 +6,7 @@
 import { UIDatabase } from '../../../database/index';
 import { MODAL_KEYS } from '../../../utilities';
 import { ACTIONS } from './constants';
+import { pageObjectSelector, pageStateSelector } from '../selectors';
 
 /**
  * Refreshes the underlying data array by slicing backingData.
@@ -15,7 +16,7 @@ import { ACTIONS } from './constants';
  * NOTE: This is a duplicate action to avoid a dependency cycle with
  *       tableActions.js
  */
-const refreshData = () => ({ type: ACTIONS.REFRESH_DATA });
+const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
 
 /**
  * Edits the name field in the current store.
@@ -23,12 +24,12 @@ const refreshData = () => ({ type: ACTIONS.REFRESH_DATA });
  *
  * @param {String} value New name value to set.
  */
-export const editName = value => ({ type: ACTIONS.EDIT_NAME, payload: { value } });
+export const editName = (value, route) => ({ type: ACTIONS.EDIT_NAME, payload: { value, route } });
 
 /**
  * Closes a modal by unsetting the modalKey aand modalValue (if used).
  */
-export const closeModal = () => ({ type: ACTIONS.CLOSE_MODAL });
+export const closeModal = route => ({ type: ACTIONS.CLOSE_MODAL, payload: { route } });
 
 /**
  * Splitter action creator, assumes the current modalValue is an instance
@@ -36,14 +37,14 @@ export const closeModal = () => ({ type: ACTIONS.CLOSE_MODAL });
  * closing the modal.
  * use case: opening a stocktake batch and refreshing the stocktake edit page row.
  */
-export const closeAndRefresh = () => (dispatch, getState) => {
-  const { modalValue, keyExtractor } = getState();
+export const closeAndRefresh = route => (dispatch, getState) => {
+  const { modalValue, keyExtractor } = pageStateSelector(getState());
 
   const rowKey = keyExtractor(modalValue);
 
   // Avoiding refresh row dependency cycle.
-  dispatch({ type: ACTIONS.REFRESH_ROW, payload: { rowKey } });
-  dispatch(closeModal());
+  dispatch({ type: ACTIONS.REFRESH_ROW, payload: { rowKey, route } });
+  dispatch(closeModal(route));
 };
 
 /**
@@ -53,12 +54,12 @@ export const closeAndRefresh = () => (dispatch, getState) => {
  * @param {String} modalKey Key for the modal to open
  * @param {Any}    value     Optional value to set as `modalValue` in state.
  */
-export const openModal = (modalKey, value) => {
+export const openModal = (modalKey, value, route) => {
   switch (modalKey) {
     case MODAL_KEYS.STOCKTAKE_REASON:
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
-      return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, rowKey: value } };
+      return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, rowKey: value, route } };
 
     case MODAL_KEYS.MONTHS_SELECT:
     case MODAL_KEYS.PROGRAM_REQUISITION:
@@ -74,7 +75,7 @@ export const openModal = (modalKey, value) => {
     case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
     case MODAL_KEYS.THEIR_REF_EDIT:
     default:
-      return { type: ACTIONS.OPEN_MODAL, payload: { modalKey } };
+      return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, route: route || value } };
   }
 };
 
@@ -84,8 +85,8 @@ export const openModal = (modalKey, value) => {
  * @param {String} value          New name value.
  * @param {String} pageObjectType PageObject type to edit i.e. Transaction.
  */
-export const editPageObjectName = (value, pageObjectType) => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const editPageObjectName = (value, pageObjectType, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   const { name } = pageObject;
 
@@ -98,7 +99,7 @@ export const editPageObjectName = (value, pageObjectType) => (dispatch, getState
     });
   }
 
-  dispatch(closeModal());
+  dispatch(closeModal(route));
 };
 
 /**
@@ -107,8 +108,8 @@ export const editPageObjectName = (value, pageObjectType) => (dispatch, getState
  * @param {String} value          New theifRef value.
  * @param {String} pageObjectType PageObject type to edit i.e. Transaction.
  */
-export const editTheirRef = (value, pageObjectType) => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const editTheirRef = (value, pageObjectType, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   const { theirRef } = pageObject;
 
@@ -118,7 +119,7 @@ export const editTheirRef = (value, pageObjectType) => (dispatch, getState) => {
     });
   }
 
-  dispatch(closeModal());
+  dispatch(closeModal(route));
 };
 
 /**
@@ -127,8 +128,8 @@ export const editTheirRef = (value, pageObjectType) => (dispatch, getState) => {
  * @param {String} value          New comment value.
  * @param {String} pageObjectType Type of the pageObject to edit i.e. Transaction.
  */
-export const editComment = (value, pageObjectType) => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const editComment = (value, pageObjectType, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   const { comment } = pageObject;
 
@@ -138,7 +139,7 @@ export const editComment = (value, pageObjectType) => (dispatch, getState) => {
     });
   }
 
-  dispatch(closeModal());
+  dispatch(closeModal(route));
 };
 
 /**
@@ -147,8 +148,8 @@ export const editComment = (value, pageObjectType) => (dispatch, getState) => {
  *
  * @param {Number} value  New months of supply value.
  */
-export const editMonthsToSupply = value => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const editMonthsToSupply = (value, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   const { monthsToSupply } = pageObject;
 
@@ -159,10 +160,10 @@ export const editMonthsToSupply = value => (dispatch, getState) => {
     });
 
     // Update suggested quantities when the monthsToSupply changes.
-    dispatch(refreshData());
+    dispatch(refreshData(route));
   }
 
-  dispatch(closeModal());
+  dispatch(closeModal(route));
 };
 
 /**
@@ -171,13 +172,13 @@ export const editMonthsToSupply = value => (dispatch, getState) => {
  * use case: Snapshot quantities need to be refreshed if they are
  *           outdated when revisiting an un-finalised Stocktake.
  */
-export const resetStocktake = () => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const resetStocktake = route => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   pageObject.resetStocktake(UIDatabase);
 
-  dispatch(refreshData());
-  dispatch(closeModal());
+  dispatch(refreshData(route));
+  dispatch(closeModal(route));
 };
 
 export const PageActionsLookup = {

@@ -104,4 +104,22 @@ const NON_DEFAULT_PAGE_ACTIONS = {
  *
  * @param {String} routeName Name of the route being navigated to.
  */
-export const getPageActions = routeName => NON_DEFAULT_PAGE_ACTIONS[routeName] || BasePageActions;
+export const getPageActions = route => {
+  const thisRoutesActions = NON_DEFAULT_PAGE_ACTIONS[route] || BasePageActions;
+
+  const wrappedActions = {};
+
+  Object.entries(thisRoutesActions).forEach(([key, value]) => {
+    // if (typeof value() === 'function') {
+    wrappedActions[key] = (...args) => value(...args, route);
+    // } else {
+    //   wrappedActions[key] = (...args) => {
+    //     const action = value(...args);
+    //     const { payload = {} } = action;
+    //     return { ...action, payload: { ...payload, route } };
+    //   };
+    // }
+  });
+
+  return wrappedActions;
+};
