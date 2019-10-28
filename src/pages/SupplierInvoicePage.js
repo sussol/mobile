@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,9 +7,10 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { usePageReducer, useRecordListener } from '../hooks';
+import { useRecordListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
@@ -18,26 +20,22 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
-export const SupplierInvoicePage = ({ routeName, transaction }) => {
-  const initialState = { page: routeName, pageObject: transaction };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    pageObject,
-    data,
-    dataState,
-    keyExtractor,
-    sortBy,
-    isAscending,
-    modalKey,
-    modalValue,
-    hasSelection,
-    searchTerm,
-    PageActions,
-    columns,
-    getPageInfoColumns,
-  } = state;
-
+export const SupplierInvoice = ({
+  pageObject,
+  data,
+  dispatch,
+  dataState,
+  keyExtractor,
+  sortBy,
+  isAscending,
+  modalKey,
+  modalValue,
+  hasSelection,
+  searchTerm,
+  PageActions,
+  columns,
+  getPageInfoColumns,
+}) => {
   // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
   const refreshCallback = () => dispatch(PageActions.refreshData());
   useRecordListener(refreshCallback, pageObject, 'Transaction');
@@ -59,7 +57,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const onEditTotalQuantity = (newValue, rowKey) =>
     dispatch(PageActions.editTotalQuantity(newValue, rowKey));
 
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useCallback(() => getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     theirRef,
     isFinalised,
@@ -115,7 +113,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
+        dispatch={dispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
@@ -169,8 +167,31 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
-SupplierInvoicePage.propTypes = {
-  routeName: PropTypes.string.isRequired,
-  transaction: PropTypes.object.isRequired,
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { supplierInvoice } = pages;
+  return supplierInvoice;
+};
+
+export const SupplierInvoicePage = connect(mapStateToProps)(SupplierInvoice);
+
+SupplierInvoice.defaultProps = {
+  modalValue: null,
+};
+
+SupplierInvoice.propTypes = {
+  pageObject: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
+  hasSelection: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };
