@@ -54,6 +54,8 @@ export const CustomerInvoicesPage = ({
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
+  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
+  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
 
   const onNavigateToInvoice = useCallback(
     invoice => reduxDispatch(gotoCustomerInvoice(invoice)),
@@ -73,11 +75,11 @@ export const CustomerInvoicesPage = ({
     [showFinalised]
   );
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -102,8 +104,7 @@ export const CustomerInvoicesPage = ({
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
           onPress={onNavigateToInvoice}
         />

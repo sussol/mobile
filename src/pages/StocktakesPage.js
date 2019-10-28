@@ -55,17 +55,19 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
+  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
+  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
     return reduxDispatch(gotoStocktakeManagePage(''));
   };
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -93,8 +95,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           onPress={onRowPress}
           rowIndex={index}
         />

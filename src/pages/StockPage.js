@@ -67,8 +67,6 @@ export const StockPage = ({ routeName }) => {
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          isFinalised={false}
-          dispatch={dispatch}
           rowIndex={index}
           onPress={onSelectRow}
         />
