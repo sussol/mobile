@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unused-prop-types */
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,6 +8,7 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
 
@@ -15,7 +18,7 @@ import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '.
 
 import { getItemLayout } from './dataTableUtilities';
 
-import { usePageReducer, useRecordListener } from '../hooks';
+import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
@@ -37,29 +40,26 @@ import { buttonStrings, modalStrings, programStrings } from '../localization';
  * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const initialState = { page: routeName, pageObject: requisition };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    modalKey,
-    pageObject,
-    hasSelection,
-    showAll,
-    keyExtractor,
-    modalValue,
-    searchTerm,
-    PageActions,
-    columns,
-    getPageInfoColumns,
-  } = state;
-
+const SupplierRequisition = ({
+  runWithLoadingIndicator,
+  dispatch,
+  data,
+  dataState,
+  sortBy,
+  modalValue,
+  isAscending,
+  modalKey,
+  pageObject,
+  hasSelection,
+  showAll,
+  keyExtractor,
+  searchTerm,
+  PageActions,
+  columns,
+  getPageInfoColumns,
+}) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(() => dispatch(PageActions.refreshData()), requisition, 'Requisition');
+  useRecordListener(() => dispatch(PageActions.refreshData()), pageObject, 'Requisition');
 
   const { isFinalised, comment, theirRef, program, daysToSupply } = pageObject;
 
@@ -91,7 +91,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
   const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
 
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     theirRef,
     isFinalised,
@@ -147,7 +147,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
+        dispatch={dispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
@@ -294,9 +294,36 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
-SupplierRequisitionPage.propTypes = {
+const mapStateToProps = (state, ownProps) => {
+  const { pages } = state;
+  const { routeName } = ownProps;
+  const { [routeName]: thisPagesState } = pages;
+  return thisPagesState;
+};
+
+export const SupplierRequisitionPage = connect(mapStateToProps)(SupplierRequisition);
+
+SupplierRequisition.defaultProps = {
+  modalValue: null,
+  showAll: false,
+};
+
+SupplierRequisition.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  requisition: PropTypes.object.isRequired,
+  dataState: PropTypes.object.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  pageObject: PropTypes.object.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
   routeName: PropTypes.string.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  showAll: PropTypes.bool,
+  modalValue: PropTypes.any,
 };
