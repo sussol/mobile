@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,11 +7,12 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
@@ -32,31 +34,28 @@ import { buttonStrings } from '../localization';
  *
  * @prop {String} routeName     The current route name for the top of the navigation stack.
  * @prop {Object} currentUser   The currently logged in user.
- * @prop {Func}   reduxDispatch Dispatch method for the app-wide redux store.
+ * @prop {Func}   dispatch Dispatch method for the app-wide redux store.
  * @prop {Object} navigation    Reference to the main application stack navigator.
  */
-export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
-  const initialState = { page: routeName };
-  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    sortBy,
-    isAscending,
-    searchTerm,
-    PageActions,
-    columns,
-    keyExtractor,
-    showFinalised,
-  } = state;
-
+export const CustomerRequisitions = ({
+  dispatch,
+  navigation,
+  data,
+  sortBy,
+  isAscending,
+  searchTerm,
+  PageActions,
+  columns,
+  keyExtractor,
+  showFinalised,
+}) => {
   const refreshCallback = () => dispatch(PageActions.refreshData(), []);
   // Custom hook to refresh data on this page when becoming the head of the stack again.
   useNavigationFocus(refreshCallback, navigation);
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
   useSyncListener(refreshCallback, 'Requisition');
 
-  const onPressRow = useCallback(rowData => reduxDispatch(gotoCustomerRequisition(rowData)), []);
+  const onPressRow = useCallback(rowData => dispatch(gotoCustomerRequisition(rowData)), []);
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
@@ -81,7 +80,7 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={debouncedDispatch}
+        dispatch={dispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
@@ -122,11 +121,27 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
-CustomerRequisitionsPage.propTypes = {
-  routeName: PropTypes.string.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  navigation: PropTypes.object.isRequired,
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { customerRequisitions } = pages;
+  return customerRequisitions;
 };
 
-CustomerRequisitionsPage.propTypes = { routeName: PropTypes.string.isRequired };
+export const CustomerRequisitionsPage = connect(mapStateToProps)(CustomerRequisitions);
+
+CustomerRequisitions.defaultProps = {
+  showFinalised: false,
+};
+
+CustomerRequisitions.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  navigation: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  showFinalised: PropTypes.bool,
+};
