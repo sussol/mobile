@@ -91,8 +91,8 @@ export const StocktakeEditPage = ({
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
   const onManageStocktake = () => reduxDispatch(gotoStocktakeManagePage(name, stocktake));
-  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
-  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
   const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
     dispatch(PageActions.editCountedQuantity(newValue, rowKey, columnKey));
   const onResetStocktake = () =>

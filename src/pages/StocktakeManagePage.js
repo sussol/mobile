@@ -48,8 +48,8 @@ export const StocktakeManagePage = ({
     if (stocktake) dispatch(PageActions.selectItems(stocktake.itemsInStocktake));
   }, []);
 
-  const onCheck = (rowKey, columnKey) => dispatch(PageActions.selectRow(rowKey, columnKey));
-  const onUncheck = (rowKey, columnKey) => dispatch(PageActions.deselectRow(rowKey, columnKey));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
 
   const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
