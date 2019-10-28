@@ -6,10 +6,11 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { View } from 'react-native';
 
 import { MODAL_KEYS } from '../utilities';
-import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
+import { useNavigationFocus, useSyncListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
@@ -20,28 +21,22 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
 
-export const CustomerInvoicesPage = ({
+export const CustomerInvoices = ({
   currentUser,
-  routeName,
   navigation,
-  dispatch: reduxDispatch,
+  dispatch,
+  data,
+  dataState,
+  sortBy,
+  isAscending,
+  modalKey,
+  hasSelection,
+  keyExtractor,
+  searchTerm,
+  columns,
+  PageActions,
+  showFinalised,
 }) => {
-  const initialState = { page: routeName };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    modalKey,
-    hasSelection,
-    keyExtractor,
-    searchTerm,
-    columns,
-    PageActions,
-    showFinalised,
-  } = state;
-
   // Listen to changes from sync and navigation events re-focusing this screen,
   // such that any side effects that occur trigger a reconcilitation of data.
   const refreshCallback = () => dispatch(PageActions.refreshData());
@@ -57,13 +52,10 @@ export const CustomerInvoicesPage = ({
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
   const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
 
-  const onNavigateToInvoice = useCallback(
-    invoice => reduxDispatch(gotoCustomerInvoice(invoice)),
-    []
-  );
+  const onNavigateToInvoice = useCallback(invoice => dispatch(gotoCustomerInvoice(invoice)), []);
 
   const onCreateInvoice = otherParty => {
-    reduxDispatch(createCustomerInvoice(otherParty, currentUser));
+    dispatch(createCustomerInvoice(otherParty, currentUser));
     onCloseModal();
   };
 
@@ -117,7 +109,7 @@ export const CustomerInvoicesPage = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
+        dispatch={dispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
         sortBy={sortBy}
@@ -170,11 +162,27 @@ export const CustomerInvoicesPage = ({
   );
 };
 
-export default CustomerInvoicesPage;
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { customerInvoices } = pages;
+  return customerInvoices;
+};
 
-CustomerInvoicesPage.propTypes = {
+export const CustomerInvoicesPage = connect(mapStateToProps)(CustomerInvoices);
+
+CustomerInvoices.propTypes = {
   currentUser: PropTypes.object.isRequired,
-  routeName: PropTypes.string.isRequired,
   navigation: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
+  data: PropTypes.object.isRequired,
+  dataState: PropTypes.object.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  columns: PropTypes.array.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  showFinalised: PropTypes.bool.isRequired,
 };
