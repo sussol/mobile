@@ -31,6 +31,83 @@ import { ROUTES } from './constants';
  */
 
 /**
+ * Pushes the Realm explorer route onto the main navigation stack.
+ */
+export const gotoRealmExplorer = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.REALM_EXPLORER,
+    params: {
+      title: 'Database Contents',
+    },
+  });
+
+/**
+ * Pushes the Customer Invoices route onto the main navigation stack.
+ */
+export const gotoCustomerInvoices = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.CUSTOMER_INVOICES,
+    params: {
+      title: navStrings.customer_invoices,
+    },
+  });
+
+/**
+ * Pushes the Customer Requisitions route onto the main navigation stack.
+ */
+export const gotoCustomerRequisitions = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.CUSTOMER_REQUISITIONS,
+    params: {
+      title: navStrings.customer_requisitions,
+    },
+  });
+
+/**
+ * Pushes the Supplier Invoices route onto the main navigation stack.
+ */
+export const gotoSupplierInvoices = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.SUPPLIER_INVOICES,
+    params: {
+      title: navStrings.supplier_invoices,
+    },
+  });
+
+/**
+ * Pushes the Supplier Requisitions route onto the main navigation stack.
+ */
+export const gotoSupplierRequisitions = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.SUPPLIER_REQUISITIONS,
+    params: {
+      title: navStrings.supplier_requisitions,
+    },
+  });
+
+/**
+ * Pushes the Stocktakes route onto the main navigation stack.
+ */
+export const gotoStocktakes = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.STOCKTAKES,
+    params: {
+      title: navStrings.stocktakes,
+    },
+  });
+
+/**
+ * Pushes the Stock route onto the main navigation stack.
+ */
+export const gotoStock = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.STOCK,
+    params: {
+      title: navStrings.current_stock,
+    },
+  });
+
+/**
  * Action creator for navigating to the SupplierRequisition screen.
  *
  * @param {Object} requisition The requisition to pass to the next screen.
