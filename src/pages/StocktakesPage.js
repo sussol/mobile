@@ -7,7 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -26,7 +26,7 @@ import {
 
 export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch, navigation }) => {
   const initialState = { page: routeName };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -57,6 +57,11 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
   const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
@@ -108,8 +113,7 @@ export const StocktakesPage = ({ routeName, currentUser, dispatch: reduxDispatch
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

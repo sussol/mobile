@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
@@ -39,7 +39,7 @@ import { buttonStrings } from '../localization';
  */
 export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
   const initialState = { page: routeName, pageObject: requisition };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -72,7 +72,10 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested()));
   const onSetSuppliedToSuggested = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
-
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     isFinalised,
@@ -120,8 +123,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

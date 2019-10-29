@@ -8,7 +8,7 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { usePageReducer } from '../hooks/usePageReducer';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -50,7 +50,7 @@ export const StocktakeEditPage = ({
   navigation,
 }) => {
   const initialState = { page: routeName, pageObject: stocktake };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     pageObject,
@@ -97,6 +97,11 @@ export const StocktakeEditPage = ({
     dispatch(PageActions.editCountedQuantity(newValue, rowKey, columnKey));
   const onResetStocktake = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
@@ -161,8 +166,7 @@ export const StocktakeEditPage = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { usePageReducer, useRecordListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -20,7 +20,7 @@ import globalStyles from '../globalStyles';
 
 export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const initialState = { page: routeName, pageObject: transaction };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     pageObject,
@@ -59,6 +59,10 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
   const onEditTotalQuantity = (newValue, rowKey) =>
     dispatch(PageActions.editTotalQuantity(newValue, rowKey));
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     theirRef,
@@ -115,8 +119,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

@@ -13,7 +13,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { MODAL_KEYS, debounce, getAllPrograms } from '../utilities';
 import { usePageReducer, useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
@@ -47,7 +47,7 @@ export const SupplierRequisitionsPage = ({
 }) => {
   const initialState = { page: routeName };
 
-  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -81,6 +81,11 @@ export const SupplierRequisitionsPage = ({
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
   const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const onCreateRequisition = otherStoreName => {
     onCloseModal();
@@ -136,8 +141,7 @@ export const SupplierRequisitionsPage = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={debouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />
