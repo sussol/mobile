@@ -85,13 +85,13 @@ export class Synchroniser {
   };
 
   fetchWrapper = async (url, opts) => {
-    const { body } = opts;
+    const { body, headers } = opts;
 
     const bugsnagNotify = async message => {
       const responseText = await responseClone.text();
       bugsnagClient.notify(new Error(message), report => {
         report.context = 'SYNC ERROR';
-        report.metadata = { error: { url, body, responseText } };
+        report.metadata = { error: { url, headers, body, responseText } };
       });
     };
 
