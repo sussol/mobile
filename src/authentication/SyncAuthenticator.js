@@ -26,7 +26,7 @@ const AUTH_ENDPOINT = '/sync/v3/site';
 export class SyncAuthenticator {
   constructor(settings) {
     this.settings = settings;
-    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueId() };
+    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueID() };
   }
 
   /**
