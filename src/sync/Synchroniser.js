@@ -5,7 +5,10 @@
 
 /* eslint-disable no-await-in-loop */
 
+import DeviceInfo from 'react-native-device-info';
+
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+
 import {
   incrementSyncProgress,
   setSyncProgress,
@@ -30,7 +33,6 @@ const {
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
-  HARDWARE_UUID,
 } = SETTINGS_KEYS;
 
 const MIN_SYNC_BATCH_SIZE = 10;
@@ -53,7 +55,7 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
-    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
+    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueId() };
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }

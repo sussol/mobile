@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import DeviceInfo from 'react-native-device-info';
+
 import { authenticateAsync, getAuthHeader, hashPassword } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
@@ -17,7 +19,6 @@ const {
   SYNC_SITE_PASSWORD_HASH,
   THIS_STORE_ID,
   THIS_STORE_NAME_ID,
-  HARDWARE_UUID,
 } = SETTINGS_KEYS;
 
 const AUTH_ENDPOINT = '/sync/v3/site';
@@ -25,7 +26,7 @@ const AUTH_ENDPOINT = '/sync/v3/site';
 export class SyncAuthenticator {
   constructor(settings) {
     this.settings = settings;
-    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
+    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueId() };
   }
 
   /**

@@ -3,11 +3,13 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+import DeviceInfo from 'react-native-device-info';
+
 import { authenticateAsync, AUTH_ERROR_CODES, hashPassword } from 'sussol-utilities';
 
 import { SETTINGS_KEYS } from '../settings';
 
-const { SYNC_URL, THIS_STORE_ID, HARDWARE_UUID } = SETTINGS_KEYS;
+const { SYNC_URL, THIS_STORE_ID } = SETTINGS_KEYS;
 
 const { CONNECTION_FAILURE, INVALID_PASSWORD } = AUTH_ERROR_CODES;
 
@@ -21,7 +23,7 @@ export class UserAuthenticator {
     this.settings = settings;
     this.activeUsername = '';
     this.activePassword = '';
-    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
+    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueId() };
   }
 
   /**
