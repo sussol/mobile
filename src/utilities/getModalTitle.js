@@ -14,7 +14,8 @@ export const MODAL_KEYS = {
   SELECT_ITEM: 'selectItem',
   SELECT_MONTH: 'selectMonth',
   SELECT_CUSTOMER: 'selectCustomer',
-  SELECT_SUPPLIER: 'selectSupplier',
+  SELECT_INTERNAL_SUPPLIER: 'selectInternalSupplier',
+  SELECT_EXTERNAL_SUPPLIER: 'selectExternalSupplier',
   SELECT_LANGUAGE: 'selectLanguage',
   PROGRAM_REQUISITION: 'programRequisition',
   PROGRAM_STOCKTAKE: 'programStocktake',
@@ -47,7 +48,8 @@ export const getModalTitle = modalKey => {
       return modalStrings.edit_their_reference;
     case MODAL_KEYS.SELECT_CUSTOMER:
       return modalStrings.search_for_the_customer;
-    case MODAL_KEYS.SELECT_SUPPLIER:
+    case MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER:
+    case MODAL_KEYS.SELECT_INTERNAL_SUPPLIER:
       return modalStrings.search_for_the_supplier;
     case MODAL_KEYS.VIEW_REGIMEN_DATA:
       return buttonStrings.view_regimen_data;
