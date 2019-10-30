@@ -10,6 +10,7 @@ import { createRecord } from '../database/utilities/index';
 import { navStrings } from '../localization/index';
 import { SETTINGS_KEYS } from '../settings/index';
 import { getCurrentRouteName } from './selectors';
+import { ROUTES } from './constants';
 
 /**
  * Navigation Action Creators.
@@ -30,13 +31,90 @@ import { getCurrentRouteName } from './selectors';
  */
 
 /**
+ * Pushes the Realm explorer route onto the main navigation stack.
+ */
+export const gotoRealmExplorer = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.REALM_EXPLORER,
+    params: {
+      title: 'Database Contents',
+    },
+  });
+
+/**
+ * Pushes the Customer Invoices route onto the main navigation stack.
+ */
+export const gotoCustomerInvoices = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.CUSTOMER_INVOICES,
+    params: {
+      title: navStrings.customer_invoices,
+    },
+  });
+
+/**
+ * Pushes the Customer Requisitions route onto the main navigation stack.
+ */
+export const gotoCustomerRequisitions = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.CUSTOMER_REQUISITIONS,
+    params: {
+      title: navStrings.customer_requisitions,
+    },
+  });
+
+/**
+ * Pushes the Supplier Invoices route onto the main navigation stack.
+ */
+export const gotoSupplierInvoices = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.SUPPLIER_INVOICES,
+    params: {
+      title: navStrings.supplier_invoices,
+    },
+  });
+
+/**
+ * Pushes the Supplier Requisitions route onto the main navigation stack.
+ */
+export const gotoSupplierRequisitions = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.SUPPLIER_REQUISITIONS,
+    params: {
+      title: navStrings.supplier_requisitions,
+    },
+  });
+
+/**
+ * Pushes the Stocktakes route onto the main navigation stack.
+ */
+export const gotoStocktakes = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.STOCKTAKES,
+    params: {
+      title: navStrings.stocktakes,
+    },
+  });
+
+/**
+ * Pushes the Stock route onto the main navigation stack.
+ */
+export const gotoStock = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.STOCK,
+    params: {
+      title: navStrings.current_stock,
+    },
+  });
+
+/**
  * Action creator for navigating to the SupplierRequisition screen.
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
 export const gotoStocktakeManagePage = (stocktakeName, stocktake) =>
   NavigationActions.navigate({
-    routeName: 'stocktakeManager',
+    routeName: ROUTES.STOCKTAKE_MANAGER,
     params: {
       title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
@@ -60,10 +138,10 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
   const navigationActionCreator =
-    currentRouteName === 'stocktakes' ? NavigationActions.navigate : StackActions.replace;
+    currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
 
   const navigationParameters = {
-    routeName: usesReasons ? 'stocktakeEditorWithReasons' : 'stocktakeEditor',
+    routeName: usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR,
     params: { title: navStrings.stocktake, stocktake },
   };
 
@@ -92,7 +170,7 @@ export const gotoCustomerInvoice = transaction => dispatch => {
   }
 
   const navigationAction = NavigationActions.navigate({
-    routeName: 'customerInvoice',
+    routeName: ROUTES.CUSTOMER_INVOICE,
     params: {
       title: `${navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
@@ -124,7 +202,7 @@ export const gotoSupplierInvoice = transaction => dispatch => {
   }
 
   const navigationAction = NavigationActions.navigate({
-    routeName: 'supplierInvoice',
+    routeName: ROUTES.SUPPLIER_INVOICE,
     params: {
       title: `${navStrings.invoice} ${transaction.serialNumber}`,
       transaction,
@@ -141,7 +219,9 @@ export const gotoSupplierInvoice = transaction => dispatch => {
  */
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
-    routeName: !requisition.program ? 'supplierRequisition' : 'supplierRequisitionWithProgram',
+    routeName: !requisition.program
+      ? ROUTES.SUPPLIER_REQUISITION
+      : ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM,
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,
@@ -155,7 +235,7 @@ export const gotoSupplierRequisition = requisition =>
  */
 export const gotoCustomerRequisition = requisition =>
   NavigationActions.navigate({
-    routeName: 'customerRequisition',
+    routeName: ROUTES.CUSTOMER_REQUISITION,
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,

@@ -69,8 +69,8 @@ export const SupplierRequisitionsPage = ({
   useSyncListener(refreshCallback, 'Requisition');
 
   const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
-  const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
-  const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
+  const { SELECT_INTERNAL_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
+  const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_INTERNAL_SUPPLIER;
 
   const onPressRow = useCallback(rowData => reduxDispatch(gotoSupplierRequisition(rowData)), []);
   const onConfirmDelete = () => dispatch(PageActions.deleteRequisitions());
@@ -102,7 +102,7 @@ export const SupplierRequisitionsPage = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case SELECT_SUPPLIER:
+      case SELECT_INTERNAL_SUPPLIER:
         return onCreateRequisition;
       case PROGRAM_REQUISITION:
         return onCreateProgramRequisition;

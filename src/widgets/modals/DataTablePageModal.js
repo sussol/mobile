@@ -83,11 +83,15 @@ const DataTablePageModalComponent = ({
             onSelect={onSelect}
           />
         );
-
-      case MODAL_KEYS.SELECT_SUPPLIER:
+      case MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER:
+      case MODAL_KEYS.SELECT_INTERNAL_SUPPLIER: {
+        const options =
+          modalKey === MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER
+            ? UIDatabase.objects('ExternalSupplier')
+            : UIDatabase.objects('InternalSupplier');
         return (
           <AutocompleteSelector
-            options={UIDatabase.objects('ExternalSupplier')}
+            options={options}
             isOpen={isOpen}
             placeholderText={modalStrings.start_typing_to_select_supplier}
             queryString="name BEGINSWITH[c] $0"
@@ -95,6 +99,7 @@ const DataTablePageModalComponent = ({
             onSelect={onSelect}
           />
         );
+      }
 
       case MODAL_KEYS.PROGRAM_STOCKTAKE:
       case MODAL_KEYS.PROGRAM_REQUISITION:
