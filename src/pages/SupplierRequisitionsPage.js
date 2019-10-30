@@ -15,7 +15,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { MODAL_KEYS, getAllPrograms, debounce } from '../utilities';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
 import { getItemLayout } from './dataTableUtilities';
@@ -64,8 +64,8 @@ export const SupplierRequisitions = ({
   useSyncListener(refreshCallback, 'Requisition');
 
   const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
-  const { SELECT_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
-  const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_SUPPLIER;
+  const { SELECT_INTERNAL_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
+  const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_INTERNAL_SUPPLIER;
 
   const onPressRow = useCallback(rowData => dispatch(gotoSupplierRequisition(rowData)), []);
   const onConfirmDelete = () => dispatch(PageActions.deleteRequisitions());
@@ -76,6 +76,11 @@ export const SupplierRequisitions = ({
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
   const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const onCreateRequisition = otherStoreName => {
     onCloseModal();
@@ -99,7 +104,7 @@ export const SupplierRequisitions = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case SELECT_SUPPLIER:
+      case SELECT_INTERNAL_SUPPLIER:
         return onCreateRequisition;
       case PROGRAM_REQUISITION:
         return onCreateProgramRequisition;
@@ -131,8 +136,7 @@ export const SupplierRequisitions = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={dispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

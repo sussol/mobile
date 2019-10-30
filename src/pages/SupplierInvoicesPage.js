@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 import { gotoSupplierInvoice, createSupplierInvoice } from '../navigation/actions';
@@ -44,7 +44,7 @@ export const SupplierInvoices = ({
 
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_SUPPLIER));
+  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER));
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
@@ -53,6 +53,10 @@ export const SupplierInvoices = ({
 
   const onNavigateToInvoice = useCallback(invoice => dispatch(gotoSupplierInvoice(invoice)), []);
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
   const onCreateInvoice = otherParty => {
     dispatch(createSupplierInvoice(otherParty, currentUser));
     onCloseModal();
@@ -70,7 +74,7 @@ export const SupplierInvoices = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_SUPPLIER:
+      case MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER:
         return onCreateInvoice;
       default:
         return null;
@@ -100,8 +104,7 @@ export const SupplierInvoices = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={dispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

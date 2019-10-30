@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -57,6 +57,11 @@ export const Stocktakes = ({
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
   const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
@@ -108,8 +113,7 @@ export const Stocktakes = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={dispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

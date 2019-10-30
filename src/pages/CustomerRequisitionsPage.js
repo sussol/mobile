@@ -18,6 +18,7 @@ import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
+import { debounce } from '../utilities/index';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -59,6 +60,11 @@ export const CustomerRequisitions = ({
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -80,8 +86,7 @@ export const CustomerRequisitions = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={dispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

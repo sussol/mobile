@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { useRecordListener } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -57,7 +57,11 @@ export const SupplierInvoice = ({
   const onEditTotalQuantity = (newValue, rowKey) =>
     dispatch(PageActions.editTotalQuantity(newValue, rowKey));
 
-  const pageInfoColumns = useCallback(() => getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     theirRef,
     isFinalised,
@@ -113,8 +117,7 @@ export const SupplierInvoice = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={dispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

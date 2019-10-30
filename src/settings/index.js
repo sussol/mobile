@@ -18,7 +18,6 @@ export const SETTINGS_KEYS = {
   THIS_STORE_NAME_ID: 'ThisStoreNameId',
   THIS_STORE_TAGS: 'ThisStoreTags',
   THIS_STORE_CUSTOM_DATA: 'ThisStoreCustomData',
-  HARDWARE_UUID: 'Hardware_UUID',
 };
 
 export const getAppVersion = async () => {

@@ -30,8 +30,7 @@ const HeaderCell = React.memo(
     SortAscComponent,
     SortDescComponent,
     SortNeutralComponent,
-    onPressAction,
-    dispatch,
+    onPress,
     sortable,
     containerStyle,
     textStyle,
@@ -39,9 +38,7 @@ const HeaderCell = React.memo(
     isLastCell,
     ...otherProps
   }) => {
-    const onPress = () => {
-      dispatch(onPressAction(columnKey));
-    };
+    const onPressCell = () => onPress(columnKey);
 
     const Icon = () => {
       switch (sortDirection) {
@@ -57,12 +54,12 @@ const HeaderCell = React.memo(
       }
     };
 
-    const Container = onPressAction ? TouchableOpacity : View;
+    const Container = onPress ? TouchableOpacity : View;
 
     const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
 
     return (
-      <Container style={internalContainerStyle} onPress={onPress} {...otherProps}>
+      <Container style={internalContainerStyle} onPress={onPressCell} {...otherProps}>
         <Text style={textStyle}>{title}</Text>
         {sortable && <Icon />}
       </Container>

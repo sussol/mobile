@@ -1,7 +1,5 @@
 import { Settings } from 'react-native-database';
 
-import DeviceInfo from 'react-native-device-info';
-
 import { SETTINGS_KEYS } from './index';
 import { MILLISECONDS_PER_DAY } from '../database/utilities';
 import { setCurrentLanguage, DEFAULT_LANGUAGE } from '../localization';
@@ -13,7 +11,6 @@ export class MobileAppSettings extends Settings {
   constructor() {
     super(UIDatabase);
     this.load();
-    this.set(SETTINGS_KEYS.HARDWARE_UUID, DeviceInfo.getUniqueId());
     this.refreshGlobals();
   }
 
@@ -54,7 +51,7 @@ export class MobileAppSettings extends Settings {
   // Call functions for initialising the app on start. Checks database for any
   // settings. If no settings found, calls |setDefaults()|.
   load() {
-    if (this.database.objects('Setting').length <= 0) this.setDefaults();
+    if (UIDatabase.objects('Setting').length <= 0) this.setDefaults();
     setCurrentLanguage(this.get(SETTINGS_KEYS.CURRENT_LANGUAGE));
   }
 

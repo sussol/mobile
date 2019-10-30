@@ -10,8 +10,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS } from '../utilities';
-
+import { MODAL_KEYS, debounce } from '../utilities';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
@@ -77,6 +76,7 @@ const SupplierRequisition = ({
 
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onHideOverStocked = () => dispatch(PageActions.hideOverStocked());
+
   const onShowOverStocked = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.showOverStocked()));
   const onSetRequestedToSuggested = () =>
@@ -86,6 +86,10 @@ const SupplierRequisition = ({
   const onAddFromMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Requisition')));
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
   const onEditRequiredQuantity = (newValue, rowKey) =>
     dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey));
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
@@ -147,8 +151,7 @@ const SupplierRequisition = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={dispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

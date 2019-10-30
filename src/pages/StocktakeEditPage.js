@@ -4,12 +4,12 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useMemo, useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { getItemLayout } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -90,7 +90,12 @@ export const StocktakeEdit = ({
   const onResetStocktake = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
 
-  const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     isFinalised,
     name,
@@ -153,8 +158,7 @@ export const StocktakeEdit = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={dispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

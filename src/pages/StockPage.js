@@ -19,6 +19,7 @@ import { useSyncListener } from '../hooks';
 import { DataTablePageView, SearchBar } from '../widgets';
 
 import { ItemDetails } from '../widgets/modals/ItemDetails';
+import { debounce } from '../utilities/index';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -55,6 +56,11 @@ export const Stock = ({
   const onDeselectRow = () => dispatch(PageActions.deselectRow(selectedRow.id));
   const onFilterData = value => dispatch(PageActions.filterData(value));
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -76,8 +82,7 @@ export const Stock = ({
   const renderHeader = () => (
     <DataTableHeaderRow
       columns={columns}
-      dispatch={dispatch}
-      sortAction={PageActions.sortData}
+      onPress={onSortColumn}
       isAscending={isAscending}
       sortBy={sortBy}
     />

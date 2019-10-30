@@ -4,13 +4,20 @@
  */
 
 /**
- * Selects a pageObject field from within the `pages` state.
+ * Selects the current routes state.
  */
-export const pageObjectSelector = state => {
+export const pageStateSelector = state => {
   const { pages } = state;
   const { currentRoute } = pages;
 
-  const pageState = pages[currentRoute];
+  return pages[currentRoute];
+};
+
+/**
+ * Selects a pageObject field from within the `pages` state.
+ */
+export const pageObjectSelector = state => {
+  const pageState = pageStateSelector(state);
 
   const { pageObject } = pageState;
 
