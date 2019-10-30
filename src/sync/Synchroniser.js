@@ -5,7 +5,10 @@
 
 /* eslint-disable no-await-in-loop */
 
+import DeviceInfo from 'react-native-device-info';
+
 import { Client as BugsnagClient } from 'bugsnag-react-native';
+
 import {
   incrementSyncProgress,
   setSyncProgress,
@@ -30,7 +33,6 @@ const {
   SYNC_SERVER_ID,
   SYNC_SITE_ID,
   SYNC_URL,
-  HARDWARE_UUID,
 } = SETTINGS_KEYS;
 
 const MIN_SYNC_BATCH_SIZE = 10;
@@ -53,7 +55,7 @@ export class Synchroniser {
     this.settings = settings;
     this.syncQueue = new SyncQueue(this.database);
     this.dispatch = dispatch;
-    this.extraHeaders = { 'msupply-site-uuid': settings.get(HARDWARE_UUID) };
+    this.extraHeaders = { 'msupply-site-uuid': DeviceInfo.getUniqueID() };
     this.refreshSyncParams();
     if (this.isInitialised()) this.syncQueue.enable();
   }
@@ -85,13 +87,13 @@ export class Synchroniser {
   };
 
   fetchWrapper = async (url, opts) => {
-    const { body } = opts;
+    const { body, headers } = opts;
 
     const bugsnagNotify = async message => {
       const responseText = await responseClone.text();
       bugsnagClient.notify(new Error(message), report => {
         report.context = 'SYNC ERROR';
-        report.metadata = { error: { url, body, responseText } };
+        report.metadata = { error: { url, headers, body, responseText } };
       });
     };
 
