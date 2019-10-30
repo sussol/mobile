@@ -7,7 +7,7 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { useRecordListener, usePageReducer } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -37,7 +37,7 @@ import globalStyles from '../globalStyles';
  */
 export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, routeName }) => {
   const initialState = { page: routeName, pageObject: transaction };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -70,9 +70,18 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+  const onEditTotalQuantity = (newValue, rowKey) =>
+    dispatch(PageActions.editTotalQuantity(newValue, rowKey));
 
   const onAddMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
@@ -80,13 +89,13 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     isFinalised,
   ]);
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
-        return PageActions.editTotalQuantity;
+        return onEditTotalQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -117,8 +126,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
@@ -130,8 +138,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

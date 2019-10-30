@@ -32,19 +32,12 @@ import RefContext from './DataTable/RefContext';
  * @param {string|number} value The value to render in cell
  * @param {string|number} rowKey Unique key associated to row cell is in
  * @param {string|number} columnKey Unique key associated to column cell is in
- * @param {bool} disabled If `true` will render a plain Cell element with no interaction
- * @param {bool} isFocused If `false` will TouchableOpacity that dispatches a focusAction
- *                         when pressed. When `true` will render a TextInput with focus
-
- * @param {func}  dispatch Reducer dispatch callback for handling actions
+ * @param {bool} isDisabled If `true` will render a plain Cell element with no interaction
  * @param {Number}  width Optional flex property to inject into styles.
- * @param {Bool}  isLastCell Indicator for if this cell is the last
- *                                   in a row. Removing the borderRight if true.
+ * @param {Bool}  isLastCell Indicator if this cell is the last in a row.
+ * @param {Func} onEndEditing Callback for onEndEditing event.
  * @param {String}  placeholder String to display when the cell is empty.
- * @param {func} editAction Action creator for handling editing of this cell.
- *                          `(newValue, rowKey, columnKey) => {...}`
  * @param {String} underlineColor    Underline colour of TextInput on Android.
- *
  */
 
 const { expiryBatchView, expiryBatchText, expiryBatchPlaceholderText } = dataTableStyles;
@@ -56,8 +49,7 @@ export const ExpiryDateInput = React.memo(
     columnKey,
     isDisabled,
     placeholderColour,
-    editAction,
-    dispatch,
+    onEndEditing,
     isLastCell,
     width,
     debug,
@@ -81,7 +73,7 @@ export const ExpiryDateInput = React.memo(
     // to the underlying model are not committed until a valid date is entered.
     const finishEditingExpiryDate = () => {
       finaliseExpiryDate();
-      dispatch(editAction(parseExpiryDate(expiryDate), rowKey, columnKey));
+      onEndEditing(parseExpiryDate(expiryDate), rowKey, columnKey);
     };
 
     const onSubmit = () => {
@@ -135,8 +127,7 @@ ExpiryDateInput.propTypes = {
   rowKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   columnKey: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   isDisabled: PropTypes.bool,
-  editAction: PropTypes.func.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  onEndEditing: PropTypes.func.isRequired,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,
   debug: PropTypes.bool,

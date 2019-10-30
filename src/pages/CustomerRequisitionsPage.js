@@ -16,6 +16,7 @@ import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
+import { debounce } from '../utilities/index';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -37,7 +38,7 @@ import { buttonStrings } from '../localization';
  */
 export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, navigation }) => {
   const initialState = { page: routeName };
-  const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -60,6 +61,11 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -69,7 +75,6 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
           rowData={data[index]}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
           onPress={onPressRow}
           rowIndex={index}
         />
@@ -82,8 +87,7 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={debouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

@@ -7,8 +7,7 @@ import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { MODAL_KEYS } from '../utilities';
-
+import { MODAL_KEYS, debounce } from '../utilities';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
@@ -39,7 +38,7 @@ import { buttonStrings, modalStrings, programStrings } from '../localization';
  */
 export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
   const initialState = { page: routeName, pageObject: requisition };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -77,6 +76,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
 
   const onFilterData = value => dispatch(PageActions.filterData(value));
   const onHideOverStocked = () => dispatch(PageActions.hideOverStocked());
+
   const onShowOverStocked = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.showOverStocked()));
   const onSetRequestedToSuggested = () =>
@@ -86,6 +86,15 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const onAddFromMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Requisition')));
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+  const onEditRequiredQuantity = (newValue, rowKey) =>
+    dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     theirRef,
@@ -93,13 +102,13 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     daysToSupply,
   ]);
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
-        return PageActions.editRequisitionItemRequiredQuantity;
+        return onEditRequiredQuantity;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -130,8 +139,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
@@ -143,8 +151,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

@@ -8,7 +8,7 @@ import React, { useCallback, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { usePageReducer } from '../hooks/usePageReducer';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -50,7 +50,7 @@ export const StocktakeEditPage = ({
   navigation,
 }) => {
   const initialState = { page: routeName, pageObject: stocktake };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     pageObject,
@@ -82,15 +82,26 @@ export const StocktakeEditPage = ({
 
   const onEditName = value => dispatch(PageActions.editPageObjectName(value, 'Stocktake'));
   const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onEditBatch = rowKey => PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey);
-  const onEditReason = rowKey => PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey);
+  const onEditBatch = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.EDIT_STOCKTAKE_BATCH, rowKey));
+  const onEditReason = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
   const onEditComment = value => dispatch(PageActions.editComment(value, 'Stocktake'));
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
   const onManageStocktake = () => reduxDispatch(gotoStocktakeManagePage(name, stocktake));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+  const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editCountedQuantity(newValue, rowKey, columnKey));
   const onResetStocktake = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.resetStocktake()));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
@@ -98,15 +109,15 @@ export const StocktakeEditPage = ({
     name,
   ]);
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'countedTotalQuantity':
-        return PageActions.editCountedQuantity;
+        return onEditCountedQuantity;
       case 'batch':
         return onEditBatch;
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       case 'reasonTitle':
         return onEditReason;
       default:
@@ -143,8 +154,7 @@ export const StocktakeEditPage = ({
           rowKey={rowKey}
           columns={columns}
           isFinalised={isFinalised}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
@@ -156,8 +166,7 @@ export const StocktakeEditPage = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

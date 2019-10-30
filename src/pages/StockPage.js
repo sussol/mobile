@@ -17,6 +17,7 @@ import { usePageReducer, useSyncListener } from '../hooks';
 import { DataTablePageView, SearchBar } from '../widgets';
 
 import { ItemDetails } from '../widgets/modals/ItemDetails';
+import { debounce } from '../utilities/index';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -35,7 +36,7 @@ import { ItemDetails } from '../widgets/modals/ItemDetails';
  */
 export const StockPage = ({ routeName }) => {
   const initialState = { page: routeName };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -57,6 +58,11 @@ export const StockPage = ({ routeName }) => {
   const onDeselectRow = () => dispatch(PageActions.deselectRow(selectedRow.id));
   const onFilterData = value => dispatch(PageActions.filterData(value));
 
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
@@ -67,8 +73,6 @@ export const StockPage = ({ routeName }) => {
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          isFinalised={false}
-          dispatch={dispatch}
           rowIndex={index}
           onPress={onSelectRow}
         />
@@ -80,8 +84,7 @@ export const StockPage = ({ routeName }) => {
   const renderHeader = () => (
     <DataTableHeaderRow
       columns={columns}
-      dispatch={instantDebouncedDispatch}
-      sortAction={PageActions.sortData}
+      onPress={onSortColumn}
       isAscending={isAscending}
       sortBy={sortBy}
     />
