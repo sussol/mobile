@@ -50,7 +50,7 @@ export const SupplierInvoicesPage = ({
 
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_SUPPLIER));
+  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER));
   const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
   const onCancelDelete = () => dispatch(PageActions.deselectAll());
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
@@ -77,7 +77,7 @@ export const SupplierInvoicesPage = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_SUPPLIER:
+      case MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER:
         return onCreateInvoice;
       default:
         return null;
