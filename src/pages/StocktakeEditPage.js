@@ -4,7 +4,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
@@ -95,7 +95,7 @@ export const StocktakeEdit = ({
     []
   );
 
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     isFinalised,
     name,
@@ -213,6 +213,7 @@ export const StocktakeEdit = ({
 const mapStateToProps = (state, ownProps) => {
   const { pages } = state;
   const { routeName } = ownProps;
+
   const { [routeName]: thisPagesState } = pages;
   return thisPagesState;
 };

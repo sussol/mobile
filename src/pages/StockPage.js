@@ -123,12 +123,16 @@ const mapStateToProps = state => {
 
 export const StockPage = connect(mapStateToProps)(Stock);
 
+Stock.defaultProps = {
+  selectedRow: null,
+};
+
 Stock.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
-  selectedRow: PropTypes.object.isRequired,
+  selectedRow: PropTypes.object,
   searchTerm: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,

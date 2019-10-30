@@ -173,11 +173,15 @@ const mapStateToProps = state => {
 
 export const CustomerInvoicesPage = connect(mapStateToProps)(CustomerInvoices);
 
+CustomerInvoices.defaultProps = {
+  showFinalised: false,
+};
+
 CustomerInvoices.propTypes = {
   currentUser: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
-  data: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
@@ -187,5 +191,5 @@ CustomerInvoices.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
   PageActions: PropTypes.object.isRequired,
-  showFinalised: PropTypes.bool.isRequired,
+  showFinalised: PropTypes.bool,
 };

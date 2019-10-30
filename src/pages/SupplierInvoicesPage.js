@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -172,7 +173,10 @@ const mapStateToProps = state => {
 
 export const SupplierInvoicesPage = connect(mapStateToProps)(SupplierInvoices);
 
-/* eslint-disable react/forbid-prop-types */
+SupplierInvoices.defaultProps = {
+  showFinalised: false,
+};
+
 SupplierInvoices.propTypes = {
   currentUser: PropTypes.object.isRequired,
   navigation: PropTypes.object.isRequired,
@@ -187,5 +191,5 @@ SupplierInvoices.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
   PageActions: PropTypes.object.isRequired,
-  showFinalised: PropTypes.bool.isRequired,
+  showFinalised: PropTypes.bool,
 };
