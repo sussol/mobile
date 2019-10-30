@@ -113,6 +113,7 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
           dispatch={dispatch}
           getAction={getAction}
           rowIndex={index}
+          isFinalised={isFinalised}
         />
       );
     },
