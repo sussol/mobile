@@ -9,6 +9,7 @@ import DataTable from './DataTable';
 import DataTableHeaderRow from './DataTableHeaderRow';
 import DataTableRow from './DataTableRow';
 import TouchableNoFeedback from './TouchableNoFeedback';
+import TextInputCellWithState from './TextInputCellWithState';
 
 export {
   DataTable,
@@ -22,4 +23,5 @@ export {
   HeaderCell,
   DataTableRow,
   TouchableNoFeedback,
+  TextInputCellWithState,
 };
