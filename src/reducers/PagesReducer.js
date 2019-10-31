@@ -28,11 +28,10 @@ export const PagesReducer = (state = {}, action) => {
       const { payload } = action;
       const { route } = payload || {};
 
-      if (!route) return state;
-
-      const newPageState = DataTablePageReducer(state[route], action);
-
-      return { ...state, [route]: newPageState };
+      const newState = route
+        ? { ...state, [route]: DataTablePageReducer(state[route], action) }
+        : state;
+      return newState;
     }
   }
 };
