@@ -13,7 +13,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { UIDatabaseType } from '../database';
 
 import { navStrings } from '../localization';
-import { SETTINGS_KEYS, SETTINGS_TYPES } from '../settings';
+import { SETTINGS_KEYS } from '../settings';
+import { MobileAppSettings } from '../settings/MobileAppSettings';
 
 import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
 
@@ -162,7 +163,7 @@ MenuPage.propTypes = {
   isInAdminMode: PropTypes.bool,
   logOut: PropTypes.func.isRequired,
   navigateTo: PropTypes.func.isRequired,
-  settings: PropTypes.shape(SETTINGS_TYPES).isRequired,
+  settings: PropTypes.instanceOf(MobileAppSettings).isRequired,
 };
 
 MenuPage.defaultProps = {

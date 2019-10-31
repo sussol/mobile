@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import PropTypes from 'prop-types';
 
 export const SETTINGS_KEYS = {
   APP_VERSION: 'AppVersion',
@@ -20,27 +19,6 @@ export const SETTINGS_KEYS = {
   THIS_STORE_TAGS: 'ThisStoreTags',
   THIS_STORE_CUSTOM_DATA: 'ThisStoreCustomData',
   HARDWARE_UUID: 'Hardware_UUID',
-};
-
-export const SETTINGS_TYPES = {
-  APP_VERSION: PropTypes.string,
-  CURRENT_LANGUAGE: PropTypes.string,
-  MOST_RECENT_USERNAME: PropTypes.string,
-  SUPPLYING_STORE_ID: PropTypes.string,
-  SUPPLYING_STORE_NAME_ID: PropTypes.string,
-  LAST_POST_PROCESSING_FAILED: PropTypes.bool,
-  SYNC_IS_INITIALISED: PropTypes.bool,
-  SYNC_PRIOR_FAILED: PropTypes.bool,
-  SYNC_URL: PropTypes.string,
-  SYNC_SITE_ID: PropTypes.string,
-  SYNC_SERVER_ID: PropTypes.string,
-  SYNC_SITE_NAME: PropTypes.string,
-  SYNC_SITE_PASSWORD_HASH: PropTypes.string,
-  THIS_STORE_ID: PropTypes.string,
-  THIS_STORE_NAME_ID: PropTypes.string,
-  THIS_STORE_TAGS: PropTypes.string,
-  THIS_STORE_CUSTOM_DATA: PropTypes.object,
-  HARDWARE_UUID: PropTypes.string,
 };
 
 export const getAppVersion = async () => {
