@@ -33,7 +33,8 @@ export class DemoUserModal extends React.Component {
     this.errorTimeoutId = null;
   }
 
-  componentWillUpdate() {
+  // eslint-disable-next-line camelcase, react/sort-comp
+  UNSAFE_componentWillUpdate() {
     if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 

@@ -18,11 +18,8 @@ import TouchableCell from './TouchableCell';
  *                                                  checked and disabled
  * @param {React.element} DisabledUncheckedComponent  Component to render when cell is
  *                                                    checked and disabled
- * @param {func} onCheckAction Action creator for handling checking of this cell.
- *                          `(rowKey, columnKey) => {...}`
- * @param {func} onUncheckAction Action creator for handling unchecking of this cell.
- *                          `(rowKey, columnKey) => {...}`
- * @param {func} dispatch Reducer dispatch callback for handling actions
+ * @param {func} onCheck Callback when this cell is checked.
+ * @param {func} onUncheck Callback when this cell is unchecked.
  * @param {Object} containerStyle Style object for the containing Touchable component
  */
 
@@ -36,9 +33,8 @@ const CheckableCell = React.memo(
     UncheckedComponent,
     DisabledCheckedComponent,
     DisabledUncheckedComponent,
-    onCheckAction,
-    onUncheckAction,
-    dispatch,
+    onCheck,
+    onUncheck,
     containerStyle,
     width,
     isLastCell,
@@ -46,7 +42,7 @@ const CheckableCell = React.memo(
   }) => {
     if (debug) console.log(`- CheckableCell: ${rowKey},${columnKey}`);
 
-    const onPressAction = isChecked ? onUncheckAction : onCheckAction;
+    const onPressAction = isChecked ? onUncheck : onCheck;
 
     const renderCheck = isChecked
       ? (isDisabled && DisabledCheckedComponent) || CheckedComponent
@@ -57,8 +53,7 @@ const CheckableCell = React.memo(
         renderChildren={renderCheck}
         rowKey={rowKey}
         columnKey={columnKey}
-        onPressAction={onPressAction}
-        dispatch={dispatch}
+        onPress={onPressAction}
         containerStyle={containerStyle}
         width={width}
         isLastCell={isLastCell}
@@ -81,9 +76,8 @@ CheckableCell.propTypes = {
   UncheckedComponent: PropTypes.func.isRequired,
   DisabledCheckedComponent: PropTypes.func,
   DisabledUncheckedComponent: PropTypes.func,
-  onCheckAction: PropTypes.func.isRequired,
-  onUncheckAction: PropTypes.func.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
   containerStyle: PropTypes.object,
   width: PropTypes.number,
   isLastCell: PropTypes.bool,

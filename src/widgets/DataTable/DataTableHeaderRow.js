@@ -22,7 +22,7 @@ import { dataTableStyles } from '../../globalStyles';
  *
  *
  */
-const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch, sortAction }) => {
+const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, onPress }) => {
   const { headerRow, headerCells, cellText } = dataTableStyles;
   return (
     <HeaderRow
@@ -41,8 +41,7 @@ const DataTableHeaderRow = React.memo(({ columns, sortBy, isAscending, dispatch,
               SortDescComponent={SortDescIcon}
               SortNeutralComponent={SortNeutralIcon}
               columnKey={key}
-              onPressAction={sortable ? sortAction : null}
-              dispatch={dispatch}
+              onPress={sortable ? onPress : null}
               sortDirection={directionForThisColumn}
               sortable={sortable}
               width={width}
@@ -61,15 +60,13 @@ DataTableHeaderRow.propTypes = {
   columns: PropTypes.arrayOf(PropTypes.object),
   sortBy: PropTypes.string,
   isAscending: PropTypes.bool.isRequired,
-  dispatch: PropTypes.func,
-  sortAction: PropTypes.func,
+  onPress: PropTypes.func,
 };
 
 DataTableHeaderRow.defaultProps = {
   columns: [],
   sortBy: '',
-  dispatch: null,
-  sortAction: null,
+  onPress: null,
 };
 
 export default DataTableHeaderRow;

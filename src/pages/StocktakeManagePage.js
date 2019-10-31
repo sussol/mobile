@@ -19,6 +19,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
+import { debounce } from '../utilities/index';
 
 export const StocktakeManagePage = ({
   routeName,
@@ -27,7 +28,7 @@ export const StocktakeManagePage = ({
   runWithLoadingIndicator,
 }) => {
   const initialState = { page: routeName, pageObject: stocktake };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -50,11 +51,19 @@ export const StocktakeManagePage = ({
     if (stocktake) dispatch(PageActions.selectItems(stocktake.itemsInStocktake));
   }, []);
 
-  const getAction = useCallback((colKey, propName) => {
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'selected':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -83,8 +92,7 @@ export const StocktakeManagePage = ({
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           rowIndex={index}
         />
       );
@@ -96,8 +104,7 @@ export const StocktakeManagePage = ({
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

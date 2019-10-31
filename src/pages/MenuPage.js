@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -5,6 +6,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
@@ -17,28 +19,22 @@ import { SETTINGS_KEYS } from '../settings';
 import { MobileAppSettings } from '../settings/MobileAppSettings';
 
 import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
+import {
+  gotoCustomerInvoices,
+  gotoCustomerRequisitions,
+  gotoSupplierInvoices,
+  gotoSupplierRequisitions,
+  gotoStock,
+  gotoStocktakes,
+  gotoRealmExplorer,
+} from '../navigation/actions';
 
 const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 
-export class MenuPage extends React.Component {
+class Menu extends React.Component {
   constructor(props) {
     super(props);
     this.databaseListenerId = null;
-  }
-
-  componentWillMount() {
-    const { database } = this.props;
-
-    this.databaseListenerId = database.addListener(
-      // Ensure that language changes in login modal are re-rendered onto the MenuPage.
-      (_, recordType) => recordType === 'Setting' && this.forceUpdate()
-    );
-  }
-
-  componentWillUnmount() {
-    const { database } = this.props;
-
-    database.removeListener(this.databaseListenerId);
   }
 
   exportData = async () => {
@@ -56,7 +52,18 @@ export class MenuPage extends React.Component {
   };
 
   render() {
-    const { isInAdminMode, logOut, navigateTo } = this.props;
+    const {
+      isInAdminMode,
+      logOut,
+      navigateToCustomerInvoices,
+      navigateToCustomerRequisitions,
+      navigateToStock,
+      navigateToStocktakes,
+      navigateToSupplierInvoices,
+      navigateToSupplierRequisitions,
+      navigateToRealmExplorer,
+    } = this.props;
+
     return (
       <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
         <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
@@ -71,13 +78,13 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_invoices}
-              onPress={() => navigateTo('customerInvoices', navStrings.customer_invoices)}
+              onPress={navigateToCustomerInvoices}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.customer_requisitions}
-              onPress={() => navigateTo('customerRequisitions', navStrings.customer_requisitions)}
+              onPress={navigateToCustomerRequisitions}
             />
           </View>
 
@@ -92,13 +99,13 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_invoices}
-              onPress={() => navigateTo('supplierInvoices', navStrings.supplier_invoices)}
+              onPress={navigateToSupplierInvoices}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.supplier_requisitions}
-              onPress={() => navigateTo('supplierRequisitions', navStrings.supplier_requisitions)}
+              onPress={navigateToSupplierRequisitions}
             />
             {isInAdminMode && (
               <Button
@@ -121,20 +128,20 @@ export class MenuPage extends React.Component {
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.current_stock}
-              onPress={() => navigateTo('stock', navStrings.current_stock)}
+              onPress={navigateToStock}
             />
             <Button
               style={globalStyles.menuButton}
               textStyle={globalStyles.menuButtonText}
               text={navStrings.stocktakes}
-              onPress={() => navigateTo('stocktakes', navStrings.stocktakes)}
+              onPress={navigateToStocktakes}
             />
             {isInAdminMode && (
               <Button
                 style={globalStyles.menuButton}
                 textStyle={globalStyles.menuButtonText}
                 text="Realm Explorer"
-                onPress={() => navigateTo('realmExplorer', 'Database Contents')}
+                onPress={navigateToRealmExplorer}
               />
             )}
           </View>
@@ -156,18 +163,37 @@ export class MenuPage extends React.Component {
   }
 }
 
-export default MenuPage;
+const actionCreators = {
+  navigateToCustomerInvoices: gotoCustomerInvoices,
+  navigateToCustomerRequisitions: gotoCustomerRequisitions,
+  navigateToStock: gotoStock,
+  navigateToStocktakes: gotoStocktakes,
+  navigateToSupplierInvoices: gotoSupplierInvoices,
+  navigateToSupplierRequisitions: gotoSupplierRequisitions,
+  navigateToRealmExplorer: gotoRealmExplorer,
+};
 
-MenuPage.propTypes = {
+export const MenuPage = connect(
+  null,
+  actionCreators
+)(Menu);
+
+Menu.defaultProps = {
+  isInAdminMode: false,
+};
+
+Menu.propTypes = {
   database: UIDatabaseType.isRequired,
   isInAdminMode: PropTypes.bool,
   logOut: PropTypes.func.isRequired,
-  navigateTo: PropTypes.func.isRequired,
   settings: PropTypes.instanceOf(MobileAppSettings).isRequired,
-};
-
-MenuPage.defaultProps = {
-  isInAdminMode: false,
+  navigateToCustomerInvoices: PropTypes.func.isRequired,
+  navigateToCustomerRequisitions: PropTypes.func.isRequired,
+  navigateToStock: PropTypes.func.isRequired,
+  navigateToStocktakes: PropTypes.func.isRequired,
+  navigateToSupplierInvoices: PropTypes.func.isRequired,
+  navigateToSupplierRequisitions: PropTypes.func.isRequired,
+  navigateToRealmExplorer: PropTypes.func.isRequired,
 };
 
 const localStyles = StyleSheet.create({

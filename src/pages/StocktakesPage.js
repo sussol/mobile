@@ -9,7 +9,7 @@ import { View } from 'react-native';
 
 import { User } from '../database/DataTypes';
 
-import { MODAL_KEYS } from '../utilities';
+import { MODAL_KEYS, debounce } from '../utilities';
 import { usePageReducer, useSyncListener, useNavigationFocus } from '../hooks';
 import { getItemLayout } from './dataTableUtilities';
 
@@ -28,7 +28,7 @@ import {
 
 export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: reduxDispatch }) => {
   const initialState = { page: routeName };
-  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
+  const [state, dispatch] = usePageReducer(initialState);
 
   const {
     data,
@@ -57,17 +57,24 @@ export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: r
   const onConfirmDelete = () => dispatch(PageActions.deleteStocktakes());
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
 
   const onNewStocktake = () => {
     if (usingPrograms) return dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
     return reduxDispatch(gotoStocktakeManagePage(''));
   };
 
-  const getAction = useCallback((colKey, propName) => {
+  const getCallback = useCallback((colKey, propName) => {
     switch (colKey) {
       case 'remove':
-        if (propName === 'onCheckAction') return PageActions.selectRow;
-        return PageActions.deselectRow;
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
         return null;
     }
@@ -95,8 +102,7 @@ export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: r
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
-          dispatch={dispatch}
-          getAction={getAction}
+          getCallback={getCallback}
           onPress={onRowPress}
           rowIndex={index}
         />
@@ -109,8 +115,7 @@ export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: r
     () => (
       <DataTableHeaderRow
         columns={columns}
-        dispatch={instantDebouncedDispatch}
-        sortAction={PageActions.sortData}
+        onPress={onSortColumn}
         isAscending={isAscending}
         sortBy={sortBy}
       />

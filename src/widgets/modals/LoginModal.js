@@ -36,7 +36,8 @@ export class LoginModal extends React.Component {
     this.errorTimeoutId = null;
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase, react/sort-comp
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { authStatus } = this.state;
 
     if (authStatus === 'authenticated' && !nextProps.isAuthenticated) {
@@ -47,7 +48,8 @@ export class LoginModal extends React.Component {
     }
   }
 
-  componentWillUpdate() {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillUpdate() {
     if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 
