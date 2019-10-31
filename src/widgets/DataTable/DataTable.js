@@ -84,7 +84,7 @@ const DataTable = React.memo(
       const nextCellRef = (refIndex + 1) % numberOfEditableCells;
       const cellRef = getCellRef(nextCellRef);
 
-      return cellRef.current.focus();
+      return cellRef.current && cellRef.current.focus();
     };
 
     // Adjusts the passed row to the top of the list.
