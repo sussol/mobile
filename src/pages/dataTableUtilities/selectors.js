@@ -9,7 +9,6 @@
 export const pageStateSelector = state => {
   const { pages } = state;
   const { currentRoute } = pages;
-
   return pages[currentRoute];
 };
 
@@ -18,8 +17,6 @@ export const pageStateSelector = state => {
  */
 export const pageObjectSelector = state => {
   const pageState = pageStateSelector(state);
-
   const { pageObject } = pageState;
-
   return pageObject;
 };
