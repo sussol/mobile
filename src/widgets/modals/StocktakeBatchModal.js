@@ -119,6 +119,7 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
           columns={columns}
           getCallback={getCallback}
           rowIndex={index}
+          isFinalised={isFinalised}
         />
       );
     },

@@ -112,15 +112,25 @@ export const gotoStock = () =>
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
-export const gotoStocktakeManagePage = (stocktakeName, stocktake) =>
-  NavigationActions.navigate({
+export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, getState) => {
+  const { nav } = getState();
+
+  const currentRouteName = getCurrentRouteName(nav);
+
+  const navigationActionCreator =
+    currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
+
+  const navigationParameters = {
     routeName: ROUTES.STOCKTAKE_MANAGER,
     params: {
       title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
     },
-  });
+  };
+
+  dispatch(navigationActionCreator(navigationParameters));
+};
 
 /**
  * Navigate to the StocktakeEditPage.
