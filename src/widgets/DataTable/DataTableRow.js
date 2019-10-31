@@ -26,6 +26,7 @@ import {
   OpenModal,
 } from '../icons';
 import TextInputCell from './TextInputCell';
+import TextInputCellWithState from './TextInputCellWithState';
 
 import { formatStatus } from '../../utilities';
 
@@ -94,12 +95,13 @@ const DataTableRow = React.memo(
               // Use the placeholder 'Not counted' when a stocktake item or batch
               // has not been counted yet.
               let placeholder = '';
+              let Component = TextInputCell;
               if (columnKey === COLUMN_NAMES.COUNTED_TOTAL_QUANTITY) {
                 placeholder = rowData.hasBeenCounted ? '' : tableStrings.not_counted;
+                Component = TextInputCellWithState;
               }
-
               return (
-                <TextInputCell
+                <Component
                   key={columnKey}
                   value={rowData[columnKey]}
                   rowKey={rowKey}
