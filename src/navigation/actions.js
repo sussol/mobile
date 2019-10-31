@@ -34,15 +34,25 @@ import { getCurrentRouteName } from './selectors';
  *
  * @param {Object} requisition The requisition to pass to the next screen.
  */
-export const gotoStocktakeManagePage = (stocktakeName, stocktake) =>
-  NavigationActions.navigate({
+export const gotoStocktakeManagePage = (stocktakeName, stocktake) => (dispatch, getState) => {
+  const { nav } = getState();
+
+  const currentRouteName = getCurrentRouteName(nav);
+
+  const navigationActionCreator =
+    currentRouteName === 'stocktakes' ? NavigationActions.navigate : StackActions.replace;
+
+  const navigationParameters = {
     routeName: 'stocktakeManager',
     params: {
       title: stocktake ? navStrings.manage_stocktake : navStrings.new_stocktake,
       stocktakeName,
       stocktake,
     },
-  });
+  };
+
+  dispatch(navigationActionCreator(navigationParameters));
+};
 
 /**
  * Navigate to the StocktakeEditPage.
