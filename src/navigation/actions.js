@@ -71,9 +71,7 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
   // replace the current page as the user is coming from StocktakeManagePage.
   const navigationActionCreator =
     currentRouteName === 'stocktakes' ? NavigationActions.navigate : StackActions.replace;
-  console.log(navigationActionCreator({ routeName: '?' }));
-  console.log(Object.keys(nav));
-  nav.routes.forEach(route => console.log(route.routeName));
+
   const navigationParameters = {
     routeName: usesReasons ? 'stocktakeEditorWithReasons' : 'stocktakeEditor',
     params: { title: navStrings.stocktake, stocktake },
