@@ -7,8 +7,6 @@ import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
-import { navigation } from 'react-navigation';
-
 import { SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -37,11 +35,7 @@ import { buttonStrings } from '../localization';
  * @prop {Func}   reduxDispatch Dispatch method for the app-wide redux store.
  * @prop {Object} navigation    Reference to the main application stack navigator.
  */
-export const CustomerRequisitionsPage = ({
-  routeName,
-  dispatch: reduxDispatch,
-  navigation: reactNavigation,
-}) => {
+export const CustomerRequisitionsPage = ({ routeName, navigation, dispatch: reduxDispatch }) => {
   const initialState = { page: routeName };
   const [state, dispatch, debouncedDispatch] = usePageReducer(initialState);
 
@@ -58,7 +52,7 @@ export const CustomerRequisitionsPage = ({
 
   const refreshCallback = () => dispatch(PageActions.refreshData(), []);
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  useNavigationFocus(refreshCallback, reactNavigation);
+  useNavigationFocus(refreshCallback, navigation);
   // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
   useSyncListener(refreshCallback, 'Requisition');
 
@@ -132,5 +126,9 @@ export const CustomerRequisitionsPage = ({
 CustomerRequisitionsPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
-  navigation: PropTypes.instanceOf(navigation).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    state: PropTypes.func.isRequired,
+  }).isRequired,
 };

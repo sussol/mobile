@@ -46,8 +46,8 @@ export const StocktakeEditPage = ({
   runWithLoadingIndicator,
   stocktake,
   routeName,
-  dispatch: reduxDispatch,
   navigation,
+  dispatch: reduxDispatch,
 }) => {
   const initialState = { page: routeName, pageObject: stocktake };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
@@ -214,5 +214,9 @@ StocktakeEditPage.propTypes = {
   stocktake: PropTypes.object.isRequired,
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
-  navigation: PropTypes.object.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    state: PropTypes.func.isRequired,
+  }).isRequired,
 };

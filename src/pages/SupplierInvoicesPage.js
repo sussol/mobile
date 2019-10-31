@@ -6,7 +6,6 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { navigation } from 'react-navigation';
 
 import { User } from '../database/DataTypes';
 
@@ -25,7 +24,7 @@ import globalStyles from '../globalStyles';
 export const SupplierInvoicesPage = ({
   currentUser,
   routeName,
-  navigation: reactNavigation,
+  navigation,
   dispatch: reduxDispatch,
 }) => {
   const initialState = { page: routeName };
@@ -48,7 +47,7 @@ export const SupplierInvoicesPage = ({
   // Listen to changes from sync and navigation events re-focusing this screen,
   // such that any side effects that occur trigger a reconcilitation of data.
   const refreshCallback = () => dispatch(PageActions.refreshData());
-  useNavigationFocus(refreshCallback, reactNavigation);
+  useNavigationFocus(refreshCallback, navigation);
   useSyncListener(refreshCallback, ['Transaction']);
 
   const onCloseModal = () => dispatch(PageActions.closeModal());
@@ -177,6 +176,10 @@ export default SupplierInvoicesPage;
 SupplierInvoicesPage.propTypes = {
   currentUser: PropTypes.instanceOf(User).isRequired,
   routeName: PropTypes.string.isRequired,
-  navigation: PropTypes.instanceOf(navigation).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    state: PropTypes.func.isRequired,
+  }).isRequired,
   dispatch: PropTypes.func.isRequired,
 };

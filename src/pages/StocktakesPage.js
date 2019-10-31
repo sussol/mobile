@@ -6,7 +6,6 @@
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { navigation } from 'react-navigation';
 
 import { User } from '../database/DataTypes';
 
@@ -27,12 +26,7 @@ import {
   gotoStocktakeEditPage,
 } from '../navigation/actions';
 
-export const StocktakesPage = ({
-  routeName,
-  currentUser,
-  dispatch: reduxDispatch,
-  navigation: reactNavigation,
-}) => {
+export const StocktakesPage = ({ routeName, currentUser, navigation, dispatch: reduxDispatch }) => {
   const initialState = { page: routeName };
   const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
@@ -55,7 +49,7 @@ export const StocktakesPage = ({
   // Listen to sync changing stocktake data - refresh if there are any.
   useSyncListener(refreshCallback, ['Stocktake']);
   // Listen to navigation focusing this page - fresh if so.
-  useNavigationFocus(refreshCallback, reactNavigation);
+  useNavigationFocus(refreshCallback, navigation);
 
   const onRowPress = useCallback(stocktake => reduxDispatch(gotoStocktakeEditPage(stocktake)), []);
   const onFilterData = value => dispatch(PageActions.filterData(value));
@@ -179,5 +173,9 @@ StocktakesPage.propTypes = {
   routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   currentUser: PropTypes.instanceOf(User).isRequired,
-  navigation: PropTypes.instanceOf(navigation).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+    state: PropTypes.func.isRequired,
+  }).isRequired,
 };
