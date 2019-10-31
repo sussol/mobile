@@ -217,6 +217,6 @@ StocktakeEditPage.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
-    state: PropTypes.func.isRequired,
+    state: PropTypes.object.isRequired,
   }).isRequired,
 };
