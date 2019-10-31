@@ -300,8 +300,8 @@ const SupplierRequisition = ({
 const mapStateToProps = (state, ownProps) => {
   const { pages } = state;
   const { routeName } = ownProps;
-  const { [routeName]: thisPagesState } = pages;
-  return thisPagesState;
+
+  return pages[routeName];
 };
 
 export const SupplierRequisitionPage = connect(mapStateToProps)(SupplierRequisition);
