@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/forbid-prop-types */
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Text, TouchableOpacity, TouchableOpacityPropTypes } from 'react-native';
+import { Text, TouchableOpacity, Keyboard, TouchableOpacityPropTypes } from 'react-native';
 
 import TouchableNoFeedback from './TouchableNoFeedback';
 
@@ -45,7 +45,10 @@ const TouchableCell = React.memo(
   }) => {
     if (debug) console.log(`- TouchableCell: ${rowKey},${columnKey}`);
 
-    const onPress = () => dispatch(onPressAction(rowKey, columnKey));
+    const onPress = useCallback(() => {
+      Keyboard.dismiss();
+      dispatch(onPressAction(rowKey, columnKey));
+    }, [onPressAction, rowKey, columnKey]);
 
     const internalContainerStyle = getAdjustedStyle(containerStyle, width, isLastCell);
     const Container = isDisabled ? TouchableNoFeedback : TouchableComponent || TouchableOpacity;
