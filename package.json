@@ -26,7 +26,7 @@
     "deploy": "./dev_scripts/deploy.sh",
     "export": "./dev_scripts/export.sh",
     "uninstall": "./dev_scripts/uninstall.sh",
-    "clean-mac-cache": "rm -rf $TMPDIR/react-native-packager-* && rm -rf $TMPDIR/metro-bundler-* && watchman watch-del-all && rm -rf node_modules/ && yarn cache clean && yarn install"
+    "clean-mac-cache": "./dev_scripts/clean.sh",
   },
   "jest": {
     "preset": "react-native"
