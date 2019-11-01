@@ -27,6 +27,7 @@
     "export": "./dev_scripts/export.sh",
     "uninstall": "./dev_scripts/uninstall.sh",
     "clean-mac-cache": "./dev_scripts/clean.sh",
+    "keygen": "./dev_scripts/keygen.sh",
   },
   "jest": {
     "preset": "react-native"
