@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,6 +7,7 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS, debounce } from '../utilities';
 
@@ -15,7 +17,7 @@ import { DataTablePageView, PageButton, PageInfo, SearchBar } from '../widgets';
 
 import { getItemLayout } from './dataTableUtilities';
 
-import { usePageReducer, useRecordListener } from '../hooks';
+import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
@@ -37,27 +39,24 @@ import { buttonStrings } from '../localization';
  * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
  * @prop {String} routeName The current route name for the top of the navigation stack.
  */
-export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, routeName }) => {
-  const initialState = { page: routeName, pageObject: requisition };
-  const [state, dispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    modalKey,
-    pageObject,
-    keyExtractor,
-    modalValue,
-    searchTerm,
-    PageActions,
-    columns,
-    getPageInfoColumns,
-  } = state;
-
+export const CustomerRequisition = ({
+  runWithLoadingIndicator,
+  data,
+  dispatch,
+  dataState,
+  sortBy,
+  isAscending,
+  modalKey,
+  pageObject,
+  keyExtractor,
+  modalValue,
+  searchTerm,
+  PageActions,
+  columns,
+  getPageInfoColumns,
+}) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(() => dispatch(PageActions.refreshData()), requisition, 'Requisition');
+  useRecordListener(() => dispatch(PageActions.refreshData()), pageObject, 'Requisition');
 
   const { isFinalised, comment } = pageObject;
 
@@ -148,7 +147,7 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
             style={globalStyles.topButton}
             text={buttonStrings.use_requested_quantities}
             onPress={onSetSuppliedToRequested}
-            isDisabled={requisition.isFinalised}
+            isDisabled={isFinalised}
           />
           <PageButton
             style={globalStyles.topButton}
@@ -179,9 +178,31 @@ export const CustomerRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   );
 };
 
-/* eslint-disable react/forbid-prop-types */
-CustomerRequisitionPage.propTypes = {
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { customerRequisition } = pages;
+  return customerRequisition;
+};
+
+export const CustomerRequisitionPage = connect(mapStateToProps)(CustomerRequisition);
+
+CustomerRequisition.defaultProps = {
+  modalValue: null,
+};
+
+CustomerRequisition.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  requisition: PropTypes.object.isRequired,
-  routeName: PropTypes.string.isRequired,
+  dataState: PropTypes.object.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  pageObject: PropTypes.object.isRequired,
+  modalValue: PropTypes.any,
+  getPageInfoColumns: PropTypes.func.isRequired,
 };

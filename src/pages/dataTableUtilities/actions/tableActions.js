@@ -9,6 +9,7 @@ import Settings from '../../../settings/MobileAppSettings';
 import { createRecord } from '../../../database/utilities/index';
 import { closeModal } from './pageActions';
 import { ACTIONS } from './constants';
+import { pageObjectSelector } from '../selectors';
 
 /**
  * Sorts the underlying data array by the key provided. Determines
@@ -16,9 +17,9 @@ import { ACTIONS } from './constants';
  *
  * @param {String} sortBy Key to sortBy - see utilities/sortData.js
  */
-export const sortData = sortBy => ({
+export const sortData = (sortBy, route) => ({
   type: ACTIONS.SORT_DATA,
-  payload: { sortBy },
+  payload: { sortBy, route },
 });
 
 /**
@@ -28,9 +29,9 @@ export const sortData = sortBy => ({
  *
  * @param {String} searchTerm String to filter by.
  */
-export const filterData = searchTerm => ({
+export const filterData = (searchTerm, route) => ({
   type: ACTIONS.FILTER_DATA,
-  payload: { searchTerm },
+  payload: { searchTerm, route },
 });
 
 /**
@@ -39,9 +40,9 @@ export const filterData = searchTerm => ({
  *
  * @param {Any} record A record to add to the current data.
  */
-export const addRecord = record => ({
+export const addRecord = (record, route) => ({
   type: ACTIONS.ADD_RECORD,
-  payload: { record },
+  payload: { record, route },
 });
 
 /**
@@ -49,42 +50,42 @@ export const addRecord = record => ({
  * BackingData is a live realm collection which side effects i.e.
  * finalising can make out of sync with the data array used for display.
  */
-export const refreshData = () => ({ type: ACTIONS.REFRESH_DATA });
+export const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { route } });
 
 /**
  * Hides all items which have current stock on hand greater than the
  * threshold MOS stock for that item.
  */
-export const hideOverStocked = () => ({ type: ACTIONS.HIDE_OVER_STOCKED });
+export const hideOverStocked = route => ({ type: ACTIONS.HIDE_OVER_STOCKED, payload: { route } });
 
 /**
  * Hides all items which have a current stock on hand less than 0.
  */
-export const hideStockOut = () => ({ type: ACTIONS.HIDE_STOCK_OUT });
+export const hideStockOut = route => ({ type: ACTIONS.HIDE_STOCK_OUT, payload: { route } });
 
 /**
  * Hides all rows which have a status of finalised.
  */
-export const showFinalised = () => ({ type: ACTIONS.SHOW_FINALISED });
+export const showFinalised = route => ({ type: ACTIONS.SHOW_FINALISED, payload: { route } });
 
 /**
  * Shows all rows which do not have the status of finalised.
  */
-export const showNotFinalised = () => ({ type: ACTIONS.SHOW_NOT_FINALISED });
+export const showNotFinalised = route => ({ type: ACTIONS.SHOW_NOT_FINALISED, payload: { route } });
 
 /**
  * Shows all items, regardless of current stock on hand, toggles
  * showAll to true and removes the current search filtering. Sort is
  * kept stable.
  */
-export const showOverStocked = () => refreshData();
+export const showOverStocked = route => refreshData(route);
 
 /**
  * Shows all items, regardless of current stock on hand, toggles
  * showAll to true and removes the current search filtering. Sort is
  * kept stable.
  */
-export const showStockOut = () => refreshData();
+export const showStockOut = route => refreshData(route);
 
 /**
  * Wrapper around showFinalised/showNotFinalised to toggle between. Determines the
@@ -92,9 +93,9 @@ export const showStockOut = () => refreshData();
  *
  * @param {Bool} showFinalised Indicator wheter finalised rows are currently displayed.
  */
-export const toggleShowFinalised = showingFinalised => {
-  if (showingFinalised) return showNotFinalised();
-  return showFinalised();
+export const toggleShowFinalised = (showingFinalised, route) => {
+  if (showingFinalised) return showNotFinalised(route);
+  return showFinalised(route);
 };
 
 /**
@@ -102,9 +103,9 @@ export const toggleShowFinalised = showingFinalised => {
  * should be dispatched.
  * @param {Bool} showAll Indicator whether all rows are currently showing.
  */
-export const toggleStockOut = showAll => {
-  if (showAll) return hideStockOut();
-  return showStockOut();
+export const toggleStockOut = (showAll, route) => {
+  if (showAll) return hideStockOut(route);
+  return showStockOut(route);
 };
 
 /**
@@ -115,8 +116,8 @@ export const toggleStockOut = showAll => {
  *
  * @param {String} objectType Type of object to add items for.
  */
-export const addMasterListItems = objectType => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const addMasterListItems = (objectType, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   const thisStore = UIDatabase.objects('Name').filtered(
     'id == $0',
@@ -128,7 +129,7 @@ export const addMasterListItems = objectType => (dispatch, getState) => {
     UIDatabase.save(objectType, pageObject);
   });
 
-  dispatch(refreshData());
+  dispatch(refreshData(route));
 };
 
 /**
@@ -143,16 +144,16 @@ export const addMasterListItems = objectType => (dispatch, getState) => {
  * @param {Object} item           The item to be added.
  * @param {String} addedItemType  The item type to be added.
  */
-export const addItem = (item, addedItemType) => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   if (!pageObject.hasItem(item)) {
     UIDatabase.write(() => {
       const addedItem = createRecord(UIDatabase, addedItemType, pageObject, item);
-      dispatch(addRecord(addedItem));
+      dispatch(addRecord(addedItem, route));
     });
   } else {
-    dispatch(closeModal());
+    dispatch(closeModal(route));
   }
 };
 
@@ -161,9 +162,9 @@ export const addItem = (item, addedItemType) => (dispatch, getState) => {
  *
  * @param {Object} item The item to be added.
  */
-export const addTransactionItem = item => addItem(item, 'TransactionItem');
-export const addStocktakeItem = item => addItem(item, 'StocktakeItem');
-export const addRequisitionItem = item => addItem(item, 'RequisitionItem');
+export const addTransactionItem = (item, route) => addItem(item, 'TransactionItem', route);
+export const addStocktakeItem = (item, route) => addItem(item, 'StocktakeItem', route);
+export const addRequisitionItem = (item, route) => addItem(item, 'RequisitionItem', route);
 
 /**
  * Creates a transaction batch which will be associated with the current stores
@@ -171,14 +172,14 @@ export const addRequisitionItem = item => addItem(item, 'RequisitionItem');
  * use case: Pages which are batch-based i.e. SupplierInvoice page.
  * @param {Object} item The item to create a transaction batch for.
  */
-export const addTransactionBatch = item => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const addTransactionBatch = (item, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   UIDatabase.write(() => {
     const transItem = createRecord(UIDatabase, 'TransactionItem', pageObject, item);
     const itemBatch = createRecord(UIDatabase, 'ItemBatch', item, '');
     const addedBatch = createRecord(UIDatabase, 'TransactionBatch', transItem, itemBatch);
-    dispatch(addRecord(addedBatch));
+    dispatch(addRecord(addedBatch, route));
   });
 };
 
@@ -188,20 +189,20 @@ export const addTransactionBatch = item => (dispatch, getState) => {
  *
  * use case: StocktakeEditBatchModal adding empty batches.
  */
-export const addStocktakeBatch = () => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const addStocktakeBatch = route => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   UIDatabase.write(() => {
     const addedBatch = pageObject.createNewBatch(UIDatabase);
-    dispatch(addRecord(addedBatch));
+    dispatch(addRecord(addedBatch, route));
   });
 };
 
 /**
  * Creates an automatic order for a Supplier Requisition.
  */
-export const createAutomaticOrder = () => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const createAutomaticOrder = route => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   const thisStore = UIDatabase.objects('Name').filtered(
     'id == $0',
@@ -213,47 +214,47 @@ export const createAutomaticOrder = () => (dispatch, getState) => {
     UIDatabase.save('Requisition', pageObject);
   });
 
-  dispatch(refreshData());
+  dispatch(refreshData(route));
 };
 
 /**
  * Sets all requested quantities to the suggested quantity for
  * a requisition.
  */
-export const setRequestedToSuggested = () => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const setRequestedToSuggested = route => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   UIDatabase.write(() => {
     pageObject.setRequestedToSuggested(UIDatabase);
   });
 
-  dispatch(refreshData());
+  dispatch(refreshData(route));
 };
 
 /**
  * Sets all rows `suppliedQuantity` to `requestedQuantity`.
  */
-export const setSuppliedToRequested = () => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const setSuppliedToRequested = route => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   UIDatabase.write(() => {
     pageObject.setSuppliedToRequested();
   });
 
-  dispatch(refreshData());
+  dispatch(refreshData(route));
 };
 
 /**
  * Sets all rows `suppliedQuantity` to `suggestedQuantity`.
  */
-export const setSuppliedToSuggested = () => (dispatch, getState) => {
-  const { pageObject } = getState();
+export const setSuppliedToSuggested = route => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
 
   UIDatabase.write(() => {
     pageObject.setSuppliedToSuggested();
   });
 
-  dispatch(refreshData());
+  dispatch(refreshData(route));
 };
 
 export const TableActionsLookup = {
@@ -294,16 +295,17 @@ export const TableActionsLookup = {
  * =====================================================================
  */
 
-export const refreshDataWithFinalisedToggle = () => ({
+export const refreshDataWithFinalisedToggle = route => ({
   type: ACTIONS.REFRESH_DATA_WITH_FINALISED_TOGGLE,
+  payload: { route },
 });
 
-export const filterDataWithFinalisedToggle = searchTerm => ({
+export const filterDataWithFinalisedToggle = (searchTerm, route) => ({
   type: ACTIONS.FILTER_DATA_WITH_FINALISED_TOGGLE,
-  payload: { searchTerm },
+  payload: { searchTerm, route },
 });
 
-export const filterDataWithOverStockToggle = searchTerm => ({
+export const filterDataWithOverStockToggle = (searchTerm, route) => ({
   type: ACTIONS.FILTER_DATA_WITH_OVER_STOCK_TOGGLE,
-  payload: { searchTerm },
+  payload: { searchTerm, route },
 });

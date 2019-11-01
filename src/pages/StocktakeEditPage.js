@@ -4,12 +4,12 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS, debounce } from '../utilities';
-import { usePageReducer } from '../hooks/usePageReducer';
 import { getItemLayout } from './dataTableUtilities';
 
 import { DataTablePageModal } from '../widgets/modals';
@@ -42,31 +42,23 @@ import { useRecordListener, useNavigationFocus } from '../hooks/index';
  * @prop {Object} navigation App-wide stack navigator reference
  *
  */
-export const StocktakeEditPage = ({
+export const StocktakeEdit = ({
   runWithLoadingIndicator,
-  stocktake,
-  routeName,
-  dispatch: reduxDispatch,
+  dispatch,
   navigation,
+  pageObject,
+  data,
+  dataState,
+  searchTerm,
+  sortBy,
+  isAscending,
+  modalKey,
+  modalValue,
+  keyExtractor,
+  PageActions,
+  columns,
+  getPageInfoColumns,
 }) => {
-  const initialState = { page: routeName, pageObject: stocktake };
-  const [state, dispatch] = usePageReducer(initialState);
-
-  const {
-    pageObject,
-    data,
-    dataState,
-    searchTerm,
-    sortBy,
-    isAscending,
-    modalKey,
-    modalValue,
-    keyExtractor,
-    PageActions,
-    columns,
-    getPageInfoColumns,
-  } = state;
-
   const { isFinalised, comment, program, name } = pageObject;
 
   // Listen to the stocktake become the top of the stack or being finalised,
@@ -77,7 +69,7 @@ export const StocktakeEditPage = ({
 
   // If the Stocktake is outdated, force a reset of the stocktake on mount.
   useEffect(() => {
-    if (stocktake.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
+    if (pageObject.isOutdated) dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_OUTDATED_ITEM));
   }, []);
 
   const onEditName = value => dispatch(PageActions.editPageObjectName(value, 'Stocktake'));
@@ -90,7 +82,7 @@ export const StocktakeEditPage = ({
   const onCloseModal = () => dispatch(PageActions.closeModal());
   const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
   const onConfirmBatchEdit = () => dispatch(PageActions.closeAndRefresh());
-  const onManageStocktake = () => reduxDispatch(gotoStocktakeManagePage(name, stocktake));
+  const onManageStocktake = () => dispatch(gotoStocktakeManagePage(name, pageObject));
   const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
   const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
   const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
@@ -103,7 +95,7 @@ export const StocktakeEditPage = ({
     []
   );
 
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     isFinalised,
     name,
@@ -218,10 +210,33 @@ export const StocktakeEditPage = ({
   );
 };
 
-StocktakeEditPage.propTypes = {
+const mapStateToProps = (state, ownProps) => {
+  const { pages } = state;
+  const { routeName } = ownProps;
+
+  return pages[routeName];
+};
+
+export const StocktakeEditPage = connect(mapStateToProps)(StocktakeEdit);
+
+StocktakeEdit.defaultProps = {
+  modalValue: null,
+};
+
+StocktakeEdit.propTypes = {
   runWithLoadingIndicator: PropTypes.func.isRequired,
-  stocktake: PropTypes.object.isRequired,
-  routeName: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
   navigation: PropTypes.object.isRequired,
+  pageObject: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
+  keyExtractor: PropTypes.func.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
 };

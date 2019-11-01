@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -6,13 +7,14 @@
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { getItemLayout } from './dataTableUtilities/utilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import globalStyles from '../globalStyles';
-import { usePageReducer, useSyncListener } from '../hooks';
+import { useSyncListener } from '../hooks';
 
 import { DataTablePageView, SearchBar } from '../widgets';
 
@@ -34,22 +36,18 @@ import { debounce } from '../utilities/index';
  *
  * @prop {Object} routeName Name of the current route.
  */
-export const StockPage = ({ routeName }) => {
-  const initialState = { page: routeName };
-  const [state, dispatch] = usePageReducer(initialState);
-
-  const {
-    data,
-    dataState,
-    sortBy,
-    isAscending,
-    selectedRow,
-    searchTerm,
-    keyExtractor,
-    columns,
-    PageActions,
-  } = state;
-
+export const Stock = ({
+  data,
+  dispatch,
+  dataState,
+  sortBy,
+  isAscending,
+  selectedRow,
+  searchTerm,
+  keyExtractor,
+  columns,
+  PageActions,
+}) => {
   //  Refresh data on retrieving item or itembatch records from sync.
   const refreshCallback = () => dispatch(PageActions.refreshData());
   useSyncListener(refreshCallback, ['Item', 'ItemBatch']);
@@ -116,6 +114,28 @@ export const StockPage = ({ routeName }) => {
   );
 };
 
-StockPage.propTypes = {
-  routeName: PropTypes.string.isRequired,
+const mapStateToProps = state => {
+  const { pages } = state;
+
+  const { stock } = pages;
+  return stock;
+};
+
+export const StockPage = connect(mapStateToProps)(Stock);
+
+Stock.defaultProps = {
+  selectedRow: null,
+};
+
+Stock.propTypes = {
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  selectedRow: PropTypes.object,
+  searchTerm: PropTypes.string.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  columns: PropTypes.array.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  PageActions: PropTypes.object.isRequired,
 };

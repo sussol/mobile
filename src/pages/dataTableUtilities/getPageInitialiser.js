@@ -8,6 +8,12 @@ import Settings from '../../settings/MobileAppSettings';
 
 import { sortDataBy, getAllPrograms } from '../../utilities';
 import { recordKeyExtractor } from './utilities';
+import getColumns from './getColumns';
+import getPageInfoColumns from './getPageInfoColumns';
+
+import { ROUTES } from '../../navigation/constants';
+
+import { getPageActions } from './actions/index';
 
 /**
  * Gets data for initialising a customer invoice page from an associated transaction.
@@ -15,7 +21,7 @@ import { recordKeyExtractor } from './utilities';
  * @param    {Transaction}  transaction
  * @returns  {object}
  */
-const customerInvoiceInitialiser = transaction => {
+export const customerInvoiceInitialiser = transaction => {
   const { items: backingData } = transaction;
 
   const sortedData = backingData.sorted('item.name').slice();
@@ -33,6 +39,10 @@ const customerInvoiceInitialiser = transaction => {
     modalKey: '',
     modalValue: null,
     hasSelection: false,
+    route: ROUTES.CUSTOMER_INVOICE,
+    columns: getColumns(ROUTES.CUSTOMER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
+    PageActions: getPageActions(ROUTES.CUSTOMER_INVOICE),
   };
 };
 
@@ -42,7 +52,7 @@ const customerInvoiceInitialiser = transaction => {
  *
  * @returns  {object}
  */
-const customerInvoicesInitialiser = () => {
+export const customerInvoicesInitialiser = () => {
   const backingData = UIDatabase.objects('CustomerInvoice');
   const filteredData = backingData.filtered('status != $0', 'finalised').slice();
   const sortedData = sortDataBy(filteredData, 'serialNumber', false);
@@ -58,6 +68,10 @@ const customerInvoicesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
+    route: ROUTES.CUSTOMER_INVOICES,
+    columns: getColumns(ROUTES.CUSTOMER_INVOICES),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICES),
+    PageActions: getPageActions(ROUTES.CUSTOMER_INVOICES),
   };
 };
 
@@ -83,6 +97,10 @@ const customerRequisitionInitialiser = requisition => {
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    route: ROUTES.CUSTOMER_REQUISITION,
+    columns: getColumns(ROUTES.CUSTOMER_REQUISITION),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITION),
+    PageActions: getPageActions(ROUTES.CUSTOMER_REQUISITION),
   };
 };
 
@@ -105,6 +123,10 @@ const customerRequisitionsInitialiser = () => {
     filterDataKeys: ['serialNumber'],
     sortBy: 'serialNumber',
     isAscending: false,
+    route: ROUTES.CUSTOMER_REQUISITIONS,
+    columns: getColumns(ROUTES.CUSTOMER_REQUISITIONS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_REQUISITIONS),
+    PageActions: getPageActions(ROUTES.CUSTOMER_REQUISITIONS),
   };
 };
 
@@ -126,6 +148,10 @@ const stockInitialiser = () => {
     sortBy: 'name',
     isAscending: true,
     selectedRow: null,
+    route: ROUTES.STOCK,
+    columns: getColumns(ROUTES.STOCK),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCK),
+    PageActions: getPageActions(ROUTES.STOCK),
   };
 };
 
@@ -156,6 +182,10 @@ const stocktakesInitialiser = () => {
     modalKey: '',
     hasSelection: false,
     usingPrograms,
+    route: ROUTES.STOCKTAKES,
+    columns: getColumns(ROUTES.STOCKTAKES),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKES),
+    PageActions: getPageActions(ROUTES.STOCKTAKES),
   };
 };
 
@@ -175,6 +205,10 @@ const stocktakeBatchInitialiser = stocktakeItem => ({
   isAscending: true,
   modalKey: '',
   modalValue: null,
+  route: ROUTES.X,
+  columns: getColumns(ROUTES.CUSTOMER_INVOICE),
+  getPageInfoColumns: getPageInfoColumns(ROUTES.CUSTOMER_INVOICE),
+  PageActions: getPageActions(ROUTES.CUSTOMER_INVOICE),
 });
 
 /**
@@ -200,6 +234,10 @@ const stocktakeManagerInitialiser = stocktake => {
     hasSelection: false,
     allSelected: false,
     showAll: true,
+    route: ROUTES.STOCKTAKE_MANAGER,
+    columns: getColumns(ROUTES.STOCKTAKE_MANAGER),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_MANAGER),
+    PageActions: getPageActions(ROUTES.STOCKTAKE_MANAGER),
   };
 };
 
@@ -225,6 +263,40 @@ const stocktakeEditorInitialiser = stocktake => {
     isAscending: true,
     modalKey: '',
     modalValue: null,
+    route: ROUTES.STOCKTAKE_EDITOR,
+    columns: getColumns(ROUTES.STOCKTAKE_EDITOR),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_EDITOR),
+    PageActions: getPageActions(ROUTES.STOCKTAKE_EDITOR),
+  };
+};
+
+/**
+ * Gets data for initialising an edit stocktake page when reasons
+ * are defined from an associated stocktake.
+ *
+ * @param    {Stocktake}  stocktake
+ * @returns  {object}
+ */
+const stocktakeEditorWithReasonsInitialiser = stocktake => {
+  const { items: backingData } = stocktake;
+  const sortedData = backingData.sorted('item.name').slice();
+
+  return {
+    pageObject: stocktake,
+    backingData,
+    data: sortedData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name', 'item.code'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+    route: ROUTES.STOCKTAKE_EDITOR_WITH_REASONS,
+    columns: getColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
+    PageActions: getPageActions(ROUTES.STOCKTAKE_EDITOR_WITH_REASONS),
   };
 };
 
@@ -252,6 +324,10 @@ const supplierInvoiceInitialiser = transaction => {
     modalKey: '',
     modalValue: null,
     hasSelection: false,
+    route: ROUTES.SUPPLIER_INVOICE,
+    columns: getColumns(ROUTES.SUPPLIER_INVOICE),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICE),
+    PageActions: getPageActions(ROUTES.SUPPLIER_INVOICE),
   };
 };
 
@@ -278,6 +354,10 @@ const supplierInvoicesInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
+    route: ROUTES.SUPPLIER_INVOICES,
+    columns: getColumns(ROUTES.SUPPLIER_INVOICES),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_INVOICES),
+    PageActions: getPageActions(ROUTES.SUPPLIER_INVOICES),
   };
 };
 
@@ -304,6 +384,10 @@ const supplierRequisitionInitialiser = requisition => {
     modalKey: '',
     hasSelection: false,
     modalValue: null,
+    route: ROUTES.SUPPLIER_REQUISITION,
+    columns: getColumns(ROUTES.SUPPLIER_REQUISITION),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_REQUISITION),
+    PageActions: getPageActions(ROUTES.SUPPLIER_REQUISITION),
   };
 };
 
@@ -332,6 +416,10 @@ const supplierRequisitionWithProgramInitialiser = requisition => {
     hasSelection: false,
     showAll,
     modalValue: null,
+    route: ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM,
+    columns: getColumns(ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM),
+    PageActions: getPageActions(ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM),
   };
 };
 
@@ -358,6 +446,10 @@ const supplierRequisitionsInitialiser = () => {
     isAscending: false,
     modalKey: '',
     hasSelection: false,
+    route: ROUTES.SUPPLIER_REQUISITIONS,
+    columns: getColumns(ROUTES.SUPPLIER_REQUISITIONS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.SUPPLIER_REQUISITIONS),
+    PageActions: getPageActions(ROUTES.SUPPLIER_REQUISITIONS),
   };
 };
 
@@ -370,7 +462,7 @@ const pageInitialisers = {
   stocktakeBatchEditModal: stocktakeBatchInitialiser,
   stocktakeBatchEditModalWithReasons: stocktakeBatchInitialiser,
   stocktakeEditor: stocktakeEditorInitialiser,
-  stocktakeEditorWithReasons: stocktakeEditorInitialiser,
+  stocktakeEditorWithReasons: stocktakeEditorWithReasonsInitialiser,
   stocktakeManager: stocktakeManagerInitialiser,
   stocktakes: stocktakesInitialiser,
   supplierInvoice: supplierInvoiceInitialiser,
