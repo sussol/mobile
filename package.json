@@ -28,6 +28,7 @@
     "uninstall": "./dev_scripts/uninstall.sh",
     "clean-mac-cache": "./dev_scripts/clean.sh",
     "keygen": "./dev_scripts/keygen.sh",
+    "upload-bugsnag": "./dev_scripts/upload.sh"
   },
   "jest": {
     "preset": "react-native"
