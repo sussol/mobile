@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { getItemLayout } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { createStocktake, updateStocktake } from '../navigation/actions';
 
 import { BottomTextEditor } from '../widgets/modals';
@@ -18,7 +18,8 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
-import { debounce } from '../utilities/index';
+
+import { ROUTES } from '../navigation/constants';
 
 export const StocktakeManage = ({
   dispatch,
@@ -34,8 +35,14 @@ export const StocktakeManage = ({
   name,
   keyExtractor,
   searchTerm,
-  PageActions,
   columns,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onFilterData,
+  onNameChange,
+  toggleSelectAll,
+  toggleStockOut,
 }) => {
   // On navigating to this screen, if a stocktake is passed through, update the selection with
   // the items already in the stocktake.
@@ -43,15 +50,7 @@ export const StocktakeManage = ({
     if (pageObject) dispatch(PageActions.selectItems(pageObject.itemsInStocktake));
   }, []);
 
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
-
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'selected':
         if (propName === 'onCheck') return onCheck;
@@ -59,12 +58,7 @@ export const StocktakeManage = ({
       default:
         return null;
     }
-  }, []);
-
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onNameChange = value => dispatch(PageActions.editName(value));
-  const onSelectAll = () => dispatch(PageActions.toggleAllSelected(allSelected));
-  const onHideStock = () => dispatch(PageActions.toggleStockOut(showAll));
+  };
 
   const onConfirmStocktake = () => {
     runWithLoadingIndicator(() => {
@@ -106,8 +100,8 @@ export const StocktakeManage = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.hide_stockouts, onPress: onHideStock, isOn: !showAll },
-      { text: buttonStrings.all_items_selected, onPress: onSelectAll, isOn: allSelected },
+      { text: buttonStrings.hide_stockouts, onPress: toggleStockOut, isOn: !showAll },
+      { text: buttonStrings.all_items_selected, onPress: toggleSelectAll, isOn: allSelected },
     ],
     [showAll, allSelected]
   );
@@ -150,13 +144,21 @@ export const StocktakeManage = ({
   );
 };
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKE_MANAGER),
+  filterData: () => dispatch(PageActions.filterDataWithOverStockToggle),
+});
+
 const mapStateToProps = state => {
   const { pages } = state;
   const { stocktakeManager } = pages;
   return stocktakeManager;
 };
 
-export const StocktakeManagePage = connect(mapStateToProps)(StocktakeManage);
+export const StocktakeManagePage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(StocktakeManage);
 
 StocktakeManage.propTypes = {
   dispatch: PropTypes.func.isRequired,
@@ -165,7 +167,6 @@ StocktakeManage.propTypes = {
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  PageActions: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   hasSelection: PropTypes.bool.isRequired,
@@ -174,4 +175,11 @@ StocktakeManage.propTypes = {
   allSelected: PropTypes.bool.isRequired,
   name: PropTypes.string.isRequired,
   pageObject: PropTypes.object.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onNameChange: PropTypes.func.isRequired,
+  toggleSelectAll: PropTypes.func.isRequired,
+  toggleStockOut: PropTypes.func.isRequired,
 };
