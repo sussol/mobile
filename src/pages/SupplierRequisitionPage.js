@@ -10,12 +10,13 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS, debounce } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, ToggleBar, SearchBar } from '../widgets';
 
-import { getItemLayout } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+import { ROUTES } from '../navigation/constants';
 
 import { useRecordListener } from '../hooks';
 
@@ -34,10 +35,6 @@ import { buttonStrings, modalStrings, programStrings } from '../localization';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isDisabled },
- *
- * @prop {Object} requisition The realm transaction object for this invoice.
- * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 const SupplierRequisition = ({
   runWithLoadingIndicator,
@@ -53,56 +50,46 @@ const SupplierRequisition = ({
   showAll,
   keyExtractor,
   searchTerm,
-  PageActions,
   columns,
   getPageInfoColumns,
+  refreshData,
+  onSelectNewItem,
+  onEditComment,
+  onFilterData,
+  onDeleteItems,
+  onDeselectAll,
+  onCloseModal,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onShowOverStocked,
+  onHideOverStocked,
+  onOpenRegimenDataModal,
+  onEditMonth,
+  onEditRequiredQuantity,
+  onAddRequisitionItem,
+  onSetRequestedToSuggested,
+  route,
 }) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(() => dispatch(PageActions.refreshData()), pageObject, 'Requisition');
+  useRecordListener(() => dispatch(refreshData), pageObject, 'Requisition');
 
   const { isFinalised, comment, theirRef, program, daysToSupply } = pageObject;
 
-  // On click handlers
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onSelectItem = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
-  const onViewRegimenData = () => dispatch(PageActions.openModal(MODAL_KEYS.VIEW_REGIMEN_DATA));
+  const createAutomaticOrder = () => dispatch(PageActions.createAutomaticOrder(route));
+  const onCreateAutomaticOrder = () => runWithLoadingIndicator(createAutomaticOrder);
 
-  const onConfirmDelete = () => dispatch(PageActions.deleteRequisitionItems());
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const addFromMasterlist = () => dispatch(PageActions.addMasterListItems('Requisition', route));
+  const onAddFromMasterList = () => runWithLoadingIndicator(addFromMasterlist);
 
-  const onAddItem = value => dispatch(PageActions.addRequisitionItem(value));
-  const onEditMonth = value => dispatch(PageActions.editMonthsToSupply(value, 'Requisition'));
-  const onEditComment = value => dispatch(PageActions.editComment(value, 'Requisition'));
-
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onHideOverStocked = () => dispatch(PageActions.hideOverStocked());
-
-  const onShowOverStocked = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.showOverStocked()));
-  const onSetRequestedToSuggested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setRequestedToSuggested()));
-  const onCreateAutomaticOrder = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.createAutomaticOrder()));
-  const onAddFromMasterList = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Requisition')));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
-  const onEditRequiredQuantity = (newValue, rowKey) =>
-    dispatch(PageActions.editRequisitionItemRequiredQuantity(newValue, rowKey));
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-
-  const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     theirRef,
     isFinalised,
     daysToSupply,
   ]);
 
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'requiredQuantity':
         return onEditRequiredQuantity;
@@ -112,12 +99,12 @@ const SupplierRequisition = ({
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return onAddItem;
+        return onAddRequisitionItem;
       case MODAL_KEYS.SELECT_MONTH:
         return onEditMonth;
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
@@ -172,7 +159,7 @@ const SupplierRequisition = ({
     <PageButton
       style={globalStyles.topButton}
       text={buttonStrings.new_item}
-      onPress={onSelectItem}
+      onPress={onSelectNewItem}
       isDisabled={isFinalised}
     />
   );
@@ -217,7 +204,7 @@ const SupplierRequisition = ({
     <PageButton
       style={globalStyles.topButton}
       text={buttonStrings.view_regimen_data}
-      onPress={onViewRegimenData}
+      onPress={onOpenRegimenDataModal}
     />
   );
 
@@ -280,8 +267,8 @@ const SupplierRequisition = ({
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteItems}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
@@ -297,14 +284,18 @@ const SupplierRequisition = ({
   );
 };
 
-const mapStateToProps = (state, ownProps) => {
-  const { pages } = state;
-  const { routeName } = ownProps;
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITION);
 
-  return pages[routeName];
+const mapStateToProps = state => {
+  const { pages } = state;
+  return pages[ROUTES.SUPPLIER_REQUISITION];
 };
 
-export const SupplierRequisitionPage = connect(mapStateToProps)(SupplierRequisition);
+export const SupplierRequisitionPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SupplierRequisition);
 
 SupplierRequisition.defaultProps = {
   modalValue: null,
@@ -317,7 +308,6 @@ SupplierRequisition.propTypes = {
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  PageActions: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
@@ -329,4 +319,22 @@ SupplierRequisition.propTypes = {
   hasSelection: PropTypes.bool.isRequired,
   showAll: PropTypes.bool,
   modalValue: PropTypes.any,
+  refreshData: PropTypes.func.isRequired,
+  onSelectNewItem: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeleteItems: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onShowOverStocked: PropTypes.func.isRequired,
+  onHideOverStocked: PropTypes.func.isRequired,
+  onOpenRegimenDataModal: PropTypes.func.isRequired,
+  onEditMonth: PropTypes.func.isRequired,
+  onEditRequiredQuantity: PropTypes.func.isRequired,
+  onAddRequisitionItem: PropTypes.func.isRequired,
+  onSetRequestedToSuggested: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };
