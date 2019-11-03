@@ -9,9 +9,10 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS, debounce } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { useRecordListener } from '../hooks';
-import { getItemLayout } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+import { ROUTES } from '../navigation/constants';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
@@ -31,11 +32,7 @@ import globalStyles from '../globalStyles';
  *
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
- * { isSelected, isFocused, isDisabled },
- *
- * @prop {Object} transaction The realm transaction object for this invoice.
- * @prop {Func} runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
+ * { isSelected, isFocused, isDisabled }
  */
 export const CustomerInvoice = ({
   runWithLoadingIndicator,
@@ -51,35 +48,29 @@ export const CustomerInvoice = ({
   searchTerm,
   modalValue,
   columns,
-  PageActions,
   getPageInfoColumns,
+  refreshData,
+  onSelectNewItem,
+  onEditComment,
+  onEditTheirRef,
+  onFilterData,
+  onDeleteItems,
+  onDeselectAll,
+  onCloseModal,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onEditTotalQuantity,
+  onAddTransactionItem,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
   // Listen for this invoice being finalised which will prune items and cause side effects
   // outside of the reducer. Reconcile differences when triggered.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useRecordListener(refreshCallback, pageObject, 'Transaction');
-  const onAddItem = item => dispatch(PageActions.addTransactionItem(item));
-  const onNewRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
-  const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
-  const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-  const onEditTotalQuantity = (newValue, rowKey) =>
-    dispatch(PageActions.editTotalQuantity(newValue, rowKey));
+  useRecordListener(refreshData, pageObject, 'Transaction');
 
   const onAddMasterList = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
@@ -87,7 +78,7 @@ export const CustomerInvoice = ({
     isFinalised,
   ]);
 
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'totalQuantity':
         return onEditTotalQuantity;
@@ -97,12 +88,12 @@ export const CustomerInvoice = ({
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
       case MODAL_KEYS.SELECT_ITEM:
-        return onAddItem;
+        return onAddTransactionItem;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
@@ -163,7 +154,7 @@ export const CustomerInvoice = ({
             <PageButton
               style={{ ...topButton, marginLeft: 0 }}
               text={buttonStrings.new_item}
-              onPress={onNewRow}
+              onPress={onSelectNewItem}
               isDisabled={isFinalised}
             />
             <PageButton
@@ -186,8 +177,8 @@ export const CustomerInvoice = ({
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteItems}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
@@ -203,13 +194,19 @@ export const CustomerInvoice = ({
   );
 };
 
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_INVOICE);
+
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoice } = pages;
   return customerInvoice;
 };
 
-export const CustomerInvoicePage = connect(mapStateToProps)(CustomerInvoice);
+export const CustomerInvoicePage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomerInvoice);
 
 CustomerInvoice.defaultProps = {
   modalValue: null,
@@ -229,6 +226,18 @@ CustomerInvoice.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   modalValue: PropTypes.any,
   columns: PropTypes.array.isRequired,
-  PageActions: PropTypes.object.isRequired,
   getPageInfoColumns: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onSelectNewItem: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onEditTheirRef: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeleteItems: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onEditTotalQuantity: PropTypes.func.isRequired,
+  onAddTransactionItem: PropTypes.func.isRequired,
 };
