@@ -61,7 +61,7 @@ export const Stocktakes = ({
 
   const onRowPress = useCallback(stocktake => dispatch(gotoStocktakeEditPage(stocktake)), []);
 
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheck') return onCheck;
@@ -69,7 +69,7 @@ export const Stocktakes = ({
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -167,15 +167,16 @@ export const Stocktakes = ({
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   const usingPrograms = () => getAllPrograms(Settings, UIDatabase).length > 0;
-  const onNewProgramStocktake = () => dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE));
+  const onNewProgramStocktake = () =>
+    dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE, ROUTES.STOCKTAKES));
   const onNewStocktake = () => dispatch(gotoStocktakeManagePage(''));
 
   return {
     ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKES),
+    onNewStocktake: usingPrograms ? onNewProgramStocktake : onNewStocktake,
     refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.STOCKTAKES)),
     onFilterData: value =>
       dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.STOCKTAKES)),
-    onNewStocktake: usingPrograms ? onNewProgramStocktake : onNewStocktake,
   };
 };
 
