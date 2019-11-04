@@ -3,18 +3,9 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import {
-  CellActionsLookup,
-  editCountedQuantityWithReason,
-  editStocktakeBatchCountedQuantityWithReason,
-} from './cellActions';
+import { CellActionsLookup, editStocktakeBatchCountedQuantityWithReason } from './cellActions';
 import { RowActionsLookup } from './rowActions';
-import {
-  TableActionsLookup,
-  refreshDataWithFinalisedToggle,
-  filterDataWithFinalisedToggle,
-  filterDataWithOverStockToggle,
-} from './tableActions';
+import { TableActionsLookup } from './tableActions';
 import { PageActionsLookup } from './pageActions';
 
 /**
@@ -31,56 +22,16 @@ import { PageActionsLookup } from './pageActions';
 /**
  * Standard base page actions.
  */
-const BasePageActions = {
+export const BasePageActions = {
   ...CellActionsLookup,
   ...RowActionsLookup,
   ...TableActionsLookup,
   ...PageActionsLookup,
 };
 
-const stocktakeEditorWithReasons = {
-  ...BasePageActions,
-  editCountedQuantity: editCountedQuantityWithReason,
-};
-
 const stocktakeBatchEditModalWithReasons = {
   ...BasePageActions,
   editStocktakeBatchCountedQuantity: editStocktakeBatchCountedQuantityWithReason,
-};
-
-const stocktakes = {
-  ...BasePageActions,
-  refreshData: refreshDataWithFinalisedToggle,
-  filterData: filterDataWithFinalisedToggle,
-};
-
-const customerInvoices = {
-  ...BasePageActions,
-  refreshData: refreshDataWithFinalisedToggle,
-  filterData: filterDataWithFinalisedToggle,
-};
-
-const customerRequisitions = {
-  ...BasePageActions,
-  refreshData: refreshDataWithFinalisedToggle,
-  filterData: filterDataWithFinalisedToggle,
-};
-
-const supplierInvoices = {
-  ...BasePageActions,
-  refreshData: refreshDataWithFinalisedToggle,
-  filterData: filterDataWithFinalisedToggle,
-};
-
-const supplierRequisitions = {
-  ...BasePageActions,
-  refreshData: refreshDataWithFinalisedToggle,
-  filterData: filterDataWithFinalisedToggle,
-};
-
-const supplierRequisitionWithProgram = {
-  ...BasePageActions,
-  filterData: filterDataWithOverStockToggle,
 };
 
 /**
@@ -89,14 +40,7 @@ const supplierRequisitionWithProgram = {
  * screen when navigating.
  */
 const NON_DEFAULT_PAGE_ACTIONS = {
-  stocktakeEditorWithReasons,
   stocktakeBatchEditModalWithReasons,
-  customerInvoices,
-  customerRequisitions,
-  supplierInvoices,
-  supplierRequisitions,
-  stocktakes,
-  supplierRequisitionWithProgram,
 };
 
 /**
@@ -110,15 +54,7 @@ export const getPageActions = route => {
   const wrappedActions = {};
 
   Object.entries(thisRoutesActions).forEach(([key, value]) => {
-    // if (typeof value() === 'function') {
     wrappedActions[key] = (...args) => value(...args, route);
-    // } else {
-    //   wrappedActions[key] = (...args) => {
-    //     const action = value(...args);
-    //     const { payload = {} } = action;
-    //     return { ...action, payload: { ...payload, route } };
-    //   };
-    // }
   });
 
   return wrappedActions;
