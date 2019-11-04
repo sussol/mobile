@@ -9,9 +9,9 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS, debounce } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { useNavigationFocus, useSyncListener } from '../hooks';
-import { getItemLayout } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { gotoSupplierInvoice, createSupplierInvoice } from '../navigation/actions';
 
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
@@ -20,6 +20,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
+import { ROUTES } from '../navigation/constants';
 
 export const SupplierInvoices = ({
   currentUser,
@@ -34,36 +35,32 @@ export const SupplierInvoices = ({
   keyExtractor,
   searchTerm,
   columns,
-  PageActions,
   showFinalised,
+  refreshData,
+  onFilterData,
+  onDeselectAll,
+  onDeleteRecords,
+  onCloseModal,
+  toggleFinalised,
+  onCheck,
+  onUncheck,
+  onSortColumn,
 }) => {
   // Listen to changes from sync and navigation events re-focusing this screen,
   // such that any side effects that occur trigger a reconcilitation of data.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useNavigationFocus(refreshCallback, navigation);
-  useSyncListener(refreshCallback, ['Transaction']);
+  useNavigationFocus(refreshData, navigation);
+  useSyncListener(refreshData, ['Transaction']);
 
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onFilterData = value => dispatch(PageActions.filterData(value));
   const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER));
-  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
-  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
 
   const onNavigateToInvoice = useCallback(invoice => dispatch(gotoSupplierInvoice(invoice)), []);
 
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
   const onCreateInvoice = otherParty => {
     dispatch(createSupplierInvoice(otherParty, currentUser));
     onCloseModal();
   };
 
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheck') return onCheck;
@@ -71,7 +68,7 @@ export const SupplierInvoices = ({
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -115,8 +112,8 @@ export const SupplierInvoices = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
     ],
     [showFinalised]
   );
@@ -149,8 +146,8 @@ export const SupplierInvoices = ({
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.delete_these_invoices}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteRecords}
         confirmText={modalStrings.delete}
       />
       <DataTablePageModal
@@ -165,13 +162,23 @@ export const SupplierInvoices = ({
   );
 };
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.SUPPLIER_INVOICES),
+  onFilterData: value =>
+    dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.SUPPLIER_INVOICES)),
+  refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.SUPPLIER_INVOICES)),
+});
+
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierInvoices } = pages;
   return supplierInvoices;
 };
 
-export const SupplierInvoicesPage = connect(mapStateToProps)(SupplierInvoices);
+export const SupplierInvoicesPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SupplierInvoices);
 
 SupplierInvoices.defaultProps = {
   showFinalised: false,
@@ -190,6 +197,14 @@ SupplierInvoices.propTypes = {
   keyExtractor: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
-  PageActions: PropTypes.object.isRequired,
   showFinalised: PropTypes.bool,
+  refreshData: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onDeleteRecords: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  toggleFinalised: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
 };
