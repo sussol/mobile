@@ -1,23 +1,22 @@
-/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Text, View, ToastAndroid } from 'react-native';
 
-import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { InfoBadge } from '../widgets';
+import { CustomerImage, SupplierImage, StockImage, ModulesImage, InfoBadge } from '../widgets';
 
+import { ROUTES } from '../navigation/constants';
 import { navStrings } from '../localization';
 
 import { SETTINGS_KEYS } from '../settings';
+import { UIDatabase } from '../database';
 
-import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
 import {
   gotoCustomerInvoices,
   gotoCustomerRequisitions,
@@ -28,183 +27,184 @@ import {
   gotoRealmExplorer,
 } from '../navigation/actions';
 
-const { SYNC_SITE_NAME } = SETTINGS_KEYS;
+import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
 
-class Menu extends React.Component {
-  constructor(props) {
-    super(props);
+const exportData = async () => {
+  const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
+  const { success, message } = await UIDatabase.exportData(syncSiteName);
+  const toastMessage = success ? 'Exported data file' : `Couldn't export data: ${message}`;
+  ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
+};
 
-    this.databaseListenerId = null;
-  }
+const Menu = ({
+  isInAdminMode,
+  logOut,
+  toCustomerInvoices,
+  toCustomerRequisitions,
+  toStock,
+  toStocktakes,
+  toSupplierInvoices,
+  toSupplierRequisitions,
+  toRealmExplorer,
+  toDispensary,
+  usingDispensary,
+  usingModules,
+}) => {
+  const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
+  const { image, originalContainer, moduleContainer, bottomIcon, moduleRow, topRow } = styles;
 
-  componentWillMount() {
-    const { database } = this.props;
+  const containerStyle = usingModules ? moduleContainer : originalContainer;
 
-    this.databaseListenerId = database.addListener(
-      // Ensure that language changes in login modal are re-rendered onto the MenuPage.
-      (_, recordType) => recordType === 'Setting' && this.forceUpdate()
-    );
-  }
+  const MenuButton = props => <Button style={menuButton} textStyle={buttonText} {...props} />;
 
-  componentWillUnmount() {
-    const { database } = this.props;
-    database.removeListener(this.databaseListenerId);
-  }
-
-  exportData = async () => {
-    const { settings, database } = this.props;
-    const syncSiteName = settings.get(SYNC_SITE_NAME);
-    const { success, error } = await database.exportData(syncSiteName);
-    let toastMessage;
-    if (success) {
-      toastMessage = 'Exported data file';
-    } else {
-      const { message } = error;
-      toastMessage = `Couldn't export data: ${message}`;
-    }
-    ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
-  };
-
-  render() {
-    const {
-      isInAdminMode,
-      logOut,
-      navigateToCustomerInvoices,
-      navigateToCustomerRequisitions,
-      navigateToStock,
-      navigateToStocktakes,
-      navigateToSupplierInvoices,
-      navigateToSupplierRequisitions,
-      navigateToRealmExplorer,
-    } = this.props;
-
-    return (
-      <View style={[globalStyles.pageContentContainer, localStyles.pageContentContainer]}>
-        <View style={[globalStyles.horizontalContainer, localStyles.horizontalContainer]}>
-          <View style={localStyles.container}>
-            <Image
-              style={localStyles.image}
-              resizeMode="contain"
-              // eslint-disable-next-line global-require
-              source={require('../images/menu_people.png')}
-            />
-            <InfoBadge routeName="customerInvoices" mainWrapperStyle={localStyles.InfoBadgeWrapper}>
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text={navStrings.customer_invoices}
-                onPress={navigateToCustomerInvoices}
-              />
-            </InfoBadge>
-            <InfoBadge
-              routeName="customerRequisitions"
-              mainWrapperStyle={localStyles.InfoBadgeWrapper}
-            >
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text={navStrings.customer_requisitions}
-                onPress={navigateToCustomerRequisitions}
-              />
-            </InfoBadge>
-          </View>
-
-          <View style={[localStyles.container, localStyles.centralContainer]}>
-            <Image
-              style={localStyles.image}
-              resizeMode="contain"
-              // eslint-disable-next-line global-require
-              source={require('../images/menu_truck.png')}
-            />
-            <InfoBadge routeName="supplierInvoices" mainWrapperStyle={localStyles.InfoBadgeWrapper}>
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text={navStrings.supplier_invoices}
-                onPress={navigateToSupplierInvoices}
-              />
-            </InfoBadge>
-            <InfoBadge
-              routeName="supplierRequisitions"
-              mainWrapperStyle={localStyles.InfoBadgeWrapper}
-            >
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text={navStrings.supplier_requisitions}
-                onPress={navigateToSupplierRequisitions}
-              />
-            </InfoBadge>
-            {isInAdminMode && (
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text="Export Data"
-                onPress={this.exportData}
-              />
-            )}
-          </View>
-
-          <View style={localStyles.container}>
-            <Image
-              style={localStyles.image}
-              resizeMode="contain"
-              // eslint-disable-next-line global-require
-              source={require('../images/menu_pc_clipboard.png')}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.current_stock}
-              onPress={navigateToStock}
-            />
-            <InfoBadge routeName="stocktakes" mainWrapperStyle={localStyles.InfoBadgeWrapper}>
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text={navStrings.stocktakes}
-                onPress={navigateToStocktakes}
-              />
-            </InfoBadge>
-            {isInAdminMode && (
-              <Button
-                style={globalStyles.menuButton}
-                textStyle={globalStyles.menuButtonText}
-                text="Realm Explorer"
-                onPress={navigateToRealmExplorer}
-              />
-            )}
-          </View>
-        </View>
-        <View style={globalStyles.bottomContainer}>
-          <Icon.Button
-            name="power-off"
-            underlayColor="#888888"
-            iconStyle={localStyles.bottomIcon}
-            borderRadius={4}
-            backgroundColor="rgba(255,255,255,0)"
-            onPress={logOut}
-          >
-            <Text style={localStyles.logOutText}>{navStrings.log_out}</Text>
-          </Icon.Button>
-        </View>
+  const CustomerSection = () => (
+    <View style={containerStyle}>
+      <CustomerImage style={image} />
+      <View>
+        <InfoBadge routeName={ROUTES.CUSTOMER_INVOICES}>
+          <MenuButton text={navStrings.customer_invoices} onPress={toCustomerInvoices} />
+        </InfoBadge>
+        <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
+          <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
+        </InfoBadge>
       </View>
-    );
-  }
-}
+    </View>
+  );
+
+  const SupplierSection = () => (
+    <View style={containerStyle}>
+      <SupplierImage style={image} />
+      <View>
+        <InfoBadge routeName={ROUTES.SUPPLIER_INVOICES}>
+          <MenuButton text={navStrings.supplier_invoices} onPress={toSupplierInvoices} />
+        </InfoBadge>
+        <InfoBadge routeName={ROUTES.SUPPLIER_REQUISITIONS}>
+          <MenuButton text={navStrings.supplier_requisitions} onPress={toSupplierRequisitions} />
+        </InfoBadge>
+      </View>
+    </View>
+  );
+
+  const StockSection = () => (
+    <View style={containerStyle}>
+      <StockImage style={image} />
+      <View>
+        <MenuButton text={navStrings.current_stock} onPress={toStock} />
+        <InfoBadge routeName={ROUTES.STOCKTAKES}>
+          <MenuButton text={navStrings.stocktake} onPress={toStocktakes} />
+        </InfoBadge>
+      </View>
+    </View>
+  );
+
+  const ModulesSection = () => (
+    <View style={containerStyle}>
+      <ModulesImage style={image} />
+      <View>{usingDispensary && <MenuButton text="Dispensary" onPress={toDispensary} />}</View>
+    </View>
+  );
+
+  const AdminRow = () => (
+    <View style={styles.bottomRow}>
+      <View style={styles.bottomIconView}>
+        <Icon.Button
+          name="power-off"
+          iconStyle={bottomIcon}
+          backgroundColor="rgba(255,255,255,0)"
+          onPress={logOut}
+        >
+          <Text>{navStrings.log_out}</Text>
+        </Icon.Button>
+      </View>
+      {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
+      {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
+    </View>
+  );
+
+  const ModuleLayout = () => (
+    <View style={{ flex: 9 }}>
+      <View style={moduleRow}>
+        <CustomerSection />
+        <SupplierSection />
+      </View>
+      <View style={moduleRow}>
+        <StockSection />
+        <ModulesSection />
+      </View>
+    </View>
+  );
+
+  const OriginalLayout = () => (
+    <View style={topRow}>
+      <CustomerSection />
+      <SupplierSection />
+      <StockSection />
+    </View>
+  );
+
+  return (
+    <View style={{ ...appBackground }}>
+      {usingModules ? <ModuleLayout /> : <OriginalLayout />}
+      <AdminRow />
+    </View>
+  );
+};
+
+const styles = {
+  topRow: { flex: 9, flexDirection: 'row' },
+  moduleRow: { flex: 1, flexDirection: 'row' },
+  image: { height: 150, width: 150, marginBottom: 30 },
+  bottomIcon: { color: GREY },
+  bottomIconView: { flexGrow: 1, marginLeft: 100 },
+  bottomRow: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+  },
+  moduleContainer: {
+    alignItems: 'center',
+    borderColor: SHADOW_BORDER,
+    borderWidth: 1,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginTop: 30,
+    paddingLeft: 50,
+    marginHorizontal: 15,
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  originalContainer: {
+    backgroundColor: 'white',
+    alignItems: 'center',
+    borderColor: SHADOW_BORDER,
+    borderWidth: 1,
+    justifyContent: 'flex-start',
+    marginTop: 30,
+    paddingTop: 50,
+    marginHorizontal: 30,
+    flex: 1,
+  },
+};
 
 const actionCreators = {
-  navigateToCustomerInvoices: gotoCustomerInvoices,
-  navigateToCustomerRequisitions: gotoCustomerRequisitions,
-  navigateToStock: gotoStock,
-  navigateToStocktakes: gotoStocktakes,
-  navigateToSupplierInvoices: gotoSupplierInvoices,
-  navigateToSupplierRequisitions: gotoSupplierRequisitions,
-  navigateToRealmExplorer: gotoRealmExplorer,
+  toCustomerInvoices: gotoCustomerInvoices,
+  toCustomerRequisitions: gotoCustomerRequisitions,
+  toStock: gotoStock,
+  toStocktakes: gotoStocktakes,
+  toSupplierInvoices: gotoSupplierInvoices,
+  toSupplierRequisitions: gotoSupplierRequisitions,
+  toRealmExplorer: gotoRealmExplorer,
+};
+
+const mapStateToProps = state => {
+  const { modules } = state;
+  const { usingDispensary } = modules;
+  return { usingDispensary, usingModules: usingDispensary };
 };
 
 export const MenuPage = connect(
-  null,
+  mapStateToProps,
   actionCreators
 )(Menu);
 
@@ -213,51 +213,16 @@ Menu.defaultProps = {
 };
 
 Menu.propTypes = {
-  database: PropTypes.object.isRequired,
   isInAdminMode: PropTypes.bool,
   logOut: PropTypes.func.isRequired,
-  settings: PropTypes.object.isRequired,
-  navigateToCustomerInvoices: PropTypes.func.isRequired,
-  navigateToCustomerRequisitions: PropTypes.func.isRequired,
-  navigateToStock: PropTypes.func.isRequired,
-  navigateToStocktakes: PropTypes.func.isRequired,
-  navigateToSupplierInvoices: PropTypes.func.isRequired,
-  navigateToSupplierRequisitions: PropTypes.func.isRequired,
-  navigateToRealmExplorer: PropTypes.func.isRequired,
+  toCustomerInvoices: PropTypes.func.isRequired,
+  toCustomerRequisitions: PropTypes.func.isRequired,
+  toStock: PropTypes.func.isRequired,
+  toStocktakes: PropTypes.func.isRequired,
+  toSupplierInvoices: PropTypes.func.isRequired,
+  toSupplierRequisitions: PropTypes.func.isRequired,
+  toRealmExplorer: PropTypes.func.isRequired,
+  toDispensary: PropTypes.func.isRequired,
+  usingDispensary: PropTypes.bool.isRequired,
+  usingModules: PropTypes.bool.isRequired,
 };
-
-const localStyles = StyleSheet.create({
-  pageContentContainer: {
-    padding: 0,
-  },
-  horizontalContainer: {
-    flex: 9,
-    justifyContent: 'space-between',
-  },
-  container: {
-    alignSelf: 'stretch',
-    flex: 1,
-    paddingTop: 30,
-    paddingHorizontal: 30,
-    borderColor: SHADOW_BORDER,
-    borderWidth: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: 'white',
-  },
-  centralContainer: {
-    marginHorizontal: 40,
-  },
-  image: {
-    height: 150,
-    width: 150,
-    marginBottom: 30,
-  },
-  logOutText: {
-    fontFamily: APP_FONT_FAMILY,
-    color: WARMER_GREY,
-  },
-  bottomIcon: {
-    color: GREY,
-  },
-});
