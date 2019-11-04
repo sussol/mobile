@@ -9,13 +9,13 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { MODAL_KEYS, debounce } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 
 import { DataTablePageModal } from '../widgets/modals';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 import { DataTablePageView, PageButton, PageInfo, SearchBar } from '../widgets';
-
-import { getItemLayout } from './dataTableUtilities';
+import { ROUTES } from '../navigation/constants';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import { useRecordListener } from '../hooks';
 
@@ -34,10 +34,6 @@ import { buttonStrings } from '../localization';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isDisabled },
- *
- * @prop {Object} requisition The realm transaction object for this invoice.
- * @prop {Func}   runWithLoadingIndicator Callback for displaying a fullscreen spinner.
- * @prop {String} routeName The current route name for the top of the navigation stack.
  */
 export const CustomerRequisition = ({
   runWithLoadingIndicator,
@@ -51,30 +47,25 @@ export const CustomerRequisition = ({
   keyExtractor,
   modalValue,
   searchTerm,
-  PageActions,
   columns,
   getPageInfoColumns,
+  refreshData,
+  onEditComment,
+  onFilterData,
+  onCloseModal,
+  onSortColumn,
+  onEditSuppliedQuantity,
 }) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
-  useRecordListener(() => dispatch(PageActions.refreshData()), pageObject, 'Requisition');
+  useRecordListener(refreshData, pageObject, 'Requisition');
 
   const { isFinalised, comment } = pageObject;
 
-  // On click handlers
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onAddItem = value => dispatch(PageActions.addRequisitionItem(value));
-  const onEditComment = value => dispatch(PageActions.editComment(value, 'Requisition'));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onEditSuppliedQuantity = (newValue, rowKey, columnKey) =>
-    dispatch(PageActions.editSuppliedQuantity(newValue, rowKey, columnKey));
   const onSetSuppliedToRequested = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested()));
   const onSetSuppliedToSuggested = () =>
     runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
+
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
     comment,
     isFinalised,
@@ -91,8 +82,6 @@ export const CustomerRequisition = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_ITEM:
-        return onAddItem;
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
         return onEditComment;
       default:
@@ -178,13 +167,19 @@ export const CustomerRequisition = ({
   );
 };
 
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.CUSTOMER_REQUISITION);
+
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerRequisition } = pages;
   return customerRequisition;
 };
 
-export const CustomerRequisitionPage = connect(mapStateToProps)(CustomerRequisition);
+export const CustomerRequisitionPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomerRequisition);
 
 CustomerRequisition.defaultProps = {
   modalValue: null,
@@ -196,7 +191,6 @@ CustomerRequisition.propTypes = {
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  PageActions: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   runWithLoadingIndicator: PropTypes.func.isRequired,
@@ -205,4 +199,10 @@ CustomerRequisition.propTypes = {
   pageObject: PropTypes.object.isRequired,
   modalValue: PropTypes.any,
   getPageInfoColumns: PropTypes.func.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onEditSuppliedQuantity: PropTypes.func.isRequired,
 };
