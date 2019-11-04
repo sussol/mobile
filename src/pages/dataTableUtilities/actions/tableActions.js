@@ -59,21 +59,6 @@ export const refreshData = route => ({ type: ACTIONS.REFRESH_DATA, payload: { ro
 export const hideOverStocked = route => ({ type: ACTIONS.HIDE_OVER_STOCKED, payload: { route } });
 
 /**
- * Hides all items which have a current stock on hand less than 0.
- */
-export const hideStockOut = route => ({ type: ACTIONS.HIDE_STOCK_OUT, payload: { route } });
-
-/**
- * Hides all rows which have a status of finalised.
- */
-export const showFinalised = route => ({ type: ACTIONS.SHOW_FINALISED, payload: { route } });
-
-/**
- * Shows all rows which do not have the status of finalised.
- */
-export const showNotFinalised = route => ({ type: ACTIONS.SHOW_NOT_FINALISED, payload: { route } });
-
-/**
  * Shows all items, regardless of current stock on hand, toggles
  * showAll to true and removes the current search filtering. Sort is
  * kept stable.
@@ -93,20 +78,20 @@ export const showStockOut = route => refreshData(route);
  *
  * @param {Bool} showFinalised Indicator wheter finalised rows are currently displayed.
  */
-export const toggleShowFinalised = (showingFinalised, route) => {
-  if (showingFinalised) return showNotFinalised(route);
-  return showFinalised(route);
-};
+export const toggleShowFinalised = route => ({
+  type: ACTIONS.TOGGLE_SHOW_FINALISED,
+  payload: { route },
+});
 
 /**
  * Wrapper around hideStockout and showStockout. Determines which
  * should be dispatched.
  * @param {Bool} showAll Indicator whether all rows are currently showing.
  */
-export const toggleStockOut = (showAll, route) => {
-  if (showAll) return hideStockOut(route);
-  return showStockOut(route);
-};
+export const toggleStockOut = route => ({
+  type: ACTIONS.TOGGLE_STOCK_OUT,
+  payload: { route },
+});
 
 /**
  * Adds all items from master lists, according to the type of pageObject.
@@ -156,15 +141,6 @@ export const addItem = (item, addedItemType, route) => (dispatch, getState) => {
     dispatch(closeModal(route));
   }
 };
-
-/**
- * Wrappers around addItem action creator to pass a pageObject type.
- *
- * @param {Object} item The item to be added.
- */
-export const addTransactionItem = (item, route) => addItem(item, 'TransactionItem', route);
-export const addStocktakeItem = (item, route) => addItem(item, 'StocktakeItem', route);
-export const addRequisitionItem = (item, route) => addItem(item, 'RequisitionItem', route);
 
 /**
  * Creates a transaction batch which will be associated with the current stores
@@ -257,44 +233,6 @@ export const setSuppliedToSuggested = route => (dispatch, getState) => {
   dispatch(refreshData(route));
 };
 
-export const TableActionsLookup = {
-  sortData,
-  filterData,
-  refreshData,
-  hideOverStocked,
-  showNotFinalised,
-  showFinalised,
-  toggleShowFinalised,
-  hideStockOut,
-  showOverStocked,
-  showStockOut,
-  toggleStockOut,
-  addMasterListItems,
-  addItem,
-  addTransactionBatch,
-  createAutomaticOrder,
-  setRequestedToSuggested,
-  setSuppliedToRequested,
-  setSuppliedToSuggested,
-  addRequisitionItem,
-  addStocktakeItem,
-  addTransactionItem,
-  addStocktakeBatch,
-};
-
-/**
- * =====================================================================
- *
- *                             Overrides
- *
- * Below are actions which are overrides of base actions.
- *
- * Example: editCountedQuantityWithReason overrides editCountedQuantity
- * for a stocktakeEditPage when reasons are defined.
- *
- * =====================================================================
- */
-
 export const refreshDataWithFinalisedToggle = route => ({
   type: ACTIONS.REFRESH_DATA_WITH_FINALISED_TOGGLE,
   payload: { route },
@@ -309,3 +247,25 @@ export const filterDataWithOverStockToggle = (searchTerm, route) => ({
   type: ACTIONS.FILTER_DATA_WITH_OVER_STOCK_TOGGLE,
   payload: { searchTerm, route },
 });
+
+export const TableActionsLookup = {
+  sortData,
+  filterData,
+  refreshData,
+  hideOverStocked,
+  toggleShowFinalised,
+  showOverStocked,
+  showStockOut,
+  toggleStockOut,
+  addMasterListItems,
+  addItem,
+  addTransactionBatch,
+  createAutomaticOrder,
+  setRequestedToSuggested,
+  setSuppliedToRequested,
+  setSuppliedToSuggested,
+  addStocktakeBatch,
+  refreshDataWithFinalisedToggle,
+  filterDataWithFinalisedToggle,
+  filterDataWithOverStockToggle,
+};
