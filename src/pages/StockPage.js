@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 
-import { getItemLayout } from './dataTableUtilities/utilities';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
@@ -19,7 +19,8 @@ import { useSyncListener } from '../hooks';
 import { DataTablePageView, SearchBar } from '../widgets';
 
 import { ItemDetails } from '../widgets/modals/ItemDetails';
-import { debounce } from '../utilities/index';
+
+import { ROUTES } from '../navigation/constants';
 
 /**
  * Renders a mSupply mobile page with Items and their stock levels.
@@ -33,12 +34,9 @@ import { debounce } from '../utilities/index';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused, isDisabled },
- *
- * @prop {Object} routeName Name of the current route.
  */
 export const Stock = ({
   data,
-  dispatch,
   dataState,
   sortBy,
   isAscending,
@@ -46,20 +44,14 @@ export const Stock = ({
   searchTerm,
   keyExtractor,
   columns,
-  PageActions,
+  refreshData,
+  onSelectRow,
+  onDeselectRow,
+  onFilterData,
+  onSortColumn,
 }) => {
   //  Refresh data on retrieving item or itembatch records from sync.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useSyncListener(refreshCallback, ['Item', 'ItemBatch']);
-
-  const onSelectRow = useCallback(({ id }) => dispatch(PageActions.selectOneRow(id)), []);
-  const onDeselectRow = () => dispatch(PageActions.deselectRow(selectedRow.id));
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
+  useSyncListener(refreshData, ['Item', 'ItemBatch']);
 
   const renderRow = useCallback(
     listItem => {
@@ -114,6 +106,9 @@ export const Stock = ({
   );
 };
 
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, '', ROUTES.STOCK);
+
 const mapStateToProps = state => {
   const { pages } = state;
 
@@ -121,7 +116,10 @@ const mapStateToProps = state => {
   return stock;
 };
 
-export const StockPage = connect(mapStateToProps)(Stock);
+export const StockPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Stock);
 
 Stock.defaultProps = {
   selectedRow: null,
@@ -136,6 +134,9 @@ Stock.propTypes = {
   searchTerm: PropTypes.string.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   columns: PropTypes.array.isRequired,
-  dispatch: PropTypes.func.isRequired,
-  PageActions: PropTypes.object.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onSelectRow: PropTypes.func.isRequired,
+  onDeselectRow: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
 };

@@ -15,10 +15,11 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { UIDatabase } from '../database';
 import Settings from '../settings/MobileAppSettings';
-import { MODAL_KEYS, getAllPrograms, debounce } from '../utilities';
+import { MODAL_KEYS, getAllPrograms } from '../utilities';
+import { ROUTES } from '../navigation/constants';
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { createSupplierRequisition, gotoSupplierRequisition } from '../navigation/actions';
-import { getItemLayout } from './dataTableUtilities';
+import { getItemLayout, PageActions, getPageDispatchers } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings } from '../localization';
@@ -35,11 +36,6 @@ import { buttonStrings, modalStrings } from '../localization';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused },
- *
- * @prop {String} routeName     The current route name for the top of the navigation stack.
- * @prop {Object} currentUser   The currently logged in user.
- * @prop {Func}   dispatch Dispatch method for the app-wide redux store.
- * @prop {Object} navigation    Reference to the main application stack navigator.
  */
 export const SupplierRequisitions = ({
   currentUser,
@@ -52,35 +48,25 @@ export const SupplierRequisitions = ({
   modalKey,
   hasSelection,
   searchTerm,
-  PageActions,
   columns,
   showFinalised,
   keyExtractor,
+  refreshData,
+  onFilterData,
+  onDeselectAll,
+  onDeleteRecords,
+  onCloseModal,
+  toggleFinalised,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onNewRequisition,
 }) => {
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  const refreshCallback = () => dispatch(PageActions.refreshData(), []);
-  useNavigationFocus(refreshCallback, navigation);
-  // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useSyncListener(refreshCallback, 'Requisition');
-
-  const usingPrograms = useMemo(() => getAllPrograms(Settings, UIDatabase).length > 0, []);
-  const { SELECT_INTERNAL_SUPPLIER, PROGRAM_REQUISITION } = MODAL_KEYS;
-  const NEW_REQUISITON = usingPrograms ? PROGRAM_REQUISITION : SELECT_INTERNAL_SUPPLIER;
+  useNavigationFocus(refreshData, navigation);
+  useSyncListener(refreshData, 'Requisition');
 
   const onPressRow = useCallback(rowData => dispatch(gotoSupplierRequisition(rowData)), []);
-  const onConfirmDelete = () => dispatch(PageActions.deleteRequisitions());
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
-  const onSearchFiltering = value => dispatch(PageActions.filterData(value));
-  const onNewRequisition = () => dispatch(PageActions.openModal(NEW_REQUISITON));
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
 
   const onCreateRequisition = otherStoreName => {
     onCloseModal();
@@ -104,9 +90,9 @@ export const SupplierRequisitions = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case SELECT_INTERNAL_SUPPLIER:
+      case MODAL_KEYS.SELECT_INTERNAL_SUPPLIER:
         return onCreateRequisition;
-      case PROGRAM_REQUISITION:
+      case MODAL_KEYS.PROGRAM_REQUISITION:
         return onCreateProgramRequisition;
       default:
         return null;
@@ -146,8 +132,8 @@ export const SupplierRequisitions = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
     ],
     [showFinalised]
   );
@@ -162,7 +148,7 @@ export const SupplierRequisitions = ({
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={onSearchFiltering} value={searchTerm} />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
           <PageButton text={buttonStrings.new_requisition} onPress={onNewRequisition} />
@@ -179,8 +165,8 @@ export const SupplierRequisitions = ({
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.remove_these_items}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteRecords}
         confirmText={modalStrings.remove}
       />
       <DataTablePageModal
@@ -193,13 +179,34 @@ export const SupplierRequisitions = ({
     </DataTablePageView>
   );
 };
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const usingPrograms = () => getAllPrograms(Settings, UIDatabase).length > 0;
+  const newRequisitionModalKey = usingPrograms
+    ? MODAL_KEYS.PROGRAM_REQUISITION
+    : MODAL_KEYS.SELECT_INTERNAL_SUPPLIER;
+
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITIONS),
+    onFilterData: value =>
+      dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.SUPPLIER_REQUISITIONS)),
+    refreshData: () =>
+      dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.SUPPLIER_REQUISITIONS)),
+    onNewRequisition: () =>
+      dispatch(PageActions.openModal(newRequisitionModalKey, ROUTES.SUPPLIER_REQUISITIONS)),
+  };
+};
+
 const mapStateToProps = state => {
   const { pages } = state;
   const { supplierRequisitions } = pages;
   return supplierRequisitions;
 };
 
-export const SupplierRequisitionsPage = connect(mapStateToProps)(SupplierRequisitions);
+export const SupplierRequisitionsPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SupplierRequisitions);
 
 SupplierRequisitions.defaultProps = {
   showFinalised: false,
@@ -213,11 +220,20 @@ SupplierRequisitions.propTypes = {
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  PageActions: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   showFinalised: PropTypes.bool,
   modalKey: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   currentUser: PropTypes.object.isRequired,
+  refreshData: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onDeleteRecords: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  toggleFinalised: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onNewRequisition: PropTypes.func.isRequired,
 };

@@ -7,11 +7,11 @@ import { useRef, useState, useCallback, useMemo } from 'react';
 
 import {
   DataTablePageReducer,
-  getPageActions,
   getColumns,
   getPageInfoColumns,
   getPageInitialiser,
 } from '../pages/dataTableUtilities';
+import { getPageActions } from '../pages/dataTableUtilities/actions/getPageActions';
 
 import { debounce } from '../utilities/index';
 

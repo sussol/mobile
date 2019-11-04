@@ -142,17 +142,13 @@ export const gotoStocktakeEditPage = stocktake => (dispatch, getState) => {
   const { nav } = getState();
   const currentRouteName = getCurrentRouteName(nav);
 
-  const hasNegativeAdjustmentReasons = UIDatabase.objects('NegativeAdjustmentReason').length > 0;
-  const hasPositiveAdjustmentReasons = UIDatabase.objects('PositiveAdjustmentReason').length > 0;
-  const usesReasons = hasNegativeAdjustmentReasons && hasPositiveAdjustmentReasons;
-
   // If navigating from the stocktakesPage, go straight to the StocktakeEditPage. Otherwise,
   // replace the current page as the user is coming from StocktakeManagePage.
   const navigationActionCreator =
     currentRouteName === ROUTES.STOCKTAKES ? NavigationActions.navigate : StackActions.replace;
 
   const navigationParameters = {
-    routeName: usesReasons ? ROUTES.STOCKTAKE_EDITOR_WITH_REASONS : ROUTES.STOCKTAKE_EDITOR,
+    routeName: ROUTES.STOCKTAKE_EDITOR,
     params: { title: navStrings.stocktake, stocktake, pageObject: stocktake },
   };
 
@@ -232,9 +228,7 @@ export const gotoSupplierInvoice = transaction => dispatch => {
  */
 export const gotoSupplierRequisition = requisition =>
   NavigationActions.navigate({
-    routeName: !requisition.program
-      ? ROUTES.SUPPLIER_REQUISITION
-      : ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM,
+    routeName: ROUTES.SUPPLIER_REQUISITION,
     params: {
       title: `${navStrings.requisition} ${requisition.serialNumber}`,
       requisition,

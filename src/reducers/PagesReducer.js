@@ -15,6 +15,7 @@ export const PagesReducer = (state = {}, action) => {
   const { type } = action;
 
   switch (type) {
+    case 'Navigation/REPLACE':
     case 'Navigation/NAVIGATE': {
       const { routeName, params } = action;
       const { pageObject } = params;

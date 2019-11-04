@@ -234,37 +234,6 @@ export const applyReason = (value, route) => (dispatch, getState) => {
   dispatch(refreshRow(rowKey, route));
 };
 
-export const CellActionsLookup = {
-  refreshRow,
-  editExpiryDate,
-  editTransactionBatchExpiryDate,
-  editStocktakeBatchExpiryDate,
-  editTotalQuantity,
-  editSuppliedQuantity,
-  editRequiredQuantity,
-  editRequisitionItemRequiredQuantity,
-  editCountedQuantity,
-  editStocktakeBatchCountedQuantity,
-  removeReason,
-  enforceReasonChoice,
-  applyReason,
-  editBatchName,
-  editStocktakeBatchName,
-};
-
-/**
- * =====================================================================
- *
- *                             Overrides
- *
- * Below are actions which are overrides of base actions.
- *
- * Example: editCountedQuantityWithReason overrides editCountedQuantity
- * for a stocktakeEditPage when reasons are defined.
- *
- * =====================================================================
- */
-
 /**
  * Wrapper around `editCountedTotalQuantity`, splitting the action to enforce a
  * reason also.
@@ -287,4 +256,24 @@ export const editCountedQuantityWithReason = (value, rowKey, route) => dispatch 
 export const editStocktakeBatchCountedQuantityWithReason = (value, rowKey, route) => dispatch => {
   dispatch(editStocktakeBatchCountedQuantity(value, rowKey, route));
   dispatch(enforceReasonChoice(rowKey, route));
+};
+
+export const CellActionsLookup = {
+  refreshRow,
+  editExpiryDate,
+  editTransactionBatchExpiryDate,
+  editStocktakeBatchExpiryDate,
+  editTotalQuantity,
+  editSuppliedQuantity,
+  editRequiredQuantity,
+  editRequisitionItemRequiredQuantity,
+  editCountedQuantity,
+  editStocktakeBatchCountedQuantity,
+  removeReason,
+  enforceReasonChoice,
+  applyReason,
+  editBatchName,
+  editStocktakeBatchName,
+  editCountedQuantityWithReason,
+  editStocktakeBatchCountedQuantityWithReason,
 };
