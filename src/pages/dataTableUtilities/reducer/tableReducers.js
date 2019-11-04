@@ -131,28 +131,17 @@ export const refreshDataWithFinalisedToggle = state => {
  * Filters `backingData` by status, setting `data` as all elements whose
  * status is finalised.
  */
-export const showFinalised = state => {
-  const { backingData, sortBy, isAscending } = state;
+export const toggleShowFinalised = state => {
+  const { backingData, sortBy, isAscending, showFinalised } = state;
 
-  const filteredData = backingData.filtered('status == $0', 'finalised').slice();
+  const newShowFinalisedState = !showFinalised;
+  const finalisedCondition = newShowFinalisedState ? '==' : '!=';
 
-  const sortedData = sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData;
-
-  return { ...state, data: sortedData, showFinalised: true, searchTerm: '' };
-};
-
-/**
- * Filters `backingData` by status, setting `data` as all elements whose
- * status is not finalised.
- */
-export const showNotFinalised = state => {
-  const { backingData, sortBy, isAscending } = state;
-
-  const filteredData = backingData.filtered('status != $0', 'finalised').slice();
+  const filteredData = backingData.filtered(`status ${finalisedCondition} $0`, 'finalised').slice();
 
   const sortedData = sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData;
 
-  return { ...state, data: sortedData, showFinalised: false };
+  return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
 
 /**
@@ -169,12 +158,14 @@ export const hideOverStocked = state => {
 /**
  * Filters by backingData elements `hasStock` field.
  */
-export const hideStockOut = state => {
-  const { backingData } = state;
+export const toggleStockOut = state => {
+  const { backingData, showAll } = state;
 
-  const newData = backingData.filter(item => item.hasStock);
+  const newToggleState = !showAll;
 
-  return { ...state, data: newData, showAll: false, searchTerm: '' };
+  const newData = newToggleState ? backingData : backingData.filter(item => item.hasStock);
+
+  return { ...state, data: newData, showAll: newToggleState, searchTerm: '' };
 };
 
 /**
@@ -198,9 +189,8 @@ export const addRecord = (state, action) => {
 };
 
 export const TableReducerLookup = {
-  hideStockOut,
-  showNotFinalised,
-  showFinalised,
+  toggleStockOut,
+  toggleShowFinalised,
   addRecord,
   hideOverStocked,
   refreshData,
