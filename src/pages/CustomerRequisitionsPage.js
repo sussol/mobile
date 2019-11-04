@@ -14,11 +14,12 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { useNavigationFocus, useSyncListener } from '../hooks';
 import { gotoCustomerRequisition } from '../navigation/actions';
-import { getItemLayout, recordKeyExtractor } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings } from '../localization';
-import { debounce } from '../utilities/index';
+
+import { ROUTES } from '../navigation/constants';
 
 /**
  * Renders a mSupply mobile page with a list of Customer requisitions.
@@ -32,11 +33,6 @@ import { debounce } from '../utilities/index';
  * dataState is a simple map of objects corresponding to a row being displayed,
  * holding the state of a given row. Each object has the shape :
  * { isSelected, isFocused },
- *
- * @prop {String} routeName     The current route name for the top of the navigation stack.
- * @prop {Object} currentUser   The currently logged in user.
- * @prop {Func}   dispatch Dispatch method for the app-wide redux store.
- * @prop {Object} navigation    Reference to the main application stack navigator.
  */
 export const CustomerRequisitions = ({
   dispatch,
@@ -45,25 +41,19 @@ export const CustomerRequisitions = ({
   sortBy,
   isAscending,
   searchTerm,
-  PageActions,
   columns,
   keyExtractor,
   showFinalised,
+  refreshData,
+  onFilterData,
+  toggleFinalised,
+  onSortColumn,
 }) => {
-  const refreshCallback = () => dispatch(PageActions.refreshData(), []);
   // Custom hook to refresh data on this page when becoming the head of the stack again.
-  useNavigationFocus(refreshCallback, navigation);
-  // Custom hook to listen to sync changes - refreshing data when requisitions are synced.
-  useSyncListener(refreshCallback, 'Requisition');
+  useNavigationFocus(refreshData, navigation);
+  useSyncListener(refreshData, 'Requisition');
 
   const onPressRow = useCallback(rowData => dispatch(gotoCustomerRequisition(rowData)), []);
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
 
   const renderRow = useCallback(
     listItem => {
@@ -98,8 +88,8 @@ export const CustomerRequisitions = ({
     () => (
       <ToggleBar
         toggles={[
-          { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-          { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+          { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
+          { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
         ]}
       />
     ),
@@ -119,12 +109,20 @@ export const CustomerRequisitions = ({
         data={data}
         renderRow={renderRow}
         renderHeader={renderHeader}
-        keyExtractor={recordKeyExtractor}
+        keyExtractor={keyExtractor}
         getItemLayout={getItemLayout}
       />
     </DataTablePageView>
   );
 };
+
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_REQUISITIONS),
+  onFilterData: value =>
+    dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.CUSTOMER_REQUISITIONS)),
+  refreshData: () =>
+    dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.CUSTOMER_REQUISITIONS)),
+});
 
 const mapStateToProps = state => {
   const { pages } = state;
@@ -132,7 +130,10 @@ const mapStateToProps = state => {
   return customerRequisitions;
 };
 
-export const CustomerRequisitionsPage = connect(mapStateToProps)(CustomerRequisitions);
+export const CustomerRequisitionsPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomerRequisitions);
 
 CustomerRequisitions.defaultProps = {
   showFinalised: false,
@@ -145,8 +146,11 @@ CustomerRequisitions.propTypes = {
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  PageActions: PropTypes.object.isRequired,
   columns: PropTypes.array.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   showFinalised: PropTypes.bool,
+  refreshData: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  toggleFinalised: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
 };
