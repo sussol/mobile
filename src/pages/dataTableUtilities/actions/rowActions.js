@@ -8,39 +8,6 @@ import { ACTIONS } from './constants';
 import { pageStateSelector } from '../selectors';
 
 /**
- * Uses the stores dataState map to set a row/column
- * to isFocused.
- * use case: react-native bug where rendering 100+ TextInput
- * components causes the app to crash. When a table needs a
- * large number of TextInputs, need to render View's when not
- * focused so using imperative focus handling is not possible.
- *
- * @param {String} rowKey       Key of the row to focus.
- * @param {String} columnKey    Key of the column to focus.
- */
-export const focusCell = (rowKey, columnKey, route) => ({
-  type: ACTIONS.FOCUS_CELL,
-  payload: { rowKey, columnKey, route },
-});
-
-/**
- * Uses the stores dataState map to set a row/column
- * to isFocused. Will focus the cell after the currently
- * focused cell.
- * use case: react-native bug where rendering 100+ TextInput
- * components causes the app to crash. When a table needs a
- * large number of TextInputs, need to render View's when not
- * focused so using imperative focus handling is not possible.
- *
- * @param {String} rowKey       Key of the row to focus.
- * @param {String} columnKey    Key of the column to focus.
- */
-export const focusNext = (rowKey, columnKey, route) => ({
-  type: ACTIONS.FOCUS_NEXT,
-  payload: { rowKey, columnKey, route },
-});
-
-/**
  * Uses the stores dataState map to set a row to
  * isSelected.
  *
@@ -55,6 +22,11 @@ export const selectRow = (rowKey, route) => ({
 export const selectOneRow = (rowKey, route) => ({
   type: ACTIONS.SELECT_ONE_ROW,
   payload: { rowKey, route },
+});
+
+export const deselectOneRow = route => ({
+  type: ACTIONS.DESELECT_ONE_ROW,
+  payload: { route },
 });
 
 /**
@@ -90,10 +62,10 @@ export const selectAll = route => ({
  * be dispatched.
  * @param {Bool} allSelected indicator whether all items are currently selected.
  */
-export const toggleAllSelected = (allSelected, route) => {
-  if (allSelected) return deselectAll(route);
-  return selectAll(route);
-};
+export const toggleSelectAll = route => ({
+  type: ACTIONS.TOGGLE_SELECT_ALL,
+  payload: { route },
+});
 
 /**
  * Sets all rowState objects within the passed items array,
@@ -171,35 +143,16 @@ export const deleteSelectedRecords = (recordType, route) => (dispatch, getState)
   dispatch({ type: ACTIONS.DELETE_RECORDS, payload: { route } });
 };
 
-/**
- * Wrappers for easy calling of delete action creators.
- */
-export const deleteTransactions = route => deleteSelectedRecords('Transaction', route);
-export const deleteRequisitions = route => deleteSelectedRecords('Requisition', route);
-export const deleteStocktakes = route => deleteSelectedRecords('Stocktake', route);
-export const deleteTransactionItems = route => deleteSelectedItems('Transaction', route);
-export const deleteRequisitionItems = route => deleteSelectedItems('Requisition', route);
-export const deleteStocktakeItems = route => deleteSelectedItems('Stocktake', route);
-export const deleteTransactionBatches = route => deleteSelectedBatches('Transaction', route);
-
 export const RowActionsLookup = {
-  focusCell,
-  focusNext,
   selectRow,
   deselectRow,
+  deselectOneRow,
   deselectAll,
   selectAll,
-  toggleAllSelected,
+  toggleSelectAll,
   selectItems,
   deleteSelectedBatches,
   deleteSelectedItems,
   deleteSelectedRecords,
-  deleteTransactions,
-  deleteRequisitions,
-  deleteStocktakes,
-  deleteTransactionItems,
-  deleteRequisitionItems,
-  deleteStocktakeItems,
-  deleteTransactionBatches,
   selectOneRow,
 };
