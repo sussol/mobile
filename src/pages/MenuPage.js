@@ -11,8 +11,10 @@ import { connect } from 'react-redux';
 import { Image, StyleSheet, Text, View, ToastAndroid } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { InfoBadge } from '../widgets';
 
 import { navStrings } from '../localization';
+
 import { SETTINGS_KEYS } from '../settings';
 
 import globalStyles, { APP_FONT_FAMILY, SHADOW_BORDER, GREY, WARMER_GREY } from '../globalStyles';
@@ -31,7 +33,22 @@ const { SYNC_SITE_NAME } = SETTINGS_KEYS;
 class Menu extends React.Component {
   constructor(props) {
     super(props);
+
     this.databaseListenerId = null;
+  }
+
+  componentWillMount() {
+    const { database } = this.props;
+
+    this.databaseListenerId = database.addListener(
+      // Ensure that language changes in login modal are re-rendered onto the MenuPage.
+      (_, recordType) => recordType === 'Setting' && this.forceUpdate()
+    );
+  }
+
+  componentWillUnmount() {
+    const { database } = this.props;
+    database.removeListener(this.databaseListenerId);
   }
 
   exportData = async () => {
@@ -71,18 +88,25 @@ class Menu extends React.Component {
               // eslint-disable-next-line global-require
               source={require('../images/menu_people.png')}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.customer_invoices}
-              onPress={navigateToCustomerInvoices}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.customer_requisitions}
-              onPress={navigateToCustomerRequisitions}
-            />
+            <InfoBadge routeName="customerInvoices" mainWrapperStyle={localStyles.InfoBadgeWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.customer_invoices}
+                onPress={navigateToCustomerInvoices}
+              />
+            </InfoBadge>
+            <InfoBadge
+              routeName="customerRequisitions"
+              mainWrapperStyle={localStyles.InfoBadgeWrapper}
+            >
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.customer_requisitions}
+                onPress={navigateToCustomerRequisitions}
+              />
+            </InfoBadge>
           </View>
 
           <View style={[localStyles.container, localStyles.centralContainer]}>
@@ -92,18 +116,25 @@ class Menu extends React.Component {
               // eslint-disable-next-line global-require
               source={require('../images/menu_truck.png')}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.supplier_invoices}
-              onPress={navigateToSupplierInvoices}
-            />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.supplier_requisitions}
-              onPress={navigateToSupplierRequisitions}
-            />
+            <InfoBadge routeName="supplierInvoices" mainWrapperStyle={localStyles.InfoBadgeWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.supplier_invoices}
+                onPress={navigateToSupplierInvoices}
+              />
+            </InfoBadge>
+            <InfoBadge
+              routeName="supplierRequisitions"
+              mainWrapperStyle={localStyles.InfoBadgeWrapper}
+            >
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.supplier_requisitions}
+                onPress={navigateToSupplierRequisitions}
+              />
+            </InfoBadge>
             {isInAdminMode && (
               <Button
                 style={globalStyles.menuButton}
@@ -127,12 +158,14 @@ class Menu extends React.Component {
               text={navStrings.current_stock}
               onPress={navigateToStock}
             />
-            <Button
-              style={globalStyles.menuButton}
-              textStyle={globalStyles.menuButtonText}
-              text={navStrings.stocktakes}
-              onPress={navigateToStocktakes}
-            />
+            <InfoBadge routeName="stocktakes" mainWrapperStyle={localStyles.InfoBadgeWrapper}>
+              <Button
+                style={globalStyles.menuButton}
+                textStyle={globalStyles.menuButtonText}
+                text={navStrings.stocktakes}
+                onPress={navigateToStocktakes}
+              />
+            </InfoBadge>
             {isInAdminMode && (
               <Button
                 style={globalStyles.menuButton}

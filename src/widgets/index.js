@@ -9,6 +9,7 @@ export { AutocompleteSelector } from './AutocompleteSelector';
 export { FinaliseButton } from './FinaliseButton';
 export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
+// eslint-disable-next-line import/named
 export { NavigationBar } from './NavigationBar';
 export { OnePressButton } from './OnePressButton';
 export { PageButton } from './PageButton';
@@ -38,3 +39,4 @@ export {
   Expand,
 } from './icons';
 export { KiribatiFlag, EnglishFlag, LaosFlag, TetumFlag, FrenchFlag } from './images';
+export { InfoBadge } from './InfoBadge';

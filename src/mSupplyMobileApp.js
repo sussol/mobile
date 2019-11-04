@@ -57,7 +57,7 @@ class MSupplyMobileAppContainer extends React.Component {
     this.scheduler.schedule(() => {
       const { currentUser } = this.state;
       if (currentUser !== null) {
-        // Only reauthenticate if currently logged in.
+        // Only re-authenticate if currently logged in.
         this.userAuthenticator.reauthenticate(this.onAuthentication);
       }
     }, AUTHENTICATION_INTERVAL);
@@ -92,6 +92,18 @@ class MSupplyMobileAppContainer extends React.Component {
     return navigationState.index !== 0;
   };
 
+  // eslint-disable-next-line class-methods-use-this
+  getCurrentRouteName(navigationState) {
+    if (!navigationState) return null;
+
+    const route = navigationState.routes[navigationState.index];
+
+    // dive into nested navigators
+    if (route.routes) return getCurrentRouteName(route);
+
+    return route.routeName;
+  }
+
   handleBackEvent = () => {
     const { dispatch } = this.props;
     const { confirmFinalise, syncModalIsOpen } = this.state;
@@ -109,7 +121,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
-    // We here set up an asyncronous promise that will be resolved after a timeout
+    // We here set up an asynchronous promise that will be resolved after a timeout
     // of 1 millisecond. This allows a fraction of a delay for the javascript thread
     // to unblock and allow the spinner animation to start up. The |functionToRun| should
     // not be run inside a |setTimeout| as that relegates to a lower priority, resulting
@@ -216,6 +228,7 @@ class MSupplyMobileAppContainer extends React.Component {
     return (
       <View style={globalStyles.appBackground}>
         <NavigationBar
+          routeName={this.getCurrentRouteName(navigationState)}
           onPressBack={this.getCanNavigateBack() ? this.handleBackEvent : null}
           LeftComponent={this.getCanNavigateBack() ? this.renderPageTitle : null}
           CentreComponent={this.renderLogo}

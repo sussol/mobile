@@ -3,6 +3,8 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/* eslint-disable react/forbid-prop-types */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -10,28 +12,42 @@ import { Platform, TouchableOpacity, View, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { textStyles } from '../globalStyles';
+import { InfoBadge } from './InfoBadge';
 
-export const NavigationBar = ({ onPressBack, LeftComponent, CentreComponent, RightComponent }) => (
-  <View style={localStyles.container}>
-    <View style={localStyles.leftSection}>
-      <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
-        {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
-      </TouchableOpacity>
-      {LeftComponent && <LeftComponent />}
+const NavigationBar = props => {
+  const { routeName, onPressBack, LeftComponent, CentreComponent, RightComponent } = props;
+
+  return (
+    <View style={localStyles.container}>
+      <View style={localStyles.leftSection}>
+        <TouchableOpacity onPress={onPressBack} style={localStyles.backButton}>
+          {onPressBack && <Icon name="chevron-left" style={localStyles.backIcon} />}
+        </TouchableOpacity>
+        {LeftComponent && (
+          <InfoBadge
+            routeName={routeName}
+            popoverPosition="bottom"
+            mainWrapperStyle={localStyles.InfoBadgeWrapper}
+          >
+            <LeftComponent />
+          </InfoBadge>
+        )}
+      </View>
+      <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
+      <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
     </View>
-    <View style={localStyles.centreSection}>{CentreComponent && <CentreComponent />}</View>
-    <View style={localStyles.rightSection}>{RightComponent && <RightComponent />}</View>
-  </View>
-);
+  );
+};
 
+export { NavigationBar };
 export default NavigationBar;
 
-/* eslint-disable react/forbid-prop-types */
 NavigationBar.propTypes = {
   onPressBack: PropTypes.func,
   LeftComponent: PropTypes.any,
   CentreComponent: PropTypes.any,
   RightComponent: PropTypes.any,
+  routeName: PropTypes.string,
 };
 
 NavigationBar.defaultProps = {
@@ -39,6 +55,7 @@ NavigationBar.defaultProps = {
   LeftComponent: null,
   CentreComponent: null,
   RightComponent: null,
+  routeName: null,
 };
 
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 20 : 0;
@@ -79,5 +96,8 @@ const localStyles = StyleSheet.create({
   rightSection: {
     ...sectionStyle,
     justifyContent: 'flex-end',
+  },
+  InfoBadgeWrapper: {
+    right: -60,
   },
 });

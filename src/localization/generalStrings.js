@@ -12,6 +12,12 @@ export const generalStrings = new LocalizedStrings({
     submitted: 'Submitted',
     stocktake: 'Stocktake',
     start_typing_to_search: 'Start typing to search',
+    unfinalised: 'Un-finalised',
+    customerRequisitions: 'Customer requisitions',
+    supplierRequisitions: 'Supplier requisitions',
+    supplierInvoices: ' Supplier invoices',
+    customerInvoices: 'Customer invoices',
+    stocktakes: 'Stocktakes',
     not_available: 'N/A',
   },
   fr: {

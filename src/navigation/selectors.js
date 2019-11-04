@@ -2,9 +2,18 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
+const routeList = {
+  customerRequisitions: 'ResponseRequisition',
+  supplierRequisitions: 'RequestRequisition',
+  supplierInvoices: 'SupplierInvoice',
+  stocktakes: 'Stocktake',
+  customerInvoices: 'CustomerInvoice',
+};
 
-export const getCurrentRouteName = state =>
+const getCurrentRouteName = state =>
   state.routes[state.index] ? state.routes[state.index].routeName : undefined;
 
-export const getCurrentParams = state =>
+const getCurrentParams = state =>
   state.routes[state.index] ? state.routes[state.index].params : undefined;
+
+export { routeList, getCurrentRouteName, getCurrentParams };

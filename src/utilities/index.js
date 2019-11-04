@@ -26,3 +26,4 @@ export {
 } from './finalisation';
 
 export { formatErrorItemNames } from './formatters';
+export { renderNode } from './renderNode';
