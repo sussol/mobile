@@ -9,9 +9,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 
-import { MODAL_KEYS, debounce } from '../utilities';
+import { MODAL_KEYS } from '../utilities';
 import { useNavigationFocus, useSyncListener } from '../hooks';
-import { getItemLayout } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
 import { gotoCustomerInvoice, createCustomerInvoice } from '../navigation/actions';
 
 import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
@@ -20,6 +20,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
+import { ROUTES } from '../navigation/constants';
 
 export const CustomerInvoices = ({
   currentUser,
@@ -34,28 +35,23 @@ export const CustomerInvoices = ({
   keyExtractor,
   searchTerm,
   columns,
-  PageActions,
   showFinalised,
+  refreshData,
+  onFilterData,
+  onDeselectAll,
+  onDeleteRecords,
+  onCloseModal,
+  toggleFinalised,
+  onCheck,
+  onUncheck,
+  onSortColumn,
+  onNewCustomerInvoice,
 }) => {
   // Listen to changes from sync and navigation events re-focusing this screen,
   // such that any side effects that occur trigger a reconcilitation of data.
-  const refreshCallback = () => dispatch(PageActions.refreshData());
-  useNavigationFocus(refreshCallback, navigation);
-  useSyncListener(refreshCallback, ['Transaction']);
+  useNavigationFocus(refreshData, navigation);
+  useSyncListener(refreshData, ['Transaction']);
 
-  const onCloseModal = () => dispatch(PageActions.closeModal());
-  const onFilterData = value => dispatch(PageActions.filterData(value));
-  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_CUSTOMER));
-  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
-  const onCancelDelete = () => dispatch(PageActions.deselectAll());
-  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
-  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
-  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
-
-  const onSortColumn = useCallback(
-    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
-    []
-  );
   const onNavigateToInvoice = useCallback(invoice => dispatch(gotoCustomerInvoice(invoice)), []);
 
   const onCreateInvoice = otherParty => {
@@ -65,13 +61,13 @@ export const CustomerInvoices = ({
 
   const toggles = useMemo(
     () => [
-      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
     ],
     [showFinalised]
   );
 
-  const getCallback = useCallback((colKey, propName) => {
+  const getCallback = (colKey, propName) => {
     switch (colKey) {
       case 'remove':
         if (propName === 'onCheck') return onCheck;
@@ -79,7 +75,7 @@ export const CustomerInvoices = ({
       default:
         return null;
     }
-  }, []);
+  };
 
   const getModalOnSelect = () => {
     switch (modalKey) {
@@ -134,7 +130,7 @@ export const CustomerInvoices = ({
           <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
-          <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
+          <PageButton text={buttonStrings.new_invoice} onPress={onNewCustomerInvoice} />
         </View>
       </View>
       <DataTable
@@ -149,8 +145,8 @@ export const CustomerInvoices = ({
       <BottomConfirmModal
         isOpen={hasSelection}
         questionText={modalStrings.delete_these_invoices}
-        onCancel={onCancelDelete}
-        onConfirm={onConfirmDelete}
+        onCancel={onDeselectAll}
+        onConfirm={onDeleteRecords}
         confirmText={modalStrings.delete}
       />
       <DataTablePageModal
@@ -165,13 +161,23 @@ export const CustomerInvoices = ({
   );
 };
 
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_INVOICES),
+  refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.CUSTOMER_INVOICES)),
+  onFilterData: value =>
+    dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.CUSTOMER_INVOICES)),
+});
+
 const mapStateToProps = state => {
   const { pages } = state;
   const { customerInvoices } = pages;
   return customerInvoices;
 };
 
-export const CustomerInvoicesPage = connect(mapStateToProps)(CustomerInvoices);
+export const CustomerInvoicesPage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomerInvoices);
 
 CustomerInvoices.defaultProps = {
   showFinalised: false,
@@ -190,6 +196,15 @@ CustomerInvoices.propTypes = {
   keyExtractor: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
-  PageActions: PropTypes.object.isRequired,
   showFinalised: PropTypes.bool,
+  refreshData: PropTypes.func.isRequired,
+  onFilterData: PropTypes.func.isRequired,
+  onDeselectAll: PropTypes.func.isRequired,
+  onDeleteRecords: PropTypes.func.isRequired,
+  onCloseModal: PropTypes.func.isRequired,
+  toggleFinalised: PropTypes.func.isRequired,
+  onCheck: PropTypes.func.isRequired,
+  onUncheck: PropTypes.func.isRequired,
+  onSortColumn: PropTypes.func.isRequired,
+  onNewCustomerInvoice: PropTypes.func.isRequired,
 };
