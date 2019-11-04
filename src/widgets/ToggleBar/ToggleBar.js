@@ -31,7 +31,7 @@ import globalStyles from '../../globalStyles';
  *
  */
 
-export const ToggleBar = props => {
+export const ToggleBarComponent = props => {
   const {
     style,
     toggleOffStyle,
@@ -77,9 +77,11 @@ export const ToggleBar = props => {
   );
 };
 
+export const ToggleBar = React.memo(ToggleBarComponent);
+
 export default ToggleBar;
 
-ToggleBar.propTypes = {
+ToggleBarComponent.propTypes = {
   style: ViewPropTypes.style,
   // eslint-disable-next-line react/require-default-props, react/forbid-prop-types
   toggles: PropTypes.array,
@@ -89,7 +91,7 @@ ToggleBar.propTypes = {
   textOnStyle: Text.propTypes.style,
 };
 
-ToggleBar.defaultProps = {
+ToggleBarComponent.defaultProps = {
   style: globalStyles.toggleBar,
   toggleOffStyle: globalStyles.toggleOption,
   toggleOnStyle: globalStyles.toggleOptionSelected,
@@ -108,12 +110,12 @@ const localStyles = StyleSheet.create({
   toggleOffStyle: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 140,
+    width: 142,
   },
   toggleOnStyle: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 140,
+    width: 142,
     backgroundColor: 'rgb(114, 211, 242)',
   },
 });

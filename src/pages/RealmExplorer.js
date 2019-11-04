@@ -3,201 +3,276 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useState, useCallback } from 'react';
+import { View, VirtualizedList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 
-import { View } from 'react-native';
-import { SearchBar } from 'react-native-ui-components';
+import { UIDatabase } from '../database/index';
+import { schema } from '../database/schema';
 
-import { Cell, DataTable, Header, HeaderCell, Row } from 'react-native-data-table';
-
-import { ListView } from 'realm/react-native';
+import { SearchBar } from '../widgets';
 
 import globalStyles from '../globalStyles';
 
-const OBJECT_TYPES = [
-  'Address',
-  'Item',
-  'ItemBatch',
-  'ItemDepartment',
-  'ItemCategory',
-  'ItemStoreJoin',
-  'Transaction',
-  'TransactionItem',
-  'TransactionBatch',
-  'TransactionCategory',
-  'MasterList',
-  'MasterListItem',
-  'MasterListNameJoin',
-  'Name',
-  'NameStoreJoin',
-  'NumberSequence',
-  'NumberToReuse',
-  'Requisition',
-  'RequisitionItem',
-  'Setting',
-  'SyncOut',
-  'Stocktake',
-  'StocktakeItem',
-  'StocktakeBatch',
-  'User',
-];
+const TYPES = {
+  BOOLEAN: 'boolean',
+  DATE: 'date',
+  NUMBER: 'number',
+  STRING: 'string',
+  ARRAY: 'array',
+  OBJECT: 'object',
+};
+
+const REALM_TYPES = {
+  BOOL: 'bool',
+  DATE: 'date',
+  DOUBLE: 'double',
+  FLOAT: 'float',
+  INT: 'int',
+  LIST: 'list',
+  OBJECT: 'object',
+  STRING: 'string',
+};
+
+const TYPE_MAPPINGS = {
+  [TYPES.BOOLEAN]: [REALM_TYPES.BOOL],
+  [TYPES.DATE]: [REALM_TYPES.DATE],
+  [TYPES.NUMBER]: [REALM_TYPES.INT, REALM_TYPES.FLOAT, REALM_TYPES.DOUBLE],
+  [TYPES.STRING]: [REALM_TYPES.STRING],
+  [TYPES.ARRAY]: [REALM_TYPES.LIST],
+  [TYPES.OBJECT]: [REALM_TYPES.OBJECT],
+};
+
+const typeMapper = new Map(
+  Object.entries(TYPE_MAPPINGS)
+    .map(([type, realmTypes]) => realmTypes.map(realmType => [realmType, type]))
+    .flat()
+);
+
+const parseType = realmType => {
+  const { type } = realmType;
+  if (type) return parseType(type);
+  return typeMapper.get(realmType) || TYPES.OBJECT;
+};
+
+const getRealmObjects = ({ schema: objectSchemas }) =>
+  objectSchemas.map(({ schema: objectSchema }) => objectSchema.name);
+
+const getRealmObjectsFields = ({ schema: objectSchemas }) =>
+  objectSchemas
+    .map(({ schema: objectSchema }) => {
+      const { name, properties } = objectSchema;
+      const fields = Object.entries(properties)
+        .map(([field, type]) => ({
+          [field]: parseType(type),
+        }))
+        .reduce((acc, field) => ({ ...acc, ...field }), {});
+      return { [name]: fields };
+    })
+    .reduce((acc, object) => ({ ...acc, ...object }));
+
+const REALM_OBJECTS = getRealmObjects(schema);
+const REALM_OBJECTS_FIELDS = getRealmObjectsFields(schema);
+
+const toCapitalCase = value => value.charAt(0).toUpperCase() + value.slice(1);
+
+const parseString = value => String(value);
+const parseNumber = value => String(value);
+const parseObject = value => value.id;
+const parseArray = value => value.length;
+const parseBoolean = value => toCapitalCase(String(value));
+const parseDate = value => value.toString();
+
+const parseCell = (value, type) => {
+  if (value === null || value === undefined) return 'N/A';
+  switch (type) {
+    case TYPES.STRING:
+      return parseString(value);
+    case TYPES.NUMBER:
+      return parseNumber(value);
+    case TYPES.OBJECT:
+      return parseObject(value);
+    case TYPES.ARRAY:
+      return parseArray(value);
+    case TYPES.BOOLEAN:
+      return parseBoolean(value);
+    case TYPES.DATE:
+      return parseDate(value);
+    default:
+      return '';
+  }
+};
+
+const getInitialState = () => {
+  const searchString = '';
+  const filterString = '';
+  const searchData = {};
+  const filteredData = [];
+  return { searchString, searchData, filterString, filteredData };
+};
+
+const updateSearchData = (newSearchString, state) => {
+  const { searchString } = state;
+  const updateObjectString = newSearchString !== searchString;
+  if (!updateObjectString) return { ...state };
+  const updateObject = REALM_OBJECTS.indexOf(newSearchString) >= 0;
+  const newSearchData = updateObject ? UIDatabase.objects(newSearchString) : {};
+  const newFilteredData = updateObject ? newSearchData.slice() : [];
+  return {
+    ...state,
+    searchString: newSearchString,
+    searchData: newSearchData,
+    filteredData: newFilteredData,
+  };
+};
+
+const getSearchBarRenderer = onSearchChange => {
+  const RealmSearchBar = ({ searchString }) => (
+    <SearchBar value={searchString} onChangeText={onSearchChange} placeholder="Object string" />
+  );
+  RealmSearchBar.propTypes = propTypes.RealmSearchBar;
+  return RealmSearchBar;
+};
+
+const updateFilteredData = (newFilterString, state) => {
+  const { searchData } = state;
+  try {
+    const newFilteredData =
+      newFilterString === '' ? searchData.slice() : searchData.filtered(newFilterString).slice();
+    return { ...state, filterString: newFilterString, filteredData: newFilteredData };
+  } catch (err) {
+    return { ...state, filterString: newFilterString };
+  }
+};
+
+const getFilterBarRenderer = onFilterChange => {
+  const RealmFilterBar = ({ filterString }) => (
+    <SearchBar value={filterString} onChangeText={onFilterChange} placeholder="Filter string" />
+  );
+  RealmFilterBar.propTypes = propTypes.RealmFilterBar;
+  return RealmFilterBar;
+};
+
+const getHeaderRenderer = realmObjectFields => () => {
+  if (!realmObjectFields) return null;
+  const headerCells = Object.keys(realmObjectFields).map(columnKey => (
+    <View key={columnKey} style={styles.cell}>
+      <Text style={styles.cellText}>{columnKey}</Text>
+    </View>
+  ));
+  return <View style={styles.row}>{headerCells}</View>;
+};
+
+const getRowRenderer = realmObjectFields => {
+  const RealmTableRow = ({ item }) => {
+    if (!realmObjectFields) return null;
+    const cells = Object.entries(realmObjectFields).map(([columnKey, columnType]) => {
+      const cell = item[columnKey];
+      const cellValue = parseCell(cell, columnType);
+      return (
+        <View key={columnKey} style={styles.cell}>
+          <Text style={styles.cellText}>{cellValue}</Text>
+        </View>
+      );
+    });
+    return <View style={styles.row}>{cells}</View>;
+  };
+  RealmTableRow.propTypes = propTypes.RealmTableRow;
+  return RealmTableRow;
+};
+
+const getItem = (data, index) => data[index];
+const getItemCount = data => data.length;
+const keyExtractor = ({ id }) => id;
+
+const getTableRenderer = realmObjectFields => {
+  const RealmTable = ({ data }) => {
+    if (!realmObjectFields) return null;
+    const TableHeader = getHeaderRenderer(realmObjectFields);
+    const TableRow = getRowRenderer(realmObjectFields);
+    return (
+      <VirtualizedList
+        ListHeaderComponent={TableHeader}
+        data={data}
+        getItem={getItem}
+        getItemCount={getItemCount}
+        keyExtractor={keyExtractor}
+        renderItem={TableRow}
+      />
+    );
+  };
+  RealmTable.propTypes = propTypes.RealmTable;
+  return RealmTable;
+};
 
 /**
- * A page to explore the contents of the local database. Allows searching for any
- * database object type, and will show the related data in a table.
+ * A page for displaying objects in the local database. Includes search and filtering functionality.
  *
- * @prop   {Realm}                database    App wide database.
- * @state  {ListView.DataSource}  dataSource  DataTable input, used to update rows being rendered.
- * @state  {Realm.Results}        data        Holds the data that gets put into the dataSource.
+ * @prop   {UIDatabase}     database      App wide database.
+ * @state  {string}         searchString  Current search string. Used to update current object.
+ * @state  {string}         filterString  Current filter string. Used to update filtered data.
+ * @state  {Realm.Results}  objectData    Reference to current database object results. Used to roll
+ *                                        back filter state when filter is reset.
+ * @state  {Realm.Results}  filteredData  Reference to current database object results after filter
+ *                                        has been applied. Displayed to the user.
  */
-export class RealmExplorer extends React.Component {
-  constructor(props) {
-    super(props);
-    const dataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-    });
-    this.state = {
-      data: null,
-      dataSource,
-    };
-    this.unfilteredData = null;
-    this.onSearchChange = this.onSearchChange.bind(this);
-    this.onFilterChange = this.onFilterChange.bind(this);
-    this.renderHeader = this.renderHeader.bind(this);
-    this.renderRow = this.renderRow.bind(this);
-  }
+export const RealmExplorer = () => {
+  const [state, setState] = useState(getInitialState());
 
-  componentWillMount() {
-    const { database } = this.props;
-    const { dataSource } = this.state;
+  const onSearchChange = useCallback(
+    newObjectString => setState(prevState => updateSearchData(newObjectString, prevState)),
+    []
+  );
+  const onFilterChange = useCallback(
+    newFilterString => setState(prevState => updateFilteredData(newFilterString, prevState)),
+    []
+  );
 
-    const data = database.objects('User');
-    this.setState({
-      data,
-      dataSource: dataSource.cloneWithRows(data),
-    });
-  }
+  const { searchString, filterString, filteredData } = state;
 
-  onFilterChange(filterString) {
-    const { dataSource } = this.state;
+  const realmObjectFields = REALM_OBJECTS_FIELDS[searchString];
 
-    if (!this.unfilteredData) return;
+  const RealmSearchBar = useCallback(getSearchBarRenderer(onSearchChange), [onSearchChange]);
+  const RealmFilterBar = useCallback(getFilterBarRenderer(onFilterChange), [onFilterChange]);
+  const RealmTable = useCallback(getTableRenderer(realmObjectFields), [realmObjectFields]);
 
-    let data = null;
-    if (filterString === '') {
-      // if filter is emptied, clear filter.
-      data = this.unfilteredData;
-    } else {
-      try {
-        // Use |this.unfilteredData| to avoid stacking filters.
-        data = this.unfilteredData.filtered(filterString);
-      } catch (err) {
-        // Ignore error silently.
-      }
-    }
+  return (
+    <View style={[globalStyles.container]}>
+      <RealmSearchBar searchString={searchString} />
+      <RealmFilterBar filterString={filterString} />
+      <RealmTable data={filteredData} />
+    </View>
+  );
+};
 
-    if (data) {
-      this.setState({
-        data,
-        dataSource: dataSource.cloneWithRows(data),
-      });
-    }
-  }
+const styles = StyleSheet.create({
+  cell: {
+    flex: 1,
+  },
+  cellText: {
+    textAlign: 'center',
+  },
+  row: {
+    flex: 1,
+    flexBasis: 0,
+    flexDirection: 'row',
+    flexGrow: 1,
+    flexWrap: 'nowrap',
+    justifyContent: 'space-between',
+  },
+});
 
-  onSearchChange(searchTerm) {
-    const { database } = this.props;
-    const { dataSource } = this.state;
-
-    if (OBJECT_TYPES.indexOf(searchTerm) < 0) return;
-    const data = database.objects(searchTerm);
-    this.unfilteredData = data;
-    this.setState({
-      data,
-      dataSource: dataSource.cloneWithRows(data),
-    });
-  }
-
-  renderHeader() {
-    const { data } = this.state;
-
-    const headerCells = [];
-    if (data && data.length > 0) {
-      const firstObject = data[0];
-
-      // TODO: use explicit loops instead of generators.
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [key] of Object.entries(firstObject)) {
-        headerCells.push(
-          <HeaderCell
-            key={key}
-            style={globalStyles.headerCell}
-            textStyle={globalStyles.text}
-            width={1}
-            text={key}
-          />
-        );
-      }
-    }
-    return <Header style={globalStyles.header}>{headerCells}</Header>;
-  }
-
-  renderRow(item) {
-    const { data } = this.state;
-    const cells = [];
-    if (data && data.length > 0) {
-      const firstObject = data[0];
-
-      const objects = Object.entries(firstObject);
-
-      // TODO: use explicit loops instead of generators.
-      // eslint-disable-next-line no-restricted-syntax
-      for (const [key] of objects) {
-        let itemString =
-          item[key] &&
-          (typeof item[key] === 'string' ||
-            typeof item[key] === 'number' ||
-            typeof item[key].getMonth === 'function') &&
-          String(item[key]);
-        if (!itemString && item[key] && item[key].length) {
-          itemString = item[key].length;
-        }
-        if (typeof item[key] === 'boolean') {
-          itemString = item[key] ? 'True' : 'False';
-        }
-        if (!itemString && item[key] && item[key].id) itemString = item[key].id;
-        cells.push(
-          <Cell key={key} style={globalStyles.cell} textStyle={globalStyles.text} width={1}>
-            {itemString}
-          </Cell>
-        );
-      }
-    }
-    return <Row style={globalStyles.row}>{cells}</Row>;
-  }
-
-  render() {
-    const { dataSource } = this.state;
-
-    return (
-      <View style={[globalStyles.container]}>
-        <SearchBar onChange={this.onSearchChange} placeholder="Table Name" />
-        <SearchBar onChange={this.onFilterChange} placeholder="Filter" />
-        <DataTable
-          style={globalStyles.container}
-          listViewStyle={globalStyles.container}
-          dataSource={dataSource}
-          renderRow={this.renderRow}
-          renderHeader={this.renderHeader}
-        />
-      </View>
-    );
-  }
-}
-
-export default RealmExplorer;
-
-RealmExplorer.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
-  database: PropTypes.object.isRequired,
+const propTypes = {
+  RealmSearchBar: {
+    searchString: PropTypes.string.isRequired,
+  },
+  RealmFilterBar: {
+    filterString: PropTypes.string.isRequired,
+  },
+  RealmTable: {
+    data: PropTypes.arrayOf(PropTypes.shape({ id: PropTypes.string.isRequired })).isRequired,
+  },
+  RealmTableRow: {
+    item: PropTypes.shape({ id: PropTypes.string.isRequired }).isRequired,
+  },
 };

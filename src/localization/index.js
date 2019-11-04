@@ -16,26 +16,28 @@ export { syncStrings } from './syncStrings';
 export { validationStrings } from './validationStrings';
 export { programStrings } from './programStrings';
 
-// Order of pairs defines the order they show in the |ListView| of |LanguageModal|. Languages
-// appear in alphabetical order, with the exception of English, which appears first.
-
-// TODO: js objects do not guarantee ordering. Replace with data structure which does.
-const languageKeys = {
-  gb: 'English',
-  gil: 'te taetae ni Kiribati',
-  fr: 'French',
-  tl: 'Tetum',
-  la: 'Laos',
+export const LANGUAGE_CODES = {
+  ENGLISH: 'gb',
+  KIRIBATI: 'gil',
+  FRENCH: 'fr',
+  TETUM: 'tl',
+  LAOS: 'la',
 };
 
-export const DEFAULT_LANGUAGE = Object.keys(languageKeys)[0]; // English as default.
-export const LANGUAGE_KEYS = languageKeys;
-
-export const COUNTRY_FLAGS = {
-  /* eslint-disable global-require */
-  fr: require('../images/flags/fr.png'),
-  gb: require('../images/flags/gb.png'),
-  gil: require('../images/flags/gil.png'),
-  tl: require('../images/flags/tl.png'),
-  la: require('../images/flags/la.png'),
+export const LANGUAGE_NAMES = {
+  [LANGUAGE_CODES.ENGLISH]: 'English',
+  [LANGUAGE_CODES.KIRIBATI]: 'te taetae ni Kiribati',
+  [LANGUAGE_CODES.FRENCH]: 'French',
+  [LANGUAGE_CODES.TETUM]: 'Tetum',
+  [LANGUAGE_CODES.LAOS]: 'Laos',
 };
+
+export const LANGUAGE_CHOICE = [
+  { code: LANGUAGE_CODES.ENGLISH, name: LANGUAGE_NAMES[LANGUAGE_CODES.ENGLISH] },
+  { code: LANGUAGE_CODES.FRENCH, name: LANGUAGE_NAMES[LANGUAGE_CODES.FRENCH] },
+  { code: LANGUAGE_CODES.KIRIBATI, name: LANGUAGE_NAMES[LANGUAGE_CODES.KIRIBATI] },
+  { code: LANGUAGE_CODES.LAOS, name: LANGUAGE_NAMES[LANGUAGE_CODES.LAOS] },
+  { code: LANGUAGE_CODES.TETUM, name: LANGUAGE_NAMES[LANGUAGE_CODES.TETUM] },
+];
+
+export const DEFAULT_LANGUAGE = LANGUAGE_CODES.ENGLISH;

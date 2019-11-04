@@ -37,13 +37,7 @@ import Settings from './settings/MobileAppSettings';
 import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
-import globalStyles, {
-  dataTableColors,
-  dataTableStyles,
-  pageStyles,
-  textStyles,
-  SUSSOL_ORANGE,
-} from './globalStyles';
+import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -95,7 +89,7 @@ class MSupplyMobileAppContainer extends React.Component {
 
   getCanNavigateBack = () => {
     const { navigationState } = this.props;
-    return this.navigator && navigationState.index !== 0;
+    return navigationState.index !== 0;
   };
 
   // eslint-disable-next-line class-methods-use-this
@@ -111,6 +105,7 @@ class MSupplyMobileAppContainer extends React.Component {
   }
 
   handleBackEvent = () => {
+    const { dispatch } = this.props;
     const { confirmFinalise, syncModalIsOpen } = this.state;
     // If finalise or sync modals are open, close them rather than navigating.
     if (confirmFinalise || syncModalIsOpen) {
@@ -119,10 +114,8 @@ class MSupplyMobileAppContainer extends React.Component {
     }
     // If we are on base screen (e.g. home), back button should close app as we can't go back.
     if (!this.getCanNavigateBack()) BackHandler.exitApp();
-    else {
-      const { dispatch } = this.navigator.props;
-      dispatch(NavigationActions.back());
-    }
+    else dispatch(NavigationActions.back());
+
     return true;
   };
 
@@ -241,11 +234,7 @@ class MSupplyMobileAppContainer extends React.Component {
           CentreComponent={this.renderLogo}
           RightComponent={finaliseItem ? this.renderFinaliseButton : this.renderSyncState}
         />
-
         <ReduxNavigator
-          ref={navigator => {
-            this.navigator = navigator;
-          }}
           state={navigationState}
           dispatch={dispatch}
           screenProps={{
@@ -253,14 +242,9 @@ class MSupplyMobileAppContainer extends React.Component {
             settings: Settings,
             logOut: this.logOut,
             currentUser,
+            routeName: navigationState.routes[navigationState.index].routeName,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
             isInAdminMode,
-            genericTablePageStyles: {
-              searchBarColor: SUSSOL_ORANGE,
-              dataTableStyles,
-              pageStyles,
-              colors: dataTableColors,
-            },
           }}
         />
         <FinaliseModal

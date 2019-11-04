@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# mSupply Mobile
+# Sustainable Solutions (NZ) Ltd. 2019.
+#
+# Clean up react native caches.
+
+TMPDIR_PACKAGER=$TMPDIR/react-native-packager-*
+TMPDIR_METRO=$TMPDIR/metro-bundler-*
+
+echo "Cleaning up temporary files..."
+rm -rf $TMPDIR_PACKAGER $TMPDIR_METRO
+echo "Cleaning up watchman files..."
+npx watchman watch-del-all
+echo "Reinstalling node modules..."
+rm -rf node_modules/ &&
+    yarn cache clean &&
+    yarn install

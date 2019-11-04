@@ -1,251 +1,195 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import { PageButton } from '../widgets';
-import { GenericPage } from './GenericPage';
-import { SelectModal, BottomConfirmModal } from '../widgets/modals';
+import { MODAL_KEYS, debounce } from '../utilities';
+import { useNavigationFocus, useSyncListener } from '../hooks';
+import { getItemLayout } from './dataTableUtilities';
+import { gotoSupplierInvoice, createSupplierInvoice } from '../navigation/actions';
 
-import { createRecord } from '../database';
-import { formatStatus, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, navStrings, tableStrings } from '../localization';
+import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-const DATA_TYPES_SYNCHRONISED = ['Transaction'];
+import { buttonStrings, modalStrings } from '../localization';
+import globalStyles from '../globalStyles';
 
-/**
- * Renders the page for displaying supplier invoices.
- *
- * @prop   {Realm}          database      App wide database.
- * @prop   {func}           navigateTo    CallBack for navigation stack.
- * @state  {Realm.Results}  transactions  Filtered to have only |supplier_invoice|.
- */
-export class SupplierInvoicesPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      transactions: props.database.objects('SupplierInvoice'),
-      isCreatingInvoice: false,
-      selection: [],
-    };
-    this.dataFilters = {
-      searchTerm: '',
-      sortBy: 'serialNumber',
-      isAscending: false,
-    };
-  }
+export const SupplierInvoices = ({
+  currentUser,
+  navigation,
+  dispatch,
+  data,
+  dataState,
+  sortBy,
+  isAscending,
+  modalKey,
+  hasSelection,
+  keyExtractor,
+  searchTerm,
+  columns,
+  PageActions,
+  showFinalised,
+}) => {
+  // Listen to changes from sync and navigation events re-focusing this screen,
+  // such that any side effects that occur trigger a reconcilitation of data.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useNavigationFocus(refreshCallback, navigation);
+  useSyncListener(refreshCallback, ['Transaction']);
 
-  onDeleteConfirm = () => {
-    const { selection, transactions } = this.state;
-    const { database } = this.props;
-    database.write(() => {
-      const transactionsToDelete = [];
-      for (let i = 0; i < selection.length; i += 1) {
-        const transaction = transactions.find(
-          currentTransaction => currentTransaction.id === selection[i]
-        );
-        if (transaction.isValid() && !transaction.isFinalised) {
-          transactionsToDelete.push(transaction);
-        }
-      }
-      database.delete('Transaction', transactionsToDelete);
-    });
-    this.setState({ selection: [] }, this.refreshData);
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER));
+  const onConfirmDelete = () => dispatch(PageActions.deleteTransactions());
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onToggleShowFinalised = () => dispatch(PageActions.toggleShowFinalised(showFinalised));
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+
+  const onNavigateToInvoice = useCallback(invoice => dispatch(gotoSupplierInvoice(invoice)), []);
+
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+  const onCreateInvoice = otherParty => {
+    dispatch(createSupplierInvoice(otherParty, currentUser));
+    onCloseModal();
   };
 
-  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
-
-  onSelectionChange = newSelection => this.setState({ selection: newSelection });
-
-  onRowPress = invoice => this.navigateToInvoice(invoice);
-
-  /**
-   * Create new supplier invoice and navigate user to the edit supplier invoice page.
-   */
-  onNewSupplierInvoice = otherParty => {
-    const { database, currentUser } = this.props;
-    let invoice;
-    database.write(() => {
-      invoice = createRecord(database, 'SupplierInvoice', otherParty, currentUser);
-    });
-    this.navigateToInvoice(invoice);
-  };
-
-  navigateToInvoice = invoice => {
-    // To open a supplier invoice in the supplier invoice page, it must be new or finalised, but not
-    // confirmed. If this is not enforced, a user has the ability to reduce the amount of stock on a
-    // confirmed supplier invoice which has already been issued in a customer invoice.
-
-    const { database, navigateTo } = this.props;
-
-    // Supplier invoices are initialised with the status 'new', and then jump to 'finalised'.
-    // Invoices with status 'confirmed' should not occur, but are handled here in case of an
-    // anomoly.
-    if (invoice.isConfirmed) {
-      database.write(() => {
-        invoice.finalise(database);
-        database.save('Transaction', invoice);
-      });
-    }
-
-    this.setState({ selection: [] }, this.refreshData); // Clear any invoices selected for deletion.
-
-    navigateTo('supplierInvoice', `${navStrings.invoice} ${invoice.serialNumber}`, {
-      transaction: invoice,
-    });
-  };
-
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  };
-
-  /**
-   * Returns updated data fitlered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    const { transactions } = this.state;
-
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-
-    const data = transactions.filtered('serialNumber BEGINSWITH[c] $0', searchTerm);
-
-    let sortDataType;
-    switch (sortBy) {
-      case 'serialNumber':
-        sortDataType = 'number';
-        break;
-      case 'otherPartyName':
-        sortDataType = 'string';
-        break;
-      default:
-        sortDataType = 'realm';
-    }
-    this.setState({
-      data: sortDataBy(data, sortBy, sortDataType, isAscending),
-    });
-  };
-
-  renderCell = (key, invoice) => {
-    switch (key) {
-      default:
-        return invoice[key];
-      case 'status':
-        return formatStatus(invoice.status);
-      case 'entryDate':
-        return (invoice.entryDate && invoice.entryDate.toDateString()) || 'N/A';
+  const getCallback = useCallback((colKey, propName) => {
+    switch (colKey) {
       case 'remove':
-        return {
-          type: 'checkable',
-          icon: 'md-remove-circle',
-          isDisabled: invoice.isFinalised || !invoice.isExternalSupplierInvoice,
-        };
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
+      default:
+        return null;
+    }
+  }, []);
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER:
+        return onCreateInvoice;
+      default:
+        return null;
     }
   };
 
-  renderNewInvoiceButton = () => (
-    <PageButton
-      text={buttonStrings.new_supplier_invoice}
-      onPress={() => this.setState({ isCreatingInvoice: true })}
-    />
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          columns={columns}
+          getCallback={getCallback}
+          rowIndex={index}
+          onPress={onNavigateToInvoice}
+        />
+      );
+    },
+    [data, dataState]
   );
 
-  render() {
-    const { database, genericTablePageStyles, topRoute } = this.props;
-    const { data, isCreatingInvoice, selection } = this.state;
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        onPress={onSortColumn}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
+  );
 
-    return (
-      <GenericPage
+  const toggles = useMemo(
+    () => [
+      { text: buttonStrings.current, onPress: onToggleShowFinalised, isOn: !showFinalised },
+      { text: buttonStrings.past, onPress: onToggleShowFinalised, isOn: showFinalised },
+    ],
+    [showFinalised]
+  );
+
+  const {
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
+  return (
+    <DataTablePageView>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <ToggleBar toggles={toggles} />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+        </View>
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_invoice} onPress={onNewInvoice} />
+        </View>
+      </View>
+      <DataTable
         data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopRightComponent={this.renderNewInvoiceButton}
-        onRowPress={this.onRowPress}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'serialNumber',
-            width: 1.5,
-            title: tableStrings.invoice_number,
-            sortable: true,
-          },
-          {
-            key: 'otherPartyName',
-            width: 2.5,
-            title: tableStrings.supplier,
-            sortable: true,
-          },
-          {
-            key: 'status',
-            width: 2,
-            title: tableStrings.status,
-            sortable: true,
-          },
-          {
-            key: 'entryDate',
-            width: 2,
-            title: tableStrings.entered_date,
-            sortable: true,
-          },
-          {
-            key: 'comment',
-            width: 3,
-            title: tableStrings.comment,
-            lines: 2,
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        database={database}
-        selection={selection}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
-      >
-        <BottomConfirmModal
-          isOpen={selection.length > 0}
-          questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.remove}
-        />
-        <SelectModal
-          isOpen={isCreatingInvoice}
-          options={database.objects('ExternalSupplier')}
-          placeholderText={modalStrings.start_typing_to_select_supplier}
-          queryString="name BEGINSWITH[c] $0"
-          sortByString="name"
-          onSelect={name => {
-            this.onNewSupplierInvoice(name);
-            this.setState({ isCreatingInvoice: false });
-          }}
-          onClose={() => this.setState({ isCreatingInvoice: false })}
-          title={modalStrings.search_for_the_supplier}
-        />
-      </GenericPage>
-    );
-  }
-}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+        columns={columns}
+      />
+      <BottomConfirmModal
+        isOpen={hasSelection}
+        questionText={modalStrings.delete_these_invoices}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
+        confirmText={modalStrings.delete}
+      />
+      <DataTablePageModal
+        fullScreen={false}
+        isOpen={!!modalKey}
+        modalKey={modalKey}
+        onClose={onCloseModal}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
+      />
+    </DataTablePageView>
+  );
+};
 
-export default SupplierInvoicesPage;
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { supplierInvoices } = pages;
+  return supplierInvoices;
+};
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
-SupplierInvoicesPage.propTypes = {
+export const SupplierInvoicesPage = connect(mapStateToProps)(SupplierInvoices);
+
+SupplierInvoices.defaultProps = {
+  showFinalised: false,
+};
+
+SupplierInvoices.propTypes = {
   currentUser: PropTypes.object.isRequired,
-  database: PropTypes.object,
-  navigateTo: PropTypes.func.isRequired,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
+  navigation: PropTypes.object.isRequired,
+  dispatch: PropTypes.func.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  hasSelection: PropTypes.bool.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  columns: PropTypes.array.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  showFinalised: PropTypes.bool,
 };

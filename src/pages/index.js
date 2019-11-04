@@ -5,84 +5,112 @@
 
 import React from 'react';
 
-import {
-  CustomerInvoicePage,
-  checkForFinaliseError as checkForCustomerInvoiceError,
-} from './CustomerInvoicePage';
+import { ROUTES } from '../navigation/constants';
+
+import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
 import { PageContainer } from './PageContainer';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
-import {
-  CustomerRequisitionPage,
-  checkForFinaliseError as checkForCustomerRequisitionFinaliseError,
-} from './CustomerRequisitionPage';
+import { CustomerRequisitionPage } from './CustomerRequisitionPage';
 import { StockPage } from './StockPage';
-import {
-  StocktakeEditPage,
-  checkForFinaliseError as checkForStocktakeFinaliseError,
-} from './StocktakeEditPage';
+import { StocktakeEditPage } from './StocktakeEditPage';
 import { StocktakeManagePage } from './StocktakeManagePage';
 import { StocktakesPage } from './StocktakesPage';
-import {
-  SupplierInvoicePage,
-  checkForFinaliseError as checkForSupplierInvoiceError,
-} from './SupplierInvoicePage';
+import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
-import {
-  SupplierRequisitionPage,
-  checkForFinaliseError as checkForSupplierRequisitionFinaliseError,
-} from './SupplierRequisitionPage';
+import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { RealmExplorer } from './RealmExplorer';
+import {
+  checkForCustomerInvoiceError,
+  checkForSupplierInvoiceError,
+  checkForSupplierRequisitionError,
+  checkForStocktakeError,
+  checkForCustomerRequisitionError,
+} from '../utilities';
 
 export { FirstUsePage } from './FirstUsePage';
 
 export const PAGES = {
-  customerInvoice: props => <PageContainer page={CustomerInvoicePage} {...props} />,
-  customerInvoices: props => <PageContainer page={CustomerInvoicesPage} {...props} />,
-  customerRequisition: props => <PageContainer page={CustomerRequisitionPage} {...props} />,
-  customerRequisitions: props => <PageContainer page={CustomerRequisitionsPage} {...props} />,
-  menu: props => <PageContainer page={MenuPage} {...props} />,
-  realmExplorer: props => <PageContainer page={RealmExplorer} {...props} />,
-  root: props => <PageContainer page={MenuPage} {...props} />,
-  stock: props => <PageContainer page={StockPage} {...props} />,
-  stocktakeEditor: props => <PageContainer page={StocktakeEditPage} {...props} />,
-  stocktakeManager: props => <PageContainer page={StocktakeManagePage} {...props} />,
-  stocktakes: props => <PageContainer page={StocktakesPage} {...props} />,
-  supplierInvoice: props => <PageContainer page={SupplierInvoicePage} {...props} />,
-  supplierInvoices: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
-  supplierRequisition: props => <PageContainer page={SupplierRequisitionPage} {...props} />,
-  supplierRequisitions: props => <PageContainer page={SupplierRequisitionsPage} {...props} />,
+  [ROUTES.ROOT]: props => <PageContainer page={MenuPage} {...props} />,
+
+  [ROUTES.MENU]: props => <PageContainer page={MenuPage} {...props} />,
+
+  [ROUTES.REALM_EXPLORER]: props => <PageContainer page={RealmExplorer} {...props} />,
+
+  [ROUTES.CUSTOMER_REQUISITION]: props => (
+    <PageContainer page={CustomerRequisitionPage} {...props} />
+  ),
+  [ROUTES.CUSTOMER_REQUISITIONS]: props => (
+    <PageContainer page={CustomerRequisitionsPage} {...props} />
+  ),
+
+  [ROUTES.SUPPLIER_REQUISITION]: props => (
+    <PageContainer page={SupplierRequisitionPage} {...props} />
+  ),
+  [ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM]: props => (
+    <PageContainer page={SupplierRequisitionPage} {...props} />
+  ),
+  [ROUTES.SUPPLIER_REQUISITIONS]: props => (
+    <PageContainer page={SupplierRequisitionsPage} {...props} />
+  ),
+
+  [ROUTES.CUSTOMER_INVOICE]: props => <PageContainer page={CustomerInvoicePage} {...props} />,
+  [ROUTES.CUSTOMER_INVOICES]: props => <PageContainer page={CustomerInvoicesPage} {...props} />,
+
+  [ROUTES.SUPPLIER_INVOICE]: props => <PageContainer page={SupplierInvoicePage} {...props} />,
+  [ROUTES.SUPPLIER_INVOICES]: props => <PageContainer page={SupplierInvoicesPage} {...props} />,
+
+  [ROUTES.STOCK]: props => <PageContainer page={StockPage} {...props} />,
+
+  [ROUTES.STOCKTAKES]: props => <PageContainer page={StocktakesPage} {...props} />,
+  [ROUTES.STOCKTAKE_MANAGER]: props => <PageContainer page={StocktakeManagePage} {...props} />,
+  [ROUTES.STOCKTAKE_EDITOR]: props => <PageContainer page={StocktakeEditPage} {...props} />,
+  [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: props => (
+    <PageContainer page={StocktakeEditPage} {...props} />
+  ),
 };
 
 export const FINALISABLE_PAGES = {
-  supplierInvoice: {
+  [ROUTES.SUPPLIER_INVOICE]: {
     checkForError: checkForSupplierInvoiceError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_supplier_invoice',
   },
-  customerInvoice: {
+  [ROUTES.CUSTOMER_INVOICE]: {
     checkForError: checkForCustomerInvoiceError,
     recordType: 'Transaction',
     recordToFinaliseKey: 'transaction',
     finaliseText: 'finalise_customer_invoice',
   },
-  customerRequisition: {
-    checkForError: checkForCustomerRequisitionFinaliseError,
+  [ROUTES.CUSTOMER_REQUISITION]: {
+    checkForError: checkForCustomerRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_customer_requisition',
   },
-  stocktakeEditor: {
-    checkForError: checkForStocktakeFinaliseError,
+  [ROUTES.STOCKTAKE_EDITOR]: {
+    checkForError: checkForStocktakeError,
     recordType: 'Stocktake',
     recordToFinaliseKey: 'stocktake',
     finaliseText: 'finalise_stocktake',
   },
-  supplierRequisition: {
-    checkForError: checkForSupplierRequisitionFinaliseError,
+  [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: {
+    checkForError: checkForStocktakeError,
+    recordType: 'Stocktake',
+    recordToFinaliseKey: 'stocktake',
+    finaliseText: 'finalise_stocktake',
+  },
+  [ROUTES.SUPPLIER_REQUISITION]: {
+    checkForError: checkForSupplierRequisitionError,
+    recordType: 'Requisition',
+    recordToFinaliseKey: 'requisition',
+    finaliseText: 'finalise_supplier_requisition',
+  },
+  [ROUTES.SUPPLIER_REQUISITION_WITH_PROGRAM]: {
+    checkForError: checkForSupplierRequisitionError,
     recordType: 'Requisition',
     recordToFinaliseKey: 'requisition',
     finaliseText: 'finalise_supplier_requisition',

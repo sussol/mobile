@@ -18,3 +18,4 @@ export const SUSSOL_ORANGE = '#e95c30';
 export const TRANSPARENT = 'rgba(0, 0, 0, 0)';
 export const WARM_GREY = '#9b9b9b';
 export const WARMER_GREY = '#a8aaac';
+export const WHITE = '#FFFFFF';

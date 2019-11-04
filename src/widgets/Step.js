@@ -157,7 +157,7 @@ const localStyles = StyleSheet.create({
     alignItems: 'center',
     minHeight: '10%',
   },
-  textContainerStyle: { minWidth: '30%', justifyContent: 'center' },
-  iconContainerStyle: { minWidth: '5%' },
+  textContainerStyle: { width: '30%', justifyContent: 'center' },
+  iconContainerStyle: { width: '5%' },
   textStyle: { color: 'white' },
 });

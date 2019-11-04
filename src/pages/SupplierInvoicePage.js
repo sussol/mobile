@@ -1,398 +1,200 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
+import { connect } from 'react-redux';
 
-import {
-  AutocompleteSelector,
-  PageButton,
-  PageInfo,
-  TextEditor,
-  ExpiryTextInput,
-} from '../widgets';
-import { GenericPage } from './GenericPage';
-import { BottomConfirmModal, PageContentModal } from '../widgets/modals';
+import { MODAL_KEYS, debounce } from '../utilities';
+import { useRecordListener } from '../hooks';
+import { getItemLayout } from './dataTableUtilities';
 
-import { createRecord } from '../database';
-import { formatDate, parsePositiveInteger, sortDataBy } from '../utilities';
-import { buttonStrings, modalStrings, pageInfoStrings, tableStrings } from '../localization';
+import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
-import globalStyles, { dataTableStyles } from '../globalStyles';
+import { buttonStrings, modalStrings } from '../localization';
+import globalStyles from '../globalStyles';
 
-const DATA_TYPES_SYNCHRONISED = ['TransactionItem', 'TransactionBatch', 'Item', 'ItemBatch'];
+export const SupplierInvoice = ({
+  pageObject,
+  data,
+  dispatch,
+  dataState,
+  keyExtractor,
+  sortBy,
+  isAscending,
+  modalKey,
+  modalValue,
+  hasSelection,
+  searchTerm,
+  PageActions,
+  columns,
+  getPageInfoColumns,
+}) => {
+  // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
+  const refreshCallback = () => dispatch(PageActions.refreshData());
+  useRecordListener(refreshCallback, pageObject, 'Transaction');
 
-const MODAL_KEYS = {
-  COMMENT_EDIT: 'commentEdit',
-  THEIR_REF_EDIT: 'theirRefEdit',
-  ITEM_SELECT: 'itemSelect',
-};
+  const { isFinalised, comment, theirRef } = pageObject;
 
-const SORT_DATA_TYPES = {
-  itemName: 'string',
-  itemCode: 'string',
-  batch: 'string',
-  totalQuantity: 'number',
-  packSize: 'number',
-};
+  const onAddBatch = item => dispatch(PageActions.addTransactionBatch(item));
+  const onEditComment = value => dispatch(PageActions.editComment(value, 'Transaction'));
+  const onEditTheirRef = value => dispatch(PageActions.editTheirRef(value, 'Transaction'));
+  const onAddRow = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_ITEM));
+  const onFilterData = value => dispatch(PageActions.filterData(value));
+  const onCancelDelete = () => dispatch(PageActions.deselectAll());
+  const onConfirmDelete = () => dispatch(PageActions.deleteTransactionBatches());
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onCheck = rowKey => dispatch(PageActions.selectRow(rowKey));
+  const onUncheck = rowKey => dispatch(PageActions.deselectRow(rowKey));
+  const onEditDate = (date, rowKey) =>
+    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey));
+  const onEditTotalQuantity = (newValue, rowKey) =>
+    dispatch(PageActions.editTotalQuantity(newValue, rowKey));
 
-export class SupplierInvoicePage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.dataFilters = {
-      searchKey: '',
-      sortBy: 'itemName',
-      isAscending: true,
-    };
-    this.state = {
-      modalKey: null,
-      modalIsOpen: false,
-      selection: [],
-    };
-  }
+  const onSortColumn = useCallback(
+    debounce(columnKey => dispatch(PageActions.sortData(columnKey)), 250, true),
+    []
+  );
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+    comment,
+    theirRef,
+    isFinalised,
+  ]);
 
-  // Delete transaction batch then delete transaction item if no more transaction batches remain.
-  onDeleteConfirm = () => {
-    const { selection } = this.state;
-    const { transaction, database } = this.props;
-    database.write(() => transaction.removeTransactionBatchesById(database, selection));
-    this.setState({ selection: [] }, this.refreshData);
-  };
-
-  onDeleteCancel = () => this.setState({ selection: [] }, this.refreshData);
-
-  onSelectionChange = newSelection => this.setState({ selection: newSelection });
-
-  /**
-   * Respond to the user editing fields.
-   *
-   * @param   {string}  key               Key of edited field.
-   * @param   {object}  transactionBatch  The transaction batch from the row being edited.
-   * @param   {string}  newValue          The value the user entered in the cell.
-   * @return  {none}
-   */
-  onEndEditing = (key, transactionBatch, newValue) => {
-    const { database } = this.props;
-    database.write(() => {
-      switch (key) {
-        case 'totalQuantity':
-          // Should edit |numberOfPacks| directly if |packSize| becomes an editable column
-          // that represents the number of packs counted.
-          transactionBatch.setTotalQuantity(database, parsePositiveInteger(newValue));
-          break;
-        case 'expiryDate':
-          transactionBatch.expiryDate = newValue;
-          break;
-        default:
-          break;
-      }
-      database.save('TransactionBatch', transactionBatch);
-    });
-  };
-
-  getModalTitle = () => {
-    const { modalKey } = this.state;
-
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-    switch (modalKey) {
-      default:
-      case ITEM_SELECT:
-        return modalStrings.search_for_an_item_to_add;
-      case COMMENT_EDIT:
-        return modalStrings.edit_the_invoice_comment;
-      case THEIR_REF_EDIT:
-        return modalStrings.edit_their_reference;
-    }
-  };
-
-  updateDataFilters = (newSearchTerm, newSortBy, newIsAscending) => {
-    // (... != null) checks for null or undefined (implicitly type coerced to null).
-    if (newSearchTerm != null) this.dataFilters.searchTerm = newSearchTerm;
-    if (newSortBy != null) this.dataFilters.sortBy = newSortBy;
-    if (newIsAscending != null) this.dataFilters.isAscending = newIsAscending;
-  };
-
-  /**
-   * Returns updated data fitlered by |searchTerm| and ordered by |sortBy| and |isAscending|.
-   */
-  refreshData = (newSearchTerm, newSortBy, newIsAscending) => {
-    this.updateDataFilters(newSearchTerm, newSortBy, newIsAscending);
-    const { searchTerm, sortBy, isAscending } = this.dataFilters;
-    const { database, transaction } = this.props;
-    const transactionBatches = transaction
-      .getTransactionBatches(database)
-      .filtered('itemName BEGINSWITH[c] $0', searchTerm);
-
-    const sortDataType = SORT_DATA_TYPES[sortBy] || 'realm';
-
-    this.setState({
-      data: sortDataBy(transactionBatches, sortBy, sortDataType, isAscending),
-    });
-  };
-
-  addNewLine = item => {
-    const { database, transaction } = this.props;
-    database.write(() => {
-      const transactionItem = createRecord(database, 'TransactionItem', transaction, item);
-      createRecord(
-        database,
-        'TransactionBatch',
-        transactionItem,
-        createRecord(database, 'ItemBatch', item, '')
-      );
-    });
-  };
-
-  openModal = key => this.setState({ modalKey: key, modalIsOpen: true });
-
-  closeModal = () => this.setState({ modalIsOpen: false });
-
-  openItemSelector = () => this.openModal(MODAL_KEYS.ITEM_SELECT);
-
-  openCommentEditor = () => this.openModal(MODAL_KEYS.COMMENT_EDIT);
-
-  openTheirRefEditor = () => this.openModal(MODAL_KEYS.THEIR_REF_EDIT);
-
-  renderPageInfo = () => {
-    const { transaction } = this.props;
-    const infoColumns = [
-      [
-        {
-          title: `${pageInfoStrings.entry_date}:`,
-          info: formatDate(transaction.entryDate) || 'N/A',
-        },
-        {
-          title: `${pageInfoStrings.confirm_date}:`,
-          info: formatDate(transaction.confirmDate),
-        },
-      ],
-      [
-        {
-          title: `${pageInfoStrings.supplier}:`,
-          info: transaction.otherParty && transaction.otherParty.name,
-        },
-        {
-          title: `${pageInfoStrings.their_ref}:`,
-          info: transaction.theirRef,
-          onPress: this.openTheirRefEditor,
-          editableType: 'text',
-        },
-        {
-          title: `${pageInfoStrings.comment}:`,
-          info: transaction.comment,
-          onPress: this.openCommentEditor,
-          editableType: 'text',
-        },
-      ],
-    ];
-    return <PageInfo columns={infoColumns} isEditingDisabled={transaction.isFinalised} />;
-  };
-
-  renderCell = (key, transactionBatch) => {
-    const { transaction } = this.props;
-
-    const isEditable = !transaction.isFinalised;
-    const type = isEditable ? 'editable' : 'text';
-    const editableCell = {
-      type,
-      cellContents: String(transactionBatch[key]),
-    };
-
-    switch (key) {
-      default:
-        return {
-          cellContents: transactionBatch[key],
-        };
+  const getCallback = useCallback((columnKey, propName) => {
+    switch (columnKey) {
       case 'totalQuantity':
-        return editableCell;
-      case 'expiryDate': {
-        return (
-          <ExpiryTextInput
-            key={transactionBatch.id}
-            isEditable={isEditable}
-            onEndEditing={newValue => this.onEndEditing(key, transactionBatch, newValue)}
-            text={transactionBatch[key]}
-            style={dataTableStyles.text}
-          />
-        );
-      }
+        return onEditTotalQuantity;
+      case 'expiryDate':
+        return onEditDate;
       case 'remove':
-        return {
-          type: 'checkable',
-          icon: 'md-remove-circle',
-          isDisabled: transaction.isFinalised,
-        };
-    }
-  };
-
-  renderModalContent = () => {
-    const { database, transaction } = this.props;
-    const { modalKey } = this.state;
-
-    const { ITEM_SELECT, COMMENT_EDIT, THEIR_REF_EDIT } = MODAL_KEYS;
-
-    switch (modalKey) {
+        if (propName === 'onCheck') return onCheck;
+        return onUncheck;
       default:
-      case ITEM_SELECT:
-        return (
-          <AutocompleteSelector
-            options={database.objects('Item')}
-            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
-            queryStringSecondary="name CONTAINS[c] $0"
-            sortByString="name"
-            onSelect={item => {
-              this.addNewLine(item);
-              this.refreshData();
-              this.closeModal();
-            }}
-            renderLeftText={item => `${item.name}`}
-            renderRightText={item => `${item.totalQuantity}`}
-          />
-        );
-      case COMMENT_EDIT:
-        return (
-          <TextEditor
-            text={transaction.comment}
-            onEndEditing={newComment => {
-              if (newComment !== transaction.comment) {
-                database.write(() => {
-                  transaction.comment = newComment;
-                  database.save('Transaction', transaction);
-                });
-              }
-              this.closeModal();
-            }}
-          />
-        );
-      case THEIR_REF_EDIT:
-        return (
-          <TextEditor
-            text={transaction.theirRef}
-            onEndEditing={newTheirRef => {
-              if (newTheirRef !== transaction.theirRef) {
-                database.write(() => {
-                  transaction.theirRef = newTheirRef;
-                  database.save('Transaction', transaction);
-                });
-              }
-              this.closeModal();
-            }}
-          />
-        );
+        return null;
+    }
+  }, []);
+
+  const getModalOnSelect = () => {
+    switch (modalKey) {
+      case MODAL_KEYS.SELECT_ITEM:
+        return onAddBatch;
+      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
+        return onEditComment;
+      case MODAL_KEYS.THEIR_REF_EDIT:
+        return onEditTheirRef;
+      default:
+        return null;
     }
   };
 
-  renderAddBatchButton = () => {
-    const { transaction } = this.props;
-
-    return (
-      <PageButton
-        style={globalStyles.topButton}
-        text={buttonStrings.new_line}
-        onPress={this.openItemSelector}
-        isDisabled={transaction.isFinalised}
-      />
-    );
-  };
-
-  render() {
-    const { database, genericTablePageStyles, transaction, topRoute } = this.props;
-    const { data, modalIsOpen, selection } = this.state;
-
-    return (
-      <GenericPage
-        data={data}
-        refreshData={this.refreshData}
-        renderCell={this.renderCell}
-        renderTopLeftComponent={this.renderPageInfo}
-        renderTopRightComponent={this.renderAddBatchButton}
-        onEndEditing={this.onEndEditing}
-        onSelectionChange={this.onSelectionChange}
-        defaultSortKey={this.dataFilters.sortBy}
-        defaultSortDirection={this.dataFilters.isAscending ? 'ascending' : 'descending'}
-        columns={[
-          {
-            key: 'itemCode',
-            width: 1,
-            title: tableStrings.item_code,
-            sortable: true,
-          },
-          {
-            key: 'itemName',
-            width: 3,
-            title: tableStrings.item_name,
-            sortable: true,
-          },
-          {
-            key: 'totalQuantity',
-            width: 1,
-            title: tableStrings.quantity,
-            alignText: 'right',
-          },
-          {
-            key: 'expiryDate',
-            width: 1,
-            title: tableStrings.batch_expiry,
-            alignText: 'center',
-          },
-          {
-            key: 'remove',
-            width: 1,
-            title: tableStrings.remove,
-            alignText: 'center',
-          },
-        ]}
-        dataTypesSynchronised={DATA_TYPES_SYNCHRONISED}
-        finalisableDataType="Transaction"
-        database={database}
-        selection={selection}
-        {...genericTablePageStyles}
-        topRoute={topRoute}
-      >
-        <BottomConfirmModal
-          isOpen={selection.length > 0 && !transaction.isFinalised}
-          questionText={modalStrings.remove_these_items}
-          onCancel={() => this.onDeleteCancel()}
-          onConfirm={() => this.onDeleteConfirm()}
-          confirmText={modalStrings.remove}
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          columns={columns}
+          isFinalised={isFinalised}
+          getCallback={getCallback}
+          rowIndex={index}
         />
-        <PageContentModal
-          isOpen={modalIsOpen && !transaction.isFinalised}
-          onClose={this.closeModal}
-          title={this.getModalTitle()}
-        >
-          {this.renderModalContent()}
-        </PageContentModal>
-      </GenericPage>
-    );
-  }
-}
+      );
+    },
+    [data, dataState]
+  );
 
-/**
- * Check whether a given transaction is safe to be finalised. If safe to finalise,
- * return null, else return an appropriate error message.
- *
- * @param   {object}  transaction  The transaction to check.
- * @return  {string}               Error message if unsafe to finalise, else null.
- */
-export function checkForFinaliseError(transaction) {
-  if (!transaction.isExternalSupplierInvoice) return null;
-  if (transaction.items.length === 0) {
-    return modalStrings.add_at_least_one_item_before_finalising;
-  }
-  if (transaction.totalQuantity === 0) {
-    return modalStrings.stock_quantity_greater_then_zero;
-  }
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        onPress={onSortColumn}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
+  );
 
-  return null;
-}
+  const {
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
+  return (
+    <DataTablePageView>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+        </View>
+        <View style={pageTopRightSectionContainer}>
+          <PageButton text={buttonStrings.new_item} onPress={onAddRow} isDisabled={isFinalised} />
+        </View>
+      </View>
+      <DataTable
+        data={data}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+        columns={columns}
+      />
+      <BottomConfirmModal
+        isOpen={hasSelection}
+        questionText={modalStrings.remove_these_items}
+        onCancel={onCancelDelete}
+        onConfirm={onConfirmDelete}
+        confirmText={modalStrings.remove}
+      />
+      <DataTablePageModal
+        fullScreen={false}
+        isOpen={!!modalKey}
+        modalKey={modalKey}
+        onClose={onCloseModal}
+        onSelect={getModalOnSelect()}
+        dispatch={dispatch}
+        currentValue={modalValue}
+      />
+    </DataTablePageView>
+  );
+};
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
-SupplierInvoicePage.propTypes = {
-  database: PropTypes.object,
-  genericTablePageStyles: PropTypes.object,
-  topRoute: PropTypes.bool,
-  transaction: PropTypes.object,
+const mapStateToProps = state => {
+  const { pages } = state;
+  const { supplierInvoice } = pages;
+  return supplierInvoice;
+};
+
+export const SupplierInvoicePage = connect(mapStateToProps)(SupplierInvoice);
+
+SupplierInvoice.defaultProps = {
+  modalValue: null,
+};
+
+SupplierInvoice.propTypes = {
+  pageObject: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired,
+  dataState: PropTypes.object.isRequired,
+  keyExtractor: PropTypes.func.isRequired,
+  sortBy: PropTypes.string.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  modalKey: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
+  hasSelection: PropTypes.bool.isRequired,
+  searchTerm: PropTypes.string.isRequired,
+  PageActions: PropTypes.object.isRequired,
+  columns: PropTypes.array.isRequired,
+  getPageInfoColumns: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired,
 };

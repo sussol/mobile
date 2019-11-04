@@ -1,413 +1,192 @@
 /* eslint-disable react/forbid-prop-types */
+/* eslint-disable import/prefer-default-export */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import Modal from 'react-native-modalbox';
-import { TouchableOpacity, StyleSheet, View, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { GenericPage } from '../../pages/GenericPage';
-import { Button, PageButton, ExpiryTextInput, PageInfo, GenericChoiceList } from '..';
-import { PageContentModal } from './PageContentModal';
+import { View } from 'react-native';
 
-import {
-  programStrings,
-  tableStrings,
-  buttonStrings,
-  modalStrings,
-  pageInfoStrings,
-} from '../../localization';
-import { parsePositiveInteger } from '../../utilities';
-import globalStyles, {
-  WARM_GREY,
-  SUSSOL_ORANGE,
-  DARK_GREY,
-  dataTableStyles,
-  expansionPageStyles,
-} from '../../globalStyles';
+import { MODAL_KEYS } from '../../utilities';
+import { usePageReducer } from '../../hooks';
+import { getItemLayout } from '../../pages/dataTableUtilities';
 
-const MODAL_KEYS = {
-  REASON_EDIT: 'reasonEdit',
-};
-export class StocktakeBatchModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      currentBatch: null,
-      reasons: [],
-      isModalOpen: false,
-      modalKey: null,
-    };
-  }
+import { GenericChoiceList } from '../GenericChoiceList';
+import { PageInfo, DataTablePageView, PageButton } from '..';
+import { DataTable, DataTableHeaderRow, DataTableRow } from '../DataTable';
 
-  componentDidMount = () => {
-    const { database } = this.props;
-    const queryString = 'type == $0 && isActive == true';
-    const reasons = database.objects('Options').filtered(queryString, 'stocktakeLineAdjustment');
-    this.setState({ reasons });
+import globalStyles from '../../globalStyles';
+
+import { UIDatabase } from '../../database';
+import ModalContainer from './ModalContainer';
+import { buttonStrings } from '../../localization/index';
+
+/**
+ * Renders a stateful modal with a stocktake item and it's batches loaded
+ * for editing.
+ *
+ * State:
+ * Uses a reducer to manage state with `backingData` being a realm results
+ * of items to display. `data` is a plain JS array of realm objects. data is
+ * hydrated from the `backingData` for displaying in the interface.
+ * i.e: When filtering, data is populated from filtered items of `backingData`.
+ *
+ * dataState is a simple map of objects corresponding to a row being displayed,
+ * holding the state of a given row. Each object has the shape :
+ * { isSelected, isFocused, isDisabled },
+ *
+ * @prop {Object} stocktakeItem The realm transaction object for this invoice.
+ *
+ */
+export const StocktakeBatchModal = ({ stocktakeItem }) => {
+  const usingReasons = useMemo(
+    () =>
+      UIDatabase.objects('NegativeAdjustmentReason').length > 0 &&
+      UIDatabase.objects('PositiveAdjustmentReason').length > 0,
+    []
+  );
+
+  const initialState = {
+    page: usingReasons ? 'stocktakeBatchEditModalWithReasons' : 'stocktakeBatchEditModal',
+    pageObject: stocktakeItem,
   };
 
-  openModal = (key, currentBatch) => {
-    this.setState({ modalKey: key, isModalOpen: true, currentBatch });
-  };
+  const [state, dispatch, instantDebouncedDispatch] = usePageReducer(initialState);
 
-  closeModal = () => {
-    this.setState({ isModalOpen: false });
-  };
+  const {
+    pageObject,
+    data,
+    dataState,
+    sortBy,
+    isAscending,
+    modalKey,
+    modalValue,
+    keyExtractor,
+    PageActions,
+    columns,
+    getPageInfoColumns,
+  } = state;
 
-  reasonModalConfirm = ({ item: option }) => {
-    if (option) {
-      const { database } = this.props;
-      const { currentBatch } = this.state;
-      const { id } = currentBatch;
-      database.write(() => database.update('StocktakeBatch', { id, option }));
-    }
-    this.closeModal();
-  };
+  const { stocktake = {} } = stocktakeItem;
+  const { isFinalised = false } = stocktake;
+  const { difference = 0 } = modalValue || {};
 
-  /**
-   * Opens the reason modal for applying a reason to a stocktakeBatch
-   * if the snapshot quantity and counted total quantity differ.
-   * Otherwise, removes the reason from the stocktake items batches.
-   * @param {Object} stocktakeBatch
-   */
-  assignReason = stocktakeBatch => {
-    const { REASON_EDIT } = MODAL_KEYS;
-    const { database } = this.props;
-    const { id, option, shouldHaveReason } = stocktakeBatch;
-    if (shouldHaveReason) {
-      if (!option) this.openModal(REASON_EDIT, stocktakeBatch);
-    } else database.write(() => database.update('StocktakeBatch', { id, option: null }));
-  };
+  const reasonsSelection =
+    difference > 0
+      ? UIDatabase.objects('PositiveAdjustmentReason')
+      : UIDatabase.objects('NegativeAdjustmentReason');
 
-  onEndEditing = (key, stocktakeBatch, newValue) => {
-    const { reasons, isModalOpen } = this.state;
-    const { database } = this.props;
-    const { id } = stocktakeBatch;
+  const onCloseModal = () => dispatch(PageActions.closeModal());
+  const onApplyReason = ({ item }) => dispatch(PageActions.applyReason(item));
+  const onAddBatch = () => dispatch(PageActions.addStocktakeBatch());
+  const onEditBatch = (value, rowKey, columnKey) =>
+    dispatch(PageActions.editStocktakeBatchName(value, rowKey, columnKey));
+  const onEditReason = rowKey =>
+    dispatch(PageActions.openModal(MODAL_KEYS.STOCKTAKE_REASON, rowKey));
+  const onEditCountedQuantity = (newValue, rowKey, columnKey) =>
+    dispatch(PageActions.editStocktakeBatchCountedQuantity(newValue, rowKey, columnKey));
+  const onEditDate = (date, rowKey, columnKey) =>
+    dispatch(PageActions.editTransactionBatchExpiryDate(date, rowKey, columnKey));
 
-    if (!newValue) return;
-    // If the reason modal is open just ignore any change to the current line
-    if (isModalOpen) return;
-    switch (key) {
-      case 'countedTotalQuantity': {
-        const quantity = parsePositiveInteger(newValue);
-        if (quantity === null) return;
-        database.write(() => {
-          stocktakeBatch.countedTotalQuantity = quantity;
-        });
-        database.save(stocktakeBatch);
-        if (reasons.length > 0) this.assignReason(stocktakeBatch);
-        break;
-      }
-      case 'batch': {
-        let newBatchName = '';
-        if (newValue !== `(${tableStrings.no_batch_name})`) newBatchName = newValue;
-        database.write(() => database.update('StocktakeBatch', { id, batch: newBatchName }));
-        break;
-      }
-      case 'expiryDate':
-        database.write(() => database.update('StocktakeBatch', { id, expiryDate: newValue }));
-        break;
-      default:
-        break;
-    }
-  };
+  const toggles = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), []);
 
-  refreshData = () => {
-    const { stocktakeItem } = this.props;
-    this.setState({ data: stocktakeItem.batches });
-  };
-
-  renderCell = (key, stocktakeBatch) => {
-    const { stocktakeItem } = this.props;
-    const { stocktake } = stocktakeItem;
-    const isEditable = !stocktake.isFinalised;
-    const { option } = stocktakeBatch;
-    const { REASON_EDIT } = MODAL_KEYS;
-    switch (key) {
+  const getCallback = useCallback(colKey => {
+    switch (colKey) {
+      case 'countedTotalQuantity':
+        return onEditCountedQuantity;
       case 'batch':
-        return {
-          type: isEditable ? 'editable' : 'text',
-          cellContents:
-            stocktakeBatch[key] && stocktakeBatch[key] !== ''
-              ? stocktakeBatch[key]
-              : `(${tableStrings.no_batch_name})`,
-          keyboardType: 'default',
-        };
-      case 'countedTotalQuantity': {
-        const emptyCellContents = isEditable ? '' : tableStrings.not_counted;
-        return {
-          type: isEditable ? 'editable' : 'text',
-          cellContents: stocktakeBatch.hasBeenCounted
-            ? stocktakeBatch.countedTotalQuantity
-            : emptyCellContents,
-          placeholder: tableStrings.not_counted,
-        };
-      }
-      case 'expiryDate': {
-        return (
-          <ExpiryTextInput
-            key={stocktakeBatch.id}
-            isEditable={isEditable}
-            onEndEditing={newValue => {
-              this.onEndEditing(key, stocktakeBatch, newValue);
-              this.refreshData();
-            }}
-            text={stocktakeBatch[key]}
-            style={dataTableStyles.text}
-          />
-        );
-      }
-      case 'difference': {
-        const { difference } = stocktakeBatch;
-        const prefix = difference > 0 ? '+' : '';
-        return { cellContents: `${prefix}${difference}` };
-      }
-      case 'reason': {
-        const onPress = this.openModal.bind(this, REASON_EDIT, stocktakeBatch);
-        const editable = option && isEditable;
-        return (
-          <TouchableOpacity
-            key={stocktakeBatch.id}
-            onPress={editable ? onPress : null}
-            style={localStyles.reasonCell}
-          >
-            {editable && <Icon name="external-link" size={14} color={SUSSOL_ORANGE} />}
-            <Text style={{ width: '80%' }} numberOfLines={1} ellipsizeMode="tail">
-              {stocktakeBatch.option ? stocktakeBatch.option.title : programStrings.not_applicable}
-            </Text>
-          </TouchableOpacity>
-        );
-      }
+        return onEditBatch;
+      case 'expiryDate':
+        return onEditDate;
+      case 'reasonTitle':
+        return onEditReason;
       default:
-        return {
-          cellContents: stocktakeBatch[key],
-        };
-    }
-  };
-
-  renderAddBatchButton = () => {
-    const { database, stocktakeItem } = this.props;
-
-    const addNewBatch = () => {
-      database.write(() => {
-        stocktakeItem.createNewBatch(database);
-      });
-      this.refreshData();
-    };
-
-    return (
-      <PageButton
-        text={buttonStrings.add_batch}
-        onPress={addNewBatch}
-        isDisabled={stocktakeItem.stocktake.isFinalised}
-        style={localStyles.addBatchButton}
-      />
-    );
-  };
-
-  renderPageInfo = () => {
-    const { stocktakeItem } = this.props;
-    const { itemName } = stocktakeItem;
-
-    const infoColumns = [
-      [
-        {
-          title: pageInfoStrings.by_batch,
-          info: itemName,
-        },
-      ],
-    ];
-    return <PageInfo columns={infoColumns} />;
-  };
-
-  renderFooter = () => {
-    const { onConfirm } = this.props;
-    return (
-      <View style={localStyles.footer}>
-        <Button
-          text={buttonStrings.done}
-          disabledColor={WARM_GREY}
-          style={[globalStyles.button, localStyles.OKButton]}
-          textStyle={[globalStyles.buttonText, localStyles.OKButtonText]}
-          onPress={onConfirm}
-        />
-      </View>
-    );
-  };
-
-  getModalTitle = () => {
-    const { modalKey } = this.state;
-    const { REASON_EDIT } = MODAL_KEYS;
-    switch (modalKey) {
-      default:
-        return '';
-      case REASON_EDIT:
-        return programStrings.select_a_reason;
-    }
-  };
-
-  renderModalContent = () => {
-    const { modalKey, currentBatch, reasons } = this.state;
-    const { option } = currentBatch;
-    const highlightValue = option && option.title;
-    const { REASON_EDIT } = MODAL_KEYS;
-    switch (modalKey) {
-      default: {
         return null;
-      }
-      case REASON_EDIT: {
-        return (
-          <GenericChoiceList
-            data={reasons}
-            highlightValue={highlightValue}
-            keyToDisplay="title"
-            onPress={this.reasonModalConfirm}
-            title={modalStrings.select_a_reason}
-          />
-        );
-      }
     }
-  };
+  }, []);
 
-  getColumns = () => {
-    const { reasons } = this.state;
-    const columns = [
-      {
-        key: 'batch',
-        width: 2,
-        title: tableStrings.batch_name,
-        alignText: 'center',
-      },
-      {
-        key: 'expiryDate',
-        width: 1,
-        title: tableStrings.expiry,
-        alignText: 'center',
-      },
-      {
-        key: 'snapshotTotalQuantity',
-        width: 1,
-        title: unwrapText(tableStrings.snapshot_quantity),
-        alignText: 'right',
-      },
-      {
-        key: 'countedTotalQuantity',
-        width: 1,
-        title: unwrapText(tableStrings.actual_quantity),
-        alignText: 'right',
-      },
-      {
-        key: 'difference',
-        width: 1,
-        title: tableStrings.difference,
-        alignText: 'right',
-      },
-    ];
-    if (reasons.length > 0) {
-      columns.push({
-        key: 'reason',
-        width: 1,
-        title: tableStrings.reason,
-        alignText: 'right',
-      });
-    }
-    return columns;
-  };
-
-  render() {
-    const { database, genericTablePageStyles, isOpen } = this.props;
-    const { data, isModalOpen, modalKey, currentBatch } = this.state;
-    const { REASON_EDIT } = MODAL_KEYS;
-
-    return (
-      <Modal
-        isOpen={isOpen}
-        style={[localStyles.modal]}
-        backdropOpacity={0.33}
-        position="top"
-        backdropPressToClose={false}
-        swipeToClose={false}
-      >
-        <GenericPage
-          data={data}
-          renderCell={this.renderCell}
-          refreshData={this.refreshData}
-          hideSearchBar={true}
-          dontRenderSearchBar={true}
-          onEndEditing={this.onEndEditing}
-          renderTopLeftComponent={this.renderPageInfo}
-          renderTopRightComponent={this.renderAddBatchButton}
-          columns={this.getColumns()}
-          dataTypesLinked={['StocktakeBatch', 'Stocktake']}
-          database={database}
-          pageStyles={expansionPageStyles}
-          {...genericTablePageStyles}
+  const renderRow = useCallback(
+    listItem => {
+      const { item, index } = listItem;
+      const rowKey = keyExtractor(item);
+      return (
+        <DataTableRow
+          rowData={data[index]}
+          rowState={dataState.get(rowKey)}
+          rowKey={rowKey}
+          columns={columns}
+          getCallback={getCallback}
+          rowIndex={index}
+          isFinalised={isFinalised}
         />
-        {isModalOpen && (
-          <PageContentModal
-            isOpen={isModalOpen}
-            onClose={currentBatch && currentBatch.enforceReason ? null : this.closeModal}
-            title={this.getModalTitle()}
-            coverScreen={modalKey === REASON_EDIT}
-          >
-            {this.renderModalContent()}
-          </PageContentModal>
-        )}
-        {this.renderFooter()}
-      </Modal>
-    );
-  }
-}
+      );
+    },
+    [data, dataState]
+  );
 
-StocktakeBatchModal.defaultProps = {
-  genericTablePageStyles: {},
+  const renderHeader = useCallback(
+    () => (
+      <DataTableHeaderRow
+        columns={columns}
+        dispatch={instantDebouncedDispatch}
+        sortAction={PageActions.sortData}
+        isAscending={isAscending}
+        sortBy={sortBy}
+      />
+    ),
+    [sortBy, isAscending]
+  );
+
+  const {
+    pageTopSectionContainer,
+    pageTopLeftSectionContainer,
+    pageTopRightSectionContainer,
+  } = globalStyles;
+  return (
+    <DataTablePageView>
+      <View style={pageTopSectionContainer}>
+        <View style={pageTopLeftSectionContainer}>
+          <PageInfo columns={toggles} />
+        </View>
+        <View style={pageTopRightSectionContainer}>
+          <PageButton
+            text={buttonStrings.add_batch}
+            onPress={onAddBatch}
+            isDisabled={isFinalised}
+          />
+        </View>
+      </View>
+      <DataTable
+        data={data}
+        extraData={dataState}
+        renderRow={renderRow}
+        renderHeader={renderHeader}
+        keyExtractor={keyExtractor}
+        getItemLayout={getItemLayout}
+        columns={columns}
+        windowSize={1}
+        initialNumToRender={0}
+      />
+      <ModalContainer
+        fullScreen={modalKey === MODAL_KEYS.ENFORCE_STOCKTAKE_REASON}
+        isVisible={!!modalKey}
+        onClose={onCloseModal}
+      >
+        <GenericChoiceList
+          data={reasonsSelection}
+          highlightValue={(modalValue && modalValue.reasonTitle) || ''}
+          keyToDisplay="title"
+          onPress={onApplyReason}
+        />
+      </ModalContainer>
+    </DataTablePageView>
+  );
 };
 
 StocktakeBatchModal.propTypes = {
-  database: PropTypes.object.isRequired,
-  genericTablePageStyles: PropTypes.object,
   stocktakeItem: PropTypes.object.isRequired,
-  isOpen: PropTypes.bool.isRequired,
-  onConfirm: PropTypes.func.isRequired,
 };
 
 export default StocktakeBatchModal;
-
-const unwrapText = text => text.replace(/\n/g, ' ');
-const localStyles = StyleSheet.create({
-  addBatchButton: {
-    height: 30,
-    width: 90,
-  },
-  modal: {
-    height: '100%',
-    width: '100%',
-    padding: 20,
-    backgroundColor: DARK_GREY,
-  },
-  footer: {
-    flex: 1,
-    maxHeight: 50,
-    alignItems: 'flex-end',
-    justifyContent: 'flex-end',
-  },
-  OKButton: {
-    backgroundColor: SUSSOL_ORANGE,
-  },
-  OKButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  reasonCell: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-});

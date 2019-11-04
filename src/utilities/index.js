@@ -15,4 +15,15 @@ export { createReducer, REHYDRATE } from './createReducer';
 export { getAllPeriodsForProgram, getAllPrograms } from './byProgram';
 export { requestPermission } from './requestPermission';
 export { backupValidation } from './fileSystem';
+export { debounce } from './underscoreMethods';
+export { getModalTitle, MODAL_KEYS } from './getModalTitle';
+export {
+  checkForCustomerInvoiceError,
+  checkForSupplierInvoiceError,
+  checkForSupplierRequisitionError,
+  checkForStocktakeError,
+  checkForCustomerRequisitionError,
+} from './finalisation';
+
+export { formatErrorItemNames } from './formatters';
 export { renderNode } from './renderNode';

@@ -53,6 +53,9 @@ export class Stocktake extends Realm.Object {
 
   /**
    * Sets the stocktake items attached to this stocktake based on item id.
+   * Only items which are passed in `itemIds` are set to the stocktake. Any
+   * items currently in the stocktake which are not passed are removed, and
+   * any extras are added.
    *
    * @param   {Realm}           database
    * @param   {Array.<string>}  itemIds
@@ -86,6 +89,28 @@ export class Stocktake extends Realm.Object {
         createRecord(database, 'StocktakeBatch', stocktakeItem, itemBatch);
       });
     });
+  }
+
+  /**
+   * Returns if this stocktakes snapshot quantities are outdated.
+   *
+   * @return {Bool} Indicator if this stocktake is outdated.
+   */
+  get isOutdated() {
+    return this.itemsOutdated.length > 0 && !this.isFinalised;
+  }
+
+  /**
+   * Returns an Array of item objects that are currently in the stocktae.
+   *
+   * @return {Array} Realm.Item objects current in the stocktake.
+   */
+  get itemsInStocktake() {
+    return this.items.reduce((acc, stocktakeItem) => {
+      const { item } = stocktakeItem;
+      if (item) return [...acc, item];
+      return acc;
+    }, []);
   }
 
   /**
@@ -133,7 +158,7 @@ export class Stocktake extends Realm.Object {
    * @return  {boolean}
    */
   get hasSomeCountedItems() {
-    return this.items.some(item => item.hasCountedBatches);
+    return this.items.some(item => item.hasBeenCounted);
   }
 
   /**
@@ -151,11 +176,10 @@ export class Stocktake extends Realm.Object {
    * @param  {Realm}                  database
    * @param  {Array.<StocktakeItem>}  stocktakeItems  Items to reset.
    */
-  // eslint-disable-next-line class-methods-use-this
-  resetStocktakeItems(database, stocktakeItems) {
+  resetStocktake(database) {
     database.write(() => {
-      stocktakeItems.forEach(stocktakeItem => {
-        stocktakeItem.reset(database);
+      this.itemsOutdated.forEach(outdatedItem => {
+        outdatedItem.reset(database);
       });
     });
   }
@@ -233,7 +257,7 @@ export class Stocktake extends Realm.Object {
     // Prune any stocktake item that has not had a quantity change.
     database.delete(
       'StocktakeItem',
-      this.items.filter(stocktakeItem => !stocktakeItem.hasCountedBatches)
+      this.items.filter(stocktakeItem => !stocktakeItem.hasBeenCounted)
     );
 
     // Get every batch associated with this stocktake.

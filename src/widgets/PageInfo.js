@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -11,15 +12,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import { APP_FONT_FAMILY, DARK_GREY, SUSSOL_ORANGE } from '../globalStyles';
 
-const renderTitleComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) => {
+const renderTitleComponent = (isEditingDisabled, columnIndex, color, rowData, rowIndex) => {
   // If null or empty string, use single space to avoid squishing row
   const titleString = rowData.title ? rowData.title : ' ';
+  const style = { ...localStyles.text, ...localStyles.titleText, color };
   const titleComponent = (
-    <Text
-      key={`Title ${columnIndex}-${rowIndex}`}
-      style={[localStyles.text, localStyles.titleText]}
-      numberOfLines={1}
-    >
+    <Text key={`Title ${columnIndex}-${rowIndex}`} style={style} numberOfLines={1}>
       {titleString}
     </Text>
   );
@@ -41,7 +39,7 @@ const renderTitleComponent = (isEditingDisabled, columnIndex, rowData, rowIndex)
   );
 };
 
-const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) => {
+const renderInfoComponent = (isEditingDisabled, columnIndex, color, rowData, rowIndex) => {
   let editTextStyle;
   let containerStyle;
   let iconName;
@@ -62,12 +60,9 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
   // If null or empty string, use single space to avoid squishing row
   let infoString = (rowData.info || rowData.info === 0) && String(rowData.info);
   infoString = infoString && infoString.length > 0 ? infoString : ' ';
+  const textStyle = { ...localStyles.text, ...editTextStyle, color };
   const infoComponent = (
-    <Text
-      key={`Info ${columnIndex}-${rowIndex}`}
-      style={[localStyles.text, editTextStyle]}
-      numberOfLines={1}
-    >
+    <Text key={`Info ${columnIndex}-${rowIndex}`} style={textStyle} numberOfLines={1}>
       {infoString}
     </Text>
   );
@@ -116,8 +111,8 @@ const renderInfoComponent = (isEditingDisabled, columnIndex, rowData, rowIndex) 
  *                            col1: row1 col2: row1
  *                            col1: row2 col2: row2
  */
-export const PageInfo = props => {
-  const { columns, isEditingDisabled } = props;
+const PageInfoComponent = props => {
+  const { columns, isEditingDisabled, titleColor, infoColor } = props;
 
   return (
     <View style={[localStyles.horizontalContainer]}>
@@ -135,12 +130,16 @@ export const PageInfo = props => {
             <View>
               {columnData
                 .filter(data => !data.shouldHide)
-                .map((...args) => renderTitleComponent(isEditingDisabled, columnIndex, ...args))}
+                .map((...args) =>
+                  renderTitleComponent(isEditingDisabled, columnIndex, titleColor, ...args)
+                )}
             </View>
             <View style={localStyles.infoContainer}>
               {columnData
                 .filter(data => !data.shouldHide)
-                .map((...args) => renderInfoComponent(isEditingDisabled, columnIndex, ...args))}
+                .map((...args) =>
+                  renderInfoComponent(isEditingDisabled, columnIndex, infoColor, ...args)
+                )}
             </View>
           </View>
         );
@@ -149,16 +148,21 @@ export const PageInfo = props => {
   );
 };
 
+export const PageInfo = React.memo(PageInfoComponent);
+
 export default PageInfo;
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
-PageInfo.propTypes = {
+PageInfoComponent.propTypes = {
   columns: PropTypes.array.isRequired,
   isEditingDisabled: PropTypes.bool,
+  titleColor: PropTypes.string,
+  infoColor: PropTypes.string,
 };
 
-PageInfo.defaultProps = {
+PageInfoComponent.defaultProps = {
   isEditingDisabled: false,
+  infoColor: SUSSOL_ORANGE,
+  titleColor: DARK_GREY,
 };
 
 const localStyles = StyleSheet.create({

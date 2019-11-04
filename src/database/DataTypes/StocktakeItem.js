@@ -77,7 +77,7 @@ export class StocktakeItem extends Realm.Object {
    *
    * @return  {boolean}
    */
-  get hasCountedBatches() {
+  get hasBeenCounted() {
     // Return true if any batches of this stocktake item have adjustments.
     return this.batches.some(
       stocktakeBatch => stocktakeBatch.isValid() && stocktakeBatch.hasBeenCounted
@@ -142,7 +142,7 @@ export class StocktakeItem extends Realm.Object {
    * Returns the title of the most common option within this stocktakeItem's batches
    * @return {string} The title of the reason with the highest frequency
    */
-  get mostUsedReasonTitle() {
+  get reasonTitle() {
     if (!this.batches.length) return '';
 
     // Mapping table for ranking reasons by usage
@@ -170,29 +170,15 @@ export class StocktakeItem extends Realm.Object {
   }
 
   /**
-   * Returns a boolean indicator on whether one of the batches
-   * of this stocktake item has an option applied, or not.
+   * Returns an indicator that all batches related to this item have a correct
+   * reason/option applied. A correct reason being a `positiveInventoryAdjustment`
+   * for positive differences and vice versa for negative differences and no reason
+   * when there is no difference.
    */
-  get hasAnyReason() {
-    return this.batches.some(({ option }) => !!option);
-  }
-
-  /**
-   * Returns true if the snapshot and counted quantities differ.
-   * Does not account for if reasons are used by the user, caller
-   * needs to account for this.
-   * @return {bool}
-   */
-  get shouldHaveReason() {
-    return this.batches.some(({ shouldHaveReason }) => shouldHaveReason);
-  }
-
-  /**
-   * Returns a boolean indicator whether a reason needs to be enforced
-   * on this stocktake line item.
-   */
-  get enforceReason() {
-    return this.shouldHaveReason && !this.hasAnyReason;
+  get validateReason() {
+    return this.batches.every(
+      ({ validateReason: batchHasValidatedReason }) => batchHasValidatedReason
+    );
   }
 
   /**
@@ -298,25 +284,30 @@ export class StocktakeItem extends Realm.Object {
   createNewBatch(database) {
     const batchString = `stocktake_${this.stocktake.serialNumber}`;
     const itemBatch = createRecord(database, 'ItemBatch', this.item, batchString);
-    createRecord(database, 'StocktakeBatch', this, itemBatch, true);
+    return createRecord(database, 'StocktakeBatch', this, itemBatch, true);
+  }
+
+  /**
+   * Removes reasons from related batches if they have no difference between
+   * snapshot and counted quantity.
+   *
+   * @param {Realm} database App-wide database interface
+   */
+  removeReason(database) {
+    this.batches.forEach(batch => {
+      if (!this.difference) batch.removeReason(database);
+    });
   }
 
   /**
    * Applies the given Options object to all stocktake batches associated to
    * this stocktake item, if there is a difference between countedTotalQuantity
    * and snapshotTotalQuantity.
-   * @param {Realm}   database
-   * @param {Options} option
+   * @param {Realm}   database App-wide database interface.
+   * @param {Options} option   Option object to apply.
    */
-  applyReasonToBatches(database, option) {
-    this.batches.forEach(batch => {
-      const { id, countedTotalQuantity, snapshotTotalQuantity } = batch;
-      let batchOption = option;
-      if (countedTotalQuantity === snapshotTotalQuantity) batchOption = null;
-      database.write(() => {
-        database.update('StocktakeBatch', { id, option: batchOption });
-      });
-    });
+  applyReason(database, option) {
+    this.batches.forEach(batch => batch.applyReason(database, option));
   }
 }
 

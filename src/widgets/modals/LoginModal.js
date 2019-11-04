@@ -5,18 +5,19 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Image, StyleSheet, Text, TextInput, View } from 'react-native';
-
-import { LanguageModal } from './LanguageModal';
 
 import { SETTINGS_KEYS, getAppVersion } from '../../settings';
-import { authStrings, navStrings } from '../../localization';
 
 import globalStyles, { SUSSOL_ORANGE, GREY, WARM_GREY } from '../../globalStyles';
+import { GenericChoiceList, Flag } from '..';
+import ModalContainer from './ModalContainer';
+
+import { LANGUAGE_NAMES, LANGUAGE_CHOICE, authStrings, navStrings } from '../../localization';
+import { getModalTitle, MODAL_KEYS } from '../../utilities/index';
 
 export class LoginModal extends React.Component {
   constructor(props) {
@@ -35,7 +36,8 @@ export class LoginModal extends React.Component {
     this.errorTimeoutId = null;
   }
 
-  componentWillReceiveProps(nextProps) {
+  // eslint-disable-next-line camelcase, react/sort-comp
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const { authStatus } = this.state;
 
     if (authStatus === 'authenticated' && !nextProps.isAuthenticated) {
@@ -46,7 +48,8 @@ export class LoginModal extends React.Component {
     }
   }
 
-  componentWillUpdate() {
+  // eslint-disable-next-line camelcase
+  UNSAFE_componentWillUpdate() {
     if (this.errorTimeoutId) clearTimeout(this.errorTimeoutId);
   }
 
@@ -99,6 +102,18 @@ export class LoginModal extends React.Component {
         return authStrings.login;
     }
   }
+
+  onCloseModal = () => {
+    this.setState({ isLanguageModalOpen: false });
+  };
+
+  onSelectLanguage = ({ item }) => {
+    const { settings } = this.props;
+    settings.set(SETTINGS_KEYS.CURRENT_LANGUAGE, item.code);
+    this.setState({ isLanguageModalOpen: false });
+  };
+
+  renderFlag = ({ code }) => <Flag countryCode={code} />;
 
   render() {
     const { isAuthenticated, settings } = this.props;
@@ -205,11 +220,19 @@ export class LoginModal extends React.Component {
             </Icon.Button>
             <Text style={globalStyles.authWindowButtonText}>v{appVersion}</Text>
           </View>
-          <LanguageModal
-            isOpen={isLanguageModalOpen}
-            onClose={() => this.setState({ isLanguageModalOpen: false })}
-            settings={settings}
-          />
+          <ModalContainer
+            isVisible={isLanguageModalOpen}
+            onClose={this.onCloseModal}
+            title={getModalTitle(MODAL_KEYS.SELECT_LANGUAGE)}
+          >
+            <GenericChoiceList
+              data={LANGUAGE_CHOICE}
+              keyToDisplay="name"
+              onPress={this.onSelectLanguage}
+              renderLeftComponent={this.renderFlag}
+              highlightValue={LANGUAGE_NAMES[settings.get(SETTINGS_KEYS.CURRENT_LANGUAGE)]}
+            />
+          </ModalContainer>
         </Modal>
       )
     );

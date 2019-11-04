@@ -188,6 +188,53 @@ const dataMigrations = [
       });
     },
   },
+
+  //  2.3.6 Introduced a patch for ItemBatch outgoing sync supplier. Previously,
+  // all outgoing ItemBatches had their supplier field set to the default
+  // supplying store record for its store. 2.3.6 ensured that the supplier
+  // of a ItemBatch was correctly synced out, maintaining it's supplier field.
+  // This migration code
+  {
+    version: '3.0.0',
+    migrate: database => {
+      const supplierInvoiceType = 'supplier_invoice';
+      const finalisedStatus = 'finalised';
+      const itemBatches = database.objects('ItemBatch');
+      database.write(() => {
+        // For each item batch, find the supplier invoice transaction which
+        // introduced it and set the otherParty of the related transaction
+        // to the supplier of the related batch.
+        itemBatches.forEach(batch => {
+          const { id, transactionBatches } = batch;
+          // Ensure there are transaction batches before trying to find the transaction.
+          if (!(transactionBatches && transactionBatches.length !== 0)) return;
+          // There should only be one supplier invoice related to the item batch,
+          // in case somethings wrong and there are more, use the first one.
+          // Also ensure it is finalised. If it isn't, the supplier will be set when confirmed.
+          const supplierInvoiceTransactionBatches = transactionBatches.filtered(
+            'transaction.type = $0 && transaction.status = $1',
+            supplierInvoiceType,
+            finalisedStatus
+          );
+          // If there aren't any transaction batches, exit.
+          if (!(supplierInvoiceTransactionBatches.length > 0)) return;
+          const { transaction } = supplierInvoiceTransactionBatches[0];
+          // If somehow the transaction batch doesn't have a transaction, return
+          if (!transaction) return;
+          const { otherParty: transactionsSupplier } = transaction;
+          const { supplier: currentSupplier } = batch;
+          // If the transaction doesn't have a supplier, early exit
+          if (!transactionsSupplier) return;
+          const { id: transactionsSupplierId } = transactionsSupplier;
+          const { id: currentSuppliersId } = currentSupplier || {};
+          // Only update an item batch if the transaction supplier differs from the batches
+          if (currentSuppliersId !== transactionsSupplierId) {
+            database.update('ItemBatch', { id, supplier: transactionsSupplier });
+          }
+        });
+      });
+    },
+  },
 ];
 
 export default dataMigrations;
