@@ -38,7 +38,7 @@ export const closeModal = route => ({ type: ACTIONS.CLOSE_MODAL, payload: { rout
  * use case: opening a stocktake batch and refreshing the stocktake edit page row.
  */
 export const closeAndRefresh = route => (dispatch, getState) => {
-  const { modalValue, keyExtractor } = pageStateSelector(route, getState());
+  const { modalValue, keyExtractor } = pageStateSelector(getState());
 
   const rowKey = keyExtractor(modalValue);
 
