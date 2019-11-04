@@ -2,7 +2,7 @@
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
  */
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Text, View, ToastAndroid } from 'react-native';
@@ -46,100 +46,123 @@ const Menu = ({
   toSupplierInvoices,
   toSupplierRequisitions,
   toRealmExplorer,
-  toDispensary,
   usingDispensary,
   usingModules,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
-  const { image, originalContainer, moduleContainer, bottomIcon, moduleRow, topRow } = styles;
+  const { image, originalContainer, moduleContainer, bottomIcon, moduleRow } = styles;
 
   const containerStyle = usingModules ? moduleContainer : originalContainer;
 
-  const MenuButton = props => <Button style={menuButton} textStyle={buttonText} {...props} />;
+  const MenuButton = useCallback(
+    props => <Button style={menuButton} textStyle={buttonText} {...props} />,
+    []
+  );
 
-  const CustomerSection = () => (
-    <View style={containerStyle}>
-      <CustomerImage style={image} />
-      <View>
-        <InfoBadge routeName={ROUTES.CUSTOMER_INVOICES}>
-          <MenuButton text={navStrings.customer_invoices} onPress={toCustomerInvoices} />
-        </InfoBadge>
-        <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
-          <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
-        </InfoBadge>
+  const CustomerSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <CustomerImage style={image} />
+        <View>
+          <InfoBadge routeName={ROUTES.CUSTOMER_INVOICES}>
+            <MenuButton text={navStrings.customer_invoices} onPress={toCustomerInvoices} />
+          </InfoBadge>
+          <InfoBadge routeName={ROUTES.CUSTOMER_REQUISITIONS}>
+            <MenuButton text={navStrings.customer_requisitions} onPress={toCustomerRequisitions} />
+          </InfoBadge>
+        </View>
       </View>
-    </View>
+    ),
+    []
   );
 
-  const SupplierSection = () => (
-    <View style={containerStyle}>
-      <SupplierImage style={image} />
-      <View>
-        <InfoBadge routeName={ROUTES.SUPPLIER_INVOICES}>
-          <MenuButton text={navStrings.supplier_invoices} onPress={toSupplierInvoices} />
-        </InfoBadge>
-        <InfoBadge routeName={ROUTES.SUPPLIER_REQUISITIONS}>
-          <MenuButton text={navStrings.supplier_requisitions} onPress={toSupplierRequisitions} />
-        </InfoBadge>
+  const SupplierSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <SupplierImage style={image} />
+        <View>
+          <InfoBadge routeName={ROUTES.SUPPLIER_INVOICES}>
+            <MenuButton text={navStrings.supplier_invoices} onPress={toSupplierInvoices} />
+          </InfoBadge>
+          <InfoBadge routeName={ROUTES.SUPPLIER_REQUISITIONS}>
+            <MenuButton text={navStrings.supplier_requisitions} onPress={toSupplierRequisitions} />
+          </InfoBadge>
+        </View>
       </View>
-    </View>
+    ),
+    []
   );
 
-  const StockSection = () => (
-    <View style={containerStyle}>
-      <StockImage style={image} />
-      <View>
-        <MenuButton text={navStrings.current_stock} onPress={toStock} />
-        <InfoBadge routeName={ROUTES.STOCKTAKES}>
-          <MenuButton text={navStrings.stocktake} onPress={toStocktakes} />
-        </InfoBadge>
+  const StockSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <StockImage style={image} />
+        <View>
+          <MenuButton text={navStrings.current_stock} onPress={toStock} />
+          <InfoBadge routeName={ROUTES.STOCKTAKES}>
+            <MenuButton text={navStrings.stocktake} onPress={toStocktakes} />
+          </InfoBadge>
+        </View>
       </View>
-    </View>
+    ),
+    []
   );
 
-  const ModulesSection = () => (
-    <View style={containerStyle}>
-      <ModulesImage style={image} />
-      <View>{usingDispensary && <MenuButton text="Dispensary" onPress={toDispensary} />}</View>
-    </View>
-  );
-
-  const AdminRow = () => (
-    <View style={styles.bottomRow}>
-      <View style={styles.bottomIconView}>
-        <Icon.Button
-          name="power-off"
-          iconStyle={bottomIcon}
-          backgroundColor="rgba(255,255,255,0)"
-          onPress={logOut}
-        >
-          <Text>{navStrings.log_out}</Text>
-        </Icon.Button>
+  const ModulesSection = useCallback(
+    () => (
+      <View style={containerStyle}>
+        <ModulesImage style={image} />
+        <View>{usingDispensary && <MenuButton text="Dispensary" />}</View>
       </View>
-      {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
-      {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
-    </View>
+    ),
+    []
   );
 
-  const ModuleLayout = () => (
-    <View style={{ flex: 9 }}>
-      <View style={moduleRow}>
+  const AdminRow = useCallback(
+    () => (
+      <View style={styles.bottomRow}>
+        <View style={styles.bottomIconView}>
+          <Icon.Button
+            name="power-off"
+            iconStyle={bottomIcon}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={logOut}
+          >
+            <Text>{navStrings.log_out}</Text>
+          </Icon.Button>
+        </View>
+        {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
+        {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
+      </View>
+    ),
+    []
+  );
+
+  const ModuleLayout = useCallback(
+    () => (
+      <View style={styles.moduleTopRow}>
+        <View style={moduleRow}>
+          <CustomerSection />
+          <SupplierSection />
+        </View>
+        <View style={moduleRow}>
+          <StockSection />
+          <ModulesSection />
+        </View>
+      </View>
+    ),
+    []
+  );
+
+  const OriginalLayout = useCallback(
+    () => (
+      <View style={styles.originalTopRow}>
         <CustomerSection />
         <SupplierSection />
-      </View>
-      <View style={moduleRow}>
         <StockSection />
-        <ModulesSection />
       </View>
-    </View>
-  );
-
-  const OriginalLayout = () => (
-    <View style={topRow}>
-      <CustomerSection />
-      <SupplierSection />
-      <StockSection />
-    </View>
+    ),
+    []
   );
 
   return (
@@ -151,7 +174,8 @@ const Menu = ({
 };
 
 const styles = {
-  topRow: { flex: 9, flexDirection: 'row' },
+  moduleTopRow: { flex: 9 },
+  originalTopRow: { flex: 9, flexDirection: 'row' },
   moduleRow: { flex: 1, flexDirection: 'row' },
   image: { height: 150, width: 150, marginBottom: 30 },
   bottomIcon: { color: GREY },
@@ -222,7 +246,6 @@ Menu.propTypes = {
   toSupplierInvoices: PropTypes.func.isRequired,
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
-  toDispensary: PropTypes.func.isRequired,
   usingDispensary: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };
