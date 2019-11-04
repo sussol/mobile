@@ -7,9 +7,9 @@
  * Selects the current routes state.
  */
 export const pageStateSelector = state => {
-  const { pages } = state;
-  const { currentRoute } = pages;
-  return pages[currentRoute];
+  const { pages = {} } = state;
+  const { currentRoute = '' } = pages || {};
+  return pages[currentRoute] || state;
 };
 
 /**
