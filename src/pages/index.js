@@ -32,6 +32,7 @@ import {
   checkForStocktakeError,
   checkForCustomerRequisitionError,
 } from '../utilities';
+import { PrescribersPage } from './PrescribersPage';
 
 export { FirstUsePage } from './FirstUsePage';
 
@@ -76,6 +77,8 @@ export const PAGES = {
   dispensing: props => <PageContainer page={DispensingPage} {...props} />,
   [ROUTES.PRESCRIPTIONS]: props => <PageContainer page={PrescriptionsPage} {...props} />,
   [ROUTES.PRESCRIPTION]: props => <PageContainer page={PrescriptionPage} {...props} />,
+
+  [ROUTES.PRESCRIBERS]: props => <PageContainer page={PrescribersPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
