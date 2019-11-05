@@ -22,6 +22,7 @@ import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
 import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { DispensingPage } from './DispensingPage';
+import { PrescriptionsPage } from './PrescriptionsPage';
 import { RealmExplorer } from './RealmExplorer';
 import {
   checkForCustomerInvoiceError,
@@ -72,6 +73,7 @@ export const PAGES = {
     <PageContainer page={StocktakeEditPage} {...props} />
   ),
   dispensing: props => <PageContainer page={DispensingPage} {...props} />,
+  [ROUTES.PRESCRIPTIONS]: props => <PageContainer page={PrescriptionsPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
