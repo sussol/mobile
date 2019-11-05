@@ -33,6 +33,7 @@ import {
   TransactionItem,
   User,
   Unit,
+  Prescriber,
 } from './DataTypes';
 
 Address.schema = {
@@ -151,6 +152,7 @@ export const schema = {
     StocktakeBatch,
     User,
     Unit,
+    Prescriber,
   ],
   schemaVersion: 9,
 };
