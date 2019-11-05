@@ -435,6 +435,30 @@ const prescriptionsInitialiser = () => {
   };
 };
 
+export const prescriptionInitialiser = transaction => {
+  const { items: backingData } = transaction;
+
+  const sortedData = backingData.sorted('item.name').slice();
+
+  return {
+    pageObject: transaction,
+    backingData,
+    data: sortedData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['item.name', 'item.code'],
+    sortBy: 'itemName',
+    isAscending: true,
+    modalKey: '',
+    modalValue: null,
+    hasSelection: false,
+    route: ROUTES.PRESCRIPTION,
+    columns: getColumns(ROUTES.PRESCRIPTION),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.PRESCRIPTION),
+  };
+};
+
 const pageInitialisers = {
   customerInvoice: customerInvoiceInitialiser,
   customerInvoices: customerInvoicesInitialiser,
@@ -452,6 +476,7 @@ const pageInitialisers = {
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
   prescriptions: prescriptionsInitialiser,
+  prescription: prescriptionInitialiser,
 };
 
 /**

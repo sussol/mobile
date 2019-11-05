@@ -47,6 +47,7 @@ const PER_PAGE_INFO_COLUMNS = {
     ['monthsToSupply', 'entryDate'],
     ['customer', 'requisitionComment'],
   ],
+  [ROUTES.PRESCRIPTION]: [['entryDate', 'enteredBy'], ['customer', 'transactionComment']],
   stocktakeBatchEditModal: [['itemName']],
   stocktakeBatchEditModalWithReasons: [['itemName']],
 };
