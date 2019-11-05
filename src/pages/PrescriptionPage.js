@@ -4,71 +4,66 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
-import { useNavigationFocus, useSyncListener } from '../hooks';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
-import { gotoPrescription, createPrescription } from '../navigation/actions';
+import { useRecordListener } from '../hooks';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
+import { ROUTES } from '../navigation/constants';
 
-import { PageButton, SearchBar, DataTablePageView, ToggleBar } from '../widgets';
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
+import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
 import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTable';
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
-import { ROUTES } from '../navigation/constants';
 
-export const Prescriptions = ({
-  currentUser,
-  navigation,
+export const Prescription = ({
   dispatch,
   data,
   dataState,
+  pageObject,
   sortBy,
   isAscending,
   modalKey,
   hasSelection,
   keyExtractor,
   searchTerm,
+  modalValue,
   columns,
-  showFinalised,
+  getPageInfoColumns,
   refreshData,
+  onSelectNewItem,
+  onEditComment,
+  onEditTheirRef,
   onFilterData,
+  onDeleteItems,
   onDeselectAll,
-  onDeleteRecords,
   onCloseModal,
-  toggleFinalised,
   onCheck,
   onUncheck,
   onSortColumn,
-  onNewPrescription,
+  onEditTotalQuantity,
+  onAddTransactionItem,
 }) => {
-  useNavigationFocus(refreshData, navigation);
-  useSyncListener(refreshData, ['Transaction']);
+  const { isFinalised, comment, theirRef } = pageObject;
 
-  const onNavigateToPrescription = useCallback(prescription => {
-    dispatch(gotoPrescription(prescription));
-  }, []);
+  // Listen for this invoice being finalised which will prune items and cause side effects
+  // outside of the reducer. Reconcile differences when triggered.
+  useRecordListener(refreshData, pageObject, 'Transaction');
 
-  const onCreatePrescription = otherParty => {
-    dispatch(createPrescription(otherParty, currentUser));
-    onCloseModal();
-  };
-
-  const toggles = useMemo(
-    () => [
-      { text: buttonStrings.current, onPress: toggleFinalised, isOn: !showFinalised },
-      { text: buttonStrings.past, onPress: toggleFinalised, isOn: showFinalised },
-    ],
-    [showFinalised]
+  const pageInfoColumns = useCallback(
+    getPageInfoColumns(pageObject, dispatch, ROUTES.PRESCRIPTION),
+    [comment, theirRef, isFinalised]
   );
 
   const getCallback = (colKey, propName) => {
     switch (colKey) {
+      case 'totalQuantity':
+        return onEditTotalQuantity;
       case 'remove':
         if (propName === 'onCheck') return onCheck;
         return onUncheck;
@@ -79,8 +74,12 @@ export const Prescriptions = ({
 
   const getModalOnSelect = () => {
     switch (modalKey) {
-      case MODAL_KEYS.SELECT_PATIENT:
-        return onCreatePrescription;
+      case MODAL_KEYS.SELECT_ITEM:
+        return onAddTransactionItem;
+      case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
+        return onEditComment;
+      case MODAL_KEYS.THEIR_REF_EDIT:
+        return onEditTheirRef;
       default:
         return null;
     }
@@ -89,6 +88,7 @@ export const Prescriptions = ({
   const renderRow = useCallback(
     listItem => {
       const { item, index } = listItem;
+
       const rowKey = keyExtractor(item);
       return (
         <DataTableRow
@@ -96,9 +96,9 @@ export const Prescriptions = ({
           rowState={dataState.get(rowKey)}
           rowKey={rowKey}
           columns={columns}
+          isFinalised={isFinalised}
           getCallback={getCallback}
           rowIndex={index}
-          onPress={onNavigateToPrescription}
         />
       );
     },
@@ -117,20 +117,29 @@ export const Prescriptions = ({
     [sortBy, isAscending]
   );
 
+  const { verticalContainer, topButton } = globalStyles;
   const {
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
+    searchBar,
   } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
-          <ToggleBar toggles={toggles} />
-          <SearchBar onChangeText={onFilterData} value={searchTerm} />
+          <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
+          <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
-          <PageButton text={buttonStrings.new_invoice} onPress={onNewPrescription} />
+          <View style={verticalContainer}>
+            <PageButton
+              style={{ ...topButton, marginLeft: 0 }}
+              text={buttonStrings.new_item}
+              onPress={onSelectNewItem}
+              isDisabled={isFinalised}
+            />
+          </View>
         </View>
       </View>
       <DataTable
@@ -144,10 +153,10 @@ export const Prescriptions = ({
       />
       <BottomConfirmModal
         isOpen={hasSelection}
-        questionText={modalStrings.delete_these_invoices}
+        questionText={modalStrings.remove_these_items}
         onCancel={onDeselectAll}
-        onConfirm={onDeleteRecords}
-        confirmText={modalStrings.delete}
+        onConfirm={onDeleteItems}
+        confirmText={modalStrings.remove}
       />
       <DataTablePageModal
         fullScreen={false}
@@ -156,55 +165,56 @@ export const Prescriptions = ({
         onClose={onCloseModal}
         onSelect={getModalOnSelect()}
         dispatch={dispatch}
+        currentValue={modalValue}
       />
     </DataTablePageView>
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
-  ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.PRESCRIPTIONS),
-  refreshData: () => dispatch(PageActions.refreshDataWithFinalisedToggle(ROUTES.PRESCRIPTIONS)),
-  onFilterData: value =>
-    dispatch(PageActions.filterDataWithFinalisedToggle(value, ROUTES.PRESCRIPTIONS)),
-});
+const mapDispatchToProps = (dispatch, ownProps) =>
+  getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.PRESCRIPTION);
 
 const mapStateToProps = state => {
   const { pages } = state;
-  const { prescriptions } = pages;
-  return prescriptions;
+  const { prescription } = pages;
+
+  return prescription;
 };
 
-export const PrescriptionsPage = connect(
+export const PrescriptionPage = connect(
   mapStateToProps,
   mapDispatchToProps
-)(Prescriptions);
+)(Prescription);
 
-Prescriptions.defaultProps = {
-  showFinalised: false,
+Prescription.defaultProps = {
+  modalValue: null,
 };
 
-Prescriptions.propTypes = {
-  currentUser: PropTypes.object.isRequired,
-  navigation: PropTypes.object.isRequired,
+Prescription.propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
+  pageObject: PropTypes.object.isRequired,
   sortBy: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
   keyExtractor: PropTypes.func.isRequired,
   searchTerm: PropTypes.string.isRequired,
+  modalValue: PropTypes.any,
   columns: PropTypes.array.isRequired,
-  showFinalised: PropTypes.bool,
+  getPageInfoColumns: PropTypes.func.isRequired,
   refreshData: PropTypes.func.isRequired,
+  onSelectNewItem: PropTypes.func.isRequired,
+  onEditComment: PropTypes.func.isRequired,
+  onEditTheirRef: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
+  onDeleteItems: PropTypes.func.isRequired,
   onDeselectAll: PropTypes.func.isRequired,
-  onDeleteRecords: PropTypes.func.isRequired,
   onCloseModal: PropTypes.func.isRequired,
-  toggleFinalised: PropTypes.func.isRequired,
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
-  onNewPrescription: PropTypes.func.isRequired,
+  onEditTotalQuantity: PropTypes.func.isRequired,
+  onAddTransactionItem: PropTypes.func.isRequired,
 };
