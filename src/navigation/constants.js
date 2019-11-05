@@ -33,4 +33,12 @@ export const ROUTES = {
   STOCKTAKE_MANAGER: 'stocktakeManager',
   STOCKTAKE_EDITOR: 'stocktakeEditor',
   STOCKTAKE_EDITOR_WITH_REASONS: 'stocktakeEditorWithReasons',
+
+  DISPENSARY: 'dispensary',
+  PRESCRIPTIONS: 'prescriptions',
+  PRESCRIPTION: 'prescription',
+  PRESCRIBERS: 'prescribers',
+  PRESCRIBER: 'prescriber',
+  PATIENTS: 'patients',
+  PATIENT: 'patient',
 };
