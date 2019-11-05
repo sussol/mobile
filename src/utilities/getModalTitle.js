@@ -15,6 +15,7 @@ export const MODAL_KEYS = {
   SELECT_MONTH: 'selectMonth',
   SELECT_CUSTOMER: 'selectCustomer',
   SELECT_PATIENT: 'selectPatient',
+  SELECT_PRESCRIBER: 'selectPrescriber',
   SELECT_INTERNAL_SUPPLIER: 'selectInternalSupplier',
   SELECT_EXTERNAL_SUPPLIER: 'selectExternalSupplier',
   SELECT_LANGUAGE: 'selectLanguage',
@@ -31,6 +32,10 @@ export const getModalTitle = modalKey => {
   switch (modalKey) {
     default:
       return '';
+    case MODAL_KEYS.SELECT_PRESCRIBER:
+      return 'Select a prescriber';
+    case MODAL_KEYS.SELECT_PATIENT:
+      return 'Select a patient';
     case MODAL_KEYS.SELECT_LANGUAGE:
       return modalStrings.select_a_language;
     case MODAL_KEYS.SELECT_MONTH:

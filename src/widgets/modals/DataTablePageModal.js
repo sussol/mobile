@@ -71,6 +71,18 @@ const DataTablePageModalComponent = ({
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
         return <TextEditor text={currentValue} onEndEditing={onSelect} />;
+      case MODAL_KEYS.SELECT_PRESCRIBER:
+        return (
+          <AutocompleteSelector
+            options={UIDatabase.objects('Prescriber')}
+            isOpen={isOpen}
+            placeholderText="Select a prescriber"
+            queryString="firstName BEGINSWITH[c] $0"
+            sortByString="firstName"
+            onSelect={onSelect}
+            renderLeftText={({ firstName, lastName }) => `${firstName} ${lastName}`}
+          />
+        );
       case MODAL_KEYS.SELECT_PATIENT:
         return (
           <AutocompleteSelector
