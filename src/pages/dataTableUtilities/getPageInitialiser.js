@@ -413,6 +413,28 @@ const supplierRequisitionsInitialiser = () => {
   };
 };
 
+const prescriptionsInitialiser = () => {
+  const backingData = UIDatabase.objects('Prescription');
+  const filteredData = backingData.filtered('status != $0', 'finalised').slice();
+  const sortedData = sortDataBy(filteredData, 'serialNumber', false);
+
+  return {
+    backingData,
+    data: sortedData,
+    keyExtractor: recordKeyExtractor,
+    dataState: new Map(),
+    searchTerm: '',
+    filterDataKeys: ['otherParty.name'],
+    sortBy: 'serialNumber',
+    isAscending: false,
+    modalKey: '',
+    hasSelection: false,
+    route: ROUTES.PRESCRIPTIONS,
+    columns: getColumns(ROUTES.PRESCRIPTIONS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.PRESCRIPTIONS),
+  };
+};
+
 const pageInitialisers = {
   customerInvoice: customerInvoiceInitialiser,
   customerInvoices: customerInvoicesInitialiser,
@@ -429,6 +451,7 @@ const pageInitialisers = {
   supplierInvoices: supplierInvoicesInitialiser,
   supplierRequisition: supplierRequisitionInitialiser,
   supplierRequisitions: supplierRequisitionsInitialiser,
+  prescriptions: prescriptionsInitialiser,
 };
 
 /**
