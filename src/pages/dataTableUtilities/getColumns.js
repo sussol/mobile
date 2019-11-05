@@ -24,6 +24,7 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.CUSTOMER_REQUISITION]: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
   [ROUTES.STOCK]: [1, 4, 1],
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
+  [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
@@ -31,6 +32,13 @@ const PAGE_COLUMN_WIDTHS = {
 
 const PAGE_COLUMNS = {
   [ROUTES.CUSTOMER_INVOICE]: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.AVAILABLE_QUANTITY,
+    COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
+    COLUMN_NAMES.REMOVE,
+  ],
+  [ROUTES.PRESCRIPTION]: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.AVAILABLE_QUANTITY,
@@ -225,7 +233,7 @@ const COLUMNS = () => ({
   [COLUMN_NAMES.PATIENT]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
-    title: 'Patient',
+    title: 'PATIENT',
     sortable: true,
     editable: false,
   },
