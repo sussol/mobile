@@ -3,14 +3,16 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 import React, { useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
 
 import { Button } from 'react-native-ui-components';
 
 import globalStyles, { SHADOW_BORDER, BACKGROUND_COLOR } from '../globalStyles';
+import { gotoPrescriptions } from '../navigation/actions';
 
-const Dispensing = () => {
+const Dispensing = ({ toPrescriptions }) => {
   const { menuButton, menuButtonText: buttonText } = globalStyles;
   const { flexOne, middleColumn, mainContainer, buttonContainer } = localStyles;
 
@@ -25,7 +27,7 @@ const Dispensing = () => {
       <View style={middleColumn}>
         <View style={flexOne} />
         <View style={buttonContainer}>
-          <MenuButton text="Prescriptions" />
+          <MenuButton text="Prescriptions" onPress={toPrescriptions} />
           <MenuButton text="Prescribers" />
           <MenuButton text="Patients" />
         </View>
@@ -34,6 +36,19 @@ const Dispensing = () => {
       <View style={flexOne} />
     </View>
   );
+};
+
+const mapDispatchToProps = dispatch => ({
+  toPrescriptions: () => dispatch(gotoPrescriptions()),
+});
+
+export const DispensingPage = connect(
+  null,
+  mapDispatchToProps
+)(Dispensing);
+
+Dispensing.propTypes = {
+  toPrescriptions: PropTypes.func.isRequired,
 };
 
 const localStyles = {
@@ -49,5 +64,3 @@ const localStyles = {
     backgroundColor: 'white',
   },
 };
-
-export const DispensingPage = connect()(Dispensing);
