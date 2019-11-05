@@ -30,6 +30,12 @@ import { ROUTES } from './constants';
  *
  */
 
+export const gotoDispensingPage = () =>
+  NavigationActions.navigate({
+    routeName: 'dispensing',
+    params: { title: 'Dispensing' },
+  });
+
 /**
  * Pushes the Realm explorer route onto the main navigation stack.
  */
