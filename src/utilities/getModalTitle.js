@@ -14,6 +14,7 @@ export const MODAL_KEYS = {
   SELECT_ITEM: 'selectItem',
   SELECT_MONTH: 'selectMonth',
   SELECT_CUSTOMER: 'selectCustomer',
+  SELECT_PATIENT: 'selectPatient',
   SELECT_INTERNAL_SUPPLIER: 'selectInternalSupplier',
   SELECT_EXTERNAL_SUPPLIER: 'selectExternalSupplier',
   SELECT_LANGUAGE: 'selectLanguage',
