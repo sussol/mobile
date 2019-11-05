@@ -24,6 +24,7 @@ import { SupplierRequisitionPage } from './SupplierRequisitionPage';
 import { DispensingPage } from './DispensingPage';
 import { PrescriptionPage } from './PrescriptionPage';
 import { PrescriptionsPage } from './PrescriptionsPage';
+import { PatientsPage } from './PatientsPage';
 import { RealmExplorer } from './RealmExplorer';
 import {
   checkForCustomerInvoiceError,
@@ -79,6 +80,8 @@ export const PAGES = {
   [ROUTES.PRESCRIPTION]: props => <PageContainer page={PrescriptionPage} {...props} />,
 
   [ROUTES.PRESCRIBERS]: props => <PageContainer page={PrescribersPage} {...props} />,
+
+  [ROUTES.PATIENTS]: props => <PageContainer page={PatientsPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
