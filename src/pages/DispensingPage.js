@@ -10,9 +10,9 @@ import { View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
 import globalStyles, { SHADOW_BORDER, BACKGROUND_COLOR } from '../globalStyles';
-import { gotoPrescriptions } from '../navigation/actions';
+import { gotoPrescriptions, gotoPrescribers } from '../navigation/actions';
 
-const Dispensing = ({ toPrescriptions }) => {
+const Dispensing = ({ toPrescriptions, toPrescribers }) => {
   const { menuButton, menuButtonText: buttonText } = globalStyles;
   const { flexOne, middleColumn, mainContainer, buttonContainer } = localStyles;
 
@@ -28,7 +28,7 @@ const Dispensing = ({ toPrescriptions }) => {
         <View style={flexOne} />
         <View style={buttonContainer}>
           <MenuButton text="Prescriptions" onPress={toPrescriptions} />
-          <MenuButton text="Prescribers" />
+          <MenuButton text="Prescribers" onPress={toPrescribers} />
           <MenuButton text="Patients" />
         </View>
         <View style={flexOne} />
@@ -40,6 +40,7 @@ const Dispensing = ({ toPrescriptions }) => {
 
 const mapDispatchToProps = dispatch => ({
   toPrescriptions: () => dispatch(gotoPrescriptions()),
+  toPrescribers: () => dispatch(gotoPrescribers()),
 });
 
 export const DispensingPage = connect(
@@ -49,6 +50,7 @@ export const DispensingPage = connect(
 
 Dispensing.propTypes = {
   toPrescriptions: PropTypes.func.isRequired,
+  toPrescribers: PropTypes.func.isRequired,
 };
 
 const localStyles = {
