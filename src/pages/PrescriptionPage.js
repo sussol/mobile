@@ -20,6 +20,7 @@ import { DataTable, DataTableHeaderRow, DataTableRow } from '../widgets/DataTabl
 
 import { buttonStrings, modalStrings } from '../localization';
 import globalStyles from '../globalStyles';
+import { PageActions } from './dataTableUtilities/actions/index';
 
 export const Prescription = ({
   dispatch,
@@ -38,7 +39,6 @@ export const Prescription = ({
   refreshData,
   onSelectNewItem,
   onEditComment,
-  onEditTheirRef,
   onFilterData,
   onDeleteItems,
   onDeselectAll,
@@ -49,7 +49,7 @@ export const Prescription = ({
   onEditTotalQuantity,
   onAddTransactionItem,
 }) => {
-  const { isFinalised, comment, theirRef } = pageObject;
+  const { isFinalised, comment, prescriber } = pageObject;
 
   // Listen for this invoice being finalised which will prune items and cause side effects
   // outside of the reducer. Reconcile differences when triggered.
@@ -57,7 +57,7 @@ export const Prescription = ({
 
   const pageInfoColumns = useCallback(
     getPageInfoColumns(pageObject, dispatch, ROUTES.PRESCRIPTION),
-    [comment, theirRef, isFinalised]
+    [comment, prescriber, isFinalised]
   );
 
   const getCallback = (colKey, propName) => {
@@ -78,8 +78,8 @@ export const Prescription = ({
         return onAddTransactionItem;
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
         return onEditComment;
-      case MODAL_KEYS.THEIR_REF_EDIT:
-        return onEditTheirRef;
+      case MODAL_KEYS.SELECT_PRESCRIBER:
+        return value => dispatch(PageActions.editPrescriber(value, ROUTES.PRESCRIPTION));
       default:
         return null;
     }
@@ -207,7 +207,6 @@ Prescription.propTypes = {
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
-  onEditTheirRef: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
   onDeleteItems: PropTypes.func.isRequired,
   onDeselectAll: PropTypes.func.isRequired,
