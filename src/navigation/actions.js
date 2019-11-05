@@ -30,6 +30,38 @@ import { ROUTES } from './constants';
  *
  */
 
+/**
+ * Action creator which first creates a customer invoice, and then navigates to it
+ * for editing.
+ *
+ * @param {Object} patient     The other party of the invoice (Customer)
+ * @param {Object} currentUser    The currently logged in user.
+ */
+export const createPrescription = (patient, currentUser) => dispatch => {
+  let newPrescription;
+  UIDatabase.write(() => {
+    newPrescription = createRecord(
+      UIDatabase,
+      'CustomerInvoice',
+      patient,
+      currentUser,
+      'dispensary'
+    );
+  });
+
+  dispatch(gotoPrescription(newPrescription));
+};
+
+export const gotoPrescription = prescription =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIPTION,
+    params: {
+      title: `Prescription ${prescription.serialNumber}`,
+      transaction: prescription,
+      pageObject: prescription,
+    },
+  });
+
 export const gotoPrescriptions = () =>
   NavigationActions.navigate({
     routeName: ROUTES.PRESCRIPTIONS,
