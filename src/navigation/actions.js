@@ -30,6 +30,12 @@ import { ROUTES } from './constants';
  *
  */
 
+export const gotoPatients = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PATIENTS,
+    params: { title: 'Patients' },
+  });
+
 export const gotoPrescribers = () =>
   NavigationActions.navigate({
     routeName: ROUTES.PRESCRIBERS,
