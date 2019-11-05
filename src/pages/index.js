@@ -21,6 +21,7 @@ import { SupplierInvoicePage } from './SupplierInvoicePage';
 import { SupplierInvoicesPage } from './SupplierInvoicesPage';
 import { SupplierRequisitionsPage } from './SupplierRequisitionsPage';
 import { SupplierRequisitionPage } from './SupplierRequisitionPage';
+import { DispensingPage } from './DispensingPage';
 import { RealmExplorer } from './RealmExplorer';
 import {
   checkForCustomerInvoiceError,
@@ -70,6 +71,7 @@ export const PAGES = {
   [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: props => (
     <PageContainer page={StocktakeEditPage} {...props} />
   ),
+  dispensing: props => <PageContainer page={DispensingPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {
