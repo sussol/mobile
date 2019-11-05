@@ -127,7 +127,10 @@ class UIDatabase {
           thisStoreNameId
         );
       case 'Patient':
-        return results.filtered('isVisible == true AND isPatient == true AND id != $0');
+        return results.filtered(
+          'isVisible == true AND isPatient == true AND id != $0',
+          thisStoreNameId
+        );
       case 'InternalSupplier':
         return results.filtered(
           'isVisible == true AND isSupplier == true AND type == "store" AND id != $0',
