@@ -14,12 +14,14 @@ const { THIS_STORE_NAME_ID } = SETTINGS_KEYS;
 const translateToCoreDatabaseType = type => {
   switch (type) {
     case 'CustomerInvoice':
+    case 'Prescription':
     case 'SupplierInvoice':
       return 'Transaction';
     case 'Customer':
     case 'Supplier':
     case 'InternalSupplier':
     case 'ExternalSupplier':
+    case 'Patient':
       return 'Name';
     case 'RequestRequisition':
     case 'ResponseRequisition':
@@ -117,6 +119,8 @@ class UIDatabase {
           'isVisible == true AND isSupplier == true AND id != $0',
           thisStoreNameId
         );
+      case 'Patient':
+        return results.filtered('isVisible == true AND isPatient == true AND id != $0');
       case 'InternalSupplier':
         return results.filtered(
           'isVisible == true AND isSupplier == true AND type == "store" AND id != $0',
@@ -134,6 +138,14 @@ class UIDatabase {
         return results.filtered('type == $0 && isActive == true', 'negativeInventoryAdjustment');
       case 'PositiveAdjustmentReason':
         return results.filtered('type == $0 && isActive == true', 'positiveInventoryAdjustment');
+      case 'Prescription':
+        return results.filtered(
+          'type == $0 AND mode == $1 AND (linkedRequisition == $2 OR status == $3)',
+          'customer_invoice',
+          'dispensary',
+          null,
+          'finalised'
+        );
       default:
         return results;
     }
