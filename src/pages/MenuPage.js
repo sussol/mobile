@@ -191,7 +191,6 @@ const styles = {
     borderColor: SHADOW_BORDER,
     backgroundColor: 'white',
     marginTop: 30,
-    paddingLeft: 50,
     flex: 1,
     borderWidth: 1,
   },
@@ -202,6 +201,7 @@ const styles = {
   },
   originalContainer: {
     justifyContent: 'flex-start',
+    paddingTop: 50,
     marginHorizontal: 30,
   },
 };
