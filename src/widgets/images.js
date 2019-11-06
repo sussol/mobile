@@ -14,29 +14,49 @@ import PropTypes from 'prop-types';
  * images are lazily required.
  */
 
-const flagPropTypes = { style: PropTypes.object.isRequired };
+const imagePropTypes = { style: PropTypes.object.isRequired };
 
 export const EnglishFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/gb.png')} resizeMode="stretch" />
 );
-EnglishFlag.propTypes = flagPropTypes;
+EnglishFlag.propTypes = imagePropTypes;
 
 export const KiribatiFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/gil.png')} resizeMode="stretch" />
 );
-KiribatiFlag.propTypes = flagPropTypes;
+KiribatiFlag.propTypes = imagePropTypes;
 
 export const FrenchFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/fr.png')} resizeMode="stretch" />
 );
-FrenchFlag.propTypes = flagPropTypes;
+FrenchFlag.propTypes = imagePropTypes;
 
 export const TetumFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/tl.png')} resizeMode="stretch" />
 );
-TetumFlag.propTypes = flagPropTypes;
+TetumFlag.propTypes = imagePropTypes;
 
 export const LaosFlag = ({ style }) => (
   <Image style={style} source={require('../images/flags/la.png')} resizeMode="stretch" />
 );
-LaosFlag.propTypes = flagPropTypes;
+LaosFlag.propTypes = imagePropTypes;
+
+export const CustomerImage = ({ style }) => (
+  <Image style={style} source={require('../images/menu_people.png')} resizeMode="contain" />
+);
+CustomerImage.propTypes = imagePropTypes;
+
+export const SupplierImage = ({ style }) => (
+  <Image style={style} source={require('../images/menu_truck.png')} resizeMode="contain" />
+);
+SupplierImage.propTypes = imagePropTypes;
+
+export const StockImage = ({ style }) => (
+  <Image style={style} source={require('../images/menu_pc_clipboard.png')} resizeMode="contain" />
+);
+StockImage.propTypes = imagePropTypes;
+
+export const ModulesImage = ({ style }) => (
+  <Image style={style} source={require('../images/menu_modules.png')} resizeMode="contain" />
+);
+ModulesImage.propTypes = imagePropTypes;

@@ -38,5 +38,15 @@ export {
   OpenModal,
   Expand,
 } from './icons';
-export { KiribatiFlag, EnglishFlag, LaosFlag, TetumFlag, FrenchFlag } from './images';
+export {
+  KiribatiFlag,
+  EnglishFlag,
+  LaosFlag,
+  TetumFlag,
+  FrenchFlag,
+  CustomerImage,
+  SupplierImage,
+  StockImage,
+  ModulesImage,
+} from './images';
 export { InfoBadge } from './InfoBadge';
