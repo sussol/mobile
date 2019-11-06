@@ -50,9 +50,9 @@ const Menu = ({
   usingModules,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
-  const { image, originalContainer, moduleContainer, bottomIcon, moduleRow } = styles;
+  const { image, originalContainer, moduleContainer, container, bottomIcon, moduleRow } = styles;
 
-  const containerStyle = usingModules ? moduleContainer : originalContainer;
+  const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
@@ -186,28 +186,23 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
-  moduleContainer: {
+  container: {
     alignItems: 'center',
     borderColor: SHADOW_BORDER,
-    borderWidth: 1,
-    justifyContent: 'center',
-    flexDirection: 'row',
+    backgroundColor: 'white',
     marginTop: 30,
     paddingLeft: 50,
-    marginHorizontal: 15,
     flex: 1,
-    backgroundColor: 'white',
+    borderWidth: 1,
+  },
+  moduleContainer: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+    marginHorizontal: 15,
   },
   originalContainer: {
-    backgroundColor: 'white',
-    alignItems: 'center',
-    borderColor: SHADOW_BORDER,
-    borderWidth: 1,
     justifyContent: 'flex-start',
-    marginTop: 30,
-    paddingTop: 50,
     marginHorizontal: 30,
-    flex: 1,
   },
 };
 
