@@ -57,12 +57,11 @@ const DataTablePageModalComponent = ({
         return (
           <AutocompleteSelector
             options={UIDatabase.objects('Item')}
-            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
-            queryStringSecondary="name CONTAINS[c] $0"
+            queryString="name CONTAINS[c] $0 OR code BEGINSWITH[c] $0"
             sortByString="name"
             onSelect={onSelect}
-            renderLeftText={item => `${item.name}`}
-            renderRightText={item => `${item.totalQuantity}`}
+            renderLeftText={({ code, name }) => `${code} - ${name}`}
+            renderRightText={({ totalQuantity }) => `${totalQuantity}`}
           />
         );
       case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
