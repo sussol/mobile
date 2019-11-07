@@ -5,8 +5,9 @@
  */
 
 import React from 'react';
+
 import PropTypes from 'prop-types';
-import { StyleSheet, Text, View, TouchableOpacity, ViewPropTypes } from 'react-native';
+import { StyleSheet, Dimensions, Text, View, TouchableOpacity, ViewPropTypes } from 'react-native';
 import { SUSSOL_ORANGE } from '../globalStyles/index';
 
 const Badge = props => {
@@ -43,8 +44,8 @@ Badge.defaultProps = {
   textStyle: { fontSize: 16, color: '#FFF', paddingHorizontal: 4, fontWeight: 'bold' },
   badgeStyle: {
     alignSelf: 'center',
-    width: 65,
-    height: 25,
+    width: Dimensions.get('window').width / 25,
+    height: Dimensions.get('window').height / 30,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
