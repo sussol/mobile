@@ -62,6 +62,7 @@ export const CustomerInvoice = ({
   onSortColumn,
   onEditTotalQuantity,
   onAddTransactionItem,
+  route,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -70,9 +71,9 @@ export const CustomerInvoice = ({
   useRecordListener(refreshData, pageObject, 'Transaction');
 
   const onAddMasterList = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
+    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction', route)));
 
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     theirRef,
     isFinalised,
@@ -240,4 +241,5 @@ CustomerInvoice.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   onEditTotalQuantity: PropTypes.func.isRequired,
   onAddTransactionItem: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };
