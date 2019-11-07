@@ -47,7 +47,7 @@ export const InfoBadge = ({
   return (
     <View>
       {children}
-      {pendingCount && (
+      {pendingCount !== 0 && (
         <View style={mainWrapperStyle}>
           <TouchableHighlight ref={ref} style={touchableContainerStyle} onPress={show}>
             <Badge value={unfinalisedCountText} />
