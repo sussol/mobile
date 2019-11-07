@@ -175,13 +175,13 @@ export const toggleStockOut = state => {
  * Also removes the current sorting and filter.
  */
 export const addRecord = (state, action) => {
-  const { backingData } = state;
+  const { data } = state;
   const { payload } = action;
   const { record } = payload;
 
   return {
     ...state,
-    data: [record, ...backingData.slice(0, backingData.length - 1)],
+    data: [record, ...data],
     modalKey: '',
     sortBy: '',
     searchTerm: '',
