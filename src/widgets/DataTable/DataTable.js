@@ -89,7 +89,7 @@ const DataTable = React.memo(
 
     // Adjusts the passed row to the top of the list.
     const adjustToTop = useCallback(rowIndex => {
-      virtualizedListRef.current.scrollToIndex({ index: Math.max(0, rowIndex - 1) });
+      virtualizedListRef.current.scrollToIndex({ index: rowIndex });
     }, []);
 
     // Contexts values. Functions passed to rows and editable cells to control focus/scrolling.
