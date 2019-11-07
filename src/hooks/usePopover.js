@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 
 /**
  * Hook which manages popover position over a DOM element.
@@ -6,9 +6,10 @@ import { useState, useCallback } from 'react';
  */
 export const usePopover = () => {
   const [visibilityState, setVisibilityState] = useState(false);
+  const ref = useRef(React.createRef());
 
   const showPopover = useCallback(() => setVisibilityState(true), []);
   const closePopover = useCallback(() => setVisibilityState(false), []);
 
-  return [visibilityState, showPopover, closePopover];
+  return [ref, visibilityState, showPopover, closePopover];
 };

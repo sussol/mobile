@@ -1,5 +1,5 @@
 /* eslint-disable react/forbid-prop-types */
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { View, TouchableHighlight, Text } from 'react-native';
 import Popover from 'react-native-popover-view';
@@ -24,8 +24,7 @@ export const InfoBadge = ({
   badgeTextStyle,
   touchableContainerStyle,
 }) => {
-  const [ref] = useState(React.createRef());
-  const [visible, show, close] = usePopover(ref);
+  const [ref, visible, show, close] = usePopover();
 
   // Get total of all the count variables in the info array. We want to show it on the badge
   const info = getBadgeData(routeName);
