@@ -175,13 +175,19 @@ export const toggleStockOut = state => {
  * Also removes the current sorting and filter.
  */
 export const addRecord = (state, action) => {
-  const { data } = state;
+  const { data, searchTerm, backingData } = state;
   const { payload } = action;
   const { record } = payload;
 
+  // New records are added to index 0 of the table and all filtering and
+  // sorting are removed. To keep the table consistent while adding items,
+  // if there is a search term, the table is currently being filtered so
+  // fetch all the rows again. Otherwise, just use the current data state.
+  const newData = searchTerm ? backingData.slice(1, backingData.length - 1) : data;
+
   return {
     ...state,
-    data: [record, ...data],
+    data: [record, ...newData],
     modalKey: '',
     sortBy: '',
     searchTerm: '',
