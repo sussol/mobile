@@ -193,7 +193,7 @@ export const createSupplierRequisition = ({
 
   // Months lead time has an effect on daysToSupply for a requisition.
   const monthsLeadTime = parsedCustomData.monthsLeadTime
-    ? Number(customData.monthsLeadTime.data)
+    ? Number(parsedCustomData.monthsLeadTime.data)
     : 0;
 
   // Create the requisition. If a program was supplied, add items from that
