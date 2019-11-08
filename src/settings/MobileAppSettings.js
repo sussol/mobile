@@ -7,7 +7,7 @@ import { UIDatabase } from '../database';
 
 const DEFAULT_AMC_MONTHS_LOOKBACK = 3; // three months
 
-export class MobileAppSettings extends Settings {
+class MobileAppSettings extends Settings {
   constructor() {
     super(UIDatabase);
     this.load();
