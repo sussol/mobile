@@ -7,8 +7,7 @@ const getBadgeData = routeName => {
 
   return [
     {
-      count:
-        dataType !== '' ? UIDatabase.objects(dataType).filtered('status != "finalised"').length : 0,
+      count: dataType ? UIDatabase.objects(dataType).filtered('status != "finalised"').length : 0,
       title: `${generalStrings.unfinalised} ${generalStrings[routeName]}`,
     },
   ];
