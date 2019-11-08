@@ -212,12 +212,7 @@ const actionCreators = {
 
 const mapStateToProps = state => {
   const { modules } = state;
-
   const { usingDispensary, usingModules, usingVaccines } = modules;
-  console.log('***************-------******************');
-  console.log(modules);
-  console.log('map state', { usingDispensary, usingVaccines, usingModules });
-  console.log('*********************************');
   return { usingDispensary, usingVaccines, usingModules };
 };
 

@@ -5,8 +5,6 @@
 
 import Realm from 'realm';
 
-import { getTotal } from '../utilities';
-
 /**
  * A batch of items.
  *
@@ -80,25 +78,7 @@ export class ItemBatch extends Realm.Object {
   }
 
   /**
-   * Get the sum of all usage in each transaction batch related to this item
-   * batch within a starting and ending date.
-   *
-   * @param   {Date}    startDate
-   * @param   {Date}    endDate
-   * @return  {number}
-   */
-  totalUsageForPeriod(startDate, endDate) {
-    const transactionBatches = this.transactionBatches.filtered(
-      'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
-      startDate,
-      endDate
-    );
-
-    return getTotal(transactionBatches, 'usage');
-  }
-
-  /**
-   * Add a transaction batch to be associated with this batch.
+   * Ad˚d a transaction batch to be associated with this batch.
    *
    * @param  {TransactionBatch}  transactionBatch
    */
