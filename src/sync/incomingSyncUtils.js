@@ -599,7 +599,6 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
             value: customData,
           });
         }
-        settings.refreshGlobals();
       }
       break;
     }
