@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2019
@@ -12,7 +13,7 @@ import EvilIcon from 'react-native-vector-icons/EvilIcons';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { SUSSOL_ORANGE, FINALISED_RED, dataTableColors } from '../globalStyles';
+import { FINALISE_GREEN, SUSSOL_ORANGE, FINALISED_RED, dataTableColors } from '../globalStyles';
 
 export const SortAscIcon = <FAIcon name="sort-asc" size={15} style={{ marginRight: 10 }} />;
 export const SortNeutralIcon = <FAIcon name="sort" size={15} style={{ marginRight: 10 }} />;
@@ -48,3 +49,18 @@ export const CloseIcon = React.memo(() => <IonIcon name="md-close" size={36} col
 export const Expand = React.memo(() => (
   <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />
 ));
+
+export const Confirm = ({ style }) => <FAIcon name="check-circle" style={style} />;
+export const ConfirmIcon = React.memo(Confirm);
+Confirm.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };
+Confirm.propTypes = { style: PropTypes.object };
+
+export const Lock = ({ style }) => <FAIcon name="lock" size={28} style={style} />;
+export const LockIcon = React.memo(Lock);
+Lock.defaultProps = { style: { color: FINALISED_RED, marginHorizontal: 8, bottom: 6 } };
+Lock.propTypes = { style: PropTypes.object };
+
+export const Settings = ({ style }) => <IonIcon style={style} name="ios-settings" size={40} />;
+export const SettingsIcon = React.memo(Settings);
+Settings.defaultProps = { style: { marginRight: 35 } };
+Settings.propTypes = { style: PropTypes.object };

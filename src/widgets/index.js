@@ -37,6 +37,9 @@ export {
   CloseIcon,
   OpenModal,
   Expand,
+  ConfirmIcon,
+  LockIcon,
+  SettingsIcon,
 } from './icons';
 export {
   KiribatiFlag,
