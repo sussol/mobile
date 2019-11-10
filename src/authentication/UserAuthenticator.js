@@ -73,7 +73,7 @@ export class UserAuthenticator {
             id: userJson.UserID,
             username,
             passwordHash,
-            isAdmin: userJson.isAdmin,
+            isAdmin: userJson.isAdmin || false,
           });
         });
       }

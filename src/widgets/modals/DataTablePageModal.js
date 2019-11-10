@@ -74,7 +74,8 @@ const DataTablePageModalComponent = ({
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT: {
         const isPasswordEdit = !!(
-          MODAL_KEYS.CONFIRM_USER_PASSWORD || MODAL_KEYS.SYNC_PASSWORD_EDIT
+          modalKey === MODAL_KEYS.CONFIRM_USER_PASSWORD ||
+          modalKey === MODAL_KEYS.SYNC_PASSWORD_EDIT
         );
         return (
           <TextEditor

@@ -138,9 +138,9 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
         fullScreen={false}
         isOpen={!!modalKey}
         modalKey={modalKey}
+        currentValue={modalKey === MODAL_KEYS.SYNC_URL_EDIT ? syncURL : ''}
         onClose={closeModal}
         onSelect={getModalSelect(modalKey)}
-        currentValue={null}
       />
     </DataTablePageView>
   );
