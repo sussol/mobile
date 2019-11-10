@@ -7,6 +7,13 @@ import { USER_ACTION_TYPES } from '../actions/UserActions';
 
 const initialState = () => ({ currentUser: null });
 
+/**
+ * Reducer for User state.
+ * Shape:
+ * {
+ *     currentUser,
+ * }
+ */
 export const UserReducer = (state = initialState(), action) => {
   const { type } = action;
 
