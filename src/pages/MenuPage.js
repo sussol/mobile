@@ -25,9 +25,11 @@ import {
   gotoStock,
   gotoStocktakes,
   gotoRealmExplorer,
+  gotoSettings,
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
+import { UserActions } from '../actions/index';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -38,7 +40,7 @@ const exportData = async () => {
 
 const Menu = ({
   isInAdminMode,
-  logOut,
+  logout,
   toCustomerInvoices,
   toCustomerRequisitions,
   toStock,
@@ -46,8 +48,10 @@ const Menu = ({
   toSupplierInvoices,
   toSupplierRequisitions,
   toRealmExplorer,
+  toSettings,
   usingDispensary,
   usingModules,
+  isAdmin,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
   const { image, originalContainer, moduleContainer, container, bottomIcon, moduleRow } = styles;
@@ -126,16 +130,26 @@ const Menu = ({
             name="power-off"
             iconStyle={bottomIcon}
             backgroundColor="rgba(255,255,255,0)"
-            onPress={logOut}
+            onPress={logout}
           >
             <Text>{navStrings.log_out}</Text>
           </Icon.Button>
         </View>
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
+        {isAdmin && (
+          <Icon.Button
+            name="cog"
+            iconStyle={bottomIcon}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={toSettings}
+          >
+            <Text>SETTINGS</Text>
+          </Icon.Button>
+        )}
       </View>
     ),
-    []
+    [isInAdminMode, isAdmin]
   );
 
   const ModuleLayout = useCallback(
@@ -179,12 +193,12 @@ const styles = {
   moduleRow: { flex: 1, flexDirection: 'row' },
   image: { height: 150, width: 150, marginBottom: 30 },
   bottomIcon: { color: GREY },
-  bottomIconView: { flexGrow: 1, marginLeft: 100 },
   bottomRow: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
   },
   container: {
     alignItems: 'center',
@@ -206,25 +220,28 @@ const styles = {
   },
 };
 
-const actionCreators = {
-  toCustomerInvoices: gotoCustomerInvoices,
-  toCustomerRequisitions: gotoCustomerRequisitions,
-  toStock: gotoStock,
-  toStocktakes: gotoStocktakes,
-  toSupplierInvoices: gotoSupplierInvoices,
-  toSupplierRequisitions: gotoSupplierRequisitions,
-  toRealmExplorer: gotoRealmExplorer,
-};
+const mapDispatchToProps = dispatch => ({
+  toCustomerInvoices: () => dispatch(gotoCustomerInvoices()),
+  toCustomerRequisitions: () => dispatch(gotoCustomerRequisitions()),
+  toStock: () => dispatch(gotoStock()),
+  toStocktakes: () => dispatch(gotoStocktakes()),
+  toSupplierInvoices: () => dispatch(gotoSupplierInvoices()),
+  toSupplierRequisitions: () => dispatch(gotoSupplierRequisitions()),
+  toRealmExplorer: () => dispatch(gotoRealmExplorer()),
+  toSettings: () => dispatch(gotoSettings()),
+  logout: () => dispatch(UserActions.logout()),
+});
 
 const mapStateToProps = state => {
-  const { modules } = state;
+  const { modules, user } = state;
+  const { currentUser } = user;
   const { usingDispensary } = modules;
-  return { usingDispensary, usingModules: usingDispensary };
+  return { usingDispensary, usingModules: usingDispensary, isAdmin: currentUser?.isAdmin };
 };
 
 export const MenuPage = connect(
   mapStateToProps,
-  actionCreators
+  mapDispatchToProps
 )(Menu);
 
 Menu.defaultProps = {
@@ -233,7 +250,7 @@ Menu.defaultProps = {
 
 Menu.propTypes = {
   isInAdminMode: PropTypes.bool,
-  logOut: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
   toCustomerInvoices: PropTypes.func.isRequired,
   toCustomerRequisitions: PropTypes.func.isRequired,
   toStock: PropTypes.func.isRequired,
@@ -241,6 +258,8 @@ Menu.propTypes = {
   toSupplierInvoices: PropTypes.func.isRequired,
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
+  toSettings: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   usingDispensary: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };
