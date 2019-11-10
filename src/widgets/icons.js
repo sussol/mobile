@@ -59,8 +59,3 @@ export const Lock = ({ style }) => <FAIcon name="lock" size={28} style={style} /
 export const LockIcon = React.memo(Lock);
 Lock.defaultProps = { style: { color: FINALISED_RED, marginHorizontal: 8, bottom: 6 } };
 Lock.propTypes = { style: PropTypes.object };
-
-export const Settings = ({ style }) => <IonIcon style={style} name="ios-settings" size={40} />;
-export const SettingsIcon = React.memo(Settings);
-Settings.defaultProps = { style: { marginRight: 35 } };
-Settings.propTypes = { style: PropTypes.object };
