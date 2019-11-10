@@ -16,9 +16,9 @@ export const authStrings = new LocalizedStrings({
   },
   fr: {
     logging_in: 'Connexion en cours',
-    login: 'Se connecter or Ouverture de session',
+    login: 'Se connecter',
     password: 'Mot de passe',
-    user_name: "Identifiiant or Nom d'utilisateur",
+    user_name: 'Identifiiant',
   },
   gil: {
     logging_in: 'Taninga bwa e na uki',
