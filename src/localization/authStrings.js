@@ -13,6 +13,7 @@ export const authStrings = new LocalizedStrings({
     repeat_password: 'Please re-enter password',
     user_name: 'User Name',
     email: 'E-mail Address',
+    invalid_username_or_password: 'Invalid username or password',
   },
   fr: {
     logging_in: 'Connexion en cours',
