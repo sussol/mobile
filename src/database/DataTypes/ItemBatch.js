@@ -78,7 +78,7 @@ export class ItemBatch extends Realm.Object {
   }
 
   /**
-   * Ad˚d a transaction batch to be associated with this batch.
+   * Add a transaction batch to be associated with this batch.
    *
    * @param  {TransactionBatch}  transactionBatch
    */
