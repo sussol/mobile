@@ -179,10 +179,7 @@ const mapStateToProps = state => {
   return supplierInvoice;
 };
 
-export const SupplierInvoicePage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(SupplierInvoice);
+export const SupplierInvoicePage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoice);
 
 SupplierInvoice.defaultProps = {
   modalValue: null,
@@ -216,5 +213,5 @@ SupplierInvoice.propTypes = {
   onEditTotalQuantity: PropTypes.func.isRequired,
   onEditDate: PropTypes.func.isRequired,
   onAddTransactionBatch: PropTypes.func.isRequired,
-  route: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };
