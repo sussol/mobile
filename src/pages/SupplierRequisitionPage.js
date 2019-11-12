@@ -206,13 +206,21 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
 
   const ThresholdMOSToggle = () => <ToggleBar toggles={toggles} />;
 
-  const ViewRegimenDataButton = () => (
-    <PageButton
-      style={globalStyles.topButton}
-      text={buttonStrings.view_regimen_data}
-      onPress={onViewRegimenData}
-    />
-  );
+  const ViewRegimenDataButton = () => {
+    const hasRegimenData =
+      requisition.parsedCustomData &&
+      requisition.parsedCustomData.regimenData &&
+      requisition.parsedCustomData.regimenData.length;
+
+    return (
+      <PageButton
+        style={globalStyles.topButton}
+        text={buttonStrings.view_regimen_data}
+        onPress={onViewRegimenData}
+        isDisabled={!hasRegimenData}
+      />
+    );
+  };
 
   const GeneralButtons = useCallback(() => {
     const { verticalContainer } = globalStyles;
