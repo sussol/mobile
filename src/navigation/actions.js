@@ -37,7 +37,7 @@ export const gotoSettings = () =>
   NavigationActions.navigate({
     routeName: ROUTES.SETTINGS,
     params: {
-      title: 'Settings',
+      title: navStrings.settings,
     },
   });
 
@@ -48,7 +48,7 @@ export const gotoRealmExplorer = () =>
   NavigationActions.navigate({
     routeName: ROUTES.REALM_EXPLORER,
     params: {
-      title: 'Database Contents',
+      title: navStrings.database_contents,
     },
   });
 
