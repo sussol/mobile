@@ -50,12 +50,10 @@ export const Expand = React.memo(() => (
   <FAIcon name="external-link" size={16} color={SUSSOL_ORANGE} />
 ));
 
-export const Confirm = ({ style }) => <FAIcon name="check-circle" style={style} />;
-export const ConfirmIcon = React.memo(Confirm);
-Confirm.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };
-Confirm.propTypes = { style: PropTypes.object };
+export const ConfirmIcon = React.memo(({ style }) => <FAIcon name="check-circle" style={style} />);
+ConfirmIcon.defaultProps = { style: { color: FINALISE_GREEN, fontSize: 40 } };
+ConfirmIcon.propTypes = { style: PropTypes.object };
 
-export const Lock = ({ style }) => <FAIcon name="lock" size={28} style={style} />;
-export const LockIcon = React.memo(Lock);
-Lock.defaultProps = { style: { color: FINALISED_RED, marginHorizontal: 8, bottom: 6 } };
-Lock.propTypes = { style: PropTypes.object };
+export const LockIcon = React.memo(({ style }) => <FAIcon name="lock" size={28} style={style} />);
+LockIcon.defaultProps = { style: { color: FINALISED_RED, marginHorizontal: 8, bottom: 6 } };
+LockIcon.propTypes = { style: PropTypes.object };
