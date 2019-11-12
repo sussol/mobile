@@ -43,7 +43,7 @@ export const gotoPrescribers = () =>
   });
 
 /**
- * Action creator which first creates a customer invoice, and then navigates to it
+ * Action creator which first creates a prescription, and then navigates to it
  * for editing.
  *
  * @param {Object} patient     The other party of the invoice (Customer)
