@@ -89,11 +89,11 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
     }
   };
 
-  const { menuButton, menuButtonText: buttonText } = globalStyles;
+  const { menuButton, menuButtonText } = globalStyles;
   const { row, column, marginRight, topRow } = styles;
 
   const MenuButton = useCallback(
-    props => <Button style={menuButton} textStyle={buttonText} {...props} />,
+    props => <Button style={menuButton} textStyle={menuButtonText} {...props} />,
     []
   );
 
