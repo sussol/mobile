@@ -52,8 +52,8 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
     setState({ ...state, modalKey: '', syncPassword: newSyncPassword });
 
   const save = enteredPassword => {
-    const currentUserPassowrd = currentUser?.passwordHash ?? '';
-    const passwordMatch = hashPassword(enteredPassword) === currentUserPassowrd;
+    const currentUserPassword = currentUser?.passwordHash ?? '';
+    const passwordMatch = hashPassword(enteredPassword) === currentUserPassword;
     const toastMessage = passwordMatch
       ? 'New details have been saved'
       : 'Password did not match. New details have not been saved.';
