@@ -47,6 +47,10 @@ const PER_PAGE_INFO_COLUMNS = {
     ['monthsToSupply', 'entryDate'],
     ['customer', 'requisitionComment'],
   ],
+  [ROUTES.PRESCRIPTION]: [
+    ['entryDate', 'enteredBy'],
+    ['customer', 'transactionComment', 'prescriber'],
+  ],
   stocktakeBatchEditModal: [['itemName']],
   stocktakeBatchEditModalWithReasons: [['itemName']],
 };
@@ -128,6 +132,11 @@ const PAGE_INFO_ROWS = (pageObject, dispatch, route) => ({
     title: `${tableStrings.item_name}`,
     info: pageObject.itemName,
     onPress: null,
+  },
+  prescriber: {
+    title: 'Prescriber',
+    info: pageObject?.prescriber?.firstName,
+    onPress: () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_PRESCRIBER, route)),
   },
 });
 
