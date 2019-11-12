@@ -43,11 +43,13 @@ const TYPE_MAPPINGS = {
   [TYPES.OBJECT]: [REALM_TYPES.OBJECT],
 };
 
-const typeMapper = new Map(
-  Object.entries(TYPE_MAPPINGS)
-    .map(([type, realmTypes]) => realmTypes.map(realmType => [realmType, type]))
-    .flat()
-);
+const typeMapper = new Map();
+
+Object.entries(TYPE_MAPPINGS).forEach(([type, realmTypes]) => {
+  realmTypes.forEach(realmType => {
+    typeMapper.set(realmType, type);
+  });
+});
 
 const parseType = realmType => {
   const { type } = realmType;
@@ -55,12 +57,11 @@ const parseType = realmType => {
   return typeMapper.get(realmType) || TYPES.OBJECT;
 };
 
-const getRealmObjects = ({ schema: objectSchemas }) =>
-  objectSchemas.map(({ schema: objectSchema }) => objectSchema.name);
+const getRealmObjects = ({ schema: objectSchemas }) => objectSchemas.map(({ name }) => name);
 
 const getRealmObjectsFields = ({ schema: objectSchemas }) =>
   objectSchemas
-    .map(({ schema: objectSchema }) => {
+    .map(objectSchema => {
       const { name, properties } = objectSchema;
       const fields = Object.entries(properties)
         .map(([field, type]) => ({
