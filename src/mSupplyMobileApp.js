@@ -208,7 +208,6 @@ class MSupplyMobileAppContainer extends React.Component {
     const { dispatch, finaliseItem, navigationState, syncState, currentUser } = this.props;
     const {
       confirmFinalise,
-
       isInAdminMode,
       isInitialised,
       isLoading,
