@@ -56,7 +56,6 @@
     "@react-native-community/async-storage": "^1.6.2",
     "@react-navigation/core": "^3.5.1",
     "bugsnag-react-native": "2.23.2",
-    "lodash": "4.17.15",
     "prop-types": "^15.7.2",
     "react": "16.9.0",
     "react-devtools-core": "4.2.0",
