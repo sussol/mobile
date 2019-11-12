@@ -30,6 +30,18 @@ import { ROUTES } from './constants';
  *
  */
 
+export const gotoPatients = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PATIENTS,
+    params: { title: 'Patients' },
+  });
+
+export const gotoPrescribers = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.PRESCRIBERS,
+    params: { title: 'Prescribers' },
+  });
+
 /**
  * Action creator which first creates a customer invoice, and then navigates to it
  * for editing.

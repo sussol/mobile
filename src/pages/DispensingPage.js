@@ -10,9 +10,9 @@ import { View } from 'react-native';
 import { Button } from 'react-native-ui-components';
 
 import globalStyles, { SHADOW_BORDER, BACKGROUND_COLOR } from '../globalStyles';
-import { gotoPrescriptions } from '../navigation/actions';
+import { gotoPrescriptions, gotoPrescribers, gotoPatients } from '../navigation/actions';
 
-const Dispensing = ({ toPrescriptions }) => {
+const Dispensing = ({ toPrescriptions, toPrescribers, toPatients }) => {
   const { menuButton, menuButtonText: buttonText } = globalStyles;
   const { flexOne, middleColumn, mainContainer, buttonContainer } = localStyles;
 
@@ -28,8 +28,8 @@ const Dispensing = ({ toPrescriptions }) => {
         <View style={flexOne} />
         <View style={buttonContainer}>
           <MenuButton text="Prescriptions" onPress={toPrescriptions} />
-          <MenuButton text="Prescribers" />
-          <MenuButton text="Patients" />
+          <MenuButton text="Prescribers" onPress={toPrescribers} />
+          <MenuButton text="Patients" onPress={toPatients} />
         </View>
         <View style={flexOne} />
       </View>
@@ -40,6 +40,8 @@ const Dispensing = ({ toPrescriptions }) => {
 
 const mapDispatchToProps = dispatch => ({
   toPrescriptions: () => dispatch(gotoPrescriptions()),
+  toPrescribers: () => dispatch(gotoPrescribers()),
+  toPatients: () => dispatch(gotoPatients()),
 });
 
 export const DispensingPage = connect(
@@ -49,6 +51,8 @@ export const DispensingPage = connect(
 
 Dispensing.propTypes = {
   toPrescriptions: PropTypes.func.isRequired,
+  toPrescribers: PropTypes.func.isRequired,
+  toPatients: PropTypes.func.isRequired,
 };
 
 const localStyles = {

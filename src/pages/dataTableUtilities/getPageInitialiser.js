@@ -459,6 +459,45 @@ export const prescriptionInitialiser = transaction => {
   };
 };
 
+/**
+ * Gets data for initialising a customer requisitions page.
+ *
+ * @returns  {object}
+ */
+const prescribersInitialiser = () => {
+  const backingData = UIDatabase.objects('Prescriber');
+
+  return {
+    backingData,
+    data: backingData.sorted('firstName').slice(),
+    keyExtractor: recordKeyExtractor,
+    searchTerm: '',
+    filterDataKeys: ['serialNumber'],
+    sortBy: 'firstName',
+    isAscending: false,
+    route: ROUTES.PRESCRIBERS,
+    columns: getColumns(ROUTES.PRESCRIBERS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.PRESCRIBERS),
+  };
+};
+
+const patientsInitialiser = () => {
+  const backingData = UIDatabase.objects('Patient');
+
+  return {
+    backingData,
+    data: backingData.sorted('firstName').slice(),
+    keyExtractor: recordKeyExtractor,
+    searchTerm: '',
+    filterDataKeys: ['firstName', 'lastName', 'code'],
+    sortBy: 'firstName',
+    isAscending: false,
+    route: ROUTES.PATIENTS,
+    columns: getColumns(ROUTES.PATIENTS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.PATIENTS),
+  };
+};
+
 const pageInitialisers = {
   customerInvoice: customerInvoiceInitialiser,
   customerInvoices: customerInvoicesInitialiser,
@@ -477,6 +516,8 @@ const pageInitialisers = {
   supplierRequisitions: supplierRequisitionsInitialiser,
   prescriptions: prescriptionsInitialiser,
   prescription: prescriptionInitialiser,
+  prescribers: prescribersInitialiser,
+  patients: patientsInitialiser,
 };
 
 /**
