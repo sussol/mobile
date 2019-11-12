@@ -78,19 +78,15 @@ export class Item extends Realm.Object {
   }
 
   /**
-   * Get the date the item was added, defined as date of he earliest added batch associated
-   * with this item, or undefined if no batches exist.
-   *
+   * Get the date the item was added, defined as date of the earliest added batch associated
+   * with this item.
    * @return  {Date}
    */
   get addedDate() {
-    if (this.batches.length === 0) return undefined;
-    let itemAddedDate = new Date();
-    this.batches.forEach(batch => {
-      const batchAddedDate = batch.addedDate;
-      itemAddedDate = batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
-    });
-    return itemAddedDate;
+    return this.batches.reduce(
+      (acc, { addedDate }) => (acc > addedDate ? addedDate : acc),
+      new Date()
+    );
   }
 
   /**
