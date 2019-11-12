@@ -23,11 +23,14 @@ import { DataTablePageView, PageInfo } from '../widgets/index';
 import { DataTablePageModal } from '../widgets/modals/index';
 
 import globalStyles from '../globalStyles';
+import { generalStrings, buttonStrings } from '../localization';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
   const { success, message } = await UIDatabase.exportData(syncSiteName);
-  const toastMessage = success ? 'Exported data file' : `Couldn't export data: ${message}`;
+  const toastMessage = success
+    ? generalStrings.exported_data
+    : `${generalStrings.couldnt_export_data}: ${message}`;
   ToastAndroid.show(toastMessage, ToastAndroid.SHORT);
 };
 
@@ -55,8 +58,8 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
     const currentUserPassword = currentUser?.passwordHash ?? '';
     const passwordMatch = hashPassword(enteredPassword) === currentUserPassword;
     const toastMessage = passwordMatch
-      ? 'New details have been saved'
-      : 'Password did not match. New details have not been saved.';
+      ? generalStrings.new_details_saved
+      : generalStrings.new_details_not_saved;
 
     if (passwordMatch) {
       UIDatabase.write(() => {
@@ -101,13 +104,13 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
     () => [
       [
         {
-          title: 'Sync URL:',
+          title: `${generalStrings.sync_url}:`,
           editableType: 'text',
           info: syncURL,
           onPress: () => openModal(MODAL_KEYS.SYNC_URL_EDIT),
         },
         {
-          title: 'Sync password:',
+          title: `${generalStrings.sync_password}:`,
           editableType: 'text',
           info: '',
           onPress: () => openModal(MODAL_KEYS.SYNC_PASSWORD_EDIT),
@@ -129,8 +132,8 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
           <PageInfo columns={pageInfoColumns} />
         </View>
         <View>
-          <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />
-          <MenuButton text="Export Data" onPress={exportData} />
+          <MenuButton text={buttonStrings.export_data} onPress={toRealmExplorer} />
+          <MenuButton text={buttonStrings.realm_explorer} onPress={exportData} />
         </View>
       </View>
 
