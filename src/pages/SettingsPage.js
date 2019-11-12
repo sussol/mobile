@@ -70,7 +70,7 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
 
         UIDatabase.update('Setting', {
           key: SETTINGS_KEYS.SYNC_SITE_PASSWORD_HASH,
-          value: hashPassword(syncPassword),
+          value: syncPassword ? hashPassword(syncPassword) : currentUserPassword,
         });
       });
     }
