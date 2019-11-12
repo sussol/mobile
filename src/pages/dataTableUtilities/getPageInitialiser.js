@@ -481,6 +481,23 @@ const prescribersInitialiser = () => {
   };
 };
 
+const patientsInitialiser = () => {
+  const backingData = UIDatabase.objects('Patient');
+
+  return {
+    backingData,
+    data: backingData.sorted('firstName').slice(),
+    keyExtractor: recordKeyExtractor,
+    searchTerm: '',
+    filterDataKeys: ['firstName', 'lastName', 'code'],
+    sortBy: 'firstName',
+    isAscending: false,
+    route: ROUTES.PATIENTS,
+    columns: getColumns(ROUTES.PATIENTS),
+    getPageInfoColumns: getPageInfoColumns(ROUTES.PATIENTS),
+  };
+};
+
 const pageInitialisers = {
   customerInvoice: customerInvoiceInitialiser,
   customerInvoices: customerInvoicesInitialiser,
@@ -500,6 +517,7 @@ const pageInitialisers = {
   prescriptions: prescriptionsInitialiser,
   prescription: prescriptionInitialiser,
   prescribers: prescribersInitialiser,
+  patients: patientsInitialiser,
 };
 
 /**

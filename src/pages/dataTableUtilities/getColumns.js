@@ -26,6 +26,7 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
   [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
   [ROUTES.PRESCRIBERS]: [1, 3, 3],
+  [ROUTES.PATIENTS]: [1, 3, 3],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
@@ -37,6 +38,7 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.FIRST_NAME,
     COLUMN_NAMES.LAST_NAME,
   ],
+  [ROUTES.PATIENTS]: [COLUMN_NAMES.CODE, COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
   [ROUTES.CUSTOMER_INVOICE]: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
