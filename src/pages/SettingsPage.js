@@ -151,7 +151,7 @@ const mapStateToDispatch = dispatch => ({
 });
 
 const mapStateToProps = state => ({
-  currentUser: state?.user?.currentUser,
+  currentUser: state.user.currentUser,
 });
 
 const styles = {
