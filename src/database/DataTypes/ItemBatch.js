@@ -5,8 +5,6 @@
 
 import Realm from 'realm';
 
-import { getTotal } from '../utilities';
-
 /**
  * A batch of items.
  *
@@ -35,16 +33,14 @@ export class ItemBatch extends Realm.Object {
   /**
    * Get the date this batch was added, equivalent to the confirm date
    * of the earliest transaction batch this batch is associated with.
-   *
    * @return  {Date}
    */
   get addedDate() {
-    if (this.transactionBatches.length === 0) return new Date();
-    const transactionBatches = this.transactionBatches.slice();
-    const sortedTransactionBatches = transactionBatches.sort(
-      (a, b) => a.transaction.confirmDate < b.transaction.confirmDate
+    return (
+      this.transactionBatches
+        .filtered('transaction.type == $0 && transaction.status != $1', 'supplier_invoice', 'new')
+        .sorted('transaction.confirmDate', false)[0]?.transaction?.confirmDate ?? new Date()
     );
-    return sortedTransactionBatches[0].transaction.confirmDate;
   }
 
   /**
@@ -77,24 +73,6 @@ export class ItemBatch extends Realm.Object {
       throw new Error('Cannot set a negative item batch quantity');
     }
     this.numberOfPacks = this.packSize ? quantity / this.packSize : 0;
-  }
-
-  /**
-   * Get the sum of all usage in each transaction batch related to this item
-   * batch within a starting and ending date.
-   *
-   * @param   {Date}    startDate
-   * @param   {Date}    endDate
-   * @return  {number}
-   */
-  totalUsageForPeriod(startDate, endDate) {
-    const transactionBatches = this.transactionBatches.filtered(
-      'transaction.confirmDate >= $0 && transaction.confirmDate <= $1',
-      startDate,
-      endDate
-    );
-
-    return getTotal(transactionBatches, 'usage');
   }
 
   /**

@@ -43,11 +43,12 @@ export const StocktakeManage = ({
   onNameChange,
   toggleSelectAll,
   toggleStockOut,
+  route,
 }) => {
   // On navigating to this screen, if a stocktake is passed through, update the selection with
   // the items already in the stocktake.
   useEffect(() => {
-    if (pageObject) dispatch(PageActions.selectItems(pageObject.itemsInStocktake));
+    if (pageObject) dispatch(PageActions.selectItems(pageObject.itemsInStocktake, route));
   }, []);
 
   const getCallback = (colKey, propName) => {
@@ -146,7 +147,8 @@ export const StocktakeManage = ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   ...getPageDispatchers(dispatch, ownProps, 'Stocktake', ROUTES.STOCKTAKE_MANAGER),
-  filterData: () => dispatch(PageActions.filterDataWithOverStockToggle),
+  onFilterData: value =>
+    dispatch(PageActions.filterDataWithOverStockToggle(value, ROUTES.STOCKTAKE_MANAGER)),
 });
 
 const mapStateToProps = state => {
@@ -182,4 +184,5 @@ StocktakeManage.propTypes = {
   onNameChange: PropTypes.func.isRequired,
   toggleSelectAll: PropTypes.func.isRequired,
   toggleStockOut: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

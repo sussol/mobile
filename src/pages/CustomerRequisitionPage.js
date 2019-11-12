@@ -55,6 +55,7 @@ export const CustomerRequisition = ({
   onCloseModal,
   onSortColumn,
   onEditSuppliedQuantity,
+  route,
 }) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
   useRecordListener(refreshData, pageObject, 'Requisition');
@@ -62,11 +63,11 @@ export const CustomerRequisition = ({
   const { isFinalised, comment } = pageObject;
 
   const onSetSuppliedToRequested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested()));
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToRequested(route)));
   const onSetSuppliedToSuggested = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested()));
+    runWithLoadingIndicator(() => dispatch(PageActions.setSuppliedToSuggested(route)));
 
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     isFinalised,
   ]);
@@ -205,4 +206,5 @@ CustomerRequisition.propTypes = {
   onCloseModal: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
   onEditSuppliedQuantity: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

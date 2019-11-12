@@ -45,13 +45,15 @@ export const SupplierInvoices = ({
   onCheck,
   onUncheck,
   onSortColumn,
+  route,
 }) => {
   // Listen to changes from sync and navigation events re-focusing this screen,
   // such that any side effects that occur trigger a reconcilitation of data.
   useNavigationFocus(refreshData, navigation);
   useSyncListener(refreshData, ['Transaction']);
 
-  const onNewInvoice = () => dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER));
+  const onNewInvoice = () =>
+    dispatch(PageActions.openModal(MODAL_KEYS.SELECT_EXTERNAL_SUPPLIER, route));
 
   const onNavigateToInvoice = useCallback(invoice => dispatch(gotoSupplierInvoice(invoice)), []);
 
@@ -207,4 +209,5 @@ SupplierInvoices.propTypes = {
   onCheck: PropTypes.func.isRequired,
   onUncheck: PropTypes.func.isRequired,
   onSortColumn: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

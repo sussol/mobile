@@ -32,6 +32,7 @@ import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
+import { syncCompleteTransaction } from './actions/SyncActions';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
@@ -39,7 +40,8 @@ import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
-import { UserActions } from './actions/index';
+import { UserActions } from './actions';
+import { debounce } from './utilities';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -106,20 +108,24 @@ class MSupplyMobileAppContainer extends React.Component {
     return route.routeName;
   }
 
-  handleBackEvent = () => {
-    const { dispatch } = this.props;
-    const { confirmFinalise, syncModalIsOpen } = this.state;
-    // If finalise or sync modals are open, close them rather than navigating.
-    if (confirmFinalise || syncModalIsOpen) {
-      this.setState({ confirmFinalise: false, syncModalIsOpen: false });
-      return true;
-    }
-    // If we are on base screen (e.g. home), back button should close app as we can't go back.
-    if (!this.getCanNavigateBack()) BackHandler.exitApp();
-    else dispatch(NavigationActions.back());
+  handleBackEvent = debounce(
+    () => {
+      const { dispatch } = this.props;
+      const { confirmFinalise, syncModalIsOpen } = this.state;
+      // If finalise or sync modals are open, close them rather than navigating.
+      if (confirmFinalise || syncModalIsOpen) {
+        this.setState({ confirmFinalise: false, syncModalIsOpen: false });
+        return true;
+      }
+      // If we are on base screen (e.g. home), back button should close app as we can't go back.
+      if (!this.getCanNavigateBack()) BackHandler.exitApp();
+      else dispatch(NavigationActions.back());
 
-    return true;
-  };
+      return true;
+    },
+    400,
+    true
+  );
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
@@ -137,7 +143,7 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { syncState } = this.props;
+    const { syncState, dispatch } = this.props;
     const { isInitialised } = this.state;
     if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
     // True if most recent call to |this.synchroniser.synchronise()| failed.
@@ -153,6 +159,7 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       this.postSyncProcessor.processRecordQueue();
     }
+    dispatch(syncCompleteTransaction());
   };
 
   renderFinaliseButton = () => {

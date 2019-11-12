@@ -5,7 +5,8 @@
 
 import Realm from 'realm';
 
-import { getTotal, millisecondsToDays } from '../utilities';
+import { getTotal } from '../utilities';
+import { dailyUsage } from '../../utilities/dailyUsage';
 
 /**
  * An item.
@@ -71,26 +72,19 @@ export class Item extends Realm.Object {
    * @return  {number}
    */
   get dailyUsage() {
-    const { AMCmillisecondsLookBack, AMCenforceLookBack } = global;
-    const endDate = new Date();
-    const startDate = new Date(endDate - AMCmillisecondsLookBack);
-    return this.dailyUsageForPeriod(startDate, endDate, AMCenforceLookBack);
+    return dailyUsage(this);
   }
 
   /**
-   * Get the date the item was added, defined as date of he earliest added batch associated
-   * with this item, or undefined if no batches exist.
-   *
+   * Get the date the item was added, defined as date of the earliest added batch associated
+   * with this item.
    * @return  {Date}
    */
   get addedDate() {
-    if (this.batches.length === 0) return undefined;
-    let itemAddedDate = new Date();
-    this.batches.forEach(batch => {
-      const batchAddedDate = batch.addedDate;
-      itemAddedDate = batchAddedDate < itemAddedDate ? batchAddedDate : itemAddedDate;
-    });
-    return itemAddedDate;
+    return this.batches.reduce(
+      (acc, { addedDate }) => (acc > addedDate ? addedDate : acc),
+      new Date()
+    );
   }
 
   /**
@@ -169,46 +163,6 @@ export class Item extends Realm.Object {
    */
   get unitString() {
     return (this.unit && this.unit.units) || 'N/A';
-  }
-
-  /**
-   * Get the sum of all transaction batch usage related to batches for this item within a start
-   * and end date.
-   *
-   * @param   {Date}    startDate  Start date.
-   * @param   {Date}    endDate    End date.
-   * @return  {number}             The total transaction usage for this batch
-   *                               over the specified period.
-   */
-  totalUsageForPeriod(startDate, endDate) {
-    return this.batches.reduce(
-      (total, batch) => total + batch.totalUsageForPeriod(startDate, endDate),
-      0
-    );
-  }
-
-  /**
-   * Get the sum of all transaction batch usage related to batches for this item within a start and
-   * end date. If the oldest batch is later than |startDate|, use that.
-   *
-   * @param   {Date}    startDate  Start date.
-   * @param   {Date}    endDate    End date.
-   * @return  {number}             The average daily usage for this item over the specified
-   *                               period (often a decimal, should be rounded or ceiling taken
-   *                               if used as quantity.
-   */
-  dailyUsageForPeriod(startDate, endDate, enforceEndDate = false) {
-    if (this.batches.length === 0) return 0;
-
-    let fromDate = startDate;
-    if (!enforceEndDate) {
-      const { addedDate } = this;
-      fromDate = addedDate > startDate ? addedDate : fromDate;
-    }
-    const periodInDays = millisecondsToDays(endDate - fromDate);
-    const usage = this.totalUsageForPeriod(fromDate, endDate);
-
-    return usage / (periodInDays || 1); // Avoid divide by zero.
   }
 
   /**
