@@ -35,3 +35,4 @@ export { Transaction } from './Transaction';
 export { TransactionBatch } from './TransactionBatch';
 export { TransactionItem } from './TransactionItem';
 export { Unit } from './Unit';
+export { Prescriber } from './Prescriber';

@@ -620,6 +620,8 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         status: STATUSES.translate(record.status, EXTERNAL_TO_INTERNAL),
         confirmDate: parseDate(record.confirm_date),
         theirRef: record.their_ref,
+        mode: record.mode,
+        prescriber: database.getOrCreate('Prescriber', record.prescriber_ID),
         category,
         enteredBy,
         otherParty,

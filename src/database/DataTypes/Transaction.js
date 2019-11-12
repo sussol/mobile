@@ -456,6 +456,8 @@ Transaction.schema = {
     theirRef: { type: 'string', optional: true },
     category: { type: 'TransactionCategory', optional: true },
     items: { type: 'list', objectType: 'TransactionItem' },
+    mode: { type: 'string', default: 'store' },
+    prescriber: { type: 'Prescriber', optional: true },
     linkedRequisition: { type: 'Requisition', optional: true },
   },
 };

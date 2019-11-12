@@ -23,13 +23,30 @@ const PAGE_COLUMN_WIDTHS = {
   [ROUTES.CUSTOMER_REQUISITIONS]: [1.5, 2, 1, 1, 1],
   [ROUTES.CUSTOMER_REQUISITION]: [2, 4, 1.5, 1.5, 2, 2, 2, 2],
   [ROUTES.STOCK]: [1, 4, 1],
+  [ROUTES.PRESCRIPTIONS]: [1.5, 2.5, 2, 1.5, 3, 1],
+  [ROUTES.PRESCRIPTION]: [2, 4, 2, 2, 1],
+  [ROUTES.PRESCRIBERS]: [1, 3, 3],
+  [ROUTES.PATIENTS]: [1, 3, 3],
   stocktakeBatchEditModal: [1, 1, 1, 1, 1],
   stocktakeBatchEditModalWithReasons: [1, 1, 1, 1, 1, 1],
   regimenDataModal: [4, 1, 5],
 };
 
 const PAGE_COLUMNS = {
+  [ROUTES.PRESCRIBERS]: [
+    COLUMN_NAMES.REGISTRATION_CODE,
+    COLUMN_NAMES.FIRST_NAME,
+    COLUMN_NAMES.LAST_NAME,
+  ],
+  [ROUTES.PATIENTS]: [COLUMN_NAMES.CODE, COLUMN_NAMES.FIRST_NAME, COLUMN_NAMES.LAST_NAME],
   [ROUTES.CUSTOMER_INVOICE]: [
+    COLUMN_NAMES.ITEM_CODE,
+    COLUMN_NAMES.ITEM_NAME,
+    COLUMN_NAMES.AVAILABLE_QUANTITY,
+    COLUMN_NAMES.EDITABLE_TOTAL_QUANTITY,
+    COLUMN_NAMES.REMOVE,
+  ],
+  [ROUTES.PRESCRIPTION]: [
     COLUMN_NAMES.ITEM_CODE,
     COLUMN_NAMES.ITEM_NAME,
     COLUMN_NAMES.AVAILABLE_QUANTITY,
@@ -128,6 +145,14 @@ const PAGE_COLUMNS = {
     COLUMN_NAMES.SUPPLIED_QUANTITY,
   ],
   [ROUTES.STOCK]: [COLUMN_NAMES.CODE, COLUMN_NAMES.NAME, COLUMN_NAMES.TOTAL_QUANTITY],
+  [ROUTES.PRESCRIPTIONS]: [
+    COLUMN_NAMES.INVOICE_NUMBER,
+    COLUMN_NAMES.PATIENT,
+    COLUMN_NAMES.ENTRY_DATE,
+    COLUMN_NAMES.STATUS,
+    COLUMN_NAMES.COMMENT,
+    COLUMN_NAMES.REMOVE,
+  ],
   stocktakeBatchEditModal: [
     COLUMN_NAMES.BATCH_NAME,
     COLUMN_NAMES.EDITABLE_EXPIRY_DATE,
@@ -181,6 +206,14 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  [COLUMN_NAMES.REGISTRATION_CODE]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.REGISTRATION_CODE,
+    title: tableStrings.code,
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
 
   // STRING COLUMNS
 
@@ -199,6 +232,22 @@ const COLUMNS = () => ({
     sortable: true,
     editable: false,
   },
+  [COLUMN_NAMES.FIRST_NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.FIRST_NAME,
+    title: 'First Name',
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
+  [COLUMN_NAMES.LAST_NAME]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.LAST_NAME,
+    title: 'Last Name',
+    alignText: 'left',
+    sortable: true,
+    editable: false,
+  },
   [COLUMN_NAMES.SUPPLIER]: {
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
@@ -210,6 +259,13 @@ const COLUMNS = () => ({
     type: COLUMN_TYPES.STRING,
     key: COLUMN_KEYS.OTHER_PARTY_NAME,
     title: tableStrings.customer,
+    sortable: true,
+    editable: false,
+  },
+  [COLUMN_NAMES.PATIENT]: {
+    type: COLUMN_TYPES.STRING,
+    key: COLUMN_KEYS.OTHER_PARTY_NAME,
+    title: 'PATIENT',
     sortable: true,
     editable: false,
   },
@@ -470,6 +526,7 @@ const getColumns = page => {
   if (!columnKeys) return [];
   if (!(columnKeys.length === widths.length)) return [];
   const columns = COLUMNS();
+
   return columnKeys.map((columnKey, i) => ({ ...columns[columnKey], width: widths[i] }));
 };
 

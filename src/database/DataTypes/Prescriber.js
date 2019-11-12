@@ -1,0 +1,23 @@
+import Realm from 'realm';
+
+export class Prescriber extends Realm.Object {}
+
+Prescriber.schema = {
+  name: 'Prescriber',
+  primaryKey: 'id',
+  properties: {
+    id: 'string',
+    firstName: { type: 'string', default: 'placeholderName' },
+    lastName: { type: 'string', default: 'placeholderName' },
+    registrationCode: { type: 'string', default: 'placeholderCode' },
+    address: { type: 'Address', optional: true },
+    isVisible: { type: 'bool', default: false },
+    isActive: { type: 'bool', default: false },
+    phone: { type: 'string', optional: true },
+    mobile: { type: 'string', optional: true },
+    email: { type: 'string', optional: true },
+    transactions: { type: 'linkingObjects', objectType: 'Transaction', property: 'prescriber' },
+  },
+};
+
+export default Prescriber;

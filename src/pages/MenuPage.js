@@ -25,6 +25,7 @@ import {
   gotoStock,
   gotoStocktakes,
   gotoRealmExplorer,
+  gotoDispensingPage,
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
@@ -46,6 +47,7 @@ const Menu = ({
   toSupplierInvoices,
   toSupplierRequisitions,
   toRealmExplorer,
+  toDispensary,
   usingDispensary,
   usingModules,
 }) => {
@@ -112,7 +114,7 @@ const Menu = ({
     () => (
       <View style={containerStyle}>
         <ModulesImage style={image} />
-        <View>{usingDispensary && <MenuButton text="Dispensary" />}</View>
+        <View>{usingDispensary && <MenuButton text="Dispensary" onPress={toDispensary} />}</View>
       </View>
     ),
     []
@@ -219,6 +221,7 @@ const actionCreators = {
   toSupplierInvoices: gotoSupplierInvoices,
   toSupplierRequisitions: gotoSupplierRequisitions,
   toRealmExplorer: gotoRealmExplorer,
+  toDispensary: gotoDispensingPage,
 };
 
 const mapStateToProps = state => {
@@ -246,6 +249,7 @@ Menu.propTypes = {
   toSupplierInvoices: PropTypes.func.isRequired,
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
+  toDispensary: PropTypes.func.isRequired,
   usingDispensary: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };
