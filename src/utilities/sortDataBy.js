@@ -26,6 +26,9 @@ const sortKeyToType = {
   difference: 'number',
   stockOnHand: 'number',
   suppliedQuantity: 'number',
+  firstName: 'string',
+  lastName: 'string',
+  registrationCode: 'string',
 };
 
 /**

@@ -80,6 +80,19 @@ export const openModal = (modalKey, value, route) => {
   }
 };
 
+export const editPrescriber = (value, route) => (dispatch, getState) => {
+  const pageObject = pageObjectSelector(getState());
+
+  UIDatabase.write(() => {
+    UIDatabase.update('Transaction', {
+      ...pageObject,
+      prescriber: value,
+    });
+  });
+
+  dispatch(closeModal(route));
+};
+
 /**
  * Edits the `name` field of a pageObject.
  *
@@ -192,4 +205,5 @@ export const PageActionsLookup = {
   resetStocktake,
   closeAndRefresh,
   editPageObjectName,
+  editPrescriber,
 };
