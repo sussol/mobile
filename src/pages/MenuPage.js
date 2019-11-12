@@ -56,7 +56,7 @@ const Menu = ({
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
-    []
+    [usingDispensary, usingModules]
   );
 
   const CustomerSection = useCallback(
@@ -73,7 +73,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const SupplierSection = useCallback(
@@ -90,7 +90,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const StockSection = useCallback(
@@ -105,7 +105,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const ModulesSection = useCallback(
@@ -115,7 +115,7 @@ const Menu = ({
         <View>{usingDispensary && <MenuButton text="Dispensary" />}</View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const AdminRow = useCallback(
@@ -135,35 +135,29 @@ const Menu = ({
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
-  const ModuleLayout = useCallback(
-    () => (
-      <View style={styles.moduleTopRow}>
-        <View style={moduleRow}>
-          <CustomerSection />
-          <SupplierSection />
-        </View>
-        <View style={moduleRow}>
-          <StockSection />
-          <ModulesSection />
-        </View>
-      </View>
-    ),
-    []
-  );
-
-  const OriginalLayout = useCallback(
-    () => (
-      <View style={styles.originalTopRow}>
+  const ModuleLayout = useCallback(() => (
+    <View style={styles.moduleTopRow}>
+      <View style={moduleRow}>
         <CustomerSection />
         <SupplierSection />
-        <StockSection />
       </View>
-    ),
-    []
-  );
+      <View style={moduleRow}>
+        <StockSection />
+        <ModulesSection />
+      </View>
+    </View>
+  ));
+
+  const OriginalLayout = useCallback(() => (
+    <View style={styles.originalTopRow}>
+      <CustomerSection />
+      <SupplierSection />
+      <StockSection />
+    </View>
+  ));
 
   return (
     <View style={{ ...appBackground }}>
@@ -218,8 +212,8 @@ const actionCreators = {
 
 const mapStateToProps = state => {
   const { modules } = state;
-  const { usingDispensary } = modules;
-  return { usingDispensary, usingModules: usingDispensary };
+  const { usingDispensary, usingModules, usingVaccines } = modules;
+  return { usingDispensary, usingVaccines, usingModules };
 };
 
 export const MenuPage = connect(

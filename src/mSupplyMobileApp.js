@@ -32,6 +32,7 @@ import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
+import { syncCompleteTransaction } from './actions/SyncActions';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
@@ -141,7 +142,7 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { syncState } = this.props;
+    const { syncState, dispatch } = this.props;
     const { isInitialised } = this.state;
     if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
     // True if most recent call to |this.synchroniser.synchronise()| failed.
@@ -157,6 +158,7 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       this.postSyncProcessor.processRecordQueue();
     }
+    dispatch(syncCompleteTransaction());
   };
 
   logOut = () => this.setState({ currentUser: null });
