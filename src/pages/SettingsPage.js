@@ -132,8 +132,8 @@ const Settings = ({ toRealmExplorer, currentUser }) => {
           <PageInfo columns={pageInfoColumns} />
         </View>
         <View>
-          <MenuButton text={buttonStrings.export_data} onPress={toRealmExplorer} />
-          <MenuButton text={buttonStrings.realm_explorer} onPress={exportData} />
+          <MenuButton text={buttonStrings.realm_explorer} onPress={toRealmExplorer} />
+          <MenuButton text={buttonStrings.export_data} onPress={exportData} />
         </View>
       </View>
 
