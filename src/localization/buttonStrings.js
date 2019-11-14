@@ -25,6 +25,8 @@ export const buttonStrings = new LocalizedStrings({
     use_suggested_quantities: 'Use Suggested Quantities',
     use_requested_quantities: 'Use Requested Quantities',
     view_regimen_data: 'View Regimen Data',
+    export_data: 'Export Data',
+    realm_explorer: 'Realm Explorer',
   },
   fr: {
     view_regimen_data: 'Données de régimes',

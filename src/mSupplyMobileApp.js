@@ -1,3 +1,4 @@
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
 /**
@@ -31,6 +32,7 @@ import { FinaliseButton, NavigationBar, SyncState, Spinner } from './widgets';
 import { FinaliseModal, LoginModal } from './widgets/modals';
 
 import { getCurrentParams, getCurrentRouteName, ReduxNavigator } from './navigation';
+import { syncCompleteTransaction } from './actions/SyncActions';
 import { migrateDataToVersion } from './dataMigration';
 import { SyncAuthenticator, UserAuthenticator } from './authentication';
 import Settings from './settings/MobileAppSettings';
@@ -38,6 +40,8 @@ import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
+import { UserActions } from './actions';
+import { debounce } from './utilities';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -55,7 +59,7 @@ class MSupplyMobileAppContainer extends React.Component {
     const isInitialised = this.synchroniser.isInitialised();
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
-      const { currentUser } = this.state;
+      const { currentUser } = this.props;
       if (currentUser !== null) {
         // Only re-authenticate if currently logged in.
         this.userAuthenticator.reauthenticate(this.onAuthentication);
@@ -63,7 +67,6 @@ class MSupplyMobileAppContainer extends React.Component {
     }, AUTHENTICATION_INTERVAL);
     this.state = {
       confirmFinalise: false,
-      currentUser: null,
       isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
@@ -78,7 +81,8 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   onAuthentication = user => {
-    this.setState({ currentUser: user });
+    const { dispatch } = this.props;
+    dispatch(UserActions.login(user));
     this.postSyncProcessor.setUser(user);
   };
 
@@ -104,20 +108,24 @@ class MSupplyMobileAppContainer extends React.Component {
     return route.routeName;
   }
 
-  handleBackEvent = () => {
-    const { dispatch } = this.props;
-    const { confirmFinalise, syncModalIsOpen } = this.state;
-    // If finalise or sync modals are open, close them rather than navigating.
-    if (confirmFinalise || syncModalIsOpen) {
-      this.setState({ confirmFinalise: false, syncModalIsOpen: false });
-      return true;
-    }
-    // If we are on base screen (e.g. home), back button should close app as we can't go back.
-    if (!this.getCanNavigateBack()) BackHandler.exitApp();
-    else dispatch(NavigationActions.back());
+  handleBackEvent = debounce(
+    () => {
+      const { dispatch } = this.props;
+      const { confirmFinalise, syncModalIsOpen } = this.state;
+      // If finalise or sync modals are open, close them rather than navigating.
+      if (confirmFinalise || syncModalIsOpen) {
+        this.setState({ confirmFinalise: false, syncModalIsOpen: false });
+        return true;
+      }
+      // If we are on base screen (e.g. home), back button should close app as we can't go back.
+      if (!this.getCanNavigateBack()) BackHandler.exitApp();
+      else dispatch(NavigationActions.back());
 
-    return true;
-  };
+      return true;
+    },
+    400,
+    true
+  );
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
@@ -135,7 +143,7 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   synchronise = async () => {
-    const { syncState } = this.props;
+    const { syncState, dispatch } = this.props;
     const { isInitialised } = this.state;
     if (!isInitialised || syncState.isSyncing) return; // Ignore if syncing.
     // True if most recent call to |this.synchroniser.synchronise()| failed.
@@ -151,9 +159,8 @@ class MSupplyMobileAppContainer extends React.Component {
     } else {
       this.postSyncProcessor.processRecordQueue();
     }
+    dispatch(syncCompleteTransaction());
   };
-
-  logOut = () => this.setState({ currentUser: null });
 
   renderFinaliseButton = () => {
     const { finaliseItem } = this.props;
@@ -205,10 +212,9 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   render() {
-    const { dispatch, finaliseItem, navigationState, syncState } = this.props;
+    const { dispatch, finaliseItem, navigationState, syncState, currentUser } = this.props;
     const {
       confirmFinalise,
-      currentUser,
       isInAdminMode,
       isInitialised,
       isLoading,
@@ -240,7 +246,6 @@ class MSupplyMobileAppContainer extends React.Component {
           screenProps={{
             database: UIDatabase,
             settings: Settings,
-            logOut: this.logOut,
             currentUser,
             routeName: navigationState.routes[navigationState.index].routeName,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
@@ -265,7 +270,7 @@ class MSupplyMobileAppContainer extends React.Component {
         <LoginModal
           authenticator={this.userAuthenticator}
           settings={Settings}
-          isAuthenticated={currentUser !== null}
+          isAuthenticated={!!currentUser}
           onAuthentication={this.onAuthentication}
         />
         {isLoading && this.renderLoadingIndicator()}
@@ -288,16 +293,23 @@ const mapStateToProps = state => {
     finaliseItem,
     navigationState,
     syncState,
+    currentUser: state.user.currentUser,
   };
 };
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
+MSupplyMobileAppContainer.defaultProps = {
+  currentUser: null,
+  currentTitle: '',
+  finaliseItem: null,
+};
+
 MSupplyMobileAppContainer.propTypes = {
   currentTitle: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
   navigationState: PropTypes.object.isRequired,
   syncState: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(MSupplyMobileAppContainer);

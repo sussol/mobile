@@ -19,6 +19,12 @@ export const generalStrings = new LocalizedStrings({
     customerInvoices: 'Customer invoices',
     stocktakes: 'Stocktakes',
     not_available: 'N/A',
+    new_details_saved: 'New details have been saved',
+    new_details_not_saved: 'Password did not match. New details have not been saved.',
+    exported_data: 'Exported data file',
+    couldnt_export_data: "Couldn't export data",
+    sync_password: 'Sync password',
+    sync_url: 'Sync url',
   },
   fr: {
     stocktake: 'Inventaire',

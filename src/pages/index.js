@@ -10,6 +10,7 @@ import { ROUTES } from '../navigation/constants';
 import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
+import { SettingsPage } from './SettingsPage';
 import { PageContainer } from './PageContainer';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
 import { CustomerRequisitionPage } from './CustomerRequisitionPage';
@@ -70,6 +71,7 @@ export const PAGES = {
   [ROUTES.STOCKTAKE_EDITOR_WITH_REASONS]: props => (
     <PageContainer page={StocktakeEditPage} {...props} />
   ),
+  [ROUTES.SETTINGS]: props => <PageContainer page={SettingsPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {

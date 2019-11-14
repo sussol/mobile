@@ -52,6 +52,7 @@ export const modalStrings = new LocalizedStrings({
     stocktake_invalid_stock:
       'Stock on hand for these item(s) have changed since this stocktake was last opened (through customer invoice, supplier invoice or another stocktake), both "Snapshot Quantity" and "Actual Quantity" will be reset',
     select_a_reason: 'Select a reason',
+    confirm_password: 'Please confirm your user password',
   },
   fr: {
     add_at_least_one_item_before_finalising:

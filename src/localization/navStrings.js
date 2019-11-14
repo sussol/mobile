@@ -23,6 +23,8 @@ export const navStrings = new LocalizedStrings({
     stocktake: 'Stocktake',
     supplier_invoices: 'Supplier Invoices',
     supplier_requisitions: 'Supplier Requisitions',
+    settings: 'settings',
+    database_contents: 'Database Contents',
   },
   fr: {
     current_stock: 'Stock actuel',

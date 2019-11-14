@@ -5,23 +5,39 @@
 
 import { UIDatabase } from '../database';
 import { SETTINGS_KEYS } from '../settings';
+import { SYNC_TRANSACTION_COMPLETE } from '../sync/constants';
 
 /**
- * Reducer for Modules field in redux with the shape:
+ * Simple reducer managing the stores current modules state.
+ *
+ * State shape:
  * {
- *     usingDispensary: [bool]
+ *     usingDispensary: [bool],
+ *     usingVaccines: [bool],
+ *     usingModules: [bool],
  * }
  */
 
-const modulesInitialState = () => {
-  const thisStoreCustomData = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_CUSTOM_DATA);
+const checkModule = key => UIDatabase.getSetting(key).toLowerCase() === 'true';
 
-  try {
-    const parsedCustomData = JSON.parse(thisStoreCustomData);
-    return { usingDispensary: parsedCustomData.usingDispensary.data === 'true' };
-  } catch (error) {
-    return { usingDispensary: false };
-  }
+const modulesInitialState = () => {
+  const usingDispensary = checkModule(SETTINGS_KEYS.DISPENSARY_MODULE);
+  const usingVaccines = checkModule(SETTINGS_KEYS.VACCINE_MODULE);
+  const usingModules = usingDispensary || usingVaccines;
+
+  return { usingDispensary, usingVaccines, usingModules };
 };
 
-export const ModulesReducer = (state = modulesInitialState()) => state;
+export const ModulesReducer = (state = modulesInitialState(), action) => {
+  const { type } = action;
+
+  switch (type) {
+    // After sync, refresh modules state
+    case SYNC_TRANSACTION_COMPLETE: {
+      return modulesInitialState();
+    }
+
+    default:
+      return state;
+  }
+};

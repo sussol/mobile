@@ -82,13 +82,13 @@ export const deselectAll = state => {
  * Toggles selection of all rows between selected/false
  */
 export const toggleSelectAll = state => {
-  const { data, keyExtractor, dataState, allSelected } = state;
+  const { keyExtractor, dataState, allSelected, backingData } = state;
 
   const newDataState = new Map(dataState);
 
   const newSelectionState = !allSelected;
 
-  data.forEach(item => {
+  backingData.forEach(item => {
     const rowKey = keyExtractor(item);
     newDataState.set(rowKey, { ...newDataState.get(rowKey), isSelected: newSelectionState });
   });
