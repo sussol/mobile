@@ -61,10 +61,8 @@ const getRealmObjects = ({ schema: objectSchemas }) => objectSchemas.map(({ name
 
 const getRealmObjectsFields = ({ schema: objectSchemas }) =>
   objectSchemas
-    .map(objectSchema => {
-      // In debug mode, objectSchema is the schema object. In non-debug, it isn't.
-      const realObjectSchema = objectSchema.schema ? objectSchema.schema : objectSchema;
-      const { name, properties } = realObjectSchema;
+    .map(({ schema: objectSchema }) => {
+      const { name, properties } = objectSchema;
       const fields = Object.entries(properties)
         .map(([field, type]) => ({
           [field]: parseType(type),
