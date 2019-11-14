@@ -31,13 +31,24 @@ import { ROUTES } from './constants';
  */
 
 /**
+ * Pushes the Settings page route onto the main navigation stack.
+ */
+export const gotoSettings = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.SETTINGS,
+    params: {
+      title: navStrings.settings,
+    },
+  });
+
+/**
  * Pushes the Realm explorer route onto the main navigation stack.
  */
 export const gotoRealmExplorer = () =>
   NavigationActions.navigate({
     routeName: ROUTES.REALM_EXPLORER,
     params: {
-      title: 'Database Contents',
+      title: navStrings.database_contents,
     },
   });
 

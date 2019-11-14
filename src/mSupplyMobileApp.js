@@ -1,4 +1,4 @@
-/* eslint-disable react/sort-comp */
+/* eslint-disable react/forbid-prop-types */
 /* eslint-disable no-undef */
 /* eslint-disable no-console */
 /**
@@ -40,7 +40,8 @@ import Database from './database/BaseDatabase';
 import { UIDatabase } from './database';
 
 import globalStyles, { textStyles, SUSSOL_ORANGE } from './globalStyles';
-import { debounce } from './utilities/index';
+import { UserActions } from './actions';
+import { debounce } from './utilities';
 
 const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
@@ -58,7 +59,7 @@ class MSupplyMobileAppContainer extends React.Component {
     const isInitialised = this.synchroniser.isInitialised();
     this.scheduler.schedule(this.synchronise, SYNC_INTERVAL);
     this.scheduler.schedule(() => {
-      const { currentUser } = this.state;
+      const { currentUser } = this.props;
       if (currentUser !== null) {
         // Only re-authenticate if currently logged in.
         this.userAuthenticator.reauthenticate(this.onAuthentication);
@@ -66,7 +67,6 @@ class MSupplyMobileAppContainer extends React.Component {
     }, AUTHENTICATION_INTERVAL);
     this.state = {
       confirmFinalise: false,
-      currentUser: null,
       isInitialised,
       isLoading: false,
       syncModalIsOpen: false,
@@ -81,7 +81,8 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   onAuthentication = user => {
-    this.setState({ currentUser: user });
+    const { dispatch } = this.props;
+    dispatch(UserActions.login(user));
     this.postSyncProcessor.setUser(user);
   };
 
@@ -161,8 +162,6 @@ class MSupplyMobileAppContainer extends React.Component {
     dispatch(syncCompleteTransaction());
   };
 
-  logOut = () => this.setState({ currentUser: null });
-
   renderFinaliseButton = () => {
     const { finaliseItem } = this.props;
     return (
@@ -213,10 +212,9 @@ class MSupplyMobileAppContainer extends React.Component {
   };
 
   render() {
-    const { dispatch, finaliseItem, navigationState, syncState } = this.props;
+    const { dispatch, finaliseItem, navigationState, syncState, currentUser } = this.props;
     const {
       confirmFinalise,
-      currentUser,
       isInAdminMode,
       isInitialised,
       isLoading,
@@ -248,7 +246,6 @@ class MSupplyMobileAppContainer extends React.Component {
           screenProps={{
             database: UIDatabase,
             settings: Settings,
-            logOut: this.logOut,
             currentUser,
             routeName: navigationState.routes[navigationState.index].routeName,
             runWithLoadingIndicator: this.runWithLoadingIndicator,
@@ -273,7 +270,7 @@ class MSupplyMobileAppContainer extends React.Component {
         <LoginModal
           authenticator={this.userAuthenticator}
           settings={Settings}
-          isAuthenticated={currentUser !== null}
+          isAuthenticated={!!currentUser}
           onAuthentication={this.onAuthentication}
         />
         {isLoading && this.renderLoadingIndicator()}
@@ -296,16 +293,23 @@ const mapStateToProps = state => {
     finaliseItem,
     navigationState,
     syncState,
+    currentUser: state.user.currentUser,
   };
 };
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
+MSupplyMobileAppContainer.defaultProps = {
+  currentUser: null,
+  currentTitle: '',
+  finaliseItem: null,
+};
+
 MSupplyMobileAppContainer.propTypes = {
   currentTitle: PropTypes.string,
   dispatch: PropTypes.func.isRequired,
   finaliseItem: PropTypes.object,
   navigationState: PropTypes.object.isRequired,
   syncState: PropTypes.object.isRequired,
+  currentUser: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(MSupplyMobileAppContainer);

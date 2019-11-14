@@ -64,12 +64,26 @@ const DataTablePageModalComponent = ({
             renderRightText={({ totalQuantity }) => `${totalQuantity}`}
           />
         );
+      case MODAL_KEYS.CONFIRM_USER_PASSWORD:
+      case MODAL_KEYS.SYNC_URL_EDIT:
+      case MODAL_KEYS.SYNC_PASSWORD_EDIT:
       case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
       case MODAL_KEYS.THEIR_REF_EDIT:
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
-      case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
-        return <TextEditor text={currentValue} onEndEditing={onSelect} />;
+      case MODAL_KEYS.REQUISITION_COMMENT_EDIT: {
+        const isPasswordEdit = !!(
+          modalKey === MODAL_KEYS.CONFIRM_USER_PASSWORD ||
+          modalKey === MODAL_KEYS.SYNC_PASSWORD_EDIT
+        );
+        return (
+          <TextEditor
+            text={currentValue}
+            onEndEditing={onSelect}
+            secureTextEntry={isPasswordEdit}
+          />
+        );
+      }
 
       case MODAL_KEYS.SELECT_CUSTOMER:
         return (

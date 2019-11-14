@@ -13,6 +13,8 @@ export const authStrings = new LocalizedStrings({
     repeat_password: 'Please re-enter password',
     user_name: 'User Name',
     email: 'E-mail Address',
+    warning_sync_edit:
+      'WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!',
   },
   fr: {
     logging_in: 'Connexion en cours',
