@@ -28,7 +28,7 @@ export const SupplierInvoice = ({
   dispatch,
   dataState,
   keyExtractor,
-  sortBy,
+  sortKey,
   isAscending,
   modalKey,
   modalValue,
@@ -115,10 +115,10 @@ export const SupplierInvoice = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -179,7 +179,10 @@ const mapStateToProps = state => {
   return supplierInvoice;
 };
 
-export const SupplierInvoicePage = connect(mapStateToProps, mapDispatchToProps)(SupplierInvoice);
+export const SupplierInvoicePage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SupplierInvoice);
 
 SupplierInvoice.defaultProps = {
   modalValue: null,
@@ -190,7 +193,7 @@ SupplierInvoice.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   keyExtractor: PropTypes.func.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   modalValue: PropTypes.any,

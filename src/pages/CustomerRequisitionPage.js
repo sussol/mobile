@@ -40,7 +40,7 @@ export const CustomerRequisition = ({
   data,
   dispatch,
   dataState,
-  sortBy,
+  sortKey,
   isAscending,
   modalKey,
   pageObject,
@@ -114,10 +114,10 @@ export const CustomerRequisition = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -189,7 +189,7 @@ CustomerRequisition.defaultProps = {
 CustomerRequisition.propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,

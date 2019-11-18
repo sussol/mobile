@@ -59,7 +59,7 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
     pageObject,
     data,
     dataState,
-    sortBy,
+    sortKey,
     isAscending,
     modalKey,
     modalValue,
@@ -133,10 +133,10 @@ export const StocktakeBatchModal = ({ stocktakeItem }) => {
         dispatch={instantDebouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {

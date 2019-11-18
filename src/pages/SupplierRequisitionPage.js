@@ -41,7 +41,7 @@ const SupplierRequisition = ({
   dispatch,
   data,
   dataState,
-  sortBy,
+  sortKey,
   modalValue,
   isAscending,
   modalKey,
@@ -140,10 +140,10 @@ const SupplierRequisition = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const AddMasterListItemsButton = () => (
@@ -305,7 +305,7 @@ SupplierRequisition.defaultProps = {
 SupplierRequisition.propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,

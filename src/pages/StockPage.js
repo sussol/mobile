@@ -38,7 +38,7 @@ import { ROUTES } from '../navigation/constants';
 export const Stock = ({
   data,
   dataState,
-  sortBy,
+  sortKey,
   isAscending,
   selectedRow,
   searchTerm,
@@ -76,7 +76,7 @@ export const Stock = ({
       columns={columns}
       onPress={onSortColumn}
       isAscending={isAscending}
-      sortBy={sortBy}
+      sortKey={sortKey}
     />
   );
 
@@ -128,7 +128,7 @@ Stock.defaultProps = {
 Stock.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   selectedRow: PropTypes.object,
   searchTerm: PropTypes.string.isRequired,
