@@ -43,7 +43,7 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
     data,
     dataState,
     pageObject,
-    sortBy,
+    sortKey,
     isAscending,
     modalKey,
     hasSelection,
@@ -133,10 +133,10 @@ export const CustomerInvoicePage = ({ transaction, runWithLoadingIndicator, rout
         dispatch={instantDebouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const { verticalContainer, topButton } = globalStyles;

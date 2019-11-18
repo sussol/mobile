@@ -27,7 +27,7 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
     data,
     dataState,
     keyExtractor,
-    sortBy,
+    sortKey,
     isAscending,
     modalKey,
     modalValue,
@@ -113,10 +113,10 @@ export const SupplierInvoicePage = ({ routeName, transaction }) => {
         dispatch={instantDebouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {

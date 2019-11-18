@@ -41,7 +41,7 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
 
   const {
     data,
-    sortBy,
+    sortKey,
     isAscending,
     searchTerm,
     PageActions,
@@ -85,10 +85,10 @@ export const CustomerRequisitionsPage = ({ routeName, dispatch: reduxDispatch, n
         dispatch={debouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const PastCurrentToggleBar = useCallback(

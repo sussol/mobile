@@ -40,7 +40,7 @@ export const StockPage = ({ routeName }) => {
   const {
     data,
     dataState,
-    sortBy,
+    sortKey,
     isAscending,
     selectedRow,
     searchTerm,
@@ -83,7 +83,7 @@ export const StockPage = ({ routeName }) => {
       dispatch={instantDebouncedDispatch}
       sortAction={PageActions.sortData}
       isAscending={isAscending}
-      sortBy={sortBy}
+      sortKey={sortKey}
     />
   );
 

@@ -52,7 +52,7 @@ export const SupplierRequisitionsPage = ({
   const {
     data,
     dataState,
-    sortBy,
+    sortKey,
     isAscending,
     modalKey,
     hasSelection,
@@ -138,10 +138,10 @@ export const SupplierRequisitionsPage = ({
         dispatch={debouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const toggles = useMemo(

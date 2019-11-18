@@ -44,7 +44,7 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
   const {
     data,
     dataState,
-    sortBy,
+    sortKey,
     isAscending,
     modalKey,
     pageObject,
@@ -146,10 +146,10 @@ export const SupplierRequisitionPage = ({ requisition, runWithLoadingIndicator, 
         dispatch={instantDebouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const AddMasterListItemsButton = () => (

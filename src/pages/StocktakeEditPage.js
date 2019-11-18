@@ -57,7 +57,7 @@ export const StocktakeEditPage = ({
     data,
     dataState,
     searchTerm,
-    sortBy,
+    sortKey,
     isAscending,
     modalKey,
     modalValue,
@@ -159,10 +159,10 @@ export const StocktakeEditPage = ({
         dispatch={instantDebouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {

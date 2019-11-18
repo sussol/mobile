@@ -30,7 +30,7 @@ export const StocktakeManagePage = ({
   const {
     data,
     dataState,
-    sortBy,
+    sortKey,
     isAscending,
     hasSelection,
     showAll,
@@ -97,10 +97,10 @@ export const StocktakeManagePage = ({
         dispatch={instantDebouncedDispatch}
         sortAction={PageActions.sortData}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const toggles = useMemo(
