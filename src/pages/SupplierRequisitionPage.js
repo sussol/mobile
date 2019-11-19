@@ -69,6 +69,8 @@ const SupplierRequisition = ({
   onEditRequiredQuantity,
   onAddRequisitionItem,
   onSetRequestedToSuggested,
+  onAddMasterList,
+  onApplyMasterLists,
   route,
 }) => {
   // Listen for changes to this pages requisition. Refreshing data on side effects i.e. finalizing.
@@ -78,9 +80,6 @@ const SupplierRequisition = ({
 
   const createAutomaticOrder = () => dispatch(PageActions.createAutomaticOrder(route));
   const onCreateAutomaticOrder = () => runWithLoadingIndicator(createAutomaticOrder);
-
-  const addFromMasterlist = () => dispatch(PageActions.addMasterListItems('Requisition', route));
-  const onAddFromMasterList = () => runWithLoadingIndicator(addFromMasterlist);
 
   const pageInfoColumns = useMemo(() => getPageInfoColumns(pageObject, dispatch, route), [
     comment,
@@ -109,6 +108,8 @@ const SupplierRequisition = ({
         return onEditMonth;
       case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
         return onEditComment;
+      case MODAL_KEYS.SELECT_MASTER_LISTS:
+        return onApplyMasterLists;
       default:
         return null;
     }
@@ -150,7 +151,8 @@ const SupplierRequisition = ({
     <PageButton
       style={globalStyles.leftButton}
       text={buttonStrings.add_master_list_items}
-      onPress={onAddFromMasterList}
+      onPress={onAddMasterList}
+      onSelect={onApplyMasterLists}
       isDisabled={isFinalised}
     />
   );
@@ -336,5 +338,7 @@ SupplierRequisition.propTypes = {
   onEditRequiredQuantity: PropTypes.func.isRequired,
   onAddRequisitionItem: PropTypes.func.isRequired,
   onSetRequestedToSuggested: PropTypes.func.isRequired,
+  onAddMasterList: PropTypes.func.isRequired,
+  onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
 };

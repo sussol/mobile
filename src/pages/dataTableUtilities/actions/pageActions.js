@@ -60,7 +60,6 @@ export const openModal = (modalKey, value, route) => {
     case MODAL_KEYS.EDIT_STOCKTAKE_BATCH:
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, rowKey: value, route } };
-
     case MODAL_KEYS.MONTHS_SELECT:
     case MODAL_KEYS.PROGRAM_REQUISITION:
     case MODAL_KEYS.PROGRAM_STOCKTAKE:
@@ -75,6 +74,7 @@ export const openModal = (modalKey, value, route) => {
     case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
     case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
     case MODAL_KEYS.THEIR_REF_EDIT:
+    case MODAL_KEYS.SELECT_MASTER_LISTS:
     default:
       return { type: ACTIONS.OPEN_MODAL, payload: { modalKey, route: route || value } };
   }

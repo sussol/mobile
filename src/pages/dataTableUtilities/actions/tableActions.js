@@ -101,7 +101,8 @@ export const toggleStockOut = route => ({
  *
  * @param {String} objectType Type of object to add items for.
  */
-export const addMasterListItems = (objectType, route) => (dispatch, getState) => {
+export const addMasterListItems = (selected, route) => (dispatch, getState) => {
+  let objectType = '';
   const pageObject = pageObjectSelector(getState());
 
   const thisStore = UIDatabase.objects('Name').filtered(
@@ -109,12 +110,27 @@ export const addMasterListItems = (objectType, route) => (dispatch, getState) =>
     Settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
   )[0];
 
-  UIDatabase.write(() => {
-    pageObject.addItemsFromMasterList(UIDatabase, thisStore);
-    UIDatabase.save(objectType, pageObject);
-  });
+  switch (route) {
+    case 'supplierRequisition':
+      objectType = 'Requisition';
+      break;
+    case 'customerInvoice':
+      objectType = 'Transaction';
+      break;
+    default:
+      objectType = '';
+  }
+
+  console.log(`objectType ${objectType}`);
+  if (objectType) {
+    UIDatabase.write(() => {
+      pageObject.addItemsFromMasterList(UIDatabase, selected, thisStore);
+      UIDatabase.save(objectType, pageObject);
+    });
+  }
 
   dispatch(refreshData(route));
+  dispatch(closeModal(route));
 };
 
 /**
@@ -241,6 +257,11 @@ export const refreshDataWithFinalisedToggle = route => ({
 export const filterDataWithFinalisedToggle = (searchTerm, route) => ({
   type: ACTIONS.FILTER_DATA_WITH_FINALISED_TOGGLE,
   payload: { searchTerm, route },
+});
+
+export const applyMasterLists = (selectedMasterLists, route) => ({
+  type: ACTIONS.APPLY_MASTER_LISTS,
+  payload: { selectedMasterLists, route },
 });
 
 export const filterDataWithOverStockToggle = (searchTerm, route) => ({

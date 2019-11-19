@@ -14,6 +14,7 @@ import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 
 import ModalContainer from './ModalContainer';
 import { AutocompleteSelector } from '../AutocompleteSelector';
+import { MultiSelectList } from '../MultiSelectList';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
 import { ToggleSelector } from '../ToggleSelector';
@@ -168,6 +169,17 @@ const DataTablePageModalComponent = ({
           />
         );
       }
+      case MODAL_KEYS.SELECT_MASTER_LISTS:
+        return (
+          <MultiSelectList
+            options={currentValue}
+            isOpen={isOpen}
+            placeholderText={modalStrings.start_typing_to_select_master_list}
+            queryString="name BEGINSWITH[c] $0"
+            sortByString="name"
+            onConfirmSelections={onSelect}
+          />
+        );
       default:
         return null;
     }

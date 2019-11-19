@@ -3,19 +3,19 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-// eslint-disable-next-line max-classes-per-file
 import React from 'react';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-ui-components';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
 import { complement } from 'set-manipulator';
-import { APP_FONT_FAMILY } from '../globalStyles';
-import { generalStrings } from '../localization';
-import { withOnePress } from './withOnePress';
+import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
+import { generalStrings, buttonStrings } from '../localization';
+import { OnePressButton } from '.';
+import { ResultRow } from './ResultRow';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
- * the dropdown options to be selected. Will gracefully handle null values
+ * the dropdown options to be selected. Will gravefully handle null values
  * by using an empty array of searchable objects.
  * @prop  {array}     options         The options to select from
  * @prop  {function}  onSelect        A function taking the selected option as a parameter
@@ -24,11 +24,12 @@ import { withOnePress } from './withOnePress';
  *                                    e.g. 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'
  * @prop  {string}    placeholderText The text to initially display in the search bar
  */
-export class AutocompleteSelector extends React.PureComponent {
+class MultiSelectList extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
       queryText: '',
+      selected: [],
     };
   }
 
@@ -84,9 +85,55 @@ export class AutocompleteSelector extends React.PureComponent {
     return [];
   };
 
-  render() {
-    const { onSelect, placeholderText, renderLeftText, renderRightText } = this.props;
+  /**
+   * Render single item of the FlatList
+   *
+   * @prop  {object}     data   Single item data.
+   *
+   * @returns {component} ResultRow
+   *
+   */
+  renderItem = data => {
+    const { renderLeftText, renderRightText, showCheckIcon } = this.props;
+    return (
+      <ResultRow
+        data={data}
+        onPress={() => this.onSelect(data)}
+        isSelected={() => this.isSelected(data)}
+        renderLeftText={renderLeftText}
+        renderRightText={renderRightText}
+        showCheckIcon={showCheckIcon}
+      />
+    );
+  };
 
+  /**
+   * On select FlatList item update selected state
+   *
+   * @prop  {object}     data   Single item data.
+   */
+  onSelect = data =>
+    this.setState(prevState =>
+      prevState.selected.indexOf(data.item.id) === -1
+        ? { selected: [...prevState.selected, data.item.id] }
+        : { selected: prevState.selected.filter(i => i !== data.item.id) }
+    );
+
+  /**
+   * Check if the single item is selected or not
+   *
+   * @prop  {object}     data   Single item data.
+   *
+   * @returns {bool}    selected state of the item
+   */
+  isSelected = data => {
+    const { selected } = this.state;
+    return !(selected.indexOf(data.item.id) === -1);
+  };
+
+  render() {
+    const { placeholderText, onConfirmSelections } = this.props;
+    const { selected } = this.state;
     const data = this.getData();
 
     return (
@@ -105,66 +152,61 @@ export class AutocompleteSelector extends React.PureComponent {
           <FlatList
             data={data}
             keyExtractor={item => item.id || item.name}
-            renderItem={({ item }) => (
-              <ResultRowWithOnePress
-                item={item}
-                onPress={onSelect}
-                renderLeftText={renderLeftText}
-                renderRightText={renderRightText}
-              />
-            )}
+            renderItem={item => this.renderItem(item)}
             keyboardShouldPersistTaps="always"
             style={localStyles.resultList}
+            extraData={selected}
           />
         )}
+        <View style={localStyles.contentContainer}>
+          <View style={[localStyles.buttonContainer]}>
+            <OnePressButton
+              style={[globalStyles.button, localStyles.confirmButton]}
+              textStyle={[globalStyles.buttonText, localStyles.confirmButtonText]}
+              text={buttonStrings.done}
+              onPress={() => onConfirmSelections(selected)}
+            />
+          </View>
+        </View>
       </View>
     );
   }
 }
 
-export default AutocompleteSelector;
+export default MultiSelectList;
+export { MultiSelectList };
 
 /* eslint-disable react/forbid-prop-types, react/require-default-props */
-AutocompleteSelector.propTypes = {
+MultiSelectList.propTypes = {
   options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   queryString: PropTypes.string.isRequired,
   queryStringSecondary: PropTypes.string,
   sortByString: PropTypes.string.isRequired,
   placeholderText: PropTypes.string,
-  onSelect: PropTypes.func.isRequired,
   renderLeftText: PropTypes.func,
   renderRightText: PropTypes.func,
   primaryFilterProperty: PropTypes.string,
   secondaryFilterProperty: PropTypes.string,
-};
-AutocompleteSelector.defaultProps = {
-  placeholderText: generalStrings.start_typing_to_search,
+  onConfirmSelections: PropTypes.func,
+  showCheckIcon: PropTypes.bool,
 };
 
-// TODO: move ResultRow to dedicated file
-// eslint-disable-next-line react/no-multi-comp
-class ResultRow extends React.PureComponent {
-  render() {
-    // TODO: add ResultRow.propTypes
-    // eslint-disable-next-line react/prop-types
-    const { item, renderLeftText, renderRightText, onPress } = this.props;
-    return (
-      <TouchableOpacity style={localStyles.resultRow} onPress={() => onPress(item)}>
-        <Text style={[localStyles.text, localStyles.itemText]}>
-          {renderLeftText ? renderLeftText(item) : item.toString()}
-        </Text>
-        <Text style={[localStyles.text, localStyles.itemText]}>
-          {renderRightText ? renderRightText(item) : null}
-        </Text>
-      </TouchableOpacity>
-    );
-  }
-}
-const ResultRowWithOnePress = withOnePress(ResultRow);
+MultiSelectList.defaultProps = {
+  placeholderText: generalStrings.start_typing_to_search,
+  showCheckIcon: true,
+};
 
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    top: 15,
+    right: 0,
+  },
+  contentContainer: {
+    paddingTop: Dimensions.get('window').height / 10, // Start the content 1/10 down the page
   },
   resultList: {
     flex: 1,
@@ -182,12 +224,12 @@ const localStyles = StyleSheet.create({
     fontSize: 20,
     fontFamily: APP_FONT_FAMILY,
   },
-  itemText: {
-    marginHorizontal: 2,
-    marginVertical: 8,
+  confirmButton: {
+    backgroundColor: SUSSOL_ORANGE,
   },
-  resultRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  confirmButtonText: {
+    color: 'white',
+    fontSize: 20,
+    fontFamily: APP_FONT_FAMILY,
   },
 });

@@ -210,23 +210,26 @@ export class Requisition extends Realm.Object {
   /**
    * Add all items from the mobile store master list to this requisition.
    *
-   * @param  {Realm}  database
-   * @param  {Name}   thisStore
+   * @param  {Realm}            database
+   * @param  {Array.<string>}   selected masterlists from multiselect
+   * @param  {Name}             thisStore
    */
-  addItemsFromMasterList(database, thisStore) {
+  addItemsFromMasterList(database, selected, thisStore) {
     if (this.isFinalised) {
       throw new Error('Cannot add items to a finalised requisition');
     }
-
-    thisStore.masterLists.forEach(masterList => {
-      const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
-      itemsToAdd.forEach(masterListItem => {
-        if (!masterListItem.item.crossReferenceItem) {
-          // Do not add cross reference items as causes unwanted duplicates.
-          createRecord(database, 'RequisitionItem', this, masterListItem.item);
-        }
+    // Filter through masterList ids that are on multiselect list
+    thisStore.masterLists
+      .filter(item => selected.indexOf(item.id) !== -1)
+      .forEach(masterList => {
+        const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
+        itemsToAdd.forEach(masterListItem => {
+          if (!masterListItem.item.crossReferenceItem) {
+            // Do not add cross reference items as causes unwanted duplicates.
+            createRecord(database, 'RequisitionItem', this, masterListItem.item);
+          }
+        });
       });
-    });
   }
 
   /**

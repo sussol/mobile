@@ -47,6 +47,25 @@ const SYNC_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 const AUTHENTICATION_INTERVAL = 10 * 60 * 1000; // 10 minutes in milliseconds.
 
 class MSupplyMobileAppContainer extends React.Component {
+  handleBackEvent = debounce(
+    () => {
+      const { dispatch } = this.props;
+      const { confirmFinalise, syncModalIsOpen } = this.state;
+      // If finalise or sync modals are open, close them rather than navigating.
+      if (confirmFinalise || syncModalIsOpen) {
+        this.setState({ confirmFinalise: false, syncModalIsOpen: false });
+        return true;
+      }
+      // If we are on base screen (e.g. home), back button should close app as we can't go back.
+      if (!this.getCanNavigateBack()) BackHandler.exitApp();
+      else dispatch(NavigationActions.back());
+
+      return true;
+    },
+    400,
+    true
+  );
+
   constructor(props, ...otherArgs) {
     super(props, ...otherArgs);
 
@@ -107,25 +126,6 @@ class MSupplyMobileAppContainer extends React.Component {
 
     return route.routeName;
   }
-
-  handleBackEvent = debounce(
-    () => {
-      const { dispatch } = this.props;
-      const { confirmFinalise, syncModalIsOpen } = this.state;
-      // If finalise or sync modals are open, close them rather than navigating.
-      if (confirmFinalise || syncModalIsOpen) {
-        this.setState({ confirmFinalise: false, syncModalIsOpen: false });
-        return true;
-      }
-      // If we are on base screen (e.g. home), back button should close app as we can't go back.
-      if (!this.getCanNavigateBack()) BackHandler.exitApp();
-      else dispatch(NavigationActions.back());
-
-      return true;
-    },
-    400,
-    true
-  );
 
   runWithLoadingIndicator = async functionToRun => {
     UIDatabase.isLoading = true;
