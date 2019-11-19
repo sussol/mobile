@@ -38,7 +38,7 @@ export class FirstUsePage extends React.Component {
 
     try {
       this.setState({ status: 'initialising' });
-      await synchroniser.initialise(serverURL, syncSiteName, syncSitePassword);
+      await synchroniser.initialise(serverURL.toLowerCase(), syncSiteName, syncSitePassword);
       this.setState({ status: 'initialised' });
 
       onInitialised();
