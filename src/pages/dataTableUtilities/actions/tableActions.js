@@ -15,11 +15,11 @@ import { pageObjectSelector } from '../selectors';
  * Sorts the underlying data array by the key provided. Determines
  * direction by the previous direction.
  *
- * @param {String} sortBy Key to sortBy - see utilities/sortData.js
+ * @param {String} sortKey Key to sortKey - see utilities/sortData.js
  */
-export const sortData = (sortBy, route) => ({
+export const sortData = (sortKey, route) => ({
   type: ACTIONS.SORT_DATA,
-  payload: { sortBy, route },
+  payload: { sortKey, route },
 });
 
 /**

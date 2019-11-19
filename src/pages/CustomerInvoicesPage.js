@@ -28,7 +28,7 @@ export const CustomerInvoices = ({
   dispatch,
   data,
   dataState,
-  sortBy,
+  sortKey,
   isAscending,
   modalKey,
   hasSelection,
@@ -111,10 +111,10 @@ export const CustomerInvoices = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -189,7 +189,7 @@ CustomerInvoices.propTypes = {
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,

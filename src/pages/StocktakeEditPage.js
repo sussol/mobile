@@ -43,7 +43,7 @@ export const StocktakeEdit = ({
   data,
   dataState,
   searchTerm,
-  sortBy,
+  sortKey,
   isAscending,
   modalKey,
   modalValue,
@@ -145,10 +145,10 @@ export const StocktakeEdit = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -232,7 +232,7 @@ StocktakeEdit.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   searchTerm: PropTypes.string.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   modalValue: PropTypes.any,

@@ -9,20 +9,20 @@ import { sortDataBy } from '../../../utilities';
  * Sorts the current set of data by the provided
  * key and direction in action.
  *
- * sortBy: String key of the field of the objects to sort by, see sortDataBy.js
+ * sortKey: String key of the field of the objects to sort by, see sortDataBy.js
  */
 export const sortData = (state, action) => {
-  const { data, isAscending, sortBy } = state;
+  const { data, isAscending, sortKey } = state;
   const { payload } = action;
-  const { sortBy: newSortBy } = payload;
+  const { sortKey: newSortKey } = payload;
 
-  // If the new sortBy is the same as the sortBy in state, then invert isAscending
-  // that was set by the last sortBy action. Otherwise, default to true.
-  const newIsAscending = newSortBy === sortBy ? !isAscending : true;
+  // If the new sortKey is the same as the sortKey in state, then invert isAscending
+  // that was set by the last sortKey action. Otherwise, default to true.
+  const newIsAscending = newSortKey === sortKey ? !isAscending : true;
 
-  const newData = sortDataBy(data, newSortBy, newIsAscending);
+  const newData = sortDataBy(data, newSortKey, newIsAscending);
 
-  return { ...state, data: newData, sortBy: newSortBy, isAscending: newIsAscending };
+  return { ...state, data: newData, sortKey: newSortKey, isAscending: newIsAscending };
 };
 
 /**
@@ -30,7 +30,7 @@ export const sortData = (state, action) => {
  * is held stable.
  */
 export const filterData = (state, action) => {
-  const { backingData, filterDataKeys, sortBy, isAscending } = state;
+  const { backingData, filterDataKeys, sortKey, isAscending } = state;
   const { payload } = action;
   const { searchTerm } = payload;
 
@@ -40,7 +40,7 @@ export const filterData = (state, action) => {
 
   return {
     ...state,
-    data: sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData,
+    data: sortKey ? sortDataBy(filteredData, sortKey, isAscending) : filteredData,
     searchTerm,
   };
 };
@@ -51,7 +51,7 @@ export const filterData = (state, action) => {
  *
  */
 export const filterDataWithFinalisedToggle = (state, action) => {
-  const { backingData, filterDataKeys, sortBy, isAscending, showFinalised } = state;
+  const { backingData, filterDataKeys, sortKey, isAscending, showFinalised } = state;
   const { payload } = action;
   const { searchTerm } = payload;
 
@@ -64,8 +64,8 @@ export const filterDataWithFinalisedToggle = (state, action) => {
   const queryFilteredData = statusFilteredData.filtered(queryString, searchTerm.trim()).slice();
 
   // Sort the data by the current sorting parameters.
-  const sortedData = sortBy
-    ? sortDataBy(queryFilteredData, sortBy, isAscending)
+  const sortedData = sortKey
+    ? sortDataBy(queryFilteredData, sortKey, isAscending)
     : statusFilteredData;
 
   return { ...state, data: sortedData, searchTerm };
@@ -77,7 +77,7 @@ export const filterDataWithFinalisedToggle = (state, action) => {
  *
  */
 export const filterDataWithOverStockToggle = (state, action) => {
-  const { backingData, filterDataKeys, sortBy, isAscending, showAll } = state;
+  const { backingData, filterDataKeys, sortKey, isAscending, showAll } = state;
   const { payload } = action;
   const { searchTerm } = payload;
 
@@ -91,8 +91,8 @@ export const filterDataWithOverStockToggle = (state, action) => {
     : queryFilteredData.slice();
 
   // Sort the data by the current sorting parameters.
-  const sortedData = sortBy
-    ? sortDataBy(stockFilteredData, sortBy, isAscending)
+  const sortedData = sortKey
+    ? sortDataBy(stockFilteredData, sortKey, isAscending)
     : stockFilteredData;
 
   return { ...state, data: sortedData, searchTerm };
@@ -104,10 +104,10 @@ export const filterDataWithOverStockToggle = (state, action) => {
  * the state of a page from outside the reducer.
  */
 export const refreshData = state => {
-  const { backingData, sortBy, isAscending } = state;
+  const { backingData, sortKey, isAscending } = state;
 
   const backingDataArray = backingData.slice();
-  const newData = sortBy ? sortDataBy(backingDataArray, sortBy, isAscending) : backingDataArray;
+  const newData = sortKey ? sortDataBy(backingDataArray, sortKey, isAscending) : backingDataArray;
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
 };
@@ -117,12 +117,12 @@ export const refreshData = state => {
  * which will display either finalised records, or unfinalised.
  */
 export const refreshDataWithFinalisedToggle = state => {
-  const { backingData, sortBy, isAscending, showFinalised } = state;
+  const { backingData, sortKey, isAscending, showFinalised } = state;
 
   const finalisedCondition = showFinalised ? '==' : '!=';
   const filteredData = backingData.filtered(`status ${finalisedCondition} $0`, 'finalised');
 
-  const newData = sortBy ? sortDataBy(filteredData.slice(), sortBy, isAscending) : filteredData;
+  const newData = sortKey ? sortDataBy(filteredData.slice(), sortKey, isAscending) : filteredData;
 
   return { ...state, data: newData, searchTerm: '', showAll: true };
 };
@@ -132,14 +132,14 @@ export const refreshDataWithFinalisedToggle = state => {
  * status is finalised.
  */
 export const toggleShowFinalised = state => {
-  const { backingData, sortBy, isAscending, showFinalised } = state;
+  const { backingData, sortKey, isAscending, showFinalised } = state;
 
   const newShowFinalisedState = !showFinalised;
   const finalisedCondition = newShowFinalisedState ? '==' : '!=';
 
   const filteredData = backingData.filtered(`status ${finalisedCondition} $0`, 'finalised').slice();
 
-  const sortedData = sortBy ? sortDataBy(filteredData, sortBy, isAscending) : filteredData;
+  const sortedData = sortKey ? sortDataBy(filteredData, sortKey, isAscending) : filteredData;
 
   return { ...state, data: sortedData, showFinalised: newShowFinalisedState, searchTerm: '' };
 };
@@ -181,7 +181,7 @@ export const addRecord = state => {
     ...state,
     data: backingData.sorted('id', true).slice(),
     modalKey: '',
-    sortBy: '',
+    sortKey: '',
     searchTerm: '',
   };
 };

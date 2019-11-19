@@ -58,7 +58,7 @@ const DataTablePageModalComponent = ({
           <AutocompleteSelector
             options={UIDatabase.objects('Item')}
             queryString="name CONTAINS[c] $0 OR code BEGINSWITH[c] $0"
-            sortByString="name"
+            sortKeyString="name"
             onSelect={onSelect}
             renderLeftText={({ code, name }) => `${code} - ${name}`}
             renderRightText={({ totalQuantity }) => `${totalQuantity}`}
@@ -92,7 +92,7 @@ const DataTablePageModalComponent = ({
             isOpen={isOpen}
             placeholderText={modalStrings.start_typing_to_select_customer}
             queryString="name BEGINSWITH[c] $0"
-            sortByString="name"
+            sortKeyString="name"
             onSelect={onSelect}
           />
         );
@@ -108,7 +108,7 @@ const DataTablePageModalComponent = ({
             isOpen={isOpen}
             placeholderText={modalStrings.start_typing_to_select_supplier}
             queryString="name BEGINSWITH[c] $0"
-            sortByString="name"
+            sortKeyString="name"
             onSelect={onSelect}
           />
         );

@@ -38,7 +38,7 @@ export const CustomerRequisitions = ({
   dispatch,
   navigation,
   data,
-  sortBy,
+  sortKey,
   isAscending,
   searchTerm,
   columns,
@@ -78,10 +78,10 @@ export const CustomerRequisitions = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const PastCurrentToggleBar = useCallback(
@@ -143,7 +143,7 @@ CustomerRequisitions.propTypes = {
   dispatch: PropTypes.func.isRequired,
   navigation: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,
