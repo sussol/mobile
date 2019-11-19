@@ -115,7 +115,7 @@ export class FirstUsePage extends React.Component {
               editable={status !== 'initialising'}
               returnKeyType="next"
               selectTextOnFocus
-              autoCorrect={false}
+              autoCapitalize={none}
               onChangeText={text => this.setState({ serverURL: text, status: 'uninitialised' })}
               onSubmitEditing={() => {
                 if (this.siteNameInputRef) this.siteNameInputRef.focus();
