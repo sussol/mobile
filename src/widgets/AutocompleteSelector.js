@@ -36,17 +36,17 @@ export class AutocompleteSelector extends React.PureComponent {
    * by two query strings. And concats A to B - A.
    */
   filterResultData = options => {
-    const { sortByString, queryString, queryStringSecondary } = this.props;
+    const { sortKeyString, queryString, queryStringSecondary } = this.props;
     const { queryText } = this.state;
 
     let data = options
       .filtered(queryString, queryText)
-      .sorted(sortByString)
+      .sorted(sortKeyString)
       .slice();
 
     if (queryStringSecondary) {
       data = data.concat(
-        complement(options.filtered(queryStringSecondary, queryText).sorted(sortByString), data)
+        complement(options.filtered(queryStringSecondary, queryText).sorted(sortKeyString), data)
       );
     }
 
@@ -128,7 +128,7 @@ AutocompleteSelector.propTypes = {
   options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   queryString: PropTypes.string.isRequired,
   queryStringSecondary: PropTypes.string,
-  sortByString: PropTypes.string.isRequired,
+  sortKeyString: PropTypes.string.isRequired,
   placeholderText: PropTypes.string,
   onSelect: PropTypes.func.isRequired,
   renderLeftText: PropTypes.func,
