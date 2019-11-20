@@ -37,7 +37,7 @@ See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more detail
 
 1. Connect a physical device or start an Android emulator. Check the device is running with `adb devices` (if the `adb` daemon is not running, start it with `adb start-server`).
 2. Run `react-native run-android` (`react-native run-android && react-native log-android` for logging)
-3. Done!
+3. Done! For instructions on connecting to mSupply, see the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#setting-up-msupply-server).
 
 ### Building from source
 
@@ -46,10 +46,6 @@ See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more detail
 - Build the mSupply Mobile APK: `yarn install && ./android/gradlew assembleRelease`.
 - The mSupply Mobile APK file can be found at `android/app/build/outputs/apk/app-release.apk`.
 - For more information, see the official React Native documentation for generating signed APKs.
-
-## Connecting to mSupply
-
-See the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#setting-up-msupply-server).
 
 ## Contributors
 
