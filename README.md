@@ -1,55 +1,93 @@
 # mSupply Mobile
 
-A user friendly, offline-first mobile app for use with [mSupply](http://msupply.org.nz). Provides electronic inventory control for medical stock. Designed and built by [Sustainable Solutions](http://sussol.net) for use in developing countries, the app is now open source and free to use. Hello
+Cross-platform mobile application designed and developed by [Sustainable Solutions](http://sussol.net). Integrates with [mSupply](https://www.msupply.org.nz/) to provide accessible and user-friendly offline-first electronic inventory control for medical stock. Open-source and free-to-use, mSupply Mobile is designed and built with a specific focus on the needs of developing countries.
 
-### Features
+## Features
 
-- Receiving and issuing goods with automatic inventory adjustments
-- Stocktaking
-- Forecasts of required stock based on usage
-- Ordering stock from suppliers
-- Viewing stock on hand
-- Syncs with an mSupply server when internet is available
+- Track stock movements and view stock on hand.
+- Receive and issue goods with automatic inventory adjustments.
+- Order stock from suppliers.
+- Forecast required stock based on usage.
+- Sync data with a local or remote mSupply server when internet is available.
 
-See http://msupply.org.nz/mobile for a detailed description of these and other features
+See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more details of these and many other features.
 
-### Building from Source
+## Getting started
 
-See the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#building-from-source)
+### Prerequisites
 
-### Use with an mSupply Server
+#### Android SDK
 
-Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#setting-up-msupply-server)
+- Install Android Studio and SDK tools: https://developer.android.com/studio.
+- Install SDKMAN for managing Java versions: https://sdkman.io/.
 
-### Set Up for Development
+#### React Native
 
-Instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup)
+- Install nvm for managing Node versions: https://github.com/nvm-sh/nvm.
+- Install yarn for managing Node packages: https://yarnpkg.com/lang/en/.
+- Install React Native: https://facebook.github.io/react-native/docs/getting-started. Follow the steps listed under "Building Projects with Native Code" and set Target OS as "Android".
 
-### Contribute
+### Installing
 
-As an open source software project, we welcome contributions from external developers.
+- Clone the repo: `git clone https://github.com/openmsupply/mobile.git`.
+- Setup local node environment: `nvm install . && nvm use .`.
+- Install/update app dependencies: `yarn install`.
 
-1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own
-2. Comment on the issue to indicate you're going to work on it, and follow up with progress and/or questions
-3. Read the [documentation](https://github.com/sussol/mobile/wiki/Code-Design) - at least the coding conventions as well as any areas you are working around
-4. Fork the repository
-5. Set up your development environment using [our instructions](https://github.com/sussol/mobile/wiki/Setup)
-6. Code
-7. Make a pull request ensuring you have
+### Running mSupply mobile
 
-- Made it to the appropriate branch
-- Adhered to our conventions/style
-- Respected module boundaries
-- Tested that your additions work and haven't caused regressions
+1. Connect a physical device or start an Android emulator. Check the device is running with `adb devices` (if the `adb` daemon is not running, start it with `adb start-server`).
+2. Run `react-native run-android` (`react-native run-android && react-native log-android` for logging)
+3. Done!
 
-8. We'll review the PR and merge it if it adds value for a general use case (not just one user)
-9. Sit back and enjoy the warm glow :-)
+### Building from source
 
-#### Branch Structure
+See the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#building-from-source).
 
-We are using the [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html) approach to branch/feature management.
+## Connecting to mSupply
+
+See the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#setting-up-msupply-server).
+
+## Contributors
+
+We welcome contributions from external developers!
+
+#### Prequisites
+
+Before getting started, see the development environment instructions on the [setup page](https://github.com/openmsupply/mobile/wiki/Setup).
+
+#### How to contribute
+
+1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own. If suggesting a feature, make sure to provide a general use case (functionality useful to only one or a few users is unlikely to be approved).
+2. Comment on the issue to indicate you are interested in working on it.
+3. Be patient :). A Sussoler will respond with any additional information or questions, and assign you when the issue is ready to be worked on.
+4. Fork the repository.
+5. Code!
+6. Make a pull request to the appropriate branch.
+7. A Sussoler will review your PR and provide comments or request changes.
+8. Sit back and enjoy the warm glow :-).
+
+#### Git workflow
+
+mSupply Mobile uses the [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html) branching model.
+
 **Branches:**
 
-- master: This branch represents the current release. Generally don't branch off it unless for a hotfix. Release branches and hotfixs are PRed here.
-- development: Branch off/PR into this branch if making new features. This is the dirty edge of the app.
-- release branches: e.g. "2.1.0" release branches will be made from development branch. This effectively locks down the feature set of the release. When thoroughly tested and bug fixed, this will be merged into master with tag of the release. Release release candidates should be made from this branch (e.g. 2.1.0-rc10)
+- master: The latest stable release. PRs into this branch are reserved for release branches and hotfixes. Hotfixes are restricted to high priority bugs which must be addressed immediately.
+- development: The "bleeding edge". Branch off and PR into this branch if making new features.
+- release branches: Release branches, e.g. "2.1.0". Release branches represent "alpha" candidates for a particular version, and enable developers to "lock down" a release while continuing development work on new functionality. Release branches should always be branched from the development branch, and are considered "dirty" until they are thoroughly tested and bug fixed, at which point they are tagged and merged into master. All release candidates should be made from this branch (e.g. 2.1.0-rc10).
+
+#### Useful stuff
+
+mSupply Mobile uses [Realm](https://realm.io/) for local storage of mSupply data. Realm Browser is a useful debugging tool for viewing and editing Realm databases.
+
+- Download Realm Browser [here](https://realm.io/products/realm-studio/#download-studio).
+- Run `chmod +x ./dev_scripts/get_db.sh && ./dev_scripts/get_db.sh`. A copy of the default.realm database should now be placed in the ./data directory.
+- Open `default.realm` in Realm Browser.
+
+#### Tips and advice
+
+- Before making any changes to the code, make sure to familiarise yourself with our [coding conventions and design standards](https://github.com/sussol/mobile/wiki/Code-Design).
+- Before opening your pull request, go through the following checklist:
+  - do all you changes adhered to the Sussol code conventions?
+  - have you tested all changes you have made for bugs and regressions?
+  - are your changes consistent with the mSupply Mobile mission statement (basic functionality with a focus on user-friendly and consistent design)?
