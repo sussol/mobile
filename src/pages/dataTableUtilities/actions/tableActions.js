@@ -121,7 +121,6 @@ export const addMasterListItems = (selected, route) => (dispatch, getState) => {
       objectType = '';
   }
 
-  console.log(`objectType ${objectType}`);
   if (objectType) {
     UIDatabase.write(() => {
       pageObject.addItemsFromMasterList(UIDatabase, selected, thisStore);
