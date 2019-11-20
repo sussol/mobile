@@ -41,7 +41,11 @@ See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more detail
 
 ### Building from source
 
-See the instructions on the [setup page](https://github.com/sussol/mobile/wiki/Setup#building-from-source).
+- To build mSupply Mobile from source, you will need a signing key from a Sussol insider.
+- Copy or move the release key to the `./android/app` directory, e.g. `mv my-release-key.keystore ./android/app`.
+- Build the mSupply Mobile APK: `yarn install && ./android/gradlew assembleRelease`.
+- The mSupply Mobile APK file can be found at `android/app/build/outputs/apk/app-release.apk`.
+- For more information, see the official React Native documentation for generating signed APKs.
 
 ## Connecting to mSupply
 
