@@ -1,6 +1,6 @@
 # mSupply Mobile
 
-Cross-platform mobile application designed and developed by [Sustainable Solutions](http://sussol.net). Integrates with [mSupply](https://www.msupply.org.nz/) to provide accessible and user-friendly offline-first electronic inventory control for medical stock. Open-source and free-to-use, mSupply Mobile is designed and built with a specific focus on the needs of developing countries.
+Cross-platform, offline-first mobile application designed and developed by [Sustainable Solutions](http://sussol.net). Integrates with [mSupply](https://www.msupply.org.nz/) to provide accessible and user-friendly electronic inventory control for medical stock. Open-source and free-to-use, mSupply Mobile is designed and built with a specific focus on the needs of developing countries.
 
 ## Features
 
