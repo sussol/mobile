@@ -55,11 +55,11 @@ See the instructions on the [setup page](https://github.com/sussol/mobile/wiki/S
 
 We welcome contributions from external developers!
 
-#### Prequisites
+### Prequisites
 
 Before getting started, see the development environment instructions on the [setup page](https://github.com/openmsupply/mobile/wiki/Setup).
 
-#### How to contribute
+### How to contribute
 
 1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own. If suggesting a feature, make sure to provide a general use case (functionality useful to only one or a few users is unlikely to be approved).
 2. Comment on the issue to indicate you are interested in working on it.
@@ -70,17 +70,17 @@ Before getting started, see the development environment instructions on the [set
 7. A Sussoler will review your PR and provide comments or request changes.
 8. Sit back and enjoy the warm glow :-).
 
-#### Git workflow
+### Git workflow
 
 mSupply Mobile uses the [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html) branching model.
 
-**Branches:**
+#### Branches
 
 - master: The latest stable release. PRs into this branch are reserved for release branches and hotfixes. Hotfixes are restricted to high priority bugs which must be addressed immediately.
 - development: The "bleeding edge". Branch off and PR into this branch if making new features.
 - release branches: Release branches, e.g. "2.1.0". Release branches represent "alpha" candidates for a particular version, and enable developers to "lock down" a release while continuing development work on new functionality. Release branches should always be branched from the development branch, and are considered "dirty" until they are thoroughly tested and bug fixed, at which point they are tagged and merged into master. All release candidates should be made from this branch (e.g. 2.1.0-rc10).
 
-#### Useful stuff
+### Useful stuff
 
 mSupply Mobile uses [Realm](https://realm.io/) for local storage of mSupply data. Realm Browser is a useful debugging tool for viewing and editing Realm databases.
 
@@ -88,7 +88,7 @@ mSupply Mobile uses [Realm](https://realm.io/) for local storage of mSupply data
 - Run `chmod +x ./dev_scripts/get_db.sh && ./dev_scripts/get_db.sh`. A copy of the default.realm database should now be placed in the ./data directory.
 - Open `default.realm` in Realm Browser.
 
-#### Tips and advice
+### Tips and advice
 
 - Before making any changes to the code, make sure to familiarise yourself with our [coding conventions and design standards](https://github.com/sussol/mobile/wiki/Code-Design).
 - Before opening your pull request, go through the following checklist:
