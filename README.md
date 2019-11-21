@@ -30,7 +30,7 @@ See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more detail
 ### Installing
 
 - Clone the repo: `git clone https://github.com/openmsupply/mobile.git`.
-- Setup local node environment: `nvm install . && nvm use .`.
+- Setup local node environment as specified in `.nvmrc`: `nvm install && nvm use`.
 - Install/update app dependencies: `yarn install`.
 
 ### Running mSupply mobile
