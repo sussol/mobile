@@ -9,52 +9,53 @@ import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { APP_FONT_FAMILY, SUSSOL_ORANGE, BACKGROUND_COLOR, GREY } from '../globalStyles';
 
-const ResultRow = props => {
-  const { data, renderLeftText, renderRightText, onPress, isSelected, showCheckIcon } = props;
-  const selected = isSelected(data);
+const ResultRow = React.memo(
+  ({ data, renderLeftText, renderRightText, onPress, isSelected, showCheckIcon }) => {
+    const selected = isSelected(data);
 
-  return (
-    <TouchableOpacity
-      style={[localStyles.resultRow, selected && localStyles.selected]}
-      onPress={() => onPress(data)}
-    >
-      {showCheckIcon && selected ? (
-        <Icon name="md-checkbox" style={localStyles.checkIcon} />
-      ) : (
-        <Icon name="md-square-outline" style={[localStyles.checkIcon, { color: GREY }]} />
-      )}
-      <Text
-        style={[
-          localStyles.text,
-          localStyles.itemText,
-          selected && localStyles.selectedText,
-          {
-            flex: 5,
-            justifyContent: 'flex-start',
-            alignItems: 'stretch',
-          },
-        ]}
+    return (
+      <TouchableOpacity
+        style={[localStyles.resultRow, selected && localStyles.selected]}
+        onPress={() => onPress(data)}
       >
-        {renderLeftText ? renderLeftText(data.item) : data.item.toString()}
-      </Text>
-      {renderRightText && (
+        {showCheckIcon && selected ? (
+          <Icon name="md-checkbox" style={localStyles.checkIcon} />
+        ) : (
+          <Icon name="md-square-outline" style={[localStyles.checkIcon, { color: GREY }]} />
+        )}
         <Text
           style={[
             localStyles.text,
             localStyles.itemText,
             selected && localStyles.selectedText,
             {
-              justifyContent: 'flex-end',
-              textAlign: 'right',
+              flex: 5,
+              justifyContent: 'flex-start',
+              alignItems: 'stretch',
             },
           ]}
         >
-          {renderRightText(data.item)}
+          {renderLeftText ? renderLeftText(data.item) : data.item.toString()}
         </Text>
-      )}
-    </TouchableOpacity>
-  );
-};
+        {renderRightText && (
+          <Text
+            style={[
+              localStyles.text,
+              localStyles.itemText,
+              selected && localStyles.selectedText,
+              {
+                justifyContent: 'flex-end',
+                textAlign: 'right',
+              },
+            ]}
+          >
+            {renderRightText(data.item)}
+          </Text>
+        )}
+      </TouchableOpacity>
+    );
+  }
+);
 
 ResultRow.propTypes = {
   data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
@@ -107,4 +108,4 @@ const localStyles = StyleSheet.create({
   },
 });
 
-export { ResultRow };
+export default ResultRow;

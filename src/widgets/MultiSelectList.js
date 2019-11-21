@@ -11,7 +11,7 @@ import { complement } from 'set-manipulator';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
 import { OnePressButton } from '.';
-import { ResultRow } from './ResultRow';
+import ResultRow from './ResultRow';
 
 /**
  * A search bar that autocompletes from the options passed in, and allows any of
