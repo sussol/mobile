@@ -44,11 +44,11 @@ We welcome contributions from external developers!
 
 ### How to contribute
 
-1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own. If suggesting a feature, make sure to provide a general use case (functionality useful to only one or a few users is unlikely to be approved).
+1. Find a bug or feature you'd like to work on from the [issues page](https://github.com/sussol/mobile/issues), or submit your own. If suggesting a feature, make sure to provide a compelling use case (functionality useful to only one or a few users is unlikely to be approved).
 2. Comment on the issue to indicate you are interested in working on it.
 3. Be patient :). A Sussoler will respond with any additional information or questions, and assign you when the issue is ready to be worked on.
-4. Fork the repository.
+4. Fork your own copy of the repository.
 5. Code!
-6. Make a pull request to the appropriate branch.
+6. Open a pull request to the appropriate branch.
 7. A Sussoler will review your PR and provide comments or request changes.
-8. Sit back and enjoy the warm glow :-).
+8. Sit back and enjoy the warm glow of success :).
