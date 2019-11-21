@@ -178,6 +178,7 @@ const DataTablePageModalComponent = ({
             queryString="name BEGINSWITH[c] $0"
             sortByString="name"
             onConfirmSelections={onSelect}
+            emptyMessage={modalStrings.no_masterlist_available}
           />
         );
       default:

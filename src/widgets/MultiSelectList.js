@@ -6,7 +6,7 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-ui-components';
-import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
+import { Dimensions, FlatList, StyleSheet, View, Text } from 'react-native';
 import { complement } from 'set-manipulator';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
@@ -37,6 +37,7 @@ const MultiSelectList = ({
   showCheckIcon,
   placeholderText,
   onConfirmSelections,
+  emptyMessage,
 }) => {
   const [queryText, setQueryText] = useState('');
   const [selected, setSelected] = useState([]);
@@ -97,8 +98,8 @@ const MultiSelectList = ({
   const renderItem = useCallback(data => (
     <ResultRow
       data={data}
-      onPress={() => onSelect(data)}
-      isSelected={() => isSelected(data)}
+      onPress={onSelect}
+      isSelected={isSelected}
       renderLeftText={renderLeftText}
       renderRightText={renderRightText}
       showCheckIcon={showCheckIcon}
@@ -110,12 +111,19 @@ const MultiSelectList = ({
    *
    * @prop  {object}     data   Single item data.
    */
-  const onSelect = data =>
+  const onSelect = useCallback(data =>
     setSelected(prevState =>
       prevState.indexOf(data.item.id) === -1
         ? [...prevState, data.item.id]
         : prevState.filter(i => i !== data.item.id)
-    );
+    )
+  );
+
+  const EmptyComponent = useCallback(({ title }) => (
+    <View style={localStyles.emptyContainer}>
+      <Text style={localStyles.emptyText}>{title}</Text>
+    </View>
+  ));
 
   /**
    * Check if the single item is selected or not
@@ -124,7 +132,7 @@ const MultiSelectList = ({
    *
    * @returns {bool}    selected state of the item
    */
-  const isSelected = data => !(selected.indexOf(data.item.id) === -1);
+  const isSelected = useCallback(data => !(selected.indexOf(data.item.id) === -1));
 
   const data = getData();
 
@@ -135,21 +143,20 @@ const MultiSelectList = ({
         autoCorrect={false}
         autoFocus
         color="white"
-        onChange={text => setQueryText(text)}
+        onChange={setQueryText}
         placeholder={placeholderText}
         placeholderTextColor="white"
         style={[localStyles.text, localStyles.searchBar]}
       />
-      {data.length > 0 && (
-        <FlatList
-          data={data}
-          keyExtractor={item => item.id || item.name}
-          renderItem={renderItem}
-          keyboardShouldPersistTaps="always"
-          style={localStyles.resultList}
-          extraData={selected}
-        />
-      )}
+      <FlatList
+        data={data}
+        keyExtractor={item => item.id || item.name}
+        renderItem={renderItem}
+        keyboardShouldPersistTaps="always"
+        style={localStyles.resultList}
+        extraData={selected}
+        ListEmptyComponent={<EmptyComponent title={emptyMessage} />}
+      />
       <View style={localStyles.contentContainer}>
         <View style={[localStyles.buttonContainer]}>
           <OnePressButton
@@ -178,6 +185,7 @@ MultiSelectList.propTypes = {
   renderRightText: PropTypes.func,
   primaryFilterProperty: PropTypes.string,
   secondaryFilterProperty: PropTypes.string,
+  emptyMessage: PropTypes.string,
   onConfirmSelections: PropTypes.func,
   showCheckIcon: PropTypes.bool,
 };
@@ -190,6 +198,15 @@ MultiSelectList.defaultProps = {
 const localStyles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  emptyContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  emptyText: {
+    fontSize: 20,
+    fontFamily: APP_FONT_FAMILY,
+    padding: 15,
   },
   buttonContainer: {
     position: 'absolute',
