@@ -158,7 +158,7 @@ const MultiSelectList = ({
         ListEmptyComponent={<EmptyComponent title={emptyMessage} />}
       />
       <View style={localStyles.contentContainer}>
-        <View style={[localStyles.buttonContainer]}>
+        <View style={localStyles.buttonContainer}>
           <OnePressButton
             style={[globalStyles.button, localStyles.confirmButton]}
             textStyle={[globalStyles.buttonText, localStyles.confirmButtonText]}
