@@ -65,19 +65,3 @@ Before getting started, see the development environment instructions on the [set
 6. Make a pull request to the appropriate branch.
 7. A Sussoler will review your PR and provide comments or request changes.
 8. Sit back and enjoy the warm glow :-).
-
-### Useful stuff
-
-mSupply Mobile uses [Realm](https://realm.io/) for local storage of mSupply data. Realm Browser is a useful debugging tool for viewing and editing Realm databases.
-
-- Download Realm Browser [here](https://realm.io/products/realm-studio/#download-studio).
-- Run `chmod +x ./dev_scripts/get_db.sh && ./dev_scripts/get_db.sh`. A copy of the default.realm database should now be placed in the ./data directory.
-- Open `default.realm` in Realm Browser.
-
-### Tips and advice
-
-- Before making any changes to the code, make sure to familiarise yourself with our [coding conventions and design standards](https://github.com/sussol/mobile/wiki/Code-Design).
-- Before opening your pull request, go through the following checklist:
-  - do all you changes adhered to the Sussol code conventions?
-  - have you tested all changes you have made for bugs and regressions?
-  - are your changes consistent with the mSupply Mobile mission statement (basic functionality with a focus on user-friendly and consistent design)?
