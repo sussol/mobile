@@ -134,6 +134,8 @@ const MultiSelectList = ({
    */
   const isSelected = useCallback(data => !(selected.indexOf(data.item.id) === -1));
 
+  const onDoneSelected = useCallback(() => onConfirmSelections(selected));
+
   const data = getData();
 
   return (
@@ -163,7 +165,7 @@ const MultiSelectList = ({
             style={[globalStyles.button, localStyles.confirmButton]}
             textStyle={[globalStyles.buttonText, localStyles.confirmButtonText]}
             text={buttonStrings.done}
-            onPress={() => onConfirmSelections(selected)}
+            onPress={onDoneSelected}
           />
         </View>
       </View>

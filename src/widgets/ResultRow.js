@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -12,11 +12,12 @@ import { APP_FONT_FAMILY, SUSSOL_ORANGE, BACKGROUND_COLOR, GREY } from '../globa
 const ResultRow = React.memo(
   ({ data, renderLeftText, renderRightText, onPress, isSelected, showCheckIcon }) => {
     const selected = isSelected(data);
+    const rowPressed = useCallback(() => onPress(data));
 
     return (
       <TouchableOpacity
         style={[localStyles.resultRow, selected && localStyles.selected]}
-        onPress={() => onPress(data)}
+        onPress={rowPressed}
       >
         {showCheckIcon && selected ? (
           <Icon name="md-checkbox" style={localStyles.checkIcon} />
