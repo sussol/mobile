@@ -101,8 +101,7 @@ export const toggleStockOut = route => ({
  *
  * @param {String} objectType Type of object to add items for.
  */
-export const addMasterListItems = (selected, route) => (dispatch, getState) => {
-  let objectType = '';
+export const addMasterListItems = (selected, objectType, route) => (dispatch, getState) => {
   const pageObject = pageObjectSelector(getState());
 
   const thisStore = UIDatabase.objects('Name').filtered(
@@ -110,23 +109,10 @@ export const addMasterListItems = (selected, route) => (dispatch, getState) => {
     Settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
   )[0];
 
-  switch (route) {
-    case 'supplierRequisition':
-      objectType = 'Requisition';
-      break;
-    case 'customerInvoice':
-      objectType = 'Transaction';
-      break;
-    default:
-      objectType = '';
-  }
-
-  if (objectType) {
-    UIDatabase.write(() => {
-      pageObject.addItemsFromMasterList(UIDatabase, selected, thisStore);
-      UIDatabase.save(objectType, pageObject);
-    });
-  }
+  UIDatabase.write(() => {
+    pageObject.addItemsFromMasterList(UIDatabase, selected, thisStore);
+    UIDatabase.save(objectType, pageObject);
+  });
 
   dispatch(refreshData(route));
   dispatch(closeModal(route));

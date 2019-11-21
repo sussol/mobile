@@ -61,7 +61,8 @@ export const getPageDispatchers = (dispatch, props, dataType, route) => {
     // Master list
     onAddMasterList: () =>
       dispatch(BasePageActions.openModal(MODAL_KEYS.SELECT_MASTER_LISTS, route)),
-    onApplyMasterLists: selected => dispatch(BasePageActions.addMasterListItems(selected, route)),
+    onApplyMasterLists: selected =>
+      dispatch(BasePageActions.addMasterListItems(selected, pageObject, route)),
 
     // Navigation
     onManageStocktake: name => dispatch(gotoStocktakeManagePage(name, pageObject, route)),
