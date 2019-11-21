@@ -66,16 +66,6 @@ Before getting started, see the development environment instructions on the [set
 7. A Sussoler will review your PR and provide comments or request changes.
 8. Sit back and enjoy the warm glow :-).
 
-### Git workflow
-
-mSupply Mobile uses the [GitFlow](https://datasift.github.io/gitflow/IntroducingGitFlow.html) branching model.
-
-#### Branches
-
-- master: The latest stable release. PRs into this branch are reserved for release branches and hotfixes. Hotfixes are restricted to high priority bugs which must be addressed immediately.
-- development: The "bleeding edge". Branch off and PR into this branch if making new features.
-- release branches: Release branches, e.g. "2.1.0". Release branches represent "alpha" candidates for a particular version, and enable developers to "lock down" a release while continuing development work on new functionality. Release branches should always be branched from the development branch, and are considered "dirty" until they are thoroughly tested and bug fixed, at which point they are tagged and merged into master. All release candidates should be made from this branch (e.g. 2.1.0-rc10).
-
 ### Useful stuff
 
 mSupply Mobile uses [Realm](https://realm.io/) for local storage of mSupply data. Realm Browser is a useful debugging tool for viewing and editing Realm databases.
