@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2016
  */
 
-import React from 'react';
+import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-ui-components';
 import { Dimensions, FlatList, StyleSheet, View } from 'react-native';
@@ -24,23 +24,28 @@ import { ResultRow } from './ResultRow';
  *                                    e.g. 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'
  * @prop  {string}    placeholderText The text to initially display in the search bar
  */
-class MultiSelectList extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      queryText: '',
-      selected: [],
-    };
-  }
+
+const MultiSelectList = ({
+  options,
+  sortByString,
+  queryString,
+  queryStringSecondary,
+  primaryFilterProperty,
+  secondaryFilterProperty,
+  renderLeftText,
+  renderRightText,
+  showCheckIcon,
+  placeholderText,
+  onConfirmSelections,
+}) => {
+  const [queryText, setQueryText] = useState('');
+  const [selected, setSelected] = useState([]);
 
   /**
    * Filters a realm results object. Creates two realm results A, B
    * by two query strings. And concats A to B - A.
    */
-  filterResultData = options => {
-    const { sortByString, queryString, queryStringSecondary } = this.props;
-    const { queryText } = this.state;
-
+  const filterResultData = () => {
     let data = options
       .filtered(queryString, queryText)
       .sorted(sortByString)
@@ -60,10 +65,7 @@ class MultiSelectList extends React.PureComponent {
    * Ignores case. Querying a realm result with filtered is more performant,
    * so have two cases for each.
    */
-  filterArrayData = options => {
-    const { primaryFilterProperty, secondaryFilterProperty } = this.props;
-    const { queryText } = this.state;
-
+  const filterArrayData = () => {
     const regexFilter = RegExp(queryText, 'i');
 
     return options.filter(
@@ -78,10 +80,9 @@ class MultiSelectList extends React.PureComponent {
    * object (has the filtered member) or if it is an array. Otherwise,
    * return an empty list to display.
    */
-  getData = () => {
-    const { options, primaryFilterProperty, queryString } = this.props;
-    if (options && options.filtered && queryString) return this.filterResultData(options);
-    if (Array.isArray(options) && primaryFilterProperty) return this.filterArrayData(options);
+  const getData = () => {
+    if (options && options.filtered && queryString) return filterResultData(options);
+    if (Array.isArray(options) && primaryFilterProperty) return filterArrayData(options);
     return [];
   };
 
@@ -93,30 +94,27 @@ class MultiSelectList extends React.PureComponent {
    * @returns {component} ResultRow
    *
    */
-  renderItem = data => {
-    const { renderLeftText, renderRightText, showCheckIcon } = this.props;
-    return (
-      <ResultRow
-        data={data}
-        onPress={() => this.onSelect(data)}
-        isSelected={() => this.isSelected(data)}
-        renderLeftText={renderLeftText}
-        renderRightText={renderRightText}
-        showCheckIcon={showCheckIcon}
-      />
-    );
-  };
+  const renderItem = useCallback(data => (
+    <ResultRow
+      data={data}
+      onPress={() => onSelect(data)}
+      isSelected={() => isSelected(data)}
+      renderLeftText={renderLeftText}
+      renderRightText={renderRightText}
+      showCheckIcon={showCheckIcon}
+    />
+  ));
 
   /**
    * On select FlatList item update selected state
    *
    * @prop  {object}     data   Single item data.
    */
-  onSelect = data =>
-    this.setState(prevState =>
-      prevState.selected.indexOf(data.item.id) === -1
-        ? { selected: [...prevState.selected, data.item.id] }
-        : { selected: prevState.selected.filter(i => i !== data.item.id) }
+  const onSelect = data =>
+    setSelected(prevState =>
+      prevState.indexOf(data.item.id) === -1
+        ? [...prevState, data.item.id]
+        : prevState.filter(i => i !== data.item.id)
     );
 
   /**
@@ -126,52 +124,45 @@ class MultiSelectList extends React.PureComponent {
    *
    * @returns {bool}    selected state of the item
    */
-  isSelected = data => {
-    const { selected } = this.state;
-    return !(selected.indexOf(data.item.id) === -1);
-  };
+  const isSelected = data => !(selected.indexOf(data.item.id) === -1);
 
-  render() {
-    const { placeholderText, onConfirmSelections } = this.props;
-    const { selected } = this.state;
-    const data = this.getData();
+  const data = getData();
 
-    return (
-      <View style={localStyles.container}>
-        <SearchBar
-          autoCapitalize="none"
-          autoCorrect={false}
-          autoFocus
-          color="white"
-          onChange={text => this.setState({ queryText: text })}
-          placeholder={placeholderText}
-          placeholderTextColor="white"
-          style={[localStyles.text, localStyles.searchBar]}
+  return (
+    <View style={localStyles.container}>
+      <SearchBar
+        autoCapitalize="none"
+        autoCorrect={false}
+        autoFocus
+        color="white"
+        onChange={text => setQueryText(text)}
+        placeholder={placeholderText}
+        placeholderTextColor="white"
+        style={[localStyles.text, localStyles.searchBar]}
+      />
+      {data.length > 0 && (
+        <FlatList
+          data={data}
+          keyExtractor={item => item.id || item.name}
+          renderItem={renderItem}
+          keyboardShouldPersistTaps="always"
+          style={localStyles.resultList}
+          extraData={selected}
         />
-        {data.length > 0 && (
-          <FlatList
-            data={data}
-            keyExtractor={item => item.id || item.name}
-            renderItem={item => this.renderItem(item)}
-            keyboardShouldPersistTaps="always"
-            style={localStyles.resultList}
-            extraData={selected}
+      )}
+      <View style={localStyles.contentContainer}>
+        <View style={[localStyles.buttonContainer]}>
+          <OnePressButton
+            style={[globalStyles.button, localStyles.confirmButton]}
+            textStyle={[globalStyles.buttonText, localStyles.confirmButtonText]}
+            text={buttonStrings.done}
+            onPress={() => onConfirmSelections(selected)}
           />
-        )}
-        <View style={localStyles.contentContainer}>
-          <View style={[localStyles.buttonContainer]}>
-            <OnePressButton
-              style={[globalStyles.button, localStyles.confirmButton]}
-              textStyle={[globalStyles.buttonText, localStyles.confirmButtonText]}
-              text={buttonStrings.done}
-              onPress={() => onConfirmSelections(selected)}
-            />
-          </View>
         </View>
       </View>
-    );
-  }
-}
+    </View>
+  );
+};
 
 export default MultiSelectList;
 export { MultiSelectList };
