@@ -9,6 +9,8 @@ import DeviceInfo from 'react-native-device-info';
 
 import { Client as BugsnagClient } from 'bugsnag-react-native';
 
+import { authStrings } from '../localization/authStrings';
+
 import {
   incrementSyncProgress,
   setSyncProgress,
@@ -244,7 +246,7 @@ export class Synchroniser {
    * @return  {Promise}  Resolves if successful, or bubbles up any errors thrown.
    */
   push = async () => {
-    this.setProgressMessage('Pushing changes to the server');
+    this.setProgressMessage(authStrings.pushing_changes_text);
     this.setProgress(0);
     this.setTotal(this.syncQueue.length);
     while (this.syncQueue.length > 0) {

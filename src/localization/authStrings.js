@@ -15,6 +15,7 @@ export const authStrings = new LocalizedStrings({
     email: 'E-mail Address',
     warning_sync_edit:
       'WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!',
+    pushing_changes_text: 'Pushing changes to the server',
   },
   fr: {
     logging_in: 'Connexion en cours',
