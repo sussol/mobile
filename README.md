@@ -37,9 +37,10 @@ See [http://msupply.org.nz/mobile](http://msupply.org.nz/mobile) for more detail
 
 We welcome contributions from external developers!
 
-### Prequisites
+### Prerequisitions
 
-Before getting started, see the development environment instructions on the [setup page](https://github.com/openmsupply/mobile/wiki/Setup).
+- Follow the [Installation guide](https://github.com/openmsupply/mobile/wiki/Installation) to set up your development environment.
+- Familiarise yourself with our [Git workflow](https://github.com/openmsupply/mobile/wiki/Git-workflow) and [coding conventions](https://github.com/openmsupply/mobile/wiki/Code-conventions).
 
 ### How to contribute
 
