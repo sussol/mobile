@@ -137,7 +137,7 @@ export class Synchroniser {
    */
   initialise = async (serverURL, syncSiteName, syncSitePassword) => {
     this.setIsSyncing(true);
-    this.setProgressMessage(syncStrings.initializing);
+    this.setProgressMessage(syncStrings.initialising);
     this.syncQueue.disable(); // Stop sync queue listening to database changes.
 
     // Check if the |serverURL| passed in is the same as that which has been used during
