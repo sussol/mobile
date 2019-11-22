@@ -52,3 +52,10 @@ We welcome contributions from external developers!
 6. Open a pull request to the appropriate branch.
 7. A Sussoler will review your PR and provide comments or request changes.
 8. Sit back and enjoy the warm glow of success :).
+
+### Checklist
+
+- Ready to contribute? Before opening a PR, do a final check against the following list:
+  - do all you changes adhered to the Sussol code conventions?
+  - have you tested all changes you have made for bugs and regressions?
+  - are your changes consistent with the mSupply Mobile mission statement (basic functionality with a focus on user-friendly and consistent design)?
