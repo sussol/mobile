@@ -27,6 +27,7 @@ export const MODAL_KEYS = {
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
   STOCKTAKE_REASON: 'stocktakeReason',
   ENFORCE_STOCKTAKE_REASON: 'enforceStocktakeReason',
+  SELECT_MASTER_LISTS: 'selectMasterList',
 };
 
 export const getModalTitle = modalKey => {
@@ -64,5 +65,7 @@ export const getModalTitle = modalKey => {
       return authStrings.warning_sync_edit;
     case MODAL_KEYS.CONFIRM_USER_PASSWORD:
       return modalStrings.confirm_password;
+    case MODAL_KEYS.SELECT_MASTER_LISTS:
+      return modalStrings.select_master_lists;
   }
 };

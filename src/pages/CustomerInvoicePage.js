@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
 import { useRecordListener } from '../hooks';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
@@ -35,7 +35,6 @@ import globalStyles from '../globalStyles';
  * { isSelected, isFocused, isDisabled }
  */
 export const CustomerInvoice = ({
-  runWithLoadingIndicator,
   dispatch,
   data,
   dataState,
@@ -51,6 +50,7 @@ export const CustomerInvoice = ({
   getPageInfoColumns,
   refreshData,
   onSelectNewItem,
+  onAddMasterList,
   onEditComment,
   onEditTheirRef,
   onFilterData,
@@ -62,6 +62,7 @@ export const CustomerInvoice = ({
   onSortColumn,
   onEditTotalQuantity,
   onAddTransactionItem,
+  onApplyMasterLists,
   route,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
@@ -69,9 +70,6 @@ export const CustomerInvoice = ({
   // Listen for this invoice being finalised which will prune items and cause side effects
   // outside of the reducer. Reconcile differences when triggered.
   useRecordListener(refreshData, pageObject, 'Transaction');
-
-  const onAddMasterList = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction', route)));
 
   const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
@@ -99,6 +97,8 @@ export const CustomerInvoice = ({
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
         return onEditTheirRef;
+      case MODAL_KEYS.SELECT_MASTER_LISTS:
+        return onApplyMasterLists;
       default:
         return null;
     }
@@ -161,6 +161,7 @@ export const CustomerInvoice = ({
             <PageButton
               text={buttonStrings.add_master_list_items}
               onPress={onAddMasterList}
+              onSelect={onApplyMasterLists}
               isDisabled={isFinalised}
             />
           </View>
@@ -204,17 +205,13 @@ const mapStateToProps = state => {
   return customerInvoice;
 };
 
-export const CustomerInvoicePage = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CustomerInvoice);
+export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);
 
 CustomerInvoice.defaultProps = {
   modalValue: null,
 };
 
 CustomerInvoice.propTypes = {
-  runWithLoadingIndicator: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
@@ -230,6 +227,7 @@ CustomerInvoice.propTypes = {
   getPageInfoColumns: PropTypes.func.isRequired,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
+  onAddMasterList: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
   onEditTheirRef: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
@@ -241,5 +239,6 @@ CustomerInvoice.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   onEditTotalQuantity: PropTypes.func.isRequired,
   onAddTransactionItem: PropTypes.func.isRequired,
+  onApplyMasterLists: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
 };

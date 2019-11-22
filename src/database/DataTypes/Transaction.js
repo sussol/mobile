@@ -227,9 +227,10 @@ export class Transaction extends Realm.Object {
    * Add all items from the customer's master list to this transaction. Transaction
    * must be an unfinalised customer invoice.
    *
-   * @param  {Realm}  database
+   * @param  {Realm}            database
+   * @param  {Array.<string>}   selected masterlists from multiselect
    */
-  addItemsFromMasterList(database) {
+  addItemsFromMasterList(database, selected) {
     if (!this.isCustomerInvoice) {
       throw new Error(`Cannot add master lists to ${this.type}`);
     }
@@ -237,15 +238,18 @@ export class Transaction extends Realm.Object {
       throw new Error('Cannot add items to a finalised transaction');
     }
     if (this.otherParty) {
-      this.otherParty.masterLists.forEach(masterList => {
-        const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
-        itemsToAdd.forEach(masterListItem => {
-          if (!masterListItem.item.crossReferenceItem && masterListItem.item.isVisible) {
-            // Do not add cross reference items as will cause duplicates.
-            createRecord(database, 'TransactionItem', this, masterListItem.item);
-          }
+      // Filter through masterList ids that are on multiselect list
+      this.otherParty.masterLists
+        .filter(masterList => selected.indexOf(masterList.id) !== -1)
+        .forEach(masterList => {
+          const itemsToAdd = complement(masterList.items, this.items, item => item.itemId);
+          itemsToAdd.forEach(masterListItem => {
+            if (!masterListItem.item.crossReferenceItem && masterListItem.item.isVisible) {
+              // Do not add cross reference items as will cause duplicates.
+              createRecord(database, 'TransactionItem', this, masterListItem.item);
+            }
+          });
         });
-      });
     }
   }
 
