@@ -3,9 +3,12 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { modalStrings, buttonStrings } from '../localization';
+import { authStrings, modalStrings, buttonStrings } from '../localization';
 
 export const MODAL_KEYS = {
+  CONFIRM_USER_PASSWORD: 'confirmUserPassword',
+  SYNC_URL_EDIT: 'syncUrlEdit',
+  SYNC_PASSWORD_EDIT: 'syncPasswordEdit',
   STOCKTAKE_COMMENT_EDIT: 'stocktakeCommentEdit',
   STOCKTAKE_NAME_EDIT: 'stocktakeNameEdit',
   TRANSACTION_COMMENT_EDIT: 'transactionCommentEdit',
@@ -26,6 +29,7 @@ export const MODAL_KEYS = {
   STOCKTAKE_OUTDATED_ITEM: 'stocktakeOutdatedItems',
   STOCKTAKE_REASON: 'stocktakeReason',
   ENFORCE_STOCKTAKE_REASON: 'enforceStocktakeReason',
+  SELECT_MASTER_LISTS: 'selectMasterList',
 };
 
 export const getModalTitle = modalKey => {
@@ -62,5 +66,12 @@ export const getModalTitle = modalKey => {
     case MODAL_KEYS.ENFORCE_STOCKTAKE_REASON:
     case MODAL_KEYS.STOCKTAKE_REASON:
       return modalStrings.select_a_reason;
+    case MODAL_KEYS.SYNC_URL_EDIT:
+    case MODAL_KEYS.SYNC_PASSWORD_EDIT:
+      return authStrings.warning_sync_edit;
+    case MODAL_KEYS.CONFIRM_USER_PASSWORD:
+      return modalStrings.confirm_password;
+    case MODAL_KEYS.SELECT_MASTER_LISTS:
+      return modalStrings.select_master_lists;
   }
 };

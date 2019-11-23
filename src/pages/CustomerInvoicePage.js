@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
 import { useRecordListener } from '../hooks';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 import { ROUTES } from '../navigation/constants';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
@@ -35,12 +35,11 @@ import globalStyles from '../globalStyles';
  * { isSelected, isFocused, isDisabled }
  */
 export const CustomerInvoice = ({
-  runWithLoadingIndicator,
   dispatch,
   data,
   dataState,
   pageObject,
-  sortBy,
+  sortKey,
   isAscending,
   modalKey,
   hasSelection,
@@ -51,6 +50,7 @@ export const CustomerInvoice = ({
   getPageInfoColumns,
   refreshData,
   onSelectNewItem,
+  onAddMasterList,
   onEditComment,
   onEditTheirRef,
   onFilterData,
@@ -62,6 +62,8 @@ export const CustomerInvoice = ({
   onSortColumn,
   onEditTotalQuantity,
   onAddTransactionItem,
+  onApplyMasterLists,
+  route,
 }) => {
   const { isFinalised, comment, theirRef } = pageObject;
 
@@ -69,10 +71,7 @@ export const CustomerInvoice = ({
   // outside of the reducer. Reconcile differences when triggered.
   useRecordListener(refreshData, pageObject, 'Transaction');
 
-  const onAddMasterList = () =>
-    runWithLoadingIndicator(() => dispatch(PageActions.addMasterListItems('Transaction')));
-
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     theirRef,
     isFinalised,
@@ -98,6 +97,8 @@ export const CustomerInvoice = ({
         return onEditComment;
       case MODAL_KEYS.THEIR_REF_EDIT:
         return onEditTheirRef;
+      case MODAL_KEYS.SELECT_MASTER_LISTS:
+        return onApplyMasterLists;
       default:
         return null;
     }
@@ -129,10 +130,10 @@ export const CustomerInvoice = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const { verticalContainer, topButton } = globalStyles;
@@ -160,6 +161,7 @@ export const CustomerInvoice = ({
             <PageButton
               text={buttonStrings.add_master_list_items}
               onPress={onAddMasterList}
+              onSelect={onApplyMasterLists}
               isDisabled={isFinalised}
             />
           </View>
@@ -213,12 +215,11 @@ CustomerInvoice.defaultProps = {
 };
 
 CustomerInvoice.propTypes = {
-  runWithLoadingIndicator: PropTypes.func.isRequired,
   dispatch: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   pageObject: PropTypes.object.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   hasSelection: PropTypes.bool.isRequired,
@@ -229,6 +230,7 @@ CustomerInvoice.propTypes = {
   getPageInfoColumns: PropTypes.func.isRequired,
   refreshData: PropTypes.func.isRequired,
   onSelectNewItem: PropTypes.func.isRequired,
+  onAddMasterList: PropTypes.func.isRequired,
   onEditComment: PropTypes.func.isRequired,
   onEditTheirRef: PropTypes.func.isRequired,
   onFilterData: PropTypes.func.isRequired,
@@ -240,4 +242,6 @@ CustomerInvoice.propTypes = {
   onSortColumn: PropTypes.func.isRequired,
   onEditTotalQuantity: PropTypes.func.isRequired,
   onAddTransactionItem: PropTypes.func.isRequired,
+  onApplyMasterLists: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };

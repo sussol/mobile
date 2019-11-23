@@ -1,12 +1,14 @@
+/* eslint-disable react/require-default-props */
 /* Taken from https://github.com/react-native-training/react-native-elements
  * since we only need badge component. Tweaked the component class since we do not
  * need extra logic present in the code.
  */
 
 import React from 'react';
+
 import PropTypes from 'prop-types';
-import { StyleSheet, Text, View, TouchableOpacity, ViewPropTypes } from 'react-native';
-import { renderNode } from '../utilities';
+import { StyleSheet, Dimensions, Text, View, TouchableOpacity, ViewPropTypes } from 'react-native';
+import { SUSSOL_ORANGE } from '../globalStyles/index';
 
 const Badge = props => {
   const {
@@ -19,69 +21,37 @@ const Badge = props => {
     ...attributes
   } = props;
 
-  const element = renderNode(Text, value, {
-    style: StyleSheet.flatten([styles.text, textStyle && textStyle]),
-  });
-
   return (
-    <View style={StyleSheet.flatten([containerStyle && containerStyle])}>
-      <Component
-        {...attributes}
-        style={StyleSheet.flatten([
-          styles.badge(),
-          !element && styles.miniBadge,
-          badgeStyle && badgeStyle,
-        ])}
-        onPress={onPress}
-      >
-        {element}
+    <View style={containerStyle}>
+      <Component {...attributes} style={badgeStyle} onPress={onPress}>
+        <Text style={textStyle}>{value}</Text>
       </Component>
     </View>
   );
 };
 
-/* eslint-disable react/require-default-props */
 Badge.propTypes = {
   containerStyle: ViewPropTypes.style,
   badgeStyle: ViewPropTypes.style,
   textStyle: Text.propTypes.style,
-  value: PropTypes.node,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   onPress: PropTypes.func,
   Component: PropTypes.elementType,
 };
 
 Badge.defaultProps = {
   containerStyle: {},
-  textStyle: {},
-  badgeStyle: {},
-};
-
-const size = 18;
-const miniSize = 8;
-
-const styles = {
-  badge: () => ({
+  textStyle: { fontSize: 16, color: '#FFF', paddingHorizontal: 4, fontWeight: 'bold' },
+  badgeStyle: {
     alignSelf: 'center',
-    minWidth: size,
-    height: size,
-    borderRadius: size / 2,
+    width: Dimensions.get('window').width / 25,
+    height: Dimensions.get('window').height / 30,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFF',
+    backgroundColor: SUSSOL_ORANGE,
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#fff',
-  }),
-  miniBadge: {
-    paddingHorizontal: 0,
-    paddingVertical: 0,
-    minWidth: miniSize,
-    height: miniSize,
-    borderRadius: miniSize / 2,
-  },
-  text: {
-    fontSize: 12,
-    color: 'white',
-    paddingHorizontal: 4,
   },
 };
 

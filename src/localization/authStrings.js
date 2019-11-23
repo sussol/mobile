@@ -13,12 +13,16 @@ export const authStrings = new LocalizedStrings({
     repeat_password: 'Please re-enter password',
     user_name: 'User Name',
     email: 'E-mail Address',
+    invalid_username_or_password: 'Invalid username or password',
+    warning_sync_edit:
+      'WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!',
   },
   fr: {
     logging_in: 'Connexion en cours',
-    login: 'Se connecter or Ouverture de session',
+    login: 'Se connecter',
     password: 'Mot de passe',
-    user_name: "Identifiiant or Nom d'utilisateur",
+    user_name: 'Identifiant',
+    invalid_username_or_password: 'Identifiant ou mot de passe invalide',
   },
   gil: {
     logging_in: 'Taninga bwa e na uki',

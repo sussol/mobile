@@ -14,6 +14,7 @@ import { getModalTitle, MODAL_KEYS } from '../../utilities/getModalTitle';
 
 import ModalContainer from './ModalContainer';
 import { AutocompleteSelector } from '../AutocompleteSelector';
+import { MultiSelectList } from '../MultiSelectList';
 import { TextEditor } from '../TextEditor';
 import { ByProgramModal } from './ByProgramModal';
 import { ToggleSelector } from '../ToggleSelector';
@@ -57,20 +58,20 @@ const DataTablePageModalComponent = ({
         return (
           <AutocompleteSelector
             options={UIDatabase.objects('Item')}
-            queryString="name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0"
-            queryStringSecondary="name CONTAINS[c] $0"
-            sortByString="name"
+            queryString="name CONTAINS[c] $0 OR code BEGINSWITH[c] $0"
+            sortKeyString="name"
             onSelect={onSelect}
-            renderLeftText={item => `${item.name}`}
-            renderRightText={item => `${item.totalQuantity}`}
+            renderLeftText={({ code, name }) => `${code} - ${name}`}
+            renderRightText={({ totalQuantity }) => `${totalQuantity}`}
           />
         );
+      case MODAL_KEYS.CONFIRM_USER_PASSWORD:
+      case MODAL_KEYS.SYNC_URL_EDIT:
+      case MODAL_KEYS.SYNC_PASSWORD_EDIT:
       case MODAL_KEYS.STOCKTAKE_NAME_EDIT:
       case MODAL_KEYS.THEIR_REF_EDIT:
       case MODAL_KEYS.STOCKTAKE_COMMENT_EDIT:
       case MODAL_KEYS.TRANSACTION_COMMENT_EDIT:
-      case MODAL_KEYS.REQUISITION_COMMENT_EDIT:
-        return <TextEditor text={currentValue} onEndEditing={onSelect} />;
       case MODAL_KEYS.SELECT_PRESCRIBER:
         return (
           <AutocompleteSelector
@@ -95,6 +96,20 @@ const DataTablePageModalComponent = ({
             renderLeftText={({ firstName, lastName }) => `${firstName} ${lastName}`}
           />
         );
+      case MODAL_KEYS.REQUISITION_COMMENT_EDIT: {
+        const isPasswordEdit = !!(
+          modalKey === MODAL_KEYS.CONFIRM_USER_PASSWORD ||
+          modalKey === MODAL_KEYS.SYNC_PASSWORD_EDIT
+        );
+        return (
+          <TextEditor
+            text={currentValue}
+            onEndEditing={onSelect}
+            secureTextEntry={isPasswordEdit}
+          />
+        );
+      }
+
       case MODAL_KEYS.SELECT_CUSTOMER:
         return (
           <AutocompleteSelector
@@ -102,7 +117,7 @@ const DataTablePageModalComponent = ({
             isOpen={isOpen}
             placeholderText={modalStrings.start_typing_to_select_customer}
             queryString="name BEGINSWITH[c] $0"
-            sortByString="name"
+            sortKeyString="name"
             onSelect={onSelect}
           />
         );
@@ -118,7 +133,7 @@ const DataTablePageModalComponent = ({
             isOpen={isOpen}
             placeholderText={modalStrings.start_typing_to_select_supplier}
             queryString="name BEGINSWITH[c] $0"
-            sortByString="name"
+            sortKeyString="name"
             onSelect={onSelect}
           />
         );
@@ -178,6 +193,18 @@ const DataTablePageModalComponent = ({
           />
         );
       }
+      case MODAL_KEYS.SELECT_MASTER_LISTS:
+        return (
+          <MultiSelectList
+            options={currentValue}
+            isOpen={isOpen}
+            placeholderText={modalStrings.start_typing_to_select_master_list}
+            queryString="name BEGINSWITH[c] $0"
+            sortByString="name"
+            onConfirmSelections={onSelect}
+            emptyMessage={modalStrings.no_masterlist_available}
+          />
+        );
       default:
         return null;
     }

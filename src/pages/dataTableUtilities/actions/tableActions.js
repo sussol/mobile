@@ -15,11 +15,11 @@ import { pageObjectSelector } from '../selectors';
  * Sorts the underlying data array by the key provided. Determines
  * direction by the previous direction.
  *
- * @param {String} sortBy Key to sortBy - see utilities/sortData.js
+ * @param {String} sortKey Key to sortKey - see utilities/sortData.js
  */
-export const sortData = (sortBy, route) => ({
+export const sortData = (sortKey, route) => ({
   type: ACTIONS.SORT_DATA,
-  payload: { sortBy, route },
+  payload: { sortKey, route },
 });
 
 /**
@@ -101,7 +101,7 @@ export const toggleStockOut = route => ({
  *
  * @param {String} objectType Type of object to add items for.
  */
-export const addMasterListItems = (objectType, route) => (dispatch, getState) => {
+export const addMasterListItems = (selected, objectType, route) => (dispatch, getState) => {
   const pageObject = pageObjectSelector(getState());
 
   const thisStore = UIDatabase.objects('Name').filtered(
@@ -110,11 +110,12 @@ export const addMasterListItems = (objectType, route) => (dispatch, getState) =>
   )[0];
 
   UIDatabase.write(() => {
-    pageObject.addItemsFromMasterList(UIDatabase, thisStore);
+    pageObject.addItemsFromMasterList(UIDatabase, selected, thisStore);
     UIDatabase.save(objectType, pageObject);
   });
 
   dispatch(refreshData(route));
+  dispatch(closeModal(route));
 };
 
 /**
@@ -241,6 +242,11 @@ export const refreshDataWithFinalisedToggle = route => ({
 export const filterDataWithFinalisedToggle = (searchTerm, route) => ({
   type: ACTIONS.FILTER_DATA_WITH_FINALISED_TOGGLE,
   payload: { searchTerm, route },
+});
+
+export const applyMasterLists = (selectedMasterLists, route) => ({
+  type: ACTIONS.APPLY_MASTER_LISTS,
+  payload: { selectedMasterLists, route },
 });
 
 export const filterDataWithOverStockToggle = (searchTerm, route) => ({

@@ -10,6 +10,7 @@ import { ROUTES } from '../navigation/constants';
 import { CustomerInvoicePage } from './CustomerInvoicePage';
 import { CustomerInvoicesPage } from './CustomerInvoicesPage';
 import { MenuPage } from './MenuPage';
+import { SettingsPage } from './SettingsPage';
 import { PageContainer } from './PageContainer';
 import { CustomerRequisitionsPage } from './CustomerRequisitionsPage';
 import { CustomerRequisitionPage } from './CustomerRequisitionPage';
@@ -82,6 +83,8 @@ export const PAGES = {
   [ROUTES.PRESCRIBERS]: props => <PageContainer page={PrescribersPage} {...props} />,
 
   [ROUTES.PATIENTS]: props => <PageContainer page={PatientsPage} {...props} />,
+
+  [ROUTES.SETTINGS]: props => <PageContainer page={SettingsPage} {...props} />,
 };
 
 export const FINALISABLE_PAGES = {

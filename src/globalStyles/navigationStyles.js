@@ -3,7 +3,7 @@
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
-import { FINALISE_GREEN, FINALISED_RED, GREY } from './colors';
+import { GREY } from './colors';
 import { APP_FONT_FAMILY } from './fonts';
 
 export const navigationStyles = {
@@ -18,16 +18,6 @@ export const navigationStyles = {
     flexDirection: 'row',
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
-    bottom: 6,
-  },
-  finaliseButton: {
-    color: FINALISE_GREEN,
-    fontSize: 40,
-  },
-  finalisedLock: {
-    color: FINALISED_RED,
-    fontSize: 28,
-    marginHorizontal: 8,
     bottom: 6,
   },
 };

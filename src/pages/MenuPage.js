@@ -26,9 +26,11 @@ import {
   gotoStocktakes,
   gotoRealmExplorer,
   gotoDispensingPage,
+  gotoSettings,
 } from '../navigation/actions';
 
 import globalStyles, { SHADOW_BORDER, GREY } from '../globalStyles';
+import { UserActions } from '../actions/index';
 
 const exportData = async () => {
   const syncSiteName = UIDatabase.getSetting(SETTINGS_KEYS.SYNC_SITE_NAME);
@@ -39,7 +41,7 @@ const exportData = async () => {
 
 const Menu = ({
   isInAdminMode,
-  logOut,
+  logout,
   toCustomerInvoices,
   toCustomerRequisitions,
   toStock,
@@ -48,17 +50,19 @@ const Menu = ({
   toSupplierRequisitions,
   toRealmExplorer,
   toDispensary,
+  toSettings,
   usingDispensary,
   usingModules,
+  isAdmin,
 }) => {
   const { menuButton, menuButtonText: buttonText, appBackground } = globalStyles;
-  const { image, originalContainer, moduleContainer, bottomIcon, moduleRow } = styles;
+  const { image, originalContainer, moduleContainer, container, bottomIcon, moduleRow } = styles;
 
-  const containerStyle = usingModules ? moduleContainer : originalContainer;
+  const containerStyle = { ...container, ...(usingModules ? moduleContainer : originalContainer) };
 
   const MenuButton = useCallback(
     props => <Button style={menuButton} textStyle={buttonText} {...props} />,
-    []
+    [usingDispensary, usingModules]
   );
 
   const CustomerSection = useCallback(
@@ -75,7 +79,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const SupplierSection = useCallback(
@@ -92,7 +96,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const StockSection = useCallback(
@@ -107,7 +111,7 @@ const Menu = ({
         </View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const ModulesSection = useCallback(
@@ -117,7 +121,7 @@ const Menu = ({
         <View>{usingDispensary && <MenuButton text="Dispensary" onPress={toDispensary} />}</View>
       </View>
     ),
-    []
+    [usingDispensary, usingModules]
   );
 
   const AdminRow = useCallback(
@@ -128,44 +132,48 @@ const Menu = ({
             name="power-off"
             iconStyle={bottomIcon}
             backgroundColor="rgba(255,255,255,0)"
-            onPress={logOut}
+            onPress={logout}
           >
             <Text>{navStrings.log_out}</Text>
           </Icon.Button>
         </View>
         {isInAdminMode && <MenuButton text="Realm Explorer" onPress={toRealmExplorer} />}
         {isInAdminMode && <MenuButton text="Export Data" onPress={exportData} />}
+        {isAdmin && (
+          <Icon.Button
+            name="cog"
+            iconStyle={bottomIcon}
+            backgroundColor="rgba(255,255,255,0)"
+            onPress={toSettings}
+          >
+            <Text>SETTINGS</Text>
+          </Icon.Button>
+        )}
       </View>
     ),
-    []
+    [isInAdminMode, isAdmin]
   );
 
-  const ModuleLayout = useCallback(
-    () => (
-      <View style={styles.moduleTopRow}>
-        <View style={moduleRow}>
-          <CustomerSection />
-          <SupplierSection />
-        </View>
-        <View style={moduleRow}>
-          <StockSection />
-          <ModulesSection />
-        </View>
-      </View>
-    ),
-    []
-  );
-
-  const OriginalLayout = useCallback(
-    () => (
-      <View style={styles.originalTopRow}>
+  const ModuleLayout = useCallback(() => (
+    <View style={styles.moduleTopRow}>
+      <View style={moduleRow}>
         <CustomerSection />
         <SupplierSection />
-        <StockSection />
       </View>
-    ),
-    []
-  );
+      <View style={moduleRow}>
+        <StockSection />
+        <ModulesSection />
+      </View>
+    </View>
+  ));
+
+  const OriginalLayout = useCallback(() => (
+    <View style={styles.originalTopRow}>
+      <CustomerSection />
+      <SupplierSection />
+      <StockSection />
+    </View>
+  ));
 
   return (
     <View style={{ ...appBackground }}>
@@ -181,58 +189,56 @@ const styles = {
   moduleRow: { flex: 1, flexDirection: 'row' },
   image: { height: 150, width: 150, marginBottom: 30 },
   bottomIcon: { color: GREY },
-  bottomIconView: { flexGrow: 1, marginLeft: 100 },
   bottomRow: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    marginHorizontal: 20,
+  },
+  container: {
+    alignItems: 'center',
+    borderColor: SHADOW_BORDER,
+    backgroundColor: 'white',
+    marginTop: 30,
+    flex: 1,
+    borderWidth: 1,
   },
   moduleContainer: {
-    alignItems: 'center',
-    borderColor: SHADOW_BORDER,
-    borderWidth: 1,
     justifyContent: 'center',
     flexDirection: 'row',
-    marginTop: 30,
-    paddingLeft: 50,
     marginHorizontal: 15,
-    flex: 1,
-    backgroundColor: 'white',
   },
   originalContainer: {
-    backgroundColor: 'white',
-    alignItems: 'center',
-    borderColor: SHADOW_BORDER,
-    borderWidth: 1,
     justifyContent: 'flex-start',
-    marginTop: 30,
     paddingTop: 50,
     marginHorizontal: 30,
-    flex: 1,
   },
 };
 
-const actionCreators = {
-  toCustomerInvoices: gotoCustomerInvoices,
-  toCustomerRequisitions: gotoCustomerRequisitions,
-  toStock: gotoStock,
-  toStocktakes: gotoStocktakes,
-  toSupplierInvoices: gotoSupplierInvoices,
-  toSupplierRequisitions: gotoSupplierRequisitions,
-  toRealmExplorer: gotoRealmExplorer,
-  toDispensary: gotoDispensingPage,
-};
+const mapDispatchToProps = dispatch => ({
+  toCustomerInvoices: () => dispatch(gotoCustomerInvoices()),
+  toCustomerRequisitions: () => dispatch(gotoCustomerRequisitions()),
+  toStock: () => dispatch(gotoStock()),
+  toStocktakes: () => dispatch(gotoStocktakes()),
+  toSupplierInvoices: () => dispatch(gotoSupplierInvoices()),
+  toSupplierRequisitions: () => dispatch(gotoSupplierRequisitions()),
+  toRealmExplorer: () => dispatch(gotoRealmExplorer()),
+  toSettings: () => dispatch(gotoSettings()),
+  toDispensary: () => dispatch(gotoDispensingPage()),
+  logout: () => dispatch(UserActions.logout()),
+});
 
 const mapStateToProps = state => {
-  const { modules } = state;
+  const { modules, user } = state;
+  const { currentUser } = user;
   const { usingDispensary } = modules;
-  return { usingDispensary, usingModules: usingDispensary };
+  return { usingDispensary, usingModules: usingDispensary, isAdmin: currentUser?.isAdmin };
 };
 
 export const MenuPage = connect(
   mapStateToProps,
-  actionCreators
+  mapDispatchToProps
 )(Menu);
 
 Menu.defaultProps = {
@@ -241,7 +247,7 @@ Menu.defaultProps = {
 
 Menu.propTypes = {
   isInAdminMode: PropTypes.bool,
-  logOut: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
   toCustomerInvoices: PropTypes.func.isRequired,
   toCustomerRequisitions: PropTypes.func.isRequired,
   toStock: PropTypes.func.isRequired,
@@ -250,6 +256,8 @@ Menu.propTypes = {
   toSupplierRequisitions: PropTypes.func.isRequired,
   toRealmExplorer: PropTypes.func.isRequired,
   toDispensary: PropTypes.func.isRequired,
+  toSettings: PropTypes.func.isRequired,
+  isAdmin: PropTypes.bool.isRequired,
   usingDispensary: PropTypes.bool.isRequired,
   usingModules: PropTypes.bool.isRequired,
 };

@@ -71,6 +71,10 @@ export class MasterList extends Realm.Object {
 
     return foundStoreTag && storeTags[foundStoreTag];
   }
+
+  toString() {
+    return this.name;
+  }
 }
 
 MasterList.schema = {

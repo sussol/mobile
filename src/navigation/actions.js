@@ -87,13 +87,24 @@ export const gotoDispensingPage = () =>
   });
 
 /**
+ * Pushes the Settings page route onto the main navigation stack.
+ */
+export const gotoSettings = () =>
+  NavigationActions.navigate({
+    routeName: ROUTES.SETTINGS,
+    params: {
+      title: navStrings.settings,
+    },
+  });
+
+/**
  * Pushes the Realm explorer route onto the main navigation stack.
  */
 export const gotoRealmExplorer = () =>
   NavigationActions.navigate({
     routeName: ROUTES.REALM_EXPLORER,
     params: {
-      title: 'Database Contents',
+      title: navStrings.database_contents,
     },
   });
 
@@ -328,7 +339,7 @@ export const createSupplierRequisition = ({
 
   // Months lead time has an effect on daysToSupply for a requisition.
   const monthsLeadTime = parsedCustomData.monthsLeadTime
-    ? Number(customData.monthsLeadTime.data)
+    ? Number(parsedCustomData.monthsLeadTime.data)
     : 0;
 
   // Create the requisition. If a program was supplied, add items from that

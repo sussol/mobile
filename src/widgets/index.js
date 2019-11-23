@@ -6,6 +6,8 @@
 export { Button, ProgressBar } from 'react-native-ui-components';
 
 export { AutocompleteSelector } from './AutocompleteSelector';
+// eslint-disable-next-line import/no-cycle
+export { MultiSelectList } from './MultiSelectList';
 export { FinaliseButton } from './FinaliseButton';
 export { GenericChoiceList } from './GenericChoiceList';
 export { IconCell } from './IconCell';
@@ -37,6 +39,8 @@ export {
   CloseIcon,
   OpenModal,
   Expand,
+  ConfirmIcon,
+  LockIcon,
 } from './icons';
 export {
   KiribatiFlag,

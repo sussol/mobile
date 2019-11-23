@@ -8,10 +8,9 @@ import PropTypes from 'prop-types';
 
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import Icon from 'react-native-vector-icons/FontAwesome';
-
 import globalStyles from '../globalStyles';
 import { navStrings } from '../localization';
+import { ConfirmIcon, LockIcon } from './icons';
 
 export const FinaliseButton = props => {
   const { isFinalised, onPress } = props;
@@ -22,7 +21,7 @@ export const FinaliseButton = props => {
         <Text style={[globalStyles.navBarText, localStyles.text]}>
           {navStrings.finalised_cannot_be_edited}
         </Text>
-        <Icon name="lock" style={globalStyles.finalisedLock} />
+        <LockIcon />
       </View>
     );
   }
@@ -32,7 +31,7 @@ export const FinaliseButton = props => {
       onPress={onPress}
     >
       <Text style={[globalStyles.navBarText, localStyles.text]}>{navStrings.finalise}</Text>
-      <Icon name="check-circle" style={globalStyles.finaliseButton} />
+      <ConfirmIcon />
     </TouchableOpacity>
   );
 };

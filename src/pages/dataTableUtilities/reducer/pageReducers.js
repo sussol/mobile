@@ -4,6 +4,9 @@
  */
 
 import { MODAL_KEYS, formatErrorItemNames } from '../../../utilities';
+import { UIDatabase } from '../../../database/index';
+import { SETTINGS_KEYS } from '../../../settings';
+import Settings from '../../../settings/MobileAppSettings';
 
 /**
  * Edits the name field in the current stores state.
@@ -83,6 +86,28 @@ export const openModal = (state, action) => {
       const { monthsToSupply } = pageObject;
 
       return { ...state, modalKey, modalValue: monthsToSupply };
+    }
+
+    case MODAL_KEYS.SELECT_MASTER_LISTS: {
+      let masterLists = [];
+      const { pageObject } = state;
+      const { route } = payload;
+
+      switch (route) {
+        case 'supplierRequisition':
+          masterLists = UIDatabase.objects('Name').filtered(
+            'id == $0',
+            Settings.get(SETTINGS_KEYS.THIS_STORE_NAME_ID)
+          )[0].masterLists;
+          break;
+        case 'customerInvoice':
+          masterLists = pageObject.otherParty.masterLists;
+          break;
+        default:
+          masterLists = [];
+      }
+
+      return { ...state, modalKey, modalValue: masterLists };
     }
 
     default: {

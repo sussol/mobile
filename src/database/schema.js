@@ -113,6 +113,7 @@ User.schema = {
     firstName: { type: 'string', optional: true },
     lastName: { type: 'string', optional: true },
     email: { type: 'string', optional: true },
+    isAdmin: { type: 'bool', default: false },
     passwordHash: {
       type: 'string',
       default: '4ada0b60df8fe299b8a412bbc8c97d0cb204b80e5693608ab2fb09ecde6d252d',
@@ -154,7 +155,7 @@ export const schema = {
     Unit,
     Prescriber,
   ],
-  schemaVersion: 9,
+  schemaVersion: 10,
 };
 
 export default schema;

@@ -43,7 +43,7 @@ export const SupplierRequisitions = ({
   navigation,
   data,
   dataState,
-  sortBy,
+  sortKey,
   isAscending,
   modalKey,
   hasSelection,
@@ -124,10 +124,10 @@ export const SupplierRequisitions = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const toggles = useMemo(
@@ -217,7 +217,7 @@ SupplierRequisitions.propTypes = {
   navigation: PropTypes.object.isRequired,
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   searchTerm: PropTypes.string.isRequired,
   columns: PropTypes.array.isRequired,

@@ -66,7 +66,11 @@ export class LoginModal extends React.Component {
       this.setState({ authStatus: 'authenticated' });
       onAuthentication(user);
     } catch (error) {
-      this.setState({ authStatus: 'error', error: error.message });
+      const message = error.message.startsWith('Invalid username or password')
+        ? authStrings.invalid_username_or_password
+        : error.message;
+
+      this.setState({ authStatus: 'error', error: message });
       onAuthentication(null);
       if (!error.message.startsWith('Invalid username or password')) {
         // After ten seconds of displaying the error, re-enable the button

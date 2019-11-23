@@ -11,7 +11,7 @@ import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
 import { useRecordListener } from '../hooks';
-import { getItemLayout, getPageDispatchers, PageActions } from './dataTableUtilities';
+import { getItemLayout, getPageDispatchers } from './dataTableUtilities';
 
 import { BottomConfirmModal, DataTablePageModal } from '../widgets/modals';
 import { PageButton, PageInfo, SearchBar, DataTablePageView } from '../widgets';
@@ -28,7 +28,7 @@ export const SupplierInvoice = ({
   dispatch,
   dataState,
   keyExtractor,
-  sortBy,
+  sortKey,
   isAscending,
   modalKey,
   modalValue,
@@ -50,13 +50,14 @@ export const SupplierInvoice = ({
   onEditTotalQuantity,
   onEditDate,
   onAddTransactionBatch,
+  route,
 }) => {
   // Listen for this transaction being finalised, so data can be refreshed and kept consistent.
   useRecordListener(refreshData, pageObject, 'Transaction');
 
   const { isFinalised, comment, theirRef } = pageObject;
 
-  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, PageActions), [
+  const pageInfoColumns = useCallback(getPageInfoColumns(pageObject, dispatch, route), [
     comment,
     theirRef,
     isFinalised,
@@ -114,10 +115,10 @@ export const SupplierInvoice = ({
         columns={columns}
         onPress={onSortColumn}
         isAscending={isAscending}
-        sortBy={sortBy}
+        sortKey={sortKey}
       />
     ),
-    [sortBy, isAscending]
+    [sortKey, isAscending]
   );
 
   const {
@@ -192,7 +193,7 @@ SupplierInvoice.propTypes = {
   data: PropTypes.array.isRequired,
   dataState: PropTypes.object.isRequired,
   keyExtractor: PropTypes.func.isRequired,
-  sortBy: PropTypes.string.isRequired,
+  sortKey: PropTypes.string.isRequired,
   isAscending: PropTypes.bool.isRequired,
   modalKey: PropTypes.string.isRequired,
   modalValue: PropTypes.any,
@@ -215,4 +216,5 @@ SupplierInvoice.propTypes = {
   onEditTotalQuantity: PropTypes.func.isRequired,
   onEditDate: PropTypes.func.isRequired,
   onAddTransactionBatch: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };
