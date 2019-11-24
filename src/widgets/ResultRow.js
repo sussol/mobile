@@ -11,7 +11,7 @@ import { APP_FONT_FAMILY, SUSSOL_ORANGE, BACKGROUND_COLOR, GREY } from '../globa
 
 const ResultRow = React.memo(
   ({ data, renderLeftText, renderRightText, onPress, isSelected, showCheckIcon }) => {
-    const rowPressed = useCallback(() => onPress(data));
+    const rowPressed = useCallback(() => onPress(data), [data]);
 
     return (
       <TouchableOpacity
