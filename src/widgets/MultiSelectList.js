@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 /**
  * mSupply Mobile
  * Sustainable Solutions (NZ) Ltd. 2016
@@ -6,12 +7,14 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { Dimensions, FlatList, StyleSheet, View, Text } from 'react-native';
+import { FlatList, StyleSheet, View, Text } from 'react-native';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
 import { OnePressButton, SearchBar } from '.';
 import ResultRow from './ResultRow';
 import { WHITE } from '../globalStyles/colors';
+
+const keyExtractor = item => item.id || item.name;
 
 const MultiSelectList = ({
   options,
@@ -29,6 +32,17 @@ const MultiSelectList = ({
 }) => {
   const [queryText, setQueryText] = useState('');
   const [selected, setSelected] = useState([]);
+
+  const onDoneSelected = useCallback(() => onConfirmSelections(selected), [selected]);
+  const onSelect = useCallback(
+    ({ item }) =>
+      setSelected(prevState =>
+        prevState.indexOf(item.id) === -1
+          ? [...prevState, item.id]
+          : prevState.filter(selectedItem => selectedItem !== item.id)
+      ),
+    []
+  );
 
   const filterResultData = () => {
     const data = options.filtered(queryString, queryText);
@@ -55,19 +69,7 @@ const MultiSelectList = ({
     return [];
   };
 
-  const onDoneSelected = useCallback(() => onConfirmSelections(selected), [selected]);
-
   const data = getData();
-
-  const onSelect = useCallback(
-    ({ item }) =>
-      setSelected(prevState =>
-        prevState.indexOf(item.id) === -1
-          ? [...prevState, item.id]
-          : prevState.filter(selectedItem => selectedItem !== item.id)
-      ),
-    []
-  );
 
   const renderItem = useCallback(
     row => (
@@ -102,22 +104,21 @@ const MultiSelectList = ({
       />
       <FlatList
         data={data}
-        keyExtractor={item => item.id || item.name}
+        keyExtractor={keyExtractor}
         renderItem={renderItem}
         keyboardShouldPersistTaps="always"
         style={localStyles.resultList}
         extraData={selected}
         ListEmptyComponent={<EmptyComponent title={emptyMessage} />}
       />
-      <View style={localStyles.contentContainer}>
-        <View style={localStyles.buttonContainer}>
-          <OnePressButton
-            style={[globalStyles.button, localStyles.confirmButton]}
-            textStyle={[globalStyles.buttonText, localStyles.confirmButtonText]}
-            text={buttonStrings.done}
-            onPress={onDoneSelected}
-          />
-        </View>
+
+      <View style={localStyles.buttonContainer}>
+        <OnePressButton
+          style={localStyles.confirmButton}
+          textStyle={[globalStyles.buttonText, localStyles.confirmButtonText]}
+          text={buttonStrings.done}
+          onPress={onDoneSelected}
+        />
       </View>
     </View>
   );
@@ -126,7 +127,6 @@ const MultiSelectList = ({
 export default MultiSelectList;
 export { MultiSelectList };
 
-/* eslint-disable react/forbid-prop-types, react/require-default-props */
 MultiSelectList.propTypes = {
   options: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
   queryString: PropTypes.string.isRequired,
@@ -148,40 +148,11 @@ MultiSelectList.defaultProps = {
 };
 
 const localStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  emptyContainer: {
-    flex: 1,
-    alignItems: 'flex-start',
-  },
-  emptyText: {
-    fontSize: 20,
-    fontFamily: APP_FONT_FAMILY,
-    padding: 15,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    top: 15,
-    right: 0,
-  },
-  contentContainer: {
-    paddingTop: Dimensions.get('window').height / 10, // Start the content 1/10 down the page
-  },
-  resultList: {
-    flex: 1,
-    marginHorizontal: 10,
-    backgroundColor: 'white',
-    borderColor: '#b9b9b9',
-    borderRadius: 1,
-    borderWidth: 1,
-  },
-  confirmButton: {
-    backgroundColor: SUSSOL_ORANGE,
-  },
-  confirmButtonText: {
-    color: 'white',
-    fontSize: 20,
-    fontFamily: APP_FONT_FAMILY,
-  },
+  container: { flex: 1 },
+  emptyContainer: { flex: 1, alignItems: 'flex-start' },
+  emptyText: { fontSize: 20, fontFamily: APP_FONT_FAMILY, padding: 15 },
+  buttonContainer: { alignItems: 'flex-end' },
+  resultList: { marginHorizontal: 5, backgroundColor: 'white' },
+  confirmButton: { ...globalStyles.button, backgroundColor: SUSSOL_ORANGE },
+  confirmButtonText: { color: 'white', fontSize: 20, fontFamily: APP_FONT_FAMILY },
 });
