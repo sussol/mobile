@@ -123,6 +123,7 @@ Name.schema = {
     isSupplier: { type: 'bool', default: false },
     isManufacturer: { type: 'bool', default: false },
     isPatient: { type: 'bool', default: false },
+    policies: { type: 'linkingObjects', objectType: 'InsurancePolicy', property: 'patient' },
   },
 };
 
