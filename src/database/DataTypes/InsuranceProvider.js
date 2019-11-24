@@ -11,6 +11,11 @@ InsuranceProvider.schema = {
     comment: 'string?',
     validityDays: 'int',
     isActive: 'bool',
+    policies: {
+      type: 'linkingObjects',
+      objectType: 'InsurancePolicy',
+      property: 'insuranceProvider',
+    },
   },
 };
 
