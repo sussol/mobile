@@ -337,8 +337,8 @@ const createSupplierInvoice = (database, supplier, user) => {
 };
 
 /**
- * Create a new transaction batch.
- *
+ * Create a new transaction batch. When creating a TransactionBatch, this is coming from either
+ * a) an external supplier or b) some adjustment during a stocktake. These must be stock ins.
  * @param   {Realm}             database
  * @param   {TransactionItem}   transactionItem  Batch item.
  * @param   {ItemBatch}         itemBatch        Item batch to associate with transaction batch.
@@ -346,6 +346,7 @@ const createSupplierInvoice = (database, supplier, user) => {
  */
 const createTransactionBatch = (database, transactionItem, itemBatch) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+  const { transaction } = transactionItem || {};
 
   const transactionBatch = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -359,8 +360,9 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
     costPrice,
     sellPrice,
     donor,
-    transaction: transactionItem.transaction,
-    sortIndex: transactionItem.transaction ? transactionItem.transaction.numberOfBatches : 0,
+    transaction,
+    sortIndex: transaction?.numberOfBatches || 0,
+    type: 'stock_in',
   });
 
   transactionItem.addBatch(transactionBatch);
