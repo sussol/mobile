@@ -7,7 +7,7 @@
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { FlatList, StyleSheet, View, Text } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
 import { OnePressButton, SearchBar } from '.';
@@ -28,7 +28,6 @@ const MultiSelectList = ({
   showCheckIcon,
   placeholderText,
   onConfirmSelections,
-  emptyMessage,
 }) => {
   const [queryText, setQueryText] = useState('');
   const [selected, setSelected] = useState([]);
@@ -55,7 +54,6 @@ const MultiSelectList = ({
 
   const filterArrayData = () => {
     const regexFilter = RegExp(queryText, 'i');
-
     return options.filter(
       optionItem =>
         regexFilter.test(optionItem[primaryFilterProperty]) ||
@@ -85,15 +83,6 @@ const MultiSelectList = ({
     [data, onSelect, renderLeftText, renderRightText, showCheckIcon]
   );
 
-  const EmptyComponent = useCallback(
-    ({ title }) => (
-      <View style={localStyles.emptyContainer}>
-        <Text style={localStyles.emptyText}>{title}</Text>
-      </View>
-    ),
-    []
-  );
-
   return (
     <View style={localStyles.container}>
       <SearchBar
@@ -109,9 +98,7 @@ const MultiSelectList = ({
         keyboardShouldPersistTaps="always"
         style={localStyles.resultList}
         extraData={selected}
-        ListEmptyComponent={<EmptyComponent title={emptyMessage} />}
       />
-
       <View style={localStyles.buttonContainer}>
         <OnePressButton
           style={localStyles.confirmButton}
@@ -137,7 +124,6 @@ MultiSelectList.propTypes = {
   renderRightText: PropTypes.func,
   primaryFilterProperty: PropTypes.string,
   secondaryFilterProperty: PropTypes.string,
-  emptyMessage: PropTypes.string,
   onConfirmSelections: PropTypes.func,
   showCheckIcon: PropTypes.bool,
 };
@@ -149,8 +135,6 @@ MultiSelectList.defaultProps = {
 
 const localStyles = StyleSheet.create({
   container: { flex: 1 },
-  emptyContainer: { flex: 1, alignItems: 'flex-start' },
-  emptyText: { fontSize: 20, fontFamily: APP_FONT_FAMILY, padding: 15 },
   buttonContainer: { alignItems: 'flex-end' },
   resultList: { marginHorizontal: 5, backgroundColor: 'white' },
   confirmButton: { ...globalStyles.button, backgroundColor: SUSSOL_ORANGE },
