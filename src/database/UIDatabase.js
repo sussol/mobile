@@ -16,6 +16,9 @@ const translateToCoreDatabaseType = type => {
     case 'CustomerInvoice':
     case 'Prescription':
     case 'SupplierInvoice':
+    case 'Receipt':
+    case 'CustomerCredit':
+    case 'Payment':
       return 'Transaction';
     case 'Customer':
     case 'Supplier':
@@ -29,6 +32,10 @@ const translateToCoreDatabaseType = type => {
     case 'NegativeAdjustmentReason':
     case 'PositiveAdjustmentReason':
       return 'Options';
+    case 'Policy':
+      return 'InsurancePolicy';
+    case 'Provider':
+      return 'InsuranceProvider';
     default:
       return type;
   }
@@ -116,6 +123,20 @@ class UIDatabase {
           'store',
           'inventory_adjustment'
         );
+      case 'Receipt':
+        return results.filtered('type == $0', 'receipt');
+      case 'Payment':
+        return results.filtered('type == $0', 'payment');
+      case 'CustomerCredit':
+        return results.filtered('type == $0', 'customer_credit');
+      case 'Policy':
+        return results.filtered(
+          'insuranceProvider.isActive == $0 && expiryDate > $1',
+          true,
+          new Date()
+        );
+      case 'Provider':
+        return results.filtered('isActive == $0', true);
       case 'Customer':
         return results.filtered(
           'isVisible == true AND isCustomer == true AND id != $0',
