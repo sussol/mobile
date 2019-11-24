@@ -155,6 +155,9 @@ TransactionBatch.schema = {
     sellPrice: 'double',
     donor: { type: 'Name', optional: true },
     sortIndex: { type: 'int', optional: true },
+    total: { type: 'float', optional: true },
+    type: { type: 'string', optional: true },
+    linkedTransaction: { type: 'Transaction', optional: true },
   },
 };
 
