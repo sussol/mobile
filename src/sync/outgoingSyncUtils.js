@@ -13,7 +13,6 @@ import {
   SEQUENCE_KEYS,
   STATUSES,
   SYNC_TYPES,
-  TRANSACTION_BATCH_TYPES,
   TRANSACTION_TYPES,
 } from './syncTranslators';
 import { CHANGE_TYPES } from '../database';
@@ -220,7 +219,7 @@ const generateSyncData = (settings, recordType, record) => {
         item_name: record.itemName,
         is_from_inventory_adjustment: transaction.isInventoryAdjustment,
         donor_id: record.donor && record.donor.id,
-        type: TRANSACTION_BATCH_TYPES.translate(transaction.type, INTERNAL_TO_EXTERNAL),
+        type: record.type,
       };
     }
     default:
