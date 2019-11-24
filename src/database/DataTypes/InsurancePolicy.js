@@ -7,7 +7,6 @@ InsurancePolicy.schema = {
   primaryKey: 'id',
   properties: {
     id: 'string',
-    patient: 'string',
     policyNumberFamily: 'string',
     policyNumberPerson: 'string',
     type: 'string',
@@ -15,6 +14,7 @@ InsurancePolicy.schema = {
     expiryDate: 'date',
     enteredBy: { type: 'User', optional: false },
     insuranceProvider: { type: 'InsuranceProvider', optional: false },
+    patient: { type: 'InsuranceProvider', optional: false },
   },
 };
 
