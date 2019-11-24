@@ -5,12 +5,13 @@
 
 import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
-import { SearchBar } from 'react-native-ui-components';
+
 import { Dimensions, FlatList, StyleSheet, View, Text } from 'react-native';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
-import { OnePressButton } from '.';
+import { OnePressButton, SearchBar } from '.';
 import ResultRow from './ResultRow';
+import { WHITE } from '../globalStyles/colors';
 
 const MultiSelectList = ({
   options,
@@ -94,14 +95,10 @@ const MultiSelectList = ({
   return (
     <View style={localStyles.container}>
       <SearchBar
-        autoCapitalize="none"
-        autoCorrect={false}
-        autoFocus
-        color="white"
-        onChange={setQueryText}
+        onChangeText={setQueryText}
+        value={queryText}
+        color={WHITE}
         placeholder={placeholderText}
-        placeholderTextColor="white"
-        style={[localStyles.text, localStyles.searchBar]}
       />
       <FlatList
         data={data}
@@ -178,14 +175,6 @@ const localStyles = StyleSheet.create({
     borderColor: '#b9b9b9',
     borderRadius: 1,
     borderWidth: 1,
-  },
-  searchBar: {
-    flex: 1,
-    color: 'white',
-  },
-  text: {
-    fontSize: 20,
-    fontFamily: APP_FONT_FAMILY,
   },
   confirmButton: {
     backgroundColor: SUSSOL_ORANGE,
