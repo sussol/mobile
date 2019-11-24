@@ -7,7 +7,7 @@
 
 import React, { useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -22,6 +22,8 @@ import { useRecordListener } from '../hooks';
 
 import globalStyles from '../globalStyles';
 import { buttonStrings, modalStrings, programStrings } from '../localization';
+import { UIDatabase } from '../database/index';
+import { SETTINGS_KEYS } from '../settings/index';
 
 /**
  * Renders a mSupply mobile page with a supplier requisition loaded for editing
@@ -286,8 +288,19 @@ const SupplierRequisition = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITION);
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const thisStoreID = UIDatabase.getSetting(SETTINGS_KEYS.THIS_STORE_NAME_ID);
+  const thisStore = UIDatabase.get('Name', thisStoreID);
+  const hasMasterLists = thisStore?.masterLists?.length > 0;
+
+  const noMasterLists = () =>
+    ToastAndroid.show(modalStrings.supplier_no_masterlist_available, ToastAndroid.LONG);
+
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Requisition', ROUTES.SUPPLIER_REQUISITION),
+    [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
+  };
+};
 
 const mapStateToProps = state => {
   const { pages } = state;
