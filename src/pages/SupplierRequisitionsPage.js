@@ -181,7 +181,7 @@ export const SupplierRequisitions = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const usingPrograms = () => getAllPrograms(Settings, UIDatabase).length > 0;
+  const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
   const newRequisitionModalKey = usingPrograms
     ? MODAL_KEYS.PROGRAM_REQUISITION
     : MODAL_KEYS.SELECT_INTERNAL_SUPPLIER;
