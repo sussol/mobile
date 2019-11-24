@@ -344,7 +344,7 @@ const createSupplierInvoice = (database, supplier, user) => {
  * @param   {ItemBatch}         itemBatch        Item batch to associate with transaction batch.
  * @return  {TransactionBatch}
  */
-const createTransactionBatch = (database, transactionItem, itemBatch) => {
+const createTransactionBatch = (database, transactionItem, itemBatch, isAddition = true) => {
   const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
   const { transaction } = transactionItem || {};
 
@@ -362,7 +362,7 @@ const createTransactionBatch = (database, transactionItem, itemBatch) => {
     donor,
     transaction,
     sortIndex: transaction?.numberOfBatches || 0,
-    type: 'stock_in',
+    type: isAddition ? 'stock_in' : 'stock_out',
   });
 
   transactionItem.addBatch(transactionBatch);
