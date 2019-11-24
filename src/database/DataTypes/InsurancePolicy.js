@@ -14,7 +14,7 @@ InsurancePolicy.schema = {
     expiryDate: 'date',
     enteredBy: { type: 'User', optional: false },
     insuranceProvider: { type: 'InsuranceProvider', optional: false },
-    patient: { type: 'InsuranceProvider', optional: false },
+    patient: { type: 'Name', optional: false },
   },
 };
 
