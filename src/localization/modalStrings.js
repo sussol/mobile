@@ -55,7 +55,8 @@ export const modalStrings = new LocalizedStrings({
     select_a_reason: 'Select a reason',
     confirm_password: 'Please confirm your user password',
     select_master_lists: 'Select master list',
-    no_masterlist_available: 'Sorry, no master list available.',
+    customer_no_masterlist_available: 'This customer has no master lists!',
+    supplier_no_masterlist_available: 'Your store has no master lists!',
   },
   fr: {
     add_at_least_one_item_before_finalising:
