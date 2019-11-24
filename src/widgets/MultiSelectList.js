@@ -7,23 +7,10 @@ import React, { useCallback, useState } from 'react';
 import PropTypes from 'prop-types';
 import { SearchBar } from 'react-native-ui-components';
 import { Dimensions, FlatList, StyleSheet, View, Text } from 'react-native';
-import { complement } from 'set-manipulator';
 import globalStyles, { APP_FONT_FAMILY, SUSSOL_ORANGE } from '../globalStyles';
 import { generalStrings, buttonStrings } from '../localization';
 import { OnePressButton } from '.';
 import ResultRow from './ResultRow';
-
-/**
- * A search bar that autocompletes from the options passed in, and allows any of
- * the dropdown options to be selected. Will gravefully handle null values
- * by using an empty array of searchable objects.
- * @prop  {array}     options         The options to select from
- * @prop  {function}  onSelect        A function taking the selected option as a parameter
- * @prop  {string}    queryString     The query to filter the options by, where $0 will
- *                                    be replaced by the user's current search
- *                                    e.g. 'name BEGINSWITH[c] $0 OR code BEGINSWITH[c] $0'
- * @prop  {string}    placeholderText The text to initially display in the search bar
- */
 
 const MultiSelectList = ({
   options,
@@ -42,30 +29,15 @@ const MultiSelectList = ({
   const [queryText, setQueryText] = useState('');
   const [selected, setSelected] = useState([]);
 
-  /**
-   * Filters a realm results object. Creates two realm results A, B
-   * by two query strings. And concats A to B - A.
-   */
   const filterResultData = () => {
-    let data = options
-      .filtered(queryString, queryText)
-      .sorted(sortByString)
-      .slice();
-
-    if (queryStringSecondary) {
-      data = data.concat(
-        complement(options.filtered(queryStringSecondary, queryText).sorted(sortByString), data)
-      );
-    }
-
-    return data;
+    const data = options.filtered(queryString, queryText);
+    const secondaryFiltered = queryStringSecondary
+      ? data.filtered(queryStringSecondary, queryText)
+      : data;
+    const sortedData = secondaryFiltered.sorted(sortByString);
+    return sortedData;
   };
 
-  /**
-   * Filters an array by two filter properties, and user input query text.
-   * Ignores case. Querying a realm result with filtered is more performant,
-   * so have two cases for each.
-   */
   const filterArrayData = () => {
     const regexFilter = RegExp(queryText, 'i');
 
@@ -76,67 +48,48 @@ const MultiSelectList = ({
     );
   };
 
-  /**
-   * Delegator of filtering process. Check if the object is a realm
-   * object (has the filtered member) or if it is an array. Otherwise,
-   * return an empty list to display.
-   */
   const getData = () => {
     if (options && options.filtered && queryString) return filterResultData(options);
     if (Array.isArray(options) && primaryFilterProperty) return filterArrayData(options);
     return [];
   };
 
-  /**
-   * Render single item of the FlatList
-   *
-   * @prop  {object}     data   Single item data.
-   *
-   * @returns {component} ResultRow
-   *
-   */
-  const renderItem = useCallback(data => (
-    <ResultRow
-      data={data}
-      onPress={onSelect}
-      isSelected={isSelected}
-      renderLeftText={renderLeftText}
-      renderRightText={renderRightText}
-      showCheckIcon={showCheckIcon}
-    />
-  ));
-
-  /**
-   * On select FlatList item update selected state
-   *
-   * @prop  {object}     data   Single item data.
-   */
-  const onSelect = useCallback(data =>
-    setSelected(prevState =>
-      prevState.indexOf(data.item.id) === -1
-        ? [...prevState, data.item.id]
-        : prevState.filter(i => i !== data.item.id)
-    )
-  );
-
-  const EmptyComponent = useCallback(({ title }) => (
-    <View style={localStyles.emptyContainer}>
-      <Text style={localStyles.emptyText}>{title}</Text>
-    </View>
-  ));
-
-  /**
-   * Check if the single item is selected or not
-   *
-   * @prop  {object}     data   Single item data.
-   *
-   * @returns {bool}    selected state of the item
-   */
-  const isSelected = useCallback(data => !(selected.indexOf(data.item.id) === -1));
-
-  const onDoneSelected = useCallback(() => onConfirmSelections(selected));
+  const onDoneSelected = useCallback(() => onConfirmSelections(selected), [selected]);
 
   const data = getData();
+
+  const onSelect = useCallback(
+    ({ item }) =>
+      setSelected(prevState =>
+        prevState.indexOf(item.id) === -1
+          ? [...prevState, item.id]
+          : prevState.filter(selectedItem => selectedItem !== item.id)
+      ),
+    []
+  );
+
+  const renderItem = useCallback(
+    row => (
+      <ResultRow
+        data={row}
+        onPress={onSelect}
+        isSelected={selected.indexOf(row.item.id) >= 0}
+        renderLeftText={renderLeftText}
+        renderRightText={renderRightText}
+        showCheckIcon={showCheckIcon}
+      />
+    ),
+    [data, onSelect, renderLeftText, renderRightText, showCheckIcon]
+  );
+
+  const EmptyComponent = useCallback(
+    ({ title }) => (
+      <View style={localStyles.emptyContainer}>
+        <Text style={localStyles.emptyText}>{title}</Text>
+      </View>
+    ),
+    []
+  );
 
   return (
     <View style={localStyles.container}>
