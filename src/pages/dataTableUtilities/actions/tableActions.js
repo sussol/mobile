@@ -244,11 +244,6 @@ export const filterDataWithFinalisedToggle = (searchTerm, route) => ({
   payload: { searchTerm, route },
 });
 
-export const applyMasterLists = (selectedMasterLists, route) => ({
-  type: ACTIONS.APPLY_MASTER_LISTS,
-  payload: { selectedMasterLists, route },
-});
-
 export const filterDataWithOverStockToggle = (searchTerm, route) => ({
   type: ACTIONS.FILTER_DATA_WITH_OVER_STOCK_TOGGLE,
   payload: { searchTerm, route },
