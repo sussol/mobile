@@ -1,0 +1,13 @@
+{
+  "authStrings": {
+    "logging_in": "Logging in...",
+    "login": "Login",
+    "password": "Password",
+    "repeat_password": "Please re-enter password",
+    "user_name": "User Name",
+    "email": "E-mail Address",
+    "pushing_changes_text": "Pushing changes to the Server",
+    "invalid_username_or_password": "Invalid username or password",
+    "warning_sync_edit": "WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!"
+  }
+}
