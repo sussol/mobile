@@ -70,6 +70,14 @@ const createCashOut = (database, user, patient, amount) => {
   return [offsetInvoice, payment, paymentLine];
 };
 
+const createCashIn = (database, user, patient, amount) => {
+  const customerCredit = createCustomerCredit(database, user, patient, -amount);
+  const receipt = createReceipt(database, user, patient, amount);
+  const receiptLine = createReceiptLine(database, receipt, customerCredit, amount);
+
+  return [customerCredit, receipt, receiptLine];
+};
+
 const createOffsetCustomerInvoice = (database, user, patient, amount) => {
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
@@ -88,14 +96,6 @@ const createOffsetCustomerInvoice = (database, user, patient, amount) => {
   });
 
   return invoice;
-};
-
-const createCashIn = (database, user, patient, amount) => {
-  const customerCredit = createCustomerCredit(database, user, patient, -amount);
-  const receipt = createReceipt(database, user, patient, amount);
-  const receiptLine = createReceiptLine(database, receipt, customerCredit, amount);
-
-  return [customerCredit, receipt, receiptLine];
 };
 
 const createReceipt = (database, user, patient, total) => {
