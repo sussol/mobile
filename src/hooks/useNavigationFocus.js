@@ -7,37 +7,43 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Simple custom hook which subscribes to navigation focus event,
- * (navigating to a page), which will invoke the passed callback
- * when navigating to it.
+ * Simple custom hook which subscribes to navigation focus/blur events,
+ * (navigating to/from a page), which will invoke the passed callback.
  *
  * Main use case is popping a page from the stack and returning to
- * a page whose state has been altered but the UI has not updated.
- *
+ * a page whose state has been altered but the UI has not updated or
+ * triggering a callback when navigating away from a page
  * - Only events for the calling page are subscribed to.
  * - Initial navigation focus event is NOT captured.
  *
- * @param {Func}   callback   callback to invoke on focusing the subscribed screen.
- * @param {Object} navigation react-navigation navigator object.
+ * @param {Func}   willFocusCallback callback to invoke on focusing the subscribed screen.
+ * @param {Func}   willBlurCallback  callback to invoke on focusing the subscribed screen.
+ * @param {Object} navigation        react-navigation navigator object.
  */
-export const useNavigationFocus = (callback, navigation) => {
-  const subscription = useRef(null);
+export const useNavigationFocus = (navigation, willFocusCallback, willBlurCallback) => {
+  const willFocusSub = useRef(null);
+  const willBlurSub = useRef(null);
 
   const subscribe = () => {
-    if (subscription.current) return;
-    subscription.current = navigation.addListener('willFocus', callback);
+    if (!willFocusSub && willFocusCallback) {
+      willFocusSub.current = navigation.addListener('willFocus', () => willFocusCallback());
+    }
+    if (!willBlurSub.current && willBlurCallback) {
+      willBlurSub.current = navigation.addListener('willBlur', () => willBlurCallback());
+    }
   };
 
   const unSubscribe = () => {
-    if (!subscription.current) return;
-    subscription.current.remove();
+    if (!willFocusSub.current || !willBlurSub.current) return;
+    willFocusSub.current.remove();
+    willBlurSub.current.remove();
   };
 
-  // On-mount, On-unmount effect, subscribing/unsubscribing to willFocus navigation events.
+  // On-mount/On-unmount effect, subscribing/unsubscribing to navigation events given the callbacks.
   useEffect(() => {
     subscribe();
     return unSubscribe;
   }, []);
 
-  return [subscription, subscribe, unSubscribe];
+  return [willFocusSub, willBlurSub, subscribe, unSubscribe];
 };
