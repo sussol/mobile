@@ -36,12 +36,27 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * Get number of transactions associated with this name.
-   *
-   * @return  {number}
+   * Returns all customer credits for this Name
    */
-  get numberOfTransactions() {
-    return this.transactions.length;
+  get customerCredits() {
+    return this.transactions.filtered('type == $0', 'customer_credit');
+  }
+
+  /**
+   * Returns all customer invoices for this Name
+   */
+  get customerInvoices() {
+    return this.transactions.filtered('type == $0', 'customer_invoice');
+  }
+
+  /**
+   * Returns the available credit for this Name.
+   */
+  get availableCredit() {
+    const sumOfCredits = this.customerCredits.sum('outstanding');
+    const sumOfDebits = this.customerInvoices.sum('outstanding');
+
+    return Math.abs(sumOfDebits - sumOfCredits);
   }
 
   /**
@@ -99,20 +114,6 @@ export class Name extends Realm.Object {
   toString() {
     return this.name;
   }
-
-  get customerCredits() {
-    return this.transactions.filtered('type == $0', 'customer_credit');
-  }
-
-  get customerInvoices() {
-    return this.transactions.filtered('type == $0', 'customer_invoice');
-  }
-
-  get availableCredit() {
-    const sumOfCredits = this.customerCredits().sum('outstanding');
-    const sumOfDebits = this.customerInvoices().sum('outstanding');
-    return Math.abs(sumOfDebits - sumOfCredits);
-  }
 }
 
 Name.schema = {
@@ -127,7 +128,7 @@ Name.schema = {
     emailAddress: { type: 'string', optional: true },
     type: { type: 'string', default: 'placeholderType' },
     masterLists: { type: 'list', objectType: 'MasterList' },
-    transactions: { type: 'list', objectType: 'Transaction' },
+    transactions: { type: 'linkingObjects', objectType: 'Transaction', property: 'otherParty' },
     isVisible: { type: 'bool', default: false },
     supplyingStoreId: { type: 'string', optional: true },
     firstName: { type: 'string', optional: true },
