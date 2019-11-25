@@ -166,7 +166,7 @@ export const Stocktakes = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const usingPrograms = () => getAllPrograms(Settings, UIDatabase).length > 0;
+  const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
   const onNewProgramStocktake = () =>
     dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE, ROUTES.STOCKTAKES));
   const onNewStocktake = () => dispatch(gotoStocktakeManagePage(''));
