@@ -56,7 +56,7 @@ export class Name extends Realm.Object {
     const sumOfCredits = this.customerCredits.sum('outstanding');
     const sumOfDebits = this.customerInvoices.sum('outstanding');
 
-    return Math.abs(sumOfDebits - sumOfCredits);
+    return Math.abs(sumOfCredits + sumOfDebits);
   }
 
   /**
