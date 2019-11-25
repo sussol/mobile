@@ -99,6 +99,20 @@ export class Name extends Realm.Object {
   toString() {
     return this.name;
   }
+
+  get customerCredits() {
+    return this.transactions.filtered('type == $0', 'customer_credit');
+  }
+
+  get customerInvoices() {
+    return this.transactions.filtered('type == $0', 'customer_invoice');
+  }
+
+  get availableCredit() {
+    const sumOfCredits = this.customerCredits().sum('outstanding');
+    const sumOfDebits = this.customerInvoices().sum('outstanding');
+    return Math.abs(sumOfDebits - sumOfCredits);
+  }
 }
 
 Name.schema = {
