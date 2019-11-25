@@ -12,10 +12,9 @@ InsurancePolicy.schema = {
     type: 'string',
     discountRate: 'float',
     expiryDate: 'date',
-    enteredBy: { type: 'User', optional: false },
+    enteredBy: { type: 'User', optional: true },
     patient: { type: 'Name', optional: false },
     insuranceProvider: { type: 'InsuranceProvider', optional: false },
-    patient: { type: 'Name', optional: false },
   },
 };
 
