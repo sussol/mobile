@@ -62,6 +62,26 @@ const createInsurancePolicy = (
   return policy;
 };
 
+const createOffsetCustomerInvoice = (database, user, patient, amount) => {
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const currentDate = new Date();
+  const invoice = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_invoice',
+    status: 'finalised',
+    comment: '',
+    otherParty: patient,
+    total: amount,
+    outstanding: amount,
+    enteredBy: user,
+  });
+
+  return invoice;
+};
+
 const createCashIn = (database, user, patient, amount) => {
   const customerCredit = createCustomerCredit(database, user, patient, -amount);
   const receipt = createReceipt(database, user, patient, amount);
@@ -579,6 +599,8 @@ export const createRecord = (database, type, ...args) => {
       return createInsurancePolicy(database, ...args);
     case 'CashIn':
       return createCashIn(database, ...args);
+    case 'OffsetCustomerInvoice':
+      return createOffsetCustomerInvoice(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
