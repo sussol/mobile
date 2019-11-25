@@ -4,18 +4,18 @@
  */
 
 import LocalizedStrings from 'react-native-localization';
+import gb from './jsonFiles/gb.json';
 
 export const authStrings = new LocalizedStrings({
   gb: {
-    logging_in: 'Logging in...',
-    login: 'Login',
-    password: 'Password',
-    repeat_password: 'Please re-enter password',
-    user_name: 'User Name',
-    email: 'E-mail Address',
-    invalid_username_or_password: 'Invalid username or password',
-    warning_sync_edit:
-      'WARNING:\nThis will effect syncing for this store.\nMake sure you know what you doing!',
+    logging_in: gb.authStrings.logging_in,
+    login: gb.authStrings.login,
+    password: gb.authStrings.password,
+    repeat_password: gb.authStrings.repeat_password,
+    user_name: gb.authStrings.user_name,
+    email: gb.authStrings.email,
+    invalid_username_or_password: gb.authStrings.invalid_username_or_password,
+    warning_sync_edit: gb.authStrings.warning_sync_edit,
   },
   fr: {
     logging_in: 'Connexion en cours',
