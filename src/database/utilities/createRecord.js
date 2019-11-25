@@ -37,6 +37,31 @@ export const getNumberSequence = (database, sequenceKey) => {
   return sequenceResults[0];
 };
 
+const createInsurancePolicy = (
+  database,
+  patient,
+  policyNumberFamily,
+  policyNumberPerson,
+  type,
+  discountRate,
+  expiryDate,
+  insuranceProvider
+) => {
+  const policy = database.create('InsurancePolicy', {
+    id: generateUUID(),
+    patient,
+    policyNumberFamily,
+    policyNumberPerson,
+    type,
+    discountRate,
+    expiryDate,
+    insuranceProvider,
+  });
+
+  database.save('InsurancePolicy', policy);
+  return policy;
+};
+
 const createReceipt = (database, user, patient, total) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
@@ -545,6 +570,8 @@ export const createRecord = (database, type, ...args) => {
       return createCustomerCredit(database, ...args);
     case 'CustomerCreditLine':
       return createCustomerCreditLine(database, ...args);
+    case 'InsurancePolicy':
+      return createInsurancePolicy(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
