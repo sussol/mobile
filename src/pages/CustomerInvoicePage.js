@@ -141,14 +141,13 @@ export const CustomerInvoice = ({
     pageTopSectionContainer,
     pageTopLeftSectionContainer,
     pageTopRightSectionContainer,
-    searchBar,
   } = globalStyles;
   return (
     <DataTablePageView>
       <View style={pageTopSectionContainer}>
         <View style={pageTopLeftSectionContainer}>
           <PageInfo columns={pageInfoColumns} isEditingDisabled={isFinalised} />
-          <SearchBar onChangeText={onFilterData} style={searchBar} value={searchTerm} />
+          <SearchBar onChangeText={onFilterData} value={searchTerm} />
         </View>
         <View style={pageTopRightSectionContainer}>
           <View style={verticalContainer}>
@@ -205,7 +204,10 @@ const mapStateToProps = state => {
   return customerInvoice;
 };
 
-export const CustomerInvoicePage = connect(mapStateToProps, mapDispatchToProps)(CustomerInvoice);
+export const CustomerInvoicePage = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CustomerInvoice);
 
 CustomerInvoice.defaultProps = {
   modalValue: null,

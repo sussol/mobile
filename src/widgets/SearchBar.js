@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 
 import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import { MagnifyingGlass, Cancel } from './icons';
-import { SUSSOL_ORANGE } from '../globalStyles/index';
+import { SUSSOL_ORANGE, APP_FONT_FAMILY } from '../globalStyles/index';
 import { debounce } from '../utilities/index';
 
 /**
@@ -74,7 +74,7 @@ export const SearchBarComponent = ({
 
   return (
     <View style={internalViewStyle}>
-      <MagnifyingGlass />
+      <MagnifyingGlass color={color} />
       <TextInput
         {...textInputProps}
         style={internalTextStyle}
@@ -121,7 +121,8 @@ const defaultStyles = StyleSheet.create({
   },
   textInput: {
     height: 40,
-    fontSize: 16,
+    fontSize: 20,
+    fontFamily: APP_FONT_FAMILY,
     backgroundColor: 'rgba(0, 0, 0, 0)',
     flex: 1,
   },
