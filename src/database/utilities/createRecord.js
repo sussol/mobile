@@ -185,6 +185,40 @@ const createCustomerCredit = (database, user, patient, total) => {
   return customerCredit;
 };
 
+const createCustomerRefundLine = (database, customerCredit, transactionBatch) => {
+  const { total, itemBatch, numberOfPacks } = transactionBatch;
+  const { item, batch, expiryDate, packSize, costPrice, sellPrice, donor } = itemBatch;
+
+  const inverseTotal = -total;
+
+  const refundLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    item,
+    batch,
+    expiryDate,
+    packSize,
+    costPrice,
+    sellPrice,
+    donor,
+    itemBatch,
+    transaction: customerCredit,
+    total: inverseTotal,
+    type: 'stock_in',
+    note: 'credit',
+  });
+
+  customerCredit.outstanding += inverseTotal;
+
+  itemBatch.addTransactionBatch(refundLine);
+  refundLine.setTotalQuantity(database, numberOfPacks);
+
+  database.save('Transaction', customerCredit);
+  database.save('TransactionBatch', refundLine);
+  database.save('ItemBatch', customerCredit);
+
+  return refundLine;
+};
+
 const createCustomerCreditLine = (database, customerCredit, total) => {
   const receiptLine = database.create('TransactionBatch', {
     id: generateUUID(),
@@ -615,6 +649,8 @@ export const createRecord = (database, type, ...args) => {
       return createCashOut(database, ...args);
     case 'OffsetCustomerInvoice':
       return createOffsetCustomerInvoice(database, ...args);
+    case 'RefundLine':
+      return createCustomerRefundLine(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
