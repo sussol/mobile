@@ -62,6 +62,14 @@ const createInsurancePolicy = (
   return policy;
 };
 
+const createCashOut = (database, user, patient, amount) => {
+  const offsetInvoice = createOffsetCustomerInvoice(database, user, patient, amount);
+  const payment = createPayment(database, user, patient, amount);
+  const paymentLine = createPaymentLine(database, payment, offsetInvoice, amount);
+
+  return [offsetInvoice, payment, paymentLine];
+};
+
 const createOffsetCustomerInvoice = (database, user, patient, amount) => {
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
   const currentDate = new Date();
@@ -170,6 +178,7 @@ const createCustomerCredit = (database, user, patient, total) => {
     otherParty: patient,
     enteredBy: user,
     total,
+    outstanding: total,
   });
 
   database.save('Transaction', customerCredit);
@@ -599,6 +608,8 @@ export const createRecord = (database, type, ...args) => {
       return createInsurancePolicy(database, ...args);
     case 'CashIn':
       return createCashIn(database, ...args);
+    case 'CashOut':
+      return createCashOut(database, ...args);
     case 'OffsetCustomerInvoice':
       return createOffsetCustomerInvoice(database, ...args);
     default:
