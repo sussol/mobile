@@ -37,6 +37,105 @@ export const getNumberSequence = (database, sequenceKey) => {
   return sequenceResults[0];
 };
 
+const createReceipt = (database, user, patient, total) => {
+  const currentDate = new Date();
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const receipt = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'receipt',
+    status: 'finalised',
+    comment: '',
+    otherParty: patient,
+    enteredBy: user,
+    total,
+  });
+
+  database.save('Transaction', receipt);
+  return receipt;
+};
+
+const createReceiptLine = (database, receipt, linkedTransaction, total) => {
+  const receiptLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    total,
+    transaction: receipt,
+    linkedTransaction,
+    type: 'cash_in',
+  });
+
+  database.save('TransactionBatch', receiptLine);
+  return receiptLine;
+};
+
+const createPayment = (database, user, patient, total) => {
+  const currentDate = new Date();
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const payment = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'payment',
+    status: 'finalised',
+    comment: '',
+    otherParty: patient,
+    enteredBy: user,
+    total,
+  });
+
+  database.save('Transaction', payment);
+  return payment;
+};
+
+const createPaymentLine = (database, payment, linkedTransaction, total) => {
+  const receiptLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    total,
+    transaction: payment,
+    linkedTransaction,
+    type: 'cash_out',
+  });
+
+  database.save('TransactionBatch', receiptLine);
+  return receiptLine;
+};
+
+const createCustomerCredit = (database, user, patient, total) => {
+  const currentDate = new Date();
+  const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
+  const customerCredit = database.create('Transaction', {
+    id: generateUUID(),
+    serialNumber: getNextNumber(database, CUSTOMER_INVOICE_NUMBER),
+    entryDate: currentDate,
+    confirmDate: currentDate,
+    type: 'customer_credit',
+    status: 'finalised',
+    comment: '',
+    otherParty: patient,
+    enteredBy: user,
+    total,
+  });
+
+  database.save('Transaction', customerCredit);
+  return customerCredit;
+};
+
+const createCustomerCreditLine = (database, payment, total) => {
+  const receiptLine = database.create('TransactionBatch', {
+    id: generateUUID(),
+    total,
+    transaction: payment,
+    type: 'cash_in',
+    note: 'credit',
+  });
+
+  database.save('TransactionBatch', receiptLine);
+  return receiptLine;
+};
+
 /**
  * Create a customer invoice associated with a given customer.
  *
@@ -434,6 +533,18 @@ export const createRecord = (database, type, ...args) => {
       return createTransactionItem(database, ...args);
     case 'TransactionBatch':
       return createTransactionBatch(database, ...args);
+    case 'Receipt':
+      return createReceipt(database, ...args);
+    case 'ReceiptLine':
+      return createReceiptLine(database, ...args);
+    case 'Payment':
+      return createPayment(database, ...args);
+    case 'PaymentLine':
+      return createPaymentLine(database, ...args);
+    case 'CustomerCredit':
+      return createCustomerCredit(database, ...args);
+    case 'CustomerCreditLine':
+      return createCustomerCreditLine(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
