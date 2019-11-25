@@ -49,7 +49,7 @@ export const CustomerInvoices = ({
 }) => {
   // Listen to changes from sync and navigation events re-focusing this screen,
   // such that any side effects that occur trigger a reconcilitation of data.
-  useNavigationFocus(refreshData, navigation);
+  useNavigationFocus(navigation, refreshData);
   useSyncListener(refreshData, ['Transaction']);
 
   const onNavigateToInvoice = useCallback(invoice => dispatch(gotoCustomerInvoice(invoice)), []);
