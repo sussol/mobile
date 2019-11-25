@@ -11,15 +11,14 @@ import { APP_FONT_FAMILY, SUSSOL_ORANGE, BACKGROUND_COLOR, GREY } from '../globa
 
 const ResultRow = React.memo(
   ({ data, renderLeftText, renderRightText, onPress, isSelected, showCheckIcon }) => {
-    const selected = isSelected(data);
-    const rowPressed = useCallback(() => onPress(data));
+    const rowPressed = useCallback(() => onPress(data), [data]);
 
     return (
       <TouchableOpacity
-        style={[localStyles.resultRow, selected && localStyles.selected]}
+        style={[localStyles.resultRow, isSelected && localStyles.selected]}
         onPress={rowPressed}
       >
-        {showCheckIcon && selected ? (
+        {showCheckIcon && isSelected ? (
           <Icon name="md-checkbox" style={localStyles.checkIcon} />
         ) : (
           <Icon name="md-square-outline" style={[localStyles.checkIcon, { color: GREY }]} />
@@ -28,7 +27,7 @@ const ResultRow = React.memo(
           style={[
             localStyles.text,
             localStyles.itemText,
-            selected && localStyles.selectedText,
+            isSelected && localStyles.selectedText,
             {
               flex: 5,
               justifyContent: 'flex-start',
@@ -43,7 +42,7 @@ const ResultRow = React.memo(
             style={[
               localStyles.text,
               localStyles.itemText,
-              selected && localStyles.selectedText,
+              isSelected && localStyles.selectedText,
               {
                 justifyContent: 'flex-end',
                 textAlign: 'right',
@@ -63,7 +62,7 @@ ResultRow.propTypes = {
   renderLeftText: PropTypes.func,
   renderRightText: PropTypes.func,
   onPress: PropTypes.func,
-  isSelected: PropTypes.func,
+  isSelected: PropTypes.bool,
   showCheckIcon: PropTypes.bool,
 };
 

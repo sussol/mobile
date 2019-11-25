@@ -154,26 +154,32 @@ const Menu = ({
     [isInAdminMode, isAdmin]
   );
 
-  const ModuleLayout = useCallback(() => (
-    <View style={styles.moduleTopRow}>
-      <View style={moduleRow}>
+  const ModuleLayout = useCallback(
+    () => (
+      <View style={styles.moduleTopRow}>
+        <View style={moduleRow}>
+          <CustomerSection />
+          <SupplierSection />
+        </View>
+        <View style={moduleRow}>
+          <StockSection />
+          <ModulesSection />
+        </View>
+      </View>
+    ),
+    []
+  );
+
+  const OriginalLayout = useCallback(
+    () => (
+      <View style={styles.originalTopRow}>
         <CustomerSection />
         <SupplierSection />
-      </View>
-      <View style={moduleRow}>
         <StockSection />
-        <ModulesSection />
       </View>
-    </View>
-  ));
-
-  const OriginalLayout = useCallback(() => (
-    <View style={styles.originalTopRow}>
-      <CustomerSection />
-      <SupplierSection />
-      <StockSection />
-    </View>
-  ));
+    ),
+    []
+  );
 
   return (
     <View style={{ ...appBackground }}>

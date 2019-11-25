@@ -57,7 +57,7 @@ export const Stocktakes = ({
 }) => {
   // Listen to sync & navigation changing stocktake data - refresh if there are any.
   useSyncListener(refreshData, ['Stocktake']);
-  useNavigationFocus(refreshData, navigation);
+  useNavigationFocus(navigation, refreshData);
 
   const onRowPress = useCallback(stocktake => dispatch(gotoStocktakeEditPage(stocktake)), []);
 
@@ -166,7 +166,7 @@ export const Stocktakes = ({
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
-  const usingPrograms = () => getAllPrograms(Settings, UIDatabase).length > 0;
+  const usingPrograms = getAllPrograms(Settings, UIDatabase).length > 0;
   const onNewProgramStocktake = () =>
     dispatch(PageActions.openModal(MODAL_KEYS.PROGRAM_STOCKTAKE, ROUTES.STOCKTAKES));
   const onNewStocktake = () => dispatch(gotoStocktakeManagePage(''));
