@@ -34,9 +34,8 @@ export const useNavigationFocus = (navigation, willFocusCallback, willBlurCallba
   };
 
   const unSubscribe = () => {
-    if (!willFocusSub.current || !willBlurSub.current) return;
-    willFocusSub.current.remove();
-    willBlurSub.current.remove();
+    if (willFocusSub.current) willFocusSub.current.remove();
+    if (willBlurSub.current) willBlurSub.current.remove();
   };
 
   // On-mount/On-unmount effect, subscribing/unsubscribing to navigation events given the callbacks.
