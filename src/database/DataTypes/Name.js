@@ -88,27 +88,6 @@ export class Name extends Realm.Object {
   }
 
   /**
-   * Add transaction to name.
-   *
-   * @param  {Transaction}  transaction
-   */
-  addTransaction(transaction) {
-    this.transactions.push(transaction);
-  }
-
-  /**
-   * Add transaction to name, if it has not already been added.
-   *
-   * @param  {Transaction}  transaction
-   */
-  addTransactionIfUnique(transaction) {
-    if (this.transactions.filtered('id == $0', transaction.id).length > 0) {
-      return;
-    }
-    this.addTransaction(transaction);
-  }
-
-  /**
    * Get string representation of name.
    */
   toString() {
