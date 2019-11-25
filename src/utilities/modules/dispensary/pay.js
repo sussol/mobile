@@ -27,7 +27,7 @@ export const pay = (currentUser, patient, script, cashAmount) => {
   if (creditAmount > availableCredit) throw new Error('Not enough credit');
 
   // Create a Receipt and ReceiptLine for every payment path.
-  const receipt = createRecord(UIDatabase, 'Receipt', patient);
+  const receipt = createRecord(UIDatabase, 'Receipt', currentUser, patient, cashAmount);
   createRecord(UIDatabase, 'ReceiptLine', script, null, cashAmount);
 
   // When using credit, create a CustomerCreditLine and ReceiptLine for each
@@ -41,7 +41,7 @@ export const pay = (currentUser, patient, script, cashAmount) => {
 
       if (creditFromCustomerCredit >= 0) return false;
 
-      const amountToTake = Math.min(creditFromCustomerCredit, creditToAllocate);
+      const amountToTake = Math.min(Math.abs(creditFromCustomerCredit), creditToAllocate);
 
       createRecord(UIDatabase, 'CustomerCreditLine', customerCredit, amountToTake);
       createRecord(UIDatabase, 'ReceiptLine', receipt, customerCredit, -amountToTake);
@@ -51,6 +51,7 @@ export const pay = (currentUser, patient, script, cashAmount) => {
       return !creditToAllocate;
     });
   }
+
   if (usingCredit && creditToAllocate > 0) throw new Error('Credit not fully allocated');
 
   if (usingOverpayment) createRecord(UIDatabase, 'CashIn', currentUser, patient, overpayAmount);
