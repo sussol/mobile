@@ -6,6 +6,34 @@ import { UIDatabase } from '../../../database/index';
  * Sustainable Solutions (NZ) Ltd. 2019
  */
 
+/**
+ * Helper method to pay off a prescription. Given a cash amount
+ * a script and a patient, all receipts, credits and cash in
+ * transactions will be created and the script will be finalised.
+ *
+ * Paying a script has three paths: underpay, exactpay and overpay.
+ * All payments create a Receipt with a ReceiptLine.
+ *
+ * An underpayment creates a CustomerCreditLine and a ReceiptLine
+ * for each source of credit (CustomerCredit) that credit was used from.
+ * For example if a Patient has overpaid the last two prescriptions, then
+ * there would be two sources of credit. If both sources were used to pay
+ * off a script, a CustomerCreditLine is added to each CustomerCredit for
+ * the amount used. A CustomerCredit can have many CustomerCreditLines If
+ * only a fraction of credit is used at a time.
+ *
+ * An overpayment creates a CashIn Transaction to the value of the
+ * amount overpaid.
+ *
+ * When using credit, credit must not become negative.
+ * A script must be paid off in full, no partial payments.
+ * Any amount overpaid must be gained in credit.
+ *
+ * @param {Name} patient       A Name that is a patient
+ * @param {Transaction} script A Transaction that is a prescription
+ * @param {Number} cashAmount  The cash amount being paid for the script.
+ */
+
 export const pay = (currentUser, patient, script, cashAmount) => {
   if (!patient.isPatient) throw new Error('Patient is not a patient');
 
