@@ -671,6 +671,7 @@ export const createOrUpdateRecord = (database, settings, recordType, record) => 
         sortIndex: parseNumber(record.line_number),
         expiryDate: parseDate(record.expiry_date),
         batch: record.batch,
+        type: record.type,
       };
       const transactionBatch = database.update(recordType, internalRecord);
       transaction.addBatchIfUnique(database, transactionBatch);

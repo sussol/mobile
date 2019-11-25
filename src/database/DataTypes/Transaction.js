@@ -81,7 +81,7 @@ export class Transaction extends Realm.Object {
    * @return  {boolean}
    */
   get isIncoming() {
-    return this.type === 'supplier_invoice';
+    return this.type === 'supplier_invoice' || this.type === 'customer_credit';
   }
 
   /**

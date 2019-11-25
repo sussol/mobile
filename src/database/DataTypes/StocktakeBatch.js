@@ -245,7 +245,8 @@ export class StocktakeBatch extends Realm.Object {
         database,
         'TransactionBatch',
         transactionItem,
-        this.itemBatch
+        this.itemBatch,
+        isAddition
       );
 
       // Apply difference from stocktake to actual stock on hand levels. Whether stock is increased

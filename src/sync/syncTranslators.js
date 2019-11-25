@@ -81,18 +81,12 @@ export const TRANSACTION_TYPES = new SyncTranslator({
   supplier_invoice: 'si',
   supplier_credit: 'sc',
   inventory_adjustment: 'in',
-  prescription: 'pi', // Following types provided for sync purposes, not actually used by mobile.
-  build: 'bu',
-  repack: 'sr',
+  prescription: 'pi',
   receipt: 'rc',
   payment: 'ps',
-});
-
-export const TRANSACTION_BATCH_TYPES = new SyncTranslator({
-  customer_invoice: 'stock_out',
-  customer_credit: 'stock_in',
-  supplier_invoice: 'stock_in',
-  supplier_credit: 'stock_out',
+  // Following types provided for sync purposes, not actually used by mobile.
+  build: 'bu',
+  repack: 'sr',
 });
 
 export const NAME_TYPES = new SyncTranslator({
