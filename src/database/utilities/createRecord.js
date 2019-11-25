@@ -62,6 +62,14 @@ const createInsurancePolicy = (
   return policy;
 };
 
+const createCashIn = (database, user, patient, amount) => {
+  const customerCredit = createCustomerCredit(database, user, patient, -amount);
+  const receipt = createReceipt(database, user, patient, amount);
+  const receiptLine = createReceiptLine(database, receipt, customerCredit, amount);
+
+  return [customerCredit, receipt, receiptLine];
+};
+
 const createReceipt = (database, user, patient, total) => {
   const currentDate = new Date();
   const { CUSTOMER_INVOICE_NUMBER } = NUMBER_SEQUENCE_KEYS;
@@ -569,6 +577,8 @@ export const createRecord = (database, type, ...args) => {
       return createCustomerCreditLine(database, ...args);
     case 'InsurancePolicy':
       return createInsurancePolicy(database, ...args);
+    case 'CashIn':
+      return createCashIn(database, ...args);
     default:
       throw new Error(`Cannot create a record with unsupported type: ${type}`);
   }
