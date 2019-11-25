@@ -6,7 +6,7 @@
 
 import React, { useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
+import { View, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { MODAL_KEYS } from '../utilities';
@@ -50,7 +50,6 @@ export const CustomerInvoice = ({
   getPageInfoColumns,
   refreshData,
   onSelectNewItem,
-  onAddMasterList,
   onEditComment,
   onEditTheirRef,
   onFilterData,
@@ -62,6 +61,7 @@ export const CustomerInvoice = ({
   onSortColumn,
   onEditTotalQuantity,
   onAddTransactionItem,
+  onAddMasterList,
   onApplyMasterLists,
   route,
 }) => {
@@ -160,7 +160,6 @@ export const CustomerInvoice = ({
             <PageButton
               text={buttonStrings.add_master_list_items}
               onPress={onAddMasterList}
-              onSelect={onApplyMasterLists}
               isDisabled={isFinalised}
             />
           </View>
@@ -195,8 +194,18 @@ export const CustomerInvoice = ({
   );
 };
 
-const mapDispatchToProps = (dispatch, ownProps) =>
-  getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_INVOICE);
+const mapDispatchToProps = (dispatch, ownProps) => {
+  const { transaction } = ownProps || {};
+  const { otherParty } = transaction;
+  const hasMasterLists = otherParty.masterLists.length > 0;
+
+  const noMasterLists = () =>
+    ToastAndroid.show(modalStrings.customer_no_masterlist_available, ToastAndroid.LONG);
+  return {
+    ...getPageDispatchers(dispatch, ownProps, 'Transaction', ROUTES.CUSTOMER_INVOICE),
+    [hasMasterLists ? null : 'onAddMasterList']: noMasterLists,
+  };
+};
 
 const mapStateToProps = state => {
   const { pages } = state;
