@@ -186,8 +186,6 @@ const createCustomerInvoice = (database, customer, user, mode = 'store') => {
   });
 
   database.save('Transaction', invoice);
-  customer.addTransaction(invoice);
-  database.save('Name', customer);
 
   return invoice;
 };
@@ -455,7 +453,6 @@ const createSupplierInvoice = (database, supplier, user) => {
   });
 
   database.save('Transaction', invoice);
-  supplier.addTransaction(invoice);
 
   return invoice;
 };
